@@ -1,6 +1,6 @@
 package com.projectkorra.ProjectKorra.Ability;
 
-import Utilities.AbilityLoadable;
+import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable;
 
 public class AbilityModule extends AbilityLoadable implements Cloneable {
 

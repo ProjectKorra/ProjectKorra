@@ -1,4 +1,4 @@
-package com.projectkorra.ProjectKorra.airbending.chiblocking;
+package com.projectkorra.ProjectKorra.chiblocking;
 
 import java.util.Random;
 

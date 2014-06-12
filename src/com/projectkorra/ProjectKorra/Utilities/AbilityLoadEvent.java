@@ -1,4 +1,4 @@
-package Utilities;
+package com.projectkorra.ProjectKorra.Utilities;
 
 import java.util.jar.JarFile;
 

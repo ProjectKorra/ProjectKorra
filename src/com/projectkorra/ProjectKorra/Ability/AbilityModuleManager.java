@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.AbilityLoader;
 
-import Utilities.AbilityLoader;
 
 public class AbilityModuleManager {
 

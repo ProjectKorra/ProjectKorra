@@ -10,7 +10,7 @@ import org.bukkit.WorldType;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.airbending.AirPassive;
-import com.projectkorra.ProjectKorra.airbending.chiblocking.ChiPassive;
+import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.FirePassive;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
