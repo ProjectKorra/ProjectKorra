@@ -1,0 +1,58 @@
+Properties:
+  GlobalCooldown: 500
+  Air:
+    CanBendWithWeapons: false
+  Water:
+    CanBendWithWeapons: false
+    NightFactor: 1.5
+  Earth:
+    CanBendWithWeapons: true
+    EarthbendableBlocks:
+    - STONE
+    - COAL_ORE
+    - DIAMOND_ORE
+    - DIRT
+    - GOLD_ORE
+    - GRASS
+    - GRAVEL
+    - IRON_ORE
+    - LAPIS_ORE
+    - NETHERRACK
+    - REDSTONE_ORE
+    - SAND
+    - SANDSTONE
+  Fire:
+    CanBendWithWeapons: true
+    DayFactor: 1.5
+  Chi:
+    CanBendWithWeapons: false
+Abilities:
+  Air:
+    Passive:
+      Factor: 0.3
+      Speed: 2
+      Jump: 3
+  Water:
+    Passive:
+      SwimSpeedFactor: 0.7
+    Plantbending:
+      RegrowTime: 180000
+  Earth:
+    Passive:
+      Duration: 2500
+  Chi:
+    Passive:
+      FallReductionFactor: 0.5
+      Speed: 1
+      Jump: 2
+      BlockChi:
+        Duration: 2500
+        DodgeChance: 25
+Storage:
+  engine: sqlite
+  MySQL:
+    host: localhost
+    port: 3306
+    pass: ''
+    db: minecraft
+    user: root

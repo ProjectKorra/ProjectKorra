@@ -1,0 +1,559 @@
+package com.projectkorra.ProjectKorra;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
+
+import com.projectkorra.ProjectKorra.Ability.AbilityModule;
+import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+
+public class Methods {
+
+	static ProjectKorra plugin;
+
+	public Methods(ProjectKorra plugin) {
+		Methods.plugin = plugin;
+	}
+
+	public static boolean isBender(String player, Element element) {
+		BendingPlayer bPlayer = getBendingPlayer(player);
+		if (bPlayer.hasElement(element)) return true;
+		return false;
+	}
+
+	public static BendingPlayer getBendingPlayer(String player) {
+		return BendingPlayer.players.get(player);
+	}
+
+	public static void createBendingPlayer(UUID uuid, String player) {
+		/*
+		 * This will run when the player logs in.
+		 */
+		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
+		try {
+			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
+				new BendingPlayer(uuid, player, new ArrayList<Element>(), new HashMap<Integer, String>(), false);
+				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player) VALUES ('" + uuid.toString() + "', '" + player + "')");
+				ProjectKorra.log.info("Created new BendingPlayer for " + player);
+			} else {
+				// The player has at least played before.
+				String player2 = rs2.getString("player");
+				if (!player.equalsIgnoreCase(player2)) DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player2 + "' WHERE uuid = '" + uuid.toString() + "'"); // They have changed names.
+				String element = rs2.getString("element");
+				String permaremoved = rs2.getString("permaremoved");
+				String slot1 = rs2.getString("slot1");
+				String slot2 = rs2.getString("slot2");
+				String slot3 = rs2.getString("slot3");
+				String slot4 = rs2.getString("slot4");
+				String slot5 = rs2.getString("slot5");
+				String slot6 = rs2.getString("slot6");
+				String slot7 = rs2.getString("slot7");
+				String slot8 = rs2.getString("slot8");
+				String slot9 = rs2.getString("slot9");
+				boolean p = false;
+				ArrayList<Element> elements = new ArrayList<Element>();
+				if (element != null) { // Player has an element.
+					if (element.contains("a")) elements.add(Element.Air);
+					if (element.contains("w")) elements.add(Element.Water);
+					if (element.contains("e")) elements.add(Element.Earth);
+					if (element.contains("f")) elements.add(Element.Fire);
+					if (element.contains("c")) elements.add(Element.Chi);
+				}
+
+				HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+				if (slot1 != null) abilities.put(1, slot1);
+				if (slot2 != null) abilities.put(2, slot2);
+				if (slot3 != null) abilities.put(3, slot3);
+				if (slot4 != null) abilities.put(4, slot4);
+				if (slot5 != null) abilities.put(5, slot5);
+				if (slot6 != null) abilities.put(6, slot6);
+				if (slot7 != null) abilities.put(7, slot7);
+				if (slot8 != null) abilities.put(8, slot8);
+				if (slot9 != null) abilities.put(9, slot9);
+
+				if (permaremoved == null) p = false;
+				if (permaremoved.equals("true")) p = true;
+				if (permaremoved.equals("false")) p = false;
+				new BendingPlayer(uuid, player2, elements, abilities, p);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static void saveBendingPlayer(String player) {
+		BendingPlayer bPlayer = BendingPlayer.players.get(player);
+		if (bPlayer == null) return;
+		String uuid = bPlayer.uuid.toString();
+
+		StringBuilder elements = new StringBuilder();
+		if (bPlayer.hasElement(Element.Air)) elements.append("a");
+		if (bPlayer.hasElement(Element.Water)) elements.append("w");
+		if (bPlayer.hasElement(Element.Earth)) elements.append("e");
+		if (bPlayer.hasElement(Element.Fire)) elements.append("f");
+		if (bPlayer.hasElement(Element.Chi)) elements.append("c");
+
+		HashMap<Integer, String> abilities = bPlayer.abilities;
+
+		if (abilities.get(1) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot1 = '" + abilities.get(1) + "' WHERE uuid = '" + uuid + "'");
+		if (abilities.get(2) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot2 = '" + abilities.get(2) + "' WHERE uuid = '" + uuid + "'");
+		if (abilities.get(3) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot3 = '" + abilities.get(3) + "' WHERE uuid = '" + uuid + "'");
+		if (abilities.get(4) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot4 = '" + abilities.get(4) + "' WHERE uuid = '" + uuid + "'");
+		if (abilities.get(5) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot5 = '" + abilities.get(5) + "' WHERE uuid = '" + uuid + "'");
+		if (abilities.get(6) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot6 = '" + abilities.get(6) + "' WHERE uuid = '" + uuid + "'");
+		if (abilities.get(7) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot7 = '" + abilities.get(7) + "' WHERE uuid = '" + uuid + "'");
+		if (abilities.get(8) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot8 = '" + abilities.get(8) + "' WHERE uuid = '" + uuid + "'");
+		if (abilities.get(9) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot9 = '" + abilities.get(9) + "' WHERE uuid = '" + uuid + "'");
+
+
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
+		boolean permaRemoved = bPlayer.permaRemoved;
+
+		if (permaRemoved) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = 'true' WHERE uuid = '" + uuid + "'");
+		} else {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = 'false' WHERE uuid = '" + uuid + "'");
+		}
+	}
+
+	public static void stopBending() {
+		List<AbilityModule> abilities = AbilityModuleManager.ability;
+		for (AbilityModule ab: abilities) {
+			ab.stop();
+		}
+		EarthPassive.removeAll();
+	}
+
+	public static boolean isSolid(Block block) {
+		if (Arrays.asList(nonOpaque).contains(block.getTypeId())) return false;
+		return true;
+	}
+
+	public static String getAbility(String string) {
+		for (String st: AbilityModuleManager.abilities) {
+			if (st.equalsIgnoreCase(string)) return st;
+		}
+		return null;
+	}
+
+	public static void bindAbility(Player player, String ability) {
+		int slot = player.getInventory().getHeldItemSlot() + 1;
+		BendingPlayer bPlayer = getBendingPlayer(player.getName());
+		bPlayer.abilities.put(slot, ability);
+	}
+
+	public static void bindAbility(Player player, String ability, int slot) {
+		BendingPlayer bPlayer = getBendingPlayer(player.getName());
+		bPlayer.abilities.put(slot, ability);
+	}
+	public static boolean abilityExists(String string) {
+		if (getAbility(string) == null) return false;
+		return true;
+	}
+	public static List<Entity> getEntitiesAroundPoint(Location location,
+			double radius) {
+
+		List<Entity> entities = location.getWorld().getEntities();
+		List<Entity> list = location.getWorld().getEntities();
+
+		for (Entity entity : entities) {
+			if (entity.getWorld() != location.getWorld()) {
+				list.remove(entity);
+			} else if (entity.getLocation().distance(location) > radius) {
+				list.remove(entity);
+			}
+		}
+
+		return list;
+
+	}
+
+	public static Entity getTargetedEntity(Player player, double range,
+			List<Entity> avoid) {
+		double longestr = range + 1;
+		Entity target = null;
+		Location origin = player.getEyeLocation();
+		Vector direction = player.getEyeLocation().getDirection().normalize();
+		for (Entity entity : origin.getWorld().getEntities()) {
+			if (avoid.contains(entity))
+				continue;
+			if (entity.getLocation().distance(origin) < longestr
+					&& getDistanceFromLine(direction, origin,
+							entity.getLocation()) < 2
+							&& (entity instanceof LivingEntity)
+							&& entity.getEntityId() != player.getEntityId()
+							&& entity.getLocation().distance(
+									origin.clone().add(direction)) < entity
+									.getLocation().distance(
+											origin.clone().add(
+													direction.clone().multiply(-1)))) {
+				target = entity;
+				longestr = entity.getLocation().distance(origin);
+			}
+		}
+		return target;
+	}
+
+	public static boolean isAbilityInstalled(String name, String author) {
+		String ability = getAbility(name);
+		if (ability == null) return false;
+		if (AbilityModuleManager.authors.get(name).equalsIgnoreCase(author)) return true;
+		return false;
+	}
+
+	public static double getDistanceFromLine(Vector line, Location pointonline,
+			Location point) {
+
+		Vector AP = new Vector();
+		double Ax, Ay, Az;
+		Ax = pointonline.getX();
+		Ay = pointonline.getY();
+		Az = pointonline.getZ();
+
+		double Px, Py, Pz;
+		Px = point.getX();
+		Py = point.getY();
+		Pz = point.getZ();
+
+		AP.setX(Px - Ax);
+		AP.setY(Py - Ay);
+		AP.setZ(Pz - Az);
+
+		return (AP.crossProduct(line).length()) / (line.length());
+	}
+
+	public static boolean canBend(String player, String ability) {
+		BendingPlayer bPlayer = getBendingPlayer(player);
+		Player p = Bukkit.getPlayer(player);
+		if (!bPlayer.isToggled) return false;
+		if (p == null) return false;
+		if (!p.hasPermission("bending.ability." + ability)) return false;
+		if (isAirAbility(ability) && !isBender(player, Element.Air)) return false;
+		if (isWaterAbility(ability) && !isBender(player, Element.Water)) return false;
+		if (isEarthAbility(ability) && !isBender(player, Element.Earth)) return false;
+		if (isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
+		if (isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
+		return true;
+	}
+
+	public static boolean canBendPassive(String player, Element element) {
+		BendingPlayer bPlayer = getBendingPlayer(player);
+		if (!bPlayer.isToggled) return false;
+		if (!bPlayer.hasElement(element)) return false;
+		return true;
+	}
+
+	public static boolean isAirAbility(String ability) {
+		return AbilityModuleManager.airbendingabilities.contains(ability);
+	}
+
+	public static boolean isWaterAbility(String ability) {
+		return AbilityModuleManager.waterbendingabilities.contains(ability);
+	}
+
+	public static boolean isEarthAbility(String ability) {
+		return AbilityModuleManager.earthbendingabilities.contains(ability);
+	}
+
+	public static boolean isFireAbility(String ability) {
+		return AbilityModuleManager.firebendingabilities.contains(ability);
+	}
+
+	public static boolean isChiAbility(String ability) {
+		return AbilityModuleManager.chiabilities.contains(ability);
+	}
+
+	public static boolean isWater(Block block) {
+		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) return true;
+		return false;
+	}
+
+	public static String getBoundAbility(Player player) {
+		BendingPlayer bPlayer = getBendingPlayer(player.getName());
+
+		int slot = player.getInventory().getHeldItemSlot() + 1;
+		return bPlayer.abilities.get(slot);
+	}
+
+	public static boolean isWaterbendable(Block block, Player player) {
+		byte full = 0x0;
+		if (TempBlock.isTempBlock(block)) return false;
+		if ((block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) && block.getData() == full) return true;
+		if (block.getType() == Material.ICE || block.getType() == Material.SNOW || block.getType() == Material.PACKED_ICE) return true;
+		if (canPlantbend(player) && isPlant(block)) return true;
+		return false;
+	}
+
+	public static boolean canPlantbend(Player player) {
+		return player.hasPermission("bending.ability.plantbending");
+	}
+
+	public static boolean isPlant(Block block) {
+		if (Arrays.asList(plantIds).contains(block.getTypeId())) return true;
+		return false;
+	}
+
+	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
+		if (TempBlock.isTempBlock(block)) return false;
+		int sources = 0;
+		byte full = 0x0;
+		BlockFace[] faces = {BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
+		for (BlockFace face: faces) {
+			Block blocki = block.getRelative(face);
+			if (isWater(block) && blocki.getData() == full) sources++; 
+			if (blocki.getType() == Material.ICE || blocki.getType() == Material.PACKED_ICE) sources++;
+		}
+		if (sources >= 2) return true;
+		return false;
+	}
+
+	public static List<Block> getBlocksAroundPoint(Location location, double radius) {
+		List<Block> blocks = new ArrayList<Block>();
+
+		int xorg = location.getBlockX();
+		int yorg = location.getBlockY();
+		int zorg = location.getBlockZ();
+
+		int r = (int) radius * 4;
+
+		for (int x = xorg - r; x <= xorg + r; x++) {
+			for (int y = yorg - r; y <= yorg + r; y++) {
+				for (int z = zorg - r; z <= zorg + r; z++) {
+					Block block = location.getWorld().getBlockAt(x, y, z);
+					// if
+					// (block.getLocation().distance(originblock.getLocation())
+					// <= radius) {
+					if (block.getLocation().distance(location) <= radius) {
+						blocks.add(block);
+					}
+				}
+			}
+		}
+
+		return blocks;
+	}
+
+	public static boolean isEarthbendable(Player player, Block block) {
+		Material material = block.getType();
+
+		for (String s: plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks")) {
+			if (material == Material.getMaterial(s)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isChiBlocked(String player) {
+		long currTime = System.currentTimeMillis();
+		long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Passive.BlockChi.Duration");
+		if (BendingPlayer.blockedChi.contains(player)) {
+			if (BendingPlayer.blockedChi.get(player) + duration >= currTime) {
+				BendingPlayer.blockedChi.remove(player);
+				return false;
+			}
+		}
+		return true;
+	}
+	public static boolean isWeapon(Material mat) {
+		if (mat == null) return false;
+		if (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE
+				|| mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD
+
+				|| mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE
+				|| mat == Material.STONE_SPADE || mat == Material.STONE_SWORD
+
+				|| mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE
+				|| mat == Material.IRON_SWORD || mat == Material.IRON_SPADE
+
+				|| mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE
+				|| mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE)
+			return true;
+		return false;
+	}
+
+	public static boolean isTransparentToEarthbending(Player player, Block block) {
+		if (Arrays.asList(transparentToEarthbending).contains(block.getTypeId())) return true;
+		return false;
+	}
+
+	public static double firebendingDayAugment(double value, World world) {
+		if (isDay(world)) {
+			return plugin.getConfig().getDouble("Properties.Fire.DayFactor") * value;
+		}
+		return value;
+	}
+
+	public static double getFirebendingDayAugment(World world) {
+		if (isDay(world)) return plugin.getConfig().getDouble("Properties.Fire.DayFactor");
+		return 1;
+	}
+
+	public static double waterbendingNightAugment(double value, World world) {
+		if (isNight(world)) {
+			return plugin.getConfig().getDouble("Properties.Water.NightFactor") * value;
+		}
+		return value;
+	}
+
+	public static double getWaterbendingNightAugment(World world) {
+		if (isNight(world)) return plugin.getConfig().getDouble("Properties.Water.NightFactor");
+		return 1;
+	}
+
+	public static boolean isNight(World world) {
+		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
+			return false;
+		}
+
+		long time = world.getTime();
+		if (time >= 12950 && time <= 23050) {
+			return true;
+		}
+		return false;
+	}
+
+	public static void damageEntity(Player player, Entity entity, double damage) {
+		if (entity instanceof LivingEntity) {
+			((LivingEntity) entity).damage(damage, player);
+			((LivingEntity) entity)
+			.setLastDamageCause(new EntityDamageByEntityEvent(player,
+					entity, DamageCause.CUSTOM, damage));
+		}
+	}
+
+	public static boolean isDay(World world) {
+		long time = world.getTime();
+		if (time >= 23500 || time <= 12500) {
+			return true;
+		}
+		return false;
+	}
+
+	public static int getIntCardinalDirection(Vector vector) {
+		BlockFace face = getCardinalDirection(vector);
+
+		switch (face) {
+		case SOUTH:
+			return 7;
+		case SOUTH_WEST:
+			return 6;
+		case WEST:
+			return 3;
+		case NORTH_WEST:
+			return 0;
+		case NORTH:
+			return 1;
+		case NORTH_EAST:
+			return 2;
+		case EAST:
+			return 5;
+		case SOUTH_EAST:
+			return 8;
+		}
+
+		return 4;
+
+	}
+
+	public static Collection<ItemStack> getDrops(Block block, Material type,
+			byte data, ItemStack breakitem) {
+		BlockState tempstate = block.getState();
+		block.setType(type);
+		block.setData(data);
+		Collection<ItemStack> item = block.getDrops();
+		tempstate.update(true);
+		return item;
+	}
+
+	public static void dropItems(Block block, Collection<ItemStack> items) {
+		for (ItemStack item : items)
+			block.getWorld().dropItem(block.getLocation(), item);
+	}
+
+	public static Location getTargetedLocation(Player player, int range) {
+		return getTargetedLocation(player, range, 0);
+	}
+
+	public static Location getTargetedLocation(Player player,
+			double originselectrange, Integer... nonOpaque2) {
+		Location origin = player.getEyeLocation();
+		Vector direction = origin.getDirection();
+
+		HashSet<Byte> trans = new HashSet<Byte>();
+		trans.add((byte) 0);
+
+		if (nonOpaque2 == null) {
+			trans = null;
+		} else {
+			for (int i : nonOpaque2) {
+				trans.add((byte) i);
+			}
+		}
+
+		Block block = player.getTargetBlock(trans, (int) originselectrange + 1);
+		double distance = block.getLocation().distance(origin) - 1.5;
+		Location location = origin.add(direction.multiply(distance));
+
+		return location;
+	}
+
+	public static BlockFace getCardinalDirection(Vector vector) {
+		BlockFace[] faces = { BlockFace.NORTH, BlockFace.NORTH_EAST,
+				BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH,
+				BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
+		Vector n, ne, e, se, s, sw, w, nw;
+		w = new Vector(-1, 0, 0);
+		n = new Vector(0, 0, -1);
+		s = n.clone().multiply(-1);
+		e = w.clone().multiply(-1);
+		ne = n.clone().add(e.clone()).normalize();
+		se = s.clone().add(e.clone()).normalize();
+		nw = n.clone().add(w.clone()).normalize();
+		sw = s.clone().add(w.clone()).normalize();
+
+		Vector[] vectors = { n, ne, e, se, s, sw, w, nw };
+
+		double comp = 0;
+		int besti = 0;
+		for (int i = 0; i < vectors.length; i++) {
+			double dot = vector.dot(vectors[i]);
+			if (dot > comp) {
+				comp = dot;
+				besti = i;
+			}
+		}
+
+		return faces[besti];
+
+	}
+
+	private static Integer[] plantIds = { 6, 18, 31, 32, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175};
+	public static Integer[] transparentToEarthbending = {0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106};
+	public static Integer[] nonOpaque = {0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 68, 69, 70, 72,
+		75, 76, 77, 78, 83, 90, 93, 94, 104, 105, 106, 111, 115, 119, 127, 131, 132};
+
+}
