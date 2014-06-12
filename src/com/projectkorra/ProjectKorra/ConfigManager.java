@@ -39,7 +39,7 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Properties.Earth.EarthbendableBlocks", earthbendable);
 		
 		plugin.getConfig().addDefault("Properties.Fire.CanBendWithWeapons", true);
-		plugin.getConfig().addDefault("Properties.Fire.NightFactor", 1.5);
+		plugin.getConfig().addDefault("Properties.Fire.DayFactor", 1.5);
 		
 		plugin.getConfig().addDefault("Properties.Chi.CanBendWithWeapons", true);
 		
