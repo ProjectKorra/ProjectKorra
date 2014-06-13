@@ -1,4 +1,4 @@
-package Utilities;
+package com.projectkorra.ProjectKorra.Utilities;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,8 +17,9 @@ import java.util.logging.Logger;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import Utilities.AbilityLoadable.LoadResult;
-import Utilities.AbilityLoadable.LoadResult.Result;
+import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable.LoadResult;
+import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable.LoadResult.Result;
+
 
 public class AbilityLoader <T extends AbilityLoadable> implements Listener {
 

@@ -378,6 +378,34 @@ public class Methods {
 		}
 		return true;
 	}
+
+	public static Vector rotateVectorAroundVector(Vector axis, Vector rotator,
+			double degrees) {
+		double angle = Math.toRadians(degrees);
+		Vector rotation = axis.clone();
+		Vector rotate = rotator.clone();
+		rotation = rotation.normalize();
+
+		Vector thirdaxis = rotation.crossProduct(rotate).normalize()
+				.multiply(rotate.length());
+
+		return rotate.multiply(Math.cos(angle)).add(
+				thirdaxis.multiply(Math.sin(angle)));
+
+		// return new Vector(x, z, y);
+	}
+
+	public static Vector getOrthogonalVector(Vector axis, double degrees,
+			double length) {
+
+		Vector ortho = new Vector(axis.getY(), -axis.getX(), 0);
+		ortho = ortho.normalize();
+		ortho = ortho.multiply(length);
+
+		return rotateVectorAroundVector(axis, ortho, degrees);
+
+	}
+
 	public static boolean isWeapon(Material mat) {
 		if (mat == null) return false;
 		if (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE

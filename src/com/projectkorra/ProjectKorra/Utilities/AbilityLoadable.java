@@ -1,4 +1,4 @@
-package Utilities;
+package com.projectkorra.ProjectKorra.Utilities;
 
 public class AbilityLoadable implements Cloneable {
 
