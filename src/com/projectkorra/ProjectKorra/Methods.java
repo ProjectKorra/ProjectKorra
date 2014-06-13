@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -31,6 +32,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.abilities.PhaseChange.FreezeMelt;
 import com.projectkorra.abilities.RaiseEarth.EarthColumn;
 
 public class Methods {
@@ -481,6 +483,75 @@ public class Methods {
 			return true;
 		}
 		return false;
+	}
+
+	public static Block getWaterSourceBlock(Player player, double range,
+			boolean plantbending) {
+		Location location = player.getEyeLocation();
+		Vector vector = location.getDirection().clone().normalize();
+		for (double i = 0; i <= range; i++) {
+			Block block = location.clone().add(vector.clone().multiply(i))
+					.getBlock();
+			//			if (isRegionProtectedFromBuild(player, Abilities.WaterManipulation,
+			//					location))
+			//				continue;
+			if (isWaterbendable(block, player)
+					&& (!isPlant(block) || plantbending)) {
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock tb = TempBlock.get(block);
+					byte full = 0x0;
+					if (tb.state.getRawData() != full
+							&& (tb.state.getType() != Material.WATER || tb.state
+							.getType() != Material.STATIONARY_WATER)) {
+						continue;
+					}
+				}
+				return block;
+			}
+		}
+		return null;
+	}
+
+	public static boolean isObstructed(Location location1, Location location2) {
+		Vector loc1 = location1.toVector();
+		Vector loc2 = location2.toVector();
+
+		Vector direction = loc2.subtract(loc1);
+		direction.normalize();
+
+		Location loc;
+
+		double max = location1.distance(location2);
+
+		for (double i = 0; i <= max; i++) {
+			loc = location1.clone().add(direction.clone().multiply(i));
+			Material type = loc.getBlock().getType();
+			if (type != Material.AIR
+					&& !Arrays.asList(transparentToEarthbending).contains(
+							type.getId()))
+				return true;
+		}
+
+		return false;
+	}
+
+	public static boolean isAdjacentToFrozenBlock(Block block) {
+		BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH,
+				BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
+		boolean adjacent = false;
+		if (Methods.isAbilityInstalled("PhaseChange", "orion304")) {
+			for (BlockFace face : faces) {
+				if (FreezeMelt.frozenblocks.containsKey((block.getRelative(face))))
+					adjacent = true;
+			}
+		}
+		return adjacent;
+	}
+
+
+
+	public static void playFocusWaterEffect(Block block) {
+		block.getWorld().playEffect(block.getLocation(), Effect.SMOKE, 4, 20);
 	}
 
 	public static void removeRevertIndex(Block block) {
