@@ -61,10 +61,6 @@ public class FireStream {
 	}
 
 	public boolean progress() {
-//		if (Tools.isRegionProtectedFromBuild(player, Abilities.Blaze, location)) {
-//			remove();
-//			return false;
-//		}
 		if (System.currentTimeMillis() - time >= interval) {
 			location = location.clone().add(direction);
 			time = System.currentTimeMillis();
@@ -97,15 +93,13 @@ public class FireStream {
 		if (Methods.isPlant(block)) {
 			new Plantbending(block);
 		}
+
 		block.setType(Material.FIRE);
 		ignitedblocks.put(block, this.player);
 		ignitedtimes.put(block, System.currentTimeMillis());
 	}
 
 	public static boolean isIgnitable(Player player, Block block) {
-//		if (Tools.isRegionProtectedFromBuild(player, Abilities.Blaze,
-//				block.getLocation()))
-//			return false;
 
 		Material[] overwriteable = { Material.SAPLING, Material.LONG_GRASS,
 				Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE,
