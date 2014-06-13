@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,6 +31,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.abilities.RaiseEarth.EarthColumn;
 
 public class Methods {
 
@@ -38,6 +40,10 @@ public class Methods {
 	public Methods(ProjectKorra plugin) {
 		Methods.plugin = plugin;
 	}
+
+	public static ConcurrentHashMap<Block, Information> movedearth = new ConcurrentHashMap<Block, Information>();
+	public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<Integer, Information>();
+	public static ArrayList<Block> tempnophysics = new ArrayList<Block>();
 
 	public static boolean isBender(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
@@ -295,7 +301,7 @@ public class Methods {
 		if (AbilityModuleManager.firebendingabilities.contains(ability)) return ChatColor.RED;
 		else return null;
 	}
-	
+
 	public static boolean isWater(Block block) {
 		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) return true;
 		return false;
@@ -450,6 +456,42 @@ public class Methods {
 		return 1;
 	}
 
+	public static Block getEarthSourceBlock(Player player, double range) {
+		Block testblock = player.getTargetBlock(getTransparentEarthbending(),
+				(int) range);
+		if (isEarthbendable(player, testblock))
+			return testblock;
+		Location location = player.getEyeLocation();
+		Vector vector = location.getDirection().clone().normalize();
+		for (double i = 0; i <= range; i++) {
+			Block block = location.clone().add(vector.clone().multiply(i))
+					.getBlock();
+			//			if (isRegionProtectedFromBuild(player, Abilities.RaiseEarth,
+			//					location))
+			//				continue;
+			if (isEarthbendable(player, block)) {
+				return block;
+			}
+		}
+		return null;
+	}
+
+	public static void removeRevertIndex(Block block) {
+		if (movedearth.containsKey(block)) {
+			Information info = movedearth.get(block);
+			if (block.getType() == Material.SANDSTONE
+					&& info.getType() == Material.SAND)
+				block.setType(Material.SAND);
+			if (isAbilityInstalled("RaiseEarth", "orion304")) {
+				if (EarthColumn.blockInAllAffectedBlocks(block))
+					EarthColumn.revertBlock(block);
+
+				EarthColumn.resetBlock(block);
+			}
+			movedearth.remove(block);
+		}
+	}
+
 	public static double waterbendingNightAugment(double value, World world) {
 		if (isNight(world)) {
 			return plugin.getConfig().getDouble("Properties.Water.NightFactor") * value;
@@ -472,6 +514,95 @@ public class Methods {
 			return true;
 		}
 		return false;
+	}
+
+	public static Location getPointOnLine(Location origin, Location target,
+			double distance) {
+		return origin.clone().add(
+				getDirection(origin, target).normalize().multiply(distance));
+
+	}
+
+	public static void breakBlock(Block block) {
+		block.breakNaturally(new ItemStack(Material.AIR));
+	}
+
+	public static void moveEarthBlock(Block source, Block target) {
+		byte full = 0x0;
+		Information info;
+		if (movedearth.containsKey(source)) {
+			// verbose("Moving something already moved.");
+			info = movedearth.get(source);
+			info.setTime(System.currentTimeMillis());
+			movedearth.remove(source);
+			movedearth.put(target, info);
+		} else {
+			// verbose("Moving something for the first time.");
+			info = new Information();
+			info.setBlock(source);
+			// info.setType(source.getType());
+			// info.setData(source.getData());
+			info.setTime(System.currentTimeMillis());
+			info.setState(source.getState());
+			movedearth.put(target, info);
+		}
+
+		if (isAdjacentToThreeOrMoreSources(source)) {
+			source.setType(Material.WATER);
+			source.setData(full);
+		} else {
+			source.setType(Material.AIR);
+		}
+		if (info.getState().getType() == Material.SAND) {
+			target.setType(Material.SANDSTONE);
+		} else {
+			target.setType(info.getState().getType());
+			target.setData(info.getState().getRawData());
+		}
+	}
+
+	public static void addTempAirBlock(Block block) {
+		if (movedearth.containsKey(block)) {
+			Information info = movedearth.get(block);
+			block.setType(Material.AIR);
+			info.setTime(System.currentTimeMillis());
+			movedearth.remove(block);
+			tempair.put(info.getID(), info);
+		} else {
+			Information info = new Information();
+			info.setBlock(block);
+			// info.setType(block.getType());
+			// info.setData(block.getData());
+			info.setState(block.getState());
+			info.setTime(System.currentTimeMillis());
+			block.setType(Material.AIR);
+			tempair.put(info.getID(), info);
+		}
+
+	}
+
+	public static Vector getDirection(Location location, Location destination) {
+		double x1, y1, z1;
+		double x0, y0, z0;
+
+		x1 = destination.getX();
+		y1 = destination.getY();
+		z1 = destination.getZ();
+
+		x0 = location.getX();
+		y0 = location.getY();
+		z0 = location.getZ();
+
+		return new Vector(x1 - x0, y1 - y0, z1 - z0);
+
+	}
+
+	public static HashSet<Byte> getTransparentEarthbending() {
+		HashSet<Byte> set = new HashSet<Byte>();
+		for (int i : transparentToEarthbending) {
+			set.add((byte) i);
+		}
+		return set;
 	}
 
 	public static void damageEntity(Player player, Entity entity, double damage) {
