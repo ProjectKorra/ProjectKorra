@@ -1,9 +1,15 @@
 package com.projectkorra.ProjectKorra;
 
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -12,6 +18,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.firebending.Enflamed;
+import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 
 public class PKListener implements Listener {
@@ -33,6 +41,38 @@ public class PKListener implements Listener {
 		BendingPlayer.players.remove(e.getPlayer().getName());
 	}
 
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityCombust(EntityCombustEvent event) {
+		Entity entity = event.getEntity();
+		Block block = entity.getLocation().getBlock();
+		if (FireStream.ignitedblocks.containsKey(block) && entity instanceof LivingEntity) {
+			new Enflamed(entity, FireStream.ignitedblocks.get(block));
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityDamageEvent(EntityDamageEvent event) {
+		Entity entity = event.getEntity();
+		if (event.getCause() == DamageCause.FIRE && FireStream.ignitedblocks.containsKey(entity.getLocation().getBlock())) {
+			new Enflamed(entity, FireStream.ignitedblocks.get(entity.getLocation().getBlock()));
+		}
+		
+		if (Enflamed.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) {
+			event.setCancelled(true);
+			Enflamed.dealFlameDamage(entity);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onBlockMeltEvent(BlockFadeEvent event) {
+		Block block = event.getBlock();
+		if (block.getType() == Material.FIRE) {
+			return;
+		}
+		if (FireStream.ignitedblocks.containsKey(block)) {
+			FireStream.remove(block);
+		}
+	}
 	@EventHandler
 	public void onPlayerDamageByPlayer(EntityDamageByEntityEvent e) {
 		Entity en = e.getEntity();
