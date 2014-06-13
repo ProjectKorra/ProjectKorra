@@ -207,7 +207,7 @@ public class Commands {
 					
 					if (args.length == 2) {
 						//bending display [Element]
-						if (Arrays.asList(airaliases).contains(args[1])) {
+						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.airbendingabilities.isEmpty()) {
 								s.sendMessage(ChatColor.GRAY + "There are no airbending abilities available.");
 								return true;
@@ -217,7 +217,7 @@ public class Commands {
 							}
 							return true;
 						}
-						if (Arrays.asList(wateraliases).contains(args[1])) {
+						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.waterbendingabilities.isEmpty()) {
 								s.sendMessage(ChatColor.AQUA + "There are no waterbending abilities available.");
 								return true;
@@ -227,7 +227,7 @@ public class Commands {
 							}
 							return true;
 						}
-						if (Arrays.asList(earthaliases).contains(args[1])) {
+						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.earthbendingabilities.isEmpty()) {
 								s.sendMessage(ChatColor.GREEN + "There are no earthbending abilities available.");
 								return true;
@@ -237,7 +237,7 @@ public class Commands {
 							}
 							return true;
 						}
-						if (Arrays.asList(firealiases).contains(args[1])) {
+						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.firebendingabilities.isEmpty()) {
 								s.sendMessage(ChatColor.RED + "There are no firebending abilities available.");
 								return true;
@@ -247,7 +247,7 @@ public class Commands {
 							}
 							return true;
 						}
-						if (Arrays.asList(chialiases).contains(args[1])) {
+						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.chiabilities.isEmpty()) {
 								s.sendMessage(ChatColor.GOLD + "There are no chiblocking abilities available.");
 								return true;
