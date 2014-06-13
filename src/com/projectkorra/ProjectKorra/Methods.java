@@ -476,6 +476,13 @@ public class Methods {
 		return null;
 	}
 
+	public static boolean isMeltable(Block block) {
+		if (block.getType() == Material.ICE || block.getType() == Material.SNOW || block.getType() == Material.PACKED_ICE) {
+			return true;
+		}
+		return false;
+	}
+
 	public static void removeRevertIndex(Block block) {
 		if (movedearth.containsKey(block)) {
 			Information info = movedearth.get(block);
