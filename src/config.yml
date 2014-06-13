@@ -1,5 +1,13 @@
 Properties:
   GlobalCooldown: 500
+  Chat:
+    ChatPrefixes: true
+    AirPrefix: "[&7Air&f]"
+    WaterPrefix: "[&bWater&f]"
+    EarthPrefix: "[&aEarth&f]"
+    FirePrefix: "[&cFire&f]"
+    AvatarPrefix: "[&5Avatar&f]"
+    ChiPrefix: "[&6Chi]"
   Air:
     CanBendWithWeapons: false
   Water:

@@ -1,5 +1,8 @@
 package com.projectkorra.ProjectKorra;
 
+import java.util.List;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -33,6 +36,22 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Methods.createBendingPlayer(e.getPlayer().getUniqueId(), e.getPlayer().getName());
+		Player player = e.getPlayer();
+		List<Element> elements = Methods.getBendingPlayer(e.getPlayer().getName()).getElements();
+		if (plugin.getConfig().getBoolean("Properties.Chat.ChatPrefixes")) {
+			if (elements.size() > 1)
+				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AvatarPrefix") + player.getName());
+			else if (elements.get(0).equals(Element.Earth))
+				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.EarthPrefix") + player.getName());
+			else if (elements.get(0).equals(Element.Air))
+				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AirPrefix") + player.getName());
+			else if (elements.get(0).equals(Element.Water))
+				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.WaterPrefix") + player.getName());
+			else if (elements.get(0).equals(Element.Fire))
+				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.FirePrefix") + player.getName());
+			else if (elements.get(0).equals(Element.Earth))
+				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.ChiPrefix") + player.getName());
+		}
 	}
 
 	@EventHandler
