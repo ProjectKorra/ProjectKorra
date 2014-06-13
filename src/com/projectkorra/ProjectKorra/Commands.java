@@ -2,6 +2,7 @@ package com.projectkorra.ProjectKorra;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -252,6 +253,7 @@ public class Commands {
 								s.sendMessage(ChatColor.GOLD + "There are no chiblocking abilities available.");
 								return true;
 							}
+	
 							for (String st: AbilityModuleManager.chiabilities) {
 								s.sendMessage(ChatColor.GOLD  + st);
 							}

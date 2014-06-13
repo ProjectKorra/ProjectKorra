@@ -5,14 +5,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldType;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.airbending.AirPassive;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.FirePassive;
+import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 
@@ -42,6 +45,18 @@ public class BendingManager implements Runnable {
 			EarthPassive.revertSands();
 			Plantbending.regrow();
 			handleDayNight();
+			
+			for (int id: FireStream.instances.keySet()) {
+				FireStream.progress(id);
+			}
+			
+			for (Block block: FireStream.ignitedblocks.keySet()) {
+				if (block.getType() != Material.FIRE) {
+					FireStream.ignitedblocks.remove(block);
+				}
+			}
+			
+			FireStream.dissipateAll();
 		} catch (Exception e) {
 			Methods.stopBending();
 			e.printStackTrace();
