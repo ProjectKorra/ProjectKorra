@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -286,6 +287,15 @@ public class Methods {
 		return AbilityModuleManager.chiabilities.contains(ability);
 	}
 
+	public static ChatColor getAbilityColor(String ability) {
+		if (AbilityModuleManager.chiabilities.contains(ability)) return ChatColor.GOLD;
+		if (AbilityModuleManager.airbendingabilities.contains(ability)) return ChatColor.GRAY;
+		if (AbilityModuleManager.waterbendingabilities.contains(ability)) return ChatColor.AQUA;
+		if (AbilityModuleManager.earthbendingabilities.contains(ability)) return ChatColor.GREEN;
+		if (AbilityModuleManager.firebendingabilities.contains(ability)) return ChatColor.RED;
+		else return null;
+	}
+	
 	public static boolean isWater(Block block) {
 		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) return true;
 		return false;
