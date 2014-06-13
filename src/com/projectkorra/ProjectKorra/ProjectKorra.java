@@ -1,7 +1,5 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -12,6 +10,7 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 
 public class ProjectKorra extends JavaPlugin {
 
+	public static long time_step = 1;
 	public static ProjectKorra plugin;
 	public static Logger log;
 

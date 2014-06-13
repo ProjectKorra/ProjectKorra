@@ -23,6 +23,9 @@ public class BendingManager implements Runnable {
 
 	public ProjectKorra plugin;
 
+	long time;
+	long interval;
+	
 	ArrayList<World> worlds = new ArrayList<World>();
 	ConcurrentHashMap<World, Boolean> nights = new ConcurrentHashMap<World, Boolean>();
 	ConcurrentHashMap<World, Boolean> days = new ConcurrentHashMap<World, Boolean>();
@@ -34,10 +37,15 @@ public class BendingManager implements Runnable {
 
 	public BendingManager(ProjectKorra plugin) {
 		this.plugin = plugin;
+		time = System.currentTimeMillis();
 	}
 
 	public void run() {
 		try {
+			interval = System.currentTimeMillis() - time;
+			time = System.currentTimeMillis();
+			ProjectKorra.time_step = interval;
+			
 			AirPassive.handlePassive(Bukkit.getServer());
 			ChiPassive.handlePassive();
 			WaterPassive.handlePassive();
