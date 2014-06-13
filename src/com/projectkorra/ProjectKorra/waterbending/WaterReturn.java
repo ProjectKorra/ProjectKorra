@@ -14,6 +14,8 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.abilities.OctopusForm.OctopusFormAbility;
+import com.projectkorra.abilities.Surge.WaterWall;
+import com.projectkorra.abilities.Surge.Wave;
 import com.projectkorra.abilities.WaterManipulation.WaterManipulationAbility;
 
 public class WaterReturn {
@@ -155,7 +157,8 @@ public class WaterReturn {
 	private static boolean isBending(Player player) {
 		if (Methods.isAbilityInstalled("WaterManipulation", "orion304")) {
 			for (int id : WaterManipulationAbility .instances.keySet()) {
-				if (WaterManipulationAbility.instances.get(id).player.equals(player))
+				WaterManipulationAbility.instances.get(id);
+				if (WaterManipulationAbility.player.equals(player))
 					return true;
 			}
 		}

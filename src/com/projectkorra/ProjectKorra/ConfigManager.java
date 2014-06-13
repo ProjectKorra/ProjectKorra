@@ -29,6 +29,7 @@ public class ConfigManager {
 		earthbendable.add("SANDSTONE");
 		
 		plugin.getConfig().addDefault("Properties.GlobalCooldown", 500);
+		plugin.getConfig().addDefault("Properties.SeaLevel", 62);
 		
 		plugin.getConfig().addDefault("Properties.Air.CanBendWithWeapons", false);
 		

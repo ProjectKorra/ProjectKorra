@@ -1,5 +1,6 @@
 Properties:
   GlobalCooldown: 500
+  SeaLevel: 62
   Chat:
     ChatPrefixes: true
     AirPrefix: "[&7Air&f]"
