@@ -32,8 +32,10 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
 import com.projectkorra.abilities.RaiseEarth.EarthColumn;
+import com.projectkorra.abilities.Surge.Surge;
 
 public class Methods {
 
@@ -341,8 +343,18 @@ public class Methods {
 		BlockFace[] faces = {BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
 		for (BlockFace face: faces) {
 			Block blocki = block.getRelative(face);
-			if (isWater(block) && blocki.getData() == full) sources++; 
-			if (blocki.getType() == Material.ICE || blocki.getType() == Material.PACKED_ICE) sources++;
+			/*
+			 * TODO : Checks for WaterManip and other abilities.
+			 */
+			
+			if (isWater(block) && blocki.getData() == full) {
+				sources++;
+			}
+			if (FreezeMelt.frozenblocks.containsKey(blocki)) {
+				if (FreezeMelt.frozenblocks.get(blocki) == full) sources++;
+			} else if (blocki.getType() == Material.ICE){
+				sources++;
+			}
 		}
 		if (sources >= 2) return true;
 		return false;

@@ -1,5 +1,8 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,7 +17,7 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 public class WaterPassive {
 
 	private static double swimFactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Passive.SwimSpeedFactor");
-
+	
 	public static boolean applyNoFall(Player player) {
 		Block block = player.getLocation().getBlock();
 		Block fallblock = block.getRelative(BlockFace.DOWN);
@@ -33,15 +36,15 @@ public class WaterPassive {
 						player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimFactor));
 					}
 				}
-				if (player.getLocation().getBlock().isLiquid()) {
-					for (Block block: Methods.getBlocksAroundPoint(player.getLocation(), 2)) {
-						if (Methods.isAdjacentToThreeOrMoreSources(block) && Methods.isWater(block)) {
-							byte full = 0x0;
-							block.setType(Material.WATER);
-							block.setData(full);
-						}
-					}
-				}
+//				if (player.getLocation().getBlock().isLiquid()) {
+//					for (Block block: Methods.getBlocksAroundPoint(player.getLocation(), 2)) {
+//						if (Methods.isAdjacentToThreeOrMoreSources(block) && Methods.isWater(block) && !tempHaltPassive.contains(player.getName())) {
+//							byte full = 0x0;
+//							block.setType(Material.WATER);
+//							block.setData(full);
+//						}
+//					}
+//				}
 			}
 		}
 	}
