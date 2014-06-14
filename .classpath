@@ -5,9 +5,9 @@
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/TagAPI.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/RaiseEarth.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/WaterManipulation.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/OctopusForm.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/PhaseChange.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/WaterSpout.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/WaterManipulation.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/Surge.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -20,7 +20,6 @@ public class ProjectKorra extends JavaPlugin {
 		plugin = this;
 
 		new Methods(this);
-		getServer().getPluginManager().registerEvents(new PKListener(this), this);
 
 		new Commands(this);
 		new AbilityModuleManager(this);
@@ -38,6 +37,7 @@ public class ProjectKorra extends JavaPlugin {
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
 		}
+		getServer().getPluginManager().registerEvents(new PKListener(this), this);
 	}
 
 	@Override

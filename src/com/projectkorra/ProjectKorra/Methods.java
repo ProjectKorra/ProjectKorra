@@ -32,7 +32,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
-import com.projectkorra.abilities.PhaseChange.FreezeMelt;
+import com.projectkorra.ProjectKorra.waterbending.WaterCore;
 import com.projectkorra.abilities.RaiseEarth.EarthColumn;
 
 public class Methods {
@@ -541,7 +541,7 @@ public class Methods {
 		boolean adjacent = false;
 		if (Methods.isAbilityInstalled("PhaseChange", "orion304")) {
 			for (BlockFace face : faces) {
-				if (FreezeMelt.frozenblocks.containsKey((block.getRelative(face))))
+				if (WaterCore.frozenblocks.containsKey((block.getRelative(face))))
 					adjacent = true;
 			}
 		}

@@ -15,7 +15,7 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.abilities.OctopusForm.OctopusFormAbility;
 import com.projectkorra.abilities.Surge.WaterWall;
-import com.projectkorra.abilities.Surge.Wave;
+import com.projectkorra.abilities.Surge.WaveAbility;
 import com.projectkorra.abilities.WaterManipulation.WaterManipulationAbility;
 
 public class WaterReturn {
@@ -156,7 +156,7 @@ public class WaterReturn {
 
 	private static boolean isBending(Player player) {
 		if (Methods.isAbilityInstalled("WaterManipulation", "orion304")) {
-			for (int id : WaterManipulationAbility .instances.keySet()) {
+			for (int id : WaterManipulationAbility.instances.keySet()) {
 				WaterManipulationAbility.instances.get(id);
 				if (WaterManipulationAbility.player.equals(player))
 					return true;
@@ -167,11 +167,10 @@ public class WaterReturn {
 				return true;
 		}
 		if (Methods.isAbilityInstalled("Surge", "orion304")) {
-			for (int id : Wave.instances.keySet()) {
-				if (Wave.instances.get(id).player.equals(player))
+			for (int id : WaveAbility.instances.keySet()) {
+				if (WaveAbility.instances.get(id).player.equals(player))
 					return true;
 			}
-
 			for (int id : WaterWall.instances.keySet()) {
 				if (WaterWall.instances.get(id).player.equals(player))
 					return true;
