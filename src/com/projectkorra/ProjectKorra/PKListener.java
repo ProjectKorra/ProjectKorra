@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -19,7 +18,6 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -31,8 +29,6 @@ import com.projectkorra.ProjectKorra.firebending.Enflamed;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
-import com.projectkorra.abilities.Surge.WaterWall;
-import com.projectkorra.abilities.Surge.WaveAbility;
 
 public class PKListener implements Listener {
 
@@ -48,7 +44,9 @@ public class PKListener implements Listener {
 		Block fromblock = event.getBlock();
 		if (Methods.isWater(fromblock)) {
 			if (!event.isCancelled()) {
-				event.setCancelled(!WaterCore.canFlowFromTo(fromblock, toblock));
+				if (Methods.isAdjacentToFrozenBlock(toblock) || Methods.isAdjacentToFrozenBlock(fromblock)) {
+					event.setCancelled(true);
+				}
 			}
 		}
 	}
@@ -135,40 +133,6 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
-	public void onBlockBreak(BlockBreakEvent event) {
-		Block block = event.getBlock();
-		Player player = event.getPlayer();
-		if (Methods.isAbilityInstalled("Surge", "orion304")) {	
-			if (WaterWall.wasBrokenFor(player, block)) {
-				event.setCancelled(true);
-				return;
-			}
-			if (WaterCore.waterwallblocks.containsKey(block)) {
-				WaterWall.thaw(block);
-				event.setCancelled(true);
-			}
-			if (!WaveAbility.canThaw(block)) {
-				WaveAbility.thaw(block);
-				event.setCancelled(true);
-			}
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onEntityExplode(EntityExplodeEvent event) {
-		for (Block block: event.blockList()) {
-			if (Methods.isAbilityInstalled("Surge", "orion304")) {
-				if (WaterCore.waterwallblocks.containsKey(block)) {
-					block.setType(Material.AIR);
-				}
-				if (!WaveAbility.canThaw(block)) {
-					WaveAbility.thaw(block);
-				}
-			}
-		}
-	}
-
 	@EventHandler
 	public void onPlayerDamage(EntityDamageEvent e) {
 		Entity en = e.getEntity();
@@ -202,7 +166,9 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
-		event.setCancelled(!WaterCore.canPhysicsChange(block));
+		if (TempBlock.isTempBlock(block) || TempBlock.isTouchingTempBlock(block)) {
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
