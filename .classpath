@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/WaterSpout.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/WaterManipulation.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/Surge.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/ProjectKorra/Abilities/IceSpike.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

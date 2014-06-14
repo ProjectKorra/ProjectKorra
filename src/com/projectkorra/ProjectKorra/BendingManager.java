@@ -18,6 +18,7 @@ import com.projectkorra.ProjectKorra.firebending.FirePassive;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
+import com.projectkorra.ProjectKorra.waterbending.WaterReturn;
 
 public class BendingManager implements Runnable {
 
@@ -53,6 +54,7 @@ public class BendingManager implements Runnable {
 			EarthPassive.revertSands();
 			Plantbending.regrow();
 			handleDayNight();
+			WaterReturn.progressAll();
 			
 			for (int id: FireStream.instances.keySet()) {
 				FireStream.progress(id);
