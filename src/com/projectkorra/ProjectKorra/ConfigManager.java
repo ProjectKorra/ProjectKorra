@@ -44,6 +44,14 @@ public class ConfigManager {
 		
 		plugin.getConfig().addDefault("Properties.Chi.CanBendWithWeapons", true);
 		
+		plugin.getConfig().addDefault("Abilities.AvatarState.Enabled", true);
+		plugin.getConfig().addDefault("Abilities.AvatarState.Description", "The signature ability of the Avatar, this is a toggle. Click to activate to become "
+					+ "nearly unstoppable. While in the Avatar State, the user takes severely reduced damage from "
+					+ "all sources, regenerates health rapidly, and is granted extreme speed. Nearly all abilities "
+					+ "are incredibly amplified in this state. Additionally, AirShield and FireJet become toggle-able "
+					+ "abilities and last until you deactivate them or the Avatar State. Click again with the Avatar "
+					+ "State selected to deactivate it.");
+
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Factor", 0.3);
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Speed", 2);
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Jump", 3);

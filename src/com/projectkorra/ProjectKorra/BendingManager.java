@@ -11,6 +11,7 @@ import org.bukkit.WorldType;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.airbending.AirPassive;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
@@ -46,6 +47,7 @@ public class BendingManager implements Runnable {
 			time = System.currentTimeMillis();
 			ProjectKorra.time_step = interval;
 			
+			AvatarState.manageAvatarStates();
 			AirPassive.handlePassive(Bukkit.getServer());
 			ChiPassive.handlePassive();
 			WaterPassive.handlePassive();

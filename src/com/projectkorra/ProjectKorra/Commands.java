@@ -731,21 +731,25 @@ public class Commands {
 							s.sendMessage(ChatColor.GRAY + ability + " - ");
 							s.sendMessage(ChatColor.GRAY + AbilityModuleManager.descriptions.get(ability));
 						}
-						if (Methods.isWaterAbility(ability)) {
+						else if (Methods.isWaterAbility(ability)) {
 							s.sendMessage(ChatColor.AQUA + ability + " - ");
 							s.sendMessage(ChatColor.AQUA + AbilityModuleManager.descriptions.get(ability));
 						}
-						if (Methods.isEarthAbility(ability)) {
+						else if (Methods.isEarthAbility(ability)) {
 							s.sendMessage(ChatColor.GREEN + ability + " - ");
 							s.sendMessage(ChatColor.GREEN + AbilityModuleManager.descriptions.get(ability));
 						}
-						if (Methods.isFireAbility(ability)) {
+						else if (Methods.isFireAbility(ability)) {
 							s.sendMessage(ChatColor.RED + ability + " - ");
 							s.sendMessage(ChatColor.RED + AbilityModuleManager.descriptions.get(ability));
 						}
-						if (Methods.isChiAbility(ability)) {
+						else if (Methods.isChiAbility(ability)) {
 							s.sendMessage(ChatColor.GOLD + ability + " - ");
 							s.sendMessage(ChatColor.GOLD + AbilityModuleManager.descriptions.get(ability));
+						}
+						else {
+							s.sendMessage(ChatColor.DARK_PURPLE + ability + " - ");
+							s.sendMessage(ChatColor.DARK_PURPLE + AbilityModuleManager.descriptions.get(ability));
 						}
 					}
 				}

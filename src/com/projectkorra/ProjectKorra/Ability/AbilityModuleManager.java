@@ -15,7 +15,7 @@ public class AbilityModuleManager {
 	static ProjectKorra plugin;
 	public static List<AbilityModule> ability;
 	private final AbilityLoader<AbilityModule> loader;
-	
+
 	public static HashSet<String> abilities;
 	public static HashSet<String> waterbendingabilities;
 	public static HashSet<String> airbendingabilities;
@@ -24,9 +24,9 @@ public class AbilityModuleManager {
 	public static HashSet<String> chiabilities;
 	public static HashSet<String> shiftabilities;
 	public static HashMap<String, String> authors;
-	
+
 	public static HashMap<String, String> descriptions;
-	
+
 	public AbilityModuleManager(final ProjectKorra plugin) {
 		AbilityModuleManager.plugin = plugin;
 		final File path = new File(plugin.getDataFolder().toString() + "/Abilities/");
@@ -46,9 +46,9 @@ public class AbilityModuleManager {
 		ability = loader.load(AbilityModule.class);
 		fill();
 	}
-	
+
 	private void fill() {
-		
+
 		for (StockAbilities a: StockAbilities.values()) {
 			if (StockAbilities.isAirbending(a)) {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air." + a.name() + ".Enabled")) {
@@ -57,32 +57,38 @@ public class AbilityModuleManager {
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Air." + a.name() + ".Description"));
 				}
 			}
-			if (StockAbilities.isWaterbending(a)) {
+			else if (StockAbilities.isWaterbending(a)) {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water." + a.name() + ".Enabled")) {
 					abilities.add(a.name());
 					waterbendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Water." + a.name() + ".Description"));
 				}
 			}
-			if (StockAbilities.isEarthbending(a)) {
+			else if (StockAbilities.isEarthbending(a)) {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth." + a.name() + ".Enabled")) {
 					abilities.add(a.name());
 					earthbendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Earth." + a.name() + ".Description"));
 				}
 			}
-			if (StockAbilities.isFirebending(a)) {
+			else if (StockAbilities.isFirebending(a)) {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire." + a.name() + ".Enabled")) {
 					abilities.add(a.name());
 					firebendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Fire." + a.name() + ".Description"));
 				}
 			}
-			if (StockAbilities.isChiBlocking(a)) {
+			else if (StockAbilities.isChiBlocking(a)) {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Chi." + a.name() + ".Enabled")) {
 					abilities.add(a.name());
 					chiabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Chi." + a.name() + ".Description"));
+				}
+			}
+			else {
+				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities." + a.name() + ".Enabled")) {
+					abilities.add(a.name()); // AvatarState, etc.
+					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities." + a.name() + ".Description"));
 				}
 			}
 		}

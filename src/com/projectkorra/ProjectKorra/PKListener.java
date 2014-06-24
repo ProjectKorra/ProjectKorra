@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -19,10 +20,13 @@ import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
@@ -76,6 +80,32 @@ public class PKListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		Methods.saveBendingPlayer(e.getPlayer().getName());
 		BendingPlayer.players.remove(e.getPlayer().getName());
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
+	public void onPlayerSwing(PlayerAnimationEvent event) {
+		Player player = event.getPlayer();
+		
+		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player)) {
+			event.setCancelled(true);
+		}
+		
+		String abil = Methods.getBoundAbility(player);
+		if (abil == null) return;
+		if (Methods.canBend(player.getName(), abil)) {
+			if (abil == "AvatarState") {
+				new AvatarState(player);
+			}
+		}
+	}
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
+	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
+		Player p = event.getPlayer();
+		if (Tornado.getplayers().contains(p) || Bloodbending.isBloodbended(p)
+				|| FireJet.getPlayers().contains(p)
+				|| AvatarState.getPlayers().contains(p)) {
+			event.setCancelled(p.getGameMode() != GameMode.CREATIVE);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
