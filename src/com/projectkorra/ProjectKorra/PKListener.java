@@ -24,9 +24,12 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.airbending.AirBlast;
+import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
@@ -82,6 +85,35 @@ public class PKListener implements Listener {
 		BendingPlayer.players.remove(e.getPlayer().getName());
 	}
 	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerSneak(PlayerToggleSneakEvent event) {
+		Player player = event.getPlayer();
+		
+		if (Paralyze.isParaylzed(player) || Bloodbending.isBloodbended(player)) {
+			event.setCancelled(true);
+		}
+		
+		AirScooter.check(player);
+		
+		String abil = Methods.getBoundAbility(player);
+		if (abil == null) {
+			return;
+		}
+		
+		if (!player.isSneaking() && Methods.canBend(player.getName(), abil)) {
+			if (Methods.isAirAbility(abil)) {
+				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
+					return;
+				}
+				if (abil == "Tornado") {
+					new Tornado(player);
+				}
+				if (abil == "AirBlast") {
+					AirBlast.setOrigin(player);
+				}
+			}
+		}
+	}
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
 	public void onPlayerSwing(PlayerAnimationEvent event) {
 		Player player = event.getPlayer();
@@ -96,12 +128,20 @@ public class PKListener implements Listener {
 			if (abil == "AvatarState") {
 				new AvatarState(player);
 			}
+			if (Methods.isAirAbility(abil)) {
+				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
+					return;
+				}
+				if (abil == "AirBlast") {
+					new AirBlast(player);
+				}
+			}
 		}
 	}
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
 	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
 		Player p = event.getPlayer();
-		if (Tornado.getplayers().contains(p) || Bloodbending.isBloodbended(p)
+		if (Tornado.getPlayers().contains(p) || Bloodbending.isBloodbended(p)
 				|| FireJet.getPlayers().contains(p)
 				|| AvatarState.getPlayers().contains(p)) {
 			event.setCancelled(p.getGameMode() != GameMode.CREATIVE);

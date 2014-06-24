@@ -36,11 +36,29 @@ Properties:
   Chi:
     CanBendWithWeapons: false
 Abilities:
+  AvatarState:
+    Enabled: true
+    Description: "The signature ability of the Avatar, this is a toggle. Click to activate to become nearly unstoppable. While in the Avatar State, the user takes severely reduced damage from all sources, regenreates health rapidly, and is granted extreme speed. Nearly all abilities are incredibly amplified in this state. Additionally, AirShield and FireJet become toggle-able abilities and last until you deactivate them or the Avatar State. Click again with the Avatar State selected to deactivate it."
   Air:
     Passive:
       Factor: 0.3
       Speed: 2
       Jump: 3
+    AirBlast:
+      Enabled: true
+      Description: "AirBlast is the most fundamental bending technique of an airbender. To use, simply left-click in a direction. A gust of wind will be created at your fingertips, launching anything in its path harmlessly back. A gust of air can extinguish fires on the ground or on a player, can cool lava, and can flip levers and activate buttons. Additionally, tapping sneak will change the original of your next AirBlast to your targeted location."
+      Speed: 25
+      Range: 20
+      Radius: 2
+      Push: 3.5
+    Tornado: 
+      Enabled: true
+      Description: "To use, simply sneak (default: shift). This will create a swirling vortex at the targeted lcoation. Any creature or object caught in the vortex will be launched up and out in some random direction. If another player gets caught in the vortex, the launching effect is minimal. Tornado can also be used to transport the user. If the user gets caught in his/her own tornado, his/her movements are much more manageable. Provided the user doesn't fall out of the vortex, it will take him to a maximum height and move him in the general direction he/she is looking. Skilled airbenders can scale anything with this ability."
+      Radius: 10
+      Height: 25
+      Range: 25
+      MobPushFactor: 1
+      PlayerPushFactor: 1
   Water:
     Passive:
       SwimSpeedFactor: 0.7

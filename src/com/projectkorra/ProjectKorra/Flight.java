@@ -7,6 +7,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.airbending.Tornado;
 
 public class Flight {
 

@@ -12,7 +12,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirPassive;
+import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.FirePassive;
@@ -48,6 +50,7 @@ public class BendingManager implements Runnable {
 			ProjectKorra.time_step = interval;
 			
 			AvatarState.manageAvatarStates();
+			AirBlast.progressAll();
 			AirPassive.handlePassive(Bukkit.getServer());
 			ChiPassive.handlePassive();
 			WaterPassive.handlePassive();
@@ -55,6 +58,9 @@ public class BendingManager implements Runnable {
 			EarthPassive.revertSands();
 			Plantbending.regrow();
 			handleDayNight();
+			for (int ID: Tornado.instances.keySet()) {
+				Tornado.progress(ID);
+			}
 			
 			for (int id: FireStream.instances.keySet()) {
 				FireStream.progress(id);

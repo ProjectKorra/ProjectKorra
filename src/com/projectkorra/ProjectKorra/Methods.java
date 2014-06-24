@@ -346,7 +346,7 @@ public class Methods {
 			/*
 			 * TODO : Checks for WaterManip and other abilities.
 			 */
-			
+
 			if (isWater(block) && blocki.getData() == full) {
 				sources++;
 			}
@@ -572,12 +572,11 @@ public class Methods {
 			if (block.getType() == Material.SANDSTONE
 					&& info.getType() == Material.SAND)
 				block.setType(Material.SAND);
-			if (isAbilityInstalled("RaiseEarth", "orion304")) {
-				if (EarthColumn.blockInAllAffectedBlocks(block))
-					EarthColumn.revertBlock(block);
+			if (EarthColumn.blockInAllAffectedBlocks(block))
+				EarthColumn.revertBlock(block);
 
-				EarthColumn.resetBlock(block);
-			}
+			EarthColumn.resetBlock(block);
+
 			movedearth.remove(block);
 		}
 	}

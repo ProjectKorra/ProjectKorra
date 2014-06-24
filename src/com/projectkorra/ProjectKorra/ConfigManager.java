@@ -2,6 +2,8 @@ package com.projectkorra.ProjectKorra;
 
 import java.util.ArrayList;
 
+import org.bukkit.configuration.file.FileConfiguration;
+
 public class ConfigManager {
 
 	static ProjectKorra plugin;
@@ -12,7 +14,9 @@ public class ConfigManager {
 	}
 	
 	public static void configCheck() {
-			    
+			   
+		FileConfiguration config = ProjectKorra.plugin.getConfig();
+		
 		ArrayList<String> earthbendable = new ArrayList<String>();
 		earthbendable.add("STONE");
 		earthbendable.add("COAL_ORE");
@@ -55,6 +59,35 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Factor", 0.3);
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Speed", 2);
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Jump", 3);
+		
+		config.addDefault("Abilities.Air.AirBlast.Enabled", true);
+		config.addDefault("Abilities.Air.AirBlast.Description", "AirBlast is the most fundamental bending technique of an airbender."
+				+ " To use, simply left-click in a direction. A gust of wind will be"
+				+ " created at your fingertips, launching anything in its path harmlessly back."
+				+ " A gust of air can extinguish fires on the ground or on a player, can cool lava, and "
+				+ "can flip levers and activate buttons. Additionally, tapping sneak will change the "
+				+ "origin of your next AirBlast to your targeted location.");
+		config.addDefault("Abilities.Air.AirBlast.Speed", 25);
+		config.addDefault("Abilities.Air.AirBlast.Range", 20);
+		config.addDefault("Abilities.Air.AirBlast.Radius", 2);
+		config.addDefault("Abilities.Air.AirBlast.Push", 3.5);
+		
+		plugin.getConfig().addDefault("Abilities.Air.Tornado.Enabled", true);
+		plugin.getConfig().addDefault("Abilities.Air.Tornado.Description", "To use, simply sneak (default: shift). "
+				+ "This will create a swirling vortex at the targeted location. "
+				+ "Any creature or object caught in the vortex will be launched up "
+				+ "and out in some random direction. If another player gets caught "
+				+ "in the vortex, the launching effect is minimal. Tornado can "
+				+ "also be used to transport the user. If the user gets caught in his/her "
+				+ "own tornado, his movements are much more manageable. Provided the user doesn't "
+				+ "fall out of the vortex, it will take him to a maximum height and move him in "
+				+ "the general direction he's looking. Skilled airbenders can scale anything "
+				+ "with this ability.");
+		config.addDefault("Abilities.Air.Tornado.Radius", 10);
+		config.addDefault("Abilities.Air.Tornado.Height", 25);
+		config.addDefault("Abilities.Air.Tornado.Range", 25);
+		config.addDefault("Abilities.Air.Tornado.MobPushFactor", 1);
+		config.addDefault("Abilities.Air.Tornado.PlayerPushFactor", 1);
 		
 		plugin.getConfig().addDefault("Abilities.Water.Passive.SwimSpeedFactor", 0.7);
 		plugin.getConfig().addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
