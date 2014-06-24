@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
+import com.projectkorra.ProjectKorra.airbending.AirBurst;
 import com.projectkorra.ProjectKorra.airbending.AirPassive;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
@@ -57,6 +58,7 @@ public class BendingManager implements Runnable {
 			FirePassive.handlePassive();
 			EarthPassive.revertSands();
 			Plantbending.regrow();
+			AirBurst.progressAll();
 			handleDayNight();
 			for (int ID: Tornado.instances.keySet()) {
 				Tornado.progress(ID);

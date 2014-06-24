@@ -29,6 +29,7 @@ import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
+import com.projectkorra.ProjectKorra.airbending.AirBurst;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
@@ -105,11 +106,14 @@ public class PKListener implements Listener {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
 				}
-				if (abil == "Tornado") {
+				if (abil.equalsIgnoreCase("Tornado")) {
 					new Tornado(player);
 				}
-				if (abil == "AirBlast") {
+				if (abil.equalsIgnoreCase("AirBlast")) {
 					AirBlast.setOrigin(player);
+				}
+				if (abil.equalsIgnoreCase("AirBurst")) {
+					new AirBurst(player);
 				}
 			}
 		}
@@ -125,15 +129,18 @@ public class PKListener implements Listener {
 		String abil = Methods.getBoundAbility(player);
 		if (abil == null) return;
 		if (Methods.canBend(player.getName(), abil)) {
-			if (abil == "AvatarState") {
+			if (abil.equalsIgnoreCase("AvatarState")) {
 				new AvatarState(player);
 			}
 			if (Methods.isAirAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
 				}
-				if (abil == "AirBlast") {
+				if (abil.equalsIgnoreCase("AirBlast")) {
 					new AirBlast(player);
+				}
+				if (abil.equalsIgnoreCase("AirBurst")) {
+					AirBurst.coneBurst(player);
 				}
 			}
 		}
@@ -160,6 +167,7 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDamageEvent(EntityDamageEvent event) {
 		Entity entity = event.getEntity();
+
 		if (event.getCause() == DamageCause.FIRE && FireStream.ignitedblocks.containsKey(entity.getLocation().getBlock())) {
 			new Enflamed(entity, FireStream.ignitedblocks.get(entity.getLocation().getBlock()));
 		}
@@ -203,33 +211,76 @@ public class PKListener implements Listener {
 		}
 	}
 
-	@EventHandler
-	public void onPlayerDamage(EntityDamageEvent e) {
-		Entity en = e.getEntity();
-		if (en instanceof Player) { // Player is the one being hurt.
-			Player p = (Player) en;
-			if (e.getCause() == DamageCause.FALL) { // Result is Fall Damage
-				if (Methods.canBendPassive(p.getName(), Element.Air)) {
-					e.setDamage(0.0);
-				}
-				if (Methods.canBendPassive(p.getName(), Element.Chi)) {
-					double initdamage = e.getDamage();
-					double newdamage = e.getDamage() * ChiPassive.FallReductionFactor;
-					double finaldamage = initdamage - newdamage;
-					e.setDamage(finaldamage);
-				}
-				if (Methods.canBendPassive(p.getName(), Element.Water)) {
-					if (WaterPassive.applyNoFall(p)) {
-						e.setDamage(0.0);
-					}
-				}
-
-				if (Methods.canBendPassive(p.getName(), Element.Earth)) {
-					if (EarthPassive.softenLanding(p)) {
-						e.setDamage(0.0);
-					}
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerDamage(EntityDamageEvent event) {
+		if (event.getEntity() instanceof Player) {
+			Player player = (Player) event.getEntity();
+			
+			if (Methods.isBender(player.getName(), Element.Earth) && event.getCause() == DamageCause.FALL) {
+				Shockwave.fallShockwave(player);
+			}
+			
+			if (Methods.isBender(player.getName(), Element.Air) && event.getCause() == DamageCause.FALL && Methods.canBendPassive(player.getName(), Element.Air)) {
+				new Flight(player);
+				player.setAllowFlight(true);
+				AirBurst.fallBurst(player);
+				player.setFallDistance(0);
+				event.setDamage(0);
+				event.setCancelled(true);
+			}
+			
+			if (!event.isCancelled() && Methods.isBender(player.getName(), Element.Water) && event.getCause() == DamageCause.FALL && Methods.canBendPassive(player.getName(), Element.Water)) {
+				if (WaterPassive.applyNoFall(player)) {
+					new Flight(player);
+					player.setAllowFlight(true);
+					player.setFallDistance(0);
+					event.setDamage(0);
+					event.setCancelled(true);
 				}
 			}
+			
+			if (!event.isCancelled()
+					&& Methods.isBender(player.getName(), Element.Earth)
+					&& event.getCause() == DamageCause.FALL
+					&& Methods.canBendPassive(player.getName(), Element.Earth)) {
+				if (EarthPassive.softenLanding(player)) {
+					new Flight(player);
+					player.setAllowFlight(true);
+					player.setFallDistance(0);
+					event.setDamage(0);
+					event.setCancelled(true);
+				}
+			}
+			
+			if (!event.isCancelled()
+					&& Methods.isBender(player.getName(), Element.Chi)
+					&& event.getCause() == DamageCause.FALL
+					&& Methods.canBendPassive(player.getName(), Element.Chi)) {
+				double initdamage = event.getDamage();
+				double newdamage = event.getDamage() * ChiPassive.FallReductionFactor;
+				double finaldamage = initdamage - newdamage;
+				event.setDamage(finaldamage);
+			}
+			
+			if (!event.isCancelled() && event.getCause() == DamageCause.FALL) {
+				Player source = Flight.getLaunchedBy(player);
+				if (source != null) {
+					event.setCancelled(true);
+					Methods.damageEntity(source, player, event.getDamage());
+				}
+			}
+			
+			if (Methods.canBendPassive(player.getName(), Element.Fire)
+					&& Methods.isBender(player.getName(),  Element.Fire)
+					&& (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
+				event.setCancelled(!Extinguish.canBurn(player));
+			}
+			
+			if (Methods.isBender(player.getName(), Element.Earth)
+					&& event.getCause() == DamageCause.SUFFOCATION && TempBlock.isTempBlock(player.getEyeLocation().getBlock())) {
+						event.setDamage(0);
+						event.setCancelled(true);
+					}
 		}
 	}
 
