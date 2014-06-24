@@ -48,7 +48,48 @@ public class AbilityModuleManager {
 	}
 	
 	private void fill() {
+		
+		for (StockAbilities a: StockAbilities.values()) {
+			if (StockAbilities.isAirbending(a)) {
+				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air." + a.name() + ".Enabled")) {
+					abilities.add(a.name());
+					airbendingabilities.add(a.name());
+					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Air." + a.name() + ".Description"));
+				}
+			}
+			if (StockAbilities.isWaterbending(a)) {
+				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water." + a.name() + ".Enabled")) {
+					abilities.add(a.name());
+					waterbendingabilities.add(a.name());
+					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Water." + a.name() + ".Description"));
+				}
+			}
+			if (StockAbilities.isEarthbending(a)) {
+				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth." + a.name() + ".Enabled")) {
+					abilities.add(a.name());
+					earthbendingabilities.add(a.name());
+					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Earth." + a.name() + ".Description"));
+				}
+			}
+			if (StockAbilities.isFirebending(a)) {
+				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire." + a.name() + ".Enabled")) {
+					abilities.add(a.name());
+					firebendingabilities.add(a.name());
+					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Fire." + a.name() + ".Description"));
+				}
+			}
+			if (StockAbilities.isChiBlocking(a)) {
+				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Chi." + a.name() + ".Enabled")) {
+					abilities.add(a.name());
+					chiabilities.add(a.name());
+					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Chi." + a.name() + ".Description"));
+				}
+			}
+		}
 		for (AbilityModule ab: ability) {
+			if (abilities.contains(ab.getName())) {
+				continue;
+			}
 			ab.onThisLoad();
 			abilities.add(ab.getName());
 			if (ab.getElement() == Element.Air.toString()) airbendingabilities.add(ab.getName()); 
