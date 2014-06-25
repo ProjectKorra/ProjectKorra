@@ -35,6 +35,7 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
 
 public class Methods {

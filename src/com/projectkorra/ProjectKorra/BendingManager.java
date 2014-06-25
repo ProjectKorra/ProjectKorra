@@ -28,6 +28,7 @@ import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FirePassive;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
+import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
@@ -76,6 +77,7 @@ public class BendingManager implements Runnable {
 			AirSpout.spoutAll();
 			WaterSpout.handleSpouts(Bukkit.getServer());
 			Cook.progressAll();
+			FreezeMelt.handleFrozenBlocks();
 			for (int ID: Tornado.instances.keySet()) {
 				Tornado.progress(ID);
 			}

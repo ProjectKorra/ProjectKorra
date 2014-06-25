@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
@@ -15,15 +16,15 @@ public class Melt {
 	private static final int defaultrange = FreezeMelt.defaultrange;
 	private static final int defaultradius = FreezeMelt.defaultradius;
 	private static final int defaultevaporateradius = 3;
-	private static final int seaLevel = ConfigManager.seaLevel;
+	private static final int seaLevel = ProjectKorra.plugin.getConfig().getInt("Properties.SeaLevel");
 
 	private static final byte full = 0x0;
 
 	public Melt(Player player) {
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-		if (bPlayer.isOnCooldown(Abilities.PhaseChange))
-			return;
+//		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+//
+//		if (bPlayer.isOnCooldown(Abilities.PhaseChange))
+//			return;
 
 		int range = (int) Methods.waterbendingNightAugment(defaultrange,
 				player.getWorld());
@@ -51,13 +52,13 @@ public class Melt {
 			}
 		}
 
-		bPlayer.cooldown(Abilities.PhaseChange);
+//		bPlayer.cooldown(Abilities.PhaseChange);
 	}
 
 	public static void melt(Player player, Block block) {
-		if (Methods.isRegionProtectedFromBuild(player, Abilities.PhaseChange,
-				block.getLocation()))
-			return;
+//		if (Methods.isRegionProtectedFromBuild(player, Abilities.PhaseChange,
+//				block.getLocation()))
+//			return;
 		if (!Wave.canThaw(block)) {
 			Wave.thaw(block);
 			return;
@@ -82,9 +83,9 @@ public class Melt {
 	}
 
 	public static void evaporate(Player player, Block block) {
-		if (Methods.isRegionProtectedFromBuild(player, Abilities.PhaseChange,
-				block.getLocation()))
-			return;
+//		if (Methods.isRegionProtectedFromBuild(player, Abilities.PhaseChange,
+//				block.getLocation()))
+//			return;
 		if (Methods.isWater(block) && !TempBlock.isTempBlock(block)
 				&& WaterManipulation.canPhysicsChange(block)) {
 			block.setType(Material.AIR);

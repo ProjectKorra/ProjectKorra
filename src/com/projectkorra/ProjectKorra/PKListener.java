@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -61,6 +62,8 @@ import com.projectkorra.ProjectKorra.firebending.Extinguish;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
+import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
+import com.projectkorra.ProjectKorra.waterbending.Melt;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
@@ -168,11 +171,12 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					new Bloodbending(player);
 				}
-				if (abil.equalsIgnoreCase("WaterSpout")) {
-					new WaterSpout(player);
+
+				if (abil.equalsIgnoreCase("PhaseChange")) {
+					new Melt(player);
 				}
 			}
-			
+
 			if (Methods.isEarthAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
 					return;
@@ -184,7 +188,7 @@ public class PKListener implements Listener {
 					new Collapse(player);
 				}
 			}
-			
+
 			if (Methods.isFireAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
@@ -203,7 +207,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		if (WaterSpout.instances.containsKey(event.getPlayer()) || AirSpout.getPlayers().contains(event.getPlayer())) {
 			Vector vel = new Vector();
 			vel.setX(event.getTo().getX() - event.getFrom().getX());
@@ -213,13 +217,13 @@ public class PKListener implements Listener {
 			double currspeed = vel.length();
 			double maxspeed = .15;
 			if (currspeed > maxspeed) {
-			// only if moving set a factor
-			// double recspeed = 0.6;
-			// vel = vel.ultiply(recspeed * currspeed);
-			vel = vel.normalize().multiply(maxspeed);
-			// apply the new velocity (MAY REQUIRE A SCHEDULED TASK
-			// INSTEAD!)
-			event.getPlayer().setVelocity(vel);
+				// only if moving set a factor
+				// double recspeed = 0.6;
+				// vel = vel.ultiply(recspeed * currspeed);
+				vel = vel.normalize().multiply(maxspeed);
+				// apply the new velocity (MAY REQUIRE A SCHEDULED TASK
+				// INSTEAD!)
+				event.getPlayer().setVelocity(vel);
 			}
 		}
 
@@ -340,8 +344,14 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					Bloodbending.launch(player);
 				}
+				if (abil.equalsIgnoreCase("PhaseChange")) {
+					new FreezeMelt(player);
+				}
+				if (abil.equalsIgnoreCase("WaterSpout")) {
+					new WaterSpout(player);
+				}
 			}
-			
+
 			if (Methods.isEarthAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
 					return;
@@ -349,11 +359,11 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Catapult")) {
 					new Catapult(player);
 				}
-				
+
 				if (abil.equalsIgnoreCase("RaiseEarth")) {
 					new EarthColumn(player);
 				}
-				
+
 				if (abil.equalsIgnoreCase("Collapse")) {
 					new CompactColumn(player);
 				}
@@ -362,7 +372,7 @@ public class PKListener implements Listener {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
 				}
-				
+
 				if (abil.equalsIgnoreCase("FireJet")) {
 					new FireJet(player);
 				}
@@ -411,10 +421,64 @@ public class PKListener implements Listener {
 		if (block.getType() == Material.FIRE) {
 			return;
 		}
+		event.setCancelled(Illumination.blocks.containsKey(block));
+		if (!event.isCancelled()) {
+			event.setCancelled(!WaterManipulation.canPhysicsChange(block));
+		}
+		if (!event.isCancelled()) {
+			event.setCancelled(FreezeMelt.frozenblocks.containsKey(block));
+		}
+		if (!event.isCancelled()) {
+			event.setCancelled(!Wave.canThaw(block));
+		}
+		if (!event.isCancelled()) {
+			event.setCancelled(!Torrent.canThaw(block));
+		}
 		if (FireStream.ignitedblocks.containsKey(block)) {
 			FireStream.remove(block);
 		}
 	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onBlockBreak(BlockBreakEvent event) {
+		Block block = event.getBlock();
+		Player player = event.getPlayer();
+		if (WaterWall.wasBrokenFor(player, block)
+				|| OctopusForm.wasBrokenFor(player, block)
+				|| Torrent.wasBrokenFor(player, block)) {
+			event.setCancelled(true);
+			return;
+		}
+		EarthBlast blast = EarthBlast.getBlastFromSource(block);
+		if (blast != null) {
+			blast.cancel();
+		}
+
+		if (FreezeMelt.frozenblocks.containsKey(block)) {
+			FreezeMelt.thaw(block);
+			event.setCancelled(true);
+			// } else if (!WalkOnWater.canThaw(block)) {
+			// WalkOnWater.thaw(block);
+		} else if (WaterWall.wallblocks.containsKey(block)) {
+			WaterWall.thaw(block);
+			event.setCancelled(true);
+		} else if (Illumination.blocks.containsKey(block)) {
+			event.setCancelled(true);
+			// } else if (Illumination.blocks.containsKey(block
+			// .getRelative(BlockFace.UP))) {
+			// event.setCancelled(true);
+		} else if (!Wave.canThaw(block)) {
+			Wave.thaw(block);
+			event.setCancelled(true);
+			// event.setCancelled(true);
+		} else if (Methods.movedearth.containsKey(block)) {
+			// Methods.removeEarthbendedBlockIndex(block);
+			Methods.removeRevertIndex(block);
+		} else if (TempBlock.isTempBlock(block)) {
+			TempBlock.revertBlock(block, Material.AIR);
+		}
+	}
+
 	@EventHandler
 	public void onPlayerDamageByPlayer(EntityDamageByEntityEvent e) {
 		Entity en = e.getEntity();
