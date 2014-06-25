@@ -49,6 +49,7 @@ import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
+import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
@@ -279,6 +280,15 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					Bloodbending.launch(player);
+				}
+			}
+			if (Methods.isFireAbility(abil)) {
+				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
+					return;
+				}
+				
+				if (abil.equalsIgnoreCase("FireJet")) {
+					new FireJet(player);
 				}
 			}
 		}

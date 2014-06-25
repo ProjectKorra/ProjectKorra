@@ -114,6 +114,17 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 		
 		plugin.getConfig().addDefault("Abilities.Earth.Passive.Duration", 2500);
+		
+		config.addDefault("Abilities.Fire.FireJet.Enabled", true);
+		config.addDefault("Abilities.Fire.FireJet.Description", "This ability is used for a limited burst of flight for firebenders. Clicking with this "
+				+ "ability selected will launch you in the direction you're looking, granting you "
+				+ "controlled flight for a short time. This ability can be used mid-air to prevent falling "
+				+ "to your death, but on the ground it can only be used if standing on a block that's "
+				+ "ignitable (e.g. not snow or water).");
+		config.addDefault("Abilities.Fire.FireJet.Speed", 0.7);
+		config.addDefault("Abilities.Fire.FireJet.Duration", 1500);
+		config.addDefault("Abilities.Fire.FireJet.Cooldown", 6000);
+		
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Speed", 1);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Jump", 2);

@@ -18,6 +18,7 @@ import com.projectkorra.ProjectKorra.airbending.AirPassive;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FirePassive;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
@@ -63,6 +64,7 @@ public class BendingManager implements Runnable {
 			AirBurst.progressAll();
 			handleDayNight();
 			Bloodbending.progressAll();
+			FireJet.progressAll();
 			
 			for (int ID: Tornado.instances.keySet()) {
 				Tornado.progress(ID);
