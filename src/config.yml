@@ -51,6 +51,9 @@ Abilities:
       Range: 20
       Radius: 2
       Push: 3.5
+    AirBurst:
+      Enabled: true
+      Description: "AirBurst is one of the most powerful abilities in an airbender's arsenal. To use, press and hold sneak to charge your burst. Once charged, you can either release sneak to launch a cone-shaped burst of air in front of you, or click to release theb urst in a sphere around you. Additionally, having this ability selected when you land on the ground from a large enough fall will create a burst of air around you."
     Tornado: 
       Enabled: true
       Description: "To use, simply sneak (default: shift). This will create a swirling vortex at the targeted lcoation. Any creature or object caught in the vortex will be launched up and out in some random direction. If another player gets caught in the vortex, the launching effect is minimal. Tornado can also be used to transport the user. If the user gets caught in his/her own tornado, his/her movements are much more manageable. Provided the user doesn't fall out of the vortex, it will take him to a maximum height and move him in the general direction he/she is looking. Skilled airbenders can scale anything with this ability."
@@ -62,6 +65,11 @@ Abilities:
   Water:
     Passive:
       SwimSpeedFactor: 0.7
+    Bloodbending:
+      Enabled: true
+      Description: "This ability was made illegal for a reason. With this ability selected, sneak while targeting something and you will bloodbend that target. Bloodbent targets cannot move, bend, or attack. You are free to control their actions by looking elsewhere - they will be forced to move in that direciton. Additionally, clicking while bloodbending will launch that target off in the direction you're looking. People who are capable of bloodbending are immune to technique, and you are immune to theirs.";
+      ThrowFactor: 2
+      Range: 10
     Plantbending:
       RegrowTime: 180000
   Earth:

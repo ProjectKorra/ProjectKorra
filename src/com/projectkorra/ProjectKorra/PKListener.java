@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -16,15 +17,28 @@ import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.util.Vector;
 import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -35,6 +49,7 @@ import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
+import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 
@@ -45,6 +60,23 @@ public class PKListener implements Listener {
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerInteraction(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onBlockPlace(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
+			event.setCancelled(true);
+		}
+	}
+
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockFlowTo(BlockFromToEvent event) {
@@ -85,22 +117,22 @@ public class PKListener implements Listener {
 		Methods.saveBendingPlayer(e.getPlayer().getName());
 		BendingPlayer.players.remove(e.getPlayer().getName());
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSneak(PlayerToggleSneakEvent event) {
 		Player player = event.getPlayer();
-		
+
 		if (Paralyze.isParaylzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
 		}
-		
+
 		AirScooter.check(player);
-		
+
 		String abil = Methods.getBoundAbility(player);
 		if (abil == null) {
 			return;
 		}
-		
+
 		if (!player.isSneaking() && Methods.canBend(player.getName(), abil)) {
 			if (Methods.isAirAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
@@ -116,16 +148,113 @@ public class PKListener implements Listener {
 					new AirBurst(player);
 				}
 			}
+
+			if (Methods.isWaterAbility(abil)) {
+				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons")) {
+					return;
+				}
+				if (abil.equalsIgnoreCase("Bloodbending")) {
+					new Bloodbending(player);
+				}
+			}
 		}
 	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerMove(PlayerMoveEvent event) {
+		Player player = event.getPlayer();
+		if (Paralyze.isParalyzed(player)) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (Bloodbending.isBloodbended(player)) {
+			double distance1, distance2;
+			Location loc = Bloodbending.getBloodbendingLocation(player);
+			distance1 = event.getFrom().distance(loc);
+			distance2 = event.getTo().distance(loc);
+			if (distance2 > distance1) {
+				player.setVelocity(new Vector(0, 0, 0));
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityTargetLiving(EntityTargetLivingEntityEvent event) {
+		Entity entity = event.getEntity();
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onTarget(EntityTargetEvent event) {
+		Entity entity = event.getEntity();
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityChangeBlockEvent(EntityChangeBlockEvent event) {
+		Entity entity = event.getEntity();
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
+			event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityExplodeEvent(EntityExplodeEvent event) {
+		Entity entity = event.getEntity();
+		if (entity != null)
+			if (Paralyze.isParalyzed(entity)
+					|| Bloodbending.isBloodbended(entity))
+				event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityInteractEvent(EntityInteractEvent event) {
+		Entity entity = event.getEntity();
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
+			event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityShootBowEvent(EntityShootBowEvent event) {
+		Entity entity = event.getEntity();
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
+			event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityTeleportEvent(EntityTeleportEvent event) {
+		Entity entity = event.getEntity();
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
+			event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityProjectileLaunchEvent(ProjectileLaunchEvent event) {
+		Entity entity = event.getEntity();
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
+			event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntitySlimeSplitEvent(SlimeSplitEvent event) {
+		Entity entity = event.getEntity();
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
+			event.setCancelled(true);
+	}
+
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
 	public void onPlayerSwing(PlayerAnimationEvent event) {
 		Player player = event.getPlayer();
-		
+
 		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player)) {
 			event.setCancelled(true);
 		}
-		
+
 		String abil = Methods.getBoundAbility(player);
 		if (abil == null) return;
 		if (Methods.canBend(player.getName(), abil)) {
@@ -141,6 +270,14 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("AirBurst")) {
 					AirBurst.coneBurst(player);
+				}
+			}
+			if (Methods.isWaterAbility(abil)) {
+				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons")) {
+					return;
+				}
+				if (abil.equalsIgnoreCase("Bloodbending")) {
+					Bloodbending.launch(player);
 				}
 			}
 		}
@@ -215,11 +352,11 @@ public class PKListener implements Listener {
 	public void onPlayerDamage(EntityDamageEvent event) {
 		if (event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
-			
+
 			if (Methods.isBender(player.getName(), Element.Earth) && event.getCause() == DamageCause.FALL) {
 				Shockwave.fallShockwave(player);
 			}
-			
+
 			if (Methods.isBender(player.getName(), Element.Air) && event.getCause() == DamageCause.FALL && Methods.canBendPassive(player.getName(), Element.Air)) {
 				new Flight(player);
 				player.setAllowFlight(true);
@@ -228,7 +365,7 @@ public class PKListener implements Listener {
 				event.setDamage(0);
 				event.setCancelled(true);
 			}
-			
+
 			if (!event.isCancelled() && Methods.isBender(player.getName(), Element.Water) && event.getCause() == DamageCause.FALL && Methods.canBendPassive(player.getName(), Element.Water)) {
 				if (WaterPassive.applyNoFall(player)) {
 					new Flight(player);
@@ -238,7 +375,7 @@ public class PKListener implements Listener {
 					event.setCancelled(true);
 				}
 			}
-			
+
 			if (!event.isCancelled()
 					&& Methods.isBender(player.getName(), Element.Earth)
 					&& event.getCause() == DamageCause.FALL
@@ -251,7 +388,7 @@ public class PKListener implements Listener {
 					event.setCancelled(true);
 				}
 			}
-			
+
 			if (!event.isCancelled()
 					&& Methods.isBender(player.getName(), Element.Chi)
 					&& event.getCause() == DamageCause.FALL
@@ -261,7 +398,7 @@ public class PKListener implements Listener {
 				double finaldamage = initdamage - newdamage;
 				event.setDamage(finaldamage);
 			}
-			
+
 			if (!event.isCancelled() && event.getCause() == DamageCause.FALL) {
 				Player source = Flight.getLaunchedBy(player);
 				if (source != null) {
@@ -269,18 +406,18 @@ public class PKListener implements Listener {
 					Methods.damageEntity(source, player, event.getDamage());
 				}
 			}
-			
+
 			if (Methods.canBendPassive(player.getName(), Element.Fire)
 					&& Methods.isBender(player.getName(),  Element.Fire)
 					&& (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
 				event.setCancelled(!Extinguish.canBurn(player));
 			}
-			
+
 			if (Methods.isBender(player.getName(), Element.Earth)
 					&& event.getCause() == DamageCause.SUFFOCATION && TempBlock.isTempBlock(player.getEyeLocation().getBlock())) {
-						event.setDamage(0);
-						event.setCancelled(true);
-					}
+				event.setDamage(0);
+				event.setCancelled(true);
+			}
 		}
 	}
 

@@ -31,6 +31,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
@@ -614,6 +615,16 @@ public class Methods {
 
 	public static void breakBlock(Block block) {
 		block.breakNaturally(new ItemStack(Material.AIR));
+	}
+
+	public static boolean canBeBloodbent(Player player) {
+		if (AvatarState.isAvatarState(player))
+			return false;
+		if ((isChiBlocked(player.getName())))
+			return true;
+		if (canBend(player.getName(), "Bloodbending") && Methods.getBendingPlayer(player.getName()).isToggled)
+			return false;
+		return true;
 	}
 
 	public static void moveEarthBlock(Block source, Block target) {

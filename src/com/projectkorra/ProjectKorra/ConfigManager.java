@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra;
 import java.util.ArrayList;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 public class ConfigManager {
 
@@ -72,6 +73,14 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirBlast.Radius", 2);
 		config.addDefault("Abilities.Air.AirBlast.Push", 3.5);
 		
+		config.addDefault("Abilities.Air.AirBurst.Enabled", true);
+		config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. "
+				+ "To use, press and hold sneak to charge your burst. "
+				+ "Once charged, you can either release sneak to launch a cone-shaped burst "
+				+ "of air in front of you, or click to release the burst in a sphere around you. "
+				+ "Additionally, having this ability selected when you land on the ground from a "
+				+ "large enough fall will create a burst of air around you.");
+		
 		plugin.getConfig().addDefault("Abilities.Air.Tornado.Enabled", true);
 		plugin.getConfig().addDefault("Abilities.Air.Tornado.Description", "To use, simply sneak (default: shift). "
 				+ "This will create a swirling vortex at the targeted location. "
@@ -90,6 +99,18 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.Tornado.PlayerPushFactor", 1);
 		
 		plugin.getConfig().addDefault("Abilities.Water.Passive.SwimSpeedFactor", 0.7);
+		
+		config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
+		config.addDefault("Abilities.Water.Bloodbending.Description", "This ability was made illegal for a reason. With this ability selected, sneak while "
+				+ "targetting something and you will bloodbend that target. Bloodbent targets cannot move, "
+				+ "bend or attack. You are free to control their actions by looking elsewhere - they will "
+				+ "be forced to move in that direction. Additionally, clicking while bloodbending will "
+				+ "launch that target off in the direction you're looking. "
+				+ "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
+		config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
+		config.addDefault("Abilities.Water.Bloodbending.Range", 10);
+		
+		
 		plugin.getConfig().addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 		
 		plugin.getConfig().addDefault("Abilities.Earth.Passive.Duration", 2500);
