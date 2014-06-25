@@ -100,6 +100,14 @@ public class ConfigManager {
 				+ "fall out of the vortex, it will take him to a maximum height and move him in "
 				+ "the general direction he's looking. Skilled airbenders can scale anything "
 				+ "with this ability.");
+		
+		config.addDefault("Abilities.Air.AirSpout.Enabled", true);
+		config.addDefault("Abilities.Air.AirSpout.Description", "This ability gives the airbender limited sustained levitation. It is a "
+				+ "toggle - click to activate and form a whirling spout of air "
+				+ "beneath you, lifting you up. You can bend other abilities while using AirSpout. "
+				+ "Click again to deactivate this ability.");
+		config.addDefault("Abilities.Air.AirSpout.Height", 20);
+		
 		config.addDefault("Abilities.Air.Tornado.Radius", 10);
 		config.addDefault("Abilities.Air.Tornado.Height", 25);
 		config.addDefault("Abilities.Air.Tornado.Range", 25);

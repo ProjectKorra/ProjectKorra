@@ -45,6 +45,7 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
 import com.projectkorra.ProjectKorra.airbending.AirScooter;
+import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
@@ -170,6 +171,25 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		
+		if (WaterSpout.instances.containsKey(event.getPlayer()) || AirSpout.getPlayers().contains(event.getPlayer())) {
+			Vector vel = new Vector();
+			vel.setX(event.getTo().getX() - event.getFrom().getX());
+			vel.setY(event.getTo().getY() - event.getFrom().getY());
+			vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
+			// You now know the old velocity. Set to match recommended velocity
+			double currspeed = vel.length();
+			double maxspeed = .15;
+			if (currspeed > maxspeed) {
+			// only if moving set a factor
+			// double recspeed = 0.6;
+			// vel = vel.ultiply(recspeed * currspeed);
+			vel = vel.normalize().multiply(maxspeed);
+			// apply the new velocity (MAY REQUIRE A SCHEDULED TASK
+			// INSTEAD!)
+			event.getPlayer().setVelocity(vel);
+			}
+		}
 
 		if (Bloodbending.isBloodbended(player)) {
 			double distance1, distance2;
@@ -276,6 +296,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("AirScooter")) {
 					new AirScooter(player);
+				}
+				if (abil.equalsIgnoreCase("AirSpout")) {
+					new AirSpout(player);
 				}
 			}
 			if (Methods.isWaterAbility(abil)) {
