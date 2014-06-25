@@ -85,6 +85,13 @@ Abilities:
       Radius: 5
     Plantbending:
       RegrowTime: 180000
+    WaterManipulation:
+      Enabled: true
+      Description: "To use, place your cursor over a waterbendable object and tap sneak (default: shift). Smoke will appear where you've selected, indicating the origin of your ability. After you have selected an origin, simply left-click in any direction and you will see your water spout off in that direction, slicing any creature in its path. If you look towards a creature when you use this ability, it will target that creature. A collision from Water Manipulation both knocks the target back and deals some damage. Alternatively, if you have the source selected and tap shift again, you will be able to control the water more directly."
+      Damage: 3.0
+      Range: 20
+      Speed: 35
+      Push: .3
     WaterSpout:
       Enabled: true
       Description: "To use this ability, click while over or in water. You will spout water up from beneath you to experience controlled levitation. This ability is a toggle, so you can activate it then use other abilities and it will remain on. If you try to spout over an area with no water, snow, or ice, the spout will dissipate and you will fall. Click again with this ability selected to deactivate it."

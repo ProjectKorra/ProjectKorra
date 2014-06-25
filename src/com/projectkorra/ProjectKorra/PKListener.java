@@ -65,6 +65,7 @@ import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.Melt;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
+import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
@@ -98,10 +99,14 @@ public class PKListener implements Listener {
 		Block toblock = event.getToBlock();
 		Block fromblock = event.getBlock();
 		if (Methods.isWater(fromblock)) {
+			event.setCancelled(!AirBubble.canFlowTo(toblock));
 			if (!event.isCancelled()) {
-				if (Methods.isAdjacentToFrozenBlock(toblock) || Methods.isAdjacentToFrozenBlock(fromblock)) {
-					event.setCancelled(true);
-				}
+				event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock,
+						toblock));
+			}
+			if (!event.isCancelled()) {
+				if (Illumination.blocks.containsKey(toblock))
+					toblock.setType(Material.AIR);
 			}
 		}
 	}
@@ -174,6 +179,9 @@ public class PKListener implements Listener {
 
 				if (abil.equalsIgnoreCase("PhaseChange")) {
 					new Melt(player);
+				}
+				if (abil.equalsIgnoreCase("WaterManipulation")) {
+					new WaterManipulation(player);
 				}
 			}
 
@@ -349,6 +357,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("WaterSpout")) {
 					new WaterSpout(player);
+				}
+				if (abil.equalsIgnoreCase("WaterManipulation")) {
+					WaterManipulation.moveWater(player);
 				}
 			}
 
@@ -586,16 +597,20 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
-		if (TempBlock.isTempBlock(block) || TempBlock.isTouchingTempBlock(block)) {
-			event.setCancelled(true);
-		}
+		event.setCancelled(!WaterManipulation.canPhysicsChange(block));
+		if (!event.isCancelled())
+			event.setCancelled(Illumination.blocks.containsKey(block));
+		if (!event.isCancelled())
+			event.setCancelled(Methods.tempnophysics.contains(block));
 	}
-
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockForm(BlockFormEvent event) {
-		if (!WaterCore.canPhysicsChange(event.getBlock()))
+		if (TempBlock.isTempBlock(event.getBlock()))
+			event.setCancelled(true);
+		if (!WaterManipulation.canPhysicsChange(event.getBlock()))
 			event.setCancelled(true);
 	}
+
 
 	public void onNameTag(AsyncPlayerReceiveNameTagEvent e) {
 		List<Element> elements = Methods.getBendingPlayer(e.getNamedPlayer().getName()).getElements();

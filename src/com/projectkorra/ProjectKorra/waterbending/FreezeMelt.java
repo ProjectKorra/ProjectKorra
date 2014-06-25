@@ -50,9 +50,9 @@ public class FreezeMelt {
 	}
 
 	private static boolean isFreezable(Player player, Block block) {
-		if (Methods.isRegionProtectedFromBuild(player, Abilities.PhaseChange,
-				block.getLocation()))
-			return false;
+//		if (Methods.isRegionProtectedFromBuild(player, Abilities.PhaseChange,
+//				block.getLocation()))
+//			return false;
 		if (block.getType() == Material.WATER
 				|| block.getType() == Material.STATIONARY_WATER)
 			if (WaterManipulation.canPhysicsChange(block)

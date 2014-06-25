@@ -37,6 +37,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
+import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 public class Methods {
 

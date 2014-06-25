@@ -30,6 +30,7 @@ import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
@@ -102,6 +103,10 @@ public class BendingManager implements Runnable {
 			
 			for (int ID: CompactColumn.instances.keySet()) {
 				CompactColumn.progress(ID);
+			}
+			
+			for (int ID: WaterManipulation.instances.keySet()) {
+				WaterManipulation.progress(ID);
 			}
 			
 			FireStream.dissipateAll();
