@@ -117,6 +117,12 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Speed", 1);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Jump", 2);
+		
+		config.addDefault("Abilities.Chi.Paralyze.Enabled", true);
+		config.addDefault("Abilities.Chi.Paralyze.Description", "Paralyzes the target, making them unable to do anything for a short "
+				+ "period of time. This ability has a long cooldown.");
+		config.addDefault("Abilities.Chi.Paralyze.Cooldown", 15000);
+		config.addDefault("Abilities.Chi.Paralyze.Duration", 2000);
 				
 		plugin.getConfig().addDefault("Storage.engine", "sqlite");
 		

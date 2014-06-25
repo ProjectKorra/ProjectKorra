@@ -83,6 +83,11 @@ Abilities:
       BlockChi:
         Duration: 2500
         DodgeChance: 25
+      Paralyze:
+        Enabled: true
+        Description: "Paralyzes the target, making them unable to do anything for a short period of time. This ability has a long cooldown."
+        Cooldown: 15000
+        Duration: 2000
 Storage:
   engine: sqlite
   MySQL:
