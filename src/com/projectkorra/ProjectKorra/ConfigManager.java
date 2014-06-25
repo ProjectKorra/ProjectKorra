@@ -8,16 +8,16 @@ import org.bukkit.entity.Player;
 public class ConfigManager {
 
 	static ProjectKorra plugin;
-	
+
 	public ConfigManager(ProjectKorra plugin) {
 		ConfigManager.plugin = plugin;
 		configCheck();
 	}
-	
+
 	public static void configCheck() {
-			   
+
 		FileConfiguration config = ProjectKorra.plugin.getConfig();
-		
+
 		ArrayList<String> earthbendable = new ArrayList<String>();
 		earthbendable.add("STONE");
 		earthbendable.add("COAL_ORE");
@@ -32,35 +32,35 @@ public class ConfigManager {
 		earthbendable.add("REDSTONE_ORE");
 		earthbendable.add("SAND");
 		earthbendable.add("SANDSTONE");
-		
+
 		plugin.getConfig().addDefault("Properties.GlobalCooldown", 500);
 		plugin.getConfig().addDefault("Properties.SeaLevel", 62);
-		
+
 		plugin.getConfig().addDefault("Properties.Air.CanBendWithWeapons", false);
-		
+
 		plugin.getConfig().addDefault("Properties.Water.CanBendWithWeapons", true);
 		plugin.getConfig().addDefault("Properties.Water.NightFactor", 1.5);
-		
+
 		plugin.getConfig().addDefault("Properties.Earth.CanBendWithWeapons", true);
 		plugin.getConfig().addDefault("Properties.Earth.EarthbendableBlocks", earthbendable);
-		
+
 		plugin.getConfig().addDefault("Properties.Fire.CanBendWithWeapons", true);
 		plugin.getConfig().addDefault("Properties.Fire.DayFactor", 1.5);
-		
+
 		plugin.getConfig().addDefault("Properties.Chi.CanBendWithWeapons", true);
-		
+
 		plugin.getConfig().addDefault("Abilities.AvatarState.Enabled", true);
 		plugin.getConfig().addDefault("Abilities.AvatarState.Description", "The signature ability of the Avatar, this is a toggle. Click to activate to become "
-					+ "nearly unstoppable. While in the Avatar State, the user takes severely reduced damage from "
-					+ "all sources, regenerates health rapidly, and is granted extreme speed. Nearly all abilities "
-					+ "are incredibly amplified in this state. Additionally, AirShield and FireJet become toggle-able "
-					+ "abilities and last until you deactivate them or the Avatar State. Click again with the Avatar "
-					+ "State selected to deactivate it.");
+				+ "nearly unstoppable. While in the Avatar State, the user takes severely reduced damage from "
+				+ "all sources, regenerates health rapidly, and is granted extreme speed. Nearly all abilities "
+				+ "are incredibly amplified in this state. Additionally, AirShield and FireJet become toggle-able "
+				+ "abilities and last until you deactivate them or the Avatar State. Click again with the Avatar "
+				+ "State selected to deactivate it.");
 
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Factor", 0.3);
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Speed", 2);
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Jump", 3);
-		
+
 		config.addDefault("Abilities.Air.AirBlast.Enabled", true);
 		config.addDefault("Abilities.Air.AirBlast.Description", "AirBlast is the most fundamental bending technique of an airbender."
 				+ " To use, simply left-click in a direction. A gust of wind will be"
@@ -72,7 +72,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirBlast.Range", 20);
 		config.addDefault("Abilities.Air.AirBlast.Radius", 2);
 		config.addDefault("Abilities.Air.AirBlast.Push", 3.5);
-		
+
 		config.addDefault("Abilities.Air.AirBurst.Enabled", true);
 		config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. "
 				+ "To use, press and hold sneak to charge your burst. "
@@ -80,7 +80,7 @@ public class ConfigManager {
 				+ "of air in front of you, or click to release the burst in a sphere around you. "
 				+ "Additionally, having this ability selected when you land on the ground from a "
 				+ "large enough fall will create a burst of air around you.");
-		
+
 		config.addDefault("Abilities.Air.AirScooter.Enabled", true);
 		config.addDefault("Abilities.Air.AirScooter.Description", "AirScooter is a fast means of transportation. To use, sprint, jump then click with "
 				+ "this ability selected. You will hop on a scooter of air and be propelled forward "
@@ -88,7 +88,7 @@ public class ConfigManager {
 				+ "This ability can be used to levitate above liquids, but it cannot go up steep slopes. "
 				+ "Any other actions will deactivate this ability.");
 		config.addDefault("Abilities.Air.AirScooter.Speed", .675);
-		
+
 		plugin.getConfig().addDefault("Abilities.Air.Tornado.Enabled", true);
 		plugin.getConfig().addDefault("Abilities.Air.Tornado.Description", "To use, simply sneak (default: shift). "
 				+ "This will create a swirling vortex at the targeted location. "
@@ -100,22 +100,22 @@ public class ConfigManager {
 				+ "fall out of the vortex, it will take him to a maximum height and move him in "
 				+ "the general direction he's looking. Skilled airbenders can scale anything "
 				+ "with this ability.");
-		
+
 		config.addDefault("Abilities.Air.AirSpout.Enabled", true);
 		config.addDefault("Abilities.Air.AirSpout.Description", "This ability gives the airbender limited sustained levitation. It is a "
 				+ "toggle - click to activate and form a whirling spout of air "
 				+ "beneath you, lifting you up. You can bend other abilities while using AirSpout. "
 				+ "Click again to deactivate this ability.");
 		config.addDefault("Abilities.Air.AirSpout.Height", 20);
-		
+
 		config.addDefault("Abilities.Air.Tornado.Radius", 10);
 		config.addDefault("Abilities.Air.Tornado.Height", 25);
 		config.addDefault("Abilities.Air.Tornado.Range", 25);
 		config.addDefault("Abilities.Air.Tornado.MobPushFactor", 1);
 		config.addDefault("Abilities.Air.Tornado.PlayerPushFactor", 1);
-		
+
 		plugin.getConfig().addDefault("Abilities.Water.Passive.SwimSpeedFactor", 0.7);
-		
+
 		config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
 		config.addDefault("Abilities.Water.Bloodbending.Description", "This ability was made illegal for a reason. With this ability selected, sneak while "
 				+ "targetting something and you will bloodbend that target. Bloodbent targets cannot move, "
@@ -125,12 +125,19 @@ public class ConfigManager {
 				+ "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
 		config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 		config.addDefault("Abilities.Water.Bloodbending.Range", 10);
-		
-		
+
 		plugin.getConfig().addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
+
+		config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
+		config.addDefault("Abilities.Water.WaterSpout.Description", "To use this ability, click while over or in water. "
+				+ "You will spout water up from beneath you to experience controlled levitation. "
+				+ "This ability is a toggle, so you can activate it then use other abilities and it "
+				+ "will remain on. If you try to spout over an area with no water, snow or ice, "
+				+ "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.");
+		config.addDefault("Abilities.Water.WaterSpout.Height", 20);
 		
 		plugin.getConfig().addDefault("Abilities.Earth.Passive.Duration", 2500);
-		
+
 		config.addDefault("Abilities.Fire.FireJet.Enabled", true);
 		config.addDefault("Abilities.Fire.FireJet.Description", "This ability is used for a limited burst of flight for firebenders. Clicking with this "
 				+ "ability selected will launch you in the direction you're looking, granting you "
@@ -140,25 +147,25 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.FireJet.Speed", 0.7);
 		config.addDefault("Abilities.Fire.FireJet.Duration", 1500);
 		config.addDefault("Abilities.Fire.FireJet.Cooldown", 6000);
-		
+
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Speed", 1);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Jump", 2);
-		
+
 		config.addDefault("Abilities.Chi.Paralyze.Enabled", true);
 		config.addDefault("Abilities.Chi.Paralyze.Description", "Paralyzes the target, making them unable to do anything for a short "
 				+ "period of time. This ability has a long cooldown.");
 		config.addDefault("Abilities.Chi.Paralyze.Cooldown", 15000);
 		config.addDefault("Abilities.Chi.Paralyze.Duration", 2000);
-				
+
 		plugin.getConfig().addDefault("Storage.engine", "sqlite");
-		
+
 		plugin.getConfig().addDefault("Storage.MySQL.host", "localhost");
 		plugin.getConfig().addDefault("Storage.MySQL.port", 3306);
 		plugin.getConfig().addDefault("Storage.MySQL.pass", "");
 		plugin.getConfig().addDefault("Storage.MySQL.db", "minecraft");
 		plugin.getConfig().addDefault("Storage.MySQL.user", "root");
-		
+
 		plugin.getConfig().options().copyDefaults(true);
 		plugin.saveConfig();
 	}

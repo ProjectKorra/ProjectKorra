@@ -56,6 +56,7 @@ import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
+import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
 public class PKListener implements Listener {
 
@@ -159,6 +160,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					new Bloodbending(player);
+				}
+				if (abil.equalsIgnoreCase("WaterSpout")) {
+					new WaterSpout(player);
 				}
 			}
 		}

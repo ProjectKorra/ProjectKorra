@@ -80,6 +80,10 @@ Abilities:
       Range: 10
     Plantbending:
       RegrowTime: 180000
+    WaterSpout:
+      Enabled: true
+      Description: "To use this ability, click while over or in water. You will spout water up from beneath you to experience controlled levitation. This ability is a toggle, so you can activate it then use other abilities and it will remain on. If you try to spout over an area with no water, snow, or ice, the spout will dissipate and you will fall. Click again with this ability selected to deactivate it."
+      Height: 20
   Earth:
     Passive:
       Duration: 2500
