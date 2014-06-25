@@ -87,6 +87,12 @@ Abilities:
   Earth:
     Passive:
       Duration: 2500
+    Catapult:
+      Enabled: true
+      Description: "To use, left-click while looking in the direction you want to be launched. A pillar of earth will jut up from under you and launch you in that direction - if and only if there is enough earth behind where you're looking to launch you. Skillful use of this ability takes much time and work, and it does result in the death of certain gung-ho earthbenders. if you plan to use this ability, be sure you've read about your passive ability you innately have as an earthbender."
+      Length: 7
+      Speed: 12
+      Push: 5
   Fire:
     FireJet:
       Enabled: true

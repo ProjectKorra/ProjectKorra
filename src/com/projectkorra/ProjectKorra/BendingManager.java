@@ -19,6 +19,7 @@ import com.projectkorra.ProjectKorra.airbending.AirScooter;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
+import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FirePassive;
@@ -83,6 +84,10 @@ public class BendingManager implements Runnable {
 				if (block.getType() != Material.FIRE) {
 					FireStream.ignitedblocks.remove(block);
 				}
+			}
+			
+			for (int ID: Catapult.instances.keySet()) {
+				Catapult.progress(ID);
 			}
 			
 			FireStream.dissipateAll();

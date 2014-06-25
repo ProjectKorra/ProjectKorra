@@ -49,6 +49,7 @@ import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
+import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
@@ -311,6 +312,15 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					Bloodbending.launch(player);
+				}
+			}
+			
+			if (Methods.isEarthAbility(abil)) {
+				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
+					return;
+				}
+				if (abil.equalsIgnoreCase("Catapult")) {
+					new Catapult(player);
 				}
 			}
 			if (Methods.isFireAbility(abil)) {

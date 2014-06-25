@@ -22,6 +22,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -35,8 +36,6 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
-import com.projectkorra.abilities.RaiseEarth.EarthColumn;
-import com.projectkorra.abilities.Surge.Surge;
 
 public class Methods {
 
@@ -491,6 +490,22 @@ public class Methods {
 		return null;
 	}
 
+	public static int getEarthbendableBlocksLength(Player player, Block block,
+			Vector direction, int maxlength) {
+		Location location = block.getLocation();
+		direction = direction.normalize();
+		double j;
+		for (int i = 0; i <= maxlength; i++) {
+			j = (double) i;
+			if (!isEarthbendable(player,
+					location.clone().add(direction.clone().multiply(j))
+					.getBlock())) {
+				return i;
+			}
+		}
+		return maxlength;
+	}
+
 	public static boolean isMeltable(Block block) {
 		if (block.getType() == Material.ICE || block.getType() == Material.SNOW || block.getType() == Material.PACKED_ICE) {
 			return true;
@@ -626,6 +641,180 @@ public class Methods {
 			return false;
 		return true;
 	}
+
+	public static void moveEarth(Player player, Location location,
+			Vector direction, int chainlength) {
+		moveEarth(player, location, direction, chainlength, true);
+	}
+
+	public static void moveEarth(Player player, Location location,
+			Vector direction, int chainlength, boolean throwplayer) {
+		Block block = location.getBlock();
+		moveEarth(player, block, direction, chainlength, throwplayer);
+	}
+
+	public static void moveEarth(Player player, Block block, Vector direction,
+			int chainlength) {
+		moveEarth(player, block, direction, chainlength, true);
+	}
+
+	public static boolean moveEarth(Player player, Block block,
+			Vector direction, int chainlength, boolean throwplayer) {
+		if (isEarthbendable(player, block)) {
+//				&& !isRegionProtectedFromBuild(player, Abilities.RaiseEarth,
+//						block.getLocation())) {
+
+			boolean up = false;
+			boolean down = false;
+			Vector norm = direction.clone().normalize();
+			if (norm.dot(new Vector(0, 1, 0)) == 1) {
+				up = true;
+			} else if (norm.dot(new Vector(0, -1, 0)) == 1) {
+				down = true;
+			}
+			Vector negnorm = norm.clone().multiply(-1);
+
+			Location location = block.getLocation();
+
+			ArrayList<Block> blocks = new ArrayList<Block>();
+			for (double j = -2; j <= chainlength; j++) {
+				Block checkblock = location.clone()
+						.add(negnorm.clone().multiply(j)).getBlock();
+				if (!tempnophysics.contains(checkblock)) {
+					blocks.add(checkblock);
+					tempnophysics.add(checkblock);
+				}
+			}
+
+			Block affectedblock = location.clone().add(norm).getBlock();
+			if (EarthPassive.isPassiveSand(block)) {
+				EarthPassive.revertSand(block);
+			}
+			// if (block.getType() == Material.SAND) {
+			// block.setType(Material.SANDSTONE);
+			// }
+
+			if (affectedblock == null)
+				return false;
+			if (isTransparentToEarthbending(player, affectedblock)) {
+				if (throwplayer) {
+					for (Entity entity : getEntitiesAroundPoint(
+							affectedblock.getLocation(), 1.75)) {
+						if (entity instanceof LivingEntity) {
+							LivingEntity lentity = (LivingEntity) entity;
+							if (lentity.getEyeLocation().getBlockX() == affectedblock
+									.getX()
+									&& lentity.getEyeLocation().getBlockZ() == affectedblock
+									.getZ())
+								if (!(entity instanceof FallingBlock))
+									entity.setVelocity(norm.clone().multiply(
+											.75));
+						} else {
+							if (entity.getLocation().getBlockX() == affectedblock
+									.getX()
+									&& entity.getLocation().getBlockZ() == affectedblock
+									.getZ())
+								if (!(entity instanceof FallingBlock))
+									entity.setVelocity(norm.clone().multiply(
+											.75));
+						}
+					}
+
+				}
+
+				if (up) {
+					Block topblock = affectedblock.getRelative(BlockFace.UP);
+					if (topblock.getType() != Material.AIR) {
+						breakBlock(affectedblock);
+					} else if (!affectedblock.isLiquid()
+							&& affectedblock.getType() != Material.AIR) {
+						// affectedblock.setType(Material.GLASS);
+						moveEarthBlock(affectedblock, topblock);
+					}
+				} else {
+					breakBlock(affectedblock);
+				}
+
+				// affectedblock.setType(block.getType());
+				// affectedblock.setData(block.getData());
+				//
+				// addTempEarthBlock(block, affectedblock);
+				moveEarthBlock(block, affectedblock);
+				block.getWorld().playEffect(block.getLocation(),
+						Effect.GHAST_SHOOT, 0, 4);
+
+				for (double i = 1; i < chainlength; i++) {
+					affectedblock = location
+							.clone()
+							.add(negnorm.getX() * i, negnorm.getY() * i,
+									negnorm.getZ() * i).getBlock();
+					if (!isEarthbendable(player, affectedblock)) {
+						// verbose(affectedblock.getType());
+						if (down) {
+							if (isTransparentToEarthbending(player,
+									affectedblock)
+									&& !affectedblock.isLiquid()
+									&& affectedblock.getType() != Material.AIR) {
+								moveEarthBlock(affectedblock, block);
+							}
+						}
+						// if (!Tools.adjacentToThreeOrMoreSources(block)
+						// && Tools.isWater(block)) {
+						// block.setType(Material.AIR);
+						// } else {
+						// byte full = 0x0;
+						// block.setType(Material.WATER);
+						// block.setData(full);
+						// }
+						break;
+					}
+					if (EarthPassive.isPassiveSand(affectedblock)) {
+						EarthPassive.revertSand(affectedblock);
+					}
+					// if (affectedblock.getType() == Material.SAND) {
+					// affectedblock.setType(Material.SANDSTONE);
+					// }
+					if (block == null) {
+						for (Block checkblock : blocks) {
+							tempnophysics.remove(checkblock);
+						}
+						return false;
+					}
+					// block.setType(affectedblock.getType());
+					// block.setData(affectedblock.getData());
+					// addTempEarthBlock(affectedblock, block);
+					moveEarthBlock(affectedblock, block);
+					block = affectedblock;
+				}
+
+				int i = chainlength;
+				affectedblock = location
+						.clone()
+						.add(negnorm.getX() * i, negnorm.getY() * i,
+								negnorm.getZ() * i).getBlock();
+				if (!isEarthbendable(player, affectedblock)) {
+					if (down) {
+						if (isTransparentToEarthbending(player, affectedblock)
+								&& !affectedblock.isLiquid()) {
+							moveEarthBlock(affectedblock, block);
+						}
+					}
+				}
+
+			} else {
+				for (Block checkblock : blocks) {
+					tempnophysics.remove(checkblock);
+				}
+				return false;
+			}
+			for (Block checkblock : blocks) {
+				tempnophysics.remove(checkblock);
+			}
+			return true;
+		}
+		return false;
+	}
+
 
 	public static void moveEarthBlock(Block source, Block target) {
 		byte full = 0x0;
