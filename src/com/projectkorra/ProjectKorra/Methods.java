@@ -35,7 +35,6 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
-import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.WaterCore;
 
 public class Methods {
@@ -338,26 +337,27 @@ public class Methods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
-		if (TempBlock.isTempBlock(block)) return false;
+		if (TempBlock.isTempBlock(block))
+			return false;
 		int sources = 0;
 		byte full = 0x0;
-		BlockFace[] faces = {BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
-		for (BlockFace face: faces) {
+		BlockFace[] faces = { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH,
+				BlockFace.SOUTH };
+		for (BlockFace face : faces) {
 			Block blocki = block.getRelative(face);
-			/*
-			 * TODO : Checks for WaterManip and other abilities.
-			 */
-
-			if (isWater(block) && blocki.getData() == full) {
+			if ((blocki.getType() == Material.WATER || blocki.getType() == Material.STATIONARY_WATER)
+					&& blocki.getData() == full
+					&& WaterManipulation.canPhysicsChange(blocki))
 				sources++;
-			}
 			if (FreezeMelt.frozenblocks.containsKey(blocki)) {
-				if (FreezeMelt.frozenblocks.get(blocki) == full) sources++;
-			} else if (blocki.getType() == Material.ICE){
+				if (FreezeMelt.frozenblocks.get(blocki) == full)
+					sources++;
+			} else if (blocki.getType() == Material.ICE) {
 				sources++;
 			}
 		}
-		if (sources >= 2) return true;
+		if (sources >= 2)
+			return true;
 		return false;
 	}
 
@@ -662,8 +662,8 @@ public class Methods {
 	public static boolean moveEarth(Player player, Block block,
 			Vector direction, int chainlength, boolean throwplayer) {
 		if (isEarthbendable(player, block)) {
-//				&& !isRegionProtectedFromBuild(player, Abilities.RaiseEarth,
-//						block.getLocation())) {
+			//				&& !isRegionProtectedFromBuild(player, Abilities.RaiseEarth,
+			//						block.getLocation())) {
 
 			boolean up = false;
 			boolean down = false;

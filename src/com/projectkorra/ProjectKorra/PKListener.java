@@ -55,7 +55,9 @@ import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
+import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
+import com.projectkorra.ProjectKorra.firebending.Extinguish;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
@@ -180,6 +182,15 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Collapse")) {
 					new Collapse(player);
+				}
+			}
+			
+			if (Methods.isFireAbility(abil)) {
+				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
+					return;
+				}
+				if (abil.equalsIgnoreCase("HeatControl")) {
+					new Cook(player);
 				}
 			}
 		}
@@ -354,6 +365,9 @@ public class PKListener implements Listener {
 				
 				if (abil.equalsIgnoreCase("FireJet")) {
 					new FireJet(player);
+				}
+				if (abil.equalsIgnoreCase("HeatControl")) {
+					new Extinguish(player);
 				}
 			}
 		}

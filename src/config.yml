@@ -115,6 +115,15 @@ Abilities:
       Speed: 0.7
       Duration: 1500
       Cooldown: 6000
+    HeatControl:
+      Enabled: true
+      Description: "While this ability is selected, the firebender becomes impervious to fire damage and cannot be ignited. If the user left-clicks with this ability, the targeted area will be extinguished, although it will leave any creature burning engulfed in flames. This ability can also cool lava. If this ability is used while targeting ice or snow, it will instead melt blocks in that area. Finally, sneaking with this ability will cook any food in your hand."
+      Extinguish:
+        Range: 20
+        Radius: 7
+      Melt:
+        Range: 15
+        Radius: 5
   Chi:
     Passive:
       FallReductionFactor: 0.5

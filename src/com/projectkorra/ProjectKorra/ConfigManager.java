@@ -186,6 +186,18 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.FireJet.Duration", 1500);
 		config.addDefault("Abilities.Fire.FireJet.Cooldown", 6000);
 
+		config.addDefault("Abilities.Fire.HeatControl.Enabled", true);
+		config.addDefault("Abilities.Fire.HeatControl.Description", "While this ability is selected, the firebender becomes impervious "
+				+ "to fire damage and cannot be ignited. "
+				+ "If the user left-clicks with this ability, the targeted area will be "
+				+ "extinguished, although it will leave any creature burning engulfed in flames. "
+				+ "This ability can also cool lava. If this ability is used while targetting ice or snow, it"
+				+ " will instead melt blocks in that area. Finally, sneaking with this ability will cook any food in your hand.");
+		config.addDefault("Abilities.Fire.HeatControl.Extinguish.Range", 20);
+		config.addDefault("Abilities.Fire.HeatControl.Extinguish.Radius", 7);
+		config.addDefault("Abilities.Fire.HeatControl.Melt.Range", 15);
+		config.addDefault("Abilities.Fire.HeatControl.Melt.Radius", 5);
+
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Speed", 1);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Jump", 2);
