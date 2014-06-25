@@ -149,6 +149,19 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.Catapult.Speed", 12);
 		config.addDefault("Abilities.Earth.Catapult.Push", 5);
 
+		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
+		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "
+				+ "A column of earth will shoot upwards from that location. "
+				+ "Anything in the way of the column will be brought up with it, "
+				+ "leaving talented benders the ability to trap brainless entities up there. "
+				+ "Additionally, simply sneak (default shift) looking at an earthbendable block. "
+				+ "A wall of earth will shoot upwards from that location. "
+				+ "Anything in the way of the wall will be brought up with it. ");
+		config.addDefault("Abilities.Earth.RaiseEarth.Column.Height", 6);
+		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Range", 15);
+		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Height", 6);
+		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Width", 6);
+		
 		config.addDefault("Abilities.Fire.FireJet.Enabled", true);
 		config.addDefault("Abilities.Fire.FireJet.Description", "This ability is used for a limited burst of flight for firebenders. Clicking with this "
 				+ "ability selected will launch you in the direction you're looking, granting you "
