@@ -44,6 +44,7 @@ import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
+import com.projectkorra.ProjectKorra.airbending.AirScooter;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
@@ -272,6 +273,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("AirBurst")) {
 					AirBurst.coneBurst(player);
+				}
+				if (abil.equalsIgnoreCase("AirScooter")) {
+					new AirScooter(player);
 				}
 			}
 			if (Methods.isWaterAbility(abil)) {

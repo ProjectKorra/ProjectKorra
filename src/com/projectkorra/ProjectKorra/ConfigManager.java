@@ -81,6 +81,14 @@ public class ConfigManager {
 				+ "Additionally, having this ability selected when you land on the ground from a "
 				+ "large enough fall will create a burst of air around you.");
 		
+		config.addDefault("Abilities.Air.AirScooter.Enabled", true);
+		config.addDefault("Abilities.Air.AirScooter.Description", "AirScooter is a fast means of transportation. To use, sprint, jump then click with "
+				+ "this ability selected. You will hop on a scooter of air and be propelled forward "
+				+ "in the direction you're looking (you don't need to press anything). "
+				+ "This ability can be used to levitate above liquids, but it cannot go up steep slopes. "
+				+ "Any other actions will deactivate this ability.");
+		config.addDefault("Abilities.Air.AirScooter.Speed", .675);
+		
 		plugin.getConfig().addDefault("Abilities.Air.Tornado.Enabled", true);
 		plugin.getConfig().addDefault("Abilities.Air.Tornado.Description", "To use, simply sneak (default: shift). "
 				+ "This will create a swirling vortex at the targeted location. "
