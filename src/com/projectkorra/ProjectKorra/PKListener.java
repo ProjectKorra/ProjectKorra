@@ -50,8 +50,11 @@ import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
+import com.projectkorra.ProjectKorra.earthbending.Collapse;
+import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
@@ -174,6 +177,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("RaiseEarth")) {
 					new EarthWall(player);
+				}
+				if (abil.equalsIgnoreCase("Collapse")) {
+					new Collapse(player);
 				}
 			}
 		}
@@ -335,6 +341,10 @@ public class PKListener implements Listener {
 				
 				if (abil.equalsIgnoreCase("RaiseEarth")) {
 					new EarthColumn(player);
+				}
+				
+				if (abil.equalsIgnoreCase("Collapse")) {
+					new CompactColumn(player);
 				}
 			}
 			if (Methods.isFireAbility(abil)) {

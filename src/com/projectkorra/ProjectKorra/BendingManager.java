@@ -20,6 +20,7 @@ import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
+import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
@@ -93,6 +94,10 @@ public class BendingManager implements Runnable {
 			
 			for (int ID: EarthColumn.instances.keySet()) {
 				EarthColumn.progress(ID);
+			}
+			
+			for (int ID: CompactColumn.instances.keySet()) {
+				CompactColumn.progress(ID);
 			}
 			
 			FireStream.dissipateAll();

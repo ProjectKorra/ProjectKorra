@@ -64,7 +64,7 @@ Abilities:
       Height: 20
     Tornado: 
       Enabled: true
-      Description: "To use, simply sneak (default: shift). This will create a swirling vortex at the targeted lcoation. Any creature or object caught in the vortex will be launched up and out in some random direction. If another player gets caught in the vortex, the launching effect is minimal. Tornado can also be used to transport the user. If the user gets caught in his/her own tornado, his/her movements are much more manageable. Provided the user doesn't fall out of the vortex, it will take him to a maximum height and move him in the general direction he/she is looking. Skilled airbenders can scale anything with this ability."
+      Description: "To use, simply sneak (default: shift). This will create a swirling vortex at the targeted location. Any creature or object caught in the vortex will be launched up and out in some random direction. If another player gets caught in the vortex, the launching effect is minimal. Tornado can also be used to transport the user. If the user gets caught in his/her own tornado, his/her movements are much more manageable. Provided the user doesn't fall out of the vortex, it will take him to a maximum height and move him in the general direction he/she is looking. Skilled airbenders can scale anything with this ability."
       Radius: 10
       Height: 25
       Range: 25
@@ -93,6 +93,12 @@ Abilities:
       Length: 7
       Speed: 12
       Push: 5
+    Collapse:
+      Enabled: true
+      Description: "To use, simply left-click an earthbendable block. That block and the earthbendable blocks above it will be shoved back into the earth below, if they can. This ability does have the capacity to trap something inside of it, although it is incredibly difficult to do so. Additionally, press sneak with this ability to affect an area around your targeted location - all earth that can be moved downwards will be moved downwards. This ability is especially risky or deadly in caves, depending on the earthbender's goal and technique."
+      Range: 20
+      Radius: 7
+      Speed: 8
     RaiseEarth:
       Enabled: true
       Description: "To use, simply left-click on an earthbendable block. A column of earth will shoot upwards from that location. Anything in the way of the column will be brought up with it, leaving talented benders the ability to trap brainless entities up there. Additionally, simply sneak (default shift) looking at an earthbendable block. A wall of earth will shoot upwards from that location. Anything in the way of the wall will be brought up with it."

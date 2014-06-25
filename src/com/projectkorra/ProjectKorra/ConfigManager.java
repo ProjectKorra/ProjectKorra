@@ -135,9 +135,9 @@ public class ConfigManager {
 				+ "will remain on. If you try to spout over an area with no water, snow or ice, "
 				+ "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.");
 		config.addDefault("Abilities.Water.WaterSpout.Height", 20);
-		
+
 		plugin.getConfig().addDefault("Abilities.Earth.Passive.Duration", 2500);
-		
+
 		config.addDefault("Abilities.Earth.Catapult.Enabled", true);
 		config.addDefault("Abilities.Earth.Catapult.Description", "To use, left-click while looking in the direction you want to be launched. "
 				+ "A pillar of earth will jut up from under you and launch you in that direction - "
@@ -148,6 +148,20 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.Catapult.Length", 7);
 		config.addDefault("Abilities.Earth.Catapult.Speed", 12);
 		config.addDefault("Abilities.Earth.Catapult.Push", 5);
+
+		config.addDefault("Abilities.Earth.Collapse.Enabled", true);
+		config.addDefault("Abilities.Earth.Collapse.Description", " To use, simply left-click on an earthbendable block. "
+				+ "That block and the earthbendable blocks above it will be shoved "
+				+ "back into the earth below them, if they can. "
+				+ "This ability does have the capacity to trap something inside of it, "
+				+ "although it is incredibly difficult to do so. "
+				+ "Additionally, press sneak with this ability to affect an area around your targetted location - "
+				+ "all earth that can be moved downwards will be moved downwards. "
+				+ "This ability is especially risky or deadly in caves, depending on the "
+				+ "earthbender's goal and technique.");
+		config.addDefault("Abilities.Earth.Collapse.Range", 20);
+		config.addDefault("Abilities.Earth.Collapse.Radius", 7);
+		config.addDefault("Abilities.Earth.Collapse.Speed", 8);
 
 		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "
@@ -161,7 +175,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Range", 15);
 		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Height", 6);
 		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Width", 6);
-		
+
 		config.addDefault("Abilities.Fire.FireJet.Enabled", true);
 		config.addDefault("Abilities.Fire.FireJet.Description", "This ability is used for a limited burst of flight for firebenders. Clicking with this "
 				+ "ability selected will launch you in the direction you're looking, granting you "
