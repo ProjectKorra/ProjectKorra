@@ -1,5 +1,6 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -145,8 +146,8 @@ public class WaterManipulation {
 
 			}
 
-			BendingPlayer.getBendingPlayer(player).cooldown(
-					Abilities.WaterManipulation);
+//			BendingPlayer.getBendingPlayer(player).cooldown(
+//					Abilities.WaterManipulation);
 
 		}
 	}

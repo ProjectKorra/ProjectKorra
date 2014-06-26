@@ -33,6 +33,8 @@ import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.Torrent;
+import com.projectkorra.ProjectKorra.waterbending.TorrentBurst;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
@@ -87,6 +89,8 @@ public class BendingManager implements Runnable {
 			OctopusForm.progressAll();
 			AirBubble.handleBubbles(Bukkit.getServer());
 			Illumination.manage(Bukkit.getServer());
+			Torrent.progressAll();
+			TorrentBurst.progressAll();
 			for (int ID: Tornado.instances.keySet()) {
 				Tornado.progress(ID);
 			}

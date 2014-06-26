@@ -67,6 +67,7 @@ import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.Melt;
 import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
+import com.projectkorra.ProjectKorra.waterbending.Torrent;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
@@ -191,6 +192,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Surge")) {
 					WaterWall.form(player);
+				}
+				if (abil.equalsIgnoreCase("Torrent")) {
+					Torrent.create(player);
 				}
 			}
 
@@ -375,6 +379,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Surge")) {
 					new WaterWall(player);
+				}
+				if (abil.equalsIgnoreCase("Torrent")) {
+					new Torrent(player);
 				}
 			}
 
