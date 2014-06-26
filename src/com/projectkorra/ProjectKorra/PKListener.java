@@ -47,6 +47,7 @@ import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
 import com.projectkorra.ProjectKorra.airbending.AirScooter;
+import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
@@ -164,6 +165,11 @@ public class PKListener implements Listener {
 		}
 
 		if (!player.isSneaking() && Methods.canBend(player.getName(), abil)) {
+			
+			if (abil.equalsIgnoreCase("AirShield")) {
+				new AirShield(player);
+			}
+			
 			if (Methods.isAirAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;

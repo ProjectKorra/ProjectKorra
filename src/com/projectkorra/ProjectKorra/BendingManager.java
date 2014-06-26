@@ -17,6 +17,7 @@ import com.projectkorra.ProjectKorra.airbending.AirBubble;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
 import com.projectkorra.ProjectKorra.airbending.AirPassive;
 import com.projectkorra.ProjectKorra.airbending.AirScooter;
+import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
@@ -144,7 +145,11 @@ public class BendingManager implements Runnable {
 			for (int ID : IceSpike.instances.keySet()) {
 				IceSpike.instances.get(ID).progress();
 			}
-			
+
+			for (int ID : AirShield.instances.keySet()) {
+				AirShield.progress(ID);
+			}
+
 			Shockwave.progressAll();
 
 			IceSpike2.progressAll();

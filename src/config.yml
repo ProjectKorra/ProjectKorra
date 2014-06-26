@@ -62,6 +62,10 @@ Abilities:
       Enabled: true
       Description: "AirScooter is a fast means of transportation. To use, sprint, jump then click with this ability selected. YOu will hop on a scooter of air and be propelled forward in the direction you're looking (you don't need to press anything). This ability can be used to levitate above liquids, but it cannot go up steep slopes. Any other actions will deactivate this ability."
       Speed: 0.675
+    AirShield:
+      Enabled: true
+      Description: "Air Shield is one of the most powerful defensive techniques in existence. To use, simply sneak (default: shift). This will create a whirlwind of air around the user, with a small pocket of safe space in the center. This wind will deflect all projectiles and will prevent any creature from entering it for as long as its maintained."
+      Radius: 7
     AirSpout:
       Enabled: true
       Description: "This ability gives the airbender limited sustained levitation. It is a toggle - click to activate and form a whirling spout of air beneath you, lifting you up. You can bend other abilities while using AirSpout. Click again to deactivate this ability."

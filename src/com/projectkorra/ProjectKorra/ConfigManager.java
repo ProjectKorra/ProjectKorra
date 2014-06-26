@@ -105,6 +105,15 @@ public class ConfigManager {
 				+ "the general direction he's looking. Skilled airbenders can scale anything "
 				+ "with this ability.");
 
+		config.addDefault("Abilities.Air.AirShield.Enabled", true);
+		config.addDefault("Abilities.Air.AirShield.Description", "Air Shield is one of the most powerful defensive techniques in existence. "
+				+ "To use, simply sneak (default: shift). "
+				+ "This will create a whirlwind of air around the user, "
+				+ "with a small pocket of safe space in the center. "
+				+ "This wind will deflect all projectiles and will prevent any creature from "
+				+ "entering it for as long as its maintained.");
+		config.addDefault("Abilities.Air.AirShield.Radius", 7);
+
 		config.addDefault("Abilities.Air.AirSpout.Enabled", true);
 		config.addDefault("Abilities.Air.AirSpout.Description", "This ability gives the airbender limited sustained levitation. It is a "
 				+ "toggle - click to activate and form a whirling spout of air "
