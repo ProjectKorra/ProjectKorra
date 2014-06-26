@@ -64,7 +64,7 @@ import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.Melt;
-import com.projectkorra.ProjectKorra.waterbending.WaterCore;
+import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
@@ -176,7 +176,9 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					new Bloodbending(player);
 				}
-
+				if (abil.equalsIgnoreCase("OctopusForm")) {
+					OctopusForm.form(player);
+				}
 				if (abil.equalsIgnoreCase("PhaseChange")) {
 					new Melt(player);
 				}
@@ -351,6 +353,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					Bloodbending.launch(player);
+				}
+				if (abil.equalsIgnoreCase("OctopusForm")) {
+					new OctopusForm(player);
 				}
 				if (abil.equalsIgnoreCase("PhaseChange")) {
 					new FreezeMelt(player);

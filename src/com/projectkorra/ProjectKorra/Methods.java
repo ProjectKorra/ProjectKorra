@@ -36,7 +36,6 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
-import com.projectkorra.ProjectKorra.waterbending.WaterCore;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 public class Methods {
@@ -572,7 +571,7 @@ public class Methods {
 		boolean adjacent = false;
 		if (Methods.isAbilityInstalled("PhaseChange", "orion304")) {
 			for (BlockFace face : faces) {
-				if (WaterCore.frozenblocks.containsKey((block.getRelative(face))))
+				if (FreezeMelt.frozenblocks.containsKey((block.getRelative(face))))
 					adjacent = true;
 			}
 		}

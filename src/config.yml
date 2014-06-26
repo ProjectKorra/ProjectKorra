@@ -78,9 +78,12 @@ Abilities:
       Description: "This ability was made illegal for a reason. With this ability selected, sneak while targeting something and you will bloodbend that target. Bloodbent targets cannot move, bend, or attack. You are free to control their actions by looking elsewhere - they will be forced to move in that direciton. Additionally, clicking while bloodbending will launch that target off in the direction you're looking. People who are capable of bloodbending are immune to technique, and you are immune to theirs.";
       ThrowFactor: 2
       Range: 10
+    OctopusForm:
+      Enabled: true
+      Description: "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. To use, click to select a water source. Then, hold sneak to channel this ability. While channleing, the water will form itself around you and has a chance to block incoming attacks. Additionally, you can click while channeling to attack things near you, dealing damage and knocking the target back. Releasing shift at any time will dissipate the form."
     PhaseChange:
       Enabled: true
-      Description: To use, simply left-click. Any water you are looking at within range will instantly freeze over into solid ice. Provided you stay within range of the ice and do not unbind FreezeMelt, that ice will not thaw. If, however, you do either of those things the ice will instantly thaw. If you sneak (default: shift), anything around where you are looking at will instantly melt. Since this is a more favorable state for these things, they will never re-freeze unless they would otherwise by nature or some other bending ability. Additionally, if you tap sneak while targeting water with FreezeMelt, it will evaporate water around that block that is above sea level."
+      Description: "To use, simply left-click. Any water you are looking at within range will instantly freeze over into solid ice. Provided you stay within range of the ice and do not unbind FreezeMelt, that ice will not thaw. If, however, you do either of those things the ice will instantly thaw. If you sneak (default: shift), anything around where you are looking at will instantly melt. Since this is a more favorable state for these things, they will never re-freeze unless they would otherwise by nature or some other bending ability. Additionally, if you tap sneak while targeting water with FreezeMelt, it will evaporate water around that block that is above sea level."
       Range: 20
       Radius: 5
     Plantbending:
