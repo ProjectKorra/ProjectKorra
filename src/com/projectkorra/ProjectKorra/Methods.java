@@ -581,12 +581,11 @@ public class Methods {
 		BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH,
 				BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
 		boolean adjacent = false;
-		if (Methods.isAbilityInstalled("PhaseChange", "orion304")) {
-			for (BlockFace face : faces) {
-				if (FreezeMelt.frozenblocks.containsKey((block.getRelative(face))))
-					adjacent = true;
-			}
+		for (BlockFace face : faces) {
+			if (FreezeMelt.frozenblocks.containsKey((block.getRelative(face))))
+				adjacent = true;
 		}
+
 		return adjacent;
 	}
 
