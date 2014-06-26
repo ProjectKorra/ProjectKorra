@@ -121,6 +121,13 @@ public class ConfigManager {
 				+ "Click again to deactivate this ability.");
 		config.addDefault("Abilities.Air.AirSpout.Height", 20);
 
+		config.addDefault("Abilities.Air.AirSuction.Enabled", true);
+		config.addDefault("Abilities.Air.AirSuction.Description", "To use, simply left-click in a direction. A gust of wind will originate as far as it can in that direction and flow towards you, sucking anything in its path harmlessly with it. Skilled benders can use this technique to pull items from precarious locations. Additionally, tapping sneak will change the origin of your next AirSuction to your targeted location.");
+		config.addDefault("Abilities.Air.AirSuction.Speed", 25);
+		config.addDefault("Abilities.Air.AirSuction.Range", 20);
+		config.addDefault("Abilities.Air.AirSuction.Radius", 2);
+		config.addDefault("Abilities.Air.AirSuction.Push", 3.5);
+
 		config.addDefault("Abilities.Air.Tornado.Radius", 10);
 		config.addDefault("Abilities.Air.Tornado.Height", 25);
 		config.addDefault("Abilities.Air.Tornado.Range", 25);
