@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
+import com.projectkorra.ProjectKorra.airbending.AirBubble;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
 import com.projectkorra.ProjectKorra.airbending.AirPassive;
 import com.projectkorra.ProjectKorra.airbending.AirScooter;
@@ -81,6 +82,7 @@ public class BendingManager implements Runnable {
 			Cook.progressAll();
 			FreezeMelt.handleFrozenBlocks();
 			OctopusForm.progressAll();
+			AirBubble.handleBubbles(Bukkit.getServer());
 			for (int ID: Tornado.instances.keySet()) {
 				Tornado.progress(ID);
 			}

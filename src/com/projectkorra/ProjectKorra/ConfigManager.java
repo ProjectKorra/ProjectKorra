@@ -73,6 +73,9 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirBlast.Radius", 2);
 		config.addDefault("Abilities.Air.AirBlast.Push", 3.5);
 
+		config.addDefault("Abilities.Air.AirBubble.Enabled", true);
+		config.addDefault("Abilities.Air.AirBubble.Description", "To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
+		config.addDefault("Abilities.Air.AirBubble.Radius", 7);
 		config.addDefault("Abilities.Air.AirBurst.Enabled", true);
 		config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. "
 				+ "To use, press and hold sneak to charge your burst. "
@@ -126,6 +129,13 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 		config.addDefault("Abilities.Water.Bloodbending.Range", 10);
 
+		config.addDefault("Abilities.Water.OctopusForm.Enabled", true);
+		config.addDefault("Abilities.Water.OctopusForm.Description", "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. "
+				+ "To use, click to select a water source. Then, hold sneak to channel this ability. "
+				+ "While channeling, the water will form itself around you and has a chance to block incoming attacks. "
+				+ "Additionally, you can click while channeling to attack things near you, dealing damage and knocking them back. "
+				+ "Releasing shift at any time will dissipate the form.");
+		
 		config.addDefault("Abilities.Water.PhaseChange.Enabled", true);
 		config.addDefault("Abilities.Water.PhaseChange.Description", "To use, simply left-click. "
 				+ "Any water you are looking at within range will instantly freeze over into solid ice. "
@@ -141,6 +151,10 @@ public class ConfigManager {
 
 		plugin.getConfig().addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 
+		config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
+		config.addDefault("Abilities.Water.WaterBubble.Description","To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
+		config.addDefault("Abilities.Water.WaterBubble.Radius", 7);
+		
 		config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
 		config.addDefault("Abilities.Water.WaterSpout.Description", "To use this ability, click while over or in water. "
 				+ "You will spout water up from beneath you to experience controlled levitation. "
