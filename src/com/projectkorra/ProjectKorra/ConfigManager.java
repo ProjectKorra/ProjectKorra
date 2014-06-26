@@ -136,7 +136,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirSwipe.Push", 1);
 		config.addDefault("Abilities.Air.AirSwipe.Arc", 20);
 		config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
-		
+
 		config.addDefault("Abilities.Air.Tornado.Radius", 10);
 		config.addDefault("Abilities.Air.Tornado.Height", 25);
 		config.addDefault("Abilities.Air.Tornado.Range", 25);
@@ -154,6 +154,16 @@ public class ConfigManager {
 				+ "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
 		config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 		config.addDefault("Abilities.Water.Bloodbending.Range", 10);
+
+		config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
+		config.addDefault("Abilities.Water.HealingWaters.Description", "To use, the bender must be at least partially submerged in water. "
+				+ "If the user is not sneaking, this ability will automatically begin "
+				+ "working provided the user has it selected. If the user is sneaking, "
+				+ "he/she is channeling the healing to their target in front of them. "
+				+ "In order for this channel to be successful, the user and the target must "
+				+ "be at least partially submerged in water.");
+		config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
+		config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
 
 		config.addDefault("Abilities.Water.IceSpike.Enabled", true);
 		config.addDefault("Abilities.Water.IceSpike.Description", "This ability has many functions. Clicking while targetting ice, or an entity over some ice, "

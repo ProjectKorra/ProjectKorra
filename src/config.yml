@@ -99,9 +99,14 @@ Abilities:
       SwimSpeedFactor: 0.7
     Bloodbending:
       Enabled: true
-      Description: "This ability was made illegal for a reason. With this ability selected, sneak while targeting something and you will bloodbend that target. Bloodbent targets cannot move, bend, or attack. You are free to control their actions by looking elsewhere - they will be forced to move in that direciton. Additionally, clicking while bloodbending will launch that target off in the direction you're looking. People who are capable of bloodbending are immune to technique, and you are immune to theirs."
+      Description: "This ability was made illegal for a reason. With this ability selected, sneak while targeting something and you will bloodbend that target. Bloodbent targets cannot move, bend, or attack. You are free to control their actions by looking elsewhere - they will be forced to move in that direction. Additionally, clicking while bloodbending will launch that target off in the direction you're looking. People who are capable of bloodbending are immune to technique, and you are immune to theirs."
       ThrowFactor: 2
       Range: 10
+    HealingWaters:
+      Enabled: true
+      Description: "To use, the bender must be at least partially submerged in water. If the user is not sneaking, this ability will automatically begin working provided the user has it selected. If the user is sneaking, he/she is channeling the healing to their target in front of them. In order for this channel to be successful, the user and the target must be at least partially submerged in water."
+      Radius: 5
+      Interval: 750
     IceSpike:
       Enabled: true
       Description: "This ability has many functions. Clicking while targetting ice, or an entity over some ice, will raise a spike of ice up, damaging and slowing the target. Tapping sneak (default: shift) while selecting a water source will select that source that can be fired with a click. Firing this will launch a spike of ice at your target, dealing a bit of damage and slowing the target. If you sneak (shift) will not selecting a source, many ice spikes will erupt from around you, damaging and slowing those targets."

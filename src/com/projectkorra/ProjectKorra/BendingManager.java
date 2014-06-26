@@ -38,6 +38,7 @@ import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
+import com.projectkorra.ProjectKorra.waterbending.HealingWaters;
 import com.projectkorra.ProjectKorra.waterbending.IceSpike;
 import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
 import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
@@ -103,6 +104,7 @@ public class BendingManager implements Runnable {
 			FireBlast.progressAll();
 			AirSuction.progressAll();
 			Fireball.progressAll();
+			HealingWaters.heal(Bukkit.getServer());
 			for (int ID: AirSwipe.instances.keySet()) {
 				AirSwipe.progress(ID);
 			}
