@@ -31,6 +31,8 @@ import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
+import com.projectkorra.ProjectKorra.waterbending.IceSpike;
+import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
 import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.Torrent;
@@ -128,6 +130,12 @@ public class BendingManager implements Runnable {
 			for (int ID : Wave.instances.keySet()) {
 				Wave.progress(ID);
 			}
+
+			for (int ID : IceSpike.instances.keySet()) {
+				IceSpike.instances.get(ID).progress();
+			}
+
+			IceSpike2.progressAll();
 
 			FireStream.dissipateAll();
 		} catch (Exception e) {

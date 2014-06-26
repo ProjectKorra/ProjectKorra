@@ -17,6 +17,7 @@ public class BendingPlayer {
 	HashMap<Integer, String> abilities;
 	boolean permaRemoved;
 	boolean isToggled;
+	private long slowTime = 0;
 	
 	public BendingPlayer(UUID uuid, String player, ArrayList<Element> elements, HashMap<Integer, String> abilities, boolean permaRemoved) {
 		this.uuid = uuid;
@@ -61,4 +62,12 @@ public class BendingPlayer {
 		this.elements.clear();
 		this.elements.add(e);
 	} 
+	
+	public boolean canBeSlowed() {
+		return (System.currentTimeMillis() > slowTime);
+	}
+	
+	public void slow(long cooldown) {
+		slowTime = System.currentTimeMillis() + cooldown;
+	}
 }

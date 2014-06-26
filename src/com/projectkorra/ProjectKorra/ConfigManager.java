@@ -130,6 +130,19 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 		config.addDefault("Abilities.Water.Bloodbending.Range", 10);
 
+		config.addDefault("Abilities.Water.IceSpike.Enabled", true);
+		config.addDefault("Abilities.Water.IceSpike.Description", "This ability has many functions. Clicking while targetting ice, or an entity over some ice, "
+				+ "will raise a spike of ice up, damaging and slowing the target. Tapping sneak (shift) while"
+				+ " selecting a water source will select that source that can then be fired with a click. Firing"
+				+ " this will launch a spike of ice at your target, dealing a bit of damage and slowing the target. "
+				+ "If you sneak (shift) while not selecting a source, many ice spikes will erupt from around you, "
+				+ "damaging and slowing those targets.");
+		config.addDefault("Abilities.Water.IceSpike.Cooldown", 2000);
+		config.addDefault("Abilities.Water.IceSpike.Damage", 2);
+		config.addDefault("Abilities.Water.IceSpike.Range", 20);
+		config.addDefault("Abilities.Water.IceSpike.ThrowingMult", 0.7);
+		config.addDefault("Abilities.Water.IceSpike.Height", 6);
+		
 		config.addDefault("Abilities.Water.OctopusForm.Enabled", true);
 		config.addDefault("Abilities.Water.OctopusForm.Description", "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. "
 				+ "To use, click to select a water source. Then, hold sneak to channel this ability. "
@@ -160,7 +173,7 @@ public class ConfigManager {
 
 		config.addDefault("Abilities.Water.Torrent.Enabled", true);
 		config.addDefault("Abilities.Water.Torrent.Description", "Torrent is one of the strongest moves in a waterbender's arsenal. To use, first click a source block to select it; then hold shift to begin streaming the water around you. Water flowing around you this way will damage and knock back nearby enemies and projectiles. If you release shift during this, you will create a large wave that expands outwards from you, launching anything in its path back. Instead, if you click you release the water and channel it to flow towards your cursor. Anything caught in the blast will be tossed about violently and take damage. Finally, if you click again when the water is torrenting, it will freeze the area around it when it is obstructed.");
-		
+
 		plugin.getConfig().addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 
 		config.addDefault("Abilities.Water.WaterBubble.Enabled", true);

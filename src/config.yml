@@ -82,6 +82,14 @@ Abilities:
       Description: "This ability was made illegal for a reason. With this ability selected, sneak while targeting something and you will bloodbend that target. Bloodbent targets cannot move, bend, or attack. You are free to control their actions by looking elsewhere - they will be forced to move in that direciton. Additionally, clicking while bloodbending will launch that target off in the direction you're looking. People who are capable of bloodbending are immune to technique, and you are immune to theirs.";
       ThrowFactor: 2
       Range: 10
+    IceSpike:
+      Enabled: true
+      Description: "This ability has many functions. Clicking while targetting ice, or an entity over some ice, will raise a spike of ice up, damaging and slowing the target. Tapping sneak (default: shift) while selecting a water source will select that source that can be fired with a click. Firing this will launch a spike of ice at your target, dealing a bit of damage and slowing the target. If you sneak (shift) will not selecting a source, many ice spikes will erupt from around you, damaging and slowing those targets."
+      Cooldown: 2000
+      Damage: 2
+      Range: 20
+      ThrowingMult: 0.7
+      Height: 6
     OctopusForm:
       Enabled: true
       Description: "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. To use, click to select a water source. Then, hold sneak to channel this ability. While channleing, the water will form itself around you and has a chance to block incoming attacks. Additionally, you can click while channeling to attack things near you, dealing damage and knocking the target back. Releasing shift at any time will dissipate the form."
