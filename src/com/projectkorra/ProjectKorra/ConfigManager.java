@@ -246,6 +246,15 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Height", 6);
 		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Width", 6);
 
+		config.addDefault("Abilities.Earth.Shockwave.Enabled", true);
+		config.addDefault("Abilities.Earth.Shockwave.Description", "This is one of the most powerful moves in the earthbender's arsenal. "
+				+ "To use, you must first charge it by holding sneak (default: shift). "
+				+ "Once charged, you can release sneak to create an enormous shockwave of earth, "
+				+ "disturbing all earth around you and expanding radially outwards. "
+				+ "Anything caught in the shockwave will be blasted back and dealt damage. "
+				+ "If you instead click while charged, the disruption is focused in a cone in front of you. "
+				+ "Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave.");
+
 		config.addDefault("Abilities.Fire.FireBlast.Enabled", true);
 		config.addDefault("Abilities.Fire.FireBlast.Description","FireBlast is the most fundamental bending technique of a firebender. "
 				+ "To use, simply left-click in a direction. A blast of fire will be created at your fingertips. "

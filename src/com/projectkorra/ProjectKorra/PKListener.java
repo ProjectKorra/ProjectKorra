@@ -58,6 +58,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
+import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
 import com.projectkorra.ProjectKorra.firebending.Extinguish;
@@ -217,6 +218,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Collapse")) {
 					new Collapse(player);
+				}
+				if (abil.equalsIgnoreCase("Shockwave")) {
+					new Shockwave(player);
 				}
 			}
 
@@ -458,6 +462,9 @@ public class PKListener implements Listener {
 
 				if (abil.equalsIgnoreCase("Collapse")) {
 					new CompactColumn(player);
+				}
+				if (abil.equalsIgnoreCase("Shockwave")) {
+					Shockwave.coneShockwave(player);
 				}
 			}
 			if (Methods.isFireAbility(abil)) {
