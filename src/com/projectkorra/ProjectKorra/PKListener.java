@@ -70,6 +70,8 @@ import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
+import com.projectkorra.ProjectKorra.waterbending.WaterWall;
+import com.projectkorra.ProjectKorra.waterbending.Wave;
 
 public class PKListener implements Listener {
 
@@ -186,6 +188,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("WaterManipulation")) {
 					new WaterManipulation(player);
+				}
+				if (abil.equalsIgnoreCase("Surge")) {
+					WaterWall.form(player);
 				}
 			}
 
@@ -367,6 +372,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("WaterManipulation")) {
 					WaterManipulation.moveWater(player);
+				}
+				if (abil.equalsIgnoreCase("Surge")) {
+					new WaterWall(player);
 				}
 			}
 

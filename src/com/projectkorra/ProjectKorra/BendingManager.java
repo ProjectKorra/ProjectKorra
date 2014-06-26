@@ -36,6 +36,8 @@ import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
+import com.projectkorra.ProjectKorra.waterbending.WaterWall;
+import com.projectkorra.ProjectKorra.waterbending.Wave;
 
 public class BendingManager implements Runnable {
 
@@ -43,7 +45,7 @@ public class BendingManager implements Runnable {
 
 	long time;
 	long interval;
-	
+
 	ArrayList<World> worlds = new ArrayList<World>();
 	ConcurrentHashMap<World, Boolean> nights = new ConcurrentHashMap<World, Boolean>();
 	ConcurrentHashMap<World, Boolean> days = new ConcurrentHashMap<World, Boolean>();
@@ -63,7 +65,7 @@ public class BendingManager implements Runnable {
 			interval = System.currentTimeMillis() - time;
 			time = System.currentTimeMillis();
 			ProjectKorra.time_step = interval;
-			
+
 			AvatarState.manageAvatarStates();
 			AirBlast.progressAll();
 			AirPassive.handlePassive(Bukkit.getServer());
@@ -88,40 +90,48 @@ public class BendingManager implements Runnable {
 			for (int ID: Tornado.instances.keySet()) {
 				Tornado.progress(ID);
 			}
-			
+
 			for (int id: FireStream.instances.keySet()) {
 				FireStream.progress(id);
 			}
-			
+
 			for (Block block: FireStream.ignitedblocks.keySet()) {
 				if (block.getType() != Material.FIRE) {
 					FireStream.ignitedblocks.remove(block);
 				}
 			}
-			
+
 			for (int ID: Catapult.instances.keySet()) {
 				Catapult.progress(ID);
 			}
-			
+
 			for (int ID: EarthColumn.instances.keySet()) {
 				EarthColumn.progress(ID);
 			}
-			
+
 			for (int ID: CompactColumn.instances.keySet()) {
 				CompactColumn.progress(ID);
 			}
-			
+
 			for (int ID: WaterManipulation.instances.keySet()) {
 				WaterManipulation.progress(ID);
 			}
-			
+
+			for (int ID: WaterWall.instances.keySet()) {
+				WaterWall.progress(ID);
+			}
+
+			for (int ID : Wave.instances.keySet()) {
+				Wave.progress(ID);
+			}
+
 			FireStream.dissipateAll();
 		} catch (Exception e) {
 			Methods.stopBending();
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void handleDayNight() {
 		for (World world: plugin.getServer().getWorlds()) {
 			if (world.getWorldType() == WorldType.NORMAL && !worlds.contains(world)) {
@@ -146,7 +156,7 @@ public class BendingManager implements Runnable {
 				}
 				days.replace(world, true);
 			}
-			
+
 			if (!Methods.isDay(world) && day) {
 				for (Player player: world.getPlayers()) {
 					if (Methods.isBender(player.getName(), Element.Fire) && player.hasPermission("bending.message.daymessage")) {
@@ -155,7 +165,7 @@ public class BendingManager implements Runnable {
 				}
 				days.replace(world, false);
 			}
-			
+
 			if (Methods.isNight(world) && !night) {
 				for (Player player: world.getPlayers()) {
 					if (Methods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
@@ -164,7 +174,7 @@ public class BendingManager implements Runnable {
 				}
 				nights.replace(world, true);
 			}
-			
+
 			if (!Methods.isNight(world) && night) {
 				for (Player player: world.getPlayers()) {
 					if (Methods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
@@ -174,10 +184,10 @@ public class BendingManager implements Runnable {
 				nights.replace(world, false);
 			}
 		}
-		
+
 		for (World world: removeworlds) {
 			worlds.remove(world);
 		}
-		
+
 	}
 }
