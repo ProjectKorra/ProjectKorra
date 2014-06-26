@@ -76,6 +76,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirBubble.Enabled", true);
 		config.addDefault("Abilities.Air.AirBubble.Description", "To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
 		config.addDefault("Abilities.Air.AirBubble.Radius", 7);
+
 		config.addDefault("Abilities.Air.AirBurst.Enabled", true);
 		config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. "
 				+ "To use, press and hold sneak to charge your burst. "
@@ -135,7 +136,7 @@ public class ConfigManager {
 				+ "While channeling, the water will form itself around you and has a chance to block incoming attacks. "
 				+ "Additionally, you can click while channeling to attack things near you, dealing damage and knocking them back. "
 				+ "Releasing shift at any time will dissipate the form.");
-		
+
 		config.addDefault("Abilities.Water.PhaseChange.Enabled", true);
 		config.addDefault("Abilities.Water.PhaseChange.Description", "To use, simply left-click. "
 				+ "Any water you are looking at within range will instantly freeze over into solid ice. "
@@ -154,7 +155,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
 		config.addDefault("Abilities.Water.WaterBubble.Description","To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
 		config.addDefault("Abilities.Water.WaterBubble.Radius", 7);
-		
+
 		config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
 		config.addDefault("Abilities.Water.WaterSpout.Description", "To use this ability, click while over or in water. "
 				+ "You will spout water up from beneath you to experience controlled levitation. "
@@ -224,6 +225,14 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.HeatControl.Extinguish.Radius", 7);
 		config.addDefault("Abilities.Fire.HeatControl.Melt.Range", 15);
 		config.addDefault("Abilities.Fire.HeatControl.Melt.Radius", 5);
+
+		config.addDefault("Abilities.Fire.Illumination.Enabled", true);
+		config.addDefault("Abilities.Fire.Illumination.Description", "This ability gives firebenders a means of illuminating the area. It is a toggle - clicking "
+				+ "will create a torch that follows you around. The torch will only appear on objects that are "
+				+ "ignitable and can hold a torch (e.g. not leaves or ice). If you get too far away from the torch, "
+				+ "it will disappear, but will reappear when you get on another ignitable block. Clicking again "
+				+ "dismisses this torch.");
+		config.addDefault("Abilities.Fire.Illumination.Range", 5);
 
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Speed", 1);

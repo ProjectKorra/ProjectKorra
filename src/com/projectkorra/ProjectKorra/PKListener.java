@@ -62,6 +62,7 @@ import com.projectkorra.ProjectKorra.firebending.Enflamed;
 import com.projectkorra.ProjectKorra.firebending.Extinguish;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
+import com.projectkorra.ProjectKorra.firebending.Illumination;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.Melt;
@@ -395,6 +396,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("HeatControl")) {
 					new Extinguish(player);
+				}
+				if (abil.equalsIgnoreCase("Illumination")) {
+					new Illumination(player);
 				}
 			}
 		}
