@@ -19,6 +19,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 

@@ -54,6 +54,7 @@ import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.Collapse;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
+import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
@@ -208,6 +209,9 @@ public class PKListener implements Listener {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
 					return;
 				}
+				if (abil.equalsIgnoreCase("EarthBlast")) {
+					new EarthBlast(player);
+				}
 				if (abil.equalsIgnoreCase("RaiseEarth")) {
 					new EarthWall(player);
 				}
@@ -290,6 +294,45 @@ public class PKListener implements Listener {
 		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
 			event.setCancelled(true);
 	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onEntityExplode(EntityExplodeEvent event) {
+		for (Block block : event.blockList()) {
+			EarthBlast blast = EarthBlast.getBlastFromSource(block);
+
+			if (blast != null) {
+				blast.cancel();
+			}
+			if (FreezeMelt.frozenblocks.containsKey(block)) {
+				FreezeMelt.thaw(block);
+			}
+			// if (WalkOnWater.affectedblocks.containsKey(block)) {
+			// WalkOnWater.thaw(block);
+			// }
+			if (WaterWall.wallblocks.containsKey(block)) {
+				block.setType(Material.AIR);
+			}
+			if (!Wave.canThaw(block)) {
+				Wave.thaw(block);
+			}
+			if (Methods.movedearth.containsKey(block)) {
+				// Tools.removeEarthbendedBlockIndex(block);
+				Methods.removeRevertIndex(block);
+			}
+		}
+
+		// if (event.getEntity() == null) {
+		// Plugin ch = Bukkit.getPluginManager().getPlugin("CreeperHeal");
+		// if (ch != null) {
+		// CreeperHeal creeperheal = (CreeperHeal) Bukkit
+		// .getPluginManager().getPlugin("CreeperHeal");
+		// creeperheal
+		// .recordBlocks(event.blockList(), event.getLocation());
+		// }
+		// }
+
+	}
+
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityExplodeEvent(EntityExplodeEvent event) {
@@ -403,6 +446,10 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Catapult")) {
 					new Catapult(player);
+				}
+
+				if (abil.equalsIgnoreCase("EarthBlast")) {
+					EarthBlast.throwEarth(player);
 				}
 
 				if (abil.equalsIgnoreCase("RaiseEarth")) {

@@ -105,6 +105,10 @@ public class BendingManager implements Runnable {
 				FireStream.progress(id);
 			}
 
+			for (int ID : EarthBlast.instances.keySet()) {
+				EarthBlast.progress(ID);
+			}
+
 			for (Block block: FireStream.ignitedblocks.keySet()) {
 				if (block.getType() != Material.FIRE) {
 					FireStream.ignitedblocks.remove(block);

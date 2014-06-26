@@ -215,6 +215,24 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.Collapse.Radius", 7);
 		config.addDefault("Abilities.Earth.Collapse.Speed", 8);
 
+		config.addDefault("Abilities.Earth.EarthBlast.Enabled", true);
+		config.addDefault("Abilities.Earth.EarthBlast.Description", "To use, place your cursor over an earthbendable object (dirt, rock, ores, etc) "
+				+ "and tap sneak (default: shift). The object will temporarily turn to stone, "
+				+ "indicating that you have it focused as the source for your ability. "
+				+ "After you have selected an origin (you no longer need to be sneaking), "
+				+ "simply left-click in any direction and you will see your object launch "
+				+ "off in that direction, smashing into any creature in its path. If you look "
+				+ "towards a creature when you use this ability, it will target that creature. "
+				+ "A collision from Earth Blast both knocks the target back and deals some damage. "
+				+ "You cannot have multiple of these abilities flying at the same time.");
+		config.addDefault("Abilities.Earth.EarthBlast.CanHitSelf", false);
+		config.addDefault("Abilities.Earth.EarthBlast.PrepareRange", 7);
+		config.addDefault("Abilities.Earth.EarthBlast.Range", 20);
+		config.addDefault("Abilities.Earth.EarthBlast.Speed", 35);
+		config.addDefault("Abilities.Earth.EarthBlast.Revert", true);
+		config.addDefault("Abilities.Earth.Earthblast.Damage", 4);
+		config.addDefault("Abilities.Earth.EarthBlast.Push", 0.3);
+
 		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "
 				+ "A column of earth will shoot upwards from that location. "
