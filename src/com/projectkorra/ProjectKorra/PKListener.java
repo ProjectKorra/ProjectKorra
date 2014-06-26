@@ -60,8 +60,10 @@ import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
 import com.projectkorra.ProjectKorra.firebending.Extinguish;
+import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
+import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
@@ -217,6 +219,9 @@ public class PKListener implements Listener {
 			if (Methods.isFireAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
+				}
+				if (abil.equalsIgnoreCase("FireBlast")) {
+					new Fireball(player);
 				}
 				if (abil.equalsIgnoreCase("HeatControl")) {
 					new Cook(player);
@@ -413,6 +418,9 @@ public class PKListener implements Listener {
 					return;
 				}
 
+				if (abil.equalsIgnoreCase("FireBlast")) {
+					new FireBlast(player);
+				}
 				if (abil.equalsIgnoreCase("FireJet")) {
 					new FireJet(player);
 				}

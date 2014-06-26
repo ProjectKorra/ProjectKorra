@@ -25,9 +25,11 @@ import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.firebending.Cook;
+import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FirePassive;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
+import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
@@ -93,6 +95,8 @@ public class BendingManager implements Runnable {
 			Illumination.manage(Bukkit.getServer());
 			Torrent.progressAll();
 			TorrentBurst.progressAll();
+			FireBlast.progressAll();
+			Fireball.progressAll();
 			for (int ID: Tornado.instances.keySet()) {
 				Tornado.progress(ID);
 			}

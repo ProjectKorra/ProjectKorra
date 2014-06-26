@@ -142,7 +142,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.IceSpike.Range", 20);
 		config.addDefault("Abilities.Water.IceSpike.ThrowingMult", 0.7);
 		config.addDefault("Abilities.Water.IceSpike.Height", 6);
-		
+
 		config.addDefault("Abilities.Water.OctopusForm.Enabled", true);
 		config.addDefault("Abilities.Water.OctopusForm.Description", "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. "
 				+ "To use, click to select a water source. Then, hold sneak to channel this ability. "
@@ -227,6 +227,23 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Range", 15);
 		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Height", 6);
 		config.addDefault("Abilities.Earth.RaiseEarth.Wall.Width", 6);
+
+		config.addDefault("Abilities.Fire.FireBlast.Enabled", true);
+		config.addDefault("Abilities.Fire.FireBlast.Description","FireBlast is the most fundamental bending technique of a firebender. "
+				+ "To use, simply left-click in a direction. A blast of fire will be created at your fingertips. "
+				+ "If this blast contacts an enemy, it will dissipate and engulf them in flames, "
+				+ "doing additional damage and knocking them back slightly. "
+				+ "If the blast hits terrain, it will ignite the nearby area. "
+				+ "Additionally, if you hold sneak, you will charge up the fireblast. "
+				+ "If you release it when it's charged, it will instead launch a powerful "
+				+ "fireball that explodes on contact.");
+		config.addDefault("Abilities.Fire.FireBlast.Speed", 15);
+		config.addDefault("Abilities.Fire.FireBlast.Range", 15);
+		config.addDefault("Abilities.Fire.FireBlast.Radius", 2);
+		config.addDefault("Abilities.Fire.FireBlast.Push", 0.3);
+		config.addDefault("Abilities.Fire.FireBlast.Damage", 2);
+		config.addDefault("Abilities.Fire.FireBlast.Cooldown", 1500);
+		config.addDefault("Abilities.fire.FireBlast.Dissipate", false);
 
 		config.addDefault("Abilities.Fire.FireJet.Enabled", true);
 		config.addDefault("Abilities.Fire.FireJet.Description", "This ability is used for a limited burst of flight for firebenders. Clicking with this "

@@ -33,10 +33,12 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
 public class Methods {
 
@@ -458,6 +460,16 @@ public class Methods {
 	public static boolean isTransparentToEarthbending(Player player, Block block) {
 		if (Arrays.asList(transparentToEarthbending).contains(block.getTypeId())) return true;
 		return false;
+	}
+
+	public static void removeSpouts(Location location, double radius,
+			Player sourceplayer) {
+		WaterSpout.removeSpouts(location, radius, sourceplayer);
+		AirSpout.removeSpouts(location, radius, sourceplayer);
+	}
+
+	public static void removeSpouts(Location location, Player sourceplayer) {
+		removeSpouts(location, 1.5, sourceplayer);
 	}
 
 	public static double firebendingDayAugment(double value, World world) {
