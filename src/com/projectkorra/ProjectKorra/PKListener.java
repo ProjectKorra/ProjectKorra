@@ -50,6 +50,7 @@ import com.projectkorra.ProjectKorra.airbending.AirScooter;
 import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
+import com.projectkorra.ProjectKorra.airbending.AirSwipe;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
@@ -186,6 +187,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("AirSuction")) {
 					AirSuction.setOrigin(player);
+				}
+				if (abil.equalsIgnoreCase("AirSwipe")) {
+					AirSwipe.charge(player);
 				}
 			}
 
@@ -425,6 +429,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("AirSpout")) {
 					new AirSpout(player);
+				}
+				if (abil.equalsIgnoreCase("AirSwipe")) {
+					new AirSwipe(player);
 				}
 			}
 			if (Methods.isWaterAbility(abil)) {

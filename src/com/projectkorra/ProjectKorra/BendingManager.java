@@ -20,6 +20,7 @@ import com.projectkorra.ProjectKorra.airbending.AirScooter;
 import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
+import com.projectkorra.ProjectKorra.airbending.AirSwipe;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
@@ -102,6 +103,9 @@ public class BendingManager implements Runnable {
 			FireBlast.progressAll();
 			AirSuction.progressAll();
 			Fireball.progressAll();
+			for (int ID: AirSwipe.instances.keySet()) {
+				AirSwipe.progress(ID);
+			}
 			for (int ID: Tornado.instances.keySet()) {
 				Tornado.progress(ID);
 			}

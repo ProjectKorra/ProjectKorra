@@ -128,6 +128,15 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirSuction.Radius", 2);
 		config.addDefault("Abilities.Air.AirSuction.Push", 3.5);
 
+		config.addDefault("Abilities.Air.AirSwipe.Enabled", true);
+		config.addDefault("Abilities.Air.AirSwipe.Description", "To use, simply left-click in a direction. An arc of air will flow from you towards that direction, cutting and pushing back anything in its path. Its damage is minimal, but it still sends the message. This ability will extinguish fires, cool lava, and cut things like grass, mushrooms, and flowers. Additionally, you can charge it by holding sneak. Charging before attacking will increase damage and knockback, up to a maximum.");
+		config.addDefault("Abilities.Air.AirSwipe.Damage", 2);
+		config.addDefault("Abilities.Air.AirSwipe.Range", 16);
+		config.addDefault("Abilities.Air.AirSwipe.Radius", 2);
+		config.addDefault("Abilities.Air.AirSwipe.Push", 1);
+		config.addDefault("Abilities.Air.AirSwipe.Arc", 20);
+		config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
+		
 		config.addDefault("Abilities.Air.Tornado.Radius", 10);
 		config.addDefault("Abilities.Air.Tornado.Height", 25);
 		config.addDefault("Abilities.Air.Tornado.Range", 25);
