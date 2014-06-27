@@ -185,6 +185,10 @@ Abilities:
       Revert: true
       Damage: 4
       Push: 0.3
+    EarthGrab:
+      Enabled: true
+      Description: "To use, simply left-click while targeting a creature within range. This ability will erect a circle of earth to trap the creature in."
+      Range: 15
     RaiseEarth:
       Enabled: true
       Description: "To use, simply left-click on an earthbendable block. A column of earth will shoot upwards from that location. Anything in the way of the column will be brought up with it, leaving talented benders the ability to trap brainless entities up there. Additionally, simply sneak (default shift) looking at an earthbendable block. A wall of earth will shoot upwards from that location. Anything in the way of the wall will be brought up with it."

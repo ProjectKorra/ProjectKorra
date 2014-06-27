@@ -275,6 +275,11 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.Earthblast.Damage", 4);
 		config.addDefault("Abilities.Earth.EarthBlast.Push", 0.3);
 
+		config.addDefault("Abilities.Earth.EarthGrab.Enabled", true);
+		config.addDefault("Abilities.Earth.EarthGrab.Description", "To use, simply left-click while targeting a creature within range. "
+				+ "This ability will erect a circle of earth to trap the creature in.");
+		config.addDefault("Abilities.Earth.EarthGrab.Range", 15);
+		
 		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "
 				+ "A column of earth will shoot upwards from that location. "

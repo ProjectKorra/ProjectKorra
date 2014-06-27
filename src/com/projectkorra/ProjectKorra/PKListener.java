@@ -66,6 +66,7 @@ import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
+import com.projectkorra.ProjectKorra.earthbending.EarthGrab;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
@@ -247,6 +248,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Shockwave")) {
 					new Shockwave(player);
+				}
+				if (abil.equalsIgnoreCase("EarthGrab")) {
+					EarthGrab.EarthGrabSelf(player);
 				}
 			}
 
@@ -500,6 +504,10 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("EarthArmor")) {
 					new EarthArmor(player);
+				}
+				
+				if (abil.equalsIgnoreCase("EarthGrab")) {
+					new EarthGrab(player);
 				}
 			}
 			if (Methods.isFireAbility(abil)) {
