@@ -295,7 +295,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.EarthGrab.Description", "To use, simply left-click while targeting a creature within range. "
 				+ "This ability will erect a circle of earth to trap the creature in.");
 		config.addDefault("Abilities.Earth.EarthGrab.Range", 15);
-		
+
 		config.addDefault("Abilities.Earth.EarthTunnel.Enabled", true);
 		config.addDefault("Abilities.Earth.EarthTunnel.Description", "Earth Tunnel is a completely utility ability for earthbenders. To use, simply sneak (default: shift) in the direction you want to tunnel. You will slowly begin tunneling in the direction you're facing for as long as you sneak or if the tunnel has been dug long enough. This ability will be interrupted if it hits a block that cannot be earthbent.");
 		config.addDefault("Abilities.Earth.EarthTunnel.MaxRadius", 1);
@@ -303,7 +303,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
 		config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
 		config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
-		      
+
 		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "
 				+ "A column of earth will shoot upwards from that location. "
@@ -354,14 +354,20 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.FireBlast.Push", 0.3);
 		config.addDefault("Abilities.Fire.FireBlast.Damage", 2);
 		config.addDefault("Abilities.Fire.FireBlast.Cooldown", 1500);
-		config.addDefault("Abilities.fire.FireBlast.Dissipate", false);
+		config.addDefault("Abilities.Fire.FireBlast.Dissipate", false);
 
+		config.addDefault("Abilities.Fire.FireBurst.Enabled", true);
+		config.addDefault("Abilities.Fire.FireBurst.Description", "FireBurst is a very powerful firebending ability. "
+				+ "To use, press and hold sneak to charge your burst. "
+				+ "Once charged, you can either release sneak to launch a cone-shaped burst "
+				+ "of flames in front of you, or click to release the burst in a sphere around you. ");
 		config.addDefault("Abilities.Fire.FireJet.Enabled", true);
 		config.addDefault("Abilities.Fire.FireJet.Description", "This ability is used for a limited burst of flight for firebenders. Clicking with this "
 				+ "ability selected will launch you in the direction you're looking, granting you "
 				+ "controlled flight for a short time. This ability can be used mid-air to prevent falling "
 				+ "to your death, but on the ground it can only be used if standing on a block that's "
 				+ "ignitable (e.g. not snow or water).");
+		
 		config.addDefault("Abilities.Fire.FireJet.Speed", 0.7);
 		config.addDefault("Abilities.Fire.FireJet.Duration", 1500);
 		config.addDefault("Abilities.Fire.FireJet.Cooldown", 6000);
@@ -396,7 +402,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Chi.HighJump.Description", "To use this ability, simply click. You will jump quite high. This ability has a short cooldown.");
 		config.addDefault("Abilities.Chi.HighJump.Height", 1);
 		config.addDefault("Abilities.Chi.HighJump.Cooldown", 10000);
-		
+
 		config.addDefault("Abilities.Chi.Paralyze.Enabled", true);
 		config.addDefault("Abilities.Chi.Paralyze.Description", "Paralyzes the target, making them unable to do anything for a short "
 				+ "period of time. This ability has a long cooldown.");
@@ -409,7 +415,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Chi.RapidPunch.Distance", 4);
 		config.addDefault("Abilities.Chi.RapidPunch.Cooldown", 15000);
 		config.addDefault("Abilities.Chi.RapidPunch.Punches", 4);
-	        
+
 		plugin.getConfig().addDefault("Storage.engine", "sqlite");
 
 		plugin.getConfig().addDefault("Storage.MySQL.host", "localhost");
