@@ -361,17 +361,25 @@ public class ConfigManager {
 				+ "To use, press and hold sneak to charge your burst. "
 				+ "Once charged, you can either release sneak to launch a cone-shaped burst "
 				+ "of flames in front of you, or click to release the burst in a sphere around you. ");
+
 		config.addDefault("Abilities.Fire.FireJet.Enabled", true);
 		config.addDefault("Abilities.Fire.FireJet.Description", "This ability is used for a limited burst of flight for firebenders. Clicking with this "
 				+ "ability selected will launch you in the direction you're looking, granting you "
 				+ "controlled flight for a short time. This ability can be used mid-air to prevent falling "
 				+ "to your death, but on the ground it can only be used if standing on a block that's "
 				+ "ignitable (e.g. not snow or water).");
-		
 		config.addDefault("Abilities.Fire.FireJet.Speed", 0.7);
 		config.addDefault("Abilities.Fire.FireJet.Duration", 1500);
 		config.addDefault("Abilities.Fire.FireJet.Cooldown", 6000);
 
+		config.addDefault("Abilities.Fire.FireShield.Enabled", true);
+		config.addDefault("Abilities.Fire.FireShield.Description", "FireShield is a basic defensive ability. "
+				+ "Clicking with this ability selected will create a "
+				+ "small disc of fire in front of you, which will block most "
+				+ "attacks and bending. Alternatively, pressing and holding "
+				+ "sneak creates a very small shield of fire, blocking most attacks. "
+				+ "Creatures that contact this fire are ignited.");
+		
 		config.addDefault("Abilities.Fire.HeatControl.Enabled", true);
 		config.addDefault("Abilities.Fire.HeatControl.Description", "While this ability is selected, the firebender becomes impervious "
 				+ "to fire damage and cannot be ignited. "

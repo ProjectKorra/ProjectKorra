@@ -84,6 +84,7 @@ import com.projectkorra.ProjectKorra.firebending.Extinguish;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireBurst;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
+import com.projectkorra.ProjectKorra.firebending.FireShield;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
@@ -307,6 +308,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("FireBurst")) {
 					new FireBurst(player);
+				}
+				if (abil.equalsIgnoreCase("FireShield")) {
+					FireShield.shield(player);
 				}
 			}
 		}
@@ -580,6 +584,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("FireBurst")) {
 					FireBurst.coneBurst(player);
+				}
+				if (abil.equalsIgnoreCase("FireShield")) {
+					new FireShield(player);
 				}
 			}
 			

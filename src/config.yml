@@ -255,6 +255,9 @@ Abilities:
       Speed: 0.7
       Duration: 1500
       Cooldown: 6000
+    FireShield:
+      Enabled: true
+      Description: "FireShield is a basic defensive ability. Clicking with this ability selected will create a small disc of fire in front of you, which will block most attacks and bending. Alternatively, pressing and holding sneak creates a very small shield of fire, blocking most attacks. Creatures that contact this fire are ignited."
     HeatControl:
       Enabled: true
       Description: "While this ability is selected, the firebender becomes impervious to fire damage and cannot be ignited. If the user left-clicks with this ability, the targeted area will be extinguished, although it will leave any creature burning engulfed in flames. This ability can also cool lava. If this ability is used while targeting ice or snow, it will instead melt blocks in that area. Finally, sneaking with this ability will cook any food in your hand."

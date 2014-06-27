@@ -38,6 +38,7 @@ import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireBurst;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FirePassive;
+import com.projectkorra.ProjectKorra.firebending.FireShield;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
@@ -111,6 +112,7 @@ public class BendingManager implements Runnable {
 			Fireball.progressAll();
 			HealingWaters.heal(Bukkit.getServer());
 			FireBurst.progressAll();
+			FireShield.progressAll();
 			
 			for (Player p : RapidPunch.instance.keySet())
 				RapidPunch.instance.get(p).startPunch(p);
