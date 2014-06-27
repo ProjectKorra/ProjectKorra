@@ -3,7 +3,6 @@ package com.projectkorra.ProjectKorra;
 import java.util.ArrayList;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 public class ConfigManager {
 
@@ -370,6 +369,11 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Speed", 1);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Jump", 2);
 
+		config.addDefault("Abilities.Chi.HighJump.Enabled", true);
+		config.addDefault("Abilities.Chi.HighJump.Description", "To use this ability, simply click. You will jump quite high. This ability has a short cooldown.");
+		config.addDefault("Abilities.Chi.HighJump.Height", 1);
+		config.addDefault("Abilities.Chi.HighJump.Cooldown", 10000);
+		
 		config.addDefault("Abilities.Chi.Paralyze.Enabled", true);
 		config.addDefault("Abilities.Chi.Paralyze.Description", "Paralyzes the target, making them unable to do anything for a short "
 				+ "period of time. This ability has a long cooldown.");

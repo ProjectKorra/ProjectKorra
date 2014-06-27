@@ -59,6 +59,7 @@ import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
+import com.projectkorra.ProjectKorra.chiblocking.HighJump;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.Collapse;
@@ -540,6 +541,15 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Illumination")) {
 					new Illumination(player);
+				}
+			}
+			
+			if (Methods.isChiAbility(abil)) {
+				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
+					return;
+				}
+				if (abil.equalsIgnoreCase("HighJump")) {
+					new HighJump(player);
 				}
 			}
 		}
