@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,6 +18,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -41,7 +42,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
@@ -88,6 +88,7 @@ import com.projectkorra.ProjectKorra.firebending.FireShield;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
+import com.projectkorra.ProjectKorra.firebending.Lightning;
 import com.projectkorra.ProjectKorra.firebending.RingOfFire;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
@@ -162,26 +163,26 @@ public class PKListener implements Listener {
 		} else if (Methods.isBender(player.getName(), Element.Chi) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
 		}
-		
+
 		if (chatEnabled) {
 			player.setDisplayName(append + player.getName());
 		}
-		
-//		List<Element> elements = Methods.getBendingPlayer(e.getPlayer().getName()).getElements();
-//		if (plugin.getConfig().getBoolean("Properties.Chat.ChatPrefixes")) {
-//			if (elements.size() > 1)
-//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AvatarPrefix") + player.getName());
-//			else if (elements.get(0).equals(Element.Earth))
-//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.EarthPrefix") + player.getName());
-//			else if (elements.get(0).equals(Element.Air))
-//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AirPrefix") + player.getName());
-//			else if (elements.get(0).equals(Element.Water))
-//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.WaterPrefix") + player.getName());
-//			else if (elements.get(0).equals(Element.Fire))
-//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.FirePrefix") + player.getName());
-//			else if (elements.get(0).equals(Element.Chi))
-//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.ChiPrefix") + player.getName());
-//		}
+
+		//		List<Element> elements = Methods.getBendingPlayer(e.getPlayer().getName()).getElements();
+		//		if (plugin.getConfig().getBoolean("Properties.Chat.ChatPrefixes")) {
+		//			if (elements.size() > 1)
+		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AvatarPrefix") + player.getName());
+		//			else if (elements.get(0).equals(Element.Earth))
+		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.EarthPrefix") + player.getName());
+		//			else if (elements.get(0).equals(Element.Air))
+		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AirPrefix") + player.getName());
+		//			else if (elements.get(0).equals(Element.Water))
+		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.WaterPrefix") + player.getName());
+		//			else if (elements.get(0).equals(Element.Fire))
+		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.FirePrefix") + player.getName());
+		//			else if (elements.get(0).equals(Element.Chi))
+		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.ChiPrefix") + player.getName());
+		//		}
 	}
 
 	@EventHandler
@@ -286,7 +287,7 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("EarthTunnel")) {
 					new EarthTunnel(player);
 				}
-				
+
 				if (abil.equalsIgnoreCase("Tremorsense")) {
 					Methods.getBendingPlayer(player.getName()).toggleTremorsense();
 				}
@@ -312,6 +313,19 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("FireShield")) {
 					FireShield.shield(player);
 				}
+				if (abil.equalsIgnoreCase("Lightning")) {
+					new Lightning(player);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onBlockIgnite(BlockIgniteEvent event) {
+		if (event.getCause() == IgniteCause.LIGHTNING) {
+			if (Lightning.isNearbyChannel(event.getBlock().getLocation())) {
+				event.setCancelled(true);
+				return;
 			}
 		}
 	}
@@ -553,11 +567,11 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("EarthArmor")) {
 					new EarthArmor(player);
 				}
-				
+
 				if (abil.equalsIgnoreCase("EarthGrab")) {
 					new EarthGrab(player);
 				}
-				
+
 				if (abil.equalsIgnoreCase("Tremorsense")) {
 					new Tremorsense(player);
 				}
@@ -589,7 +603,7 @@ public class PKListener implements Listener {
 					new FireShield(player);
 				}
 			}
-			
+
 			if (Methods.isChiAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 					return;
@@ -732,16 +746,16 @@ public class PKListener implements Listener {
 			TempBlock.revertBlock(block, Material.AIR);
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		if (!plugin.getConfig().getBoolean("Properties.Chat.Enable")) {
 			return;
 		}
-		
+
 		Player player = event.getPlayer();
 		ChatColor color = ChatColor.WHITE;
-		
+
 		if (player.hasPermission("bending.avatar") || Methods.getBendingPlayer(player.getName()).elements.size() > 1) {
 			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
 		} else if (Methods.isBender(player.getName(), Element.Air)) {
@@ -755,16 +769,45 @@ public class PKListener implements Listener {
 		} else if (Methods.isBender(player.getName(), Element.Chi)) {
 			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Chi"));
 		}
-		
+
 		String format = plugin.getConfig().getString("Properties.Chat.Format");
 		format = format.replace("<message>", "%2$s");
 		format = format.replace("<name>", color + player.getDisplayName() + ChatColor.RESET);
 		event.setFormat(format);
-		
+
 	}
 
 	@EventHandler
 	public void onPlayerDamageByPlayer(EntityDamageByEntityEvent e) {
+		Entity source = e.getDamager();
+		Entity entity = e.getEntity();
+		Fireball fireball = Fireball.getFireball(source);
+		Lightning lightning = Lightning.getLightning(source);
+
+		if (fireball != null) {
+			e.setCancelled(true);
+			fireball.dealDamage(entity);
+			return;
+		}
+
+		if (e.getCause() == DamageCause.LIGHTNING) {
+			if (Lightning.isNearbyChannel(source.getLocation())) {
+				e.setCancelled(true);
+				return;
+			}
+		}
+
+		if (lightning != null) {
+			e.setCancelled(true);
+			lightning.dealDamage(entity);
+			return;
+		}
+
+		if (Paralyze.isParalyzed(e.getDamager())) {
+			e.setCancelled(true);
+			return;
+		}
+
 		Entity en = e.getEntity();
 		if (en instanceof Player) {
 			Player p = (Player) en; // This is the player getting hurt.

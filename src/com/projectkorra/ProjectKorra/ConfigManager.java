@@ -400,6 +400,12 @@ public class ConfigManager {
 				+ "dismisses this torch.");
 		config.addDefault("Abilities.Fire.Illumination.Range", 5);
 
+		config.addDefault("Abilities.Fire.Lightning.Enabled", true);
+		config.addDefault("Abilities.Fire.Lightning.Description", "Hold sneak while selecting this ability to charge up a lightning strike. Once charged, release sneak to discharge the lightning to the targeted location.");
+		config.addDefault("Abilities.Fire.Lightning.Distance", 15);
+		config.addDefault("Abilities.Fire.Lightning.Warmup", 3500);
+		config.addDefault("Abilities.Fire.Lightning.MissChance", 10);
+		
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Speed", 1);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Jump", 2);

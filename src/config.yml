@@ -271,6 +271,12 @@ Abilities:
       Enabled: true
       Description: "This ability gives firebenders a means of illuminating the area. It is a toggle - clicking will create a torch that follows you around. The torch will only appear on objects that are ignitable and can hold a torch (e.g. not leaves or ice). If you get too far away from the torch, it will disappear, but will reappear when you get on another ignitable block. Clicking again dismisses this torch."
       Range: 5
+    Lightning:
+      Enabled: true
+      Description: "Hold sneak while selecting this ability to charge up a lightning strike. once charged, release sneak to discharge the lightning to the targeted location."
+      Distance: 15
+      Warmup: 3500
+      MissChance: 10
   Chi:
     Passive:
       FallReductionFactor: 0.5
