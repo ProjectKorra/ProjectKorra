@@ -77,6 +77,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
+import com.projectkorra.ProjectKorra.firebending.ArcOfFire;
 import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
 import com.projectkorra.ProjectKorra.firebending.Extinguish;
@@ -85,6 +86,7 @@ import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
+import com.projectkorra.ProjectKorra.firebending.RingOfFire;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
@@ -292,6 +294,9 @@ public class PKListener implements Listener {
 			if (Methods.isFireAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
+				}
+				if (abil.equalsIgnoreCase("Blaze")) {
+					new RingOfFire(player);
 				}
 				if (abil.equalsIgnoreCase("FireBlast")) {
 					new Fireball(player);
@@ -554,6 +559,9 @@ public class PKListener implements Listener {
 					return;
 				}
 
+				if (abil.equalsIgnoreCase("Blaze")) {
+					new ArcOfFire(player);
+				}
 				if (abil.equalsIgnoreCase("FireBlast")) {
 					new FireBlast(player);
 				}

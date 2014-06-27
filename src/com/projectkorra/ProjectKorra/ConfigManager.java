@@ -333,6 +333,12 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.Tremorsense.LightThreshold", 7);
 		config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
 
+		config.addDefault("Abilities.Fire.Blaze.Enabled", true);
+		config.addDefault("Abilities.Fire.Blaze.Description", "To use, simply left-click in any direction. An arc of fire will flow from your location, igniting anything in its path. Additionally, tap sneak to engulf the area around you in roaring flames.");
+		config.addDefault("Abilities.Fire.Blaze.ArcOfFire.Arc", 20);
+		config.addDefault("Abilities.Fire.Blaze.ArcOfFire.Range", 9);
+		config.addDefault("Abilities.Fire.Blaze.RingOfFire.Range", 7);
+
 		config.addDefault("Abilities.Fire.FireBlast.Enabled", true);
 		config.addDefault("Abilities.Fire.FireBlast.Description","FireBlast is the most fundamental bending technique of a firebender. "
 				+ "To use, simply left-click in a direction. A blast of fire will be created at your fingertips. "
