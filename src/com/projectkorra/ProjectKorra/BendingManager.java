@@ -23,6 +23,7 @@ import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
+import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
@@ -108,6 +109,9 @@ public class BendingManager implements Runnable {
 			AirSuction.progressAll();
 			Fireball.progressAll();
 			HealingWaters.heal(Bukkit.getServer());
+			
+			for (Player p : RapidPunch.instance.keySet())
+				RapidPunch.instance.get(p).startPunch(p);
 
 			for (Block block : RevertChecker.revertQueue.keySet()) {
 				// Tools.removeEarthbendedBlockByIndex(block);

@@ -380,6 +380,13 @@ public class ConfigManager {
 		config.addDefault("Abilities.Chi.Paralyze.Cooldown", 15000);
 		config.addDefault("Abilities.Chi.Paralyze.Duration", 2000);
 
+		config.addDefault("Abilities.Chi.RapidPunch.Enabled", true);
+		config.addDefault("Abilities.Chi.RapidPunch.Description", "This ability allows the chiblocker to punch rapidly in a short period. To use, simply punch. This has a short cooldown.");
+		config.addDefault("Abilities.Chi.RapidPunch.Damage", 1);
+		config.addDefault("Abilities.Chi.RapidPunch.Distance", 4);
+		config.addDefault("Abilities.Chi.RapidPunch.Cooldown", 15000);
+		config.addDefault("Abilities.Chi.RapidPunch.Punches", 4);
+	        
 		plugin.getConfig().addDefault("Storage.engine", "sqlite");
 
 		plugin.getConfig().addDefault("Storage.MySQL.host", "localhost");

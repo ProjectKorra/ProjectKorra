@@ -61,6 +61,7 @@ import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.HighJump;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
+import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.Collapse;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
@@ -551,6 +552,9 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("HighJump")) {
 					new HighJump(player);
 				}
+				if (abil.equalsIgnoreCase("RapidPunch")) {
+					new RapidPunch(player);
+				}
 			}
 		}
 	}
@@ -698,7 +702,7 @@ public class PKListener implements Listener {
 						}
 						if (damager.getItemInHand() != null && Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 							// Above method checks if the player has an item in their hand, if it is a weapon, and if they can bend with weapons.
-							if (Methods.getBoundAbility(damager) == null) { // We don't want them to be able to block chi if an ability is bound.
+							if (Methods.getBoundAbility(damager) == null || Methods.getBoundAbility(damager).equalsIgnoreCase("RapidPunch")) { // We don't want them to be able to block chi if an ability is bound.
 								if (ChiPassive.willChiBlock(p)) {
 									ChiPassive.blockChi(p);
 								}

@@ -266,6 +266,13 @@ Abilities:
       Description: "Paralyzes the target, making them unable to do anything for a short period of time. This ability has a long cooldown."
       Cooldown: 15000
       Duration: 2000
+    RapidPunch:
+      Enabled: true
+      Description: "This ability allows the chiblocker to punch rapidly in a short period. To use, simply punch. This has a short cooldown."
+      Damage: 1
+      Distance: 4
+      Cooldown: 15000
+      Punches: 4
 Storage:
   engine: sqlite
   MySQL:
