@@ -5,4 +5,93 @@ main: com.projectkorra.ProjectKorra.ProjectKorra
 commands:
   projectkorra:
     aliases: [bending,mtla,tla,korra]
-    usage: /<command>
+    usage: /<command
+permissions:
+  bending.admin:
+    default: op
+    description: Grants access to all commands and abilities.
+    children:
+      bending.player: true
+      bending.command.reload: true
+      bending.command.version: true
+      bending.admin.permaremove: 
+      bending.command.add.others: true
+      bending.command.add: true
+      bending.command.rechoose: true
+      bending.admin.choose: 
+      bending.ability.AvatarState: true
+      bending.ability.Bloodbending: true
+  bending.player:
+    default: 
+    description: Grants access to most abilities and basic commands.
+    children:
+      bending.command.bind: true
+      bending.command.display: true
+      bending.command.toggle: true
+      bending.command.choose: true
+      bending.air: true
+      bending.water: true
+      bending.earth: true
+      bending.fire: true
+      bending.chi: true
+  bending.air:
+    default: 
+    description: Grants access to all airbending abilities.
+    children:
+      bending.ability.AirBlast: true
+      bending.ability.AirBubble: true
+      bending.ability.AirBurst: true
+      bending.ability.AirScooter: true
+      bending.ability.AirShield: true
+      bending.ability.AirSpout: true
+      bending.ability.AirSuction: true
+      bending.ability.AirSwipe: true
+      bending.ability.Tornado: true
+  bending.water:
+    default: true
+    description: Grants access to most waterbending abilities.
+    children:
+      bending.ability.HealingWaters: true
+      bending.ability.IceSpike: true
+      bending.ability.OctopusForm: true
+      bending.ability.PhaseChange: true
+      bending.ability.Surge: true
+      bending.ability.Torrent: true
+      bending.ability.Torrent: true
+      bending.ability.WaterBubble: true
+      bending.ability.WaterManipulation: true
+      bending.ability.WaterSpout: true
+      bending.ability.Plantbending: true
+  bending.earth:
+    default: true
+    description: Grants access to all Earthbending abilities.
+    children:
+      bending.ability.Catapult: true
+      bending.ability.Collapse: true
+      bending.ability.EarthArmor: true
+      bending.ability.EarthBlast: true
+      bending.ability.EarthGrab: true
+      bending.ability.EarthTunnel: true
+      bending.ability.RaiseEarth: true
+      bending.ability.Shockwave: true
+      bending.ability.Tremorsense: true
+  bending.fire:
+    default: true
+    descritpion: Grants access to all firebending abilities.
+    children:
+      bending.ability.Blaze: true
+      bending.ability.FireBlast: true
+      bending.ability.FireBurst: true
+      bending.ability.FireJet: true
+      bending.ability.FireShield: true
+      bending.ability.HeatControl: true
+      bending.ability.Illumination: true
+      bending.ability.Lightning: true
+      bending.ability.WallOfFire: true
+  bending.chi:
+    default: true
+    description: Grants access to all ChiBlocking abilities.
+    children:
+      bending.ability.HighJump: true
+      bending.ability.Paralyze: true
+      bending.ability.RapidPunch: true
