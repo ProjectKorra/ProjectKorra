@@ -15,6 +15,7 @@ Properties:
     CanBendWithWeapons: false
     NightFactor: 1.5
   Earth:
+    RevertEarthbending: true
     CanBendWithWeapons: true
     EarthbendableBlocks:
     - STONE
@@ -168,6 +169,12 @@ Abilities:
       Range: 20
       Radius: 7
       Speed: 8
+    EarthArmor:
+      Enabled: true
+      Description: "This ability encases the earthbender in temporary armor. To use, click on a block that is earthbendable. If there is another block under it that is earthbendable, the block will fly to you and grant you temporary armor and damage reduction. This ability has a long cooldown."
+      Duration: 10000
+      Strength: 2
+      Cooldown: 17500
     EarthBlast:
       Enabled: true
       Description: "To use, place your cursor over an earthbendable object and tap sneak (default: shift). The object will temporarily turn to stone, indicating that you have it focused as the source for your ability. After you have selected an origin (you no longer need to be sneaking), simply left-click in any direction and you will see your object launch off in that direction, smashing into any creature in its path. If you look towards a creature when you use this ability, it will target that creature. A collision from Earth Blast both knocks the target back and deals some damage. You cannot have multiple of these abilities flying at the same time."

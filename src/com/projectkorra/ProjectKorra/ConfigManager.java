@@ -41,6 +41,7 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Properties.Water.CanBendWithWeapons", true);
 		plugin.getConfig().addDefault("Properties.Water.NightFactor", 1.5);
 
+		config.addDefault("Properties.Earth.RevertEarthbending", true);
 		plugin.getConfig().addDefault("Properties.Earth.CanBendWithWeapons", true);
 		plugin.getConfig().addDefault("Properties.Earth.EarthbendableBlocks", earthbendable);
 
@@ -249,6 +250,12 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.Collapse.Range", 20);
 		config.addDefault("Abilities.Earth.Collapse.Radius", 7);
 		config.addDefault("Abilities.Earth.Collapse.Speed", 8);
+
+		config.addDefault("Abilities.Earth.EarthArmor.Enabled", true);
+		config.addDefault("Abilities.Earth.EarthArmor.Description", "This ability encases the earthbender in temporary armor. To use, click on a block that is earthbendable. If there is another block under it that is earthbendable, the block will fly to you and grant you temporary armor and damage reduction. This ability has a long cooldown.");
+		config.addDefault("Abilities.Earth.EarthArmor.Duration", 10000);
+		config.addDefault("Abilities.Earth.EarthArmor.Strength", 2);
+		config.addDefault("Abilities.Earth.EarthArmor.Duration", 17500);
 
 		config.addDefault("Abilities.Earth.EarthBlast.Enabled", true);
 		config.addDefault("Abilities.Earth.EarthBlast.Description", "To use, place your cursor over an earthbendable object (dirt, rock, ores, etc) "

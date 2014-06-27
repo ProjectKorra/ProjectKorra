@@ -589,6 +589,14 @@ public class Methods {
 		return adjacent;
 	}
 
+	public static void removeBlock(Block block) {
+		if (isAdjacentToThreeOrMoreSources(block)) {
+			block.setType(Material.WATER);
+			block.setData((byte) 0x0);
+		} else {
+			block.setType(Material.AIR);
+		}
+	}
 
 
 	public static void playFocusWaterEffect(Block block) {

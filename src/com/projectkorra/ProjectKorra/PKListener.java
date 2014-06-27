@@ -1,5 +1,6 @@
 package com.projectkorra.ProjectKorra;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -30,8 +31,11 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.entity.SlimeSplitEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -39,6 +43,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 
@@ -57,6 +63,7 @@ import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.Collapse;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
+import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
@@ -146,9 +153,14 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent e) {
-		Methods.saveBendingPlayer(e.getPlayer().getName());
-		BendingPlayer.players.remove(e.getPlayer().getName());
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		Methods.saveBendingPlayer(event.getPlayer().getName());
+		BendingPlayer.players.remove(event.getPlayer().getName());
+		if (EarthArmor.instances.containsKey(event.getPlayer())) {
+			EarthArmor.removeEffect(event.getPlayer());
+			event.getPlayer().removePotionEffect(
+					PotionEffectType.DAMAGE_RESISTANCE);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -167,11 +179,11 @@ public class PKListener implements Listener {
 		}
 
 		if (!player.isSneaking() && Methods.canBend(player.getName(), abil)) {
-			
+
 			if (abil.equalsIgnoreCase("AirShield")) {
 				new AirShield(player);
 			}
-			
+
 			if (Methods.isAirAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
@@ -486,6 +498,9 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Shockwave")) {
 					Shockwave.coneShockwave(player);
 				}
+				if (abil.equalsIgnoreCase("EarthArmor")) {
+					new EarthArmor(player);
+				}
 			}
 			if (Methods.isFireAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
@@ -507,6 +522,39 @@ public class PKListener implements Listener {
 			}
 		}
 	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onInventoryClick(InventoryClickEvent event) {
+		if (event.getSlotType() == SlotType.ARMOR
+				&& !EarthArmor.canRemoveArmor((Player) event.getWhoClicked()))
+			event.setCancelled(true);
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		if (EarthArmor.instances.containsKey(event.getEntity())) {
+			List<ItemStack> drops = event.getDrops();
+			List<ItemStack> newdrops = new ArrayList<ItemStack>();
+			for (int i = 0; i < drops.size(); i++) {
+				if (!(drops.get(i).getType() == Material.LEATHER_BOOTS
+						|| drops.get(i).getType() == Material.LEATHER_CHESTPLATE
+						|| drops.get(i).getType() == Material.LEATHER_HELMET
+						|| drops.get(i).getType() == Material.LEATHER_LEGGINGS || drops
+						.get(i).getType() == Material.AIR))
+					newdrops.add((drops.get(i)));
+			}
+			if (EarthArmor.instances.get(event.getEntity()).oldarmor != null) {
+				for (ItemStack is : EarthArmor.instances.get(event.getEntity()).oldarmor) {
+					if (!(is.getType() == Material.AIR))
+						newdrops.add(is);
+				}
+			}
+			event.getDrops().clear();
+			event.getDrops().addAll(newdrops);
+			EarthArmor.removeEffect(event.getEntity());
+		}
+	}
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
 	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
 		Player p = event.getPlayer();

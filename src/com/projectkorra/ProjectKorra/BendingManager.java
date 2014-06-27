@@ -25,6 +25,7 @@ import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
+import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
@@ -105,6 +106,9 @@ public class BendingManager implements Runnable {
 			AirSuction.progressAll();
 			Fireball.progressAll();
 			HealingWaters.heal(Bukkit.getServer());
+			for (Player player : EarthArmor.instances.keySet()) {
+				EarthArmor.moveArmor(player);
+			}
 			for (int ID: AirSwipe.instances.keySet()) {
 				AirSwipe.progress(ID);
 			}
