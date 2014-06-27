@@ -1,5 +1,6 @@
 package com.projectkorra.ProjectKorra;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -39,6 +40,13 @@ public class ProjectKorra extends JavaPlugin {
 		}
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
+		
+		try {
+		    MetricsLite metrics = new MetricsLite(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    // Failed to submit the stats :-(
+		}
 	}
 
 	@Override
