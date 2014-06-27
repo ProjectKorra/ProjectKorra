@@ -16,6 +16,8 @@ Properties:
     NightFactor: 1.5
   Earth:
     RevertEarthbending: true
+    SafeRevert: true
+    RevertCheckTime: 300000
     CanBendWithWeapons: true
     EarthbendableBlocks:
     - STONE

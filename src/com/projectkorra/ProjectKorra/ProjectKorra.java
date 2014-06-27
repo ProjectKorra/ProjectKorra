@@ -38,6 +38,7 @@ public class ProjectKorra extends JavaPlugin {
 			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
 		}
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
+		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 	}
 
 	@Override

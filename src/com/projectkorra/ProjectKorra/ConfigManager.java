@@ -42,6 +42,8 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Properties.Water.NightFactor", 1.5);
 
 		config.addDefault("Properties.Earth.RevertEarthbending", true);
+		config.addDefault("Properties.Earth.SafeRevert", true);
+		config.addDefault("Properties.Earth.RevertCheckTime", 300000);
 		plugin.getConfig().addDefault("Properties.Earth.CanBendWithWeapons", true);
 		plugin.getConfig().addDefault("Properties.Earth.EarthbendableBlocks", earthbendable);
 

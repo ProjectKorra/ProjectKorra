@@ -108,6 +108,19 @@ public class BendingManager implements Runnable {
 			AirSuction.progressAll();
 			Fireball.progressAll();
 			HealingWaters.heal(Bukkit.getServer());
+
+			for (Block block : RevertChecker.revertQueue.keySet()) {
+				// Tools.removeEarthbendedBlockByIndex(block);
+				// if (Tools.revertBlock(block))
+				Methods.revertBlock(block);
+				RevertChecker.revertQueue.remove(block);
+			}
+
+			for (int i : RevertChecker.airRevertQueue.keySet()) {
+				Methods.revertAirBlock(i);
+				RevertChecker.airRevertQueue.remove(i);
+			}
+
 			for (Player player : EarthTunnel.instances.keySet()) {
 				EarthTunnel.progress(player);
 			}
