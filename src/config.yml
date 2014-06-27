@@ -189,6 +189,14 @@ Abilities:
       Enabled: true
       Description: "To use, simply left-click while targeting a creature within range. This ability will erect a circle of earth to trap the creature in."
       Range: 15
+    EarthTunnel:
+      Enabled: true
+      Description: "Earth Tunnel is a completely utility ability for earthbenders. To use, simply sneak (default: shift) in the direction you want to tunnel. You will slowly begin tunneling in the direction you're facing for as long as you sneak or if the tunnel has been dug long enough. This ability will be interrupted if it hits a block that cannot be earthbent."
+      MaxRadius: 1
+      Range: 10
+      Radius: 0.25
+      Revert: true
+      Interval: 30
     RaiseEarth:
       Enabled: true
       Description: "To use, simply left-click on an earthbendable block. A column of earth will shoot upwards from that location. Anything in the way of the column will be brought up with it, leaving talented benders the ability to trap brainless entities up there. Additionally, simply sneak (default shift) looking at an earthbendable block. A wall of earth will shoot upwards from that location. Anything in the way of the wall will be brought up with it."

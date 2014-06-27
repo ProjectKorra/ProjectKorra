@@ -280,6 +280,14 @@ public class ConfigManager {
 				+ "This ability will erect a circle of earth to trap the creature in.");
 		config.addDefault("Abilities.Earth.EarthGrab.Range", 15);
 		
+		config.addDefault("Abilities.Earth.EarthTunnel.Enabled", true);
+		config.addDefault("Abilities.Earth.EarthTunnel.Description", "Earth Tunnel is a completely utility ability for earthbenders. To use, simply sneak (default: shift) in the direction you want to tunnel. You will slowly begin tunneling in the direction you're facing for as long as you sneak or if the tunnel has been dug long enough. This ability will be interrupted if it hits a block that cannot be earthbent.");
+		config.addDefault("Abilities.Earth.EarthTunnel.MaxRadius", 1);
+		config.addDefault("Abilities.Earth.EarthTunnel.Range", 10);
+		config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
+		config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
+		config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
+		      
 		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "
 				+ "A column of earth will shoot upwards from that location. "

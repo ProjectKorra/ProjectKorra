@@ -29,6 +29,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
@@ -106,6 +107,9 @@ public class BendingManager implements Runnable {
 			AirSuction.progressAll();
 			Fireball.progressAll();
 			HealingWaters.heal(Bukkit.getServer());
+			for (Player player : EarthTunnel.instances.keySet()) {
+				EarthTunnel.progress(player);
+			}
 			for (Player player : EarthArmor.instances.keySet()) {
 				EarthArmor.moveArmor(player);
 			}

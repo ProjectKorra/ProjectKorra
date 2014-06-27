@@ -68,6 +68,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthGrab;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.firebending.Cook;
@@ -251,6 +252,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("EarthGrab")) {
 					EarthGrab.EarthGrabSelf(player);
+				}
+				if (abil.equalsIgnoreCase("EarthTunnel")) {
+					new EarthTunnel(player);
 				}
 			}
 
