@@ -368,6 +368,8 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Speed", 1);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Jump", 2);
+		config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 2500);
+		config.addDefault("Abilities.Chi.Passive.DodgeChange", 25);
 
 		config.addDefault("Abilities.Chi.HighJump.Enabled", true);
 		config.addDefault("Abilities.Chi.HighJump.Description", "To use this ability, simply click. You will jump quite high. This ability has a short cooldown.");
