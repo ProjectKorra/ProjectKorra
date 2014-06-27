@@ -71,6 +71,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
+import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
 import com.projectkorra.ProjectKorra.firebending.Extinguish;
@@ -256,6 +257,11 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("EarthTunnel")) {
 					new EarthTunnel(player);
 				}
+				
+				if (abil.equalsIgnoreCase("Tremorsense")) {
+					Methods.getBendingPlayer(player.getName()).toggleTremorsense();
+				}
+
 			}
 
 			if (Methods.isFireAbility(abil)) {
@@ -512,6 +518,10 @@ public class PKListener implements Listener {
 				
 				if (abil.equalsIgnoreCase("EarthGrab")) {
 					new EarthGrab(player);
+				}
+				
+				if (abil.equalsIgnoreCase("Tremorsense")) {
+					new Tremorsense(player);
 				}
 			}
 			if (Methods.isFireAbility(abil)) {

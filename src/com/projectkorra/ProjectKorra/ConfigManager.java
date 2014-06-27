@@ -310,6 +310,13 @@ public class ConfigManager {
 				+ "If you instead click while charged, the disruption is focused in a cone in front of you. "
 				+ "Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave.");
 
+		config.addDefault("Abilities.Earth.Tremorsense.Enabled", true);
+		config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
+		config.addDefault("Abilities.Earth.Tremorsense.MaxDepth", 10);
+		config.addDefault("Abilities.Earth.Tremorsense.Radius", 5);
+		config.addDefault("Abilities.Earth.Tremorsense.LightThreshold", 7);
+		config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
+
 		config.addDefault("Abilities.Fire.FireBlast.Enabled", true);
 		config.addDefault("Abilities.Fire.FireBlast.Description","FireBlast is the most fundamental bending technique of a firebender. "
 				+ "To use, simply left-click in a direction. A blast of fire will be created at your fingertips. "

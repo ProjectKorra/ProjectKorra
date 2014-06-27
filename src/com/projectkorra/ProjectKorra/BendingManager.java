@@ -31,6 +31,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
+import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
@@ -120,6 +121,7 @@ public class BendingManager implements Runnable {
 				Tornado.progress(ID);
 			}
 
+			Tremorsense.manage(Bukkit.getServer());
 			for (int id: FireStream.instances.keySet()) {
 				FireStream.progress(id);
 			}
