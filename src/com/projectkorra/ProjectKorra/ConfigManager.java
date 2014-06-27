@@ -32,6 +32,21 @@ public class ConfigManager {
 		earthbendable.add("SAND");
 		earthbendable.add("SANDSTONE");
 
+		config.addDefault("Properties.Chat.Enable", true);
+		config.addDefault("Properties.Chat.Format", "<name>: <message>");
+		config.addDefault("Properties.Chat.Prefixes.Air", "[Airbender]");
+		config.addDefault("Properties.Chat.Prefixes.Water", "[Waterbender]");
+		config.addDefault("Properties.Chat.Prefixes.Earth", "[Earthbender]");
+		config.addDefault("Properties.Chat.Prefixes.Fire", "[Firebender]");
+		config.addDefault("Properties.Chat.Prefixes.Chi", "[Chiblocker]");
+		config.addDefault("Properties.Chat.Prefixes.Avatar", "[Avatar]");
+		config.addDefault("Properties.Chat.Colors.Avatar", "DARK_PURPLE");
+		config.addDefault("Properties.Chat.Colors.Air", "GRAY");
+		config.addDefault("Properties.Chat.Colors.Water", "AQUA");
+		config.addDefault("Properties.Chat.Colors.Earth", "GREEN");
+		config.addDefault("Properties.Chat.Colors.Fire", "RED");
+		config.addDefault("Properties.Chat.Colors.Chi", "GOLD");
+
 		plugin.getConfig().addDefault("Properties.GlobalCooldown", 500);
 		plugin.getConfig().addDefault("Properties.SeaLevel", 62);
 

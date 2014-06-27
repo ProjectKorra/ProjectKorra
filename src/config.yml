@@ -2,13 +2,22 @@ Properties:
   GlobalCooldown: 500
   SeaLevel: 62
   Chat:
-    ChatPrefixes: true
-    AirPrefix: "[&7Air&f]"
-    WaterPrefix: "[&bWater&f]"
-    EarthPrefix: "[&aEarth&f]"
-    FirePrefix: "[&cFire&f]"
-    AvatarPrefix: "[&5Avatar&f]"
-    ChiPrefix: "[&6Chi]"
+    Format: "<name>: <message>"
+    Enable: true
+    Prefixes:
+      Air: "[Airbender]"
+      Water: "[Waterbender]"
+      Earth: "[Earthbender]"
+      Fire: "[Firebender]"
+      Chi: "[Chiblocker]"
+      Avatar: "[Avatar]"
+    Colors:
+      Avatar: DARK_PURPLE
+      Air: GRAY
+      Fire: RED
+      Water: AQUA
+      Earth: GREEN
+      Chi: GOLD
   Air:
     CanBendWithWeapons: false
   Water:

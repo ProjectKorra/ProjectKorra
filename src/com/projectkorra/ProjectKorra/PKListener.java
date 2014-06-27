@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,9 +37,11 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
@@ -140,21 +143,41 @@ public class PKListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Methods.createBendingPlayer(e.getPlayer().getUniqueId(), e.getPlayer().getName());
 		Player player = e.getPlayer();
-		List<Element> elements = Methods.getBendingPlayer(e.getPlayer().getName()).getElements();
-		if (plugin.getConfig().getBoolean("Properties.Chat.ChatPrefixes")) {
-			if (elements.size() > 1)
-				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AvatarPrefix") + player.getName());
-			else if (elements.get(0).equals(Element.Earth))
-				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.EarthPrefix") + player.getName());
-			else if (elements.get(0).equals(Element.Air))
-				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AirPrefix") + player.getName());
-			else if (elements.get(0).equals(Element.Water))
-				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.WaterPrefix") + player.getName());
-			else if (elements.get(0).equals(Element.Fire))
-				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.FirePrefix") + player.getName());
-			else if (elements.get(0).equals(Element.Chi))
-				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.ChiPrefix") + player.getName());
+		String append = "";
+		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
+		if ((player.hasPermission("bending.avatar") || Methods.getBendingPlayer(player.getName()).elements.size() > 1) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
+		} else if (Methods.isBender(player.getName(), Element.Air) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Air");
+		} else if (Methods.isBender(player.getName(), Element.Water) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Water");
+		} else if (Methods.isBender(player.getName(), Element.Earth) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Earth");
+		} else if (Methods.isBender(player.getName(), Element.Fire) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Fire");
+		} else if (Methods.isBender(player.getName(), Element.Chi) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
 		}
+		
+		if (chatEnabled) {
+			player.setDisplayName(append + player.getName());
+		}
+		
+//		List<Element> elements = Methods.getBendingPlayer(e.getPlayer().getName()).getElements();
+//		if (plugin.getConfig().getBoolean("Properties.Chat.ChatPrefixes")) {
+//			if (elements.size() > 1)
+//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AvatarPrefix") + player.getName());
+//			else if (elements.get(0).equals(Element.Earth))
+//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.EarthPrefix") + player.getName());
+//			else if (elements.get(0).equals(Element.Air))
+//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AirPrefix") + player.getName());
+//			else if (elements.get(0).equals(Element.Water))
+//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.WaterPrefix") + player.getName());
+//			else if (elements.get(0).equals(Element.Fire))
+//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.FirePrefix") + player.getName());
+//			else if (elements.get(0).equals(Element.Chi))
+//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.ChiPrefix") + player.getName());
+//		}
 	}
 
 	@EventHandler
@@ -686,6 +709,36 @@ public class PKListener implements Listener {
 		} else if (TempBlock.isTempBlock(block)) {
 			TempBlock.revertBlock(block, Material.AIR);
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		if (!plugin.getConfig().getBoolean("Properties.Chat.Enable")) {
+			return;
+		}
+		
+		Player player = event.getPlayer();
+		ChatColor color = ChatColor.WHITE;
+		
+		if (player.hasPermission("bending.avatar") || Methods.getBendingPlayer(player.getName()).elements.size() > 1) {
+			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
+		} else if (Methods.isBender(player.getName(), Element.Air)) {
+			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Air"));
+		} else if (Methods.isBender(player.getName(), Element.Water)) {
+			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Water"));
+		} else if (Methods.isBender(player.getName(), Element.Earth)) {
+			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Earth"));
+		} else if (Methods.isBender(player.getName(), Element.Fire)) {
+			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Fire"));
+		} else if (Methods.isBender(player.getName(), Element.Chi)) {
+			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Chi"));
+		}
+		
+		String format = plugin.getConfig().getString("Properties.Chat.Format");
+		format = format.replace("<message>", "%2$s");
+		format = format.replace("<name>", color + player.getDisplayName() + ChatColor.RESET);
+		event.setFormat(format);
+		
 	}
 
 	@EventHandler
