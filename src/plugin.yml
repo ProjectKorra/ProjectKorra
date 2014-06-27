@@ -14,11 +14,11 @@ permissions:
       bending.player: true
       bending.command.reload: true
       bending.command.version: true
-      bending.admin.permaremove: 
+      bending.admin.permaremove: true
       bending.command.add.others: true
       bending.command.add: true
       bending.command.rechoose: true
-      bending.admin.choose: 
+      bending.admin.choose: true
       bending.ability.AvatarState: true
       bending.ability.Bloodbending: true
   bending.player:
