@@ -90,6 +90,7 @@ import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
 import com.projectkorra.ProjectKorra.firebending.Lightning;
 import com.projectkorra.ProjectKorra.firebending.RingOfFire;
+import com.projectkorra.ProjectKorra.firebending.WallOfFire;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
@@ -601,6 +602,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("FireShield")) {
 					new FireShield(player);
+				}
+				if (abil.equalsIgnoreCase("WallOfFire")) {
+					new WallOfFire(player);
 				}
 			}
 

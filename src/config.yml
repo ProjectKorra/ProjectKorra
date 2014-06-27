@@ -277,6 +277,16 @@ Abilities:
       Distance: 15
       Warmup: 3500
       MissChance: 10
+    WallOfFire:
+      Enabled: true
+      Description: "To use this ability, click at a location. A wall of fire will appear at this location, igniting enemies caught in it and blocking projectiles."
+      Range: 4
+      Height: 4
+      Width: 4
+      Duration: 5000
+      Damage: 2
+      Cooldown: 500
+      Interval: 7500
   Chi:
     Passive:
       FallReductionFactor: 0.5

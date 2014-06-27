@@ -43,6 +43,7 @@ import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
 import com.projectkorra.ProjectKorra.firebending.Lightning;
+import com.projectkorra.ProjectKorra.firebending.WallOfFire;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.HealingWaters;
@@ -115,7 +116,7 @@ public class BendingManager implements Runnable {
 			FireBurst.progressAll();
 			FireShield.progressAll();
 			Lightning.progressAll();
-			
+			WallOfFire.manage();
 			for (Player p : RapidPunch.instance.keySet())
 				RapidPunch.instance.get(p).startPunch(p);
 

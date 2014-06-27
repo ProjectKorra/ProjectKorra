@@ -406,6 +406,16 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.Lightning.Warmup", 3500);
 		config.addDefault("Abilities.Fire.Lightning.MissChance", 10);
 		
+		config.addDefault("Abilities.Fire.WallOfFire.Enabled", true);
+		config.addDefault("Abilities.Fire.WallOfFire.Description", "To use this ability, click at a location. A wall of fire will appear at this location, igniting enemies caught in it and blocking projectiles.");
+		config.addDefault("Abilities.Fire.WallOfFire.Range", 4);
+		config.addDefault("Abilities.Fire.WallOfFire.Height", 4);
+		config.addDefault("Abilities.Fire.WallOfFire.Width", 4);
+		config.addDefault("Abilities.Fire.WallOfFire.Duration", 5000);
+		config.addDefault("Abilities.Fire.WallOfFire.Damage", 2);
+		config.addDefault("Abilities.Fire.WallOfFire.Cooldown", 500);
+		config.addDefault("Abilities.Fire.WallOfFire.Interval", 7500);
+		
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Speed", 1);
 		plugin.getConfig().addDefault("Abilities.Chi.Passive.Jump", 2);
