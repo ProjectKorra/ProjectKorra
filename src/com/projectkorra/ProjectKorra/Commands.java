@@ -130,23 +130,23 @@ public class Commands {
 						String ability = Methods.getAbility(abil);
 						
 						if (Methods.isAirAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
-							s.sendMessage(ChatColor.GRAY + "You must be an Airbender to bind this ability.");
+							s.sendMessage(Methods.getAirColor() + "You must be an Airbender to bind this ability.");
 							return true;
 						}
 						if (Methods.isWaterAbility(ability) && !Methods.isBender(s.getName(), Element.Water)) {
-							s.sendMessage(ChatColor.AQUA + "You must be a Waterbender to bind this ability.");
+							s.sendMessage(Methods.getWaterColor() + "You must be a Waterbender to bind this ability.");
 							return true;
 						}
 						if (Methods.isEarthAbility(ability) && !Methods.isBender(s.getName(), Element.Earth)) {
-							s.sendMessage(ChatColor.GREEN + "You must be an Earthbender to bind this ability.");
+							s.sendMessage(Methods.getEarthColor() + "You must be an Earthbender to bind this ability.");
 							return true;
 						}
 						if (Methods.isFireAbility(ability) && !Methods.isBender(s.getName(), Element.Fire)) {
-							s.sendMessage(ChatColor.RED + "You must be a Firebender to bind this ability.");
+							s.sendMessage(Methods.getFireColor() + "You must be a Firebender to bind this ability.");
 							return true;
 						}
 						if (Methods.isChiAbility(ability) && !Methods.isBender(s.getName(), Element.Chi)) {
-							s.sendMessage(ChatColor.GOLD + "You must be a ChiBlocker to bind this ability.");
+							s.sendMessage(Methods.getChiColor() + "You must be a ChiBlocker to bind this ability.");
 							return true;
 						}
 						
@@ -170,23 +170,23 @@ public class Commands {
 						}
 						
 						if (Methods.isAirAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
-							s.sendMessage(ChatColor.GRAY + "You must be an Airbender to bind this ability.");
+							s.sendMessage(Methods.getAirColor() + "You must be an Airbender to bind this ability.");
 							return true;
 						}
 						if (Methods.isWaterAbility(ability) && !Methods.isBender(s.getName(), Element.Water)) {
-							s.sendMessage(ChatColor.AQUA + "You must be a Waterbender to bind this ability.");
+							s.sendMessage(Methods.getWaterColor() + "You must be a Waterbender to bind this ability.");
 							return true;
 						}
 						if (Methods.isEarthAbility(ability) && !Methods.isBender(s.getName(), Element.Earth)) {
-							s.sendMessage(ChatColor.GREEN + "You must be an Earthbender to bind this ability.");
+							s.sendMessage(Methods.getEarthColor() + "You must be an Earthbender to bind this ability.");
 							return true;
 						}
 						if (Methods.isFireAbility(ability) && !Methods.isBender(s.getName(), Element.Fire)) {
-							s.sendMessage(ChatColor.RED + "You must be a Firebender to bind this ability.");
+							s.sendMessage(Methods.getFireColor() + "You must be a Firebender to bind this ability.");
 							return true;
 						}
 						if (Methods.isChiAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
-							s.sendMessage(ChatColor.GOLD + "You must be a ChiBlocker to bind this ability.");
+							s.sendMessage(Methods.getChiColor() + "You must be a ChiBlocker to bind this ability.");
 							return true;
 						}
 						Methods.bindAbility((Player) s, ability, slot);
@@ -209,52 +209,52 @@ public class Commands {
 						//bending display [Element]
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.airbendingabilities.isEmpty()) {
-								s.sendMessage(ChatColor.GRAY + "There are no airbending abilities available.");
+								s.sendMessage(Methods.getAirColor() + "There are no airbending abilities available.");
 								return true;
 							}
 							for (String st: AbilityModuleManager.airbendingabilities) {
-								s.sendMessage(ChatColor.GRAY + st);
+								s.sendMessage(Methods.getAirColor() + st);
 							}
 							return true;
 						}
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.waterbendingabilities.isEmpty()) {
-								s.sendMessage(ChatColor.AQUA + "There are no waterbending abilities available.");
+								s.sendMessage(Methods.getWaterColor() + "There are no waterbending abilities available.");
 								return true;
 							}
 							for (String st: AbilityModuleManager.waterbendingabilities) {
-								s.sendMessage(ChatColor.AQUA + st);
+								s.sendMessage(Methods.getWaterColor() + st);
 							}
 							return true;
 						}
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.earthbendingabilities.isEmpty()) {
-								s.sendMessage(ChatColor.GREEN + "There are no earthbending abilities available.");
+								s.sendMessage(Methods.getEarthColor() + "There are no earthbending abilities available.");
 								return true;
 							}
 							for (String st: AbilityModuleManager.earthbendingabilities) {
-								s.sendMessage(ChatColor.GREEN + st);
+								s.sendMessage(Methods.getEarthColor() + st);
 							}
 							return true;
 						}
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.firebendingabilities.isEmpty()) {
-								s.sendMessage(ChatColor.RED + "There are no firebending abilities available.");
+								s.sendMessage(Methods.getFireColor() + "There are no firebending abilities available.");
 								return true;
 							}
 							for (String st: AbilityModuleManager.firebendingabilities) {
-								s.sendMessage(ChatColor.RED + st);
+								s.sendMessage(Methods.getFireColor() + st);
 							}
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.chiabilities.isEmpty()) {
-								s.sendMessage(ChatColor.GOLD + "There are no chiblocking abilities available.");
+								s.sendMessage(Methods.getChiColor() + "There are no chiblocking abilities available.");
 								return true;
 							}
 	
 							for (String st: AbilityModuleManager.chiabilities) {
-								s.sendMessage(ChatColor.GOLD  + st);
+								s.sendMessage(Methods.getChiColor()  + st);
 							}
 							return true;
 						}
@@ -328,19 +328,19 @@ public class Commands {
 						String un = p.getName();
 						s.sendMessage(un + " - ");
 						if (Methods.isBender(un, Element.Air)) {
-							s.sendMessage(ChatColor.GRAY + "- Airbender");
+							s.sendMessage(Methods.getAirColor() + "- Airbender");
 						}
 						if (Methods.isBender(un, Element.Water)) {
-							s.sendMessage(ChatColor.AQUA + "- Waterbender");
+							s.sendMessage(Methods.getWaterColor() + "- Waterbender");
 						}
 						if (Methods.isBender(un, Element.Earth)) {
-							s.sendMessage(ChatColor.GREEN + "- Earthbender");
+							s.sendMessage(Methods.getEarthColor() + "- Earthbender");
 						}
 						if (Methods.isBender(un, Element.Fire)) {
-							s.sendMessage(ChatColor.RED + "- Firebender");
+							s.sendMessage(Methods.getFireColor() + "- Firebender");
 						}
 						if (Methods.isBender(un, Element.Chi)) {
-							s.sendMessage(ChatColor.GOLD + "- ChiBlocker");
+							s.sendMessage(Methods.getChiColor() + "- ChiBlocker");
 						}
 						return true;
 					}
@@ -351,7 +351,7 @@ public class Commands {
 							
 							BendingPlayer bp = Methods.getBendingPlayer(un);
 							if (bp.elements.size() > 1) {
-								players.add(ChatColor.DARK_PURPLE + un);
+								players.add(Methods.getAvatarColor() + un);
 								continue;
 							}
 							if (bp.elements.size() == 0) {
@@ -359,23 +359,23 @@ public class Commands {
 								continue;
 							}
 							if (Methods.isBender(un, Element.Air)) {
-								players.add(ChatColor.GRAY + un);
+								players.add(Methods.getAirColor() + un);
 								continue;
 							}
 							if (Methods.isBender(un, Element.Water)){
-								players.add(ChatColor.AQUA + un);
+								players.add(Methods.getWaterColor() + un);
 								continue;
 							}
 							if (Methods.isBender(un, Element.Earth)) {
-								players.add(ChatColor.GREEN + un);
+								players.add(Methods.getEarthColor() + un);
 								continue;
 							}
 							if (Methods.isBender(un, Element.Chi)) {
-								players.add(ChatColor.GOLD + un);
+								players.add(Methods.getChiColor() + un);
 								continue;
 							}
 							if (Methods.isBender(un, Element.Fire)) {
-								players.add(ChatColor.RED + un);
+								players.add(Methods.getFireColor() + un);
 								continue;
 							}
 						}
@@ -472,35 +472,35 @@ public class Commands {
 						BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Air);
-							player.sendMessage(ChatColor.GRAY + "You are also an airbender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + ChatColor.GRAY + " is also an airbender.");
+							player.sendMessage(Methods.getAirColor() + "You are also an airbender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getAirColor() + " is also an airbender.");
 							return true;
 						}
 						
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Water);
-							player.sendMessage(ChatColor.AQUA + "You are also a waterbender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + ChatColor.AQUA + " is also a waterbender.");
+							player.sendMessage(Methods.getWaterColor() + "You are also a waterbender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getWaterColor() + " is also a waterbender.");
 							return true;
 						}
 						
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Earth);
-							player.sendMessage(ChatColor.GREEN + "You are also an Earthbender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN + " is also an Earthbender.");
+							player.sendMessage(Methods.getEarthColor() + "You are also an Earthbender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getEarthColor() + " is also an Earthbender.");
 							return true;
 						}
 						
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Fire);
-							player.sendMessage(ChatColor.GREEN + "You are also a Firebender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + ChatColor.RED + " is also a Firebender");
+							player.sendMessage(Methods.getFireColor() + "You are also a Firebender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getFireColor() + " is also a Firebender");
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Chi);
-							player.sendMessage(ChatColor.GOLD + "You are also a ChiBlocker.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + ChatColor.GOLD + " is also a ChiBlocker");
+							player.sendMessage(Methods.getChiColor() + "You are also a ChiBlocker.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getChiColor() + " is also a ChiBlocker");
 							return true;
 						}
 						
@@ -523,30 +523,30 @@ public class Commands {
 
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Air);
-							s.sendMessage(ChatColor.GRAY + "You are also an airbender.");
+							s.sendMessage(Methods.getAirColor() + "You are also an airbender.");
 							return true;
 						}
 						
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Water);
-							s.sendMessage(ChatColor.AQUA + "You are also a waterbender.");
+							s.sendMessage(Methods.getWaterColor() + "You are also a waterbender.");
 							return true;
 						}
 						
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Earth);
-							s.sendMessage(ChatColor.GREEN + "You are also an Earthbender.");
+							s.sendMessage(Methods.getEarthColor() + "You are also an Earthbender.");
 							return true;
 						}
 						
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Fire);
-							s.sendMessage(ChatColor.GREEN + "You are also a Firebender.");
+							s.sendMessage(Methods.getFireColor() + "You are also a Firebender.");
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Chi);
-							s.sendMessage(ChatColor.GOLD + "You are also a ChiBlocker.");
+							s.sendMessage(Methods.getChiColor() + "You are also a ChiBlocker.");
 							return true;
 						}
 						s.sendMessage(ChatColor.RED + "You must specify an element.");
@@ -586,27 +586,27 @@ public class Commands {
 						}
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Air);
-							s.sendMessage(ChatColor.GRAY + "You are now an Airbender.");
+							s.sendMessage(Methods.getAirColor() + "You are now an Airbender.");
 							return true;
 						}
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Water);
-							s.sendMessage(ChatColor.AQUA + "You are now a waterbender.");
+							s.sendMessage(Methods.getWaterColor() + "You are now a waterbender.");
 							return true;
 						}
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Earth);
-							s.sendMessage(ChatColor.GREEN + "You are now an Earthbender.");
+							s.sendMessage(Methods.getEarthColor() + "You are now an Earthbender.");
 							return true;
 						}
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Fire);
-							s.sendMessage(ChatColor.RED + "You are now a Firebender.");
+							s.sendMessage(Methods.getFireColor() + "You are now a Firebender.");
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Chi);
-							s.sendMessage(ChatColor.RED + "You are now a ChiBlocker.");
+							s.sendMessage(Methods.getChiColor() + "You are now a ChiBlocker.");
 							return true;
 						}
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending choose [Element]");
@@ -727,28 +727,28 @@ public class Commands {
 					if (Methods.abilityExists(args[1])) {
 						String ability = Methods.getAbility(args[1]);
 						if (Methods.isAirAbility(ability)) {
-							s.sendMessage(ChatColor.GRAY + ability + " - ");
-							s.sendMessage(ChatColor.GRAY + AbilityModuleManager.descriptions.get(ability));
+							s.sendMessage(Methods.getAirColor() + ability + " - ");
+							s.sendMessage(Methods.getAirColor() + AbilityModuleManager.descriptions.get(ability));
 						}
 						else if (Methods.isWaterAbility(ability)) {
-							s.sendMessage(ChatColor.AQUA + ability + " - ");
-							s.sendMessage(ChatColor.AQUA + AbilityModuleManager.descriptions.get(ability));
+							s.sendMessage(Methods.getWaterColor() + ability + " - ");
+							s.sendMessage(Methods.getWaterColor() + AbilityModuleManager.descriptions.get(ability));
 						}
 						else if (Methods.isEarthAbility(ability)) {
-							s.sendMessage(ChatColor.GREEN + ability + " - ");
-							s.sendMessage(ChatColor.GREEN + AbilityModuleManager.descriptions.get(ability));
+							s.sendMessage(Methods.getEarthColor() + ability + " - ");
+							s.sendMessage(Methods.getEarthColor() + AbilityModuleManager.descriptions.get(ability));
 						}
 						else if (Methods.isFireAbility(ability)) {
-							s.sendMessage(ChatColor.RED + ability + " - ");
-							s.sendMessage(ChatColor.RED + AbilityModuleManager.descriptions.get(ability));
+							s.sendMessage(Methods.getFireColor() + ability + " - ");
+							s.sendMessage(Methods.getFireColor() + AbilityModuleManager.descriptions.get(ability));
 						}
 						else if (Methods.isChiAbility(ability)) {
-							s.sendMessage(ChatColor.GOLD + ability + " - ");
-							s.sendMessage(ChatColor.GOLD + AbilityModuleManager.descriptions.get(ability));
+							s.sendMessage(Methods.getChiColor() + ability + " - ");
+							s.sendMessage(Methods.getChiColor() + AbilityModuleManager.descriptions.get(ability));
 						}
 						else {
-							s.sendMessage(ChatColor.DARK_PURPLE + ability + " - ");
-							s.sendMessage(ChatColor.DARK_PURPLE + AbilityModuleManager.descriptions.get(ability));
+							s.sendMessage(Methods.getAvatarColor() + ability + " - ");
+							s.sendMessage(Methods.getAvatarColor() + AbilityModuleManager.descriptions.get(ability));
 						}
 					}
 				}

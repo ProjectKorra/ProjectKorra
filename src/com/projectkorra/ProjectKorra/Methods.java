@@ -328,6 +328,30 @@ public class Methods {
 	public static boolean isChiAbility(String ability) {
 		return AbilityModuleManager.chiabilities.contains(ability);
 	}
+	
+	public static ChatColor getAirColor() {
+		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Air"));
+	}
+	
+	public static ChatColor getWaterColor() {
+		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Water"));
+	}
+	
+	public static ChatColor getEarthColor() {
+		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Earth"));
+	}
+	
+	public static ChatColor getFireColor() {
+		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Fire"));
+	}
+	
+	public static ChatColor getChiColor() {
+		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Chi"));
+	}
+	
+	public static ChatColor getAvatarColor() {
+		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
+	}
 
 	public static ChatColor getAbilityColor(String ability) {
 		if (AbilityModuleManager.chiabilities.contains(ability)) return ChatColor.GOLD;
