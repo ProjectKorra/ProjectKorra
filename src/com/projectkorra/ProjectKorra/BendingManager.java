@@ -55,6 +55,7 @@ import com.projectkorra.ProjectKorra.waterbending.Torrent;
 import com.projectkorra.ProjectKorra.waterbending.TorrentBurst;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
+import com.projectkorra.ProjectKorra.waterbending.WaterReturn;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 import com.projectkorra.ProjectKorra.waterbending.WaterWall;
 import com.projectkorra.ProjectKorra.waterbending.Wave;
@@ -117,6 +118,7 @@ public class BendingManager implements Runnable {
 			FireShield.progressAll();
 			Lightning.progressAll();
 			WallOfFire.manage();
+			WaterReturn.progressAll();
 			for (Player p : RapidPunch.instance.keySet())
 				RapidPunch.instance.get(p).startPunch(p);
 
