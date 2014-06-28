@@ -214,9 +214,9 @@ public class IceSpike {
 		progress++;
 		Block affectedblock = location.clone().add(direction).getBlock();
 		location = location.add(direction);
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.IceSpike,
-//				location))
-//			return false;
+		if (Methods.isRegionProtectedFromBuild(player, "IceSpike",
+				location))
+			return false;
 		for (Entity en : Methods.getEntitiesAroundPoint(location, 1.4)) {
 			if (en instanceof LivingEntity && en != player
 					&& !damaged.contains(((LivingEntity) en))) {

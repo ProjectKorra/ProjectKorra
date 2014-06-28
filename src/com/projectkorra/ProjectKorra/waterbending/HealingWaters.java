@@ -78,8 +78,8 @@ public class HealingWaters {
 	}
 
 	private static void applyHealing(Player player) {
-//		if (!Methods.isRegionProtectedFromBuild(player, Abilities.HealingWaters,
-//				player.getLocation()))
+		if (!Methods.isRegionProtectedFromBuild(player, "HealingWaters",
+				player.getLocation()))
 			player.addPotionEffect(new PotionEffect(
 					PotionEffectType.REGENERATION, 70, 1));
 	}

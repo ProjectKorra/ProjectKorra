@@ -35,12 +35,13 @@ public class WaterReturn {
 		this.player = player;
 		location = block.getLocation();
 		if (Methods.canBend(player.getName(), "WaterManipulation")) {
-//		if (!Methods.isRegionProtectedFromBuild(player,
-//				Abilities.WaterManipulation, location)
-//				&& Methods.canBend(player, Abilities.WaterManipulation)) {
-			if (Methods.isTransparentToEarthbending(player, block)
-					&& !block.isLiquid())
-				this.block = new TempBlock(block, Material.WATER, full);
+			if (!Methods.isRegionProtectedFromBuild(player,
+					"WaterManipulation", location)
+					&& Methods.canBend(player.getName(), "WaterManipulation")) {
+				if (Methods.isTransparentToEarthbending(player, block)
+						&& !block.isLiquid())
+					this.block = new TempBlock(block, Material.WATER, full);
+			}
 		}
 		// if (ID >= Integer.MAX_VALUE) {
 		// ID = Integer.MIN_VALUE;
@@ -82,11 +83,11 @@ public class WaterReturn {
 		if (location.getBlock().equals(block.getLocation().getBlock()))
 			return;
 
-//		if (Methods.isRegionProtectedFromBuild(player,
-//				Abilities.WaterManipulation, location)) {
-//			remove();
-//			return;
-//		}
+		if (Methods.isRegionProtectedFromBuild(player,
+				"WaterManipulation", location)) {
+			remove();
+			return;
+		}
 
 		if (location.distance(player.getEyeLocation()) > Methods
 				.waterbendingNightAugment(range, player.getWorld())) {

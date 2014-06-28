@@ -371,9 +371,9 @@ public class EarthBlast {
 
 				for (Entity entity : Methods.getEntitiesAroundPoint(location,
 						FireBlast.affectingradius)) {
-//					if (Methods.isRegionProtectedFromBuild(player,
-//							Abilities.EarthBlast, entity.getLocation()))
-//						continue;
+					if (Methods.isRegionProtectedFromBuild(player,
+							"EarthBlast", entity.getLocation()))
+						continue;
 					if (entity instanceof LivingEntity
 							&& (entity.getEntityId() != player.getEntityId() || hitself)) {
 						// Block testblock = location.getBlock();
@@ -507,9 +507,9 @@ public class EarthBlast {
 			if (!blast.location.getWorld().equals(player.getWorld()))
 				continue;
 
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.EarthBlast,
-//					blast.location))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player, "EarthBlast",
+					blast.location))
+				continue;
 
 			if (blast.player.equals(player))
 				blast.redirect(player, getTargetLocation(player));
@@ -553,9 +553,9 @@ public class EarthBlast {
 			if (!blast.progressing)
 				continue;
 
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.EarthBlast,
-//					blast.location))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player, "EarthBlast",
+					blast.location))
+				continue;
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();

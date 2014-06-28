@@ -129,9 +129,9 @@ public class OctopusForm {
 		for (Entity entity : Methods.getEntitiesAroundPoint(location, 2.5)) {
 			if (entity.getEntityId() == player.getEntityId())
 				continue;
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.OctopusForm,
-//					entity.getLocation()))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player, "OctopusForm",
+					entity.getLocation()))
+				continue;
 			// if (Torrent.canThaw(entity.getLocation().getBlock())
 			// || Wave.canThaw(entity.getLocation().getBlock()))
 			// continue;
@@ -362,9 +362,9 @@ public class OctopusForm {
 
 	private void addWater(Block block) {
 		clearNearbyWater(block);
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.OctopusForm,
-//				block.getLocation()))
-//			return;
+		if (Methods.isRegionProtectedFromBuild(player, "OctopusForm",
+				block.getLocation()))
+			return;
 		if (TempBlock.isTempBlock(block)) {
 			TempBlock tblock = TempBlock.get(block);
 			if (!newblocks.contains(tblock)) {

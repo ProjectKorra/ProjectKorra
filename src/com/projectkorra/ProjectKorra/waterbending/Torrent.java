@@ -275,7 +275,7 @@ public class Torrent {
 				if (Math.abs(theta - startangle) < 10)
 					location = blockloc.clone();
 				Block block = blockloc.getBlock();
-				if (!doneblocks.contains(block)) {
+				if (!doneblocks.contains(block) && !Methods.isRegionProtectedFromBuild(player, "Torrent", blockloc)) {
 					if (Methods.isTransparentToEarthbending(player, block)
 							&& !block.isLiquid()) {
 						launchblocks.add(new TempBlock(block, Material.WATER,
@@ -324,7 +324,7 @@ public class Torrent {
 
 		// player.sendBlockChange(location, 20, (byte) 0);
 
-		if (location.distance(player.getLocation()) > range) {
+		if (location.distance(player.getLocation()) > range || Methods.isRegionProtectedFromBuild(player, "Torrent", location)) {
 			if (layer < maxlayer)
 				if (freeze || layer < 1)
 					layer++;

@@ -72,9 +72,9 @@ public class Tremorsense {
 					Block blocki = block.getRelative(BlockFace.EAST, i)
 							.getRelative(BlockFace.NORTH, j)
 							.getRelative(BlockFace.DOWN, k);
-//					if (Methods.isRegionProtectedFromBuild(player,
-//							Abilities.RaiseEarth, blocki.getLocation()))
-//						continue;
+					if (Methods.isRegionProtectedFromBuild(player,
+							"RaiseEarth", blocki.getLocation()))
+						continue;
 					if (Methods.isEarthbendable(player,
 							blocki) && !earth) {
 						earth = true;

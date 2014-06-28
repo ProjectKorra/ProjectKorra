@@ -54,11 +54,11 @@ public class Lightning {
 		Location targetlocation = getTargetLocation();
 		if (AvatarState.isAvatarState(player))
 			maxdamage = AvatarState.getValue(maxdamage);
-//		if (!Methods.isRegionProtectedFromBuild(player, Abilities.Lightning,
-//				targetlocation)) {
+		if (!Methods.isRegionProtectedFromBuild(player, "Lightning",
+				targetlocation)) {
 			strike = player.getWorld().strikeLightning(targetlocation);
 			strikes.put(strike, this);
-//		}
+		}
 		instances.remove(player);
 	}
 

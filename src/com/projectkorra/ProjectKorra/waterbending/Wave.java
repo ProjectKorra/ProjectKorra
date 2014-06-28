@@ -248,7 +248,7 @@ public class Wave {
 
 				ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if ((((blockl.getType() == Material.AIR
+				if (!Methods.isRegionProtectedFromBuild(player, "Surge", location) && (((blockl.getType() == Material.AIR
 						|| blockl.getType() == Material.FIRE
 						|| Methods.isPlant(blockl)
 						|| Methods.isWater(blockl) || Methods
@@ -376,9 +376,9 @@ public class Wave {
 	}
 
 	private void addWater(Block block) {
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.Surge,
-//				block.getLocation()))
-//			return;
+		if (Methods.isRegionProtectedFromBuild(player, "Surge",
+				block.getLocation()))
+			return;
 		if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.WATER, full);
 			// new TempBlock(block, Material.ICE, (byte) 0);
@@ -441,11 +441,11 @@ public class Wave {
 
 		for (Block block : Methods.getBlocksAroundPoint(frozenlocation,
 				freezeradius)) {
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.Surge,
-//					block.getLocation())
-//					|| Methods.isRegionProtectedFromBuild(player,
-//							Abilities.PhaseChange, block.getLocation()))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player, "Surge",
+					block.getLocation())
+					|| Methods.isRegionProtectedFromBuild(player,
+							"PhaseChange", block.getLocation()))
+				continue;
 			if (TempBlock.isTempBlock(block))
 				continue;
 			if (block.getType() == Material.AIR

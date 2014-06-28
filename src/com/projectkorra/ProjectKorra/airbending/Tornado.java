@@ -20,7 +20,7 @@ public class Tornado {
 	public static ConcurrentHashMap<Integer, Tornado> instances = new ConcurrentHashMap<Integer, Tornado>();
 
 	static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
+
 	private static double maxradius = config.getDouble("Abilities.Air.Tornado.Radius");
 	private static double maxheight = config.getDouble("Abilities.Air.Tornado.Height");
 	private static double range = config.getDouble("Abilities.Air.Tornado.Range");
@@ -85,11 +85,11 @@ public class Tornado {
 			return false;
 		}
 
-//		if (Methods
-//				.isRegionProtectedFromBuild(player, Abilities.AirBlast, origin)) {
-//			instances.remove(player.getEntityId());
-//			return false;
-//		}
+		if (Methods
+				.isRegionProtectedFromBuild(player, "AirBlast", origin)) {
+			instances.remove(player.getEntityId());
+			return false;
+		}
 		rotateTornado();
 		return true;
 	}
@@ -104,9 +104,9 @@ public class Tornado {
 			origin.setY(origin.getY() - 1. / 10. * height);
 
 			for (Entity entity : Methods.getEntitiesAroundPoint(origin, height)) {
-//				if (Methods.isRegionProtectedFromBuild(player,
-//						Abilities.AirBlast, entity.getLocation()))
-//					continue;
+				if (Methods.isRegionProtectedFromBuild(player,
+						"AirBlast", entity.getLocation()))
+					continue;
 				double y = entity.getLocation().getY();
 				double factor;
 				if (y > origin.getY() && y < origin.getY() + height) {
@@ -180,10 +180,10 @@ public class Tornado {
 						* Math.sin(angle);
 
 				Location effect = new Location(origin.getWorld(), x, y, z);
-				//				if (!Methods.isRegionProtectedFromBuild(player,
-				//						Abilities.AirBlast, effect))
-				origin.getWorld().playEffect(effect, Effect.SMOKE, 4,
-						(int) AirBlast.defaultrange);
+				if (!Methods.isRegionProtectedFromBuild(player,
+						"AirBlast", effect))
+					origin.getWorld().playEffect(effect, Effect.SMOKE, 4,
+							(int) AirBlast.defaultrange);
 
 				angles.put(i, angles.get(i) + 25 * (int) speedfactor);
 			}

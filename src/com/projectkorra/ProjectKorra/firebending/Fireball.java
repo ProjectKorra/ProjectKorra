@@ -100,11 +100,11 @@ public class Fireball {
 
 		if (System.currentTimeMillis() > time + interval) {
 			if (launched) {
-//				if (Methods.isRegionProtectedFromBuild(player, Abilities.Blaze,
-//						location)) {
-//					remove();
-//					return;
-//				}
+				if (Methods.isRegionProtectedFromBuild(player, "Blaze",
+						location)) {
+					remove();
+					return;
+				}
 			}
 
 			time = System.currentTimeMillis();
@@ -198,11 +198,11 @@ public class Fireball {
 		// Methods.verbose("Fireball Explode!");
 		boolean explode = true;
 		for (Block block : Methods.getBlocksAroundPoint(location, 3)) {
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.FireBlast,
-//					block.getLocation())) {
-//				explode = false;
-//				break;
-//			}
+			if (Methods.isRegionProtectedFromBuild(player, "FireBlast",
+					block.getLocation())) {
+				explode = false;
+				break;
+			}
 		}
 		if (explode) {
 			explosion = player.getWorld().spawn(location, TNTPrimed.class);

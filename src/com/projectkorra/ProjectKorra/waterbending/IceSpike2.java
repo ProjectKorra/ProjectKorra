@@ -277,12 +277,12 @@ public class IceSpike2 {
 				return;
 			}
 
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.IceSpike,
-//					location)) {
-//				cancel();
-//				returnWater();
-//				return;
-//			}
+			if (Methods.isRegionProtectedFromBuild(player, "IceSpike",
+					location)) {
+				cancel();
+				returnWater();
+				return;
+			}
 
 			for (Entity entity : Methods.getEntitiesAroundPoint(location,
 					affectingradius)) {
@@ -357,9 +357,9 @@ public class IceSpike2 {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = ice.location;
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.IceSpike,
-//					mloc))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player, "IceSpike",
+					mloc))
+				continue;
 			if (mloc.distance(location) <= defaultrange
 					&& Methods.getDistanceFromLine(vector, location, ice.location) < deflectrange
 					&& mloc.distance(location.clone().add(vector)) < mloc
@@ -392,9 +392,9 @@ public class IceSpike2 {
 			if (!ice.progressing)
 				continue;
 
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.IceSpike,
-//					ice.location))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player, "IceSpike",
+					ice.location))
+				continue;
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();

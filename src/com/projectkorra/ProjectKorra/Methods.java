@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -61,6 +62,7 @@ import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 public class Methods {
 
@@ -69,7 +71,7 @@ public class Methods {
 	public Methods(ProjectKorra plugin) {
 		Methods.plugin = plugin;
 	}
-	
+
 	private static boolean allowharmless = plugin.getConfig().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
 	private static boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
 	private static boolean respectPreciousStones = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectPreciousStones");
@@ -301,13 +303,16 @@ public class Methods {
 		if (isEarthAbility(ability) && !isBender(player, Element.Earth)) return false;
 		if (isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
 		if (isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
+		if (isRegionProtectedFromBuild(p, ability, p.getLocation())) return false;
 		return true;
 	}
 
 	public static boolean canBendPassive(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
+		Player p = Bukkit.getPlayer(player);
 		if (!bPlayer.isToggled) return false;
 		if (!bPlayer.hasElement(element)) return false;
+		if (isRegionProtectedFromBuild(p, null, p.getLocation())) return false;
 		return true;
 	}
 
@@ -422,12 +427,39 @@ public class Methods {
 	}
 
 	public static boolean isEarthbendable(Player player, Block block) {
+		return isEarthbendable(player, "RaiseEarth", block);
+	}
+
+	public static boolean isEarthbendable(Player player, String ability,
+			Block block) {
+		if (isRegionProtectedFromBuild(player, ability,
+				block.getLocation()))
+			return false;
 		Material material = block.getType();
 
-		for (String s: plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks")) {
+		// if ((material == Material.STONE) || (material == Material.CLAY)
+		// || (material == Material.COAL_ORE)
+		// || (material == Material.DIAMOND_ORE)
+		// || (material == Material.DIRT)
+		// || (material == Material.GOLD_ORE)
+		// || (material == Material.GRASS)
+		// || (material == Material.GRAVEL)
+		// || (material == Material.IRON_ORE)
+		// || (material == Material.LAPIS_ORE)
+		// || (material == Material.NETHERRACK)
+		// || (material == Material.REDSTONE_ORE)
+		// || (material == Material.SAND)
+		// || (material == Material.SANDSTONE)) {
+		// return true;
+		// }
+		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks")) {
+
 			if (material == Material.getMaterial(s)) {
+
 				return true;
+
 			}
+
 		}
 		return false;
 	}
@@ -489,7 +521,16 @@ public class Methods {
 	}
 
 	public static boolean isTransparentToEarthbending(Player player, Block block) {
-		if (Arrays.asList(transparentToEarthbending).contains(block.getTypeId())) return true;
+		return isTransparentToEarthbending(player, "RaiseEarth", block);
+	}
+
+	public static boolean isTransparentToEarthbending(Player player,
+			String ability, Block block) {
+		if (isRegionProtectedFromBuild(player, ability,
+				block.getLocation()))
+			return false;
+		if (Arrays.asList(transparentToEarthbending).contains(block.getTypeId()))
+			return true;
 		return false;
 	}
 
@@ -525,9 +566,9 @@ public class Methods {
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i))
 					.getBlock();
-			//			if (isRegionProtectedFromBuild(player, Abilities.RaiseEarth,
-			//					location))
-			//				continue;
+						if (isRegionProtectedFromBuild(player, "RaiseEarth",
+								location))
+							continue;
 			if (isEarthbendable(player, block)) {
 				return block;
 			}
@@ -565,9 +606,9 @@ public class Methods {
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i))
 					.getBlock();
-			//			if (isRegionProtectedFromBuild(player, Abilities.WaterManipulation,
-			//					location))
-			//				continue;
+						if (isRegionProtectedFromBuild(player, "WaterManipulation",
+								location))
+							continue;
 			if (isWaterbendable(block, player)
 					&& (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block)) {
@@ -843,9 +884,9 @@ public class Methods {
 
 	public static boolean moveEarth(Player player, Block block,
 			Vector direction, int chainlength, boolean throwplayer) {
-		if (isEarthbendable(player, block)) {
-			//				&& !isRegionProtectedFromBuild(player, Abilities.RaiseEarth,
-			//						block.getLocation())) {
+		if (isEarthbendable(player, block)
+				&& !isRegionProtectedFromBuild(player, "RaiseEarth",
+						block.getLocation())) {
 
 			boolean up = false;
 			boolean down = false;
@@ -1191,7 +1232,7 @@ public class Methods {
 		return faces[besti];
 
 	}
-	
+
 	public static boolean isHarmlessAbility(String ability) {
 		return Arrays.asList(AbilityModuleManager.harmlessabilities).contains(ability);
 	}
@@ -1201,11 +1242,11 @@ public class Methods {
 
 		Set<String> ignite = AbilityModuleManager.igniteabilities;
 		Set<String> explode = AbilityModuleManager.explodeabilities;
-//		List<Abilities> ignite = new ArrayList<Abilities>();
-//		ignite.add(Abilities.Blaze);
-//		List<Abilities> explode = new ArrayList<Abilities>();
-//		explode.add(Abilities.FireBlast);
-//		explode.add(Abilities.Lightning);
+		//		List<Abilities> ignite = new ArrayList<Abilities>();
+		//		ignite.add(Abilities.Blaze);
+		//		List<Abilities> explode = new ArrayList<Abilities>();
+		//		explode.add(Abilities.FireBlast);
+		//		explode.add(Abilities.Lightning);
 
 		if (ability == null && allowharmless)
 			return false;
@@ -1272,17 +1313,16 @@ public class Methods {
 			if (psp != null && respectPreciousStones) {
 				PreciousStones ps = (PreciousStones) psp;
 
-//				if (ignite.contains(ability)) {
-//					if (ps.getForceFieldManager().hasSourceField(location,
-//							FieldFlag.PREVENT_FIRE))
-//						return true;
-//				}
-
-//				if (explode.contains(ability)) {
-//					if (ps.getForceFieldManager().hasSourceField(location,
-//							FieldFlag.PREVENT_EXPLOSIONS))
-//						return true;
-//				}
+				if (ignite.contains(ability)) {
+					if (ps.getForceFieldManager().hasSourceField(location,
+							FieldFlag.PREVENT_FIRE))
+						return true;
+				}
+				if (explode.contains(ability)) {
+					if (ps.getForceFieldManager().hasSourceField(location,
+							FieldFlag.PREVENT_EXPLOSIONS))
+						return true;
+				}
 
 				if (ps.getForceFieldManager().hasSourceField(location,
 						FieldFlag.PREVENT_PLACE))
@@ -1290,13 +1330,13 @@ public class Methods {
 			}
 
 			if (fcp != null && mcore != null && respectFactions) {
-//				if (ignite.contains(ability)) {
-//
-//				}
-//
-//				if (explode.contains(ability)) {
-//
-//				}
+				if (ignite.contains(ability)) {
+
+				}
+
+				if (explode.contains(ability)) {
+
+				}
 
 				if (!FactionsListenerMain.canPlayerBuildAt(player,
 						PS.valueOf(loc.getBlock()), false)) {
@@ -1324,13 +1364,13 @@ public class Methods {
 							location, 3, (byte) 0,
 							TownyPermission.ActionType.BUILD);
 
-//					if (ignite.contains(ability)) {
-//
-//					}
-//
-//					if (explode.contains(ability)) {
-//
-//					}
+					if (ignite.contains(ability)) {
+
+					}
+
+					if (explode.contains(ability)) {
+
+					}
 
 					if (!bBuild) {
 						PlayerCache cache = twn.getCache(player);

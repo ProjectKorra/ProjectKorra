@@ -183,7 +183,7 @@ public class AirSwipe {
 						direction.clone().multiply(speedfactor));
 				elements.replace(direction, location);
 
-				if (location.distance(origin) > range) {
+				if (location.distance(origin) > range || Methods.isRegionProtectedFromBuild(player, "AirSwipe", location)) {
 					elements.remove(direction);
 				} else {
 					Methods.removeSpouts(location, player);
@@ -246,9 +246,9 @@ public class AirSwipe {
 		Methods.removeSpouts(location, player);
 		for (Entity entity : Methods.getEntitiesAroundPoint(location,
 				affectingradius)) {
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.AirSwipe,
-//					entity.getLocation()))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player, "AirSwipe",
+					entity.getLocation()))
+				continue;
 			if (entity.getEntityId() != player.getEntityId()) {
 				if (AvatarState.isAvatarState(player)) {
 					entity.setVelocity(direction.multiply(AvatarState

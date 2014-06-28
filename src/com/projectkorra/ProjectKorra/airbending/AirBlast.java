@@ -132,9 +132,9 @@ public class AirBlast {
 				|| Methods.isSolid(location.getBlock()))
 			return;
 
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.AirBlast,
-//				location))
-//			return;
+		if (Methods.isRegionProtectedFromBuild(player, "AirBlast",
+				location))
+			return;
 
 		if (origins.containsKey(player)) {
 			origins.replace(player, location);
@@ -149,11 +149,11 @@ public class AirBlast {
 			return false;
 		}
 
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.AirBlast,
-//				location)) {
-//			instances.remove(id);
-//			return false;
-//		}
+		if (Methods.isRegionProtectedFromBuild(player, "AirBlast",
+				location)) {
+			instances.remove(id);
+			return false;
+		}
 
 		speedfactor = speed * (ProjectKorra.time_step / 1000.);
 

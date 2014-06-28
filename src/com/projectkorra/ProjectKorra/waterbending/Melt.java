@@ -56,9 +56,9 @@ public class Melt {
 	}
 
 	public static void melt(Player player, Block block) {
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.PhaseChange,
-//				block.getLocation()))
-//			return;
+		if (Methods.isRegionProtectedFromBuild(player, "PhaseChange",
+				block.getLocation()))
+			return;
 		if (!Wave.canThaw(block)) {
 			Wave.thaw(block);
 			return;
@@ -83,9 +83,9 @@ public class Melt {
 	}
 
 	public static void evaporate(Player player, Block block) {
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.PhaseChange,
-//				block.getLocation()))
-//			return;
+		if (Methods.isRegionProtectedFromBuild(player, "PhaseChange",
+				block.getLocation()))
+			return;
 		if (Methods.isWater(block) && !TempBlock.isTempBlock(block)
 				&& WaterManipulation.canPhysicsChange(block)) {
 			block.setType(Material.AIR);

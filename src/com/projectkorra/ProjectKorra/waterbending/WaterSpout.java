@@ -151,9 +151,9 @@ public class WaterSpout {
 		Block blocki;
 		for (int i = 0; i < maxheight; i++) {
 			blocki = location.clone().add(0, -i, 0).getBlock();
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.WaterSpout,
-//					blocki.getLocation()))
-//				return -1;
+			if (Methods.isRegionProtectedFromBuild(player, "WaterSpout",
+					blocki.getLocation()))
+				return -1;
 			if (!affectedblocks.contains(blocki)) {
 				if (blocki.getType() == Material.WATER
 						|| blocki.getType() == Material.STATIONARY_WATER) {

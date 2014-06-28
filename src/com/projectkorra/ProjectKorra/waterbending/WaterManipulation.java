@@ -148,8 +148,8 @@ public class WaterManipulation {
 
 			}
 
-//			BendingPlayer.getBendingPlayer(player).cooldown(
-//					Abilities.WaterManipulation);
+			//			BendingPlayer.getBendingPlayer(player).cooldown(
+			//					Abilities.WaterManipulation);
 
 		}
 	}
@@ -206,11 +206,11 @@ public class WaterManipulation {
 		}
 		if (System.currentTimeMillis() - time >= interval) {
 			// removeWater(oldwater);
-			//			if (Methods.isRegionProtectedFromBuild(player,
-			//					Abilities.WaterManipulation, location)) {
-			//				breakBlock();
-			//				return false;
-			//			}
+			if (Methods.isRegionProtectedFromBuild(player,
+					"WaterManipulation", location)) {
+				breakBlock();
+				return false;
+			}
 
 			time = System.currentTimeMillis();
 
@@ -544,9 +544,9 @@ public class WaterManipulation {
 			if (!manip.location.getWorld().equals(player.getWorld()))
 				continue;
 
-//			if (Methods.isRegionProtectedFromBuild(player,
-//					Abilities.WaterManipulation, manip.location))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player,
+					"WaterManipulation", manip.location))
+				continue;
 
 			if (manip.player.equals(player))
 				manip.redirect(player, getTargetLocation(player));
@@ -578,10 +578,10 @@ public class WaterManipulation {
 
 			if (!manip.progressing)
 				continue;
-//
-//			if (Methods.isRegionProtectedFromBuild(player,
-//					Abilities.WaterManipulation, manip.location))
-//				continue;
+
+			if (Methods.isRegionProtectedFromBuild(player,
+					"WaterManipulation", manip.location))
+				continue;
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();

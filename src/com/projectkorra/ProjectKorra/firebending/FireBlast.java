@@ -120,10 +120,10 @@ public class FireBlast {
 			return false;
 		}
 
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.Blaze, location)) {
-//			instances.remove(id);
-//			return false;
-//		}
+		if (Methods.isRegionProtectedFromBuild(player, "Blaze", location)) {
+			instances.remove(id);
+			return false;
+		}
 
 		speedfactor = speed * (ProjectKorra.time_step / 1000.);
 

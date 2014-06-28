@@ -40,9 +40,9 @@ public class Extinguish {
 				player.getWorld());
 		for (Block block : Methods.getBlocksAroundPoint(
 				player.getTargetBlock(null, (int) range).getLocation(), radius)) {
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.Blaze,
-//					block.getLocation()))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player, "Blaze",
+					block.getLocation()))
+				continue;
 			if (block.getType() == Material.FIRE) {
 				block.setType(Material.AIR);
 				block.getWorld().playEffect(block.getLocation(),

@@ -79,9 +79,9 @@ public class AirBubble {
 		for (Block block : Methods.getBlocksAroundPoint(location, radius)) {
 			if (waterorigins.containsKey(block))
 				continue;
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.AirBubble,
-//					block.getLocation()))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player, "AirBubble",
+					block.getLocation()))
+				continue;
 			if (block.getType() == Material.STATIONARY_WATER
 					|| block.getType() == Material.WATER) {
 				if (WaterManipulation.canBubbleWater(block)) {

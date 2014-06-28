@@ -291,9 +291,9 @@ public class WaterWall {
 						// loc.getBlock().setType(Material.GLOWSTONE);
 						vec = Methods.getOrthogonalVector(dir.clone(), angle, i);
 						block = loc.clone().add(vec).getBlock();
-//						if (Methods.isRegionProtectedFromBuild(player,
-//								Abilities.Surge, block.getLocation()))
-//							continue;
+						if (Methods.isRegionProtectedFromBuild(player,
+								"Surge", block.getLocation()))
+							continue;
 						if (wallblocks.containsKey(block)) {
 							blocks.add(block);
 						} else if (!blocks.contains(block)
@@ -440,23 +440,15 @@ public class WaterWall {
 
 	private void addWater(Block block) {
 
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.Surge,
-//				block.getLocation()))
-//			return;
+		if (Methods.isRegionProtectedFromBuild(player, "Surge",
+				block.getLocation()))
+			return;
 
 		if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.WATER, full);
 			// new TempBlock(block, Material.ICE, (byte) 0);
 			affectedblocks.put(block, block);
 		}
-
-		// if (!affectedblocks.containsKey(block)) {
-		// affectedblocks.put(block, block);
-		// }
-		// if (FreezeMelt.frozenblocks.containsKey(block))
-		// FreezeMelt.frozenblocks.remove(block);
-		// block.setType(Material.WATER);
-		// block.setData(full);
 	}
 
 	public static void moveWater(Player player) {

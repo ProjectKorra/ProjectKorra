@@ -54,9 +54,9 @@ public class AirShield {
 		FireBlast.removeFireBlastsAroundPoint(origin, radius);
 
 		for (Entity entity : Methods.getEntitiesAroundPoint(origin, radius)) {
-//			if (Methods.isRegionProtectedFromBuild(player, Abilities.AirShield,
-//					entity.getLocation()))
-//				continue;
+			if (Methods.isRegionProtectedFromBuild(player, "AirShield",
+					entity.getLocation()))
+				continue;
 			if (origin.distance(entity.getLocation()) > 2) {
 				double x, z, vx, vz, mag;
 				double angle = 50;
@@ -103,10 +103,10 @@ public class AirShield {
 			z = origin.getZ() + radius * Math.sin(angle) * f;
 
 			Location effect = new Location(origin.getWorld(), x, y, z);
-			//			if (!Methods.isRegionProtectedFromBuild(player, Abilities.AirShield,
-			//					effect))
-			origin.getWorld().playEffect(effect, Effect.SMOKE, 4,
-					(int) AirBlast.defaultrange);
+			if (!Methods.isRegionProtectedFromBuild(player, "AirShield",
+					effect))
+				origin.getWorld().playEffect(effect, Effect.SMOKE, 4,
+						(int) AirBlast.defaultrange);
 
 			angles.put(i, angles.get(i) + (int) (10 * speedfactor));
 		}
@@ -125,18 +125,18 @@ public class AirShield {
 			instances.remove(player.getEntityId());
 			return false;
 		}
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.AirShield,
-//				player.getLocation())) {
-//			instances.remove(player.getEntityId());
-//			return false;
-//		}
+		if (Methods.isRegionProtectedFromBuild(player, "AirShield",
+				player.getLocation())) {
+			instances.remove(player.getEntityId());
+			return false;
+		}
 		speedfactor = 1;
 		if (!Methods.canBend(player.getName(), "AirShield")
 				|| player.getEyeLocation().getBlock().isLiquid()) {
 			instances.remove(player.getEntityId());
 			return false;
 		}
-		
+
 		if (Methods.getBoundAbility(player) == null) {
 			instances.remove(player.getEntityId());
 			return false;

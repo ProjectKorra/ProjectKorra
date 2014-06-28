@@ -120,7 +120,7 @@ public class AirSuction {
 		Location location = origin.clone();
 		for (double i = 1; i <= range; i++) {
 			location = origin.clone().add(direction.clone().multiply(i));
-			if (!Methods.isTransparentToEarthbending(player, location.getBlock())) {
+			if (!Methods.isTransparentToEarthbending(player, location.getBlock()) || Methods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
 				return origin.clone().add(direction.clone().multiply(i - 1));
 			}
 		}
@@ -133,10 +133,10 @@ public class AirSuction {
 		if (location.getBlock().isLiquid()
 				|| Methods.isSolid(location.getBlock()))
 			return;
-//
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.AirSuction,
-//				location))
-//			return;
+
+		if (Methods.isRegionProtectedFromBuild(player, "AirSuction",
+				location))
+			return;
 
 		if (origins.containsKey(player)) {
 			origins.replace(player, location);
@@ -150,11 +150,11 @@ public class AirSuction {
 			instances.remove(id);
 			return false;
 		}
-//		if (Methods.isRegionProtectedFromBuild(player, Abilities.AirSuction,
-//				location)) {
-//			instances.remove(id);
-//			return false;
-//		}
+		if (Methods.isRegionProtectedFromBuild(player, "AirSuction",
+				location)) {
+			instances.remove(id);
+			return false;
+		}
 		speedfactor = speed * (ProjectKorra.time_step / 1000.);
 
 		ticks++;
