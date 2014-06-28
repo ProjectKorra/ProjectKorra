@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -28,8 +32,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
 
+import com.massivecraft.factions.listeners.FactionsListenerMain;
+import com.massivecraft.mcore.ps.PS;
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.TownyMessaging;
+import com.palmergames.bukkit.towny.TownySettings;
+import com.palmergames.bukkit.towny.object.Coord;
+import com.palmergames.bukkit.towny.object.PlayerCache;
+import com.palmergames.bukkit.towny.object.PlayerCache.TownBlockStatus;
+import com.palmergames.bukkit.towny.object.TownyPermission;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
+import com.palmergames.bukkit.towny.object.TownyWorld;
+import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
+import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
+import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -39,6 +60,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class Methods {
 
@@ -47,6 +69,13 @@ public class Methods {
 	public Methods(ProjectKorra plugin) {
 		Methods.plugin = plugin;
 	}
+	
+	private static boolean allowharmless = plugin.getConfig().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
+	private static boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
+	private static boolean respectPreciousStones = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectPreciousStones");
+	private static boolean respectFactions = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectFactions");
+	private static boolean respectTowny = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectTowny");
+	private static boolean respectGriefPrevention = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
 
 	private static final ItemStack pickaxe = new ItemStack(
 			Material.DIAMOND_PICKAXE);
@@ -1162,15 +1191,21 @@ public class Methods {
 		return faces[besti];
 
 	}
+	
+	public static boolean isHarmlessAbility(String ability) {
+		return Arrays.asList(AbilityModuleManager.harmlessabilities).contains(ability);
+	}
 
 	public static boolean isRegionProtectedFromBuild(Player player,
 			String ability, Location loc) {
 
-		List<Abilities> ignite = new ArrayList<Abilities>();
-		ignite.add(Abilities.Blaze);
-		List<Abilities> explode = new ArrayList<Abilities>();
-		explode.add(Abilities.FireBlast);
-		explode.add(Abilities.Lightning);
+		Set<String> ignite = AbilityModuleManager.igniteabilities;
+		Set<String> explode = AbilityModuleManager.explodeabilities;
+//		List<Abilities> ignite = new ArrayList<Abilities>();
+//		ignite.add(Abilities.Blaze);
+//		List<Abilities> explode = new ArrayList<Abilities>();
+//		explode.add(Abilities.FireBlast);
+//		explode.add(Abilities.Lightning);
 
 		if (ability == null && allowharmless)
 			return false;
@@ -1218,7 +1253,6 @@ public class Methods {
 					}
 
 				}
-
 				if (explode.contains(ability)) {
 					if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions)
 						return true;
@@ -1238,17 +1272,17 @@ public class Methods {
 			if (psp != null && respectPreciousStones) {
 				PreciousStones ps = (PreciousStones) psp;
 
-				if (ignite.contains(ability)) {
-					if (ps.getForceFieldManager().hasSourceField(location,
-							FieldFlag.PREVENT_FIRE))
-						return true;
-				}
+//				if (ignite.contains(ability)) {
+//					if (ps.getForceFieldManager().hasSourceField(location,
+//							FieldFlag.PREVENT_FIRE))
+//						return true;
+//				}
 
-				if (explode.contains(ability)) {
-					if (ps.getForceFieldManager().hasSourceField(location,
-							FieldFlag.PREVENT_EXPLOSIONS))
-						return true;
-				}
+//				if (explode.contains(ability)) {
+//					if (ps.getForceFieldManager().hasSourceField(location,
+//							FieldFlag.PREVENT_EXPLOSIONS))
+//						return true;
+//				}
 
 				if (ps.getForceFieldManager().hasSourceField(location,
 						FieldFlag.PREVENT_PLACE))
@@ -1256,13 +1290,13 @@ public class Methods {
 			}
 
 			if (fcp != null && mcore != null && respectFactions) {
-				if (ignite.contains(ability)) {
-
-				}
-
-				if (explode.contains(ability)) {
-
-				}
+//				if (ignite.contains(ability)) {
+//
+//				}
+//
+//				if (explode.contains(ability)) {
+//
+//				}
 
 				if (!FactionsListenerMain.canPlayerBuildAt(player,
 						PS.valueOf(loc.getBlock()), false)) {
@@ -1290,13 +1324,13 @@ public class Methods {
 							location, 3, (byte) 0,
 							TownyPermission.ActionType.BUILD);
 
-					if (ignite.contains(ability)) {
-
-					}
-
-					if (explode.contains(ability)) {
-
-					}
+//					if (ignite.contains(ability)) {
+//
+//					}
+//
+//					if (explode.contains(ability)) {
+//
+//					}
 
 					if (!bBuild) {
 						PlayerCache cache = twn.getCache(player);

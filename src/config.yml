@@ -18,6 +18,13 @@ Properties:
       Water: AQUA
       Earth: GREEN
       Chi: GOLD
+  RegionProtection:
+    AllowHarmlessAbilities: true
+    RespectWorldGuard: true
+    RespectGriefPrevention: true
+    RespectFactions: true
+    RespectTowny: true
+    RespectPreciousStones: true
   Air:
     CanBendWithWeapons: false
   Water:

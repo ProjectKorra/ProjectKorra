@@ -25,6 +25,8 @@ public class AbilityModuleManager {
 	public static HashSet<String> shiftabilities;
 	public static HashMap<String, String> authors;
 	public static HashSet<String> harmlessabilities;
+	public static HashSet<String> igniteabilities;
+	public static HashSet<String> explodeabilities;
 	
 	public static HashMap<String, String> descriptions;
 
@@ -45,6 +47,8 @@ public class AbilityModuleManager {
 		descriptions = new HashMap<String, String>();
 		authors = new HashMap<String, String>();
 		harmlessabilities = new HashSet<String>();
+		explodeabilities = new HashSet<String>();
+		igniteabilities = new HashSet<String>();
 		ability = loader.load(AbilityModule.class);
 		fill();
 	}
@@ -57,6 +61,8 @@ public class AbilityModuleManager {
 					abilities.add(a.name());
 					airbendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Air." + a.name() + ".Description"));
+					if (a == StockAbilities.AirScooter) harmlessabilities.add(a.name());
+					if (a == StockAbilities.AirSpout) harmlessabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isWaterbending(a)) {
@@ -64,6 +70,8 @@ public class AbilityModuleManager {
 					abilities.add(a.name());
 					waterbendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Water." + a.name() + ".Description"));
+					if (a == StockAbilities.WaterSpout) harmlessabilities.add(a.name());
+					if (a == StockAbilities.HealingWaters) harmlessabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isEarthbending(a)) {
@@ -71,6 +79,7 @@ public class AbilityModuleManager {
 					abilities.add(a.name());
 					earthbendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Earth." + a.name() + ".Description"));
+					if (a == StockAbilities.Tremorsense) harmlessabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isFirebending(a)) {
@@ -78,6 +87,10 @@ public class AbilityModuleManager {
 					abilities.add(a.name());
 					firebendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Fire." + a.name() + ".Description"));
+					if (a == StockAbilities.Illumination) harmlessabilities.add(a.name());
+					if (a == StockAbilities.Blaze) igniteabilities.add(a.name());
+					if (a == StockAbilities.FireBlast) explodeabilities.add(a.name());
+					if (a == StockAbilities.Lightning) explodeabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isChiBlocking(a)) {
@@ -85,6 +98,7 @@ public class AbilityModuleManager {
 					abilities.add(a.name());
 					chiabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Chi." + a.name() + ".Description"));
+					if (a == StockAbilities.HighJump) harmlessabilities.add(a.name());
 				}
 			}
 			else {

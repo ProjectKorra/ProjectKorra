@@ -50,6 +50,13 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Properties.GlobalCooldown", 500);
 		plugin.getConfig().addDefault("Properties.SeaLevel", 62);
 
+		config.addDefault("Properties.RegionProtection.AllowHarmlessAbilities", true);
+		config.addDefault("Properties.RegionProtection.RespectWorldGuard", true);
+		config.addDefault("Properties.RegionProtection.RespectGriefPrevention", true);
+		config.addDefault("Properties.RegionProtection.RespectFactions", true);
+		config.addDefault("Properties.RegionProtection.RespectTowny", true);
+		config.addDefault("Properties.RegionProtection.RespectPreciousStones", true);
+
 		plugin.getConfig().addDefault("Properties.Air.CanBendWithWeapons", false);
 
 		plugin.getConfig().addDefault("Properties.Water.CanBendWithWeapons", true);

@@ -43,5 +43,13 @@ public class AbilityModule extends AbilityLoadable implements Cloneable {
 		return "";
 	}
 	
+	public boolean isIgniteAbility() {
+		return false;
+	}
+	
+	public boolean isExplodeAbility() {
+		return false;
+	}
+	
 
 }
