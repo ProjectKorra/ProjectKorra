@@ -185,7 +185,7 @@ public class Commands {
 							s.sendMessage(Methods.getFireColor() + "You must be a Firebender to bind this ability.");
 							return true;
 						}
-						if (Methods.isChiAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
+						if (Methods.isChiAbility(ability) && !Methods.isBender(s.getName(), Element.Chi)) {
 							s.sendMessage(Methods.getChiColor() + "You must be a ChiBlocker to bind this ability.");
 							return true;
 						}
