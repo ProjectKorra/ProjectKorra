@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.1.0 BETA 2
+version: 1.1.0 BETA 3
 main: com.projectkorra.ProjectKorra.ProjectKorra
 commands:
   projectkorra:
@@ -62,7 +62,7 @@ permissions:
       bending.ability.WaterManipulation: true
       bending.ability.WaterSpout: true
       bending.ability.Plantbending: true
-      bending.message.nightmessage
+      bending.message.nightmessage: true
   bending.earth:
     default: true
     description: Grants access to all Earthbending abilities.

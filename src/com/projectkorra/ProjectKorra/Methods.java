@@ -72,13 +72,6 @@ public class Methods {
 		Methods.plugin = plugin;
 	}
 
-	private static boolean allowharmless = plugin.getConfig().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
-	private static boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-	private static boolean respectPreciousStones = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-	private static boolean respectFactions = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectFactions");
-	private static boolean respectTowny = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectTowny");
-	private static boolean respectGriefPrevention = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-
 	private static final ItemStack pickaxe = new ItemStack(
 			Material.DIAMOND_PICKAXE);
 	public static ConcurrentHashMap<Block, Information> movedearth = new ConcurrentHashMap<Block, Information>();
@@ -566,9 +559,9 @@ public class Methods {
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i))
 					.getBlock();
-						if (isRegionProtectedFromBuild(player, "RaiseEarth",
-								location))
-							continue;
+			if (isRegionProtectedFromBuild(player, "RaiseEarth",
+					location))
+				continue;
 			if (isEarthbendable(player, block)) {
 				return block;
 			}
@@ -606,9 +599,9 @@ public class Methods {
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i))
 					.getBlock();
-						if (isRegionProtectedFromBuild(player, "WaterManipulation",
-								location))
-							continue;
+			if (isRegionProtectedFromBuild(player, "WaterManipulation",
+					location))
+				continue;
 			if (isWaterbendable(block, player)
 					&& (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block)) {
@@ -1239,6 +1232,13 @@ public class Methods {
 
 	public static boolean isRegionProtectedFromBuild(Player player,
 			String ability, Location loc) {
+
+		boolean allowharmless = plugin.getConfig().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
+		boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
+		boolean respectPreciousStones = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectPreciousStones");
+		boolean respectFactions = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectFactions");
+		boolean respectTowny = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectTowny");
+		boolean respectGriefPrevention = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
 
 		Set<String> ignite = AbilityModuleManager.igniteabilities;
 		Set<String> explode = AbilityModuleManager.explodeabilities;
