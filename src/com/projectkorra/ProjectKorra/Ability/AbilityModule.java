@@ -35,6 +35,10 @@ public class AbilityModule extends AbilityLoadable implements Cloneable {
 		return false;
 	}
 	
+	public boolean isHarmlessAbility() {
+		return true;
+	}
+	
 	public String getDescription() {
 		return "";
 	}

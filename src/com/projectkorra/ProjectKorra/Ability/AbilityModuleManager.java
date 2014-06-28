@@ -24,7 +24,8 @@ public class AbilityModuleManager {
 	public static HashSet<String> chiabilities;
 	public static HashSet<String> shiftabilities;
 	public static HashMap<String, String> authors;
-
+	public static HashSet<String> harmlessabilities;
+	
 	public static HashMap<String, String> descriptions;
 
 	public AbilityModuleManager(final ProjectKorra plugin) {
@@ -43,6 +44,7 @@ public class AbilityModuleManager {
 		shiftabilities = new HashSet<String>();
 		descriptions = new HashMap<String, String>();
 		authors = new HashMap<String, String>();
+		harmlessabilities = new HashSet<String>();
 		ability = loader.load(AbilityModule.class);
 		fill();
 	}
@@ -104,6 +106,7 @@ public class AbilityModuleManager {
 			if (ab.getElement() == Element.Fire.toString()) firebendingabilities.add(ab.getName());
 			if (ab.getElement() == Element.Chi.toString()) chiabilities.add(ab.getName());
 			if (ab.isShiftAbility()) shiftabilities.add(ab.getName());
+			if (ab.isHarmlessAbility()) harmlessabilities.add(ab.getName());
 			descriptions.put(ab.getName(), ab.getDescription());
 			authors.put(ab.getName(), ab.getAuthor());
 		}
