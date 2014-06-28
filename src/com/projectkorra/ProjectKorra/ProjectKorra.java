@@ -19,14 +19,14 @@ public class ProjectKorra extends JavaPlugin {
 	public void onEnable() {
 		ProjectKorra.log = this.getLogger();
 		plugin = this;
-
-		new AbilityModuleManager(this);
 		new ConfigManager(this);
+
 		new Methods(this);
-
 		new Commands(this);
-		
+		new AbilityModuleManager(this);
 
+		ConfigManager.configCheck();
+		
 		DBConnection.host = getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = getConfig().getInt("Storage.MySQL.port");
 		DBConnection.pass = getConfig().getString("Storage.MySQL.pass");
