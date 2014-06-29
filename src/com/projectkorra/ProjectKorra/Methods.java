@@ -300,6 +300,22 @@ public class Methods {
 		return true;
 	}
 
+	public static void removeUnusableAbilities(String player) {
+		BendingPlayer bPlayer = getBendingPlayer(player);
+		HashMap<Integer, String> slots = bPlayer.getAbilities();
+		try {
+			for (int i: slots.keySet()) {
+				if (!canBend(player, slots.get(i))) {
+					slots.remove(i);
+				}
+			}
+			bPlayer.abilities = slots;
+		} catch (Exception ex) {
+
+		}
+
+	}
+
 	public static boolean canBendPassive(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
@@ -328,27 +344,27 @@ public class Methods {
 	public static boolean isChiAbility(String ability) {
 		return AbilityModuleManager.chiabilities.contains(ability);
 	}
-	
+
 	public static ChatColor getAirColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Air"));
 	}
-	
+
 	public static ChatColor getWaterColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Water"));
 	}
-	
+
 	public static ChatColor getEarthColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Earth"));
 	}
-	
+
 	public static ChatColor getFireColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Fire"));
 	}
-	
+
 	public static ChatColor getChiColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Chi"));
 	}
-	
+
 	public static ChatColor getAvatarColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
 	}

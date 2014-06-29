@@ -418,6 +418,7 @@ public class Commands {
 					}
 					
 					BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+					Methods.removeUnusableAbilities(player.getName());
 					bPlayer.elements.clear();
 					s.sendMessage(ChatColor.GREEN + "You have removed the bending of " + ChatColor.DARK_AQUA + player.getName());
 					player.sendMessage(ChatColor.GREEN + "Your bending has been removed by " + ChatColor.DARK_AQUA + s.getName());
@@ -445,6 +446,7 @@ public class Commands {
 					
 					BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 					bPlayer.elements.clear();
+					Methods.removeUnusableAbilities(player.getName());
 					bPlayer.permaRemoved = true;
 					player.sendMessage(ChatColor.RED + "Your bending has been permanently removed.");
 					s.sendMessage(ChatColor.RED + "You have permanently removed the bending of: " + ChatColor.DARK_AQUA + player.getName());
@@ -587,26 +589,31 @@ public class Commands {
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Air);
 							s.sendMessage(Methods.getAirColor() + "You are now an Airbender.");
+							Methods.removeUnusableAbilities(s.getName());
 							return true;
 						}
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Water);
 							s.sendMessage(Methods.getWaterColor() + "You are now a waterbender.");
+							Methods.removeUnusableAbilities(s.getName());
 							return true;
 						}
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Earth);
 							s.sendMessage(Methods.getEarthColor() + "You are now an Earthbender.");
+							Methods.removeUnusableAbilities(s.getName());
 							return true;
 						}
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Fire);
 							s.sendMessage(Methods.getFireColor() + "You are now a Firebender.");
+							Methods.removeUnusableAbilities(s.getName());
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Chi);
 							s.sendMessage(Methods.getChiColor() + "You are now a ChiBlocker.");
+							Methods.removeUnusableAbilities(s.getName());
 							return true;
 						}
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending choose [Element]");
@@ -641,6 +648,7 @@ public class Commands {
 							return true;
 						} else {
 							bTarget.setElement(e);
+							Methods.removeUnusableAbilities(target.getName());
 							target.sendMessage(ChatColor.RED + "Your bending has been changed to " + ChatColor.DARK_AQUA + e.toString() + ChatColor.RED + " by " + ChatColor.DARK_AQUA + s.getName());
 							return true;
 						}
