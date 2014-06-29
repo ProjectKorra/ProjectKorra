@@ -239,7 +239,7 @@ public class EarthBlast {
 					unfocusBlock();
 					return false;
 				}
-				
+
 				if (!Methods.getBoundAbility(player).equalsIgnoreCase("EarthBlast")) {
 					unfocusBlock();
 					return false;
@@ -465,20 +465,22 @@ public class EarthBlast {
 			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
 				return;
 			} else {
-				boolean cooldown = false;
-				for (int id : instances.keySet()) {
-					EarthBlast blast = instances.get(id);
-					if (blast.player == player && !blast.progressing) {
-						blast.throwEarth();
-						cooldown = true;
-						ignore.add(blast);
-					}
-				}
-
-				if (cooldown)
-					cooldowns.put(player.getName(), System.currentTimeMillis());
-
+				cooldowns.remove(player.getName());
 			}
+		} else {
+			boolean cooldown = false;
+			for (int id : instances.keySet()) {
+				EarthBlast blast = instances.get(id);
+				if (blast.player == player && !blast.progressing) {
+					blast.throwEarth();
+					cooldown = true;
+					ignore.add(blast);
+				}
+			}
+
+			if (cooldown)
+				cooldowns.put(player.getName(), System.currentTimeMillis());
+
 		}
 
 		redirectTargettedBlasts(player, ignore);
