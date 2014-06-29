@@ -85,7 +85,6 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.OctopusForm) shiftabilities.add(a.name());
 					if (a == StockAbilities.Torrent) shiftabilities.add(a.name());
 					if (a == StockAbilities.WaterManipulation) shiftabilities.add(a.name());
-					if (a == StockAbilities.WaterSpout) shiftabilities.add(a.name());
 					if (a == StockAbilities.IceSpike) shiftabilities.add(a.name());
 				}
 			}
