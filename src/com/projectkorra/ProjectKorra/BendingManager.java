@@ -99,6 +99,7 @@ public class BendingManager implements Runnable {
 			AirBurst.progressAll();
 			handleDayNight();
 			Bloodbending.progressAll();
+			Flight.handle();
 			FireJet.progressAll();
 			AirScooter.progressAll();
 			AirSpout.spoutAll();
