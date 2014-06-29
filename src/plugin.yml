@@ -4,7 +4,7 @@ version: 1.1.0 BETA 7
 main: com.projectkorra.ProjectKorra.ProjectKorra
 commands:
   projectkorra:
-    aliases: [b, bending,mtla,tla,korra]
+    aliases: [b,bending,mtla,tla,korra]
     usage: /<command
 permissions:
   bending.admin:
