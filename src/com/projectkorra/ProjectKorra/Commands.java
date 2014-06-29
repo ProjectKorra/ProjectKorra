@@ -470,34 +470,34 @@ public class Commands {
 						}
 						
 						BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
-						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
+						if (Arrays.asList(airaliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Air);
 							player.sendMessage(Methods.getAirColor() + "You are also an airbender.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getAirColor() + " is also an airbender.");
 							return true;
 						}
 						
-						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
+						if (Arrays.asList(wateraliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Water);
 							player.sendMessage(Methods.getWaterColor() + "You are also a waterbender.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getWaterColor() + " is also a waterbender.");
 							return true;
 						}
 						
-						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
+						if (Arrays.asList(earthaliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Earth);
 							player.sendMessage(Methods.getEarthColor() + "You are also an Earthbender.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getEarthColor() + " is also an Earthbender.");
 							return true;
 						}
 						
-						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
+						if (Arrays.asList(firealiases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Fire);
 							player.sendMessage(Methods.getFireColor() + "You are also a Firebender.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getFireColor() + " is also a Firebender");
 							return true;
 						}
-						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
+						if (Arrays.asList(chialiases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Chi);
 							player.sendMessage(Methods.getChiColor() + "You are also a ChiBlocker.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getChiColor() + " is also a ChiBlocker");
