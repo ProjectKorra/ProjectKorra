@@ -303,13 +303,14 @@ public class Methods {
 	public static void removeUnusableAbilities(String player) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		HashMap<Integer, String> slots = bPlayer.getAbilities();
+		HashMap<Integer, String> finalabilities = new HashMap<Integer, String>();
 		try {
 			for (int i: slots.keySet()) {
-				if (!canBend(player, slots.get(i))) {
-					slots.remove(i);
+				if (canBend(player, slots.get(i))) {
+					finalabilities.put(i, slots.get(i));
 				}
 			}
-			bPlayer.abilities = slots;
+			bPlayer.abilities = finalabilities;
 		} catch (Exception ex) {
 
 		}
