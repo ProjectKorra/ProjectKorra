@@ -63,6 +63,12 @@ public class AbilityModuleManager {
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Air." + a.name() + ".Description"));
 					if (a == StockAbilities.AirScooter) harmlessabilities.add(a.name());
 					if (a == StockAbilities.AirSpout) harmlessabilities.add(a.name());
+					if (a == StockAbilities.Tornado) shiftabilities.add(a.name());
+					if (a == StockAbilities.AirSuction) shiftabilities.add(a.name());
+					if (a == StockAbilities.AirSwipe) shiftabilities.add(a.name());
+					if (a == StockAbilities.AirBlast) shiftabilities.add(a.name());
+					if (a == StockAbilities.AirBurst) shiftabilities.add(a.name());
+					if (a == StockAbilities.AirShield) shiftabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isWaterbending(a)) {
@@ -72,6 +78,15 @@ public class AbilityModuleManager {
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Water." + a.name() + ".Description"));
 					if (a == StockAbilities.WaterSpout) harmlessabilities.add(a.name());
 					if (a == StockAbilities.HealingWaters) harmlessabilities.add(a.name());
+					if (a == StockAbilities.Surge) shiftabilities.add(a.name());
+					if (a == StockAbilities.Bloodbending) shiftabilities.add(a.name());
+					if (a == StockAbilities.PhaseChange) shiftabilities.add(a.name());
+					if (a == StockAbilities.HealingWaters) shiftabilities.add(a.name());
+					if (a == StockAbilities.OctopusForm) shiftabilities.add(a.name());
+					if (a == StockAbilities.Torrent) shiftabilities.add(a.name());
+					if (a == StockAbilities.WaterManipulation) shiftabilities.add(a.name());
+					if (a == StockAbilities.WaterSpout) shiftabilities.add(a.name());
+					if (a == StockAbilities.IceSpike) shiftabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isEarthbending(a)) {
@@ -80,6 +95,13 @@ public class AbilityModuleManager {
 					earthbendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Earth." + a.name() + ".Description"));
 					if (a == StockAbilities.Tremorsense) harmlessabilities.add(a.name());
+					if (a == StockAbilities.RaiseEarth) shiftabilities.add(a.name());
+					if (a == StockAbilities.Collapse) shiftabilities.add(a.name());
+					if (a == StockAbilities.EarthBlast) shiftabilities.add(a.name());
+					if (a == StockAbilities.Shockwave) shiftabilities.add(a.name());
+					if (a == StockAbilities.EarthTunnel) shiftabilities.add(a.name());
+					if (a == StockAbilities.EarthArmor) shiftabilities.add(a.name());
+					if (a == StockAbilities.EarthGrab) shiftabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isFirebending(a)) {
@@ -91,6 +113,11 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.Blaze) igniteabilities.add(a.name());
 					if (a == StockAbilities.FireBlast) explodeabilities.add(a.name());
 					if (a == StockAbilities.Lightning) explodeabilities.add(a.name());
+					if (a == StockAbilities.HeatControl) shiftabilities.add(a.name());
+					if (a == StockAbilities.Lightning) shiftabilities.add(a.name());
+					if (a == StockAbilities.FireBlast) shiftabilities.add(a.name());
+					if (a == StockAbilities.Blaze) shiftabilities.add(a.name());
+					if (a == StockAbilities.FireBurst) shiftabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isChiBlocking(a)) {
