@@ -22,7 +22,7 @@ permissions:
       bending.ability.AvatarState: true
       bending.ability.Bloodbending: true
   bending.player:
-    default: 
+    default: true
     description: Grants access to most abilities and basic commands.
     children:
       bending.command.bind: true
