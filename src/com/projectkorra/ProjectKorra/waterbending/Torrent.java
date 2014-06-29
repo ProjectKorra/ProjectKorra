@@ -138,7 +138,7 @@ public class Torrent {
 					} else if (!Methods.isAdjacentToThreeOrMoreSources(sourceblock)) {
 						sourceblock.setType(Material.AIR);
 					}
-					source = new TempBlock(sourceblock, Material.WATER, full);
+					source = new TempBlock(sourceblock, Material.STATIONARY_WATER, (byte) 8);
 					location = sourceblock.getLocation();
 				} else {
 					Methods.playFocusWaterEffect(sourceblock);
@@ -199,7 +199,7 @@ public class Torrent {
 							return;
 						}
 						source = new TempBlock(location.getBlock(),
-								Material.WATER, full);
+								Material.STATIONARY_WATER, (byte) 8);
 					}
 				}
 			}
@@ -278,8 +278,8 @@ public class Torrent {
 				if (!doneblocks.contains(block) && !Methods.isRegionProtectedFromBuild(player, "Torrent", blockloc)) {
 					if (Methods.isTransparentToEarthbending(player, block)
 							&& !block.isLiquid()) {
-						launchblocks.add(new TempBlock(block, Material.WATER,
-								full));
+						launchblocks.add(new TempBlock(block, Material.STATIONARY_WATER,
+								(byte) 8));
 						doneblocks.add(block);
 					} else if (!Methods
 							.isTransparentToEarthbending(player, block))
@@ -355,7 +355,7 @@ public class Torrent {
 				return true;
 			}
 			if (b.getLocation().distance(targetloc) > 1) {
-				newblocks.add(new TempBlock(b, Material.WATER, full));
+				newblocks.add(new TempBlock(b, Material.STATIONARY_WATER, (byte) 8));
 			} else {
 				if (layer < maxlayer) {
 					if (layer == 0)
@@ -423,7 +423,7 @@ public class Torrent {
 			if (!doneblocks.contains(block)) {
 				if (Methods.isTransparentToEarthbending(player, block)
 						&& !block.isLiquid()) {
-					blocks.add(new TempBlock(block, Material.WATER, full));
+					blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 					doneblocks.add(block);
 					for (Entity entity : entities) {
 						if (entity.getWorld() != blockloc.getWorld())

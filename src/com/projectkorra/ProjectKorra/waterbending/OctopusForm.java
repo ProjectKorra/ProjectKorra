@@ -106,7 +106,7 @@ public class OctopusForm {
 		} else if (!Methods.isAdjacentToThreeOrMoreSources(sourceblock)) {
 			sourceblock.setType(Material.AIR);
 		}
-		source = new TempBlock(sourceblock, Material.WATER, full);
+		source = new TempBlock(sourceblock, Material.STATIONARY_WATER, (byte) 8);
 	}
 
 	private void attack() {
@@ -196,7 +196,7 @@ public class OctopusForm {
 					Block newblock = sourceblock.getRelative(BlockFace.UP);
 					sourcelocation = newblock.getLocation();
 					if (!Methods.isSolid(newblock)) {
-						source = new TempBlock(newblock, Material.WATER, full);
+						source = new TempBlock(newblock, Material.STATIONARY_WATER, (byte) 8);
 						sourceblock = newblock;
 					} else {
 						remove();
@@ -208,7 +208,7 @@ public class OctopusForm {
 					Block newblock = sourceblock.getRelative(BlockFace.DOWN);
 					sourcelocation = newblock.getLocation();
 					if (!Methods.isSolid(newblock)) {
-						source = new TempBlock(newblock, Material.WATER, full);
+						source = new TempBlock(newblock, Material.STATIONARY_WATER, (byte) 8);
 						sourceblock = newblock;
 					} else {
 						remove();
@@ -223,8 +223,8 @@ public class OctopusForm {
 						source.revertBlock();
 						source = null;
 						if (!Methods.isSolid(newblock)) {
-							source = new TempBlock(newblock, Material.WATER,
-									full);
+							source = new TempBlock(newblock, Material.STATIONARY_WATER,
+									(byte) 8);
 							sourceblock = newblock;
 						}
 					}
@@ -375,7 +375,7 @@ public class OctopusForm {
 		} else if (Methods.isWaterbendable(block, player)
 				|| block.getType() == Material.FIRE
 				|| block.getType() == Material.AIR) {
-			newblocks.add(new TempBlock(block, Material.WATER, full));
+			newblocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 		}
 	}
 

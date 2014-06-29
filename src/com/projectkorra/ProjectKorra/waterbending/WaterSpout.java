@@ -120,7 +120,7 @@ public class WaterSpout {
 			for (int i = 1; i <= height; i++) {
 				block = location.clone().add(0, i, 0).getBlock();
 				if (!TempBlock.isTempBlock(block)) {
-					new TempBlock(block, Material.WATER, full);
+					new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 				}
 				// block.setType(Material.WATER);
 				// block.setData(full);
@@ -171,7 +171,7 @@ public class WaterSpout {
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock(player);
 						instances.get(player).baseblock = new TempBlock(blocki,
-								Material.WATER, full);
+								Material.STATIONARY_WATER, (byte) 8);
 					}
 					// blocki.setType(Material.WATER);
 					// blocki.setData(full);

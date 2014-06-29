@@ -24,7 +24,7 @@ public class TorrentBurst {
 	private static double defaultfactor = 1.5;
 	private static long interval = Torrent.interval;
 
-	private static final byte full = 0x0;
+//	private static final byte full = 0x0;
 	// private static final Vector reference = new Vector(1, 0, 0);
 
 	private Player player;
@@ -137,8 +137,8 @@ public class TorrentBurst {
 					continue;
 				if (Methods.isTransparentToEarthbending(player,
 						block)) {
-					TempBlock tempBlock = new TempBlock(block, Material.WATER,
-							full);
+					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER,
+							(byte) 8);
 					blocks.add(tempBlock);
 					torrentblocks.add(block);
 				} else {

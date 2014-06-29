@@ -142,7 +142,7 @@ public class WaterWall {
 		frozen = false;
 		for (Block block : wallblocks.keySet()) {
 			if (wallblocks.get(block) == player) {
-				new TempBlock(block, Material.WATER, full);
+				new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 			}
 		}
 	}
@@ -379,7 +379,7 @@ public class WaterWall {
 		if (frozen) {
 			new TempBlock(block, Material.ICE, (byte) 0);
 		} else {
-			new TempBlock(block, Material.WATER, full);
+			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 		}
 	}
 
@@ -445,7 +445,7 @@ public class WaterWall {
 			return;
 
 		if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.WATER, full);
+			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 			// new TempBlock(block, Material.ICE, (byte) 0);
 			affectedblocks.put(block, block);
 		}

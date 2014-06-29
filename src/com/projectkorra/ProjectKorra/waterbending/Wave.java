@@ -380,7 +380,7 @@ public class Wave {
 				block.getLocation()))
 			return;
 		if (!TempBlock.isTempBlock(block)) {
-			new TempBlock(block, Material.WATER, full);
+			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 			// new TempBlock(block, Material.ICE, (byte) 0);
 			wave.put(block, block);
 		}
