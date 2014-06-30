@@ -15,6 +15,7 @@ public class BendingPlayer {
 	String player;
 	ArrayList<Element> elements;
 	HashMap<Integer, String> abilities;
+	boolean isChiBlocked;
 	boolean permaRemoved;
 	boolean isToggled;
 	private long slowTime = 0;
@@ -27,6 +28,7 @@ public class BendingPlayer {
 		this.abilities = abilities;
 		this.permaRemoved = permaRemoved;
 		isToggled = true;
+		isChiBlocked = false;
 
 		players.put(player, this);
 	}
@@ -78,5 +80,17 @@ public class BendingPlayer {
 
 	public boolean isTremorsensing() {
 		return tremorsense;
+	}
+
+	public void blockChi() {
+		isChiBlocked = true;
+	}
+
+	public void unblockChi() {
+		isChiBlocked = false;
+	}
+
+	public boolean isChiBlocked() {
+		return isChiBlocked;
 	}
 }

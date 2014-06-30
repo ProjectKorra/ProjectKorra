@@ -56,6 +56,7 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
+import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
@@ -499,15 +500,20 @@ public class Methods {
 	}
 
 	public static boolean isChiBlocked(String player) {
-		long currTime = System.currentTimeMillis();
-		long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Passive.BlockChi.Duration");
-		if (BendingPlayer.blockedChi.contains(player)) {
-			if (BendingPlayer.blockedChi.get(player) + duration >= currTime) {
-				BendingPlayer.blockedChi.remove(player);
-				return false;
-			}
-		}
-		return true;
+		return Methods.getBendingPlayer(player).isChiBlocked();
+//		long currTime = System.currentTimeMillis();
+//		long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Passive.BlockChi.Duration");
+//		if (BendingPlayer.blockedChi.contains(player)) {
+//			if (BendingPlayer.blockedChi.get(player) + ChiPassive.duration >= System.currentTimeMillis()) {
+//				return true;
+//			} else {
+//				BendingPlayer.blockedChi.remove(player);
+//				return false;
+//			}
+//		} else {
+//			Bukkit.getServer().broadcastMessage("test");
+//			return false;
+//		}
 	}
 
 	public static Vector rotateVectorAroundVector(Vector axis, Vector rotator,

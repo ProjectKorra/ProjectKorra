@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -208,6 +209,11 @@ public class PKListener implements Listener {
 
 		String abil = Methods.getBoundAbility(player);
 		if (abil == null) {
+			return;
+		}
+		
+		if (Methods.isChiBlocked(player.getName())) {
+			event.setCancelled(true);
 			return;
 		}
 
@@ -482,6 +488,11 @@ public class PKListener implements Listener {
 		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player)) {
 			event.setCancelled(true);
 		}
+		
+		if (Methods.isChiBlocked(player.getName())) {
+			event.setCancelled(true);
+			return;
+		}
 
 		String abil = Methods.getBoundAbility(player);
 		if (abil == null) return;
@@ -489,6 +500,7 @@ public class PKListener implements Listener {
 			if (abil.equalsIgnoreCase("AvatarState")) {
 				new AvatarState(player);
 			}
+			
 			if (Methods.isAirAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
@@ -616,6 +628,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("RapidPunch")) {
 					new RapidPunch(player);
+				}
+				if (abil.equalsIgnoreCase("Paralyze")) {
+					//
 				}
 			}
 		}
@@ -813,29 +828,45 @@ public class PKListener implements Listener {
 
 		Entity en = e.getEntity();
 		if (en instanceof Player) {
-			Player p = (Player) en; // This is the player getting hurt.
+//			Player p = (Player) en; // This is the player getting hurt.
 			if (e.getDamager() instanceof Player) { // This is the player hitting someone.
-				Player damager = (Player) e.getDamager();
-				if (Methods.canBendPassive(damager.getName(), Element.Chi)) {
-					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
-						if (Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
-							return;
-						}
-						if (damager.getItemInHand() != null && Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
-							// Above method checks if the player has an item in their hand, if it is a weapon, and if they can bend with weapons.
-							if (Methods.getBoundAbility(damager) == null || Methods.getBoundAbility(damager).equalsIgnoreCase("RapidPunch")) { // We don't want them to be able to block chi if an ability is bound.
-								if (ChiPassive.willChiBlock(p)) {
-									ChiPassive.blockChi(p);
-								}
-							}
-							if (Methods.getBoundAbility(damager).equalsIgnoreCase("Paralyze")) {
-								if (ChiPassive.willChiBlock(p)) {
-									new Paralyze((Player) e.getDamager(), e.getEntity());
+				Player sourceplayer = (Player) e.getDamager();
+				Player targetplayer = (Player) e.getEntity();
+				if (Methods.canBendPassive(sourceplayer.getName(), Element.Chi)) {
+					if (Methods.isBender(sourceplayer.getName(), Element.Chi) && e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
+						if (sourceplayer.getLocation().distance(targetplayer.getLocation()) <= plugin.getConfig().getDouble("Abilities.Chi.RapidPunch.Distance")) {
+							if (Methods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
+								return;
+							} else {
+
+								if (ChiPassive.willChiBlock(targetplayer)) {
+									ChiPassive.blockChi(targetplayer);
 								}
 							}
 						}
 					}
 				}
+//				Player damager = (Player) e.getDamager();
+//				if (Methods.canBendPassive(damager.getName(), Element.Chi)) {
+//					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
+//						if (Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
+//							return;
+//						}
+//						if (damager.getItemInHand() != null && Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
+//							// Above method checks if the player has an item in their hand, if it is a weapon, and if they can bend with weapons.
+//							if (Methods.getBoundAbility(damager) == null || Methods.getBoundAbility(damager).equalsIgnoreCase("RapidPunch")) { // We don't want them to be able to block chi if an ability is bound.
+//								if (ChiPassive.willChiBlock(p)) {
+//									ChiPassive.blockChi(p);
+//								}
+//							}
+//							if (Methods.getBoundAbility(damager).equalsIgnoreCase("Paralyze")) {
+//								if (ChiPassive.willChiBlock(p)) {
+//									new Paralyze((Player) e.getDamager(), e.getEntity());
+//								}
+//							}
+//						}
+//					}
+//				}
 			}
 		}
 	}

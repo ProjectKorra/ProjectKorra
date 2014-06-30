@@ -18,19 +18,23 @@ public class ChiPassive {
 	public static int jumpPower = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Passive.Jump");
 	public static int speedPower = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Passive.Speed");
 	
-	public static int dodgeChance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Passive.ChiBlock.DodgeChance");
-	public static int duration = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Passive.ChiBlock.Duration");
+	public static int dodgeChance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Passive.BlockChi.DodgeChance");
+	public static int duration = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Passive.BlockChi.Duration");
 	
 	public static boolean willChiBlock(Player player) {
 		Random rand = new Random();
 		if (rand.nextInt(99) + 1 < dodgeChance) {
 			return false;
 		}
-		if (Methods.isChiBlocked(player.getName())) return false;
+		if (Methods.isChiBlocked(player.getName())) {
+			return false;
+		}
 		return true;
 	}
 	
 	public static void blockChi(Player player) {
+		Methods.getBendingPlayer(player.getName()).blockChi();
+//		Bukkit.getServer().broadcastMessage("We made it");
 		BendingPlayer.blockedChi.put(player.getName(), System.currentTimeMillis());
 	}
 	
@@ -46,11 +50,25 @@ public class ChiPassive {
 					}
 				}
 			}
-			if (BendingPlayer.blockedChi.contains(player.getName())) {
-				if (BendingPlayer.blockedChi.get(player.getName()) + duration >= System.currentTimeMillis()) {
-					BendingPlayer.blockedChi.remove(player.getName());
-				}
-			}
 		}
+		for (String s: BendingPlayer.blockedChi.keySet()) {
+			if (!(BendingPlayer.blockedChi.get(s) + duration >= System.currentTimeMillis())) {
+				Methods.getBendingPlayer(s).unblockChi();
+			}
+//			if (BendingPlayer.blockedChi.contains(player.getName())) {
+//				if (BendingPlayer.blockedChi.get(player.getName()) + duration < System.currentTimeMillis()) {
+//					BendingPlayer.blockedChi.remove(player.getName());
+//				} else {
+//				}
+//			}
+		}
+//		for (String s: BendingPlayer.blockedChi.keySet()) {
+//			if (BendingPlayer.blockedChi.get(s) + duration >= System.currentTimeMillis()) {
+//				Bukkit.getServer().broadcastMessage(s + "'s Chi is blocked.");
+//			} else {
+//				Bukkit.getServer().broadcastMessage(s + "'s Chi has been unblocked.");
+//				BendingPlayer.blockedChi.remove(s);
+//			}
+//		}
 	}
 }
