@@ -203,6 +203,7 @@ public class PKListener implements Listener {
 
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
+			return;
 		}
 
 		AirScooter.check(player);
@@ -487,6 +488,7 @@ public class PKListener implements Listener {
 
 		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player)) {
 			event.setCancelled(true);
+			return;
 		}
 		
 		if (Methods.isChiBlocked(player.getName())) {
@@ -834,7 +836,7 @@ public class PKListener implements Listener {
 				Player targetplayer = (Player) e.getEntity();
 				if (Methods.canBendPassive(sourceplayer.getName(), Element.Chi)) {
 					if (Methods.isBender(sourceplayer.getName(), Element.Chi) && e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
-						if (sourceplayer.getLocation().distance(targetplayer.getLocation()) <= plugin.getConfig().getDouble("Abilities.Chi.RapidPunch.Distance")) {
+						if (sourceplayer.getLocation().distance(targetplayer.getLocation()) <= plugin.getConfig().getDouble("Abilities.Chi.RapidPunch.Distance") && Methods.getBoundAbility(sourceplayer) == null) {
 							if (Methods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 								return;
 							} else {
@@ -846,6 +848,19 @@ public class PKListener implements Listener {
 						}
 					}
 				}
+				if (Methods.canBendPassive(sourceplayer.getName(), Element.Chi)) {
+					if (Methods.isWeapon(sourceplayer.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
+						return;
+					}
+					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
+						if (Methods.getBoundAbility(sourceplayer) != null && Methods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze")) {
+							if (ChiPassive.willChiBlock(targetplayer)) {
+								new Paralyze(sourceplayer, targetplayer);
+							}
+						}
+					}
+				}
+				
 //				Player damager = (Player) e.getDamager();
 //				if (Methods.canBendPassive(damager.getName(), Element.Chi)) {
 //					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
