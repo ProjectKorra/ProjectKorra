@@ -55,13 +55,47 @@ import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.airbending.AirBlast;
+import com.projectkorra.ProjectKorra.airbending.AirBubble;
+import com.projectkorra.ProjectKorra.airbending.AirBurst;
+import com.projectkorra.ProjectKorra.airbending.AirScooter;
+import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
+import com.projectkorra.ProjectKorra.airbending.AirSuction;
+import com.projectkorra.ProjectKorra.airbending.AirSwipe;
+import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
+import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
+import com.projectkorra.ProjectKorra.earthbending.Catapult;
+import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
+import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
+import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
+import com.projectkorra.ProjectKorra.earthbending.Shockwave;
+import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
+import com.projectkorra.ProjectKorra.firebending.Cook;
+import com.projectkorra.ProjectKorra.firebending.FireBlast;
+import com.projectkorra.ProjectKorra.firebending.FireBurst;
+import com.projectkorra.ProjectKorra.firebending.FireJet;
+import com.projectkorra.ProjectKorra.firebending.FireShield;
+import com.projectkorra.ProjectKorra.firebending.FireStream;
+import com.projectkorra.ProjectKorra.firebending.Fireball;
+import com.projectkorra.ProjectKorra.firebending.Illumination;
+import com.projectkorra.ProjectKorra.firebending.Lightning;
+import com.projectkorra.ProjectKorra.firebending.WallOfFire;
+import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
+import com.projectkorra.ProjectKorra.waterbending.IceSpike;
+import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
+import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
+import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import com.projectkorra.ProjectKorra.waterbending.WaterReturn;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
+import com.projectkorra.ProjectKorra.waterbending.WaterWall;
+import com.projectkorra.ProjectKorra.waterbending.Wave;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
@@ -185,8 +219,69 @@ public class Methods {
 		for (AbilityModule ab: abilities) {
 			ab.stop();
 		}
+		AirBlast.removeAll();
+		AirBubble.removeAll();
+		AirShield.instances.clear();
+		AirSuction.instances.clear();
+		AirScooter.removeAll();
+		AirSpout.removeAll();
+		AirSwipe.instances.clear();
+		Tornado.instances.clear();
+		AirBurst.removeAll();
+
+		Catapult.removeAll();
+		CompactColumn.removeAll();
+		EarthBlast.removeAll();
+		EarthColumn.removeAll();
+		EarthPassive.removeAll();
+		EarthArmor.removeAll();
+		EarthTunnel.instances.clear();
+		Shockwave.removeAll();
+		Tremorsense.removeAll();
+
+		FreezeMelt.removeAll();
+		IceSpike.removeAll();
+		IceSpike2.removeAll();
+		WaterManipulation.removeAll();
+		WaterSpout.removeAll();
+		WaterWall.removeAll();
+		Wave.removeAll();
+		Plantbending.regrowAll();
+		OctopusForm.removeAll();
+		Bloodbending.instances.clear();
+
+		FireStream.removeAll();
+		Fireball.removeAll();
+		WallOfFire.instances.clear();
+		Lightning.instances.clear();
+		FireShield.removeAll();
+		FireBlast.removeAll();
+		FireBurst.removeAll();
+		FireJet.instances.clear();
+		Cook.removeAll();
+		Illumination.removeAll();
+
+		RapidPunch.instance.clear();
+
+		Flight.removeAll();
+		WaterReturn.removeAll();
+		TempBlock.removeAll();
+		removeAllEarthbendedBlocks();
+
 		EarthPassive.removeAll();
 	}
+
+	public static void removeAllEarthbendedBlocks() {
+		for (Block block : movedearth.keySet()) {
+			revertBlock(block);
+		}
+
+		for (Integer i : tempair.keySet()) {
+			revertAirBlock(i, true);
+		}
+	}
+
+
 
 	public static boolean isSolid(Block block) {
 		if (Arrays.asList(nonOpaque).contains(block.getTypeId())) return false;
@@ -535,19 +630,19 @@ public class Methods {
 
 	public static boolean isChiBlocked(String player) {
 		return Methods.getBendingPlayer(player).isChiBlocked();
-//		long currTime = System.currentTimeMillis();
-//		long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Passive.BlockChi.Duration");
-//		if (BendingPlayer.blockedChi.contains(player)) {
-//			if (BendingPlayer.blockedChi.get(player) + ChiPassive.duration >= System.currentTimeMillis()) {
-//				return true;
-//			} else {
-//				BendingPlayer.blockedChi.remove(player);
-//				return false;
-//			}
-//		} else {
-//			Bukkit.getServer().broadcastMessage("test");
-//			return false;
-//		}
+		//		long currTime = System.currentTimeMillis();
+		//		long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Passive.BlockChi.Duration");
+		//		if (BendingPlayer.blockedChi.contains(player)) {
+		//			if (BendingPlayer.blockedChi.get(player) + ChiPassive.duration >= System.currentTimeMillis()) {
+		//				return true;
+		//			} else {
+		//				BendingPlayer.blockedChi.remove(player);
+		//				return false;
+		//			}
+		//		} else {
+		//			Bukkit.getServer().broadcastMessage("test");
+		//			return false;
+		//		}
 	}
 
 	public static Vector rotateVectorAroundVector(Vector axis, Vector rotator,
