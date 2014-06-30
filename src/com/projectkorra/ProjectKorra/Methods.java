@@ -204,11 +204,45 @@ public class Methods {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
 		bPlayer.abilities.put(slot, ability);
+		if (isAirAbility(ability)) {
+			player.sendMessage(getAirColor() + "Succesfully bound " + ability + " to slot " + slot);
+		}
+		else if (isWaterAbility(ability)) {
+			player.sendMessage(getWaterColor() + "Succesfully bound " + ability + " to slot " + slot);
+		}
+		else if (isEarthAbility(ability)) {
+			player.sendMessage(getEarthColor() + "Succesfully bound " + ability + " to slot " + slot);
+		}
+		else if (isFireAbility(ability)) {
+			player.sendMessage(getFireColor() + "Succesfully bound " + ability + " to slot " + slot);
+		}
+		else if (isChiAbility(ability)) {
+			player.sendMessage(getChiColor() + "Succesfully bound " + ability + " to slot " + slot);
+		} else {
+			player.sendMessage(getAvatarColor() + "Successfully bound " + ability + " to slot " + slot);
+		}
 	}
 
 	public static void bindAbility(Player player, String ability, int slot) {
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
 		bPlayer.abilities.put(slot, ability);
+		if (isAirAbility(ability)) {
+			player.sendMessage(getAirColor() + "Succesfully bound " + ability + " to slot " + slot);
+		}
+		else if (isWaterAbility(ability)) {
+			player.sendMessage(getWaterColor() + "Succesfully bound " + ability + " to slot " + slot);
+		}
+		else if (isEarthAbility(ability)) {
+			player.sendMessage(getEarthColor() + "Succesfully bound " + ability + " to slot " + slot);
+		}
+		else if (isFireAbility(ability)) {
+			player.sendMessage(getFireColor() + "Succesfully bound " + ability + " to slot " + slot);
+		}
+		else if (isChiAbility(ability)) {
+			player.sendMessage(getChiColor() + "Succesfully bound " + ability + " to slot " + slot);
+		} else {
+			player.sendMessage(getAvatarColor() + "Successfully bound " + ability + " to slot " + slot);
+		}
 	}
 	public static boolean abilityExists(String string) {
 		if (getAbility(string) == null) return false;

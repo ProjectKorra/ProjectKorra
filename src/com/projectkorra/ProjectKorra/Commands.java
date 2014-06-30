@@ -151,7 +151,7 @@ public class Commands {
 						}
 						
 						Methods.bindAbility((Player) s, ability);
-						s.sendMessage("Ability Bound.");
+//						s.sendMessage("Ability Bound to slot");
 						return true;
 					}
 					
@@ -190,7 +190,7 @@ public class Commands {
 							return true;
 						}
 						Methods.bindAbility((Player) s, ability, slot);
-						s.sendMessage("Ability Bound");
+//						s.sendMessage("Ability Bound");
 						return true;
 					}
 				}
