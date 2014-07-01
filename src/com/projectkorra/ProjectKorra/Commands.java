@@ -131,6 +131,10 @@ public class Commands {
 
 						String ability = Methods.getAbility(abil);
 
+						if (!Methods.canBend(s.getName(), ability)) {
+							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							return true;
+						}
 						if (Methods.isAirAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
 							s.sendMessage(Methods.getAirColor() + "You must be an Airbender to bind this ability.");
 							return true;
@@ -168,6 +172,11 @@ public class Commands {
 						int slot = Integer.parseInt(args[2]);
 						if (slot < 1 || slot > 9) {
 							s.sendMessage(ChatColor.RED + "Slot must be an integer between 1 and 9.");
+							return true;
+						}
+						
+						if (!Methods.canBend(s.getName(), ability)) {
+							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
 						}
 
