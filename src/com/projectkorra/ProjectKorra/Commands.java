@@ -39,6 +39,8 @@ public class Commands {
 	String[] bindaliases = {"bind", "b"};
 	String[] clearaliases = {"clear", "cl", "c"};
 	String[] reloadaliases = {"reload", "r"};
+	String[] addaliases = {"add", "a"};
+	String[] whoaliases = {"who", "w"};
 	
 	private void init() {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");
@@ -308,7 +310,7 @@ public class Commands {
 						return true;
 					}
 				}
-				if (args[0].equalsIgnoreCase("who")) {
+				if (Arrays.asList(whoaliases).contains(args[0].toLowerCase())) {
 					if (args.length > 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending who <Player>");
 						return true;
@@ -452,7 +454,7 @@ public class Commands {
 					s.sendMessage(ChatColor.RED + "You have permanently removed the bending of: " + ChatColor.DARK_AQUA + player.getName());
 					return true;
 				}
-				if (args[0].equalsIgnoreCase("add")) {
+				if (Arrays.asList(addaliases).contains(args[0].toLowerCase())) {
 					//bending add [Player] [Element]
 					if (args.length > 3) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending add [Player] [Element]");
