@@ -215,7 +215,7 @@ public class Commands {
 								return true;
 							}
 							for (String st: AbilityModuleManager.airbendingabilities) {
-								if (Methods.canBend(s.getName(), st)) {
+								if (Methods.hasPermission((Player) s, st)) {
 									s.sendMessage(Methods.getAirColor() + st);
 								}
 							}
@@ -227,7 +227,7 @@ public class Commands {
 								return true;
 							}
 							for (String st: AbilityModuleManager.waterbendingabilities) {
-								if (Methods.canBend(s.getName(), st)) {
+								if (Methods.hasPermission((Player) s, st)) {
 									s.sendMessage(Methods.getWaterColor() + st);
 								}
 							}
@@ -239,7 +239,7 @@ public class Commands {
 								return true;
 							}
 							for (String st: AbilityModuleManager.earthbendingabilities) {
-								if (Methods.canBend(s.getName(), st)) {
+								if (Methods.hasPermission((Player) s, st)) {
 									s.sendMessage(Methods.getEarthColor() + st);
 								}
 							}
@@ -251,7 +251,7 @@ public class Commands {
 								return true;
 							}
 							for (String st: AbilityModuleManager.firebendingabilities) {
-								if (Methods.canBend(s.getName(), st)) {
+								if (Methods.hasPermission((Player) s, st)) {
 									s.sendMessage(Methods.getFireColor() + st);
 								}
 							}
@@ -264,7 +264,7 @@ public class Commands {
 							}
 
 							for (String st: AbilityModuleManager.chiabilities) {
-								if (Methods.canBend(s.getName(), st)) {
+								if (Methods.hasPermission((Player) s, st)) {
 									s.sendMessage(Methods.getChiColor()  + st);
 								}
 							}

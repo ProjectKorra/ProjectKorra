@@ -446,6 +446,11 @@ public class Methods {
 		}
 
 	}
+	
+	public static boolean hasPermission(Player player, String ability) {
+		if (player.hasPermission("bending.ability." + ability)) return true;
+		return false;
+	}
 
 	public static boolean canBendPassive(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
