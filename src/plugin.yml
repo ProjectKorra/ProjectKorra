@@ -13,7 +13,6 @@ permissions:
     children:
       bending.player: true
       bending.command.reload: true
-      bending.command.version: true
       bending.admin.permaremove: true
       bending.command.add.others: true
       bending.command.add: true
@@ -29,6 +28,8 @@ permissions:
       bending.command.display: true
       bending.command.toggle: true
       bending.command.choose: true
+      bending.command.version: true
+      bending.command.who: true
       bending.air: true
       bending.water: true
       bending.earth: true
