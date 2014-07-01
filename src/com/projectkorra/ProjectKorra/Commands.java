@@ -41,7 +41,7 @@ public class Commands {
 	String[] reloadaliases = {"reload", "r"};
 	String[] addaliases = {"add", "a"};
 	String[] whoaliases = {"who", "w"};
-	
+
 	private void init() {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");
 		CommandExecutor exe;
@@ -60,12 +60,12 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending reload");
 						return true;
 					}
-					
+
 					if (!s.hasPermission("bending.command.reload")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					
+
 					plugin.reloadConfig();
 					s.sendMessage(ChatColor.AQUA + "Bending config reloaded.");
 					return true;
@@ -79,7 +79,7 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					
+
 					if (!(s instanceof Player)) {
 						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
 						return true;
@@ -90,7 +90,7 @@ public class Commands {
 						s.sendMessage("Your bound abilities have been cleared.");
 						return true;
 					}
-					
+
 					if (args.length == 2) {
 						int slot = Integer.parseInt(args[1]);
 						if (slot < 1 || slot > 9) {
@@ -109,17 +109,17 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending bind [Ability] <#>");
 						return true;
 					}
-					
+
 					if (!s.hasPermission("bending.command.bind")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					
+
 					if (!(s instanceof Player)) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					
+
 					if (args.length == 2) {
 						// We bind the ability to the slot they have selected..
 						// bending bind [Ability]
@@ -128,9 +128,9 @@ public class Commands {
 							s.sendMessage(ChatColor.RED + "That is not an ability.");
 							return true;
 						}
-						
+
 						String ability = Methods.getAbility(abil);
-						
+
 						if (Methods.isAirAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
 							s.sendMessage(Methods.getAirColor() + "You must be an Airbender to bind this ability.");
 							return true;
@@ -151,12 +151,12 @@ public class Commands {
 							s.sendMessage(Methods.getChiColor() + "You must be a ChiBlocker to bind this ability.");
 							return true;
 						}
-						
+
 						Methods.bindAbility((Player) s, ability);
-//						s.sendMessage("Ability Bound to slot");
+						//						s.sendMessage("Ability Bound to slot");
 						return true;
 					}
-					
+
 					if (args.length == 3) {
 						// bending bind ability [Slot]
 						String abil = args[1];
@@ -170,7 +170,7 @@ public class Commands {
 							s.sendMessage(ChatColor.RED + "Slot must be an integer between 1 and 9.");
 							return true;
 						}
-						
+
 						if (Methods.isAirAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
 							s.sendMessage(Methods.getAirColor() + "You must be an Airbender to bind this ability.");
 							return true;
@@ -192,7 +192,7 @@ public class Commands {
 							return true;
 						}
 						Methods.bindAbility((Player) s, ability, slot);
-//						s.sendMessage("Ability Bound");
+						//						s.sendMessage("Ability Bound");
 						return true;
 					}
 				}
@@ -201,12 +201,12 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending display <Element>");
 						return true;
 					}
-					
+
 					if (!s.hasPermission("bending.command.display")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					
+
 					if (args.length == 2) {
 						//bending display [Element]
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
@@ -215,7 +215,9 @@ public class Commands {
 								return true;
 							}
 							for (String st: AbilityModuleManager.airbendingabilities) {
-								s.sendMessage(Methods.getAirColor() + st);
+								if (Methods.canBend(s.getName(), st)) {
+									s.sendMessage(Methods.getAirColor() + st);
+								}
 							}
 							return true;
 						}
@@ -225,7 +227,9 @@ public class Commands {
 								return true;
 							}
 							for (String st: AbilityModuleManager.waterbendingabilities) {
-								s.sendMessage(Methods.getWaterColor() + st);
+								if (Methods.canBend(s.getName(), st)) {
+									s.sendMessage(Methods.getWaterColor() + st);
+								}
 							}
 							return true;
 						}
@@ -235,7 +239,9 @@ public class Commands {
 								return true;
 							}
 							for (String st: AbilityModuleManager.earthbendingabilities) {
-								s.sendMessage(Methods.getEarthColor() + st);
+								if (Methods.canBend(s.getName(), st)) {
+									s.sendMessage(Methods.getEarthColor() + st);
+								}
 							}
 							return true;
 						}
@@ -245,7 +251,9 @@ public class Commands {
 								return true;
 							}
 							for (String st: AbilityModuleManager.firebendingabilities) {
-								s.sendMessage(Methods.getFireColor() + st);
+								if (Methods.canBend(s.getName(), st)) {
+									s.sendMessage(Methods.getFireColor() + st);
+								}
 							}
 							return true;
 						}
@@ -254,9 +262,11 @@ public class Commands {
 								s.sendMessage(Methods.getChiColor() + "There are no chiblocking abilities available.");
 								return true;
 							}
-	
+
 							for (String st: AbilityModuleManager.chiabilities) {
-								s.sendMessage(Methods.getChiColor()  + st);
+								if (Methods.canBend(s.getName(), st)) {
+									s.sendMessage(Methods.getChiColor()  + st);
+								}
 							}
 							return true;
 						}
@@ -269,17 +279,17 @@ public class Commands {
 						}
 						BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
 						HashMap<Integer, String> abilities = bPlayer.abilities;
-						
+
 						if (abilities.isEmpty()) {
 							s.sendMessage("You don't have any bound abilities.");
 							return true;
 						}
-						
+
 						for (int i = 1; i <= 9; i++) {
 							String ability = abilities.get(i);
 							if (ability != null) s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
 						}
-						
+
 						return true;
 					}
 				}
@@ -292,14 +302,14 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					
+
 					if (!(s instanceof Player)) {
 						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
 						return true;
 					}
-					
+
 					BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
-					
+
 					if (bPlayer.isToggled) {
 						s.sendMessage(ChatColor.RED + "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
 						bPlayer.isToggled = false;
@@ -319,14 +329,14 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					
+
 					if (args.length == 2) {
 						Player p = Bukkit.getPlayer(args[1]);
 						if (p == null) {
 							s.sendMessage(ChatColor.RED + "That player is not online.");
 							return true;
 						}
-						
+
 						String un = p.getName();
 						s.sendMessage(un + " - ");
 						if (Methods.isBender(un, Element.Air)) {
@@ -350,7 +360,7 @@ public class Commands {
 						List<String> players = new ArrayList<String>();
 						for (Player player: Bukkit.getOnlinePlayers()) {
 							String un = player.getName();
-							
+
 							BendingPlayer bp = Methods.getBendingPlayer(un);
 							if (bp.elements.size() > 1) {
 								players.add(Methods.getAvatarColor() + un);
@@ -392,7 +402,7 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending version");
 						return true;
 					}
-					
+
 					if (!s.hasPermission("bending.command.version")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
@@ -406,26 +416,26 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending remove [Player]");
 						return true;
 					}
-					
+
 					if (!s.hasPermission("bending.admin.remove")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					
+
 					Player player = Bukkit.getPlayer(args[1]);
-					
+
 					if (player == null) {
 						s.sendMessage(ChatColor.RED + "That player is not online.");
 						return true;
 					}
-					
+
 					BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 					Methods.removeUnusableAbilities(player.getName());
 					bPlayer.elements.clear();
 					s.sendMessage(ChatColor.GREEN + "You have removed the bending of " + ChatColor.DARK_AQUA + player.getName());
 					player.sendMessage(ChatColor.GREEN + "Your bending has been removed by " + ChatColor.DARK_AQUA + s.getName());
 					return true;
-					
+
 				}
 				if (Arrays.asList(permaremovealiases).contains(args[0].toLowerCase())) {
 					//bending permaremove [Player]
@@ -433,19 +443,19 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending permaremove [Player]");
 						return true;
 					}
-					
+
 					if (!s.hasPermission("bending.admin.permaremove")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					
+
 					Player player = Bukkit.getPlayer(args[1]);
-					
+
 					if (player == null) {
 						s.sendMessage(ChatColor.RED + "That player is not online.");
 						return true;
 					}
-					
+
 					BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 					bPlayer.elements.clear();
 					Methods.removeUnusableAbilities(player.getName());
@@ -466,13 +476,13 @@ public class Commands {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
 						}
-						
+
 						Player player = Bukkit.getPlayer(args[1]);
 						if (player == null) {
 							s.sendMessage(ChatColor.RED + "That player is not online.");
 							return true;
 						}
-						
+
 						BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 						if (Arrays.asList(airaliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Air);
@@ -480,21 +490,21 @@ public class Commands {
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getAirColor() + " is also an airbender.");
 							return true;
 						}
-						
+
 						if (Arrays.asList(wateraliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Water);
 							player.sendMessage(Methods.getWaterColor() + "You are also a waterbender.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getWaterColor() + " is also a waterbender.");
 							return true;
 						}
-						
+
 						if (Arrays.asList(earthaliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Earth);
 							player.sendMessage(Methods.getEarthColor() + "You are also an Earthbender.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getEarthColor() + " is also an Earthbender.");
 							return true;
 						}
-						
+
 						if (Arrays.asList(firealiases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Fire);
 							player.sendMessage(Methods.getFireColor() + "You are also a Firebender.");
@@ -507,7 +517,7 @@ public class Commands {
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getChiColor() + " is also a ChiBlocker");
 							return true;
 						}
-						
+
 						s.sendMessage(ChatColor.RED + "You must specify an element.");
 						return true;
 					}
@@ -530,19 +540,19 @@ public class Commands {
 							s.sendMessage(Methods.getAirColor() + "You are also an airbender.");
 							return true;
 						}
-						
+
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Water);
 							s.sendMessage(Methods.getWaterColor() + "You are also a waterbender.");
 							return true;
 						}
-						
+
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Earth);
 							s.sendMessage(Methods.getEarthColor() + "You are also an Earthbender.");
 							return true;
 						}
-						
+
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Fire);
 							s.sendMessage(Methods.getFireColor() + "You are also a Firebender.");
@@ -581,7 +591,7 @@ public class Commands {
 							s.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
 							return true;
 						}
-						
+
 						if (!bPlayer.getElements().isEmpty()) {
 							if (!s.hasPermission("bending.command.rechoose")) {
 								s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
@@ -697,14 +707,14 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "This command will print out the version of ProjectKorra this server is running.");
 						return true;
 					}
-					
+
 					if (Arrays.asList(removealiases).contains(args[1].toLowerCase())) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending remove [Player]");
 						s.sendMessage(ChatColor.YELLOW + "This command will remove the element of the targeted [Player]. The player will be able to re-pick "
 								+ " their element after this command is run on them, assuming their Bending was not permaremoved.");
 						return true;
 					}
-					
+
 					if (Arrays.asList(togglealiases).contains(args[1].toLowerCase())) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending toggle");
 						s.sendMessage(ChatColor.YELLOW + "This command will toggle a player's own Bending on or off. If toggled off, all abilities should stop"
@@ -717,7 +727,7 @@ public class Commands {
 								+ " or give you information about the player that you specify.");
 						return true;
 					}
-					
+
 					if (Arrays.asList(clearaliases).contains(args[1].toLowerCase())) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending clear <slot>");
 						s.sendMessage(ChatColor.YELLOW + "This command will clear the bound ability from the slot you specify (if you specify one."
@@ -733,7 +743,7 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "This command will bind an ability to the slot you specify (if you specify one), or the slot currently"
 								+ " selected in your hotbar (If you do not specify a Slot #).");
 					}
-					
+
 					if (Methods.abilityExists(args[1])) {
 						String ability = Methods.getAbility(args[1]);
 						if (Methods.isAirAbility(ability)) {
