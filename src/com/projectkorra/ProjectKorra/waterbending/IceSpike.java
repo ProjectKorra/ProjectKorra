@@ -56,9 +56,13 @@ public class IceSpike {
 	private List<LivingEntity> damaged = new ArrayList<LivingEntity>();
 
 	public IceSpike(Player player) {
-		if (cooldowns.containsKey(player))
-			if (cooldowns.get(player) + cooldown >= System.currentTimeMillis())
+		if (cooldowns.containsKey(player)) {
+			if (cooldowns.get(player) + cooldown >= System.currentTimeMillis()) {
 				return;
+			} else {
+				cooldowns.remove(player.getName());
+			}
+		}
 		try {
 			this.player = player;
 
