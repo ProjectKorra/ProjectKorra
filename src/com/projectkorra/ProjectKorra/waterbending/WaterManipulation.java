@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
@@ -35,6 +37,8 @@ public class WaterManipulation {
 	private static double pushfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterManipulation.Push");
 	private static double defaultdamage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterManipulation.Damage");
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterManipulation.Speed");
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown");
+	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	private static final double deflectrange = 3;
 	// private static double speed = 1.5;
 
@@ -147,9 +151,8 @@ public class WaterManipulation {
 				}
 
 			}
-
-			//			BendingPlayer.getBendingPlayer(player).cooldown(
-			//					Abilities.WaterManipulation);
+			
+			cooldowns.put(player.getName(), System.currentTimeMillis());
 
 		}
 	}
@@ -498,9 +501,13 @@ public class WaterManipulation {
 	}
 
 	public static void moveWater(Player player) {
-		//		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-		//		if (!bPlayer.isOnCooldown(Abilities.WaterManipulation)) {
+		if (cooldowns.containsKey(player.getName())) {
+			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
+				return;
+			} else {
+				cooldowns.remove(player.getName());
+			}
+		}
 
 		if (prepared.containsKey(player)) {
 			if (instances.containsKey(prepared.get(player))) {
