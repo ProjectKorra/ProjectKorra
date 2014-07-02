@@ -506,12 +506,12 @@ public class Methods {
 	}
 
 	public static ChatColor getAbilityColor(String ability) {
-		if (AbilityModuleManager.chiabilities.contains(ability)) return ChatColor.GOLD;
-		if (AbilityModuleManager.airbendingabilities.contains(ability)) return ChatColor.GRAY;
-		if (AbilityModuleManager.waterbendingabilities.contains(ability)) return ChatColor.AQUA;
-		if (AbilityModuleManager.earthbendingabilities.contains(ability)) return ChatColor.GREEN;
-		if (AbilityModuleManager.firebendingabilities.contains(ability)) return ChatColor.RED;
-		else return null;
+		if (AbilityModuleManager.chiabilities.contains(ability)) return getChiColor();
+		if (AbilityModuleManager.airbendingabilities.contains(ability)) return getAirColor();
+		if (AbilityModuleManager.waterbendingabilities.contains(ability)) return getWaterColor();
+		if (AbilityModuleManager.earthbendingabilities.contains(ability)) return getEarthColor();
+		if (AbilityModuleManager.firebendingabilities.contains(ability)) return getFireColor();
+		else return getAvatarColor();
 	}
 
 	public static boolean isWater(Block block) {
