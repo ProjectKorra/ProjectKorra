@@ -169,9 +169,16 @@ public class Methods {
 				if (slot8 != null) abilities.put(8, slot8);
 				if (slot9 != null) abilities.put(9, slot9);
 
-				if (permaremoved == null) p = false;
-				if (permaremoved.equals("true")) p = true;
-				if (permaremoved.equals("false")) p = false;
+				if (permaremoved == null) {
+					p = false;
+				}
+				else if (permaremoved.equals("true")) {
+					p = true;
+				}
+				else if (permaremoved.equals("false")) {
+					p = false;
+				}
+
 				new BendingPlayer(uuid, player2, elements, abilities, p);
 			}
 		} catch (SQLException ex) {
