@@ -131,7 +131,7 @@ public class Commands {
 
 						String ability = Methods.getAbility(abil);
 
-						if (!Methods.canBend(s.getName(), ability)) {
+						if (!Methods.hasPermission((Player) s, ability)) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
 						}
@@ -175,7 +175,7 @@ public class Commands {
 							return true;
 						}
 						
-						if (!Methods.canBend(s.getName(), ability)) {
+						if (!Methods.hasPermission((Player) s, ability)) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
 						}
