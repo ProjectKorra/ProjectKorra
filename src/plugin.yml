@@ -30,6 +30,7 @@ permissions:
       bending.command.choose: true
       bending.command.version: true
       bending.command.help: true
+      bending.command.clear: true
       bending.command.who: true
       bending.air: true
       bending.water: true
