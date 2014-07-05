@@ -67,6 +67,7 @@ public class Commands {
 					}
 
 					plugin.reloadConfig();
+					Methods.stopBending();
 					s.sendMessage(ChatColor.AQUA + "Bending config reloaded.");
 					return true;
 				}
