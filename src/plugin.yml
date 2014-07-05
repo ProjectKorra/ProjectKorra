@@ -5,7 +5,7 @@ main: com.projectkorra.ProjectKorra.ProjectKorra
 commands:
   projectkorra:
     aliases: [b,bending,mtla,tla,korra]
-    usage: /<command
+    usage: /<command>
 permissions:
   bending.admin:
     default: op
@@ -29,6 +29,7 @@ permissions:
       bending.command.toggle: true
       bending.command.choose: true
       bending.command.version: true
+      bending.command.help: true
       bending.command.who: true
       bending.air: true
       bending.water: true
