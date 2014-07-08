@@ -80,6 +80,13 @@ public class ConfigManager {
 				+ "are incredibly amplified in this state. Additionally, AirShield and FireJet become toggle-able "
 				+ "abilities and last until you deactivate them or the Avatar State. Click again with the Avatar "
 				+ "State selected to deactivate it.");
+		config.addDefault("Abilities.AvatarState.PotionEffects.Regeneration.Enabled", true);
+		config.addDefault("Abilities.AvatarState.PotionEffects.Regeneration.Power", 3);
+		config.addDefault("Abilities.AvatarState.PotionEffects.Speed.Enabled", true);
+		config.addDefault("Abilities.AvatarState.PotionEffects.Speed.Power", 3);
+		config.addDefault("Abilities.AvatarState.PotionEffects.DamageResistance.Enabled", true);
+		config.addDefault("Abilities.AvatarState.PotionEffects.FireResistance.Enabled", true);
+		config.addDefault("Abilities.AvatarState.PotionEffects.FireResistance.Power", 3);
 
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Factor", 0.3);
 		plugin.getConfig().addDefault("Abilities.Air.Passive.Speed", 2);

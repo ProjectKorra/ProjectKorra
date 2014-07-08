@@ -1,18 +1,34 @@
 package com.projectkorra.ProjectKorra.Ability;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class AvatarState {
 
 	public static ConcurrentHashMap<Player, AvatarState> instances = new ConcurrentHashMap<Player, AvatarState>();
+	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
+
+	public static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	private static final long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.AvatarState.Cooldown");
+	private static boolean regenEnabled = config.getBoolean("Abilities.AvatarState.PotionEffects.Regeneration.Enabled");
+	private static int regenPower = config.getInt("Abilities.AvatarState.PotionEffects.Regeneration.Power") - 1;
+	private static boolean speedEnabled = config.getBoolean("Abilities.AvatarState.PotionEffects.Speed..Enabled");
+	private static int speedPower = config.getInt("Abilities.AvatarState.Potioneffects.Speed.Power") - 1;
+	private static boolean resistanceEnabled = config.getBoolean("Abilities.AvatarState.PotionEffects.DamageResistance.Enabled");
+	private static int resistancePower = config.getInt("Abilities.AvatarState.PotionEffects.DamageResistance.Power") - 1;
+	private static boolean fireResistanceEnabled = config.getBoolean("Abilities.AvatarState.PotionEffects.FireResistance.Enabled");
+	private static int fireResistancePower = config.getInt("Abilities.AvatarState.PotionEffects.FireResistance.Power") - 1;
 
 	private static final double factor = 5;
 
@@ -24,9 +40,19 @@ public class AvatarState {
 		this.player = player;
 		if (instances.containsKey(player)) {
 			instances.remove(player);
-		} else {
-			new Flight(player);
-			instances.put(player, this);
+			return;
+		}
+		if (cooldowns.containsKey(player.getName())) {
+			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
+				return;
+			} else {
+				cooldowns.remove(player.getName());
+			}
+		} 
+		new Flight(player);
+		instances.put(player, this);
+		if (cooldown != 0) {
+			cooldowns.put(player.getName(), System.currentTimeMillis());
 		}
 	}
 
@@ -51,14 +77,22 @@ public class AvatarState {
 
 	private void addPotionEffects() {
 		int duration = 70;
-		player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,
-				duration, 3));
-		player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,
-				duration, 2));
-		player.addPotionEffect(new PotionEffect(
-				PotionEffectType.DAMAGE_RESISTANCE, duration, 2));
-		player.addPotionEffect(new PotionEffect(
-				PotionEffectType.FIRE_RESISTANCE, duration, 2));
+		if (regenEnabled) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,
+					duration, regenPower));
+		}
+		if (speedEnabled) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,
+					duration, speedPower));
+		}
+		if (resistanceEnabled) {
+			player.addPotionEffect(new PotionEffect(
+					PotionEffectType.DAMAGE_RESISTANCE, duration, resistancePower));
+		}
+		if (fireResistanceEnabled) {
+			player.addPotionEffect(new PotionEffect(
+					PotionEffectType.FIRE_RESISTANCE, duration, fireResistancePower));
+		}
 	}
 
 	public static boolean isAvatarState(Player player) {
