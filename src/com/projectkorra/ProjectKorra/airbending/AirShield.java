@@ -21,6 +21,7 @@ public class AirShield {
 
 	private static double maxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirShield.Radius");
 	private static int numberOfStreams = (int) (.75 * (double) maxradius);
+	private static boolean isToggle = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
 
 	private double radius = 2;
 
@@ -31,7 +32,7 @@ public class AirShield {
 
 	public AirShield(Player player) {
 		if (AvatarState.isAvatarState(player)
-				&& instances.containsKey(player.getEntityId())) {
+				&& instances.containsKey(player.getEntityId()) && isToggle) {
 			instances.remove(player.getEntityId());
 			return;
 		}
@@ -141,11 +142,27 @@ public class AirShield {
 			instances.remove(player.getEntityId());
 			return false;
 		}
-		if (((!Methods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player
-				.isSneaking())) && !AvatarState.isAvatarState(player)) {
-			instances.remove(player.getEntityId());
-			return false;
+
+		if (isToggle) {
+			if (((!Methods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player
+					.isSneaking())) && !AvatarState.isAvatarState(player)) {
+				instances.remove(player.getEntityId());
+				return false;
+			}
+		} else {
+			if (((!Methods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player
+					.isSneaking()))) {
+				instances.remove(player.getEntityId());
+				return false;
+			}
 		}
+
+		//
+		//		if (((!Methods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player
+		//				.isSneaking()))) {
+		//			instances.remove(player.getEntityId());
+		//			return false;
+		//		}
 		rotateShield();
 		return true;
 	}

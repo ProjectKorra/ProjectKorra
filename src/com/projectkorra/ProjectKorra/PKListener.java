@@ -499,9 +499,7 @@ public class PKListener implements Listener {
 		String abil = Methods.getBoundAbility(player);
 		if (abil == null) return;
 		if (Methods.canBend(player.getName(), abil)) {
-			if (abil.equalsIgnoreCase("AvatarState")) {
-				new AvatarState(player);
-			}
+			
 			
 			if (Methods.isAirAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
@@ -634,6 +632,10 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Paralyze")) {
 					//
 				}
+			}
+			
+			if (abil.equalsIgnoreCase("AvatarState")) {
+				new AvatarState(player);
 			}
 		}
 	}

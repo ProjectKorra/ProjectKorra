@@ -144,6 +144,7 @@ public class ConfigManager {
 				+ "This wind will deflect all projectiles and will prevent any creature from "
 				+ "entering it for as long as its maintained.");
 		config.addDefault("Abilities.Air.AirShield.Radius", 7);
+		config.addDefault("Abilities.Air.AirShield.IsAvatarStateToggle", true);
 
 		config.addDefault("Abilities.Air.AirSpout.Enabled", true);
 		config.addDefault("Abilities.Air.AirSpout.Description", "This ability gives the airbender limited sustained levitation. It is a "
@@ -385,6 +386,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.FireJet.Speed", 0.7);
 		config.addDefault("Abilities.Fire.FireJet.Duration", 1500);
 		config.addDefault("Abilities.Fire.FireJet.Cooldown", 6000);
+		config.addDefault("Abilities.Fire.FireJet.IsAvatarStateToggle", true);
 
 		config.addDefault("Abilities.Fire.FireShield.Enabled", true);
 		config.addDefault("Abilities.Fire.FireShield.Description", "FireShield is a basic defensive ability. "

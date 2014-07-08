@@ -99,6 +99,7 @@ Abilities:
       Enabled: true
       Description: "Air Shield is one of the most powerful defensive techniques in existence. To use, simply sneak (default: shift). This will create a whirlwind of air around the user, with a small pocket of safe space in the center. This wind will deflect all projectiles and will prevent any creature from entering it for as long as its maintained."
       Radius: 7
+      IsAvatarStateToggle: true
     AirSpout:
       Enabled: true
       Description: "This ability gives the airbender limited sustained levitation. It is a toggle - click to activate and form a whirling spout of air beneath you, lifting you up. You can bend other abilities while using AirSpout. Click again to deactivate this ability."
@@ -276,6 +277,7 @@ Abilities:
       Speed: 0.7
       Duration: 1500
       Cooldown: 6000
+      IsAvatarStateToggle: true
     FireShield:
       Enabled: true
       Description: "FireShield is a basic defensive ability. Clicking with this ability selected will create a small disc of fire in front of you, which will block most attacks and bending. Alternatively, pressing and holding sneak creates a very small shield of fire, blocking most attacks. Creatures that contact this fire are ignited."

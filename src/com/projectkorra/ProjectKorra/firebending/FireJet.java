@@ -21,6 +21,7 @@ public class FireJet {
 	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireJet.Speed");
 	private static final long defaultduration = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireJet.Duration");
+	private static boolean isToggle = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
 	// private static final long cooldown = ConfigManager.fireJetCooldown;
 
 	// private static ConcurrentHashMap<Player, Long> timers = new
@@ -88,14 +89,14 @@ public class FireJet {
 		}
 		if ((Methods.isWater(player.getLocation().getBlock()) || System
 				.currentTimeMillis() > time + duration)
-				&& !AvatarState.isAvatarState(player)) {
+				&& (!AvatarState.isAvatarState(player) || !isToggle)) {
 			// player.setAllowFlight(canfly);
 			instances.remove(player);
 		} else {
 			player.getWorld().playEffect(player.getLocation(),
 					Effect.MOBSPAWNER_FLAMES, 1);
 			double timefactor;
-			if (AvatarState.isAvatarState(player)) {
+			if (AvatarState.isAvatarState(player) && isToggle) {
 				timefactor = 1;
 			} else {
 				timefactor = 1 - ((double) (System.currentTimeMillis() - time))
