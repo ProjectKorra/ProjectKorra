@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.1.0
+version: 1.2.0 BETA 1
 main: com.projectkorra.ProjectKorra.ProjectKorra
 commands:
   projectkorra:
@@ -50,6 +50,7 @@ permissions:
       bending.ability.AirSuction: true
       bending.ability.AirSwipe: true
       bending.ability.Tornado: true
+      bending.air.passive: true
   bending.water:
     default: true
     description: Grants access to most waterbending abilities.
@@ -66,6 +67,7 @@ permissions:
       bending.ability.WaterSpout: true
       bending.ability.Plantbending: true
       bending.message.nightmessage: true
+      bending.water.passive: true
   bending.earth:
     default: true
     description: Grants access to all Earthbending abilities.
@@ -79,6 +81,7 @@ permissions:
       bending.ability.RaiseEarth: true
       bending.ability.Shockwave: true
       bending.ability.Tremorsense: true
+      bending.earth.passive: true
   bending.fire:
     default: true
     description: Grants access to all firebending abilities.
@@ -93,6 +96,7 @@ permissions:
       bending.ability.Lightning: true
       bending.ability.WallOfFire: true
       bending.message.daymessage: true
+      bending.fire.passive: true
   bending.chi:
     default: true
     description: Grants access to all ChiBlocking abilities.
@@ -100,3 +104,4 @@ permissions:
       bending.ability.HighJump: true
       bending.ability.Paralyze: true
       bending.ability.RapidPunch: true
+      bending.chi.passive: true
