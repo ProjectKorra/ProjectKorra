@@ -170,12 +170,18 @@ public class Commands {
 							return true;
 						}
 						String ability = Methods.getAbility(abil);
-						int slot = Integer.parseInt(args[2]);
+						int slot = 0;
+						try {
+							slot = Integer.parseInt(args[2]);
+						} catch (NumberFormatException e) {
+							s.sendMessage(ChatColor.RED + "Slot must be an integer between 1 and 9.");
+							return true;
+						}
 						if (slot < 1 || slot > 9) {
 							s.sendMessage(ChatColor.RED + "Slot must be an integer between 1 and 9.");
 							return true;
 						}
-						
+
 						if (!Methods.hasPermission((Player) s, ability)) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
