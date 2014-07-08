@@ -17,6 +17,7 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 public class AvatarState {
 
 	public static ConcurrentHashMap<Player, AvatarState> instances = new ConcurrentHashMap<Player, AvatarState>();
+	public static ConcurrentHashMap<String, Long> startTimes = new ConcurrentHashMap<String, Long>();
 	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	public static FileConfiguration config = ProjectKorra.plugin.getConfig();
@@ -29,6 +30,7 @@ public class AvatarState {
 	private static int resistancePower = config.getInt("Abilities.AvatarState.PotionEffects.DamageResistance.Power") - 1;
 	private static boolean fireResistanceEnabled = config.getBoolean("Abilities.AvatarState.PotionEffects.FireResistance.Enabled");
 	private static int fireResistancePower = config.getInt("Abilities.AvatarState.PotionEffects.FireResistance.Power") - 1;
+	private static long duration = config.getLong("Abilities.AvatarState.Duration");
 
 	private static final double factor = 5;
 
@@ -40,6 +42,9 @@ public class AvatarState {
 		this.player = player;
 		if (instances.containsKey(player)) {
 			instances.remove(player);
+			if (startTimes.containsKey(player.getName())) {
+				startTimes.remove(player.getName());
+			}
 			return;
 		}
 		if (cooldowns.containsKey(player.getName())) {
@@ -53,6 +58,9 @@ public class AvatarState {
 		instances.put(player, this);
 		if (cooldown != 0) {
 			cooldowns.put(player.getName(), System.currentTimeMillis());
+		}
+		if (duration != 0) {
+			startTimes.put(player.getName(), System.currentTimeMillis());
 		}
 	}
 
@@ -69,7 +77,18 @@ public class AvatarState {
 	private boolean progress() {
 		if (!Methods.canBend(player.getName(), StockAbilities.AvatarState.name())) {
 			instances.remove(player);
+			if (startTimes.containsKey(player.getName())) {
+				startTimes.remove(player.getName());
+			}
 			return false;
+		}
+		
+		if (startTimes.containsKey(player.getName())) {
+			if (startTimes.get(player.getName()) + duration >= System.currentTimeMillis()) {
+				startTimes.remove(player.getName());
+				instances.remove(player);
+				return false;
+			}
 		}
 		addPotionEffects();
 		return true;
