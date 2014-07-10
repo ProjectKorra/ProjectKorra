@@ -18,6 +18,9 @@ public class EarthPassive {
 
 	public static boolean softenLanding(Player player) {
 		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
+		if (Methods.canMetalbend(player) && Methods.isMetalBlock(block)) {
+			return true;
+		}
 		if (Methods.isEarthbendable(player, block) || Methods.isTransparentToEarthbending(player, block)) {
 			if (!Methods.isTransparentToEarthbending(player, block)) {
 				Material type = block.getType();

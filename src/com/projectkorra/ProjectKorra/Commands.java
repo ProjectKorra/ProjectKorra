@@ -255,7 +255,11 @@ public class Commands {
 							}
 							for (String st: AbilityModuleManager.earthbendingabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
-									s.sendMessage(Methods.getEarthColor() + st);
+									if (Methods.isMetalbendingAbility(st)) {
+										s.sendMessage(Methods.getMetalbendingColor() + st);
+									} else {
+										s.sendMessage(Methods.getEarthColor() + st);
+									}
 								}
 							}
 							return true;
@@ -361,6 +365,9 @@ public class Commands {
 							s.sendMessage(Methods.getWaterColor() + "- Waterbender");
 						}
 						if (Methods.isBender(un, Element.Earth)) {
+							if (Methods.canMetalbend(p)) {
+								s.sendMessage(Methods.getEarthColor() + "- Earthbender " + Methods.getMetalbendingColor() + "(Can Metalbend)");
+							}
 							s.sendMessage(Methods.getEarthColor() + "- Earthbender");
 						}
 						if (Methods.isBender(un, Element.Fire)) {
@@ -770,8 +777,13 @@ public class Commands {
 							s.sendMessage(Methods.getWaterColor() + AbilityModuleManager.descriptions.get(ability));
 						}
 						else if (Methods.isEarthAbility(ability)) {
-							s.sendMessage(Methods.getEarthColor() + ability + " - ");
-							s.sendMessage(Methods.getEarthColor() + AbilityModuleManager.descriptions.get(ability));
+							if (Methods.isMetalbendingAbility(ability)) {
+								s.sendMessage(Methods.getMetalbendingColor() + ability + " - ");
+								s.sendMessage(Methods.getMetalbendingColor() + AbilityModuleManager.descriptions.get(ability));
+							} else {
+								s.sendMessage(Methods.getEarthColor() + ability + " - ");
+								s.sendMessage(Methods.getEarthColor() + AbilityModuleManager.descriptions.get(ability));
+							}
 						}
 						else if (Methods.isFireAbility(ability)) {
 							s.sendMessage(Methods.getFireColor() + ability + " - ");

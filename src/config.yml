@@ -17,6 +17,7 @@ Properties:
       Fire: RED
       Water: AQUA
       Earth: GREEN
+      Metalbending: DARK_GREEN
       Chi: GOLD
   RegionProtection:
     AllowHarmlessAbilities: true

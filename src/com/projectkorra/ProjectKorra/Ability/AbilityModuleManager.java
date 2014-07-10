@@ -27,6 +27,7 @@ public class AbilityModuleManager {
 	public static HashSet<String> harmlessabilities;
 	public static HashSet<String> igniteabilities;
 	public static HashSet<String> explodeabilities;
+	public static HashSet<String> metalbendingabilities;
 	
 	public static HashMap<String, String> descriptions;
 
@@ -49,6 +50,7 @@ public class AbilityModuleManager {
 		harmlessabilities = new HashSet<String>();
 		explodeabilities = new HashSet<String>();
 		igniteabilities = new HashSet<String>();
+		metalbendingabilities = new HashSet<String>();
 		ability = loader.load(AbilityModule.class);
 		fill();
 	}

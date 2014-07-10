@@ -44,6 +44,7 @@ public class ConfigManager {
 		config.addDefault("Properties.Chat.Colors.Air", "GRAY");
 		config.addDefault("Properties.Chat.Colors.Water", "AQUA");
 		config.addDefault("Properties.Chat.Colors.Earth", "GREEN");
+		config.addDefault("Properties.Chat.Colors.Metalbending", "DARK_GREEN");
 		config.addDefault("Properties.Chat.Colors.Fire", "RED");
 		config.addDefault("Properties.Chat.Colors.Chi", "GOLD");
 
