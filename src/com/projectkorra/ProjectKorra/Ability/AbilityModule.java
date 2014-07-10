@@ -51,5 +51,9 @@ public class AbilityModule extends AbilityLoadable implements Cloneable {
 		return false;
 	}
 	
+	public boolean isMetalbendingAbility() {
+		return false;
+	}
+	
 
 }
