@@ -82,6 +82,7 @@ permissions:
       bending.ability.Shockwave: true
       bending.ability.Tremorsense: true
       bending.earth.passive: true
+      bending.earth.metalbending: true
   bending.fire:
     default: true
     description: Grants access to all firebending abilities.

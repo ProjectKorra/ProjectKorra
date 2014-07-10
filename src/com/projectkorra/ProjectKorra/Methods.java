@@ -64,7 +64,6 @@ import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
-import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
@@ -1612,6 +1611,11 @@ public class Methods {
 			}
 		}
 
+		return false;
+	}
+	
+	public static boolean canMetalbend(Player player) {
+		if (player.hasPermission("bending.earth.metalbending")) return true;
 		return false;
 	}
 
