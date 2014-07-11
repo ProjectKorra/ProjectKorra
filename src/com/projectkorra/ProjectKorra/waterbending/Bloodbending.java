@@ -24,6 +24,7 @@ public class Bloodbending {
 	ConcurrentHashMap<Entity, Location> targetentities = new ConcurrentHashMap<Entity, Location>();
 
 	private static final double factor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
+	private static final boolean onlyUsableAtNight = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.OnlyUsableAtNight");
 
 	private Player player;
 	private int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Range");
@@ -33,6 +34,11 @@ public class Bloodbending {
 			remove(player);
 			return;
 		}
+		if (onlyUsableAtNight && !Methods.isNight(player.getWorld())) {
+			remove(player);
+			return;
+		}
+		
 		range = (int) Methods.waterbendingNightAugment(range, player.getWorld());
 		if (AvatarState.isAvatarState(player)) {
 			range = AvatarState.getValue(range);
@@ -96,6 +102,11 @@ public class Bloodbending {
 		PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 60, 1);
 
 		if (!player.isSneaking()) {
+			remove(player);
+			return;
+		}
+		
+		if (onlyUsableAtNight && !Methods.isNight(player.getWorld())) {
 			remove(player);
 			return;
 		}
