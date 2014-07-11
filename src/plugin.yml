@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.2.0 BETA 5
+version: 1.2.0 BETA 6
 main: com.projectkorra.ProjectKorra.ProjectKorra
 commands:
   projectkorra:
@@ -81,6 +81,7 @@ permissions:
       bending.ability.RaiseEarth: true
       bending.ability.Shockwave: true
       bending.ability.Tremorsense: true
+      bending.ability.Extraction: true
       bending.earth.passive: true
       bending.earth.metalbending: true
   bending.fire:

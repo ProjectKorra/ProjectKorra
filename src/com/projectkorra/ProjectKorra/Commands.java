@@ -367,8 +367,9 @@ public class Commands {
 						if (Methods.isBender(un, Element.Earth)) {
 							if (Methods.canMetalbend(p)) {
 								s.sendMessage(Methods.getEarthColor() + "- Earthbender " + Methods.getMetalbendingColor() + "(Can Metalbend)");
+							} else {
+								s.sendMessage(Methods.getEarthColor() + "- Earthbender");
 							}
-							s.sendMessage(Methods.getEarthColor() + "- Earthbender");
 						}
 						if (Methods.isBender(un, Element.Fire)) {
 							s.sendMessage(Methods.getFireColor() + "- Firebender");
