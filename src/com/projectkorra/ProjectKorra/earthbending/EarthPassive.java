@@ -2,11 +2,16 @@ package com.projectkorra.ProjectKorra.earthbending;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Door;
 
+import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
@@ -64,6 +69,39 @@ public class EarthPassive {
 		sandblocks.remove(block);
 		if (block.getType() == Material.SAND) {
 			block.setType(type);
+		}
+	}
+	
+	public static void handleMetalPassives() {
+		for (Player player: Bukkit.getOnlinePlayers()) {
+			if (Methods.canBendPassive(player.getName(), Element.Earth) && Methods.canMetalbend(player)) {
+				if (player.isSneaking()) {
+					Block block = player.getTargetBlock(null, 5);
+					if (block == null) continue;
+					if (block.getType() == Material.IRON_DOOR_BLOCK && !Methods.isRegionProtectedFromBuild(player, null, block.getLocation())) {
+						if (block.getData() >= 8) {
+							block = block.getRelative(BlockFace.DOWN);
+						}
+						
+						if (block.getData() < 4) {
+							block.setData((byte) (block.getData() + 4));
+							block.getWorld().playSound(block.getLocation(), Sound.DOOR_CLOSE, 10, 1);
+						} else {
+							block.setData((byte) (block.getData() - 4));
+							block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
+						}
+//						Door door = (Door) block.getState().getData();
+//						if (door.isTopHalf()) {
+//							block = block.getRelative(BlockFace.DOWN);
+//							if (door.isOpen()) {
+//								door.setOpen(false);
+//							} else {
+//								door.setOpen(true);
+//							}
+//						}
+					}
+				}
+			}
 		}
 	}
 	

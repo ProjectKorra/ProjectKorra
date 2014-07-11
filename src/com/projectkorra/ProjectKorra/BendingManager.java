@@ -94,6 +94,7 @@ public class BendingManager implements Runnable {
 			WaterPassive.handlePassive();
 			FirePassive.handlePassive();
 			EarthPassive.revertSands();
+			EarthPassive.handleMetalPassives();
 			TempPotionEffect.progressAll();
 			Plantbending.regrow();
 			AirBurst.progressAll();
