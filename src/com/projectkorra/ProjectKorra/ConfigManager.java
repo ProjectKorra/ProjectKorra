@@ -321,6 +321,12 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
 		config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
 		config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
+		
+		config.addDefault("Abilities.Earth.Extraction.Enabled", true);
+		config.addDefault("Abilities.Earth.Extraction.Description", "This ability allows metalbenders to extract the minerals from ore blocks. To use, simply tap sneak while looking at an ore block with metal in it (iron, gold, quartz) and the ore will be extracted and drop in front of you. This ability has a small chance of doubling or tripling the loot. This ability has a short cooldown.");
+		config.addDefault("Abilities.Earth.Extraction.Cooldown", 10000);
+		config.addDefault("Abilities.Earth.Extraction.TripleLootChance", 15);
+		config.addDefault("Abilities.Earth.Extraction.DoubleLootChance", 40);
 
 		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "

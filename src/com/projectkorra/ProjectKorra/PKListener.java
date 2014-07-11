@@ -75,6 +75,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthGrab;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
+import com.projectkorra.ProjectKorra.earthbending.Extraction;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.firebending.ArcOfFire;
@@ -297,6 +298,10 @@ public class PKListener implements Listener {
 
 				if (abil.equalsIgnoreCase("Tremorsense")) {
 					Methods.getBendingPlayer(player.getName()).toggleTremorsense();
+				}
+				
+				if (abil.equalsIgnoreCase("Extraction")) {
+					new Extraction(player);
 				}
 
 			}
