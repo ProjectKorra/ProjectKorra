@@ -232,36 +232,33 @@ public class Methods {
 	
 
 
-	  public static void deserializeFile() {
-	    File readFile = new File(".", "bendingPlayers.yml");
+	public static void deserializeFile() {
+		File readFile = new File(".", "bendingPlayers.yml");
 	    File writeFile = new File(".", "converted.yml");
 	    if (readFile.exists()) {
-//	      plugin.log.info("File exists");
-	      try
-	      {
-	        DataInputStream input = new DataInputStream(new FileInputStream(readFile));
-	        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        // plugin.log.info("File exists");
+	    	try {
+	    		DataInputStream input = new DataInputStream(new FileInputStream(readFile));
+	    		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-	        DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile));
-	        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
-	        String line;
-	        while ((line = reader.readLine()) != null)
-	        {
-	          if (!line.trim().contains("==: BendingPlayer"))
-	          {
-	            writer.write(line + "\n");
-	          }
-	        }
+	    		DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile));
+	    		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
+	    		String line;
+	    		while ((line = reader.readLine()) != null) {
+	    			if (!line.trim().contains("==: BendingPlayer")) {
+	    				writer.write(line + "\n");
+	    			}
+	    		}
 
-	        reader.close();
-	        input.close();
-	        writer.close();
-	        output.close();
-	      } catch (IOException e) {
-	        e.printStackTrace();
-	      }
+	    		reader.close();
+	    		input.close();
+	    		writer.close();
+	    		output.close();
+	    	} catch (IOException e) {
+	    		e.printStackTrace();
+	    	}
 	    }
-	  }
+	}
 
 
 

@@ -17,8 +17,10 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
 public class Commands {
 
@@ -48,7 +50,7 @@ public class Commands {
 	String[] whoaliases = {"who", "w"};
 	String[] importaliases = {"import", "i"};
 
-	private static int importTask;
+	private static BukkitTask importTask;
 	private void init() {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");
 		CommandExecutor exe;
@@ -236,21 +238,35 @@ public class Commands {
 						UUID uuid = Bukkit.getOfflinePlayer(playername).getUniqueId();
 						ArrayList<Element> element = new ArrayList<Element>();
 						List<Integer> oe = bendingPlayers.getIntegerList(string + ".BendingTypes");
+						HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+						List<Integer> oa = bendingPlayers.getIntegerList(string + ".SlotAbilities"); 
+						boolean permaremoved = bendingPlayers.getBoolean(string + ".Permaremoved");
 
+						int slot = 1;
+						for (int i : oa) {
+							if (StockAbilities.getAbility(i) != null) {
+								abilities.put(slot, StockAbilities.getAbility(i).toString());
+								slot++;
+							} else {
+								abilities.put(slot, null);
+								slot++;
+							}
+						}
+						
 						for (int i : oe) {
 							if (Element.getType(i) != null) {
 								element.add(Element.getType(i));
 							}
 						}
 						
-						BendingPlayer bPlayer = new BendingPlayer(uuid, playername, element, new HashMap<Integer, String>(), false);
+						BendingPlayer bPlayer = new BendingPlayer(uuid, playername, element, abilities, permaremoved);
 						bPlayers.add(bPlayer);
 					}
 					
 					final int total = bPlayers.size();
 					final CommandSender sender = s;
 					s.sendMessage(ChatColor.GREEN + "Import of data started. Do NOT stop / reload your server.");
-					importTask = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+					importTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
 						public void run() {
 							int i = 0;
 							if (i >= 10) {
@@ -261,7 +277,7 @@ public class Commands {
 							while (i < 10) {
 								if (bPlayers.isEmpty()) {
 									sender.sendMessage(ChatColor.GREEN + "Import complete, it may be best to reload your server.");
-									Bukkit.getServer().getScheduler().cancelTask(importTask);
+									Bukkit.getServer().getScheduler().cancelTask(importTask.getTaskId());
 									for (Player player: Bukkit.getOnlinePlayers()) {
 										Methods.createBendingPlayer(player.getUniqueId(), player.getName());
 									}
@@ -275,7 +291,12 @@ public class Commands {
 								if (bPlayer.hasElement(Element.Fire)) elements.append("f");
 								if (bPlayer.hasElement(Element.Chi)) elements.append("c");
 								
-								DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, element, permaremoved) VALUES ('" + bPlayer.uuid.toString() + "', '" + bPlayer.player + "', '" + elements + "', 'false')");
+								HashMap<Integer, String> abilities = bPlayer.abilities;
+								
+								DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, element, permaremoved) VALUES ('" + bPlayer.uuid.toString() + "', '" + bPlayer.player + "', '" + elements + "', '" + bPlayer.isPermaRemoved() +"')");
+								for (int slot = 1; slot < 10; slot++) {
+									DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
+								}
 //								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.uuid.toString() + "'");
 								
 //								try {
