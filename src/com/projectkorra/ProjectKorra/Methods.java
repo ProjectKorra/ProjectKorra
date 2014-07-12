@@ -1,5 +1,15 @@
 package com.projectkorra.ProjectKorra;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -219,6 +229,41 @@ public class Methods {
 			DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = 'false' WHERE uuid = '" + uuid + "'");
 		}
 	}
+	
+
+
+	  public static void deserializeFile() {
+	    File readFile = new File(".", "bendingPlayers.yml");
+	    File writeFile = new File(".", "converted.yml");
+	    if (readFile.exists()) {
+//	      plugin.log.info("File exists");
+	      try
+	      {
+	        DataInputStream input = new DataInputStream(new FileInputStream(readFile));
+	        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
+	        DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile));
+	        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
+	        String line;
+	        while ((line = reader.readLine()) != null)
+	        {
+	          if (!line.trim().contains("==: BendingPlayer"))
+	          {
+	            writer.write(line + "\n");
+	          }
+	        }
+
+	        reader.close();
+	        input.close();
+	        writer.close();
+	        output.close();
+	      } catch (IOException e) {
+	        e.printStackTrace();
+	      }
+	    }
+	  }
+
+
 
 	public static void stopBending() {
 		List<AbilityModule> abilities = AbilityModuleManager.ability;

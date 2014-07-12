@@ -49,6 +49,8 @@ public class ProjectKorra extends JavaPlugin {
 		} catch (IOException e) {
 		    // Failed to submit the stats :-(
 		}
+		
+		Methods.deserializeFile();
 	}
 
 	@Override
