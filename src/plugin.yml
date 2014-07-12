@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.2.0 BETA 6
+version: 1.2.0 BETA 7
 main: com.projectkorra.ProjectKorra.ProjectKorra
 commands:
   projectkorra:
@@ -20,6 +20,7 @@ permissions:
       bending.admin.choose: true
       bending.ability.AvatarState: true
       bending.ability.Bloodbending: true
+      bending.command.import: true
   bending.player:
     default: true
     description: Grants access to most abilities and basic commands.

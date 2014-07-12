@@ -1,16 +1,25 @@
 package com.projectkorra.ProjectKorra;
 
+import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 
@@ -41,6 +50,7 @@ public class Commands {
 	String[] addaliases = {"add", "a"};
 	String[] whoaliases = {"who", "w"};
 
+	private static int importTask;
 	private void init() {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");
 		CommandExecutor exe;
@@ -210,6 +220,92 @@ public class Commands {
 						//						s.sendMessage("Ability Bound");
 						return true;
 					}
+				}
+				if (args[0].equalsIgnoreCase("import")) {
+					if (!s.hasPermission("bending.command.import")) {
+						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						return true;
+					}
+					
+					s.sendMessage(ChatColor.GREEN + "Preparing data for import.");					
+					File bendingPlayersFile = new File(".", "converted.yml");
+					FileConfiguration bendingPlayers = YamlConfiguration.loadConfiguration(bendingPlayersFile);
+					
+					final LinkedList<BendingPlayer> bPlayers = new LinkedList<BendingPlayer>();
+					for (String string: bendingPlayers.getConfigurationSection("").getKeys(false)) {
+						if (string.equalsIgnoreCase("version")) continue;
+						String playername = string;
+						UUID uuid = Bukkit.getOfflinePlayer(playername).getUniqueId();
+						ArrayList<Element> element = new ArrayList<Element>();
+						List<Integer> oe = bendingPlayers.getIntegerList(string + ".BendingTypes");
+
+						if (oe.contains(0)) {
+							element.add(Element.Air);
+						}
+						if (oe.contains(1)) {
+							element.add(Element.Water);
+						}
+						if (oe.contains(2)) {
+							element.add(Element.Earth);
+						}
+						if (oe.contains(3)) {
+							element.add(Element.Fire);
+						}
+						if (oe.contains(4)) {
+							element.add(Element.Chi);
+						}
+						
+						BendingPlayer bPlayer = new BendingPlayer(uuid, playername, element, new HashMap<Integer, String>(), false);
+						bPlayers.add(bPlayer);
+					}
+					
+					final int total = bPlayers.size();
+					final CommandSender sender = s;
+					s.sendMessage(ChatColor.GREEN + "Import of data started. Do NOT stop / reload your server.");
+					importTask = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+						public void run() {
+							int i = 0;
+							if (i >= 10) {
+								sender.sendMessage(ChatColor.GREEN + "10 / " + total + " players converted thus far!");
+								return;
+							}
+							
+							while (i < 10) {
+								if (bPlayers.isEmpty()) {
+									sender.sendMessage(ChatColor.GREEN + "Import complete, it may be best to reload your server.");
+									Bukkit.getServer().getScheduler().cancelTask(importTask);
+									for (Player player: Bukkit.getOnlinePlayers()) {
+										Methods.createBendingPlayer(player.getUniqueId(), player.getName());
+									}
+									return;
+								}
+								StringBuilder elements = new StringBuilder();
+								BendingPlayer bPlayer = bPlayers.pop();
+								if (bPlayer.hasElement(Element.Air)) elements.append("a");
+								if (bPlayer.hasElement(Element.Water)) elements.append("w");
+								if (bPlayer.hasElement(Element.Earth)) elements.append("e");
+								if (bPlayer.hasElement(Element.Fire)) elements.append("f");
+								if (bPlayer.hasElement(Element.Chi)) elements.append("c");
+								
+								DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, element, permaremoved) VALUES ('" + bPlayer.uuid.toString() + "', '" + bPlayer.player + "', '" + elements + "', 'false')");
+//								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.uuid.toString() + "'");
+								
+//								try {
+//									if (rs2.next()) { // SQL Data already exists for player.
+//										DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + bPlayer.player + "' WHERE uuid = '" + bPlayer.uuid.toString());
+//										DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + bPlayer.uuid.toString());
+//										DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = 'false' WHERE uuid = '" + bPlayer.uuid.toString());
+//									} else {
+//									}
+//								} catch (SQLException ex) {
+//									ex.printStackTrace();
+//								}
+								i++;
+							}
+						}
+					}, 0, 40);
+					return true;
+					
 				}
 				if (Arrays.asList(displayaliases).contains(args[0].toLowerCase())) {
 					if (args.length > 2) {
