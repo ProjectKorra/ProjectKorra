@@ -352,3 +352,4 @@ Storage:
     pass: ''
     db: minecraft
     user: root
+debug: false

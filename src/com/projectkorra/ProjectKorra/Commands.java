@@ -49,6 +49,8 @@ public class Commands {
 	String[] addaliases = {"add", "a"};
 	String[] whoaliases = {"who", "w"};
 	String[] importaliases = {"import", "i"};
+	
+	public static boolean debug = ProjectKorra.plugin.getConfig().getBoolean("debug");
 
 	private static BukkitTask importTask;
 	private void init() {
@@ -266,6 +268,9 @@ public class Commands {
 					final int total = bPlayers.size();
 					final CommandSender sender = s;
 					s.sendMessage(ChatColor.GREEN + "Import of data started. Do NOT stop / reload your server.");
+					if (debug) {
+						s.sendMessage(ChatColor.RED + "Console will print out all of the players that are imported as they import.");
+					}
 					importTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
 						public void run() {
 							int i = 0;
@@ -276,7 +281,7 @@ public class Commands {
 							
 							while (i < 10) {
 								if (bPlayers.isEmpty()) {
-									sender.sendMessage(ChatColor.GREEN + "Import complete, it may be best to reload your server.");
+									sender.sendMessage(ChatColor.GREEN + "All data has been queued up, please allow up to 5 minutes for the data to complete, then reboot your server.");
 									Bukkit.getServer().getScheduler().cancelTask(importTask.getTaskId());
 									for (Player player: Bukkit.getOnlinePlayers()) {
 										Methods.createBendingPlayer(player.getUniqueId(), player.getName());
@@ -310,6 +315,9 @@ public class Commands {
 //									ex.printStackTrace();
 //								}
 								i++;
+								if (debug) {
+									System.out.println("[ProjectKorra] Successfully imported " + bPlayer.player + ". " + bPlayers.size() + " players left to import.");
+								}
 							}
 						}
 					}, 0, 40);

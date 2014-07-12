@@ -79,6 +79,7 @@ public enum StockAbilities {
 	public static StockAbilities getAbility(int index) {
 		if (index == -1)
 			return null;
-		return (StockAbilities)Arrays.asList(values()).get(index);
+		if (index > 41) return null;
+		return Arrays.asList(StockAbilities.values()).get(index);
 	}
 }

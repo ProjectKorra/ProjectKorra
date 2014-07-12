@@ -474,6 +474,7 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Storage.MySQL.db", "minecraft");
 		plugin.getConfig().addDefault("Storage.MySQL.user", "root");
 
+		config.addDefault("debug", false);
 		plugin.getConfig().options().copyDefaults(true);
 		plugin.saveConfig();
 	}
