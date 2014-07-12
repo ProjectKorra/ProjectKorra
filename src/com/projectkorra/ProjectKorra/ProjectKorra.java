@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Utilities.CraftingRecipes;
 
 public class ProjectKorra extends JavaPlugin {
 
@@ -51,6 +52,8 @@ public class ProjectKorra extends JavaPlugin {
 		}
 		
 		Methods.deserializeFile();
+		
+		new CraftingRecipes(this);
 	}
 
 	@Override

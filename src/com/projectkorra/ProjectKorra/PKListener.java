@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -9,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,6 +42,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -51,6 +54,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
+import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
@@ -110,7 +115,65 @@ public class PKListener implements Listener {
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
+	
+	public static HashMap<Integer, Integer> noFallEntities = new HashMap<Integer, Integer>(); // Grappling Hooks
+	public static HashMap<String, Integer> noGrapplePlayers = new HashMap<String, Integer>(); // Grappling Hooks
 
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerGrapple(PlayerGrappleEvent event) {
+		if (event.isCancelled()) return;
+		if (!plugin.getConfig().getBoolean("Properties.CustomItems.GrapplingHook.Enable")) return;
+		
+		Player player = event.getPlayer();
+		if (!Methods.isBender(player.getName(), Element.Chi) && (!Methods.isBender(player.getName(), Element.Earth) || !Methods.canMetalbend(player))) {
+			event.setCancelled(true);
+			return;
+		}
+		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
+			event.setCancelled(true);
+		}
+		
+		event.getHookItem().setDurability((short) - 10);
+		if (noGrapplePlayers.containsKey(player.getName())) {
+			return;
+		}
+		
+		Entity e = event.getPulledEntity();
+		Location loc = event.getPullLocation();
+		
+		if (player.equals(e)) {
+			if (player.getLocation().distance(loc) < 3) { // Too close
+				GrapplingHookAPI.pullPlayerSlightly(player, loc);
+			} else {
+				GrapplingHookAPI.pullEntityToLocation(player, loc);
+			}
+			
+			if (GrapplingHookAPI.addUse(player, event.getHookItem())) {
+				GrapplingHookAPI.playGrappleSound(player.getLocation());
+			}
+			GrapplingHookAPI.addPlayerCooldown(player, 100);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void fishEvent(PlayerFishEvent event) {
+		Player player = event.getPlayer();
+		if (GrapplingHookAPI.isGrapplingHook(player.getItemInHand())) {
+			if (event.getState() == PlayerFishEvent.State.IN_GROUND) {
+				Location loc = event.getHook().getLocation();
+				for (Entity ent: event.getHook().getNearbyEntities(1.5, 1, 1.5)) {
+					if (ent instanceof Item) {
+						PlayerGrappleEvent e = new PlayerGrappleEvent(player, ent, player.getLocation());
+						plugin.getServer().getPluginManager().callEvent(e);
+						return;
+					}
+				}
+				
+				PlayerGrappleEvent e = new PlayerGrappleEvent(player, player, loc);
+				plugin.getServer().getPluginManager().callEvent(e);
+			}
+		}
+	}
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerInteraction(PlayerInteractEvent event) {
 		Player player = event.getPlayer();

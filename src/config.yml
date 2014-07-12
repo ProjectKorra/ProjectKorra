@@ -1,6 +1,11 @@
 Properties:
   GlobalCooldown: 500
   SeaLevel: 62
+  CustomItems:
+    GrapplingHook:
+      Enable: true
+      IronUses: 25
+      GoldUses: 50
   Chat:
     Format: "<name>: <message>"
     Enable: true

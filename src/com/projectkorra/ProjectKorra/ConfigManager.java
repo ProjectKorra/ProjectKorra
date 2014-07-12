@@ -51,6 +51,10 @@ public class ConfigManager {
 		plugin.getConfig().addDefault("Properties.GlobalCooldown", 500);
 		plugin.getConfig().addDefault("Properties.SeaLevel", 62);
 
+		config.addDefault("Properties.CustomItems.GrapplingHook.Enable", true);
+		config.addDefault("Properties.CustomItems.GrapplingHook.IronUses", 25);
+		config.addDefault("Properties.CustomItems.GrapplingHook.GoldUses", 50);
+		
 		config.addDefault("Properties.RegionProtection.AllowHarmlessAbilities", true);
 		config.addDefault("Properties.RegionProtection.RespectWorldGuard", true);
 		config.addDefault("Properties.RegionProtection.RespectGriefPrevention", true);
