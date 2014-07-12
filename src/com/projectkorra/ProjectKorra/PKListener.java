@@ -3,7 +3,6 @@ package com.projectkorra.ProjectKorra;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -907,7 +906,7 @@ public class PKListener implements Listener {
 				player.setAllowFlight(true);
 				AirBurst.fallBurst(player);
 				player.setFallDistance(0);
-				event.setDamage(0);
+				event.setDamage(0D);
 				event.setCancelled(true);
 			}
 
@@ -916,7 +915,7 @@ public class PKListener implements Listener {
 					new Flight(player);
 					player.setAllowFlight(true);
 					player.setFallDistance(0);
-					event.setDamage(0);
+					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
@@ -929,7 +928,7 @@ public class PKListener implements Listener {
 					new Flight(player);
 					player.setAllowFlight(true);
 					player.setFallDistance(0);
-					event.setDamage(0);
+					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
@@ -960,7 +959,7 @@ public class PKListener implements Listener {
 
 			if (Methods.isBender(player.getName(), Element.Earth)
 					&& event.getCause() == DamageCause.SUFFOCATION && TempBlock.isTempBlock(player.getEyeLocation().getBlock())) {
-				event.setDamage(0);
+				event.setDamage(0D);
 				event.setCancelled(true);
 			}
 		}

@@ -1,5 +1,7 @@
 package com.projectkorra.ProjectKorra;
 
+import java.util.Arrays;
+
 public enum Element {
 
 	Air, Water, Earth, Fire, Chi;
@@ -11,5 +13,11 @@ public enum Element {
 			}
 		}
 		return null;
+	}
+	
+	public static Element getType(int index) {
+	    if (index == -1)
+	    	return null;
+	    return (Element)Arrays.asList(values()).get(index);
 	}
 }

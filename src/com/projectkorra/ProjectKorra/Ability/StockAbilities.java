@@ -1,10 +1,13 @@
 package com.projectkorra.ProjectKorra.Ability;
 
+import java.util.Arrays;
+
 public enum StockAbilities {
 
+	// Old Bending
 	AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst,
 	
-	Catapult, RaiseEarth, EarthGrab, EarthTunnel, EarthBlast, Collapse, Tremorsense, EarthArmor, Shockwave, Extraction,
+	Catapult, RaiseEarth, EarthGrab, EarthTunnel, EarthBlast, Collapse, Tremorsense, EarthArmor, Shockwave, 
 	
 	HeatControl, Blaze, FireJet, Illumination, WallOfFire, FireBlast, Lightning, FireBurst, FireShield,
 	
@@ -12,7 +15,10 @@ public enum StockAbilities {
 	
 	HighJump, RapidPunch, Paralyze,
 	
-	AvatarState;
+	AvatarState,
+	
+	// Project Korra
+	Extraction;
 	
 	private enum AirbendingAbilities {
 		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst;
@@ -68,5 +74,11 @@ public enum StockAbilities {
 		}
 		
 		return false;
+	}
+	
+	public static StockAbilities getAbility(int index) {
+		if (index == -1)
+			return null;
+		return (StockAbilities)Arrays.asList(values()).get(index);
 	}
 }
