@@ -1,8 +1,6 @@
 package com.projectkorra.ProjectKorra;
 
 import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,7 +17,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 
@@ -49,6 +46,7 @@ public class Commands {
 	String[] reloadaliases = {"reload", "r"};
 	String[] addaliases = {"add", "a"};
 	String[] whoaliases = {"who", "w"};
+	String[] importaliases = {"import", "i"};
 
 	private static int importTask;
 	private void init() {
@@ -221,7 +219,7 @@ public class Commands {
 						return true;
 					}
 				}
-				if (args[0].equalsIgnoreCase("import")) {
+				if (Arrays.asList(importaliases).contains(args[0].toLowerCase())) {
 					if (!s.hasPermission("bending.command.import")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
@@ -239,20 +237,10 @@ public class Commands {
 						ArrayList<Element> element = new ArrayList<Element>();
 						List<Integer> oe = bendingPlayers.getIntegerList(string + ".BendingTypes");
 
-						if (oe.contains(0)) {
-							element.add(Element.Air);
-						}
-						if (oe.contains(1)) {
-							element.add(Element.Water);
-						}
-						if (oe.contains(2)) {
-							element.add(Element.Earth);
-						}
-						if (oe.contains(3)) {
-							element.add(Element.Fire);
-						}
-						if (oe.contains(4)) {
-							element.add(Element.Chi);
+						for (int i : oe) {
+							if (Element.getType(i) != null) {
+								element.add(Element.getType(i));
+							}
 						}
 						
 						BendingPlayer bPlayer = new BendingPlayer(uuid, playername, element, new HashMap<Integer, String>(), false);
@@ -788,11 +776,28 @@ public class Commands {
 				if (Arrays.asList(helpaliases).contains(args[0].toLowerCase())) {
 					if (args.length != 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending help Command/Ability");
+						s.sendMessage(ChatColor.YELLOW + "/bending add <Player> [Element]");
+						s.sendMessage(ChatColor.YELLOW + "/bending bind [Ability] <Slot>");
+						s.sendMessage(ChatColor.YELLOW + "/bending clear <slot>");
+						s.sendMessage(ChatColor.YELLOW + "/bending choose <Player> [Element]");
+						s.sendMessage(ChatColor.YELLOW + "/bending display <Element>");
+						s.sendMessage(ChatColor.YELLOW + "/bending import");
+						s.sendMessage(ChatColor.YELLOW + "/bending permaremove <Player>");
+						s.sendMessage(ChatColor.YELLOW + "/bending remove [Player]");
+						s.sendMessage(ChatColor.YELLOW + "/bending toggle");
+						s.sendMessage(ChatColor.YELLOW + "/bending version");
 						return true;
 					}
 					if (!s.hasPermission("bending.command.help")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
+					}
+					if (Arrays.asList(importaliases).contains(args[1].toLowerCase())) {
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending import");
+						s.sendMessage(ChatColor.YELLOW + "This command will import your old bendingPlayers.yml from the Bending plugin."
+								+ " It will generate a convert.yml file to convert the data to be used with this plugin."
+								+ " You can delete the file once the complete message is displayed"
+								+ " This command should only be used ONCE.");
 					}
 					if (Arrays.asList(displayaliases).contains(args[1].toLowerCase())) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending display <Element>");
