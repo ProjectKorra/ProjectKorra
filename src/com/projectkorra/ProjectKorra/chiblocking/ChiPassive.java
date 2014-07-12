@@ -53,6 +53,7 @@ public class ChiPassive {
 		}
 		for (String s: BendingPlayer.blockedChi.keySet()) {
 			if (!(BendingPlayer.blockedChi.get(s) + duration >= System.currentTimeMillis())) {
+				if (Methods.getBendingPlayer(s) == null) continue;
 				Methods.getBendingPlayer(s).unblockChi();
 			}
 //			if (BendingPlayer.blockedChi.contains(player.getName())) {
