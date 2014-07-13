@@ -577,7 +577,8 @@ public class Methods {
 
 	public static String getBoundAbility(Player player) {
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
-
+		if (bPlayer == null) return null; 
+		
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		return bPlayer.abilities.get(slot);
 	}

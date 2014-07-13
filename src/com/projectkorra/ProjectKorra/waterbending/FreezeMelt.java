@@ -92,7 +92,7 @@ public class FreezeMelt {
 		if (frozenblocks.containsKey(block)) {
 			for (Player player : block.getWorld().getPlayers()) {
 				if (Methods.getBoundAbility(player) == null) {
-					return true;
+					return false;
 				}
 				if (Methods.getBoundAbility(player).equalsIgnoreCase("OctopusForm")) {
 					if (block.getLocation().distance(player.getLocation()) <= OctopusForm.radius + 2)
