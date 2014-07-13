@@ -91,10 +91,7 @@ public class FreezeMelt {
 	public static boolean canThaw(Block block) {
 		if (frozenblocks.containsKey(block)) {
 			for (Player player : block.getWorld().getPlayers()) {
-				if (Methods.getBoundAbility(player) == null) {
-					return true;
-				}
-				if (Methods.getBoundAbility(player).equalsIgnoreCase("OctopusForm")) {
+				if (Methods.getBoundAbility(player) != null && Methods.getBoundAbility(player).equalsIgnoreCase("OctopusForm")) {
 					if (block.getLocation().distance(player.getLocation()) <= OctopusForm.radius + 2)
 						return false;
 				}
