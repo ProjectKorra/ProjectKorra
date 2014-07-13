@@ -466,6 +466,7 @@ public class Methods {
 	public static boolean canBend(String player, String ability) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
+		if (bPlayer == null) return false;
 		if (!bPlayer.isToggled) return false;
 		if (p == null) return false;
 		if (!p.hasPermission("bending.ability." + ability)) return false;
