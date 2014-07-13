@@ -3,7 +3,6 @@ package com.projectkorra.ProjectKorra.earthbending;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -21,7 +20,7 @@ public class Ripple {
 	private static ConcurrentHashMap<Integer[], Block> blocks = new ConcurrentHashMap<Integer[], Block>();
 
 	static final double radius = 15;
-	private static final double damage = 5;
+	private static final int damage = 5;
 
 	private static int ID = Integer.MIN_VALUE;
 
@@ -241,11 +240,12 @@ public class Ripple {
 			length = 2;
 		}
 		if (Methods.moveEarth(player, block, new Vector(0, 1, 0), length, false)) {
-			for (Entity entity : Methods.getEntitiesAroundPoint(block.getLocation().clone().add(0, 1, 0), 2)) {
-				if (entity.getEntityId() != player.getEntityId() && !entities.contains(entity)) {
-					if (!(entity instanceof FallingBlock)) {
+			for (Entity entity : Methods.getEntitiesAroundPoint(block
+					.getLocation().clone().add(0, 1, 0), 2)) {
+				if (entity.getEntityId() != player.getEntityId()
+						&& !entities.contains(entity)) {
+					if (!(entity instanceof FallingBlock))
 						entities.add(entity);
-					}
 				}
 			}
 			return true;
@@ -256,7 +256,7 @@ public class Ripple {
 	private void affect(Entity entity) {
 
 		if (entity instanceof LivingEntity) {
-			Methods.damageEntity(player, entity, "Shockwave", damage);
+			Methods.damageEntity(player, entity, damage);
 		}
 
 		Vector vector = direction.clone();

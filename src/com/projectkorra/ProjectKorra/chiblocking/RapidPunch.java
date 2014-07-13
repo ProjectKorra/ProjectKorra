@@ -53,7 +53,7 @@ public class RapidPunch {
 			instance.remove(p);
 		if (target instanceof LivingEntity && target != null) {
 			LivingEntity lt = (LivingEntity) target;
-			Methods.damageEntity(p, target, "RapidPunch", damage);
+			Methods.damageEntity(p, target, damage);
 			if (target instanceof Player)
 				if (ChiPassive.willChiBlock((Player) target)) {
 					ChiPassive.blockChi((Player) target);

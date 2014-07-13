@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -56,7 +54,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.CustomEvents.EntityDamageByBendingEvent;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
 import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
@@ -118,7 +115,7 @@ public class PKListener implements Listener {
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-
+	
 	public static HashMap<Integer, Integer> noFallEntities = new HashMap<Integer, Integer>(); // Grappling Hooks
 	public static HashMap<String, Integer> noGrapplePlayers = new HashMap<String, Integer>(); // Grappling Hooks
 
@@ -126,7 +123,7 @@ public class PKListener implements Listener {
 	public void onPlayerGrapple(PlayerGrappleEvent event) {
 		if (event.isCancelled()) return;
 		if (!plugin.getConfig().getBoolean("Properties.CustomItems.GrapplingHook.Enable")) return;
-
+		
 		Player player = event.getPlayer();
 		if (!Methods.isBender(player.getName(), Element.Chi) && (!Methods.isBender(player.getName(), Element.Earth) || !Methods.canMetalbend(player))) {
 			event.setCancelled(true);
@@ -135,29 +132,29 @@ public class PKListener implements Listener {
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
 		}
-
+		
 		event.getHookItem().setDurability((short) - 10);
 		if (noGrapplePlayers.containsKey(player.getName())) {
 			return;
 		}
-
+		
 		Entity e = event.getPulledEntity();
 		Location loc = event.getPullLocation();
-
+		
 		if (player.equals(e)) {
 			if (player.getLocation().distance(loc) < 3) { // Too close
 				GrapplingHookAPI.pullPlayerSlightly(player, loc);
 			} else {
 				GrapplingHookAPI.pullEntityToLocation(player, loc);
 			}
-
+			
 			if (GrapplingHookAPI.addUse(player, event.getHookItem())) {
 				GrapplingHookAPI.playGrappleSound(player.getLocation());
 			}
 			GrapplingHookAPI.addPlayerCooldown(player, 100);
 		}
 	}
-
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void fishEvent(PlayerFishEvent event) {
 		Player player = event.getPlayer();
@@ -171,7 +168,7 @@ public class PKListener implements Listener {
 						return;
 					}
 				}
-
+				
 				PlayerGrappleEvent e = new PlayerGrappleEvent(player, player, loc);
 				plugin.getServer().getPluginManager().callEvent(e);
 			}
@@ -278,7 +275,7 @@ public class PKListener implements Listener {
 		if (abil == null) {
 			return;
 		}
-
+		
 		if (Methods.isChiBlocked(player.getName())) {
 			event.setCancelled(true);
 			return;
@@ -364,7 +361,7 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Tremorsense")) {
 					Methods.getBendingPlayer(player.getName()).toggleTremorsense();
 				}
-
+				
 				if (abil.equalsIgnoreCase("Extraction")) {
 					new Extraction(player);
 				}
@@ -560,7 +557,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
+		
 		if (Methods.isChiBlocked(player.getName())) {
 			event.setCancelled(true);
 			return;
@@ -569,8 +566,8 @@ public class PKListener implements Listener {
 		String abil = Methods.getBoundAbility(player);
 		if (abil == null) return;
 		if (Methods.canBend(player.getName(), abil)) {
-
-
+			
+			
 			if (Methods.isAirAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
@@ -703,7 +700,7 @@ public class PKListener implements Listener {
 					//
 				}
 			}
-
+			
 			if (abil.equalsIgnoreCase("AvatarState")) {
 				new AvatarState(player);
 			}
@@ -902,7 +899,7 @@ public class PKListener implements Listener {
 
 		Entity en = e.getEntity();
 		if (en instanceof Player) {
-			//			Player p = (Player) en; // This is the player getting hurt.
+//			Player p = (Player) en; // This is the player getting hurt.
 			if (e.getDamager() instanceof Player) { // This is the player hitting someone.
 				Player sourceplayer = (Player) e.getDamager();
 				Player targetplayer = (Player) e.getEntity();
@@ -932,28 +929,28 @@ public class PKListener implements Listener {
 						}
 					}
 				}
-
-				//				Player damager = (Player) e.getDamager();
-				//				if (Methods.canBendPassive(damager.getName(), Element.Chi)) {
-				//					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
-				//						if (Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
-				//							return;
-				//						}
-				//						if (damager.getItemInHand() != null && Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
-				//							// Above method checks if the player has an item in their hand, if it is a weapon, and if they can bend with weapons.
-				//							if (Methods.getBoundAbility(damager) == null || Methods.getBoundAbility(damager).equalsIgnoreCase("RapidPunch")) { // We don't want them to be able to block chi if an ability is bound.
-				//								if (ChiPassive.willChiBlock(p)) {
-				//									ChiPassive.blockChi(p);
-				//								}
-				//							}
-				//							if (Methods.getBoundAbility(damager).equalsIgnoreCase("Paralyze")) {
-				//								if (ChiPassive.willChiBlock(p)) {
-				//									new Paralyze((Player) e.getDamager(), e.getEntity());
-				//								}
-				//							}
-				//						}
-				//					}
-				//				}
+				
+//				Player damager = (Player) e.getDamager();
+//				if (Methods.canBendPassive(damager.getName(), Element.Chi)) {
+//					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
+//						if (Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
+//							return;
+//						}
+//						if (damager.getItemInHand() != null && Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
+//							// Above method checks if the player has an item in their hand, if it is a weapon, and if they can bend with weapons.
+//							if (Methods.getBoundAbility(damager) == null || Methods.getBoundAbility(damager).equalsIgnoreCase("RapidPunch")) { // We don't want them to be able to block chi if an ability is bound.
+//								if (ChiPassive.willChiBlock(p)) {
+//									ChiPassive.blockChi(p);
+//								}
+//							}
+//							if (Methods.getBoundAbility(damager).equalsIgnoreCase("Paralyze")) {
+//								if (ChiPassive.willChiBlock(p)) {
+//									new Paralyze((Player) e.getDamager(), e.getEntity());
+//								}
+//							}
+//						}
+//					}
+//				}
 			}
 		}
 	}
@@ -1013,7 +1010,7 @@ public class PKListener implements Listener {
 				Player source = Flight.getLaunchedBy(player);
 				if (source != null) {
 					event.setCancelled(true);
-					Methods.damageEntity(source, player, null, event.getDamage());
+					Methods.damageEntity(source, player, event.getDamage());
 				}
 			}
 
@@ -1046,32 +1043,6 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 		if (!WaterManipulation.canPhysicsChange(event.getBlock()))
 			event.setCancelled(true);
-	}
-
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onEntityDamageByBending(EntityDamageByBendingEvent event) {
-		Player player = event.getAttacker();
-		Entity target = event.getTarget();
-		if (target instanceof LivingEntity) {
-			LivingEntity le = (LivingEntity) target;
-			if (event.isCancelled()) return;
-			if (target instanceof Player) {
-				Player victim = (Player) target;
-				if (event.getAbilityName() != null && event.getAbilityName().equalsIgnoreCase("FireBurst")) {
-					Bukkit.getServer().broadcastMessage("FireBurst: " + event.getDamage());
-					return;
-				}
-				victim.playEffect(EntityEffect.HURT);
-				if (victim.getHealth() - event.getDamage() <= 0) {
-					victim.setHealth(0);
-				} else {
-					victim.setHealth(victim.getHealth() - event.getDamage());
-				}
-			} else {
-				target.playEffect(EntityEffect.HURT);
-				le.damage(event.getDamage(), player);
-			}
-		}
 	}
 
 

@@ -49,7 +49,7 @@ public class FireBlast {
 	private int id;
 	private double speedfactor;
 	private int ticks = 0;
-	private double damage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Damage");
+	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.FireBlast.Damage");
 	double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Range");
 	long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
 
@@ -95,7 +95,7 @@ public class FireBlast {
 	}
 
 	public FireBlast(Location location, Vector direction, Player player,
-			double damage, List<Block> safeblocks) {
+			int damage, List<Block> safeblocks) {
 		if (location.getBlock().isLiquid()) {
 			return;
 		}
@@ -134,9 +134,46 @@ public class FireBlast {
 			return false;
 		}
 
+		// if (player.isSneaking()
+		// && Methods.getBendingAbility(player) == Abilities.AirBlast) {
+		// new AirBlast(player);
+		// }
+
 		Block block = location.getBlock();
+		// for (Block testblock : Methods.getBlocksAroundPoint(location,
+		// affectingradius)) {
+		// if (testblock.getType() == Material.FIRE) {
+		// testblock.setType(Material.AIR);
+		// testblock.getWorld().playEffect(testblock.getLocation(),
+		// Effect.EXTINGUISH, 0);
+		// }
+		// if (((block.getType() == Material.LEVER) || (block.getType() ==
+		// Material.STONE_BUTTON))
+		// && !affectedlevers.contains(block)) {
+		// EntityHuman eH = ((CraftPlayer) player).getHandle();
+		//
+		// net.minecraft.server.Block.byId[block.getTypeId()].interact(
+		// ((CraftWorld) block.getWorld()).getHandle(),
+		// block.getX(), block.getY(), block.getZ(), eH);
+		//
+		// affectedlevers.add(block);
+		// }
+		// }
 		if (Methods.isSolid(block) || block.isLiquid()) {
 			if (block.getType() == Material.FURNACE && canPowerFurnace) {
+				// BlockState state = block.getState();
+				// Furnace furnace = (Furnace) state;
+				// FurnaceInventory inv = furnace.getInventory();
+				// if (inv.getFuel() == null) {
+				// ItemStack temp = inv.getSmelting();
+				// ItemStack tempfuel = new ItemStack(Material.WOOD_AXE, 1);
+				// ItemStack tempsmelt = new ItemStack(Material.COBBLESTONE);
+				// inv.setFuel(tempfuel);
+				// inv.setSmelting(tempsmelt);
+				// state.update(true);
+				// inv.setSmelting(temp);
+				// state.update(true);
+				// }
 			} else if (FireStream.isIgnitable(player,
 					block.getRelative(BlockFace.UP))) {
 				ignite(location);
@@ -163,8 +200,17 @@ public class FireBlast {
 
 		for (Entity entity : Methods.getEntitiesAroundPoint(location,
 				affectingradius)) {
+			// Block bblock = location.getBlock();
+			// Block block1 = entity.getLocation().getBlock();
+			// if (bblock.equals(block1))
 			affect(entity);
 			if (entity instanceof LivingEntity) {
+				// Block block2 = ((LivingEntity) entity).getEyeLocation()
+				// .getBlock();
+				// if (bblock.equals(block1))
+				// break;
+				// if (bblock.equals(block2)) {
+				// affect(entity);
 				break;
 				// }
 			}
@@ -219,7 +265,7 @@ public class FireBlast {
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks(50);
-				Methods.damageEntity(player, entity,  "FireBlast",  Methods
+				Methods.damageEntity(player, entity, (int) Methods
 						.firebendingDayAugment((double) damage,
 								entity.getWorld()));
 				new Enflamed(entity, player);

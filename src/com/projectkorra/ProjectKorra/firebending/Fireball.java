@@ -155,14 +155,14 @@ public class Fireball {
 		if (distance > explosionradius)
 			return;
 		if (distance < innerradius) {
-			Methods.damageEntity(player, entity, "FireBlast", maxdamage);
+			Methods.damageEntity(player, entity, maxdamage);
 			return;
 		}
 		double slope = -(maxdamage * .5) / (explosionradius - innerradius);
 
 		double damage = slope * (distance - innerradius) + maxdamage;
 		// Methods.verbose(damage);
-		Methods.damageEntity(player, entity, "FireBlast", damage);
+		Methods.damageEntity(player, entity, (int) damage);
 	}
 
 	private void fireball() {

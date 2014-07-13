@@ -260,8 +260,7 @@ public class AirSwipe {
 				if (entity instanceof LivingEntity
 						&& !affectedentities.contains(entity)) {
 					if (damage != 0)
-						Methods.damageEntity(player, entity, "AirSwipe", damage);
-//						Methods.damageEntity(player, entity, damage);
+						Methods.damageEntity(player, entity, damage);
 					affectedentities.add(entity);
 				}
 

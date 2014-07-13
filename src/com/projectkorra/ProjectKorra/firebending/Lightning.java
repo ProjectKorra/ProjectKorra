@@ -153,7 +153,7 @@ public class Lightning {
 			return;
 		double damage = maxdamage - (distance / strikeradius) * .5;
 		hitentities.add(entity);
-		Methods.damageEntity(player, entity, "Lightning", damage);
+		Methods.damageEntity(player, entity, (int) damage);
 	}
 
 	public static boolean isNearbyChannel(Location location) {

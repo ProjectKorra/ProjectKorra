@@ -141,8 +141,7 @@ public class OctopusForm {
 					.getDirection(player.getLocation(), location).normalize()
 					.multiply(1.75));
 			if (entity instanceof LivingEntity)
-				Methods.damageEntity(player, entity, "OctopusForm", damage);
-//				Methods.damageEntity(player, entity, damage);
+				Methods.damageEntity(player, entity, damage);
 		}
 	}
 
