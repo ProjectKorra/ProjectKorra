@@ -54,7 +54,8 @@ public class Bloodbending {
 										"Bloodbending")))
 							continue;
 					}
-					Methods.damageEntity(player, entity, 0);
+					Methods.damageEntity(player, entity, "Bloodbending", 0);
+//					Methods.damageEntity(player, entity, 0);
 					targetentities.put(entity, entity.getLocation().clone());
 				}
 			}
@@ -71,7 +72,8 @@ public class Bloodbending {
 						|| AvatarState.isAvatarState((Player) target))
 					return;
 			}
-			Methods.damageEntity(player, target, 0);
+			Methods.damageEntity(player, target, "Bloodbending", 0);
+//			Methods.damageEntity(player, target, 0);
 			targetentities.put(target, target.getLocation().clone());
 		}
 		this.player = player;
@@ -138,7 +140,8 @@ public class Bloodbending {
 				entities.add(entity);
 				if (!targetentities.containsKey(entity)
 						&& entity instanceof LivingEntity) {
-					Methods.damageEntity(player, entity, 0);
+					Methods.damageEntity(player, entity, "Bloodbending", 0);
+//					Methods.damageEntity(player, entity, 0);
 					targetentities.put(entity, entity.getLocation().clone());
 				}
 				if (entity instanceof LivingEntity) {

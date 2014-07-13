@@ -22,7 +22,7 @@ public class FireBurst {
 
 	private Player player;
 	private long starttime;
-	private int damage = 3;
+	private double damage = 3;
 	private long chargetime = 2500;
 	private double deltheta = 10;
 	private double delphi = 10;

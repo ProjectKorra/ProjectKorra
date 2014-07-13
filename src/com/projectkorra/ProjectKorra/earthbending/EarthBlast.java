@@ -389,7 +389,7 @@ public class EarthBlast {
 						Location location = player.getEyeLocation();
 						Vector vector = location.getDirection();
 						entity.setVelocity(vector.normalize().multiply(pushfactor));
-						Methods.damageEntity(player, entity, damage);
+						Methods.damageEntity(player, entity, "EarthBlast", damage);
 						progressing = false;
 
 						// }

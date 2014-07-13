@@ -65,6 +65,7 @@ import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.CustomEvents.EntityDamageByBendingEvent;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
@@ -1345,12 +1346,13 @@ public class Methods {
 		return set;
 	}
 
-	public static void damageEntity(Player player, Entity entity, double damage) {
+	public static void damageEntity(Player player, Entity entity, String ability, double damage) {
 		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).damage(damage, player);
-			((LivingEntity) entity)
-			.setLastDamageCause(new EntityDamageByEntityEvent(player,
-					entity, DamageCause.CUSTOM, damage));
+			Bukkit.getServer().getPluginManager().callEvent(new EntityDamageByBendingEvent(player, entity, ability, damage));
+//			((LivingEntity) entity).damage(damage, player);
+//			((LivingEntity) entity)
+//			.setLastDamageCause(new EntityDamageByEntityEvent(player,
+//					entity, DamageCause.CUSTOM, damage));
 		}
 	}
 
