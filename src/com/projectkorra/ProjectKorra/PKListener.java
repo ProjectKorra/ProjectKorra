@@ -157,6 +157,7 @@ public class PKListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void fishEvent(PlayerFishEvent event) {
+		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
 		if (GrapplingHookAPI.isGrapplingHook(player.getItemInHand())) {
 			if (event.getState() == PlayerFishEvent.State.IN_GROUND) {
@@ -176,6 +177,7 @@ public class PKListener implements Listener {
 	}
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerInteraction(PlayerInteractEvent event) {
+		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
@@ -184,6 +186,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
+		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
@@ -193,6 +196,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockFlowTo(BlockFromToEvent event) {
+		if (event.isCancelled()) return;
 		Block toblock = event.getToBlock();
 		Block fromblock = event.getBlock();
 		if (Methods.isWater(fromblock)) {
@@ -231,26 +235,11 @@ public class PKListener implements Listener {
 		if (chatEnabled) {
 			player.setDisplayName(append + player.getName());
 		}
-
-		//		List<Element> elements = Methods.getBendingPlayer(e.getPlayer().getName()).getElements();
-		//		if (plugin.getConfig().getBoolean("Properties.Chat.ChatPrefixes")) {
-		//			if (elements.size() > 1)
-		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AvatarPrefix") + player.getName());
-		//			else if (elements.get(0).equals(Element.Earth))
-		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.EarthPrefix") + player.getName());
-		//			else if (elements.get(0).equals(Element.Air))
-		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.AirPrefix") + player.getName());
-		//			else if (elements.get(0).equals(Element.Water))
-		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.WaterPrefix") + player.getName());
-		//			else if (elements.get(0).equals(Element.Fire))
-		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.FirePrefix") + player.getName());
-		//			else if (elements.get(0).equals(Element.Chi))
-		//				player.setDisplayName(plugin.getConfig().getString("Properties.Chat.ChiPrefix") + player.getName());
-		//		}
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
+
 		Methods.saveBendingPlayer(event.getPlayer().getName());
 		BendingPlayer.players.remove(event.getPlayer().getName());
 		if (EarthArmor.instances.containsKey(event.getPlayer())) {
@@ -263,6 +252,8 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSneak(PlayerToggleSneakEvent event) {
 		Player player = event.getPlayer();
+
+		if (event.isCancelled()) return;
 
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
@@ -396,6 +387,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockIgnite(BlockIgniteEvent event) {
+		if (event.isCancelled()) return;
+
 		if (event.getCause() == IgniteCause.LIGHTNING) {
 			if (Lightning.isNearbyChannel(event.getBlock().getLocation())) {
 				event.setCancelled(true);
@@ -406,6 +399,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerMove(PlayerMoveEvent event) {
+		if (event.isCancelled()) return;
+
 		Player player = event.getPlayer();
 		if (Paralyze.isParalyzed(player)) {
 			event.setCancelled(true);
@@ -444,6 +439,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityTargetLiving(EntityTargetLivingEntityEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
 			event.setCancelled(true);
@@ -452,6 +449,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onTarget(EntityTargetEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
 			event.setCancelled(true);
@@ -460,6 +459,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityChangeBlockEvent(EntityChangeBlockEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
 			event.setCancelled(true);
@@ -467,6 +468,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityExplode(EntityExplodeEvent event) {
+		if (event.isCancelled()) return;
+
 		for (Block block : event.blockList()) {
 			EarthBlast blast = EarthBlast.getBlastFromSource(block);
 
@@ -476,9 +479,6 @@ public class PKListener implements Listener {
 			if (FreezeMelt.frozenblocks.containsKey(block)) {
 				FreezeMelt.thaw(block);
 			}
-			// if (WalkOnWater.affectedblocks.containsKey(block)) {
-			// WalkOnWater.thaw(block);
-			// }
 			if (WaterWall.wallblocks.containsKey(block)) {
 				block.setType(Material.AIR);
 			}
@@ -486,26 +486,17 @@ public class PKListener implements Listener {
 				Wave.thaw(block);
 			}
 			if (Methods.movedearth.containsKey(block)) {
-				// Tools.removeEarthbendedBlockIndex(block);
 				Methods.removeRevertIndex(block);
 			}
 		}
-
-		// if (event.getEntity() == null) {
-		// Plugin ch = Bukkit.getPluginManager().getPlugin("CreeperHeal");
-		// if (ch != null) {
-		// CreeperHeal creeperheal = (CreeperHeal) Bukkit
-		// .getPluginManager().getPlugin("CreeperHeal");
-		// creeperheal
-		// .recordBlocks(event.blockList(), event.getLocation());
-		// }
-		// }
 
 	}
 
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityExplodeEvent(EntityExplodeEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 		if (entity != null)
 			if (Paralyze.isParalyzed(entity)
@@ -515,6 +506,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityInteractEvent(EntityInteractEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
 			event.setCancelled(true);
@@ -522,6 +515,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityShootBowEvent(EntityShootBowEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
 			event.setCancelled(true);
@@ -529,6 +524,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityTeleportEvent(EntityTeleportEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
 			event.setCancelled(true);
@@ -536,6 +533,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityProjectileLaunchEvent(ProjectileLaunchEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
 			event.setCancelled(true);
@@ -543,6 +542,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntitySlimeSplitEvent(SlimeSplitEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity))
 			event.setCancelled(true);
@@ -551,6 +552,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
 	public void onPlayerSwing(PlayerAnimationEvent event) {
+		if (event.isCancelled()) return;
+
 		Player player = event.getPlayer();
 
 		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player)) {
@@ -709,6 +712,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
+		if (event.isCancelled()) return;
+
 		if (event.getSlotType() == SlotType.ARMOR
 				&& !EarthArmor.canRemoveArmor((Player) event.getWhoClicked()))
 			event.setCancelled(true);
@@ -741,6 +746,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
 	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
+		if (event.isCancelled()) return;
+
 		Player p = event.getPlayer();
 		if (Tornado.getPlayers().contains(p) || Bloodbending.isBloodbended(p)
 				|| FireJet.getPlayers().contains(p)
@@ -751,6 +758,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityCombust(EntityCombustEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 		Block block = entity.getLocation().getBlock();
 		if (FireStream.ignitedblocks.containsKey(block) && entity instanceof LivingEntity) {
@@ -760,6 +769,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDamageEvent(EntityDamageEvent event) {
+		if (event.isCancelled()) return;
+
 		Entity entity = event.getEntity();
 
 		if (event.getCause() == DamageCause.FIRE && FireStream.ignitedblocks.containsKey(entity.getLocation().getBlock())) {
@@ -774,6 +785,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockMeltEvent(BlockFadeEvent event) {
+		if (event.isCancelled()) return;
+
 		Block block = event.getBlock();
 		if (block.getType() == Material.FIRE) {
 			return;
@@ -798,6 +811,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
+		if (event.isCancelled()) return;
+
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
 		if (WaterWall.wasBrokenFor(player, block)
@@ -838,6 +853,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		if (event.isCancelled()) return;
+
 		if (!plugin.getConfig().getBoolean("Properties.Chat.Enable")) {
 			return;
 		}
@@ -868,6 +885,8 @@ public class PKListener implements Listener {
 
 	@EventHandler
 	public void onPlayerDamageByPlayer(EntityDamageByEntityEvent e) {
+		if (e.isCancelled()) return;
+
 		Entity source = e.getDamager();
 		Entity entity = e.getEntity();
 		Fireball fireball = Fireball.getFireball(source);
@@ -957,6 +976,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerDamage(EntityDamageEvent event) {
+		if (event.isCancelled()) return;
+
 		if (event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
 
@@ -1030,6 +1051,8 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockPhysics(BlockPhysicsEvent event) {
+		if (event.isCancelled()) return;
+
 		Block block = event.getBlock();
 		event.setCancelled(!WaterManipulation.canPhysicsChange(block));
 		if (!event.isCancelled())
@@ -1039,6 +1062,8 @@ public class PKListener implements Listener {
 	}
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockForm(BlockFormEvent event) {
+		if (event.isCancelled()) return;
+
 		if (TempBlock.isTempBlock(event.getBlock()))
 			event.setCancelled(true);
 		if (!WaterManipulation.canPhysicsChange(event.getBlock()))
