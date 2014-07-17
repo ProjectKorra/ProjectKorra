@@ -414,6 +414,7 @@ public class Commands {
 
 						if (abilities.isEmpty()) {
 							s.sendMessage("You don't have any bound abilities.");
+							s.sendMessage("If you would like to see a list of available abilities, please use the /bending display [Element] command. Use /bending help for more information.");
 							return true;
 						}
 
