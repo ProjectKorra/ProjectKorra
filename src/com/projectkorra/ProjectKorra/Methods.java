@@ -209,15 +209,51 @@ public class Methods {
 
 		HashMap<Integer, String> abilities = bPlayer.abilities;
 
-		if (abilities.get(1) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot1 = '" + abilities.get(1) + "' WHERE uuid = '" + uuid + "'");
-		if (abilities.get(2) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot2 = '" + abilities.get(2) + "' WHERE uuid = '" + uuid + "'");
-		if (abilities.get(3) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot3 = '" + abilities.get(3) + "' WHERE uuid = '" + uuid + "'");
-		if (abilities.get(4) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot4 = '" + abilities.get(4) + "' WHERE uuid = '" + uuid + "'");
-		if (abilities.get(5) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot5 = '" + abilities.get(5) + "' WHERE uuid = '" + uuid + "'");
-		if (abilities.get(6) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot6 = '" + abilities.get(6) + "' WHERE uuid = '" + uuid + "'");
-		if (abilities.get(7) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot7 = '" + abilities.get(7) + "' WHERE uuid = '" + uuid + "'");
-		if (abilities.get(8) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot8 = '" + abilities.get(8) + "' WHERE uuid = '" + uuid + "'");
-		if (abilities.get(9) != null) DBConnection.sql.modifyQuery("UPDATE pk_players SET slot9 = '" + abilities.get(9) + "' WHERE uuid = '" + uuid + "'");
+		if (abilities.get(1) != null) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot1 = '" + abilities.get(1) + "' WHERE uuid = '" + uuid + "'");
+		} else {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot1 = " + null + " WHERE uuid = '" + uuid + "'");
+		}
+		if (abilities.get(2) != null) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot2 = '" + abilities.get(2) + "' WHERE uuid = '" + uuid + "'");
+		} else {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot2 = '" + null + " WHERE uuid = '" + uuid + "'");
+		}
+		if (abilities.get(3) != null) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot3 = '" + abilities.get(3) + "' WHERE uuid = '" + uuid + "'");
+		} else {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot3 = '" + null + " WHERE uuid = '" + uuid + "'");
+		}
+		if (abilities.get(4) != null) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot4 = '" + abilities.get(4) + "' WHERE uuid = '" + uuid + "'");
+		} else {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot4 = '" + null + " WHERE uuid = '" + uuid + "'");
+		}
+		if (abilities.get(5) != null) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot5 = '" + abilities.get(5) + "' WHERE uuid = '" + uuid + "'");
+		} else {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot5 = '" + null + " WHERE uuid = '" + uuid + "'");
+		}
+		if (abilities.get(6) != null) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot6 = '" + abilities.get(6) + "' WHERE uuid = '" + uuid + "'");
+		} else {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot6 = '" + null + " WHERE uuid = '" + uuid + "'");
+		}
+		if (abilities.get(7) != null) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot7 = '" + abilities.get(7) + "' WHERE uuid = '" + uuid + "'");
+		} else {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot7 = '" + null + " WHERE uuid = '" + uuid + "'");
+		}
+		if (abilities.get(8) != null) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot8 = '" + abilities.get(8) + "' WHERE uuid = '" + uuid + "'");
+		} else {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot8 = '" + null + " WHERE uuid = '" + uuid + "'");
+		}
+		if (abilities.get(9) != null) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot9 = '" + abilities.get(9) + "' WHERE uuid = '" + uuid + "'");
+		} else {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot9 = '" + null + " WHERE uuid = '" + uuid + "'");
+		}
 
 
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
