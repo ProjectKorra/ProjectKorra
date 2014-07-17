@@ -784,7 +784,7 @@ public class PKListener implements Listener {
 		
 		if (entity instanceof Player) {
 			Player player = (Player) entity;
-			if (Methods.getBoundability(player) != null && Methods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
+			if (Methods.getBoundAbility(player) != null && Methods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
 				if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
 					event.setCancelled(true);
 				}
