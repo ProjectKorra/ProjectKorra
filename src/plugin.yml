@@ -108,3 +108,6 @@ permissions:
       bending.ability.Paralyze: true
       bending.ability.RapidPunch: true
       bending.chi.passive: true
+  bending.avatar:
+    default: false
+    description: Grants the Avatar Color.
