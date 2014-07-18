@@ -274,10 +274,6 @@ public class PKListener implements Listener {
 
 		if (!player.isSneaking() && Methods.canBend(player.getName(), abil)) {
 
-			if (abil.equalsIgnoreCase("AirShield")) {
-				new AirShield(player);
-			}
-
 			if (Methods.isAirAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
@@ -297,6 +293,10 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("AirSwipe")) {
 					AirSwipe.charge(player);
 				}
+				if (abil.equalsIgnoreCase("AirShield")) {
+					new AirShield(player);
+				}
+
 			}
 
 			if (Methods.isWaterAbility(abil)) {

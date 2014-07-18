@@ -117,7 +117,7 @@ public class IceSpike {
 
 	public IceSpike(Player player, Location origin, int damage,
 			Vector throwing, long aoecooldown) {
-		this.cooldown = aoecooldown;
+		cooldown = aoecooldown;
 		this.player = player;
 		this.origin = origin;
 		location = origin.clone();
