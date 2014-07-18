@@ -539,6 +539,8 @@ public class Methods {
 	public static boolean canBendPassive(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
+		if (bPlayer == null) return false;
+		if (p == null) return false;
 		if (!p.hasPermission("bending." + element.toString().toLowerCase() + ".passive")) return false;
 		if (!bPlayer.isToggled) return false;
 		if (!bPlayer.hasElement(element)) return false;
