@@ -74,7 +74,7 @@ public class AirSwipe {
 		// }
 		// }
 		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + config.getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
+			if (cooldowns.get(player.getName()) + config.getLong("Abilities.Air.AirSwipe.GlobalCooldown") >= System.currentTimeMillis()) {
 				return;
 			} else {
 				cooldowns.remove(player.getName());
