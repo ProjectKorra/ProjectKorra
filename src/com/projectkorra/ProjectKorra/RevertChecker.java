@@ -7,7 +7,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
@@ -44,9 +43,9 @@ public class RevertChecker implements Runnable {
 		@Override
 		public ArrayList<Chunk> call() throws Exception {
 			ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+			Player[] players = server.getOnlinePlayers();
 
-			
-			for (Player player : Bukkit._INVALID_getOnlinePlayers()) {
+			for (Player player : players) {
 				Chunk chunk = player.getLocation().getChunk();
 				if (!chunks.contains(chunk))
 					chunks.add(chunk);
