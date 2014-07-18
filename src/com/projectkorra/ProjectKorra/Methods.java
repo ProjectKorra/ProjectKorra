@@ -502,6 +502,7 @@ public class Methods {
 	public static boolean canBend(String player, String ability) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
+		if (bPlayer == null) return false;
 		if (!bPlayer.isToggled) return false;
 		if (p == null) return false;
 		if (!p.hasPermission("bending.ability." + ability)) return false;
@@ -539,6 +540,8 @@ public class Methods {
 	public static boolean canBendPassive(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
+		if (bPlayer == null) return false;
+		if (p == null) return false;
 		if (!p.hasPermission("bending." + element.toString().toLowerCase() + ".passive")) return false;
 		if (!bPlayer.isToggled) return false;
 		if (!bPlayer.hasElement(element)) return false;
@@ -610,7 +613,8 @@ public class Methods {
 
 	public static String getBoundAbility(Player player) {
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
-
+		if (bPlayer == null) return null; 
+		
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		return bPlayer.abilities.get(slot);
 	}
