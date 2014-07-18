@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -17,8 +18,8 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 public class AvatarState {
 
 	public static ConcurrentHashMap<Player, AvatarState> instances = new ConcurrentHashMap<Player, AvatarState>();
-	public static ConcurrentHashMap<String, Long> startTimes = new ConcurrentHashMap<String, Long>();
 	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
+	public static Map<String, Long> startTimes = new HashMap<String, Long>();
 
 	public static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	private static final long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.AvatarState.Cooldown");
@@ -42,8 +43,8 @@ public class AvatarState {
 		this.player = player;
 		if (instances.containsKey(player)) {
 			instances.remove(player);
-			if (startTimes.containsKey(player.getName())) {
-				startTimes.remove(player.getName());
+			if (cooldowns.containsKey(player.getName())) {
+				cooldowns.remove(player.getName());
 			}
 			return;
 		}
@@ -77,19 +78,19 @@ public class AvatarState {
 	private boolean progress() {
 		if (!Methods.canBend(player.getName(), StockAbilities.AvatarState.name())) {
 			instances.remove(player);
-			if (startTimes.containsKey(player.getName())) {
-				startTimes.remove(player.getName());
+			if (cooldowns.containsKey(player.getName())) {
+				cooldowns.remove(player.getName());
 			}
 			return false;
 		}
 		
 		if (startTimes.containsKey(player.getName())) {
-			if (startTimes.get(player.getName()) + duration >= System.currentTimeMillis()) {
+			if (startTimes.get(player.getName()) + duration < System.currentTimeMillis()) {
 				startTimes.remove(player.getName());
 				instances.remove(player);
-				return false;
 			}
 		}
+		
 		addPotionEffects();
 		return true;
 	}
