@@ -176,6 +176,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirSwipe.Arc", 20);
 		config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
 		config.addDefault("Abilities.Air.AirSwipe.Cooldown", 1500);
+		config.addDefault("Abilities.Air.AirSwipe.ChargeFactor", 3);
 
 		config.addDefault("Abilities.Air.Tornado.Radius", 10);
 		config.addDefault("Abilities.Air.Tornado.Height", 25);
