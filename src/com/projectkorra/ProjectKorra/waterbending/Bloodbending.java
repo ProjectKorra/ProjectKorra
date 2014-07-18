@@ -24,7 +24,7 @@ public class Bloodbending {
 	ConcurrentHashMap<Entity, Location> targetentities = new ConcurrentHashMap<Entity, Location>();
 
 	private static final double factor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
-	private static final boolean onlyUsableAtNight = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.OnlyUsableAtNight");
+	private static final boolean onlyUsableAtNight = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
 
 	private Player player;
 	private int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Range");
