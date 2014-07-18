@@ -28,11 +28,15 @@ public class WaterPassive {
 		for (Player player: Bukkit.getServer().getOnlinePlayers()) {
 			String ability = Methods.getBoundAbility(player);
 			if (Methods.canBendPassive(player.getName(), Element.Water)) {
-				if (ability == null || !AbilityModuleManager.shiftabilities.contains(ability)) {
+				if (WaterSpout.instances.containsKey(player)) {
+					continue;
+				}
+				else if (ability == null || !AbilityModuleManager.shiftabilities.contains(ability)) {
 					if (player.isSneaking() && Methods.isWater(player.getLocation().getBlock())) {
 						player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimFactor));
 					}
 				}
+				
 //				if (player.getLocation().getBlock().isLiquid()) {
 //					for (Block block: Methods.getBlocksAroundPoint(player.getLocation(), 2)) {
 //						if (Methods.isAdjacentToThreeOrMoreSources(block) && Methods.isWater(block) && !tempHaltPassive.contains(player.getName())) {
