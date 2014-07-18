@@ -566,6 +566,8 @@ public class PKListener implements Listener {
 			return;
 		}
 
+		AirScooter.check(player);
+		
 		String abil = Methods.getBoundAbility(player);
 		if (abil == null) return;
 		if (Methods.canBend(player.getName(), abil)) {
