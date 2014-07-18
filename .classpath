@@ -11,6 +11,5 @@
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/Towny.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldEdit.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldGuard.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/Bending.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

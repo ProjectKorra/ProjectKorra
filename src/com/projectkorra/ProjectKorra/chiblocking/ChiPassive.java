@@ -39,7 +39,7 @@ public class ChiPassive {
 	}
 	
 	public static void handlePassive() {
-		for (Player player: Bukkit.getOnlinePlayers()) {
+		for (Player player: Bukkit._INVALID_getOnlinePlayers()) {
 			if (Methods.canBendPassive(player.getName(), Element.Chi)) {
 				if (player.isSprinting()) {
 					if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
@@ -56,20 +56,6 @@ public class ChiPassive {
 				if (Methods.getBendingPlayer(s) == null) continue;
 				Methods.getBendingPlayer(s).unblockChi();
 			}
-//			if (BendingPlayer.blockedChi.contains(player.getName())) {
-//				if (BendingPlayer.blockedChi.get(player.getName()) + duration < System.currentTimeMillis()) {
-//					BendingPlayer.blockedChi.remove(player.getName());
-//				} else {
-//				}
-//			}
 		}
-//		for (String s: BendingPlayer.blockedChi.keySet()) {
-//			if (BendingPlayer.blockedChi.get(s) + duration >= System.currentTimeMillis()) {
-//				Bukkit.getServer().broadcastMessage(s + "'s Chi is blocked.");
-//			} else {
-//				Bukkit.getServer().broadcastMessage(s + "'s Chi has been unblocked.");
-//				BendingPlayer.blockedChi.remove(s);
-//			}
-//		}
 	}
 }
