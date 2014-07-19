@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -16,22 +17,24 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
 public class AirSuction {
+	
+	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
 	public static ConcurrentHashMap<Integer, AirSuction> instances = new ConcurrentHashMap<Integer, AirSuction>();
-	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 	private static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
+	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 	// private static ConcurrentHashMap<Player, Long> timers = new
 	// ConcurrentHashMap<Player, Long>();
-	static final long soonesttime = ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown");
-
+	static final long soonesttime = config.getLong("Properties.GlobalCooldown");
+	static final double maxspeed = AirBlast.maxspeed;
+	
 	private static int ID = Integer.MIN_VALUE;
 	private static final int maxticks = AirBlast.maxticks;
-	static final double maxspeed = AirBlast.maxspeed;
 
-	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirSuction.Speed");
-	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirSuction.Range");
-	private static double affectingradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirSuction.Radius");
-	private static double pushfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirSuction.Push");
+	private static double speed = config.getDouble("Abilities.Air.AirSuction.Speed");
+	private static double range = config.getDouble("Abilities.Air.AirSuction.Range");
+	private static double affectingradius = config.getDouble("Abilities.Air.AirSuction.Radius");
+	private static double pushfactor = config.getDouble("Abilities.Air.AirSuction.Push");
 	private static double originselectrange = 10;
 	// private static long interval = AirBlast.interval;
 

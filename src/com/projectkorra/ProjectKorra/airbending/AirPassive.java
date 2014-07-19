@@ -19,6 +19,7 @@ public class AirPassive {
 	
 	private static int speedPower = ProjectKorra.plugin.getConfig().getInt("Abilities.Air.Passive.Speed");
 	private static int jumpPower = ProjectKorra.plugin.getConfig().getInt("Abilities.Air.Passive.Jump");
+	
 	public static float getExhaustion(Player player, float level) {
 		if (!food.keySet().contains(player)) {
 			food.put(player, level);

@@ -18,11 +18,13 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class SpikeField {
+	
+	public static Map<Player, Long> cooldowns = new HashMap<Player, Long>();
 
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
+	
 	private static int radius = 6;
 	public static int numofspikes = ((radius * 2) * (radius * 2)) / 16;
-	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
-	public static Map<Player, Long> cooldowns = new HashMap<Player, Long>();
 
 	Random ran = new Random();
 	private int damage = 2;
@@ -40,8 +42,7 @@ public class SpikeField {
 		for (int x = -(radius - 1); x <= (radius - 1); x++) {
 			for (int z = -(radius - 1); z <= (radius - 1); z++) {
 				for (int y = -1; y <= 1; y++) {
-					Block testblock = p.getWorld().getBlockAt(locX + x,
-							locY + y, locZ + z);
+					Block testblock = p.getWorld().getBlockAt(locX + x,	locY + y, locZ + z);
 					if (testblock.getType() == Material.ICE
 							&& testblock.getRelative(BlockFace.UP).getType() == Material.AIR
 							&& !(testblock.getX() == p.getEyeLocation()
@@ -56,8 +57,7 @@ public class SpikeField {
 			}
 		}
 
-		List<Entity> entities = Methods.getEntitiesAroundPoint(p.getLocation(),
-				radius);
+		List<Entity> entities = Methods.getEntitiesAroundPoint(p.getLocation(),	radius);
 
 		for (int i = 0; i < numofspikes; i++) {
 			if (iceblocks.isEmpty())
@@ -66,12 +66,9 @@ public class SpikeField {
 			Entity target = null;
 			Block targetblock = null;
 			for (Entity entity : entities) {
-				if (entity instanceof LivingEntity
-						&& entity.getEntityId() != p.getEntityId()) {
+				if (entity instanceof LivingEntity && entity.getEntityId() != p.getEntityId()) {
 					for (Block block : iceblocks) {
-						if (block.getX() == entity.getLocation().getBlockX()
-								&& block.getZ() == entity.getLocation()
-								.getBlockZ()) {
+						if (block.getX() == entity.getLocation().getBlockX() && block.getZ() == entity.getLocation().getBlockZ()) {
 							target = entity;
 							targetblock = block;
 							break;

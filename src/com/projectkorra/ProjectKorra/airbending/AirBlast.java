@@ -19,6 +19,8 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class AirBlast {
 
+	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	
 	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<Integer, AirBlast>();
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
@@ -29,8 +31,6 @@ public class AirBlast {
 	private static int ID = Integer.MIN_VALUE;
 	static final int maxticks = 10000;
 
-	static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
 	public static double speed = config.getDouble("Abilities.Air.AirBlast.Speed");
 	public static double defaultrange = config.getDouble("Abilities.Air.AirBlast.Range");
 	public static double affectingradius = config.getDouble("Abilities.Air.AirBlast.Radius");
@@ -84,11 +84,9 @@ public class AirBlast {
 			origins.remove(player);
 			Entity entity = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
 			if (entity != null) {
-				direction = Methods.getDirection(origin, entity.getLocation())
-						.normalize();
+				direction = Methods.getDirection(origin, entity.getLocation()).normalize();
 			} else {
-				direction = Methods.getDirection(origin,
-						Methods.getTargetedLocation(player, range)).normalize();
+				direction = Methods.getDirection(origin, Methods.getTargetedLocation(player, range)).normalize();
 			}
 		} else {
 			origin = player.getEyeLocation();
@@ -105,8 +103,7 @@ public class AirBlast {
 		// timers.put(player, System.currentTimeMillis());
 	}
 
-	public AirBlast(Location location, Vector direction, Player player,
-			double factorpush, AirBurst burst) {
+	public AirBlast(Location location, Vector direction, Player player, double factorpush, AirBurst burst) {
 		if (location.getBlock().isLiquid()) {
 			return;
 		}
@@ -126,14 +123,11 @@ public class AirBlast {
 	}
 
 	public static void setOrigin(Player player) {
-		Location location = Methods.getTargetedLocation(player,
-				originselectrange, Methods.nonOpaque);
-		if (location.getBlock().isLiquid()
-				|| Methods.isSolid(location.getBlock()))
+		Location location = Methods.getTargetedLocation(player, originselectrange, Methods.nonOpaque);
+		if (location.getBlock().isLiquid() || Methods.isSolid(location.getBlock()))
 			return;
 
-		if (Methods.isRegionProtectedFromBuild(player, "AirBlast",
-				location))
+		if (Methods.isRegionProtectedFromBuild(player, "AirBlast", location))
 			return;
 
 		if (origins.containsKey(player)) {
@@ -149,8 +143,7 @@ public class AirBlast {
 			return false;
 		}
 
-		if (Methods.isRegionProtectedFromBuild(player, "AirBlast",
-				location)) {
+		if (Methods.isRegionProtectedFromBuild(player, "AirBlast", location)) {
 			instances.remove(id);
 			return false;
 		}
@@ -170,12 +163,10 @@ public class AirBlast {
 		// }
 
 		Block block = location.getBlock();
-		for (Block testblock : Methods.getBlocksAroundPoint(location,
-				affectingradius)) {
+		for (Block testblock : Methods.getBlocksAroundPoint(location, affectingradius)) {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
-				testblock.getWorld().playEffect(testblock.getLocation(),
-						Effect.EXTINGUISH, 0);
+				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
 			if (((block.getType() == Material.LEVER) || (block.getType() == Material.STONE_BUTTON))
 					&& !affectedlevers.contains(block)) {
@@ -196,10 +187,8 @@ public class AirBlast {
 				affectedlevers.add(block);
 			}
 		}
-		if ((Methods.isSolid(block) || block.isLiquid())
-				&& !affectedlevers.contains(block)) {
-			if (block.getType() == Material.LAVA
-					|| block.getType() == Material.STATIONARY_LAVA) {
+		if ((Methods.isSolid(block) || block.isLiquid()) && !affectedlevers.contains(block)) {
+			if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
 				if (block.getData() == full) {
 					block.setType(Material.OBSIDIAN);
 				} else {
@@ -217,8 +206,7 @@ public class AirBlast {
 			return false;
 		}
 
-		for (Entity entity : Methods.getEntitiesAroundPoint(location,
-				affectingradius)) {
+		for (Entity entity : Methods.getEntitiesAroundPoint(location, affectingradius)) {
 			// if (source == null) {
 			// if (affectedentities.contains(entity))
 			// continue;
@@ -266,20 +254,14 @@ public class AirBlast {
 
 			factor *= 1 - location.distance(origin) / (2 * range);
 
-			if (isUser
-					&& Methods.isSolid(player.getLocation().add(0, -.5, 0)
-							.getBlock())) {
+			if (isUser && Methods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
 				factor *= .5;
 			}
 
 			double comp = velocity.dot(push.clone().normalize());
 			if (comp > factor) {
 				velocity.multiply(.5);
-				velocity.add(push
-						.clone()
-						.normalize()
-						.multiply(
-								velocity.clone().dot(push.clone().normalize())));
+				velocity.add(push.clone().normalize().multiply(velocity.clone().dot(push.clone().normalize())));
 			} else if (comp + factor * .5 > factor) {
 				velocity.add(push.clone().multiply(factor - comp));
 			} else {
@@ -308,8 +290,7 @@ public class AirBlast {
 				new Flight((Player) entity, player);
 			}
 			if (entity.getFireTicks() > 0)
-				entity.getWorld().playEffect(entity.getLocation(),
-						Effect.EXTINGUISH, 0);
+				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
 			entity.setFireTicks(0);
 		}
 	}

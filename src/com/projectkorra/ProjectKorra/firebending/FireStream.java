@@ -30,7 +30,6 @@ public class FireStream {
 	private static int ID = Integer.MIN_VALUE;
 	private static double speed = 15;
 	private static long interval = (long) (1000. / speed);
-
 	private static long dissipateAfter = 400;
 
 	private Player player;
@@ -41,8 +40,7 @@ public class FireStream {
 	private long time;
 	private double range;
 
-	public FireStream(Location location, Vector direction, Player player,
-			int range) {
+	public FireStream(Location location, Vector direction, Player player, int range) {
 		this.range = Methods.firebendingDayAugment(range, player.getWorld());
 		this.player = player;
 		origin = location.clone();
@@ -112,7 +110,8 @@ public class FireStream {
 			return false;
 		}
 
-		Material[] ignitable = { Material.BEDROCK, Material.BOOKSHELF,
+		Material[] ignitable = { 
+				Material.BEDROCK, Material.BOOKSHELF,
 				Material.BRICK, Material.CLAY, Material.CLAY_BRICK,
 				Material.COAL_ORE, Material.COBBLESTONE, Material.DIAMOND_ORE,
 				Material.DIAMOND_BLOCK, Material.DIRT, Material.ENDER_STONE,
@@ -124,7 +123,8 @@ public class FireStream {
 				Material.OBSIDIAN, Material.REDSTONE_ORE, Material.SAND,
 				Material.SANDSTONE, Material.SMOOTH_BRICK, Material.STONE,
 				Material.SOUL_SAND, Material.SNOW_BLOCK, Material.WOOD,
-				Material.WOOL, Material.LEAVES };
+				Material.WOOL, Material.LEAVES 
+		};
 
 		Block belowblock = block.getRelative(BlockFace.DOWN);
 		if (Arrays.asList(ignitable).contains(belowblock.getType())) {

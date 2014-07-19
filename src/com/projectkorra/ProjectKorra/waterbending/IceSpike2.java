@@ -33,20 +33,19 @@ public class IceSpike2 {
 	private static final double affectingradius = 2;
 	private static final double deflectrange = 3;
 
-	private Player player;
 	private int id;
 	private double range;
 	private boolean plantbending = false;
-	private Block sourceblock;
-	private TempBlock source;
 	private boolean prepared = false;
 	private boolean settingup = false;
 	private boolean progressing = false;
 	private long time;
-
 	private Location location;
 	private Location firstdestination;
 	private Location destination;
+	private Block sourceblock;
+	private Player player;
+	private TempBlock source;
 
 	public IceSpike2(Player player) {
 		block(player);
@@ -54,8 +53,7 @@ public class IceSpike2 {
 			plantbending = true;
 		range = Methods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;
-		Block sourceblock = Methods.getWaterSourceBlock(player, range,
-				plantbending);
+		Block sourceblock = Methods.getWaterSourceBlock(player, range, plantbending);
 
 		if (sourceblock == null) {
 			new SpikeField(player);
@@ -127,21 +125,16 @@ public class IceSpike2 {
 	private static void waterBottle(Player player) {
 		if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeloc = player.getEyeLocation();
-			Block block = eyeloc.add(eyeloc.getDirection().normalize())
-					.getBlock();
+			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
 			if (Methods.isTransparentToEarthbending(player, block)
-					&& Methods.isTransparentToEarthbending(player,
-							eyeloc.getBlock())) {
+					&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
-				LivingEntity target = (LivingEntity) Methods.getTargetedEntity(
-						player, defaultrange, new ArrayList<Entity>());
+				LivingEntity target = (LivingEntity) Methods.getTargetedEntity(player, defaultrange, new ArrayList<Entity>());
 				Location destination;
 				if (target == null) {
-					destination = Methods.getTargetedLocation(player,
-							defaultrange, Methods.transparentToEarthbending);
+					destination = Methods.getTargetedLocation(player, defaultrange, Methods.transparentToEarthbending);
 				} else {
-					destination = Methods.getPointOnLine(player.getEyeLocation(),
-							target.getEyeLocation(), defaultrange);
+					destination = Methods.getPointOnLine(player.getEyeLocation(), target.getEyeLocation(), defaultrange);
 				}
 
 				if (destination.distance(block.getLocation()) < 1)
@@ -165,11 +158,9 @@ public class IceSpike2 {
 	private void throwIce() {
 		if (!prepared)
 			return;
-		LivingEntity target = (LivingEntity) Methods.getTargetedEntity(player,
-				range, new ArrayList<Entity>());
+		LivingEntity target = (LivingEntity) Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		if (target == null) {
-			destination = Methods.getTargetedLocation(player, range,
-					Methods.transparentToEarthbending);
+			destination = Methods.getTargetedLocation(player, range, Methods.transparentToEarthbending);
 		} else {
 			destination = target.getEyeLocation();
 		}
@@ -183,8 +174,7 @@ public class IceSpike2 {
 		} else {
 			firstdestination.add(0, 2, 0);
 		}
-		destination = Methods
-				.getPointOnLine(firstdestination, destination, range);
+		destination = Methods.getPointOnLine(firstdestination, destination, range);
 		progressing = true;
 		settingup = true;
 		prepared = false;
@@ -206,8 +196,7 @@ public class IceSpike2 {
 	}
 
 	private void progress() {
-		if (player.isDead() || !player.isOnline()
-				|| !Methods.canBend(player.getName(), "IceSpike")) {
+		if (player.isDead() || !player.isOnline() || !Methods.canBend(player.getName(), "IceSpike")) {
 			cancel();
 			return;
 		}
@@ -251,11 +240,9 @@ public class IceSpike2 {
 			}
 
 			if (settingup) {
-				direction = Methods.getDirection(location, firstdestination)
-						.normalize();
+				direction = Methods.getDirection(location, firstdestination).normalize();
 			} else {
-				direction = Methods.getDirection(location, destination)
-						.normalize();
+				direction = Methods.getDirection(location, destination).normalize();
 			}
 
 			location.add(direction);
@@ -268,8 +255,7 @@ public class IceSpike2 {
 			source.revertBlock();
 			source = null;
 
-			if (Methods.isTransparentToEarthbending(player, block)
-					&& !block.isLiquid()) {
+			if (Methods.isTransparentToEarthbending(player, block) && !block.isLiquid()) {
 				Methods.breakBlock(block);
 			} else if (!Methods.isWater(block)) {
 				cancel();
@@ -277,17 +263,14 @@ public class IceSpike2 {
 				return;
 			}
 
-			if (Methods.isRegionProtectedFromBuild(player, "IceSpike",
-					location)) {
+			if (Methods.isRegionProtectedFromBuild(player, "IceSpike", location)) {
 				cancel();
 				returnWater();
 				return;
 			}
 
-			for (Entity entity : Methods.getEntitiesAroundPoint(location,
-					affectingradius)) {
-				if (entity.getEntityId() != player.getEntityId()
-						&& entity instanceof LivingEntity) {
+			for (Entity entity : Methods.getEntitiesAroundPoint(location, affectingradius)) {
+				if (entity.getEntityId() != player.getEntityId() && entity instanceof LivingEntity) {
 					affect((LivingEntity) entity);
 					progressing = false;
 					returnWater();
@@ -308,22 +291,18 @@ public class IceSpike2 {
 	}
 
 	private void affect(LivingEntity entity) {
-		int mod = (int) Methods.waterbendingNightAugment(defaultmod,
-				player.getWorld());
-		int damage = (int) Methods.waterbendingNightAugment(defaultdamage,
-				player.getWorld());
+		int mod = (int) Methods.waterbendingNightAugment(defaultmod, player.getWorld());
+		int damage = (int) Methods.waterbendingNightAugment(defaultdamage, player.getWorld());
 		if (entity instanceof Player) {
 			BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 			if (bPlayer.canBeSlowed()) {
-				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW,
-						70, mod);
+				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 				new TempPotionEffect(entity, effect);
 				bPlayer.slow(slowCooldown);
 				entity.damage(damage, player);
 			}
 		} else {
-			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70,
-					mod);
+			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 			new TempPotionEffect(entity, effect);
 			entity.damage(damage, player);
 		}
@@ -349,22 +328,19 @@ public class IceSpike2 {
 				} else {
 					location = ((LivingEntity) target).getEyeLocation();
 				}
-				location = Methods.getPointOnLine(ice.location, location,
-						defaultrange * 2);
+				location = Methods.getPointOnLine(ice.location, location, defaultrange * 2);
 				ice.redirect(location, player);
 			}
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = ice.location;
-			if (Methods.isRegionProtectedFromBuild(player, "IceSpike",
-					mloc))
+			if (Methods.isRegionProtectedFromBuild(player, "IceSpike", mloc))
 				continue;
 			if (mloc.distance(location) <= defaultrange
 					&& Methods.getDistanceFromLine(vector, location, ice.location) < deflectrange
-					&& mloc.distance(location.clone().add(vector)) < mloc
-					.distance(location.clone().add(
-							vector.clone().multiply(-1)))) {
+					&& mloc.distance(location.clone().add(vector)) < 
+					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				Location loc;
 				Entity target = Methods.getTargetedEntity(player, defaultrange, new ArrayList<Entity>());
 				if (target == null) {
@@ -401,9 +377,8 @@ public class IceSpike2 {
 			Location mloc = ice.location;
 			if (mloc.distance(location) <= defaultrange
 					&& Methods.getDistanceFromLine(vector, location, ice.location) < deflectrange
-					&& mloc.distance(location.clone().add(vector)) < mloc
-					.distance(location.clone().add(
-							vector.clone().multiply(-1)))) {
+					&& mloc.distance(location.clone().add(vector)) < 
+					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				ice.cancel();
 			}
 

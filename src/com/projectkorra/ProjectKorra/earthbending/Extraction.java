@@ -15,6 +15,7 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 public class Extraction {
 	
 	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
+	
 	private long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Extraction.Cooldown");
 	private static int doublechance = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Extraction.DoubleLootChance");
 	private static int triplechance = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");

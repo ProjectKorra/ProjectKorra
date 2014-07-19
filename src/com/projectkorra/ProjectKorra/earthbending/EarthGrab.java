@@ -16,8 +16,9 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class EarthGrab {
 
-	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthGrab.Range");
 	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
+	
+	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthGrab.Range");
 
 	public EarthGrab(Player player) {
 		// Methods.verbose("initiating");
@@ -34,8 +35,7 @@ public class EarthGrab {
 		double lowestdistance = range + 1;
 		Entity closestentity = null;
 		for (Entity entity : Methods.getEntitiesAroundPoint(origin, range)) {
-			if (Methods.getDistanceFromLine(direction, origin,
-					entity.getLocation()) <= 3
+			if (Methods.getDistanceFromLine(direction, origin, entity.getLocation()) <= 3
 					&& (entity instanceof LivingEntity)
 					&& (entity.getEntityId() != player.getEntityId())) {
 				double distance = origin.distance(entity.getLocation());

@@ -13,18 +13,16 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 public class EarthColumn {
 
 	public static ConcurrentHashMap<Integer, EarthColumn> instances = new ConcurrentHashMap<Integer, EarthColumn>();
-	public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
-
+	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<Block, Block>();
 	private static ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
-
+	
+	public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
 	private static int ID = Integer.MIN_VALUE;
 
 	private static double range = 20;
 	private static double speed = 8;
 	private static final Vector direction = new Vector(0, 1, 0);
-
 	private static long interval = (long) (1000. / speed);
 
 	private Location origin;
@@ -52,8 +50,7 @@ public class EarthColumn {
 				return;
 			origin = block.getLocation();
 			location = origin.clone();
-			distance = Methods.getEarthbendableBlocksLength(player, block,
-					direction.clone().multiply(-1), height);
+			distance = Methods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
 		} catch (IllegalStateException e) {
 			return;
 		}
@@ -81,8 +78,7 @@ public class EarthColumn {
 		location = origin.clone();
 		block = location.getBlock();
 		this.player = player;
-		distance = Methods.getEarthbendableBlocksLength(player, block, direction
-				.clone().multiply(-1), height);
+		distance = Methods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
 
 		loadAffectedBlocks();
 
@@ -105,8 +101,7 @@ public class EarthColumn {
 		location = origin.clone();
 		block = location.getBlock();
 		this.player = player;
-		distance = Methods.getEarthbendableBlocksLength(player, block, direction
-				.clone().multiply(-1), height);
+		distance = Methods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
 
 		loadAffectedBlocks();
 
@@ -127,8 +122,7 @@ public class EarthColumn {
 		affectedblocks.clear();
 		Block thisblock;
 		for (int i = 0; i <= distance; i++) {
-			thisblock = block.getWorld().getBlockAt(
-					location.clone().add(direction.clone().multiply(-i)));
+			thisblock = block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(-i)));
 			affectedblocks.put(thisblock, thisblock);
 			if (CompactColumn.blockInAllAffectedBlocks(thisblock))
 				CompactColumn.revertBlock(thisblock);
@@ -160,8 +154,7 @@ public class EarthColumn {
 
 	private boolean canInstantiate() {
 		for (Block block : affectedblocks.keySet()) {
-			if (blockInAllAffectedBlocks(block)
-					|| alreadydoneblocks.containsKey(block)) {
+			if (blockInAllAffectedBlocks(block)	|| alreadydoneblocks.containsKey(block)) {
 				return false;
 			}
 		}
@@ -176,11 +169,8 @@ public class EarthColumn {
 				for (Block block : affectedblocks.keySet()) {
 					alreadydoneblocks.put(block, block);
 				}
-				baseblocks.put(
-						location.clone()
-						.add(direction.clone().multiply(
-								-1 * (distance - 1))).getBlock(),
-								(distance - 1));
+				baseblocks.put(location.clone().add(direction.clone().multiply(-1 * (distance - 1)))
+						.getBlock(), (distance - 1));
 
 				return false;
 			}

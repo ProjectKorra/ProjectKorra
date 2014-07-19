@@ -75,8 +75,7 @@ public class FireBurst {
 					if (direction.angle(vector) <= angle) {
 						// Methods.verbose(direction.angle(vector));
 						// Methods.verbose(direction);
-						new FireBlast(location, direction.normalize(), player,
-								damage, safeblocks);
+						new FireBlast(location, direction.normalize(), player, damage, safeblocks);
 					}
 				}
 			}
@@ -88,8 +87,7 @@ public class FireBurst {
 	private void sphereBurst() {
 		if (charged) {
 			Location location = player.getEyeLocation();
-			List<Block> safeblocks = Methods.getBlocksAroundPoint(
-					player.getLocation(), 2);
+			List<Block> safeblocks = Methods.getBlocksAroundPoint(player.getLocation(), 2);
 			double x, y, z;
 			double r = 1;
 			for (double theta = 0; theta <= 180; theta += deltheta) {
@@ -101,8 +99,7 @@ public class FireBurst {
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
 					Vector direction = new Vector(x, z, y);
-					new FireBlast(location, direction.normalize(), player,
-							damage, safeblocks);
+					new FireBlast(location, direction.normalize(), player, damage, safeblocks);
 				}
 			}
 		}
@@ -138,8 +135,7 @@ public class FireBurst {
 		} else if (charged) {
 			Location location = player.getEyeLocation();
 			// location = location.add(location.getDirection().normalize());
-			location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES,
-					4, 3);
+			location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 4, 3);
 		}
 	}
 

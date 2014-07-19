@@ -21,20 +21,17 @@ public class Ripple {
 
 	static final double radius = 15;
 	private static final int damage = 5;
-
 	private static int ID = Integer.MIN_VALUE;
 
 	private Player player;
 	private Vector direction;
 	private Location origin, location;
-
-	private ArrayList<Location> locations = new ArrayList<Location>();
-	private ArrayList<Entity> entities = new ArrayList<Entity>();
-
 	private Block block1, block2, block3, block4;
 	private int id;
 	private int step = 0;
 	private int maxstep;
+	private ArrayList<Location> locations = new ArrayList<Location>();
+	private ArrayList<Entity> entities = new ArrayList<Entity>();
 
 	public Ripple(Player player, Vector direction) {
 		this(player, getInitialLocation(player, direction), direction);

@@ -13,16 +13,13 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 public class CompactColumn {
 
 	public static ConcurrentHashMap<Integer, CompactColumn> instances = new ConcurrentHashMap<Integer, CompactColumn>();
-
 	private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<Block, Block>();
 
 	private static int ID = Integer.MIN_VALUE;
-
-	private static double range = Collapse.range;
 	private static int height = EarthColumn.standardheight;
+	private static double range = Collapse.range;
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Collapse.Speed");
 	private static final Vector direction = new Vector(0, -1, 0);
-
 	private static long interval = (long) (1000. / speed);
 
 	private Location origin;

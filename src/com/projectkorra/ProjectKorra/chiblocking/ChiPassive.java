@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra.chiblocking;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -14,12 +15,13 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class ChiPassive {
 	
-	public static double FallReductionFactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Chi.Passive.FallReductionFactor");
-	public static int jumpPower = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Passive.Jump");
-	public static int speedPower = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Passive.Speed");
+	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	
-	public static int dodgeChance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Passive.BlockChi.DodgeChance");
-	public static int duration = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Passive.BlockChi.Duration");
+	public static double FallReductionFactor = config.getDouble("Abilities.Chi.Passive.FallReductionFactor");
+	public static int jumpPower = config.getInt("Abilities.Chi.Passive.Jump");
+	public static int speedPower = config.getInt("Abilities.Chi.Passive.Speed");
+	public static int dodgeChance = config.getInt("Abilities.Chi.Passive.BlockChi.DodgeChance");
+	public static int duration = config.getInt("Abilities.Chi.Passive.BlockChi.Duration");
 	
 	public static boolean willChiBlock(Player player) {
 		Random rand = new Random();

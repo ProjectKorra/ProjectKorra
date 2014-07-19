@@ -19,10 +19,14 @@ import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.TempPotionEffect;
 
 public class EarthArmor {
+	
+	public static ConcurrentHashMap<Player, EarthArmor> instances = new ConcurrentHashMap<Player, EarthArmor>();
+	public static Map<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 
+	private static long interval = 2000;
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
 	private static long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.Duration");
 	private static int strength = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthArmor.Strength");
-	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
 	private static int range = 7;
 
 	private Player player;
@@ -34,10 +38,6 @@ public class EarthArmor {
 	private boolean formed = false;
 	private boolean complete = false;
 	public ItemStack[] oldarmor;
-
-	private static long interval = 2000;
-	public static ConcurrentHashMap<Player, EarthArmor> instances = new ConcurrentHashMap<Player, EarthArmor>();
-	public static Map<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 
 	public EarthArmor(Player player) {
 		if (instances.containsKey(player)) {
@@ -55,8 +55,7 @@ public class EarthArmor {
 		this.player = player;
 		headblock = player.getTargetBlock(Methods.getTransparentEarthbending(),
 				range);
-		if (Methods.getEarthbendableBlocksLength(player, headblock, new Vector(0,
-				-1, 0), 2) >= 2) {
+		if (Methods.getEarthbendableBlocksLength(player, headblock, new Vector(0,-1, 0), 2) >= 2) {
 			legsblock = headblock.getRelative(BlockFace.DOWN);
 			headtype = headblock.getType();
 			legstype = legsblock.getType();
@@ -107,8 +106,7 @@ public class EarthArmor {
 			newlegsblock = legsblocklocation.getBlock();
 		}
 
-		if (Methods.isTransparentToEarthbending(player, newheadblock)
-				&& !newheadblock.isLiquid()) {
+		if (Methods.isTransparentToEarthbending(player, newheadblock) && !newheadblock.isLiquid()) {
 			Methods.breakBlock(newheadblock);
 		} else if (!Methods.isEarthbendable(player, newheadblock)
 				&& !newheadblock.isLiquid()
@@ -117,8 +115,7 @@ public class EarthArmor {
 			return false;
 		}
 
-		if (Methods.isTransparentToEarthbending(player, newlegsblock)
-				&& !newlegsblock.isLiquid()) {
+		if (Methods.isTransparentToEarthbending(player, newlegsblock) && !newlegsblock.isLiquid()) {
 			Methods.breakBlock(newlegsblock);
 		} else if (!Methods.isEarthbendable(player, newlegsblock)
 				&& !newlegsblock.isLiquid()
@@ -218,8 +215,7 @@ public class EarthArmor {
 		}
 
 		if (eartharmor.formed) {
-			if (System.currentTimeMillis() > eartharmor.starttime + duration
-					&& !eartharmor.complete) {
+			if (System.currentTimeMillis() > eartharmor.starttime + duration && !eartharmor.complete) {
 				eartharmor.complete = true;
 				eartharmor.removeEffect();
 				return;

@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
@@ -17,21 +18,22 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Tremorsense {
 
+	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	
 	public static ConcurrentHashMap<Player, Tremorsense> instances = new ConcurrentHashMap<Player, Tremorsense>();
-	public static ConcurrentHashMap<Block, Player> blocks = new ConcurrentHashMap<Block, Player>();
 	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
+	public static ConcurrentHashMap<Block, Player> blocks = new ConcurrentHashMap<Block, Player>();
 
 	// private static final long cooldown = ConfigManager.tremorsenseCooldown;
-	private static final int maxdepth = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Tremorsense.MaxDepth");
-	private static final int radius = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Tremorsense.Radius");
-	private static final byte lightthreshold = (byte) ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Tremorsense.LightThreshold");
-	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Tremorsense.Cooldown");
+	private static final int maxdepth = config.getInt("Abilities.Earth.Tremorsense.MaxDepth");
+	private static final int radius = config.getInt("Abilities.Earth.Tremorsense.Radius");
+	private static final byte lightthreshold = (byte) config.getInt("Abilities.Earth.Tremorsense.LightThreshold");
+	private static long cooldown = config.getLong("Abilities.Earth.Tremorsense.Cooldown");
 
 	private Player player;
 	private Block block;
 
-	// private static ConcurrentHashMap<Player, Long> timers = new
-	// ConcurrentHashMap<Player, Long>();
+	// private static ConcurrentHashMap<Player, Long> timers = new ConcurrentHashMap<Player, Long>();
 
 	public Tremorsense(Player player) {
 		// if (timers.containsKey(player)) {

@@ -26,20 +26,23 @@ import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 public class FireBlast {
 
 	public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<Integer, FireBlast>();
+	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	// private static ConcurrentHashMap<Player, Long> timers = new
 	// ConcurrentHashMap<Player, Long>();
 	// static final long soonesttime = ConfigManager.fireBlastCooldown;
-
-	private static int ID = Integer.MIN_VALUE;
-	static final int maxticks = 10000;
-
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
-	public static double affectingradius = 2;
 	private static double pushfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Push");
-	private static boolean canPowerFurnace = true;
 	static boolean dissipate = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
+	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.FireBlast.Damage");
+	double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Range");
+	long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
+	
+	public static double affectingradius = 2;
 	// public static long interval = 2000;
 	public static byte full = 0x0;
+	private static int ID = Integer.MIN_VALUE;
+	private static boolean canPowerFurnace = true;
+	static final int maxticks = 10000;
 
 	private Location location;
 	private List<Block> safe = new ArrayList<Block>();
@@ -49,13 +52,7 @@ public class FireBlast {
 	private int id;
 	private double speedfactor;
 	private int ticks = 0;
-	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.FireBlast.Damage");
-	double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Range");
-	long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
-
-	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	// private ArrayList<Block> affectedlevers = new ArrayList<Block>();
-
 	// private long time;
 
 	public FireBlast(Player player) {
@@ -73,8 +70,7 @@ public class FireBlast {
 			}
 		}
 		
-		if (player.getEyeLocation().getBlock().isLiquid()
-				|| Fireball.isCharging(player)) {
+		if (player.getEyeLocation().getBlock().isLiquid() || Fireball.isCharging(player)) {
 			return;
 		}
 		range = Methods.firebendingDayAugment(range, player.getWorld());
@@ -94,8 +90,7 @@ public class FireBlast {
 		// timers.put(player, System.currentTimeMillis());
 	}
 
-	public FireBlast(Location location, Vector direction, Player player,
-			int damage, List<Block> safeblocks) {
+	public FireBlast(Location location, Vector direction, Player player, int damage, List<Block> safeblocks) {
 		if (location.getBlock().isLiquid()) {
 			return;
 		}
@@ -174,8 +169,7 @@ public class FireBlast {
 				// inv.setSmelting(temp);
 				// state.update(true);
 				// }
-			} else if (FireStream.isIgnitable(player,
-					block.getRelative(BlockFace.UP))) {
+			} else if (FireStream.isIgnitable(player, block.getRelative(BlockFace.UP))) {
 				ignite(location);
 			}
 			instances.remove(id);
@@ -198,8 +192,7 @@ public class FireBlast {
 			return false;
 		}
 
-		for (Entity entity : Methods.getEntitiesAroundPoint(location,
-				affectingradius)) {
+		for (Entity entity : Methods.getEntitiesAroundPoint(location, affectingradius)) {
 			// Block bblock = location.getBlock();
 			// Block block1 = entity.getLocation().getBlock();
 			// if (bblock.equals(block1))
@@ -222,22 +215,19 @@ public class FireBlast {
 	}
 
 	private void advanceLocation() {
-		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 0,
-				(int) range);
+		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 0, (int) range);
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
 
 	private void ignite(Location location) {
-		for (Block block : Methods
-				.getBlocksAroundPoint(location, affectingradius)) {
+		for (Block block : Methods.getBlocksAroundPoint(location, affectingradius)) {
 			if (FireStream.isIgnitable(player, block) && !safe.contains(block)) {
 				if (Methods.isPlant(block))
 					new Plantbending(block);
 				block.setType(Material.FIRE);
 				if (dissipate) {
 					FireStream.ignitedblocks.put(block, player);
-					FireStream.ignitedtimes.put(block,
-							System.currentTimeMillis());
+					FireStream.ignitedtimes.put(block, System.currentTimeMillis());
 				}
 			}
 		}
@@ -258,24 +248,20 @@ public class FireBlast {
 	private void affect(Entity entity) {
 		if (entity.getEntityId() != player.getEntityId()) {
 			if (AvatarState.isAvatarState(player)) {
-				entity.setVelocity(direction.clone().multiply(
-						AvatarState.getValue(pushfactor)));
+				entity.setVelocity(direction.clone().multiply(AvatarState.getValue(pushfactor)));
 			} else {
 				entity.setVelocity(direction.clone().multiply(pushfactor));
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks(50);
-				Methods.damageEntity(player, entity, (int) Methods
-						.firebendingDayAugment((double) damage,
-								entity.getWorld()));
+				Methods.damageEntity(player, entity, (int) Methods.firebendingDayAugment((double) damage, entity.getWorld()));
 				new Enflamed(entity, player);
 				instances.remove(id);
 			}
 		}
 	}
 
-	public static void removeFireBlastsAroundPoint(Location location,
-			double radius) {
+	public static void removeFireBlastsAroundPoint(Location location, double radius) {
 		for (int id : instances.keySet()) {
 			Location fireblastlocation = instances.get(id).location;
 			if (location.getWorld() == fireblastlocation.getWorld()) {
@@ -286,14 +272,12 @@ public class FireBlast {
 		Fireball.removeFireballsAroundPoint(location, radius);
 	}
 
-	public static boolean annihilateBlasts(Location location, double radius,
-			Player source) {
+	public static boolean annihilateBlasts(Location location, double radius, Player source) {
 		boolean broke = false;
 		for (int id : instances.keySet()) {
 			FireBlast blast = instances.get(id);
 			Location fireblastlocation = blast.location;
-			if (location.getWorld() == fireblastlocation.getWorld()
-					&& !blast.player.equals(source)) {
+			if (location.getWorld() == fireblastlocation.getWorld()	&& !blast.player.equals(source)) {
 				if (location.distance(fireblastlocation) <= radius) {
 					instances.remove(id);
 					broke = true;

@@ -19,9 +19,9 @@ public class WaterReturn {
 	private static ConcurrentHashMap<Player, WaterReturn> instances = new ConcurrentHashMap<Player, WaterReturn>();
 	// private static int ID = Integer.MIN_VALUE;
 	private static long interval = 50;
+	private static double range = 30;
 
 	private static final byte full = 0x0;
-	private static double range = 30;
 
 	private Player player;
 	// private int id;
@@ -35,11 +35,9 @@ public class WaterReturn {
 		this.player = player;
 		location = block.getLocation();
 		if (Methods.canBend(player.getName(), "WaterManipulation")) {
-			if (!Methods.isRegionProtectedFromBuild(player,
-					"WaterManipulation", location)
+			if (!Methods.isRegionProtectedFromBuild(player, "WaterManipulation", location)
 					&& Methods.canBend(player.getName(), "WaterManipulation")) {
-				if (Methods.isTransparentToEarthbending(player, block)
-						&& !block.isLiquid())
+				if (Methods.isTransparentToEarthbending(player, block) && !block.isLiquid())
 					this.block = new TempBlock(block, Material.WATER, full);
 			}
 		}
@@ -71,8 +69,7 @@ public class WaterReturn {
 
 		time = System.currentTimeMillis();
 
-		Vector direction = Methods
-				.getDirection(location, player.getEyeLocation()).normalize();
+		Vector direction = Methods.getDirection(location, player.getEyeLocation()).normalize();
 		location = location.clone().add(direction);
 
 		if (location == null || block == null) {
@@ -83,14 +80,12 @@ public class WaterReturn {
 		if (location.getBlock().equals(block.getLocation().getBlock()))
 			return;
 
-		if (Methods.isRegionProtectedFromBuild(player,
-				"WaterManipulation", location)) {
+		if (Methods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 			remove();
 			return;
 		}
 
-		if (location.distance(player.getEyeLocation()) > Methods
-				.waterbendingNightAugment(range, player.getWorld())) {
+		if (location.distance(player.getEyeLocation()) > Methods.waterbendingNightAugment(range, player.getWorld())) {
 			remove();
 			return;
 		}
@@ -101,8 +96,7 @@ public class WaterReturn {
 		}
 
 		Block newblock = location.getBlock();
-		if (Methods.isTransparentToEarthbending(player, newblock)
-				&& !newblock.isLiquid()) {
+		if (Methods.isTransparentToEarthbending(player, newblock) && !newblock.isLiquid()) {
 			block.revertBlock();
 			block = new TempBlock(newblock, Material.WATER, full);
 		} else {
@@ -138,11 +132,9 @@ public class WaterReturn {
 			} else {
 				item.setAmount(item.getAmount() - 1);
 				inventory.setItem(index, item);
-				HashMap<Integer, ItemStack> leftover = inventory
-						.addItem(new ItemStack(Material.POTION));
+				HashMap<Integer, ItemStack> leftover = inventory.addItem(new ItemStack(Material.POTION));
 				for (int left : leftover.keySet()) {
-					player.getWorld().dropItemNaturally(player.getLocation(),
-							leftover.get(left));
+					player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(left));
 				}
 			}
 		}
@@ -194,11 +186,9 @@ public class WaterReturn {
 			} else {
 				item.setAmount(item.getAmount() - 1);
 				inventory.setItem(index, item);
-				HashMap<Integer, ItemStack> leftover = inventory
-						.addItem(new ItemStack(Material.GLASS_BOTTLE));
+				HashMap<Integer, ItemStack> leftover = inventory.addItem(new ItemStack(Material.GLASS_BOTTLE));
 				for (int left : leftover.keySet()) {
-					player.getWorld().dropItemNaturally(player.getLocation(),
-							leftover.get(left));
+					player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(left));
 				}
 			}
 		}
