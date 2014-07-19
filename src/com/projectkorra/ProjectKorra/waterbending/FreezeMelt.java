@@ -25,10 +25,8 @@ public class FreezeMelt {
 //		if (bPlayer.isOnCooldown(Abilities.PhaseChange))
 //			return;
 
-		int range = (int) Methods.waterbendingNightAugment(defaultrange,
-				player.getWorld());
-		int radius = (int) Methods.waterbendingNightAugment(defaultradius,
-				player.getWorld());
+		int range = (int) Methods.waterbendingNightAugment(defaultrange, player.getWorld());
+		int radius = (int) Methods.waterbendingNightAugment(defaultradius, player.getWorld());
 		if (AvatarState.isAvatarState(player)) {
 			range = AvatarState.getValue(range);
 			// radius = AvatarState.getValue(radius);
@@ -50,20 +48,16 @@ public class FreezeMelt {
 	}
 
 	private static boolean isFreezable(Player player, Block block) {
-		if (Methods.isRegionProtectedFromBuild(player, "PhaseChange",
-				block.getLocation()))
+		if (Methods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
 			return false;
-		if (block.getType() == Material.WATER
-				|| block.getType() == Material.STATIONARY_WATER)
-			if (WaterManipulation.canPhysicsChange(block)
-					&& !TempBlock.isTempBlock(block))
+		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER)
+			if (WaterManipulation.canPhysicsChange(block) && !TempBlock.isTempBlock(block))
 				return true;
 		return false;
 	}
 
 	static void freeze(Player player, Block block) {
-		if (Methods.isRegionProtectedFromBuild(player, "PhaseChange",
-				block.getLocation()))
+		if (Methods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
 			return;
 		if (TempBlock.isTempBlock(block))
 			return;
@@ -99,8 +93,7 @@ public class FreezeMelt {
 						return false;
 				}
 				if (Methods.canBend(player.getName(), "PhaseChange")) {
-					double range = Methods.waterbendingNightAugment(defaultrange,
-							player.getWorld());
+					double range = Methods.waterbendingNightAugment(defaultrange, player.getWorld());
 					if (AvatarState.isAvatarState(player)) {
 						range = AvatarState.getValue(range);
 					}

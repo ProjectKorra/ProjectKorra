@@ -19,6 +19,7 @@ public class FireJet {
 
 	public static ConcurrentHashMap<Player, FireJet> instances = new ConcurrentHashMap<Player, FireJet>();
 	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
+	
 	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireJet.Speed");
 	private static final long defaultduration = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireJet.Duration");
 	private static boolean isToggle = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
@@ -56,11 +57,8 @@ public class FireJet {
 
 		factor = Methods.firebendingDayAugment(defaultfactor, player.getWorld());
 		Block block = player.getLocation().getBlock();
-		if (FireStream.isIgnitable(player, block)
-				|| block.getType() == Material.AIR
-				|| AvatarState.isAvatarState(player)) {
-			player.setVelocity(player.getEyeLocation().getDirection().clone()
-					.normalize().multiply(factor));
+		if (FireStream.isIgnitable(player, block) || block.getType() == Material.AIR	|| AvatarState.isAvatarState(player)) {
+			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(factor));
 			block.setType(Material.FIRE);
 			this.player = player;
 			// canfly = player.getAllowFlight();
@@ -87,23 +85,19 @@ public class FireJet {
 			instances.remove(player);
 			return;
 		}
-		if ((Methods.isWater(player.getLocation().getBlock()) || System
-				.currentTimeMillis() > time + duration)
+		if ((Methods.isWater(player.getLocation().getBlock()) || System.currentTimeMillis() > time + duration)
 				&& (!AvatarState.isAvatarState(player) || !isToggle)) {
 			// player.setAllowFlight(canfly);
 			instances.remove(player);
 		} else {
-			player.getWorld().playEffect(player.getLocation(),
-					Effect.MOBSPAWNER_FLAMES, 1);
+			player.getWorld().playEffect(player.getLocation(), Effect.MOBSPAWNER_FLAMES, 1);
 			double timefactor;
 			if (AvatarState.isAvatarState(player) && isToggle) {
 				timefactor = 1;
 			} else {
-				timefactor = 1 - ((double) (System.currentTimeMillis() - time))
-						/ (2.0 * duration);
+				timefactor = 1 - ((double) (System.currentTimeMillis() - time)) / (2.0 * duration);
 			}
-			Vector velocity = player.getEyeLocation().getDirection().clone()
-					.normalize().multiply(factor * timefactor);
+			Vector velocity = player.getEyeLocation().getDirection().clone().normalize().multiply(factor * timefactor);
 			// Vector velocity = player.getVelocity().clone();
 			// velocity.add(player.getEyeLocation().getDirection().clone()
 			// .normalize().multiply(factor * timefactor));

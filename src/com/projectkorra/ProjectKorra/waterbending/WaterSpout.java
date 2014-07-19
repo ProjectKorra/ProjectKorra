@@ -145,18 +145,15 @@ public class WaterSpout {
 		WaterSpout spout = instances.get(player);
 		int height = defaultheight;
 		if (Methods.isNight(player.getWorld()))
-			height = (int) Methods.waterbendingNightAugment((double) height,
-					player.getWorld());
+			height = (int) Methods.waterbendingNightAugment((double) height, player.getWorld());
 		int maxheight = (int) ((double) defaultheight * ProjectKorra.plugin.getConfig().getDouble("Properties.Water.NightFactor")) + 5;
 		Block blocki;
 		for (int i = 0; i < maxheight; i++) {
 			blocki = location.clone().add(0, -i, 0).getBlock();
-			if (Methods.isRegionProtectedFromBuild(player, "WaterSpout",
-					blocki.getLocation()))
+			if (Methods.isRegionProtectedFromBuild(player, "WaterSpout", blocki.getLocation()))
 				return -1;
 			if (!affectedblocks.contains(blocki)) {
-				if (blocki.getType() == Material.WATER
-						|| blocki.getType() == Material.STATIONARY_WATER) {
+				if (blocki.getType() == Material.WATER || blocki.getType() == Material.STATIONARY_WATER) {
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock(player);
 					}
@@ -165,13 +162,10 @@ public class WaterSpout {
 						return height;
 					return i;
 				}
-				if (blocki.getType() == Material.ICE
-						|| blocki.getType() == Material.SNOW
-						|| blocki.getType() == Material.SNOW_BLOCK) {
+				if (blocki.getType() == Material.ICE || blocki.getType() == Material.SNOW || blocki.getType() == Material.SNOW_BLOCK) {
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock(player);
-						instances.get(player).baseblock = new TempBlock(blocki,
-								Material.STATIONARY_WATER, (byte) 8);
+						instances.get(player).baseblock = new TempBlock(blocki,	Material.STATIONARY_WATER, (byte) 8);
 					}
 					// blocki.setType(Material.WATER);
 					// blocki.setData(full);
@@ -180,8 +174,7 @@ public class WaterSpout {
 						return height;
 					return i;
 				}
-				if ((blocki.getType() != Material.AIR && (!Methods
-						.isPlant(blocki) || !Methods.canPlantbend(player)))) {
+				if ((blocki.getType() != Material.AIR && (!Methods.isPlant(blocki) || !Methods.canPlantbend(player)))) {
 					revertBaseBlock(player);
 					return -1;
 				}
@@ -218,8 +211,7 @@ public class WaterSpout {
 		return players;
 	}
 
-	public static void removeSpouts(Location loc0, double radius,
-			Player sourceplayer) {
+	public static void removeSpouts(Location loc0, double radius, Player sourceplayer) {
 		for (Player player : instances.keySet()) {
 			if (!player.equals(sourceplayer)) {
 				Location loc1 = player.getLocation().getBlock().getLocation();

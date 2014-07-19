@@ -43,8 +43,7 @@ public class Cook {
 			cancel();
 			return;
 		}
-		if (!player.isSneaking()
-				|| !Methods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
+		if (!player.isSneaking() || !Methods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
 			cancel();
 			return;
 		}
@@ -64,8 +63,7 @@ public class Cook {
 			time = System.currentTimeMillis();
 		}
 
-		player.getWorld().playEffect(player.getEyeLocation(),
-				Effect.MOBSPAWNER_FLAMES, 0, 10);
+		player.getWorld().playEffect(player.getEyeLocation(), Effect.MOBSPAWNER_FLAMES, 0, 10);
 	}
 
 	private void cancel() {
@@ -79,16 +77,13 @@ public class Cook {
 	private void cook() {
 		Material cooked = getCooked(items.getType());
 		ItemStack newitem = new ItemStack(cooked);
-		HashMap<Integer, ItemStack> cantfit = player.getInventory().addItem(
-				newitem);
+		HashMap<Integer, ItemStack> cantfit = player.getInventory().addItem(newitem);
 		for (int id : cantfit.keySet()) {
-			player.getWorld()
-			.dropItem(player.getEyeLocation(), cantfit.get(id));
+			player.getWorld().dropItem(player.getEyeLocation(), cantfit.get(id));
 		}
 		int amount = items.getAmount();
 		if (amount == 1) {
-			player.getInventory()
-			.clear(player.getInventory().getHeldItemSlot());
+			player.getInventory().clear(player.getInventory().getHeldItemSlot());
 			// items.setType(Material.AIR);
 		} else {
 			items.setAmount(amount - 1);

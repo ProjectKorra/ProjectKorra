@@ -27,26 +27,25 @@ import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 public class AirSwipe {
 
+	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	
 	public static ConcurrentHashMap<Integer, AirSwipe> instances = new ConcurrentHashMap<Integer, AirSwipe>();
 	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	// private static ConcurrentHashMap<Player, Long> timers = new
 	// ConcurrentHashMap<Player, Long>();
 	// static final long soonesttime = ConfigManager.airSwipeCooldown;
 
-	public static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
 	private static int ID = Integer.MIN_VALUE;
-
-	private static int defaultdamage = config.getInt("Abilities.Air.AirSwipe.Damage");
-	private static double affectingradius = config.getDouble("Abilities.Air.AirSwipe.Radius");
-	private static double defaultpushfactor = config.getDouble("Abilities.Air.AirSwipe.Push");
-	private static double range = config.getDouble("Abilities.Air.AirSwipe.Range");
-	private static int arc = config.getInt("Abilities.Air.AirSwipe.Arc");
 	private static int stepsize = 4;
+	private static int arc = config.getInt("Abilities.Air.AirSwipe.Arc");
+	private static int defaultdamage = config.getInt("Abilities.Air.AirSwipe.Damage");
+	private static double defaultpushfactor = config.getDouble("Abilities.Air.AirSwipe.Push");
+	private static double affectingradius = config.getDouble("Abilities.Air.AirSwipe.Radius");
+	private static double range = config.getDouble("Abilities.Air.AirSwipe.Range");
 	private static double speed = config.getDouble("Abilities.Air.AirSwipe.Speed");
+	private static double maxfactor = config.getDouble("Abilities.Air.AirSwipe.ChargeFactor");
 	private static byte full = AirBlast.full;
 	private static long maxchargetime = 3000;
-	private static double maxfactor = config.getDouble("Abilities.Air.AirSwipe.ChargeFactor");
 
 	private double speedfactor;
 
@@ -167,8 +166,7 @@ public class AirSwipe {
 				player.getWorld().playEffect(
 						player.getEyeLocation(),
 						Effect.SMOKE,
-						Methods.getIntCardinalDirection(player.getEyeLocation()
-								.getDirection()), 3);
+						Methods.getIntCardinalDirection(player.getEyeLocation().getDirection()), 3);
 			}
 		}
 		return true;
@@ -179,8 +177,7 @@ public class AirSwipe {
 		for (Vector direction : elements.keySet()) {
 			Location location = elements.get(direction);
 			if (direction != null && location != null) {
-				location = location.clone().add(
-						direction.clone().multiply(speedfactor));
+				location = location.clone().add(direction.clone().multiply(speedfactor));
 				elements.replace(direction, location);
 
 				if (location.distance(origin) > range || Methods.isRegionProtectedFromBuild(player, "AirSwipe", location)) {
@@ -191,18 +188,15 @@ public class AirSwipe {
 					double radius = FireBlast.affectingradius;
 					Player source = player;
 					if (EarthBlast.annihilateBlasts(location, radius, source)
-							|| WaterManipulation.annihilateBlasts(location,
-									radius, source)
-									|| FireBlast.annihilateBlasts(location, radius,
-											source)) {
+							|| WaterManipulation.annihilateBlasts(location,radius, source)
+							|| FireBlast.annihilateBlasts(location, radius, source)) {
 						elements.remove(direction);
 						damage = 0;
 						continue;
 					}
 
 					Block block = location.getBlock();
-					for (Block testblock : Methods.getBlocksAroundPoint(location,
-							affectingradius)) {
+					for (Block testblock : Methods.getBlocksAroundPoint(location, affectingradius)) {
 						if (testblock.getType() == Material.FIRE) {
 							testblock.setType(Material.AIR);
 						}
@@ -217,8 +211,7 @@ public class AirSwipe {
 						} else {
 							elements.remove(direction);
 						}
-						if (block.getType() == Material.LAVA
-								|| block.getType() == Material.STATIONARY_LAVA) {
+						if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
 							if (block.getData() == full) {
 								block.setType(Material.OBSIDIAN);
 							} else {
@@ -244,15 +237,12 @@ public class AirSwipe {
 
 	private void affectPeople(Location location, Vector direction) {
 		Methods.removeSpouts(location, player);
-		for (Entity entity : Methods.getEntitiesAroundPoint(location,
-				affectingradius)) {
-			if (Methods.isRegionProtectedFromBuild(player, "AirSwipe",
-					entity.getLocation()))
+		for (Entity entity : Methods.getEntitiesAroundPoint(location, affectingradius)) {
+			if (Methods.isRegionProtectedFromBuild(player, "AirSwipe", entity.getLocation()))
 				continue;
 			if (entity.getEntityId() != player.getEntityId()) {
 				if (AvatarState.isAvatarState(player)) {
-					entity.setVelocity(direction.multiply(AvatarState
-							.getValue(pushfactor)));
+					entity.setVelocity(direction.multiply(AvatarState.getValue(pushfactor)));
 				} else {
 					entity.setVelocity(direction.multiply(pushfactor));
 				}

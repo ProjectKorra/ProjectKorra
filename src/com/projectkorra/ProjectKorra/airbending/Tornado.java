@@ -16,17 +16,17 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Tornado {
+	
+	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
 	public static ConcurrentHashMap<Integer, Tornado> instances = new ConcurrentHashMap<Integer, Tornado>();
 
-	static FileConfiguration config = ProjectKorra.plugin.getConfig();
-
-	private static double maxradius = config.getDouble("Abilities.Air.Tornado.Radius");
 	private static double maxheight = config.getDouble("Abilities.Air.Tornado.Height");
-	private static double range = config.getDouble("Abilities.Air.Tornado.Range");
-	private static int numberOfStreams = (int) (.3 * (double) maxheight);
-	private static double NPCpushfactor = config.getDouble("Abilities.Air.Tornado.MobPushFactor");
 	private static double PCpushfactor = config.getDouble("Abilities.Air.Tornado.PlayerPushFactor");
+	private static double maxradius = config.getDouble("Abilities.Air.Tornado.Radius");
+	private static double range = config.getDouble("Abilities.Air.Tornado.Range");
+	private static double NPCpushfactor = config.getDouble("Abilities.Air.Tornado.MobPushFactor");
+	private static int numberOfStreams = (int) (.3 * (double) maxheight);
 	// private static double speed = .75;
 
 	private double height = 2;
@@ -69,8 +69,7 @@ public class Tornado {
 			instances.remove(player.getEntityId());
 			return false;
 		}
-		if (!Methods.canBend(player.getName(), "Tornado")
-				|| player.getEyeLocation().getBlock().isLiquid()) {
+		if (!Methods.canBend(player.getName(), "Tornado") || player.getEyeLocation().getBlock().isLiquid()) {
 			// player.setAllowFlight(canfly);
 			instances.remove(player.getEntityId());
 			return false;
@@ -85,8 +84,7 @@ public class Tornado {
 			return false;
 		}
 
-		if (Methods
-				.isRegionProtectedFromBuild(player, "AirBlast", origin)) {
+		if (Methods.isRegionProtectedFromBuild(player, "AirBlast", origin)) {
 			instances.remove(player.getEntityId());
 			return false;
 		}
@@ -104,17 +102,14 @@ public class Tornado {
 			origin.setY(origin.getY() - 1. / 10. * height);
 
 			for (Entity entity : Methods.getEntitiesAroundPoint(origin, height)) {
-				if (Methods.isRegionProtectedFromBuild(player,
-						"AirBlast", entity.getLocation()))
+				if (Methods.isRegionProtectedFromBuild(player, "AirBlast", entity.getLocation()))
 					continue;
 				double y = entity.getLocation().getY();
 				double factor;
 				if (y > origin.getY() && y < origin.getY() + height) {
 					factor = (y - origin.getY()) / height;
-					Location testloc = new Location(origin.getWorld(),
-							origin.getX(), y, origin.getZ());
-					if (testloc.distance(entity.getLocation()) < radius
-							* factor) {
+					Location testloc = new Location(origin.getWorld(), origin.getX(), y, origin.getZ());
+					if (testloc.distance(entity.getLocation()) < radius	* factor) {
 						double x, z, vx, vz, mag;
 						double angle = 100;
 						double vy = 0.7 * NPCpushfactor;
@@ -133,8 +128,7 @@ public class Tornado {
 						}
 
 						if (entity.getEntityId() == player.getEntityId()) {
-							Vector direction = player.getEyeLocation()
-									.getDirection().clone().normalize();
+							Vector direction = player.getEyeLocation().getDirection().clone().normalize();
 							vx = direction.getX();
 							vz = direction.getZ();
 							Location playerloc = player.getLocation();
@@ -174,16 +168,12 @@ public class Tornado {
 				y = origin.getY() + timefactor * (double) i;
 				factor = (double) i / height;
 
-				x = origin.getX() + timefactor * factor * radius
-						* Math.cos(angle);
-				z = origin.getZ() + timefactor * factor * radius
-						* Math.sin(angle);
+				x = origin.getX() + timefactor * factor * radius * Math.cos(angle);
+				z = origin.getZ() + timefactor * factor * radius * Math.sin(angle);
 
 				Location effect = new Location(origin.getWorld(), x, y, z);
-				if (!Methods.isRegionProtectedFromBuild(player,
-						"AirBlast", effect))
-					origin.getWorld().playEffect(effect, Effect.SMOKE, 4,
-							(int) AirBlast.defaultrange);
+				if (!Methods.isRegionProtectedFromBuild(player, "AirBlast", effect))
+					origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int) AirBlast.defaultrange);
 
 				angles.put(i, angles.get(i) + 25 * (int) speedfactor);
 			}

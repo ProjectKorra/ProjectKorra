@@ -30,8 +30,7 @@ public class WaterPassive {
 			if (Methods.canBendPassive(player.getName(), Element.Water)) {
 				if (WaterSpout.instances.containsKey(player)) {
 					continue;
-				}
-				else if (ability == null || !AbilityModuleManager.shiftabilities.contains(ability)) {
+				} else if (ability == null || !AbilityModuleManager.shiftabilities.contains(ability)) {
 					if (player.isSneaking() && Methods.isWater(player.getLocation().getBlock())) {
 						player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimFactor));
 					}

@@ -15,17 +15,18 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class RapidPunch {
 
-	private static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
-	private int distance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Distance");
-	 private long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
-	private static int punches = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
-
-	 private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	public static ConcurrentHashMap<Player, RapidPunch> instance = new ConcurrentHashMap<Player, RapidPunch>();
+	public static List<Player> punching = new ArrayList<Player>();
+	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
+	
+	private static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
+	private static int punches = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
+	private int distance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Distance");
+	private long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
+	
 	private int numpunches;
 	// private long timers;
 	private Entity target;
-	public static List<Player> punching = new ArrayList<Player>();
 
 	public RapidPunch(Player p) {// , Entity t) {
 		if (instance.containsKey(p))

@@ -24,9 +24,9 @@ public class FireShield {
 	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	private static long interval = 100;
+	private static long duration = 1000;
 	private static double radius = 3;
 	private static double discradius = 1.5;
-	private static long duration = 1000;
 	private static boolean ignite = true;
 
 	private Player player;
@@ -69,8 +69,7 @@ public class FireShield {
 	}
 
 	private void progress() {
-		if (((!player.isSneaking()) && shield)
-				|| !Methods.canBend(player.getName(), "FireShield")) {
+		if (((!player.isSneaking()) && shield) || !Methods.canBend(player.getName(), "FireShield")) {
 			remove();
 			return;
 		}
@@ -97,29 +96,22 @@ public class FireShield {
 					for (double phi = 0; phi < 360; phi += 20) {
 						double rphi = Math.toRadians(phi);
 						double rtheta = Math.toRadians(theta);
-						Block block = location
-								.clone()
-								.add(radius * Math.cos(rphi) * Math.sin(rtheta),
-										radius * Math.cos(rtheta),
-										radius * Math.sin(rphi)
-										* Math.sin(rtheta)).getBlock();
-						if (!blocks.contains(block) && !Methods.isSolid(block)
-								&& !block.isLiquid())
+						Block block = location.clone().add(
+								radius * Math.cos(rphi) * Math.sin(rtheta),
+								radius * Math.cos(rtheta),
+								radius * Math.sin(rphi)	* Math.sin(rtheta)).getBlock();
+						if (!blocks.contains(block) && !Methods.isSolid(block) && !block.isLiquid())
 							blocks.add(block);
 					}
 				}
 
 				for (Block block : blocks) {
-					if (!Methods.isRegionProtectedFromBuild(player,
-							"FireShield", block.getLocation()))
-						block.getWorld().playEffect(block.getLocation(),
-								Effect.MOBSPAWNER_FLAMES, 0, 20);
+					if (!Methods.isRegionProtectedFromBuild(player,	"FireShield", block.getLocation()))
+						block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
 				}
 
-				for (Entity entity : Methods.getEntitiesAroundPoint(location,
-						radius)) {
-					if (Methods.isRegionProtectedFromBuild(player,
-							"FireShield", entity.getLocation()))
+				for (Entity entity : Methods.getEntitiesAroundPoint(location, radius)) {
+					if (Methods.isRegionProtectedFromBuild(player, "FireShield", entity.getLocation()))
 						continue;
 					if (player.getEntityId() != entity.getEntityId() && ignite) {
 						entity.setFireTicks(120);
@@ -139,35 +131,26 @@ public class FireShield {
 				Vector direction = location.getDirection();
 				location = location.clone().add(direction.multiply(radius));
 
-								if (Methods.isRegionProtectedFromBuild(player,
-										"FireShield", location)) {
-									remove();
-									return;
-								}
+				if (Methods.isRegionProtectedFromBuild(player, "FireShield", location)) {
+					remove();
+					return;
+				}
 
 				for (double theta = 0; theta < 360; theta += 20) {
-					Vector vector = Methods.getOrthogonalVector(direction, theta,
-							discradius);
-
+					Vector vector = Methods.getOrthogonalVector(direction, theta, discradius);
 					Block block = location.clone().add(vector).getBlock();
-					if (!blocks.contains(block) && !Methods.isSolid(block)
-							&& !block.isLiquid())
+					if (!blocks.contains(block) && !Methods.isSolid(block) && !block.isLiquid())
 						blocks.add(block);
-
 				}
 
 				for (Block block : blocks) {
-										if (!Methods.isRegionProtectedFromBuild(player,
-												"FireShield", block.getLocation()))
-					block.getWorld().playEffect(block.getLocation(),
-							Effect.MOBSPAWNER_FLAMES, 0, 20);
+					if (!Methods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation()))
+					block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
 				}
 
-				for (Entity entity : Methods.getEntitiesAroundPoint(location,
-						discradius)) {
-										if (Methods.isRegionProtectedFromBuild(player,
-												"FireShield", entity.getLocation()))
-											continue;
+				for (Entity entity : Methods.getEntitiesAroundPoint(location, discradius)) {
+					if (Methods.isRegionProtectedFromBuild(player, "FireShield", entity.getLocation()))
+						continue;
 					if (player.getEntityId() != entity.getEntityId() && ignite) {
 						entity.setFireTicks(120);
 						if (!(entity instanceof LivingEntity)) {
@@ -180,9 +163,7 @@ public class FireShield {
 				WaterManipulation.removeAroundPoint(location, discradius);
 				EarthBlast.removeAroundPoint(location, discradius);
 				FireStream.removeAroundPoint(location, discradius);
-
 			}
-
 		}
 	}
 
@@ -202,6 +183,5 @@ public class FireShield {
 
 	public static void removeAll() {
 		instances.clear();
-
 	}
 }

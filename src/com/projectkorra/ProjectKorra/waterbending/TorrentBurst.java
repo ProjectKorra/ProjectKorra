@@ -24,16 +24,16 @@ public class TorrentBurst {
 	private static double defaultfactor = 1.5;
 	private static long interval = Torrent.interval;
 
-//	private static final byte full = 0x0;
+	//	private static final byte full = 0x0;
 	// private static final Vector reference = new Vector(1, 0, 0);
 
-	private Player player;
 	private int id;
 	private long time;
-	private Location origin;
 	private double radius = dr;
 	private double maxradius = defaultmaxradius;
 	private double factor = defaultfactor;
+	private Location origin;
+	private Player player;
 	private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Double>> heights = new ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Double>>();
 	private ArrayList<TempBlock> blocks = new ArrayList<TempBlock>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
@@ -135,10 +135,8 @@ public class TorrentBurst {
 				Block block = location.getBlock();
 				if (torrentblocks.contains(block))
 					continue;
-				if (Methods.isTransparentToEarthbending(player,
-						block)) {
-					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER,
-							(byte) 8);
+				if (Methods.isTransparentToEarthbending(player,	block)) {
+					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 					blocks.add(tempBlock);
 					torrentblocks.add(block);
 				} else {
@@ -165,8 +163,7 @@ public class TorrentBurst {
 		Vector direction = Methods.getDirection(origin, entity.getLocation());
 		direction.setY(0);
 		direction.normalize();
-		entity.setVelocity(entity.getVelocity().clone()
-				.add(direction.multiply(factor)));
+		entity.setVelocity(entity.getVelocity().clone().add(direction.multiply(factor)));
 	}
 
 	private void remove() {
@@ -177,8 +174,7 @@ public class TorrentBurst {
 	}
 
 	private void returnWater() {
-		Location location = new Location(origin.getWorld(), origin.getX()
-				+ radius, origin.getY(), origin.getZ());
+		Location location = new Location(origin.getWorld(), origin.getX() + radius, origin.getY(), origin.getZ());
 		if (!location.getWorld().equals(player.getWorld()))
 			return;
 		if (location.distance(player.getLocation()) > maxradius + 5)

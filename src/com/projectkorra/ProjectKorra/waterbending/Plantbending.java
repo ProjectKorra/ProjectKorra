@@ -10,9 +10,9 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Plantbending {
 
-	private static final long regrowtime = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.Plantbending.RegrowTime");
 	private static ConcurrentHashMap<Integer, Plantbending> instances = new ConcurrentHashMap<Integer, Plantbending>();
 
+	private static final long regrowtime = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.Plantbending.RegrowTime");
 	private static int ID = Integer.MIN_VALUE;
 
 	private Block block;
@@ -26,8 +26,7 @@ public class Plantbending {
 			this.block = block;
 			type = block.getType();
 			data = block.getData();
-			time = System.currentTimeMillis() + regrowtime / 2
-					+ (long) (Math.random() * (double) regrowtime) / 2;
+			time = System.currentTimeMillis() + regrowtime / 2 + (long) (Math.random() * (double) regrowtime) / 2;
 			id = ID;
 			instances.put(id, this);
 			if (ID >= Integer.MAX_VALUE) {

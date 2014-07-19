@@ -13,16 +13,14 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class ArcOfFire {
 
-	// private static ConcurrentHashMap<Player, Long> timers = new
-	// ConcurrentHashMap<Player, Long>();
+	// private static ConcurrentHashMap<Player, Long> timers = new ConcurrentHashMap<Player, Long>();
 	// static final long soonesttime = Tools.timeinterval;
+	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	private static int defaultarc = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.ArcOfFire.Arc");
 	private static int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.ArcOfFire.Range");
 	private static int stepsize = 2;
 	
-	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
-
 	public ArcOfFire(Player player) {
 		// if (timers.containsKey(player)) {
 		// if (System.currentTimeMillis() < timers.get(player) + soonesttime) {

@@ -20,11 +20,10 @@ public class AirShield {
 	public static ConcurrentHashMap<Integer, AirShield> instances = new ConcurrentHashMap<Integer, AirShield>();
 
 	private static double maxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirShield.Radius");
-	private static int numberOfStreams = (int) (.75 * (double) maxradius);
 	private static boolean isToggle = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
+	private static int numberOfStreams = (int) (.75 * (double) maxradius);
 
 	private double radius = 2;
-
 	private double speedfactor;
 
 	private Player player;

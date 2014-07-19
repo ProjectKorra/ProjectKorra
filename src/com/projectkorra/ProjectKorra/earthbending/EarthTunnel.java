@@ -20,7 +20,6 @@ public class EarthTunnel {
 	// private static final double speed = 10;
 
 	private static boolean revert = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
-
 	private static final long interval = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
 
 	private Player player;

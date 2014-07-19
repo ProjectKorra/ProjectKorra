@@ -24,23 +24,22 @@ public class Fireball {
 	private static long defaultchargetime = 2000;
 	private static long interval = 25;
 	private static double radius = 1.5;
-
 	private static int ID = Integer.MIN_VALUE;
 
 	private int id;
-	private double range = 20;
 	private int maxdamage = 4;
+	private double range = 20;
 	private double explosionradius = 6;
 	private double innerradius = 3;
-	private Player player;
-	private Location origin;
-	private Location location;
-	private Vector direction;
 	private long starttime;
 	private long time;
 	private long chargetime = defaultchargetime;
 	private boolean charged = false;
 	private boolean launched = false;
+	private Player player;
+	private Location origin;
+	private Location location;
+	private Vector direction;
 	private TNTPrimed explosion = null;
 
 	public Fireball(Player player) {
@@ -100,8 +99,7 @@ public class Fireball {
 
 		if (System.currentTimeMillis() > time + interval) {
 			if (launched) {
-				if (Methods.isRegionProtectedFromBuild(player, "Blaze",
-						location)) {
+				if (Methods.isRegionProtectedFromBuild(player, "Blaze",	location)) {
 					remove();
 					return;
 				}
@@ -112,8 +110,7 @@ public class Fireball {
 			if (!launched && !charged)
 				return;
 			if (!launched) {
-				player.getWorld().playEffect(player.getEyeLocation(),
-						Effect.MOBSPAWNER_FLAMES, 0, 3);
+				player.getWorld().playEffect(player.getEyeLocation(), Effect.MOBSPAWNER_FLAMES, 0, 3);
 				return;
 			}
 
@@ -150,8 +147,7 @@ public class Fireball {
 		// entity.getLocation())) {
 		// return 0;
 		// }
-		double distance = entity.getLocation()
-				.distance(explosion.getLocation());
+		double distance = entity.getLocation().distance(explosion.getLocation());
 		if (distance > explosionradius)
 			return;
 		if (distance < innerradius) {
@@ -159,7 +155,6 @@ public class Fireball {
 			return;
 		}
 		double slope = -(maxdamage * .5) / (explosionradius - innerradius);
-
 		double damage = slope * (distance - innerradius) + maxdamage;
 		// Methods.verbose(damage);
 		Methods.damageEntity(player, entity, (int) damage);
@@ -167,8 +162,7 @@ public class Fireball {
 
 	private void fireball() {
 		for (Block block : Methods.getBlocksAroundPoint(location, radius)) {
-			block.getWorld().playEffect(block.getLocation(),
-					Effect.MOBSPAWNER_FLAMES, 0, 20);
+			block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
 		}
 
 		for (Entity entity : Methods.getEntitiesAroundPoint(location, 2 * radius)) {
@@ -198,8 +192,7 @@ public class Fireball {
 		// Methods.verbose("Fireball Explode!");
 		boolean explode = true;
 		for (Block block : Methods.getBlocksAroundPoint(location, 3)) {
-			if (Methods.isRegionProtectedFromBuild(player, "FireBlast",
-					block.getLocation())) {
+			if (Methods.isRegionProtectedFromBuild(player, "FireBlast",	block.getLocation())) {
 				explode = false;
 				break;
 			}
@@ -232,14 +225,12 @@ public class Fireball {
 	}
 
 	private void ignite(Location location) {
-		for (Block block : Methods.getBlocksAroundPoint(location,
-				FireBlast.affectingradius)) {
+		for (Block block : Methods.getBlocksAroundPoint(location, FireBlast.affectingradius)) {
 			if (FireStream.isIgnitable(player, block)) {
 				block.setType(Material.FIRE);
 				if (FireBlast.dissipate) {
 					FireStream.ignitedblocks.put(block, player);
-					FireStream.ignitedtimes.put(block,
-							System.currentTimeMillis());
+					FireStream.ignitedtimes.put(block, System.currentTimeMillis());
 				}
 			}
 		}
@@ -259,8 +250,7 @@ public class Fireball {
 			instances.get(id).remove();
 	}
 
-	public static void removeFireballsAroundPoint(Location location,
-			double radius) {
+	public static void removeFireballsAroundPoint(Location location, double radius) {
 		for (int id : instances.keySet()) {
 			Fireball fireball = instances.get(id);
 			if (!fireball.launched)
@@ -274,8 +264,7 @@ public class Fireball {
 
 	}
 
-	public static boolean annihilateBlasts(Location location, double radius,
-			Player source) {
+	public static boolean annihilateBlasts(Location location, double radius, Player source) {
 		boolean broke = false;
 		for (int id : instances.keySet()) {
 			Fireball fireball = instances.get(id);

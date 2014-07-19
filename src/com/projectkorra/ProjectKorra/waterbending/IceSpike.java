@@ -25,22 +25,20 @@ import com.projectkorra.ProjectKorra.TempPotionEffect;
 public class IceSpike {
 
 	public static ConcurrentHashMap<Integer, IceSpike> instances = new ConcurrentHashMap<Integer, IceSpike>();
-	public ConcurrentHashMap<Player, Long> removeTimers = new ConcurrentHashMap<Player, Long>();
 	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
-	public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Height");
-	public static long removeTimer = 500;
-
+	public ConcurrentHashMap<Player, Long> removeTimers = new ConcurrentHashMap<Player, Long>();
 	private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<Block, Block>();
 	private static ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
+	
+	public static long removeTimer = 500;
+	public static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
+	public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Height");
+	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceSpike.Range");
 
 	private static int ID = Integer.MIN_VALUE;
-
-	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceSpike.Range");
-	public static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
 	private static double speed = 25;
-	private static final Vector direction = new Vector(0, 1, 0);
-
 	private static long interval = (long) (1000. / speed);
+	private static final Vector direction = new Vector(0, 1, 0);
 
 	private Location origin;
 	private Location location;
@@ -48,8 +46,8 @@ public class IceSpike {
 	private Player player;
 	private int progress = 0;
 	private double damage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceSpike.Damage");
-	int id;
 	private long time;
+	int id;
 	int height = 2;
 	private Vector thrown = new Vector(0, ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceSpike.ThrowingMult"), 0);
 	private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
@@ -68,15 +66,11 @@ public class IceSpike {
 
 			double lowestdistance = range + 1;
 			Entity closestentity = null;
-			for (Entity entity : Methods.getEntitiesAroundPoint(
-					player.getLocation(), range)) {
-				if (Methods.getDistanceFromLine(player.getLocation()
-						.getDirection(), player.getLocation(), entity
-						.getLocation()) <= 2
+			for (Entity entity : Methods.getEntitiesAroundPoint(player.getLocation(), range)) {
+				if (Methods.getDistanceFromLine(player.getLocation().getDirection(), player.getLocation(), entity.getLocation()) <= 2
 						&& (entity instanceof LivingEntity)
 						&& (entity.getEntityId() != player.getEntityId())) {
-					double distance = player.getLocation().distance(
-							entity.getLocation());
+					double distance = player.getLocation().distance(entity.getLocation());
 					if (distance < lowestdistance) {
 						closestentity = entity;
 						lowestdistance = distance;
@@ -84,8 +78,7 @@ public class IceSpike {
 				}
 			}
 			if (closestentity != null) {
-				Block temptestingblock = closestentity.getLocation().getBlock()
-						.getRelative(BlockFace.DOWN, 1);
+				Block temptestingblock = closestentity.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
 				// if (temptestingblock.getType() == Material.ICE){
 				this.block = temptestingblock;
 				// }
@@ -115,15 +108,14 @@ public class IceSpike {
 		}
 	}
 
-	public IceSpike(Player player, Location origin, int damage,
-			Vector throwing, long aoecooldown) {
+	public IceSpike(Player player, Location origin, int damage,	Vector throwing, long aoecooldown) {
 		cooldown = aoecooldown;
 		this.player = player;
 		this.origin = origin;
-		location = origin.clone();
-		block = location.getBlock();
 		this.damage = damage;
 		this.thrown = throwing;
+		location = origin.clone();
+		block = location.getBlock();
 
 		loadAffectedBlocks();
 
@@ -144,8 +136,7 @@ public class IceSpike {
 		affectedblocks.clear();
 		Block thisblock;
 		for (int i = 1; i <= height; i++) {
-			thisblock = block.getWorld().getBlockAt(
-					location.clone().add(direction.clone().multiply(i)));
+			thisblock = block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(i)));
 			affectedblocks.put(thisblock, thisblock);
 		}
 	}
@@ -196,13 +187,8 @@ public class IceSpike {
 				moveEarth();
 				removeTimers.put(player, System.currentTimeMillis());
 			} else {
-				if (removeTimers.get(player) + removeTimer <= System
-						.currentTimeMillis()) {
-					baseblocks.put(
-							location.clone()
-							.add(direction.clone().multiply(
-									-1 * (height))).getBlock(),
-									(height - 1));
+				if (removeTimers.get(player) + removeTimer <= System.currentTimeMillis()) {
+					baseblocks.put(location.clone().add(direction.clone().multiply(-1 * (height))).getBlock(),(height - 1));
 					if (!revertblocks()) {
 						instances.remove(id);
 					}
@@ -218,12 +204,10 @@ public class IceSpike {
 		progress++;
 		Block affectedblock = location.clone().add(direction).getBlock();
 		location = location.add(direction);
-		if (Methods.isRegionProtectedFromBuild(player, "IceSpike",
-				location))
+		if (Methods.isRegionProtectedFromBuild(player, "IceSpike", location))
 			return false;
 		for (Entity en : Methods.getEntitiesAroundPoint(location, 1.4)) {
-			if (en instanceof LivingEntity && en != player
-					&& !damaged.contains(((LivingEntity) en))) {
+			if (en instanceof LivingEntity && en != player && !damaged.contains(((LivingEntity) en))) {
 				LivingEntity le = (LivingEntity) en;
 				affect(le);
 				// le.setVelocity(thrown);
@@ -251,14 +235,12 @@ public class IceSpike {
 		if (entity instanceof Player) {
 			BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 			if (bPlayer.canBeSlowed()) {
-				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW,
-						70, mod);
+				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 				new TempPotionEffect(entity, effect);
 				bPlayer.slow(slowCooldown);
 			}
 		} else {
-			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70,
-					mod);
+			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 			new TempPotionEffect(entity, effect);
 		}
 

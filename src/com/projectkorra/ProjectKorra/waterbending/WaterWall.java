@@ -19,29 +19,26 @@ import com.projectkorra.ProjectKorra.firebending.FireBlast;
 public class WaterWall {
 
 	public static ConcurrentHashMap<Integer, WaterWall> instances = new ConcurrentHashMap<Integer, WaterWall>();
-
-	private static final long interval = 30;
-
 	public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Block, Player> wallblocks = new ConcurrentHashMap<Block, Player>();
-
-	private static final byte full = 0x0;
-	// private static final byte half = 0x4;
-
+	
 	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 	// private static double speed = 1.5;
+	private static final long interval = 30;
+	private static final byte full = 0x0;
+	// private static final byte half = 0x4;
 
 	Player player;
 	private Location location = null;
 	private Block sourceblock = null;
 	// private Block oldwater = null;
-	private boolean progressing = false;
 	private Location firstdestination = null;
 	private Location targetdestination = null;
 	private Vector firstdirection = null;
 	private Vector targetdirection = null;
 	// private boolean falling = false;
+	private boolean progressing = false;
 	private boolean settingup = false;
 	private boolean forming = false;
 	private boolean frozen = false;
@@ -91,15 +88,12 @@ public class WaterWall {
 			}
 		}
 
-		if (!instances.containsKey(player.getEntityId())
-				&& WaterReturn.hasWaterBottle(player)) {
+		if (!instances.containsKey(player.getEntityId()) && WaterReturn.hasWaterBottle(player)) {
 
 			Location eyeloc = player.getEyeLocation();
-			Block block = eyeloc.add(eyeloc.getDirection().normalize())
-					.getBlock();
+			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
 			if (Methods.isTransparentToEarthbending(player, block)
-					&& Methods.isTransparentToEarthbending(player,
-							eyeloc.getBlock())) {
+					&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData(full);
 				Wave wave = new Wave(player);
@@ -150,8 +144,7 @@ public class WaterWall {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = Methods.getWaterSourceBlock(player, range,
-				Methods.canPlantbend(player));
+		Block block = Methods.getWaterSourceBlock(player, range, Methods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -185,9 +178,7 @@ public class WaterWall {
 
 	public void moveWater() {
 		if (sourceblock != null) {
-			targetdestination = player.getTargetBlock(
-					Methods.getTransparentEarthbending(), (int) range)
-					.getLocation();
+			targetdestination = player.getTargetBlock(Methods.getTransparentEarthbending(), (int) range).getLocation();
 
 			if (targetdestination.distance(location) <= 1) {
 				progressing = false;
@@ -196,10 +187,8 @@ public class WaterWall {
 				progressing = true;
 				settingup = true;
 				firstdestination = getToEyeLevel();
-				firstdirection = getDirection(sourceblock.getLocation(),
-						firstdestination);
-				targetdirection = getDirection(firstdestination,
-						targetdestination);
+				firstdirection = getDirection(sourceblock.getLocation(), firstdestination);
+				targetdirection = getDirection(firstdestination, targetdestination);
 				if (Methods.isPlant(sourceblock))
 					new Plantbending(sourceblock);
 				if (!Methods.isAdjacentToThreeOrMoreSources(sourceblock)) {
@@ -272,34 +261,30 @@ public class WaterWall {
 			}
 
 			if (!progressing) {
-				sourceblock.getWorld().playEffect(location, Effect.SMOKE, 4,
-						(int) range);
+				sourceblock.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
 				return false;
 			}
 
 			if (forming) {
 				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location loc = Methods.getTargetedLocation(player, (int) range,
-						8, 9, 79);
+				Location loc = Methods.getTargetedLocation(player, (int) range,	8, 9, 79);
 				location = loc.clone();
 				Vector dir = player.getEyeLocation().getDirection();
 				Vector vec;
 				Block block;
-				for (double i = 0; i <= Methods.waterbendingNightAugment(radius,
-						player.getWorld()); i += 0.5) {
+				for (double i = 0; i <= Methods.waterbendingNightAugment(radius, player.getWorld()); i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
 						// loc.getBlock().setType(Material.GLOWSTONE);
 						vec = Methods.getOrthogonalVector(dir.clone(), angle, i);
 						block = loc.clone().add(vec).getBlock();
-						if (Methods.isRegionProtectedFromBuild(player,
-								"Surge", block.getLocation()))
+						if (Methods.isRegionProtectedFromBuild(player, "Surge", block.getLocation()))
 							continue;
 						if (wallblocks.containsKey(block)) {
 							blocks.add(block);
 						} else if (!blocks.contains(block)
 								&& (block.getType() == Material.AIR
-								|| block.getType() == Material.FIRE || Methods
-								.isWaterbendable(block, player))) {
+								|| block.getType() == Material.FIRE 
+								|| Methods.isWaterbendable(block, player))) {
 							wallblocks.put(block, player);
 							addWallBlock(block);
 							// if (frozen) {
@@ -310,16 +295,14 @@ public class WaterWall {
 							// }
 							// block.setType(Material.GLASS);
 							blocks.add(block);
-							FireBlast.removeFireBlastsAroundPoint(
-									block.getLocation(), 2);
+							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 							// Methods.verbose(wallblocks.size());
 						}
 					}
 				}
 
 				for (Block blocki : wallblocks.keySet()) {
-					if (wallblocks.get(blocki) == player
-							&& !blocks.contains(blocki)) {
+					if (wallblocks.get(blocki) == player && !blocks.contains(blocki)) {
 						finalRemoveWater(blocki);
 					}
 				}
@@ -327,8 +310,7 @@ public class WaterWall {
 				return true;
 			}
 
-			if (sourceblock.getLocation().distance(firstdestination) < .5
-					&& settingup) {
+			if (sourceblock.getLocation().distance(firstdestination) < .5 && settingup) {
 				settingup = false;
 			}
 
@@ -440,8 +422,7 @@ public class WaterWall {
 
 	private void addWater(Block block) {
 
-		if (Methods.isRegionProtectedFromBuild(player, "Surge",
-				block.getLocation()))
+		if (Methods.isRegionProtectedFromBuild(player, "Surge", block.getLocation()))
 			return;
 
 		if (!TempBlock.isTempBlock(block)) {
@@ -465,9 +446,8 @@ public class WaterWall {
 
 		if (!instances.containsKey(player.getEntityId())) {
 			if (!Wave.instances.containsKey(player.getEntityId())
-					&& Methods.getWaterSourceBlock(player,
-							(int) Wave.defaultrange, Methods.canPlantbend(player)) == null
-							&& WaterReturn.hasWaterBottle(player)) {
+					&& Methods.getWaterSourceBlock(player, (int) Wave.defaultrange, Methods.canPlantbend(player)) == null
+					&& WaterReturn.hasWaterBottle(player)) {
 
 				if (Wave.cooldowns.containsKey(player.getName())) {
 					if (Wave.cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
@@ -478,11 +458,9 @@ public class WaterWall {
 				}
 
 				Location eyeloc = player.getEyeLocation();
-				Block block = eyeloc.add(eyeloc.getDirection().normalize())
-						.getBlock();
+				Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
 				if (Methods.isTransparentToEarthbending(player, block)
-						&& Methods.isTransparentToEarthbending(player,
-								eyeloc.getBlock())) {
+						&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 					block.setType(Material.WATER);
 					block.setData(full);
 					WaterWall wall = new WaterWall(player);
@@ -500,9 +478,7 @@ public class WaterWall {
 			new Wave(player);
 			return;
 		} else {
-			if (Methods.isWaterbendable(
-					player.getTargetBlock(null, (int) Wave.defaultrange),
-					player)) {
+			if (Methods.isWaterbendable(player.getTargetBlock(null, (int) Wave.defaultrange), player)) {
 				new Wave(player);
 				return;
 			}

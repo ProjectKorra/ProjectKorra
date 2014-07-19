@@ -14,9 +14,10 @@ import com.projectkorra.ProjectKorra.airbending.AirBlast;
 
 public class Extinguish {
 
+	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
+	
 	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.HeatControl.Extinguish.Range");
 	private static double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.HeatControl.Extinguish.Radius");
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	
 	private static byte full = AirBlast.full;
 
@@ -30,14 +31,12 @@ public class Extinguish {
 			}
 		}
 
-		double range = Methods.firebendingDayAugment(defaultrange,
-				player.getWorld());
+		double range = Methods.firebendingDayAugment(defaultrange, player.getWorld());
 		if (Methods.isMeltable(player.getTargetBlock(null, (int) range))) {
 			new HeatMelt(player);
 			return;
 		}
-		double radius = Methods.firebendingDayAugment(defaultradius,
-				player.getWorld());
+		double radius = Methods.firebendingDayAugment(defaultradius, player.getWorld());
 		for (Block block : Methods.getBlocksAroundPoint(
 				player.getTargetBlock(null, (int) range).getLocation(), radius)) {
 			if (Methods.isRegionProtectedFromBuild(player, "Blaze",
@@ -45,20 +44,17 @@ public class Extinguish {
 				continue;
 			if (block.getType() == Material.FIRE) {
 				block.setType(Material.AIR);
-				block.getWorld().playEffect(block.getLocation(),
-						Effect.EXTINGUISH, 0);
+				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
 			} else if (block.getType() == Material.STATIONARY_LAVA) {
 				block.setType(Material.OBSIDIAN);
-				block.getWorld().playEffect(block.getLocation(),
-						Effect.EXTINGUISH, 0);
+				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
 			} else if (block.getType() == Material.LAVA) {
 				if (block.getData() == full) {
 					block.setType(Material.OBSIDIAN);
 				} else {
 					block.setType(Material.COBBLESTONE);
 				}
-				block.getWorld().playEffect(block.getLocation(),
-						Effect.EXTINGUISH, 0);
+				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
 			}
 		}
 
@@ -73,8 +69,7 @@ public class Extinguish {
 			}
 		}
 
-		if (player.getFireTicks() > 80
-				&& Methods.canBendPassive(player.getName(), Element.Fire)) {
+		if (player.getFireTicks() > 80 && Methods.canBendPassive(player.getName(), Element.Fire)) {
 			player.setFireTicks(80);
 		}
 

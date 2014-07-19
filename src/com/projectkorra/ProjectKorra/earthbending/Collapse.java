@@ -12,6 +12,8 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Collapse {
+	
+	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 
 	public static final int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Collapse.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Collapse.Radius");
@@ -19,9 +21,7 @@ public class Collapse {
 
 	private ConcurrentHashMap<Block, Block> blocks = new ConcurrentHashMap<Block, Block>();
 	private ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	private double radius = defaultradius;
-
 	private Player player;
 
 	public Collapse(Player player) {
