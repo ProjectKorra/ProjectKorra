@@ -25,8 +25,8 @@ public class AvatarState {
 	private static final long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.AvatarState.Cooldown");
 	private static boolean regenEnabled = config.getBoolean("Abilities.AvatarState.PotionEffects.Regeneration.Enabled");
 	private static int regenPower = config.getInt("Abilities.AvatarState.PotionEffects.Regeneration.Power") - 1;
-	private static boolean speedEnabled = config.getBoolean("Abilities.AvatarState.PotionEffects.Speed..Enabled");
-	private static int speedPower = config.getInt("Abilities.AvatarState.Potioneffects.Speed.Power") - 1;
+	private static boolean speedEnabled = config.getBoolean("Abilities.AvatarState.PotionEffects.Speed.Enabled");
+	private static int speedPower = config.getInt("Abilities.AvatarState.PotionEffects.Speed.Power") - 1;
 	private static boolean resistanceEnabled = config.getBoolean("Abilities.AvatarState.PotionEffects.DamageResistance.Enabled");
 	private static int resistancePower = config.getInt("Abilities.AvatarState.PotionEffects.DamageResistance.Power") - 1;
 	private static boolean fireResistanceEnabled = config.getBoolean("Abilities.AvatarState.PotionEffects.FireResistance.Enabled");
