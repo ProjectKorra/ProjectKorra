@@ -87,6 +87,7 @@ public class ConfigManager {
 				+ "State selected to deactivate it.");
 		config.addDefault("Abilities.AvatarState.Cooldown", 7200000);
 		config.addDefault("Abilities.AvatarState.Duration", 480000);
+		config.addDefault("Abilities.AvatarState.PowerMultiplier", 5);
 		config.addDefault("Abilities.AvatarState.PotionEffects.Regeneration.Enabled", true);
 		config.addDefault("Abilities.AvatarState.PotionEffects.Regeneration.Power", 3);
 		config.addDefault("Abilities.AvatarState.PotionEffects.Speed.Enabled", true);
