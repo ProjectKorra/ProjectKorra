@@ -85,6 +85,7 @@ permissions:
       bending.ability.Extraction: true
       bending.earth.passive: true
       bending.earth.metalbending: true
+      bending.earth.grapplinghook: true
   bending.fire:
     default: true
     description: Grants access to all firebending abilities.
@@ -108,6 +109,7 @@ permissions:
       bending.ability.Paralyze: true
       bending.ability.RapidPunch: true
       bending.chi.passive: true
+      bending.chi.grapplinghook: true
   bending.avatar:
     default: false
     description: Grants the Avatar Color.

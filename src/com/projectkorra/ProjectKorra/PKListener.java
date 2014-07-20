@@ -129,6 +129,15 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		if (Methods.isBender(player.getName(), Element.Chi) && !player.hasPermission("bending.chi.grapplinghook")) {
+			event.setCancelled(true);
+			return;
+		}
+		
+		if (Methods.isBender(player.getName(), Element.Earth) && !player.hasPermission("bending.earth.grapplinghook")) {
+			event.setCancelled(true);
+			return;
+		}
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
 		}
@@ -959,28 +968,6 @@ public class PKListener implements Listener {
 						}
 					}
 				}
-
-				//				Player damager = (Player) e.getDamager();
-				//				if (Methods.canBendPassive(damager.getName(), Element.Chi)) {
-				//					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
-				//						if (Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
-				//							return;
-				//						}
-				//						if (damager.getItemInHand() != null && Methods.isWeapon(damager.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
-				//							// Above method checks if the player has an item in their hand, if it is a weapon, and if they can bend with weapons.
-				//							if (Methods.getBoundAbility(damager) == null || Methods.getBoundAbility(damager).equalsIgnoreCase("RapidPunch")) { // We don't want them to be able to block chi if an ability is bound.
-				//								if (ChiPassive.willChiBlock(p)) {
-				//									ChiPassive.blockChi(p);
-				//								}
-				//							}
-				//							if (Methods.getBoundAbility(damager).equalsIgnoreCase("Paralyze")) {
-				//								if (ChiPassive.willChiBlock(p)) {
-				//									new Paralyze((Player) e.getDamager(), e.getEntity());
-				//								}
-				//							}
-				//						}
-				//					}
-				//				}
 			}
 		}
 	}
