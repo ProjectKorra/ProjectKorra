@@ -124,6 +124,7 @@ public class Methods {
 
 	public static boolean isBender(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
+		if (bPlayer == null) return false;
 		if (bPlayer.hasElement(element)) return true;
 		return false;
 	}
@@ -265,39 +266,37 @@ public class Methods {
 			DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = 'false' WHERE uuid = '" + uuid + "'");
 		}
 	}
-	
+
 
 
 	public static void deserializeFile() {
 		File readFile = new File(".", "bendingPlayers.yml");
-	    File writeFile = new File(".", "converted.yml");
-	    if (readFile.exists()) {
-        // plugin.log.info("File exists");
-	    	try {
-	    		DataInputStream input = new DataInputStream(new FileInputStream(readFile));
-	    		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+		File writeFile = new File(".", "converted.yml");
+		if (readFile.exists()) {
+			// plugin.log.info("File exists");
+			try {
+				DataInputStream input = new DataInputStream(new FileInputStream(readFile));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-	    		DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile));
-	    		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
-	    		String line;
-	    		while ((line = reader.readLine()) != null) {
-	    			if (!line.trim().contains("==: BendingPlayer")) {
-	    				writer.write(line + "\n");
-	    			}
-	    		}
+				DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile));
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
+				String line;
+				while ((line = reader.readLine()) != null) {
+					if (!line.trim().contains("==: BendingPlayer")) {
+						writer.write(line + "\n");
+					}
+				}
 
-	    		reader.close();
-	    		input.close();
-	    		writer.close();
-	    		output.close();
-	    	} catch (IOException e) {
-	    		e.printStackTrace();
-	    	}
-	    }
+				reader.close();
+				input.close();
+				writer.close();
+				output.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
-
-
-
+	
 	public static void stopBending() {
 		List<AbilityModule> abilities = AbilityModuleManager.ability;
 		for (AbilityModule ab: abilities) {
@@ -531,7 +530,7 @@ public class Methods {
 		}
 
 	}
-	
+
 	public static boolean hasPermission(Player player, String ability) {
 		if (player.hasPermission("bending.ability." + ability)) return true;
 		return false;
@@ -580,7 +579,7 @@ public class Methods {
 	public static ChatColor getEarthColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Earth"));
 	}
-	
+
 	public static ChatColor getMetalbendingColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Metalbending"));
 	}
@@ -614,7 +613,7 @@ public class Methods {
 	public static String getBoundAbility(Player player) {
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
 		if (bPlayer == null) return null;
-		
+
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		return bPlayer.abilities.get(slot);
 	}
@@ -1699,12 +1698,12 @@ public class Methods {
 
 		return false;
 	}
-	
+
 	public static boolean canMetalbend(Player player) {
 		if (player.hasPermission("bending.earth.metalbending")) return true;
 		return false;
 	}
-	
+
 	public static boolean isMetalBlock(Block block) {
 		if (block.getType() == Material.GOLD_BLOCK
 				|| block.getType() == Material.IRON_BLOCK
