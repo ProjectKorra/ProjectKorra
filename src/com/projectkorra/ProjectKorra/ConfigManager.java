@@ -66,6 +66,7 @@ public class ConfigManager {
 
 		plugin.getConfig().addDefault("Properties.Water.CanBendWithWeapons", true);
 		plugin.getConfig().addDefault("Properties.Water.NightFactor", 1.5);
+		config.addDefault("Properties.Water.FullMoonFactor", 3.0);
 
 		config.addDefault("Properties.Earth.RevertEarthbending", true);
 		config.addDefault("Properties.Earth.SafeRevert", true);

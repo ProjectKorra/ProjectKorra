@@ -196,6 +196,15 @@ public class Methods {
 		}
 	}
 
+	public static boolean isFullMoon(World world) {
+		long days = world.getFullTime() / 24000;
+		long phase = days%8;
+		if (phase == 0) {
+			return true;
+		}
+		return false;
+	}
+
 	public static void saveBendingPlayer(String player) {
 		BendingPlayer bPlayer = BendingPlayer.players.get(player);
 		if (bPlayer == null) return;
@@ -296,7 +305,7 @@ public class Methods {
 			}
 		}
 	}
-	
+
 	public static void stopBending() {
 		List<AbilityModule> abilities = AbilityModuleManager.ability;
 		for (AbilityModule ab: abilities) {
@@ -1089,12 +1098,17 @@ public class Methods {
 
 	public static double waterbendingNightAugment(double value, World world) {
 		if (isNight(world)) {
-			return plugin.getConfig().getDouble("Properties.Water.NightFactor") * value;
+			if (isFullMoon(world)) {
+				return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
+			} else {
+				return plugin.getConfig().getDouble("Properties.Water.NightFactor") * value;
+			}
 		}
 		return value;
 	}
 
 	public static double getWaterbendingNightAugment(World world) {
+		if (isNight(world) && isFullMoon(world)) return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
 		if (isNight(world)) return plugin.getConfig().getDouble("Properties.Water.NightFactor");
 		return 1;
 	}

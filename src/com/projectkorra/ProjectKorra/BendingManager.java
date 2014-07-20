@@ -74,6 +74,7 @@ public class BendingManager implements Runnable {
 	static final String defaultsunrisemessage = "You feel the strength of the rising sun empowering your firebending.";
 	static final String defaultsunsetmessage = "You feel the empowering of your firebending subside as the sun sets.";
 	static final String defaultmoonrisemessage = "You feel the strength of the rising moon empowering your waterbending.";
+	static final String defaultfullmoonrisemessage = "A full moon is rising, empowering your waterbending like never before.";
 	static final String defaultmoonsetmessage = "You feel the empowering of your waterbending subside as the moon sets.";
 
 	public BendingManager(ProjectKorra plugin) {
@@ -244,7 +245,11 @@ public class BendingManager implements Runnable {
 			if (Methods.isNight(world) && !night) {
 				for (Player player: world.getPlayers()) {
 					if (Methods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
-						player.sendMessage(ChatColor.AQUA + defaultmoonrisemessage);
+						if (Methods.isFullMoon(world)) {
+							player.sendMessage(ChatColor.AQUA + defaultfullmoonrisemessage);
+						} else {
+							player.sendMessage(ChatColor.AQUA + defaultmoonrisemessage);
+						}
 					}
 				}
 				nights.replace(world, true);

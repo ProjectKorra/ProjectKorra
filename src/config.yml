@@ -36,6 +36,7 @@ Properties:
   Water:
     CanBendWithWeapons: false
     NightFactor: 1.5
+    FullMoonFactor: 3.0
   Earth:
     RevertEarthbending: true
     SafeRevert: true
