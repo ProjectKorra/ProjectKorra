@@ -407,6 +407,14 @@ public class Commands {
 								}
 							}
 							return true;
+						} else {
+							s.sendMessage(ChatColor.RED + "Not a valid Element." + ChatColor.WHITE + " Elements: " + 
+									Methods.getAirColor() + "Air" + 
+									Methods.getEarthColor() + "Earth" + 
+									Methods.getFireColor() + "Fire" +
+									Methods.getWaterColor() + "Water" +
+									Methods.getChiColor() + "Chi");
+								
 						}
 					}
 					if (args.length == 1) {
@@ -496,6 +504,14 @@ public class Commands {
 						}
 						if (Methods.isBender(un, Element.Chi)) {
 							s.sendMessage(Methods.getChiColor() + "- ChiBlocker");
+						}
+						BendingPlayer bPlayer = Methods.getBendingPlayer(un);
+						if (bPlayer != null)  {
+							s.sendMessage("Abilities: ");
+							for (int i = 1; i <= 9; i++) {
+								String ability = bPlayer.getAbilities().get(i);
+								if (ability != null) s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
+							}
 						}
 						return true;
 					}
