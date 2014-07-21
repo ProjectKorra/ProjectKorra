@@ -228,6 +228,10 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
+					if (Methods.isImportEnabled()) {
+						s.sendMessage(ChatColor.RED + "Importing has been disabled in the config");
+						return true;
+					}
 					
 					s.sendMessage(ChatColor.GREEN + "Preparing data for import.");					
 					File bendingPlayersFile = new File(".", "converted.yml");
@@ -269,7 +273,7 @@ public class Commands {
 					final CommandSender sender = s;
 					s.sendMessage(ChatColor.GREEN + "Import of data started. Do NOT stop / reload your server.");
 					if (debug) {
-						s.sendMessage(ChatColor.RED + "Console will print out all of the players that are imported as they import.");
+						s.sendMessage(ChatColor.RED + "Console will print out all of the players that are imported if debug mode is enabled as they import.");
 					}
 					importTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
 						public void run() {
@@ -283,6 +287,8 @@ public class Commands {
 								if (bPlayers.isEmpty()) {
 									sender.sendMessage(ChatColor.GREEN + "All data has been queued up, please allow up to 5 minutes for the data to complete, then reboot your server.");
 									Bukkit.getServer().getScheduler().cancelTask(importTask.getTaskId());
+									plugin.getConfig().set("Properties.ImportEnabled", false);
+									plugin.saveConfig();
 									for (Player player: Bukkit.getOnlinePlayers()) {
 										Methods.createBendingPlayer(player.getUniqueId(), player.getName());
 									}

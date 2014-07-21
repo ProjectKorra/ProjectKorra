@@ -1,4 +1,5 @@
 Properties:
+  ImportEnabled: true
   GlobalCooldown: 500
   SeaLevel: 62
   CustomItems:

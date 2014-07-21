@@ -1738,5 +1738,9 @@ public class Methods {
 		if (AbilityModuleManager.metalbendingabilities.contains(ability)) return true;
 		return false;
 	}
+	
+	public static boolean isImportEnabled() {
+		return plugin.getConfig().getBoolean("Properties.ImportEnabled");
+	}
 
 }

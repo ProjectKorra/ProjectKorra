@@ -48,8 +48,9 @@ public class ConfigManager {
 		config.addDefault("Properties.Chat.Colors.Fire", "RED");
 		config.addDefault("Properties.Chat.Colors.Chi", "GOLD");
 
-		plugin.getConfig().addDefault("Properties.GlobalCooldown", 500);
-		plugin.getConfig().addDefault("Properties.SeaLevel", 62);
+		config.addDefault("Properties.ImportEnabled", true);
+		config.addDefault("Properties.GlobalCooldown", 500);
+		config.addDefault("Properties.SeaLevel", 62);
 
 		config.addDefault("Properties.CustomItems.GrapplingHook.Enable", true);
 		config.addDefault("Properties.CustomItems.GrapplingHook.IronUses", 25);
@@ -62,25 +63,25 @@ public class ConfigManager {
 		config.addDefault("Properties.RegionProtection.RespectTowny", true);
 		config.addDefault("Properties.RegionProtection.RespectPreciousStones", true);
 
-		plugin.getConfig().addDefault("Properties.Air.CanBendWithWeapons", false);
+		config.addDefault("Properties.Air.CanBendWithWeapons", false);
 
-		plugin.getConfig().addDefault("Properties.Water.CanBendWithWeapons", true);
-		plugin.getConfig().addDefault("Properties.Water.NightFactor", 1.5);
+		config.addDefault("Properties.Water.CanBendWithWeapons", true);
+		config.addDefault("Properties.Water.NightFactor", 1.5);
 		config.addDefault("Properties.Water.FullMoonFactor", 3.0);
 
 		config.addDefault("Properties.Earth.RevertEarthbending", true);
 		config.addDefault("Properties.Earth.SafeRevert", true);
 		config.addDefault("Properties.Earth.RevertCheckTime", 300000);
-		plugin.getConfig().addDefault("Properties.Earth.CanBendWithWeapons", true);
-		plugin.getConfig().addDefault("Properties.Earth.EarthbendableBlocks", earthbendable);
+		config.addDefault("Properties.Earth.CanBendWithWeapons", true);
+		config.addDefault("Properties.Earth.EarthbendableBlocks", earthbendable);
 
-		plugin.getConfig().addDefault("Properties.Fire.CanBendWithWeapons", true);
-		plugin.getConfig().addDefault("Properties.Fire.DayFactor", 1.5);
+		config.addDefault("Properties.Fire.CanBendWithWeapons", true);
+		config.addDefault("Properties.Fire.DayFactor", 1.5);
 
-		plugin.getConfig().addDefault("Properties.Chi.CanBendWithWeapons", true);
+		config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
-		plugin.getConfig().addDefault("Abilities.AvatarState.Enabled", true);
-		plugin.getConfig().addDefault("Abilities.AvatarState.Description", "The signature ability of the Avatar, this is a toggle. Click to activate to become "
+		config.addDefault("Abilities.AvatarState.Enabled", true);
+		config.addDefault("Abilities.AvatarState.Description", "The signature ability of the Avatar, this is a toggle. Click to activate to become "
 				+ "nearly unstoppable. While in the Avatar State, the user takes severely reduced damage from "
 				+ "all sources, regenerates health rapidly, and is granted extreme speed. Nearly all abilities "
 				+ "are incredibly amplified in this state. Additionally, AirShield and FireJet become toggle-able "
@@ -97,9 +98,9 @@ public class ConfigManager {
 		config.addDefault("Abilities.AvatarState.PotionEffects.FireResistance.Enabled", true);
 		config.addDefault("Abilities.AvatarState.PotionEffects.FireResistance.Power", 3);
 
-		plugin.getConfig().addDefault("Abilities.Air.Passive.Factor", 0.3);
-		plugin.getConfig().addDefault("Abilities.Air.Passive.Speed", 2);
-		plugin.getConfig().addDefault("Abilities.Air.Passive.Jump", 3);
+		config.addDefault("Abilities.Air.Passive.Factor", 0.3);
+		config.addDefault("Abilities.Air.Passive.Speed", 2);
+		config.addDefault("Abilities.Air.Passive.Jump", 3);
 
 		config.addDefault("Abilities.Air.AirBlast.Enabled", true);
 		config.addDefault("Abilities.Air.AirBlast.Description", "AirBlast is the most fundamental bending technique of an airbender."
@@ -133,8 +134,8 @@ public class ConfigManager {
 				+ "Any other actions will deactivate this ability.");
 		config.addDefault("Abilities.Air.AirScooter.Speed", .675);
 
-		plugin.getConfig().addDefault("Abilities.Air.Tornado.Enabled", true);
-		plugin.getConfig().addDefault("Abilities.Air.Tornado.Description", "To use, simply sneak (default: shift). "
+		config.addDefault("Abilities.Air.Tornado.Enabled", true);
+		config.addDefault("Abilities.Air.Tornado.Description", "To use, simply sneak (default: shift). "
 				+ "This will create a swirling vortex at the targeted location. "
 				+ "Any creature or object caught in the vortex will be launched up "
 				+ "and out in some random direction. If another player gets caught "
@@ -186,7 +187,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.Tornado.MobPushFactor", 1);
 		config.addDefault("Abilities.Air.Tornado.PlayerPushFactor", 1);
 
-		plugin.getConfig().addDefault("Abilities.Water.Passive.SwimSpeedFactor", 0.7);
+		config.addDefault("Abilities.Water.Passive.SwimSpeedFactor", 0.7);
 
 		config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
 		config.addDefault("Abilities.Water.Bloodbending.Description", "This ability was made illegal for a reason. With this ability selected, sneak while "
@@ -253,7 +254,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Torrent.Enabled", true);
 		config.addDefault("Abilities.Water.Torrent.Description", "Torrent is one of the strongest moves in a waterbender's arsenal. To use, first click a source block to select it; then hold shift to begin streaming the water around you. Water flowing around you this way will damage and knock back nearby enemies and projectiles. If you release shift during this, you will create a large wave that expands outwards from you, launching anything in its path back. Instead, if you click you release the water and channel it to flow towards your cursor. Anything caught in the blast will be tossed about violently and take damage. Finally, if you click again when the water is torrenting, it will freeze the area around it when it is obstructed.");
 
-		plugin.getConfig().addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
+		config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 
 		config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
 		config.addDefault("Abilities.Water.WaterBubble.Description","To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
@@ -267,7 +268,7 @@ public class ConfigManager {
 				+ "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.");
 		config.addDefault("Abilities.Water.WaterSpout.Height", 20);
 
-		plugin.getConfig().addDefault("Abilities.Earth.Passive.Duration", 2500);
+		config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 
 		config.addDefault("Abilities.Earth.Catapult.Enabled", true);
 		config.addDefault("Abilities.Earth.Catapult.Description", "To use, left-click while looking in the direction you want to be launched. "
@@ -450,9 +451,9 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.WallOfFire.Cooldown", 500);
 		config.addDefault("Abilities.Fire.WallOfFire.Interval", 7500);
 		
-		plugin.getConfig().addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
-		plugin.getConfig().addDefault("Abilities.Chi.Passive.Speed", 1);
-		plugin.getConfig().addDefault("Abilities.Chi.Passive.Jump", 2);
+		config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
+		config.addDefault("Abilities.Chi.Passive.Speed", 1);
+		config.addDefault("Abilities.Chi.Passive.Jump", 2);
 		config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 2500);
 		config.addDefault("Abilities.Chi.Passive.DodgeChange", 25);
 
@@ -474,16 +475,16 @@ public class ConfigManager {
 		config.addDefault("Abilities.Chi.RapidPunch.Cooldown", 15000);
 		config.addDefault("Abilities.Chi.RapidPunch.Punches", 4);
 
-		plugin.getConfig().addDefault("Storage.engine", "sqlite");
+		config.addDefault("Storage.engine", "sqlite");
 
-		plugin.getConfig().addDefault("Storage.MySQL.host", "localhost");
-		plugin.getConfig().addDefault("Storage.MySQL.port", 3306);
-		plugin.getConfig().addDefault("Storage.MySQL.pass", "");
-		plugin.getConfig().addDefault("Storage.MySQL.db", "minecraft");
-		plugin.getConfig().addDefault("Storage.MySQL.user", "root");
+		config.addDefault("Storage.MySQL.host", "localhost");
+		config.addDefault("Storage.MySQL.port", 3306);
+		config.addDefault("Storage.MySQL.pass", "");
+		config.addDefault("Storage.MySQL.db", "minecraft");
+		config.addDefault("Storage.MySQL.user", "root");
 
 		config.addDefault("debug", false);
-		plugin.getConfig().options().copyDefaults(true);
+		config.options().copyDefaults(true);
 		plugin.saveConfig();
 	}
 }
