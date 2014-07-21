@@ -16,6 +16,7 @@ import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class AirBlast {
 
@@ -223,7 +224,8 @@ public class AirBlast {
 	}
 
 	private void advanceLocation() {
-		location.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
+		ParticleEffect.SPELL.display(location, (float)0, (float)0, (float)0, (float)speed, (int)20);
+//		location.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
 
@@ -327,8 +329,9 @@ public class AirBlast {
 			return;
 		}
 
-		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
-				(int) originselectrange);
+		ParticleEffect.SPELL.display(origin, (float) 0, (float) 0, 0F, (float) speed, 20);
+//		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
+//				(int) originselectrange);
 	}
 
 	public static void removeAll() {
