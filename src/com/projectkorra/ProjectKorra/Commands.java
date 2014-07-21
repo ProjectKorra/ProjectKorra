@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra;
 
 import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -77,8 +79,7 @@ public class Commands {
 						return true;
 					}
 
-					plugin.reloadConfig();
-					Methods.stopBending();
+					Methods.reloadPlugin();
 					s.sendMessage(ChatColor.AQUA + "Bending config reloaded.");
 					return true;
 				}
@@ -304,22 +305,25 @@ public class Commands {
 								
 								HashMap<Integer, String> abilities = bPlayer.abilities;
 								
-								DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, element, permaremoved) VALUES ('" + bPlayer.uuid.toString() + "', '" + bPlayer.player + "', '" + elements + "', '" + bPlayer.isPermaRemoved() +"')");
-								for (int slot = 1; slot < 10; slot++) {
-									DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
-								}
-//								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.uuid.toString() + "'");
+								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.uuid.toString() + "'");
 								
-//								try {
-//									if (rs2.next()) { // SQL Data already exists for player.
-//										DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + bPlayer.player + "' WHERE uuid = '" + bPlayer.uuid.toString());
-//										DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + bPlayer.uuid.toString());
-//										DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = 'false' WHERE uuid = '" + bPlayer.uuid.toString());
-//									} else {
-//									}
-//								} catch (SQLException ex) {
-//									ex.printStackTrace();
-//								}
+								try {
+									if (rs2.next()) { // SQL Data already exists for player.
+										DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + bPlayer.player + "' WHERE uuid = '" + bPlayer.uuid.toString());
+										DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + bPlayer.uuid.toString());
+										DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + bPlayer.isPermaRemoved() + "' WHERE uuid = '" + bPlayer.uuid.toString());
+										for (int slot = 1; slot < 10; slot++) {
+											DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
+										}
+									} else {
+										DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, element, permaremoved) VALUES ('" + bPlayer.uuid.toString() + "', '" + bPlayer.player + "', '" + elements + "', '" + bPlayer.isPermaRemoved() +"')");
+										for (int slot = 1; slot < 10; slot++) {
+											DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
+										}
+									}
+								} catch (SQLException ex) {
+									ex.printStackTrace();
+								}
 								i++;
 								if (debug) {
 									System.out.println("[ProjectKorra] Successfully imported " + bPlayer.player + ". " + bPlayers.size() + " players left to import.");

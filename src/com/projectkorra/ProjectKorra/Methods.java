@@ -1695,5 +1695,23 @@ public class Methods {
 	public static boolean isImportEnabled() {
 		return plugin.getConfig().getBoolean("Properties.ImportEnabled");
 	}
+	
+	public static void reloadPlugin() {
+		for (Player player: Bukkit.getOnlinePlayers()) {
+			Methods.saveBendingPlayer(player.getName());
+		}
+		DBConnection.sql.close();
+		plugin.reloadConfig();
+		Methods.stopBending();
+		DBConnection.host = plugin.getConfig().getString("Storage.MySQL.host");
+		DBConnection.port = plugin.getConfig().getInt("Storage.MySQL.port");
+		DBConnection.pass = plugin.getConfig().getString("Storage.MySQL.pass");
+		DBConnection.db = plugin.getConfig().getString("Storage.MySQL.db");
+		DBConnection.user = plugin.getConfig().getString("Storage.MySQL.user");
+		DBConnection.init();
+		for (Player player: Bukkit.getOnlinePlayers()) {
+			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
+		}
+	}
 
 }
