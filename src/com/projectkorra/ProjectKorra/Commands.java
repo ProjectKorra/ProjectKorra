@@ -816,6 +816,7 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "/bending remove [Player]");
 						s.sendMessage(ChatColor.YELLOW + "/bending toggle");
 						s.sendMessage(ChatColor.YELLOW + "/bending version");
+						s.sendMessage(ChatColor.YELLOW + "/bending who");
 						return true;
 					}
 					if (!s.hasPermission("bending.command.help")) {
