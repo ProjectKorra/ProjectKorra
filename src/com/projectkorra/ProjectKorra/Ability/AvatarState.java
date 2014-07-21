@@ -43,9 +43,6 @@ public class AvatarState {
 		this.player = player;
 		if (instances.containsKey(player)) {
 			instances.remove(player);
-			if (cooldowns.containsKey(player.getName())) {
-				cooldowns.remove(player.getName());
-			}
 			return;
 		}
 		if (cooldowns.containsKey(player.getName())) {
