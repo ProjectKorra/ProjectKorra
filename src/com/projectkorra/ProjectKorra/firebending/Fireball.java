@@ -201,20 +201,30 @@ public class Fireball {
 			explosion = player.getWorld().spawn(location, TNTPrimed.class);
 			explosion.setFuseTicks(0);
 			float yield = 1;
-			switch (player.getWorld().getDifficulty()) {
-			case PEACEFUL:
-				yield *= 2.;
-				break;
-			case EASY:
-				yield *= 2.;
-				break;
-			case NORMAL:
-				yield *= 1.;
-				break;
-			case HARD:
-				yield *= 3. / 4.;
-				break;
+			if (!AvatarState.isAvatarState(player)) {
+				if (Methods.isDay(player.getWorld())) {
+					Methods.firebendingDayAugment(yield, player.getWorld());
+				} else {
+					yield *= 1.;
+				}
+			} else {
+				yield *= AvatarState.factor;
+//				yield = AvatarState.getValue(yield);
 			}
+//			switch (player.getWorld().getDifficulty()) {
+//			case PEACEFUL:
+//				yield *= 2.;
+//				break;
+//			case EASY:
+//				yield *= 2.;
+//				break;
+//			case NORMAL:
+//				yield *= 1.;
+//				break;
+//			case HARD:
+//				yield *= 3. / 4.;
+//				break;
+//			}
 			explosion.setYield(yield);
 			explosions.put(explosion, this);
 		}

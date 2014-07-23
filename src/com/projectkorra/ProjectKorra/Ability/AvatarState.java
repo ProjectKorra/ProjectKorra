@@ -33,7 +33,7 @@ public class AvatarState {
 	private static int fireResistancePower = config.getInt("Abilities.AvatarState.PotionEffects.FireResistance.Power") - 1;
 	private static long duration = config.getLong("Abilities.AvatarState.Duration");
 
-	private static final double factor = config.getDouble("Abilities.AvatarState.PowerMultiplier");
+	public static final double factor = config.getDouble("Abilities.AvatarState.PowerMultiplier");
 
 	Player player;
 
