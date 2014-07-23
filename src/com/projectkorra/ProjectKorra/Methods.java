@@ -219,62 +219,15 @@ public class Methods {
 		if (bPlayer.hasElement(Element.Chi)) elements.append("c");
 
 		HashMap<Integer, String> abilities = bPlayer.abilities;
-
-		if (abilities.get(1) != null) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot1 = '" + abilities.get(1) + "' WHERE uuid = '" + uuid + "'");
-		} else {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot1 = " + null + " WHERE uuid = '" + uuid + "'");
+		
+		for (int i = 1; i <= 9; i++) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i +" = '" + (abilities.get(i) == null ? null : abilities.get(i)) + "' WHERE uuid = '" + uuid + "'");
 		}
-		if (abilities.get(2) != null) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot2 = '" + abilities.get(2) + "' WHERE uuid = '" + uuid + "'");
-		} else {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot2 = " + null + " WHERE uuid = '" + uuid + "'");
-		}
-		if (abilities.get(3) != null) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot3 = '" + abilities.get(3) + "' WHERE uuid = '" + uuid + "'");
-		} else {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot3 = " + null + " WHERE uuid = '" + uuid + "'");
-		}
-		if (abilities.get(4) != null) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot4 = '" + abilities.get(4) + "' WHERE uuid = '" + uuid + "'");
-		} else {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot4 = " + null + " WHERE uuid = '" + uuid + "'");
-		}
-		if (abilities.get(5) != null) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot5 = '" + abilities.get(5) + "' WHERE uuid = '" + uuid + "'");
-		} else {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot5 = " + null + " WHERE uuid = '" + uuid + "'");
-		}
-		if (abilities.get(6) != null) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot6 = '" + abilities.get(6) + "' WHERE uuid = '" + uuid + "'");
-		} else {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot6 = " + null + " WHERE uuid = '" + uuid + "'");
-		}
-		if (abilities.get(7) != null) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot7 = '" + abilities.get(7) + "' WHERE uuid = '" + uuid + "'");
-		} else {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot7 = " + null + " WHERE uuid = '" + uuid + "'");
-		}
-		if (abilities.get(8) != null) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot8 = '" + abilities.get(8) + "' WHERE uuid = '" + uuid + "'");
-		} else {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot8 = " + null + " WHERE uuid = '" + uuid + "'");
-		}
-		if (abilities.get(9) != null) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot9 = '" + abilities.get(9) + "' WHERE uuid = '" + uuid + "'");
-		} else {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot9 = " + null + " WHERE uuid = '" + uuid + "'");
-		}
-
 
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
 		boolean permaRemoved = bPlayer.permaRemoved;
 
-		if (permaRemoved) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = 'true' WHERE uuid = '" + uuid + "'");
-		} else {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = 'false' WHERE uuid = '" + uuid + "'");
-		}
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : " false") +"' WHERE uuid = '" + uuid + "'");
 	}
 
 
@@ -1744,6 +1697,28 @@ public class Methods {
 	public static boolean isMetalbendingAbility(String ability) {
 		if (AbilityModuleManager.metalbendingabilities.contains(ability)) return true;
 		return false;
+	}
+	
+	public static boolean isImportEnabled() {
+		return plugin.getConfig().getBoolean("Properties.ImportEnabled");
+	}
+	
+	public static void reloadPlugin() {
+		for (Player player: Bukkit.getOnlinePlayers()) {
+			Methods.saveBendingPlayer(player.getName());
+		}
+		DBConnection.sql.close();
+		plugin.reloadConfig();
+		Methods.stopBending();
+		DBConnection.host = plugin.getConfig().getString("Storage.MySQL.host");
+		DBConnection.port = plugin.getConfig().getInt("Storage.MySQL.port");
+		DBConnection.pass = plugin.getConfig().getString("Storage.MySQL.pass");
+		DBConnection.db = plugin.getConfig().getString("Storage.MySQL.db");
+		DBConnection.user = plugin.getConfig().getString("Storage.MySQL.user");
+		DBConnection.init();
+		for (Player player: Bukkit.getOnlinePlayers()) {
+			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
+		}
 	}
 
 }

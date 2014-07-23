@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra;
 
 import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -77,8 +79,7 @@ public class Commands {
 						return true;
 					}
 
-					plugin.reloadConfig();
-					Methods.stopBending();
+					Methods.reloadPlugin();
 					s.sendMessage(ChatColor.AQUA + "Bending config reloaded.");
 					return true;
 				}
@@ -228,6 +229,10 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
+					if (Methods.isImportEnabled()) {
+						s.sendMessage(ChatColor.RED + "Importing has been disabled in the config");
+						return true;
+					}
 					
 					s.sendMessage(ChatColor.GREEN + "Preparing data for import.");					
 					File bendingPlayersFile = new File(".", "converted.yml");
@@ -269,7 +274,7 @@ public class Commands {
 					final CommandSender sender = s;
 					s.sendMessage(ChatColor.GREEN + "Import of data started. Do NOT stop / reload your server.");
 					if (debug) {
-						s.sendMessage(ChatColor.RED + "Console will print out all of the players that are imported as they import.");
+						s.sendMessage(ChatColor.RED + "Console will print out all of the players that are imported if debug mode is enabled as they import.");
 					}
 					importTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
 						public void run() {
@@ -283,6 +288,8 @@ public class Commands {
 								if (bPlayers.isEmpty()) {
 									sender.sendMessage(ChatColor.GREEN + "All data has been queued up, please allow up to 5 minutes for the data to complete, then reboot your server.");
 									Bukkit.getServer().getScheduler().cancelTask(importTask.getTaskId());
+									plugin.getConfig().set("Properties.ImportEnabled", false);
+									plugin.saveConfig();
 									for (Player player: Bukkit.getOnlinePlayers()) {
 										Methods.createBendingPlayer(player.getUniqueId(), player.getName());
 									}
@@ -298,22 +305,25 @@ public class Commands {
 								
 								HashMap<Integer, String> abilities = bPlayer.abilities;
 								
-								DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, element, permaremoved) VALUES ('" + bPlayer.uuid.toString() + "', '" + bPlayer.player + "', '" + elements + "', '" + bPlayer.isPermaRemoved() +"')");
-								for (int slot = 1; slot < 10; slot++) {
-									DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
-								}
-//								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.uuid.toString() + "'");
+								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.uuid.toString() + "'");
 								
-//								try {
-//									if (rs2.next()) { // SQL Data already exists for player.
-//										DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + bPlayer.player + "' WHERE uuid = '" + bPlayer.uuid.toString());
-//										DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + bPlayer.uuid.toString());
-//										DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = 'false' WHERE uuid = '" + bPlayer.uuid.toString());
-//									} else {
-//									}
-//								} catch (SQLException ex) {
-//									ex.printStackTrace();
-//								}
+								try {
+									if (rs2.next()) { // SQL Data already exists for player.
+										DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + bPlayer.player + "' WHERE uuid = '" + bPlayer.uuid.toString());
+										DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + bPlayer.uuid.toString());
+										DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + bPlayer.isPermaRemoved() + "' WHERE uuid = '" + bPlayer.uuid.toString());
+										for (int slot = 1; slot < 10; slot++) {
+											DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
+										}
+									} else {
+										DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, element, permaremoved) VALUES ('" + bPlayer.uuid.toString() + "', '" + bPlayer.player + "', '" + elements + "', '" + bPlayer.isPermaRemoved() +"')");
+										for (int slot = 1; slot < 10; slot++) {
+											DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
+										}
+									}
+								} catch (SQLException ex) {
+									ex.printStackTrace();
+								}
 								i++;
 								if (debug) {
 									System.out.println("[ProjectKorra] Successfully imported " + bPlayer.player + ". " + bPlayers.size() + " players left to import.");
@@ -401,6 +411,14 @@ public class Commands {
 								}
 							}
 							return true;
+						} else {
+							s.sendMessage(ChatColor.RED + "Not a valid Element." + ChatColor.WHITE + " Elements: " + 
+									Methods.getAirColor() + "Air" + 
+									Methods.getEarthColor() + "Earth" + 
+									Methods.getFireColor() + "Fire" +
+									Methods.getWaterColor() + "Water" +
+									Methods.getChiColor() + "Chi");
+								
 						}
 					}
 					if (args.length == 1) {
@@ -490,6 +508,14 @@ public class Commands {
 						}
 						if (Methods.isBender(un, Element.Chi)) {
 							s.sendMessage(Methods.getChiColor() + "- ChiBlocker");
+						}
+						BendingPlayer bPlayer = Methods.getBendingPlayer(un);
+						if (bPlayer != null)  {
+							s.sendMessage("Abilities: ");
+							for (int i = 1; i <= 9; i++) {
+								String ability = bPlayer.getAbilities().get(i);
+								if (ability != null) s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
+							}
 						}
 						return true;
 					}
@@ -816,6 +842,7 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "/bending remove [Player]");
 						s.sendMessage(ChatColor.YELLOW + "/bending toggle");
 						s.sendMessage(ChatColor.YELLOW + "/bending version");
+						s.sendMessage(ChatColor.YELLOW + "/bending who");
 						return true;
 					}
 					if (!s.hasPermission("bending.command.help")) {
