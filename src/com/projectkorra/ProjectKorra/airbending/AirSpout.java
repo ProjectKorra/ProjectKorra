@@ -131,8 +131,9 @@ public class AirSpout {
 				Location effectloc2 = new Location(location.getWorld(),
 						location.getX(), block.getY() + i, location.getZ());
 
-				location.getWorld().playEffect(effectloc2, Effect.SMOKE,
-						(int) directions[index], (int) height + 5);
+				Methods.playAirbendingParticles(effectloc2);
+//				location.getWorld().playEffect(effectloc2, Effect.SMOKE,
+//						(int) directions[index], (int) height + 5);
 
 				// Methods.verbose(directions[index]);
 

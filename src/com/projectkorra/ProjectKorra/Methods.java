@@ -65,6 +65,7 @@ import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
@@ -1111,6 +1112,12 @@ public class Methods {
 		if (isNight(world) && isFullMoon(world)) return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
 		if (isNight(world)) return plugin.getConfig().getDouble("Properties.Water.NightFactor");
 		return 1;
+	}
+	
+	public static void playAirbendingParticles(Location loc) {
+		for (int i = 0; i < 30; i++) {
+			ParticleEffect.SPELL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+		}
 	}
 
 	public static boolean isNight(World world) {

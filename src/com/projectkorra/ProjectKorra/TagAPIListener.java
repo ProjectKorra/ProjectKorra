@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 
@@ -14,6 +15,7 @@ public class TagAPIListener implements Listener {
 		this.plugin = plugin;
 	}
 	
+	@EventHandler
 	public void onNameTag(AsyncPlayerReceiveNameTagEvent e) {
 		List<Element> elements = Methods.getBendingPlayer(e.getNamedPlayer().getName()).getElements();
 		if (elements.size() > 1)

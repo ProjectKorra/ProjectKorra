@@ -130,8 +130,9 @@ public class AirScooter {
 			double x = Math.cos(Math.toRadians(angles.get(i))) * scooterradius;
 			double y = ((double) i) / 2 * scooterradius - scooterradius;
 			double z = Math.sin(Math.toRadians(angles.get(i))) * scooterradius;
-			player.getWorld().playEffect(origin.clone().add(x, y, z),
-					Effect.SMOKE, 4, (int) AirBlast.defaultrange);
+			Methods.playAirbendingParticles(origin.clone().add(x, y, z));
+//			player.getWorld().playEffect(origin.clone().add(x, y, z),
+//					Effect.SMOKE, 4, (int) AirBlast.defaultrange);
 		}
 		for (int i = 0; i < 5; i++) {
 			angles.set(i, angles.get(i) + 10);
