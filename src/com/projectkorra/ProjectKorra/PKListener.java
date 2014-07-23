@@ -570,7 +570,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
+		
 		if (Methods.isChiBlocked(player.getName())) {
 			event.setCancelled(true);
 			return;

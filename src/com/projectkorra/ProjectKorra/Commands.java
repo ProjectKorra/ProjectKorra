@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -404,7 +406,7 @@ public class Commands {
 								s.sendMessage(Methods.getChiColor() + "There are no chiblocking abilities available.");
 								return true;
 							}
-
+							
 							for (String st: AbilityModuleManager.chiabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
 									s.sendMessage(Methods.getChiColor()  + st);

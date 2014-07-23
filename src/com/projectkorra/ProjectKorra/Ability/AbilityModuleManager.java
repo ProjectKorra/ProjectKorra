@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra.Ability;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,11 +19,11 @@ public class AbilityModuleManager {
 	private final AbilityLoader<AbilityModule> loader;
 
 	public static HashSet<String> abilities;
-	public static HashSet<String> waterbendingabilities;
-	public static HashSet<String> airbendingabilities;
-	public static HashSet<String> earthbendingabilities;
-	public static HashSet<String> firebendingabilities;
-	public static HashSet<String> chiabilities;
+	public static List<String> waterbendingabilities;
+	public static List<String> airbendingabilities;
+	public static List<String> earthbendingabilities;
+	public static List<String> firebendingabilities;
+	public static List<String> chiabilities;
 	public static HashSet<String> shiftabilities;
 	public static HashMap<String, String> authors;
 	public static HashSet<String> harmlessabilities;
@@ -39,11 +41,11 @@ public class AbilityModuleManager {
 		}
 		loader = new AbilityLoader<AbilityModule>(plugin, path, new Object[] {});
 		abilities = new HashSet<String>();
-		waterbendingabilities = new HashSet<String>();
-		airbendingabilities = new HashSet<String>();
-		earthbendingabilities = new HashSet<String>();
-		firebendingabilities = new HashSet<String>();
-		chiabilities = new HashSet<String>();
+		waterbendingabilities = new ArrayList<String>();
+		airbendingabilities = new ArrayList<String>();
+		earthbendingabilities = new ArrayList<String>();
+		firebendingabilities = new ArrayList<String>();
+		chiabilities = new ArrayList<String>();
 		shiftabilities = new HashSet<String>();
 		descriptions = new HashMap<String, String>();
 		authors = new HashMap<String, String>();
@@ -154,6 +156,12 @@ public class AbilityModuleManager {
 			descriptions.put(ab.getName(), ab.getDescription());
 			authors.put(ab.getName(), ab.getAuthor());
 		}
+		
+		Collections.sort(airbendingabilities);
+		Collections.sort(waterbendingabilities);
+		Collections.sort(earthbendingabilities);
+		Collections.sort(firebendingabilities);
+		Collections.sort(chiabilities);
 	}
 
 }
