@@ -53,8 +53,10 @@ public class Commands {
 	String[] addaliases = {"add", "a"};
 	String[] whoaliases = {"who", "w"};
 	String[] importaliases = {"import", "i"};
-	
+
 	public static boolean debug = ProjectKorra.plugin.getConfig().getBoolean("debug");
+
+	public static boolean isToggledForAll = false;
 
 	private static BukkitTask importTask;
 	private void init() {
@@ -235,11 +237,11 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "Importing has been disabled in the config");
 						return true;
 					}
-					
+
 					s.sendMessage(ChatColor.GREEN + "Preparing data for import.");					
 					File bendingPlayersFile = new File(".", "converted.yml");
 					FileConfiguration bendingPlayers = YamlConfiguration.loadConfiguration(bendingPlayersFile);
-					
+
 					final LinkedList<BendingPlayer> bPlayers = new LinkedList<BendingPlayer>();
 					for (String string: bendingPlayers.getConfigurationSection("").getKeys(false)) {
 						if (string.equalsIgnoreCase("version")) continue;
@@ -261,17 +263,17 @@ public class Commands {
 								slot++;
 							}
 						}
-						
+
 						for (int i : oe) {
 							if (Element.getType(i) != null) {
 								element.add(Element.getType(i));
 							}
 						}
-						
+
 						BendingPlayer bPlayer = new BendingPlayer(uuid, playername, element, abilities, permaremoved);
 						bPlayers.add(bPlayer);
 					}
-					
+
 					final int total = bPlayers.size();
 					final CommandSender sender = s;
 					s.sendMessage(ChatColor.GREEN + "Import of data started. Do NOT stop / reload your server.");
@@ -285,7 +287,7 @@ public class Commands {
 								sender.sendMessage(ChatColor.GREEN + "10 / " + total + " players converted thus far!");
 								return;
 							}
-							
+
 							while (i < 10) {
 								if (bPlayers.isEmpty()) {
 									sender.sendMessage(ChatColor.GREEN + "All data has been queued up, please allow up to 5 minutes for the data to complete, then reboot your server.");
@@ -304,11 +306,11 @@ public class Commands {
 								if (bPlayer.hasElement(Element.Earth)) elements.append("e");
 								if (bPlayer.hasElement(Element.Fire)) elements.append("f");
 								if (bPlayer.hasElement(Element.Chi)) elements.append("c");
-								
+
 								HashMap<Integer, String> abilities = bPlayer.abilities;
-								
+
 								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.uuid.toString() + "'");
-								
+
 								try {
 									if (rs2.next()) { // SQL Data already exists for player.
 										DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + bPlayer.player + "' WHERE uuid = '" + bPlayer.uuid.toString());
@@ -334,7 +336,7 @@ public class Commands {
 						}
 					}, 0, 40);
 					return true;
-					
+
 				}
 				if (Arrays.asList(displayaliases).contains(args[0].toLowerCase())) {
 					if (args.length > 2) {
@@ -406,7 +408,7 @@ public class Commands {
 								s.sendMessage(Methods.getChiColor() + "There are no chiblocking abilities available.");
 								return true;
 							}
-							
+
 							for (String st: AbilityModuleManager.chiabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
 									s.sendMessage(Methods.getChiColor()  + st);
@@ -420,7 +422,7 @@ public class Commands {
 									Methods.getFireColor() + "Fire" +
 									Methods.getWaterColor() + "Water" +
 									Methods.getChiColor() + "Chi");
-								
+
 						}
 					}
 					if (args.length == 1) {
@@ -447,30 +449,57 @@ public class Commands {
 					}
 				}
 				if (Arrays.asList(togglealiases).contains(args[0].toLowerCase())) {
-					if (args.length != 1) {
-						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending toggle");
+					if (args.length > 2) {
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending toggle <all>");
 						return true;
 					}
-					if (!s.hasPermission("bending.command.toggle")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
-						return true;
-					}
+					if (args.length == 1) {
+						if (!s.hasPermission("bending.command.toggle")) {
+							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							return true;
+						}
 
-					if (!(s instanceof Player)) {
-						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
-						return true;
-					}
+						if (!(s instanceof Player)) {
+							s.sendMessage(ChatColor.RED + "This command is only usable by players.");
+							return true;
+						}
 
-					BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
+						BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
 
-					if (bPlayer.isToggled) {
-						s.sendMessage(ChatColor.RED + "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
-						bPlayer.isToggled = false;
-						return true;
+						if (!isToggledForAll) {
+							s.sendMessage(ChatColor.DARK_RED + "Bending has been toggled off for all players. You may not use this command until after it is turned back on.");
+							return true;
+						}
+						if (bPlayer.isToggled) {
+							s.sendMessage(ChatColor.RED + "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
+							bPlayer.isToggled = false;
+							return true;
+						} else {
+							s.sendMessage(ChatColor.GREEN + "You have turned your Bending back on.");
+							bPlayer.isToggled = true;
+							return true;
+						}
+					} else if (args.length == 2 && args[1].equalsIgnoreCase("all")) {
+						if (!s.hasPermission("bending.command.toggle.all")) {
+							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							return true;
+						}
+						
+						if (isToggledForAll) { // Bending is toggled off for all players.
+							isToggledForAll = false;
+							for (Player player: Bukkit.getOnlinePlayers()) {
+								s.sendMessage(ChatColor.GREEN + "Bending has been toggled back on for all players.");
+								return true;
+							}
+						} else {
+							isToggledForAll = true;
+							for (Player player: Bukkit.getOnlinePlayers()) {
+								s.sendMessage(ChatColor.RED + "Bending has been toggled off for all players.");
+								return true;
+							}
+						}
 					} else {
-						s.sendMessage(ChatColor.GREEN + "You have turned your Bending back on.");
-						bPlayer.isToggled = true;
-						return true;
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending toggle <all>");
 					}
 				}
 				if (Arrays.asList(whoaliases).contains(args[0].toLowerCase())) {
@@ -899,9 +928,9 @@ public class Commands {
 					}
 
 					if (Arrays.asList(togglealiases).contains(args[1].toLowerCase())) {
-						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending toggle");
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending toggle <all>");
 						s.sendMessage(ChatColor.YELLOW + "This command will toggle a player's own Bending on or off. If toggled off, all abilities should stop"
-								+ " working until it is toggled back on. Logging off will automatically toggle your Bending back on.");
+								+ " working until it is toggled back on. Logging off will automatically toggle your Bending back on. If you run the command /bending toggle all, Bending will be turned off for all players and cannot be turned back on until the command is run again.");
 						return true;
 					}
 					if (args[1].equalsIgnoreCase("who")) {

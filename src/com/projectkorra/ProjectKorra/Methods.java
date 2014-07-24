@@ -465,6 +465,7 @@ public class Methods {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
 		if (bPlayer == null) return false;
+		if (Commands.isToggledForAll) return false;
 		if (!bPlayer.isToggled) return false;
 		if (p == null) return false;
 		if (!p.hasPermission("bending.ability." + ability)) return false;
