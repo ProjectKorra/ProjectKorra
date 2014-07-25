@@ -1069,8 +1069,8 @@ public class Methods {
 	}
 	
 	public static void playAirbendingParticles(Location loc) {
-		for (int i = 0; i < 30; i++) {
-			ParticleEffect.SPELL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+		for (int i = 0; i < 20; i++) {
+			ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
 		}
 	}
 
