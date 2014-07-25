@@ -10,6 +10,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
+import chiblocking.Paralyze;
+
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -32,9 +34,9 @@ public class WaterSpout {
 	private TempBlock baseblock;
 
 	public WaterSpout(Player player) {
-//		if (BendingPlayer.getBendingPlayer(player).isOnCooldown(
-//				Abilities.WaterSpout))
-//			return;
+		//		if (BendingPlayer.getBendingPlayer(player).isOnCooldown(
+		//				Abilities.WaterSpout))
+		//			return;
 
 		if (instances.containsKey(player)) {
 			instances.get(player).remove();
@@ -101,43 +103,48 @@ public class WaterSpout {
 
 	public static void spout(Player player) {
 		WaterSpout spout = instances.get(player);
-		player.setFallDistance(0);
-		player.setSprinting(false);
-		// if (player.getVelocity().length() > threshold) {
-		// // Methods.verbose("Too fast!");
-		// player.setVelocity(player.getVelocity().clone().normalize()
-		// .multiply(threshold * .5));
-		// }
-		player.removePotionEffect(PotionEffectType.SPEED);
-		Location location = player.getLocation().clone().add(0, .2, 0);
-		Block block = location.clone().getBlock();
-		int height = spoutableWaterHeight(location, player);
-
-		// Methods.verbose(height + " " + WaterSpout.height + " "
-		// + affectedblocks.size());
-		if (height != -1) {
-			location = spout.base.getLocation();
-			for (int i = 1; i <= height; i++) {
-				block = location.clone().add(0, i, 0).getBlock();
-				if (!TempBlock.isTempBlock(block)) {
-					new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
-				}
-				// block.setType(Material.WATER);
-				// block.setData(full);
-				if (!affectedblocks.containsKey(block)) {
-					affectedblocks.put(block, block);
-				}
-				newaffectedblocks.put(block, block);
-			}
-			if (player.getLocation().getBlockY() > block.getY()) {
-				player.setFlying(false);
-			} else {
-				new Flight(player);
-				player.setAllowFlight(true);
-				player.setFlying(true);
-			}
-		} else {
+		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player)) {
 			instances.get(player).remove();
+		} else {
+
+			player.setFallDistance(0);
+			player.setSprinting(false);
+			// if (player.getVelocity().length() > threshold) {
+			// // Methods.verbose("Too fast!");
+			// player.setVelocity(player.getVelocity().clone().normalize()
+			// .multiply(threshold * .5));
+			// }
+			player.removePotionEffect(PotionEffectType.SPEED);
+			Location location = player.getLocation().clone().add(0, .2, 0);
+			Block block = location.clone().getBlock();
+			int height = spoutableWaterHeight(location, player);
+
+			// Methods.verbose(height + " " + WaterSpout.height + " "
+			// + affectedblocks.size());
+			if (height != -1) {
+				location = spout.base.getLocation();
+				for (int i = 1; i <= height; i++) {
+					block = location.clone().add(0, i, 0).getBlock();
+					if (!TempBlock.isTempBlock(block)) {
+						new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
+					}
+					// block.setType(Material.WATER);
+					// block.setData(full);
+					if (!affectedblocks.containsKey(block)) {
+						affectedblocks.put(block, block);
+					}
+					newaffectedblocks.put(block, block);
+				}
+				if (player.getLocation().getBlockY() > block.getY()) {
+					player.setFlying(false);
+				} else {
+					new Flight(player);
+					player.setAllowFlight(true);
+					player.setFlying(true);
+				}
+			} else {
+				instances.get(player).remove();
+			}
 		}
 	}
 
