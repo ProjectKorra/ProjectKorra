@@ -466,7 +466,7 @@ public class Commands {
 
 						BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
 
-						if (!isToggledForAll) {
+						if (isToggledForAll) {
 							s.sendMessage(ChatColor.DARK_RED + "Bending has been toggled off for all players. You may not use this command until after it is turned back on.");
 							return true;
 						}
