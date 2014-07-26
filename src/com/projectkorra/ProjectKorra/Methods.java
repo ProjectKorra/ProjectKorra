@@ -219,7 +219,7 @@ public class Methods {
 		if (bPlayer.hasElement(Element.Chi)) elements.append("c");
 
 		HashMap<Integer, String> abilities = bPlayer.abilities;
-		
+
 		for (int i = 1; i <= 9; i++) {
 			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i +" = '" + (abilities.get(i) == null ? null : abilities.get(i)) + "' WHERE uuid = '" + uuid + "'");
 		}
@@ -1067,7 +1067,7 @@ public class Methods {
 		if (isNight(world)) return plugin.getConfig().getDouble("Properties.Water.NightFactor");
 		return 1;
 	}
-	
+
 	public static void playAirbendingParticles(Location loc) {
 		for (int i = 0; i < 20; i++) {
 			ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
@@ -1699,11 +1699,33 @@ public class Methods {
 		if (AbilityModuleManager.metalbendingabilities.contains(ability)) return true;
 		return false;
 	}
-	
+
 	public static boolean isImportEnabled() {
 		return plugin.getConfig().getBoolean("Properties.ImportEnabled");
 	}
-	
+
+	public static List<Location> getCircle(Location loc, int radius, int height, boolean hollow, boolean sphere, int plusY){
+		List<Location> circleblocks = new ArrayList<Location>();
+		int cx = loc.getBlockX();
+		int cy = loc.getBlockY();
+		int cz = loc.getBlockZ();
+
+		for(int x = cx - radius; x <= cx + radius; x++){
+			for (int z = cz - radius; z <= cz + radius; z++){
+				for(int y = (sphere ? cy - radius : cy); y < (sphere ? cy + radius : cy + height); y++){
+					double dist = (cx - x) * (cx - x) + (cz - z) * (cz - z) + (sphere ? (cy - y) * (cy - y) : 0);
+
+					if(dist < radius * radius && !(hollow && dist < (radius - 1) * (radius - 1))){
+						Location l = new Location(loc.getWorld(), x, y + plusY, z);
+						circleblocks.add(l);
+					}
+				}
+			}
+		}
+
+		return circleblocks;
+	}
+
 	public static void reloadPlugin() {
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			Methods.saveBendingPlayer(player.getName());

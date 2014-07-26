@@ -474,6 +474,12 @@ public class ConfigManager {
 		config.addDefault("Abilities.Chi.RapidPunch.Distance", 4);
 		config.addDefault("Abilities.Chi.RapidPunch.Cooldown", 15000);
 		config.addDefault("Abilities.Chi.RapidPunch.Punches", 4);
+		
+		config.addDefault("Abilities.Chi.Smokescreen.Enabled", true);
+		config.addDefault("Abilities.Chi.Smokescreen.Description", "Smokescren, if used correctly, can serve as a defensive and offensive ability for Chiblockers. To use, simply left click and you will toss out a Smoke Bomb. When the bomb hits the ground, it will explode and give all players within a small radius of the explosion temporary blindness, allowing you to either get away, or move in for the kill. This ability has a long cooldown.");
+		config.addDefault("Abilities.Chi.Smokescreen.Cooldown", 50000);
+		config.addDefault("Abilities.Chi.Smokescreen.Radius", 4);
+		config.addDefault("Abilities.Chi.Smokescreen.Duration", 15);
 
 		config.addDefault("Storage.engine", "sqlite");
 

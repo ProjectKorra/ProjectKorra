@@ -18,7 +18,7 @@ public enum StockAbilities {
 	AvatarState,
 	
 	// Project Korra
-	Extraction;
+	Extraction, Smokescreen;
 	
 	private enum AirbendingAbilities {
 		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst;
@@ -37,7 +37,7 @@ public enum StockAbilities {
 	}
 	
 	private enum ChiblockingAbilities {
-		HighJump, RapidPunch, Paralyze;
+		HighJump, RapidPunch, Paralyze, Smokescreen;
 	}
 	
 	public static boolean isAirbending(StockAbilities ability) {

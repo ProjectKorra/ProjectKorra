@@ -354,6 +354,12 @@ Abilities:
       Distance: 4
       Cooldown: 15000
       Punches: 4
+    Smokescreen:
+      Enabled: true
+      Description: "Smokescren, if used correctly, can serve as a defensive and offensive ability for Chiblockers. To use, simply left click and you will toss out a Smoke Bomb. When the bomb hits the ground, it will explode and give all players within a small radius of the explosion temporary blindness, allowing you to either get away, or move in for the kill. This ability has a long cooldown."
+      Cooldown: 50000
+      Radius: 4
+      Duration: 15
 Storage:
   engine: sqlite
   MySQL:

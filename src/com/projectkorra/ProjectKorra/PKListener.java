@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -36,13 +37,13 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -70,6 +71,7 @@ import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.HighJump;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
+import com.projectkorra.ProjectKorra.chiblocking.Smokescreen;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.Collapse;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
@@ -162,6 +164,19 @@ public class PKListener implements Listener {
 				GrapplingHookAPI.playGrappleSound(player.getLocation());
 			}
 			GrapplingHookAPI.addPlayerCooldown(player, 100);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onProjectileHit(ProjectileHitEvent event) {
+		Integer id = event.getEntity().getEntityId();
+		if (Smokescreen.snowballs.contains(id)) {
+			Location loc = event.getEntity().getLocation();
+			Smokescreen.playEffect(loc);
+			for (Entity en: Methods.getEntitiesAroundPoint(loc, Smokescreen.radius)) {
+				Smokescreen.applyBlindness(en);
+			}
+			Smokescreen.snowballs.remove(id);
 		}
 	}
 
@@ -713,6 +728,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Paralyze")) {
 					//
+				}
+				if (abil.equalsIgnoreCase("Smokescreen")) {
+					new Smokescreen(player);
 				}
 			}
 

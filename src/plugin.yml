@@ -109,6 +109,7 @@ permissions:
       bending.ability.HighJump: true
       bending.ability.Paralyze: true
       bending.ability.RapidPunch: true
+      bending.ability.Smokescreen: true
       bending.chi.passive: true
       bending.chi.grapplinghook: true
   bending.avatar:
