@@ -42,6 +42,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
 		getServer().getPluginManager().registerEvents(new TagAPIListener(this), this);
+		getServer().getPluginManager().registerEvents(new DevJoinListener(this), this);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 		
 		try {

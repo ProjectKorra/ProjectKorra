@@ -474,6 +474,7 @@ public class Methods {
 		if (isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
 		if (isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation())) return false;
+		if (bPlayer.isEnergybent()) return false;
 		return true;
 	}
 
@@ -534,9 +535,17 @@ public class Methods {
 	public static ChatColor getAirColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Air"));
 	}
+	
+	public static ChatColor getSpiritualProjectionColor() {
+		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Spiritualprojection"));
+	}
 
 	public static ChatColor getWaterColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Water"));
+	}
+	
+	public static ChatColor getBloodbendingColor() {
+		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Bloodbending"));
 	}
 
 	public static ChatColor getEarthColor() {
@@ -549,6 +558,10 @@ public class Methods {
 
 	public static ChatColor getFireColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Fire"));
+	}
+	
+	public static ChatColor getLightningbendingColor() {
+		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Lightningbending"));
 	}
 
 	public static ChatColor getChiColor() {
@@ -685,6 +698,11 @@ public class Methods {
 			}
 
 		}
+		
+		if(isMetalBlock(block) && canMetalbend(player)) {
+			return true;
+		}
+		
 		return false;
 	}
 
@@ -1677,6 +1695,21 @@ public class Methods {
 		if (player.hasPermission("bending.earth.metalbending")) return true;
 		return false;
 	}
+	
+	public static boolean canBloodbend(Player player) {
+		if (player.hasPermission("bending.ability.Bloodbending")) return true;
+		return false;
+	}
+	
+	public static boolean canLightningbend(Player player) {
+		if (player.hasPermission("bending.ability.Lightning")) return true;
+		return false;
+	}
+	
+	public static boolean canSpiritualproject(Player player) {
+		if (player.hasPermission("bending.ability.SpiritualProjection")) return true;
+		return false;
+	}
 
 	public static boolean isMetalBlock(Block block) {
 		if (block.getType() == Material.GOLD_BLOCK
@@ -1696,6 +1729,21 @@ public class Methods {
 
 	public static boolean isMetalbendingAbility(String ability) {
 		if (AbilityModuleManager.metalbendingabilities.contains(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isLightningbendingAbility(String ability) {
+		if (AbilityModuleManager.lightningbendingabilities.contains(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isBloodbendingAbility(String ability) {
+		if (AbilityModuleManager.bloodbendingabilities.contains(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isSpiritualProjectionAbility(String ability) {
+		if (AbilityModuleManager.spiritualprojectionabilities.contains(ability)) return true;
 		return false;
 	}
 	

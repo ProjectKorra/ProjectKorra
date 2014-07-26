@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.3.0 BETA 3
+version: 1.3.0 BETA 4
 main: com.projectkorra.ProjectKorra.ProjectKorra
 commands:
   projectkorra:
@@ -110,6 +110,17 @@ permissions:
       bending.ability.RapidPunch: true
       bending.chi.passive: true
       bending.chi.grapplinghook: true
+  bending.avatarpowers:
+    default: op
+    description: Grants access to all Avatar abilities.
+    children:
+      bending.water: true
+      bending.fire: true
+      bending.earth: true
+      bending.air: true
+      bending.avatar: true
+      bending.ability.AvatarState: true
+      bending.ability.EnergyBending: true
   bending.avatar:
     default: false
     description: Grants the Avatar Color.

@@ -16,6 +16,7 @@ public class BendingPlayer {
 	ArrayList<Element> elements;
 	HashMap<Integer, String> abilities;
 	boolean isChiBlocked;
+	boolean isEnergybent;
 	boolean permaRemoved;
 	boolean isToggled;
 	private long slowTime = 0;
@@ -29,6 +30,7 @@ public class BendingPlayer {
 		this.permaRemoved = permaRemoved;
 		isToggled = true;
 		isChiBlocked = false;
+		isEnergybent = false;
 
 		players.put(player, this);
 	}
@@ -92,5 +94,17 @@ public class BendingPlayer {
 
 	public boolean isChiBlocked() {
 		return isChiBlocked;
+	}
+	
+	public void EnergybendBPlayer() {
+		isEnergybent = true;
+	}
+	
+	public void RestoreBendingBPlayer() {
+		isEnergybent = false;
+	}
+	
+	public boolean isEnergybent() {
+		return isEnergybent;
 	}
 }

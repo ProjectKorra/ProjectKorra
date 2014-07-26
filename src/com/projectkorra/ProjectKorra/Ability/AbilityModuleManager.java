@@ -24,12 +24,16 @@ public class AbilityModuleManager {
 	public static List<String> earthbendingabilities;
 	public static List<String> firebendingabilities;
 	public static List<String> chiabilities;
+	public static List<String> avatarabilities;
 	public static HashSet<String> shiftabilities;
 	public static HashMap<String, String> authors;
 	public static HashSet<String> harmlessabilities;
 	public static HashSet<String> igniteabilities;
 	public static HashSet<String> explodeabilities;
 	public static HashSet<String> metalbendingabilities;
+	public static HashSet<String> lightningbendingabilities;
+	public static HashSet<String> spiritualprojectionabilities;
+	public static HashSet<String> bloodbendingabilities;
 	
 	public static HashMap<String, String> descriptions;
 
@@ -46,6 +50,7 @@ public class AbilityModuleManager {
 		earthbendingabilities = new ArrayList<String>();
 		firebendingabilities = new ArrayList<String>();
 		chiabilities = new ArrayList<String>();
+		avatarabilities = new ArrayList<String>();
 		shiftabilities = new HashSet<String>();
 		descriptions = new HashMap<String, String>();
 		authors = new HashMap<String, String>();
@@ -53,6 +58,9 @@ public class AbilityModuleManager {
 		explodeabilities = new HashSet<String>();
 		igniteabilities = new HashSet<String>();
 		metalbendingabilities = new HashSet<String>();
+		lightningbendingabilities = new HashSet<String>();
+		spiritualprojectionabilities = new HashSet<String>();
+		bloodbendingabilities = new HashSet<String>();
 		ability = loader.load(AbilityModule.class);
 		fill();
 	}
@@ -83,7 +91,10 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.WaterSpout) harmlessabilities.add(a.name());
 					if (a == StockAbilities.HealingWaters) harmlessabilities.add(a.name());
 					if (a == StockAbilities.Surge) shiftabilities.add(a.name());
-					if (a == StockAbilities.Bloodbending) shiftabilities.add(a.name());
+					if (a == StockAbilities.Bloodbending) {
+						shiftabilities.add(a.name());
+						bloodbendingabilities.add(a.name());
+					}
 					if (a == StockAbilities.PhaseChange) shiftabilities.add(a.name());
 					if (a == StockAbilities.HealingWaters) shiftabilities.add(a.name());
 					if (a == StockAbilities.OctopusForm) shiftabilities.add(a.name());
@@ -116,7 +127,10 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.Illumination) harmlessabilities.add(a.name());
 					if (a == StockAbilities.Blaze) igniteabilities.add(a.name());
 					if (a == StockAbilities.FireBlast) explodeabilities.add(a.name());
-					if (a == StockAbilities.Lightning) explodeabilities.add(a.name());
+					if (a == StockAbilities.Lightning){
+						lightningbendingabilities.add(a.name());
+						explodeabilities.add(a.name());
+					}
 					if (a == StockAbilities.HeatControl) shiftabilities.add(a.name());
 					if (a == StockAbilities.Lightning) shiftabilities.add(a.name());
 					if (a == StockAbilities.FireBlast) shiftabilities.add(a.name());
@@ -132,9 +146,16 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.HighJump) harmlessabilities.add(a.name());
 				}
 			}
+			else if(StockAbilities.isAvatar(a)) {
+				if(ProjectKorra.plugin.getConfig().getBoolean("Abilities." + a.name() + ".Enabled")) {
+					abilities.add(a.name());
+					avatarabilities.add(a.name());
+					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities." + a.name() + ".Description"));
+				}
+			}
 			else {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities." + a.name() + ".Enabled")) {
-					abilities.add(a.name()); // AvatarState, etc.
+					abilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities." + a.name() + ".Description"));
 				}
 			}
@@ -150,9 +171,13 @@ public class AbilityModuleManager {
 			if (ab.getElement() == Element.Earth.toString()) earthbendingabilities.add(ab.getName());
 			if (ab.getElement() == Element.Fire.toString()) firebendingabilities.add(ab.getName());
 			if (ab.getElement() == Element.Chi.toString()) chiabilities.add(ab.getName());
+			if (ab.getElement() == Element.Avatar.toString()) avatarabilities.add(ab.getName());
 			if (ab.isShiftAbility()) shiftabilities.add(ab.getName());
 			if (ab.isHarmlessAbility()) harmlessabilities.add(ab.getName());
 			if (ab.isMetalbendingAbility()) metalbendingabilities.add(ab.getName());
+			if (ab.isLightningbendingAbility()) lightningbendingabilities.add(ab.getName());
+			if (ab.isBloodbendingAbility()) bloodbendingabilities.add(ab.getName());
+			if (ab.isShiftAbility()) spiritualprojectionabilities.add(ab.getName());
 			descriptions.put(ab.getName(), ab.getDescription());
 			authors.put(ab.getName(), ab.getAuthor());
 		}
@@ -162,6 +187,7 @@ public class AbilityModuleManager {
 		Collections.sort(earthbendingabilities);
 		Collections.sort(firebendingabilities);
 		Collections.sort(chiabilities);
+		Collections.sort(avatarabilities);
 	}
 
 }

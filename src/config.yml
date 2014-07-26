@@ -1,5 +1,6 @@
 Properties:
   ImportEnabled: true
+  DeveloperJoinListener: true
   GlobalCooldown: 500
   SeaLevel: 62
   CustomItems:
@@ -20,8 +21,11 @@ Properties:
     Colors:
       Avatar: DARK_PURPLE
       Air: GRAY
+      Spiritualprojection: DARK_GRAY
       Fire: RED
+      Lightningbending: DARK_RED
       Water: AQUA
+      Bloodbending: DARK_BLUE
       Earth: GREEN
       Metalbending: DARK_GREEN
       Chi: GOLD
@@ -46,7 +50,9 @@ Properties:
     EarthbendableBlocks:
     - STONE
     - COAL_ORE
+    - COAL_BLOCK
     - DIAMOND_ORE
+    - EMERALD_ORE
     - DIRT
     - GOLD_ORE
     - GRASS
@@ -82,6 +88,10 @@ Abilities:
       FireResistance:
         Enabled: true
         Power: 3
+  EnergyBending:
+    Enabled: true
+    Description: "This is one of the most powerful moves the Avatar possesses! Simple look at a player and shift, and the player will no longer be able to bend. Shift again while looking at a player who has been energybent to restore their bending!"
+    Range: 5
   Air:
     Passive:
       Factor: 0.3

@@ -20,7 +20,9 @@ public class ConfigManager {
 		ArrayList<String> earthbendable = new ArrayList<String>();
 		earthbendable.add("STONE");
 		earthbendable.add("COAL_ORE");
+		earthbendable.add("COAL_BLOCK");
 		earthbendable.add("DIAMOND_ORE");
+		earthbendable.add("EMERALD_ORE");
 		earthbendable.add("DIRT");
 		earthbendable.add("GOLD_ORE");
 		earthbendable.add("GRASS");
@@ -42,13 +44,17 @@ public class ConfigManager {
 		config.addDefault("Properties.Chat.Prefixes.Avatar", "[Avatar]");
 		config.addDefault("Properties.Chat.Colors.Avatar", "DARK_PURPLE");
 		config.addDefault("Properties.Chat.Colors.Air", "GRAY");
+		config.addDefault("Properties.Chat.Colors.Spiritualprojection", "DARK_GRAY");
 		config.addDefault("Properties.Chat.Colors.Water", "AQUA");
+		config.addDefault("Properties.Chat.Colors.Bloodbending", "DARK_BLUE");
 		config.addDefault("Properties.Chat.Colors.Earth", "GREEN");
 		config.addDefault("Properties.Chat.Colors.Metalbending", "DARK_GREEN");
 		config.addDefault("Properties.Chat.Colors.Fire", "RED");
+		config.addDefault("Properties.Chat.Colors.Lightningbending", "DARK_RED");
 		config.addDefault("Properties.Chat.Colors.Chi", "GOLD");
 
 		config.addDefault("Properties.ImportEnabled", true);
+		config.addDefault("Properties.DeveloperJoinListener", true);
 		config.addDefault("Properties.GlobalCooldown", 500);
 		config.addDefault("Properties.SeaLevel", 62);
 
@@ -97,6 +103,10 @@ public class ConfigManager {
 		config.addDefault("Abilities.AvatarState.PotionEffects.DamageResistance.Enabled", true);
 		config.addDefault("Abilities.AvatarState.PotionEffects.FireResistance.Enabled", true);
 		config.addDefault("Abilities.AvatarState.PotionEffects.FireResistance.Power", 3);
+		
+		config.addDefault("Abilities.EnergyBending.Enabled", true);
+		config.addDefault("Abilities.EnergyBending.Description", "This is one of the most powerful moves the Avatar possesses! Simple look at a player and shift, and the player will no longer be able to bend. Shift again while looking at a player who has been energybent to restore their bending!");
+		config.addDefault("Abilities.EnergyBending.Range", 5);
 
 		config.addDefault("Abilities.Air.Passive.Factor", 0.3);
 		config.addDefault("Abilities.Air.Passive.Speed", 2);

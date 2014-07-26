@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public enum Element {
 
-	Air, Water, Earth, Fire, Chi;
+	Air, Water, Earth, Fire, Chi, Avatar;
 	
 	public static Element getType(String string) {
 		for (Element element: Element.values()) {
