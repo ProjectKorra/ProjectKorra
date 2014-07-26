@@ -18,7 +18,9 @@ public enum StockAbilities {
 	AvatarState,
 	
 	// Project Korra
-	Extraction;
+	Extraction,
+	
+	Energybending;
 	
 	private enum AirbendingAbilities {
 		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst;
@@ -38,6 +40,10 @@ public enum StockAbilities {
 	
 	private enum ChiblockingAbilities {
 		HighJump, RapidPunch, Paralyze;
+	}
+	
+	private enum AvatarAbilities {
+		AvatarState, Energybending;
 	}
 	
 	public static boolean isAirbending(StockAbilities ability) {
@@ -71,6 +77,14 @@ public enum StockAbilities {
 	public static boolean isChiBlocking(StockAbilities ability) {
 		for (ChiblockingAbilities a: ChiblockingAbilities.values()) {
 			if (a.name().equalsIgnoreCase(ability.name())) return true;
+		}
+		
+		return false;
+	}
+	
+	public static boolean isAvatar(StockAbilities ability) {
+		for (AvatarAbilities a: AvatarAbilities.values()) {
+			if(a.name().equalsIgnoreCase(ability.name())) return true;
 		}
 		
 		return false;

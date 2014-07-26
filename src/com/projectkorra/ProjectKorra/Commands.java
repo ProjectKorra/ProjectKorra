@@ -54,6 +54,8 @@ public class Commands {
 	String[] whoaliases = {"who", "w"};
 	String[] importaliases = {"import", "i"};
 	
+	String[] devverify = {"verify", "dv"};
+	
 	public static boolean debug = ProjectKorra.plugin.getConfig().getBoolean("debug");
 
 	private static BukkitTask importTask;
@@ -356,7 +358,11 @@ public class Commands {
 							}
 							for (String st: AbilityModuleManager.airbendingabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
-									s.sendMessage(Methods.getAirColor() + st);
+									if(Methods.isSpiritualProjectionAbility(st)) {
+										s.sendMessage(Methods.getSpiritualProjectionColor() + st);
+									}else{
+										s.sendMessage(Methods.getAirColor() + st);
+									}
 								}
 							}
 							return true;
@@ -368,7 +374,11 @@ public class Commands {
 							}
 							for (String st: AbilityModuleManager.waterbendingabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
-									s.sendMessage(Methods.getWaterColor() + st);
+									if(Methods.isBloodbendingAbility(st)) {
+										s.sendMessage(Methods.getBloodbendingColor() + st);
+									}else{
+										s.sendMessage(Methods.getWaterColor() + st);
+									}
 								}
 							}
 							return true;
@@ -396,7 +406,11 @@ public class Commands {
 							}
 							for (String st: AbilityModuleManager.firebendingabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
-									s.sendMessage(Methods.getFireColor() + st);
+									if(Methods.isLightningbendingAbility(st)) {
+										s.sendMessage(Methods.getLightningbendingColor() + st);
+									}else{
+										s.sendMessage(Methods.getFireColor() + st);
+									}
 								}
 							}
 							return true;
@@ -493,10 +507,18 @@ public class Commands {
 						String un = p.getName();
 						s.sendMessage(un + " - ");
 						if (Methods.isBender(un, Element.Air)) {
-							s.sendMessage(Methods.getAirColor() + "- Airbender");
+							if (Methods.canSpiritualproject(p)) {
+								s.sendMessage(Methods.getAirColor() + "- Airbender " + Methods.getSpiritualProjectionColor() + "(Can Spiritual Project)");
+							}else{
+								s.sendMessage(Methods.getAirColor() + "- Airbender");
+							}
 						}
 						if (Methods.isBender(un, Element.Water)) {
-							s.sendMessage(Methods.getWaterColor() + "- Waterbender");
+							if (Methods.canBloodbend(p)) {
+								s.sendMessage(Methods.getWaterColor() + "- Waterbender " + Methods.getBloodbendingColor() + "(Can Bloodbend)");
+							}else{
+								s.sendMessage(Methods.getWaterColor() + "- Waterbender");
+							}
 						}
 						if (Methods.isBender(un, Element.Earth)) {
 							if (Methods.canMetalbend(p)) {
@@ -506,7 +528,11 @@ public class Commands {
 							}
 						}
 						if (Methods.isBender(un, Element.Fire)) {
-							s.sendMessage(Methods.getFireColor() + "- Firebender");
+							if (Methods.canLightningbend(p)) {
+								s.sendMessage(Methods.getFireColor() + "- Firebender " + Methods.getLightningbendingColor() + "(Can Lightningbend)");
+							}else{
+								s.sendMessage(Methods.getFireColor() + "- Firebender");
+							}
 						}
 						if (Methods.isBender(un, Element.Chi)) {
 							s.sendMessage(Methods.getChiColor() + "- ChiBlocker");
@@ -517,6 +543,7 @@ public class Commands {
 							for (int i = 1; i <= 9; i++) {
 								String ability = bPlayer.getAbilities().get(i);
 								if (ability != null) s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
+								if (ability == null) return true;
 							}
 						}
 						return true;
@@ -930,12 +957,22 @@ public class Commands {
 					if (Methods.abilityExists(args[1])) {
 						String ability = Methods.getAbility(args[1]);
 						if (Methods.isAirAbility(ability)) {
-							s.sendMessage(Methods.getAirColor() + ability + " - ");
-							s.sendMessage(Methods.getAirColor() + AbilityModuleManager.descriptions.get(ability));
+							if (Methods.isSpiritualProjectionAbility(ability)) {
+								s.sendMessage(Methods.getSpiritualProjectionColor() + ability + " - ");
+								s.sendMessage(Methods.getSpiritualProjectionColor() + AbilityModuleManager.descriptions.get(ability));
+							} else {
+								s.sendMessage(Methods.getAirColor() + ability + " - ");
+								s.sendMessage(Methods.getAirColor() + AbilityModuleManager.descriptions.get(ability));
+							}
 						}
 						else if (Methods.isWaterAbility(ability)) {
-							s.sendMessage(Methods.getWaterColor() + ability + " - ");
-							s.sendMessage(Methods.getWaterColor() + AbilityModuleManager.descriptions.get(ability));
+							if (Methods.isBloodbendingAbility(ability)) {
+								s.sendMessage(Methods.getBloodbendingColor() + ability + " - ");
+								s.sendMessage(Methods.getBloodbendingColor() + AbilityModuleManager.descriptions.get(ability));
+							} else {
+								s.sendMessage(Methods.getWaterColor() + ability + " - ");
+								s.sendMessage(Methods.getWaterColor() + AbilityModuleManager.descriptions.get(ability));
+							}
 						}
 						else if (Methods.isEarthAbility(ability)) {
 							if (Methods.isMetalbendingAbility(ability)) {
@@ -947,8 +984,13 @@ public class Commands {
 							}
 						}
 						else if (Methods.isFireAbility(ability)) {
-							s.sendMessage(Methods.getFireColor() + ability + " - ");
-							s.sendMessage(Methods.getFireColor() + AbilityModuleManager.descriptions.get(ability));
+							if (Methods.isLightningbendingAbility(ability)) {
+								s.sendMessage(Methods.getLightningbendingColor() + ability + " - ");
+								s.sendMessage(Methods.getLightningbendingColor() + AbilityModuleManager.descriptions.get(ability));
+							} else {
+								s.sendMessage(Methods.getFireColor() + ability + " - ");
+								s.sendMessage(Methods.getFireColor() + AbilityModuleManager.descriptions.get(ability));
+							}
 						}
 						else if (Methods.isChiAbility(ability)) {
 							s.sendMessage(Methods.getChiColor() + ability + " - ");

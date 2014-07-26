@@ -2,7 +2,7 @@ package com.projectkorra.ProjectKorra.Ability;
 
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable;
 
-public class AbilityModule extends AbilityLoadable implements Cloneable {
+public class AbilityModule extends AbilityLoadable implements Cloneable{
 
 	public AbilityModule(final String name) {
 		super(name);
@@ -52,6 +52,18 @@ public class AbilityModule extends AbilityLoadable implements Cloneable {
 	}
 	
 	public boolean isMetalbendingAbility() {
+		return false;
+	}
+	
+	public boolean isLightningbendingAbility() {
+		return false;
+	}
+	
+	public boolean isBloodbendingAbility() {
+		return false;
+	}
+	
+	public boolean isSpiritualProjectionAbility() {
 		return false;
 	}
 	
