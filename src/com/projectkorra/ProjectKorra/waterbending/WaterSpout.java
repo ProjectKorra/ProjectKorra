@@ -10,12 +10,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import chiblocking.Paralyze;
-
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 
 public class WaterSpout {
 

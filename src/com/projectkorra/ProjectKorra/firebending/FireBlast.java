@@ -129,46 +129,11 @@ public class FireBlast {
 			return false;
 		}
 
-		// if (player.isSneaking()
-		// && Methods.getBendingAbility(player) == Abilities.AirBlast) {
-		// new AirBlast(player);
-		// }
-
 		Block block = location.getBlock();
-		// for (Block testblock : Methods.getBlocksAroundPoint(location,
-		// affectingradius)) {
-		// if (testblock.getType() == Material.FIRE) {
-		// testblock.setType(Material.AIR);
-		// testblock.getWorld().playEffect(testblock.getLocation(),
-		// Effect.EXTINGUISH, 0);
-		// }
-		// if (((block.getType() == Material.LEVER) || (block.getType() ==
-		// Material.STONE_BUTTON))
-		// && !affectedlevers.contains(block)) {
-		// EntityHuman eH = ((CraftPlayer) player).getHandle();
-		//
-		// net.minecraft.server.Block.byId[block.getTypeId()].interact(
-		// ((CraftWorld) block.getWorld()).getHandle(),
-		// block.getX(), block.getY(), block.getZ(), eH);
-		//
-		// affectedlevers.add(block);
-		// }
-		// }
+
 		if (Methods.isSolid(block) || block.isLiquid()) {
 			if (block.getType() == Material.FURNACE && canPowerFurnace) {
-				// BlockState state = block.getState();
-				// Furnace furnace = (Furnace) state;
-				// FurnaceInventory inv = furnace.getInventory();
-				// if (inv.getFuel() == null) {
-				// ItemStack temp = inv.getSmelting();
-				// ItemStack tempfuel = new ItemStack(Material.WOOD_AXE, 1);
-				// ItemStack tempsmelt = new ItemStack(Material.COBBLESTONE);
-				// inv.setFuel(tempfuel);
-				// inv.setSmelting(tempsmelt);
-				// state.update(true);
-				// inv.setSmelting(temp);
-				// state.update(true);
-				// }
+
 			} else if (FireStream.isIgnitable(player, block.getRelative(BlockFace.UP))) {
 				ignite(location);
 			}
