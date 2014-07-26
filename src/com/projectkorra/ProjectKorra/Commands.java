@@ -233,7 +233,7 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					if (Methods.isImportEnabled()) {
+					if (!Methods.isImportEnabled()) {
 						s.sendMessage(ChatColor.RED + "Importing has been disabled in the config");
 						return true;
 					}
