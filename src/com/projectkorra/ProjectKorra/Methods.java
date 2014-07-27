@@ -135,9 +135,6 @@ public class Methods {
 	}
 
 	public static void createBendingPlayer(UUID uuid, String player) {
-		/*
-		 * This will run when the player logs in.
-		 */
 		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
 		try {
 			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
@@ -236,7 +233,6 @@ public class Methods {
 		File readFile = new File(".", "bendingPlayers.yml");
 		File writeFile = new File(".", "converted.yml");
 		if (readFile.exists()) {
-			// plugin.log.info("File exists");
 			try {
 				DataInputStream input = new DataInputStream(new FileInputStream(readFile));
 				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
@@ -639,9 +635,6 @@ public class Methods {
 			for (int y = yorg - r; y <= yorg + r; y++) {
 				for (int z = zorg - r; z <= zorg + r; z++) {
 					Block block = location.getWorld().getBlockAt(x, y, z);
-					// if
-					// (block.getLocation().distance(originblock.getLocation())
-					// <= radius) {
 					if (block.getLocation().distance(location) <= radius) {
 						blocks.add(block);
 					}
@@ -663,21 +656,6 @@ public class Methods {
 			return false;
 		Material material = block.getType();
 
-		// if ((material == Material.STONE) || (material == Material.CLAY)
-		// || (material == Material.COAL_ORE)
-		// || (material == Material.DIAMOND_ORE)
-		// || (material == Material.DIRT)
-		// || (material == Material.GOLD_ORE)
-		// || (material == Material.GRASS)
-		// || (material == Material.GRAVEL)
-		// || (material == Material.IRON_ORE)
-		// || (material == Material.LAPIS_ORE)
-		// || (material == Material.NETHERRACK)
-		// || (material == Material.REDSTONE_ORE)
-		// || (material == Material.SAND)
-		// || (material == Material.SANDSTONE)) {
-		// return true;
-		// }
 		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks")) {
 
 			if (material == Material.getMaterial(s)) {
@@ -692,19 +670,6 @@ public class Methods {
 
 	public static boolean isChiBlocked(String player) {
 		return Methods.getBendingPlayer(player).isChiBlocked();
-		//		long currTime = System.currentTimeMillis();
-		//		long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Passive.BlockChi.Duration");
-		//		if (BendingPlayer.blockedChi.contains(player)) {
-		//			if (BendingPlayer.blockedChi.get(player) + ChiPassive.duration >= System.currentTimeMillis()) {
-		//				return true;
-		//			} else {
-		//				BendingPlayer.blockedChi.remove(player);
-		//				return false;
-		//			}
-		//		} else {
-		//			Bukkit.getServer().broadcastMessage("test");
-		//			return false;
-		//		}
 	}
 
 	public static Vector rotateVectorAroundVector(Vector axis, Vector rotator,
@@ -719,8 +684,6 @@ public class Methods {
 
 		return rotate.multiply(Math.cos(angle)).add(
 				thirdaxis.multiply(Math.sin(angle)));
-
-		// return new Vector(x, z, y);
 	}
 
 	public static Vector getOrthogonalVector(Vector axis, double degrees,
@@ -916,18 +879,12 @@ public class Methods {
 						block,
 						getDrops(block, info.getState().getType(), info
 								.getState().getRawData(), pickaxe));
-				// ItemStack item = new ItemStack(info.getType());
-				// item.setData(new MaterialData(info.getType(),
-				// info.getData()));
-				// block.getWorld().dropItem(block.getLocation(), item);
 				tempair.remove(i);
 			} else {
 				info.setTime(info.getTime() + 10000);
 			}
 			return;
 		} else {
-			// block.setType(info.getType());
-			// block.setData(info.getData());
 			info.getState().update(true);
 			tempair.remove(i);
 		}
@@ -945,10 +902,6 @@ public class Methods {
 			}
 
 			if (block.equals(sourceblock)) {
-				// verbose("Equals!");
-				// if (block.getType() == Material.SANDSTONE
-				// && info.getState().getType() == Material.SAND)
-				// block.setType(Material.SAND);
 				info.getState().update(true);
 				if (EarthColumn.blockInAllAffectedBlocks(sourceblock))
 					EarthColumn.revertBlock(sourceblock);
@@ -964,62 +917,23 @@ public class Methods {
 				addTempAirBlock(block);
 				movedearth.remove(block);
 				return true;
-				// verbose("Block: " + block);
-				// verbose("Sourceblock: " + sourceblock);
-				// verbose("StartBlock: " + startblock);
-				// if (startblock != null) {
-				// if (startblock.equals(sourceblock)) {
-				// sourceblock.setType(info.getType());
-				// sourceblock.setData(info.getData());
-				// if (adjacentToThreeOrMoreSources(block)) {
-				// block.setType(Material.WATER);
-				// block.setData(full);
-				// } else {
-				// block.setType(Material.AIR);
-				// }
-				// movedearth.get(startblock).setInteger(10);
-				// if (EarthColumn
-				// .blockInAllAffectedBlocks(sourceblock))
-				// EarthColumn.revertBlock(sourceblock);
-				// if (EarthColumn.blockInAllAffectedBlocks(block))
-				// EarthColumn.revertBlock(block);
-				// EarthColumn.resetBlock(sourceblock);
-				// EarthColumn.resetBlock(block);
-				// movedearth.remove(block);
-				// return true;
-				// }
-				//
-				// } else {
-				// startblock = block;
-				// }
-				// revertBlock(sourceblock, startblock, true);
 			}
 
 			if (sourceblock.getType() == Material.AIR || sourceblock.isLiquid()) {
-				// sourceblock.setType(info.getType());
-				// sourceblock.setData(info.getData());
 				info.getState().update(true);
 			} else {
-				// if (info.getType() != Material.AIR) {
-				// ItemStack item = new ItemStack(info.getType());
-				// item.setData(new MaterialData(info.getType(), info
-				// .getData()));
-				// block.getWorld().dropItem(block.getLocation(), item);
 				dropItems(
 						block,
 						getDrops(block, info.getState().getType(), info
 								.getState().getRawData(), pickaxe));
-				// }
 			}
 
-			// if (info.getInteger() != 10) {
 			if (isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.WATER);
 				block.setData(full);
 			} else {
 				block.setType(Material.AIR);
 			}
-			// }
 
 			if (EarthColumn.blockInAllAffectedBlocks(sourceblock))
 				EarthColumn.revertBlock(sourceblock);
@@ -1156,9 +1070,6 @@ public class Methods {
 			if (EarthPassive.isPassiveSand(block)) {
 				EarthPassive.revertSand(block);
 			}
-			// if (block.getType() == Material.SAND) {
-			// block.setType(Material.SANDSTONE);
-			// }
 
 			if (affectedblock == null)
 				return false;
@@ -1194,17 +1105,12 @@ public class Methods {
 						breakBlock(affectedblock);
 					} else if (!affectedblock.isLiquid()
 							&& affectedblock.getType() != Material.AIR) {
-						// affectedblock.setType(Material.GLASS);
 						moveEarthBlock(affectedblock, topblock);
 					}
 				} else {
 					breakBlock(affectedblock);
 				}
 
-				// affectedblock.setType(block.getType());
-				// affectedblock.setData(block.getData());
-				//
-				// addTempEarthBlock(block, affectedblock);
 				moveEarthBlock(block, affectedblock);
 				block.getWorld().playEffect(block.getLocation(),
 						Effect.GHAST_SHOOT, 0, 4);
@@ -1215,7 +1121,6 @@ public class Methods {
 							.add(negnorm.getX() * i, negnorm.getY() * i,
 									negnorm.getZ() * i).getBlock();
 					if (!isEarthbendable(player, affectedblock)) {
-						// verbose(affectedblock.getType());
 						if (down) {
 							if (isTransparentToEarthbending(player,
 									affectedblock)
@@ -1224,31 +1129,17 @@ public class Methods {
 								moveEarthBlock(affectedblock, block);
 							}
 						}
-						// if (!Tools.adjacentToThreeOrMoreSources(block)
-						// && Tools.isWater(block)) {
-						// block.setType(Material.AIR);
-						// } else {
-						// byte full = 0x0;
-						// block.setType(Material.WATER);
-						// block.setData(full);
-						// }
 						break;
 					}
 					if (EarthPassive.isPassiveSand(affectedblock)) {
 						EarthPassive.revertSand(affectedblock);
 					}
-					// if (affectedblock.getType() == Material.SAND) {
-					// affectedblock.setType(Material.SANDSTONE);
-					// }
 					if (block == null) {
 						for (Block checkblock : blocks) {
 							tempnophysics.remove(checkblock);
 						}
 						return false;
 					}
-					// block.setType(affectedblock.getType());
-					// block.setData(affectedblock.getData());
-					// addTempEarthBlock(affectedblock, block);
 					moveEarthBlock(affectedblock, block);
 					block = affectedblock;
 				}
@@ -1286,17 +1177,13 @@ public class Methods {
 		byte full = 0x0;
 		Information info;
 		if (movedearth.containsKey(source)) {
-			// verbose("Moving something already moved.");
 			info = movedearth.get(source);
 			info.setTime(System.currentTimeMillis());
 			movedearth.remove(source);
 			movedearth.put(target, info);
 		} else {
-			// verbose("Moving something for the first time.");
 			info = new Information();
 			info.setBlock(source);
-			// info.setType(source.getType());
-			// info.setData(source.getData());
 			info.setTime(System.currentTimeMillis());
 			info.setState(source.getState());
 			movedearth.put(target, info);
@@ -1326,8 +1213,6 @@ public class Methods {
 		} else {
 			Information info = new Information();
 			info.setBlock(block);
-			// info.setType(block.getType());
-			// info.setData(block.getData());
 			info.setState(block.getState());
 			info.setTime(System.currentTimeMillis());
 			block.setType(Material.AIR);
@@ -1491,25 +1376,11 @@ public class Methods {
 
 		Set<String> ignite = AbilityModuleManager.igniteabilities;
 		Set<String> explode = AbilityModuleManager.explodeabilities;
-		//		List<Abilities> ignite = new ArrayList<Abilities>();
-		//		ignite.add(Abilities.Blaze);
-		//		List<Abilities> explode = new ArrayList<Abilities>();
-		//		explode.add(Abilities.FireBlast);
-		//		explode.add(Abilities.Lightning);
 
 		if (ability == null && allowharmless)
 			return false;
 		if (isHarmlessAbility(ability) && allowharmless)
 			return false;
-
-		// if (ignite.contains(ability)) {
-		// BlockIgniteEvent event = new BlockIgniteEvent(location.getBlock(),
-		// IgniteCause.FLINT_AND_STEEL, player);
-		// Bending.plugin.getServer().getPluginManager().callEvent(event);
-		// if (event.isCancelled())
-		// return false;
-		// event.setCancelled(true);
-		// }
 
 		PluginManager pm = Bukkit.getPluginManager();
 
