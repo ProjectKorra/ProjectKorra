@@ -103,7 +103,6 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.EarthBlast) shiftabilities.add(a.name());
 					if (a == StockAbilities.Shockwave) shiftabilities.add(a.name());
 					if (a == StockAbilities.EarthTunnel) shiftabilities.add(a.name());
-					if (a == StockAbilities.EarthArmor) shiftabilities.add(a.name());
 					if (a == StockAbilities.EarthGrab) shiftabilities.add(a.name());
 					if (a == StockAbilities.Extraction) metalbendingabilities.add(a.name());
 				}

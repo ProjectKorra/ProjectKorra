@@ -10,6 +10,7 @@ import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
 
 public class WaterPassive {
 
@@ -28,7 +29,7 @@ public class WaterPassive {
 		for (Player player: Bukkit.getServer().getOnlinePlayers()) {
 			String ability = Methods.getBoundAbility(player);
 			if (Methods.canBendPassive(player.getName(), Element.Water)) {
-				if (WaterSpout.instances.containsKey(player)) {
+				if (WaterSpout.instances.containsKey(player) || EarthArmor.instances.containsKey(player)) {
 					continue;
 				} else if (ability == null || !AbilityModuleManager.shiftabilities.contains(ability)) {
 					if (player.isSneaking() && Methods.isWater(player.getLocation().getBlock())) {
