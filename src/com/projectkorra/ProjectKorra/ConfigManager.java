@@ -68,6 +68,7 @@ public class ConfigManager {
 		config.addDefault("Properties.Water.CanBendWithWeapons", true);
 		config.addDefault("Properties.Water.NightFactor", 1.5);
 		config.addDefault("Properties.Water.FullMoonFactor", 3.0);
+		config.addDefault("Properties.Water.CanBendPackedIce", true);
 
 		config.addDefault("Properties.Earth.RevertEarthbending", true);
 		config.addDefault("Properties.Earth.SafeRevert", true);

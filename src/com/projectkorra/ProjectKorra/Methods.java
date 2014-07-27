@@ -586,7 +586,8 @@ public class Methods {
 		byte full = 0x0;
 		if (TempBlock.isTempBlock(block)) return false;
 		if ((block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) && block.getData() == full) return true;
-		if (block.getType() == Material.ICE || block.getType() == Material.SNOW || block.getType() == Material.PACKED_ICE) return true;
+		if (block.getType() == Material.ICE || block.getType() == Material.SNOW) return true;
+		if (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce")) return true;
 		if (canPlantbend(player) && isPlant(block)) return true;
 		return false;
 	}
