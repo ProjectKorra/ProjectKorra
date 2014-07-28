@@ -1578,23 +1578,11 @@ public class Methods {
 			}
 
 			if (fcp != null && mcore != null && respectFactions) {
-				if (ignite.contains(ability)) {
-
-				}
-
-				if (explode.contains(ability)) {
-
-				}
-
-				if (!FactionsListenerMain.canPlayerBuildAt(player,
-						PS.valueOf(loc.getBlock()), false)) {
+				if (!FactionsListenerMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
 					return true;
+				}else{
+					return false;
 				}
-
-				// if (!FactionsBlockListener.playerCanBuildDestroyBlock(player,
-				// location, "build", true)) {
-				// return true;
-				// }
 			}
 
 			if (twnp != null && respectTowny) {
