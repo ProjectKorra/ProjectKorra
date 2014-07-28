@@ -482,7 +482,7 @@ public class Commands {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
 						}
-						
+
 						if (isToggledForAll) { // Bending is toggled off for all players.
 							isToggledForAll = false;
 							for (Player player: Bukkit.getOnlinePlayers()) {
@@ -549,11 +549,14 @@ public class Commands {
 							s.sendMessage("Abilities: ");
 							for (int i = 1; i <= 9; i++) {
 								String ability = bPlayer.getAbilities().get(i);
-								if (ability != null) s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
-								if (ability == null) return true;
+								if (ability == null || ability.equalsIgnoreCase("null")) {
+									continue;
+								} else {
+									s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
+								}
 							}
 						}
-							
+
 						if (p.getName().equalsIgnoreCase("MistPhizzle") ||
 								p.getName().equalsIgnoreCase("runefist")
 								|| p.getName().equalsIgnoreCase("Jacklin213")
