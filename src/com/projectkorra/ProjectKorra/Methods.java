@@ -125,6 +125,11 @@ public class Methods {
 	public static Integer[] nonOpaque = {0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 68, 69, 70, 72,
 		75, 76, 77, 78, 83, 90, 93, 94, 104, 105, 106, 111, 115, 119, 127, 131, 132};
 
+	/**
+	 * Checks to see if an AbilityExists. Uses method {@link #getAbility(String)} to check if it exists.
+	 * @param string Ability Name
+	 * @return true if ability exists
+	 */
 	public static boolean abilityExists(String string) {
 		if (getAbility(string) == null) return false;
 		return true;
@@ -150,6 +155,12 @@ public class Methods {
 
 	}
 
+	/**
+	 * Binds a Ability to the hotbar slot that the player is on. 
+	 * @param player The player to bind to
+	 * @param ability The ability name to Bind
+	 * @see {@link #bindAbility(Player, String, int)}
+	 */
 	public static void bindAbility(Player player, String ability) {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
@@ -173,8 +184,13 @@ public class Methods {
 		}
 	}
 
-
-
+	/**
+	 * Binds a Ability to a specific hotbar slot. 
+	 * @param player The player to bind to
+	 * @param ability 
+	 * @param slot
+	 * @see {@link #bindAbility(Player, String)}
+	 */
 	public static void bindAbility(Player player, String ability, int slot) {
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
 		bPlayer.abilities.put(slot, ability);
@@ -197,22 +213,39 @@ public class Methods {
 		}
 	}
 
+	/**
+	 * Breaks a block and sets it to {@link Material#AIR AIR}.
+	 * @param block The block to break
+	 */
 	public static void breakBlock(Block block) {
 		block.breakNaturally(new ItemStack(Material.AIR));
 	}
 
+	/**
+	 * Checks to see if a Player is effected by BloodBending.
+	 * @param player The player to check
+	 * <p>
+	 * @return true If {@link #isChiBlocked(String)} is true
+	 * <br />
+	 * false If player is BloodBender and Bending is toggled on, or if player is in AvatarState
+	 * </p>
+	 */
 	public static boolean canBeBloodbent(Player player) {
 		if (AvatarState.isAvatarState(player))
 			return false;
-		if ((isChiBlocked(player.getName())))
+		if (isChiBlocked(player.getName()))
 			return true;
 		if (canBend(player.getName(), "Bloodbending") && Methods.getBendingPlayer(player.getName()).isToggled)
 			return false;
 		return true;
 	}
 
-
-
+	/**
+	 * Checks to see if a Player can bend a specific Ability.
+	 * @param player The player name to check
+	 * @param ability The Ability name to check
+	 * @return true If player can bend specified ability and has the permissions to do so
+	 */
 	public static boolean canBend(String player, String ability) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
@@ -242,14 +275,31 @@ public class Methods {
 		return true;
 	}
 
+	/**
+	 * Checks to see if a player can MetalBend.
+	 * @param player The player to check
+	 * @return true If player has permission node "bending.earth.metalbending"
+	 */
 	public static boolean canMetalbend(Player player) {
 		if (player.hasPermission("bending.earth.metalbending")) return true;
 		return false;
 	}
 
+	/**
+	 * Checks to see if a player can PlantBend.
+	 * @param player The player to check
+	 * @return true If player has permission node "bending.ability.plantbending"
+	 */
 	public static boolean canPlantbend(Player player) {
 		return player.hasPermission("bending.ability.plantbending");
 	}
+	
+	/**
+	 * Creates a {@link BendingPlayer} with the data from the database. This runs when a player logs in.
+	 * @param uuid The UUID of the player
+	 * @param player The player name
+	 * @throws SQLException
+	 */
 	public static void createBendingPlayer(UUID uuid, String player) {
 		/*
 		 * This will run when the player logs in.
@@ -298,15 +348,25 @@ public class Methods {
 			ex.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Damages an Entity by amount of damage specified. Starts a {@link EntityDamageByEntityEvent}.
+	 * @param player The player dealing the damage
+	 * @param entity The entity that is receiving the damage
+	 * @param damage The amount of damage to deal
+	 */
 	public static void damageEntity(Player player, Entity entity, double damage) {
 		if (entity instanceof LivingEntity) {
 			((LivingEntity) entity).damage(damage, player);
-			((LivingEntity) entity)
-			.setLastDamageCause(new EntityDamageByEntityEvent(player,
-					entity, DamageCause.CUSTOM, damage));
+			((LivingEntity) entity).setLastDamageCause(
+					new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
 		}
 	}
 
+	/**
+	 * Deserializes the configuration file "bendingPlayers.yml" of the old BendingPlugin and creates a converted.yml ready for conversion.
+	 * @throws IOException If the "bendingPlayers.yml" file is not found
+	 */
 	public static void deserializeFile() {
 		File readFile = new File(".", "bendingPlayers.yml");
 		File writeFile = new File(".", "converted.yml");
@@ -335,18 +395,24 @@ public class Methods {
 		}
 	}
 
+	/**
+	 * Drops a {@code Collection<ItemStack>} of items on a specified block.
+	 * @param block The block to drop items on.
+	 * @param items The items to drop.
+	 */
 	public static void dropItems(Block block, Collection<ItemStack> items) {
 		for (ItemStack item : items)
 			block.getWorld().dropItem(block.getLocation(), item);
 	}
 
-	public static double firebendingDayAugment(double value, World world) {
-		if (isDay(world)) {
-			return plugin.getConfig().getDouble("Properties.Fire.DayFactor") * value;
-		}
-		return value;
-	}
-
+	/**
+	 * Gets the ability from specified ability name.
+	 * @param string The ability name
+	 * @return Ability name if found in {@link AbilityModuleManager#abilities}
+	 * <p>
+	 * else null
+	 * </p>
+	 */
 	public static String getAbility(String string) {
 		for (String st: AbilityModuleManager.abilities) {
 			if (st.equalsIgnoreCase(string)) return st;
@@ -354,6 +420,19 @@ public class Methods {
 		return null;
 	}
 
+	/**
+	 * Gets the Element color from the Ability name specified.
+	 * @param ability The ability name
+	 * <p>
+	 * @return
+	 * {@link #getChiColor()} <br />
+	 * {@link #getAirColor()} <br />
+	 * {@link #getWaterColor()} <br />
+	 * {@link #getEarthColor()} <br />
+	 * {@link #getFireColor()} <br />
+	 * else {@link #getAvatarColor()}
+	 * </p>
+	 */
 	public static ChatColor getAbilityColor(String ability) {
 		if (AbilityModuleManager.chiabilities.contains(ability)) return getChiColor();
 		if (AbilityModuleManager.airbendingabilities.contains(ability)) return getAirColor();
@@ -363,18 +442,37 @@ public class Methods {
 		else return getAvatarColor();
 	}
 
+	/**
+	 * Gets the AirColor from the config.
+	 * @return Config specified ChatColor
+	 */
 	public static ChatColor getAirColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Air"));
 	}
 
+	/**
+	 * Gets the AvatarColor from the config.
+	 * @return Config specified ChatColor
+	 */
 	public static ChatColor getAvatarColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
 	}
 
+	/**
+	 * Gets a {@link BendingPlayer} from specified player name.
+	 * @param player The name of the Player
+	 * @return The BendingPlayer object if {@link BendingPlayer#players} contains the player name
+	 */
 	public static BendingPlayer getBendingPlayer(String player) {
 		return BendingPlayer.players.get(player);
 	}
 
+	/**
+	 * Gets a {@code List<Blocks>} within the specified radius around the specified location.
+	 * @param location The base location
+	 * @param radius The block radius from location to include within the list of blocks
+	 * @return The list of Blocks
+	 */
 	public static List<Block> getBlocksAroundPoint(Location location, double radius) {
 		List<Block> blocks = new ArrayList<Block>();
 
@@ -401,6 +499,14 @@ public class Methods {
 		return blocks;
 	}
 
+	/**
+	 * Gets the Ability bound to the slot that the player is in.
+	 * @param player The player to check
+	 * @return The Ability name bounded to the slot
+	 * <p>
+	 * else null
+	 * </p>
+	 */
 	public static String getBoundAbility(Player player) {
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
 		if (bPlayer == null) return null;
@@ -439,6 +545,10 @@ public class Methods {
 
 	}
 
+	/**
+	 * Gets the ChiColor from the config.
+	 * @return Config specified ChatColor
+	 */
 	public static ChatColor getChiColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Chi"));
 	}
@@ -502,8 +612,15 @@ public class Methods {
 		return (AP.crossProduct(line).length()) / (line.length());
 	}
 
-	public static Collection<ItemStack> getDrops(Block block, Material type,
-			byte data, ItemStack breakitem) {
+	/**
+	 * Gets a {@code Collection<ItemStack>} of item drops from a single block.
+	 * @param block The single block
+	 * @param type The Material type to change the block into
+	 * @param data The block data to change the block into
+	 * @param breakitem Unused
+	 * @return The item drops fromt the specified block
+	 */
+	public static Collection<ItemStack> getDrops(Block block, Material type, byte data, ItemStack breakitem) {
 		BlockState tempstate = block.getState();
 		block.setType(type);
 		block.setData(data);
@@ -512,38 +629,36 @@ public class Methods {
 		return item;
 	}
 
-	public static int getEarthbendableBlocksLength(Player player, Block block,
-			Vector direction, int maxlength) {
+	public static int getEarthbendableBlocksLength(Player player, Block block, Vector direction, int maxlength) {
 		Location location = block.getLocation();
 		direction = direction.normalize();
 		double j;
 		for (int i = 0; i <= maxlength; i++) {
 			j = (double) i;
-			if (!isEarthbendable(player,
-					location.clone().add(direction.clone().multiply(j))
-					.getBlock())) {
+			if (!isEarthbendable(player, location.clone().add(direction.clone().multiply(j)).getBlock())) {
 				return i;
 			}
 		}
 		return maxlength;
 	}
 
+	/**
+	 * Gets the EarthColor from the config.
+	 * @return Config specified ChatColor
+	 */
 	public static ChatColor getEarthColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Earth"));
 	}
 
 	public static Block getEarthSourceBlock(Player player, double range) {
-		Block testblock = player.getTargetBlock(getTransparentEarthbending(),
-				(int) range);
+		Block testblock = player.getTargetBlock(getTransparentEarthbending(), (int) range);
 		if (isEarthbendable(player, testblock))
 			return testblock;
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {
-			Block block = location.clone().add(vector.clone().multiply(i))
-					.getBlock();
-			if (isRegionProtectedFromBuild(player, "RaiseEarth",
-					location))
+			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			if (isRegionProtectedFromBuild(player, "RaiseEarth", location))
 				continue;
 			if (isEarthbendable(player, block)) {
 				return block;
@@ -552,8 +667,13 @@ public class Methods {
 		return null;
 	}
 
-	public static List<Entity> getEntitiesAroundPoint(Location location,
-			double radius) {
+	/**
+	 * Gets a {@code List<Entity>} of entities around a specified radius from the specified area
+	 * @param location The base location
+	 * @param radius The radius of blocks to look for entities from the location
+	 * @return A list of entities around a point
+	 */
+	public static List<Entity> getEntitiesAroundPoint(Location location, double radius) {
 
 		List<Entity> entities = location.getWorld().getEntities();
 		List<Entity> list = location.getWorld().getEntities();
@@ -570,11 +690,43 @@ public class Methods {
 
 	}
 
+	/**
+	 * Gets the firebending dayfactor from the config multiplied by a specific value if it is day.
+	 * @param value The value 
+	 * @param world The world to pass into {@link #isDay(World)}
+	 * <p>
+	 * @return value DayFactor multiplied by specified value when {@link #isDay(World)} is true 
+	 * <br /> else <br /> 
+	 * value The specified value in the parameters 
+	 * </p>
+	 * @see {@link #getFirebendingDayAugment(World)}
+	 */
+	public static double getFirebendingDayAugment(double value, World world) {
+		if (isDay(world)) {
+			return plugin.getConfig().getDouble("Properties.Fire.DayFactor") * value;
+		}
+		return value;
+	}
+
+	/**
+	 * Gets the firebending dayfactor from the config if it is day.
+	 * @param world The world to pass into {@link #isDay(World)}
+	 * <p>
+	 * @return value DayFactor multiplied by specified value when {@link #isDay(World)} is true 
+	 * <br /> else <br />
+	 * value The value of 1
+	 * </p>
+	 * @see {@link #getFirebendingDayAugment(double, World)}
+	 */
 	public static double getFirebendingDayAugment(World world) {
 		if (isDay(world)) return plugin.getConfig().getDouble("Properties.Fire.DayFactor");
 		return 1;
 	}
 
+	/**
+	 * Gets the FireColor from the config.
+	 * @return Config specified ChatColor
+	 */
 	public static ChatColor getFireColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Fire"));
 	}
@@ -605,12 +757,15 @@ public class Methods {
 
 	}
 
+	/**
+	 * Gets the MetalBendingColor from the config.
+	 * @return Config specified ChatColor
+	 */
 	public static ChatColor getMetalbendingColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Metalbending"));
 	}
 
-	public static Vector getOrthogonalVector(Vector axis, double degrees,
-			double length) {
+	public static Vector getOrthogonalVector(Vector axis, double degrees, double length) {
 
 		Vector ortho = new Vector(axis.getY(), -axis.getX(), 0);
 		ortho = ortho.normalize();
@@ -620,15 +775,13 @@ public class Methods {
 
 	}
 
-	public static Location getPointOnLine(Location origin, Location target,
-			double distance) {
+	public static Location getPointOnLine(Location origin, Location target,	double distance) {
 		return origin.clone().add(
 				getDirection(origin, target).normalize().multiply(distance));
 
 	}
 
-	public static Entity getTargetedEntity(Player player, double range,
-			List<Entity> avoid) {
+	public static Entity getTargetedEntity(Player player, double range,	List<Entity> avoid) {
 		double longestr = range + 1;
 		Entity target = null;
 		Location origin = player.getEyeLocation();
@@ -637,15 +790,11 @@ public class Methods {
 			if (avoid.contains(entity))
 				continue;
 			if (entity.getLocation().distance(origin) < longestr
-					&& getDistanceFromLine(direction, origin,
-							entity.getLocation()) < 2
-							&& (entity instanceof LivingEntity)
-							&& entity.getEntityId() != player.getEntityId()
-							&& entity.getLocation().distance(
-									origin.clone().add(direction)) < entity
-									.getLocation().distance(
-											origin.clone().add(
-													direction.clone().multiply(-1)))) {
+					&& getDistanceFromLine(direction, origin, entity.getLocation()) < 2
+					&& (entity instanceof LivingEntity)
+					&& entity.getEntityId() != player.getEntityId()
+					&& entity.getLocation().distance(origin.clone().add(direction)) < 
+					entity.getLocation().distance(origin.clone().add(direction.clone().multiply(-1)))) {
 				target = entity;
 				longestr = entity.getLocation().distance(origin);
 			}
@@ -653,8 +802,7 @@ public class Methods {
 		return target;
 	}
 
-	public static Location getTargetedLocation(Player player,
-			double originselectrange, Integer... nonOpaque2) {
+	public static Location getTargetedLocation(Player player, double originselectrange, Integer... nonOpaque2) {
 		Location origin = player.getEyeLocation();
 		Vector direction = origin.getDirection();
 
@@ -694,6 +842,10 @@ public class Methods {
 		return 1;
 	}
 
+	/**
+	 * Gets the WaterColor from the config.
+	 * @return Config specified ChatColor
+	 */
 	public static ChatColor getWaterColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Water"));
 	}
