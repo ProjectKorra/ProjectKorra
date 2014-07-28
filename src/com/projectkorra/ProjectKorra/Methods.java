@@ -1585,6 +1585,11 @@ public class Methods {
 
 		return circleblocks;
 	}
+	
+	public static boolean canBloodbend(Player player) {
+		if (player.hasPermission("bending.ability.bloodbending")) return true;
+		return false;
+	}
 
 	public static void reloadPlugin() {
 		for (Player player: Bukkit.getOnlinePlayers()) {
