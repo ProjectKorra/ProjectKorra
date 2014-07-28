@@ -544,6 +544,7 @@ public class Commands {
 							for (int i = 1; i <= 9; i++) {
 								String ability = bPlayer.getAbilities().get(i);
 								if (ability != null) s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
+								if (ability == null) return true;
 							}
 						}
 						return true;
