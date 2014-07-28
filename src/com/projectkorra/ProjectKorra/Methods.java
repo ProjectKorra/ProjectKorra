@@ -1475,7 +1475,7 @@ public class Methods {
 	}
 
 	public static boolean isHarmlessAbility(String ability) {
-		return Arrays.asList(AbilityModuleManager.harmlessabilities).contains(ability);
+		return AbilityModuleManager.harmlessabilities.contains(ability);
 	}
 
 	public static boolean isRegionProtectedFromBuild(Player player,

@@ -5,8 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -466,10 +464,6 @@ public class Commands {
 
 						BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
 
-						if (isToggledForAll) {
-							s.sendMessage(ChatColor.DARK_RED + "Bending has been toggled off for all players. You may not use this command until after it is turned back on.");
-							return true;
-						}
 						if (bPlayer.isToggled) {
 							s.sendMessage(ChatColor.RED + "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
 							bPlayer.isToggled = false;
@@ -500,6 +494,7 @@ public class Commands {
 						}
 					} else {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending toggle <all>");
+						return true;
 					}
 				}
 				if (Arrays.asList(whoaliases).contains(args[0].toLowerCase())) {
