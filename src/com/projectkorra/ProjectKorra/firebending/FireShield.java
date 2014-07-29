@@ -24,9 +24,9 @@ public class FireShield {
 	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	private static long interval = 100;
-	private static long duration = 1000;
-	private static double radius = 3;
-	private static double discradius = 1.5;
+	private static long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireShield.Duration");
+	private static double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.Radius");
+	private static double discradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.DiscRadius");
 	private static boolean ignite = true;
 
 	private Player player;

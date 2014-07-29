@@ -437,6 +437,9 @@ public class ConfigManager {
 				+ "attacks and bending. Alternatively, pressing and holding "
 				+ "sneak creates a very small shield of fire, blocking most attacks. "
 				+ "Creatures that contact this fire are ignited.");
+		config.addDefault("Abilities.Fire.FireShield.Radius", 3);
+		config.addDefault("Abilities.Fire.FireShield.DiscRadius", 1.5);
+		config.addDefault("Abilities.Fire.FireShield.Duration", 1000);
 		
 		config.addDefault("Abilities.Fire.HeatControl.Enabled", true);
 		config.addDefault("Abilities.Fire.HeatControl.Description", "While this ability is selected, the firebender becomes impervious "
