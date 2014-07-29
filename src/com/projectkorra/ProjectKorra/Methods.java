@@ -75,6 +75,7 @@ import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
+import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
@@ -258,6 +259,7 @@ public class Methods {
 		if (isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
 		if (isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation())) return false;
+		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p)) return false;
 		return true;
 	}
 
