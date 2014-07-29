@@ -64,11 +64,11 @@ public class WallOfFire {
 		World world = player.getWorld();
 
 		if (Methods.isDay(player.getWorld())) {
-			width = (int) Methods.firebendingDayAugment((double) width, world);
-			height = (int) Methods.firebendingDayAugment((double) height, world);
-			duration = (long) Methods.firebendingDayAugment((double) duration,
+			width = (int) Methods.getFirebendingDayAugment((double) width, world);
+			height = (int) Methods.getFirebendingDayAugment((double) height, world);
+			duration = (long) Methods.getFirebendingDayAugment((double) duration,
 					world);
-			damage = (int) Methods.firebendingDayAugment((double) damage, world);
+			damage = (int) Methods.getFirebendingDayAugment((double) damage, world);
 		}
 
 		time = System.currentTimeMillis();

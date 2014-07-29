@@ -71,7 +71,7 @@ public class Illumination {
 		} else if (player.getWorld() != block.getWorld()) {
 			revert();
 		} else if (player.getLocation().distance(block.getLocation()) > Methods
-				.firebendingDayAugment(range, player.getWorld())) {
+				.getFirebendingDayAugment(range, player.getWorld())) {
 			revert();
 		}
 	}

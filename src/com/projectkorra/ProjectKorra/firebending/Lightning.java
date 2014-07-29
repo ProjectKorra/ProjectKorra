@@ -63,7 +63,7 @@ public class Lightning {
 	}
 
 	private Location getTargetLocation() {
-		int distance = (int) Methods.firebendingDayAugment(defaultdistance,
+		int distance = (int) Methods.getFirebendingDayAugment(defaultdistance,
 				player.getWorld());
 
 		Location targetlocation;
@@ -110,7 +110,7 @@ public class Lightning {
 			return;
 		}
 
-		int distance = (int) Methods.firebendingDayAugment(defaultdistance,
+		int distance = (int) Methods.getFirebendingDayAugment(defaultdistance,
 				player.getWorld());
 		long warmup = (int) ((double) defaultwarmup / ProjectKorra.plugin.getConfig().getDouble("Properties.Fire.DayFactor"));
 		if (AvatarState.isAvatarState(player))
