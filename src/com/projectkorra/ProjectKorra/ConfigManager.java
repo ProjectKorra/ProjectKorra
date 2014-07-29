@@ -416,6 +416,8 @@ public class ConfigManager {
 				+ "To use, press and hold sneak to charge your burst. "
 				+ "Once charged, you can either release sneak to launch a cone-shaped burst "
 				+ "of flames in front of you, or click to release the burst in a sphere around you. ");
+		config.addDefault("Abilities.Fire.FireBurst.Damage", 3);
+		config.addDefault("Abilities.Fire.FireBurst.ChargeTime", 2500);
 
 		config.addDefault("Abilities.Fire.FireJet.Enabled", true);
 		config.addDefault("Abilities.Fire.FireJet.Description", "This ability is used for a limited burst of flight for firebenders. Clicking with this "

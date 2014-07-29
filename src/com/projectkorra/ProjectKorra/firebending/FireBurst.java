@@ -21,8 +21,8 @@ public class FireBurst {
 
 	private Player player;
 	private long starttime;
-	private int damage = 3;
-	private long chargetime = 2500;
+	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.FireBurst.Damage");
+	private long chargetime = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBurst.ChargeTime");
 	private double deltheta = 10;
 	private double delphi = 10;
 	private boolean charged = false;

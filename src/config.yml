@@ -304,6 +304,8 @@ Abilities:
     FireBurst:
       Enabled: true
       Description: "FireBurst is a very powerful firebending ability. To use, press and hold sneak to charge your burst. Once charged, you can either release sneak to launch a cone-shaped burst of flames in front of you, or click to release the burst in a sphere around you."
+      ChargeTime: 2500
+      Damage: 3
     FireJet:
       Enabled: true
       Description: "This ability is used for a limited burst of flight for firebenders. Clicking with this ability selected will launch you in the direction you're looking, granting you controlled flight for a short time. This ability can be used mid-air to prevent falling to your death, but on the ground it can only be used if standing on a block that's ignitable (e.g. not snow or water)."
