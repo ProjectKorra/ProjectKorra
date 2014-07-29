@@ -8,12 +8,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
@@ -23,12 +25,13 @@ public class Torrent {
 	private static ConcurrentHashMap<Player, Torrent> instances = new ConcurrentHashMap<Player, Torrent>();
 	private static ConcurrentHashMap<TempBlock, Player> frozenblocks = new ConcurrentHashMap<TempBlock, Player>();
 
+	static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	static long interval = 30;
-	static double range = 25;
+	static double range = config.getInt("Abilities.Water.Torrent.Range");
 	private static int defaultrange = 20;
 	private static int selectrange = 10;
-	private static int damage = 2;
-	private static int deflectdamage = 1;
+	private static int damage = config.getInt("Abilities.Water.Torrent.Damage");
+	private static int deflectdamage = config.getInt("Abilities.Water.Torrent.DeflectDamage");
 	private static int maxlayer = 3;
 	private static double factor = 1;
 	private static double radius = 3;

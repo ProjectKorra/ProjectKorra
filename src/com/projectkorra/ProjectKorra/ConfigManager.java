@@ -261,7 +261,10 @@ public class ConfigManager {
 
 		config.addDefault("Abilities.Water.Torrent.Enabled", true);
 		config.addDefault("Abilities.Water.Torrent.Description", "Torrent is one of the strongest moves in a waterbender's arsenal. To use, first click a source block to select it; then hold shift to begin streaming the water around you. Water flowing around you this way will damage and knock back nearby enemies and projectiles. If you release shift during this, you will create a large wave that expands outwards from you, launching anything in its path back. Instead, if you click you release the water and channel it to flow towards your cursor. Anything caught in the blast will be tossed about violently and take damage. Finally, if you click again when the water is torrenting, it will freeze the area around it when it is obstructed.");
-
+		config.addDefault("Abilities.Water.Torrent.Range", 25);
+		config.addDefault("Abilities.Water.Torrent.DeflectDamage", 1);
+		config.addDefault("Abilities.Water.Torrent.Damage", 2);
+		
 		config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 
 		config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
