@@ -329,8 +329,8 @@ Abilities:
       Width: 4
       Duration: 5000
       Damage: 2
-      Cooldown: 500
-      Interval: 7500
+      Cooldown: 7500
+      Interval: 500
   Chi:
     Passive:
       FallReductionFactor: 0.5

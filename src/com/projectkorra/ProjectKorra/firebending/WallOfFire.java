@@ -93,6 +93,7 @@ public class WallOfFire {
 		initializeBlocks();
 
 		instances.put(player, this);
+		cooldowns.put(player.getName(), System.currentTimeMillis());
 	}
 
 	private void progress() {

@@ -450,8 +450,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.WallOfFire.Width", 4);
 		config.addDefault("Abilities.Fire.WallOfFire.Duration", 5000);
 		config.addDefault("Abilities.Fire.WallOfFire.Damage", 2);
-		config.addDefault("Abilities.Fire.WallOfFire.Cooldown", 500);
-		config.addDefault("Abilities.Fire.WallOfFire.Interval", 7500);
+		config.addDefault("Abilities.Fire.WallOfFire.Cooldown", 7500);
+		config.addDefault("Abilities.Fire.WallOfFire.Interval", 500);
 		
 		config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		config.addDefault("Abilities.Chi.Passive.Speed", 1);
