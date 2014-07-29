@@ -478,7 +478,7 @@ public class Commands {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
 						}
-						
+
 						if (isToggledForAll) { // Bending is toggled off for all players.
 							isToggledForAll = false;
 							for (Player player: Bukkit.getOnlinePlayers()) {
@@ -521,6 +521,12 @@ public class Commands {
 						}
 						if (Methods.isBender(un, Element.Water)) {
 							s.sendMessage(Methods.getWaterColor() + "- Waterbender");
+							if (Methods.canPlantbend(p)) {
+								s.sendMessage(Methods.getWaterColor() + "    Can Plantbend");
+							}
+							if (Methods.canBloodbend(p)) {
+								s.sendMessage(Methods.getWaterColor() + "    Can Bloodbend");
+							}
 						}
 						if (Methods.isBender(un, Element.Earth)) {
 							if (Methods.canMetalbend(p)) {
@@ -540,8 +546,27 @@ public class Commands {
 							s.sendMessage("Abilities: ");
 							for (int i = 1; i <= 9; i++) {
 								String ability = bPlayer.getAbilities().get(i);
-								if (ability != null) s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
+								if (ability == null || ability.equalsIgnoreCase("null")) {
+									continue;
+								} else {
+									s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
+								}
 							}
+						}
+
+						if (p.getName().equalsIgnoreCase("MistPhizzle") ||
+								p.getName().equalsIgnoreCase("runefist")
+								|| p.getName().equalsIgnoreCase("Jacklin213")
+								|| p.getName().equalsIgnoreCase("kingbirdy")
+								|| p.getName().equalsIgnoreCase("cpdances")
+								|| p.getName().equalsIgnoreCase("sampepere")) {
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Developer");
+						}
+						if (p.getName().equalsIgnoreCase("vidcom")
+								|| p.getName().equalsIgnoreCase("Zolteex")
+								|| p.getName().equalsIgnoreCase("zmeduna")
+								|| p.getName().equalsIgnoreCase("ashe36")) {
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
 						}
 						return true;
 					}

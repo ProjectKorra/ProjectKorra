@@ -38,6 +38,7 @@ Properties:
     CanBendWithWeapons: false
     NightFactor: 1.5
     FullMoonFactor: 3.0
+    CanBendPackedIce: true
   Earth:
     RevertEarthbending: true
     SafeRevert: true

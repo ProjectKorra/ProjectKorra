@@ -23,8 +23,7 @@ public class AirSuction {
 	public static ConcurrentHashMap<Integer, AirSuction> instances = new ConcurrentHashMap<Integer, AirSuction>();
 	private static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
-	// private static ConcurrentHashMap<Player, Long> timers = new
-	// ConcurrentHashMap<Player, Long>();
+
 	static final long soonesttime = config.getLong("Properties.GlobalCooldown");
 	static final double maxspeed = AirBlast.maxspeed;
 	
@@ -36,7 +35,6 @@ public class AirSuction {
 	private static double affectingradius = config.getDouble("Abilities.Air.AirSuction.Radius");
 	private static double pushfactor = config.getDouble("Abilities.Air.AirSuction.Push");
 	private static double originselectrange = 10;
-	// private static long interval = AirBlast.interval;
 
 	private Location location;
 	private Location origin;
