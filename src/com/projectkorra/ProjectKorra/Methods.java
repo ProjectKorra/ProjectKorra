@@ -145,8 +145,6 @@ public class Methods {
 		} else {
 			Information info = new Information();
 			info.setBlock(block);
-			// info.setType(block.getType());
-			// info.setData(block.getData());
 			info.setState(block.getState());
 			info.setTime(System.currentTimeMillis());
 			block.setType(Material.AIR);
@@ -1068,8 +1066,7 @@ public class Methods {
 		return false;
 	}
 
-	public static boolean isRegionProtectedFromBuild(Player player,
-			String ability, Location loc) {
+	public static boolean isRegionProtectedFromBuild(Player player, String ability, Location loc) {
 
 		boolean allowharmless = plugin.getConfig().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
 		boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
@@ -1154,23 +1151,11 @@ public class Methods {
 			}
 
 			if (fcp != null && mcore != null && respectFactions) {
-				if (ignite.contains(ability)) {
-
-				}
-
-				if (explode.contains(ability)) {
-
-				}
-
-				if (!FactionsListenerMain.canPlayerBuildAt(player,
-						PS.valueOf(loc.getBlock()), false)) {
-					return true;
-				}
-
-				// if (!FactionsBlockListener.playerCanBuildDestroyBlock(player,
-				// location, "build", true)) {
-				// return true;
-				// }
+				if (!FactionsListenerMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
+  					return true;
+				} else {
+ 					return false;
+  				}
 			}
 
 			if (twnp != null && respectTowny) {
@@ -1343,9 +1328,6 @@ public class Methods {
 			if (EarthPassive.isPassiveSand(block)) {
 				EarthPassive.revertSand(block);
 			}
-			// if (block.getType() == Material.SAND) {
-			// block.setType(Material.SANDSTONE);
-			// }
 
 			if (affectedblock == null)
 				return false;
