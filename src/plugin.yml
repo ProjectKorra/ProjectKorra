@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.3.0 BETA 8
+version: 1.3.0 BETA 9
 main: com.projectkorra.ProjectKorra.ProjectKorra
 commands:
   projectkorra:
