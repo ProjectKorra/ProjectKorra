@@ -13,16 +13,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 
 public class OctopusForm {
 
 	static ConcurrentHashMap<Player, OctopusForm> instances = new ConcurrentHashMap<Player, OctopusForm>();
 
-	private static int range = 10;
-	private static int damage = 3;
+	private static int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Range");
+	private static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Damage");
 	private static long interval = 50;
-	static double radius = 3;
+	static double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
 	private static final byte full = 0x0;
 
 	private Player player;

@@ -234,6 +234,9 @@ public class ConfigManager {
 				+ "While channeling, the water will form itself around you and has a chance to block incoming attacks. "
 				+ "Additionally, you can click while channeling to attack things near you, dealing damage and knocking them back. "
 				+ "Releasing shift at any time will dissipate the form.");
+		config.addDefault("Abilities.Water.OctopusForm.Range", 10);
+		config.addDefault("Abilities.Water.OctopusForm.Radius", 3);
+		config.addDefault("Abilities.Water.OctopusForm.Damage", 3);
 
 		config.addDefault("Abilities.Water.PhaseChange.Enabled", true);
 		config.addDefault("Abilities.Water.PhaseChange.Description", "To use, simply left-click. "

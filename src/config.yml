@@ -170,6 +170,9 @@ Abilities:
     OctopusForm:
       Enabled: true
       Description: "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. To use, click to select a water source. Then, hold sneak to channel this ability. While channleing, the water will form itself around you and has a chance to block incoming attacks. Additionally, you can click while channeling to attack things near you, dealing damage and knocking the target back. Releasing shift at any time will dissipate the form."
+      Range: 10
+      Damage: 3
+      Radius: 3
     PhaseChange:
       Enabled: true
       Description: "To use, simply left-click. Any water you are looking at within range will instantly freeze over into solid ice. Provided you stay within range of the ice and do not unbind FreezeMelt, that ice will not thaw. If, however, you do either of those things the ice will instantly thaw. If you sneak (default: shift), anything around where you are looking at will instantly melt. Since this is a more favorable state for these things, they will never re-freeze unless they would otherwise by nature or some other bending ability. Additionally, if you tap sneak while targeting water with FreezeMelt, it will evaporate water around that block that is above sea level."
