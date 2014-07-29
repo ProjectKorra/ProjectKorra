@@ -198,6 +198,7 @@ Abilities:
       Range: 20
       Speed: 35
       Push: .3
+      Cooldown: 1000
     WaterSpout:
       Enabled: true
       Description: "To use this ability, click while over or in water. You will spout water up from beneath you to experience controlled levitation. This ability is a toggle, so you can activate it then use other abilities and it will remain on. If you try to spout over an area with no water, snow, or ice, the spout will dissipate and you will fall. Click again with this ability selected to deactivate it."

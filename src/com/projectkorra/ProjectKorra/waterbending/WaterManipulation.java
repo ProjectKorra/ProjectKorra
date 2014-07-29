@@ -36,7 +36,7 @@ public class WaterManipulation {
 	private static double pushfactor = config.getDouble("Abilities.Water.WaterManipulation.Push");
 	private static double defaultdamage = config.getDouble("Abilities.Water.WaterManipulation.Damage");
 	private static double speed = config.getDouble("Abilities.Water.WaterManipulation.Speed");
-	private static long cooldown = config.getLong("Properties.GlobalCooldown");
+	private static long cooldown = config.getLong("Abilities.Water.WaterManipulation.Cooldown");
 	private static long interval = (long) (1000. / speed);
 	private static final double deflectrange = 3;
 	// private static double speed = 1.5;

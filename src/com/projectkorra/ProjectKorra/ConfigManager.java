@@ -262,6 +262,14 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterBubble.Description","To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
 		config.addDefault("Abilities.Water.WaterBubble.Radius", 7);
 
+		config.addDefault("Abilities.Water.WaterManipulation.Enabled", true);
+		config.addDefault("Abilities.Water.WaterManipulation.Description", "To use, place your cursor over a waterbendable object and tap sneak (default: shift). Smoke will appear where you've selected, indicating the origin of your ability. After you have selected an origin, simply left-click in any direction and you will see your water spout off in that direction, slicing any creature in its path. If you look towards a creature when you use this ability, it will target that creature. A collision from Water Manipulation both knocks the target back and deals some damage. Alternatively, if you have the source selected and tap shift again, you will be able to control the water more directly.");
+		config.addDefault("Abilities.Water.WaterManipulation.Damage", 3.0);
+		config.addDefault("Abilities.Water.WaterManipulation.Range", 20);
+		config.addDefault("Abilities.Water.WaterManipulation.Speed", 35);
+		config.addDefault("Abilities.Water.WaterManipulation.Push", 0.3);
+		config.addDefault("Abilities.Water.WaterManipulation.Cooldown", 1000);
+		
 		config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
 		config.addDefault("Abilities.Water.WaterSpout.Description", "To use this ability, click while over or in water. "
 				+ "You will spout water up from beneath you to experience controlled levitation. "
