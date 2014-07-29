@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class Shockwave {
@@ -15,8 +16,8 @@ public class Shockwave {
 	private static ConcurrentHashMap<Player, Shockwave> instances = new ConcurrentHashMap<Player, Shockwave>();
 
 	private static final double angle = Math.toRadians(40);
-	private static final long defaultchargetime = 2500;
-	private static final double threshold = 10;
+	private static final long defaultchargetime = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Shockwave.ChargeTime");
+	private static final double threshold = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.FallThreshold");
 
 	private Player player;
 	private long starttime;

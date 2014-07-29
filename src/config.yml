@@ -273,6 +273,8 @@ Abilities:
     Shockwave:
       Enabled: true
       Description: "This is one of the most powerful moves in the earthbender's arsenal. To use, you must first charge it by holding sneak (default: shift). Once charged, you can release sneak to create an enormous shockwave of earth, disturbing all earth around you and expanding radially outwards. Anything caught in the shockwave will be blasted back and dealt damage. If you instead click while charged, the disruption is focused in a cone in front of you. Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave."
+      ChargeTime: 2500
+      FallThreshold: 10
     Tremorsense:
       Enabled: true
       Description: "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them."
