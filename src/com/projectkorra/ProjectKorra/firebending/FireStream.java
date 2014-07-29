@@ -41,7 +41,7 @@ public class FireStream {
 	private double range;
 
 	public FireStream(Location location, Vector direction, Player player, int range) {
-		this.range = Methods.firebendingDayAugment(range, player.getWorld());
+		this.range = Methods.getFirebendingDayAugment(range, player.getWorld());
 		this.player = player;
 		origin = location.clone();
 		this.location = origin.clone();

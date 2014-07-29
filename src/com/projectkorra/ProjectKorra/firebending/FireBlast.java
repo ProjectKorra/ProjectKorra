@@ -73,7 +73,7 @@ public class FireBlast {
 		if (player.getEyeLocation().getBlock().isLiquid() || Fireball.isCharging(player)) {
 			return;
 		}
-		range = Methods.firebendingDayAugment(range, player.getWorld());
+		range = Methods.getFirebendingDayAugment(range, player.getWorld());
 		// timers.put(player, System.currentTimeMillis());
 		this.player = player;
 		location = player.getEyeLocation();
@@ -95,7 +95,7 @@ public class FireBlast {
 			return;
 		}
 		safe = safeblocks;
-		range = Methods.firebendingDayAugment(range, player.getWorld());
+		range = Methods.getFirebendingDayAugment(range, player.getWorld());
 		// timers.put(player, System.currentTimeMillis());
 		this.player = player;
 		this.location = location.clone();
@@ -219,7 +219,7 @@ public class FireBlast {
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks(50);
-				Methods.damageEntity(player, entity, (int) Methods.firebendingDayAugment((double) damage, entity.getWorld()));
+				Methods.damageEntity(player, entity, (int) Methods.getFirebendingDayAugment((double) damage, entity.getWorld()));
 				new Enflamed(entity, player);
 				instances.remove(id);
 			}

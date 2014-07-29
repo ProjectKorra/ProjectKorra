@@ -53,7 +53,7 @@ public class Fireball {
 			chargetime = 0;
 			maxdamage = AvatarState.getValue(maxdamage);
 		}
-		range = Methods.firebendingDayAugment(range, player.getWorld());
+		range = Methods.getFirebendingDayAugment(range, player.getWorld());
 		if (!player.getEyeLocation().getBlock().isLiquid()) {
 			id = ID;
 			instances.put(id, this);
@@ -203,7 +203,7 @@ public class Fireball {
 			float yield = 1;
 			if (!AvatarState.isAvatarState(player)) {
 				if (Methods.isDay(player.getWorld())) {
-					Methods.firebendingDayAugment(yield, player.getWorld());
+					Methods.getFirebendingDayAugment(yield, player.getWorld());
 				} else {
 					yield *= 1.;
 				}

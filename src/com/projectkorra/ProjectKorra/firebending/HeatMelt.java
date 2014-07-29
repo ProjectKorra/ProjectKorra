@@ -16,9 +16,9 @@ public class HeatMelt {
 
 	public HeatMelt(Player player) {
 		Location location = Methods.getTargetedLocation(player,
-				(int) Methods.firebendingDayAugment(range, player.getWorld()));
+				(int) Methods.getFirebendingDayAugment(range, player.getWorld()));
 		for (Block block : Methods.getBlocksAroundPoint(location,
-				(int) Methods.firebendingDayAugment(radius, player.getWorld()))) {
+				(int) Methods.getFirebendingDayAugment(radius, player.getWorld()))) {
 			if (Methods.isMeltable(block)) {
 				Melt.melt(player, block);
 			} else if (isHeatable(block)) {

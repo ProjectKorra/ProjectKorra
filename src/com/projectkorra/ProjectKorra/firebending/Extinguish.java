@@ -31,12 +31,12 @@ public class Extinguish {
 			}
 		}
 
-		double range = Methods.firebendingDayAugment(defaultrange, player.getWorld());
+		double range = Methods.getFirebendingDayAugment(defaultrange, player.getWorld());
 		if (Methods.isMeltable(player.getTargetBlock(null, (int) range))) {
 			new HeatMelt(player);
 			return;
 		}
-		double radius = Methods.firebendingDayAugment(defaultradius, player.getWorld());
+		double radius = Methods.getFirebendingDayAugment(defaultradius, player.getWorld());
 		for (Block block : Methods.getBlocksAroundPoint(
 				player.getTargetBlock(null, (int) range).getLocation(), radius)) {
 			if (Methods.isRegionProtectedFromBuild(player, "Blaze",

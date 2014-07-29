@@ -38,7 +38,7 @@ public class ArcOfFire {
 
 		Location location = player.getLocation();
 
-		int arc = (int) Methods.firebendingDayAugment(defaultarc,
+		int arc = (int) Methods.getFirebendingDayAugment(defaultarc,
 				player.getWorld());
 
 		for (int i = -arc; i <= arc; i += stepsize) {
