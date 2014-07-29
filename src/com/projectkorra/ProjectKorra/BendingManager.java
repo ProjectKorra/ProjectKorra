@@ -1,7 +1,6 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -67,9 +66,7 @@ public class BendingManager implements Runnable {
 	long time;
 	long interval;
 
-	ArrayList<World> worlds = new ArrayList<World>();
-	ConcurrentHashMap<World, Boolean> nights = new ConcurrentHashMap<World, Boolean>();
-	ConcurrentHashMap<World, Boolean> days = new ConcurrentHashMap<World, Boolean>();
+	private final HashMap<String, Time> dayNight = new HashMap<>();
 
 	static final String defaultsunrisemessage = "You feel the strength of the rising sun empowering your firebending.";
 	static final String defaultsunsetmessage = "You feel the empowering of your firebending subside as the sun sets.";
@@ -143,15 +140,15 @@ public class BendingManager implements Runnable {
 			for (Player player : EarthArmor.instances.keySet()) {
 				EarthArmor.moveArmor(player);
 			}
-			for (int ID: AirSwipe.instances.keySet()) {
+			for (int ID : AirSwipe.instances.keySet()) {
 				AirSwipe.progress(ID);
 			}
-			for (int ID: Tornado.instances.keySet()) {
+			for (int ID : Tornado.instances.keySet()) {
 				Tornado.progress(ID);
 			}
 
 			Tremorsense.manage(Bukkit.getServer());
-			for (int id: FireStream.instances.keySet()) {
+			for (int id : FireStream.instances.keySet()) {
 				FireStream.progress(id);
 			}
 
@@ -159,29 +156,29 @@ public class BendingManager implements Runnable {
 				EarthBlast.progress(ID);
 			}
 
-			for (Block block: FireStream.ignitedblocks.keySet()) {
+			for (Block block : FireStream.ignitedblocks.keySet()) {
 				if (block.getType() != Material.FIRE) {
 					FireStream.ignitedblocks.remove(block);
 				}
 			}
 
-			for (int ID: Catapult.instances.keySet()) {
+			for (int ID : Catapult.instances.keySet()) {
 				Catapult.progress(ID);
 			}
 
-			for (int ID: EarthColumn.instances.keySet()) {
+			for (int ID : EarthColumn.instances.keySet()) {
 				EarthColumn.progress(ID);
 			}
 
-			for (int ID: CompactColumn.instances.keySet()) {
+			for (int ID : CompactColumn.instances.keySet()) {
 				CompactColumn.progress(ID);
 			}
 
-			for (int ID: WaterManipulation.instances.keySet()) {
+			for (int ID : WaterManipulation.instances.keySet()) {
 				WaterManipulation.progress(ID);
 			}
 
-			for (int ID: WaterWall.instances.keySet()) {
+			for (int ID : WaterWall.instances.keySet()) {
 				WaterWall.progress(ID);
 			}
 
@@ -209,65 +206,104 @@ public class BendingManager implements Runnable {
 	}
 
 	public void handleDayNight() {
-		for (World world: plugin.getServer().getWorlds()) {
-			if (world.getWorldType() == WorldType.NORMAL && !worlds.contains(world)) {
-				worlds.add(world);
-				nights.put(world, false);
-				days.put(world, false);
-			}
-		}
-		ArrayList<World> removeworlds = new ArrayList<World>();
-		for (World world: worlds) {
-			if (!plugin.getServer().getWorlds().contains(world)) {
-				removeworlds.add(world);
-				continue;
-			}
-			boolean night = nights.get(world);
-			boolean day = days.get(world);
-			if (Methods.isDay(world) && !day) {
-				for (Player player: world.getPlayers()) {
-					if (Methods.isBender(player.getName(), Element.Fire) && player.hasPermission("bending.message.daymessage")) {
-						player.sendMessage(ChatColor.RED + defaultsunrisemessage);
+		/**
+		 * This code is ran on startup, it adds all loaded worlds to the
+		 * hashmap.
+		 */
+		if (dayNight.size() < 1) {
+			for (World world : plugin.getServer().getWorlds()) {
+				if (world.getWorldType() == WorldType.NORMAL) {
+					String worldName = world.getName();
+					if (dayNight.containsKey(worldName))
+						return;
+					if (Methods.isDay(world)) {
+						dayNight.put(worldName, Time.DAY);
+					} else {
+						dayNight.put(worldName, Time.NIGHT);
 					}
 				}
-				days.replace(world, true);
-			}
-
-			if (!Methods.isDay(world) && day) {
-				for (Player player: world.getPlayers()) {
-					if (Methods.isBender(player.getName(), Element.Fire) && player.hasPermission("bending.message.daymessage")) {
-						player.sendMessage(ChatColor.RED + defaultsunsetmessage);
-					}
-				}
-				days.replace(world, false);
-			}
-
-			if (Methods.isNight(world) && !night) {
-				for (Player player: world.getPlayers()) {
-					if (Methods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
-						if (Methods.isFullMoon(world)) {
-							player.sendMessage(ChatColor.AQUA + defaultfullmoonrisemessage);
-						} else {
-							player.sendMessage(ChatColor.AQUA + defaultmoonrisemessage);
-						}
-					}
-				}
-				nights.replace(world, true);
-			}
-
-			if (!Methods.isNight(world) && night) {
-				for (Player player: world.getPlayers()) {
-					if (Methods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
-						player.sendMessage(ChatColor.AQUA + defaultmoonsetmessage);
-					}
-				}
-				nights.replace(world, false);
 			}
 		}
 
-		for (World world: removeworlds) {
-			worlds.remove(world);
+		for (World world : Bukkit.getWorlds()) {
+			final String worldName = world.getName();
+			if (!dayNight.containsKey(worldName))
+				return;
+			Time time = dayNight.get(worldName);
+			if (Methods.isDay(world) && time.equals(Time.NIGHT)) {
+				final Time newTime = Time.DAY;
+				sendFirebenderMessage(world, newTime);
+				dayNight.remove(worldName);
+				dayNight.put(worldName, newTime);
+			}
+
+			if (!Methods.isDay(world) && time.equals(Time.DAY)) {
+				final Time newTime = Time.NIGHT;
+				sendFirebenderMessage(world, newTime);
+				dayNight.remove(worldName);
+				dayNight.put(worldName, newTime);
+			}
+
+			if (Methods.isNight(world) && time.equals(Time.DAY)) {
+				final Time newTime = Time.NIGHT;
+				sendWaterbenderMessage(world, newTime);
+				dayNight.remove(worldName);
+				dayNight.put(worldName, newTime);
+			}
+
+			if (!Methods.isNight(world) && time.equals(Time.NIGHT)) {
+				final Time newTime = Time.DAY;
+				sendWaterbenderMessage(world, Time.DAY);
+				dayNight.remove(worldName);
+				dayNight.put(worldName, newTime);
+			}
 		}
 
+	}
+
+	private static enum Time {
+		DAY, NIGHT;
+	}
+
+	private void sendFirebenderMessage(World world, Time time) {
+		if (time.equals(Time.DAY)) {
+			for (Player player : world.getPlayers()) {
+				if (Methods.isBender(player.getName(), Element.Fire)
+						&& player.hasPermission("bending.message.daymessage")) {
+					player.sendMessage(ChatColor.RED + defaultsunrisemessage);
+				}
+			}
+		} else {
+			for (Player player : world.getPlayers()) {
+				if (Methods.isBender(player.getName(), Element.Fire)
+						&& player.hasPermission("bending.message.daymessage")) {
+					player.sendMessage(ChatColor.RED + defaultsunsetmessage);
+				}
+			}
+		}
+	}
+
+	private void sendWaterbenderMessage(World world, Time time) {
+		if (time.equals(Time.NIGHT)) {
+			for (Player player : world.getPlayers()) {
+				if (Methods.isBender(player.getName(), Element.Water)
+						&& player.hasPermission("bending.message.nightmessage")) {
+					if (Methods.isFullMoon(world)) {
+						player.sendMessage(ChatColor.AQUA
+								+ defaultfullmoonrisemessage);
+					} else {
+						player.sendMessage(ChatColor.AQUA
+								+ defaultmoonrisemessage);
+					}
+				}
+			}
+		} else {
+			for (Player player : world.getPlayers()) {
+				if (Methods.isBender(player.getName(), Element.Water)
+						&& player.hasPermission("bending.message.nightmessage")) {
+					player.sendMessage(ChatColor.AQUA + defaultmoonsetmessage);
+				}
+			}
+		}
 	}
 }
