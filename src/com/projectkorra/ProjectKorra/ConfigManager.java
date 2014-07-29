@@ -64,6 +64,7 @@ public class ConfigManager {
 		config.addDefault("Properties.RegionProtection.RespectPreciousStones", true);
 
 		config.addDefault("Properties.Air.CanBendWithWeapons", false);
+		config.addDefault("Properties.Air.Particles", "smoke");
 
 		config.addDefault("Properties.Water.CanBendWithWeapons", true);
 		config.addDefault("Properties.Water.NightFactor", 1.5);

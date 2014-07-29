@@ -292,7 +292,7 @@ public class Methods {
 		if (player.hasPermission("bending.earth.metalbending")) return true;
 		return false;
 	}
-	
+
 	/**
 	 * Checks to see if a player can PlantBend.
 	 * @param player The player to check
@@ -301,7 +301,7 @@ public class Methods {
 	public static boolean canPlantbend(Player player) {
 		return player.hasPermission("bending.ability.plantbending");
 	}
-	
+
 	/**
 	 * Creates a {@link BendingPlayer} with the data from the database. This runs when a player logs in.
 	 * @param uuid The UUID of the player
@@ -353,7 +353,7 @@ public class Methods {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Damages an Entity by amount of damage specified. Starts a {@link EntityDamageByEntityEvent}.
 	 * @param player The player dealing the damage
@@ -1152,10 +1152,10 @@ public class Methods {
 
 			if (fcp != null && mcore != null && respectFactions) {
 				if (!FactionsListenerMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
-  					return true;
+					return true;
 				} else {
- 					return false;
-  				}
+					return false;
+				}
 			}
 
 			if (twnp != null && respectTowny) {
@@ -1472,8 +1472,31 @@ public class Methods {
 	}
 
 	public static void playAirbendingParticles(Location loc) {
-		for (int i = 0; i < 20; i++) {
-			ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+		String particle = plugin.getConfig().getString("Properties.Air.Particles");
+		if (particle == null) {
+			for (int i = 0; i < 20; i++) {
+				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+			}
+		}
+		else if (particle.equalsIgnoreCase("spell")) {
+			for (int i = 0; i < 20; i++) {
+				ParticleEffect.SPELL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+			}
+		}
+		else if (particle.equalsIgnoreCase("blacksmoke")) {
+			for (int i = 0; i < 20; i++) {
+				ParticleEffect.SMOKE.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+			}
+		}
+		else if (particle.equalsIgnoreCase("smoke")) {
+			for (int i = 0; i < 20; i++) {
+				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+			}
+		}
+		else {
+			for (int i = 0; i < 20; i++) {
+				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+			}
 		}
 	}
 

@@ -34,6 +34,7 @@ Properties:
     RespectPreciousStones: true
   Air:
     CanBendWithWeapons: false
+    Particles: smoke
   Water:
     CanBendWithWeapons: false
     NightFactor: 1.5
