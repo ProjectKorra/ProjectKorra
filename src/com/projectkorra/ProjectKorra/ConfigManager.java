@@ -127,6 +127,9 @@ public class ConfigManager {
 				+ "of air in front of you, or click to release the burst in a sphere around you. "
 				+ "Additionally, having this ability selected when you land on the ground from a "
 				+ "large enough fall will create a burst of air around you.");
+		config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
+		config.addDefault("Abilities.Air.AirBurst.PushFactor", 1.5);
+		config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1750);
 
 		config.addDefault("Abilities.Air.AirScooter.Enabled", true);
 		config.addDefault("Abilities.Air.AirScooter.Description", "AirScooter is a fast means of transportation. To use, sprint, jump then click with "

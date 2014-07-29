@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -17,14 +18,16 @@ public class AirBurst {
 	private static ConcurrentHashMap<Player, AirBurst> instances = new ConcurrentHashMap<Player, AirBurst>();
 	private static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	
-	private static double threshold = 10;
-	private static double pushfactor = 1.5;
+	static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	
+	private static double threshold = config.getDouble("Abilities.Air.AirBurst.FallThreshold");
+	private static double pushfactor = config.getDouble("Abilities.Air.AirBurst.PushFactor");
 	private static double deltheta = 10;
 	private static double delphi = 10;
 
 	private Player player;
 	private long starttime;
-	private long chargetime = 1750;
+	private long chargetime = config.getLong("Abilities.Air.AirBurst.ChargeTime");
 	private boolean charged = false;
 
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();

@@ -103,6 +103,9 @@ Abilities:
     AirBurst:
       Enabled: true
       Description: "AirBurst is one of the most powerful abilities in an airbender's arsenal. To use, press and hold sneak to charge your burst. Once charged, you can either release sneak to launch a cone-shaped burst of air in front of you, or click to release theb urst in a sphere around you. Additionally, having this ability selected when you land on the ground from a large enough fall will create a burst of air around you."
+      FallThreshold: 10
+      PushFactor: 1.5
+      ChargeTime: 1750
     AirScooter:
       Enabled: true
       Description: "AirScooter is a fast means of transportation. To use, sprint, jump then click with this ability selected. YOu will hop on a scooter of air and be propelled forward in the direction you're looking (you don't need to press anything). This ability can be used to levitate above liquids, but it cannot go up steep slopes. Any other actions will deactivate this ability."
