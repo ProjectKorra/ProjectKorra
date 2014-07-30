@@ -48,7 +48,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
 
 import com.massivecraft.factions.listeners.FactionsListenerMain;
-import com.massivecraft.mcore.ps.PS;
+import com.massivecraft.massivecore.ps.PS;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
@@ -1090,7 +1090,7 @@ public class Methods {
 		Plugin fcp = pm.getPlugin("Factions");
 		Plugin twnp = pm.getPlugin("Towny");
 		Plugin gpp = pm.getPlugin("GriefPrevention");
-		Plugin mcore = pm.getPlugin("mcore");
+		Plugin massivecore = pm.getPlugin("MassiveCore");
 
 		for (Location location : new Location[] { loc, player.getLocation() }) {
 
@@ -1150,7 +1150,7 @@ public class Methods {
 					return true;
 			}
 
-			if (fcp != null && mcore != null && respectFactions) {
+			if (fcp != null && massivecore != null && respectFactions) {
 				if (!FactionsListenerMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
 					return true;
 				} else {
