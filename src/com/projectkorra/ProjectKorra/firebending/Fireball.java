@@ -27,7 +27,7 @@ public class Fireball {
 	private static int ID = Integer.MIN_VALUE;
 
 	private int id;
-	private int maxdamage = 4;
+	private double maxdamage = 4;
 	private double range = 20;
 	private double explosionradius = 6;
 	private double innerradius = 3;
@@ -157,7 +157,7 @@ public class Fireball {
 		double slope = -(maxdamage * .5) / (explosionradius - innerradius);
 		double damage = slope * (distance - innerradius) + maxdamage;
 		// Methods.verbose(damage);
-		Methods.damageEntity(player, entity, (int) damage);
+		Methods.damageEntity(player, entity, damage);
 	}
 
 	private void fireball() {
@@ -171,6 +171,7 @@ public class Fireball {
 			entity.setFireTicks(120);
 			if (entity instanceof LivingEntity) {
 				explode();
+				dealDamage(entity);
 				return;
 			}
 		}
