@@ -27,6 +27,9 @@ public class HighJump {
 		}
 
 		jump(p);
+		cooldowns.put(p.getName(), System.currentTimeMillis());
+
+		
 	}
 
 	private void jump(Player p) {
@@ -37,7 +40,6 @@ public class HighJump {
 		vec.setY(jumpheight);
 		p.setVelocity(vec);
 		// cooldowns.put(p.getName(), System.currentTimeMillis());
-		cooldowns.put(p.getName(), System.currentTimeMillis());
 		return;
 	}
 
