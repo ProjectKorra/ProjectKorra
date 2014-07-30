@@ -223,7 +223,7 @@ public class AirBlast {
 	}
 
 	private void advanceLocation() {
-		Methods.playAirbendingParticles(location);
+		Methods.playAirbendingParticles(location, 10);
 //		ParticleEffect.SPELL.display(location, (float)0, (float)0, (float)0, (float)speed, (int)20);
 //		location.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
 		location = location.add(direction.clone().multiply(speedfactor));
@@ -329,7 +329,7 @@ public class AirBlast {
 			return;
 		}
 
-		Methods.playAirbendingParticles(origin);
+		Methods.playAirbendingParticles(origin, 10);
 //		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
 //				(int) originselectrange);
 	}

@@ -1473,30 +1473,30 @@ public class Methods {
 		}
 	}
 
-	public static void playAirbendingParticles(Location loc) {
+	public static void playAirbendingParticles(Location loc, int amount) {
 		String particle = plugin.getConfig().getString("Properties.Air.Particles");
 		if (particle == null) {
-			for (int i = 0; i < 20; i++) {
+			for (int i = 0; i < amount; i++) {
 				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("spell")) {
-			for (int i = 0; i < 20; i++) {
+			for (int i = 0; i < amount; i++) {
 				ParticleEffect.SPELL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("blacksmoke")) {
-			for (int i = 0; i < 20; i++) {
+			for (int i = 0; i < amount; i++) {
 				ParticleEffect.SMOKE.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("smoke")) {
-			for (int i = 0; i < 20; i++) {
+			for (int i = 0; i < amount; i++) {
 				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
 			}
 		}
 		else {
-			for (int i = 0; i < 20; i++) {
+			for (int i = 0; i < amount; i++) {
 				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
 			}
 		}

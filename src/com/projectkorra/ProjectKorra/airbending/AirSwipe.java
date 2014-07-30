@@ -162,7 +162,7 @@ public class AirSwipe {
 				pushfactor *= factor;
 				return true;
 			} else if (System.currentTimeMillis() >= time + maxchargetime) {
-				Methods.playAirbendingParticles(player.getEyeLocation());
+				Methods.playAirbendingParticles(player.getEyeLocation(), 10);
 //				player.getWorld().playEffect(
 //						player.getEyeLocation(),
 //						Effect.SMOKE,
@@ -219,7 +219,7 @@ public class AirSwipe {
 							}
 						}
 					} else {
-						Methods.playAirbendingParticles(location);
+						Methods.playAirbendingParticles(location, 10);
 //						location.getWorld().playEffect(location, Effect.SMOKE,
 //								4, (int) AirBlast.defaultrange);
 						affectPeople(location, direction);

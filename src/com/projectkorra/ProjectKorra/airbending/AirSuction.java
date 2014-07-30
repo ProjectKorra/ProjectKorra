@@ -266,7 +266,7 @@ public class AirSuction {
 	}
 
 	private void advanceLocation() {
-		Methods.playAirbendingParticles(location);
+		Methods.playAirbendingParticles(location, 10);
 //		location.getWorld().playEffect(location, Effect.SMOKE, 4,
 //				(int) AirBlast.defaultrange);
 		location = location.add(direction.clone().multiply(speedfactor));
@@ -304,7 +304,7 @@ public class AirSuction {
 			return;
 		}
 		
-		Methods.playAirbendingParticles(origin);
+		Methods.playAirbendingParticles(origin, 10);
 //
 //		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
 //				(int) originselectrange);

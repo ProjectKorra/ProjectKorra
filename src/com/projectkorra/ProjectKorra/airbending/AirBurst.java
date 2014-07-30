@@ -181,7 +181,7 @@ public class AirBurst {
 		} else if (charged) {
 			Location location = player.getEyeLocation();
 			// location = location.add(location.getDirection().normalize());
-			Methods.playAirbendingParticles(location);
+			Methods.playAirbendingParticles(location, 10);
 //			location.getWorld().playEffect(
 //					location,
 //					Effect.SMOKE,
