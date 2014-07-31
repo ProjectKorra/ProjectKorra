@@ -67,6 +67,7 @@ public class BendingManager implements Runnable {
 	long interval;
 
 	private final HashMap<String, Time> dayNight = new HashMap<>();
+	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
 
 	static final String defaultsunrisemessage = "You feel the strength of the rising sun empowering your firebending.";
 	static final String defaultsunsetmessage = "You feel the empowering of your firebending subside as the sun sets.";
@@ -206,6 +207,45 @@ public class BendingManager implements Runnable {
 	}
 
 	public void handleDayNight() {
+		for (World world: Bukkit.getServer().getWorlds()) {
+			if (!times.containsKey(world)) {
+				if (Methods.isDay(world)) {
+					times.put(world, true);
+				} else {
+					times.put(world, false);
+				}
+			} else {
+				if (times.get(world) && !Methods.isDay(world)) {
+					// The hashmap says it is day, but it is not.
+					times.put(world, false); // Sets time to night.
+					for (Player player: world.getPlayers()) {
+						if (Methods.isBender(player.getName(), Element.Water)) {
+							if (Methods.isFullMoon(world)) {
+								player.sendMessage(Methods.getWaterColor() + defaultfullmoonrisemessage);
+							} else {
+								player.sendMessage(Methods.getWaterColor() + defaultmoonrisemessage);
+							}
+						}
+						if (Methods.isBender(player.getName(), Element.Fire)) {
+							player.sendMessage(Methods.getFireColor() + defaultsunsetmessage);
+						}
+					}
+				}
+
+				if (!times.get(world) && Methods.isDay(world)) {
+					// The hashmap says it is night, but it is day.
+					times.put(world, true);
+					for (Player player: world.getPlayers()) {
+						if (Methods.isBender(player.getName(), Element.Water)) {
+							player.sendMessage(Methods.getWaterColor() + defaultmoonsetmessage);
+						}
+						if (Methods.isBender(player.getName(), Element.Fire)) {
+							player.sendMessage(Methods.getFireColor() + defaultsunrisemessage);
+						}
+					}
+				}
+			}
+		}
 		/**
 		 * This code is ran on startup, it adds all loaded worlds to the
 		 * hashmap.
@@ -225,39 +265,39 @@ public class BendingManager implements Runnable {
 			}
 		}
 
-		for (World world : Bukkit.getWorlds()) {
-			final String worldName = world.getName();
-			if (!dayNight.containsKey(worldName))
-				return;
-			Time time = dayNight.get(worldName);
-			if (Methods.isDay(world) && time.equals(Time.NIGHT)) {
-				final Time newTime = Time.DAY;
-				sendFirebenderMessage(world, newTime);
-				dayNight.remove(worldName);
-				dayNight.put(worldName, newTime);
-			}
-
-			if (!Methods.isDay(world) && time.equals(Time.DAY)) {
-				final Time newTime = Time.NIGHT;
-				sendFirebenderMessage(world, newTime);
-				dayNight.remove(worldName);
-				dayNight.put(worldName, newTime);
-			}
-
-			if (Methods.isNight(world) && time.equals(Time.DAY)) {
-				final Time newTime = Time.NIGHT;
-				sendWaterbenderMessage(world, newTime);
-				dayNight.remove(worldName);
-				dayNight.put(worldName, newTime);
-			}
-
-			if (!Methods.isNight(world) && time.equals(Time.NIGHT)) {
-				final Time newTime = Time.DAY;
-				sendWaterbenderMessage(world, Time.DAY);
-				dayNight.remove(worldName);
-				dayNight.put(worldName, newTime);
-			}
-		}
+		//		for (World world : Bukkit.getWorlds()) {
+		//			final String worldName = world.getName();
+		//			if (!dayNight.containsKey(worldName))
+		//				return;
+		//			Time time = dayNight.get(worldName);
+		//			if (Methods.isDay(world) && time.equals(Time.NIGHT)) {
+		//				final Time newTime = Time.DAY;
+		//				sendFirebenderMessage(world, newTime);
+		//				dayNight.remove(worldName);
+		//				dayNight.put(worldName, newTime);
+		//			}
+		//
+		//			if (!Methods.isDay(world) && time.equals(Time.DAY)) {
+		//				final Time newTime = Time.NIGHT;
+		//				sendFirebenderMessage(world, newTime);
+		//				dayNight.remove(worldName);
+		//				dayNight.put(worldName, newTime);
+		//			}
+		//
+		//			if (Methods.isNight(world) && time.equals(Time.DAY)) {
+		//				final Time newTime = Time.NIGHT;
+		//				sendWaterbenderMessage(world, newTime);
+		//				dayNight.remove(worldName);
+		//				dayNight.put(worldName, newTime);
+		//			}
+		//
+		//			if (!Methods.isNight(world) && time.equals(Time.NIGHT)) {
+		//				final Time newTime = Time.DAY;
+		//				sendWaterbenderMessage(world, Time.DAY);
+		//				dayNight.remove(worldName);
+		//				dayNight.put(worldName, newTime);
+		//			}
+		//		}
 
 	}
 
