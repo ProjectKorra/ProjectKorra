@@ -62,6 +62,8 @@ public class ConfigManager {
 		config.addDefault("Properties.RegionProtection.RespectFactions", true);
 		config.addDefault("Properties.RegionProtection.RespectTowny", true);
 		config.addDefault("Properties.RegionProtection.RespectPreciousStones", true);
+		
+		config.addDefault("Properties.TagAPI.Enabled", true);
 
 		config.addDefault("Properties.Air.CanBendWithWeapons", false);
 		config.addDefault("Properties.Air.Particles", "smoke");
