@@ -204,6 +204,7 @@ public class ConfigManager {
 				+ "launch that target off in the direction you're looking. "
 				+ "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
 		config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight", false);
+		config.addDefault("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs", true);
 		config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 		config.addDefault("Abilities.Water.Bloodbending.Range", 10);
 

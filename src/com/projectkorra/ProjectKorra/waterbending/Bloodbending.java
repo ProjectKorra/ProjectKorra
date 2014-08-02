@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Location;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -25,8 +26,9 @@ public class Bloodbending {
 
 	private static final double factor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
 	private static final boolean onlyUsableAtNight = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
+	private static boolean canBeUsedOnUndead = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
 	private int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Range");
-	
+
 	private Player player;
 
 	public Bloodbending(Player player) {
@@ -38,7 +40,7 @@ public class Bloodbending {
 			remove(player);
 			return;
 		}
-		
+
 		range = (int) Methods.waterbendingNightAugment(range, player.getWorld());
 		if (AvatarState.isAvatarState(player)) {
 			range = AvatarState.getValue(range);
@@ -47,8 +49,8 @@ public class Bloodbending {
 					if (entity instanceof Player) {
 						if (Methods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation())
 								|| (AvatarState.isAvatarState((Player) entity)
-								|| entity.getEntityId() == player.getEntityId()
-								|| Methods.canBend(((Player) entity).getName(), "Bloodbending")))
+										|| entity.getEntityId() == player.getEntityId()
+										|| Methods.canBend(((Player) entity).getName(), "Bloodbending")))
 							continue;
 					}
 					Methods.damageEntity(player, entity, 0);
@@ -66,6 +68,9 @@ public class Bloodbending {
 				if (Methods.canBend(((Player) target).getName(), "Bloodbending")
 						|| AvatarState.isAvatarState((Player) target))
 					return;
+			}
+			if (!canBeUsedOnUndead && isUndead(target)) {
+				return;
 			}
 			Methods.damageEntity(player, target, 0);
 			targetentities.put(target, target.getLocation().clone());
@@ -101,12 +106,20 @@ public class Bloodbending {
 			remove(player);
 			return;
 		}
-		
+
+		if (!canBeUsedOnUndead) {
+			for (Entity entity: targetentities.keySet()) {
+				if (isUndead(entity)) {
+					targetentities.remove(entity);
+				}
+			}
+		}
+
 		if (onlyUsableAtNight && !Methods.isNight(player.getWorld())) {
 			remove(player);
 			return;
 		}
-		
+
 		if (!Methods.canBend(player.getName(), "Bloodbending")) {
 			remove(player);
 			return;
@@ -211,6 +224,23 @@ public class Bloodbending {
 				// }
 				return true;
 			}
+		}
+		return false;
+	}
+
+	public static boolean isUndead(Entity entity) {
+		if (entity == null) return false;
+		if (entity.getType() == EntityType.ZOMBIE
+				|| entity.getType() == EntityType.BLAZE
+				|| entity.getType() == EntityType.GIANT
+				|| entity.getType() == EntityType.IRON_GOLEM
+				|| entity.getType() == EntityType.MAGMA_CUBE
+				|| entity.getType() == EntityType.PIG_ZOMBIE
+				|| entity.getType() == EntityType.SKELETON
+				|| entity.getType() == EntityType.SLIME
+				|| entity.getType() == EntityType.SNOWMAN
+				|| entity.getType() == EntityType.ZOMBIE) {
+			return true;
 		}
 		return false;
 	}

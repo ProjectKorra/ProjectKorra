@@ -236,34 +236,34 @@ public class BendingManager implements Runnable {
 					// The hashmap says it is night, but it is day.
 					times.put(world, true);
 					for (Player player: world.getPlayers()) {
-						if (Methods.isBender(player.getName(), Element.Water)) {
+						if (Methods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
 							player.sendMessage(Methods.getWaterColor() + defaultmoonsetmessage);
 						}
-						if (Methods.isBender(player.getName(), Element.Fire)) {
+						if (Methods.isBender(player.getName(), Element.Fire) && player.hasPermission("bending.message.daymessage")) {
 							player.sendMessage(Methods.getFireColor() + defaultsunrisemessage);
 						}
 					}
 				}
 			}
 		}
-		/**
-		 * This code is ran on startup, it adds all loaded worlds to the
-		 * hashmap.
-		 */
-		if (dayNight.size() < 1) {
-			for (World world : plugin.getServer().getWorlds()) {
-				if (world.getWorldType() == WorldType.NORMAL) {
-					String worldName = world.getName();
-					if (dayNight.containsKey(worldName))
-						return;
-					if (Methods.isDay(world)) {
-						dayNight.put(worldName, Time.DAY);
-					} else {
-						dayNight.put(worldName, Time.NIGHT);
-					}
-				}
-			}
-		}
+//		/**
+//		 * This code is ran on startup, it adds all loaded worlds to the
+//		 * hashmap.
+//		 */
+//		if (dayNight.size() < 1) {
+//			for (World world : plugin.getServer().getWorlds()) {
+//				if (world.getWorldType() == WorldType.NORMAL) {
+//					String worldName = world.getName();
+//					if (dayNight.containsKey(worldName))
+//						return;
+//					if (Methods.isDay(world)) {
+//						dayNight.put(worldName, Time.DAY);
+//					} else {
+//						dayNight.put(worldName, Time.NIGHT);
+//					}
+//				}
+//			}
+//		}
 
 		//		for (World world : Bukkit.getWorlds()) {
 		//			final String worldName = world.getName();
