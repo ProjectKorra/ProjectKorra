@@ -75,7 +75,7 @@ public class Combustion {
 				
 		if (charged) {
 			if (player.isSneaking()) {
-				player.getWorld().playEffect(player.getEyeLocation(), Effect.SMOKE, 10);
+				player.getWorld().playEffect(player.getEyeLocation(), Effect.SMOKE, 4, 3);
 			} else {
 				launchFireball();
 				cooldowns.put(player.getName(), System.currentTimeMillis());

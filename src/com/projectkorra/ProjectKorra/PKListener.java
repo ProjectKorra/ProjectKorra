@@ -182,6 +182,12 @@ public class PKListener implements Listener {
 		if (Combustion.fireballs.contains(id)) {
 			Location loc = event.getEntity().getLocation();
 			loc.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), (float) ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.Combustion.Power"), true, ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks"));
+//			for (Entity en: Methods.getEntitiesAroundPoint(loc, 4)) {
+//				if (en instanceof LivingEntity) {
+//					LivingEntity le = (LivingEntity) en;
+//					le.damage(ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.Combustion.Damage"));
+//				}
+//			}
 		}
 	}
 

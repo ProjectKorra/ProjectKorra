@@ -402,7 +402,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.Combustion.Cooldown", 25000);
 		config.addDefault("Abilities.Fire.Combustion.ChargeTime", 5000);
 		config.addDefault("Abilities.Fire.Combustion.BreakBlocks", false);
-		config.addDefault("Abilities.Fire.Combustion.Power", 1);
+		config.addDefault("Abilities.Fire.Combustion.Power", 1.0);
+//		config.addDefault("Abilities.Fire.Combustion.Damage", 5);
 
 		config.addDefault("Abilities.Fire.FireBlast.Enabled", true);
 		config.addDefault("Abilities.Fire.FireBlast.Description","FireBlast is the most fundamental bending technique of a firebender. "
