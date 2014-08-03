@@ -516,6 +516,20 @@ public class Commands {
 
 						String un = p.getName();
 						s.sendMessage(un + " - ");
+						if (p.getName().equalsIgnoreCase("MistPhizzle") ||
+								p.getName().equalsIgnoreCase("runefist")
+								|| p.getName().equalsIgnoreCase("Jacklin213")
+								|| p.getName().equalsIgnoreCase("kingbirdy")
+								|| p.getName().equalsIgnoreCase("cpdances")
+								|| p.getName().equalsIgnoreCase("sampepere")) {
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Developer");
+						}
+						if (p.getName().equalsIgnoreCase("vidcom")
+								|| p.getName().equalsIgnoreCase("Zolteex")
+								|| p.getName().equalsIgnoreCase("zmeduna")
+								|| p.getName().equalsIgnoreCase("ashe36")) {
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
+						}
 						if (Methods.isBender(un, Element.Air)) {
 							s.sendMessage(Methods.getAirColor() + "- Airbender");
 						}
@@ -552,21 +566,6 @@ public class Commands {
 									s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
 								}
 							}
-						}
-
-						if (p.getName().equalsIgnoreCase("MistPhizzle") ||
-								p.getName().equalsIgnoreCase("runefist")
-								|| p.getName().equalsIgnoreCase("Jacklin213")
-								|| p.getName().equalsIgnoreCase("kingbirdy")
-								|| p.getName().equalsIgnoreCase("cpdances")
-								|| p.getName().equalsIgnoreCase("sampepere")) {
-							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Developer");
-						}
-						if (p.getName().equalsIgnoreCase("vidcom")
-								|| p.getName().equalsIgnoreCase("Zolteex")
-								|| p.getName().equalsIgnoreCase("zmeduna")
-								|| p.getName().equalsIgnoreCase("ashe36")) {
-							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
 						}
 						return true;
 					}
@@ -700,15 +699,15 @@ public class Commands {
 						BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 						if (Arrays.asList(airaliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Air);
-							player.sendMessage(Methods.getAirColor() + "You are also an airbender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getAirColor() + " is also an airbender.");
+							player.sendMessage(Methods.getAirColor() + "You are also an Airbender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getAirColor() + " is also an Airbender.");
 							return true;
 						}
 
 						if (Arrays.asList(wateraliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Water);
-							player.sendMessage(Methods.getWaterColor() + "You are also a waterbender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getWaterColor() + " is also a waterbender.");
+							player.sendMessage(Methods.getWaterColor() + "You are also a Waterbender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getWaterColor() + " is also a Waterbender.");
 							return true;
 						}
 
@@ -751,13 +750,13 @@ public class Commands {
 
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Air);
-							s.sendMessage(Methods.getAirColor() + "You are also an airbender.");
+							s.sendMessage(Methods.getAirColor() + "You are also an Airbender.");
 							return true;
 						}
 
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Water);
-							s.sendMessage(Methods.getWaterColor() + "You are also a waterbender.");
+							s.sendMessage(Methods.getWaterColor() + "You are also a Waterbender.");
 							return true;
 						}
 
@@ -820,7 +819,7 @@ public class Commands {
 						}
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Water);
-							s.sendMessage(Methods.getWaterColor() + "You are now a waterbender.");
+							s.sendMessage(Methods.getWaterColor() + "You are now a Waterbender.");
 							Methods.removeUnusableAbilities(s.getName());
 							return true;
 						}
