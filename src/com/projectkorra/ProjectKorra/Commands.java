@@ -416,9 +416,13 @@ public class Commands {
 						} else {
 							s.sendMessage(ChatColor.RED + "Not a valid Element." + ChatColor.WHITE + " Elements: " + 
 									Methods.getAirColor() + "Air" + 
-									Methods.getEarthColor() + "Earth" + 
-									Methods.getFireColor() + "Fire" +
+									ChatColor.WHITE + " | " +
 									Methods.getWaterColor() + "Water" +
+									ChatColor.WHITE + " | " +
+									Methods.getEarthColor() + "Earth" + 
+									ChatColor.WHITE + " | " +
+									Methods.getFireColor() + "Fire" +
+									ChatColor.WHITE + " | " +
 									Methods.getChiColor() + "Chi");
 
 						}
