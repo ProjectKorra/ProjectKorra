@@ -32,6 +32,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
+import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireBurst;
@@ -120,6 +121,7 @@ public class BendingManager implements Runnable {
 			Lightning.progressAll();
 			WallOfFire.manage();
 			WaterReturn.progressAll();
+			Combustion.progressAll();
 			for (Player p : RapidPunch.instance.keySet())
 				RapidPunch.instance.get(p).startPunch(p);
 

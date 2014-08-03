@@ -85,6 +85,7 @@ import com.projectkorra.ProjectKorra.earthbending.Extraction;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.firebending.ArcOfFire;
+import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.Enflamed;
 import com.projectkorra.ProjectKorra.firebending.Extinguish;
@@ -176,6 +177,10 @@ public class PKListener implements Listener {
 				Smokescreen.applyBlindness(en);
 			}
 			Smokescreen.snowballs.remove(id);
+		}
+		if (Combustion.fireballs.contains(id)) {
+			Location loc = event.getEntity().getLocation();
+			loc.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), (float) ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.Combustion.Power"), true, ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks"));
 		}
 	}
 
@@ -405,6 +410,9 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Lightning")) {
 					new Lightning(player);
 				}
+				if (abil.equalsIgnoreCase("Combustion")) {
+					new Combustion(player);
+				}
 			}
 		}
 	}
@@ -494,6 +502,10 @@ public class PKListener implements Listener {
 	public void onEntityExplode(EntityExplodeEvent event) {
 		if (event.isCancelled()) return;
 
+		if (event.getEntity() instanceof org.bukkit.entity.Fireball && Combustion.fireballs.contains(event.getEntity().getEntityId())) {
+			event.setCancelled(true);
+		}
+		
 		for (Block block : event.blockList()) {
 			EarthBlast blast = EarthBlast.getBlastFromSource(block);
 
@@ -513,6 +525,8 @@ public class PKListener implements Listener {
 				Methods.removeRevertIndex(block);
 			}
 		}
+		
+		
 
 	}
 
@@ -805,7 +819,7 @@ public class PKListener implements Listener {
 		if (event.getCause() == DamageCause.FIRE && FireStream.ignitedblocks.containsKey(entity.getLocation().getBlock())) {
 			new Enflamed(entity, FireStream.ignitedblocks.get(entity.getLocation().getBlock()));
 		}
-
+		
 		if (Enflamed.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) {
 			event.setCancelled(true);
 			Enflamed.dealFlameDamage(entity);
@@ -934,6 +948,10 @@ public class PKListener implements Listener {
 			e.setCancelled(true);
 			fireball.dealDamage(entity);
 			return;
+		}
+		
+		if (Combustion.fireballs.contains(source.getEntityId())) {
+			e.setCancelled(true);
 		}
 
 		if (e.getCause() == DamageCause.LIGHTNING) {
