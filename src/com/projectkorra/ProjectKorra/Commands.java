@@ -700,15 +700,15 @@ public class Commands {
 						BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 						if (Arrays.asList(airaliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Air);
-							player.sendMessage(Methods.getAirColor() + "You are also an airbender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getAirColor() + " is also an airbender.");
+							player.sendMessage(Methods.getAirColor() + "You are also an Airbender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getAirColor() + " is also an Airbender.");
 							return true;
 						}
 
 						if (Arrays.asList(wateraliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Water);
 							player.sendMessage(Methods.getWaterColor() + "You are also a waterbender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getWaterColor() + " is also a waterbender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getWaterColor() + " is also a Waterbender.");
 							return true;
 						}
 
@@ -820,7 +820,7 @@ public class Commands {
 						}
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Water);
-							s.sendMessage(Methods.getWaterColor() + "You are now a waterbender.");
+							s.sendMessage(Methods.getWaterColor() + "You are now a Waterbender.");
 							Methods.removeUnusableAbilities(s.getName());
 							return true;
 						}
