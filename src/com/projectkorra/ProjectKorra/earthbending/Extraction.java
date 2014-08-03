@@ -35,56 +35,29 @@ public class Extraction {
 		}
 		if (!Methods.isRegionProtectedFromBuild(player, "Extraction", block.getLocation())) {
 			if (Methods.canMetalbend(player) && Methods.canBend(player.getName(), "Extraction")) {
-				Random rand = new Random();
-				if (rand.nextInt(99) + 1 <= triplechance) {
-					if (block.getType() == Material.IRON_ORE) {
+				switch(block.getType()) {
+					case IRON_ORE:
 						block.setType(Material.STONE);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, 3));
-					}
-					if (block.getType() == Material.GOLD_ORE){
+						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, getAmount());
+				                break;
+					case GOLD_ORE:
 						block.setType(Material.STONE);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, 3));
-					}
-					if (block.getType() == Material.QUARTZ_ORE) {
+						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, getAmount());
+				                break;
+					case QUARTZ_ORE:
 						block.setType(Material.NETHERRACK);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, 3));
-					}
-					cooldowns.put(player.getName(), System.currentTimeMillis());
-					return;
+						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, getAmount());
+	                                        break;
+	                                case default:
+	                                	break;//shouldn't happen
 				}
-				else if (rand.nextInt(99) + 1 <= doublechance) {
-					if (block.getType() == Material.IRON_ORE) {
-						block.setType(Material.STONE);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, 2));
-					}
-					if (block.getType() == Material.GOLD_ORE){
-						block.setType(Material.STONE);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, 2));
-					}
-					if (block.getType() == Material.QUARTZ_ORE) {
-						block.setType(Material.NETHERRACK);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, 2));
-					}
 					cooldowns.put(player.getName(), System.currentTimeMillis());
-					return;
-				} else {
-					if (block.getType() == Material.IRON_ORE) {
-						block.setType(Material.STONE);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT));
-					}
-					if (block.getType() == Material.GOLD_ORE){
-						block.setType(Material.STONE);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT));
-					}
-					if (block.getType() == Material.QUARTZ_ORE) {
-						block.setType(Material.NETHERRACK);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ));
-					}
-					cooldowns.put(player.getName(), System.currentTimeMillis());
-					return;
-				}
-			}
 		}
+		
+        private int getAmount() {
+        	Random rand = new Random();
+                return rand.nextInt(99) + 1 <= triplechance ? 3 : rand.nextInt(99) + 1 <= doublechance ? 2: 0;
+               }
 	}
 
 }
