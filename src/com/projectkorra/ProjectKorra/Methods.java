@@ -118,6 +118,7 @@ public class Methods {
 
 	public static ConcurrentHashMap<Block, Information> movedearth = new ConcurrentHashMap<Block, Information>();
 	public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<Integer, Information>();
+	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	public static ArrayList<Block> tempnophysics = new ArrayList<Block>();
 	private static Integer[] plantIds = { 6, 18, 31, 32, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175};
 
@@ -252,6 +253,12 @@ public class Methods {
 		if (Commands.isToggledForAll) return false;
 		if (!bPlayer.isToggled) return false;
 		if (p == null) return false;
+		if (cooldowns.containsKey(p.getName())) {
+			if (cooldowns.get(p.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
+				return false;
+			}
+			cooldowns.remove(p.getName());
+		}
 		if (!p.hasPermission("bending.ability." + ability)) return false;
 		if (isAirAbility(ability) && !isBender(player, Element.Air)) return false;
 		if (isWaterAbility(ability) && !isBender(player, Element.Water)) return false;

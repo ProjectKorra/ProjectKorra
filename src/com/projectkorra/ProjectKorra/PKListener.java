@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
@@ -208,6 +209,10 @@ public class PKListener implements Listener {
 	public void onPlayerInteraction(PlayerInteractEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
+		
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			Methods.cooldowns.put(player.getName(), System.currentTimeMillis());
+		}
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
 		}
