@@ -1013,7 +1013,7 @@ public class Methods {
 
 
 	public static boolean isMeltable(Block block) {
-		if (block.getType() == Material.ICE || block.getType() == Material.SNOW || block.getType() == Material.PACKED_ICE) {
+		if (block.getType() == Material.ICE || block.getType() == Material.SNOW) {
 			return true;
 		}
 		return false;
