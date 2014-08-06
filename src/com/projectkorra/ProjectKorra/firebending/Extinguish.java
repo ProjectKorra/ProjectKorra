@@ -64,7 +64,7 @@ public class Extinguish {
 	public static boolean canBurn(Player player) {
 		if (Methods.getBoundAbility(player) != null) {
 			if (Methods.getBoundAbility(player).equalsIgnoreCase("HeatControl") || FireJet.checkTemporaryImmunity(player)) {
-				player.setFireTicks(0);
+				player.setFireTicks(-1);
 				return false;
 			}
 		}
