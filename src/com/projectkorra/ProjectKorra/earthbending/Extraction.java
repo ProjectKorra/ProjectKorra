@@ -3,12 +3,10 @@ package com.projectkorra.ProjectKorra.earthbending;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
@@ -38,26 +36,26 @@ public class Extraction {
 				switch(block.getType()) {
 					case IRON_ORE:
 						block.setType(Material.STONE);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, getAmount());
-				                break;
+						player.getInventory().addItem(new ItemStack(Material.IRON_INGOT, getAmount()));
+			            break;
 					case GOLD_ORE:
 						block.setType(Material.STONE);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, getAmount());
-				                break;
+						player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT, getAmount()));
+						break;
 					case QUARTZ_ORE:
 						block.setType(Material.NETHERRACK);
-						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, getAmount());
-	                                        break;
-	                                case default:
-	                                	break;//shouldn't happen
+						player.getInventory().addItem(new ItemStack(Material.QUARTZ, getAmount()));
+						break;
+					default:
+						break;//shouldn't happen
 				}
-					cooldowns.put(player.getName(), System.currentTimeMillis());
+				cooldowns.put(player.getName(), System.currentTimeMillis());
+			}
 		}
+	}
 		
         private int getAmount() {
         	Random rand = new Random();
-                return rand.nextInt(99) + 1 <= triplechance ? 3 : rand.nextInt(99) + 1 <= doublechance ? 2: 0;
-               }
-	}
-
+            return rand.nextInt(99) + 1 <= triplechance ? 3 : rand.nextInt(99) + 1 <= doublechance ? 2: 0;
+        }
 }

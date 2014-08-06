@@ -885,6 +885,10 @@ public class Commands {
 					}
 				}
 				if (Arrays.asList(helpaliases).contains(args[0].toLowerCase())) {
+					if (!s.hasPermission("bending.command.help")) {
+						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						return true;
+					}
 					if (args.length != 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending help Command/Ability");
 						s.sendMessage(ChatColor.YELLOW + "/bending add <Player> [Element]");
@@ -898,10 +902,6 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "/bending toggle");
 						s.sendMessage(ChatColor.YELLOW + "/bending version");
 						s.sendMessage(ChatColor.YELLOW + "/bending who");
-						return true;
-					}
-					if (!s.hasPermission("bending.command.help")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
 					if (Arrays.asList(importaliases).contains(args[1].toLowerCase())) {
@@ -978,6 +978,26 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending bind [Ability] <Slot>");
 						s.sendMessage(ChatColor.YELLOW + "This command will bind an ability to the slot you specify (if you specify one), or the slot currently"
 								+ " selected in your hotbar (If you do not specify a Slot #).");
+					}
+					
+					if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
+						s.sendMessage(Methods.getWaterColor() + ElementDescriptions.waterdesc);
+					}
+					
+					if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
+						s.sendMessage(Methods.getAirColor() + ElementDescriptions.airdesc);
+					}
+					
+					if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
+						s.sendMessage(Methods.getFireColor() + ElementDescriptions.firedesc);
+					}
+					
+					if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
+						s.sendMessage(Methods.getEarthColor() + ElementDescriptions.earthdesc);
+					}
+					
+					if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
+						s.sendMessage(Methods.getChiColor() + ElementDescriptions.chidesc);
 					}
 
 					if (Methods.abilityExists(args[1])) {
