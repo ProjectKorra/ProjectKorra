@@ -957,6 +957,7 @@ public class Methods {
 
 	public static boolean isDay(World world) {
 		long time = world.getTime();
+		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) return true;
 		if (time >= 23500 || time <= 12500) {
 			return true;
 		}
