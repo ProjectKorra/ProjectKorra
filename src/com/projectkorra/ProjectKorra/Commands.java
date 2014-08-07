@@ -904,6 +904,46 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "/bending who");
 						return true;
 					}
+					if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
+						s.sendMessage(Methods.getAirColor() + "Air is the element of freedom. Airbenders are natural pacifists and "
+								+ "great explorers. There is nothing stopping them from scaling the tallest of mountains and walls easily. They specialize in redirection, "
+								+ "from blasting things away with gusts of winds, to forming a shield around them to prevent damage. Easy to get across flat terrains, "
+								+ "such as oceans, there is practically no terrain off limits to Airbenders. They lack much raw damage output, but make up for it with "
+								+ "with their ridiculous amounts of utility and speed.");
+						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qffg9m3");
+					}
+					if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
+						s.sendMessage(Methods.getWaterColor() + "Water is the element of change. Waterbending focuses on using your "
+								+ "opponents own force against them. Using redirection and various dodging tactics, you can be made "
+								+ "practically untouchable by an opponent. Waterbending provides agility, along with strong offensive "
+								+ "skills while in or near water.");
+						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/lod3plv");
+					}
+					if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
+						s.sendMessage(Methods.getEarthColor() + "Earth is the element of substance. Earthbenders share many of the " 
+								+ "same fundamental techniques as Waterbenders, but their domain is quite different and more readily "
+								+ "accessible. Earthbenders dominate the ground and subterranean, having abilities to pull columns "
+								+ "of rock straight up from the earth or drill their way through the mountain. They can also launch "
+								+ "themselves through the air using pillars of rock, and will not hurt themselves assuming they land "
+								+ "on something they can bend. The more skilled Earthbenders can even bend metal.");
+						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qaudl42");
+					}
+					if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
+						s.sendMessage(Methods.getFireColor() + "Fire is the element of power. Firebenders focus on destruction and "
+								+ "incineration. Their abilities are pretty straight forward: set things on fire. They do have a bit "
+								+ "of utility however, being able to make themselves un-ignitable, extinguish large areas, cook food "
+								+ "in their hands, extinguish large areas, small bursts of flight, and then comes the abilities to shoot "
+								+ "fire from your hands.");
+						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/k4fkjhb");
+					}
+					if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
+						s.sendMessage(Methods.getChiColor() + "Chiblockers focus on bare handed combat, utilizing their agility and "
+								+ "speed to stop any bender right in their path. Although they lack the ability to bend any of the "
+								+ "other elements, they are great in combat, and a serious threat to any bender. Chiblocking was "
+								+ "first shown to be used by Ty Lee in Avatar: The Last Airbender, then later by members of the "
+								+ "Equalists in The Legend of Korra.");
+						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/mkp9n6y");
+					}
 					if (Arrays.asList(importaliases).contains(args[1].toLowerCase())) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending import");
 						s.sendMessage(ChatColor.YELLOW + "This command will import your old bendingPlayers.yml from the Bending plugin."
