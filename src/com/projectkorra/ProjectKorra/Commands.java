@@ -885,6 +885,10 @@ public class Commands {
 					}
 				}
 				if (Arrays.asList(helpaliases).contains(args[0].toLowerCase())) {
+					if (!s.hasPermission("bending.command.help")) {
+						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						return true;
+					}
 					if (args.length != 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending help Command/Ability");
 						s.sendMessage(ChatColor.YELLOW + "/bending add <Player> [Element]");
@@ -898,10 +902,6 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "/bending toggle");
 						s.sendMessage(ChatColor.YELLOW + "/bending version");
 						s.sendMessage(ChatColor.YELLOW + "/bending who");
-						return true;
-					}
-					if (!s.hasPermission("bending.command.help")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
 					if (Arrays.asList(importaliases).contains(args[1].toLowerCase())) {
