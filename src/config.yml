@@ -295,10 +295,13 @@ Abilities:
     Combustion:
       Enabled: true
       Description: "Combustion is a powerful ability only known by a few skilled Firebenders. It allows the bender to Firebend with their mind, concentrating energy to create a powerful blast. This technique is highly destructive and very effective, capable of use at long range. This ability has a long cooldown."
-      Cooldown: 25000
-      ChargeTime: 5000
+      Cooldown: 15000
       BreakBlocks: false
       Power: 1.0
+      Damage: 5
+      Radius: 4
+      Range: 20
+      Speed: 25
     FireBlast:
       Enabled: true
       Description: "FireBlast is the most fundamental technique of a firebender. To use, simply left-click in a direction. A blast of fire will be created at your fingertips. If this blast contacts an enemy, it will dissipate and engulf them in flames, doing additional damage and knocking them back slightly. If the blast hits terrain, it will ignite the nearby area. Additionally, if you hold sneak, you will charge up the fireblast. If you release it when it's charged, it will instead launch a powerful fireball that explodes on contact."

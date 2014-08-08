@@ -27,6 +27,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -123,6 +124,15 @@ public class PKListener implements Listener {
 	public static HashMap<Integer, Integer> noFallEntities = new HashMap<Integer, Integer>(); // Grappling Hooks
 	public static HashMap<String, Integer> noGrapplePlayers = new HashMap<String, Integer>(); // Grappling Hooks
 
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
+		if (event.getCause().equals(DamageCause.BLOCK_EXPLOSION)) {
+			if (event.getDamager() == null) {
+				event.setCancelled(true);
+			}
+		}
+	}
+	
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerGrapple(PlayerGrappleEvent event) {
 		if (event.isCancelled()) return;
@@ -179,16 +189,15 @@ public class PKListener implements Listener {
 			}
 			Smokescreen.snowballs.remove(id);
 		}
-		if (Combustion.fireballs.contains(id)) {
-			Location loc = event.getEntity().getLocation();
-			loc.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), (float) ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.Combustion.Power"), true, ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks"));
-//			for (Entity en: Methods.getEntitiesAroundPoint(loc, 4)) {
-//				if (en instanceof LivingEntity) {
-//					LivingEntity le = (LivingEntity) en;
-//					le.damage(ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.Combustion.Damage"));
-//				}
-//			}
-		}
+//		if (Combustion.fireballs.contains(id)) {
+//			Location loc = event.getEntity().getLocation();
+////			for (Entity en: Methods.getEntitiesAroundPoint(loc, 4)) {
+////				if (en instanceof LivingEntity) {
+////					LivingEntity le = (LivingEntity) en;
+////					le.damage(ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.Combustion.Damage"));
+////				}
+////			}
+//		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -513,9 +522,9 @@ public class PKListener implements Listener {
 	public void onEntityExplode(EntityExplodeEvent event) {
 		if (event.isCancelled()) return;
 
-		if (event.getEntity() instanceof org.bukkit.entity.Fireball && Combustion.fireballs.contains(event.getEntity().getEntityId())) {
-			event.setCancelled(true);
-		}
+//		if (event.getEntity() instanceof org.bukkit.entity.Fireball && Combustion.fireballs.contains(event.getEntity().getEntityId())) {
+//			event.setCancelled(true);
+//		}
 		
 		for (Block block : event.blockList()) {
 			EarthBlast blast = EarthBlast.getBlastFromSource(block);
@@ -962,9 +971,9 @@ public class PKListener implements Listener {
 			return;
 		}
 		
-		if (Combustion.fireballs.contains(source.getEntityId())) {
-			e.setCancelled(true);
-		}
+//		if (Combustion.fireballs.contains(source.getEntityId())) {
+//			e.setCancelled(true);
+//		}
 
 		if (e.getCause() == DamageCause.LIGHTNING) {
 			if (Lightning.isNearbyChannel(source.getLocation())) {
