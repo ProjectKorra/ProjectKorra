@@ -509,25 +509,6 @@ public class Methods {
 		return blocks;
 	}
 
-	public static List<Block> getBlocksAroundPointOnLevel(Location location, double radius, int level) {
-		List<Block> blocks = new ArrayList<Block>();
-
-		int xorg = location.getBlockX();
-		int zorg = location.getBlockZ();
-
-		int r = (int) radius * 4;
-
-		for (int x = xorg - r; x <= xorg + r; x++) {
-			for (int z = zorg - r; z <= zorg + r; z++) {
-				Block block = location.getWorld().getBlockAt(x, level, z);
-				if (block.getLocation().distance(location) <= radius) {
-					blocks.add(block);
-				}
-			}
-		}
-		return blocks;
-	}
-
 	/**
 	 * Gets the Ability bound to the slot that the player is in.
 	 * @param player The player to check
