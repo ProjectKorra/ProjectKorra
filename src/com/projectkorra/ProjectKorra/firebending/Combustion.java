@@ -3,7 +3,6 @@ package com.projectkorra.ProjectKorra.firebending;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,6 +15,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class Combustion {
 
@@ -168,7 +168,8 @@ public class Combustion {
 	}
 
 	private void advanceLocation() {
-		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 4, (int) range);
+		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 5);
+		ParticleEffect.FLAME.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
 
