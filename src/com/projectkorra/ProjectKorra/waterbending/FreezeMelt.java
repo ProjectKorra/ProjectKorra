@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Methods;
@@ -35,7 +36,7 @@ public class FreezeMelt {
 		boolean cooldown = false;
 
 		Location location = Methods.getTargetedLocation(player, range);
-		for (Block block : Methods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : Methods.getBlocksAroundPointOnLevel(location, radius, player.getLocation().getBlock().getRelative(BlockFace.DOWN).getY())) {
 			if (isFreezable(player, block)) {
 				freeze(player, block);
 				cooldown = true;
