@@ -43,11 +43,11 @@ public class Enflamed {
 
 	public static void dealFlameDamage(Entity entity) {
 		if (instances.containsKey(entity) && entity instanceof LivingEntity) {
-//			if (entity instanceof Player) {
-//				if (!Extinguish.canBurn((Player) entity)) {
-//					return;
-//				}
-//			}
+			if (entity instanceof Player) {
+				if (!Extinguish.canBurn((Player) entity)) {
+					return;
+				}
+			}
 			LivingEntity Lentity = (LivingEntity) entity;
 			Player source = instances.get(entity);
 			Lentity.damage(damage, source);
