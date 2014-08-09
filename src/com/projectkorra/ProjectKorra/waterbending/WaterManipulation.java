@@ -25,7 +25,7 @@ import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
 public class WaterManipulation {
-	
+
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
 	public static ConcurrentHashMap<Integer, WaterManipulation> instances = new ConcurrentHashMap<Integer, WaterManipulation>();
@@ -147,7 +147,7 @@ public class WaterManipulation {
 				}
 
 			}
-			
+
 			cooldowns.put(player.getName(), System.currentTimeMillis());
 
 		}
@@ -309,7 +309,7 @@ public class WaterManipulation {
 						new WaterReturn(player, sourceblock);
 						return false;
 					}
-					
+
 					Combustion.removeAroundPoint(location, radius);
 
 					location = location.clone().add(direction);
@@ -484,32 +484,56 @@ public class WaterManipulation {
 	public static void moveWater(Player player) {
 		if (cooldowns.containsKey(player.getName())) {
 			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
-				return;
 			} else {
 				cooldowns.remove(player.getName());
-			}
-		}
+				if (prepared.containsKey(player)) {
+					if (instances.containsKey(prepared.get(player))) {
+						instances.get(prepared.get(player)).moveWater();
+					}
+					prepared.remove(player);
+				} else if (WaterReturn.hasWaterBottle(player)) {
+					Location eyeloc = player.getEyeLocation();
+					Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
+					if (Methods.isTransparentToEarthbending(player, block)
+							&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
-		if (prepared.containsKey(player)) {
-			if (instances.containsKey(prepared.get(player))) {
-				instances.get(prepared.get(player)).moveWater();
+						if (getTargetLocation(player).distance(block.getLocation()) > 1) {
+							block.setType(Material.WATER);
+							block.setData(full);
+							WaterManipulation watermanip = new WaterManipulation(player);
+							watermanip.moveWater();
+							if (!watermanip.progressing) {
+								block.setType(Material.AIR);
+							} else {
+								WaterReturn.emptyWaterBottle(player);
+							}
+						}
+					}
+				}
 			}
-			prepared.remove(player);
-		} else if (WaterReturn.hasWaterBottle(player)) {
-			Location eyeloc = player.getEyeLocation();
-			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-			if (Methods.isTransparentToEarthbending(player, block)
-					&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+		} else {
 
-				if (getTargetLocation(player).distance(block.getLocation()) > 1) {
-					block.setType(Material.WATER);
-					block.setData(full);
-					WaterManipulation watermanip = new WaterManipulation(player);
-					watermanip.moveWater();
-					if (!watermanip.progressing) {
-						block.setType(Material.AIR);
-					} else {
-						WaterReturn.emptyWaterBottle(player);
+			if (prepared.containsKey(player)) {
+				if (instances.containsKey(prepared.get(player))) {
+					instances.get(prepared.get(player)).moveWater();
+				}
+				prepared.remove(player);
+			} else if (WaterReturn.hasWaterBottle(player)) {
+				Location eyeloc = player.getEyeLocation();
+				Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
+				if (Methods.isTransparentToEarthbending(player, block)
+						&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+
+					if (getTargetLocation(player).distance(block.getLocation()) > 1) {
+						block.setType(Material.WATER);
+						block.setData(full);
+						WaterManipulation watermanip = new WaterManipulation(player);
+						watermanip.moveWater();
+						if (!watermanip.progressing) {
+							block.setType(Material.AIR);
+						} else {
+							WaterReturn.emptyWaterBottle(player);
+						}
 					}
 				}
 			}
