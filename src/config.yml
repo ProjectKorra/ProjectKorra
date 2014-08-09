@@ -294,7 +294,7 @@ Abilities:
         Range: 7
     Combustion:
       Enabled: true
-      Description: "Combustion is a powerful ability only known by a few skilled Firebenders. It allows the bender to Firebend with their mind, concentrating energy to create a powerful blast. This technique is highly destructive and very effective, capable of use at long range. This ability has a long cooldown."
+      Description: "Combustion is a powerful ability only known by a few skilled Firebenders. It allows the bender to Firebend with their mind, concentrating energy to create a powerful blast. To use, simply tap sneak (Default: Shift) to launch the blast. This technique is highly destructive and very effective, it also comes with a long cooldown."
       Cooldown: 15000
       BreakBlocks: false
       Power: 1.0

@@ -398,7 +398,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.Blaze.RingOfFire.Range", 7);
 		
 		config.addDefault("Abilities.Fire.Combustion.Enabled", true);
-		config.addDefault("Abilities.Fire.Combustion.Description", "Combustion is a powerful ability only known by a few skilled Firebenders. It allows the bender to Firebend with their mind, concentrating energy to create a powerful blast. This technique is highly destructive and very effective, capable of use at long range. This ability has a long cooldown.");
+		config.addDefault("Abilities.Fire.Combustion.Description", "Combustion is a powerful ability only known by a few skilled Firebenders. It allows the bender to Firebend with their mind, concentrating energy to create a powerful blast. To use, simply tap sneak (Default: Shift) to launch the blast. This technique is highly destructive and very effective, it also comes with a long cooldown.");
 		config.addDefault("Abilities.Fire.Combustion.Cooldown", 15000);
 //		config.addDefault("Abilities.Fire.Combustion.ChargeTime", 5000);
 		config.addDefault("Abilities.Fire.Combustion.BreakBlocks", false);
