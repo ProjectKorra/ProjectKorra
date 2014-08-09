@@ -76,6 +76,10 @@ public class Combustion {
 			range = defaultrange;
 			damage = defaultdamage;
 		}
+		
+		if (Methods.isRegionProtectedFromBuild(player, "Combustion", Methods.getTargetedLocation(player, range))) {
+			return;
+		}
 
 		instances.put(player, this);
 		cooldowns.put(player.getName(), System.currentTimeMillis());
@@ -98,6 +102,11 @@ public class Combustion {
 		}
 
 		if (Methods.getBoundAbility(player) == null || !Methods.getBoundAbility(player).equalsIgnoreCase("Combustion")) {
+			instances.remove(player);
+			return;
+		}
+		
+		if (Methods.isRegionProtectedFromBuild(player, "Combustion", location)) {
 			instances.remove(player);
 			return;
 		}
