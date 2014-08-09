@@ -164,6 +164,7 @@ public class FireShield {
 				WaterManipulation.removeAroundPoint(location, discradius);
 				EarthBlast.removeAroundPoint(location, discradius);
 				FireStream.removeAroundPoint(location, discradius);
+				Combustion.removeAroundPoint(location, discradius);
 				for (Entity entity: Methods.getEntitiesAroundPoint(location, discradius)) {
 					if (entity instanceof Projectile) {
 						entity.remove();

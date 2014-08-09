@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
 public class AirShield {
@@ -51,6 +52,7 @@ public class AirShield {
 		Location origin = player.getLocation();
 
 		FireBlast.removeFireBlastsAroundPoint(origin, radius);
+		Combustion.removeAroundPoint(origin, radius);
 
 		for (Entity entity : Methods.getEntitiesAroundPoint(origin, radius)) {
 			if (Methods.isRegionProtectedFromBuild(player, "AirShield",

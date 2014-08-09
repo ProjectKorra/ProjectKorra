@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
@@ -353,6 +354,8 @@ public class EarthBlast {
 						breakBlock();
 						return false;
 					}
+					
+					Combustion.removeAroundPoint(location, radius);
 
 					Block block2 = location.getBlock();
 					if (block2.getLocation().equals(sourceblock.getLocation())) {

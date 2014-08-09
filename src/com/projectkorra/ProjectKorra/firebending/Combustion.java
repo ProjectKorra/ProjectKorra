@@ -180,6 +180,15 @@ public class Combustion {
 		ParticleEffect.FLAME.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
+	
+	public static void removeAroundPoint(Location loc, double radius) {
+		for (Player player: instances.keySet()) {
+			Combustion combustion = instances.get(player);
+			if (combustion.location.distance(loc) <= radius) {
+				instances.remove(player);
+			}
+		}
+	}
 
 	public static void progressAll() {
 		for (Player player: instances.keySet()) {

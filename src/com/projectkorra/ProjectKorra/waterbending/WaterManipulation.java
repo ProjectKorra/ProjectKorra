@@ -21,6 +21,7 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
+import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
 public class WaterManipulation {
@@ -308,6 +309,8 @@ public class WaterManipulation {
 						new WaterReturn(player, sourceblock);
 						return false;
 					}
+					
+					Combustion.removeAroundPoint(location, radius);
 
 					location = location.clone().add(direction);
 

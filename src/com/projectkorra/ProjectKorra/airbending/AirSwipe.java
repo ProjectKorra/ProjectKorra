@@ -20,6 +20,7 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
+import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
@@ -194,6 +195,8 @@ public class AirSwipe {
 						damage = 0;
 						continue;
 					}
+					
+					Combustion.removeAroundPoint(location, radius);
 
 					Block block = location.getBlock();
 					for (Block testblock : Methods.getBlocksAroundPoint(location, affectingradius)) {
