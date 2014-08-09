@@ -211,7 +211,7 @@ public class Wave {
 					breakBlock();
 					return false;
 				}
-				if (Methods.getBoundAbility(player) == null || !Methods.getBoundAbility(player).equalsIgnoreCase("Surge")) {
+				if (Methods.getBoundAbility(player) == null) {
 					progressing = false;
 					thaw();
 					breakBlock();
