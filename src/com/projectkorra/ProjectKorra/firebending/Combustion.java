@@ -174,6 +174,13 @@ public class Combustion {
 		instances.remove(player);
 
 	}
+	
+	public static void explode(Player player) {
+		if (instances.containsKey(player)) {
+			Combustion combustion = instances.get(player);
+			combustion.createExplosion(combustion.location, combustion.power, breakblocks);
+		}
+	}
 
 	private void advanceLocation() {
 		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 5);

@@ -747,6 +747,9 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("WallOfFire")) {
 					new WallOfFire(player);
 				}
+				if (abil.equalsIgnoreCase("Combustion")) {
+					Combustion.explode(player);
+				}
 			}
 
 			if (Methods.isChiAbility(abil)) {
