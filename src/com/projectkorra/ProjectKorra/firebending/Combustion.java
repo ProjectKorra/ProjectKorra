@@ -117,7 +117,15 @@ public class Combustion {
 		Block block = location.getBlock();
 		if (block != null) {
 			if (block.getType() != Material.AIR && block.getType() != Material.WATER && block.getType() != Material.STATIONARY_WATER) {
-				createExplosion(block, power, breakblocks);
+				createExplosion(block.getLocation(), power, breakblocks);
+			}
+		}
+		
+		for (Entity entity: location.getWorld().getEntities()) {
+			if (entity instanceof LivingEntity) {
+				if (entity.getLocation().distance(location) <= 1) {
+					createExplosion(location, power, breakblocks);
+				}
 			}
 		}
 		
@@ -154,11 +162,11 @@ public class Combustion {
 		//		}
 	}
 	
-	private void createExplosion(Block block, float power, boolean breakblocks) {
+	private void createExplosion(Location block, float power, boolean breakblocks) {
 		block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), (float) defaultpower, true, breakblocks);
 		for (Entity entity: block.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distance(block.getLocation()) < radius) { // They are close enough to the explosion.
+				if (entity.getLocation().distance(block) < radius) { // They are close enough to the explosion.
 					Methods.damageEntity(player, entity, damage);
 				}
 			}
