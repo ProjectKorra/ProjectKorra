@@ -102,13 +102,13 @@ Abilities:
       Radius: 7
     AirBurst:
       Enabled: true
-      Description: "AirBurst is one of the most powerful abilities in an airbender's arsenal. To use, press and hold sneak to charge your burst. Once charged, you can either release sneak to launch a cone-shaped burst of air in front of you, or click to release theb urst in a sphere around you. Additionally, having this ability selected when you land on the ground from a large enough fall will create a burst of air around you."
+      Description: "AirBurst is one of the most powerful abilities in an airbender's arsenal. To use, press and hold sneak to charge your burst. Once charged, you can either release sneak to launch a cone-shaped burst of air in front of you, or click to release the burst in a sphere around you. Additionally, having this ability selected when you land on the ground from a large enough fall will create a burst of air around you."
       FallThreshold: 10
       PushFactor: 1.5
       ChargeTime: 1750
     AirScooter:
       Enabled: true
-      Description: "AirScooter is a fast means of transportation. To use, sprint, jump then click with this ability selected. YOu will hop on a scooter of air and be propelled forward in the direction you're looking (you don't need to press anything). This ability can be used to levitate above liquids, but it cannot go up steep slopes. Any other actions will deactivate this ability."
+      Description: "AirScooter is a fast means of transportation. To use, sprint, jump then click with this ability selected. You will hop on a scooter of air and be propelled forward in the direction you're looking (you don't need to press anything). This ability can be used to levitate above liquids, but it cannot go up steep slopes. Any other actions will deactivate this ability."
       Speed: 0.675
     AirShield:
       Enabled: true
@@ -162,7 +162,7 @@ Abilities:
       Interval: 750
     IceSpike:
       Enabled: true
-      Description: "This ability has many functions. Clicking while targetting ice, or an entity over some ice, will raise a spike of ice up, damaging and slowing the target. Tapping sneak (default: shift) while selecting a water source will select that source that can be fired with a click. Firing this will launch a spike of ice at your target, dealing a bit of damage and slowing the target. If you sneak (shift) will not selecting a source, many ice spikes will erupt from around you, damaging and slowing those targets."
+      Description: "This ability has many functions. Clicking while targeting ice, or an entity over some ice, will raise a spike of ice up, damaging and slowing the target. Tapping sneak (default: shift) while selecting a water source will select that source, which can then be fired with a click. Firing this will launch a spike of ice at your target, dealing a bit of damage and slowing the target. If you sneak (shift) while not selecting a source, many ice spikes will erupt from around you, damaging and slowing anybody that is hit."
       Cooldown: 2000
       Damage: 2
       Range: 20
@@ -176,7 +176,7 @@ Abilities:
       Radius: 3
     PhaseChange:
       Enabled: true
-      Description: "To use, simply left-click. Any water you are looking at within range will instantly freeze over into solid ice. Provided you stay within range of the ice and do not unbind FreezeMelt, that ice will not thaw. If, however, you do either of those things the ice will instantly thaw. If you sneak (default: shift), anything around where you are looking at will instantly melt. Since this is a more favorable state for these things, they will never re-freeze unless they would otherwise by nature or some other bending ability. Additionally, if you tap sneak while targeting water with FreezeMelt, it will evaporate water around that block that is above sea level."
+      Description: "To use, simply left-click. Any water you are looking at within range will instantly freeze over into solid ice. Provided you stay within range of the ice and do not unbind FreezeMelt, that ice will not thaw. If you do either of those things, however, the ice will instantly thaw. If you sneak (default: shift), anything around where you are looking at will instantly melt. Since this is a more favorable state for these things, they will never re-freeze unless they would otherwise by nature or some other bending ability. Additionally, if you tap sneak while targeting water with FreezeMelt, it will evaporate water around that block that is above sea level."
       Range: 20
       Radius: 5
     Plantbending:
@@ -193,7 +193,7 @@ Abilities:
         Radius: 2
     Torrent:
       Enabled: true
-      Description: "Torrent is one of the strongest moves in a waterbender's arsenal. To use, first click a source block to select it; then hold shift to begin streaming the water around you. Water flowing around you this way will damage and knock back nearby enemies and projectiles. If you release shift during this, you will create a large wave that expands outwards from you, launching anything in its path back. Instead, if you click you release the water and channel it to flow towards your cursor. Anything caught in the blast will be tossed about violently and take damage. Finally, if you click again when the water is torrenting, it will freeze the area around it when it is obstructed."
+      Description: "Torrent is one of the strongest moves in a waterbender's arsenal. To use, first click a source block to select it; then hold shift to begin streaming the water around you. Water flowing around you this way will damage and knock back nearby enemies and projectiles. If you release shift during this, you will create a large wave that expands outwards from you, launching anything in its path back. If you click, instead, you release the water and channel it to flow towards your cursor. Anything caught in the blast will be tossed about violently and take damage. Finally, if you click again when the water is torrenting, it will freeze the area around it when it is obstructed."
       Damage: 2
       DeflectDamage: 1
       Range: 25
@@ -211,14 +211,14 @@ Abilities:
       Cooldown: 1000
     WaterSpout:
       Enabled: true
-      Description: "To use this ability, click while over or in water. You will spout water up from beneath you to experience controlled levitation. This ability is a toggle, so you can activate it then use other abilities and it will remain on. If you try to spout over an area with no water, snow, or ice, the spout will dissipate and you will fall. Click again with this ability selected to deactivate it."
+      Description: "To use this ability, click while over or in water. You will spout water up from beneath you to experience controlled levitation. This ability is a toggle, so you can activate it and use other abilities, and it will remain on. If you try to spout over an area with no water, snow, or ice, the spout will dissipate and you will fall. Click again with this ability selected to deactivate it."
       Height: 20
   Earth:
     Passive:
       Duration: 2500
     Catapult:
       Enabled: true
-      Description: "To use, left-click while looking in the direction you want to be launched. A pillar of earth will jut up from under you and launch you in that direction - if and only if there is enough earth behind where you're looking to launch you. Skillful use of this ability takes much time and work, and it does result in the death of certain gung-ho earthbenders. if you plan to use this ability, be sure you've read about your passive ability you innately have as an earthbender."
+      Description: "To use, left-click while looking in the direction you want to be launched. A pillar of earth will jut up from under you and launch you in that direction - if and only if there is enough earth behind where you're looking to launch you. Skillful use of this ability takes much time and work, and it does result in the death of certain gung-ho earthbenders. If you plan to use this ability, be sure you've read about your passive ability you innately have as an earthbender."
       Length: 7
       Speed: 12
       Push: 5
@@ -345,7 +345,7 @@ Abilities:
       Range: 5
     Lightning:
       Enabled: true
-      Description: "Hold sneak while selecting this ability to charge up a lightning strike. once charged, release sneak to discharge the lightning to the targeted location."
+      Description: "Hold sneak while selecting this ability to charge up a lightning strike. Once charged, release sneak to discharge the lightning to the targeted location."
       Distance: 15
       Warmup: 3500
       MissChance: 10
@@ -386,7 +386,7 @@ Abilities:
       Punches: 4
     Smokescreen:
       Enabled: true
-      Description: "Smokescren, if used correctly, can serve as a defensive and offensive ability for Chiblockers. To use, simply left click and you will toss out a Smoke Bomb. When the bomb hits the ground, it will explode and give all players within a small radius of the explosion temporary blindness, allowing you to either get away, or move in for the kill. This ability has a long cooldown."
+      Description: "Smokescreen, if used correctly, can serve as a defensive and offensive ability for Chiblockers. To use, simply left click and you will toss out a Smoke Bomb. When the bomb hits the ground, it will explode and give all players within a small radius of the explosion temporary blindness, allowing you to either get away, or move in for the kill. This ability has a long cooldown."
       Cooldown: 50000
       Radius: 4
       Duration: 15
