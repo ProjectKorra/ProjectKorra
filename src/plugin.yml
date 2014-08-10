@@ -40,7 +40,7 @@ permissions:
       bending.fire: true
       bending.chi: true
   bending.air:
-    default: 
+    default: true
     description: Grants access to all airbending abilities.
     children:
       bending.ability.AirBlast: true
