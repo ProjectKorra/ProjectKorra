@@ -34,10 +34,13 @@ public class ChiPassive {
 		return true;
 	}
 	
-	public static void blockChi(Player player) {
+	public static void blockChi(final Player player) {
 		Methods.getBendingPlayer(player.getName()).blockChi();
-//		Bukkit.getServer().broadcastMessage("We made it");
-		BendingPlayer.blockedChi.put(player.getName(), System.currentTimeMillis());
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new Runnable() {
+			public void run() {
+				Methods.getBendingPlayer(player.getName()).unblockChi();
+			}
+		}, 50);
 	}
 	
 	public static void handlePassive() {
@@ -53,18 +56,25 @@ public class ChiPassive {
 				}
 			}
 		}
-		for (String s: BendingPlayer.blockedChi.keySet()) {
-			if (!(BendingPlayer.blockedChi.get(s) + duration >= System.currentTimeMillis())) {
-				if (Methods.getBendingPlayer(s) == null) continue;
-				Methods.getBendingPlayer(s).unblockChi();
-			}
+//		for (String s: BendingPlayer.blockedChi.keySet()) {
+//			
+//			if (Methods.getBendingPlayer(s) == null) continue;
+//			Bukkit.getServer().broadcastMessage("Chi Blocked for " + s);
+//			if (BendingPlayer.blockedChi.get(s) + duration < System.currentTimeMillis()) {
+//				Methods.getBendingPlayer(s).unblockChi();
+//				Bukkit.getServer().broadcastMessage(s + " Chi Unblocked");
+//			}
+//			if (!(BendingPlayer.blockedChi.get(s) + duration >= System.currentTimeMillis())) {
+//				if (Methods.getBendingPlayer(s) == null) continue;
+//				Methods.getBendingPlayer(s).unblockChi();
+//			}
 //			if (BendingPlayer.blockedChi.contains(player.getName())) {
 //				if (BendingPlayer.blockedChi.get(player.getName()) + duration < System.currentTimeMillis()) {
 //					BendingPlayer.blockedChi.remove(player.getName());
 //				} else {
 //				}
 //			}
-		}
+//		}
 //		for (String s: BendingPlayer.blockedChi.keySet()) {
 //			if (BendingPlayer.blockedChi.get(s) + duration >= System.currentTimeMillis()) {
 //				Bukkit.getServer().broadcastMessage(s + "'s Chi is blocked.");

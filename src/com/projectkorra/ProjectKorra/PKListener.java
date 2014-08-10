@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -132,7 +133,7 @@ public class PKListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerGrapple(PlayerGrappleEvent event) {
 		if (event.isCancelled()) return;
@@ -147,7 +148,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		if (Methods.isBender(player.getName(), Element.Earth) && !player.hasPermission("bending.earth.grapplinghook")) {
 			event.setCancelled(true);
 			return;
@@ -177,7 +178,7 @@ public class PKListener implements Listener {
 			GrapplingHookAPI.addPlayerCooldown(player, 100);
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onProjectileHit(ProjectileHitEvent event) {
 		Integer id = event.getEntity().getEntityId();
@@ -189,15 +190,15 @@ public class PKListener implements Listener {
 			}
 			Smokescreen.snowballs.remove(id);
 		}
-//		if (Combustion.fireballs.contains(id)) {
-//			Location loc = event.getEntity().getLocation();
-////			for (Entity en: Methods.getEntitiesAroundPoint(loc, 4)) {
-////				if (en instanceof LivingEntity) {
-////					LivingEntity le = (LivingEntity) en;
-////					le.damage(ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.Combustion.Damage"));
-////				}
-////			}
-//		}
+		//		if (Combustion.fireballs.contains(id)) {
+		//			Location loc = event.getEntity().getLocation();
+		////			for (Entity en: Methods.getEntitiesAroundPoint(loc, 4)) {
+		////				if (en instanceof LivingEntity) {
+		////					LivingEntity le = (LivingEntity) en;
+		////					le.damage(ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.Combustion.Damage"));
+		////				}
+		////			}
+		//		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -224,7 +225,7 @@ public class PKListener implements Listener {
 	public void onPlayerInteraction(PlayerInteractEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
-		
+
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Methods.cooldowns.put(player.getName(), System.currentTimeMillis());
 		}
@@ -522,10 +523,10 @@ public class PKListener implements Listener {
 	public void onEntityExplode(EntityExplodeEvent event) {
 		if (event.isCancelled()) return;
 
-//		if (event.getEntity() instanceof org.bukkit.entity.Fireball && Combustion.fireballs.contains(event.getEntity().getEntityId())) {
-//			event.setCancelled(true);
-//		}
-		
+		//		if (event.getEntity() instanceof org.bukkit.entity.Fireball && Combustion.fireballs.contains(event.getEntity().getEntityId())) {
+		//			event.setCancelled(true);
+		//		}
+
 		for (Block block : event.blockList()) {
 			EarthBlast blast = EarthBlast.getBlastFromSource(block);
 
@@ -545,8 +546,8 @@ public class PKListener implements Listener {
 				Methods.removeRevertIndex(block);
 			}
 		}
-		
-		
+
+
 
 	}
 
@@ -618,7 +619,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		if (Methods.isChiBlocked(player.getName())) {
 			event.setCancelled(true);
 			return;
@@ -842,7 +843,7 @@ public class PKListener implements Listener {
 		if (event.getCause() == DamageCause.FIRE && FireStream.ignitedblocks.containsKey(entity.getLocation().getBlock())) {
 			new Enflamed(entity, FireStream.ignitedblocks.get(entity.getLocation().getBlock()));
 		}
-		
+
 		if (Enflamed.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) {
 			event.setCancelled(true);
 			Enflamed.dealFlameDamage(entity);
@@ -973,10 +974,10 @@ public class PKListener implements Listener {
 			fireball.dealDamage(entity);
 			return;
 		}
-		
-//		if (Combustion.fireballs.contains(source.getEntityId())) {
-//			e.setCancelled(true);
-//		}
+
+		//		if (Combustion.fireballs.contains(source.getEntityId())) {
+		//			e.setCancelled(true);
+		//		}
 
 		if (e.getCause() == DamageCause.LIGHTNING) {
 			if (Lightning.isNearbyChannel(source.getLocation())) {
@@ -1004,16 +1005,26 @@ public class PKListener implements Listener {
 				Player targetplayer = (Player) e.getEntity();
 				if (Methods.canBendPassive(sourceplayer.getName(), Element.Chi)) {
 					if (Methods.isBender(sourceplayer.getName(), Element.Chi) && e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
-						if (sourceplayer.getLocation().distance(targetplayer.getLocation()) <= plugin.getConfig().getDouble("Abilities.Chi.RapidPunch.Distance") && Methods.getBoundAbility(sourceplayer) == null) {
-							if (Methods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
-								return;
+						if (Methods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
+							return;
+						}
+						if (ChiPassive.willChiBlock(targetplayer)) {
+							if (Methods.getBoundAbility(sourceplayer) != null && Methods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze")) {
+								new Paralyze(sourceplayer, targetplayer);
 							} else {
-
-								if (ChiPassive.willChiBlock(targetplayer)) {
-									ChiPassive.blockChi(targetplayer);
-								}
+								ChiPassive.blockChi(targetplayer);
 							}
 						}
+						//						if (sourceplayer.getLocation().distance(targetplayer.getLocation()) <= plugin.getConfig().getDouble("Abilities.Chi.RapidPunch.Distance") && Methods.getBoundAbility(sourceplayer) == null) {
+						//							if (Methods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
+						//								return;
+						//							} else {
+						//								if (ChiPassive.willChiBlock(targetplayer)) {
+						//									ChiPassive.blockChi(targetplayer);
+						//									
+						//								}
+						//							}
+						//						}
 					}
 				}
 				if (Methods.canBendPassive(sourceplayer.getName(), Element.Chi)) {

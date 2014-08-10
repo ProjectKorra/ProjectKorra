@@ -9,17 +9,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BendingPlayer {
 
 	public static ConcurrentHashMap<String, BendingPlayer> players = new ConcurrentHashMap<String, BendingPlayer>();
-	public static ConcurrentHashMap<String, Long> blockedChi = new ConcurrentHashMap<String, Long>();
+//	public static ConcurrentHashMap<String, Long> blockedChi = new ConcurrentHashMap<String, Long>();
 
 	UUID uuid;
 	String player;
 	ArrayList<Element> elements;
 	HashMap<Integer, String> abilities;
-	boolean isChiBlocked;
 	boolean permaRemoved;
 	boolean isToggled;
 	private long slowTime = 0;
 	private boolean tremorsense = true;
+	boolean blockedChi;
 
 	public BendingPlayer(UUID uuid, String player, ArrayList<Element> elements, HashMap<Integer, String> abilities, boolean permaRemoved) {
 		this.uuid = uuid;
@@ -28,7 +28,7 @@ public class BendingPlayer {
 		this.abilities = abilities;
 		this.permaRemoved = permaRemoved;
 		isToggled = true;
-		isChiBlocked = false;
+		blockedChi = false;
 
 		players.put(player, this);
 	}
@@ -83,14 +83,14 @@ public class BendingPlayer {
 	}
 
 	public void blockChi() {
-		isChiBlocked = true;
+		blockedChi = true;
 	}
 
 	public void unblockChi() {
-		isChiBlocked = false;
+		blockedChi = false;
 	}
 
 	public boolean isChiBlocked() {
-		return isChiBlocked;
+		return blockedChi;
 	}
 }

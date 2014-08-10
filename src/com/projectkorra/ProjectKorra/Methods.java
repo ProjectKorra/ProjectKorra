@@ -260,6 +260,8 @@ public class Methods {
 			}
 			cooldowns.remove(p.getName());
 		}
+		if (bPlayer.blockedChi) return false;
+//		if (bPlayer.isChiBlocked()) return false;
 		if (!p.hasPermission("bending.ability." + ability)) return false;
 		if (isAirAbility(ability) && !isBender(player, Element.Air)) return false;
 		if (isWaterAbility(ability) && !isBender(player, Element.Water)) return false;
