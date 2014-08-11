@@ -116,6 +116,7 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.Blaze) igniteabilities.add(a.name());
 					if (a == StockAbilities.FireBlast) explodeabilities.add(a.name());
 					if (a == StockAbilities.Lightning) explodeabilities.add(a.name());
+					if (a == StockAbilities.Combustion) explodeabilities.add(a.name());
 					if (a == StockAbilities.HeatControl) shiftabilities.add(a.name());
 					if (a == StockAbilities.Lightning) shiftabilities.add(a.name());
 					if (a == StockAbilities.FireBlast) shiftabilities.add(a.name());
