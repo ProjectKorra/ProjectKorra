@@ -51,6 +51,11 @@ public class HealingWaters {
 		if (!le.isDead() && le.getHealth() < le.getMaxHealth()) {
 			applyHealingToEntity(le);
 		}
+		for(PotionEffect effect : le.getActivePotionEffects()) {
+			if(Methods.isNegativeEffect(effect.getType())) {
+				applyHealingToEntity(le);
+			}
+		}
 	}
 
 	private static void giveHP(Player player) {
@@ -61,6 +66,11 @@ public class HealingWaters {
 			// }
 			// player.setHealth(hp);
 			applyHealing(player);
+		}
+		for(PotionEffect effect : player.getActivePotionEffects()) {
+			if(Methods.isNegativeEffect(effect.getType())) {
+				applyHealing(player);
+			}
 		}
 	}
 
@@ -79,11 +89,25 @@ public class HealingWaters {
 
 	private static void applyHealing(Player player) {
 		if (!Methods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation()))
-			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, 1));
+			if(player.getHealth() < player.getMaxHealth()) {
+				player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, 1));
+			}
+			for(PotionEffect effect : player.getActivePotionEffects()) {
+				if(Methods.isNegativeEffect(effect.getType())) {
+					player.removePotionEffect(effect.getType());
+				}
+			}
 	}
 
 	private static void applyHealingToEntity(LivingEntity le) {
-		le.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, 1));
+		if(le.getHealth() < le.getMaxHealth()) {
+			le.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, 1));
+		}
+		for(PotionEffect effect : le.getActivePotionEffects()) {
+			if(Methods.isNegativeEffect(effect.getType())) {
+				le.removePotionEffect(effect.getType());
+			}
+		}
 	}
 
 	public static String getDescription() {
@@ -92,6 +116,6 @@ public class HealingWaters {
 				+ "working provided the user has it selected. If the user is sneaking, "
 				+ "he/she is channeling the healing to their target in front of them. "
 				+ "In order for this channel to be successful, the user and the target must "
-				+ "be at least partially submerged in water.";
+				+ "be at least partially submerged in water. This ability will heal the user or target, and it will also remove any negative potion effects the user or target has.";
 	}
 }
