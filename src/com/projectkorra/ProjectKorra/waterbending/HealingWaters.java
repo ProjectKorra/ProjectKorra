@@ -53,23 +53,18 @@ public class HealingWaters {
 		}
 		for(PotionEffect effect : le.getActivePotionEffects()) {
 			if(Methods.isNegativeEffect(effect.getType())) {
-				applyHealingToEntity(le);
+				le.removePotionEffect(effect.getType());
 			}
 		}
 	}
 
 	private static void giveHP(Player player) {
 		if (!player.isDead() && player.getHealth() < 20) {
-			// int hp = player.getHealth();
-			// if (hp < 20) {
-			// hp++;
-			// }
-			// player.setHealth(hp);
 			applyHealing(player);
 		}
 		for(PotionEffect effect : player.getActivePotionEffects()) {
 			if(Methods.isNegativeEffect(effect.getType())) {
-				applyHealing(player);
+				player.removePotionEffect(effect.getType());
 			}
 		}
 	}
@@ -80,10 +75,6 @@ public class HealingWaters {
 		Block block = entity.getLocation().getBlock();
 		if (Methods.isWater(block) && !TempBlock.isTempBlock(block))
 			return true;
-		// if (entity.getLocation().getBlock().getType() == Material.WATER
-		// || entity.getLocation().getBlock().getType() ==
-		// Material.STATIONARY_WATER) &&
-		// return true;
 		return false;
 	}
 
@@ -92,22 +83,22 @@ public class HealingWaters {
 			if(player.getHealth() < player.getMaxHealth()) {
 				player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, 1));
 			}
-			for(PotionEffect effect : player.getActivePotionEffects()) {
-				if(Methods.isNegativeEffect(effect.getType())) {
-					player.removePotionEffect(effect.getType());
-				}
-			}
+//			for(PotionEffect effect : player.getActivePotionEffects()) {
+//				if(Methods.isNegativeEffect(effect.getType())) {
+//					player.removePotionEffect(effect.getType());
+//				}
+//			}
 	}
 
 	private static void applyHealingToEntity(LivingEntity le) {
 		if(le.getHealth() < le.getMaxHealth()) {
 			le.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, 1));
 		}
-		for(PotionEffect effect : le.getActivePotionEffects()) {
-			if(Methods.isNegativeEffect(effect.getType())) {
-				le.removePotionEffect(effect.getType());
-			}
-		}
+//		for(PotionEffect effect : le.getActivePotionEffects()) {
+//			if(Methods.isNegativeEffect(effect.getType())) {
+//				le.removePotionEffect(effect.getType());
+//			}
+//		}
 	}
 
 	public static String getDescription() {
