@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 public class RevertChecker implements Runnable {
 
-	static ConcurrentHashMap<Block, Block> revertQueue = new ConcurrentHashMap<Block, Block>();
+	public static ConcurrentHashMap<Block, Block> revertQueue = new ConcurrentHashMap<Block, Block>();
 	static ConcurrentHashMap<Integer, Integer> airRevertQueue = new ConcurrentHashMap<Integer, Integer>();
 	private Future<ArrayList<Chunk>> returnFuture;
 	// static ConcurrentHashMap<Block, Material> movedEarthQueue = new

@@ -88,125 +88,24 @@ public class BendingManager implements Runnable {
 			ProjectKorra.time_step = interval;
 
 			AvatarState.manageAvatarStates();
-			AirBlast.progressAll();
-			AirPassive.handlePassive(Bukkit.getServer());
 			ChiPassive.handlePassive();
-			WaterPassive.handlePassive();
-			FirePassive.handlePassive();
-			EarthPassive.revertSands();
-			EarthPassive.handleMetalPassives();
 			TempPotionEffect.progressAll();
-			Plantbending.regrow();
-			AirBurst.progressAll();
 			handleDayNight();
-			Bloodbending.progressAll();
-			Flight.handle();
-			FireJet.progressAll();
-			AirScooter.progressAll();
-			AirSpout.spoutAll();
-			WaterSpout.handleSpouts(Bukkit.getServer());
-			Cook.progressAll();
-			FreezeMelt.handleFrozenBlocks();
-			OctopusForm.progressAll();
-			AirBubble.handleBubbles(Bukkit.getServer());
-			Illumination.manage(Bukkit.getServer());
-			Torrent.progressAll();
-			TorrentBurst.progressAll();
-			FireBlast.progressAll();
-			AirSuction.progressAll();
-			Fireball.progressAll();
-			HealingWaters.heal(Bukkit.getServer());
-			FireBurst.progressAll();
-			FireShield.progressAll();
-			Lightning.progressAll();
-			WallOfFire.manage();
-			WaterReturn.progressAll();
-			Combustion.progressAll();
+			Flight.handle();	
 			for (Player p : RapidPunch.instance.keySet())
 				RapidPunch.instance.get(p).startPunch(p);
-
-			for (Block block : RevertChecker.revertQueue.keySet()) {
-				// Tools.removeEarthbendedBlockByIndex(block);
-				// if (Tools.revertBlock(block))
-				Methods.revertBlock(block);
-				RevertChecker.revertQueue.remove(block);
-			}
-
 			for (int i : RevertChecker.airRevertQueue.keySet()) {
 				Methods.revertAirBlock(i);
 				RevertChecker.airRevertQueue.remove(i);
 			}
 
-			for (Player player : EarthTunnel.instances.keySet()) {
-				EarthTunnel.progress(player);
-			}
-			for (Player player : EarthArmor.instances.keySet()) {
-				EarthArmor.moveArmor(player);
-			}
-			for (int ID : AirSwipe.instances.keySet()) {
-				AirSwipe.progress(ID);
-			}
-			for (int ID : Tornado.instances.keySet()) {
-				Tornado.progress(ID);
-			}
-
-			Tremorsense.manage(Bukkit.getServer());
-			for (int id : FireStream.instances.keySet()) {
-				FireStream.progress(id);
-			}
-
-			for (int ID : EarthBlast.instances.keySet()) {
-				EarthBlast.progress(ID);
-			}
-
-			for (Block block : FireStream.ignitedblocks.keySet()) {
-				if (block.getType() != Material.FIRE) {
-					FireStream.ignitedblocks.remove(block);
-				}
-			}
-
-			for (int ID : Catapult.instances.keySet()) {
-				Catapult.progress(ID);
-			}
-
-			for (int ID : EarthColumn.instances.keySet()) {
-				EarthColumn.progress(ID);
-			}
-
-			for (int ID : CompactColumn.instances.keySet()) {
-				CompactColumn.progress(ID);
-			}
-
-			for (int ID : WaterManipulation.instances.keySet()) {
-				WaterManipulation.progress(ID);
-			}
-
-			for (int ID : WaterWall.instances.keySet()) {
-				WaterWall.progress(ID);
-			}
-
-			for (int ID : Wave.instances.keySet()) {
-				Wave.progress(ID);
-			}
-
-			for (int ID : IceSpike.instances.keySet()) {
-				IceSpike.instances.get(ID).progress();
-			}
-
-			for (int ID : AirShield.instances.keySet()) {
-				AirShield.progress(ID);
-			}
-
-			Shockwave.progressAll();
-
-			IceSpike2.progressAll();
-
-			FireStream.dissipateAll();
 		} catch (Exception e) {
 			Methods.stopBending();
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	public void handleDayNight() {
 		for (World world: Bukkit.getServer().getWorlds()) {
