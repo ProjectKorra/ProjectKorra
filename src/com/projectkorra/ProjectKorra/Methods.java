@@ -45,6 +45,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.massivecraft.factions.listeners.FactionsListenerMain;
@@ -1781,6 +1782,41 @@ public class Methods {
 
 	public Methods(ProjectKorra plugin) {
 		Methods.plugin = plugin;
+	}
+	
+	public static boolean isNegativeEffect(PotionEffectType effect) {
+		if(effect.equals(PotionEffectType.POISON)) return true;
+		if(effect.equals(PotionEffectType.BLINDNESS)) return true;
+		if(effect.equals(PotionEffectType.CONFUSION)) return true;
+		if(effect.equals(PotionEffectType.HARM)) return true;
+		if(effect.equals(PotionEffectType.HUNGER)) return true;
+		if(effect.equals(PotionEffectType.SLOW)) return true;
+		if(effect.equals(PotionEffectType.SLOW_DIGGING)) return true;
+		if(effect.equals(PotionEffectType.WEAKNESS)) return true;
+		if(effect.equals(PotionEffectType.WITHER)) return true;
+		return false;
+	}
+	
+	public static boolean isPositiveEffect(PotionEffectType effect) {
+		if(effect.equals(PotionEffectType.ABSORPTION)) return true;
+		if(effect.equals(PotionEffectType.DAMAGE_RESISTANCE)) return true;
+		if(effect.equals(PotionEffectType.FAST_DIGGING)) return true;
+		if(effect.equals(PotionEffectType.FIRE_RESISTANCE)) return true;
+		if(effect.equals(PotionEffectType.HEAL)) return true;
+		if(effect.equals(PotionEffectType.HEALTH_BOOST)) return true;
+		if(effect.equals(PotionEffectType.INCREASE_DAMAGE)) return true;
+		if(effect.equals(PotionEffectType.JUMP)) return true;
+		if(effect.equals(PotionEffectType.NIGHT_VISION)) return true;
+		if(effect.equals(PotionEffectType.REGENERATION)) return true;
+		if(effect.equals(PotionEffectType.SATURATION)) return true;
+		if(effect.equals(PotionEffectType.SPEED)) return true;
+		if(effect.equals(PotionEffectType.WATER_BREATHING)) return true;
+		return false;
+	}
+	
+	public static boolean isNeutralEffect(PotionEffectType effect) {
+		if(effect.equals(PotionEffectType.INVISIBILITY)) return true;
+		return false;
 	}
 
 }
