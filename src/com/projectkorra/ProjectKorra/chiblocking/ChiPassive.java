@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -22,6 +21,8 @@ public class ChiPassive {
 	public static int speedPower = config.getInt("Abilities.Chi.Passive.Speed");
 	public static int dodgeChance = config.getInt("Abilities.Chi.Passive.BlockChi.DodgeChance");
 	public static int duration = config.getInt("Abilities.Chi.Passive.BlockChi.Duration");
+	
+	static long ticks = (duration / 1000) * 20;
 	
 	public static boolean willChiBlock(Player player) {
 		Random rand = new Random();
@@ -40,7 +41,7 @@ public class ChiPassive {
 			public void run() {
 				Methods.getBendingPlayer(player.getName()).unblockChi();
 			}
-		}, 50);
+		}, ticks);
 	}
 	
 	public static void handlePassive() {
