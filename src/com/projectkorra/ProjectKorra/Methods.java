@@ -1711,7 +1711,7 @@ public class Methods {
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
 		boolean permaRemoved = bPlayer.permaRemoved;
 
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : " false") +"' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") +"' WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void stopBending() {
