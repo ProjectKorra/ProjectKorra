@@ -62,6 +62,7 @@ public class ConfigManager {
 		config.addDefault("Properties.RegionProtection.RespectFactions", true);
 		config.addDefault("Properties.RegionProtection.RespectTowny", true);
 		config.addDefault("Properties.RegionProtection.RespectPreciousStones", true);
+		config.addDefault("Properties.RegionProtection.RespectLWC", true);
 		
 		config.addDefault("Properties.TagAPI.Enabled", true);
 

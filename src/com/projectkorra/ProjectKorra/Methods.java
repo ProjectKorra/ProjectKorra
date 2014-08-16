@@ -48,6 +48,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
+import com.griefcraft.model.Protection;
 import com.massivecraft.factions.listeners.FactionsListenerMain;
 import com.massivecraft.massivecore.ps.PS;
 import com.palmergames.bukkit.towny.Towny;
@@ -1087,6 +1090,7 @@ public class Methods {
 		boolean respectFactions = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectFactions");
 		boolean respectTowny = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectTowny");
 		boolean respectGriefPrevention = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
+		boolean respectLWC = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectLWC");
 
 		Set<String> ignite = AbilityModuleManager.igniteabilities;
 		Set<String> explode = AbilityModuleManager.explodeabilities;
@@ -1104,9 +1108,21 @@ public class Methods {
 		Plugin twnp = pm.getPlugin("Towny");
 		Plugin gpp = pm.getPlugin("GriefPrevention");
 		Plugin massivecore = pm.getPlugin("MassiveCore");
+		Plugin lwc = pm.getPlugin("LWC");
 
+		LWCPlugin lwcp = (LWCPlugin) lwc;
+		LWC lwc2 = lwcp.getLWC();
+		
 		for (Location location : new Location[] { loc, player.getLocation() }) {
 
+			if (lwc != null && respectLWC) {
+				Protection protection = lwc2.getProtectionCache().getProtection(location.getBlock());
+				if (protection != null) {
+					if (!lwc2.canAccessProtection(player, protection)) {
+						return true;
+					}
+				}
+			}
 			if (wgp != null && respectWorldGuard) {
 				WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit
 						.getPluginManager().getPlugin("WorldGuard");

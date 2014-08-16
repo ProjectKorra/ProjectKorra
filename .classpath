@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldGuard.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/BukkitForPlugins.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/Factions.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/LWC.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

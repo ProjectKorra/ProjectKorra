@@ -32,6 +32,7 @@ Properties:
     RespectFactions: true
     RespectTowny: true
     RespectPreciousStones: true
+    RespectLWC: true
   Air:
     CanBendWithWeapons: false
     Particles: smoke
