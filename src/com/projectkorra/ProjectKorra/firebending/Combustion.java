@@ -201,6 +201,7 @@ public class Combustion {
 		for (Player player: instances.keySet()) {
 			Combustion combustion = instances.get(player);
 			if (combustion.location.distance(loc) <= radius) {
+				explode(player);
 				instances.remove(player);
 			}
 		}
