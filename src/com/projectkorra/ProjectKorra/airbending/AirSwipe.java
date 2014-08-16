@@ -150,6 +150,8 @@ public class AirSwipe {
 				double factor = 1;
 				if (System.currentTimeMillis() >= time + maxchargetime) {
 					factor = maxfactor;
+				} else if (AvatarState.isAvatarState(player)) {
+					factor = AvatarState.getValue(factor);
 				} else {
 					factor = maxfactor
 							* (double) (System.currentTimeMillis() - time)
