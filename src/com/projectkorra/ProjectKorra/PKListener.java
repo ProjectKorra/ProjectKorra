@@ -238,6 +238,7 @@ public class PKListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
+		Methods.cooldowns.put(player.getName(), System.currentTimeMillis());
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
 		}
