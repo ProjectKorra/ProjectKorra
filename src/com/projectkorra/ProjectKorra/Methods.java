@@ -264,7 +264,7 @@ public class Methods {
 			cooldowns.remove(p.getName());
 		}
 		if (bPlayer.blockedChi) return false;
-//		if (bPlayer.isChiBlocked()) return false;
+		//		if (bPlayer.isChiBlocked()) return false;
 		if (!p.hasPermission("bending.ability." + ability)) return false;
 		if (isAirAbility(ability) && !isBender(player, Element.Air)) return false;
 		if (isWaterAbility(ability) && !isBender(player, Element.Water)) return false;
@@ -1110,12 +1110,13 @@ public class Methods {
 		Plugin massivecore = pm.getPlugin("MassiveCore");
 		Plugin lwc = pm.getPlugin("LWC");
 
-		LWCPlugin lwcp = (LWCPlugin) lwc;
-		LWC lwc2 = lwcp.getLWC();
 		
+
 		for (Location location : new Location[] { loc, player.getLocation() }) {
 
 			if (lwc != null && respectLWC) {
+				LWCPlugin lwcp = (LWCPlugin) lwc;
+				LWC lwc2 = lwcp.getLWC();
 				Protection protection = lwc2.getProtectionCache().getProtection(location.getBlock());
 				if (protection != null) {
 					if (!lwc2.canAccessProtection(player, protection)) {
@@ -1801,7 +1802,7 @@ public class Methods {
 	public Methods(ProjectKorra plugin) {
 		Methods.plugin = plugin;
 	}
-	
+
 	public static boolean isNegativeEffect(PotionEffectType effect) {
 		if(effect.equals(PotionEffectType.POISON)) return true;
 		if(effect.equals(PotionEffectType.BLINDNESS)) return true;
@@ -1814,7 +1815,7 @@ public class Methods {
 		if(effect.equals(PotionEffectType.WITHER)) return true;
 		return false;
 	}
-	
+
 	public static boolean isPositiveEffect(PotionEffectType effect) {
 		if(effect.equals(PotionEffectType.ABSORPTION)) return true;
 		if(effect.equals(PotionEffectType.DAMAGE_RESISTANCE)) return true;
@@ -1831,7 +1832,7 @@ public class Methods {
 		if(effect.equals(PotionEffectType.WATER_BREATHING)) return true;
 		return false;
 	}
-	
+
 	public static boolean isNeutralEffect(PotionEffectType effect) {
 		if(effect.equals(PotionEffectType.INVISIBILITY)) return true;
 		return false;
