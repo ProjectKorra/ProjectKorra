@@ -1778,7 +1778,7 @@ public class Methods {
 		Cook.removeAll();
 		Illumination.removeAll();
 
-		RapidPunch.instance.clear();
+		RapidPunch.instances.clear();
 
 		Flight.removeAll();
 		WaterReturn.removeAll();

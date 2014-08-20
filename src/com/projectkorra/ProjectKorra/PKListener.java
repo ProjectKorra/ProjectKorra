@@ -295,8 +295,7 @@ public class PKListener implements Listener {
 		BendingPlayer.players.remove(event.getPlayer().getName());
 		if (EarthArmor.instances.containsKey(event.getPlayer())) {
 			EarthArmor.removeEffect(event.getPlayer());
-			event.getPlayer().removePotionEffect(
-					PotionEffectType.DAMAGE_RESISTANCE);
+			event.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 		}
 	}
 
