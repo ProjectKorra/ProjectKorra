@@ -20,6 +20,8 @@ public class Lightning {
 	public static int defaultdistance = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Lightning.Distance");
 	private static long defaultwarmup = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.Lightning.Warmup");
 	private static double misschance = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.Lightning.MissChance");
+	private static double WaterAreaOfEffect = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Lightning.WaterAreaOfEffect");
+	
 	private static double threshold = 0.1;
 	private static double blockdistance = 4;
 
@@ -149,11 +151,22 @@ public class Lightning {
 			return;
 		}
 		double distance = entity.getLocation().distance(strike.getLocation());
-		if (distance > strikeradius)
-			return;
+
 		double damage = maxdamage - (distance / strikeradius) * .5;
+
+		if (Methods.isWater(strike.getLocation().getBlock())) {
+			for (Entity en: Methods.getEntitiesAroundPoint(strike.getLocation(), WaterAreaOfEffect)) {
+				if (en instanceof LivingEntity) {
+					if (Methods.isWater(en.getLocation().getBlock())) {
+						Methods.damageEntity(player, entity, (int) damage);
+					}
+				}
+			}
+		} else {
+			if (distance > strikeradius) return;
+			Methods.damageEntity(player, entity, (int) damage);
+		}
 		hitentities.add(entity);
-		Methods.damageEntity(player, entity, (int) damage);
 	}
 
 	public static boolean isNearbyChannel(Location location) {

@@ -354,6 +354,7 @@ Abilities:
       Enabled: true
       Description: "Hold sneak while selecting this ability to charge up a lightning strike. once charged, release sneak to discharge the lightning to the targeted location."
       Distance: 15
+      WaterAreaOfEffect: 15
       Warmup: 3500
       MissChance: 10
     WallOfFire:
