@@ -94,6 +94,7 @@ import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireBurst;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
+import com.projectkorra.ProjectKorra.firebending.FirePassive;
 import com.projectkorra.ProjectKorra.firebending.FireShield;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
@@ -892,6 +893,31 @@ public class Methods {
 		}
 		return null;
 	}
+	
+	public static Block getLavaSourceBlock(Player player, double range) {
+		Location location = player.getEyeLocation();
+		Vector vector = location.getDirection().clone().normalize();
+		for (double i = 0; i <= range; i++) {
+			Block block = location.clone().add(vector.clone().multiply(i))
+					.getBlock();
+			if (isRegionProtectedFromBuild(player, "LavaSurge",
+					location))
+				continue;
+			if (isLavabendable(block, player)) {
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock tb = TempBlock.get(block);
+					byte full = 0x0;
+					if (tb.state.getRawData() != full
+							&& (tb.state.getType() != Material.LAVA || tb.state
+							.getType() != Material.STATIONARY_LAVA)) {
+						continue;
+					}
+				}
+				return block;
+			}
+		}
+		return null;
+	}
 
 	public static boolean hasPermission(Player player, String ability) {
 		if (player.hasPermission("bending.ability." + ability)) return true;
@@ -926,6 +952,10 @@ public class Methods {
 				BlockFace.SOUTH };
 		for (BlockFace face : faces) {
 			Block blocki = block.getRelative(face);
+			if ((blocki.getType() == Material.LAVA || blocki.getType() == Material.STATIONARY_LAVA)
+					&& blocki.getData() == full
+					&& EarthPassive.canPhysicsChange(blocki))
+				sources++;
 			if ((blocki.getType() == Material.WATER || blocki.getType() == Material.STATIONARY_WATER)
 					&& blocki.getData() == full
 					&& WaterManipulation.canPhysicsChange(blocki))
@@ -1288,6 +1318,11 @@ public class Methods {
 		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) return true;
 		return false;
 	}
+	
+	public static boolean isLava(Block block) {
+		if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) return true;
+		return false;
+	}
 
 	public static boolean isWaterAbility(String ability) {
 		return AbilityModuleManager.waterbendingabilities.contains(ability);
@@ -1300,6 +1335,13 @@ public class Methods {
 		if (block.getType() == Material.ICE || block.getType() == Material.SNOW) return true;
 		if (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce")) return true;
 		if (canPlantbend(player) && isPlant(block)) return true;
+		return false;
+	}
+	
+	public static boolean isLavabendable(Block block, Player player) {
+		byte full = 0x0;
+		if (TempBlock.isTempBlock(block)) return false;
+		if ((block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) && block.getData() == full) return true;
 		return false;
 	}
 

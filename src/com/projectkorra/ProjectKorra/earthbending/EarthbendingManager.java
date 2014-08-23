@@ -11,11 +11,11 @@ import com.projectkorra.ProjectKorra.RevertChecker;
 public class EarthbendingManager implements Runnable {
 
 	public ProjectKorra plugin;
-	
+
 	public EarthbendingManager(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	public void run() {
 		EarthPassive.revertSands();
 		EarthPassive.handleMetalPassives();
@@ -41,10 +41,18 @@ public class EarthbendingManager implements Runnable {
 		for (int ID : CompactColumn.instances.keySet()) {
 			CompactColumn.progress(ID);
 		}
-		
+
 		Shockwave.progressAll();
 		for (int ID : EarthBlast.instances.keySet()) {
 			EarthBlast.progress(ID);
 		}
+
+		for (int ID : LavaWall.instances.keySet()) {
+			LavaWall.progress(ID);
+		}
+		for (int ID : LavaWave.instances.keySet()) {
+			LavaWave.progress(ID);
+		}
+
 	}
 }

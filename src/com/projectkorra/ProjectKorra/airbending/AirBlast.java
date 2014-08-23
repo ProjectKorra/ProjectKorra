@@ -7,9 +7,12 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Attachable;
+import org.bukkit.material.Lever;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;

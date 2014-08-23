@@ -18,7 +18,7 @@ public enum StockAbilities {
 	AvatarState,
 	
 	// Project Korra
-	Extraction, Smokescreen, Combustion;
+	Extraction, Smokescreen, Combustion, LavaSurge;
 	
 	private enum AirbendingAbilities {
 		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst;
@@ -29,7 +29,7 @@ public enum StockAbilities {
 	}
 	
 	private enum EarthbendingAbilities {
-		Catapult, RaiseEarth, EarthGrab, EarthTunnel, EarthBlast, Collapse, Tremorsense, EarthArmor, Shockwave, Extraction;
+		Catapult, RaiseEarth, EarthGrab, EarthTunnel, EarthBlast, Collapse, Tremorsense, EarthArmor, Shockwave, Extraction, LavaSurge;
 	}
 	
 	private enum FirebendingAbilities {

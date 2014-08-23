@@ -263,6 +263,12 @@ Abilities:
       Cooldown: 10000
       TripleLootChance: 15
       DoubleLootChance: 40
+    LavaSurge:
+      Enabled: true
+      Description: "This ability allows an Earthbender to bend an existing Lava Source to create a large wave that deals damage and knocks back anything in its path. To use, simply tap sneak (Default: Shift) while targetting a source of lava. Once a source has been selected, left click to launch the wave off into the direction you are looking. This ability has a small knockback and does a fair amount of damage."
+      Radius: 3
+      HorizontalPush: 0.5
+      VerticalPush: 0.1
     RaiseEarth:
       Enabled: true
       Description: "To use, simply left-click on an earthbendable block. A column of earth will shoot upwards from that location. Anything in the way of the column will be brought up with it, leaving talented benders the ability to trap brainless entities up there. Additionally, simply sneak (default shift) looking at an earthbendable block. A wall of earth will shoot upwards from that location. Anything in the way of the wall will be brought up with it."

@@ -85,6 +85,8 @@ import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.earthbending.Extraction;
+import com.projectkorra.ProjectKorra.earthbending.LavaWall;
+import com.projectkorra.ProjectKorra.earthbending.LavaWave;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.firebending.ArcOfFire;
@@ -132,6 +134,14 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 		}
+
+		if (event.getDamager() != null) {
+			if (LavaWave.isBlockInWave(event.getDamager())) {
+				Bukkit.getServer().broadcastMessage("Hit by LavaSurge Lava");
+				event.setCancelled(true);
+			}
+		}
+
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -250,6 +260,9 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 		Block toblock = event.getToBlock();
 		Block fromblock = event.getBlock();
+		if (Methods.isLava(fromblock)) {
+			event.setCancelled(!EarthPassive.canFlowFromTo(fromblock, toblock));
+		}
 		if (Methods.isWater(fromblock)) {
 			event.setCancelled(!AirBubble.canFlowTo(toblock));
 			if (!event.isCancelled()) {
@@ -405,6 +418,10 @@ public class PKListener implements Listener {
 
 				if (abil.equalsIgnoreCase("Extraction")) {
 					new Extraction(player);
+				}
+
+				if (abil.equalsIgnoreCase("LavaSurge")) {
+					LavaWall.form(player);
 				}
 
 			}
@@ -718,6 +735,10 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Tremorsense")) {
 					new Tremorsense(player);
 				}
+
+				if (abil.equalsIgnoreCase("LavaSurge")) {
+					new LavaWall(player);
+				}
 			}
 			if (Methods.isFireAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
@@ -835,6 +856,10 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityDamageBlock(EntityDamageByBlockEvent event) {
+
+	}
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDamageEvent(EntityDamageEvent event) {
 		if (event.isCancelled()) return;
 
@@ -871,6 +896,9 @@ public class PKListener implements Listener {
 		event.setCancelled(Illumination.blocks.containsKey(block));
 		if (!event.isCancelled()) {
 			event.setCancelled(!WaterManipulation.canPhysicsChange(block));
+		}
+		if (!event.isCancelled()) {
+			event.setCancelled(!EarthPassive.canPhysicsChange(block));
 		}
 		if (!event.isCancelled()) {
 			event.setCancelled(FreezeMelt.frozenblocks.containsKey(block));
@@ -1129,6 +1157,7 @@ public class PKListener implements Listener {
 
 		Block block = event.getBlock();
 		event.setCancelled(!WaterManipulation.canPhysicsChange(block));
+		event.setCancelled(!EarthPassive.canPhysicsChange(block));
 		if (!event.isCancelled())
 			event.setCancelled(Illumination.blocks.containsKey(block));
 		if (!event.isCancelled())
@@ -1141,6 +1170,8 @@ public class PKListener implements Listener {
 		if (TempBlock.isTempBlock(event.getBlock()))
 			event.setCancelled(true);
 		if (!WaterManipulation.canPhysicsChange(event.getBlock()))
+			event.setCancelled(true);
+		if (!EarthPassive.canPhysicsChange(event.getBlock()))
 			event.setCancelled(true);
 	}
 

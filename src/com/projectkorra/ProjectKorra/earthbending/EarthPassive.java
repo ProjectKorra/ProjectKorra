@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
 
 public class EarthPassive {
 	
@@ -120,5 +121,49 @@ public class EarthPassive {
 	
 	public static void removeAll() {
 		revertAllSand();
+	}
+	
+	public static boolean canPhysicsChange(Block block) {
+		if (LavaWall.affectedblocks.containsKey(block))
+			return false;
+		if (LavaWall.wallblocks.containsKey(block))
+			return false;
+		if (LavaWave.isBlockWave(block))
+			return false;
+		if (TempBlock.isTempBlock(block))
+			return false;
+		if (TempBlock.isTouchingTempBlock(block))
+			return false;
+		return true;
+	}
+	
+	public static boolean canFlowFromTo(Block from, Block to) {
+		// if (to.getType() == Material.TORCH)
+		// return true;
+		if (LavaWall.affectedblocks.containsKey(to)
+				|| LavaWall.affectedblocks.containsKey(from)) {
+			// Methods.verbose("waterwallaffectedblocks");
+			return false;
+		}
+		if (LavaWall.wallblocks.containsKey(to)
+				|| LavaWall.wallblocks.containsKey(from)) {
+			// Methods.verbose("waterwallwall");
+			return false;
+		}
+		if (LavaWave.isBlockWave(to) || LavaWave.isBlockWave(from)) {
+			// Methods.verbose("wave");
+			return false;
+		}
+		if (TempBlock.isTempBlock(to) || TempBlock.isTempBlock(from)) {
+			// Methods.verbose("tempblock");
+			return false;
+		}
+//		if (Methods.isAdjacentToFrozenBlock(to)
+//				|| Methods.isAdjacentToFrozenBlock(from)) {
+//			// Methods.verbose("frozen");
+//			return false;
+//		}
+
+		return true;
 	}
 }
