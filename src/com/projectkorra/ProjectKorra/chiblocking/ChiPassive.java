@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -36,10 +37,12 @@ public class ChiPassive {
 	}
 	
 	public static void blockChi(final Player player) {
-		Methods.getBendingPlayer(player.getName()).blockChi();
+		final BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer == null) return;
+		bPlayer.blockChi();
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new Runnable() {
 			public void run() {
-				Methods.getBendingPlayer(player.getName()).unblockChi();
+				bPlayer.unblockChi();
 			}
 		}, ticks);
 	}
