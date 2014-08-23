@@ -75,9 +75,8 @@ public class Cook {
 	}
 
 	private void cook() {
-		Material cooked = getCooked(items.getType());
-		ItemStack newitem = new ItemStack(cooked);
-		HashMap<Integer, ItemStack> cantfit = player.getInventory().addItem(newitem);
+		ItemStack cooked = getCooked(items);
+		HashMap<Integer, ItemStack> cantfit = player.getInventory().addItem(cooked);
 		for (int id : cantfit.keySet()) {
 			player.getWorld().dropItem(player.getEyeLocation(), cantfit.get(id));
 		}
@@ -90,24 +89,32 @@ public class Cook {
 		}
 	}
 
-	private Material getCooked(Material material) {
-		Material cooked = Material.AIR;
+	private ItemStack getCooked(ItemStack is) {
+		ItemStack cooked = new ItemStack(Material.AIR);
+		Material material = is.getType();
 		switch (material) {
 		case RAW_BEEF:
-			cooked = Material.COOKED_BEEF;
+			cooked = new ItemStack(Material.COOKED_BEEF, 1);
 			break;
 		case RAW_FISH:
-			cooked = Material.COOKED_FISH;
+			ItemStack salmon = new ItemStack(Material.RAW_FISH, 1, (short) 1);
+			if(is.getDurability() == salmon.getDurability()) {
+				cooked = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
+			}else{
+				cooked = new ItemStack(Material.COOKED_FISH, 1);
+			}
 			break;
 		case RAW_CHICKEN:
-			cooked = Material.COOKED_CHICKEN;
+			cooked = new ItemStack(Material.COOKED_CHICKEN, 1);
 			break;
 		case PORK:
-			cooked = Material.GRILLED_PORK;
+			cooked = new ItemStack(Material.GRILLED_PORK, 1);
 			break;
 		case POTATO_ITEM:
-			cooked = Material.BAKED_POTATO;
+			cooked = new ItemStack(Material.BAKED_POTATO, 1);
 			break;
+		default:
+			break; //Shouldn't happen
 		}
 		return cooked;
 	}
