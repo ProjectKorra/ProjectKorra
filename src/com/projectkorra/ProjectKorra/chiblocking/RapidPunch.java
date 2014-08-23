@@ -15,7 +15,7 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class RapidPunch {
 
-	public static ConcurrentHashMap<Player, RapidPunch> instance = new ConcurrentHashMap<Player, RapidPunch>();
+	public static ConcurrentHashMap<Player, RapidPunch> instances = new ConcurrentHashMap<Player, RapidPunch>();
 	public static List<Player> punching = new ArrayList<Player>();
 	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	
@@ -29,7 +29,7 @@ public class RapidPunch {
 	private Entity target;
 
 	public RapidPunch(Player p) {// , Entity t) {
-		if (instance.containsKey(p))
+		if (instances.containsKey(p))
 			return;
 		if (cooldowns.containsKey(p.getName())) {
 			if (cooldowns.get(p.getName()) + cooldown >= System.currentTimeMillis()) {
@@ -46,12 +46,12 @@ public class RapidPunch {
 
 		target = t;
 		numpunches = 0;
-		instance.put(p, this);
+		instances.put(p, this);
 	}
 
 	public void startPunch(Player p) {
 		if (numpunches >= punches)
-			instance.remove(p);
+			instances.remove(p);
 		if (target instanceof LivingEntity && target != null) {
 			LivingEntity lt = (LivingEntity) target;
 			Methods.damageEntity(p, target, damage);

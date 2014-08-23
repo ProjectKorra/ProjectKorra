@@ -19,7 +19,7 @@ public class TagAPIListener implements Listener {
 	public void onNameTag(AsyncPlayerReceiveNameTagEvent e) {
 		List<Element> elements = Methods.getBendingPlayer(e.getNamedPlayer().getName()).getElements();
 		if (elements!=null && plugin.getConfig().getBoolean("Properties.TagAPI.Enabled")) {
-			if (elements.size() > 1)
+			if (elements.size() < 1)
 				e.setTag(ChatColor.LIGHT_PURPLE + e.getNamedPlayer().getName());
 			else if (elements.get(0).equals(Element.Earth))
 				e.setTag(ChatColor.GREEN + e.getNamedPlayer().getName());

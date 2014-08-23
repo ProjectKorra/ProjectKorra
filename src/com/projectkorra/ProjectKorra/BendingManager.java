@@ -92,8 +92,10 @@ public class BendingManager implements Runnable {
 			TempPotionEffect.progressAll();
 			handleDayNight();
 			Flight.handle();	
-			for (Player p : RapidPunch.instance.keySet())
-				RapidPunch.instance.get(p).startPunch(p);
+			for (Player p : RapidPunch.instances.keySet()) {
+				if (p == null) continue;
+				RapidPunch.instances.get(p).startPunch(p);
+			}
 			for (int i : RevertChecker.airRevertQueue.keySet()) {
 				Methods.revertAirBlock(i);
 				RevertChecker.airRevertQueue.remove(i);
