@@ -98,6 +98,7 @@ public class BreathSphere {
 			for (Entity entity : Methods.getEntitiesAroundPoint(player.getLocation(), range)) {
 				if (Methods.isRegionProtectedFromBuild(player, "BreathSphere", entity.getLocation()))
 					continue;
+				if (entity.getEntityId() == player.getEntityId()) continue;
 				entities.add(entity);
 				if (!targetentities.containsKey(entity)	&& entity instanceof LivingEntity) {
 					Methods.damageEntity(player, entity, 0);
@@ -110,6 +111,12 @@ public class BreathSphere {
 					entity.setFallDistance(0);
 					if (entity instanceof Creature) {
 						((Creature) entity).setTarget(player);
+					}
+					if (entity instanceof Player) {
+						if (AvatarState.isAvatarState((Player) entity)) {
+							remove(player);
+							return;
+						}
 					}
 					if (entity.isDead()) {
 						instances.remove(player);
@@ -133,6 +140,12 @@ public class BreathSphere {
 					entity.setFallDistance(0);
 					if (entity instanceof Creature) {
 						((Creature) entity).setTarget(null);
+					}
+					if (entity instanceof Player) {
+						if (AvatarState.isAvatarState((Player) entity)) {
+							remove(player);
+							return;
+						}
 					}
 					if (entity.isDead()) {
 						instances.remove(player);

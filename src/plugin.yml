@@ -88,7 +88,7 @@ permissions:
       bending.earth.passive: true
       bending.earth.metalbending: true
       bending.earth.grapplinghook: true
-      bending.ability.LavaSurge
+      bending.ability.LavaSurge: true
   bending.fire:
     default: true
     description: Grants access to all firebending abilities.
