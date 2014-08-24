@@ -159,19 +159,16 @@ public class Lightning {
 				if (en instanceof LivingEntity) {
 					if (Methods.isWater(en.getLocation().getBlock())) {
 						Methods.damageEntity(player, entity, (int) damage);
+						Methods.breakBreathbendingHold(entity);
 					}
 				}
 			}
 		} else {
 			if (distance > strikeradius) return;
 			Methods.damageEntity(player, entity, (int) damage);
+			Methods.breakBreathbendingHold(entity);
 		}
 		hitentities.add(entity);
-<<<<<<< HEAD
-=======
-		Methods.damageEntity(player, entity, (int) damage);
-		Methods.breakBreathbendingHold(entity);
->>>>>>> origin/master
 	}
 
 	public static boolean isNearbyChannel(Location location) {

@@ -138,7 +138,6 @@ public class PKListener implements Listener {
 
 		if (event.getDamager() != null) {
 			if (LavaWave.isBlockInWave(event.getDamager())) {
-				Bukkit.getServer().broadcastMessage("Hit by LavaSurge Lava");
 				event.setCancelled(true);
 			}
 		}
