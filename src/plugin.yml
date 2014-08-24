@@ -20,7 +20,6 @@ permissions:
       bending.admin.choose: true
       bending.ability.AvatarState: true
       bending.ability.Bloodbending: true
-      bending.ability.Breathbending: true
       bending.command.import: true
       bending.command.toggle.all: true
   bending.player:
