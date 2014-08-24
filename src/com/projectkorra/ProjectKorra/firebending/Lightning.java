@@ -154,6 +154,7 @@ public class Lightning {
 		double damage = maxdamage - (distance / strikeradius) * .5;
 		hitentities.add(entity);
 		Methods.damageEntity(player, entity, (int) damage);
+		Methods.breakBreathbendingHold(entity);
 	}
 
 	public static boolean isNearbyChannel(Location location) {

@@ -138,7 +138,7 @@ Abilities:
       Speed: 25
       Cooldown: 1500
       ChargeFactor: 3
-    Breathbending:
+    BreathSphere:
       Enabled: true
       CanBeUsedOnUndeadMobs: true
       Range: 5

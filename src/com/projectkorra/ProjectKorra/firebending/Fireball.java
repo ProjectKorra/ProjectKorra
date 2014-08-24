@@ -158,6 +158,7 @@ public class Fireball {
 		double damage = slope * (distance - innerradius) + maxdamage;
 		// Methods.verbose(damage);
 		Methods.damageEntity(player, entity, damage);
+		Methods.breakBreathbendingHold(entity);
 	}
 
 	private void fireball() {

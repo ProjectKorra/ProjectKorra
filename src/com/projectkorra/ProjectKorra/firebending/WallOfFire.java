@@ -187,6 +187,7 @@ public class WallOfFire {
 		if (entity instanceof LivingEntity) {
 			Methods.damageEntity(player, entity, damage);
 			new Enflamed(entity, player);
+			Methods.breakBreathbendingHold(entity);
 		}
 	}
 

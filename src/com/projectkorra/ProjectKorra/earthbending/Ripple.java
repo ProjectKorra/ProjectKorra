@@ -259,6 +259,8 @@ public class Ripple {
 		Vector vector = direction.clone();
 		vector.setY(.5);
 		entity.setVelocity(vector);
+		
+		Methods.breakBreathbendingHold(entity);
 
 	}
 

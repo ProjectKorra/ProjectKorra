@@ -17,19 +17,19 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempPotionEffect;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
-public class Breathbending {
+public class BreathSphere {
 
-	public static ConcurrentHashMap<Player, Breathbending> instances = new ConcurrentHashMap<Player, Breathbending>();
+	public static ConcurrentHashMap<Player, BreathSphere> instances = new ConcurrentHashMap<Player, BreathSphere>();
 
 	ConcurrentHashMap<Entity, Location> targetentities = new ConcurrentHashMap<Entity, Location>();
 
-	private static boolean canBeUsedOnUndead = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Breathbending.CanBeUsedOnUndeadMobs");
-	private int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Air.Breathbending.Range");
-	private double damage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.Breathbending.Damage");
+	private static boolean canBeUsedOnUndead = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.BreathSphere.CanBeUsedOnUndeadMobs");
+	private int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Air.BreathSphere.Range");
+	private double damage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.BreathSphere.Damage");
 
 	private Player player;
 
-	public Breathbending(Player player) {
+	public BreathSphere(Player player) {
 		if (instances.containsKey(player)) {
 			remove(player);
 			return;
@@ -80,7 +80,7 @@ public class Breathbending {
 			}
 		}
 
-		if (!Methods.canBend(player.getName(), "Breathbending")) {
+		if (!Methods.canBend(player.getName(), "BreathSphere")) {
 			remove(player);
 			return;
 		}
@@ -88,7 +88,7 @@ public class Breathbending {
 			remove(player);
 			return;
 		}
-		if (!Methods.getBoundAbility(player).equalsIgnoreCase("Breathbending")) {
+		if (!Methods.getBoundAbility(player).equalsIgnoreCase("BreathSphere")) {
 			remove(player);
 			return;
 		}
@@ -96,7 +96,7 @@ public class Breathbending {
 		if (AvatarState.isAvatarState(player)) {
 			ArrayList<Entity> entities = new ArrayList<Entity>();
 			for (Entity entity : Methods.getEntitiesAroundPoint(player.getLocation(), range)) {
-				if (Methods.isRegionProtectedFromBuild(player, "Breathbending", entity.getLocation()))
+				if (Methods.isRegionProtectedFromBuild(player, "BreathSphere", entity.getLocation()))
 					continue;
 				entities.add(entity);
 				if (!targetentities.containsKey(entity)	&& entity instanceof LivingEntity) {
@@ -158,7 +158,7 @@ public class Breathbending {
 		}
 	}
 	
-	public static void breakBreathbend(Entity entity) {
+	public static void breakBreathSphere(Entity entity) {
 		for (Player player : instances.keySet()) {
 			if (instances.get(player).targetentities.containsKey(entity)) {
 				instances.remove(player);
@@ -192,13 +192,22 @@ public class Breathbending {
 		return false;
 	}
 
-	public static Location getBreathbendingLocation(Entity entity) {
+	public static Location getBreathSphereLocation(Entity entity) {
 		for (Player player : instances.keySet()) {
 			if (instances.get(player).targetentities.containsKey(entity)) {
 				return instances.get(player).targetentities.get(entity);
 			}
 		}
 		return null;
+	}
+	
+	public static boolean isChannelingSphere(Player player){
+		if(instances.containsKey(player)) return true;
+		return false;
+	}
+	
+	public static void removeAll() {
+		instances.clear();
 	}
 
 }

@@ -18,7 +18,7 @@ public class AirbendingManager implements Runnable {
 		AirPassive.handlePassive(Bukkit.getServer());
 		AirBurst.progressAll();
 		AirScooter.progressAll();
-		Breathbending.progressAll();
+		BreathSphere.progressAll();
 		AirSpout.spoutAll();
 		AirBubble.handleBubbles(Bukkit.getServer());
 		AirSuction.progressAll();

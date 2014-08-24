@@ -306,6 +306,7 @@ public class IceSpike2 {
 			new TempPotionEffect(entity, effect);
 			entity.damage(damage, player);
 		}
+		Methods.breakBreathbendingHold(entity);
 
 	}
 

@@ -68,7 +68,7 @@ import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
-import com.projectkorra.ProjectKorra.airbending.Breathbending;
+import com.projectkorra.ProjectKorra.airbending.BreathSphere;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.HighJump;
@@ -154,7 +154,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || Breathbending.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || BreathSphere.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
 
@@ -230,7 +230,7 @@ public class PKListener implements Listener {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Methods.cooldowns.put(player.getName(), System.currentTimeMillis());
 		}
-		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || Breathbending.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || BreathSphere.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
 	}
@@ -240,7 +240,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
 		Methods.cooldowns.put(player.getName(), System.currentTimeMillis());
-		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || Breathbending.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || BreathSphere.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
 	}
@@ -306,7 +306,7 @@ public class PKListener implements Listener {
 
 		if (event.isCancelled()) return;
 		
-		if(Breathbending.isBreathbent(player)) {
+		if(BreathSphere.isBreathbent(player)) {
 			if(!Methods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !Methods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
 			}
@@ -353,8 +353,8 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("AirShield")) {
 					new AirShield(player);
 				}
-				if(abil.equalsIgnoreCase("Breathbending")) {
-					new Breathbending(player);
+				if(abil.equalsIgnoreCase("BreathSphere")) {
+					new BreathSphere(player);
 				}
 
 			}
@@ -499,7 +499,7 @@ public class PKListener implements Listener {
 			}
 		}
 		
-		if(Breathbending.isBreathbent(player)) {
+		if(BreathSphere.isBreathbent(player)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1, 100));
 		}
 	}
@@ -529,7 +529,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Breathbending.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || BreathSphere.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -573,7 +573,7 @@ public class PKListener implements Listener {
 		Entity entity = event.getEntity();
 		if (entity != null)
 			if (Paralyze.isParalyzed(entity)
-					|| Bloodbending.isBloodbended(entity) || Breathbending.isBreathbent(entity))
+					|| Bloodbending.isBloodbended(entity) || BreathSphere.isBreathbent(entity))
 				event.setCancelled(true);
 	}
 
@@ -582,7 +582,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Breathbending.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || BreathSphere.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -591,7 +591,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Breathbending.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || BreathSphere.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -600,7 +600,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Breathbending.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || BreathSphere.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -609,7 +609,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Breathbending.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || BreathSphere.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -618,7 +618,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Breathbending.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || BreathSphere.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -629,7 +629,7 @@ public class PKListener implements Listener {
 
 		Player player = event.getPlayer();
 		
-		if(Breathbending.isBreathbent(player)) {
+		if(BreathSphere.isBreathbent(player)) {
 			if(!Methods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !Methods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
 			}
@@ -836,7 +836,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Player p = event.getPlayer();
-		if (Tornado.getPlayers().contains(p) || Bloodbending.isBloodbended(p) || Breathbending.isBreathbent(p)
+		if (Tornado.getPlayers().contains(p) || Bloodbending.isBloodbended(p) || BreathSphere.isBreathbent(p)
 				|| FireJet.getPlayers().contains(p)
 				|| AvatarState.getPlayers().contains(p)) {
 			event.setCancelled(p.getGameMode() != GameMode.CREATIVE);

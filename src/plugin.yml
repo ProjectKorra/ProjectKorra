@@ -51,7 +51,7 @@ permissions:
       bending.ability.AirSpout: true
       bending.ability.AirSuction: true
       bending.ability.AirSwipe: true
-      bending.ability.Breathbending: true
+      bending.ability.BreathSphere: true
       bending.ability.Tornado: true
       bending.air.passive: true
   bending.water:

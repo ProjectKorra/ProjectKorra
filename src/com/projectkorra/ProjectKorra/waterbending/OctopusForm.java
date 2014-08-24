@@ -134,6 +134,7 @@ public class OctopusForm {
 			entity.setVelocity(Methods.getDirection(player.getLocation(), location).normalize().multiply(1.75));
 			if (entity instanceof LivingEntity)
 				Methods.damageEntity(player, entity, damage);
+				Methods.breakBreathbendingHold(entity);
 		}
 	}
 
