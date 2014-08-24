@@ -187,6 +187,8 @@ public class Methods {
 		} else {
 			player.sendMessage(getAvatarColor() + "Successfully bound " + ability + " to slot " + slot);
 		}
+		
+		saveAbility(bPlayer, slot, ability);
 	}
 
 	/**
@@ -216,6 +218,8 @@ public class Methods {
 		} else {
 			player.sendMessage(getAvatarColor() + "Successfully bound " + ability + " to slot " + slot);
 		}
+		
+		saveAbility(bPlayer, slot, ability);
 	}
 
 	/**
@@ -1577,9 +1581,9 @@ public class Methods {
 	}
 
 	public static void reloadPlugin() {
-		for (Player player: Bukkit.getOnlinePlayers()) {
-			Methods.saveBendingPlayer(player.getName());
-		}
+//		for (Player player: Bukkit.getOnlinePlayers()) {
+//			Methods.saveBendingPlayer(player.getName());
+//		}
 		DBConnection.sql.close();
 		plugin.reloadConfig();
 		Methods.stopBending();
@@ -1748,29 +1752,36 @@ public class Methods {
 		return rotate.multiply(Math.cos(angle)).add(
 				thirdaxis.multiply(Math.sin(angle)));
 	}
-
-	public static void saveBendingPlayer(String player) {
-		BendingPlayer bPlayer = BendingPlayer.players.get(player);
+	
+	public static void saveElements(BendingPlayer bPlayer) {
 		if (bPlayer == null) return;
 		String uuid = bPlayer.uuid.toString();
-
+		
 		StringBuilder elements = new StringBuilder();
 		if (bPlayer.hasElement(Element.Air)) elements.append("a");
 		if (bPlayer.hasElement(Element.Water)) elements.append("w");
 		if (bPlayer.hasElement(Element.Earth)) elements.append("e");
 		if (bPlayer.hasElement(Element.Fire)) elements.append("f");
 		if (bPlayer.hasElement(Element.Chi)) elements.append("c");
-
-		HashMap<Integer, String> abilities = bPlayer.abilities;
-
-		for (int i = 1; i <= 9; i++) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i +" = '" + (abilities.get(i) == null ? null : abilities.get(i)) + "' WHERE uuid = '" + uuid + "'");
-		}
-
+		
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
+	}
+	
+	public static void saveAbility(BendingPlayer bPlayer, int slot, String ability) {
+		if (bPlayer == null) return;
+		String uuid = bPlayer.uuid.toString();
+		
+		HashMap<Integer, String> abilities = bPlayer.abilities;
+		
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
+	}
+	
+	public static void savePermaRemoved(BendingPlayer bPlayer) {
+		if (bPlayer == null) return;
+		String uuid = bPlayer.uuid.toString();
+		
 		boolean permaRemoved = bPlayer.permaRemoved;
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") +"' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void stopBending() {

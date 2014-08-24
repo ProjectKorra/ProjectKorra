@@ -66,9 +66,9 @@ public class ProjectKorra extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		for (Player player: Bukkit.getOnlinePlayers()) {
-			Methods.saveBendingPlayer(player.getName());
-		}
+//		for (Player player: Bukkit.getOnlinePlayers()) {
+//			Methods.saveBendingPlayer(player.getName());
+//		}
 		Methods.stopBending();
 		DBConnection.sql.close();
 	}
