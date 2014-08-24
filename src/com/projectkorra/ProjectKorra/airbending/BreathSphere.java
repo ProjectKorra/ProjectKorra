@@ -108,7 +108,7 @@ public class BreathSphere {
 					if (Methods.isObstructed(player.getLocation(), entity.getLocation())) {
 						breakBreathSphere(entity);
 					}
-					((LivingEntity) entity).damage(damage);
+					Methods.damageEntity(player, (LivingEntity) entity, damage);
 					new TempPotionEffect((LivingEntity) entity, slow);
 					new TempPotionEffect((LivingEntity) entity, nausea);
 					entity.setFallDistance(0);
@@ -140,7 +140,7 @@ public class BreathSphere {
 					if (Methods.isObstructed(player.getLocation(), entity.getLocation())) {
 						breakBreathSphere(entity);
 					}
-					((LivingEntity) entity).damage(damage);
+					Methods.damageEntity(player, (LivingEntity) entity, damage);
 					new TempPotionEffect((LivingEntity) entity, slow);
 					new TempPotionEffect((LivingEntity) entity, nausea);
 					entity.setFallDistance(0);
