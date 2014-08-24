@@ -680,6 +680,14 @@ public class Commands {
 					}
 
 					BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+					
+					if (bPlayer.isPermaRemoved()) {
+						bPlayer.permaRemoved = false;
+						Methods.savePermaRemoved(bPlayer);
+						s.sendMessage(ChatColor.RED + "You have restored the bending of: " + ChatColor.DARK_AQUA + player.getName());
+						return true;
+					}
+				
 					bPlayer.elements.clear();
 					Methods.removeUnusableAbilities(player.getName());
 					Methods.saveElements(bPlayer);
