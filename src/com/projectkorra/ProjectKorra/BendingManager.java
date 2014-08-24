@@ -67,8 +67,8 @@ public class BendingManager implements Runnable {
 	long time;
 	long interval;
 
-	private final HashMap<String, Time> dayNight = new HashMap<>();
-	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
+	//private final HashMap<String, Time> dayNight = new HashMap<>();
+	private final HashMap<World, AtomicBoolean> times = new HashMap<World, AtomicBoolean>(); // true if day time
 
 	static final String defaultsunrisemessage = "You feel the strength of the rising sun empowering your firebending.";
 	static final String defaultsunsetmessage = "You feel the empowering of your firebending subside as the sun sets.";
@@ -113,42 +113,31 @@ public class BendingManager implements Runnable {
 		for (World world: Bukkit.getServer().getWorlds()) {
 			if (!times.containsKey(world)) {
 				if (Methods.isDay(world)) {
-					times.put(world, true);
+					times.put(world, new AtomicBoolean(true));
 				} else {
-					times.put(world, false);
+					times.put(world, new AtomicBoolean(false));
 				}
 			} else {
-				if (times.get(world) && !Methods.isDay(world)) {
+				final AtomicBoolean isDay = times.get(world);
+				if (isDay.get() && !Methods.isDay(world)) {
 					// The hashmap says it is day, but it is not.
-					times.put(world, false); // Sets time to night.
-					for (Player player: world.getPlayers()) {
-						if (Methods.isBender(player.getName(), Element.Water)) {
-							if (Methods.isFullMoon(world)) {
-								player.sendMessage(Methods.getWaterColor() + defaultfullmoonrisemessage);
-							} else {
-								player.sendMessage(Methods.getWaterColor() + defaultmoonrisemessage);
-							}
-						}
-						if (Methods.isBender(player.getName(), Element.Fire)) {
-							player.sendMessage(Methods.getFireColor() + defaultsunsetmessage);
-						}
+					isDay.set(false); // Sets time to night, requires no re-adding a boolean.
+					sendFirebenderMessage(world, isDay.get());
+					if(isNight(world)) { //isNight also checks if the world is nether or end type which nees to be done
+						sendWaterbenderMessage(world, isDay.get());//for waterbenders
 					}
 				}
 
-				if (!times.get(world) && Methods.isDay(world)) {
+				if (!isDay.get() && Methods.isDay(world)) {
 					// The hashmap says it is night, but it is day.
-					times.put(world, true);
-					for (Player player: world.getPlayers()) {
-						if (Methods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
-							player.sendMessage(Methods.getWaterColor() + defaultmoonsetmessage);
-						}
-						if (Methods.isBender(player.getName(), Element.Fire) && player.hasPermission("bending.message.daymessage")) {
-							player.sendMessage(Methods.getFireColor() + defaultsunrisemessage);
-						}
+					isDay.set(true);
+					sendFirebenderMessage(world, isDay.get());
+                                        sendWaterbenderMessage(world, isDay.get());//isNight works the same as !isDay if it's day time
 					}
 				}
 			}
 		}
+		
 //		/**
 //		 * This code is ran on startup, it adds all loaded worlds to the
 //		 * hashmap.
@@ -204,12 +193,12 @@ public class BendingManager implements Runnable {
 
 	}
 
-	private static enum Time {
-		DAY, NIGHT;
-	}
+//	private static enum Time {
+//		DAY, NIGHT;
+//	}
 
-	private void sendFirebenderMessage(World world, Time time) {
-		if (time.equals(Time.DAY)) {
+	private void sendFirebenderMessage(World world, boolean b) {
+		if (b) {
 			for (Player player : world.getPlayers()) {
 				if (Methods.isBender(player.getName(), Element.Fire)
 						&& player.hasPermission("bending.message.daymessage")) {
@@ -226,8 +215,8 @@ public class BendingManager implements Runnable {
 		}
 	}
 
-	private void sendWaterbenderMessage(World world, Time time) {
-		if (time.equals(Time.NIGHT)) {
+	private void sendWaterbenderMessage(World world, boolean b) {
+		if (!b) {
 			for (Player player : world.getPlayers()) {
 				if (Methods.isBender(player.getName(), Element.Water)
 						&& player.hasPermission("bending.message.nightmessage")) {
