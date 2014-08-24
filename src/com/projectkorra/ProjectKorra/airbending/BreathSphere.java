@@ -105,6 +105,9 @@ public class BreathSphere {
 					targetentities.put(entity, entity.getLocation().clone());
 				}
 				if (entity instanceof LivingEntity) {
+					if (Methods.isObstructed(player.getLocation(), entity.getLocation())) {
+						breakBreathSphere(entity);
+					}
 					((LivingEntity) entity).damage(damage);
 					new TempPotionEffect((LivingEntity) entity, slow);
 					new TempPotionEffect((LivingEntity) entity, nausea);
@@ -134,6 +137,9 @@ public class BreathSphere {
 		} else {
 			for (Entity entity : targetentities.keySet()) {
 				if(entity instanceof LivingEntity) {
+					if (Methods.isObstructed(player.getLocation(), entity.getLocation())) {
+						breakBreathSphere(entity);
+					}
 					((LivingEntity) entity).damage(damage);
 					new TempPotionEffect((LivingEntity) entity, slow);
 					new TempPotionEffect((LivingEntity) entity, nausea);
