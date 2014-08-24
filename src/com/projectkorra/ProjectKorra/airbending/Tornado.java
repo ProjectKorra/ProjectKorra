@@ -150,6 +150,8 @@ public class Tornado {
 						velocity.multiply(timefactor);
 						entity.setVelocity(velocity);
 						entity.setFallDistance(0);
+						
+						Methods.breakBreathbendingHold(entity);
 
 						if (entity instanceof Player) {
 							new Flight((Player) entity);

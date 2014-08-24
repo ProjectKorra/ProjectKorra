@@ -54,6 +54,7 @@ public class Bloodbending {
 							continue;
 					}
 					Methods.damageEntity(player, entity, 0);
+					Methods.breakBreathbendingHold(entity);
 					targetentities.put(entity, entity.getLocation().clone());
 				}
 			}
@@ -73,6 +74,7 @@ public class Bloodbending {
 				return;
 			}
 			Methods.damageEntity(player, target, 0);
+			Methods.breakBreathbendingHold(target);
 			targetentities.put(target, target.getLocation().clone());
 		}
 		this.player = player;
@@ -166,6 +168,7 @@ public class Bloodbending {
 					if (entity instanceof Creature) {
 						((Creature) entity).setTarget(null);
 					}
+					Methods.breakBreathbendingHold(entity);
 				}
 			}
 			for (Entity entity : targetentities.keySet()) {
@@ -199,6 +202,7 @@ public class Bloodbending {
 				if (entity instanceof Creature) {
 					((Creature) entity).setTarget(null);
 				}
+				Methods.breakBreathbendingHold(entity);
 			}
 		}
 	}

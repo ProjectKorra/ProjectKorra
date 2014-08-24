@@ -256,6 +256,7 @@ public class AirSuction {
 					entity.getWorld().playEffect(entity.getLocation(),
 							Effect.EXTINGUISH, 0);
 				entity.setFireTicks(0);
+				Methods.breakBreathbendingHold(entity);
 
 			}
 		}

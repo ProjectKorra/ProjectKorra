@@ -507,6 +507,7 @@ public class Torrent {
 				damagedealt = (int) (Methods.getWaterbendingNightAugment(world) * (double) deflectdamage);
 			}
 			Methods.damageEntity(player, entity, damagedealt);
+			Methods.breakBreathbendingHold(entity);
 		}
 	}
 
@@ -526,6 +527,7 @@ public class Torrent {
 			}
 			// if (((LivingEntity) entity).getNoDamageTicks() == 0) {
 			Methods.damageEntity(player, entity, damagedealt);
+			Methods.breakBreathbendingHold(entity);
 			// Methods.verbose("Hit! Health at "
 			// + ((LivingEntity) entity).getHealth());
 			hurtentities.add(entity);

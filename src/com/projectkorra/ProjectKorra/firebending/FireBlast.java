@@ -220,6 +220,7 @@ public class FireBlast {
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks(50);
 				Methods.damageEntity(player, entity, (int) Methods.getFirebendingDayAugment((double) damage, entity.getWorld()));
+				Methods.breakBreathbendingHold(entity);
 				new Enflamed(entity, player);
 				instances.remove(id);
 			}

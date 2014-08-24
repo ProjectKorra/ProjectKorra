@@ -167,6 +167,11 @@ public class Lightning {
 			Methods.damageEntity(player, entity, (int) damage);
 		}
 		hitentities.add(entity);
+<<<<<<< HEAD
+=======
+		Methods.damageEntity(player, entity, (int) damage);
+		Methods.breakBreathbendingHold(entity);
+>>>>>>> origin/master
 	}
 
 	public static boolean isNearbyChannel(Location location) {

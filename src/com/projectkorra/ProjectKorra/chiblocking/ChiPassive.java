@@ -12,6 +12,7 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.airbending.BreathSphere;
 
 public class ChiPassive {
 	
@@ -37,9 +38,13 @@ public class ChiPassive {
 	}
 	
 	public static void blockChi(final Player player) {
+		if(BreathSphere.isChannelingSphere(player)) {
+			BreathSphere.remove(player);
+		}
 		final BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 		if (bPlayer == null) return;
 		bPlayer.blockChi();
+		
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new Runnable() {
 			public void run() {
 				bPlayer.unblockChi();
