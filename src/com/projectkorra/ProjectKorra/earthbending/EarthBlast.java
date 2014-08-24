@@ -389,6 +389,9 @@ public class EarthBlast {
 						// || testblock.equals(block2)) {
 						// entity.setVelocity(entity.getVelocity().clone()
 						// .add(direction));
+						
+						Methods.breakBreathbendingHold(entity);
+						
 						Location location = player.getEyeLocation();
 						Vector vector = location.getDirection();
 						entity.setVelocity(vector.normalize().multiply(pushfactor));

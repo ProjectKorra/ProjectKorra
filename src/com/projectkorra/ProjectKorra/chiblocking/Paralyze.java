@@ -10,6 +10,7 @@ import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.airbending.BreathSphere;
 
 public class Paralyze {
 
@@ -41,6 +42,12 @@ public class Paralyze {
 		entities.put(entity, System.currentTimeMillis());
 		if (entity instanceof Creature) {
 			((Creature) entity).setTarget(null);
+		}
+		
+		if (entity instanceof Player) {
+			if(BreathSphere.isChannelingSphere((Player) entity)) {
+				BreathSphere.remove((Player) entity);
+			}
 		}
 	}
 

@@ -82,6 +82,7 @@ public class HealingWaters {
 		if (!Methods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation()))
 			if(player.getHealth() < player.getMaxHealth()) {
 				player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, 1));
+				Methods.breakBreathbendingHold(player);
 			}
 //			for(PotionEffect effect : player.getActivePotionEffects()) {
 //				if(Methods.isNegativeEffect(effect.getType())) {
@@ -93,6 +94,7 @@ public class HealingWaters {
 	private static void applyHealingToEntity(LivingEntity le) {
 		if(le.getHealth() < le.getMaxHealth()) {
 			le.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, 1));
+			Methods.breakBreathbendingHold(le);
 		}
 //		for(PotionEffect effect : le.getActivePotionEffects()) {
 //			if(Methods.isNegativeEffect(effect.getType())) {

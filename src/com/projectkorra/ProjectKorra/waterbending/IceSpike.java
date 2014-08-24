@@ -243,6 +243,7 @@ public class IceSpike {
 			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 			new TempPotionEffect(entity, effect);
 		}
+		Methods.breakBreathbendingHold(entity);
 
 	}
 

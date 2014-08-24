@@ -18,10 +18,10 @@ public enum StockAbilities {
 	AvatarState,
 	
 	// Project Korra
-	Extraction, Smokescreen, Combustion;
+	Extraction, Smokescreen, Combustion, BreathSphere;
 	
 	private enum AirbendingAbilities {
-		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst;
+		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst, BreathSphere;
 	}
 	
 	private enum WaterbendingAbilities {

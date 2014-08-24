@@ -177,6 +177,7 @@ public class Combustion {
 			if (entity instanceof LivingEntity) {
 				if (entity.getLocation().distance(block) < radius) { // They are close enough to the explosion.
 					Methods.damageEntity(player, entity, damage);
+					Methods.breakBreathbendingHold(entity);
 				}
 			}
 		}

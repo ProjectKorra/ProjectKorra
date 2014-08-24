@@ -367,6 +367,7 @@ public class WaterManipulation {
 							if (AvatarState.isAvatarState(player))
 								damage = AvatarState.getValue(damage);
 							Methods.damageEntity(player, entity, (int) Methods.waterbendingNightAugment(damage, player.getWorld()));
+							Methods.breakBreathbendingHold(entity);
 							progressing = false;
 							// }
 						}

@@ -28,7 +28,10 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Effect;
+import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -69,6 +72,7 @@ import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.FireworkEffectPlayer;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
@@ -78,6 +82,7 @@ import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
+import com.projectkorra.ProjectKorra.airbending.BreathSphere;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
@@ -1836,6 +1841,26 @@ public class Methods {
 	public static boolean isNeutralEffect(PotionEffectType effect) {
 		if(effect.equals(PotionEffectType.INVISIBILITY)) return true;
 		return false;
+	}
+	
+	public static void breakBreathbendingHold(Entity entity) {
+		if(BreathSphere.isBreathbent(entity)) {
+			BreathSphere.breakBreathSphere(entity);
+			return;
+		}
+		
+		if(entity instanceof Player) {
+			Player player = (Player) entity;
+			if(BreathSphere.isChannelingSphere(player)) {
+				BreathSphere.remove(player);
+			}
+		}
+	}
+	
+	public static FireworkEffectPlayer fireworkeffectplayer = new FireworkEffectPlayer();
+	
+	public static FireworkEffect customFireworkEffect(Type type, Color color) {
+		return FireworkEffect.builder().with(type).withColor(color).build();
 	}
 
 }
