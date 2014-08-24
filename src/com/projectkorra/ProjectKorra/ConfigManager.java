@@ -190,6 +190,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirSwipe.ChargeFactor", 3);
 		
 		config.addDefault("Abilities.Air.BreathSphere.Enabled", true);
+		config.addDefault("Abilities.Air.BreathSphere.Description", "This ability is one of the most dangerous abilities an Airbender possesses. To use, simply look at an entity and hold shift. The entity will begin taking damage as you extract the air from their lungs. Any bender caught in this sphere will only be able to use basic moves, such as AirSwipe, WaterManipulation, FireBlast, or EarthBlast. An entity can be knocked out of the sphere by certain bending arts, and your attention will be disrupted if you are hit by bending.");
 		config.addDefault("Abilities.Air.BreathSphere.CanBeUsedOnUndeadMobs", true);
 		config.addDefault("Abilities.Air.BreathSphere.Range", 5);
 		config.addDefault("Abilities.Air.BreathSphere.Damage", 0.5);
