@@ -78,6 +78,7 @@ import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
+import com.projectkorra.ProjectKorra.airbending.Breathbending;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
@@ -1836,6 +1837,12 @@ public class Methods {
 	public static boolean isNeutralEffect(PotionEffectType effect) {
 		if(effect.equals(PotionEffectType.INVISIBILITY)) return true;
 		return false;
+	}
+	
+	public static void breakBreathbendingHold(Entity entity) {
+		if(Breathbending.isBreathbent(entity)) {
+			Breathbending.breakBreathbend(entity);
+		}
 	}
 
 }

@@ -305,8 +305,14 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.isCancelled()) return;
+		
+		if(Breathbending.isBreathbent(player)) {
+			if(!Methods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !Methods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
+				event.setCancelled(true);
+			}
+		}
 
-		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || Breathbending.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -622,8 +628,14 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Player player = event.getPlayer();
+		
+		if(Breathbending.isBreathbent(player)) {
+			if(!Methods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !Methods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
+				event.setCancelled(true);
+			}
+		}
 
-		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player) || Breathbending.isBreathbent(player)) {
+		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -1005,11 +1017,6 @@ public class PKListener implements Listener {
 			return;
 		}
 		
-		if (Breathbending.isBreathbent(e.getEntity())) {
-			if(e.getCause() == DamageCause.CUSTOM) {
-				Breathbending.breakBreathbend(e.getEntity());
-			}
-		}
 
 		Entity en = e.getEntity();
 		if (en instanceof Player) {
