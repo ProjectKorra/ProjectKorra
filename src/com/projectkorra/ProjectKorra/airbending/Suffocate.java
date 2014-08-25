@@ -30,6 +30,9 @@ public class Suffocate {
 	private Player player;
 	private long time;
 	private long warmup = 2000;
+	
+	private PotionEffect slow = new PotionEffect(PotionEffectType.SLOW, 60, 1);
+	private PotionEffect nausea = new PotionEffect(PotionEffectType.SLOW, 60, 1);
 
 	public Suffocate(Player player) {
 		if (instances.containsKey(player)) {
@@ -71,14 +74,12 @@ public class Suffocate {
 	}
 
 	private void progress() {
-		PotionEffect slow = new PotionEffect(PotionEffectType.SLOW, 60, 1);
-		PotionEffect nausea = new PotionEffect(PotionEffectType.SLOW, 60, 1);
 
 		if (!player.isSneaking()) {
 			remove(player);
 			return;
 		}
-
+		
 		if (!canBeUsedOnUndead) {
 			for (Entity entity: targetentities.keySet()) {
 				if (isUndead(entity)) {
@@ -107,6 +108,9 @@ public class Suffocate {
 					continue;
 				if (entity.getEntityId() == player.getEntityId()) continue;
 				entities.add(entity);
+				if (entity.getLocation().distance(player.getLocation()) >= range) {
+					breakSuffocate(entity);
+				}
 				if (!targetentities.containsKey(entity)	&& entity instanceof LivingEntity) {
 					if (System.currentTimeMillis() >= time + warmup) {
 						Methods.damageEntity(player, entity, damage);
