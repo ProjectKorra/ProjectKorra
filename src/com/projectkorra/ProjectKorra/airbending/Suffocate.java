@@ -45,7 +45,9 @@ public class Suffocate {
 						if (Methods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation()) || entity.getEntityId() == player.getEntityId())
 							continue;
 					}
-					Methods.damageEntity(player, entity, 0);
+					if (System.currentTimeMillis() >= time + warmup) {
+						Methods.damageEntity(player, entity, 0);
+					}
 					targetentities.put(entity, entity.getLocation().clone());
 				}
 			}
@@ -58,7 +60,9 @@ public class Suffocate {
 			if (!canBeUsedOnUndead && isUndead(target)) {
 				return;
 			}
-			Methods.damageEntity(player, target, 0);
+			if (System.currentTimeMillis() >= time + warmup) {
+				Methods.damageEntity(player, target, 0);
+			}
 			targetentities.put(target, target.getLocation().clone());
 		}
 		this.player = player;
@@ -105,7 +109,7 @@ public class Suffocate {
 				entities.add(entity);
 				if (!targetentities.containsKey(entity)	&& entity instanceof LivingEntity) {
 					if (System.currentTimeMillis() >= time + warmup) {
-						Methods.damageEntity(player, entity, 0);
+						Methods.damageEntity(player, entity, damage);
 					}
 					targetentities.put(entity, entity.getLocation().clone());
 				}
@@ -114,7 +118,7 @@ public class Suffocate {
 						breakSuffocate(entity);
 					}
 					if (System.currentTimeMillis() >= time + warmup) {
-						Methods.damageEntity(player, entity, 0);
+						Methods.damageEntity(player, entity, damage);
 					}
 					new TempPotionEffect((LivingEntity) entity, slow);
 					new TempPotionEffect((LivingEntity) entity, nausea);
@@ -148,7 +152,7 @@ public class Suffocate {
 						breakSuffocate(entity);
 					}
 					if (System.currentTimeMillis() >= time + warmup) {
-						Methods.damageEntity(player, entity, 0);
+						Methods.damageEntity(player, entity, damage);
 					}
 					new TempPotionEffect((LivingEntity) entity, slow);
 					new TempPotionEffect((LivingEntity) entity, nausea);
