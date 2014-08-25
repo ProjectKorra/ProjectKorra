@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,7 +33,7 @@ public class Suffocate {
 	private Player player;
 	private long time;
 	private long warmup = 2000;
-	
+
 	private PotionEffect slow = new PotionEffect(PotionEffectType.SLOW, 60, 1);
 	private PotionEffect nausea = new PotionEffect(PotionEffectType.SLOW, 60, 1);
 
@@ -40,7 +42,7 @@ public class Suffocate {
 			remove(player);
 			return;
 		}
-		
+
 		if (AvatarState.isAvatarState(player)) {
 			range = AvatarState.getValue(range);
 			for (Entity entity: Methods.getEntitiesAroundPoint(player.getLocation(), range)) {
@@ -54,7 +56,7 @@ public class Suffocate {
 				targets.put(en, en.getLocation());
 			}
 		}
-		
+
 		this.player = player;
 		instances.put(player, this);
 		time = System.currentTimeMillis();
@@ -65,78 +67,86 @@ public class Suffocate {
 			remove(player);
 			return;
 		}
-		
+
 		if (player.isDead()) {
 			remove(player);
 			return;
 		}
-		
+
 		if (!Methods.canBend(player.getName(), "Suffocate")) {
 			remove(player);
 			return;
 		}
-		
+
 		if (Methods.getBoundAbility(player) == null || !Methods.getBoundAbility(player).equalsIgnoreCase("Suffocate")) {
 			remove(player);
 			return;
 		}
-				
-		for (Entity entity: targets.keySet()) {
-			if (targets.isEmpty()) {
-				remove(player);
-				return;
-			}
-			if (isUndead(entity) && !canBeUsedOnUndead) {
-				breakSuffocate(entity);
-				continue;
-			}
-			
-			if (entity.getLocation().getBlock() != null && Methods.isWater(entity.getLocation().getBlock())) {
-				breakSuffocate(entity);
-				continue;
-			}
-			
-			if (Methods.isRegionProtectedFromBuild(player, "Suffocate", entity.getLocation())) {
-				remove(player);
-				continue;
-			}
-			
-			if (entity.getLocation().distance(player.getLocation()) >= range) {
-				breakSuffocate(entity);
-				continue;
-			}
-			
-			if (Methods.isObstructed(player.getLocation(), entity.getLocation())) {
-				breakSuffocate(entity);
-				continue;
-			}
-			
-			if (entity instanceof Player) {
-				if (AvatarState.isAvatarState((Player) entity)) {
+
+		try {
+			for (Entity entity: targets.keySet()) {
+				if (!targets.keySet().iterator().hasNext()) {
+					remove(player);
+					return;
+				}
+				if (targets.isEmpty()) {
+					remove(player);
+					return;
+				}
+				if (isUndead(entity) && !canBeUsedOnUndead) {
 					breakSuffocate(entity);
 					continue;
 				}
-			}
-			
-			if (entity.isDead()) {
-				breakSuffocate(entity);
-				continue;
-			}
-			
-			if (entity instanceof Creature) {
-				((Creature) entity).setTarget(player);
-			}
 
-			for(Location airsphere : Methods.getCircle(entity.getLocation(), 3, 3, false, true, 0)) {
-				Methods.playAirbendingParticles(airsphere, 1);
+				if (entity.getLocation().getBlock() != null && Methods.isWater(entity.getLocation().getBlock())) {
+					breakSuffocate(entity);
+					continue;
+				}
+
+				if (Methods.isRegionProtectedFromBuild(player, "Suffocate", entity.getLocation())) {
+					remove(player);
+					continue;
+				}
+
+				if (entity.getLocation().distance(player.getLocation()) >= range) {
+					breakSuffocate(entity);
+					continue;
+				}
+
+				if (Methods.isObstructed(player.getLocation(), entity.getLocation())) {
+					breakSuffocate(entity);
+					continue;
+				}
+
+				if (entity instanceof Player) {
+					if (AvatarState.isAvatarState((Player) entity)) {
+						breakSuffocate(entity);
+						continue;
+					}
+				}
+
+				if (entity.isDead()) {
+					breakSuffocate(entity);
+					continue;
+				}
+
+				if (entity instanceof Creature) {
+					((Creature) entity).setTarget(player);
+				}
+
+				for(Location airsphere : Methods.getCircle(entity.getLocation(), 3, 3, false, true, 0)) {
+					Methods.playAirbendingParticles(airsphere, 1);
+				}
+				entity.setFallDistance(0);
+				new TempPotionEffect((LivingEntity) entity, slow);
+				new TempPotionEffect((LivingEntity) entity, nausea);
+				if (System.currentTimeMillis() >= time + warmup) {
+					Methods.damageEntity(player, entity, damage);
+					entity.teleport(entity);
+				}
 			}
-			entity.setFallDistance(0);
-			new TempPotionEffect((LivingEntity) entity, slow);
-			new TempPotionEffect((LivingEntity) entity, nausea);
-			if (System.currentTimeMillis() >= time + warmup) {
-				Methods.damageEntity(player, entity, damage);
-				entity.teleport(entity);
-			}
+		} catch (ConcurrentModificationException e) {
+
 		}
 	}
 
