@@ -91,6 +91,11 @@ public class Suffocate {
 				continue;
 			}
 			
+			if (entity.getLocation().getBlock() != null && Methods.isWater(entity.getLocation().getBlock())) {
+				breakSuffocate(entity);
+				continue;
+			}
+			
 			if (Methods.isRegionProtectedFromBuild(player, "Suffocate", entity.getLocation())) {
 				remove(player);
 				continue;
