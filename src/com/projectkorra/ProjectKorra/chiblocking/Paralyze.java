@@ -10,7 +10,7 @@ import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.airbending.BreathSphere;
+import com.projectkorra.ProjectKorra.airbending.Suffocate;
 
 public class Paralyze {
 
@@ -45,8 +45,8 @@ public class Paralyze {
 		}
 		
 		if (entity instanceof Player) {
-			if(BreathSphere.isChannelingSphere((Player) entity)) {
-				BreathSphere.remove((Player) entity);
+			if(Suffocate.isChannelingSphere((Player) entity)) {
+				Suffocate.remove((Player) entity);
 			}
 		}
 	}

@@ -17,24 +17,26 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempPotionEffect;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
-public class BreathSphere {
+public class Suffocate {
 
-	public static ConcurrentHashMap<Player, BreathSphere> instances = new ConcurrentHashMap<Player, BreathSphere>();
+	public static ConcurrentHashMap<Player, Suffocate> instances = new ConcurrentHashMap<Player, Suffocate>();
 
 	ConcurrentHashMap<Entity, Location> targetentities = new ConcurrentHashMap<Entity, Location>();
 
-	private static boolean canBeUsedOnUndead = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.BreathSphere.CanBeUsedOnUndeadMobs");
-	private int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Air.BreathSphere.Range");
-	private double damage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.BreathSphere.Damage");
+	private static boolean canBeUsedOnUndead = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
+	private int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Air.Suffocate.Range");
+	private double damage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.Suffocate.Damage");
 
 	private Player player;
+	private long time;
+	private long warmup = 2000;
 
-	public BreathSphere(Player player) {
+	public Suffocate(Player player) {
 		if (instances.containsKey(player)) {
 			remove(player);
 			return;
 		}
-		
+
 		if (AvatarState.isAvatarState(player)) {
 			range = AvatarState.getValue(range);
 			for (Entity entity : Methods.getEntitiesAroundPoint(player.getLocation(), range)) {
@@ -61,6 +63,7 @@ public class BreathSphere {
 		}
 		this.player = player;
 		instances.put(player, this);
+		time = System.currentTimeMillis();
 	}
 
 	private void progress() {
@@ -80,7 +83,7 @@ public class BreathSphere {
 			}
 		}
 
-		if (!Methods.canBend(player.getName(), "BreathSphere")) {
+		if (!Methods.canBend(player.getName(), "Suffocate")) {
 			remove(player);
 			return;
 		}
@@ -88,7 +91,7 @@ public class BreathSphere {
 			remove(player);
 			return;
 		}
-		if (!Methods.getBoundAbility(player).equalsIgnoreCase("BreathSphere")) {
+		if (!Methods.getBoundAbility(player).equalsIgnoreCase("Suffocate")) {
 			remove(player);
 			return;
 		}
@@ -96,19 +99,23 @@ public class BreathSphere {
 		if (AvatarState.isAvatarState(player)) {
 			ArrayList<Entity> entities = new ArrayList<Entity>();
 			for (Entity entity : Methods.getEntitiesAroundPoint(player.getLocation(), range)) {
-				if (Methods.isRegionProtectedFromBuild(player, "BreathSphere", entity.getLocation()))
+				if (Methods.isRegionProtectedFromBuild(player, "Suffocate", entity.getLocation()))
 					continue;
 				if (entity.getEntityId() == player.getEntityId()) continue;
 				entities.add(entity);
 				if (!targetentities.containsKey(entity)	&& entity instanceof LivingEntity) {
-					Methods.damageEntity(player, entity, 0);
+					if (System.currentTimeMillis() >= time + warmup) {
+						Methods.damageEntity(player, entity, 0);
+					}
 					targetentities.put(entity, entity.getLocation().clone());
 				}
 				if (entity instanceof LivingEntity) {
 					if (Methods.isObstructed(player.getLocation(), entity.getLocation())) {
-						breakBreathSphere(entity);
+						breakSuffocate(entity);
 					}
-					Methods.damageEntity(player, (LivingEntity) entity, damage);
+					if (System.currentTimeMillis() >= time + warmup) {
+						Methods.damageEntity(player, entity, 0);
+					}
 					new TempPotionEffect((LivingEntity) entity, slow);
 					new TempPotionEffect((LivingEntity) entity, nausea);
 					entity.setFallDistance(0);
@@ -138,9 +145,11 @@ public class BreathSphere {
 			for (Entity entity : targetentities.keySet()) {
 				if(entity instanceof LivingEntity) {
 					if (Methods.isObstructed(player.getLocation(), entity.getLocation())) {
-						breakBreathSphere(entity);
+						breakSuffocate(entity);
 					}
-					Methods.damageEntity(player, (LivingEntity) entity, damage);
+					if (System.currentTimeMillis() >= time + warmup) {
+						Methods.damageEntity(player, entity, 0);
+					}
 					new TempPotionEffect((LivingEntity) entity, slow);
 					new TempPotionEffect((LivingEntity) entity, nausea);
 					entity.setFallDistance(0);
@@ -176,8 +185,8 @@ public class BreathSphere {
 			instances.remove(player);
 		}
 	}
-	
-	public static void breakBreathSphere(Entity entity) {
+
+	public static void breakSuffocate(Entity entity) {
 		for (Player player : instances.keySet()) {
 			if (instances.get(player).targetentities.containsKey(entity)) {
 				instances.remove(player);
@@ -188,7 +197,10 @@ public class BreathSphere {
 	public static boolean isBreathbent(Entity entity) {
 		for (Player player : instances.keySet()) {
 			if (instances.get(player).targetentities.containsKey(entity)) {
-				return true;
+				if (System.currentTimeMillis() >= instances.get(player).time + instances.get(player).warmup) {
+					return true;
+				}
+				return false;
 			}
 		}
 		return false;
@@ -211,7 +223,7 @@ public class BreathSphere {
 		return false;
 	}
 
-	public static Location getBreathSphereLocation(Entity entity) {
+	public static Location getSuffocateLocation(Entity entity) {
 		for (Player player : instances.keySet()) {
 			if (instances.get(player).targetentities.containsKey(entity)) {
 				return instances.get(player).targetentities.get(entity);
@@ -219,12 +231,12 @@ public class BreathSphere {
 		}
 		return null;
 	}
-	
+
 	public static boolean isChannelingSphere(Player player){
 		if(instances.containsKey(player)) return true;
 		return false;
 	}
-	
+
 	public static void removeAll() {
 		instances.clear();
 	}

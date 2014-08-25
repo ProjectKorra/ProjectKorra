@@ -81,7 +81,7 @@ import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
-import com.projectkorra.ProjectKorra.airbending.BreathSphere;
+import com.projectkorra.ProjectKorra.airbending.Suffocate;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
@@ -1896,15 +1896,15 @@ public class Methods {
 	}
 	
 	public static void breakBreathbendingHold(Entity entity) {
-		if(BreathSphere.isBreathbent(entity)) {
-			BreathSphere.breakBreathSphere(entity);
+		if(Suffocate.isBreathbent(entity)) {
+			Suffocate.breakSuffocate(entity);
 			return;
 		}
 		
 		if(entity instanceof Player) {
 			Player player = (Player) entity;
-			if(BreathSphere.isChannelingSphere(player)) {
-				BreathSphere.remove(player);
+			if(Suffocate.isChannelingSphere(player)) {
+				Suffocate.remove(player);
 			}
 		}
 	}	

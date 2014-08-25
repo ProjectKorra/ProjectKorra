@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.airbending.BreathSphere;
+import com.projectkorra.ProjectKorra.airbending.Suffocate;
 
 public class RapidPunch {
 
@@ -60,8 +60,8 @@ public class RapidPunch {
 				if (ChiPassive.willChiBlock((Player) target)) {
 					ChiPassive.blockChi((Player) target);
 				}
-				if(BreathSphere.isChannelingSphere((Player) target)) {
-					BreathSphere.remove((Player) target);
+				if(Suffocate.isChannelingSphere((Player) target)) {
+					Suffocate.remove((Player) target);
 				}
 			lt.setNoDamageTicks(0);
 		}

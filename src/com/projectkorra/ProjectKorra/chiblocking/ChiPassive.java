@@ -12,7 +12,7 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.airbending.BreathSphere;
+import com.projectkorra.ProjectKorra.airbending.Suffocate;
 
 public class ChiPassive {
 	
@@ -38,8 +38,8 @@ public class ChiPassive {
 	}
 	
 	public static void blockChi(final Player player) {
-		if(BreathSphere.isChannelingSphere(player)) {
-			BreathSphere.remove(player);
+		if(Suffocate.isChannelingSphere(player)) {
+			Suffocate.remove(player);
 		}
 		final BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 		if (bPlayer == null) return;
