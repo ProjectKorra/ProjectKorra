@@ -42,7 +42,7 @@ public class Suffocate {
 			for (Entity entity : Methods.getEntitiesAroundPoint(player.getLocation(), range)) {
 				if (entity instanceof LivingEntity) {
 					if (entity instanceof Player) {
-						if (Methods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation()) || entity.getEntityId() == player.getEntityId())
+						if (Methods.isRegionProtectedFromBuild(player, "Suffocate", entity.getLocation()) || entity.getEntityId() == player.getEntityId())
 							continue;
 					}
 					if (System.currentTimeMillis() >= time + warmup) {
@@ -55,7 +55,7 @@ public class Suffocate {
 			Entity target = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
 			if (target == null)
 				return;
-			if (!(target instanceof LivingEntity)|| Methods.isRegionProtectedFromBuild(player, "Bloodbending", target.getLocation()))
+			if (!(target instanceof LivingEntity)|| Methods.isRegionProtectedFromBuild(player, "Suffocate", target.getLocation()))
 				return;
 			if (!canBeUsedOnUndead && isUndead(target)) {
 				return;

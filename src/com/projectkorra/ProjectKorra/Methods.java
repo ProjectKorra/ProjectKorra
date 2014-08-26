@@ -1802,6 +1802,7 @@ public class Methods {
 		AirSwipe.instances.clear();
 		Tornado.instances.clear();
 		AirBurst.removeAll();
+		Suffocate.removeAll();
 
 		Catapult.removeAll();
 		CompactColumn.removeAll();
@@ -1840,7 +1841,10 @@ public class Methods {
 		Flight.removeAll();
 		WaterReturn.removeAll();
 		TempBlock.removeAll();
-		removeAllEarthbendedBlocks();
+		
+		if(ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
+			removeAllEarthbendedBlocks();
+		}
 
 		EarthPassive.removeAll();
 	}
