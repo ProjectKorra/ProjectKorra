@@ -1690,6 +1690,10 @@ public class Methods {
 	}
 	public static boolean revertBlock(Block block) {
 		byte full = 0x0;
+		if(!ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
+			movedearth.remove(block);
+			return false;
+		}
 		if (movedearth.containsKey(block)) {
 			Information info = movedearth.get(block);
 			Block sourceblock = info.getState().getBlock();
