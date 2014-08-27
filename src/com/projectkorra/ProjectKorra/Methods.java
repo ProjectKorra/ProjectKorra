@@ -743,6 +743,7 @@ public class Methods {
 	 * </p>
 	 * @see {@link #getFirebendingDayAugment(double, World)}
 	 */
+	@Deprecated
 	public static double getFirebendingDayAugment(World world) {
 		if (isDay(world)) return plugin.getConfig().getDouble("Properties.Fire.DayFactor");
 		return 1;
