@@ -1915,6 +1915,10 @@ public class Methods {
 				Suffocate.remove(player);
 			}
 		}
-	}	
+	}
+	
+	public static void playFirebendingParticles(Location loc) {
+		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0, 15);
+	}
 
 }
