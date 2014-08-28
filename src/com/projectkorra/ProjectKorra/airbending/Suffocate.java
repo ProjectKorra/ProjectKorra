@@ -15,6 +15,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -143,6 +144,7 @@ public class Suffocate {
 				new TempPotionEffect((LivingEntity) entity, nausea);
 				if (System.currentTimeMillis() >= time + warmup) {
 					Methods.damageEntity(player, entity, damage);
+					entity.setVelocity(new Vector(0, 0, 0));
 				}
 			}
 		} catch (ConcurrentModificationException e) {
