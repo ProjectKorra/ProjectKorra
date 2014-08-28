@@ -743,6 +743,7 @@ public class Methods {
 	 * </p>
 	 * @see {@link #getFirebendingDayAugment(double, World)}
 	 */
+	@Deprecated
 	public static double getFirebendingDayAugment(World world) {
 		if (isDay(world)) return plugin.getConfig().getDouble("Properties.Fire.DayFactor");
 		return 1;
@@ -1690,6 +1691,10 @@ public class Methods {
 	}
 	public static boolean revertBlock(Block block) {
 		byte full = 0x0;
+		if(!ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
+			movedearth.remove(block);
+			return false;
+		}
 		if (movedearth.containsKey(block)) {
 			Information info = movedearth.get(block);
 			Block sourceblock = info.getState().getBlock();
@@ -1802,6 +1807,7 @@ public class Methods {
 		AirSwipe.instances.clear();
 		Tornado.instances.clear();
 		AirBurst.removeAll();
+		Suffocate.removeAll();
 
 		Catapult.removeAll();
 		CompactColumn.removeAll();
@@ -1840,7 +1846,10 @@ public class Methods {
 		Flight.removeAll();
 		WaterReturn.removeAll();
 		TempBlock.removeAll();
-		removeAllEarthbendedBlocks();
+		
+		if(ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
+			removeAllEarthbendedBlocks();
+		}
 
 		EarthPassive.removeAll();
 	}
@@ -1907,6 +1916,10 @@ public class Methods {
 				Suffocate.remove(player);
 			}
 		}
-	}	
+	}
+	
+	public static void playFirebendingParticles(Location loc) {
+		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0, 15);
+	}
 
 }

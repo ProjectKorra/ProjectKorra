@@ -18,6 +18,7 @@ public class Smokescreen {
 
 	public static HashMap<String, Long> cooldowns = new HashMap<String, Long>();
 	public static List<Integer> snowballs = new ArrayList<Integer>();
+	public static HashMap<String, Long> blinded = new HashMap<String, Long>();
 	/*
 	 * TODO: Make stuff configurable
 	 */
@@ -69,6 +70,18 @@ public class Smokescreen {
 		if (entity instanceof Player) {
 			Player p = (Player) entity;
 			p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration * 20, 2));
+			blinded.put(p.getName(), System.currentTimeMillis());
+		}
+	}
+	
+	public static void removeFromHashMap(Entity entity) {
+		if (entity instanceof Player) {
+			Player p = (Player) entity;
+			if(blinded.containsKey(p.getName())) {
+				if(blinded.get(p.getName()) + duration >= System.currentTimeMillis()) {
+					blinded.remove(p.getName());
+				}
+			}
 		}
 	}
 }

@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.chiblocking.Smokescreen;
 
 public class HealingWaters {
 
@@ -64,6 +65,9 @@ public class HealingWaters {
 		}
 		for(PotionEffect effect : player.getActivePotionEffects()) {
 			if(Methods.isNegativeEffect(effect.getType())) {
+				if((effect.getType() == PotionEffectType.BLINDNESS) && Smokescreen.blinded.containsKey(player.getName())) {
+					return;
+				}
 				player.removePotionEffect(effect.getType());
 			}
 		}
