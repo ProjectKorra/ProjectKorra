@@ -302,15 +302,16 @@ public class WaterManipulation {
 
 					double radius = FireBlast.affectingradius;
 					Player source = player;
-					if (EarthBlast.annihilateBlasts(location, radius, source)
-							|| WaterManipulation.annihilateBlasts(location,	radius, source)
-							|| FireBlast.annihilateBlasts(location, radius,	source)) {
-						breakBlock();
-						new WaterReturn(player, sourceblock);
-						return false;
+					if(!(location == null)) {
+						if (EarthBlast.annihilateBlasts(location, radius, source)
+								|| WaterManipulation.annihilateBlasts(location,	radius, source)
+								|| FireBlast.annihilateBlasts(location, radius,	source)) {
+							breakBlock();
+							new WaterReturn(player, sourceblock);
+							return false;
+						}
+						Combustion.removeAroundPoint(location, radius);
 					}
-
-					Combustion.removeAroundPoint(location, radius);
 
 					location = location.clone().add(direction);
 
