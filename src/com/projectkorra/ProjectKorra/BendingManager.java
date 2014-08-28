@@ -88,7 +88,6 @@ public class BendingManager implements Runnable {
 			ProjectKorra.time_step = interval;
 
 			AvatarState.manageAvatarStates();
-			ChiPassive.handlePassive();
 			TempPotionEffect.progressAll();
 			handleDayNight();
 			Flight.handle();	
