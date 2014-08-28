@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -140,35 +141,6 @@ public class Combustion {
 		
 		
 		advanceLocation();
-
-		//		long warmup = chargeTime;
-		//		if (AvatarState.isAvatarState(player)) {
-		//			warmup = 0;
-		//		}
-		//		
-		//		if (System.currentTimeMillis() > starttime + warmup) {
-		//			charged = true;
-		//		}
-		//				
-		//		if (charged) {
-		//			if (player.isSneaking()) {
-		//				player.getWorld().playEffect(player.getEyeLocation(), Effect.SMOKE, 4, 3);
-		//			} else {
-		//				launchFireball();
-		//				cooldowns.put(player.getName(), System.currentTimeMillis());
-		//				instances.remove(player);
-		//			}
-		//		} else {
-		//			if (!player.isSneaking()) {
-		//				instances.remove(player);
-		//			}
-		//		}
-		//		
-		//		for (Entity entity: player.getWorld().getEntities()) {
-		//			if (fireballs.contains(entity.getEntityId())) {
-		//				ParticleEffect.CLOUD.display(entity.getLocation(), 1.0F, 1.0F, 1.0F, 1.0F, 30);
-		//			}
-		//		}
 	}
 	
 	private void createExplosion(Location block, float power, boolean breakblocks) {

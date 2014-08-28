@@ -142,7 +142,7 @@ public class Suffocate {
 				new TempPotionEffect((LivingEntity) entity, nausea);
 				if (System.currentTimeMillis() >= time + warmup) {
 					Methods.damageEntity(player, entity, damage);
-					entity.teleport(entity);
+//					entity.teleport(entity);
 				}
 			}
 		} catch (ConcurrentModificationException e) {

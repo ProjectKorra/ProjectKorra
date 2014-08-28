@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -485,6 +486,16 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		
+		if (Suffocate.isBreathbent(player)) {
+			Location loc = event.getFrom();
+			Location toLoc = player.getLocation();
+			
+			if (loc.getX() != toLoc.getX() || loc.getY() != toLoc.getY() || loc.getZ() != toLoc.getZ()) {
+				event.setCancelled(true);
+				return;
+			}
+		}
 
 		if (WaterSpout.instances.containsKey(event.getPlayer()) || AirSpout.getPlayers().contains(event.getPlayer())) {
 			Vector vel = new Vector();
@@ -513,10 +524,6 @@ public class PKListener implements Listener {
 			if (distance2 > distance1) {
 				player.setVelocity(new Vector(0, 0, 0));
 			}
-		}
-		
-		if(Suffocate.isBreathbent(player)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1, 100));
 		}
 	}
 
