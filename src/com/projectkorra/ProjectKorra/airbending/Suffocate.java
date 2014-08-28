@@ -45,7 +45,6 @@ public class Suffocate {
 
 		if (AvatarState.isAvatarState(player)) {
 			range = AvatarState.getValue(range);
-<<<<<<< HEAD
 			for (Entity entity: Methods.getEntitiesAroundPoint(player.getLocation(), range)) {
 				if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId()) {
 					targets.put(entity, entity.getLocation());
@@ -55,28 +54,7 @@ public class Suffocate {
 			Entity en = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
 			if (en != null && en instanceof LivingEntity && en.getEntityId() != player.getEntityId()) {
 				targets.put(en, en.getLocation());
-=======
-			for (Entity entity : Methods.getEntitiesAroundPoint(player.getLocation(), range)) {
-				if (entity instanceof LivingEntity) {
-					if (entity instanceof Player) {
-						if (Methods.isRegionProtectedFromBuild(player, "Suffocate", entity.getLocation()) || entity.getEntityId() == player.getEntityId())
-							continue;
-					}
-					if (System.currentTimeMillis() >= time + warmup) {
-						Methods.damageEntity(player, entity, 0);
-					}
-					targetentities.put(entity, entity.getLocation().clone());
-				}
-			}
-		} else {
-			Entity target = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
-			if (target == null)
-				return;
-			if (!(target instanceof LivingEntity)|| Methods.isRegionProtectedFromBuild(player, "Suffocate", target.getLocation()))
-				return;
-			if (!canBeUsedOnUndead && isUndead(target)) {
-				return;
->>>>>>> origin/master
+
 			}
 		}
 
@@ -165,7 +143,6 @@ public class Suffocate {
 				new TempPotionEffect((LivingEntity) entity, nausea);
 				if (System.currentTimeMillis() >= time + warmup) {
 					Methods.damageEntity(player, entity, damage);
-//					entity.teleport(entity);
 				}
 			}
 		} catch (ConcurrentModificationException e) {
