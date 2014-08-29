@@ -2,7 +2,7 @@ package com.projectkorra.ProjectKorra.Utilities;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
+//import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -10,7 +10,7 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
  
-public final class PlayerBendEvent extends Event implements Cancellable {
+public final class PlayerBendEvent extends Event {//implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private Player player;
     private Element element;
@@ -18,7 +18,7 @@ public final class PlayerBendEvent extends Event implements Cancellable {
     private Location location;
     private boolean isSub;
     private String sub;
-    private boolean cancelled;
+    //private boolean cancelled;
  
     public PlayerBendEvent(Player eventplayer, Element eventelement, String eventability, Location eventlocation, Boolean isSubElement, String subelement) {
         player = eventplayer;
@@ -67,13 +67,13 @@ public final class PlayerBendEvent extends Event implements Cancellable {
     	return false;
     }
  
-    public boolean isCancelled() {
-        return cancelled;
-    }
+    //public boolean isCancelled() {
+        //return cancelled;
+    //}
  
-    public void setCancelled(boolean cancel) {
-        cancelled = cancel;
-    }
+    //public void setCancelled(boolean cancel) {
+        //cancelled = cancel;
+    //}
  
     public HandlerList getHandlers() {
         return handlers;
