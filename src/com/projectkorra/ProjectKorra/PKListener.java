@@ -350,24 +350,29 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Tornado")) {
 					new Tornado(player);
+					Methods.callBendEvent(player, Element.Air, "Tornado", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("AirBlast")) {
 					AirBlast.setOrigin(player);
 				}
 				if (abil.equalsIgnoreCase("AirBurst")) {
 					new AirBurst(player);
+					Methods.callBendEvent(player, Element.Air, "AirBurst", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("AirSuction")) {
 					AirSuction.setOrigin(player);
 				}
 				if (abil.equalsIgnoreCase("AirSwipe")) {
 					AirSwipe.charge(player);
+					Methods.callBendEvent(player, Element.Air, "AirSwipe", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("AirShield")) {
 					new AirShield(player);
+					Methods.callBendEvent(player, Element.Air, "AirShield", player.getLocation(), false, null);
 				}
 				if(abil.equalsIgnoreCase("Suffocate")) {
 					new Suffocate(player);
+					Methods.callBendEvent(player, Element.Air, "Suffocate", player.getLocation(), false, null);
 				}
 
 			}
@@ -378,24 +383,31 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					new Bloodbending(player);
+					Methods.callBendEvent(player, Element.Water, "Bloodbending", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("IceSpike")) {
 					new IceSpike2(player);
+					Methods.callBendEvent(player, Element.Water, "IceSpike", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("OctopusForm")) {
 					OctopusForm.form(player);
+					Methods.callBendEvent(player, Element.Water, "OctopusForm", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("PhaseChange")) {
 					new Melt(player);
+					Methods.callBendEvent(player, Element.Water, "PhaseChange", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("WaterManipulation")) {
 					new WaterManipulation(player);
+					Methods.callBendEvent(player, Element.Water, "WaterManipulation", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Surge")) {
 					WaterWall.form(player);
+					Methods.callBendEvent(player, Element.Water, "Surge", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Torrent")) {
 					Torrent.create(player);
+					Methods.callBendEvent(player, Element.Water, "Torrent", player.getLocation(), false, null);
 				}
 			}
 
@@ -405,33 +417,42 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("EarthBlast")) {
 					new EarthBlast(player);
+					Methods.callBendEvent(player, Element.Earth, "EarthBlast", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("RaiseEarth")) {
 					new EarthWall(player);
+					Methods.callBendEvent(player, Element.Earth, "RaiseEarth", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Collapse")) {
 					new Collapse(player);
+					Methods.callBendEvent(player, Element.Earth, "Collapse", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Shockwave")) {
 					new Shockwave(player);
+					Methods.callBendEvent(player, Element.Earth, "Shockwave", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("EarthGrab")) {
 					EarthGrab.EarthGrabSelf(player);
+					Methods.callBendEvent(player, Element.Earth, "EarthGrab", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("EarthTunnel")) {
 					new EarthTunnel(player);
+					Methods.callBendEvent(player, Element.Earth, "EarthTunnel", player.getLocation(), false, null);
 				}
 
 				if (abil.equalsIgnoreCase("Tremorsense")) {
 					Methods.getBendingPlayer(player.getName()).toggleTremorsense();
+					Methods.callBendEvent(player, Element.Earth, "TremorSense", player.getLocation(), false, null);
 				}
 
 				if (abil.equalsIgnoreCase("Extraction")) {
 					new Extraction(player);
+					Methods.callBendEvent(player, Element.Earth, "Extraction", player.getLocation(), true, "Metalbending");
 				}
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
 					LavaWall.form(player);
+					Methods.callBendEvent(player, Element.Earth, "LavaSurge", player.getLocation(), true, "Lavabending");
 				}
 
 			}
@@ -442,24 +463,31 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Blaze")) {
 					new RingOfFire(player);
+					Methods.callBendEvent(player, Element.Fire, "Blaze", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("FireBlast")) {
 					new Fireball(player);
+					Methods.callBendEvent(player, Element.Fire, "FireBlast", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("HeatControl")) {
 					new Cook(player);
+					Methods.callBendEvent(player, Element.Fire, "HeatControl", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("FireBurst")) {
 					new FireBurst(player);
+					Methods.callBendEvent(player, Element.Fire, "FireBurst", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("FireShield")) {
 					FireShield.shield(player);
+					Methods.callBendEvent(player, Element.Fire, "FireShield", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Lightning")) {
 					new Lightning(player);
+					Methods.callBendEvent(player, Element.Fire, "Lightning", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Combustion")) {
 					new Combustion(player);
+					Methods.callBendEvent(player, Element.Fire, "Combustion", player.getLocation(), true, "Combustion");
 				}
 			}
 		}
@@ -681,21 +709,27 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("AirBlast")) {
 					new AirBlast(player);
+					Methods.callBendEvent(player, Element.Air, "AirBlast", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("AirSuction")) {
 					new AirSuction(player);
+					Methods.callBendEvent(player, Element.Air, "AirSuction", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("AirBurst")) {
 					AirBurst.coneBurst(player);
+					Methods.callBendEvent(player, Element.Air, "AirBurst", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("AirScooter")) {
 					new AirScooter(player);
+					Methods.callBendEvent(player, Element.Air, "AirScooter", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("AirSpout")) {
 					new AirSpout(player);
+					Methods.callBendEvent(player, Element.Air, "AirSpout", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("AirSwipe")) {
 					new AirSwipe(player);
+					Methods.callBendEvent(player, Element.Air, "AirSwipe", player.getLocation(), false, null);
 				}
 			}
 			if (Methods.isWaterAbility(abil)) {
@@ -707,21 +741,26 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("IceSpike")) {
 					IceSpike2.activate(player);
+					Methods.callBendEvent(player, Element.Water, "IceSpike", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("OctopusForm")) {
 					new OctopusForm(player);
 				}
 				if (abil.equalsIgnoreCase("PhaseChange")) {
 					new FreezeMelt(player);
+					Methods.callBendEvent(player, Element.Water, "PhaseChange", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("WaterSpout")) {
 					new WaterSpout(player);
+					Methods.callBendEvent(player, Element.Water, "WaterSpout", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("WaterManipulation")) {
 					WaterManipulation.moveWater(player);
+					Methods.callBendEvent(player, Element.Water, "WaterManipulation", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Surge")) {
 					new WaterWall(player);
+					Methods.callBendEvent(player, Element.Water, "Surge", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Torrent")) {
 					new Torrent(player);
@@ -734,36 +773,45 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Catapult")) {
 					new Catapult(player);
+					Methods.callBendEvent(player, Element.Earth, "Catapult", player.getLocation(), false, null);
 				}
 
 				if (abil.equalsIgnoreCase("EarthBlast")) {
 					EarthBlast.throwEarth(player);
+					Methods.callBendEvent(player, Element.Earth, "EarthBlast", player.getLocation(), false, null);
 				}
 
 				if (abil.equalsIgnoreCase("RaiseEarth")) {
 					new EarthColumn(player);
+					Methods.callBendEvent(player, Element.Earth, "RaiseEarth", player.getLocation(), false, null);
 				}
 
 				if (abil.equalsIgnoreCase("Collapse")) {
 					new CompactColumn(player);
+					Methods.callBendEvent(player, Element.Earth, "Collapse", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Shockwave")) {
 					Shockwave.coneShockwave(player);
+					Methods.callBendEvent(player, Element.Earth, "Shockwave", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("EarthArmor")) {
 					new EarthArmor(player);
+					Methods.callBendEvent(player, Element.Earth, "EarthArmor", player.getLocation(), false, null);
 				}
 
 				if (abil.equalsIgnoreCase("EarthGrab")) {
 					new EarthGrab(player);
+					Methods.callBendEvent(player, Element.Earth, "EarthGrab", player.getLocation(), false, null);
 				}
 
 				if (abil.equalsIgnoreCase("Tremorsense")) {
 					new Tremorsense(player);
+					Methods.callBendEvent(player, Element.Earth, "TremorSense", player.getLocation(), false, null);
 				}
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
 					new LavaWall(player);
+					Methods.callBendEvent(player, Element.Earth, "LavaSurge", player.getLocation(), true, "Lavabending");
 				}
 			}
 			if (Methods.isFireAbility(abil)) {
@@ -773,30 +821,39 @@ public class PKListener implements Listener {
 
 				if (abil.equalsIgnoreCase("Blaze")) {
 					new ArcOfFire(player);
+					Methods.callBendEvent(player, Element.Fire, "Blaze", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("FireBlast")) {
 					new FireBlast(player);
+					Methods.callBendEvent(player, Element.Fire, "FireBlast", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("FireJet")) {
 					new FireJet(player);
+					Methods.callBendEvent(player, Element.Fire, "FireJet", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("HeatControl")) {
 					new Extinguish(player);
+					Methods.callBendEvent(player, Element.Fire, "HeatControl", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Illumination")) {
 					new Illumination(player);
+					Methods.callBendEvent(player, Element.Fire, "Illumination", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("FireBurst")) {
 					FireBurst.coneBurst(player);
+					Methods.callBendEvent(player, Element.Fire, "FireBurst", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("FireShield")) {
 					new FireShield(player);
+					Methods.callBendEvent(player, Element.Fire, "FireShield", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("WallOfFire")) {
 					new WallOfFire(player);
+					Methods.callBendEvent(player, Element.Fire, "WallOfFire", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Combustion")) {
 					Combustion.explode(player);
+					Methods.callBendEvent(player, Element.Fire, "Combustion", player.getLocation(), true, "Combustion");
 				}
 			}
 
@@ -806,20 +863,25 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("HighJump")) {
 					new HighJump(player);
+					Methods.callBendEvent(player, Element.Chi, "HighJump", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("RapidPunch")) {
 					new RapidPunch(player);
+					Methods.callBendEvent(player, Element.Chi, "RapidPunch", player.getLocation(), false, null);
 				}
 				if (abil.equalsIgnoreCase("Paralyze")) {
+					Methods.callBendEvent(player, Element.Chi, "Paralyze", player.getLocation(), false, null);
 					//
 				}
 				if (abil.equalsIgnoreCase("Smokescreen")) {
 					new Smokescreen(player);
+					Methods.callBendEvent(player, Element.Chi, "Smokescreen", player.getLocation(), true, "Tech");
 				}
 			}
 
 			if (abil.equalsIgnoreCase("AvatarState")) {
 				new AvatarState(player);
+				Methods.callBendEvent(player, null, "HighJump", player.getLocation(), false, null);
 			}
 		}
 	}

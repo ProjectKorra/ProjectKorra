@@ -28,10 +28,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Effect;
-import org.bukkit.FireworkEffect;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -73,6 +70,7 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.Utilities.PlayerBendEvent;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
@@ -98,7 +96,6 @@ import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireBurst;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
-import com.projectkorra.ProjectKorra.firebending.FirePassive;
 import com.projectkorra.ProjectKorra.firebending.FireShield;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
@@ -1920,6 +1917,11 @@ public class Methods {
 	
 	public static void playFirebendingParticles(Location loc) {
 		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0, 15);
+	}
+	
+	public static void callBendEvent(Player player, Element element, String ability, Location location, Boolean isSubElement, String subelement) {
+		PlayerBendEvent bevent = new PlayerBendEvent(player, element, ability, location, isSubElement, subelement);
+		ProjectKorra.plugin.getServer().getPluginManager().callEvent(bevent);
 	}
 
 }
