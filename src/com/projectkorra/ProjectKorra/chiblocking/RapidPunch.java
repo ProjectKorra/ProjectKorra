@@ -56,13 +56,14 @@ public class RapidPunch {
 		if (target instanceof LivingEntity && target != null) {
 			LivingEntity lt = (LivingEntity) target;
 			Methods.damageEntity(p, target, damage);
-			if (target instanceof Player)
+			if (target instanceof Player) {
 				if (ChiPassive.willChiBlock((Player) target)) {
 					ChiPassive.blockChi((Player) target);
 				}
 				if(Suffocate.isChannelingSphere((Player) target)) {
 					Suffocate.remove((Player) target);
 				}
+			}
 			lt.setNoDamageTicks(0);
 		}
 		cooldowns.put(p.getName(), System.currentTimeMillis());
