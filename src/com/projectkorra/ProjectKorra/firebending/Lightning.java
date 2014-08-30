@@ -139,15 +139,9 @@ public class Lightning {
 
 	public void dealDamage(Entity entity) {
 		if (strike == null) {
-			// Methods.verbose("Null strike");
 			return;
 		}
-		// if (Methods.isObstructed(strike.getLocation(), entity.getLocation())) {
-		// Methods.verbose("Is Obstructed");
-		// return 0;
-		// }
 		if (hitentities.contains(entity)) {
-			// Methods.verbose("Already hit");
 			return;
 		}
 		double distance = entity.getLocation().distance(strike.getLocation());

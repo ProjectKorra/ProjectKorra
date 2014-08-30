@@ -9,25 +9,19 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Extraction {
-
-	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	private long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Extraction.Cooldown");
 	private static int doublechance = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Extraction.DoubleLootChance");
 	private static int triplechance = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");
 
 	public Extraction(Player player) {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("Extraction")) return;
 
 		Block block = player.getTargetBlock(null, 5);
 		if (block == null) {
@@ -51,7 +45,7 @@ public class Extraction {
 				default:
 					break; // shouldn't happen.
 				}
-				cooldowns.put(player.getName(), System.currentTimeMillis());
+				bPlayer.addCooldown("Extraction", cooldown);
 			}
 		}
 

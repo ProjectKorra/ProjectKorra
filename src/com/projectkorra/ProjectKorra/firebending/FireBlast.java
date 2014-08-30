@@ -16,6 +16,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -26,17 +27,13 @@ import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 public class FireBlast {
 
 	public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<Integer, FireBlast>();
-	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
-	// private static ConcurrentHashMap<Player, Long> timers = new
-	// ConcurrentHashMap<Player, Long>();
-	// static final long soonesttime = ConfigManager.fireBlastCooldown;
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
 	private static double pushfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Push");
 	static boolean dissipate = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
 	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.FireBlast.Damage");
 	double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Range");
 	long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
-	
+
 	public static double affectingradius = 2;
 	// public static long interval = 2000;
 	public static byte full = 0x0;
@@ -52,29 +49,16 @@ public class FireBlast {
 	private int id;
 	private double speedfactor;
 	private int ticks = 0;
-	// private ArrayList<Block> affectedlevers = new ArrayList<Block>();
-	// private long time;
 
 	public FireBlast(Player player) {
-		// if (timers.containsKey(player)) {
-		// if (System.currentTimeMillis() < timers.get(player) + soonesttime) {
-		// return;
-		// }
-		// }
-		
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
-		
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+
+		if (bPlayer.isOnCooldown("FireBlast")) return;
+
 		if (player.getEyeLocation().getBlock().isLiquid() || Fireball.isCharging(player)) {
 			return;
 		}
 		range = Methods.getFirebendingDayAugment(range, player.getWorld());
-		// timers.put(player, System.currentTimeMillis());
 		this.player = player;
 		location = player.getEyeLocation();
 		origin = player.getEyeLocation();
@@ -82,7 +66,7 @@ public class FireBlast {
 		location = location.add(direction.clone());
 		id = ID;
 		instances.put(id, this);
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		bPlayer.addCooldown("FireBlast", cooldown);
 		if (ID == Integer.MAX_VALUE)
 			ID = Integer.MIN_VALUE;
 		ID++;

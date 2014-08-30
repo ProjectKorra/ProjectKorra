@@ -14,6 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
@@ -23,9 +24,6 @@ import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 public class EarthBlast {
 
 	public static ConcurrentHashMap<Integer, EarthBlast> instances = new ConcurrentHashMap<Integer, EarthBlast>();
-	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
-	// private static ConcurrentHashMap<Player, EarthBlast> prepared = new
-	// ConcurrentHashMap<Player, EarthBlast>();
 
 	private static boolean hitself = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
 	private static double preparerange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.PrepareRange");
@@ -36,7 +34,6 @@ public class EarthBlast {
 
 	private static boolean revert = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.Revert");
 	private static double pushfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Push");
-	// private static double speed = 1.5;
 
 	private static long interval = (long) (1000. / speed);
 
@@ -219,7 +216,7 @@ public class EarthBlast {
 			instances.get(ID).progress();
 		}
 	}
-	
+
 	private boolean progress() {
 		if (player.isDead() || !player.isOnline()
 				|| !Methods.canBend(player.getName(), "EarthBlast")) {
@@ -360,7 +357,7 @@ public class EarthBlast {
 						breakBlock();
 						return false;
 					}
-					
+
 					Combustion.removeAroundPoint(location, radius);
 
 					Block block2 = location.getBlock();
@@ -395,9 +392,9 @@ public class EarthBlast {
 						// || testblock.equals(block2)) {
 						// entity.setVelocity(entity.getVelocity().clone()
 						// .add(direction));
-						
+
 						Methods.breakBreathbendingHold(entity);
-						
+
 						Location location = player.getEyeLocation();
 						Vector vector = location.getDirection();
 						entity.setVelocity(vector.normalize().multiply(pushfactor));
@@ -466,34 +463,23 @@ public class EarthBlast {
 	}
 
 	public static void throwEarth(Player player) {
-		// if (prepared.containsKey(player)) {
-		// prepared.get(player).throwEarth();
-		// prepared.remove(player);
-		// }
-
 		ArrayList<EarthBlast> ignore = new ArrayList<EarthBlast>();
 
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		} else {
-			boolean cooldown = false;
-			for (int id : instances.keySet()) {
-				EarthBlast blast = instances.get(id);
-				if (blast.player == player && !blast.progressing) {
-					blast.throwEarth();
-					cooldown = true;
-					ignore.add(blast);
-				}
-			}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("EarthBlast")) return;
 
-			if (cooldown)
-				cooldowns.put(player.getName(), System.currentTimeMillis());
-
+		boolean cooldown = false;
+		for (int id : instances.keySet()) {
+			EarthBlast blast = instances.get(id);
+			if (blast.player == player && !blast.progressing) {
+				blast.throwEarth();
+				cooldown = true;
+				ignore.add(blast);
+			}
 		}
+
+		if (cooldown)
+			bPlayer.addCooldown("EarthBlast", Methods.getGlobalCooldown());
 
 		redirectTargettedBlasts(player, ignore);
 	}

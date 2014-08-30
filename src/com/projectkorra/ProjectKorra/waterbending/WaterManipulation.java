@@ -16,6 +16,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
@@ -29,7 +30,6 @@ public class WaterManipulation {
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
 	public static ConcurrentHashMap<Integer, WaterManipulation> instances = new ConcurrentHashMap<Integer, WaterManipulation>();
-	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Player, Integer> prepared = new ConcurrentHashMap<Player, Integer>();
 
@@ -148,8 +148,7 @@ public class WaterManipulation {
 
 			}
 
-			cooldowns.put(player.getName(), System.currentTimeMillis());
-
+			Methods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", Methods.getGlobalCooldown());
 		}
 	}
 
@@ -194,7 +193,7 @@ public class WaterManipulation {
 			this.player = player;
 		}
 	}
-	
+
 	public static void progressAll() {
 		for (int ID : instances.keySet()) {
 			instances.get(ID).progress();
@@ -490,63 +489,34 @@ public class WaterManipulation {
 	}
 
 	public static void moveWater(Player player) {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
-			} else {
-				cooldowns.remove(player.getName());
-				if (prepared.containsKey(player)) {
-					if (instances.containsKey(prepared.get(player))) {
-						instances.get(prepared.get(player)).moveWater();
-					}
-					prepared.remove(player);
-				} else if (WaterReturn.hasWaterBottle(player)) {
-					Location eyeloc = player.getEyeLocation();
-					Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-					if (Methods.isTransparentToEarthbending(player, block)
-							&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 
-						if (getTargetLocation(player).distance(block.getLocation()) > 1) {
-							block.setType(Material.WATER);
-							block.setData(full);
-							WaterManipulation watermanip = new WaterManipulation(player);
-							watermanip.moveWater();
-							if (!watermanip.progressing) {
-								block.setType(Material.AIR);
-							} else {
-								WaterReturn.emptyWaterBottle(player);
-							}
-						}
-					}
-				}
+		if (bPlayer.isOnCooldown("WaterManipulation")) return;
+
+		if (prepared.containsKey(player)) {
+			if (instances.containsKey(prepared.get(player))) {
+				instances.get(prepared.get(player)).moveWater();
 			}
-		} else {
+			prepared.remove(player);
+		} else if (WaterReturn.hasWaterBottle(player)) {
+			Location eyeloc = player.getEyeLocation();
+			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
+			if (Methods.isTransparentToEarthbending(player, block)
+					&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
-			if (prepared.containsKey(player)) {
-				if (instances.containsKey(prepared.get(player))) {
-					instances.get(prepared.get(player)).moveWater();
-				}
-				prepared.remove(player);
-			} else if (WaterReturn.hasWaterBottle(player)) {
-				Location eyeloc = player.getEyeLocation();
-				Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-				if (Methods.isTransparentToEarthbending(player, block)
-						&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
-
-					if (getTargetLocation(player).distance(block.getLocation()) > 1) {
-						block.setType(Material.WATER);
-						block.setData(full);
-						WaterManipulation watermanip = new WaterManipulation(player);
-						watermanip.moveWater();
-						if (!watermanip.progressing) {
-							block.setType(Material.AIR);
-						} else {
-							WaterReturn.emptyWaterBottle(player);
-						}
+				if (getTargetLocation(player).distance(block.getLocation()) > 1) {
+					block.setType(Material.WATER);
+					block.setData(full);
+					WaterManipulation watermanip = new WaterManipulation(player);
+					watermanip.moveWater();
+					if (!watermanip.progressing) {
+						block.setType(Material.AIR);
+					} else {
+						WaterReturn.emptyWaterBottle(player);
 					}
 				}
 			}
 		}
-		//		}
 
 		redirectTargettedBlasts(player);
 	}
@@ -680,18 +650,6 @@ public class WaterManipulation {
 
 	public static boolean canBubbleWater(Block block) {
 		return canPhysicsChange(block);
-	}
-
-	public static String getDescription() {
-		// TODO Auto-generated method stub
-		return "To use, place your cursor over a waterbendable object and tap sneak (default: shift). "
-		+ "Smoke will appear where you've selected, indicating the origin of your ability. "
-		+ "After you have selected an origin, simply left-click in any direction and you will "
-		+ "see your water spout off in that direction, slicing any creature in its path. "
-		+ "If you look towards a creature when you use this ability, it will target that creature. "
-		+ "A collision from Water Manipulation both knocks the target back and deals some damage. "
-		+ "Alternatively, if you have source selected and tap shift again, "
-		+ "you will be able to control the water more directly.";
 	}
 
 	public static void removeAroundPoint(Location location, double radius) {

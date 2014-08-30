@@ -7,6 +7,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -21,13 +22,9 @@ public class EarthWall {
 	private int halfwidth = defaulthalfwidth;
 
 	public EarthWall(Player player) {
-		if (EarthColumn.cooldowns.containsKey(player.getName())) {
-			if (EarthColumn.cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				EarthColumn.cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		
+		if (bPlayer.isOnCooldown("RaiseEarth")) return;
 
 		if (AvatarState.isAvatarState(player)) {
 			height = (int) (2. / 5. * (double) AvatarState.getValue(height));
@@ -94,7 +91,7 @@ public class EarthWall {
 		}
 
 		if (cooldown)
-			EarthColumn.cooldowns.put(player.getName(), System.currentTimeMillis());
+			bPlayer.addCooldown("RaiseEarth", Methods.getGlobalCooldown());
 
 	}
 

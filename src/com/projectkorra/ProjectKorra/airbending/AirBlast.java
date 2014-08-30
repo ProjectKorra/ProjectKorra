@@ -15,6 +15,7 @@ import org.bukkit.material.Attachable;
 import org.bukkit.material.Lever;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -26,7 +27,7 @@ public class AirBlast {
 	
 	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<Integer, AirBlast>();
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
+//	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	// private static ConcurrentHashMap<Player, Long> timers = new
 	// ConcurrentHashMap<Player, Long>();
 	// static final long soonesttime = Methods.timeinterval;
@@ -67,14 +68,10 @@ public class AirBlast {
 		// return;
 		// }
 		// }
-
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + config.getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		
+		if (bPlayer.isOnCooldown("AirBlast")) return;
 
 		if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
@@ -98,7 +95,8 @@ public class AirBlast {
 		location = origin.clone();
 		id = ID;
 		instances.put(id, this);
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		bPlayer.addCooldown("AirBlast", Methods.getGlobalCooldown());
+
 		if (ID == Integer.MAX_VALUE)
 			ID = Integer.MIN_VALUE;
 		ID++;

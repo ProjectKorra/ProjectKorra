@@ -4,31 +4,18 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class RingOfFire {
 
-	// private static ConcurrentHashMap<Player, Long> timers = new
-	// ConcurrentHashMap<Player, Long>();
-	// static final long soonesttime = Tools.timeinterval;
-
 	static final int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.RingOfFire.Range");
 
 	public RingOfFire(Player player) {
-		// if (timers.containsKey(player)) {
-		// if (System.currentTimeMillis() < timers.get(player) + soonesttime) {
-		// return;
-		// }
-		// }
-		// timers.put(player, System.currentTimeMillis());
-		if (ArcOfFire.cooldowns.containsKey(player.getName())) {
-			if (ArcOfFire.cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				ArcOfFire.cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("Blaze")) return;
 
 		Location location = player.getLocation();
 
@@ -53,7 +40,7 @@ public class RingOfFire {
 			new FireStream(location, direction, player, range);
 		}
 
-		ArcOfFire.cooldowns.put(player.getName(), System.currentTimeMillis());
+		bPlayer.addCooldown("Blaze", Methods.getGlobalCooldown());
 	}
 
 	public static String getDescription() {

@@ -12,6 +12,8 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Smokescreen {
@@ -19,25 +21,18 @@ public class Smokescreen {
 	public static HashMap<String, Long> cooldowns = new HashMap<String, Long>();
 	public static List<Integer> snowballs = new ArrayList<Integer>();
 	public static HashMap<String, Long> blinded = new HashMap<String, Long>();
-	/*
-	 * TODO: Make stuff configurable
-	 */
-	
+
 	private long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Smokescreen.Cooldown");
 	public static int duration = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Smokescreen.Duration");
 	public static double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Chi.Smokescreen.Radius");
 	
 	public Smokescreen(Player player) {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		
+		if (bPlayer.isOnCooldown("Smokescreen")) return;
 		
 		snowballs.add(player.launchProjectile(Snowball.class).getEntityId());
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		bPlayer.addCooldown("Smokescreen", cooldown);
 	}
 	
 	

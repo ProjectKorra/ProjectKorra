@@ -21,10 +21,8 @@ public class Tremorsense {
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	
 	public static ConcurrentHashMap<Player, Tremorsense> instances = new ConcurrentHashMap<Player, Tremorsense>();
-	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	public static ConcurrentHashMap<Block, Player> blocks = new ConcurrentHashMap<Block, Player>();
 
-	// private static final long cooldown = ConfigManager.tremorsenseCooldown;
 	private static final int maxdepth = config.getInt("Abilities.Earth.Tremorsense.MaxDepth");
 	private static final int radius = config.getInt("Abilities.Earth.Tremorsense.Radius");
 	private static final byte lightthreshold = (byte) config.getInt("Abilities.Earth.Tremorsense.LightThreshold");
@@ -33,26 +31,15 @@ public class Tremorsense {
 	private Player player;
 	private Block block;
 
-	// private static ConcurrentHashMap<Player, Long> timers = new ConcurrentHashMap<Player, Long>();
 
 	public Tremorsense(Player player) {
-		// if (timers.containsKey(player)) {
-		// if (System.currentTimeMillis() < timers.get(player) + cooldown)
-		// return;
-		// }
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("Tremorsense")) return;
 
 		if (Methods.isEarthbendable(player, player
 				.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
 			this.player = player;
-			cooldowns.put(player.getName(), System.currentTimeMillis());
-			// timers.put(player, System.currentTimeMillis());
+			bPlayer.addCooldown("Tremorsense", cooldown);
 			activate();
 		}
 	}

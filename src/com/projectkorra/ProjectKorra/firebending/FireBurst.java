@@ -11,13 +11,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class FireBurst {
 	private static ConcurrentHashMap<Player, FireBurst> instances = new ConcurrentHashMap<Player, FireBurst>();
-	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	private Player player;
 	private long starttime;
@@ -28,13 +28,9 @@ public class FireBurst {
 	private boolean charged = false;
 
 	public FireBurst(Player player) {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+
+		if (bPlayer.isOnCooldown("FireBurst")) return;
 
 		if (instances.containsKey(player))
 			return;
@@ -115,7 +111,7 @@ public class FireBurst {
 			instances.remove(player);
 			return;
 		}
-		
+
 		if (!Methods.getBoundAbility(player).equalsIgnoreCase("FireBurst")) {
 			instances.remove(player);
 			return;

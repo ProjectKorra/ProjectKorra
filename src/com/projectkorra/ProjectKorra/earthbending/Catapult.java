@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -17,17 +18,12 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 public class Catapult {
 
 	public static ConcurrentHashMap<Integer, Catapult> instances = new ConcurrentHashMap<Integer, Catapult>();
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
-	// private static ConcurrentHashMap<Player, Long> timers = new
-	// ConcurrentHashMap<Player, Long>();
-	// static final long soonesttime = Methods.timeinterval;
 
 	private static int length = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Catapult.Length");
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Speed");
 	private static double push = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Push");
 
 	private static long interval = (long) (1000. / speed);
-	// private static long interval = 1500;
 
 	private Player player;
 	private Location origin;
@@ -42,19 +38,8 @@ public class Catapult {
 	private int ticks = 0;
 
 	public Catapult(Player player) {
-		// if (timers.containsKey(player)) {
-		// if (System.currentTimeMillis() < timers.get(player) + soonesttime) {
-		// return;
-		// }
-		// }
-		
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("Catapult")) return;
 
 		this.player = player;
 		origin = player.getEyeLocation().clone();
@@ -67,7 +52,6 @@ public class Catapult {
 			location = origin.clone().add(neg.clone().multiply((double) i));
 			block = location.getBlock();
 			if (Methods.isEarthbendable(player, block)) {
-				// block.setType(Material.SANDSTONE);
 				distance = Methods.getEarthbendableBlocksLength(player, block,
 						neg, length - i);
 				break;
@@ -75,8 +59,6 @@ public class Catapult {
 				break;
 			}
 		}
-
-		// Methods.verbose(distance);
 
 		if (distance != 0) {
 			if ((double) distance >= location.distance(origin)) {
@@ -86,8 +68,7 @@ public class Catapult {
 			starttime = System.currentTimeMillis();
 			moving = true;
 			instances.put(player.getEntityId(), this);
-			cooldowns.put(player.getName(), System.currentTimeMillis());
-			// timers.put(player, System.currentTimeMillis());
+			bPlayer.addCooldown("Catapult", Methods.getGlobalCooldown());
 		}
 
 	}

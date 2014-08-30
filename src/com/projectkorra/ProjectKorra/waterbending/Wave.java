@@ -12,6 +12,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
@@ -21,20 +22,15 @@ import com.projectkorra.ProjectKorra.firebending.FireBlast;
 public class Wave {
 
 	public static ConcurrentHashMap<Integer, Wave> instances = new ConcurrentHashMap<Integer, Wave>();
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
-	
+
 	private static final double defaultmaxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.Radius");
 	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.HorizontalPush");
 	private static final double upfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.VerticalPush");
 	private static final double maxfreezeradius = 7;
 
 	private static final long interval = 30;
-	// public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 	private static final byte full = 0x0;
-	// private static final byte half = 0x4;
 	static double defaultrange = 20;
-	// private static int damage = 5;
-	// private static double speed = 1.5;
 
 	Player player;
 	private Location location = null;
@@ -116,15 +112,10 @@ public class Wave {
 	}
 
 	public void moveWater() {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		if (bPlayer.isOnCooldown("Surge")) return;
+		bPlayer.addCooldown("Surge", Methods.getGlobalCooldown());
 		if (sourceblock != null) {
 			if (sourceblock.getWorld() != player.getWorld()) {
 				return;
@@ -172,7 +163,7 @@ public class Wave {
 		return new Vector(x1 - x0, y1 - y0, z1 - z0);
 
 	}
-	
+
 	public static void progressAll() {
 		for (int ID : instances.keySet()) {
 			instances.get(ID).progress();

@@ -24,10 +24,6 @@ public class AirSpout {
 	private int angle = 0;
 
 	public AirSpout(Player player) {
-//		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-//
-//		if (bPlayer.isOnCooldown(Abilities.AirSpout))
-//			return;
 
 		if (instances.containsKey(player)) {
 			instances.get(player).remove();
@@ -37,7 +33,6 @@ public class AirSpout {
 		time = System.currentTimeMillis();
 		new Flight(player);
 		instances.put(player, this);
-//		bPlayer.cooldown(Abilities.AirSpout);
 		spout();
 	}
 

@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
@@ -32,13 +33,8 @@ public class CompactColumn {
 	private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 
 	public CompactColumn(Player player) {
-		if (Collapse.cooldowns.containsKey(player.getName())) {
-			if (Collapse.cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				Collapse.cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("Collapse")) return;
 
 		block = Methods.getEarthSourceBlock(player, range);
 		if (block == null)
@@ -55,7 +51,7 @@ public class CompactColumn {
 			if (canInstantiate()) {
 				id = ID;
 				instances.put(id, this);
-				Collapse.cooldowns.put(player.getName(), System.currentTimeMillis());
+				bPlayer.addCooldown("Collapse", Methods.getGlobalCooldown());
 				if (ID >= Integer.MAX_VALUE) {
 					ID = Integer.MIN_VALUE;
 				}

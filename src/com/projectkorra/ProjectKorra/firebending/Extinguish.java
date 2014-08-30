@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -14,22 +15,15 @@ import com.projectkorra.ProjectKorra.airbending.AirBlast;
 
 public class Extinguish {
 
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
-	
 	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.HeatControl.Extinguish.Range");
 	private static double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.HeatControl.Extinguish.Radius");
-	
+
 	private static byte full = AirBlast.full;
 
 	public Extinguish(Player player) {
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		if (bPlayer.isOnCooldown("HeatControl")) return;
 
 		double range = Methods.getFirebendingDayAugment(defaultrange, player.getWorld());
 		if (Methods.isMeltable(player.getTargetBlock(null, (int) range))) {
@@ -58,7 +52,7 @@ public class Extinguish {
 			}
 		}
 
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		bPlayer.addCooldown("HeatControl", Methods.getGlobalCooldown());
 	}
 
 	public static boolean canBurn(Player player) {

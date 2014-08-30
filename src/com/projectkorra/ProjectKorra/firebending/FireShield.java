@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
@@ -22,7 +23,6 @@ import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 public class FireShield {
 
 	private static ConcurrentHashMap<Player, FireShield> instances = new ConcurrentHashMap<Player, FireShield>();
-	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	private static long interval = 100;
 	private static long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireShield.Duration");
@@ -44,20 +44,16 @@ public class FireShield {
 		this.shield = shield;
 		if (instances.containsKey(player))
 			return;
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+
+		if (bPlayer.isOnCooldown("FireShield")) return;
 
 		if (!player.getEyeLocation().getBlock().isLiquid()) {
 			time = System.currentTimeMillis();
 			starttime = time;
 			instances.put(player, this);
 			if (!shield)
-				cooldowns.put(player.getName(), System.currentTimeMillis());
+				bPlayer.addCooldown("FireShield", Methods.getGlobalCooldown());
 		}
 	}
 
@@ -146,7 +142,7 @@ public class FireShield {
 
 				for (Block block : blocks) {
 					if (!Methods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation()))
-					block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
+						block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
 				}
 
 				for (Entity entity : Methods.getEntitiesAroundPoint(location, discradius)) {

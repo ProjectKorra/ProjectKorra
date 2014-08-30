@@ -1,10 +1,6 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
-import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.RevertChecker;
 

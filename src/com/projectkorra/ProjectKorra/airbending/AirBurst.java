@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -16,7 +17,6 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 public class AirBurst {
 
 	private static ConcurrentHashMap<Player, AirBurst> instances = new ConcurrentHashMap<Player, AirBurst>();
-	private static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	
 	static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	
@@ -33,13 +33,8 @@ public class AirBurst {
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
 	public AirBurst(Player player) {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("AirBurst")) return;
 		if (instances.containsKey(player))
 			return;
 		starttime = System.currentTimeMillis();
@@ -75,15 +70,12 @@ public class AirBurst {
 					z = r * Math.cos(rtheta);
 					Vector direction = new Vector(x, z, y);
 					if (direction.angle(vector) <= angle) {
-						// Methods.verbose(direction.angle(vector));
-						// Methods.verbose(direction);
 						new AirBlast(location, direction.normalize(), player,
 								pushfactor, this);
 					}
 				}
 			}
 		}
-		// Methods.verbose("--" + AirBlast.instances.size() + "--");
 		instances.remove(player);
 	}
 

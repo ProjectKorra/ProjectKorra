@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
@@ -18,7 +19,6 @@ public class RapidPunch {
 
 	public static ConcurrentHashMap<Player, RapidPunch> instances = new ConcurrentHashMap<Player, RapidPunch>();
 	public static List<Player> punching = new ArrayList<Player>();
-	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	
 	private static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
 	private static int punches = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
@@ -30,15 +30,10 @@ public class RapidPunch {
 	private Entity target;
 
 	public RapidPunch(Player p) {// , Entity t) {
+		BendingPlayer bPlayer = Methods.getBendingPlayer(p.getName());
 		if (instances.containsKey(p))
 			return;
-		if (cooldowns.containsKey(p.getName())) {
-			if (cooldowns.get(p.getName()) + cooldown >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(p.getName());
-			}
-		}
+		if (bPlayer.isOnCooldown("RapidPunch")) return;
 
 		Entity t = Methods.getTargetedEntity(p, distance, new ArrayList<Entity>());
 
@@ -72,7 +67,7 @@ public class RapidPunch {
 			}
 			lt.setNoDamageTicks(0);
 		}
-		cooldowns.put(p.getName(), System.currentTimeMillis());
+		Methods.getBendingPlayer(p.getName()).addCooldown("RapidPunch", cooldown);
 		swing(p);
 		numpunches++;
 	}

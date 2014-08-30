@@ -10,6 +10,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
@@ -18,17 +20,12 @@ import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
 public class LavaWave {
 	public static ConcurrentHashMap<Integer, LavaWave> instances = new ConcurrentHashMap<Integer, LavaWave>();
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	private static final double defaultmaxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaSurge.Radius");
 	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaSurge.HorizontalPush");
 	private static final double upfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaSurge.VerticalPush");
 	private static final long interval = 30;
-	// public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 	private static final byte full = 0x0;
-	// private static final byte half = 0x4;
 	static double defaultrange = 20;
-	// private static int damage = 5;
-	// private static double speed = 1.5;
 	Player player;
 	private Location location = null;
 	private Block sourceblock = null;
@@ -95,14 +92,10 @@ public class LavaWave {
 	}
 	
 	public void moveLava() {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("LavaSurge")) return;
+		
+		bPlayer.addCooldown("LavaSurge", Methods.getGlobalCooldown());
 		if (sourceblock != null) {
 			if (sourceblock.getWorld() != player.getWorld()) {
 				return;

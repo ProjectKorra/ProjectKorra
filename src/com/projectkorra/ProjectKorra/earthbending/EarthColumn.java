@@ -7,13 +7,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class EarthColumn {
 
 	public static ConcurrentHashMap<Integer, EarthColumn> instances = new ConcurrentHashMap<Integer, EarthColumn>();
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<Block, Block>();
 	private static ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
 	
@@ -36,13 +36,9 @@ public class EarthColumn {
 	private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 
 	public EarthColumn(Player player) {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		
+		if (bPlayer.isOnCooldown("RaiseEarth")) return;
 
 		try {
 			block = Methods.getEarthSourceBlock(player, range);
@@ -63,7 +59,7 @@ public class EarthColumn {
 			if (canInstantiate()) {
 				id = ID;
 				instances.put(id, this);
-				cooldowns.put(player.getName(), System.currentTimeMillis());
+				bPlayer.addCooldown("RaiseEarth", Methods.getGlobalCooldown());
 				if (ID >= Integer.MAX_VALUE) {
 					ID = Integer.MIN_VALUE;
 				}

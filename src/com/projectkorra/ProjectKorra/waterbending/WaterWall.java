@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
@@ -21,7 +22,7 @@ public class WaterWall {
 	public static ConcurrentHashMap<Integer, WaterWall> instances = new ConcurrentHashMap<Integer, WaterWall>();
 	public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Block, Player> wallblocks = new ConcurrentHashMap<Block, Player>();
-	
+
 	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 	// private static double speed = 1.5;
@@ -80,13 +81,9 @@ public class WaterWall {
 			time = System.currentTimeMillis();
 		}
 
-		if (Wave.cooldowns.containsKey(player.getName())) {
-			if (Wave.cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				Wave.cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+
+		if (bPlayer.isOnCooldown("Surge")) return;
 
 		if (!instances.containsKey(player.getEntityId()) && WaterReturn.hasWaterBottle(player)) {
 
@@ -221,7 +218,7 @@ public class WaterWall {
 		return new Vector(x1 - x0, y1 - y0, z1 - z0);
 
 	}
-	
+
 	public static void progressAll() {
 		for (int ID : instances.keySet()) {
 			instances.get(ID).progress();
@@ -454,14 +451,9 @@ public class WaterWall {
 			if (!Wave.instances.containsKey(player.getEntityId())
 					&& Methods.getWaterSourceBlock(player, (int) Wave.defaultrange, Methods.canPlantbend(player)) == null
 					&& WaterReturn.hasWaterBottle(player)) {
+				BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 
-				if (Wave.cooldowns.containsKey(player.getName())) {
-					if (Wave.cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-						return;
-					} else {
-						Wave.cooldowns.remove(player.getName());
-					}
-				}
+				if (bPlayer.isOnCooldown("Surge")) return;
 
 				Location eyeloc = player.getEyeLocation();
 				Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();

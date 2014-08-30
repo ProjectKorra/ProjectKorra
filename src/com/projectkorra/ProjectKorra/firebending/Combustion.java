@@ -13,6 +13,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -32,9 +33,6 @@ public class Combustion {
 	public static double radius = config.getDouble("Abilities.Fire.Combustion.Radius");
 	public static double defaultdamage = config.getDouble("Abilities.Fire.Combustion.Damage");
 
-
-//	public static List<Integer> fireballs = new ArrayList<Integer>();
-
 	private Location location;
 	private Location origin;
 	private Vector direction;
@@ -49,19 +47,14 @@ public class Combustion {
 	private long starttime;
 	private boolean charged = false;
 	public static ConcurrentHashMap<Player, Combustion> instances = new ConcurrentHashMap<Player, Combustion>();
-	public static HashMap<String, Long> cooldowns = new HashMap<String, Long>();
 
 	public Combustion(Player player) {
-		if (instances.containsKey(player)) {
-			return;
-		}
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+
+		if (instances.containsKey(player)) return;
+		if (bPlayer.isOnCooldown("Combustion")) return;
+
 		this.player = player;
 		starttime = System.currentTimeMillis();
 		origin = player.getEyeLocation();
@@ -77,13 +70,13 @@ public class Combustion {
 			range = defaultrange;
 			damage = defaultdamage;
 		}
-		
+
 		if (Methods.isRegionProtectedFromBuild(player, "Combustion", Methods.getTargetedLocation(player, range))) {
 			return;
 		}
 
 		instances.put(player, this);
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		bPlayer.addCooldown("Combustion", cooldown);
 	}
 
 	private void progress() {
@@ -106,7 +99,7 @@ public class Combustion {
 			instances.remove(player);
 			return;
 		}
-		
+
 		if (Methods.isRegionProtectedFromBuild(player, "Combustion", location)) {
 			instances.remove(player);
 			return;
@@ -130,7 +123,7 @@ public class Combustion {
 				createExplosion(block.getLocation(), power, breakblocks);
 			}
 		}
-		
+
 		for (Entity entity: location.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
 				if (entity.getLocation().distance(location) <= 1) {
@@ -138,11 +131,11 @@ public class Combustion {
 				}
 			}
 		}
-		
-		
+
+
 		advanceLocation();
 	}
-	
+
 	private void createExplosion(Location block, float power, boolean breakblocks) {
 		block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), (float) defaultpower, true, breakblocks);
 		for (Entity entity: block.getWorld().getEntities()) {
@@ -156,7 +149,7 @@ public class Combustion {
 		instances.remove(player);
 
 	}
-	
+
 	public static void explode(Player player) {
 		if (instances.containsKey(player)) {
 			Combustion combustion = instances.get(player);
@@ -169,7 +162,7 @@ public class Combustion {
 		ParticleEffect.FLAME.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
-	
+
 	public static void removeAroundPoint(Location loc, double radius) {
 		for (Player player: instances.keySet()) {
 			Combustion combustion = instances.get(player);
@@ -188,8 +181,8 @@ public class Combustion {
 		}
 	}
 
-//	private void launchFireball() {
-//		fireballs.add(player.launchProjectile(org.bukkit.entity.Fireball.class).getEntityId());
-//	}
+	//	private void launchFireball() {
+	//		fireballs.add(player.launchProjectile(org.bukkit.entity.Fireball.class).getEntityId());
+	//	}
 
 }

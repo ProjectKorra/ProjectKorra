@@ -15,6 +15,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -30,10 +31,6 @@ public class AirSwipe {
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	
 	public static ConcurrentHashMap<Integer, AirSwipe> instances = new ConcurrentHashMap<Integer, AirSwipe>();
-	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
-	// private static ConcurrentHashMap<Player, Long> timers = new
-	// ConcurrentHashMap<Player, Long>();
-	// static final long soonesttime = ConfigManager.airSwipeCooldown;
 
 	private static int ID = Integer.MIN_VALUE;
 	private static int stepsize = 4;
@@ -67,18 +64,9 @@ public class AirSwipe {
 	}
 
 	public AirSwipe(Player player, boolean charging) {
-		// if (timers.containsKey(player)) {
-		// if (System.currentTimeMillis() < timers.get(player) + soonesttime) {
-		// return;
-		// }
-		// }
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + config.getLong("Abilities.Air.AirSwipe.Cooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		
+		if (bPlayer.isOnCooldown("AirSwipe")) return;
 
 		if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
@@ -95,7 +83,7 @@ public class AirSwipe {
 
 		instances.put(id, this);
 
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		bPlayer.addCooldown("AirSwipe", ProjectKorra.plugin.getConfig().getLong("Abilities.Air.AirSwipe.Cooldown"));
 
 		if (!charging)
 			launch();

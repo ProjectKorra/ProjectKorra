@@ -1,6 +1,5 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -13,6 +12,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
@@ -21,7 +21,6 @@ import com.projectkorra.ProjectKorra.TempPotionEffect;
 public class EarthArmor {
 	
 	public static ConcurrentHashMap<Player, EarthArmor> instances = new ConcurrentHashMap<Player, EarthArmor>();
-	public static Map<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 
 	private static long interval = 2000;
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
@@ -43,14 +42,10 @@ public class EarthArmor {
 		if (instances.containsKey(player)) {
 			return;
 		}
-
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		
+		if (bPlayer.isOnCooldown("EarthArmor")) return;
 
 		this.player = player;
 		headblock = player.getTargetBlock(Methods.getTransparentEarthbending(),
@@ -123,16 +118,6 @@ public class EarthArmor {
 			cancel();
 			return false;
 		}
-
-		// if ((!Methods.isEarthbendable(player, newlegsblock)
-		// && !newlegsblock.isLiquid() && newlegsblock.getType() !=
-		// Material.AIR)
-		// || (!Methods.isEarthbendable(player, newheadblock)
-		// && !newheadblock.isLiquid() && newheadblock.getType() !=
-		// Material.AIR)) {
-		// cancel();
-		// return false;
-		// }
 
 		if (headblock.getLocation().distance(player.getEyeLocation()) > range
 				|| legsblock.getLocation().distance(player.getLocation()) > range) {

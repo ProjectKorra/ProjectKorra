@@ -93,9 +93,21 @@ public class BendingManager implements Runnable {
 			Flight.handle();	
 			RapidPunch.startPunchAll();
 			RevertChecker.revertAirBlocks();
+			handleCooldowns();
 		} catch (Exception e) {
 			Methods.stopBending();
 			e.printStackTrace();
+		}
+	}
+	
+	public void handleCooldowns() {
+		for (String bP: BendingPlayer.players.keySet()) {
+			BendingPlayer bPlayer = BendingPlayer.players.get(bP);
+			for (String abil: bPlayer.cooldowns.keySet()) {
+				if (System.currentTimeMillis() >= bPlayer.cooldowns.get(abil)) {
+					bPlayer.cooldowns.remove(abil);
+				}
+			}
 		}
 	}
 

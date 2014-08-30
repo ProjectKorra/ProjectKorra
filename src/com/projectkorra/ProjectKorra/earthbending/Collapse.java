@@ -8,13 +8,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Collapse {
 	
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
-
 	public static final int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Collapse.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Collapse.Radius");
 	private static final int height = EarthColumn.standardheight;
@@ -25,16 +24,9 @@ public class Collapse {
 	private Player player;
 
 	public Collapse(Player player) {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("Collapse")) return;
 
-		// if (AvatarState.isAvatarState(player))
-		// radius = AvatarState.getValue(defaultradius);
 		this.player = player;
 		Block sblock = Methods.getEarthSourceBlock(player, range);
 		Location location;
@@ -53,7 +45,7 @@ public class Collapse {
 		}
 
 		if (!baseblocks.isEmpty()) {
-			cooldowns.put(player.getName(), System.currentTimeMillis());
+			bPlayer.addCooldown("Collapse", Methods.getGlobalCooldown());
 		}
 
 		for (Block block : baseblocks.keySet()) {

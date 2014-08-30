@@ -99,13 +99,9 @@ public class IceSpike2 {
 		redirect(player);
 		boolean activate = false;
 
-		if (IceSpike.cooldowns.containsKey(player.getName())) {
-			if (IceSpike.cooldowns.get(player.getName()) + IceSpike.cooldown >= System.currentTimeMillis()) {
-				return;
-			} else {
-				IceSpike.cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+
+		if (bPlayer.isOnCooldown("IceSpike")) return;
 
 		for (IceSpike2 ice : getInstances(player)) {
 			if (ice.prepared) {

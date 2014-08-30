@@ -11,24 +11,19 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class EarthGrab {
 
-	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	
 	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthGrab.Range");
 
 	public EarthGrab(Player player) {
-		// Methods.verbose("initiating");
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		
+		if (bPlayer.isOnCooldown("EarthGrab")) return;
 
 		Location origin = player.getEyeLocation();
 		Vector direction = origin.getDirection();
@@ -87,18 +82,14 @@ public class EarthGrab {
 			}
 
 			if (!blocks.isEmpty())
-				cooldowns.put(player.getName(), System.currentTimeMillis());
+				bPlayer.addCooldown("EarthGrab", Methods.getGlobalCooldown());
 		}
 	}
 
 	public static void EarthGrabSelf(Player player) {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		
+		if (bPlayer.isOnCooldown("EarthGrab")) return;
 
 		Entity closestentity = player;
 
@@ -143,7 +134,7 @@ public class EarthGrab {
 			}
 
 			if (!blocks.isEmpty())
-				cooldowns.put(player.getName(), System.currentTimeMillis());
+				bPlayer.addCooldown("EarthGrab", Methods.getGlobalCooldown());
 		}
 	}
 }

@@ -9,12 +9,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BendingPlayer {
 
 	public static ConcurrentHashMap<String, BendingPlayer> players = new ConcurrentHashMap<String, BendingPlayer>();
-//	public static ConcurrentHashMap<String, Long> blockedChi = new ConcurrentHashMap<String, Long>();
+	//	public static ConcurrentHashMap<String, Long> blockedChi = new ConcurrentHashMap<String, Long>();
 
 	UUID uuid;
 	String player;
 	ArrayList<Element> elements;
 	HashMap<Integer, String> abilities;
+	HashMap<String, Long> cooldowns;
 	boolean permaRemoved;
 	boolean isToggled;
 	private long slowTime = 0;
@@ -26,11 +27,24 @@ public class BendingPlayer {
 		this.player = player;
 		this.elements = elements;
 		this.abilities = abilities;
+		cooldowns = new HashMap<String, Long>();
 		this.permaRemoved = permaRemoved;
 		isToggled = true;
 		blockedChi = false;
 
 		players.put(player, this);
+	}
+	
+	public boolean isOnCooldown(String ability) {
+		return this.cooldowns.containsKey(ability);
+	}
+	
+	public void addCooldown(String ability, long cooldown) {
+		this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
+	}
+	
+	public void removeCooldown(String ability) {
+		this.cooldowns.remove(ability);
 	}
 
 	public UUID getUUID() {

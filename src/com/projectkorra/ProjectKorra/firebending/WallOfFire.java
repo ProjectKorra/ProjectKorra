@@ -16,6 +16,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -36,7 +37,6 @@ public class WallOfFire {
 	private static long cooldown = config.getLong("Abilities.Fire.WallOfFire.Cooldown");
 	public static ConcurrentHashMap<Player, WallOfFire> instances = new ConcurrentHashMap<Player, WallOfFire>();
 	private static long damageinterval = config.getLong("Abilities.Fire.WallOfFire.Interval");
-	private static Map<String, Long> cooldowns = new HashMap<String, Long>();
 
 	private Location origin;
 	private long time, starttime;
@@ -48,14 +48,10 @@ public class WallOfFire {
 		if (instances.containsKey(player) && !AvatarState.isAvatarState(player)) {
 			return;
 		}
-		
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+
+		if (bPlayer.isOnCooldown("WallOfFire")) return;
 
 		this.player = player;
 
@@ -83,8 +79,6 @@ public class WallOfFire {
 		Vector direction = player.getEyeLocation().getDirection();
 		Vector compare = direction.clone();
 		compare.setY(0);
-		// double angle = direction.angle(compare);
-		// Methods.verbose(Math.toDegrees(angle));
 
 		if (Math.abs(direction.angle(compare)) > Math.toRadians(maxangle)) {
 			return;
@@ -93,7 +87,7 @@ public class WallOfFire {
 		initializeBlocks();
 
 		instances.put(player, this);
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		bPlayer.addCooldown("WallOfFire", cooldown);
 	}
 
 	private void progress() {

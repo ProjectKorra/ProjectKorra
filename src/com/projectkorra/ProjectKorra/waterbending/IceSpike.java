@@ -25,11 +25,10 @@ import com.projectkorra.ProjectKorra.TempPotionEffect;
 public class IceSpike {
 
 	public static ConcurrentHashMap<Integer, IceSpike> instances = new ConcurrentHashMap<Integer, IceSpike>();
-	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
 	public ConcurrentHashMap<Player, Long> removeTimers = new ConcurrentHashMap<Player, Long>();
 	private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<Block, Block>();
 	private static ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
-	
+
 	public static long removeTimer = 500;
 	public static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
 	public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Height");
@@ -54,13 +53,8 @@ public class IceSpike {
 	private List<LivingEntity> damaged = new ArrayList<LivingEntity>();
 
 	public IceSpike(Player player) {
-		if (cooldowns.containsKey(player)) {
-			if (cooldowns.get(player) + cooldown >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("IceSpike")) return;
 		try {
 			this.player = player;
 
@@ -103,7 +97,7 @@ public class IceSpike {
 				}
 				ID++;
 				time = System.currentTimeMillis() - interval;
-				cooldowns.put(player.getName(), System.currentTimeMillis());
+				bPlayer.addCooldown("IceSpike", cooldown);
 			}
 		}
 	}
@@ -179,7 +173,7 @@ public class IceSpike {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (int ID : instances.keySet()) {
 			instances.get(ID).progress();

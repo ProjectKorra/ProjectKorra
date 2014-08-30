@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
@@ -15,7 +16,6 @@ public class Illumination {
 
 	public static ConcurrentHashMap<Player, Illumination> instances = new ConcurrentHashMap<Player, Illumination>();
 	public static ConcurrentHashMap<Block, Player> blocks = new ConcurrentHashMap<Block, Player>();
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 
 	private static final int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Illumination.Range");
 
@@ -25,13 +25,9 @@ public class Illumination {
 	private byte normaldata;
 
 	public Illumination(Player player) {
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+
+		if (bPlayer.isOnCooldown("Illumination")) return;
 
 		if (instances.containsKey(player)) {
 			instances.get(player).revert();
@@ -40,7 +36,7 @@ public class Illumination {
 			this.player = player;
 			set();
 			instances.put(player, this);
-			cooldowns.put(player.getName(), System.currentTimeMillis());
+			bPlayer.addCooldown("Illumination", Methods.getGlobalCooldown());
 		}
 	}
 

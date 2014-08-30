@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -18,42 +19,24 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 public class FireJet {
 
 	public static ConcurrentHashMap<Player, FireJet> instances = new ConcurrentHashMap<Player, FireJet>();
-	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
-	
+
 	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireJet.Speed");
 	private static final long defaultduration = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireJet.Duration");
 	private static boolean isToggle = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
-	// private static final long cooldown = ConfigManager.fireJetCooldown;
-
-	// private static ConcurrentHashMap<Player, Long> timers = new
-	// ConcurrentHashMap<Player, Long>();
 
 	private Player player;
-	// private boolean canfly;
 	private long time;
 	private long duration = defaultduration;
 	private double factor = defaultfactor;
 
 	public FireJet(Player player) {
 		if (instances.containsKey(player)) {
-			// player.setAllowFlight(canfly);
 			instances.remove(player);
 			return;
 		}
-		// if (timers.containsKey(player)) {
-		// if (System.currentTimeMillis() < timers.get(player)
-		// + (long) ((double) cooldown / Methods
-		// .getFirebendingDayAugment(player.getWorld()))) {
-		// return;
-		// }
-		// }
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) +  ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireJet.Cooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+
+		if (bPlayer.isOnCooldown("FireJet")) return;
 
 		factor = Methods.getFirebendingDayAugment(defaultfactor, player.getWorld());
 		Block block = player.getLocation().getBlock();
@@ -67,7 +50,7 @@ public class FireJet {
 			time = System.currentTimeMillis();
 			// timers.put(player, time);
 			instances.put(player, this);
-			cooldowns.put(player.getName(), System.currentTimeMillis());
+			bPlayer.addCooldown("FireJet", ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireJet.Cooldown"));
 		}
 
 	}

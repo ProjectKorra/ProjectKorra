@@ -20,10 +20,6 @@ public class FreezeMelt {
 	public static final int defaultradius = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Radius");
 
 	public FreezeMelt(Player player) {
-//		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-//
-//		if (bPlayer.isOnCooldown(Abilities.PhaseChange))
-//			return;
 
 		int range = (int) Methods.waterbendingNightAugment(defaultrange, player.getWorld());
 		int radius = (int) Methods.waterbendingNightAugment(defaultradius, player.getWorld());
@@ -32,18 +28,12 @@ public class FreezeMelt {
 			// radius = AvatarState.getValue(radius);
 		}
 
-		boolean cooldown = false;
-
 		Location location = Methods.getTargetedLocation(player, range);
 		for (Block block : Methods.getBlocksAroundPoint(location, radius)) {
 			if (isFreezable(player, block)) {
 				freeze(player, block);
-				cooldown = true;
 			}
 		}
-//
-//		if (cooldown)
-//			bPlayer.cooldown(Abilities.PhaseChange);
 
 	}
 

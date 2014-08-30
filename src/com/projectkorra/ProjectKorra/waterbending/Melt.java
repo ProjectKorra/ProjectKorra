@@ -22,10 +22,6 @@ public class Melt {
 	private static final byte full = 0x0;
 
 	public Melt(Player player) {
-//		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-//
-//		if (bPlayer.isOnCooldown(Abilities.PhaseChange))
-//			return;
 
 		int range = (int) Methods.waterbendingNightAugment(defaultrange, player.getWorld());
 		int radius = (int) Methods.waterbendingNightAugment(defaultradius, player.getWorld());
@@ -49,7 +45,6 @@ public class Melt {
 			}
 		}
 
-//		bPlayer.cooldown(Abilities.PhaseChange);
 	}
 
 	public static void melt(Player player, Block block) {

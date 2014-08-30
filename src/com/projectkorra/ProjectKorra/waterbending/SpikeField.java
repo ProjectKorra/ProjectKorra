@@ -14,15 +14,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class SpikeField {
-	
-	public static Map<Player, Long> cooldowns = new HashMap<Player, Long>();
 
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
-	
+
 	private static int radius = 6;
 	public static int numofspikes = ((radius * 2) * (radius * 2)) / 16;
 
@@ -31,10 +30,9 @@ public class SpikeField {
 	private Vector thrown = new Vector(0, 1, 0);
 
 	public SpikeField(Player p) {
-		if (cooldowns.containsKey(p))
-			if (cooldowns.get(p) + cooldown >= System.currentTimeMillis())
-				return;
-		// Tools.verbose("Trying to create IceField" + numofspikes);
+		BendingPlayer bPlayer = Methods.getBendingPlayer(p.getName());
+
+		if (bPlayer.isOnCooldown("IceSpike")) return;
 		int locX = p.getLocation().getBlockX();
 		int locY = p.getLocation().getBlockY();
 		int locZ = p.getLocation().getBlockZ();
@@ -49,9 +47,6 @@ public class SpikeField {
 							.getBlock().getX() && testblock.getZ() == p
 							.getEyeLocation().getBlock().getZ())) {
 						iceblocks.add(testblock);
-						// /Tools.verbose("X: " + testblock.getLocation().getX()
-						// + " Y: " + testblock.getLocation().getY() + " Z: " +
-						// testblock.getLocation().getZ());
 					}
 				}
 			}
@@ -84,52 +79,11 @@ public class SpikeField {
 			} else {
 				targetblock = iceblocks.get(ran.nextInt(iceblocks.size()));
 			}
-
-			// Tools.verbose("X: " + targetblock.getLocation().getX() + " Y: " +
-			// targetblock.getLocation().getY() + " Z: " +
-			// targetblock.getLocation().getZ());
 			if (targetblock.getRelative(BlockFace.UP).getType() != Material.ICE) {
 				new IceSpike(p, targetblock.getLocation(), damage, thrown, cooldown);
-				IceSpike.cooldowns.put(p.getName(), System.currentTimeMillis());
+				bPlayer.addCooldown("IceSpike", cooldown);
 				iceblocks.remove(targetblock);
 			}
 		}
 	}
 }
-// for (int i = 0; i < (numofspikes / 2); i++){
-// int blockX = ran.nextInt(radius) + 1;
-// int blockZ = ran.nextInt((radius * 2) + 1) - radius;
-// Block b = p.getLocation().getWorld().getBlockAt(locX + blockX, locY - 1, locZ
-// - blockZ);
-// if (b.getType() == Material.ICE){
-// new IceSpike(p, b.getLocation(), 2);
-// } else {
-// for (i = 0; i <= heigth; i++) {
-// b = b.getRelative(BlockFace.DOWN);
-// if (b.getType() == Material.ICE){
-// new IceSpike(p, b.getLocation(), 2);
-// break;
-// }
-// }
-// }
-//
-// }
-// for (int i = 0; i < (numofspikes / 2); i++){
-// int blockX = ran.nextInt(radius) + 1;
-// int blockZ = ran.nextInt((radius * 2) + 1) - radius;
-// Block b = p.getLocation().getWorld().getBlockAt(locX - blockX, locY - 1, locZ
-// - blockZ);
-// if (b.getType() == Material.ICE) {
-// new IceSpike(p, b.getLocation(), 2);
-// } else {
-// for (i = 0; i <= heigth; i++) {
-// b = b.getRelative(BlockFace.DOWN);
-// if (b.getType() == Material.ICE){
-// new IceSpike(p, b.getLocation(), 2);
-// break;
-// }
-// }
-// }
-// }
-// }
-// }

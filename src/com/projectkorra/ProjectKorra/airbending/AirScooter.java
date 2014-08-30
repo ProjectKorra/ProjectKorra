@@ -25,13 +25,9 @@ public class AirScooter {
 	private Player player;
 	private Block floorblock;
 	private long time;
-	// private boolean canfly, wasflying;
 	private ArrayList<Double> angles = new ArrayList<Double>();
 
 	public AirScooter(Player player) {
-//		if (BendingPlayer.getBendingPlayer(player).isOnCooldown(
-//				Abilities.AirScooter))
-//			return;
 
 		if (instances.containsKey(player)) {
 			instances.get(player).remove();

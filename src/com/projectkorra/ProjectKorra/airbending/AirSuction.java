@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -21,7 +22,6 @@ public class AirSuction {
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
 	public static ConcurrentHashMap<Integer, AirSuction> instances = new ConcurrentHashMap<Integer, AirSuction>();
-	private static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
 	static final long soonesttime = config.getLong("Properties.GlobalCooldown");
@@ -50,19 +50,9 @@ public class AirSuction {
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
 	public AirSuction(Player player) {
-		// if (timers.containsKey(player)) {
-		// if (System.currentTimeMillis() < timers.get(player) + soonesttime) {
-		// return;
-		// }
-		// }
-
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + soonesttime >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		
+		if (bPlayer.isOnCooldown("AirSuction")) return;
 
 		if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
@@ -70,7 +60,6 @@ public class AirSuction {
 		if (AirSpout.getPlayers().contains(player)
 				|| WaterSpout.getPlayers().contains(player))
 			return;
-		// timers.put(player, System.currentTimeMillis());
 		this.player = player;
 		if (origins.containsKey(player)) {
 			origin = origins.get(player);
@@ -79,22 +68,6 @@ public class AirSuction {
 		} else {
 			origin = player.getEyeLocation();
 		}
-		// if (origins.containsKey(player)) {
-		// origin = origins.get(player);
-		// otherorigin = true;
-		// location = Methods.getTargetedLocation(player, range);
-		// origins.remove(player);
-		// Entity entity = Methods.getTargettedEntity(player, range);
-		// if (entity != null) {
-		// direction = Methods.getDirection(entity.getLocation(), origin)
-		// .normalize();
-		// location = origin.clone().add(
-		// direction.clone().multiply(-range));
-		// } else {
-		// direction = Methods.getDirection(location, origin).normalize();
-		// }
-		//
-		// } else {
 		location = Methods.getTargetedLocation(player, range, Methods.nonOpaque);
 		direction = Methods.getDirection(location, origin).normalize();
 		Entity entity = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
@@ -109,7 +82,7 @@ public class AirSuction {
 
 		id = ID;
 		instances.put(id, this);
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		bPlayer.addCooldown("AirSuction", Methods.getGlobalCooldown());
 		if (ID == Integer.MAX_VALUE)
 			ID = Integer.MIN_VALUE;
 		ID++;

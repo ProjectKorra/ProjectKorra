@@ -1,41 +1,24 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class ArcOfFire {
 
-	// private static ConcurrentHashMap<Player, Long> timers = new ConcurrentHashMap<Player, Long>();
-	// static final long soonesttime = Tools.timeinterval;
-	public static Map<String, Long> cooldowns = new HashMap<String, Long>();
-
 	private static int defaultarc = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.ArcOfFire.Arc");
 	private static int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.ArcOfFire.Range");
 	private static int stepsize = 2;
 	
 	public ArcOfFire(Player player) {
-		// if (timers.containsKey(player)) {
-		// if (System.currentTimeMillis() < timers.get(player) + soonesttime) {
-		// return;
-		// }
-		// }
-		// timers.put(player, System.currentTimeMillis());
-		if (cooldowns.containsKey(player.getName())) {
-			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				cooldowns.remove(player.getName());
-			}
-		}
-
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		
+		if (bPlayer.isOnCooldown("Blaze")) return;
 		Location location = player.getLocation();
 
 		int arc = (int) Methods.getFirebendingDayAugment(defaultarc,
@@ -62,7 +45,7 @@ public class ArcOfFire {
 			new FireStream(location, direction, player, range);
 		}
 
-		cooldowns.put(player.getName(), System.currentTimeMillis());
+		bPlayer.addCooldown("Blaze", Methods.getGlobalCooldown());
 	}
 
 	public static String getDescription() {

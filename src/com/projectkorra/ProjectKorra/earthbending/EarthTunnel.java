@@ -17,7 +17,6 @@ public class EarthTunnel {
 	private static final double maxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthTunnel.MaxRadius");
 	private static final double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthTunnel.Range");
 	private static final double radiusinc = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthTunnel.Radius");
-	// private static final double speed = 10;
 
 	private static boolean revert = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 	private static final long interval = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
@@ -40,9 +39,6 @@ public class EarthTunnel {
 			depth = 0;
 		angle = 0;
 		radius = radiusinc;
-		// ortho = new Vector(direction.getY(), -direction.getX(),
-		// 0).normalize();
-		// Methods.verbose(ortho.clone().dot(direction));
 		time = System.currentTimeMillis();
 
 		instances.put(player, this);
@@ -55,7 +51,6 @@ public class EarthTunnel {
 		}
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
-			// Methods.verbose("progressing");
 			if (Math.abs(Math.toDegrees(player.getEyeLocation().getDirection()
 					.angle(direction))) > 20
 					|| !player.isSneaking()) {
@@ -63,11 +58,7 @@ public class EarthTunnel {
 				return false;
 			} else {
 				while (!Methods.isEarthbendable(player, block)) {
-					// Methods.verbose("going");
 					if (!Methods.isTransparentToEarthbending(player, block)) {
-						// Methods.verbose("false! at" + angle + " " + radius +
-						// " "
-						// + depth);
 						instances.remove(player);
 						return false;
 					}
@@ -87,7 +78,6 @@ public class EarthTunnel {
 					} else {
 						angle += 20;
 					}
-					// block.setType(Material.GLASS);
 					Vector vec = Methods.getOrthogonalVector(direction, angle,
 							radius);
 					block = location.clone()

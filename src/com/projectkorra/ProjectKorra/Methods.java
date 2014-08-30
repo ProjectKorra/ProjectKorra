@@ -539,6 +539,10 @@ public class Methods {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		return bPlayer.abilities.get(slot);
 	}
+	
+	public static long getGlobalCooldown() {
+		return plugin.getConfig().getLong("Properties.GlobalCooldown");
+	}
 
 	public static BlockFace getCardinalDirection(Vector vector) {
 		BlockFace[] faces = { BlockFace.NORTH, BlockFace.NORTH_EAST,

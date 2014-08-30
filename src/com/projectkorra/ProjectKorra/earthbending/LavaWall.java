@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
@@ -52,28 +53,9 @@ public class LavaWall {
 			radius = AvatarState.getValue(radius);
 		}
 		
-//		if (instances.containsKey(player.getEntityId())) {
-//			if (prepare()) {
-//				if (instances.containsKey(player.getEntityId())) {
-//					instances.get(player.getEntityId()).cancel();
-//				}
-//				instances.put(player.getEntityId(), this);
-//				time = System.currentTimeMillis();
-//			}
-//		} else if (prepare()) {
-//			if (instances.containsKey(player.getEntityId())) {
-//				instances.get(player.getEntityId()).cancel();
-//			}
-//			instances.put(player.getEntityId(), this);
-//			time = System.currentTimeMillis();
-//		}
-		if (LavaWave.cooldowns.containsKey(player.getName())) {
-			if (LavaWave.cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
-				return;
-			} else {
-				LavaWave.cooldowns.remove(player.getName());
-			}
-		}
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("LavaSurge")) return;
+
 	}
 
 	public boolean prepare() {

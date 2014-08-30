@@ -65,32 +65,5 @@ public class ChiPassive {
 				}
 			}
 		}
-//		for (String s: BendingPlayer.blockedChi.keySet()) {
-//			
-//			if (Methods.getBendingPlayer(s) == null) continue;
-//			Bukkit.getServer().broadcastMessage("Chi Blocked for " + s);
-//			if (BendingPlayer.blockedChi.get(s) + duration < System.currentTimeMillis()) {
-//				Methods.getBendingPlayer(s).unblockChi();
-//				Bukkit.getServer().broadcastMessage(s + " Chi Unblocked");
-//			}
-//			if (!(BendingPlayer.blockedChi.get(s) + duration >= System.currentTimeMillis())) {
-//				if (Methods.getBendingPlayer(s) == null) continue;
-//				Methods.getBendingPlayer(s).unblockChi();
-//			}
-//			if (BendingPlayer.blockedChi.contains(player.getName())) {
-//				if (BendingPlayer.blockedChi.get(player.getName()) + duration < System.currentTimeMillis()) {
-//					BendingPlayer.blockedChi.remove(player.getName());
-//				} else {
-//				}
-//			}
-//		}
-//		for (String s: BendingPlayer.blockedChi.keySet()) {
-//			if (BendingPlayer.blockedChi.get(s) + duration >= System.currentTimeMillis()) {
-//				Bukkit.getServer().broadcastMessage(s + "'s Chi is blocked.");
-//			} else {
-//				Bukkit.getServer().broadcastMessage(s + "'s Chi has been unblocked.");
-//				BendingPlayer.blockedChi.remove(s);
-//			}
-//		}
 	}
 }
