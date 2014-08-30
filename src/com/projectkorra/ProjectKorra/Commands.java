@@ -110,17 +110,21 @@ public class Commands {
 					}
 
 					if (args.length == 2) {
-						int slot = Integer.parseInt(args[1]);
-						if (slot < 1 || slot > 9) {
-							s.sendMessage(ChatColor.RED + "The slot must be an integer between 0 and 9.");
+						try {
+							int slot = Integer.parseInt(args[1]);
+							if (slot < 1 || slot > 9) {
+								s.sendMessage(ChatColor.RED + "The slot must be an integer between 0 and 9.");
+								return true;
+							}
+							if (bPlayer.abilities.get(slot) != null) {
+								bPlayer.abilities.remove(slot);
+								Methods.saveAbility(bPlayer, slot, null);
+							}
+							s.sendMessage("You have cleared slot #" + slot);
 							return true;
+						} catch (NumberFormatException e) {
+							s.sendMessage(ChatColor.RED + "The slot must be an integer between 0 and 9.");
 						}
-						if (bPlayer.abilities.get(slot) != null) {
-							bPlayer.abilities.remove(slot);
-							Methods.saveAbility(bPlayer, slot, null);
-						}
-						s.sendMessage("You have cleared slot #" + slot);
-						return true;
 					}
 				}
 				if (Arrays.asList(bindaliases).contains(args[0].toLowerCase())) {
