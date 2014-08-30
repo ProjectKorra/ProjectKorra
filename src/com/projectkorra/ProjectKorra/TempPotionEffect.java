@@ -112,8 +112,10 @@ public class TempPotionEffect {
 	}
 
 	public static void progressAll() {
-		for (LivingEntity entity : instances.keySet())
+		for (LivingEntity entity : instances.keySet()) {
+			if (instances.get(entity) == null) continue;
 			instances.get(entity).progress();
+		}
 	}
 
 }

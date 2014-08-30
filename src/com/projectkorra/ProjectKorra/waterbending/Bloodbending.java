@@ -184,6 +184,10 @@ public class Bloodbending {
 					}
 				}
 				Location newlocation = entity.getLocation();
+				if (player.getWorld() != newlocation.getWorld()) {
+					targetentities.remove(entity);
+					continue;
+				}
 				Location location = Methods.getTargetedLocation(player,
 						(int) targetentities.get(entity).distance(player.getLocation()));
 				double distance = location.distance(newlocation);
