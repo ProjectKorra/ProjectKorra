@@ -53,13 +53,13 @@ public class TempBlock {
 			instances.get(block).revertBlock();
 		} else {
 			if ((defaulttype == Material.LAVA
-					|| defaulttype == Material.STATIONARY_LAVA || defaulttype == Material.AIR)
+					|| defaulttype == Material.STATIONARY_LAVA)
 					&& Methods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.LAVA);
 				block.setData((byte) 0x0);
 			}
 			else if ((defaulttype == Material.WATER
-					|| defaulttype == Material.STATIONARY_WATER || defaulttype == Material.AIR)
+					|| defaulttype == Material.STATIONARY_WATER )
 					&& Methods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.WATER);
 				block.setData((byte) 0x0);

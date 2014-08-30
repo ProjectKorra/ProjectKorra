@@ -59,7 +59,7 @@ public class Extraction {
 	
 	private int getAmount() {
 		Random rand = new Random();
-		return rand.nextInt(99) + 1 <= triplechance ? 3 : rand.nextInt(99) + 1 <= doublechance ? 2: 0;
+		return rand.nextInt(99) + 1 <= triplechance ? 3 : rand.nextInt(99) + 1 <= doublechance ? 2: 1;
 	}
 
 }
