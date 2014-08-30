@@ -172,8 +172,14 @@ public class Wave {
 		return new Vector(x1 - x0, y1 - y0, z1 - z0);
 
 	}
+	
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
 
-	public boolean progress() {
+	private boolean progress() {
 		if (player.isDead() || !player.isOnline() || !Methods.canBend(player.getName(), "Surge")) {
 			breakBlock();
 			thaw();

@@ -126,8 +126,14 @@ public class AirShield {
 			radius = maxradius;
 
 	}
+	
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
 
-	public boolean progress() {
+	private boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			instances.remove(player.getEntityId());
 			return false;
@@ -171,10 +177,6 @@ public class AirShield {
 		//		}
 		rotateShield();
 		return true;
-	}
-
-	public static boolean progress(int ID) {
-		return instances.get(ID).progress();
 	}
 
 	public static String getDescription() {

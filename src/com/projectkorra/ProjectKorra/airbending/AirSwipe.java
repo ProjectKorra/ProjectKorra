@@ -123,7 +123,13 @@ public class AirSwipe {
 		}
 	}
 
-	public boolean progress() {
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
+	
+	private boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			instances.remove(id);
 			return false;
@@ -280,10 +286,6 @@ public class AirSwipe {
 			return true;
 		}
 		return false;
-	}
-
-	public static boolean progress(int ID) {
-		return instances.get(ID).progress();
 	}
 
 	public static String getDescription() {

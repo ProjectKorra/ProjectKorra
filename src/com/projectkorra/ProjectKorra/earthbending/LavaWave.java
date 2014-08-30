@@ -43,6 +43,7 @@ public class LavaWave {
 	double range = defaultrange;
 	boolean progressing = false;
 	boolean canhitself = true;
+	
 	public LavaWave(Player player) {
 		this.player = player;
 
@@ -57,6 +58,7 @@ public class LavaWave {
 			time = System.currentTimeMillis();
 		}
 	}
+	
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
@@ -68,6 +70,7 @@ public class LavaWave {
 		}
 		return false;
 	}
+	
 	private void cancelPrevious() {
 		if (instances.containsKey(player.getEntityId())) {
 			LavaWave old = instances.get(player.getEntityId());
@@ -78,15 +81,19 @@ public class LavaWave {
 			}
 		}
 	}
+	
 	public void cancel() {
 		unfocusBlock();
 	}
+	
 	private void focusBlock() {
 		location = sourceblock.getLocation();
 	}
+	
 	private void unfocusBlock() {
 		instances.remove(player.getEntityId());
 	}
+	
 	public void moveLava() {
 		if (cooldowns.containsKey(player.getName())) {
 			if (cooldowns.get(player.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
@@ -122,6 +129,7 @@ public class LavaWave {
 			}
 		}
 	}
+	
 	private Vector getDirection(Location location, Location destination) {
 		double x1, y1, z1;
 		double x0, y0, z0;
@@ -133,7 +141,14 @@ public class LavaWave {
 		z0 = location.getZ();
 		return new Vector(x1 - x0, y1 - y0, z1 - z0);
 	}
-	public boolean progress() {
+	
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
+	
+	private boolean progress() {
 		if (player.isDead() || !player.isOnline() || !Methods.canBend(player.getName(), "LavaSurge")) {
 			breakBlock();
 			return false;
@@ -228,18 +243,21 @@ public class LavaWave {
 
 		return false;
 	}
+	
 	private void breakBlock() {
 		for (Block block : wave.keySet()) {
 			finalRemoveLava(block);
 		}
 		instances.remove(player.getEntityId());
 	}
+	
 	private void finalRemoveLava(Block block) {
 		if (wave.containsKey(block)) {
 			TempBlock.revertBlock(block, Material.AIR);
 			wave.remove(block);
 		}
 	}
+	
 	private void addLava(Block block) {
 		if (Methods.isRegionProtectedFromBuild(player, "LavaSurge",	block.getLocation()))
 			return;
@@ -248,19 +266,18 @@ public class LavaWave {
 			wave.put(block, block);
 		}
 	}
+	
 	private void clearWave() {
 		for (Block block : wave.keySet()) {
 			TempBlock.revertBlock(block, Material.AIR);
 		}
 		wave.clear();
 	}
+	
 	public static void moveLava(Player player) {
 		if (instances.containsKey(player.getEntityId())) {
 			instances.get(player.getEntityId()).moveLava();
 		}
-	}
-	public static boolean progress(int ID) {
-		return instances.get(ID).progress();
 	}
 	
 	public static boolean isBlockInWave(Block block) {
@@ -272,6 +289,7 @@ public class LavaWave {
 		}
 		return false;
 	}
+	
 	public static boolean isBlockWave(Block block) {
 		for (int ID : instances.keySet()) {
 			if (instances.get(ID).wave.containsKey(block))
@@ -279,9 +297,11 @@ public class LavaWave {
 		}
 		return false;
 	}
+	
 	public static void launch(Player player) {
 		moveLava(player);
 	}
+	
 	public static void removeAll() {
 		for (int id : instances.keySet()) {
 			for (Block block : instances.get(id).wave.keySet()) {

@@ -31,10 +31,7 @@ public class FirebendingManager implements Runnable {
 				FireStream.ignitedblocks.remove(block);
 			}
 		}
-
 		FireStream.dissipateAll();
-		for (int id : FireStream.instances.keySet()) {
-			FireStream.progress(id);
-		}
+		FireStream.progressAll();
 	}
 }

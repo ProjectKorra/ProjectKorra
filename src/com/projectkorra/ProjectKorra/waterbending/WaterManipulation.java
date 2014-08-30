@@ -194,8 +194,14 @@ public class WaterManipulation {
 			this.player = player;
 		}
 	}
+	
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
 
-	public boolean progress() {
+	private boolean progress() {
 		if (player.isDead() || !player.isOnline()
 				|| !Methods.canBend(player.getName(), "WaterManipulation")) {
 			breakBlock();

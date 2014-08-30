@@ -48,7 +48,7 @@ public class EarthTunnel {
 		instances.put(player, this);
 	}
 
-	public boolean progress() {
+	private boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			instances.remove(player);
 			return false;
@@ -107,9 +107,11 @@ public class EarthTunnel {
 			return false;
 		}
 	}
-
-	public static boolean progress(Player player) {
-		return instances.get(player).progress();
+	
+	public static void progressAll() {
+		for (Player player : instances.keySet()) {
+			instances.get(player).progress();
+		}
 	}
 
 	public static String getDescription() {

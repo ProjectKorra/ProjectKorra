@@ -22,15 +22,9 @@ public class AirbendingManager implements Runnable {
 		AirSpout.spoutAll();
 		AirBubble.handleBubbles(Bukkit.getServer());
 		AirSuction.progressAll();
-		for (int ID : AirSwipe.instances.keySet()) {
-			AirSwipe.progress(ID);
-		}
-		for (int ID : Tornado.instances.keySet()) {
-			Tornado.progress(ID);
-		}
-		for (int ID : AirShield.instances.keySet()) {
-			AirShield.progress(ID);
-		}
+		AirSwipe.progressAll();
+		Tornado.progressAll();
+		AirShield.progressAll();
 	}
 
 }

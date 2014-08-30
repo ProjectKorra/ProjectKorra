@@ -24,21 +24,10 @@ public class WaterbendingManager implements Runnable {
 		TorrentBurst.progressAll();
 		HealingWaters.heal(Bukkit.getServer());
 		WaterReturn.progressAll();
-		for (int ID : WaterManipulation.instances.keySet()) {
-			WaterManipulation.progress(ID);
-		}
-
-		for (int ID : WaterWall.instances.keySet()) {
-			WaterWall.progress(ID);
-		}
-
-		for (int ID : Wave.instances.keySet()) {
-			Wave.progress(ID);
-		}
-
-		for (int ID : IceSpike.instances.keySet()) {
-			IceSpike.instances.get(ID).progress();
-		}
+		WaterManipulation.progressAll();
+		WaterWall.progressAll();
+		Wave.progressAll();
+		IceSpike.progressAll();
 		IceSpike2.progressAll();
 	}
 

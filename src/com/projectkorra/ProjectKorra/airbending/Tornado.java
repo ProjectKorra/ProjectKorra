@@ -62,7 +62,13 @@ public class Tornado {
 
 	}
 
-	public boolean progress() {
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
+	
+	private boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			// player.setAllowFlight(canfly);
 			instances.remove(player.getEntityId());
@@ -189,10 +195,6 @@ public class Tornado {
 			height = maxheight;
 		}
 
-	}
-
-	public static boolean progress(int ID) {
-		return instances.get(ID).progress();
 	}
 
 	public static ArrayList<Player> getPlayers() {

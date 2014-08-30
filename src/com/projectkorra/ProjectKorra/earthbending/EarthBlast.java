@@ -214,7 +214,13 @@ public class EarthBlast {
 		return null;
 	}
 
-	public boolean progress() {
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
+	
+	private boolean progress() {
 		if (player.isDead() || !player.isOnline()
 				|| !Methods.canBend(player.getName(), "EarthBlast")) {
 			breakBlock();
@@ -490,12 +496,6 @@ public class EarthBlast {
 		}
 
 		redirectTargettedBlasts(player, ignore);
-	}
-
-	public static boolean progress(int ID) {
-		if (instances.containsKey(ID))
-			return instances.get(ID).progress();
-		return false;
 	}
 
 	public static void removeAll() {

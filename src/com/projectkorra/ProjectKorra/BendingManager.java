@@ -91,22 +91,13 @@ public class BendingManager implements Runnable {
 			TempPotionEffect.progressAll();
 			handleDayNight();
 			Flight.handle();	
-			for (Player p : RapidPunch.instances.keySet()) {
-				if (p == null) continue;
-				RapidPunch.instances.get(p).startPunch(p);
-			}
-			for (int i : RevertChecker.airRevertQueue.keySet()) {
-				Methods.revertAirBlock(i);
-				RevertChecker.airRevertQueue.remove(i);
-			}
-
+			RapidPunch.startPunchAll();
+			RevertChecker.revertAirBlocks();
 		} catch (Exception e) {
 			Methods.stopBending();
 			e.printStackTrace();
 		}
 	}
-	
-	
 
 	public void handleDayNight() {
 		for (World world: Bukkit.getServer().getWorlds()) {

@@ -58,7 +58,13 @@ public class FireStream {
 		instances.put(id, this);
 	}
 
-	public boolean progress() {
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
+	
+	private boolean progress() {
 		if (System.currentTimeMillis() - time >= interval) {
 			location = location.clone().add(direction);
 			time = System.currentTimeMillis();
