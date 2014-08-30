@@ -173,9 +173,11 @@ public class Combustion {
 	public static void removeAroundPoint(Location loc, double radius) {
 		for (Player player: instances.keySet()) {
 			Combustion combustion = instances.get(player);
-			if (combustion.location.distance(loc) <= radius) {
-				explode(player);
-				instances.remove(player);
+			if (combustion.location.getWorld() == loc.getWorld()) {
+				if (combustion.location.distance(loc) <= radius) {
+					explode(player);
+					instances.remove(player);
+				}
 			}
 		}
 	}
