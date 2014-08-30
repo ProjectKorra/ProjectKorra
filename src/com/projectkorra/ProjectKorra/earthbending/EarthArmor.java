@@ -203,6 +203,12 @@ public class EarthArmor {
 		starttime = System.currentTimeMillis();
 	}
 
+	public static void moveArmorAll() {
+		for (Player player : instances.keySet()) {
+			moveArmor(player);
+		}
+	}
+	
 	public static void moveArmor(Player player) {
 		if (!instances.containsKey(player))
 			return;

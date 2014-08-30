@@ -49,6 +49,12 @@ public class RapidPunch {
 		numpunches = 0;
 		instances.put(p, this);
 	}
+	
+	public static void startPunchAll() {
+		for (Player player : instances.keySet()) {
+			if (player != null) instances.get(player).startPunch(player);
+		}
+	}
 
 	public void startPunch(Player p) {
 		if (numpunches >= punches)

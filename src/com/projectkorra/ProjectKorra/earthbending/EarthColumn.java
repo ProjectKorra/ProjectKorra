@@ -160,8 +160,14 @@ public class EarthColumn {
 		}
 		return true;
 	}
+	
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
 
-	public boolean progress() {
+	private boolean progress() {
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			if (!moveEarth()) {
@@ -189,10 +195,6 @@ public class EarthColumn {
 		}
 
 		return true;
-	}
-
-	public static boolean progress(int ID) {
-		return instances.get(ID).progress();
 	}
 
 	public static boolean blockIsBase(Block block) {

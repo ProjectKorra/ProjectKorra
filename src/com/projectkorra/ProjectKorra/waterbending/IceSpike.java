@@ -179,8 +179,14 @@ public class IceSpike {
 		}
 		return true;
 	}
+	
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
 
-	public boolean progress() {
+	private boolean progress() {
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			if (progress < height) {

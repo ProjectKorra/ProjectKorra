@@ -104,6 +104,12 @@ public class Catapult {
 		instances.put(player.getEntityId(), this);
 		fly();
 	}
+	
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
+		}
+	}
 
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
@@ -212,10 +218,6 @@ public class Catapult {
 		Methods.moveEarth(player, location.clone().subtract(direction),
 				direction, distance, false);
 		return true;
-	}
-
-	public static boolean progress(int ID) {
-		return instances.get(ID).progress();
 	}
 
 	public static List<Player> getPlayers() {

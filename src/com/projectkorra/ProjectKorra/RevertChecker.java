@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 public class RevertChecker implements Runnable {
 
-	public static ConcurrentHashMap<Block, Block> revertQueue = new ConcurrentHashMap<Block, Block>();
+	public static ConcurrentHashMap<Block, Block> earthRevertQueue = new ConcurrentHashMap<Block, Block>();
 	static ConcurrentHashMap<Integer, Integer> airRevertQueue = new ConcurrentHashMap<Integer, Integer>();
 	private Future<ArrayList<Chunk>> returnFuture;
 	// static ConcurrentHashMap<Block, Material> movedEarthQueue = new
@@ -86,7 +86,7 @@ public class RevertChecker implements Runnable {
 				earth.putAll(Methods.movedearth);
 
 				for (Block block : earth.keySet()) {
-					if (revertQueue.containsKey(block))
+					if (earthRevertQueue.containsKey(block))
 						continue;
 					boolean remove = true;
 					Information info = earth.get(block);
@@ -170,8 +170,22 @@ public class RevertChecker implements Runnable {
 	// }
 
 	void addToRevertQueue(Block block) {
-		if (!revertQueue.containsKey(block))
-			revertQueue.put(block, block);
+		if (!earthRevertQueue.containsKey(block))
+			earthRevertQueue.put(block, block);
+	}
+	
+	public static void revertEarthBlocks() {
+		for (Block block : earthRevertQueue.keySet()) {
+			Methods.revertBlock(block);
+			earthRevertQueue.remove(block);
+		}
+	}
+	
+	public static void revertAirBlocks() {
+		for (int ID : airRevertQueue.keySet()) {
+			Methods.revertAirBlock(ID);
+			RevertChecker.airRevertQueue.remove(ID);
+		}
 	}
 
 }
