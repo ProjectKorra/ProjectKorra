@@ -14,7 +14,11 @@ public abstract class AbilityModule extends AbilityLoadable implements Cloneable
 	}
 
 	/**
-	 * Default action on loading this ability.
+	 * Default action on loading this ability. 
+	 * 
+	 * <p>
+	 * Events and Permissions should be registered in this method
+	 * </p>
 	 */
 	abstract public void onThisLoad();
 	
