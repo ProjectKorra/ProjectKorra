@@ -76,7 +76,6 @@ public class WaterWall {
 			if (instances.containsKey(player.getEntityId())) {
 				instances.get(player.getEntityId()).cancel();
 			}
-			// Methods.verbose("New water wall prepared");
 			instances.put(player.getEntityId(), this);
 			time = System.currentTimeMillis();
 		}
