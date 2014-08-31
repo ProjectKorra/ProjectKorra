@@ -1,5 +1,8 @@
 Properties:
   ImportEnabled: true
+  Demo:
+    Enable: false
+    Time: 12
   GlobalCooldown: 500
   SeaLevel: 62
   CustomItems:

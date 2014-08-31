@@ -49,6 +49,8 @@ public class ConfigManager {
 		config.addDefault("Properties.Chat.Colors.Chi", "GOLD");
 
 		config.addDefault("Properties.ImportEnabled", true);
+		config.addDefault("Properties.Demo.Enable", true);
+		config.addDefault("Properties.Demo.Time", 12);
 		config.addDefault("Properties.GlobalCooldown", 500);
 		config.addDefault("Properties.SeaLevel", 62);
 

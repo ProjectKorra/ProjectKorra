@@ -62,6 +62,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 		
 		Methods.deserializeFile();
+		Methods.setupStatsAPI();
 		
 		new CraftingRecipes(this);
 	}
