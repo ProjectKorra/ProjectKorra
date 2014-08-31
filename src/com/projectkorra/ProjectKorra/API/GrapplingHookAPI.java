@@ -1,4 +1,4 @@
-package com.projectkorra.ProjectKorra.Utilities;
+package com.projectkorra.ProjectKorra.API;
 
 import java.util.ArrayList;
 import java.util.List;

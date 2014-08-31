@@ -58,9 +58,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.API.GrapplingHookAPI;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
-import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
