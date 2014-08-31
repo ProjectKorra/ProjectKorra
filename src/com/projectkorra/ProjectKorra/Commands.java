@@ -840,9 +840,18 @@ public class Commands {
 						}
 
 						if (!bPlayer.getElements().isEmpty()) {
-							if (!s.hasPermission("bending.command.rechoose")) {
-								s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
-								return true;
+							if (Methods.getDemoTime() > -1) { // -1 Means it isnt enabled
+								if (!(Methods.getTotalPlayTime(bPlayer.getPlayerName()) <= Methods.getDemoTime())) {
+									if (!s.hasPermission("bending.command.rechoose")) {
+										s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+										return true;
+									}
+								} 
+							} else {
+								if (!s.hasPermission("bending.command.rechoose")) {
+									s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+									return true;
+								}
 							}
 						}
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {

@@ -25,13 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import nl.lolmewn.stats.api.StatsAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Effect;
-import org.bukkit.FireworkEffect;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -48,6 +46,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
@@ -98,7 +97,6 @@ import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireBurst;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
-import com.projectkorra.ProjectKorra.firebending.FirePassive;
 import com.projectkorra.ProjectKorra.firebending.FireShield;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
@@ -122,6 +120,7 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 public class Methods {
 
 	static ProjectKorra plugin;
+	static StatsAPI statsAPI;
 
 	private static final ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
 
@@ -603,6 +602,10 @@ public class Methods {
 
 		return circleblocks;
 	}
+	
+	public static double getDemoTime() {
+		return plugin.getConfig().getBoolean("Properties.Demo.Enable") ? plugin.getConfig().getDouble("Properties.Demo.Time") : -1;
+	}
 
 	public static Vector getDirection(Location location, Location destination) {
 		double x1, y1, z1;
@@ -864,6 +867,24 @@ public class Methods {
 			set.add((byte) i);
 		}
 		return set;
+	}
+	
+	/**
+	 * Gets the Total Play Time of a player. In hours
+	 * @param playerName Name of player
+	 * @return {@code double} Total play time
+	 */
+	public static double getTotalPlayTime(String playerName) {
+		return statsAPI.getPlaytime(playerName) / 60;
+	}
+	
+	/**
+	 * Gets the Total Play Time of a player. In hours. Runs {@link #getTotalPlayTime(String)}.
+	 * @param player The player to get the play time of
+	 * @return
+	 */
+	public static double getTotalPlayTime(Player player) {
+		return getTotalPlayTime(player.getName());
 	}
 
 	public static double getWaterbendingNightAugment(World world) {
@@ -1795,6 +1816,14 @@ public class Methods {
 		
 		boolean permaRemoved = bPlayer.permaRemoved;
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
+	}
+	
+	public static boolean setupStatsAPI(){
+	    RegisteredServiceProvider<StatsAPI> stats = Bukkit.getServer().getServicesManager().getRegistration(nl.lolmewn.stats.api.StatsAPI.class);
+	    if (stats!= null) {
+	        statsAPI = stats.getProvider();
+	    }
+	    return (statsAPI != null);
 	}
 
 	public static void stopBending() {
