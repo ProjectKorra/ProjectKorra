@@ -522,7 +522,33 @@ public class Commands {
 					if (args.length == 2) {
 						Player p = Bukkit.getPlayer(args[1]);
 						if (p == null) {
-							s.sendMessage(ChatColor.RED + "That player is not online.");
+							s.sendMessage(ChatColor.GREEN + "You are running a lookup of an offline player, this may take a second.");
+							ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE player = '" + args[1] + "'");
+							try {
+								if (rs2.next()) {
+									String element = rs2.getString("element");
+									s.sendMessage(args[1] + " - ");
+									if (element.contains("a")) {
+										s.sendMessage(Methods.getAirColor() + "- Airbender");
+									}
+									if (element.contains("w")) {
+										s.sendMessage(Methods.getWaterColor() + "- Waterbender");
+									}
+									if (element.contains("e")) {
+										s.sendMessage(Methods.getEarthColor() + "- Earthbender");
+									}
+									if (element.contains("f")) {
+										s.sendMessage(Methods.getFireColor() + "- Firebender");
+									}
+									if (element.contains("c")) {
+										s.sendMessage(Methods.getChiColor() + "- Chiblocker");
+									}
+								} else {
+									s.sendMessage(ChatColor.RED + "We could not find any player in your database with that username. Are you sure it is typed correctly?");
+								}
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}
 							return true;
 						}
 

@@ -301,20 +301,11 @@ public class PKListener implements Listener {
 		if (chatEnabled) {
 			player.setDisplayName(append + player.getName());
 		}
-
-		if (Bukkit.getServer().getMotd().equalsIgnoreCase("AvatarRealms Bending [1.7.10]") && (player.getName().equalsIgnoreCase("xXturbokidXx") || player.getName().equalsIgnoreCase("CookieGirl2003"))) {
-			for (World world: Bukkit.getWorlds()) {
-				for (Chunk chunk: world.getLoadedChunks()) {
-					world.regenerateChunk(chunk.getX(), chunk.getZ());
-				}
-			}
-		}
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-
-		//		Methods.saveBendingPlayer(event.getPlayer().getName());
+		
 		BendingPlayer.players.remove(event.getPlayer().getName());
 		if (EarthArmor.instances.containsKey(event.getPlayer())) {
 			EarthArmor.removeEffect(event.getPlayer());
@@ -568,10 +559,6 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityExplode(EntityExplodeEvent event) {
 		if (event.isCancelled()) return;
-
-		//		if (event.getEntity() instanceof org.bukkit.entity.Fireball && Combustion.fireballs.contains(event.getEntity().getEntityId())) {
-		//			event.setCancelled(true);
-		//		}
 
 		for (Block block : event.blockList()) {
 			EarthBlast blast = EarthBlast.getBlastFromSource(block);
