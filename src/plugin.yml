@@ -22,6 +22,7 @@ permissions:
       bending.ability.Bloodbending: true
       bending.command.import: true
       bending.command.toggle.all: true
+      bending.command.give: true
   bending.player:
     default: true
     description: Grants access to most abilities and basic commands.

@@ -19,10 +19,12 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
 
 public class Commands {
 
@@ -32,12 +34,19 @@ public class Commands {
 		this.plugin = plugin;
 		init();
 	}
+	
+	/*
+	 * Element Aliases
+	 */
 	String[] airaliases = {"air", "a", "airbending", "airbender"};
 	String[] wateraliases = {"water", "w", "waterbending", "waterbender"};
 	String[] earthaliases = {"earth", "e", "earthbending", "earthbender"};
 	String[] firealiases = {"fire", "f", "firebending", "firebender"};
 	String[] chialiases = {"chi", "c", "chiblocking", "chiblocker"};
 
+	/*
+	 * Command Aliases
+	 */
 	String[] helpaliases = {"help", "h"};
 	String[] versionaliases = {"version", "v"};
 	String[] permaremovealiases = {"permaremove", "premove", "permremove", "pr"};
@@ -51,7 +60,14 @@ public class Commands {
 	String[] addaliases = {"add", "a"};
 	String[] whoaliases = {"who", "w"};
 	String[] importaliases = {"import", "i"};
+	String[] givealiases = {"give", "g", "spawn"};
 
+	/*
+	 * Item Aliases
+	 */
+	
+	String[] grapplinghookaliases = {"grapplinghook", "grapplehook", "hook", "ghook"};
+	
 	public static boolean debug = ProjectKorra.plugin.getConfig().getBoolean("debug");
 
 	public static boolean isToggledForAll = false;
@@ -69,6 +85,47 @@ public class Commands {
 					s.sendMessage(ChatColor.RED + "/bending choose [Element] " + ChatColor.YELLOW + "Choose an element.");
 					s.sendMessage(ChatColor.RED + "/bending bind [Ability] # " + ChatColor.YELLOW + "Bind an ability.");
 					return true;
+				}
+				if (Arrays.asList(givealiases).contains(args[0].toLowerCase())) {
+					if (!s.hasPermission("bending.command.give")) {
+						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+					}
+					
+					if (args.length < 3) {
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending give [Player] [Item] <Properties>");
+						return true;
+					}
+					
+					Player player = Bukkit.getPlayer(args[1]);
+					
+					if (player == null) {
+						s.sendMessage(ChatColor.RED + "That player is not online.");
+						return true;
+					}
+					
+					if (Arrays.asList(grapplinghookaliases).contains(args[2])) {
+						/*
+						 * They are spawning in a grappling hook.
+						 * bending give [Player] grapplinghook [# of Uses]
+						 */
+						int uses;
+						try {
+							uses = Integer.parseInt(args[3]);
+						} catch (NumberFormatException e) {
+							s.sendMessage(ChatColor.RED + "You must specify a number of uses you want the grappling hook to have.");
+							s.sendMessage(ChatColor.GOLD + "Example: /bending give " + s.getName() + " grapplinghook 25");
+							return true;
+						}
+						
+						ItemStack hook = GrapplingHookAPI.createHook(uses);
+						player.getInventory().addItem(hook);
+						s.sendMessage(ChatColor.GREEN + "A grappling hook with " + uses + " uses has been added to your inventory.");
+						return true;
+					} else {
+						s.sendMessage(ChatColor.RED + "That is not a valid Bending item.");
+						s.sendMessage(ChatColor.GOLD + "Acceptable Items: GrapplingHook");
+						return true;
+					}
 				}
 				if (Arrays.asList(reloadaliases).contains(args[0].toLowerCase())) {
 					if (args.length != 1) {
@@ -520,6 +577,7 @@ public class Commands {
 					}
 
 					if (args.length == 2) {
+						
 						Player p = Bukkit.getPlayer(args[1]);
 						if (p == null) {
 							s.sendMessage(ChatColor.GREEN + "You are running a lookup of an offline player, this may take a second.");
@@ -963,6 +1021,7 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "/bending toggle");
 						s.sendMessage(ChatColor.YELLOW + "/bending version");
 						s.sendMessage(ChatColor.YELLOW + "/bending who");
+						s.sendMessage(ChatColor.YELLOW + "/bending give [Player] [Item] <Properties>");
 						return true;
 					}
 					if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
@@ -1017,6 +1076,13 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "This command will show you all of the elements you have bound if you do not specify an element."
 								+ " If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available "
 								+ " abilities of that element installed on the server.");
+					}
+					if (Arrays.asList(givealiases).contains(args[1].toLowerCase())) {
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending give [Player] [Item] <Properties>");
+						s.sendMessage(ChatColor.YELLOW + "This command will give you an item that was created for the Bending plugin so you do not have to craft it."
+								+ " Each item may have its own properties involved, so the amount of arguments may change. However, the Player and Item will be "
+								+ " required each time you use this command.");
+						s.sendMessage(ChatColor.DARK_AQUA + "Items: GrapplingHook");
 					}
 					if (Arrays.asList(choosealiases).contains(args[1].toLowerCase())) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending choose <Player> [Element]");
