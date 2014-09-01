@@ -1,7 +1,5 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

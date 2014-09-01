@@ -7,12 +7,9 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.material.Attachable;
-import org.bukkit.material.Lever;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
@@ -27,10 +24,6 @@ public class AirBlast {
 	
 	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<Integer, AirBlast>();
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
-//	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
-	// private static ConcurrentHashMap<Player, Long> timers = new
-	// ConcurrentHashMap<Player, Long>();
-	// static final long soonesttime = Methods.timeinterval;
 
 	private static int ID = Integer.MIN_VALUE;
 	static final int maxticks = 10000;

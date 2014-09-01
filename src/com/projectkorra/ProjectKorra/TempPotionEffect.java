@@ -13,8 +13,6 @@ public class TempPotionEffect {
 
 	private int ID = Integer.MIN_VALUE;
 
-	// private ConcurrentHashMap<Long, PotionEffect> effects = new
-	// ConcurrentHashMap<Long, PotionEffect>();
 	private ConcurrentHashMap<Integer, PotionInfo> infos = new ConcurrentHashMap<Integer, PotionInfo>();
 	private LivingEntity entity;
 

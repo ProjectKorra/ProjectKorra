@@ -1,8 +1,6 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;

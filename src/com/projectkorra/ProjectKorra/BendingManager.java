@@ -3,62 +3,11 @@ package com.projectkorra.ProjectKorra;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.WorldType;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.airbending.AirBlast;
-import com.projectkorra.ProjectKorra.airbending.AirBubble;
-import com.projectkorra.ProjectKorra.airbending.AirBurst;
-import com.projectkorra.ProjectKorra.airbending.AirPassive;
-import com.projectkorra.ProjectKorra.airbending.AirScooter;
-import com.projectkorra.ProjectKorra.airbending.AirShield;
-import com.projectkorra.ProjectKorra.airbending.AirSpout;
-import com.projectkorra.ProjectKorra.airbending.AirSuction;
-import com.projectkorra.ProjectKorra.airbending.AirSwipe;
-import com.projectkorra.ProjectKorra.airbending.Tornado;
-import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
-import com.projectkorra.ProjectKorra.earthbending.Catapult;
-import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
-import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
-import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
-import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
-import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
-import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
-import com.projectkorra.ProjectKorra.earthbending.Shockwave;
-import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
-import com.projectkorra.ProjectKorra.firebending.Combustion;
-import com.projectkorra.ProjectKorra.firebending.Cook;
-import com.projectkorra.ProjectKorra.firebending.FireBlast;
-import com.projectkorra.ProjectKorra.firebending.FireBurst;
-import com.projectkorra.ProjectKorra.firebending.FireJet;
-import com.projectkorra.ProjectKorra.firebending.FirePassive;
-import com.projectkorra.ProjectKorra.firebending.FireShield;
-import com.projectkorra.ProjectKorra.firebending.FireStream;
-import com.projectkorra.ProjectKorra.firebending.Fireball;
-import com.projectkorra.ProjectKorra.firebending.Illumination;
-import com.projectkorra.ProjectKorra.firebending.Lightning;
-import com.projectkorra.ProjectKorra.firebending.WallOfFire;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
-import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
-import com.projectkorra.ProjectKorra.waterbending.HealingWaters;
-import com.projectkorra.ProjectKorra.waterbending.IceSpike;
-import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
-import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
-import com.projectkorra.ProjectKorra.waterbending.Plantbending;
-import com.projectkorra.ProjectKorra.waterbending.Torrent;
-import com.projectkorra.ProjectKorra.waterbending.TorrentBurst;
-import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
-import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
-import com.projectkorra.ProjectKorra.waterbending.WaterReturn;
-import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
-import com.projectkorra.ProjectKorra.waterbending.WaterWall;
-import com.projectkorra.ProjectKorra.waterbending.Wave;
 
 public class BendingManager implements Runnable {
 
@@ -67,7 +16,6 @@ public class BendingManager implements Runnable {
 	long time;
 	long interval;
 
-	private final HashMap<String, Time> dayNight = new HashMap<>();
 	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
 
 	static final String defaultsunrisemessage = "You feel the strength of the rising sun empowering your firebending.";
@@ -148,105 +96,6 @@ public class BendingManager implements Runnable {
 							player.sendMessage(Methods.getFireColor() + defaultsunrisemessage);
 						}
 					}
-				}
-			}
-		}
-//		/**
-//		 * This code is ran on startup, it adds all loaded worlds to the
-//		 * hashmap.
-//		 */
-//		if (dayNight.size() < 1) {
-//			for (World world : plugin.getServer().getWorlds()) {
-//				if (world.getWorldType() == WorldType.NORMAL) {
-//					String worldName = world.getName();
-//					if (dayNight.containsKey(worldName))
-//						return;
-//					if (Methods.isDay(world)) {
-//						dayNight.put(worldName, Time.DAY);
-//					} else {
-//						dayNight.put(worldName, Time.NIGHT);
-//					}
-//				}
-//			}
-//		}
-
-		//		for (World world : Bukkit.getWorlds()) {
-		//			final String worldName = world.getName();
-		//			if (!dayNight.containsKey(worldName))
-		//				return;
-		//			Time time = dayNight.get(worldName);
-		//			if (Methods.isDay(world) && time.equals(Time.NIGHT)) {
-		//				final Time newTime = Time.DAY;
-		//				sendFirebenderMessage(world, newTime);
-		//				dayNight.remove(worldName);
-		//				dayNight.put(worldName, newTime);
-		//			}
-		//
-		//			if (!Methods.isDay(world) && time.equals(Time.DAY)) {
-		//				final Time newTime = Time.NIGHT;
-		//				sendFirebenderMessage(world, newTime);
-		//				dayNight.remove(worldName);
-		//				dayNight.put(worldName, newTime);
-		//			}
-		//
-		//			if (Methods.isNight(world) && time.equals(Time.DAY)) {
-		//				final Time newTime = Time.NIGHT;
-		//				sendWaterbenderMessage(world, newTime);
-		//				dayNight.remove(worldName);
-		//				dayNight.put(worldName, newTime);
-		//			}
-		//
-		//			if (!Methods.isNight(world) && time.equals(Time.NIGHT)) {
-		//				final Time newTime = Time.DAY;
-		//				sendWaterbenderMessage(world, Time.DAY);
-		//				dayNight.remove(worldName);
-		//				dayNight.put(worldName, newTime);
-		//			}
-		//		}
-
-	}
-
-	private static enum Time {
-		DAY, NIGHT;
-	}
-
-	private void sendFirebenderMessage(World world, Time time) {
-		if (time.equals(Time.DAY)) {
-			for (Player player : world.getPlayers()) {
-				if (Methods.isBender(player.getName(), Element.Fire)
-						&& player.hasPermission("bending.message.daymessage")) {
-					player.sendMessage(ChatColor.RED + defaultsunrisemessage);
-				}
-			}
-		} else {
-			for (Player player : world.getPlayers()) {
-				if (Methods.isBender(player.getName(), Element.Fire)
-						&& player.hasPermission("bending.message.daymessage")) {
-					player.sendMessage(ChatColor.RED + defaultsunsetmessage);
-				}
-			}
-		}
-	}
-
-	private void sendWaterbenderMessage(World world, Time time) {
-		if (time.equals(Time.NIGHT)) {
-			for (Player player : world.getPlayers()) {
-				if (Methods.isBender(player.getName(), Element.Water)
-						&& player.hasPermission("bending.message.nightmessage")) {
-					if (Methods.isFullMoon(world)) {
-						player.sendMessage(ChatColor.AQUA
-								+ defaultfullmoonrisemessage);
-					} else {
-						player.sendMessage(ChatColor.AQUA
-								+ defaultmoonrisemessage);
-					}
-				}
-			}
-		} else {
-			for (Player player : world.getPlayers()) {
-				if (Methods.isBender(player.getName(), Element.Water)
-						&& player.hasPermission("bending.message.nightmessage")) {
-					player.sendMessage(ChatColor.AQUA + defaultmoonsetmessage);
 				}
 			}
 		}

@@ -494,13 +494,13 @@ public class Commands {
 						if (isToggledForAll) { // Bending is toggled off for all players.
 							isToggledForAll = false;
 							for (Player player: Bukkit.getOnlinePlayers()) {
-								s.sendMessage(ChatColor.GREEN + "Bending has been toggled back on for all players.");
+								player.sendMessage(ChatColor.GREEN + "Bending has been toggled back on for all players.");
 								return true;
 							}
 						} else {
 							isToggledForAll = true;
 							for (Player player: Bukkit.getOnlinePlayers()) {
-								s.sendMessage(ChatColor.RED + "Bending has been toggled off for all players.");
+								player.sendMessage(ChatColor.RED + "Bending has been toggled off for all players.");
 								return true;
 							}
 						}

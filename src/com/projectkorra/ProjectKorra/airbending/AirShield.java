@@ -15,7 +15,6 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
-import com.projectkorra.ProjectKorra.waterbending.TorrentBurst;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 public class AirShield {

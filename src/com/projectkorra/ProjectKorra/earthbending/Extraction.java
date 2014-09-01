@@ -1,7 +1,5 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Material;

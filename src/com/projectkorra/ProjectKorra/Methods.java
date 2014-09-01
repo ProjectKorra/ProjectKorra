@@ -28,10 +28,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Effect;
-import org.bukkit.FireworkEffect;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -98,7 +95,6 @@ import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireBurst;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
-import com.projectkorra.ProjectKorra.firebending.FirePassive;
 import com.projectkorra.ProjectKorra.firebending.FireShield;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Fireball;

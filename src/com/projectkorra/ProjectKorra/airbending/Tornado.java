@@ -70,12 +70,10 @@ public class Tornado {
 	
 	private boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
-			// player.setAllowFlight(canfly);
 			instances.remove(player.getEntityId());
 			return false;
 		}
 		if (!Methods.canBend(player.getName(), "Tornado") || player.getEyeLocation().getBlock().isLiquid()) {
-			// player.setAllowFlight(canfly);
 			instances.remove(player.getEntityId());
 			return false;
 		}

