@@ -86,8 +86,6 @@ public class AirSwipe {
 
 		if (!charging)
 			launch();
-
-		// timers.put(player, System.currentTimeMillis());
 	}
 
 	private void launch() {
@@ -181,14 +179,14 @@ public class AirSwipe {
 					Player source = player;
 					if (EarthBlast.annihilateBlasts(location, radius, source)
 							|| WaterManipulation.annihilateBlasts(location,radius, source)
-							|| FireBlast.annihilateBlasts(location, radius, source)) {
+							|| FireBlast.annihilateBlasts(location, radius, source)
+							|| Combustion.removeAroundPoint(location, radius)) {
 						elements.remove(direction);
 						damage = 0;
+						instances.remove(id);
 						continue;
 					}
 					
-					Combustion.removeAroundPoint(location, radius);
-
 					Block block = location.getBlock();
 					for (Block testblock : Methods.getBlocksAroundPoint(location, affectingradius)) {
 						if (testblock.getType() == Material.FIRE) {
@@ -270,16 +268,6 @@ public class AirSwipe {
 			return true;
 		}
 		return false;
-	}
-
-	public static String getDescription() {
-		return "To use, simply left-click in a direction. "
-				+ "An arc of air will flow from you towards that direction, "
-				+ "cutting and pushing back anything in its path. "
-				+ "Its damage is minimal, but it still sends the message. "
-				+ "This ability will extinguish fires, cool lava, and cut things like grass, "
-				+ "mushrooms and flowers. Additionally, you can charge it by holding sneak. "
-				+ "Charging before attacking will increase damage and knockback, up to a maximum.";
 	}
 
 	public static void charge(Player player) {

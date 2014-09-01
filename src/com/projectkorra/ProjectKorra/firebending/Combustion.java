@@ -161,16 +161,18 @@ public class Combustion {
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
 
-	public static void removeAroundPoint(Location loc, double radius) {
+	public static boolean removeAroundPoint(Location loc, double radius) {
 		for (Player player: instances.keySet()) {
 			Combustion combustion = instances.get(player);
 			if (combustion.location.getWorld() == loc.getWorld()) {
 				if (combustion.location.distance(loc) <= radius) {
 					explode(player);
 					instances.remove(player);
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 
 	public static void progressAll() {
