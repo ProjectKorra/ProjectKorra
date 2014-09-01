@@ -115,6 +115,9 @@ import com.projectkorra.ProjectKorra.waterbending.Wave;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
+import fr.neatmonster.nocheatplus.checks.CheckType;
+import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
+
 public class Methods {
 
 	static ProjectKorra plugin;
@@ -241,8 +244,6 @@ public class Methods {
 	 */
 	public static boolean canBeBloodbent(Player player) {
 		if (AvatarState.isAvatarState(player))
-			return false;
-		if (Commands.invincible.contains(player.getName())) return false;
 		if (isChiBlocked(player.getName()))
 			return true;
 		if (canBend(player.getName(), "Bloodbending") && Methods.getBendingPlayer(player.getName()).isToggled)
@@ -386,9 +387,15 @@ public class Methods {
 			if (entity instanceof Player) {
 				if (Commands.invincible.contains(((Player) entity).getName())) return;
 			}
+			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
+				NCPExemptionManager.exemptPermanently(player, CheckType.FIGHT_REACH);
+			}
 			((LivingEntity) entity).damage(damage, player);
 			((LivingEntity) entity).setLastDamageCause(
 					new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
+			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
+				NCPExemptionManager.unexempt(player);
+			}
 		}
 	}
 
