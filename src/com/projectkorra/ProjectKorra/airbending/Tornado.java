@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -145,6 +146,10 @@ public class Tornado {
 							} else {
 								vy = .6;
 							}
+						}
+						
+						if (entity instanceof Player) {
+							if (Commands.invincible.contains(((Player) entity).getName())) continue;
 						}
 
 						Vector velocity = entity.getVelocity();

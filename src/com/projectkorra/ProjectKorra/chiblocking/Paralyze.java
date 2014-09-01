@@ -4,8 +4,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -33,6 +35,9 @@ public class Paralyze {
 					cooldowns.remove(targetentity);
 				}
 			}
+			if (targetentity instanceof Player) {
+				if (Commands.invincible.contains(((Player) targetentity).getName())) return;
+			}
 			paralyze(targetentity);
 			cooldowns.put(targetentity, System.currentTimeMillis());
 		}
@@ -43,7 +48,7 @@ public class Paralyze {
 		if (entity instanceof Creature) {
 			((Creature) entity).setTarget(null);
 		}
-		
+
 		if (entity instanceof Player) {
 			if(Suffocate.isChannelingSphere((Player) entity)) {
 				Suffocate.remove((Player) entity);

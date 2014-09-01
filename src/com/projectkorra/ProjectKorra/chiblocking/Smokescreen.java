@@ -7,12 +7,14 @@ import java.util.List;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
@@ -63,6 +65,7 @@ public class Smokescreen {
 	
 	public static void applyBlindness(Entity entity) {
 		if (entity instanceof Player) {
+			if (Commands.invincible.contains(((Player) entity).getName())) return;
 			Player p = (Player) entity;
 			p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration * 20, 2));
 			blinded.put(p.getName(), System.currentTimeMillis());

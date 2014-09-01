@@ -10,12 +10,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempPotionEffect;
@@ -120,6 +122,10 @@ public class Suffocate {
 				}
 
 				if (entity instanceof Player) {
+					if (Commands.invincible.contains(((Player) entity).getName())) {
+						breakSuffocate(entity);
+						continue;
+					}
 					if (AvatarState.isAvatarState((Player) entity)) {
 						breakSuffocate(entity);
 						continue;

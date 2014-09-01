@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -82,6 +83,12 @@ public class AirShield {
 				} else {
 					velocity.setX(vx);
 					velocity.setZ(vz);
+				}
+				
+				if (entity instanceof Player) {
+					if (Commands.invincible.contains(((Player) entity).getName())) {
+						continue;
+					}
 				}
 
 				velocity.multiply(radius / maxradius);

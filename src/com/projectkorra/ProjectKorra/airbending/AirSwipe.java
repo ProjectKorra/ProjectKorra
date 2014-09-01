@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -158,10 +159,6 @@ public class AirSwipe {
 				return true;
 			} else if (System.currentTimeMillis() >= time + maxchargetime) {
 				Methods.playAirbendingParticles(player.getEyeLocation(), 10);
-//				player.getWorld().playEffect(
-//						player.getEyeLocation(),
-//						Effect.SMOKE,
-//						Methods.getIntCardinalDirection(player.getEyeLocation().getDirection()), 3);
 			}
 		}
 		return true;
@@ -217,8 +214,6 @@ public class AirSwipe {
 						}
 					} else {
 						Methods.playAirbendingParticles(location, 10);
-//						location.getWorld().playEffect(location, Effect.SMOKE,
-//								4, (int) AirBlast.defaultrange);
 						affectPeople(location, direction);
 					}
 				}
@@ -239,6 +234,9 @@ public class AirSwipe {
 			if (Methods.isRegionProtectedFromBuild(player, "AirSwipe", entity.getLocation()))
 				continue;
 			if (entity.getEntityId() != player.getEntityId()) {
+				if (entity instanceof Player) {
+					if (Commands.invincible.contains(((Player) entity).getName())) continue;
+				}
 				if (AvatarState.isAvatarState(player)) {
 					entity.setVelocity(direction.multiply(AvatarState.getValue(pushfactor)));
 				} else {

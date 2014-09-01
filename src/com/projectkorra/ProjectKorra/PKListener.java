@@ -305,7 +305,9 @@ public class PKListener implements Listener {
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		
+		if (Commands.invincible.contains(event.getPlayer().getName()) {
+			Commands.invincible.remove(event.getPlayer().getName());
+		}
 		BendingPlayer.players.remove(event.getPlayer().getName());
 		if (EarthArmor.instances.containsKey(event.getPlayer())) {
 			EarthArmor.removeEffect(event.getPlayer());

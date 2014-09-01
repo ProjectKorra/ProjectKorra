@@ -242,6 +242,7 @@ public class Methods {
 	public static boolean canBeBloodbent(Player player) {
 		if (AvatarState.isAvatarState(player))
 			return false;
+		if (Commands.invincible.contains(player.getName())) return false;
 		if (isChiBlocked(player.getName()))
 			return true;
 		if (canBend(player.getName(), "Bloodbending") && Methods.getBendingPlayer(player.getName()).isToggled)
@@ -382,6 +383,9 @@ public class Methods {
 	 */
 	public static void damageEntity(Player player, Entity entity, double damage) {
 		if (entity instanceof LivingEntity) {
+			if (entity instanceof Player) {
+				if (Commands.invincible.contains(((Player) entity).getName())) return;
+			}
 			((LivingEntity) entity).damage(damage, player);
 			((LivingEntity) entity).setLastDamageCause(
 					new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));

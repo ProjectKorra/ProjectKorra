@@ -6,8 +6,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -61,10 +63,13 @@ public class Commands {
 	String[] whoaliases = {"who", "w"};
 	String[] importaliases = {"import", "i"};
 	String[] givealiases = {"give", "g", "spawn"};
+	String[] invinciblealiases = {"invincible", "inv"};
 
 	/*
 	 * Item Aliases
 	 */
+	
+	public static Set<String> invincible = new HashSet<String>();
 	
 	String[] grapplinghookaliases = {"grapplinghook", "grapplehook", "hook", "ghook"};
 	
@@ -86,9 +91,38 @@ public class Commands {
 					s.sendMessage(ChatColor.RED + "/bending bind [Ability] # " + ChatColor.YELLOW + "Bind an ability.");
 					return true;
 				}
+				if (Arrays.asList(invinciblealiases).contains(args[0].toLowerCase())) {
+					if (!s.hasPermission("bending.command.invincible")) {
+						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						return true;
+					}
+					
+					if (!(s instanceof Player)) {
+						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
+						return true;
+					}
+					
+					if (args.length != 1) {
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending invincible");
+						return true;
+					}
+					
+					if (!invincible.contains(s.getName())) {
+						/*
+						 * Player is not invincible.
+						 */
+						invincible.add(s.getName());
+						s.sendMessage(ChatColor.GREEN + "You are now invincible to all bending damage and effects. Use this command again to disable this.");
+						return true;
+					} else {
+						invincible.remove(s.getName());
+						s.sendMessage(ChatColor.RED + "You are no longer invincible to all bending damage and effects.");
+					}
+				}
 				if (Arrays.asList(givealiases).contains(args[0].toLowerCase())) {
 					if (!s.hasPermission("bending.command.give")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						return true;
 					}
 					
 					if (args.length < 3) {
@@ -1022,6 +1056,7 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "/bending version");
 						s.sendMessage(ChatColor.YELLOW + "/bending who");
 						s.sendMessage(ChatColor.YELLOW + "/bending give [Player] [Item] <Properties>");
+						s.sendMessage(ChatColor.YELLOW + "/bending invincible");
 						return true;
 					}
 					if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
@@ -1063,6 +1098,11 @@ public class Commands {
 								+ "first shown to be used by Ty Lee in Avatar: The Last Airbender, then later by members of the "
 								+ "Equalists in The Legend of Korra.");
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/mkp9n6y");
+					}
+					if (Arrays.asList(invinciblealiases).contains(args[1].toLowerCase())) {
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending invincible");
+						s.sendMessage(ChatColor.YELLOW + "This command will make you impervious to all Bending damage. Once you "
+								+ "use this command, you will stay invincible until you either log off, or use this command again.");
 					}
 					if (Arrays.asList(importaliases).contains(args[1].toLowerCase())) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending import");

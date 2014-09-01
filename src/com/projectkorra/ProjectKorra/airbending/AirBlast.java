@@ -7,12 +7,14 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -150,12 +152,6 @@ public class AirBlast {
 			instances.remove(id);
 			return false;
 		}
-
-		// if (player.isSneaking()
-		// && Methods.getBendingAbility(player) == Abilities.AirBlast) {
-		// new AirBlast(player);
-		// }
-
 		Block block = location.getBlock();
 		for (Block testblock : Methods.getBlocksAroundPoint(location, affectingradius)) {
 			if (testblock.getType() == Material.FIRE) {
@@ -193,21 +189,12 @@ public class AirBlast {
 			return false;
 		}
 
-		// Methods.verbose(location.distance(origin));
 		if (location.distance(origin) > range) {
-			// Methods.verbose(id);
 			instances.remove(id);
 			return false;
 		}
 
 		for (Entity entity : Methods.getEntitiesAroundPoint(location, affectingradius)) {
-			// if (source == null) {
-			// if (affectedentities.contains(entity))
-			// continue;
-			// } else {
-			// if (source.isAffectedEntity(entity))
-			// continue;
-			// }
 			affect(entity);
 		}
 
@@ -218,16 +205,10 @@ public class AirBlast {
 
 	private void advanceLocation() {
 		Methods.playAirbendingParticles(location, 10);
-//		ParticleEffect.SPELL.display(location, (float)0, (float)0, (float)0, (float)speed, (int)20);
-//		location.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
 
 	private void affect(Entity entity) {
-		// if (source == null)
-		// affectedentities.add(entity);
-		// else
-		// source.addAffectedEntity(entity);
 		boolean isUser = entity.getEntityId() == player.getEntityId();
 
 		if (!isUser || otherorigin) {
@@ -263,22 +244,10 @@ public class AirBlast {
 			} else {
 				velocity.add(push.clone().multiply(factor * .5));
 			}
-
-			// velocity =
-			// velocity.clone().add(direction.clone().multiply(factor));
-			// double newmag = Math.abs(velocity.getY());
-			// if (newmag > mag) {
-			// if (mag > max) {
-			// velocity = velocity.clone().multiply(mag / newmag);
-			// } else if (newmag > max) {
-			// velocity = velocity.clone().multiply(max / newmag);
-			// }
-			// }
-			//
-			// velocity.multiply(1 - location.distance(origin) / (2 * range));
-			//
-			// if (entity instanceof Player)
-			// velocity.multiply(2);
+			
+			if (entity instanceof Player) {
+				if (Commands.invincible.contains(((Player) entity).getName())) return;
+			}
 
 			entity.setVelocity(velocity);
 			entity.setFallDistance(0);

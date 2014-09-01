@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -154,38 +155,6 @@ public class AirSuction {
 			// continue;
 			// affectedentities.add(entity);
 			if (entity.getEntityId() != player.getEntityId() || otherorigin) {
-				// Vector velocity = entity.getVelocity();
-				// double mag = Math.abs(velocity.getY());
-				// double max = maxspeed;
-				// if (AvatarState.isAvatarState(player)) {
-				// max = AvatarState.getValue(maxspeed);
-				// velocity = velocity.clone().add(
-				// direction.clone().multiply(
-				// AvatarState.getValue(pushfactor)));
-				// double newmag = Math.abs(velocity.getY());
-				// if (newmag > mag) {
-				// if (mag > max) {
-				// velocity = velocity.clone().multiply(mag / newmag);
-				// } else if (newmag > max) {
-				// velocity = velocity.clone().multiply(max / newmag);
-				// }
-				// }
-				// } else {
-				// velocity = velocity.clone().add(
-				// direction.clone().multiply(pushfactor));
-				// double newmag = Math.abs(velocity.getY());
-				// if (newmag > mag) {
-				// if (mag > max) {
-				// velocity = velocity.clone().multiply(mag / newmag);
-				// } else if (newmag > max) {
-				// velocity = velocity.clone().multiply(max / newmag);
-				// }
-				// }
-				// }
-				// if (entity instanceof Player)
-				// velocity.multiply(2);
-				// entity.setVelocity(velocity);
-				// entity.setFallDistance(0);
 				Vector velocity = entity.getVelocity();
 				double max = maxspeed;
 				double factor = pushfactor;
@@ -218,6 +187,10 @@ public class AirSuction {
 					velocity.add(push.clone().multiply(factor - comp));
 				} else {
 					velocity.add(push.clone().multiply(factor * .5));
+				}
+				
+				if (entity instanceof Player) {
+					if (Commands.invincible.contains(((Player) entity).getName())) continue;
 				}
 				entity.setVelocity(velocity);
 				entity.setFallDistance(0);
