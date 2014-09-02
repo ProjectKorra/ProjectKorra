@@ -15,7 +15,7 @@ public class BendingPlayer {
 	String player;
 	ArrayList<Element> elements;
 	HashMap<Integer, String> abilities;
-	HashMap<String, Long> cooldowns;
+	ConcurrentHashMap<String, Long> cooldowns;
 	boolean permaRemoved;
 	boolean isToggled;
 	private long slowTime = 0;
@@ -27,7 +27,7 @@ public class BendingPlayer {
 		this.player = player;
 		this.elements = elements;
 		this.abilities = abilities;
-		cooldowns = new HashMap<String, Long>();
+		cooldowns = new ConcurrentHashMap<String, Long>();
 		this.permaRemoved = permaRemoved;
 		isToggled = true;
 		blockedChi = false;

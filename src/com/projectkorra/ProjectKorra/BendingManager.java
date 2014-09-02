@@ -53,7 +53,7 @@ public class BendingManager implements Runnable {
 			BendingPlayer bPlayer = BendingPlayer.players.get(bP);
 			for (String abil: bPlayer.cooldowns.keySet()) {
 				if (System.currentTimeMillis() >= bPlayer.cooldowns.get(abil)) {
-					bPlayer.cooldowns.remove(abil);
+					bPlayer.removeCooldown(abil);
 				}
 			}
 		}
