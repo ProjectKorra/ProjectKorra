@@ -224,6 +224,11 @@ public class ConfigManager {
 				+ "be at least partially submerged in water.");
 		config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
 		config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
+		
+		config.addDefault("Abilities.Water.IceBlast.Enabled", true);
+		config.addDefault("Abilities.Water.IceBlast.Damage", 3);
+		config.addDefault("Abilities.Water.IceBlast.Range", 20);
+		config.addDefault("Abilities.Water.IceBlast.Description", "This is one of the most powerful abilities available to Waterbenders. NOT COMPLETE DESC FOR TESTING PURPOSES ONLY!");
 
 		config.addDefault("Abilities.Water.IceSpike.Enabled", true);
 		config.addDefault("Abilities.Water.IceSpike.Description", "This ability has many functions. Clicking while targetting ice, or an entity over some ice, "
