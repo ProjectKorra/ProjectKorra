@@ -136,6 +136,10 @@ public class EarthBlast {
 	}
 
 	private void unfocusBlock() {
+		if(destination != null){
+			breakBlock();
+			return;
+		}
 		sourceblock.setType(sourcetype);
 		instances.remove(id);
 	}
@@ -248,7 +252,7 @@ public class EarthBlast {
 				}
 
 				if (sourceblock == null) {
-					instances.remove(player.getEntityId());
+					instances.remove(id);
 					return false;
 				}
 				if (player.getWorld() != sourceblock.getWorld()) {
