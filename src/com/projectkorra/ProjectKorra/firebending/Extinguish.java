@@ -31,6 +31,12 @@ public class Extinguish {
 		double radius = Methods.getFirebendingDayAugment(defaultradius, player.getWorld());
 		for (Block block : Methods.getBlocksAroundPoint(
 				player.getTargetBlock(null, (int) range).getLocation(), radius)) {
+			
+			Material mat = block.getType();
+			if(mat != Material.FIRE 
+					&& mat != Material.STATIONARY_LAVA
+					&& mat != Material.LAVA)
+				continue;
 			if (Methods.isRegionProtectedFromBuild(player, "Blaze",
 					block.getLocation()))
 				continue;
