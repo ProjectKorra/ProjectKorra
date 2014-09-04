@@ -42,6 +42,13 @@ public class WaterSpout {
 			return;
 		}
 		this.player = player;
+		
+		Block block = player.getLocation().clone().add(0,-1,0).getBlock();
+		Material mat = block.getType();
+		if(mat != Material.WATER && mat != Material.STATIONARY_WATER
+				&& mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW)
+			return;
+		
 		new Flight(player);
 		player.setAllowFlight(true);
 		instances.put(player, this);
