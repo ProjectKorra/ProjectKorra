@@ -65,6 +65,9 @@ Properties:
     DayFactor: 1.5
   Chi:
     CanBendWithWeapons: false
+  DisabledWorlds:
+  - TestWorld
+  - TestWorld2
 Abilities:
   AvatarState:
     Enabled: true

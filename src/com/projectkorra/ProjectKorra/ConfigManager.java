@@ -85,6 +85,11 @@ public class ConfigManager {
 
 		config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
+		ArrayList<String> disabledWorlds = new ArrayList<String>();
+		disabledWorlds.add("TestWorld");
+		disabledWorlds.add("TestWorld2");
+		config.addDefault("Properties.DisabledWorlds", disabledWorlds);
+		
 		config.addDefault("Abilities.AvatarState.Enabled", true);
 		config.addDefault("Abilities.AvatarState.Description", "The signature ability of the Avatar, this is a toggle. Click to activate to become "
 				+ "nearly unstoppable. While in the Avatar State, the user takes severely reduced damage from "

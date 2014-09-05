@@ -261,6 +261,7 @@ public class Methods {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
 		if (bPlayer == null) return false;
+		if (plugin.getConfig().getStringList("Properties.DisabledWorlds") != null && plugin.getConfig().getStringList("Properties.DisabledWorlds").contains(p.getWorld().getName())) return false;
 		if (Commands.isToggledForAll) return false;
 		if (!bPlayer.isToggled) return false;
 		if (p == null) return false;
