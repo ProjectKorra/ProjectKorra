@@ -277,6 +277,7 @@ Abilities:
       VerticalPush: 0.1
     LavaFlow:
       Enabled: true
+      Description: "This ability allows an Earthbender to create lava using the Earth around them. To use, simply hold sneak (Default: Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an Earthbendable block to create a pool of lava after a small delay. Additionally, you can left click at any time to turn lava back into its original state -- Earth."
       Description: "Create powerful pools of lava that surround you or your target. Hold sneak (Default:Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an earth bendable block to create a pool of lava after a small delay. At any time you can left click lava to turn it back into earth."
       ShiftCooldown: 16000
       ClickLavaCooldown: 6000
