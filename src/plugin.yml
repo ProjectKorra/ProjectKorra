@@ -66,7 +66,6 @@ permissions:
       bending.ability.PhaseChange: true
       bending.ability.Surge: true
       bending.ability.Torrent: true
-      bending.ability.Torrent: true
       bending.ability.WaterBubble: true
       bending.ability.WaterManipulation: true
       bending.ability.WaterSpout: true
@@ -91,6 +90,7 @@ permissions:
       bending.earth.metalbending: true
       bending.earth.grapplinghook: true
       bending.ability.LavaSurge: true
+      bending.ability.LavaFlow: true
   bending.fire:
     default: true
     description: Grants access to all firebending abilities.

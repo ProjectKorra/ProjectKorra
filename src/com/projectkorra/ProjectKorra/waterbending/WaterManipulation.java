@@ -660,6 +660,17 @@ public class WaterManipulation {
 					manip.breakBlock();
 		}
 	}
+	
+	public static ArrayList<WaterManipulation> getAroundPoint(Location location, double radius) {
+		ArrayList<WaterManipulation> list = new ArrayList<WaterManipulation>();
+		for (int id : instances.keySet()) {
+			WaterManipulation manip = instances.get(id);
+			if (manip.location.getWorld().equals(location.getWorld()))
+				if (manip.location.distance(location) <= radius)
+					list.add(manip);
+		}
+		return list;
+	}
 
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
 		boolean broke = false;

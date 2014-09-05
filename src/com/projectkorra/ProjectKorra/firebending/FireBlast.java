@@ -219,6 +219,17 @@ public class FireBlast {
 		}
 		Fireball.removeFireballsAroundPoint(location, radius);
 	}
+	public static ArrayList<FireBlast> getAroundPoint(Location location, double radius) {
+		ArrayList<FireBlast> list = new ArrayList<FireBlast>();
+		for (int id : instances.keySet()) {
+			Location fireblastlocation = instances.get(id).location;
+			if (location.getWorld() == fireblastlocation.getWorld()) {
+				if (location.distance(fireblastlocation) <= radius)
+					list.add(instances.get(id));
+			}
+		}
+		return list;
+	}
 
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
 		boolean broke = false;

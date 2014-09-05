@@ -26,5 +26,6 @@ public class EarthbendingManager implements Runnable {
 		EarthBlast.progressAll();
 		LavaWall.progressAll();
 		LavaWave.progressAll();
+		LavaFlow.progressAll();
 	}
 }

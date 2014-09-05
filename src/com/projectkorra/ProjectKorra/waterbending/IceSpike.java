@@ -187,7 +187,7 @@ public class IceSpike {
 				moveEarth();
 				removeTimers.put(player, System.currentTimeMillis());
 			} else {
-				if (removeTimers.contains(player)) {
+				if (removeTimers.containsKey(player)) {
 					if (removeTimers.get(player) + removeTimer <= System.currentTimeMillis()) {
 						baseblocks.put(location.clone().add(direction.clone().multiply(-1 * (height))).getBlock(),(height - 1));
 						if (!revertblocks()) {

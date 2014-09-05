@@ -1932,5 +1932,39 @@ public class Methods {
 	public static void playFirebendingParticles(Location loc) {
 		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0, 15);
 	}
+	
+	public static Block getTopBlock(Location loc, int range){
+		return getTopBlock(loc,range,range);
+	}
+	public static Block getTopBlock(Location loc, int positiveY, int negativeY)
+	{
+		/**
+		 * Returns the top block based around loc.
+		 * PositiveY is the maximum amount of distance it will check upward.
+		 * Similarly, negativeY is for downward.
+		 */
+		Block block = loc.getBlock();
+		Block blockHolder = block;
+		int y = 0;
+		//Only one of these while statements will go
+		while(blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY))
+		{
+			y++;
+			Block tempBlock = loc.clone().add(0,y,0).getBlock();
+			if(tempBlock.getType() == Material.AIR) 
+				return blockHolder;
+			blockHolder = tempBlock;
+		}
+		
+		while(blockHolder.getType() == Material.AIR && Math.abs(y) < Math.abs(negativeY))
+		{
+			y--;
+			blockHolder = loc.clone().add(0,y,0).getBlock();
+			if(blockHolder.getType() != Material.AIR) 
+				return blockHolder;
+			
+		}
+		return null;
+	}
 
 }

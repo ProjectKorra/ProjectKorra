@@ -3,12 +3,14 @@ package com.projectkorra.ProjectKorra.waterbending;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
@@ -42,6 +44,14 @@ public class WaterSpout {
 			return;
 		}
 		this.player = player;
+		Block topBlock = Methods.getTopBlock(player.getLocation(), 0, -50);
+		if(topBlock == null)
+			return;
+		Material mat = topBlock.getType();
+		if(mat != Material.WATER && mat != Material.STATIONARY_WATER
+				&& mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW)
+			return;
+		
 		new Flight(player);
 		player.setAllowFlight(true);
 		instances.put(player, this);

@@ -275,6 +275,18 @@ Abilities:
       Radius: 3
       HorizontalPush: 0.5
       VerticalPush: 0.1
+    LavaFlow:
+      Enabled: true
+      Description: "Create powerful pools of lava that surround you or your target. Hold sneak (Default:Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an earth bendable block to create a pool of lava after a small delay. At any time you can left click lava to turn it back into earth."
+      ShiftCooldown: 16000
+      ClickLavaCooldown: 6000
+      ClickLandCooldown: 500
+      ShiftCleanupDelay: 8000
+      ClickLavaCleanupDelay: 5000
+      ClickLandCleanupDelay: 20000
+      ClickRange: 10.0
+      ShiftRadius: 8.0
+      ClickRadius: 5.0
     RaiseEarth:
       Enabled: true
       Description: "To use, simply left-click on an earthbendable block. A column of earth will shoot upwards from that location. Anything in the way of the column will be brought up with it, leaving talented benders the ability to trap brainless entities up there. Additionally, simply sneak (default shift) looking at an earthbendable block. A wall of earth will shoot upwards from that location. Anything in the way of the wall will be brought up with it."

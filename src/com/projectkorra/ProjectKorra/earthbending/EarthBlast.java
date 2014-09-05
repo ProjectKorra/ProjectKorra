@@ -136,6 +136,10 @@ public class EarthBlast {
 	}
 
 	private void unfocusBlock() {
+		if(destination != null){
+			breakBlock();
+			return;
+		}
 		sourceblock.setType(sourcetype);
 		instances.remove(id);
 	}
@@ -248,7 +252,7 @@ public class EarthBlast {
 				}
 
 				if (sourceblock == null) {
-					instances.remove(player.getEntityId());
+					instances.remove(id);
 					return false;
 				}
 				if (player.getWorld() != sourceblock.getWorld()) {
@@ -577,16 +581,23 @@ public class EarthBlast {
 	}
 
 	public static void removeAroundPoint(Location location, double radius) {
-
 		for (int id : instances.keySet()) {
 			EarthBlast blast = instances.get(id);
 			if (blast.location.getWorld().equals(location.getWorld()))
 				if (blast.location.distance(location) <= radius)
 					blast.breakBlock();
-
 		}
-
 	}
+	public static ArrayList<EarthBlast> getAroundPoint(Location location, double radius) {
+		ArrayList<EarthBlast> list = new ArrayList<EarthBlast>();
+		for (int id : instances.keySet()) {
+			EarthBlast blast = instances.get(id);
+			if (blast.location.getWorld().equals(location.getWorld()))
+				if (blast.location.distance(location) <= radius)
+					list.add(blast);
+		}
+		return list;
+	}	
 
 	public static boolean annihilateBlasts(Location location, double radius,
 			Player source) {

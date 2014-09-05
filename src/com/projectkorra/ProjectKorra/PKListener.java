@@ -88,10 +88,12 @@ import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.earthbending.Extraction;
+import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
 import com.projectkorra.ProjectKorra.earthbending.LavaWall;
 import com.projectkorra.ProjectKorra.earthbending.LavaWave;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
+import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.ProjectKorra.firebending.ArcOfFire;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.Cook;
@@ -435,6 +437,10 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("LavaSurge")) {
 					LavaWall.form(player);
 				}
+				
+				if (abil.equalsIgnoreCase("LavaFlow")) {
+					new LavaFlow(player,LavaFlow.AbilityType.SHIFT);
+				}
 
 			}
 
@@ -762,6 +768,10 @@ public class PKListener implements Listener {
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
 					new LavaWall(player);
+				}
+				
+				if (abil.equalsIgnoreCase("LavaFlow")) {
+					new LavaFlow(player,AbilityType.CLICK);
 				}
 			}
 			if (Methods.isFireAbility(abil)) {

@@ -104,6 +104,7 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.Shockwave) shiftabilities.add(a.name());
 					if (a == StockAbilities.EarthTunnel) shiftabilities.add(a.name());
 					if (a == StockAbilities.EarthGrab) shiftabilities.add(a.name());
+					if (a == StockAbilities.LavaFlow) shiftabilities.add(a.name());
 					if (a == StockAbilities.Extraction) metalbendingabilities.add(a.name());
 				}
 			}
