@@ -3,7 +3,6 @@ package com.projectkorra.ProjectKorra.earthbending;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -77,16 +76,6 @@ public class LavaFlow
 	private ArrayList<TempBlock> affectedBlocks = new ArrayList<TempBlock>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
 	
-	/**
-	 * LavaFlow
-	 * Update Log:
-	 * 		Version 1.0.1 - 8/26/2014
-	 * 			- Fixed the issue where LavaFlow doesn't work with LavaSurge
-	 * 		Version 1.0.2 - 8/26/2014
-	 * 			- Fixed a problem where /b reload would cause an out of bounds exception in removeAll()
-	 * 				if a click instance was currently active.
-	 * 			- Added AvatarState configuration options.
-	 */
 	public LavaFlow(Player player, AbilityType type)
 	{
 		time = System.currentTimeMillis();
