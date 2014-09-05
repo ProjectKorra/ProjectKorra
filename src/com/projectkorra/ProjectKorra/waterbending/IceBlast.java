@@ -170,6 +170,10 @@ public class IceBlast {
 			entity.damage(damage, player);
 		}
 		Methods.breakBreathbendingHold(entity);
+		
+		for(Location loc : Methods.getCircle(entity.getLocation(), 6, 7, false, false, 0)) {
+			ParticleEffect.SNOW_SHOVEL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1000);
+		}
 	}
 	
 	private void throwIce() {
