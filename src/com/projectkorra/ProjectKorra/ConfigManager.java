@@ -367,6 +367,18 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.Extraction.TripleLootChance", 15);
 		config.addDefault("Abilities.Earth.Extraction.DoubleLootChance", 40);
 		
+		config.addDefault("Abilities.Earth.LavaFlow.Enabled", true);
+		config.addDefault("Abilities.Earth.LavaFlow.Description", "This ability allows an Earthbender to create lava using the Earth around them. To use, simply hold sneak (Default: Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an Earthbendable block to create a pool of lava after a small delay. Additionally, you can left click at any time to turn lava back into its original state -- Earth.");
+		config.addDefault("Abilities.Earth.LavFlow.ShiftCooldown", 16000);
+		config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCooldown", 6000);
+		config.addDefault("Abilities.Earth.LavaFlow.ClickLandCooldown", 500);
+		config.addDefault("Abilities.Earth.LavaFlow.ShiftCleanupDelay", 8000);
+		config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCleanupDelay", 5000);
+		config.addDefault("Abilities.Earth.LavaFlow.ClickLandCleanupDelay", 20000);
+		config.addDefault("Abilities.Earth.LavaFlow.ClickRange", 10.0);
+		config.addDefault("Abilities.Earth.LavaFlow.ShiftRadius", 8.0);
+		config.addDefault("Abilities.Earth.LavaFlow.ClickRadius", 5.0);
+
 		config.addDefault("Abilities.Earth.LavaSurge.Enabled", true);
 		config.addDefault("Abilities.Earth.LavaSurge.Description", "This ability allows an Earthbender to bend an existing Lava Source to create a large wave that deals damage and knocks back anything in its path. To use, simply tap sneak (Default: Shift) while targetting a source of lava. Once a source has been selected, left click to launch the wave off into the direction you are looking. This ability has a small knockback and does a fair amount of damage.");
 		config.addDefault("Abilities.Earth.LavaSurge.Radius", 3);
