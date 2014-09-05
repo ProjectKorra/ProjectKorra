@@ -45,6 +45,8 @@ public class WaterSpout {
 		}
 		this.player = player;
 		Block topBlock = Methods.getTopBlock(player.getLocation(), 0, -50);
+		if(topBlock == null)
+			return;
 		Material mat = topBlock.getType();
 		if(mat != Material.WATER && mat != Material.STATIONARY_WATER
 				&& mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW)
