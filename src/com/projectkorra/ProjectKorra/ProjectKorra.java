@@ -71,6 +71,7 @@ public class ProjectKorra extends JavaPlugin {
 //		for (Player player: Bukkit.getOnlinePlayers()) {
 //			Methods.saveBendingPlayer(player.getName());
 //		}
+		Methods.setImporting(false);
 		Methods.stopBending();
 		DBConnection.sql.close();
 	}

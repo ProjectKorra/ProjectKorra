@@ -27,6 +27,7 @@ import org.bukkit.scheduler.BukkitTask;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
+import com.projectkorra.ProjectKorra.Utilities.ImportTask;
 
 public class Commands {
 
@@ -332,108 +333,82 @@ public class Commands {
 					}
 					if (!Methods.isImportEnabled()) {
 						s.sendMessage(ChatColor.RED + "Importing has been disabled in the config");
+						s.sendMessage(ChatColor.GREEN + "Note: If this command is run all players will be kicked");
+						s.sendMessage(ChatColor.GREEN + "They will not be able to join until importing finishes");
 						return true;
 					}
 
-					s.sendMessage(ChatColor.GREEN + "Preparing data for import.");					
+					Methods.setImporting(true);
+					final long startTime = System.currentTimeMillis();
+					
+					s.sendMessage(ChatColor.GREEN + "Preparing data for import.");
+					s.sendMessage(ChatColor.GREEN + "Note: This process may take a while depending on how many players are needed to import");
+					s.sendMessage(ChatColor.GREEN + "All players will also be kicked and not allowed to join until importing is done");
+					
+					Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+						public void run() {
+							for (Player player : Bukkit.getOnlinePlayers()) {
+								player.kickPlayer("[ProjectKorra] Server is now under import mode");
+							}
+						}
+					}, 200);
+					
 					File bendingPlayersFile = new File(".", "converted.yml");
 					FileConfiguration bendingPlayers = YamlConfiguration.loadConfiguration(bendingPlayersFile);
-
-					final LinkedList<BendingPlayer> bPlayers = new LinkedList<BendingPlayer>();
+					int total = bendingPlayers.getConfigurationSection("").getKeys(false).size();
+					
+					ProjectKorra.log.info("Import of data started. Do NOT stop / reload your server.");
+					ProjectKorra.log.info("Total number of players to import: " + total);
+					ProjectKorra.log.info("Console will print out all of the players that are imported if debug mode is enabled as they import.");
 					for (String string: bendingPlayers.getConfigurationSection("").getKeys(false)) {
 						if (string.equalsIgnoreCase("version")) continue;
 						String playername = string;
-						UUID uuid = Bukkit.getOfflinePlayer(playername).getUniqueId();
-						ArrayList<Element> element = new ArrayList<Element>();
+						String uuid = Bukkit.getOfflinePlayer(playername).getUniqueId().toString();
 						List<Integer> oe = bendingPlayers.getIntegerList(string + ".BendingTypes");
-						HashMap<Integer, String> abilities = new HashMap<Integer, String>();
 						List<Integer> oa = bendingPlayers.getIntegerList(string + ".SlotAbilities"); 
+						StringBuilder elements = new StringBuilder();
+						HashMap<Integer, String> abilities = new HashMap<Integer, String>();
 						boolean permaremoved = bendingPlayers.getBoolean(string + ".Permaremoved");
-
-						int slot = 1;
-						for (int i : oa) {
-							if (StockAbilities.getAbility(i) != null) {
-								abilities.put(slot, StockAbilities.getAbility(i).toString());
-								slot++;
+	
+						int hotbarslot = 1;
+						for (int id : oa) {
+							if (StockAbilities.getAbility(id) != null) {
+								abilities.put(hotbarslot, StockAbilities.getAbility(id).toString());
+								hotbarslot++;
 							} else {
-								abilities.put(slot, null);
-								slot++;
+								abilities.put(hotbarslot, null);
+								hotbarslot++;
 							}
 						}
-
-						for (int i : oe) {
-							if (Element.getType(i) != null) {
-								element.add(Element.getType(i));
+						
+						for (int id : oe) {
+							Element element = Element.getType(id);
+							if (element != null) {
+								if (element == Element.Air) elements.append("a");
+								if (element == Element.Water) elements.append("w");
+								if (element == Element.Earth) elements.append("e");
+								if (element == Element.Fire) elements.append("f");
+								if (element == Element.Chi) elements.append("c");
 							}
 						}
+						
+						if (debug) ProjectKorra.log.info("Created BendingPlayer: " + playername);
 
-						BendingPlayer bPlayer = new BendingPlayer(uuid, playername, element, abilities, permaremoved);
-						bPlayers.add(bPlayer);
+						importTask = Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, new ImportTask(uuid, playername, permaremoved, elements, abilities));
+						total--;
+						if (debug) {
+							ProjectKorra.log.info("Successfully imported " + playername + ". " + total + " players left to import.");
+						}
 					}
-
-					final int total = bPlayers.size();
-					final CommandSender sender = s;
-					s.sendMessage(ChatColor.GREEN + "Import of data started. Do NOT stop / reload your server.");
-					if (debug) {
-						s.sendMessage(ChatColor.RED + "Console will print out all of the players that are imported if debug mode is enabled as they import.");
-					}
-					importTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
-						public void run() {
-							int i = 0;
-							if (i >= 10) {
-								sender.sendMessage(ChatColor.GREEN + "10 / " + total + " players converted thus far!");
-								return;
-							}
-
-							while (i < 10) {
-								if (bPlayers.isEmpty()) {
-									sender.sendMessage(ChatColor.GREEN + "All data has been queued up, please allow up to 5 minutes for the data to complete, then reboot your server.");
-									Bukkit.getServer().getScheduler().cancelTask(importTask.getTaskId());
-									plugin.getConfig().set("Properties.ImportEnabled", false);
-									plugin.saveConfig();
-									for (Player player: Bukkit.getOnlinePlayers()) {
-										Methods.createBendingPlayer(player.getUniqueId(), player.getName());
-									}
-									return;
-								}
-								StringBuilder elements = new StringBuilder();
-								BendingPlayer bPlayer = bPlayers.pop();
-								if (bPlayer.hasElement(Element.Air)) elements.append("a");
-								if (bPlayer.hasElement(Element.Water)) elements.append("w");
-								if (bPlayer.hasElement(Element.Earth)) elements.append("e");
-								if (bPlayer.hasElement(Element.Fire)) elements.append("f");
-								if (bPlayer.hasElement(Element.Chi)) elements.append("c");
-
-								HashMap<Integer, String> abilities = bPlayer.abilities;
-
-								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.uuid.toString() + "'");
-
-								try {
-									if (rs2.next()) { // SQL Data already exists for player.
-										DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + bPlayer.player + "' WHERE uuid = '" + bPlayer.uuid.toString());
-										DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + bPlayer.uuid.toString());
-										DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + bPlayer.isPermaRemoved() + "' WHERE uuid = '" + bPlayer.uuid.toString());
-										for (int slot = 1; slot < 10; slot++) {
-											DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
-										}
-									} else {
-										DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, element, permaremoved) VALUES ('" + bPlayer.uuid.toString() + "', '" + bPlayer.player + "', '" + elements + "', '" + bPlayer.isPermaRemoved() +"')");
-										for (int slot = 1; slot < 10; slot++) {
-											DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
-										}
-									}
-								} catch (SQLException ex) {
-									ex.printStackTrace();
-								}
-								i++;
-								if (debug) {
-									System.out.println("[ProjectKorra] Successfully imported " + bPlayer.player + ". " + bPlayers.size() + " players left to import.");
-								}
-							}
-						}
-					}, 0, 40);
+					plugin.getConfig().set("Properties.ImportEnabled", false);
+					plugin.saveConfig();
+					Methods.setImporting(false);
+					ProjectKorra.log.info("All the data has been successfully imported");
+					long endTime = (System.currentTimeMillis() - startTime)/1000;
+					if (debug) ProjectKorra.log.info("Import took " + endTime + " seconds.");
+					ProjectKorra.log.info("Reloading Plugin......");
+					Methods.reloadPlugin();
 					return true;
-
 				}
 				if (Arrays.asList(displayaliases).contains(args[0].toLowerCase())) {
 					if (args.length > 2) {
