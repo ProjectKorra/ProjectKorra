@@ -78,8 +78,10 @@ import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
+import com.projectkorra.ProjectKorra.airbending.AirbendingManager;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
+import com.projectkorra.ProjectKorra.chiblocking.ChiblockingManager;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
@@ -89,6 +91,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
+import com.projectkorra.ProjectKorra.earthbending.EarthbendingManager;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.firebending.Cook;
@@ -98,6 +101,7 @@ import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FireShield;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
+import com.projectkorra.ProjectKorra.firebending.FirebendingManager;
 import com.projectkorra.ProjectKorra.firebending.Illumination;
 import com.projectkorra.ProjectKorra.firebending.Lightning;
 import com.projectkorra.ProjectKorra.firebending.WallOfFire;
@@ -111,6 +115,7 @@ import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterReturn;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 import com.projectkorra.ProjectKorra.waterbending.WaterWall;
+import com.projectkorra.ProjectKorra.waterbending.WaterbendingManager;
 import com.projectkorra.ProjectKorra.waterbending.Wave;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
@@ -134,6 +139,8 @@ public class Methods {
 
 	public static Integer[] nonOpaque = {0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 68, 69, 70, 72,
 		75, 76, 77, 78, 83, 90, 93, 94, 104, 105, 106, 111, 115, 119, 127, 131, 132};
+	
+	private static boolean importing = false;
 
 	/**
 	 * Checks to see if an AbilityExists. Uses method {@link #getAbility(String)} to check if it exists.
@@ -1600,6 +1607,7 @@ public class Methods {
 //		for (Player player: Bukkit.getOnlinePlayers()) {
 //			Methods.saveBendingPlayer(player.getName());
 //		}
+		Bukkit.getScheduler().cancelTasks(plugin);
 		DBConnection.sql.close();
 		plugin.reloadConfig();
 		Methods.stopBending();
@@ -1612,6 +1620,13 @@ public class Methods {
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
 		}
+		
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BendingManager(plugin), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new AirbendingManager(plugin), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new WaterbendingManager(plugin), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new EarthbendingManager(plugin), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new FirebendingManager(plugin), 0, 1);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new ChiblockingManager(plugin), 0, 1);
 	}
 
 	public static void removeAllEarthbendedBlocks() {
@@ -1965,6 +1980,14 @@ public class Methods {
 			
 		}
 		return null;
+	}
+	
+	public static void setImporting(boolean importing) {
+		Methods.importing = importing;
+	}
+	
+	public static boolean isImporting() {
+		return importing;
 	}
 
 }

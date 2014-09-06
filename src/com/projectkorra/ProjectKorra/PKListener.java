@@ -282,6 +282,10 @@ public class PKListener implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
+		if (Methods.isImporting()) {
+			e.getPlayer().kickPlayer("[ProjectKorra] Server is in import mode");
+			return;
+		}
 		Methods.createBendingPlayer(e.getPlayer().getUniqueId(), e.getPlayer().getName());
 		Player player = e.getPlayer();
 		String append = "";
