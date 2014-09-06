@@ -48,8 +48,8 @@ public class LavaFlow
 	public static double AS_SHIFT_PLATFORM_RADIUS = 3;
 	public static double AS_SHIFT_MAX_RADIUS = 16;
 	public static double AS_SHIFT_FLOW_SPEED = 0.2;
-	public static long AS_SHIFT_REMOVE_SPEED = 6000;
-	public static double AS_SHIFT_REMOVE_DELAY = 12000;
+	public static double AS_SHIFT_REMOVE_SPEED = 6.0;
+	public static long AS_SHIFT_REMOVE_DELAY = 12000;
 	public static double AS_CLICK_RANGE = 15.0;
 	public static double AS_CLICK_RADIUS = 8.0;
 	public static long AS_CLICK_LAVA_DELAY = 2000;
@@ -301,7 +301,7 @@ public class LavaFlow
 		 * melting over plants by creating new Plantbending() objects.
 		 * It also appends the TempBlock to our arraylist called totalBlocks.
 		 * 
-		 * NOTE: Due to LavaSurge's check on TempBlocks we have to remove
+		 * NOTE: (DISABLED) Due to LavaSurge's check on TempBlocks we have to remove
 		 * our tempblocks from TempBlock.instances so that players will
 		 * be able to LavaSurge our blocks.
 		 */
@@ -319,7 +319,7 @@ public class LavaFlow
 			TempBlock tblock = new TempBlock(block,Material.STATIONARY_LAVA,(byte) 0);
 			totalBlocks.add(tblock);
 			affectedBlocks.add(tblock);
-			TempBlock.instances.remove(block);
+			//TempBlock.instances.remove(block);
 		}
 	}
 	public void removeLava(Block testBlock)
