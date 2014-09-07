@@ -229,6 +229,11 @@ public class ConfigManager {
 				+ "be at least partially submerged in water.");
 		config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
 		config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
+		
+		config.addDefault("Abilities.Water.IceBlast.Enabled", true);
+		config.addDefault("Abilities.Water.IceBlast.Damage", 3);
+		config.addDefault("Abilities.Water.IceBlast.Range", 20);
+		config.addDefault("Abilities.Water.IceBlast.Description", "Fires an explosive burst of ice at the opponent, spraying ice and snow around it. Requires a source of ice to use, crouch to select it, and then left click to fire.");
 
 		config.addDefault("Abilities.Water.IceSpike.Enabled", true);
 		config.addDefault("Abilities.Water.IceSpike.Description", "This ability has many functions. Clicking while targetting ice, or an entity over some ice, "

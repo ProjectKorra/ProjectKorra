@@ -941,6 +941,20 @@ public class Methods {
 		}
 		return null;
 	}
+	
+	public static Block getIceSourceBlock(Player player, double range) {
+		Location location = player.getEyeLocation();
+		Vector vector = location.getDirection().clone().normalize();
+		for (double i = 0; i <= range; i++) {
+			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			if (isRegionProtectedFromBuild(player, "IceBlast", location))
+				continue;
+			if (isIcebendable(block)) {
+				return block;
+			}
+		}
+		return null;
+	}
 
 	public static boolean hasPermission(Player player, String ability) {
 		if (player.hasPermission("bending.ability." + ability)) return true;
@@ -1365,6 +1379,12 @@ public class Methods {
 		byte full = 0x0;
 		if (TempBlock.isTempBlock(block)) return false;
 		if ((block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) && block.getData() == full) return true;
+		return false;
+	}
+	
+	public static boolean isIcebendable(Block block) {
+		if (block.getType() == Material.ICE) return true;
+		if (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce")) return true;
 		return false;
 	}
 

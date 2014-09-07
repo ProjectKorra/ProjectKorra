@@ -66,6 +66,7 @@ permissions:
     description: Grants access to most waterbending abilities.
     children:
       bending.ability.HealingWaters: true
+      bending.ability.IceBlast: true
       bending.ability.IceSpike: true
       bending.ability.OctopusForm: true
       bending.ability.PhaseChange: true

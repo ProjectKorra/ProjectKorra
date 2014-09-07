@@ -112,6 +112,7 @@ import com.projectkorra.ProjectKorra.firebending.RingOfFire;
 import com.projectkorra.ProjectKorra.firebending.WallOfFire;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
+import com.projectkorra.ProjectKorra.waterbending.IceBlast;
 import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
 import com.projectkorra.ProjectKorra.waterbending.Melt;
 import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
@@ -384,6 +385,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					new Bloodbending(player);
+				}
+				if (abil.equalsIgnoreCase("IceBlast")) {
+					new IceBlast(player);
 				}
 				if (abil.equalsIgnoreCase("IceSpike")) {
 					new IceSpike2(player);
@@ -710,6 +714,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					Bloodbending.launch(player);
+				}
+				if (abil.equalsIgnoreCase("IceBlast")) {
+					IceBlast.activate(player);
 				}
 				if (abil.equalsIgnoreCase("IceSpike")) {
 					IceSpike2.activate(player);
