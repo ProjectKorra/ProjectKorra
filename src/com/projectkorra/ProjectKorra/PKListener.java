@@ -121,6 +121,7 @@ import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 import com.projectkorra.ProjectKorra.waterbending.WaterWall;
+import com.projectkorra.ProjectKorra.waterbending.WaterWave;
 import com.projectkorra.ProjectKorra.waterbending.Wave;
 
 public class PKListener implements Listener {
@@ -406,6 +407,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Torrent")) {
 					Torrent.create(player);
+				}
+				if (abil.equalsIgnoreCase("WaterWave")) {
+					new WaterWave(player, WaterWave.AbilityType.SHIFT);
 				}
 			}
 
@@ -739,6 +743,9 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Torrent")) {
 					new Torrent(player);
 				}
+				if (abil.equalsIgnoreCase("WaterWave")) {
+					new WaterWave(player, WaterWave.AbilityType.CLICK);
+				}
 			}
 
 			if (Methods.isEarthAbility(abil)) {
@@ -965,7 +972,8 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		if (WaterWall.wasBrokenFor(player, block)
 				|| OctopusForm.wasBrokenFor(player, block)
-				|| Torrent.wasBrokenFor(player, block)) {
+				|| Torrent.wasBrokenFor(player, block) 
+				|| WaterWave.wasBrokenFor(player, block)){
 			event.setCancelled(true);
 			return;
 		}

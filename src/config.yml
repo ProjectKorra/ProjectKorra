@@ -228,6 +228,13 @@ Abilities:
       Enabled: true
       Description: "To use this ability, click while over or in water. You will spout water up from beneath you to experience controlled levitation. This ability is a toggle, so you can activate it then use other abilities and it will remain on. If you try to spout over an area with no water, snow, or ice, the spout will dissipate and you will fall. Click again with this ability selected to deactivate it."
       Height: 20
+    WaterWave:
+      Enabled: true
+      Description: "WaterWave provides a waterbender with extreme mobility and transportation. To use, first click a source block to select it; then hold sneak (Default: Shift) to begin streaming the water around you. While the water is streaming around you let go of sneak and the water will form underneath your feet, blasting you off into the direction that you are facing. Press shift while riding the wave to stop it."
+      Range: 6
+      ChargeTime: 1000
+      FlightTime: 2000
+      Speed: 1.2
   Earth:
     Passive:
       Duration: 2500
