@@ -230,7 +230,7 @@ Abilities:
       Height: 20
     WaterWave:
       Enabled: true
-      Description: "WaterWave provides a waterbender with extreme mobility and transportation. To use, first click a source block to select it; then hold sneak (Default: Shift) to begin streaming the water around you. While the water is streaming around you let go of sneak and the water will form underneath your feet, blasting you off into the direction that you are facing. Press shift while riding the wave to stop it."
+      Description: "This ability provides a Waterbender with boosted mobility and transportation. To use, first click a source block to select it; then hold sneak (Default: Shift) to begin streaming the water around you. While the water is streaming around you let go of sneak and the water will form underneath your feet, blasting you off into the direction that you are facing. Additionally, taping sneak while riding the wave still stop it."
       Range: 6
       ChargeTime: 1000
       FlightTime: 2000

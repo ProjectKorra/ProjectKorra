@@ -306,6 +306,13 @@ public class ConfigManager {
 				+ "will remain on. If you try to spout over an area with no water, snow or ice, "
 				+ "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.");
 		config.addDefault("Abilities.Water.WaterSpout.Height", 20);
+		
+		config.addDefault("Abilities.Water.WaterWave.Enabled", true);
+		config.addDefault("Abilities.Water.WaterWave.Description", "This ability provides a Waterbender with boosted mobility and transportation. To use, first click a source block to select it; then hold sneak (Default: Shift) to begin streaming the water around you. While the water is streaming around you let go of sneak and the water will form underneath your feet, blasting you off into the direction that you are facing. Additionally, taping sneak while riding the wave still stop it.");
+		config.addDefault("Abilities.Water.WaterWave.Range", 6);
+		config.addDefault("Abilities.Water.WaterWave.ChargeTime", 1000);
+		config.addDefault("Abilities.Water.WaterWave.FlightTime", 2000);
+		config.addDefault("Abilities.Water.WaterWave.Speed", 1.2);
 
 		config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 
