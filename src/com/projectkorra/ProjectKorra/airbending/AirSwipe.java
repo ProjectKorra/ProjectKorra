@@ -2,6 +2,7 @@ package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -11,6 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
@@ -28,7 +30,7 @@ import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 public class AirSwipe {
 
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
+	private final int MAX_AFFECTABLE_ENTITIES = 10;	
 	public static ConcurrentHashMap<Integer, AirSwipe> instances = new ConcurrentHashMap<Integer, AirSwipe>();
 
 	private static int ID = Integer.MIN_VALUE;
@@ -228,36 +230,44 @@ public class AirSwipe {
 
 	private void affectPeople(Location location, Vector direction) {
 		Methods.removeSpouts(location, player);
-		for (Entity entity : Methods.getEntitiesAroundPoint(location, affectingradius)) {
-			if (Methods.isRegionProtectedFromBuild(player, "AirSwipe", entity.getLocation()))
-				continue;
-			if (entity.getEntityId() != player.getEntityId()) {
-				if (entity instanceof Player) {
-					if (Commands.invincible.contains(((Player) entity).getName())) continue;
+		final List<Entity> entities = Methods.getEntitiesAroundPoint(location, affectingradius);
+		final List<Entity> surroundingEntities = Methods.getEntitiesAroundPoint(location, 4);
+		final Vector fDirection = direction;
+		
+		for(int i = 0; i < entities.size(); i++){
+			final Entity entity = entities.get(i);			
+			new BukkitRunnable(){
+				public void run(){		
+					if (Methods.isRegionProtectedFromBuild(player, "AirSwipe", entity.getLocation()))
+						return;
+					if (entity.getEntityId() != player.getEntityId()) {
+						if (entity instanceof Player) {
+							if (Commands.invincible.contains(((Player) entity).getName())) 
+								return;
+						}
+						if(surroundingEntities.size() < MAX_AFFECTABLE_ENTITIES){
+							if (AvatarState.isAvatarState(player)) {
+								entity.setVelocity(fDirection.multiply(AvatarState.getValue(pushfactor)));
+							} else {
+								entity.setVelocity(fDirection.multiply(pushfactor));
+							}
+						}
+						if (entity instanceof LivingEntity
+								&& !affectedentities.contains(entity)) {
+							if (damage != 0)
+								Methods.damageEntity(player, entity, damage);
+							affectedentities.add(entity);
+						}
+						if (entity instanceof Player) {
+							new Flight((Player) entity, player);
+						}
+						Methods.breakBreathbendingHold(entity);
+						if (elements.containsKey(fDirection)) {
+							elements.remove(fDirection);
+						}
+					}
 				}
-				if (AvatarState.isAvatarState(player)) {
-					entity.setVelocity(direction.multiply(AvatarState.getValue(pushfactor)));
-				} else {
-					entity.setVelocity(direction.multiply(pushfactor));
-				}
-
-				if (entity instanceof LivingEntity
-						&& !affectedentities.contains(entity)) {
-					if (damage != 0)
-						Methods.damageEntity(player, entity, damage);
-					affectedentities.add(entity);
-				}
-
-				if (entity instanceof Player) {
-					new Flight((Player) entity, player);
-				}
-				
-				Methods.breakBreathbendingHold(entity);
-
-				if (elements.containsKey(direction)) {
-					elements.remove(direction);
-				}
-			}
+			}.runTaskLater(ProjectKorra.plugin, i / MAX_AFFECTABLE_ENTITIES);
 		}
 	}
 
