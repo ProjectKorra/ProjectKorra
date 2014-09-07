@@ -36,6 +36,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
@@ -172,7 +173,7 @@ public class Methods {
 	public static void bindAbility(Player player, String ability) {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
-		bPlayer.abilities.put(slot, ability);
+		bPlayer.getAbilities().put(slot, ability);
 		if (isAirAbility(ability)) {
 			player.sendMessage(getAirColor() + "Succesfully bound " + ability + " to slot " + slot);
 		}
@@ -203,7 +204,7 @@ public class Methods {
 	 */
 	public static void bindAbility(Player player, String ability, int slot) {
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
-		bPlayer.abilities.put(slot, ability);
+		bPlayer.getAbilities().put(slot, ability);
 		if (isAirAbility(ability)) {
 			player.sendMessage(getAirColor() + "Succesfully bound " + ability + " to slot " + slot);
 		}
@@ -545,7 +546,7 @@ public class Methods {
 		if (bPlayer == null) return null;
 
 		int slot = player.getInventory().getHeldItemSlot() + 1;
-		return bPlayer.abilities.get(slot);
+		return bPlayer.getAbilities().get(slot);
 	}
 	
 	public static long getGlobalCooldown() {
@@ -1669,7 +1670,7 @@ public class Methods {
 					finalabilities.put(i, slots.get(i));
 				}
 			}
-			bPlayer.abilities = finalabilities;
+			bPlayer.setAbilities(finalabilities);
 		} catch (Exception ex) {
 
 		}
@@ -1792,7 +1793,7 @@ public class Methods {
 		if (bPlayer == null) return;
 		String uuid = bPlayer.uuid.toString();
 		
-		HashMap<Integer, String> abilities = bPlayer.abilities;
+		HashMap<Integer, String> abilities = bPlayer.getAbilities();
 		
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
 	}
@@ -1966,6 +1967,15 @@ public class Methods {
 			
 		}
 		return null;
+	}
+	
+	public static int getMaxPresets(Player player) {
+		if (player.isOp()) return 500;
+		int cap = 0;
+		for (int i = 0; i <= 500; i++) {
+			if (player.hasPermission("bending.command.presets.create." + i)) cap = i;
+		}
+		return cap;
 	}
 
 }

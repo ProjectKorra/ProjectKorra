@@ -61,6 +61,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
+import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
@@ -282,8 +283,9 @@ public class PKListener implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
-		Methods.createBendingPlayer(e.getPlayer().getUniqueId(), e.getPlayer().getName());
 		Player player = e.getPlayer();
+		Methods.createBendingPlayer(e.getPlayer().getUniqueId(), player.getName());
+		Preset.loadPresets(player);
 		String append = "";
 		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
 		if ((player.hasPermission("bending.avatar") || Methods.getBendingPlayer(player.getName()).elements.size() > 1) && chatEnabled) {

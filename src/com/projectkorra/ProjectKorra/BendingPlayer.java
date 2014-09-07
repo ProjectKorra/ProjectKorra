@@ -14,7 +14,7 @@ public class BendingPlayer {
 	UUID uuid;
 	String player;
 	ArrayList<Element> elements;
-	HashMap<Integer, String> abilities;
+	private HashMap<Integer, String> abilities;
 	ConcurrentHashMap<String, Long> cooldowns;
 	boolean permaRemoved;
 	boolean isToggled;
@@ -26,7 +26,7 @@ public class BendingPlayer {
 		this.uuid = uuid;
 		this.player = player;
 		this.elements = elements;
-		this.abilities = abilities;
+		this.setAbilities(abilities);
 		cooldowns = new ConcurrentHashMap<String, Long>();
 		this.permaRemoved = permaRemoved;
 		isToggled = true;
@@ -106,5 +106,9 @@ public class BendingPlayer {
 
 	public boolean isChiBlocked() {
 		return blockedChi;
+	}
+
+	public void setAbilities(HashMap<Integer, String> abilities) {
+		this.abilities = abilities;
 	}
 }
