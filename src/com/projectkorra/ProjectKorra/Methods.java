@@ -294,6 +294,7 @@ public class Methods {
 		if (!bPlayer.isToggled) return false;
 		if (!bPlayer.hasElement(element)) return false;
 		if (isRegionProtectedFromBuild(p, null, p.getLocation())) return false;
+		if (bPlayer.blockedChi) return false;
 		return true;
 	}
 
