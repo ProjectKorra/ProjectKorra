@@ -233,7 +233,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 		config.addDefault("Abilities.Water.IceBlast.Damage", 3);
 		config.addDefault("Abilities.Water.IceBlast.Range", 20);
-		config.addDefault("Abilities.Water.IceBlast.Description", "Fires an explosive burst of ice at the opponent, spraying ice and snow around it. Requires a source of ice to use, crouch to select it, and then left click to fire.");
+		config.addDefault("Abilities.Water.IceBlast.Description", "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an explosive burst of ice at an opponent, spraying ice and snow around it. To use, simply tap sneak (Default: Shift) while targeting a block of ice to select it as a source. From there, you can just left click to send the blast off at your opponent.");
 
 		config.addDefault("Abilities.Water.IceSpike.Enabled", true);
 		config.addDefault("Abilities.Water.IceSpike.Description", "This ability has many functions. Clicking while targetting ice, or an entity over some ice, "
