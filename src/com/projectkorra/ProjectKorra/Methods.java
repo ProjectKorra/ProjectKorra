@@ -1029,22 +1029,21 @@ public class Methods {
 		return isEarthbendable(player, "RaiseEarth", block);
 	}
 
-	public static boolean isEarthbendable(Player player, String ability,
-			Block block) {
-		if (isRegionProtectedFromBuild(player, ability,
-				block.getLocation()))
-			return false;
+	public static boolean isEarthbendable(Player player, String ability, Block block)
+	{
 		Material material = block.getType();
-
-		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks")) {
-
-			if (material == Material.getMaterial(s)) {
-
-				return true;
-
+		boolean valid = false;
+		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks"))
+			if (material == Material.getMaterial(s)){
+				valid = true;
+				break;
 			}
-
-		}
+		if(!valid)
+			return false;
+		
+		if (!isRegionProtectedFromBuild(player, ability,
+				block.getLocation()))
+			return true;
 		return false;
 	}
 
@@ -1327,10 +1326,10 @@ public class Methods {
 
 	public static boolean isTransparentToEarthbending(Player player,
 			String ability, Block block) {
-		if (isRegionProtectedFromBuild(player, ability,
-				block.getLocation()))
+		if (!Arrays.asList(transparentToEarthbending).contains(block.getTypeId()))
 			return false;
-		if (Arrays.asList(transparentToEarthbending).contains(block.getTypeId()))
+		if (!isRegionProtectedFromBuild(player, ability,
+				block.getLocation()))
 			return true;
 		return false;
 	}
