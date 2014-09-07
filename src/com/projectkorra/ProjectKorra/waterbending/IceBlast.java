@@ -23,7 +23,7 @@ import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 public class IceBlast {
 	
 	private static ConcurrentHashMap<Integer, IceBlast> instances = new ConcurrentHashMap<Integer, IceBlast>();
-	private static double defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
+	private static double defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Range");
 	private static int defaultdamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
 	private static int ID = Integer.MIN_VALUE;
 	
@@ -200,7 +200,7 @@ public class IceBlast {
 		settingup = true;
 		prepared = false;
 		
-		sourceblock.setType(Material.AIR);
+		new TempBlock(sourceblock, Material.AIR, (byte) 0);
 
 		source = new TempBlock(sourceblock, Material.PACKED_ICE, data);
 	}
