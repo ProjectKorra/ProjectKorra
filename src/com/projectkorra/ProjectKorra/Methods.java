@@ -90,6 +90,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
+import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.firebending.Cook;
@@ -1031,22 +1032,21 @@ public class Methods {
 		return isEarthbendable(player, "RaiseEarth", block);
 	}
 
-	public static boolean isEarthbendable(Player player, String ability,
-			Block block) {
-		if (isRegionProtectedFromBuild(player, ability,
-				block.getLocation()))
-			return false;
+	public static boolean isEarthbendable(Player player, String ability, Block block)
+	{
 		Material material = block.getType();
-
-		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks")) {
-
-			if (material == Material.getMaterial(s)) {
-
-				return true;
-
+		boolean valid = false;
+		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks"))
+			if (material == Material.getMaterial(s)){
+				valid = true;
+				break;
 			}
-
-		}
+		if(!valid)
+			return false;
+		
+		if (!isRegionProtectedFromBuild(player, ability,
+				block.getLocation()))
+			return true;
 		return false;
 	}
 
@@ -1329,10 +1329,10 @@ public class Methods {
 
 	public static boolean isTransparentToEarthbending(Player player,
 			String ability, Block block) {
-		if (isRegionProtectedFromBuild(player, ability,
-				block.getLocation()))
+		if (!Arrays.asList(transparentToEarthbending).contains(block.getTypeId()))
 			return false;
-		if (Arrays.asList(transparentToEarthbending).contains(block.getTypeId()))
+		if (!isRegionProtectedFromBuild(player, ability,
+				block.getLocation()))
 			return true;
 		return false;
 	}
@@ -1363,8 +1363,13 @@ public class Methods {
 	
 	public static boolean isLavabendable(Block block, Player player) {
 		byte full = 0x0;
-		if (TempBlock.isTempBlock(block)) return false;
-		if ((block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) && block.getData() == full) return true;
+		if (TempBlock.isTempBlock(block)){
+			TempBlock tblock = TempBlock.instances.get(block);
+			if(tblock == null || !LavaFlow.totalBlocks.contains(tblock))
+				return false;
+		}
+		if ((block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) && block.getData() == full) 
+			return true;
 		return false;
 	}
 
