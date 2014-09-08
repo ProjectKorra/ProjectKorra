@@ -239,7 +239,7 @@ public class Commands {
 						return true;
 					}
 
-					if (Arrays.asList(grapplinghookaliases).contains(args[2])) {
+					if (Arrays.asList(grapplinghookaliases).contains(args[2].toLowerCase())) {
 						/*
 						 * They are spawning in a grappling hook.
 						 * bending give [Player] grapplinghook [# of Uses]
