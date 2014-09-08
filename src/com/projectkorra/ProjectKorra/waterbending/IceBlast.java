@@ -172,7 +172,7 @@ public class IceBlast {
 		Methods.breakBreathbendingHold(entity);
 		
 		for(Location loc : Methods.getCircle(entity.getLocation(), 6, 7, false, false, 0)) {
-			ParticleEffect.SNOW_SHOVEL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 50);
+			ParticleEffect.SNOW_SHOVEL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 10);
 		}
 	}
 	
@@ -295,8 +295,8 @@ public class IceBlast {
 			sourceblock = block;
 			source = new TempBlock(sourceblock, Material.PACKED_ICE, data);
 			
-			ParticleEffect.SNOWBALL_POOF.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1000);
-			ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1000);
+			ParticleEffect.SNOWBALL_POOF.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 100);
+			ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 100);
 			location = location.add(direction.clone());
 
 		} else if (prepared) {
