@@ -102,7 +102,7 @@ public class Commands {
 					Player player = (Player) s;
 
 					String[] deletealiases = {"delete", "d", "del"};
-					String[] createaliases = {"create", "c"};
+					String[] createaliases = {"create", "c", "save"};
 					String[] listaliases = {"list", "l"};
 					if (args.length == 2 && Arrays.asList(listaliases).contains(args[1].toLowerCase())) {
 						if (!s.hasPermission("bending.command.preset.list")) {
