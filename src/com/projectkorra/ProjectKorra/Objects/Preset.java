@@ -94,7 +94,7 @@ public class Preset {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-		presets.remove(uuid);
+		presets.get(uuid).remove(this);
 	}
 	
 	public String getName() {
