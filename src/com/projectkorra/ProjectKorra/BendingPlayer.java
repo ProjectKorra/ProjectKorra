@@ -34,15 +34,15 @@ public class BendingPlayer {
 
 		players.put(player, this);
 	}
-	
+
 	public boolean isOnCooldown(String ability) {
 		return this.cooldowns.containsKey(ability);
 	}
-	
+
 	public void addCooldown(String ability, long cooldown) {
 		this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
 	}
-	
+
 	public void removeCooldown(String ability) {
 		this.cooldowns.remove(ability);
 	}
@@ -110,5 +110,8 @@ public class BendingPlayer {
 
 	public void setAbilities(HashMap<Integer, String> abilities) {
 		this.abilities = abilities;
+		for (int i = 1; i <= 9; i++) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + (abilities.get(i) == null ? null: abilities.get(i)) + "' WHERE uuid = '" + uuid + "'");
+		}
 	}
 }
