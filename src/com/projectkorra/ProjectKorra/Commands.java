@@ -244,6 +244,11 @@ public class Commands {
 						 * They are spawning in a grappling hook.
 						 * bending give [Player] grapplinghook [# of Uses]
 						 */
+						
+						if (args.length != 3) {
+							s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending give GrapplingHook <#OfUses>");
+							return true;
+						}
 						int uses;
 						try {
 							uses = Integer.parseInt(args[3]);
