@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
@@ -114,15 +115,15 @@ public class Preset {
 		 * Now we know the preset exists in the SQL table, so we can manipulate it normally.
 		 */
 		
-		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot1 = '" + abilities.get(1) + "'");
-		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot2 = '" + abilities.get(2) + "'");
-		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot3 = '" + abilities.get(3) + "'");
-		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot4 = '" + abilities.get(4) + "'");
-		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot5 = '" + abilities.get(5) + "'");
-		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot6 = '" + abilities.get(6) + "'");
-		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot7 = '" + abilities.get(7) + "'");
-		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot8 = '" + abilities.get(8) + "'");
-		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot9 = '" + abilities.get(9) + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot1 = '" + abilities.get(1) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot2 = '" + abilities.get(2) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot3 = '" + abilities.get(3) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot4 = '" + abilities.get(4) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot5 = '" + abilities.get(5) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot6 = '" + abilities.get(6) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot7 = '" + abilities.get(7) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot8 = '" + abilities.get(8) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot9 = '" + abilities.get(9) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
 	}
 
 }
