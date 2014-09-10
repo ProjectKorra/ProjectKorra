@@ -33,7 +33,7 @@ public class ProjectKorra extends JavaPlugin {
 		new AbilityModuleManager(this);
 
 		ConfigManager.configCheck();
-		
+
 		DBConnection.host = getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = getConfig().getInt("Storage.MySQL.port");
 		DBConnection.pass = getConfig().getString("Storage.MySQL.pass");
@@ -53,26 +53,30 @@ public class ProjectKorra extends JavaPlugin {
 			Preset.loadPresets(player);
 		}
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
-		getServer().getPluginManager().registerEvents(new TagAPIListener(this), this);
-		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
-		
-		try {
-		    MetricsLite metrics = new MetricsLite(this);
-		    metrics.start();
-		} catch (IOException e) {
-		    // Failed to submit the stats :-(
+
+		if (getServer().getPluginManager().getPlugin("TagAPI") != null) {
+			getServer().getPluginManager().registerEvents(new TagAPIListener(this), this);
 		}
 		
+		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
+
+		try {
+			MetricsLite metrics = new MetricsLite(this);
+			metrics.start();
+		} catch (IOException e) {
+			// Failed to submit the stats :-(
+		}
+
 		Methods.deserializeFile();
-		
+
 		new CraftingRecipes(this);
 	}
 
 	@Override
 	public void onDisable() {
-//		for (Player player: Bukkit.getOnlinePlayers()) {
-//			Methods.saveBendingPlayer(player.getName());
-//		}
+		//		for (Player player: Bukkit.getOnlinePlayers()) {
+		//			Methods.saveBendingPlayer(player.getName());
+		//		}
 		Methods.stopBending();
 		DBConnection.sql.close();
 	}
