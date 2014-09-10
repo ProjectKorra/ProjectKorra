@@ -858,7 +858,9 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					s.sendMessage(ChatColor.GREEN + "This server is running " + ChatColor.RED + "ProjectKorra v" + plugin.getDescription().getVersion());
+					s.sendMessage(ChatColor.GREEN + "Core Version: " + ChatColor.RED + plugin.getDescription().getVersion());
+					s.sendMessage(ChatColor.GREEN + "Founded by: " + ChatColor.RED + "MistPhizzle");
+					s.sendMessage(ChatColor.GREEN + "Learn More: " + ChatColor.RED + "http://projectkorra.com");
 					return true;
 				}
 				if (Arrays.asList(removealiases).contains(args[0].toLowerCase())) {
