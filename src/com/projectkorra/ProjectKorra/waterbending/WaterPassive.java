@@ -31,7 +31,7 @@ public class WaterPassive {
 			if (Methods.canBendPassive(player.getName(), Element.Water)) {
 				if (WaterSpout.instances.containsKey(player) || EarthArmor.instances.containsKey(player)) {
 					continue;
-				} else if (ability == null || !AbilityModuleManager.shiftabilities.contains(ability)) {
+				} else if (ability == null || !AbilityModuleManager.shiftabilities.contains(ability) || ability.equalsIgnoreCase("WaterWave")) {
 					if (player.isSneaking() && Methods.isWater(player.getLocation().getBlock())) {
 						player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimFactor));
 					}
