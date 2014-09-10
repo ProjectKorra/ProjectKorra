@@ -118,8 +118,8 @@ public class WaterWave
 				currentLoc = origin.clone();
 				if(Methods.isPlant(origin.getBlock()))
 					new Plantbending(origin.getBlock());
-				else
-					Methods.addTempAirBlock(origin.getBlock());
+				//else
+				//	Methods.addTempAirBlock(origin.getBlock());
 				
 			}
 			
