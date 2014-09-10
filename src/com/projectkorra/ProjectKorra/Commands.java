@@ -26,6 +26,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
 
 public class Commands {
@@ -36,7 +37,7 @@ public class Commands {
 		this.plugin = plugin;
 		init();
 	}
-	
+
 	/*
 	 * Element Aliases
 	 */
@@ -64,15 +65,16 @@ public class Commands {
 	String[] importaliases = {"import", "i"};
 	String[] givealiases = {"give", "g", "spawn"};
 	String[] invinciblealiases = {"invincible", "inv"};
+	String[] presetaliases = {"preset", "presets", "pre", "set"};
 
 	/*
 	 * Item Aliases
 	 */
-	
+
 	public static Set<String> invincible = new HashSet<String>();
-	
+
 	String[] grapplinghookaliases = {"grapplinghook", "grapplehook", "hook", "ghook"};
-	
+
 	public static boolean debug = ProjectKorra.plugin.getConfig().getBoolean("debug");
 
 	public static boolean isToggledForAll = false;
@@ -91,22 +93,122 @@ public class Commands {
 					s.sendMessage(ChatColor.RED + "/bending bind [Ability] # " + ChatColor.YELLOW + "Bind an ability.");
 					return true;
 				}
-				if (Arrays.asList(invinciblealiases).contains(args[0].toLowerCase())) {
-					if (!s.hasPermission("bending.command.invincible")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
-						return true;
-					}
-					
+				if (Arrays.asList(presetaliases).contains(args[0].toLowerCase())) {
 					if (!(s instanceof Player)) {
 						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
 						return true;
 					}
 					
+					Player player = (Player) s;
+
+					String[] deletealiases = {"delete", "d", "del"};
+					String[] createaliases = {"create", "c", "save"};
+					String[] listaliases = {"list", "l"};
+					if (args.length == 2 && Arrays.asList(listaliases).contains(args[1].toLowerCase())) {
+						if (!s.hasPermission("bending.command.preset.list")) {
+							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							return true;
+						}
+
+						List<Preset> listnames = Preset.presets.get(player.getUniqueId());
+						List<String> ln2 = new ArrayList<String>();
+						
+						if (listnames == null || listnames.isEmpty()) {
+							s.sendMessage(ChatColor.RED + "You don't have any presets.");
+							return true;
+						}
+						
+						for (Preset preset: listnames) {
+							ln2.add(preset.getName());
+						}
+
+						s.sendMessage(ChatColor.GREEN + "Your Presets: " + ChatColor.DARK_AQUA + ln2.toString());
+						return true;						
+
+					}else if (args.length != 3) { // bending preset bind|create|delete {name}
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending preset create|bind|list|delete [name]");
+						return true;
+					}
+
+					String name = args[2];
+
+					if (Arrays.asList(deletealiases).contains(args[1].toLowerCase())) {
+						if (!s.hasPermission("bending.command.preset.delete")) {
+							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							return true;
+						}
+						if (!Preset.presetExists(player, name)) {
+							s.sendMessage(ChatColor.RED + "You don't have a preset with that name.");
+							return true;
+						}
+
+						Preset preset = Preset.getPreset(player, name);
+						preset.delete();
+						s.sendMessage(ChatColor.GREEN + "You have deleted your preset named: " + name);
+					}
+
+					if (Arrays.asList(bindaliases).contains(args[1].toLowerCase())) {
+						if (!s.hasPermission("bending.command.preset.bind")) {
+							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							return true;
+						}
+
+						if (!Preset.presetExists(player, name)) {
+							s.sendMessage(ChatColor.RED + "You don't have a preset with that name.");
+							return true;
+						}
+
+						Preset.bindPreset(player, name);
+						s.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + name + " preset.");
+						return true;
+					}
+
+					if (Arrays.asList(createaliases).contains(args[1].toLowerCase())) {
+						if (!s.hasPermission("bending.command.preset.create")) {
+							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							return true;
+						}
+
+						int limit = Methods.getMaxPresets(player);
+
+						if (Preset.presets.get(player) != null && Preset.presets.get(player).size() >= limit) {
+							s.sendMessage(ChatColor.RED + "You have reached your max number of Presets.");
+							return true;
+						}
+
+						if (Preset.presetExists(player, name)) {
+							s.sendMessage(ChatColor.RED + "A preset with that name already exists.");
+							return true;
+						}
+
+						BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+
+						if (bPlayer == null) return true;
+
+						HashMap<Integer, String> abilities = bPlayer.getAbilities();
+						Preset preset = new Preset(player.getUniqueId(), name, abilities);
+						preset.save();
+						s.sendMessage(ChatColor.GREEN + "Created preset with the name: " + name);
+						return true;
+					}
+
+				}
+				if (Arrays.asList(invinciblealiases).contains(args[0].toLowerCase())) {
+					if (!s.hasPermission("bending.command.invincible")) {
+						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						return true;
+					}
+
+					if (!(s instanceof Player)) {
+						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
+						return true;
+					}
+
 					if (args.length != 1) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending invincible");
 						return true;
 					}
-					
+
 					if (!invincible.contains(s.getName())) {
 						/*
 						 * Player is not invincible.
@@ -124,24 +226,29 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					
+
 					if (args.length < 3) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending give [Player] [Item] <Properties>");
 						return true;
 					}
-					
+
 					Player player = Bukkit.getPlayer(args[1]);
-					
+
 					if (player == null) {
 						s.sendMessage(ChatColor.RED + "That player is not online.");
 						return true;
 					}
-					
-					if (Arrays.asList(grapplinghookaliases).contains(args[2])) {
+
+					if (Arrays.asList(grapplinghookaliases).contains(args[2].toLowerCase())) {
 						/*
 						 * They are spawning in a grappling hook.
 						 * bending give [Player] grapplinghook [# of Uses]
 						 */
+						
+						if (args.length != 3) {
+							s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending give GrapplingHook <#OfUses>");
+							return true;
+						}
 						int uses;
 						try {
 							uses = Integer.parseInt(args[3]);
@@ -150,7 +257,7 @@ public class Commands {
 							s.sendMessage(ChatColor.GOLD + "Example: /bending give " + s.getName() + " grapplinghook 25");
 							return true;
 						}
-						
+
 						ItemStack hook = GrapplingHookAPI.createHook(uses);
 						player.getInventory().addItem(hook);
 						s.sendMessage(ChatColor.GREEN + "A grappling hook with " + uses + " uses has been added to your inventory.");
@@ -192,7 +299,7 @@ public class Commands {
 					}
 					BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
 					if (args.length == 1) {
-						bPlayer.abilities.clear();
+						bPlayer.getAbilities().clear();
 						for (int i = 1; i <= 9; i++) {
 							Methods.saveAbility(bPlayer, i, null);
 						}
@@ -207,8 +314,8 @@ public class Commands {
 								s.sendMessage(ChatColor.RED + "The slot must be an integer between 0 and 9.");
 								return true;
 							}
-							if (bPlayer.abilities.get(slot) != null) {
-								bPlayer.abilities.remove(slot);
+							if (bPlayer.getAbilities().get(slot) != null) {
+								bPlayer.getAbilities().remove(slot);
 								Methods.saveAbility(bPlayer, slot, null);
 							}
 							s.sendMessage("You have cleared slot #" + slot);
@@ -404,7 +511,7 @@ public class Commands {
 								if (bPlayer.hasElement(Element.Fire)) elements.append("f");
 								if (bPlayer.hasElement(Element.Chi)) elements.append("c");
 
-								HashMap<Integer, String> abilities = bPlayer.abilities;
+								HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
 								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.uuid.toString() + "'");
 
@@ -533,7 +640,7 @@ public class Commands {
 							return true;
 						}
 						BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
-						HashMap<Integer, String> abilities = bPlayer.abilities;
+						HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
 						if (abilities.isEmpty()) {
 							s.sendMessage("You don't have any bound abilities.");
@@ -611,7 +718,7 @@ public class Commands {
 					}
 
 					if (args.length == 2) {
-						
+
 						Player p = Bukkit.getPlayer(args[1]);
 						if (p == null) {
 							s.sendMessage(ChatColor.GREEN + "You are running a lookup of an offline player, this may take a second.");
@@ -802,14 +909,14 @@ public class Commands {
 					}
 
 					BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
-					
+
 					if (bPlayer.isPermaRemoved()) {
 						bPlayer.permaRemoved = false;
 						Methods.savePermaRemoved(bPlayer);
 						s.sendMessage(ChatColor.RED + "You have restored the bending of: " + ChatColor.DARK_AQUA + player.getName());
 						return true;
 					}
-				
+
 					bPlayer.elements.clear();
 					Methods.removeUnusableAbilities(player.getName());
 					Methods.saveElements(bPlayer);

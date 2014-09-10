@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.CraftingRecipes;
 import com.projectkorra.ProjectKorra.airbending.AirbendingManager;
 import com.projectkorra.ProjectKorra.chiblocking.ChiblockingManager;
@@ -49,6 +50,7 @@ public class ProjectKorra extends JavaPlugin {
 		DBConnection.init();
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
+			Preset.loadPresets(player);
 		}
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
 		getServer().getPluginManager().registerEvents(new TagAPIListener(this), this);

@@ -36,6 +36,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
@@ -173,7 +174,7 @@ public class Methods {
 	public static void bindAbility(Player player, String ability) {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
-		bPlayer.abilities.put(slot, ability);
+		bPlayer.getAbilities().put(slot, ability);
 		if (isAirAbility(ability)) {
 			player.sendMessage(getAirColor() + "Succesfully bound " + ability + " to slot " + slot);
 		}
@@ -204,7 +205,7 @@ public class Methods {
 	 */
 	public static void bindAbility(Player player, String ability, int slot) {
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
-		bPlayer.abilities.put(slot, ability);
+		bPlayer.getAbilities().put(slot, ability);
 		if (isAirAbility(ability)) {
 			player.sendMessage(getAirColor() + "Succesfully bound " + ability + " to slot " + slot);
 		}
@@ -262,6 +263,7 @@ public class Methods {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
 		if (bPlayer == null) return false;
+		if (plugin.getConfig().getStringList("Properties.DisabledWorlds") != null && plugin.getConfig().getStringList("Properties.DisabledWorlds").contains(p.getWorld().getName())) return false;
 		if (Commands.isToggledForAll) return false;
 		if (!bPlayer.isToggled) return false;
 		if (p == null) return false;
@@ -293,6 +295,7 @@ public class Methods {
 		if (!bPlayer.isToggled) return false;
 		if (!bPlayer.hasElement(element)) return false;
 		if (isRegionProtectedFromBuild(p, null, p.getLocation())) return false;
+		if (bPlayer.blockedChi) return false;
 		return true;
 	}
 
@@ -545,7 +548,7 @@ public class Methods {
 		if (bPlayer == null) return null;
 
 		int slot = player.getInventory().getHeldItemSlot() + 1;
-		return bPlayer.abilities.get(slot);
+		return bPlayer.getAbilities().get(slot);
 	}
 	
 	public static long getGlobalCooldown() {
@@ -934,6 +937,20 @@ public class Methods {
 						continue;
 					}
 				}
+				return block;
+			}
+		}
+		return null;
+	}
+	
+	public static Block getIceSourceBlock(Player player, double range) {
+		Location location = player.getEyeLocation();
+		Vector vector = location.getDirection().clone().normalize();
+		for (double i = 0; i <= range; i++) {
+			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			if (isRegionProtectedFromBuild(player, "IceBlast", location))
+				continue;
+			if (isIcebendable(block)) {
 				return block;
 			}
 		}
@@ -1369,6 +1386,12 @@ public class Methods {
 			return true;
 		return false;
 	}
+	
+	public static boolean isIcebendable(Block block) {
+		if (block.getType() == Material.ICE) return true;
+		if (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce")) return true;
+		return false;
+	}
 
 
 	public static boolean isWeapon(Material mat) {
@@ -1673,7 +1696,7 @@ public class Methods {
 					finalabilities.put(i, slots.get(i));
 				}
 			}
-			bPlayer.abilities = finalabilities;
+			bPlayer.setAbilities(finalabilities);
 		} catch (Exception ex) {
 
 		}
@@ -1796,7 +1819,7 @@ public class Methods {
 		if (bPlayer == null) return;
 		String uuid = bPlayer.uuid.toString();
 		
-		HashMap<Integer, String> abilities = bPlayer.abilities;
+		HashMap<Integer, String> abilities = bPlayer.getAbilities();
 		
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
 	}
@@ -1970,6 +1993,15 @@ public class Methods {
 			
 		}
 		return null;
+	}
+	
+	public static int getMaxPresets(Player player) {
+		if (player.isOp()) return 500;
+		int cap = 0;
+		for (int i = 0; i <= 500; i++) {
+			if (player.hasPermission("bending.command.presets.create." + i)) cap = i;
+		}
+		return cap;
 	}
 
 }

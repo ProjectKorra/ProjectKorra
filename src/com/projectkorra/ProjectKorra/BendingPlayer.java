@@ -14,7 +14,7 @@ public class BendingPlayer {
 	UUID uuid;
 	String player;
 	ArrayList<Element> elements;
-	HashMap<Integer, String> abilities;
+	private HashMap<Integer, String> abilities;
 	ConcurrentHashMap<String, Long> cooldowns;
 	boolean permaRemoved;
 	boolean isToggled;
@@ -26,7 +26,7 @@ public class BendingPlayer {
 		this.uuid = uuid;
 		this.player = player;
 		this.elements = elements;
-		this.abilities = abilities;
+		this.setAbilities(abilities);
 		cooldowns = new ConcurrentHashMap<String, Long>();
 		this.permaRemoved = permaRemoved;
 		isToggled = true;
@@ -34,15 +34,15 @@ public class BendingPlayer {
 
 		players.put(player, this);
 	}
-	
+
 	public boolean isOnCooldown(String ability) {
 		return this.cooldowns.containsKey(ability);
 	}
-	
+
 	public void addCooldown(String ability, long cooldown) {
 		this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
 	}
-	
+
 	public void removeCooldown(String ability) {
 		this.cooldowns.remove(ability);
 	}
@@ -106,5 +106,12 @@ public class BendingPlayer {
 
 	public boolean isChiBlocked() {
 		return blockedChi;
+	}
+
+	public void setAbilities(HashMap<Integer, String> abilities) {
+		this.abilities = abilities;
+		for (int i = 1; i <= 9; i++) {
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + (abilities.get(i) == null ? null: abilities.get(i)) + "' WHERE uuid = '" + uuid + "'");
+		}
 	}
 }

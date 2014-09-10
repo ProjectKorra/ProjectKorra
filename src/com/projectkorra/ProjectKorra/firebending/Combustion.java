@@ -152,6 +152,7 @@ public class Combustion {
 		if (instances.containsKey(player)) {
 			Combustion combustion = instances.get(player);
 			combustion.createExplosion(combustion.location, combustion.power, breakblocks);
+			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 3);
 		}
 	}
 

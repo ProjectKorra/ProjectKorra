@@ -85,6 +85,11 @@ public class ConfigManager {
 
 		config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
+		ArrayList<String> disabledWorlds = new ArrayList<String>();
+		disabledWorlds.add("TestWorld");
+		disabledWorlds.add("TestWorld2");
+		config.addDefault("Properties.DisabledWorlds", disabledWorlds);
+		
 		config.addDefault("Abilities.AvatarState.Enabled", true);
 		config.addDefault("Abilities.AvatarState.Description", "The signature ability of the Avatar, this is a toggle. Click to activate to become "
 				+ "nearly unstoppable. While in the Avatar State, the user takes severely reduced damage from "
@@ -224,6 +229,11 @@ public class ConfigManager {
 				+ "be at least partially submerged in water.");
 		config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
 		config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
+		
+		config.addDefault("Abilities.Water.IceBlast.Enabled", true);
+		config.addDefault("Abilities.Water.IceBlast.Damage", 3);
+		config.addDefault("Abilities.Water.IceBlast.Range", 20);
+		config.addDefault("Abilities.Water.IceBlast.Description", "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an explosive burst of ice at an opponent, spraying ice and snow around it. To use, simply tap sneak (Default: Shift) while targeting a block of ice to select it as a source. From there, you can just left click to send the blast off at your opponent.");
 
 		config.addDefault("Abilities.Water.IceSpike.Enabled", true);
 		config.addDefault("Abilities.Water.IceSpike.Description", "This ability has many functions. Clicking while targetting ice, or an entity over some ice, "
@@ -296,6 +306,13 @@ public class ConfigManager {
 				+ "will remain on. If you try to spout over an area with no water, snow or ice, "
 				+ "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.");
 		config.addDefault("Abilities.Water.WaterSpout.Height", 20);
+		
+		config.addDefault("Abilities.Water.WaterWave.Enabled", true);
+		config.addDefault("Abilities.Water.WaterWave.Description", "This ability provides a Waterbender with boosted mobility and transportation. To use, first click a source block to select it; then hold sneak (Default: Shift) to begin streaming the water around you. While the water is streaming around you let go of sneak and the water will form underneath your feet, blasting you off into the direction that you are facing. Additionally, taping sneak while riding the wave still stop it.");
+		config.addDefault("Abilities.Water.WaterWave.Range", 6);
+		config.addDefault("Abilities.Water.WaterWave.ChargeTime", 1000);
+		config.addDefault("Abilities.Water.WaterWave.FlightTime", 2000);
+		config.addDefault("Abilities.Water.WaterWave.Speed", 1.2);
 
 		config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 

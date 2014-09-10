@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.4.0 BETA 9
+version: 1.4.0 BETA 11
 main: com.projectkorra.ProjectKorra.ProjectKorra
 commands:
   projectkorra:
@@ -36,6 +36,11 @@ permissions:
       bending.command.help: true
       bending.command.clear: true
       bending.command.who: true
+      bending.command.preset.list: true
+      bending.command.preset.create.2: true
+      bending.command.preset.create: true
+      bending.command.preset.bind: true
+      bending.command.preset.delete: true
       bending.air: true
       bending.water: true
       bending.earth: true
@@ -61,6 +66,7 @@ permissions:
     description: Grants access to most waterbending abilities.
     children:
       bending.ability.HealingWaters: true
+      bending.ability.IceBlast: true
       bending.ability.IceSpike: true
       bending.ability.OctopusForm: true
       bending.ability.PhaseChange: true
