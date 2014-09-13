@@ -87,6 +87,9 @@ public class Commands {
 		exe = new CommandExecutor() {
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
+                                for(int i = 0; i < args.length; i++){
+                                    args[i] = args[i].toLowerCase();
+                                }
 				if (args.length == 0) {
 					s.sendMessage(ChatColor.RED + "/bending help [Ability/Command] " + ChatColor.YELLOW + "Display help.");
 					s.sendMessage(ChatColor.RED + "/bending choose [Element] " + ChatColor.YELLOW + "Choose an element.");
@@ -349,8 +352,8 @@ public class Commands {
 							s.sendMessage(ChatColor.RED + "That is not an ability.");
 							return true;
 						}
-
-						String ability = Methods.getAbility(abil);
+                                                
+                                                String ability = Methods.getAbility(abil);
 
 						if (!Methods.hasPermission((Player) s, ability)) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");

@@ -143,9 +143,20 @@ public class Methods {
 	 * @return true if ability exists
 	 */
 	public static boolean abilityExists(String string) {
-		if (getAbility(string) == null) return false;
-		return true;
+            for (String st: AbilityModuleManager.abilities) {
+                if (string.equalsIgnoreCase(st))
+                    return true;
+            }
+            return false;
 	}
+        
+        public static boolean isDisabledStockAbility(String string){
+            for (String st : AbilityModuleManager.disabledStockAbilities){
+                if (string.equalsIgnoreCase(st))
+                    return true;
+            }
+            return false;
+        }
 
 	public static void addTempAirBlock(Block block) {
 		if (movedearth.containsKey(block)) {
@@ -173,27 +184,7 @@ public class Methods {
 	 */
 	public static void bindAbility(Player player, String ability) {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
-		BendingPlayer bPlayer = getBendingPlayer(player.getName());
-		bPlayer.getAbilities().put(slot, ability);
-		if (isAirAbility(ability)) {
-			player.sendMessage(getAirColor() + "Succesfully bound " + ability + " to slot " + slot);
-		}
-		else if (isWaterAbility(ability)) {
-			player.sendMessage(getWaterColor() + "Succesfully bound " + ability + " to slot " + slot);
-		}
-		else if (isEarthAbility(ability)) {
-			player.sendMessage(getEarthColor() + "Succesfully bound " + ability + " to slot " + slot);
-		}
-		else if (isFireAbility(ability)) {
-			player.sendMessage(getFireColor() + "Succesfully bound " + ability + " to slot " + slot);
-		}
-		else if (isChiAbility(ability)) {
-			player.sendMessage(getChiColor() + "Succesfully bound " + ability + " to slot " + slot);
-		} else {
-			player.sendMessage(getAvatarColor() + "Successfully bound " + ability + " to slot " + slot);
-		}
-		
-		saveAbility(bPlayer, slot, ability);
+                bindAbility(player,ability, slot);
 	}
 
 	/**
@@ -453,7 +444,7 @@ public class Methods {
 	 * </p>
 	 */
 	public static String getAbility(String string) {
-		for (String st: AbilityModuleManager.abilities) {
+            for (String st: AbilityModuleManager.abilities) {
 			if (st.equalsIgnoreCase(string)) return st;
 		}
 		return null;
@@ -951,7 +942,9 @@ public class Methods {
 			if (isRegionProtectedFromBuild(player, "IceBlast", location))
 				continue;
 			if (isIcebendable(block)) {
-				return block;
+                                if (TempBlock.isTempBlock(block))
+                                        continue;
+                                return block;
 			}
 		}
 		return null;
