@@ -791,19 +791,20 @@ public class Commands {
 							}
 						}
 
-						if (p.getName().equalsIgnoreCase("MistPhizzle") ||
-								p.getName().equalsIgnoreCase("runefist")
-								|| p.getName().equalsIgnoreCase("Jacklin213")
-								|| p.getName().equalsIgnoreCase("kingbirdy")
-								|| p.getName().equalsIgnoreCase("cpdances")
-								|| p.getName().equalsIgnoreCase("sampepere")) {
-							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Developer");
+						if (p.getName().equalsIgnoreCase("MistPhizzle")) {
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Founder"); // MistPhizzle
 						}
-						if (p.getName().equalsIgnoreCase("vidcom")
-								|| p.getName().equalsIgnoreCase("Zolteex")
-								|| p.getName().equalsIgnoreCase("zmeduna")
-								|| p.getName().equalsIgnoreCase("ashe36")) {
-							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
+						if (p.getName().equalsIgnoreCase("runefist") // codiaz
+								|| p.getName().equalsIgnoreCase("Jacklin213") // Jacklin213
+								|| p.getName().equalsIgnoreCase("kingbirdy") // kingbirdy
+								|| p.getName().equalsIgnoreCase("creepermcaliens") // Coolade
+								|| p.getName().equalsIgnoreCase("sampepere")) { // AlexTheCoder
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra (Core) Developer");
+						}
+						if (p.getName().equalsIgnoreCase("vidcom") // vidcom
+								|| p.getName().equalsIgnoreCase("Zolteex") // Zolteex
+								|| p.getName().equalsIgnoreCase("ashe36")) { // ashe36
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra (Core) Concept Designer");
 						}
 						return true;
 					}
