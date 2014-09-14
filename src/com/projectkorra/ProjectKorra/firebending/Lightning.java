@@ -10,6 +10,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -148,12 +150,14 @@ public class Lightning {
 
 		double damage = maxdamage - (distance / strikeradius) * .5;
 
-		if (Methods.isWater(strike.getLocation().getBlock())) {
-			for (Entity en: Methods.getEntitiesAroundPoint(strike.getLocation(), WaterAreaOfEffect)) {
+		if ((getTargetLocation().getBlock().getType() == Material.WATER) || (getTargetLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
+			for (Entity en: Methods.getEntitiesAroundPoint(getTargetLocation().getBlock().getLocation(), WaterAreaOfEffect)) {
 				if (en instanceof LivingEntity) {
-					if (Methods.isWater(en.getLocation().getBlock())) {
-						Methods.damageEntity(player, entity, (int) damage);
-						Methods.breakBreathbendingHold(entity);
+					LivingEntity le = (LivingEntity) en;
+					if ((le.getLocation().getBlock().getType() == Material.WATER) || (le.getLocation().getBlock().getType() == Material.STATIONARY_WATER)) {
+						le.damage((int) damage);
+						le.setLastDamageCause(new EntityDamageEvent(player, DamageCause.ENTITY_ATTACK, damage));
+						Methods.breakBreathbendingHold(le);
 					}
 				}
 			}
