@@ -501,9 +501,10 @@ public class Commands {
 									Bukkit.getServer().getScheduler().cancelTask(importTask.getTaskId());
 									plugin.getConfig().set("Properties.ImportEnabled", false);
 									plugin.saveConfig();
-									for (Player player: Bukkit.getOnlinePlayers()) {
-										Methods.createBendingPlayer(player.getUniqueId(), player.getName());
-									}
+									Methods.loadPlayers();
+//									for (Player player: Bukkit.getOnlinePlayers()) {
+//										Methods.createBendingPlayer(player.getUniqueId(), player.getName());
+//									}
 									return;
 								}
 								StringBuilder elements = new StringBuilder();

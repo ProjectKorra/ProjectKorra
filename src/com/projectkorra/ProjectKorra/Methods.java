@@ -139,6 +139,51 @@ public class Methods {
 	public static Integer[] nonOpaque = {0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 68, 69, 70, 72,
 		75, 76, 77, 78, 83, 90, 93, 94, 104, 105, 106, 111, 115, 119, 127, 131, 132};
 
+	private static int timelimitdays = 30;
+	
+	public static void loadPlayers() {
+		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players");
+		try {
+			if (!rs2.next()) {
+				return; // Nothing in the query!
+			} else {
+				do {
+					UUID uuid = UUID.fromString(rs2.getString("uuid"));
+					String player = rs2.getString("player");
+					String element = rs2.getString("element");
+					String permaremoved = rs2.getString("permaremoved");
+					boolean p = false;
+					ArrayList<Element> elements = new ArrayList<Element>();
+					if (element != null) { // Player has an element
+						if (element.contains("a")) elements.add(Element.Air);
+						if (element.contains("w")) elements.add(Element.Water);
+						if (element.contains("e")) elements.add(Element.Earth);
+						if (element.contains("f")) elements.add(Element.Fire);
+						if (element.contains("c")) elements.add(Element.Chi);
+					}
+					
+					HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+					for (int i = 1; i <= 9; i++) {
+						String slot = rs2.getString("slot" + i);
+						if (slot != null) abilities.put(i, slot);
+					}
+
+					if (permaremoved == null) {
+						p = false;
+					}
+					else if (permaremoved.equals("true")) {
+						p = true;
+					}
+					else if (permaremoved.equals("false")) {
+						p = false;
+					}
+					new BendingPlayer(uuid, player, elements, abilities, p);
+				} while (rs2.next());
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+	}
 	/**
 	 * Checks to see if an AbilityExists. Uses method {@link #getAbility(String)} to check if it exists.
 	 * @param string Ability Name
@@ -321,56 +366,30 @@ public class Methods {
 		return player.hasPermission("bending.ability.plantbending");
 	}
 
-	/**
-	 * Creates a {@link BendingPlayer} with the data from the database. This runs when a player logs in.
-	 * @param uuid The UUID of the player
-	 * @param player The player name
-	 * @throws SQLException
-	 */
-	public static void createBendingPlayer(UUID uuid, String player) {
-		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
-		try {
-			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
-				new BendingPlayer(uuid, player, new ArrayList<Element>(), new HashMap<Integer, String>(), false);
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player) VALUES ('" + uuid.toString() + "', '" + player + "')");
-				ProjectKorra.log.info("Created new BendingPlayer for " + player);
-			} else {
-				// The player has at least played before.
-				String player2 = rs2.getString("player");
-				if (!player.equalsIgnoreCase(player2)) DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player2 + "' WHERE uuid = '" + uuid.toString() + "'"); // They have changed names.
-				String element = rs2.getString("element");
-				String permaremoved = rs2.getString("permaremoved");
-				boolean p = false;
-				ArrayList<Element> elements = new ArrayList<Element>();
-				if (element != null) { // Player has an element.
-					if (element.contains("a")) elements.add(Element.Air);
-					if (element.contains("w")) elements.add(Element.Water);
-					if (element.contains("e")) elements.add(Element.Earth);
-					if (element.contains("f")) elements.add(Element.Fire);
-					if (element.contains("c")) elements.add(Element.Chi);
-				}
-
-				HashMap<Integer, String> abilities = new HashMap<Integer, String>();
-				for (int i = 1; i <= 9; i++) {
-					String slot = rs2.getString("slot" + i);
-					if (slot != null) abilities.put(i, slot);
-				}
-
-				if (permaremoved == null) {
-					p = false;
-				}
-				else if (permaremoved.equals("true")) {
-					p = true;
-				}
-				else if (permaremoved.equals("false")) {
-					p = false;
-				}
-
-				new BendingPlayer(uuid, player2, elements, abilities, p);
-			}
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
+//	/**
+//	 * Creates a {@link BendingPlayer} with the data from the database. This runs when a player logs in.
+//	 * @param uuid The UUID of the player
+//	 * @param player The player name
+//	 * @throws SQLException
+//	 */
+//	public static void createBendingPlayer(UUID uuid, String player) {
+//		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
+//		try {
+//			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
+//				new BendingPlayer(uuid, player, new ArrayList<Element>(), new HashMap<Integer, String>(), false);
+//				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player) VALUES ('" + uuid.toString() + "', '" + player + "')");
+//				ProjectKorra.log.info("Created new BendingPlayer for " + player);
+//			} else {
+//			}
+//		} catch (SQLException ex) {
+//			ex.printStackTrace();
+//		}
+//	}
+	
+	public static void createNewBendingPlayer(UUID uuid, String player) {
+		new BendingPlayer(uuid, player, new ArrayList<Element>(), new HashMap<Integer, String>(), false);
+		DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player) VALUES ('" + uuid.toString() + "', '" + player + "')");
+		ProjectKorra.log.info("Created new BendingPlayer for " + player);
 	}
 
 	/**
@@ -1620,9 +1639,6 @@ public class Methods {
 	}
 
 	public static void reloadPlugin() {
-//		for (Player player: Bukkit.getOnlinePlayers()) {
-//			Methods.saveBendingPlayer(player.getName());
-//		}
 		DBConnection.sql.close();
 		plugin.reloadConfig();
 		Methods.stopBending();
@@ -1632,9 +1648,7 @@ public class Methods {
 		DBConnection.db = plugin.getConfig().getString("Storage.MySQL.db");
 		DBConnection.user = plugin.getConfig().getString("Storage.MySQL.user");
 		DBConnection.init();
-		for (Player player: Bukkit.getOnlinePlayers()) {
-			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
-		}
+		loadPlayers();
 	}
 
 	public static void removeAllEarthbendedBlocks() {
