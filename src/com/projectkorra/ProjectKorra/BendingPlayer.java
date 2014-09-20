@@ -1,10 +1,15 @@
 package com.projectkorra.ProjectKorra;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class BendingPlayer {
 
@@ -21,6 +26,7 @@ public class BendingPlayer {
 	private long slowTime = 0;
 	private boolean tremorsense = true;
 	boolean blockedChi;
+	long lastTime = 0;
 
 	public BendingPlayer(UUID uuid, String player, ArrayList<Element> elements, HashMap<Integer, String> abilities, boolean permaRemoved) {
 		this.uuid = uuid;
@@ -31,8 +37,28 @@ public class BendingPlayer {
 		this.permaRemoved = permaRemoved;
 		isToggled = true;
 		blockedChi = false;
+		lastTime = System.currentTimeMillis();
 
 		players.put(player, this);
+	}
+	
+	public BendingPlayer(Player player) {
+		this.uuid = player.getUniqueId();
+		this.player = player.getName();
+		this.elements = new ArrayList<Element>();
+		this.setAbilities(new HashMap<Integer, String>());
+		cooldowns = new ConcurrentHashMap<String, Long>();
+		this.permaRemoved = false;
+		isToggled = true;
+		blockedChi = false;
+		lastTime = System.currentTimeMillis();
+		
+		players.put(player.getName(), this);
+	}
+	public BendingPlayer(UUID uuid) {
+		String playername = Bukkit.getOfflinePlayer(uuid).getName();
+		
+		players.put(playername, this);
 	}
 
 	public boolean isOnCooldown(String ability) {
@@ -113,5 +139,62 @@ public class BendingPlayer {
 		for (int i = 1; i <= 9; i++) {
 			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + (abilities.get(i) == null ? null: abilities.get(i)) + "' WHERE uuid = '" + uuid + "'");
 		}
+	}
+	
+	public static BendingPlayer getBendingPlayer(Player player) {
+		if (players.containsKey(player.getName())) {
+			return players.get(player.getName());
+		}
+		
+		BendingPlayer bPlayer = getPlayer(player.getUniqueId());
+		if (bPlayer != null) {
+			players.put(player.getName(), bPlayer);
+			return bPlayer;
+		} else {
+			return new BendingPlayer(player);
+		}
+	}
+	
+	public static BendingPlayer getPlayer(UUID uuid) {
+		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
+		try {
+			if (!rs2.next()) {
+				return null;
+			} else {
+				String name = rs2.getString("player");
+				String element = rs2.getString("element");
+				String permaremoved = rs2.getString("permaremoved");
+				boolean p = false;
+				ArrayList<Element> elements = new ArrayList<Element>();
+				if (element != null) { // Player has an element.
+					if (element.contains("a")) elements.add(Element.Air);
+					if (element.contains("w")) elements.add(Element.Water);
+					if (element.contains("e")) elements.add(Element.Earth);
+					if (element.contains("f")) elements.add(Element.Fire);
+					if (element.contains("c")) elements.add(Element.Chi);
+				}
+
+				HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+				for (int i = 1; i <= 9; i++) {
+					String slot = rs2.getString("slot" + i);
+					if (slot != null) abilities.put(i, slot);
+				}
+
+				if (permaremoved == null) {
+					p = false;
+				}
+				else if (permaremoved.equals("true")) {
+					p = true;
+				}
+				else if (permaremoved.equals("false")) {
+					p = false;
+				}
+
+				return new BendingPlayer(uuid, name, elements, abilities, p);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
