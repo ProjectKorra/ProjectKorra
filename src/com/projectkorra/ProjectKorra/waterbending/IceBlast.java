@@ -53,6 +53,8 @@ public class IceBlast {
 
 		if (sourceblock == null) {
 			return;
+        }else if (TempBlock.isTempBlock(sourceblock)) {
+            return;
 		} else {
 			prepare(sourceblock);
 		}
