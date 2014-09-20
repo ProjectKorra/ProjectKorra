@@ -1,7 +1,5 @@
 package com.projectkorra.ProjectKorra;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -108,28 +106,6 @@ public class BendingPlayer {
 
 	public boolean isChiBlocked() {
 		return blockedChi;
-	}
-	
-	public static List<BendingPlayer> getBendingPlayers() {
-		List<BendingPlayer> bPlayers = new ArrayList<BendingPlayer>(players.values());
-		return bPlayers;
-	}
-	
-	public static boolean dataExists(UUID uuid) {
-		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
-		try {
-			if (rs2.next()) return true;
-			return false;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-	
-	public void delete() {
-		DBConnection.sql.modifyQuery("DELETE FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
-		players.remove(player);
-		ProjectKorra.log.info("Deleted data for " + this.player);
 	}
 
 	public void setAbilities(HashMap<Integer, String> abilities) {

@@ -48,11 +48,10 @@ public class ProjectKorra extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 
 		DBConnection.init();
-		Methods.loadPlayers();
-//		for (Player player: Bukkit.getOnlinePlayers()) {
-//			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
-//			Preset.loadPresets(player);
-//		}
+		for (Player player: Bukkit.getOnlinePlayers()) {
+			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
+			Preset.loadPresets(player);
+		}
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
 
 		if (getServer().getPluginManager().getPlugin("TagAPI") != null) {

@@ -286,10 +286,7 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
-		if (bPlayer == null) {
-			Methods.createNewBendingPlayer(player.getUniqueId(), player.getName());
-		}
+		Methods.createBendingPlayer(e.getPlayer().getUniqueId(), player.getName());
 		Preset.loadPresets(player);
 		String append = "";
 		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
