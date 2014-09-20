@@ -65,7 +65,7 @@ public class Commands {
 	String[] importaliases = {"import", "i"};
 	String[] givealiases = {"give", "g", "spawn"};
 	String[] invinciblealiases = {"invincible", "inv"};
-	String[] presetaliases = {"preset", "presets", "pre", "set"};
+	String[] presetaliases = {"preset", "presets", "pre", "set", "p"};
 
 	/*
 	 * Item Aliases
