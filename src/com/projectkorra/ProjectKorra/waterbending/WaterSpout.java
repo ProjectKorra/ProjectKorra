@@ -49,7 +49,8 @@ public class WaterSpout {
 			topBlock = player.getLocation().getBlock();
 		Material mat = topBlock.getType();
 		if(mat != Material.WATER && mat != Material.STATIONARY_WATER
-				&& mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW)
+				&& mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW 
+				&& mat != Material.SNOW_BLOCK)
 			return;
 		
 		new Flight(player);

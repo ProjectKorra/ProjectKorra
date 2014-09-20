@@ -103,6 +103,9 @@ public class WaterWave
 		}
 		else if(type == AbilityType.SHIFT)
 		{
+			if(direction == null){
+				direction = player.getEyeLocation().getDirection();
+			}
 			if(!charging)
 			{
 				if(!containsType(player, AbilityType.CLICK)){
