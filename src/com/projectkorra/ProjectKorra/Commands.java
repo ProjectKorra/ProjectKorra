@@ -87,7 +87,10 @@ public class Commands {
 		exe = new CommandExecutor() {
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
-				if (args.length == 0) {
+				for(int i = 0; i < args.length; i++){
+                                    args[i] = args[i].toLowerCase();
+                                }
+                                if (args.length == 0) {
 					s.sendMessage(ChatColor.RED + "/bending help [Ability/Command] " + ChatColor.YELLOW + "Display help.");
 					s.sendMessage(ChatColor.RED + "/bending choose [Element] " + ChatColor.YELLOW + "Choose an element.");
 					s.sendMessage(ChatColor.RED + "/bending bind [Ability] # " + ChatColor.YELLOW + "Bind an ability.");
