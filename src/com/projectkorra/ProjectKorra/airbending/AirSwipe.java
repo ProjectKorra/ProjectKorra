@@ -247,9 +247,9 @@ public class AirSwipe {
 						}
 						if(surroundingEntities.size() < MAX_AFFECTABLE_ENTITIES){
 							if (AvatarState.isAvatarState(player)) {
-								entity.setVelocity(fDirection.multiply(AvatarState.getValue(pushfactor)));
+								Methods.setVelocity(entity, fDirection.multiply(AvatarState.getValue(pushfactor)));
 							} else {
-								entity.setVelocity(fDirection.multiply(pushfactor));
+								Methods.setVelocity(entity, fDirection.multiply(pushfactor));
 							}
 						}
 						if (entity instanceof LivingEntity

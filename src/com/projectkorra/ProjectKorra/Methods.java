@@ -119,6 +119,8 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
+import org.bukkit.entity.FallingSand;
+import org.bukkit.entity.TNTPrimed;
 
 public class Methods {
 
@@ -1892,6 +1894,20 @@ public class Methods {
 
 		EarthPassive.removeAll();
 	}
+        
+        public static void setVelocity(Entity entity, Vector velocity){
+            if (entity instanceof TNTPrimed){
+                if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.TNT"))
+                    entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier")));
+                return;
+            }
+            if (entity instanceof FallingSand){
+                if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.Normal"))
+                    entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
+                return;
+            }
+            entity.setVelocity(velocity);
+        }
 
 	public static double waterbendingNightAugment(double value, World world) {
 		if (isNight(world)) {

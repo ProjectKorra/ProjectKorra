@@ -249,7 +249,7 @@ public class AirBlast {
 				if (Commands.invincible.contains(((Player) entity).getName())) return;
 			}
 
-			entity.setVelocity(velocity);
+			Methods.setVelocity(entity, velocity);
 			entity.setFallDistance(0);
 			if (!isUser && entity instanceof Player) {
 				new Flight((Player) entity, player);
