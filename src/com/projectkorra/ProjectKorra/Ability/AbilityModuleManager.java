@@ -19,6 +19,7 @@ public class AbilityModuleManager {
 	private final AbilityLoader<AbilityModule> loader;
 
 	public static HashSet<String> abilities;
+        public static HashSet<String> disabledStockAbilities;
 	public static List<String> waterbendingabilities;
 	public static List<String> airbendingabilities;
 	public static List<String> earthbendingabilities;
@@ -143,11 +144,19 @@ public class AbilityModuleManager {
 			}
 		}
 		for (AbilityModule ab: ability) {
-			if (abilities.contains(ab.getName())) {
-				continue;
-			}
-			ab.onThisLoad();
-			abilities.add(ab.getName());
+			//To check if EarthBlast == Earthblast or for example, EarthBlast == EARTHBLAST
+                        for(String enabledAbility : abilities){
+                            if(enabledAbility.equalsIgnoreCase(ab.getName())){
+                                continue;
+                            }
+                        }
+ 			ab.onThisLoad();
+ 			abilities.add(ab.getName());
+                        for (StockAbilities a: StockAbilities.values()) {
+                            if (a.name().equalsIgnoreCase(ab.getName())){
+                                disabledStockAbilities.add(a.name());
+                            }
+                        }
 			if (ab.getElement() == Element.Air.toString()) airbendingabilities.add(ab.getName()); 
 			if (ab.getElement() == Element.Water.toString()) waterbendingabilities.add(ab.getName());
 			if (ab.getElement() == Element.Earth.toString()) earthbendingabilities.add(ab.getName());

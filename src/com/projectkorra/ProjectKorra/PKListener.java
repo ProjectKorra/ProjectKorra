@@ -351,7 +351,8 @@ public class PKListener implements Listener {
 		}
 
 		if (!player.isSneaking() && Methods.canBend(player.getName(), abil)) {
-
+                        if (Methods.isDisabledStockAbility(abil))
+                            return;
 			if (Methods.isAirAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
@@ -687,7 +688,8 @@ public class PKListener implements Listener {
 		String abil = Methods.getBoundAbility(player);
 		if (abil == null) return;
 		if (Methods.canBend(player.getName(), abil)) {
-
+                        if (Methods.isDisabledStockAbility(abil))
+                            return;
 
 			if (Methods.isAirAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
