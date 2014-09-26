@@ -157,7 +157,7 @@ public class Tornado {
 						velocity.setZ(vz);
 						velocity.setY(vy);
 						velocity.multiply(timefactor);
-						entity.setVelocity(velocity);
+						Methods.setVelocity(entity, velocity);
 						entity.setFallDistance(0);
 						
 						Methods.breakBreathbendingHold(entity);

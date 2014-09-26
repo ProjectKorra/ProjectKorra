@@ -295,7 +295,7 @@ public class Wave {
 					if (knockback) {
 						Vector dir = direction.clone();
 						dir.setY(dir.getY() * upfactor);
-						entity.setVelocity(entity.getVelocity().clone()
+						Methods.setVelocity(entity, entity.getVelocity().clone()
 								.add(dir.clone().multiply(Methods.waterbendingNightAugment(factor, player.getWorld()))));
 						entity.setFallDistance(0);
 						if (entity.getFireTicks() > 0)

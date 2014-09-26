@@ -192,7 +192,7 @@ public class AirSuction {
 				if (entity instanceof Player) {
 					if (Commands.invincible.contains(((Player) entity).getName())) continue;
 				}
-				entity.setVelocity(velocity);
+				Methods.setVelocity(entity, velocity);
 				entity.setFallDistance(0);
 				if (entity.getEntityId() != player.getEntityId()
 						&& entity instanceof Player) {

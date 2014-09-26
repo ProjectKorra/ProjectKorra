@@ -49,6 +49,10 @@ public class ConfigManager {
 		config.addDefault("Properties.Chat.Colors.Chi", "GOLD");
 
 		config.addDefault("Properties.ImportEnabled", true);
+                config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
+                config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
+                config.addDefault("Properties.BendingAffectFallingSand.TNT", true);
+                config.addDefault("Properties.BendingAffectFallingSand.TNTStrengthMultiplier", 1.0);
 		config.addDefault("Properties.GlobalCooldown", 500);
 		config.addDefault("Properties.SeaLevel", 62);
 

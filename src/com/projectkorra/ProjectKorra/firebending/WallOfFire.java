@@ -175,7 +175,7 @@ public class WallOfFire {
 
 	private void affect(Entity entity) {
 		entity.setFireTicks(50);
-		entity.setVelocity(new Vector(0, 0, 0));
+		Methods.setVelocity(entity, new Vector(0, 0, 0));
 		if (entity instanceof LivingEntity) {
 			Methods.damageEntity(player, entity, damage);
 			new Enflamed(entity, player);

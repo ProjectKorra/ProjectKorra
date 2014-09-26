@@ -195,9 +195,9 @@ public class FireBlast {
 	private void affect(Entity entity) {
 		if (entity.getEntityId() != player.getEntityId()) {
 			if (AvatarState.isAvatarState(player)) {
-				entity.setVelocity(direction.clone().multiply(AvatarState.getValue(pushfactor)));
+				Methods.setVelocity(entity, direction.clone().multiply(AvatarState.getValue(pushfactor)));
 			} else {
-				entity.setVelocity(direction.clone().multiply(pushfactor));
+				Methods.setVelocity(entity, direction.clone().multiply(pushfactor));
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks(50);

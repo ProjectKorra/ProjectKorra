@@ -498,7 +498,7 @@ public class Torrent {
 			velocity.setZ(vec.getY());
 		}
 
-		entity.setVelocity(velocity);
+		Methods.setVelocity(entity, velocity);
 		entity.setFallDistance(0);
 		if (entity instanceof LivingEntity) {
 			World world = player.getWorld();

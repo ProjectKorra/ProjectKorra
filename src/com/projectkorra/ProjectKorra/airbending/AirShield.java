@@ -92,7 +92,7 @@ public class AirShield {
 				}
 
 				velocity.multiply(radius / maxradius);
-				entity.setVelocity(velocity);
+				Methods.setVelocity(entity, velocity);
 				entity.setFallDistance(0);
 			}
 		}
