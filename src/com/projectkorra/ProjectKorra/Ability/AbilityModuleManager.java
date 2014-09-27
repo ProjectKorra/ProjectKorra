@@ -10,6 +10,7 @@ import java.util.List;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoader;
+import org.bukkit.Bukkit;
 
 
 public class AbilityModuleManager {
@@ -42,6 +43,7 @@ public class AbilityModuleManager {
 		}
 		loader = new AbilityLoader<AbilityModule>(plugin, path, new Object[] {});
 		abilities = new HashSet<String>();
+                disabledStockAbilities = new HashSet<String>();
 		waterbendingabilities = new ArrayList<String>();
 		airbendingabilities = new ArrayList<String>();
 		earthbendingabilities = new ArrayList<String>();
@@ -145,11 +147,14 @@ public class AbilityModuleManager {
 		}
 		for (AbilityModule ab: ability) {
 			//To check if EarthBlast == Earthblast or for example, EarthBlast == EARTHBLAST
+                    boolean abilityIsOn= false;
                         for(String enabledAbility : abilities){
                             if(enabledAbility.equalsIgnoreCase(ab.getName())){
-                                continue;
+                                abilityIsOn = true;
                             }
                         }
+                        if (abilityIsOn)
+                            continue;
  			ab.onThisLoad();
  			abilities.add(ab.getName());
                         for (StockAbilities a: StockAbilities.values()) {
@@ -168,7 +173,6 @@ public class AbilityModuleManager {
 			descriptions.put(ab.getName(), ab.getDescription());
 			authors.put(ab.getName(), ab.getAuthor());
 		}
-		
 		Collections.sort(airbendingabilities);
 		Collections.sort(waterbendingabilities);
 		Collections.sort(earthbendingabilities);
