@@ -19,7 +19,7 @@ public class AbilityModuleManager {
 	private final AbilityLoader<AbilityModule> loader;
 
 	public static HashSet<String> abilities;
-        public static HashSet<String> disabledStockAbilities;
+    public static HashSet<String> disabledStockAbilities;
 	public static List<String> waterbendingabilities;
 	public static List<String> airbendingabilities;
 	public static List<String> earthbendingabilities;
@@ -55,6 +55,7 @@ public class AbilityModuleManager {
 		igniteabilities = new HashSet<String>();
 		metalbendingabilities = new HashSet<String>();
 		ability = loader.load(AbilityModule.class);
+		disabledStockAbilities = new HashSet<String>();
 		fill();
 	}
 

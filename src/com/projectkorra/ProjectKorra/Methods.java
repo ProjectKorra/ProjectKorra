@@ -31,6 +31,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -2011,6 +2012,10 @@ public class Methods {
 			if (player.hasPermission("bending.command.presets.create." + i)) cap = i;
 		}
 		return cap;
+	}
+	
+	public static void playFirebendingSound(Location location) {
+		location.getWorld().playSound(location, Sound.FIRE, 10, 1);
 	}
 
 }

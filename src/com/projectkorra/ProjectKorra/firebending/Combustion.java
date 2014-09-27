@@ -159,6 +159,7 @@ public class Combustion {
 	private void advanceLocation() {
 		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 5);
 		ParticleEffect.FLAME.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
+		Methods.playFirebendingSound(location);
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
 
