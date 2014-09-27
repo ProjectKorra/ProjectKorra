@@ -1994,6 +1994,18 @@ public class Methods {
 		}
 		return null;
 	}
+	public static Vector rotateXZ(Vector vec, double theta)
+	{
+		/**
+		 * Rotates a vector around the Y plane.
+		 */
+		Vector vec2 = vec.clone();
+		double x = vec2.getX();
+		double z = vec2.getZ();
+		vec2.setX(x * Math.cos(Math.toRadians(theta)) - z * Math.sin(Math.toRadians(theta)));
+		vec2.setZ(x * Math.sin(Math.toRadians(theta)) + z * Math.cos(Math.toRadians(theta)));
+		return vec2;
+	}
 	
 	public static int getMaxPresets(Player player) {
 		if (player.isOp()) return 500;
