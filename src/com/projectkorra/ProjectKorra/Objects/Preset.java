@@ -33,6 +33,11 @@ public class Preset {
 		}
 		presets.get(uuid).add(this);
 	}
+	
+	public static void unloadPreset(Player player) {
+		UUID uuid = player.getUniqueId();
+		presets.remove(uuid);
+	}
 
 	public static void loadPresets(Player player) {
 		UUID uuid = player.getUniqueId();
