@@ -228,7 +228,8 @@ public class WaterSpout {
 		return players;
 	}
 
-	public static void removeSpouts(Location loc0, double radius, Player sourceplayer) {
+	public static boolean removeSpouts(Location loc0, double radius, Player sourceplayer) {
+		boolean removed = false;
 		for (Player player : instances.keySet()) {
 			if (!player.equals(sourceplayer)) {
 				Location loc1 = player.getLocation().getBlock().getLocation();
@@ -239,10 +240,13 @@ public class WaterSpout {
 
 				double distance = Math.sqrt(dx * dx + dz * dz);
 
-				if (distance <= radius && dy > 0 && dy < defaultheight)
+				if (distance <= radius && dy > 0 && dy < defaultheight){
+					removed = true;
 					instances.get(player).remove();
+				}
 			}
 		}
+		return removed;
 	}
 
 	public static String getDescription() {

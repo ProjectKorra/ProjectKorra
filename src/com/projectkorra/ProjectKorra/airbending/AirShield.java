@@ -184,7 +184,14 @@ public class AirShield {
 		rotateShield();
 		return true;
 	}
-
+	public static boolean isWithinShield(Location loc){
+		for (int ID : instances.keySet()) {
+			AirShield ashield = instances.get(ID);
+			if(ashield.player.getLocation().distance(loc) <= ashield.radius)
+				return true;
+		}
+		return false;
+	}
 	public static String getDescription() {
 		return "Air Shield is one of the most powerful defensive techniques in existence. "
 				+ "To use, simply sneak (default: shift). "

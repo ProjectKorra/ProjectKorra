@@ -283,5 +283,21 @@ public class AirSwipe {
 	public static void charge(Player player) {
 		new AirSwipe(player, true);
 	}
+	
+	public static boolean removeSwipesAroundPoint(Location loc, double radius) {
+		boolean removed = false;
+		for (int ID : instances.keySet()) {
+			AirSwipe aswipe = instances.get(ID);
+			
+			for(Vector vec : aswipe.elements.keySet()) {
+				Location vectorLoc = aswipe.elements.get(vec);
+				if(vectorLoc.distance(loc) <= radius){
+					instances.remove(aswipe.id);
+					removed = true;
+				}
+			}
+		}
+		return removed;
+	}
 
 }
