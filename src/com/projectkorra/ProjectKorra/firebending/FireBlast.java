@@ -164,6 +164,7 @@ public class FireBlast {
 	private void advanceLocation() {
 		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 0, (int) range);
 		location = location.add(direction.clone().multiply(speedfactor));
+		
 	}
 
 	private void ignite(Location location) {

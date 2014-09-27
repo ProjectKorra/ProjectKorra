@@ -2013,9 +2013,5 @@ public class Methods {
 		}
 		return cap;
 	}
-	
-	public static void playFirebendingSound(Location location) {
-		location.getWorld().playSound(location, Sound.FIRE, 10, 1);
-	}
 
 }
