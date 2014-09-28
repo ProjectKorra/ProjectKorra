@@ -534,6 +534,24 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.WallOfFire.Cooldown", 7500);
 		config.addDefault("Abilities.Fire.WallOfFire.Interval", 500);
 		
+		config.addDefault("Abilities.Fire.FireCombo.Enabled", true);
+		config.addDefault("Abilities.Fire.FireCombo.FireKick.Range", 8.0);
+		config.addDefault("Abilities.Fire.FireCombo.FireKick.Damage", 3.0);
+		config.addDefault("Abilities.Fire.FireCombo.FireKick.Cooldown", 1000);
+		config.addDefault("Abilities.Fire.FireCombo.FireSpin.Range", 5.0);
+		config.addDefault("Abilities.Fire.FireCombo.FireSpin.Damage", 3.0);
+		config.addDefault("Abilities.Fire.FireCombo.FireSpin.Knockback", 2.0);
+		config.addDefault("Abilities.Fire.FireCombo.FireSpin.Cooldown", 2000);
+		config.addDefault("Abilities.Fire.FireCombo.FireWheel.Range", 20.0);
+		config.addDefault("Abilities.Fire.FireCombo.FireWheel.Damage", 4.0);
+		config.addDefault("Abilities.Fire.FireCombo.FireWheel.Speed", 0.5);
+		config.addDefault("Abilities.Fire.FireCombo.FireWheel.Cooldown", 200);
+		config.addDefault("Abilities.Fire.FireCombo.JetBlast.Speed", 1.2);
+		config.addDefault("Abilities.Fire.FireCombo.JetBlast.Cooldown", 6000);
+		config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Speed", 1.1);
+		config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Damage", 3);
+		config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Cooldown", 6000);
+		
 		config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		config.addDefault("Abilities.Chi.Passive.Speed", 1);
 		config.addDefault("Abilities.Chi.Passive.Jump", 2);

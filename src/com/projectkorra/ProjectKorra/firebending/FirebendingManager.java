@@ -33,5 +33,6 @@ public class FirebendingManager implements Runnable {
 		}
 		FireStream.dissipateAll();
 		FireStream.progressAll();
+		FireCombo.progressAll();
 	}
 }
