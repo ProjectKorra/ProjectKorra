@@ -73,6 +73,9 @@ public class FireJet {
 			// player.setAllowFlight(canfly);
 			instances.remove(player);
 		} else {
+			if (Methods.rand.nextInt(2) == 0) {
+				Methods.playFirebendingSound(player.getLocation());
+			}
 			player.getWorld().playEffect(player.getLocation(), Effect.MOBSPAWNER_FLAMES, 1);
 			double timefactor;
 			if (AvatarState.isAvatarState(player) && isToggle) {

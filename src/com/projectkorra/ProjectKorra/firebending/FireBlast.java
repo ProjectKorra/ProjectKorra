@@ -2,6 +2,7 @@ package com.projectkorra.ProjectKorra.firebending;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
@@ -23,6 +24,8 @@ import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 public class FireBlast {
+
+	Random rand = new Random();
 
 	public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<Integer, FireBlast>();
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
@@ -164,7 +167,9 @@ public class FireBlast {
 	private void advanceLocation() {
 		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 0, (int) range);
 		location = location.add(direction.clone().multiply(speedfactor));
-		
+		if (rand.nextInt(4) == 0) {
+			Methods.playFirebendingSound(location);
+		}		
 	}
 
 	private void ignite(Location location) {

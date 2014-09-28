@@ -164,6 +164,10 @@ public class Fireball {
 	private void fireball() {
 		for (Block block : Methods.getBlocksAroundPoint(location, radius)) {
 			block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
+			if (Methods.rand.nextInt(4) == 0) {
+				Methods.playFirebendingSound(location);
+			}
+			
 		}
 
 		for (Entity entity : Methods.getEntitiesAroundPoint(location, 2 * radius)) {

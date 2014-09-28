@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -127,6 +128,8 @@ import org.bukkit.entity.TNTPrimed;
 public class Methods {
 
 	static ProjectKorra plugin;
+	
+	public static Random rand = new Random();
 
 	private static final ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
 
@@ -1970,6 +1973,10 @@ public class Methods {
 	
 	public static void playFirebendingParticles(Location loc) {
 		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0, 15);
+	}
+	
+	public static void playFirebendingSound(Location loc) {
+		loc.getWorld().playSound(loc, Sound.FIRE, 1, 10);
 	}
 	
 	public static void playMetalbendingSound(Location loc) {
