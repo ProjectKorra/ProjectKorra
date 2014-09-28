@@ -53,6 +53,7 @@ public class FreezeMelt {
 			return;
 		byte data = block.getData();
 		block.setType(Material.ICE);
+		Methods.playIcebendingSound(block.getLocation());
 		frozenblocks.put(block, data);
 	}
 

@@ -119,6 +119,9 @@ public class WaterSpout {
 
 			player.setFallDistance(0);
 			player.setSprinting(false);
+			if (Methods.rand.nextInt(4) == 0) {
+				Methods.playWaterbendingSound(player.getLocation());
+			}		
 			// if (player.getVelocity().length() > threshold) {
 			// // Methods.verbose("Too fast!");
 			// player.setVelocity(player.getVelocity().clone().normalize()

@@ -173,6 +173,10 @@ public class OctopusForm {
 			remove();
 			return;
 		}
+		
+		if (Methods.rand.nextInt(4) == 0) {
+			Methods.playWaterbendingSound(player.getLocation());
+		}		
 
 		if (System.currentTimeMillis() > time + interval) {
 			time = System.currentTimeMillis();

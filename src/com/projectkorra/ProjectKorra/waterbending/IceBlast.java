@@ -299,6 +299,9 @@ public class IceBlast {
 			
 			ParticleEffect.SNOWBALL_POOF.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 100);
 			ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 100);
+			if (Methods.rand.nextInt(4) == 0) {
+				Methods.playFirebendingSound(location);
+			}
 			location = location.add(direction.clone());
 
 		} else if (prepared) {

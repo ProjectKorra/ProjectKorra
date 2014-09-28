@@ -52,6 +52,7 @@ public class AvatarState {
 			}
 		} 
 		new Flight(player);
+		Methods.playAvatarSound(player.getLocation());
 		instances.put(player, this);
 		if (cooldown != 0) {
 			cooldowns.put(player.getName(), System.currentTimeMillis());

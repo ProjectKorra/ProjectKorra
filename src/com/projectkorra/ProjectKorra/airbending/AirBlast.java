@@ -205,6 +205,9 @@ public class AirBlast {
 
 	private void advanceLocation() {
 		Methods.playAirbendingParticles(location, 10);
+		if (Methods.rand.nextInt(4) == 0) {
+			Methods.playAirbendingSound(location);
+		}
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
 

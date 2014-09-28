@@ -304,6 +304,10 @@ public class WaterManipulation {
 
 				} else {
 					Methods.removeSpouts(location, player);
+					
+					if (Methods.rand.nextInt(4) == 0) {
+						Methods.playWaterbendingSound(location);
+					}		
 
 					double radius = FireBlast.affectingradius;
 					Player source = player;

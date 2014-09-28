@@ -218,6 +218,7 @@ public class IceSpike {
 			}
 		}
 		affectedblock.setType(Material.ICE);
+		Methods.playIcebendingSound(block.getLocation());	
 		loadAffectedBlocks();
 
 		if (location.distance(origin) >= height) {
