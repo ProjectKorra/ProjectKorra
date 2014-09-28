@@ -37,15 +37,15 @@ public class WaterPassive {
 					}
 				}
 				
-//				if (player.getLocation().getBlock().isLiquid()) {
-//					for (Block block: Methods.getBlocksAroundPoint(player.getLocation(), 2)) {
-//						if (Methods.isAdjacentToThreeOrMoreSources(block) && Methods.isWater(block) && !tempHaltPassive.contains(player.getName())) {
-//							byte full = 0x0;
-//							block.setType(Material.WATER);
-//							block.setData(full);
-//						}
-//					}
-//				}
+				if (player.getLocation().getBlock().isLiquid()) {
+					for (Block block: Methods.getBlocksAroundPoint(player.getLocation(), 2)) {
+						if (Methods.isAdjacentToThreeOrMoreSources(block) && Methods.isWater(block)) {
+							byte full = 0x0;
+							block.setType(Material.WATER);
+							block.setData(full);
+						}
+					}
+				}
 			}
 		}
 	}
