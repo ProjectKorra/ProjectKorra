@@ -153,7 +153,7 @@ public class TorrentBurst {
 				}
 				
 				for(Block sound : torrentblocks) {
-					if (Methods.rand.nextInt(4) == 0) {
+					if (Methods.rand.nextInt(50) == 0) {
 						Methods.playWaterbendingSound(sound.getLocation());
 					}		
 				}

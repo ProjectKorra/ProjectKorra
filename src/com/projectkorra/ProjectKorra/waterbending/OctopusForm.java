@@ -173,10 +173,6 @@ public class OctopusForm {
 			remove();
 			return;
 		}
-		
-		if (Methods.rand.nextInt(4) == 0) {
-			Methods.playWaterbendingSound(player.getLocation());
-		}		
 
 		if (System.currentTimeMillis() > time + interval) {
 			time = System.currentTimeMillis();
@@ -237,11 +233,17 @@ public class OctopusForm {
 				} else {
 					angle += 20;
 				}
+				if (Methods.rand.nextInt(4) == 0) {
+					Methods.playWaterbendingSound(player.getLocation());
+				}		
 				formOctopus();
 				if (y == 2) {
 					incrementStep();
 				}
 			} else if (formed) {
+				if (Methods.rand.nextInt(7) == 0) {
+					Methods.playWaterbendingSound(player.getLocation());
+				}		
 				step += 1;
 				if (step % inc == 0)
 					animstep += 1;

@@ -113,11 +113,7 @@ public class Torrent {
 			if (location != null)
 				returnWater(location);
 			return;
-		}
-		
-		if (Methods.rand.nextInt(4) == 0) {
-			Methods.playWaterbendingSound(location);
-		}		
+		}	
 
 		if (System.currentTimeMillis() > time + interval) {
 			time = System.currentTimeMillis();
@@ -210,6 +206,9 @@ public class Torrent {
 			}
 
 			if (forming || formed) {
+				if (Methods.rand.nextInt(4) == 0) {
+					Methods.playWaterbendingSound(location);
+				}	
 				if (angle < 220) {
 					angle += 20;
 				} else {

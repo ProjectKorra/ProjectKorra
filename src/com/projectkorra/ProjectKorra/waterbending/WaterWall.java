@@ -238,11 +238,7 @@ public class WaterWall {
 			unfocusBlock();
 			returnWater();
 			return false;
-		}
-		
-		if (Methods.rand.nextInt(4) == 0) {
-			Methods.playWaterbendingSound(location);
-		}		
+		}	
 		
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
@@ -274,6 +270,9 @@ public class WaterWall {
 			}
 
 			if (forming) {
+				if (Methods.rand.nextInt(7) == 0) {
+					Methods.playWaterbendingSound(location);
+				}	
 				ArrayList<Block> blocks = new ArrayList<Block>();
 				Location loc = Methods.getTargetedLocation(player, (int) range,	8, 9, 79);
 				location = loc.clone();

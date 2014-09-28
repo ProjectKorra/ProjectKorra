@@ -50,17 +50,17 @@ public class ConfigManager {
 		config.addDefault("Properties.Chat.Colors.Chi", "GOLD");
 
 		config.addDefault("Properties.ImportEnabled", true);
-                config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
-                config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
-                config.addDefault("Properties.BendingAffectFallingSand.TNT", true);
-                config.addDefault("Properties.BendingAffectFallingSand.TNTStrengthMultiplier", 1.0);
+		config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
+		config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);
+		config.addDefault("Properties.BendingAffectFallingSand.TNT", true);
+		config.addDefault("Properties.BendingAffectFallingSand.TNTStrengthMultiplier", 1.0);
 		config.addDefault("Properties.GlobalCooldown", 500);
 		config.addDefault("Properties.SeaLevel", 62);
 
 		config.addDefault("Properties.CustomItems.GrapplingHook.Enable", true);
 		config.addDefault("Properties.CustomItems.GrapplingHook.IronUses", 25);
 		config.addDefault("Properties.CustomItems.GrapplingHook.GoldUses", 50);
-		
+
 		config.addDefault("Properties.RegionProtection.AllowHarmlessAbilities", true);
 		config.addDefault("Properties.RegionProtection.RespectWorldGuard", true);
 		config.addDefault("Properties.RegionProtection.RespectGriefPrevention", true);
@@ -68,7 +68,7 @@ public class ConfigManager {
 		config.addDefault("Properties.RegionProtection.RespectTowny", true);
 		config.addDefault("Properties.RegionProtection.RespectPreciousStones", true);
 		config.addDefault("Properties.RegionProtection.RespectLWC", true);
-		
+
 		config.addDefault("Properties.TagAPI.Enabled", true);
 
 		config.addDefault("Properties.Air.CanBendWithWeapons", false);
@@ -94,7 +94,7 @@ public class ConfigManager {
 		disabledWorlds.add("TestWorld");
 		disabledWorlds.add("TestWorld2");
 		config.addDefault("Properties.DisabledWorlds", disabledWorlds);
-		
+
 		config.addDefault("Abilities.AvatarState.Enabled", true);
 		config.addDefault("Abilities.AvatarState.Description", "The signature ability of the Avatar, this is a toggle. Click to activate to become "
 				+ "nearly unstoppable. While in the Avatar State, the user takes severely reduced damage from "
@@ -198,7 +198,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
 		config.addDefault("Abilities.Air.AirSwipe.Cooldown", 1500);
 		config.addDefault("Abilities.Air.AirSwipe.ChargeFactor", 3);
-		
+
 		config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 		config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. To use, simply look at an entity and hold shift. The entity will begin taking damage as you extract the air from their lungs. Any bender caught in this sphere will only be able to use basic moves, such as AirSwipe, WaterManipulation, FireBlast, or EarthBlast. An entity can be knocked out of the sphere by certain bending arts, and your attention will be disrupted if you are hit by bending.");
 		config.addDefault("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs", true);
@@ -234,7 +234,7 @@ public class ConfigManager {
 				+ "be at least partially submerged in water.");
 		config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
 		config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
-		
+
 		config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 		config.addDefault("Abilities.Water.IceBlast.Damage", 3);
 		config.addDefault("Abilities.Water.IceBlast.Range", 20);
@@ -289,7 +289,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Torrent.Range", 25);
 		config.addDefault("Abilities.Water.Torrent.DeflectDamage", 1);
 		config.addDefault("Abilities.Water.Torrent.Damage", 2);
-		
+
 		config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 
 		config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
@@ -303,7 +303,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterManipulation.Speed", 35);
 		config.addDefault("Abilities.Water.WaterManipulation.Push", 0.3);
 		config.addDefault("Abilities.Water.WaterManipulation.Cooldown", 1000);
-		
+
 		config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
 		config.addDefault("Abilities.Water.WaterSpout.Description", "To use this ability, click while over or in water. "
 				+ "You will spout water up from beneath you to experience controlled levitation. "
@@ -311,7 +311,7 @@ public class ConfigManager {
 				+ "will remain on. If you try to spout over an area with no water, snow or ice, "
 				+ "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.");
 		config.addDefault("Abilities.Water.WaterSpout.Height", 20);
-		
+
 		config.addDefault("Abilities.Water.WaterWave.Enabled", true);
 		config.addDefault("Abilities.Water.WaterWave.Description", "This ability provides a Waterbender with boosted mobility and transportation. To use, first click a source block to select it; then hold sneak (Default: Shift) to begin streaming the water around you. While the water is streaming around you let go of sneak and the water will form underneath your feet, blasting you off into the direction that you are facing. Additionally, taping sneak while riding the wave still stop it.");
 		config.addDefault("Abilities.Water.WaterWave.Range", 6);
@@ -382,13 +382,13 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
 		config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
 		config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
-		
+
 		config.addDefault("Abilities.Earth.Extraction.Enabled", true);
 		config.addDefault("Abilities.Earth.Extraction.Description", "This ability allows metalbenders to extract the minerals from ore blocks. To use, simply tap sneak while looking at an ore block with metal in it (iron, gold, quartz) and the ore will be extracted and drop in front of you. This ability has a small chance of doubling or tripling the loot. This ability has a short cooldown.");
 		config.addDefault("Abilities.Earth.Extraction.Cooldown", 10000);
 		config.addDefault("Abilities.Earth.Extraction.TripleLootChance", 15);
 		config.addDefault("Abilities.Earth.Extraction.DoubleLootChance", 40);
-		
+
 		config.addDefault("Abilities.Earth.LavaFlow.Enabled", true);
 		config.addDefault("Abilities.Earth.LavaFlow.Description", "This ability allows an Earthbender to create lava using the Earth around them. To use, simply hold sneak (Default: Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an Earthbendable block to create a pool of lava after a small delay. Additionally, you can left click at any time to turn lava back into its original state -- Earth.");
 		config.addDefault("Abilities.Earth.LavFlow.ShiftCooldown", 16000);
@@ -406,7 +406,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.LavaSurge.Radius", 3);
 		config.addDefault("Abilities.Earth.LavaSurge.HorizontalPush", 0.5);
 		config.addDefault("Abilities.Earth.LavaSurge.VerticalPush", 0.1);
-		
+
 		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "
 				+ "A column of earth will shoot upwards from that location. "
@@ -430,7 +430,7 @@ public class ConfigManager {
 				+ "Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave.");
 		config.addDefault("Abilities.Earth.Shockwave.FallThreshold", 10);
 		config.addDefault("Abilities.Earth.Shockwave.ChargeTime", 2500);
-		
+
 		config.addDefault("Abilities.Earth.Tremorsense.Enabled", true);
 		config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
 		config.addDefault("Abilities.Earth.Tremorsense.MaxDepth", 10);
@@ -443,11 +443,11 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.Blaze.ArcOfFire.Arc", 20);
 		config.addDefault("Abilities.Fire.Blaze.ArcOfFire.Range", 9);
 		config.addDefault("Abilities.Fire.Blaze.RingOfFire.Range", 7);
-		
+
 		config.addDefault("Abilities.Fire.Combustion.Enabled", true);
 		config.addDefault("Abilities.Fire.Combustion.Description", "Combustion is a powerful ability only known by a few skilled Firebenders. It allows the bender to Firebend with their mind, concentrating energy to create a powerful blast. To use, simply tap sneak (Default: Shift) to launch the blast. This technique is highly destructive and very effective, it also comes with a long cooldown.");
 		config.addDefault("Abilities.Fire.Combustion.Cooldown", 15000);
-//		config.addDefault("Abilities.Fire.Combustion.ChargeTime", 5000);
+		//		config.addDefault("Abilities.Fire.Combustion.ChargeTime", 5000);
 		config.addDefault("Abilities.Fire.Combustion.BreakBlocks", false);
 		config.addDefault("Abilities.Fire.Combustion.Power", 1.0);
 		config.addDefault("Abilities.Fire.Combustion.Damage", 5);
@@ -501,7 +501,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.FireShield.Radius", 3);
 		config.addDefault("Abilities.Fire.FireShield.DiscRadius", 1.5);
 		config.addDefault("Abilities.Fire.FireShield.Duration", 1000);
-		
+
 		config.addDefault("Abilities.Fire.HeatControl.Enabled", true);
 		config.addDefault("Abilities.Fire.HeatControl.Description", "While this ability is selected, the firebender becomes impervious "
 				+ "to fire damage and cannot be ignited. "
@@ -528,7 +528,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.Lightning.WaterAreaOfEffect", 15);
 		config.addDefault("Abilities.Fire.Lightning.Warmup", 3500);
 		config.addDefault("Abilities.Fire.Lightning.MissChance", 10);
-		
+
 		config.addDefault("Abilities.Fire.WallOfFire.Enabled", true);
 		config.addDefault("Abilities.Fire.WallOfFire.Description", "To use this ability, click at a location. A wall of fire will appear at this location, igniting enemies caught in it and blocking projectiles.");
 		config.addDefault("Abilities.Fire.WallOfFire.Range", 4);
@@ -538,7 +538,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.WallOfFire.Damage", 2);
 		config.addDefault("Abilities.Fire.WallOfFire.Cooldown", 7500);
 		config.addDefault("Abilities.Fire.WallOfFire.Interval", 500);
-		
+
 		config.addDefault("Abilities.Fire.FireCombo.Enabled", true);
 		config.addDefault("Abilities.Fire.FireCombo.FireKick.Range", 6.0);
 		config.addDefault("Abilities.Fire.FireCombo.FireKick.Damage", 3.0);
@@ -556,7 +556,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Speed", 1.1);
 		config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Damage", 3);
 		config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Cooldown", 6000);
-		
+
 		config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 		config.addDefault("Abilities.Chi.Passive.Speed", 1);
 		config.addDefault("Abilities.Chi.Passive.Jump", 2);
@@ -580,7 +580,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Chi.RapidPunch.Distance", 4);
 		config.addDefault("Abilities.Chi.RapidPunch.Cooldown", 15000);
 		config.addDefault("Abilities.Chi.RapidPunch.Punches", 4);
-		
+
 		config.addDefault("Abilities.Chi.Smokescreen.Enabled", true);
 		config.addDefault("Abilities.Chi.Smokescreen.Description", "Smokescren, if used correctly, can serve as a defensive and offensive ability for Chiblockers. To use, simply left click and you will toss out a Smoke Bomb. When the bomb hits the ground, it will explode and give all players within a small radius of the explosion temporary blindness, allowing you to either get away, or move in for the kill. This ability has a long cooldown.");
 		config.addDefault("Abilities.Chi.Smokescreen.Cooldown", 50000);

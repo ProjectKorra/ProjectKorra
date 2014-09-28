@@ -249,7 +249,7 @@ public class Wave {
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 							}
 							
-							if (Methods.rand.nextInt(4) == 0) {
+							if (Methods.rand.nextInt(15) == 0) {
 								Methods.playWaterbendingSound(location);
 							}
 							// if (!blocks.contains(block)
