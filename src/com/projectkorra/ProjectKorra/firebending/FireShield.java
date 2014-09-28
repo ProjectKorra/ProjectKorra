@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
@@ -166,6 +167,24 @@ public class FireShield {
 				}
 			}
 		}
+	}
+	
+	public static boolean isWithinShield(Location loc) {
+		for (Player player : instances.keySet()){
+			FireShield fshield = instances.get(player);
+			Location playerLoc = fshield.player.getLocation();
+			
+			if(fshield.shield){
+				if(playerLoc.distance(loc) <= FireShield.radius)
+					return true;
+			}
+			else{
+				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(radius));
+				if(tempLoc.distance(loc) <= FireShield.discradius)
+					return true;
+			}
+		}
+		return false;
 	}
 
 	public static void progressAll() {

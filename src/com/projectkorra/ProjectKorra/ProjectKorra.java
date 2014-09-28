@@ -31,6 +31,7 @@ public class ProjectKorra extends JavaPlugin {
 		new Methods(this);
 		new Commands(this);
 		new AbilityModuleManager(this);
+		new ComboManager();
 
 		ConfigManager.configCheck();
 

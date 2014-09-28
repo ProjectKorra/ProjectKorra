@@ -800,7 +800,7 @@ public class Commands {
 						if (p.getName().equalsIgnoreCase("runefist") // codiaz
 								|| p.getName().equalsIgnoreCase("Jacklin213") // Jacklin213
 								|| p.getName().equalsIgnoreCase("kingbirdy") // kingbirdy
-								|| p.getName().equalsIgnoreCase("creepermcaliens") // Coolade
+								|| p.getName().equalsIgnoreCase("CherryCoolade") // Coolade
 								|| p.getName().equalsIgnoreCase("sampepere")) { // AlexTheCoder
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra (Core) Developer");
 						}
@@ -1202,6 +1202,8 @@ public class Commands {
 								+ "of utility however, being able to make themselves un-ignitable, extinguish large areas, cook food "
 								+ "in their hands, extinguish large areas, small bursts of flight, and then comes the abilities to shoot "
 								+ "fire from your hands.");
+						s.sendMessage(ChatColor.YELLOW + "Firebenders can chain their abilities into combos, type " 
+								+ Methods.getFireColor() + "/b help FireCombo" + ChatColor.YELLOW + " for more information.");
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/k4fkjhb");
 					}
 					if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
@@ -1298,6 +1300,16 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending bind [Ability] <Slot>");
 						s.sendMessage(ChatColor.YELLOW + "This command will bind an ability to the slot you specify (if you specify one), or the slot currently"
 								+ " selected in your hotbar (If you do not specify a Slot #).");
+					}
+					if (args[1].equalsIgnoreCase("FireCombo"))
+					{
+						s.sendMessage(ChatColor.GOLD + "Fire Combos allow you to chain multiple abilities together to create stronger abilities."
+								+ " Fire Combos are meant to be advanced Firebending techniques, they take practice! ");
+						s.sendMessage(Methods.getFireColor() + "FireKick" + ChatColor.WHITE + ": FireBlast > FireBlast > (Hold Shift) > FireBlast. ");
+						s.sendMessage(Methods.getFireColor() + "FireSpin" + ChatColor.WHITE + ": FireBlast > FireBlast > FireShield > (Tap Shift). ");
+						s.sendMessage(Methods.getFireColor() + "FireWheel" + ChatColor.WHITE + ": FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift. ");
+						s.sendMessage(Methods.getFireColor() + "JetBlast" + ChatColor.WHITE + ": FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet. ");
+						s.sendMessage(Methods.getFireColor() + "JetBlaze" + ChatColor.WHITE + ": FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet. ");
 					}
 
 					if (Methods.abilityExists(args[1])) {

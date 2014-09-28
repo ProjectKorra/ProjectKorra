@@ -218,10 +218,10 @@ public class WaterWave
 	{
 		double rotateSpeed = 45;
 		revertBlocks();
-		direction = rotateXZ(direction, rotateSpeed);
+		direction = Methods.rotateXZ(direction, rotateSpeed);
 		for(double i = 0; i < theta; i+=increment)
 		{
-			Vector dir = rotateXZ(direction, i - theta / 2).normalize().multiply(radius);
+			Vector dir = Methods.rotateXZ(direction, i - theta / 2).normalize().multiply(radius);
 			dir.setY(0);
 			Block block = player.getEyeLocation().add(dir).getBlock();
 			currentLoc = block.getLocation();
@@ -316,14 +316,5 @@ public class WaterWave
 				return true;
 		}
 		return false;
-	}
-	public static Vector rotateXZ(Vector vec, double theta)
-	{
-		Vector vec2 = vec.clone();
-		double x = vec2.getX();
-		double z = vec2.getZ();
-		vec2.setX(x * Math.cos(Math.toRadians(theta)) - z * Math.sin(Math.toRadians(theta)));
-		vec2.setZ(x * Math.sin(Math.toRadians(theta)) + z * Math.cos(Math.toRadians(theta)));
-		return vec2;
 	}
 }

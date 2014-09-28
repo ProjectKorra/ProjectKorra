@@ -94,6 +94,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
+import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireBurst;
@@ -2005,6 +2006,19 @@ public class Methods {
 		return null;
 	}
 	
+	public static Vector rotateXZ(Vector vec, double theta)
+	{
+		/**
+		 * Rotates a vector around the Y plane.
+		 */
+		Vector vec2 = vec.clone();
+		double x = vec2.getX();
+		double z = vec2.getZ();
+		vec2.setX(x * Math.cos(Math.toRadians(theta)) - z * Math.sin(Math.toRadians(theta)));
+		vec2.setZ(x * Math.sin(Math.toRadians(theta)) + z * Math.cos(Math.toRadians(theta)));
+		return vec2;
+	}
+	
 	public static int getMaxPresets(Player player) {
 		if (player.isOp()) return 500;
 		int cap = 0;
@@ -2012,6 +2026,53 @@ public class Methods {
 			if (player.hasPermission("bending.command.presets.create." + i)) cap = i;
 		}
 		return cap;
+	}
+	
+	public static boolean blockAbilities(Player player, List<String> abilitiesToBlock, Location loc, double radius)
+	{
+		/**
+		 * Cycles through a list of ability names to check if any instances of
+		 * the abilities exist at a specific location. If an instance of the ability is
+		 * found then it will be removed, with the exception FireShield, and AirShield.
+		 */
+		boolean hasBlocked = false;
+		for(String ability : abilitiesToBlock)
+		{
+			if(ability.equalsIgnoreCase("FireBlast")){
+				hasBlocked = FireBlast.annihilateBlasts(loc, radius, player) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("EarthBlast")){
+				hasBlocked = EarthBlast.annihilateBlasts(loc, radius, player) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("WaterManipulation")){
+				hasBlocked = WaterManipulation.annihilateBlasts(loc, radius, player) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("AirSwipe")){
+				hasBlocked = AirSwipe.removeSwipesAroundPoint(loc, radius) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("Combustion")){
+				hasBlocked = Combustion.removeAroundPoint(loc, radius) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("FireShield")){
+				hasBlocked = FireShield.isWithinShield(loc) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("AirShield")){
+				hasBlocked = AirShield.isWithinShield(loc) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("WaterSpout")){
+				hasBlocked = WaterSpout.removeSpouts(loc, radius, player) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("AirSpout")){
+				hasBlocked = AirSpout.removeSpouts(loc, radius, player) || hasBlocked;
+			}
+		}
+		return hasBlocked;
+	}
+	public static boolean isWithinShields(Location loc){
+		List<String> list = new ArrayList<String>();
+		list.add("FireShield");
+		list.add("AirShield");
+		return blockAbilities(null, list, loc, 0);
 	}
 
 }

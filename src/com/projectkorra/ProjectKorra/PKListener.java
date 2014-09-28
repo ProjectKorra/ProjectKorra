@@ -59,6 +59,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.ComboManager.ClickType;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
 import com.projectkorra.ProjectKorra.Objects.Preset;
@@ -245,6 +246,7 @@ public class PKListener implements Listener {
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Methods.cooldowns.put(player.getName(), System.currentTimeMillis());
+			ComboManager.addComboAbility(player, ClickType.RIGHTCLICK);
 		}
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
@@ -330,7 +332,12 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.isCancelled()) return;
-
+		
+		if(player.isSneaking())
+			ComboManager.addComboAbility(player, ComboManager.ClickType.SHIFTUP);
+		else
+			ComboManager.addComboAbility(player, ComboManager.ClickType.SHIFTDOWN);
+		
 		if(Suffocate.isBreathbent(player)) {
 			if(!Methods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !Methods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
@@ -670,7 +677,8 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Player player = event.getPlayer();
-
+		ComboManager.addComboAbility(player, ComboManager.ClickType.LEFTCLICK);
+		
 		if(Suffocate.isBreathbent(player)) {
 			if(!Methods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !Methods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !Methods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
