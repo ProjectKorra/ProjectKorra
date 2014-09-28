@@ -184,7 +184,7 @@ public class Tornado {
 				Location effect = new Location(origin.getWorld(), x, y, z);
 				if (!Methods.isRegionProtectedFromBuild(player, "AirBlast", effect)) {
 					Methods.playAirbendingParticles(effect, 20);
-					if (Methods.rand.nextInt(4) == 0) {
+					if (Methods.rand.nextInt(20) == 0) {
 						Methods.playAirbendingSound(effect);
 					}		
 				}
