@@ -31,6 +31,7 @@ public class ConfigManager {
 		earthbendable.add("REDSTONE_ORE");
 		earthbendable.add("SAND");
 		earthbendable.add("SANDSTONE");
+		earthbendable.add("MYCEL");
 
 		config.addDefault("Properties.Chat.Enable", true);
 		config.addDefault("Properties.Chat.Format", "<name>: <message>");

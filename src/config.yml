@@ -60,6 +60,7 @@ Properties:
     - REDSTONE_ORE
     - SAND
     - SANDSTONE
+    - MYCEL
   Fire:
     CanBendWithWeapons: true
     DayFactor: 1.5
