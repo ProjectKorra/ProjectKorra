@@ -43,6 +43,7 @@ public class Extraction {
 				default:
 					break; // shouldn't happen.
 				}
+				Methods.playMetalbendingSound(block.getLocation());
 				bPlayer.addCooldown("Extraction", cooldown);
 			}
 		}

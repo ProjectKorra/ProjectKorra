@@ -1972,6 +1972,10 @@ public class Methods {
 		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0, 15);
 	}
 	
+	public static void playMetalbendingSound(Location loc) {
+		loc.getWorld().playSound(loc, Sound.IRONGOLEM_HIT, 1, 10);
+	}
+	
 	public static Block getTopBlock(Location loc, int range){
 		return getTopBlock(loc,range,range);
 	}
