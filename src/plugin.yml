@@ -112,6 +112,7 @@ permissions:
       bending.ability.Lightning: true
       bending.ability.WallOfFire: true
       bending.ability.Combustion: true
+      bending.ability.FireCombo: true
       bending.message.daymessage: true
       bending.fire.passive: true
   bending.chi:
