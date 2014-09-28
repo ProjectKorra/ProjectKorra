@@ -116,6 +116,9 @@ public class AirScooter {
 		player.setSprinting(false);
 		player.removePotionEffect(PotionEffectType.SPEED);
 		player.setVelocity(velocity);
+		if (Methods.rand.nextInt(4) == 0) {
+			Methods.playAirbendingSound(player.getLocation());
+		}
 	}
 
 	private void spinScooter() {

@@ -59,6 +59,9 @@ public class AirSpout {
 		}
 		player.setFallDistance(0);
 		player.setSprinting(false);
+		if (Methods.rand.nextInt(4) == 0) {
+			Methods.playAirbendingSound(player.getLocation());
+		}
 		Block block = getGround();
 		if (block != null) {
 			double dy = player.getLocation().getY() - block.getY();

@@ -151,6 +151,12 @@ public class TorrentBurst {
 						}
 					}
 				}
+				
+				for(Block sound : torrentblocks) {
+					if (Methods.rand.nextInt(4) == 0) {
+						Methods.playWaterbendingSound(sound.getLocation());
+					}		
+				}
 			}
 			if (angles.isEmpty())
 				heights.remove(id);

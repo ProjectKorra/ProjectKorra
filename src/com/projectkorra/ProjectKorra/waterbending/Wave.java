@@ -248,6 +248,10 @@ public class Wave {
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 							}
+							
+							if (Methods.rand.nextInt(4) == 0) {
+								Methods.playWaterbendingSound(location);
+							}
 							// if (!blocks.contains(block)
 							// && (Methods.isPlant(block) && block.getType() !=
 							// Material.LEAVES)) {
@@ -431,6 +435,11 @@ public class Wave {
 				// block.setType(Material.ICE);
 				new TempBlock(block, Material.ICE, (byte) 0);
 				frozenblocks.put(block, block);
+			}
+			for(Block sound : frozenblocks.keySet()) {
+				if (Methods.rand.nextInt(4) == 0) {
+					Methods.playWaterbendingSound(sound.getLocation());
+				}		
 			}
 		}
 	}

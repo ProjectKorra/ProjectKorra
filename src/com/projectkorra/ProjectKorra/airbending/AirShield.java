@@ -116,8 +116,13 @@ public class AirShield {
 
 			Location effect = new Location(origin.getWorld(), x, y, z);
 			if (!Methods.isRegionProtectedFromBuild(player, "AirShield",
-					effect))
+					effect)) {
 				Methods.playAirbendingParticles(effect, 10);
+				if (Methods.rand.nextInt(4) == 0) {
+					Methods.playFirebendingSound(effect);
+				}		
+			}
+			
 //				origin.getWorld().playEffect(effect, Effect.SMOKE, 4,
 //						(int) AirBlast.defaultrange);
 

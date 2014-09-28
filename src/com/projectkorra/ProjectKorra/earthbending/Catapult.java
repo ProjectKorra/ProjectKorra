@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -83,6 +84,7 @@ public class Catapult {
 		distance = source.distance;
 		time = source.time;
 		instances.put(player.getEntityId(), this);
+		Methods.playEarthbendingSound(player.getLocation());
 		fly();
 	}
 	

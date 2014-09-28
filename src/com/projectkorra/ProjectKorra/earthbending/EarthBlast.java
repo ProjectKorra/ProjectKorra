@@ -174,9 +174,7 @@ public class EarthBlast {
 					destination = null;
 				} else {
 					progressing = true;
-					sourceblock.getWorld().playEffect(
-							sourceblock.getLocation(), Effect.GHAST_SHOOT, 0,
-							10);
+					Methods.playEarthbendingSound(sourceblock.getLocation());
 					// direction = getDirection().normalize();
 					if (sourcetype != Material.SAND
 							&& sourcetype != Material.GRAVEL) {

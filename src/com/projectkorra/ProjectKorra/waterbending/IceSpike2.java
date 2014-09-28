@@ -272,6 +272,10 @@ public class IceSpike2 {
 					returnWater();
 				}
 			}
+			
+			if (Methods.rand.nextInt(4) == 0) {
+				Methods.playIcebendingSound(location);
+			}		
 
 			if (!progressing) {
 				cancel();

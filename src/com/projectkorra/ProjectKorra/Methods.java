@@ -1490,8 +1490,7 @@ public class Methods {
 				}
 
 				moveEarthBlock(block, affectedblock);
-				block.getWorld().playEffect(block.getLocation(),
-						Effect.GHAST_SHOOT, 0, 4);
+				playEarthbendingSound(block.getLocation());
 
 				for (double i = 1; i < chainlength; i++) {
 					affectedblock = location
@@ -1979,8 +1978,32 @@ public class Methods {
 		loc.getWorld().playSound(loc, Sound.FIRE, 1, 10);
 	}
 	
+	public static void playCombustionSound(Location loc) {
+		loc.getWorld().playSound(loc, Sound.FIREWORK_BLAST, 1, -1);
+	}
+	
+	public static void playEarthbendingSound(Location loc) {
+		loc.getWorld().playEffect(loc, Effect.GHAST_SHOOT, 0, 10);
+	}
+	
 	public static void playMetalbendingSound(Location loc) {
 		loc.getWorld().playSound(loc, Sound.IRONGOLEM_HIT, 1, 10);
+	}
+	
+	public static void playWaterbendingSound(Location loc) {
+		loc.getWorld().playSound(loc, Sound.WATER, 1, 10);
+	}
+	
+	public static void playIcebendingSound(Location loc) {
+		loc.getWorld().playSound(loc, Sound.FIRE_IGNITE, 10, 4);
+	}
+	
+	public static void playAirbendingSound(Location loc) {
+		loc.getWorld().playSound(loc, Sound.CREEPER_HISS, 1, 5);
+	}
+	
+	public static void playAvatarSound(Location loc) {
+		loc.getWorld().playSound(loc, Sound.ANVIL_LAND, 1, 10);
 	}
 	
 	public static Block getTopBlock(Location loc, int range){

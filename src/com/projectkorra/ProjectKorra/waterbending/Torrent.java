@@ -86,6 +86,7 @@ public class Torrent {
 			if (Methods.isTransparentToEarthbending(player, block) && block.getType() != Material.ICE) {
 				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
 				frozenblocks.put(tblock, player);
+				Methods.playIcebendingSound(block.getLocation());
 			}
 		}
 	}
@@ -113,6 +114,10 @@ public class Torrent {
 				returnWater(location);
 			return;
 		}
+		
+		if (Methods.rand.nextInt(4) == 0) {
+			Methods.playWaterbendingSound(location);
+		}		
 
 		if (System.currentTimeMillis() > time + interval) {
 			time = System.currentTimeMillis();

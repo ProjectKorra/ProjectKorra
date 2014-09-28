@@ -149,6 +149,10 @@ public class WallOfFire {
 		for (Block block : blocks) {
 			block.getWorld().playEffect(block.getLocation(),
 					Effect.MOBSPAWNER_FLAMES, 0, 15);
+			
+			if(Methods.rand.nextInt(4) <= 2) {
+				Methods.playFirebendingSound(block.getLocation());
+			}
 		}
 	}
 

@@ -143,6 +143,9 @@ public class Suffocate {
 
 				for(Location airsphere : Methods.getCircle(entity.getLocation(), 3, 3, false, true, 0)) {
 					Methods.playAirbendingParticles(airsphere, 1);
+					if (Methods.rand.nextInt(4) == 0) {
+						Methods.playAirbendingSound(airsphere);
+					}		
 				}
 				entity.setFallDistance(0);
 				new TempPotionEffect((LivingEntity) entity, slow);

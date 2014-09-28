@@ -182,8 +182,12 @@ public class Tornado {
 				z = origin.getZ() + timefactor * factor * radius * Math.sin(angle);
 
 				Location effect = new Location(origin.getWorld(), x, y, z);
-				if (!Methods.isRegionProtectedFromBuild(player, "AirBlast", effect))
+				if (!Methods.isRegionProtectedFromBuild(player, "AirBlast", effect)) {
 					Methods.playAirbendingParticles(effect, 20);
+					if (Methods.rand.nextInt(4) == 0) {
+						Methods.playAirbendingSound(effect);
+					}		
+				}
 //					origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int) AirBlast.defaultrange);
 
 				angles.put(i, angles.get(i) + 25 * (int) speedfactor);

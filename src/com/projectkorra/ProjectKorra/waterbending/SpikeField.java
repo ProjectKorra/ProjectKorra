@@ -47,6 +47,9 @@ public class SpikeField {
 							.getBlock().getX() && testblock.getZ() == p
 							.getEyeLocation().getBlock().getZ())) {
 						iceblocks.add(testblock);
+						for(Block iceblockforsound : iceblocks) {
+							Methods.playIcebendingSound(iceblockforsound.getLocation());
+						}
 					}
 				}
 			}

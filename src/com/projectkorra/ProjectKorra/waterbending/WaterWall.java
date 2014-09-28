@@ -124,6 +124,7 @@ public class WaterWall {
 		for (Block block : wallblocks.keySet()) {
 			if (wallblocks.get(block) == player) {
 				new TempBlock(block, Material.ICE, (byte) 0);
+				Methods.playIcebendingSound(block.getLocation());
 			}
 		}
 	}
@@ -238,6 +239,11 @@ public class WaterWall {
 			returnWater();
 			return false;
 		}
+		
+		if (Methods.rand.nextInt(4) == 0) {
+			Methods.playWaterbendingSound(location);
+		}		
+		
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 
