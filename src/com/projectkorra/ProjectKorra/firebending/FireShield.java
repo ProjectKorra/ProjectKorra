@@ -102,8 +102,12 @@ public class FireShield {
 				}
 
 				for (Block block : blocks) {
-					if (!Methods.isRegionProtectedFromBuild(player,	"FireShield", block.getLocation()))
+					if (!Methods.isRegionProtectedFromBuild(player,	"FireShield", block.getLocation())) {
 						block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
+						if (Methods.rand.nextInt(7) == 0) {
+							Methods.playFirebendingSound(block.getLocation());
+						}
+					}
 				}
 
 				for (Entity entity : Methods.getEntitiesAroundPoint(location, radius)) {
@@ -140,8 +144,12 @@ public class FireShield {
 				}
 
 				for (Block block : blocks) {
-					if (!Methods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation()))
+					if (!Methods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
 						block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
+						if (Methods.rand.nextInt(4) == 0) {
+							Methods.playFirebendingSound(block.getLocation());
+						}
+					}
 				}
 
 				for (Entity entity : Methods.getEntitiesAroundPoint(location, discradius)) {
@@ -168,12 +176,12 @@ public class FireShield {
 			}
 		}
 	}
-	
+
 	public static boolean isWithinShield(Location loc) {
 		for (Player player : instances.keySet()){
 			FireShield fshield = instances.get(player);
 			Location playerLoc = fshield.player.getLocation();
-			
+
 			if(fshield.shield){
 				if(playerLoc.distance(loc) <= FireShield.radius)
 					return true;
