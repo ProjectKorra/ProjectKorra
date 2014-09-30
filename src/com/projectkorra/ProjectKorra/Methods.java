@@ -38,11 +38,12 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.FallingSand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
@@ -119,11 +120,11 @@ import com.projectkorra.ProjectKorra.waterbending.WaterWall;
 import com.projectkorra.ProjectKorra.waterbending.Wave;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.StateFlag.State;
 
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
-import org.bukkit.entity.FallingSand;
-import org.bukkit.entity.TNTPrimed;
 
 public class Methods {
 
@@ -1180,6 +1181,7 @@ public class Methods {
 		
 
 		for (Location location : new Location[] { loc, player.getLocation() }) {
+			World world = location.getWorld();
 
 			if (lwc != null && respectLWC) {
 				LWCPlugin lwcp = (LWCPlugin) lwc;
@@ -1199,32 +1201,53 @@ public class Methods {
 
 				if (ignite.contains(ability)) {
 					if (!wg.hasPermission(player, "worldguard.override.lighter")) {
-						if (wg.getGlobalStateManager().get(location.getWorld()).blockLighter)
+						if (wg.getGlobalStateManager().get(world).blockLighter)
 							return true;
-						if (!wg.getGlobalRegionManager().hasBypass(player,
-								location.getWorld())
-								&& !wg.getGlobalRegionManager()
-								.get(location.getWorld())
-								.getApplicableRegions(location)
-								.allows(DefaultFlag.LIGHTER,
-										wg.wrapPlayer(player)))
-							return true;
+						if (wg.getDescription().getVersion().startsWith("5")) {
+							if (!wg.getGlobalRegionManager().hasBypass(player, world)
+									&& !wg.getGlobalRegionManager()
+									.get(world)
+									.getApplicableRegions(location)
+									.allows(DefaultFlag.LIGHTER, wg.wrapPlayer(player)))
+								return true;
+						} else { // Version 6.x.x and above. API change
+							if (player.hasPermission("worldguard.region.bypass." + world.getName()) 
+									&& wg.getRegionContainer()
+									.get(world)
+									.getApplicableRegions(location)
+									.queryState(wg.wrapPlayer(player), DefaultFlag.LIGHTER)
+									.equals(State.DENY))
+								return true;
+						}
 					}
 
 				}
 				if (explode.contains(ability)) {
 					if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions)
 						return true;
-					if (!wg.getGlobalRegionManager().get(location.getWorld())
-							.getApplicableRegions(location)
-							.allows(DefaultFlag.TNT))
-						return true;
+					if (wg.getDescription().getVersion().startsWith("5")) {
+						if (!wg.getGlobalRegionManager().get(world)
+								.getApplicableRegions(location)
+								.allows(DefaultFlag.TNT))
+							return true;
+					} else { // Version 6.x.x and above. API change
+						if (wg.getRegionContainer().get(world)
+								.getApplicableRegions(location)
+								.queryState(null, DefaultFlag.TNT).equals(State.DENY))
+							return true;
+					}
 				}
 
-				if ((!(wg.getGlobalRegionManager().canBuild(player, location)) || !(wg
-						.getGlobalRegionManager()
-						.canConstruct(player, location)))) {
-					return true;
+				if (wg.getDescription().getVersion().startsWith("5")) {
+					if ((!(wg.getGlobalRegionManager().canBuild(player, location)) || !(wg
+							.getGlobalRegionManager()
+							.canConstruct(player, location)))) {
+						return true;
+					}
+				} else { // Version 6.x.x and above. API change
+					if (!wg.getRegionContainer().createQuery()
+							.testBuild(location, player, (StateFlag[]) null))
+						return true;
 				}
 			}
 
@@ -1261,9 +1284,9 @@ public class Methods {
 				WorldCoord worldCoord;
 
 				try {
-					TownyWorld world = TownyUniverse.getDataSource().getWorld(
-							location.getWorld().getName());
-					worldCoord = new WorldCoord(world.getName(),
+					TownyWorld tWorld = TownyUniverse.getDataSource().getWorld(
+							world.getName());
+					worldCoord = new WorldCoord(tWorld.getName(),
 							Coord.parseCoord(location));
 
 					boolean bBuild = PlayerCacheUtil.getCachePermission(player,
