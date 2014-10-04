@@ -2111,5 +2111,17 @@ public class Methods {
 		list.add("AirShield");
 		return blockAbilities(null, list, loc, 0);
 	}
+	
+	public static boolean hasRPG() {
+		if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") != null) return true;
+		return false;
+	}
+	
+	public static Plugin getRPG() {
+		if (hasRPG()) {
+			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG");
+		}
+		return null;
+	}
 
 }

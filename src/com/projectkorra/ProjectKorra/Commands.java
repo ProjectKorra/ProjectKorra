@@ -863,6 +863,9 @@ public class Commands {
 						return true;
 					}
 					s.sendMessage(ChatColor.GREEN + "Core Version: " + ChatColor.RED + plugin.getDescription().getVersion());
+					if (Methods.hasRPG()) {
+						s.sendMessage(ChatColor.GREEN + "RPG Version: " + ChatColor.RED + Methods.getRPG().getDescription().getVersion());
+					}
 					s.sendMessage(ChatColor.GREEN + "Founded by: " + ChatColor.RED + "MistPhizzle");
 					s.sendMessage(ChatColor.GREEN + "Learn More: " + ChatColor.RED + "http://projectkorra.com");
 					return true;

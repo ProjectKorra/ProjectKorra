@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldEdit.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/BukkitForPlugins.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldGuard.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/KorraRPG.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
