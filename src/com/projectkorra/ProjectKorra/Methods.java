@@ -1193,7 +1193,7 @@ public class Methods {
 					}
 				}
 			}
-			if (wgp != null && respectWorldGuard) {
+			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
 				WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit
 						.getPluginManager().getPlugin("WorldGuard");
 				if (!player.isOnline())
@@ -1203,34 +1203,32 @@ public class Methods {
 					if (!wg.hasPermission(player, "worldguard.override.lighter")) {
 						if (wg.getGlobalStateManager().get(world).blockLighter)
 							return true;
-						if (wg.getDescription().getVersion().startsWith("5")) {
-							if (!wg.getGlobalRegionManager().hasBypass(player, world)
-									&& !wg.getGlobalRegionManager()
-									.get(world)
-									.getApplicableRegions(location)
-									.allows(DefaultFlag.LIGHTER, wg.wrapPlayer(player)))
-								return true;
-						} else { // Version 6.x.x and above. API change
-							if (player.hasPermission("worldguard.region.bypass." + world.getName()) 
-									&& wg.getRegionContainer()
-									.get(world)
-									.getApplicableRegions(location)
-									.queryState(wg.wrapPlayer(player), DefaultFlag.LIGHTER)
-									.equals(State.DENY))
-								return true;
-						}
+//						if (player.hasPermission("worldguard.region.bypass." + world.getName())
+//								&& wg.getRegionContainer()
+//								.get(world)
+//								.getApplicableRegions(location)
+//								.queryState(wg.wrapPlayer(player), DefaultFlag.LIGHTER)
+//								.equals(State.DENY))
+//							return true;
 					}
-
 				}
 				if (explode.contains(ability)) {
 					if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions)
 						return true;
-					if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.TNT).equals(State.DENY))
+					if (!wg.getRegionManager(world).getApplicableRegions(location).allows(DefaultFlag.TNT)){
 						return true;
+					}
+//					if (wg.getRegionContainer().get(world).getApplicableRegions(location) == null) return false;
+//					if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.TNT).equals(State.DENY))
+//						return true;
 				}
-
-				if (!wg.getRegionContainer().createQuery().testBuild(location, player, (StateFlag[]) null))
+				
+				if (!wg.canBuild(player, location.getBlock())) {
 					return true;
+				}
+//				
+//				if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.BUILD).equals(State.DENY))
+//					return true;
 			}
 
 			if (psp != null && respectPreciousStones) {
