@@ -1225,30 +1225,12 @@ public class Methods {
 				if (explode.contains(ability)) {
 					if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions)
 						return true;
-					if (wg.getDescription().getVersion().startsWith("5")) {
-						if (!wg.getGlobalRegionManager().get(world)
-								.getApplicableRegions(location)
-								.allows(DefaultFlag.TNT))
-							return true;
-					} else { // Version 6.x.x and above. API change
-						if (wg.getRegionContainer().get(world)
-								.getApplicableRegions(location)
-								.queryState(null, DefaultFlag.TNT).equals(State.DENY))
-							return true;
-					}
+					if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.TNT).equals(State.DENY))
+						return true;
 				}
 
-				if (wg.getDescription().getVersion().startsWith("5")) {
-					if ((!(wg.getGlobalRegionManager().canBuild(player, location)) || !(wg
-							.getGlobalRegionManager()
-							.canConstruct(player, location)))) {
-						return true;
-					}
-				} else { // Version 6.x.x and above. API change
-					if (!wg.getRegionContainer().createQuery()
-							.testBuild(location, player, (StateFlag[]) null))
-						return true;
-				}
+				if (!wg.getRegionContainer().createQuery().testBuild(location, player, (StateFlag[]) null))
+					return true;
 			}
 
 			if (psp != null && respectPreciousStones) {
