@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -284,8 +285,8 @@ public class FireCombo
 					fs.setCollides(false);				
 				fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 				tasks.add(fs);
-				if(progressCounter % 5 == 0)
-					player.getWorld().playSound(player.getLocation(), Sound.WITHER_SHOOT, 3, 1F);
+				if(progressCounter % 4 == 0)
+					player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 1, 0F);
 			}
 		}
 		else if(ability.equalsIgnoreCase("FireWheel"))
@@ -475,7 +476,7 @@ public class FireCombo
 		public void run() 
 		{
 			Block block = currentLoc.getBlock();
-			if(block.getType() != Material.AIR && !Methods.isPlant(block)){
+			if(block.getRelative(BlockFace.UP).getType() != Material.AIR && !Methods.isPlant(block)){
 				remove();
 				return;
 			}
