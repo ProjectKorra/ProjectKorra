@@ -88,9 +88,9 @@ public class Commands {
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
 				for(int i = 0; i < args.length; i++){
-                                    args[i] = args[i].toLowerCase();
-                                }
-                                if (args.length == 0) {
+					args[i] = args[i].toLowerCase();
+				}
+				if (args.length == 0) {
 					s.sendMessage(ChatColor.RED + "/bending help [Ability/Command] " + ChatColor.YELLOW + "Display help.");
 					s.sendMessage(ChatColor.RED + "/bending choose [Element] " + ChatColor.YELLOW + "Choose an element.");
 					s.sendMessage(ChatColor.RED + "/bending bind [Ability] # " + ChatColor.YELLOW + "Bind an ability.");
@@ -101,7 +101,7 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
 						return true;
 					}
-					
+
 					Player player = (Player) s;
 
 					String[] deletealiases = {"delete", "d", "del"};
@@ -115,12 +115,12 @@ public class Commands {
 
 						List<Preset> listnames = Preset.presets.get(player.getUniqueId());
 						List<String> ln2 = new ArrayList<String>();
-						
+
 						if (listnames == null || listnames.isEmpty()) {
 							s.sendMessage(ChatColor.RED + "You don't have any presets.");
 							return true;
 						}
-						
+
 						for (Preset preset: listnames) {
 							ln2.add(preset.getName());
 						}
@@ -247,7 +247,7 @@ public class Commands {
 						 * They are spawning in a grappling hook.
 						 * bending give [Player] grapplinghook [# of Uses]
 						 */
-						
+
 						if (args.length != 3) {
 							s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending give GrapplingHook <#OfUses>");
 							return true;
@@ -1160,19 +1160,33 @@ public class Commands {
 					}
 					if (args.length != 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending help Command/Ability");
-						s.sendMessage(ChatColor.YELLOW + "/bending add <Player> [Element]");
-						s.sendMessage(ChatColor.YELLOW + "/bending bind [Ability] <Slot>");
-						s.sendMessage(ChatColor.YELLOW + "/bending clear <slot>");
-						s.sendMessage(ChatColor.YELLOW + "/bending choose <Player> [Element]");
-						s.sendMessage(ChatColor.YELLOW + "/bending display <Element>");
-						s.sendMessage(ChatColor.YELLOW + "/bending import");
-						s.sendMessage(ChatColor.YELLOW + "/bending permaremove <Player>");
-						s.sendMessage(ChatColor.YELLOW + "/bending remove [Player]");
-						s.sendMessage(ChatColor.YELLOW + "/bending toggle");
-						s.sendMessage(ChatColor.YELLOW + "/bending version");
-						s.sendMessage(ChatColor.YELLOW + "/bending who");
-						s.sendMessage(ChatColor.YELLOW + "/bending give [Player] [Item] <Properties>");
-						s.sendMessage(ChatColor.YELLOW + "/bending invincible");
+						if (s.hasPermission("bending.command.add")) {
+							s.sendMessage(ChatColor.YELLOW + "/bending add <Player> [Element]");
+						}
+						if (s.hasPermission("bending.command.bind"))
+							s.sendMessage(ChatColor.YELLOW + "/bending bind [Ability] <Slot>");
+						if (s.hasPermission("bending.command.clear"))
+							s.sendMessage(ChatColor.YELLOW + "/bending clear <slot>");
+						if (s.hasPermission("bending.command.choose"))
+							s.sendMessage(ChatColor.YELLOW + "/bending choose <Player> [Element]");
+						if (s.hasPermission("bending.command.display"))
+							s.sendMessage(ChatColor.YELLOW + "/bending display <Element>");
+						if (s.hasPermission("bending.command.import"))
+							s.sendMessage(ChatColor.YELLOW + "/bending import");
+						if (s.hasPermission("bending.admin.permaremove"))
+							s.sendMessage(ChatColor.YELLOW + "/bending permaremove <Player>");
+						if (s.hasPermission("bending.admin.remove"))
+							s.sendMessage(ChatColor.YELLOW + "/bending remove [Player]");
+						if (s.hasPermission("bending.command.toggle"))
+							s.sendMessage(ChatColor.YELLOW + "/bending toggle");
+						if (s.hasPermission("bending.command.version"))
+							s.sendMessage(ChatColor.YELLOW + "/bending version");
+						if (s.hasPermission("bending.command.who"))
+							s.sendMessage(ChatColor.YELLOW + "/bending who");
+						if (s.hasPermission("bending.command.give"))
+							s.sendMessage(ChatColor.YELLOW + "/bending give [Player] [Item] <Properties>");
+						if (s.hasPermission("bending.command.invincible"))
+							s.sendMessage(ChatColor.YELLOW + "/bending invincible");
 						return true;
 					}
 					if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
