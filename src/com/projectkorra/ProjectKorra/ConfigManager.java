@@ -90,6 +90,7 @@ public class ConfigManager {
 		config.addDefault("Properties.Earth.CanBendWithWeapons", true);
 		config.addDefault("Properties.Earth.EarthbendableBlocks", earthbendable);
 		config.addDefault("Properties.Earth.MetalBlocks", metals);
+		config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 
 		config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 		config.addDefault("Properties.Fire.DayFactor", 1.5);

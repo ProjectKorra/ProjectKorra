@@ -26,7 +26,7 @@ public class EarthBlast {
 	private static boolean hitself = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
 	private static double preparerange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.PrepareRange");
 	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Range");
-	private static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthBlast.Damage");
+	private static double damage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Damage");
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Speed");
 	private static final double deflectrange = 3;
 
@@ -54,14 +54,10 @@ public class EarthBlast {
 	public EarthBlast(Player player) {
 		this.player = player;
 		if (prepare()) {
-			// if (instances.containsKey(player.getEntityId())) {
-			// instances.get(player.getEntityId()).cancel();
-			// }
 			id = ID++;
 			if (ID >= Integer.MAX_VALUE)
 				ID = Integer.MIN_VALUE;
 			instances.put(id, this);
-			// prepared.put(player, this);
 			time = System.currentTimeMillis();
 		}
 
@@ -70,12 +66,6 @@ public class EarthBlast {
 	public boolean prepare() {
 		cancelPrevious();
 		Block block = Methods.getEarthSourceBlock(player, preparerange);
-		// if (Methods.isEarthbendable(player, block)) {
-		// sourceblock = block;
-		// focusBlock();
-		// return true;
-		// }
-		// return false;
 		block(player);
 		if (block != null) {
 			sourceblock = block;
@@ -91,20 +81,12 @@ public class EarthBlast {
 		if (target == null) {
 			location = Methods.getTargetedLocation(player, range);
 		} else {
-			// targetting = true;
 			location = ((LivingEntity) target).getEyeLocation();
-			// location.setY(location.getY() - 1);
 		}
 		return location;
 	}
 
 	private void cancelPrevious() {
-		// if (prepared.containsKey(player)) {
-		// EarthBlast old = prepared.get(player);
-		// if (!old.progressing) {
-		// old.cancel();
-		// }
-		// }
 
 		for (int id : instances.keySet()) {
 			EarthBlast blast = instances.get(id);
@@ -150,7 +132,6 @@ public class EarthBlast {
 				if (Methods.movedearth.containsKey(sourceblock)) {
 					if (!revert)
 						Methods.removeRevertIndex(sourceblock);
-					// Methods.removeEarthbendedBlockIndex(sourceblock);
 				}
 				Entity target = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
 				// Methods.verbose(target);
@@ -167,8 +148,6 @@ public class EarthBlast {
 					destination = Methods.getPointOnLine(firstdestination,
 							destination, range);
 				}
-				// firstdestination.getBlock().setType(Material.GLOWSTONE);
-				// destination.getBlock().setType(Material.GLOWSTONE);
 				if (destination.distance(location) <= 1) {
 					progressing = false;
 					destination = null;
@@ -185,22 +164,6 @@ public class EarthBlast {
 
 		}
 	}
-
-	// private Vector getDirection() {
-	// double x1, y1, z1;
-	// double x0, y0, z0;
-	//
-	// x1 = destination.getX();
-	// y1 = destination.getY();
-	// z1 = destination.getZ();
-	//
-	// x0 = (double) sourceblock.getX();
-	// y0 = (double) sourceblock.getY();
-	// z0 = (double) sourceblock.getZ();
-	//
-	// return new Vector(x1 - x0, y1 - y0, z1 - z0);
-	//
-	// }
 
 	public static EarthBlast getBlastFromSource(Block block) {
 		for (int id : instances.keySet()) {
@@ -261,50 +224,9 @@ public class EarthBlast {
 					unfocusBlock();
 					return false;
 				}
-				// if (sourceblock.getType() == Material.AIR) {
-				// instances.remove(player.getEntityId());
-				// return false;
-				// }
 			}
 
 			if (falling) {
-				// location = location.clone().add(0, -1, 0);
-				//
-				// if (location.getBlock().getType() == Material.SNOW
-				// || Methods.isPlant(location.getBlock())) {
-				// Methods.breakBlock(location.getBlock());
-				// } else if (location.getBlock().getType() != Material.AIR) {
-				// falling = false;
-				// unfocusBlock();
-				// return false;
-				// }
-				//
-				// for (Entity entity : Methods.getEntitiesAroundPoint(location,
-				// 1)) {
-				// if (entity instanceof LivingEntity
-				// && (entity.getEntityId() != player.getEntityId() || hitself))
-				// {
-				// Methods.damageEntity(player, entity, damage);
-				// falling = false;
-				//
-				// }
-				// }
-				//
-				// if (!falling) {
-				// breakBlock();
-				// return false;
-				// }
-				//
-				// if (revert) {
-				// Methods.addTempEarthBlock(sourceblock, location.getBlock());
-				// }
-				//
-				// location.getBlock().setType(sourceblock.getType());
-				// sourceblock.setType(Material.AIR);
-				//
-				// sourceblock = location.getBlock();
-				//
-				// return true;
 				breakBlock();
 
 			} else {
@@ -382,26 +304,17 @@ public class EarthBlast {
 						continue;
 					if (entity instanceof LivingEntity
 							&& (entity.getEntityId() != player.getEntityId() || hitself)) {
-						// Block testblock = location.getBlock();
-						// Block block1 = entity.getLocation().getBlock();
-						// Block block2 = ((LivingEntity)
-						// entity).getEyeLocation()
-						// .getBlock();
-						//
-						// if (testblock.equals(block1)
-						// || testblock.equals(block2)) {
-						// entity.setVelocity(entity.getVelocity().clone()
-						// .add(direction));
 
 						Methods.breakBreathbendingHold(entity);
 
 						Location location = player.getEyeLocation();
 						Vector vector = location.getDirection();
 						entity.setVelocity(vector.normalize().multiply(pushfactor));
+						if (Methods.isMetal(sourceblock) && Methods.canMetalbend(player)) {
+							damage = Methods.getMetalAugment(damage);
+						}
 						Methods.damageEntity(player, entity, damage);
 						progressing = false;
-
-						// }
 					}
 				}
 
@@ -423,13 +336,6 @@ public class EarthBlast {
 					sourceblock.setType(Material.AIR);
 				}
 
-				// block.setType(sourceblock.getType());
-				// sourceblock.setType(Material.AIR);
-				// if (block.getType() != Material.AIR) {
-				// block.setType(Material.GLOWSTONE);
-				// } else {
-				// block.setType(Material.GLASS);
-				// }
 				sourceblock = block;
 
 				if (location.distance(destination) < 1) {

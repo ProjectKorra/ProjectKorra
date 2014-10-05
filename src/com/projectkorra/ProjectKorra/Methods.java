@@ -1089,6 +1089,9 @@ public class Methods {
 		return ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.MetalBlocks").contains(material.toString());
 	}
 
+	public static double getMetalAugment(double value) {
+		return value * ProjectKorra.plugin.getConfig().getDouble("Properties.Earth.MetalPowerFactor");
+	}
 	public static boolean isEarthbendable(Player player, String ability, Block block)
 	{
 		Material material = block.getType();

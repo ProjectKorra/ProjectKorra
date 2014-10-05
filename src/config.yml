@@ -65,6 +65,7 @@ Properties:
     - IRON_BLOCK
     - GOLD_BLOCK
     - QUARTZ_BLOCK
+    MetalPowerFactor: 1.5
   Fire:
     CanBendWithWeapons: true
     DayFactor: 1.5
