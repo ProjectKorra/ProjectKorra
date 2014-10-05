@@ -311,12 +311,12 @@ public class LavaFlow
 		 * be able to LavaSurge our blocks.
 		 */
 		boolean valid = false;
-		if(!isEarthbendableMaterial(block.getType()) && Methods.isPlant(block)){
+		if(!isEarthbendableMaterial(block.getType(), player) && Methods.isPlant(block)){
 			new Plantbending(block);
 			block.setType(Material.AIR);
 			valid = true;
 		}
-		else if(isEarthbendableMaterial(block.getType()))
+		else if(isEarthbendableMaterial(block.getType(), player))
 			valid = true;
 		
 		
@@ -439,7 +439,7 @@ public class LavaFlow
 		}
 		return list;
 	}
-	public static boolean isEarthbendableMaterial(Material mat)
+	public static boolean isEarthbendableMaterial(Material mat, Player player)
 	{
 		/**
 		 * A version of Methods.isEarthbendable that avoids using the
@@ -449,6 +449,9 @@ public class LavaFlow
 		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks"))
 			if (mat == Material.getMaterial(s))
 				return true;
+		if (ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.MetalBlocks").contains(mat.toString()) && Methods.canMetalbend(player)) {
+			return true;
+		}
 		return false;
 	}
 	public static Block getTopBlock(Location loc, int range){
@@ -499,7 +502,7 @@ public class LavaFlow
 		Block testblock = player.getTargetBlock(bendables,
 				(int) range);
 		if ((!Methods.isRegionProtectedFromBuild(player, "LavaFlow", testblock.getLocation()))
-				&& (isEarthbendableMaterial(testblock.getType()) || isLava(testblock)))
+				&& (isEarthbendableMaterial(testblock.getType(), player) || isLava(testblock)))
 			return testblock;
 		
 		Location location = player.getEyeLocation();
@@ -509,7 +512,7 @@ public class LavaFlow
 					.getBlock();
 			if (Methods.isRegionProtectedFromBuild(player, "RaiseEarth", location))
 				continue;
-			if (isEarthbendableMaterial(testblock.getType()) || isLava(testblock)) {
+			if (isEarthbendableMaterial(testblock.getType(), player) || isLava(testblock)) {
 				return block;
 			}
 		}
