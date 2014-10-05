@@ -1171,7 +1171,7 @@ public class Methods {
 		PluginManager pm = Bukkit.getPluginManager();
 
 		Plugin wgp = pm.getPlugin("WorldGuard");
-		Plugin psp = pm.getPlugin("PreciousStone");
+		Plugin psp = pm.getPlugin("PreciousStones");
 		Plugin fcp = pm.getPlugin("Factions");
 		Plugin twnp = pm.getPlugin("Towny");
 		Plugin gpp = pm.getPlugin("GriefPrevention");
