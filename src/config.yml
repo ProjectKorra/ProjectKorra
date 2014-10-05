@@ -401,6 +401,29 @@ Abilities:
       Damage: 2
       Cooldown: 7500
       Interval: 500
+    FireCombo:
+      Enabled: true
+      FireKick:
+        Range: 7.0
+        Damage: 3.0
+        Cooldown: 1000
+      FireSpin:
+        Range: 5.5
+        Damage: 3.0
+        Knockback: 2.4
+        Cooldown: 2000
+      FireWheel:
+        Range: 20.0
+        Damage: 4.0
+        Speed: 0.55
+        Cooldown: 200
+      JetBlast:
+        Speed: 1.2
+        Cooldown: 6000
+      JetBlaze:
+        Speed: 1.1
+        Damage: 3
+        Cooldown: 6000
   Chi:
     Passive:
       FallReductionFactor: 0.5
