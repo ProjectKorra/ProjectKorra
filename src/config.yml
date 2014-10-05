@@ -61,6 +61,10 @@ Properties:
     - SAND
     - SANDSTONE
     - MYCEL
+    MetalBlocks:
+    - IRON_BLOCK
+    - GOLD_BLOCK
+    - QUARTZ_BLOCK
   Fire:
     CanBendWithWeapons: true
     DayFactor: 1.5

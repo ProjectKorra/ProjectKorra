@@ -1083,6 +1083,11 @@ public class Methods {
 	public static boolean isEarthbendable(Player player, Block block) {
 		return isEarthbendable(player, "RaiseEarth", block);
 	}
+	
+	public static boolean isMetal(Block block) {
+		Material material = block.getType();
+		return ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.MetalBlocks").contains(material.toString());
+	}
 
 	public static boolean isEarthbendable(Player player, String ability, Block block)
 	{
@@ -1093,6 +1098,10 @@ public class Methods {
 				valid = true;
 				break;
 			}
+		if (isMetal(block) && canMetalbend(player)) {
+			valid = true;
+		}
+		
 		if(!valid)
 			return false;
 

@@ -32,6 +32,11 @@ public class ConfigManager {
 		earthbendable.add("SAND");
 		earthbendable.add("SANDSTONE");
 		earthbendable.add("MYCEL");
+		
+		ArrayList<String> metals = new ArrayList<String>();
+		metals.add("IRON_BLOCK");
+		metals.add("GOLD_BLOCK");
+		metals.add("QUARTZ_BLOCK");
 
 		config.addDefault("Properties.Chat.Enable", true);
 		config.addDefault("Properties.Chat.Format", "<name>: <message>");
@@ -84,6 +89,7 @@ public class ConfigManager {
 		config.addDefault("Properties.Earth.RevertCheckTime", 300000);
 		config.addDefault("Properties.Earth.CanBendWithWeapons", true);
 		config.addDefault("Properties.Earth.EarthbendableBlocks", earthbendable);
+		config.addDefault("Properties.Earth.MetalBlocks", metals);
 
 		config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 		config.addDefault("Properties.Fire.DayFactor", 1.5);
