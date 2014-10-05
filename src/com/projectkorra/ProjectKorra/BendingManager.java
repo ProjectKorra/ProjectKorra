@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
+import com.projectkorra.rpg.RPGMethods;
 
 public class BendingManager implements Runnable {
 
@@ -18,10 +19,13 @@ public class BendingManager implements Runnable {
 
 	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
 
+	static final String defaultsozinscometmessage = "Sozin's Comet is passing overhead! Firebending is now at its most powerful.";
+	static final String defaultsolareclipsemessage = "A solar eclipse is out! Firebenders are temporarily powerless.";
 	static final String defaultsunrisemessage = "You feel the strength of the rising sun empowering your firebending.";
 	static final String defaultsunsetmessage = "You feel the empowering of your firebending subside as the sun sets.";
 	static final String defaultmoonrisemessage = "You feel the strength of the rising moon empowering your waterbending.";
 	static final String defaultfullmoonrisemessage = "A full moon is rising, empowering your waterbending like never before.";
+	static final String defaultlunareclipsemessage = "A lunar eclipse is out! Waterbenders are temporarily powerless.";
 	static final String defaultmoonsetmessage = "You feel the empowering of your waterbending subside as the moon sets.";
 
 	public BendingManager(ProjectKorra plugin) {
@@ -47,7 +51,7 @@ public class BendingManager implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void handleCooldowns() {
 		for (String bP: BendingPlayer.players.keySet()) {
 			BendingPlayer bPlayer = BendingPlayer.players.get(bP);
@@ -73,10 +77,20 @@ public class BendingManager implements Runnable {
 					times.put(world, false); // Sets time to night.
 					for (Player player: world.getPlayers()) {
 						if (Methods.isBender(player.getName(), Element.Water)) {
-							if (Methods.isFullMoon(world)) {
-								player.sendMessage(Methods.getWaterColor() + defaultfullmoonrisemessage);
+							if (Methods.hasRPG()) {
+								if (RPGMethods.isLunarEclipse(world)) {
+									player.sendMessage(Methods.getWaterColor() + defaultlunareclipsemessage);
+								} else if (Methods.isFullMoon(world)) {
+									player.sendMessage(Methods.getWaterColor() + defaultfullmoonrisemessage);
+								} else {
+									player.sendMessage(Methods.getWaterColor() + defaultmoonrisemessage);
+								}
 							} else {
-								player.sendMessage(Methods.getWaterColor() + defaultmoonrisemessage);
+								if (Methods.isFullMoon(world)) {
+									player.sendMessage(Methods.getWaterColor() + defaultfullmoonrisemessage);
+								} else {
+									player.sendMessage(Methods.getWaterColor() + defaultmoonrisemessage);
+								}
 							}
 						}
 						if (Methods.isBender(player.getName(), Element.Fire)) {
@@ -93,7 +107,17 @@ public class BendingManager implements Runnable {
 							player.sendMessage(Methods.getWaterColor() + defaultmoonsetmessage);
 						}
 						if (Methods.isBender(player.getName(), Element.Fire) && player.hasPermission("bending.message.daymessage")) {
-							player.sendMessage(Methods.getFireColor() + defaultsunrisemessage);
+							if (Methods.hasRPG()) {
+								if (RPGMethods.isSozinsComet(world)) {
+									player.sendMessage(Methods.getFireColor() + defaultsozinscometmessage);
+								} else if (RPGMethods.isSolarEclipse(world) && !RPGMethods.isLunarEclipse(world)) {
+									player.sendMessage(Methods.getFireColor() + defaultsolareclipsemessage);
+								} else {
+									player.sendMessage(Methods.getFireColor() + defaultsunrisemessage);
+								}
+							} else {
+								player.sendMessage(Methods.getFireColor() + defaultsunrisemessage);
+							}
 						}
 					}
 				}

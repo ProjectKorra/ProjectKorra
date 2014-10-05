@@ -118,6 +118,8 @@ import com.projectkorra.ProjectKorra.waterbending.WaterReturn;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 import com.projectkorra.ProjectKorra.waterbending.WaterWall;
 import com.projectkorra.ProjectKorra.waterbending.Wave;
+import com.projectkorra.rpg.RPGMethods;
+import com.projectkorra.rpg.WorldEvents;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -129,7 +131,7 @@ import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 public class Methods {
 
 	static ProjectKorra plugin;
-	
+
 	public static Random rand = new Random();
 
 	private static final ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
@@ -151,20 +153,20 @@ public class Methods {
 	 * @return true if ability exists
 	 */
 	public static boolean abilityExists(String string) {
-            for (String st: AbilityModuleManager.abilities) {
-                if (string.equalsIgnoreCase(st))
-                    return true;
-                }
-            return false;
+		for (String st: AbilityModuleManager.abilities) {
+			if (string.equalsIgnoreCase(st))
+				return true;
+		}
+		return false;
 	}
-        
-        public static boolean isDisabledStockAbility(String string){
-            for (String st : AbilityModuleManager.disabledStockAbilities){
-                if (string.equalsIgnoreCase(st))
-                    return true;
-            }
-            return false;
-        }
+
+	public static boolean isDisabledStockAbility(String string){
+		for (String st : AbilityModuleManager.disabledStockAbilities){
+			if (string.equalsIgnoreCase(st))
+				return true;
+		}
+		return false;
+	}
 
 	public static void addTempAirBlock(Block block) {
 		if (movedearth.containsKey(block)) {
@@ -222,7 +224,7 @@ public class Methods {
 		} else {
 			player.sendMessage(getAvatarColor() + "Successfully bound " + ability + " to slot " + slot);
 		}
-		
+
 		saveAbility(bPlayer, slot, ability);
 	}
 
@@ -245,8 +247,8 @@ public class Methods {
 	 */
 	public static boolean canBeBloodbent(Player player) {
 		if (AvatarState.isAvatarState(player))
-		if (isChiBlocked(player.getName()))
-			return true;
+			if (isChiBlocked(player.getName()))
+				return true;
 		if (canBend(player.getName(), "Bloodbending") && Methods.getBendingPlayer(player.getName()).isToggled)
 			return false;
 		return true;
@@ -549,7 +551,7 @@ public class Methods {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		return bPlayer.getAbilities().get(slot);
 	}
-	
+
 	public static long getGlobalCooldown() {
 		return plugin.getConfig().getLong("Properties.GlobalCooldown");
 	}
@@ -742,7 +744,17 @@ public class Methods {
 	 */
 	public static double getFirebendingDayAugment(double value, World world) {
 		if (isDay(world)) {
-			return plugin.getConfig().getDouble("Properties.Fire.DayFactor") * value;
+			if (Methods.hasRPG()) {
+				if (RPGMethods.isSozinsComet(world)) {
+					return RPGMethods.getFactor(WorldEvents.SozinsComet) * value;
+				} else if (RPGMethods.isSolarEclipse(world) && !RPGMethods.isLunarEclipse(world)) {
+					return RPGMethods.getFactor(WorldEvents.SolarEclipse) * value;
+				} else {
+					return value * plugin.getConfig().getDouble("Properties.Fire.DayFactor");
+				}
+			} else {
+				return plugin.getConfig().getDouble("Properties.Fire.DayFactor");
+			}
 		}
 		return value;
 	}
@@ -877,9 +889,23 @@ public class Methods {
 	}
 
 	public static double getWaterbendingNightAugment(World world) {
-		if (isNight(world) && isFullMoon(world)) return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
-		if (isNight(world)) return plugin.getConfig().getDouble("Properties.Water.NightFactor");
-		return 1;
+		if (hasRPG()) {
+			if (isNight(world)) {
+				if (RPGMethods.isLunarEclipse(world)) {
+					return RPGMethods.getFactor(WorldEvents.LunarEclipse);
+				}
+				if (isFullMoon(world)) {
+					return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
+				}
+				return plugin.getConfig().getDouble("Properties.Water.NightFactor");
+			} else {
+				return 1;
+			}
+		} else {
+			if (isNight(world) && isFullMoon(world)) return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
+			if (isNight(world)) return plugin.getConfig().getDouble("Properties.Water.NightFactor");
+			return 1;
+		}
 	}
 
 	/**
@@ -916,7 +942,7 @@ public class Methods {
 		}
 		return null;
 	}
-	
+
 	public static Block getLavaSourceBlock(Player player, double range) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
@@ -941,7 +967,7 @@ public class Methods {
 		}
 		return null;
 	}
-	
+
 	public static Block getIceSourceBlock(Player player, double range) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
@@ -950,9 +976,9 @@ public class Methods {
 			if (isRegionProtectedFromBuild(player, "IceBlast", location))
 				continue;
 			if (isIcebendable(block)) {
-                            if (TempBlock.isTempBlock(block))
-                                    continue;
-                                return block;
+				if (TempBlock.isTempBlock(block))
+					continue;
+				return block;
 			}
 		}
 		return null;
@@ -1058,7 +1084,7 @@ public class Methods {
 			}
 		if(!valid)
 			return false;
-		
+
 		if (!isRegionProtectedFromBuild(player, ability,
 				block.getLocation()))
 			return true;
@@ -1178,7 +1204,7 @@ public class Methods {
 		Plugin massivecore = pm.getPlugin("MassiveCore");
 		Plugin lwc = pm.getPlugin("LWC");
 
-		
+
 
 		for (Location location : new Location[] { loc, player.getLocation() }) {
 			World world = location.getWorld();
@@ -1203,13 +1229,13 @@ public class Methods {
 					if (!wg.hasPermission(player, "worldguard.override.lighter")) {
 						if (wg.getGlobalStateManager().get(world).blockLighter)
 							return true;
-//						if (player.hasPermission("worldguard.region.bypass." + world.getName())
-//								&& wg.getRegionContainer()
-//								.get(world)
-//								.getApplicableRegions(location)
-//								.queryState(wg.wrapPlayer(player), DefaultFlag.LIGHTER)
-//								.equals(State.DENY))
-//							return true;
+						//						if (player.hasPermission("worldguard.region.bypass." + world.getName())
+						//								&& wg.getRegionContainer()
+						//								.get(world)
+						//								.getApplicableRegions(location)
+						//								.queryState(wg.wrapPlayer(player), DefaultFlag.LIGHTER)
+						//								.equals(State.DENY))
+						//							return true;
 					}
 				}
 				if (explode.contains(ability)) {
@@ -1218,17 +1244,17 @@ public class Methods {
 					if (!wg.getRegionManager(world).getApplicableRegions(location).allows(DefaultFlag.TNT)){
 						return true;
 					}
-//					if (wg.getRegionContainer().get(world).getApplicableRegions(location) == null) return false;
-//					if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.TNT).equals(State.DENY))
-//						return true;
+					//					if (wg.getRegionContainer().get(world).getApplicableRegions(location) == null) return false;
+					//					if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.TNT).equals(State.DENY))
+					//						return true;
 				}
-				
+
 				if (!wg.canBuild(player, location.getBlock())) {
 					return true;
 				}
-//				
-//				if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.BUILD).equals(State.DENY))
-//					return true;
+				//				
+				//				if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.BUILD).equals(State.DENY))
+				//					return true;
 			}
 
 			if (psp != null && respectPreciousStones) {
@@ -1358,7 +1384,7 @@ public class Methods {
 		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) return true;
 		return false;
 	}
-	
+
 	public static boolean isLava(Block block) {
 		if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) return true;
 		return false;
@@ -1377,7 +1403,7 @@ public class Methods {
 		if (canPlantbend(player) && isPlant(block)) return true;
 		return false;
 	}
-	
+
 	public static boolean isLavabendable(Block block, Player player) {
 		byte full = 0x0;
 		if (TempBlock.isTempBlock(block)){
@@ -1389,7 +1415,7 @@ public class Methods {
 			return true;
 		return false;
 	}
-	
+
 	public static boolean isIcebendable(Block block) {
 		if (block.getType() == Material.ICE) return true;
 		if (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce")) return true;
@@ -1627,9 +1653,9 @@ public class Methods {
 	}
 
 	public static void reloadPlugin() {
-//		for (Player player: Bukkit.getOnlinePlayers()) {
-//			Methods.saveBendingPlayer(player.getName());
-//		}
+		//		for (Player player: Bukkit.getOnlinePlayers()) {
+		//			Methods.saveBendingPlayer(player.getName());
+		//		}
 		DBConnection.sql.close();
 		plugin.reloadConfig();
 		Methods.stopBending();
@@ -1802,34 +1828,34 @@ public class Methods {
 		return rotate.multiply(Math.cos(angle)).add(
 				thirdaxis.multiply(Math.sin(angle)));
 	}
-	
+
 	public static void saveElements(BendingPlayer bPlayer) {
 		if (bPlayer == null) return;
 		String uuid = bPlayer.uuid.toString();
-		
+
 		StringBuilder elements = new StringBuilder();
 		if (bPlayer.hasElement(Element.Air)) elements.append("a");
 		if (bPlayer.hasElement(Element.Water)) elements.append("w");
 		if (bPlayer.hasElement(Element.Earth)) elements.append("e");
 		if (bPlayer.hasElement(Element.Fire)) elements.append("f");
 		if (bPlayer.hasElement(Element.Chi)) elements.append("c");
-		
+
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
 	}
-	
+
 	public static void saveAbility(BendingPlayer bPlayer, int slot, String ability) {
 		if (bPlayer == null) return;
 		String uuid = bPlayer.uuid.toString();
-		
+
 		HashMap<Integer, String> abilities = bPlayer.getAbilities();
-		
+
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
 	}
-	
+
 	public static void savePermaRemoved(BendingPlayer bPlayer) {
 		if (bPlayer == null) return;
 		String uuid = bPlayer.uuid.toString();
-		
+
 		boolean permaRemoved = bPlayer.permaRemoved;
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
 	}
@@ -1887,27 +1913,27 @@ public class Methods {
 		Flight.removeAll();
 		WaterReturn.removeAll();
 		TempBlock.removeAll();
-		
+
 		if(ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
 			removeAllEarthbendedBlocks();
 		}
 
 		EarthPassive.removeAll();
 	}
-        
-        public static void setVelocity(Entity entity, Vector velocity){
-            if (entity instanceof TNTPrimed){
-                if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.TNT"))
-                    entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier")));
-                return;
-            }
-            if (entity instanceof FallingSand){
-                if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.Normal"))
-                    entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
-                return;
-            }
-            entity.setVelocity(velocity);
-        }
+
+	public static void setVelocity(Entity entity, Vector velocity){
+		if (entity instanceof TNTPrimed){
+			if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.TNT"))
+				entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier")));
+			return;
+		}
+		if (entity instanceof FallingSand){
+			if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.Normal"))
+				entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
+			return;
+		}
+		entity.setVelocity(velocity);
+	}
 
 	public static double waterbendingNightAugment(double value, World world) {
 		if (isNight(world)) {
@@ -1958,13 +1984,13 @@ public class Methods {
 		if(effect.equals(PotionEffectType.INVISIBILITY)) return true;
 		return false;
 	}
-	
+
 	public static void breakBreathbendingHold(Entity entity) {
 		if(Suffocate.isBreathbent(entity)) {
 			Suffocate.breakSuffocate(entity);
 			return;
 		}
-		
+
 		if(entity instanceof Player) {
 			Player player = (Player) entity;
 			if(Suffocate.isChannelingSphere(player)) {
@@ -1972,43 +1998,43 @@ public class Methods {
 			}
 		}
 	}
-	
+
 	public static void playFirebendingParticles(Location loc) {
 		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0, 15);
 	}
-	
+
 	public static void playFirebendingSound(Location loc) {
 		loc.getWorld().playSound(loc, Sound.FIRE, 1, 10);
 	}
-	
+
 	public static void playCombustionSound(Location loc) {
 		loc.getWorld().playSound(loc, Sound.FIREWORK_BLAST, 1, -1);
 	}
-	
+
 	public static void playEarthbendingSound(Location loc) {
 		loc.getWorld().playEffect(loc, Effect.GHAST_SHOOT, 0, 10);
 	}
-	
+
 	public static void playMetalbendingSound(Location loc) {
 		loc.getWorld().playSound(loc, Sound.IRONGOLEM_HIT, 1, 10);
 	}
-	
+
 	public static void playWaterbendingSound(Location loc) {
 		loc.getWorld().playSound(loc, Sound.WATER, 1, 10);
 	}
-	
+
 	public static void playIcebendingSound(Location loc) {
 		loc.getWorld().playSound(loc, Sound.FIRE_IGNITE, 10, 4);
 	}
-	
+
 	public static void playAirbendingSound(Location loc) {
 		loc.getWorld().playSound(loc, Sound.CREEPER_HISS, 1, 5);
 	}
-	
+
 	public static void playAvatarSound(Location loc) {
 		loc.getWorld().playSound(loc, Sound.ANVIL_LAND, 1, 10);
 	}
-	
+
 	public static Block getTopBlock(Location loc, int range){
 		return getTopBlock(loc,range,range);
 	}
@@ -2031,18 +2057,18 @@ public class Methods {
 				return blockHolder;
 			blockHolder = tempBlock;
 		}
-		
+
 		while(blockHolder.getType() == Material.AIR && Math.abs(y) < Math.abs(negativeY))
 		{
 			y--;
 			blockHolder = loc.clone().add(0,y,0).getBlock();
 			if(blockHolder.getType() != Material.AIR) 
 				return blockHolder;
-			
+
 		}
 		return null;
 	}
-	
+
 	public static Vector rotateXZ(Vector vec, double theta)
 	{
 		/**
@@ -2055,7 +2081,7 @@ public class Methods {
 		vec2.setZ(x * Math.sin(Math.toRadians(theta)) + z * Math.cos(Math.toRadians(theta)));
 		return vec2;
 	}
-	
+
 	public static int getMaxPresets(Player player) {
 		if (player.isOp()) return 500;
 		int cap = 0;
@@ -2064,7 +2090,7 @@ public class Methods {
 		}
 		return cap;
 	}
-	
+
 	public static boolean blockAbilities(Player player, List<String> abilitiesToBlock, Location loc, double radius)
 	{
 		/**
@@ -2111,12 +2137,12 @@ public class Methods {
 		list.add("AirShield");
 		return blockAbilities(null, list, loc, 0);
 	}
-	
+
 	public static boolean hasRPG() {
 		if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") != null) return true;
 		return false;
 	}
-	
+
 	public static Plugin getRPG() {
 		if (hasRPG()) {
 			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG");
