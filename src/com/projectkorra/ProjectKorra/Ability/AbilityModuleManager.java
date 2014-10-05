@@ -31,6 +31,7 @@ public class AbilityModuleManager {
 	public static HashSet<String> igniteabilities;
 	public static HashSet<String> explodeabilities;
 	public static HashSet<String> metalbendingabilities;
+	public static HashSet<String> earthsubabilities;
 	
 	public static HashMap<String, String> descriptions;
 
@@ -54,6 +55,7 @@ public class AbilityModuleManager {
 		explodeabilities = new HashSet<String>();
 		igniteabilities = new HashSet<String>();
 		metalbendingabilities = new HashSet<String>();
+		earthsubabilities = new HashSet<String>();
 		ability = loader.load(AbilityModule.class);
 		disabledStockAbilities = new HashSet<String>();
 		fill();
@@ -110,6 +112,12 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.EarthGrab) shiftabilities.add(a.name());
 					if (a == StockAbilities.LavaFlow) shiftabilities.add(a.name());
 					if (a == StockAbilities.Extraction) metalbendingabilities.add(a.name());
+					
+					// Earth Sub Abilities
+					if (a == StockAbilities.Extraction) earthsubabilities.add(a.name());
+					if (a == StockAbilities.LavaFlow) earthsubabilities.add(a.name());
+					if (a == StockAbilities.LavaSurge) earthsubabilities.add(a.name());
+					
 				}
 			}
 			else if (StockAbilities.isFirebending(a)) {

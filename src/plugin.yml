@@ -96,6 +96,7 @@ permissions:
       bending.ability.Extraction: true
       bending.earth.passive: true
       bending.earth.metalbending: true
+      bending.earth.lavabending: true
       bending.earth.grapplinghook: true
       bending.ability.LavaSurge: true
       bending.ability.LavaFlow: true

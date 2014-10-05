@@ -557,6 +557,10 @@ public class Commands {
 					}
 
 					if (args.length == 2) {
+						if (!(s instanceof Player)) {
+							s.sendMessage(ChatColor.RED + "This command is only usable by players.");
+							return true;
+						}
 						//bending display [Element]
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.airbendingabilities.isEmpty()) {
@@ -589,7 +593,7 @@ public class Commands {
 							}
 							for (String st: AbilityModuleManager.earthbendingabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
-									if (Methods.isMetalbendingAbility(st)) {
+									if (Methods.isSubAbility(Element.Earth, st)) {
 										s.sendMessage(Methods.getMetalbendingColor() + st);
 									} else {
 										s.sendMessage(Methods.getEarthColor() + st);
@@ -769,10 +773,12 @@ public class Commands {
 							}
 						}
 						if (Methods.isBender(un, Element.Earth)) {
+							s.sendMessage(Methods.getEarthColor() + "- Earthbender");
 							if (Methods.canMetalbend(p)) {
-								s.sendMessage(Methods.getEarthColor() + "- Earthbender " + Methods.getMetalbendingColor() + "(Can Metalbend)");
-							} else {
-								s.sendMessage(Methods.getEarthColor() + "- Earthbender");
+								s.sendMessage(Methods.getMetalbendingColor() + "    Can Metalbend");
+							}
+							if (Methods.canLavabend(p)) {
+								s.sendMessage(Methods.getMetalbendingColor() + "    Can Lavabend");
 							}
 						}
 						if (Methods.isBender(un, Element.Fire)) {

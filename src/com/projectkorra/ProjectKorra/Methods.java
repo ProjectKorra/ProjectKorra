@@ -319,6 +319,17 @@ public class Methods {
 		if (player.hasPermission("bending.earth.metalbending")) return true;
 		return false;
 	}
+	
+	public static boolean canLavabend(Player player) {
+		return player.hasPermission("bending.earth.lavabending");
+	}
+	
+	public static boolean isSubAbility(Element element, String ability) {
+		if (element == Element.Earth) {
+			if (AbilityModuleManager.earthsubabilities.contains(ability)) return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Checks to see if a player can PlantBend.
