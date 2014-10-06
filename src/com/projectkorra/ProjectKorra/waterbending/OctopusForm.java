@@ -22,7 +22,7 @@ public class OctopusForm {
 
 	private static int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Range");
 	private static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Damage");
-	private static long interval = 50;
+	private static long interval = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.Damage.FormDelay");
 	static double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
 	private static final byte full = 0x0;
 

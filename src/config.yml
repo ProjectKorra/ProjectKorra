@@ -190,6 +190,7 @@ Abilities:
       Range: 10
       Damage: 3
       Radius: 3
+      FormDelay: 50
     PhaseChange:
       Enabled: true
       Description: "To use, simply left-click. Any water you are looking at within range will instantly freeze over into solid ice. Provided you stay within range of the ice and do not unbind FreezeMelt, that ice will not thaw. If, however, you do either of those things the ice will instantly thaw. If you sneak (default: shift), anything around where you are looking at will instantly melt. Since this is a more favorable state for these things, they will never re-freeze unless they would otherwise by nature or some other bending ability. Additionally, if you tap sneak while targeting water with FreezeMelt, it will evaporate water around that block that is above sea level."
@@ -227,15 +228,14 @@ Abilities:
       Cooldown: 1000
     WaterSpout:
       Enabled: true
-      Description: "To use this ability, click while over or in water. You will spout water up from beneath you to experience controlled levitation. This ability is a toggle, so you can activate it then use other abilities and it will remain on. If you try to spout over an area with no water, snow, or ice, the spout will dissipate and you will fall. Click again with this ability selected to deactivate it."
+      Description: This ability provides a Waterbender with a new means of transportation. To use, simply left click while in or over water to spout water up beneath you, experiencing controlled levitation. Left clicking again while the spout is active will cause it to disappear. Alternatively, tapping a Waterbendable block while not in Water will select a water block as a source, from there, you can tap sneak (Default:Shift) to channel the Water around you. Releasing the sneak will create a wave allowing you a quick burst of controlled transportation. While riding the wave you may press sneak to cause the wave to disappear.
       Height: 20
-    WaterWave:
-      Enabled: true
-      Description: "This ability provides a Waterbender with boosted mobility and transportation. To use, first click a source block to select it; then hold sneak (Default: Shift) to begin streaming the water around you. While the water is streaming around you let go of sneak and the water will form underneath your feet, blasting you off into the direction that you are facing. Additionally, taping sneak while riding the wave still stop it."
-      Range: 6
-      ChargeTime: 1000
-      FlightTime: 2000
-      Speed: 1.2
+      Wave:
+        Enabled: true
+        Range: 6
+        ChargeTime: 1000
+        FlightTime: 2000
+        Speed: 1.2
   Earth:
     Passive:
       Duration: 2500

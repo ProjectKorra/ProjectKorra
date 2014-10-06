@@ -93,7 +93,6 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.WaterManipulation) shiftabilities.add(a.name());
 					if (a == StockAbilities.IceSpike) shiftabilities.add(a.name());
 					if (a == StockAbilities.IceBlast) shiftabilities.add(a.name());
-					if (a == StockAbilities.WaterWave) shiftabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isEarthbending(a)) {

@@ -262,6 +262,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.OctopusForm.Range", 10);
 		config.addDefault("Abilities.Water.OctopusForm.Radius", 3);
 		config.addDefault("Abilities.Water.OctopusForm.Damage", 3);
+		config.addDefault("Abilities.Water.OctopusForm.FormDelay", 50);
 
 		config.addDefault("Abilities.Water.PhaseChange.Enabled", true);
 		config.addDefault("Abilities.Water.PhaseChange.Description", "To use, simply left-click. "
@@ -305,19 +306,13 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterManipulation.Cooldown", 1000);
 
 		config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
-		config.addDefault("Abilities.Water.WaterSpout.Description", "To use this ability, click while over or in water. "
-				+ "You will spout water up from beneath you to experience controlled levitation. "
-				+ "This ability is a toggle, so you can activate it then use other abilities and it "
-				+ "will remain on. If you try to spout over an area with no water, snow or ice, "
-				+ "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.");
+		config.addDefault("Abilities.Water.WaterSpout.Description", "This ability provides a Waterbender with a means of transportation. To use, simply left click while in or over water to spout water up beneath you, experiencing controlled levitation. Left clicking again while the spout is active will cause it to disappear. Alternatively, tapping a Waterbendable block while not in Water will select a water block as a source, from there, you can tap sneak (Default:Shift) to channel the Water around you. Releasing the sneak will create a wave allowing you a quick burst of controlled transportation. While riding the wave you may press sneak to cause the wave to disappear.");
 		config.addDefault("Abilities.Water.WaterSpout.Height", 20);
-
-		config.addDefault("Abilities.Water.WaterWave.Enabled", true);
-		config.addDefault("Abilities.Water.WaterWave.Description", "This ability provides a Waterbender with boosted mobility and transportation. To use, first click a source block to select it; then hold sneak (Default: Shift) to begin streaming the water around you. While the water is streaming around you let go of sneak and the water will form underneath your feet, blasting you off into the direction that you are facing. Additionally, taping sneak while riding the wave still stop it.");
-		config.addDefault("Abilities.Water.WaterWave.Range", 6);
-		config.addDefault("Abilities.Water.WaterWave.ChargeTime", 1000);
-		config.addDefault("Abilities.Water.WaterWave.FlightTime", 2000);
-		config.addDefault("Abilities.Water.WaterWave.Speed", 1.2);
+		config.addDefault("Abilities.Water.WaterSpout.Wave.Enabled", true);
+		config.addDefault("Abilities.Water.WaterSpout.Wave.Range", 6);
+		config.addDefault("Abilities.Water.WaterSpout.Wave.ChargeTime", 1000);
+		config.addDefault("Abilities.Water.WaterSpout.Wave.FlightTime", 2000);
+		config.addDefault("Abilities.Water.WaterSpout.Wave.Speed", 1.2);
 
 		config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 
