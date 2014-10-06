@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
+
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent;
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent.Result;
+
 public class BendingPlayer {
 
 	public static ConcurrentHashMap<String, BendingPlayer> players = new ConcurrentHashMap<String, BendingPlayer>();
@@ -40,10 +45,14 @@ public class BendingPlayer {
 	}
 
 	public void addCooldown(String ability, long cooldown) {
+		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, Result.ADDED);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 		this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
 	}
 
 	public void removeCooldown(String ability) {
+		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, Result.REMOVED);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 		this.cooldowns.remove(ability);
 	}
 
