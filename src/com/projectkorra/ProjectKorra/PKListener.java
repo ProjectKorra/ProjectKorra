@@ -420,9 +420,6 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Torrent")) {
 					Torrent.create(player);
 				}
-				if (abil.equalsIgnoreCase("WaterWave")) {
-					new WaterWave(player, WaterWave.AbilityType.SHIFT);
-				}
 			}
 
 			if (Methods.isEarthAbility(abil)) {
@@ -756,9 +753,6 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Torrent")) {
 					new Torrent(player);
-				}
-				if (abil.equalsIgnoreCase("WaterWave")) {
-					new WaterWave(player, WaterWave.AbilityType.CLICK);
 				}
 			}
 

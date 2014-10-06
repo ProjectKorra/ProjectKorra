@@ -3,14 +3,12 @@ package com.projectkorra.ProjectKorra.waterbending;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
@@ -44,6 +42,11 @@ public class WaterSpout {
 			return;
 		}
 		this.player = player;
+		
+		WaterWave wwave = new WaterWave(player, WaterWave.AbilityType.CLICK);
+		if(WaterWave.instances.contains(wwave))
+			return;
+		
 		Block topBlock = Methods.getTopBlock(player.getLocation(), 0, -50);
 		if(topBlock == null)
 			topBlock = player.getLocation().getBlock();
