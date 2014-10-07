@@ -7,14 +7,19 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -73,6 +78,7 @@ import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
@@ -319,11 +325,11 @@ public class Methods {
 		if (player.hasPermission("bending.earth.metalbending")) return true;
 		return false;
 	}
-	
+
 	public static boolean canLavabend(Player player) {
 		return player.hasPermission("bending.earth.lavabending");
 	}
-	
+
 	public static boolean isSubAbility(Element element, String ability) {
 		if (element == Element.Earth) {
 			if (AbilityModuleManager.earthsubabilities.contains(ability)) return true;
@@ -1083,7 +1089,7 @@ public class Methods {
 	public static boolean isEarthbendable(Player player, Block block) {
 		return isEarthbendable(player, "RaiseEarth", block);
 	}
-	
+
 	public static boolean isMetal(Block block) {
 		Material material = block.getType();
 		return ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.MetalBlocks").contains(material.toString());
@@ -1104,7 +1110,7 @@ public class Methods {
 		if (isMetal(block) && canMetalbend(player)) {
 			valid = true;
 		}
-		
+
 		if(!valid)
 			return false;
 
@@ -2171,6 +2177,118 @@ public class Methods {
 			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG");
 		}
 		return null;
+	}
+
+	public static void writeToDebug(String message) {
+		try {
+			File dataFolder = plugin.getDataFolder();
+			if (!dataFolder.exists()) {
+				dataFolder.mkdir();
+			}
+
+			File saveTo = new File(plugin.getDataFolder(), "debug.txt");
+			if (!saveTo.exists()) {
+				saveTo.createNewFile();
+			}
+
+			FileWriter fw = new FileWriter(saveTo, true);
+			PrintWriter pw = new PrintWriter(fw);
+			pw.println(message);
+			pw.flush();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static String getCurrentDate() {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		return dateFormat.format(date);
+	}
+
+	public static void runDebug() {
+		File debugFile = new File(plugin.getDataFolder(), "debug.txt");
+		if (debugFile.exists()) {
+			debugFile.delete(); // We're starting brand new.
+		}
+		writeToDebug("ProjectKorra Debug: Paste this on http://pastie.org and put it in your bug report thread.");
+		writeToDebug("====================");
+		writeToDebug("");
+		writeToDebug("");
+		writeToDebug("Date Created: " + getCurrentDate());
+		writeToDebug("");
+		writeToDebug("ProjectKorra (Core) Information");
+		writeToDebug("====================");
+		writeToDebug("Version: " + plugin.getDescription().getVersion());
+		writeToDebug("Author: " + plugin.getDescription().getAuthors());
+		if (hasRPG()) {
+			writeToDebug("");
+			writeToDebug("ProjectKorra (RPG) Information");
+			writeToDebug("====================");
+			writeToDebug("Version: " + getRPG().getDescription().getVersion());
+			writeToDebug("Author: " + getRPG().getDescription().getAuthors());
+		}
+		writeToDebug("");
+		writeToDebug("Ability Information");
+		writeToDebug("====================");
+		for (String ability: AbilityModuleManager.abilities) {
+			if (StockAbilities.isStockAbility(ability) && !Methods.isDisabledStockAbility(ability)) {
+				writeToDebug(ability + " - STOCK ABILITY");
+			} else {
+				writeToDebug(ability + " - UNOFFICIAL ABILITY");
+			}
+		}
+		writeToDebug("");
+		writeToDebug("Supported Plugins");
+		writeToDebug("====================");
+		
+		boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
+		boolean respectPreciousStones = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectPreciousStones");
+		boolean respectFactions = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectFactions");
+		boolean respectTowny = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectTowny");
+		boolean respectGriefPrevention = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
+		boolean respectLWC = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectLWC");
+		PluginManager pm = Bukkit.getPluginManager();
+
+		Plugin wgp = pm.getPlugin("WorldGuard");
+		Plugin psp = pm.getPlugin("PreciousStones");
+		Plugin fcp = pm.getPlugin("Factions");
+		Plugin twnp = pm.getPlugin("Towny");
+		Plugin gpp = pm.getPlugin("GriefPrevention");
+		Plugin massivecore = pm.getPlugin("MassiveCore");
+		Plugin lwc = pm.getPlugin("LWC");
+		
+		if (wgp != null && respectWorldGuard) {
+			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
+		}
+		if (psp != null && respectPreciousStones) {
+			writeToDebug("PreciousStones v" + psp.getDescription().getVersion());
+		}
+		if (fcp != null && respectFactions) {
+			writeToDebug("Factions v" + fcp.getDescription().getVersion());
+		}
+		if (massivecore != null && respectFactions) {
+			writeToDebug("MassiveCore v" + massivecore.getDescription().getVersion());
+		}
+		if (twnp != null && respectTowny) {
+			writeToDebug("Towny v" + twnp.getDescription().getVersion());
+		}
+		if (gpp != null && respectGriefPrevention) {
+			writeToDebug("GriefPrevention v" + gpp.getDescription().getVersion());
+		}
+		if (lwc != null && respectLWC) {
+			writeToDebug("LWC v" + lwc.getDescription().getVersion());
+		}
+		
+		writeToDebug("");
+		writeToDebug("Plugins Hooking Into ProjectKorra (Core)");
+		writeToDebug("====================");
+		for (Plugin plugin: Bukkit.getPluginManager().getPlugins()) {
+			if (plugin.getDescription().getDepend() != null && plugin.getDescription().getDepend().contains("ProjectKorra")) {
+				writeToDebug(plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion());
+			}
+		}
 	}
 
 }

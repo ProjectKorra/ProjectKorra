@@ -96,6 +96,22 @@ public class Commands {
 					s.sendMessage(ChatColor.RED + "/bending bind [Ability] # " + ChatColor.YELLOW + "Bind an ability.");
 					return true;
 				}
+				if (args[0].equalsIgnoreCase("debug")) {
+					if (args.length != 1) {
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending debug");
+						return true;
+					}
+					
+					if (!s.hasPermission("bending.admin.debug")) {
+						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						return true;
+					}
+					
+					Methods.runDebug();
+					s.sendMessage(ChatColor.GREEN + "Debug File Created as debug.txt in the ProjectKorra plugin folder.");
+					s.sendMessage(ChatColor.GREEN + "Put contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
+					return true;
+				}
 				if (Arrays.asList(presetaliases).contains(args[0].toLowerCase())) {
 					if (!(s instanceof Player)) {
 						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
