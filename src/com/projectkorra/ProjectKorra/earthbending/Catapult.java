@@ -65,6 +65,7 @@ public class Catapult {
 			if ((double) distance >= location.distance(origin)) {
 				catapult = true;
 			}
+			if (player.isSneaking()) distance = distance / 2;
 			time = System.currentTimeMillis() - interval;
 			starttime = System.currentTimeMillis();
 			moving = true;
