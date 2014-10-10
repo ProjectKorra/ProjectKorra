@@ -2217,7 +2217,7 @@ public class Methods {
 		writeToDebug("");
 		writeToDebug("");
 		writeToDebug("Date Created: " + getCurrentDate());
-		writeToDebug("Bukkit Version: " + Bukkit.getServer().getVersion())
+		writeToDebug("Bukkit Version: " + Bukkit.getServer().getVersion());
 		writeToDebug("");
 		writeToDebug("ProjectKorra (Core) Information");
 		writeToDebug("====================");
