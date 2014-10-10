@@ -770,7 +770,7 @@ public class Methods {
 					return value * plugin.getConfig().getDouble("Properties.Fire.DayFactor");
 				}
 			} else {
-				return plugin.getConfig().getDouble("Properties.Fire.DayFactor");
+				return value * plugin.getConfig().getDouble("Properties.Fire.DayFactor");
 			}
 		}
 		return value;
