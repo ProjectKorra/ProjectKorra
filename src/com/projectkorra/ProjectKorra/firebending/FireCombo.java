@@ -26,7 +26,7 @@ import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 
 public class FireCombo 
 {	
-	private static final List<String> abilitiesToBlock = new ArrayList<String>(){
+	public static final List<String> abilitiesToBlock = new ArrayList<String>(){
 		private static final long serialVersionUID = 5395690551860441647L;
 	{
 		add("AirShield");
@@ -177,7 +177,7 @@ public class FireCombo
 				}
 				currentLoc = ((FireComboStream)tasks.get(0)).getLocation();
 				for(FireComboStream stream : tasks)
-					if(Methods.blockAbilities(player, abilitiesToBlock, currentLoc, 2))
+					if(Methods.blockAbilities(player, abilitiesToBlock, stream.currentLoc, 2))
 						stream.remove();
 			}
 			else if(tasks.size() == 0){
@@ -445,7 +445,7 @@ public class FireCombo
 				list.add(lf);
 		return list;
 	}
-	public class FireComboStream extends BukkitRunnable
+	public static class FireComboStream extends BukkitRunnable
 	{
 		private Vector direction;
 		private double speed;
@@ -506,9 +506,12 @@ public class FireCombo
 			if(singlePoint)
 				remove();
 		}
+		public void cancel(){
+			remove();
+		}
 		public void remove()
 		{
-			this.cancel();
+			super.cancel();
 			this.cancelled = true;
 		}
 		public Location getLocation(){
