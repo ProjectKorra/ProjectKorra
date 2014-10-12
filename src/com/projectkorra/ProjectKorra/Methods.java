@@ -1641,32 +1641,50 @@ public class Methods {
 			target.setData(info.getState().getRawData());
 		}
 	}
-
+	
+	public static ParticleEffect getAirbendingParticles() {
+		String particle = plugin.getConfig().getString("Properties.Air.Particles");
+		if (particle == null) 
+			return ParticleEffect.CLOUD; 
+		else if (particle.equalsIgnoreCase("spell"))
+			return ParticleEffect.SPELL;
+		else if (particle.equalsIgnoreCase("blacksmoke"))
+			return ParticleEffect.SMOKE;
+		else if (particle.equalsIgnoreCase("smoke"))
+			return ParticleEffect.CLOUD;
+		else 
+			return ParticleEffect.CLOUD;
+	}
+	
 	public static void playAirbendingParticles(Location loc, int amount) {
+		playAirbendingParticles(loc, amount, (float) Math.random(), (float) Math.random(), (float) Math.random());
+	}
+	
+	public static void playAirbendingParticles(Location loc, int amount, float xOffset, float yOffset, float zOffset) {
 		String particle = plugin.getConfig().getString("Properties.Air.Particles");
 		if (particle == null) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+				ParticleEffect.CLOUD.display(loc, xOffset, yOffset, zOffset, 0, 1); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("spell")) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.SPELL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+				ParticleEffect.SPELL.display(loc, xOffset, yOffset, zOffset, 0, 1); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("blacksmoke")) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.SMOKE.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+				ParticleEffect.SMOKE.display(loc, xOffset, yOffset, zOffset, 0, 1); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("smoke")) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+				ParticleEffect.CLOUD.display(loc, xOffset, yOffset, zOffset, 0, 1); 
 			}
 		}
 		else {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+				ParticleEffect.CLOUD.display(loc, xOffset, yOffset, (float) Math.random(), 0, 1); 
 			}
 		}
 	}
