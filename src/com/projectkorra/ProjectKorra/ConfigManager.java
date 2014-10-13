@@ -229,7 +229,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirCombo.AirStream.Range", 40);
 		config.addDefault("Abilities.Air.AirCombo.AirStream.EntityDuration", 4000);
 		config.addDefault("Abilities.Air.AirCombo.AirStream.EntityHeight", 14);
-		config.addDefault("Abilities.Air.AirCombo.AirStream.Cooldown", 8000);
+		config.addDefault("Abilities.Air.AirCombo.AirStream.Cooldown", 6000);
 		config.addDefault("Abilities.Air.AirCombo.AirSweep.Speed", 1.4);
 		config.addDefault("Abilities.Air.AirCombo.AirSweep.Range", 14);
 		config.addDefault("Abilities.Air.AirCombo.AirSweep.Damage", 4);

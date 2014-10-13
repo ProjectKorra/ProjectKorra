@@ -175,7 +175,7 @@ Abilities:
         Range: 40
         EntityDuration: 4000
         EntityHeight: 14
-        Cooldown: 8000
+        Cooldown: 6000
       AirSweep:
         Speed: 1.4
         Range: 14
