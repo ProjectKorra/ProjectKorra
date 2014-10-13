@@ -61,6 +61,7 @@ permissions:
       bending.ability.AirSwipe: true
       bending.ability.Suffocate: true
       bending.ability.Tornado: true
+      bending.ability.AirCombo: true
       bending.air.passive: true
   bending.water:
     default: true

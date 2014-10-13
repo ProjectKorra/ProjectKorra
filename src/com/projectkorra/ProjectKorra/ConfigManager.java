@@ -217,7 +217,25 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.Tornado.Range", 25);
 		config.addDefault("Abilities.Air.Tornado.MobPushFactor", 1);
 		config.addDefault("Abilities.Air.Tornado.PlayerPushFactor", 1);
-
+		
+		config.addDefault("Abilities.Air.AirCombo.Enabled", true);
+		config.addDefault("Abilities.Air.AirCombo.Twister.Speed", 0.35);
+		config.addDefault("Abilities.Air.AirCombo.Twister.Range", 16);
+		config.addDefault("Abilities.Air.AirCombo.Twister.Height", 8);
+		config.addDefault("Abilities.Air.AirCombo.Twister.Radius", 3.5);
+		config.addDefault("Abilities.Air.AirCombo.Twister.RemoveDelay", 1500);
+		config.addDefault("Abilities.Air.AirCombo.Twister.Cooldown", 10000);
+		config.addDefault("Abilities.Air.AirCombo.AirStream.Speed", 0.5);
+		config.addDefault("Abilities.Air.AirCombo.AirStream.Range", 40);
+		config.addDefault("Abilities.Air.AirCombo.AirStream.EntityDuration", 4000);
+		config.addDefault("Abilities.Air.AirCombo.AirStream.EntityHeight", 14);
+		config.addDefault("Abilities.Air.AirCombo.AirStream.Cooldown", 8000);
+		config.addDefault("Abilities.Air.AirCombo.AirSweep.Speed", 1.4);
+		config.addDefault("Abilities.Air.AirCombo.AirSweep.Range", 14);
+		config.addDefault("Abilities.Air.AirCombo.AirSweep.Damage", 4);
+		config.addDefault("Abilities.Air.AirCombo.AirSweep.Knockback", 3.5);
+		config.addDefault("Abilities.Air.AirCombo.AirSweep.Cooldown", 5000);
+		
 		config.addDefault("Abilities.Water.Passive.SwimSpeedFactor", 0.7);
 
 		config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
@@ -544,10 +562,10 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.FireCombo.Enabled", true);
 		config.addDefault("Abilities.Fire.FireCombo.FireKick.Range", 7.0);
 		config.addDefault("Abilities.Fire.FireCombo.FireKick.Damage", 3.0);
-		config.addDefault("Abilities.Fire.FireCombo.FireKick.Cooldown", 1000);
-		config.addDefault("Abilities.Fire.FireCombo.FireSpin.Range", 5.5);
+		config.addDefault("Abilities.Fire.FireCombo.FireKick.Cooldown", 2000);
+		config.addDefault("Abilities.Fire.FireCombo.FireSpin.Range", 7);
 		config.addDefault("Abilities.Fire.FireCombo.FireSpin.Damage", 3.0);
-		config.addDefault("Abilities.Fire.FireCombo.FireSpin.Knockback", 2.4);
+		config.addDefault("Abilities.Fire.FireCombo.FireSpin.Knockback", 3.2);
 		config.addDefault("Abilities.Fire.FireCombo.FireSpin.Cooldown", 2000);
 		config.addDefault("Abilities.Fire.FireCombo.FireWheel.Range", 20.0);
 		config.addDefault("Abilities.Fire.FireCombo.FireWheel.Damage", 4.0);

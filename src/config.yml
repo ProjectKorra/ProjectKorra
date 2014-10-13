@@ -161,6 +161,27 @@ Abilities:
       Range: 25
       MobPushFactor: 1
       PlayerPushFactor: 1
+    AirCombo:
+      Enabled: true
+      Twister:
+        Speed: 0.35
+        Range: 16
+        Height: 8
+        Radius: 3.5
+        RemoveDelay: 1500
+        Cooldown: 10000
+      AirStream:
+        Speed: 0.5
+        Range: 40
+        EntityDuration: 4000
+        EntityHeight: 14
+        Cooldown: 8000
+      AirSweep:
+        Speed: 1.4
+        Range: 14
+        Damage: 4
+        Knockback: 3.5
+        Cooldown: 5000
   Water:
     Passive:
       SwimSpeedFactor: 0.7
@@ -411,11 +432,11 @@ Abilities:
       FireKick:
         Range: 7.0
         Damage: 3.0
-        Cooldown: 1000
+        Cooldown: 2000
       FireSpin:
-        Range: 5.5
+        Range: 7
         Damage: 3.0
-        Knockback: 2.4
+        Knockback: 3.2
         Cooldown: 2000
       FireWheel:
         Range: 20.0
