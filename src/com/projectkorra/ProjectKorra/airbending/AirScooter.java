@@ -151,6 +151,9 @@ public class AirScooter {
 
 	private void remove() {
 		instances.remove(player);
+		player.setFlying(false);
+		player.setAllowFlight(false);
+		player.setSprinting(false);
 	}
 
 	public static void check(Player player) {

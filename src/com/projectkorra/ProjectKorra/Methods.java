@@ -83,6 +83,7 @@ import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
+import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.airbending.AirScooter;
 import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
@@ -106,6 +107,7 @@ import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.Cook;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.firebending.FireBurst;
+import com.projectkorra.ProjectKorra.firebending.FireCombo;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.firebending.FireShield;
 import com.projectkorra.ProjectKorra.firebending.FireStream;
@@ -1647,32 +1649,50 @@ public class Methods {
 			target.setData(info.getState().getRawData());
 		}
 	}
-
+	
+	public static ParticleEffect getAirbendingParticles() {
+		String particle = plugin.getConfig().getString("Properties.Air.Particles");
+		if (particle == null) 
+			return ParticleEffect.CLOUD; 
+		else if (particle.equalsIgnoreCase("spell"))
+			return ParticleEffect.SPELL;
+		else if (particle.equalsIgnoreCase("blacksmoke"))
+			return ParticleEffect.SMOKE;
+		else if (particle.equalsIgnoreCase("smoke"))
+			return ParticleEffect.CLOUD;
+		else 
+			return ParticleEffect.CLOUD;
+	}
+	
 	public static void playAirbendingParticles(Location loc, int amount) {
+		playAirbendingParticles(loc, amount, (float) Math.random(), (float) Math.random(), (float) Math.random());
+	}
+	
+	public static void playAirbendingParticles(Location loc, int amount, float xOffset, float yOffset, float zOffset) {
 		String particle = plugin.getConfig().getString("Properties.Air.Particles");
 		if (particle == null) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+				ParticleEffect.CLOUD.display(loc, xOffset, yOffset, zOffset, 0, 1); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("spell")) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.SPELL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+				ParticleEffect.SPELL.display(loc, xOffset, yOffset, zOffset, 0, 1); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("blacksmoke")) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.SMOKE.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+				ParticleEffect.SMOKE.display(loc, xOffset, yOffset, zOffset, 0, 1); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("smoke")) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+				ParticleEffect.CLOUD.display(loc, xOffset, yOffset, zOffset, 0, 1); 
 			}
 		}
 		else {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.CLOUD.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+				ParticleEffect.CLOUD.display(loc, xOffset, yOffset, (float) Math.random(), 0, 1); 
 			}
 		}
 	}
@@ -2120,16 +2140,14 @@ public class Methods {
 		return cap;
 	}
 
-	public static boolean blockAbilities(Player player, List<String> abilitiesToBlock, Location loc, double radius)
-	{
+	public static boolean blockAbilities(Player player, List<String> abilitiesToBlock, Location loc, double radius) {
 		/**
 		 * Cycles through a list of ability names to check if any instances of
 		 * the abilities exist at a specific location. If an instance of the ability is
 		 * found then it will be removed, with the exception FireShield, and AirShield.
 		 */
 		boolean hasBlocked = false;
-		for(String ability : abilitiesToBlock)
-		{
+		for(String ability : abilitiesToBlock){
 			if(ability.equalsIgnoreCase("FireBlast")){
 				hasBlocked = FireBlast.annihilateBlasts(loc, radius, player) || hasBlocked;
 			}
@@ -2157,10 +2175,28 @@ public class Methods {
 			else if(ability.equalsIgnoreCase("AirSpout")){
 				hasBlocked = AirSpout.removeSpouts(loc, radius, player) || hasBlocked;
 			}
+			else if(ability.equalsIgnoreCase("Twister")){
+				hasBlocked = AirCombo.removeAroundPoint(player, "Twister", loc, radius) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("AirStream")){
+				hasBlocked = AirCombo.removeAroundPoint(player, "AirStream", loc, radius) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("AirSweep")){
+				hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("FireKick")){
+				hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("FireSpin")){
+				hasBlocked = FireCombo.removeAroundPoint(player, "FireSpin", loc, radius) || hasBlocked;
+			}
+			else if(ability.equalsIgnoreCase("FireWheel")){
+				hasBlocked = FireCombo.removeAroundPoint(player, "FireWheel", loc, radius) || hasBlocked;
+			}
 		}
 		return hasBlocked;
 	}
-	public static boolean isWithinShields(Location loc){
+	public static boolean isWithinShields(Location loc) {
 		List<String> list = new ArrayList<String>();
 		list.add("FireShield");
 		list.add("AirShield");

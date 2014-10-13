@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.firebending.FireCombo;
 
 public class ComboManager 
@@ -62,6 +63,32 @@ public class ComboManager
 		fireWheel.add(new AbilityInformation("Blaze",ClickType.SHIFTUP));
 		comboAbilityList.add(new ComboAbility("FireWheel",fireWheel,FireCombo.class));	
 		
+		ArrayList<AbilityInformation> twister = new ArrayList<AbilityInformation>();
+		twister.add(new AbilityInformation("AirShield",ClickType.SHIFTDOWN));
+		twister.add(new AbilityInformation("AirShield",ClickType.SHIFTUP));
+		twister.add(new AbilityInformation("Tornado",ClickType.SHIFTDOWN));
+		twister.add(new AbilityInformation("AirBlast",ClickType.LEFTCLICK));
+		comboAbilityList.add(new ComboAbility("Twister",twister,AirCombo.class));	
+		
+		ArrayList<AbilityInformation> airStream = new ArrayList<AbilityInformation>();
+		airStream.add(new AbilityInformation("AirShield",ClickType.SHIFTDOWN));
+		airStream.add(new AbilityInformation("AirSuction",ClickType.LEFTCLICK));
+		airStream.add(new AbilityInformation("AirBlast",ClickType.LEFTCLICK));
+		comboAbilityList.add(new ComboAbility("AirStream",airStream,AirCombo.class));	
+		
+		/*ArrayList<AbilityInformation> airSlice = new ArrayList<AbilityInformation>();
+		airSlice.add(new AbilityInformation("AirBlast",ClickType.LEFTCLICK));
+		airSlice.add(new AbilityInformation("AirScooter",ClickType.SHIFTDOWN));
+		airSlice.add(new AbilityInformation("AirScooter",ClickType.LEFTCLICK));
+		comboAbilityList.add(new ComboAbility("AirSlice",airSlice,AirCombo.class));*/
+		
+		ArrayList<AbilityInformation> airSweep = new ArrayList<AbilityInformation>();
+		airSweep.add(new AbilityInformation("AirSwipe",ClickType.LEFTCLICK));
+		airSweep.add(new AbilityInformation("AirSwipe",ClickType.LEFTCLICK));
+		airSweep.add(new AbilityInformation("AirBurst",ClickType.SHIFTDOWN));
+		airSweep.add(new AbilityInformation("AirBurst",ClickType.LEFTCLICK));
+		comboAbilityList.add(new ComboAbility("AirSweep",airSweep,AirCombo.class));
+		
 		startCleanupTask();
 	}
 	public static void addComboAbility(Player player, ClickType type)
@@ -79,6 +106,8 @@ public class ComboManager
 		
 		if(comboAbil.getComboType().equals(FireCombo.class))
 			new FireCombo(player, comboAbil.getName());
+		else if(comboAbil.getComboType().equals(AirCombo.class))
+			new AirCombo(player, comboAbil.getName());
 	}
 	
 	public static class AbilityInformation

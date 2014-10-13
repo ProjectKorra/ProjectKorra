@@ -1340,15 +1340,27 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "This command will bind an ability to the slot you specify (if you specify one), or the slot currently"
 								+ " selected in your hotbar (If you do not specify a Slot #).");
 					}
-					if (args[1].equalsIgnoreCase("FireCombo"))
-					{
-						s.sendMessage(ChatColor.GOLD + "Fire Combos allow you to chain multiple abilities together to create stronger abilities."
-								+ " Fire Combos are meant to be advanced Firebending techniques, they take practice! ");
-						s.sendMessage(Methods.getFireColor() + "FireKick" + ChatColor.WHITE + ": FireBlast > FireBlast > (Hold Shift) > FireBlast. ");
-						s.sendMessage(Methods.getFireColor() + "FireSpin" + ChatColor.WHITE + ": FireBlast > FireBlast > FireShield > (Tap Shift). ");
-						s.sendMessage(Methods.getFireColor() + "FireWheel" + ChatColor.WHITE + ": FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift. ");
-						s.sendMessage(Methods.getFireColor() + "JetBlast" + ChatColor.WHITE + ": FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet. ");
-						s.sendMessage(Methods.getFireColor() + "JetBlaze" + ChatColor.WHITE + ": FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet. ");
+					if (args[1].equalsIgnoreCase("FireCombo")) {
+						s.sendMessage(ChatColor.GOLD + "Fire Combos:");
+						s.sendMessage(Methods.getFireColor() + "FireKick" + ChatColor.WHITE + ": A short ranged arc of fire launches from the player's feet dealing moderate damage to enemies.");
+						s.sendMessage(ChatColor.GOLD + "FireBlast > FireBlast > (Hold Shift) > FireBlast. ");
+						s.sendMessage(Methods.getFireColor() + "FireSpin" + ChatColor.WHITE + ": A circular array of fire that causes damage and massive knockback to nearby enemies.");
+						s.sendMessage(ChatColor.GOLD + "FireBlast > FireBlast > FireShield > (Tap Shift). ");
+						s.sendMessage(Methods.getFireColor() + "FireWheel" + ChatColor.WHITE + ": A high-speed wheel of fire that travels along the ground for long distances dealing high damage.");
+						s.sendMessage(ChatColor.GOLD + "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift. ");
+						s.sendMessage(Methods.getFireColor() + "JetBlast" + ChatColor.WHITE + ": Create an explosive blast that propels your FireJet at higher speeds.");
+						s.sendMessage(ChatColor.GOLD + "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet. ");
+						s.sendMessage(Methods.getFireColor() + "JetBlaze" + ChatColor.WHITE + ": Damages and burns all enemies in the proximity of your FireJet.");
+						s.sendMessage(ChatColor.GOLD + "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet. ");
+					}
+					if (args[1].equalsIgnoreCase("AirCombo")) {
+						s.sendMessage(ChatColor.GOLD + "AirCombo Combos:");
+						s.sendMessage(Methods.getAirColor() + "Twister" + ChatColor.WHITE + ": Create a cyclone of air that travels along the ground grabbing nearby entities.");
+						s.sendMessage(ChatColor.GOLD + "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
+						s.sendMessage(Methods.getAirColor() + "AirStream" + ChatColor.WHITE + ": Control a large stream of air that grabs onto enemies allowing you to direct them temporarily.");
+						s.sendMessage(ChatColor.GOLD + "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
+						s.sendMessage(Methods.getAirColor() + "AirSweep" + ChatColor.WHITE + ": Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion.");
+						s.sendMessage(ChatColor.GOLD + "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
 					}
 
 					if (Methods.abilityExists(args[1])) {
