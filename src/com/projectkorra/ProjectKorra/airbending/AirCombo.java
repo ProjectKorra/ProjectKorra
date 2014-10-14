@@ -46,10 +46,12 @@ public class AirCombo {
 			.getDouble("Abilities.Air.AirCombo.AirStream.Speed");
 	public static double AIR_STREAM_RANGE = ProjectKorra.plugin.getConfig()
 			.getDouble("Abilities.Air.AirCombo.AirStream.Range");
-	public static double AIR_STREAM_ENTITY_HEIGHT = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirStream.EntityHeight");
-	public static long AIR_STREAM_ENTITY_DURATION = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Air.AirCombo.AirStream.EntityDuration");
+	public static double AIR_STREAM_ENTITY_HEIGHT = ProjectKorra.plugin
+			.getConfig().getDouble(
+					"Abilities.Air.AirCombo.AirStream.EntityHeight");
+	public static long AIR_STREAM_ENTITY_DURATION = ProjectKorra.plugin
+			.getConfig().getLong(
+					"Abilities.Air.AirCombo.AirStream.EntityDuration");
 	public static long AIR_STREAM_COOLDOWN = ProjectKorra.plugin.getConfig()
 			.getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
 
@@ -405,7 +407,12 @@ public class AirCombo {
 				return;
 			}
 			if (i % 3 == 0) {
-				for (Entity entity : Methods.getEntitiesAroundPoint(loc, 2.5))
+				for (Entity entity : Methods.getEntitiesAroundPoint(loc, 2.5)) {
+					if (Methods.isRegionProtectedFromBuild(player, "AirBlast",
+							entity.getLocation())) {
+						remove();
+						return;
+					}
 					if (!entity.equals(player)
 							&& !affectedEntities.contains(entity)) {
 						affectedEntities.add(entity);
@@ -417,6 +424,7 @@ public class AirCombo {
 							if (entity instanceof LivingEntity)
 								Methods.damageEntity(player, entity, damage);
 					}
+				}
 
 				if (Methods.blockAbilities(player, FireCombo.abilitiesToBlock,
 						loc, 1)) {
