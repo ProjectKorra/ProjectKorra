@@ -119,7 +119,7 @@ public class AirShield {
 					effect)) {
 				Methods.playAirbendingParticles(effect, 10);
 				if (Methods.rand.nextInt(4) == 0) {
-					Methods.playFirebendingSound(effect);
+					Methods.playAirbendingSound(effect);
 				}		
 			}
 			
