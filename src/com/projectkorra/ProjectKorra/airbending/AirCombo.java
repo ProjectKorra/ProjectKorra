@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.ComboManager.ClickType;
+import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -92,6 +93,7 @@ public class AirCombo {
 	private AbilityState state;
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
+	private ArrayList<Flight> flights = new ArrayList<Flight>();
 
 	public AirCombo(Player player, String ability) {
 		if (!enabled || !player.hasPermission("bending.ability.AirCombo"))
@@ -293,8 +295,12 @@ public class AirCombo {
 					time = System.currentTimeMillis();
 				}
 				if (!entity.equals(player)
-						&& !affectedEntities.contains(entity))
+						&& !affectedEntities.contains(entity)) {
 					affectedEntities.add(entity);
+					if (entity instanceof Player) {
+						flights.add(new Flight((Player) entity, player));
+					}
+				}
 			}
 
 			for (Entity entity : affectedEntities) {
@@ -438,6 +444,13 @@ public class AirCombo {
 		instances.remove(this);
 		for (BukkitRunnable task : tasks)
 			task.cancel();
+		for (int i = 0; i < flights.size(); i++) {
+			Flight flight = flights.get(i);
+			flight.revert();
+			flight.remove();
+			flights.remove(i);
+			i--;
+		}
 	}
 
 	public static void progressAll() {
