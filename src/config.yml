@@ -324,7 +324,7 @@ Abilities:
       ClickLavaCooldown: 6000
       ClickLandCooldown: 500
       ShiftCleanupDelay: 8000
-      ClickLavaCleanupDelay: 5000
+      ClickLavaCleanupDelay: 7000
       ClickLandCleanupDelay: 20000
       ClickRange: 10.0
       ShiftRadius: 8.0
