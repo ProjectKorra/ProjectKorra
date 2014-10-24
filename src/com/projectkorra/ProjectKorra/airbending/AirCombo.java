@@ -192,9 +192,9 @@ public class AirCombo {
 
 			double height = TWISTER_HEIGHT;
 			double radius = TWISTER_RADIUS;
-			for (int y = 0; y < height; y++) {
+			for (double y = 0; y < height; y += 1.25) {
 				double animRadius = ((radius / height) * y);
-				for (int i = -180; i <= 180; i += 5) {
+				for (int i = -180; i <= 180; i += 7) {
 					Vector animDir = Methods.rotateXZ(new Vector(1, 0, 1), i);
 					Location animLoc = currentLoc.clone().add(
 							animDir.multiply(animRadius));
@@ -289,7 +289,7 @@ public class AirCombo {
 				tasks.add(br);
 			}
 
-			for (Entity entity : Methods.getEntitiesAroundPoint(currentLoc, 2)) {
+			for (Entity entity : Methods.getEntitiesAroundPoint(currentLoc, 2.8)) {
 				if (affectedEntities.size() == 0) {
 					// Set the timer to remove the ability
 					time = System.currentTimeMillis();
