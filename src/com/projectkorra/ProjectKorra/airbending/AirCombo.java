@@ -357,7 +357,7 @@ public class AirCombo {
 						direction.clone().multiply(10));
 
 			}
-			if (progressCounter < 4)
+			if (progressCounter < 8)
 				return;
 
 			if (destination == null) {
