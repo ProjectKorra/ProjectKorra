@@ -36,11 +36,13 @@ Properties:
   Air:
     CanBendWithWeapons: false
     Particles: smoke
+    PlaySound: true
   Water:
     CanBendWithWeapons: false
     NightFactor: 1.5
     FullMoonFactor: 3.0
     CanBendPackedIce: true
+    PlaySound: true
   Earth:
     RevertEarthbending: true
     SafeRevert: true
@@ -66,9 +68,11 @@ Properties:
     - GOLD_BLOCK
     - QUARTZ_BLOCK
     MetalPowerFactor: 1.5
+    PlaySound: true
   Fire:
     CanBendWithWeapons: true
     DayFactor: 1.5
+    PlaySound: true
   Chi:
     CanBendWithWeapons: false
   DisabledWorlds:

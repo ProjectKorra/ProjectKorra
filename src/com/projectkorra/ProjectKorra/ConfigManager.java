@@ -78,11 +78,13 @@ public class ConfigManager {
 
 		config.addDefault("Properties.Air.CanBendWithWeapons", false);
 		config.addDefault("Properties.Air.Particles", "smoke");
+		config.addDefault("Properties.Air.PlaySound", true);
 
 		config.addDefault("Properties.Water.CanBendWithWeapons", true);
 		config.addDefault("Properties.Water.NightFactor", 1.5);
 		config.addDefault("Properties.Water.FullMoonFactor", 3.0);
 		config.addDefault("Properties.Water.CanBendPackedIce", true);
+		config.addDefault("Properties.Water.PlaySound", true);
 
 		config.addDefault("Properties.Earth.RevertEarthbending", true);
 		config.addDefault("Properties.Earth.SafeRevert", true);
@@ -91,9 +93,11 @@ public class ConfigManager {
 		config.addDefault("Properties.Earth.EarthbendableBlocks", earthbendable);
 		config.addDefault("Properties.Earth.MetalBlocks", metals);
 		config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
+		config.addDefault("Properties.Earth.PlaySound", true);
 
 		config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 		config.addDefault("Properties.Fire.DayFactor", 1.5);
+		config.addDefault("Properties.Fire.PlaySound", true);
 
 		config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 

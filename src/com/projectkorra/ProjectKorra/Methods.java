@@ -1649,7 +1649,7 @@ public class Methods {
 			target.setData(info.getState().getRawData());
 		}
 	}
-	
+
 	public static ParticleEffect getAirbendingParticles() {
 		String particle = plugin.getConfig().getString("Properties.Air.Particles");
 		if (particle == null) 
@@ -1663,11 +1663,11 @@ public class Methods {
 		else 
 			return ParticleEffect.CLOUD;
 	}
-	
+
 	public static void playAirbendingParticles(Location loc, int amount) {
 		playAirbendingParticles(loc, amount, (float) Math.random(), (float) Math.random(), (float) Math.random());
 	}
-	
+
 	public static void playAirbendingParticles(Location loc, int amount, float xOffset, float yOffset, float zOffset) {
 		String particle = plugin.getConfig().getString("Properties.Air.Particles");
 		if (particle == null) {
@@ -2053,31 +2053,45 @@ public class Methods {
 	}
 
 	public static void playFirebendingSound(Location loc) {
-		loc.getWorld().playSound(loc, Sound.FIRE, 1, 10);
+		if (plugin.getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			loc.getWorld().playSound(loc, Sound.FIRE, 1, 10);
+		}
 	}
 
 	public static void playCombustionSound(Location loc) {
-		loc.getWorld().playSound(loc, Sound.FIREWORK_BLAST, 1, -1);
+		if (plugin.getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			loc.getWorld().playSound(loc, Sound.FIREWORK_BLAST, 1, -1);
+		}
 	}
 
 	public static void playEarthbendingSound(Location loc) {
-		loc.getWorld().playEffect(loc, Effect.GHAST_SHOOT, 0, 10);
+		if (plugin.getConfig().getBoolean("Properties.Earth.PlaySound")) {
+			loc.getWorld().playEffect(loc, Effect.GHAST_SHOOT, 0, 10);
+		}
 	}
 
 	public static void playMetalbendingSound(Location loc) {
-		loc.getWorld().playSound(loc, Sound.IRONGOLEM_HIT, 1, 10);
+		if (plugin.getConfig().getBoolean("Properties.Earth.PlaySound")) {
+			loc.getWorld().playSound(loc, Sound.IRONGOLEM_HIT, 1, 10);
+		}
 	}
 
 	public static void playWaterbendingSound(Location loc) {
-		loc.getWorld().playSound(loc, Sound.WATER, 1, 10);
+		if (plugin.getConfig().getBoolean("Properties.Water.PlaySound")) {
+			loc.getWorld().playSound(loc, Sound.WATER, 1, 10);
+		}
 	}
 
 	public static void playIcebendingSound(Location loc) {
-		loc.getWorld().playSound(loc, Sound.FIRE_IGNITE, 10, 4);
+		if (plugin.getConfig().getBoolean("Properties.Water.PlaySound")) {
+			loc.getWorld().playSound(loc, Sound.FIRE_IGNITE, 10, 4);
+		}
 	}
 
 	public static void playAirbendingSound(Location loc) {
-		loc.getWorld().playSound(loc, Sound.CREEPER_HISS, 1, 5);
+		if (plugin.getConfig().getBoolean("Properties.Air.PlaySound")) {
+			loc.getWorld().playSound(loc, Sound.CREEPER_HISS, 1, 5);
+		}
 	}
 
 	public static void playAvatarSound(Location loc) {
@@ -2279,7 +2293,7 @@ public class Methods {
 		writeToDebug("");
 		writeToDebug("Supported Plugins");
 		writeToDebug("====================");
-		
+
 		boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
 		boolean respectPreciousStones = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectPreciousStones");
 		boolean respectFactions = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectFactions");
@@ -2295,7 +2309,7 @@ public class Methods {
 		Plugin gpp = pm.getPlugin("GriefPrevention");
 		Plugin massivecore = pm.getPlugin("MassiveCore");
 		Plugin lwc = pm.getPlugin("LWC");
-		
+
 		if (wgp != null && respectWorldGuard) {
 			writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
 		}
@@ -2317,7 +2331,7 @@ public class Methods {
 		if (lwc != null && respectLWC) {
 			writeToDebug("LWC v" + lwc.getDescription().getVersion());
 		}
-		
+
 		writeToDebug("");
 		writeToDebug("Plugins Hooking Into ProjectKorra (Core)");
 		writeToDebug("====================");
