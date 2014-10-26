@@ -415,7 +415,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCooldown", 6000);
 		config.addDefault("Abilities.Earth.LavaFlow.ClickLandCooldown", 500);
 		config.addDefault("Abilities.Earth.LavaFlow.ShiftCleanupDelay", 8000);
-		config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCleanupDelay", 5000);
+		config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCleanupDelay", 7000);
 		config.addDefault("Abilities.Earth.LavaFlow.ClickLandCleanupDelay", 20000);
 		config.addDefault("Abilities.Earth.LavaFlow.ClickRange", 10.0);
 		config.addDefault("Abilities.Earth.LavaFlow.ShiftRadius", 8.0);

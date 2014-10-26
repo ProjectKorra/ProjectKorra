@@ -54,12 +54,12 @@ public class Flight {
 		return null;
 	}
 
-	private void revert() {
+	public void revert() {
 		player.setAllowFlight(couldFly);
 		player.setFlying(wasFlying);
 	}
 
-	private void remove() {
+	public void remove() {
 		instances.remove(player);
 	}
 

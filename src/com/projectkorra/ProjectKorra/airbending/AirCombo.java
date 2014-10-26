@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.ComboManager.ClickType;
+import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -46,10 +47,12 @@ public class AirCombo {
 			.getDouble("Abilities.Air.AirCombo.AirStream.Speed");
 	public static double AIR_STREAM_RANGE = ProjectKorra.plugin.getConfig()
 			.getDouble("Abilities.Air.AirCombo.AirStream.Range");
-	public static double AIR_STREAM_ENTITY_HEIGHT = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirStream.EntityHeight");
-	public static long AIR_STREAM_ENTITY_DURATION = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Air.AirCombo.AirStream.EntityDuration");
+	public static double AIR_STREAM_ENTITY_HEIGHT = ProjectKorra.plugin
+			.getConfig().getDouble(
+					"Abilities.Air.AirCombo.AirStream.EntityHeight");
+	public static long AIR_STREAM_ENTITY_DURATION = ProjectKorra.plugin
+			.getConfig().getLong(
+					"Abilities.Air.AirCombo.AirStream.EntityDuration");
 	public static long AIR_STREAM_COOLDOWN = ProjectKorra.plugin.getConfig()
 			.getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
 
@@ -90,6 +93,7 @@ public class AirCombo {
 	private AbilityState state;
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
+	private ArrayList<Flight> flights = new ArrayList<Flight>();
 
 	public AirCombo(Player player, String ability) {
 		if (!enabled || !player.hasPermission("bending.ability.AirCombo"))
@@ -188,9 +192,9 @@ public class AirCombo {
 
 			double height = TWISTER_HEIGHT;
 			double radius = TWISTER_RADIUS;
-			for (int y = 0; y < height; y++) {
+			for (double y = 0; y < height; y += 1.25) {
 				double animRadius = ((radius / height) * y);
-				for (int i = -180; i <= 180; i += 5) {
+				for (int i = -180; i <= 180; i += 7) {
 					Vector animDir = Methods.rotateXZ(new Vector(1, 0, 1), i);
 					Location animLoc = currentLoc.clone().add(
 							animDir.multiply(animRadius));
@@ -285,14 +289,18 @@ public class AirCombo {
 				tasks.add(br);
 			}
 
-			for (Entity entity : Methods.getEntitiesAroundPoint(currentLoc, 2)) {
+			for (Entity entity : Methods.getEntitiesAroundPoint(currentLoc, 2.8)) {
 				if (affectedEntities.size() == 0) {
 					// Set the timer to remove the ability
 					time = System.currentTimeMillis();
 				}
 				if (!entity.equals(player)
-						&& !affectedEntities.contains(entity))
+						&& !affectedEntities.contains(entity)) {
 					affectedEntities.add(entity);
+					if (entity instanceof Player) {
+						flights.add(new Flight((Player) entity, player));
+					}
+				}
 			}
 
 			for (Entity entity : affectedEntities) {
@@ -349,7 +357,7 @@ public class AirCombo {
 						direction.clone().multiply(10));
 
 			}
-			if (progressCounter < 4)
+			if (progressCounter < 8)
 				return;
 
 			if (destination == null) {
@@ -405,7 +413,12 @@ public class AirCombo {
 				return;
 			}
 			if (i % 3 == 0) {
-				for (Entity entity : Methods.getEntitiesAroundPoint(loc, 2.5))
+				for (Entity entity : Methods.getEntitiesAroundPoint(loc, 2.5)) {
+					if (Methods.isRegionProtectedFromBuild(player, "AirBlast",
+							entity.getLocation())) {
+						remove();
+						return;
+					}
 					if (!entity.equals(player)
 							&& !affectedEntities.contains(entity)) {
 						affectedEntities.add(entity);
@@ -417,6 +430,7 @@ public class AirCombo {
 							if (entity instanceof LivingEntity)
 								Methods.damageEntity(player, entity, damage);
 					}
+				}
 
 				if (Methods.blockAbilities(player, FireCombo.abilitiesToBlock,
 						loc, 1)) {
@@ -430,6 +444,13 @@ public class AirCombo {
 		instances.remove(this);
 		for (BukkitRunnable task : tasks)
 			task.cancel();
+		for (int i = 0; i < flights.size(); i++) {
+			Flight flight = flights.get(i);
+			flight.revert();
+			flight.remove();
+			flights.remove(i);
+			i--;
+		}
 	}
 
 	public static void progressAll() {
