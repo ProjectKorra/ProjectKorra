@@ -15,6 +15,7 @@ permissions:
       bending.player: true
       bending.command.reload: true
       bending.admin.permaremove: true
+      bending.admin.remove: true
       bending.command.add.others: true
       bending.command.add: true
       bending.command.rechoose: true
