@@ -128,8 +128,16 @@ public class FireStream {
 				Material.MYCEL, Material.NETHER_BRICK, Material.NETHERRACK,
 				Material.OBSIDIAN, Material.REDSTONE_ORE, Material.SAND,
 				Material.SANDSTONE, Material.SMOOTH_BRICK, Material.STONE,
-				Material.SOUL_SAND, Material.SNOW_BLOCK, Material.WOOD,
-				Material.WOOL, Material.LEAVES 
+				Material.SOUL_SAND, Material.WOOD, // Material.SNOW_BLOCK, 
+				Material.WOOL, Material.LEAVES, Material.MELON_BLOCK,
+				Material.PUMPKIN, Material.JACK_O_LANTERN, Material.NOTE_BLOCK,
+				Material.GLOWSTONE, Material.IRON_BLOCK, Material.DISPENSER,
+				Material.SPONGE, Material.IRON_ORE, Material.GOLD_ORE,
+				Material.COAL_BLOCK, Material.WORKBENCH, Material.HAY_BLOCK,
+				Material.REDSTONE_LAMP_OFF, Material.REDSTONE_LAMP_ON,
+				Material.EMERALD_ORE, Material.EMERALD_BLOCK, Material.REDSTONE_BLOCK,
+				Material.QUARTZ_BLOCK, Material.QUARTZ_ORE, Material.STAINED_CLAY,
+				Material.HARD_CLAY
 		};
 
 		Block belowblock = block.getRelative(BlockFace.DOWN);
