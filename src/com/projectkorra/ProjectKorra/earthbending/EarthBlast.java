@@ -310,8 +310,9 @@ public class EarthBlast {
 						Location location = player.getEyeLocation();
 						Vector vector = location.getDirection();
 						entity.setVelocity(vector.normalize().multiply(pushfactor));
+                                                double damage = this.damage;
 						if (Methods.isMetal(sourceblock) && Methods.canMetalbend(player)) {
-							damage = Methods.getMetalAugment(damage);
+							damage = Methods.getMetalAugment(this.damage);
 						}
 						Methods.damageEntity(player, entity, damage);
 						progressing = false;
