@@ -323,16 +323,31 @@ Abilities:
       VerticalPush: 0.1
     LavaFlow:
       Enabled: true
-      Description: "This ability allows an Earthbender to create lava using the Earth around them. To use, simply hold sneak (Default: Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an Earthbendable block to create a pool of lava after a small delay. Additionally, you can left click at any time to turn lava back into its original state -- Earth."
+      Description: 'This ability allows an Earthbender to create lava using the Earth
+        around them. To use, simply hold sneak (Default: Shift) to create a lava moat
+        that surrounds you, press sneak again to remove the moat. Left click an Earthbendable
+        block to create a pool of lava after a small delay. Additionally, you can
+        left click at any time to turn lava back into its original state -- Earth.'
       ShiftCooldown: 16000
-      ClickLavaCooldown: 6000
+      ClickLavaCooldown: 10000
       ClickLandCooldown: 500
-      ShiftCleanupDelay: 8000
+      ShiftCleanupDelay: 10000
       ClickLavaCleanupDelay: 7000
       ClickLandCleanupDelay: 20000
       ClickRange: 10.0
       ShiftRadius: 8.0
       ClickRadius: 5.0
+      ShiftPlatformRadius: 1.5
+      ClickLavaCreateSpeed: 0.05
+      ClickLandCreateSpeed: 0.1
+      ShiftFlowSpeed: 0.1
+      ShiftRemoveSpeed: 3.0
+      ClickLavaStartDelay: 1500
+      ClickLandStartDelay: 0
+      UpwardFlow: 2
+      DownwardFlow: 4
+      AllowNaturalFlow: false
+      ParticleDensity: 0.33
     RaiseEarth:
       Enabled: true
       Description: "To use, simply left-click on an earthbendable block. A column of earth will shoot upwards from that location. Anything in the way of the column will be brought up with it, leaving talented benders the ability to trap brainless entities up there. Additionally, simply sneak (default shift) looking at an earthbendable block. A wall of earth will shoot upwards from that location. Anything in the way of the wall will be brought up with it."
