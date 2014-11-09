@@ -870,6 +870,17 @@ public class Methods {
 				longestr = entity.getLocation().distance(origin);
 			}
 		}
+		if(target != null) {
+			List <Block> blklist = new ArrayList();
+			blklist = Methods.getBlocksAlongLine(player.getLocation(), target.getLocation(), player.getWorld());
+			for(Block isair:blklist)
+			{
+				if(Methods.isObstructed(origin, target.getLocation())) {
+					target = null;
+					break;
+				}
+			}
+		}
 		return target;
 	}
 
