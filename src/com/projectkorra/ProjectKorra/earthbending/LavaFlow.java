@@ -25,24 +25,24 @@ public class LavaFlow
 	}
 	public static Material REVERT_MATERIAL = Material.STONE;
 	public static long SHIFT_COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ShiftCooldown");
-	public static double SHIFT_PLATFORM_RADIUS = 1.5;
+	public static double SHIFT_PLATFORM_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ShiftPlatformRadius");
 	public static double SHIFT_MAX_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ShiftRadius");
-	public static double SHIFT_FLOW_SPEED = 0.1;
-	public static double SHIFT_REMOVE_SPEED = 3.0;
+	public static double SHIFT_FLOW_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ShiftFlowSpeed");
+	public static double SHIFT_REMOVE_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ShiftRemoveSpeed");
 	public static long SHIFT_REMOVE_DELAY = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ShiftCleanupDelay");
-	public static double PARTICLE_DENSITY = 0.33;
+	public static double PARTICLE_DENSITY = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ParticleDensity");
 	
 	public static double CLICK_RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ClickRange");
 	public static double CLICK_LAVA_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ClickRadius");
 	public static double CLICK_LAND_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ClickRadius");
-	public static long CLICK_LAVA_DELAY = 2000;
-	public static long CLICK_LAND_DELAY = 0;
+	public static long CLICK_LAVA_DELAY = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ClickLavaStartDelay");
+	public static long CLICK_LAND_DELAY = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ClickLandStartDelay");
 	public static long CLICK_LAVA_COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ClickLavaCooldown");
 	public static long CLICK_LAND_COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ClickLandCooldown");
 	public static long CLICK_LAVA_CLEANUP_DELAY = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ClickLavaCleanupDelay");
 	public static long CLICK_LAND_CLEANUP_DELAY = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ClickLandCleanupDelay");
-	public static double LAVA_CREATE_SPEED = 0.05;
-	public static double LAND_CREATE_SPEED = 0.10;
+	public static double LAVA_CREATE_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ClickLavaCreateSpeed");
+	public static double LAND_CREATE_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ClickLandCreateSpeed");
 	
 	public static long AS_SHIFT_COOLDOWN = 0;
 	public static double AS_SHIFT_PLATFORM_RADIUS = 3;
@@ -56,7 +56,9 @@ public class LavaFlow
 	public static long AS_CLICK_LAND_DELAY = 0;
 	public static long AS_CLICK_COOLDOWN = 0;
 	
-	public static int UPWARD_FLOW = 2, DOWNWARD_FLOW = 4;
+	public static int UPWARD_FLOW = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaFlow.UpwardFlow");
+	public static int DOWNWARD_FLOW = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaFlow.DownwardFlow");
+	public static boolean ALLOW_NATURAL_FLOW = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.LavaFlow.AllowNaturalFlow");
 	
 	private static final double PARTICLE_OFFSET = 3;
 
@@ -324,7 +326,8 @@ public class LavaFlow
 			TempBlock tblock = new TempBlock(block,Material.STATIONARY_LAVA,(byte) 0);
 			totalBlocks.add(tblock);
 			affectedBlocks.add(tblock);
-			//TempBlock.instances.remove(block);
+			if(ALLOW_NATURAL_FLOW)
+				TempBlock.instances.remove(block);
 		}
 	}
 	public void removeLava(Block testBlock)
