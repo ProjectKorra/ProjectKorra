@@ -29,7 +29,7 @@ public class IceBlast {
 	
 	private static final long interval = 20;
 	private static final byte data = 0;
-	private static final double affectingradius = 2;
+	private static final double affectingradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.BlastRadius");
 	private static final double deflectrange = 3;
 	
 	private int id;
