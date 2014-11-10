@@ -884,6 +884,63 @@ public class Methods {
 		return target;
 	}
 
+	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
+		List<Block> blocks = new ArrayList<Block>();
+
+		//Next we will name each coordinate
+		int x1 = ploc.getBlockX();
+		int y1 = ploc.getBlockY();
+		int z1 = ploc.getBlockZ();
+
+		int x2 = tloc.getBlockX();
+		int y2 = tloc.getBlockY();
+		int z2 = tloc.getBlockZ();
+
+		//Then we create the following integers
+		int xMin, yMin, zMin;
+		int xMax, yMax, zMax;
+		int x, y, z;
+
+		//Now we need to make sure xMin is always lower then xMax
+		if(x1 > x2){ //If x1 is a higher number then x2
+			xMin = x2;
+			xMax = x1;
+		}else{
+			xMin = x1;
+			xMax = x2;
+		}
+		//Same with Y
+		if(y1 > y2){
+			yMin = y2;
+			yMax = y1;
+		}else{
+			yMin = y1;
+			yMax = y2;
+		}
+
+		//And Z
+		if(z1 > z2){
+			zMin = z2;
+			zMax = z1;
+		}else{
+			zMin = z1;
+			zMax = z2;
+		}
+
+		//Now it's time for the loop
+		for(x = xMin; x <= xMax; x ++){
+			for(y = yMin; y <= yMax; y ++){
+				for(z = zMin; z <= zMax; z ++){
+					Block b = new Location(w, x, y, z).getBlock();
+					blocks.add(b);
+				}
+			}
+		}
+
+		//And last but not least, we return with the list
+		return blocks;
+	}
+
 	public static Location getTargetedLocation(Player player, double originselectrange, Integer... nonOpaque2) {
 		Location origin = player.getEyeLocation();
 		Vector direction = origin.getDirection();
