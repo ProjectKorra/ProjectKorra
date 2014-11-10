@@ -223,6 +223,7 @@ Abilities:
       Range: 10
       Damage: 3
       Radius: 3
+      PushFactor: 1.75
       FormDelay: 50
     PhaseChange:
       Enabled: true
