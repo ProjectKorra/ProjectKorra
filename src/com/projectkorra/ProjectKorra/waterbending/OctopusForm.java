@@ -24,6 +24,7 @@ public class OctopusForm {
 	private static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Damage");
 	private static long interval = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.Damage.FormDelay");
 	static double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
+	static double pushFactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.PushFactor");
 	private static final byte full = 0x0;
 
 	private Player player;
@@ -131,7 +132,7 @@ public class OctopusForm {
 			// continue;
 			if (Methods.isObstructed(location, entity.getLocation()))
 				continue;
-			entity.setVelocity(Methods.getDirection(player.getLocation(), location).normalize().multiply(1.75));
+			entity.setVelocity(Methods.getDirection(player.getLocation(), location).normalize().multiply(pushFactor));
 			if (entity instanceof LivingEntity)
 				Methods.damageEntity(player, entity, damage);
 				Methods.breakBreathbendingHold(entity);
