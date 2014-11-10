@@ -217,6 +217,8 @@ Abilities:
       Range: 20
       ThrowingMult: 0.7
       Height: 6
+      BlastRange: 20
+      BlastDamage: 1
     OctopusForm:
       Enabled: true
       Description: "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. To use, click to select a water source. Then, hold sneak to channel this ability. While channleing, the water will form itself around you and has a chance to block incoming attacks. Additionally, you can click while channeling to attack things near you, dealing damage and knocking the target back. Releasing shift at any time will dissipate the form."
