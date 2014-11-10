@@ -248,6 +248,7 @@ Abilities:
       Damage: 2
       DeflectDamage: 1
       Range: 25
+      WaveRange: 15
     WaterBubble:
       Enabled: true
       Description: "To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability."
