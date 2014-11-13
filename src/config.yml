@@ -508,4 +508,15 @@ Storage:
     pass: ''
     db: minecraft
     user: root
+
+messages:
+    sozinscomet: "Sozin's Comet is passing overhead! Firebending is now at its most powerful."
+    solareclipse: "A solar eclipse is out! Firebenders are temporarily powerless."
+    sunrise: "You feel the strength of the rising sun empowering your firebending."
+    sunset: "You feel the empowering of your firebending subside as the sun sets."
+    moonrise: "You feel the strength of the rising moon empowering your waterbending."
+    fullmoonrise: "A full moon is rising, empowering your waterbending like never before."
+    lunareclipse: "A lunar eclipse is out! Waterbenders are temporarily powerless."
+    moonset: "You feel the empowering of your waterbending subside as the moon sets."
+
 debug: false
