@@ -80,6 +80,7 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.Utilities.PlayerBendEvent;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.airbending.AirBubble;
 import com.projectkorra.ProjectKorra.airbending.AirBurst;
@@ -2118,6 +2119,11 @@ public class Methods {
 
 	public static void playFirebendingParticles(Location loc) {
 		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0, 15);
+	}
+	
+	public static void callBendEvent(Player player, Element element, String ability, Location location, Boolean isSubElement, String subelement) {
+		PlayerBendEvent bevent = new PlayerBendEvent(player, element, ability, location, isSubElement, subelement);
+		ProjectKorra.plugin.getServer().getPluginManager().callEvent(bevent);
 	}
 
 	public static void playFirebendingSound(Location loc) {
