@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.firebending.FireCombo;
+import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
 
 public class ComboManager 
 {
@@ -89,6 +90,31 @@ public class ComboManager
 		airSweep.add(new AbilityInformation("AirBurst",ClickType.LEFTCLICK));
 		comboAbilityList.add(new ComboAbility("AirSweep",airSweep,AirCombo.class));
 		
+		ArrayList<AbilityInformation> iceWave = new ArrayList<AbilityInformation>();
+		iceWave.add(new AbilityInformation("WaterSpout",ClickType.SHIFTUP));
+		iceWave.add(new AbilityInformation("PhaseChange",ClickType.LEFTCLICK));
+		comboAbilityList.add(new ComboAbility("IceWave",iceWave,WaterCombo.class));
+		
+		ArrayList<AbilityInformation> icePillar = new ArrayList<AbilityInformation>();
+		icePillar.add(new AbilityInformation("IceSpike",ClickType.LEFTCLICK));
+		icePillar.add(new AbilityInformation("IceSpike",ClickType.LEFTCLICK));
+		icePillar.add(new AbilityInformation("WaterSpout",ClickType.LEFTCLICK));
+		comboAbilityList.add(new ComboAbility("IcePillar",icePillar,WaterCombo.class));
+
+		ArrayList<AbilityInformation> iceBullet = new ArrayList<AbilityInformation>();
+		iceBullet.add(new AbilityInformation("WaterBubble",ClickType.SHIFTDOWN));
+		iceBullet.add(new AbilityInformation("WaterBubble",ClickType.SHIFTUP));
+		iceBullet.add(new AbilityInformation("IceBlast",ClickType.SHIFTDOWN));
+		iceBullet.add(new AbilityInformation("IceBlast",ClickType.LEFTCLICK));
+		comboAbilityList.add(new ComboAbility("IceBullet",iceBullet,WaterCombo.class));
+		
+		ArrayList<AbilityInformation> iceBulletLeft = new ArrayList<AbilityInformation>();
+		iceBulletLeft.add(new AbilityInformation("IceBlast",ClickType.LEFTCLICK));
+		comboAbilityList.add(new ComboAbility("IceBulletLeftClick",iceBulletLeft,WaterCombo.class));
+		ArrayList<AbilityInformation> iceBulletRight = new ArrayList<AbilityInformation>();
+		iceBulletRight.add(new AbilityInformation("IceBlast",ClickType.RIGHTCLICK));
+		comboAbilityList.add(new ComboAbility("IceBulletRightClick",iceBulletRight,WaterCombo.class));
+		
 		startCleanupTask();
 	}
 	public static void addComboAbility(Player player, ClickType type)
@@ -108,6 +134,8 @@ public class ComboManager
 			new FireCombo(player, comboAbil.getName());
 		else if(comboAbil.getComboType().equals(AirCombo.class))
 			new AirCombo(player, comboAbil.getName());
+		else if(comboAbil.getComboType().equals(WaterCombo.class))
+			new WaterCombo(player, comboAbil.getName());
 	}
 	
 	public static class AbilityInformation

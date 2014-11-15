@@ -31,6 +31,7 @@ public class WaterbendingManager implements Runnable {
 		IceSpike2.progressAll();
 		IceBlast.progressAll();
 		WaterWave.progressAll();
+		WaterCombo.progressAll();
 	}
 
 }
