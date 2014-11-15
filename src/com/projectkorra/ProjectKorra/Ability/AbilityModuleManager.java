@@ -153,11 +153,14 @@ public class AbilityModuleManager {
 		}
 		for (AbilityModule ab: ability) {
 			//To check if EarthBlast == Earthblast or for example, EarthBlast == EARTHBLAST
+                        boolean succes = true;
                         for(String enabledAbility : abilities){
                             if(enabledAbility.equalsIgnoreCase(ab.getName())){
-                                continue;
+                                succes = false;
                             }
                         }
+                        if (!succes)
+                            continue;
  			ab.onThisLoad();
  			abilities.add(ab.getName());
                         for (StockAbilities a: StockAbilities.values()) {
