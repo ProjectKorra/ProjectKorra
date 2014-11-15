@@ -8,6 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -27,6 +29,7 @@ public class WaterWave {
 	}
 
 	public static ArrayList<WaterWave> instances = new ArrayList<WaterWave>();
+	public static ConcurrentHashMap<Block, TempBlock> frozenBlocks = new ConcurrentHashMap<Block, TempBlock>();
 
 	public static boolean ICE_ONLY = false;
 	public static boolean ENABLED = ProjectKorra.plugin.getConfig().getBoolean(
@@ -39,6 +42,9 @@ public class WaterWave {
 			"Abilities.Water.WaterSpout.Wave.ChargeTime");
 	public static long FLIGHT_TIME = ProjectKorra.plugin.getConfig().getLong(
 			"Abilities.Water.WaterSpout.Wave.FlightTime");
+	public static double WAVE_RADIUS = 1.5;
+	public static double ICE_WAVE_DAMAGE = ProjectKorra.plugin.getConfig().getDouble(
+			"Abilities.Water.WaterCombo.IceWave.Damage");
 
 	private Player player;
 	private long time;
@@ -47,13 +53,17 @@ public class WaterWave {
 	private Vector direction;
 	private double radius = 3.8;
 	private boolean charging = false;
+	private boolean iceWave = false;
+	private int progressCounter = 0;
 	private AnimateState anim;
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks = new ConcurrentHashMap<Block, TempBlock>();
+	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
+	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
 
 	public WaterWave(Player player, AbilityType type) {
-		if(!ENABLED)
+		if (!ENABLED)
 			return;
-		
+
 		this.player = player;
 		this.time = System.currentTimeMillis();
 		this.type = type;
@@ -64,12 +74,13 @@ public class WaterWave {
 	}
 
 	public void progress() {
+		progressCounter++;
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
 		}
 		if (type != AbilityType.RELEASE) {
-			if (!Methods.canBend(player.getName(), "WaterSpout") 
+			if (!Methods.canBend(player.getName(), "WaterSpout")
 					|| !player.hasPermission("bending.ability.WaterSpout.Wave")) {
 				remove();
 				return;
@@ -141,8 +152,6 @@ public class WaterWave {
 				currentLoc = origin.clone();
 				if (Methods.isPlant(origin.getBlock()))
 					new Plantbending(origin.getBlock());
-				// else
-				// Methods.addTempAirBlock(origin.getBlock());
 
 			}
 
@@ -226,14 +235,50 @@ public class WaterWave {
 				player.setVelocity(player.getEyeLocation().getDirection()
 						.normalize().multiply(currentSpeed));
 				for (Block block : Methods.getBlocksAroundPoint(player
-						.getLocation().add(0, -1, 0), 1.5))
+						.getLocation().add(0, -1, 0), WAVE_RADIUS))
 					if (block.getType() == Material.AIR
 							&& !Methods.isRegionProtectedFromBuild(player,
-									"WaterSpout", block.getLocation()))
-						createBlock(block, Material.STATIONARY_WATER, (byte) 0);
+									"WaterSpout", block.getLocation())) {
+						if (iceWave)
+							createBlockDelay(block, Material.ICE, (byte) 0, 2L);
+						else
+							createBlock(block, Material.STATIONARY_WATER,
+									(byte) 0);
+					}
 				revertBlocksDelay(20L);
+
+				if (iceWave && progressCounter % 3 == 0) {
+					for (Entity entity : Methods.getEntitiesAroundPoint(player
+							.getLocation().add(0, -1, 0), WAVE_RADIUS * 1.5)) {
+						if (entity != this.player
+								&& entity instanceof LivingEntity
+								&& !affectedEntities.contains(entity)) {
+							affectedEntities.add(entity);
+							final double aug = Methods
+									.getWaterbendingNightAugment(player
+											.getWorld());
+							Methods.damageEntity(player, entity, aug
+									* ICE_WAVE_DAMAGE);
+							final Player fplayer = this.player;
+							final Entity fent = entity;
+							new BukkitRunnable() {
+								public void run() {
+									createIceSphere(fplayer, fent, aug * 2.5);
+								}
+							}.runTaskLater(ProjectKorra.plugin, 6);
+						}
+					}
+				}
 			}
 		}
+	}
+
+	public void setIceWave(boolean b) {
+		this.iceWave = b;
+	}
+	
+	public boolean isIceWave() {
+		return this.iceWave;
 	}
 
 	public void drawCircle(double theta, double increment) {
@@ -256,6 +301,20 @@ public class WaterWave {
 	public void remove() {
 		instances.remove(this);
 		revertBlocks();
+		for (BukkitRunnable task : tasks)
+			task.cancel();
+	}
+
+	public void createBlockDelay(final Block block, final Material mat,
+			final byte data, long delay) {
+		BukkitRunnable br = new BukkitRunnable() {
+			@Override
+			public void run() {
+				createBlock(block, mat, data);
+			}
+		};
+		br.runTaskLater(ProjectKorra.plugin, delay);
+		tasks.add(br);
 	}
 
 	public void createBlock(Block block, Material mat) {
@@ -283,14 +342,37 @@ public class WaterWave {
 			affectedBlocks.remove(block);
 			new BukkitRunnable() {
 				public void run() {
-					tblock.revertBlock();
+					if (!frozenBlocks.containsKey(block))
+						tblock.revertBlock();
 				}
 			}.runTaskLater(ProjectKorra.plugin, delay);
 		}
 	}
 
+	public void createIceSphere(Player player, Entity entity, double radius) {
+		for (double x = -radius; x <= radius; x += 0.5)
+			for (double y = -radius; y <= radius; y += 0.5)
+				for (double z = -radius; z <= radius; z += 0.5) {
+					Block block = entity.getLocation().getBlock().getLocation()
+							.add(x, y, z).getBlock();
+					if (block.getLocation().distance(
+							entity.getLocation().getBlock().getLocation()) > radius)
+						continue;
+
+					if (block.getType() == Material.AIR
+							|| block.getType() == Material.ICE
+							|| Methods.isWaterbendable(block, player)) {
+
+						if (!frozenBlocks.containsKey(block)) {
+							TempBlock tblock = new TempBlock(block,
+									Material.ICE, (byte) 1);
+							frozenBlocks.put(block, tblock);
+						}
+					}
+				}
+	}
+
 	public static void progressAll() {
-		// Bukkit.broadcastMessage("Instances:" + instances.size());
 		for (int i = 0; i < instances.size(); i++)
 			instances.get(i).progress();
 	}
@@ -304,8 +386,8 @@ public class WaterWave {
 
 	public static boolean containsType(Player player, AbilityType type) {
 		for (int i = 0; i < instances.size(); i++) {
-			WaterWave spear = instances.get(i);
-			if (spear.player.equals(player) && spear.type.equals(type))
+			WaterWave wave = instances.get(i);
+			if (wave.player.equals(player) && wave.type.equals(type))
 				return true;
 		}
 		return false;
@@ -313,8 +395,8 @@ public class WaterWave {
 
 	public static void removeType(Player player, AbilityType type) {
 		for (int i = 0; i < instances.size(); i++) {
-			WaterWave spear = instances.get(i);
-			if (spear.player.equals(player) && spear.type.equals(type)) {
+			WaterWave wave = instances.get(i);
+			if (wave.player.equals(player) && wave.type.equals(type)) {
 				instances.remove(i);
 				i--;
 			}
@@ -339,5 +421,16 @@ public class WaterWave {
 				return true;
 		}
 		return false;
+	}
+
+	public static boolean canThaw(Block block) {
+		return frozenBlocks.containsKey(block);
+	}
+
+	public static void thaw(Block block) {
+		if (frozenBlocks.containsKey(block)) {
+			frozenBlocks.get(block).revertBlock();
+			frozenBlocks.remove(block);
+		}
 	}
 }
