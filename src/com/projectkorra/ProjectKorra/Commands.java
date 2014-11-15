@@ -264,8 +264,8 @@ public class Commands {
 						 * bending give [Player] grapplinghook [# of Uses]
 						 */
 
-						if (args.length != 3) {
-							s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending give GrapplingHook <#OfUses>");
+						if (args.length != 4) {
+							s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending give [Player] GrapplingHook <#OfUses>");
 							return true;
 						}
 						int uses;
