@@ -1354,15 +1354,21 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet. ");
 					}
 					if (args[1].equalsIgnoreCase("AirCombo")) {
-						s.sendMessage(ChatColor.GOLD + "AirCombo Combos:");
+						s.sendMessage(ChatColor.GOLD + "AirCombo:");
 						s.sendMessage(Methods.getAirColor() + "Twister" + ChatColor.WHITE + ": Create a cyclone of air that travels along the ground grabbing nearby entities.");
 						s.sendMessage(ChatColor.GOLD + "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
 						s.sendMessage(Methods.getAirColor() + "AirStream" + ChatColor.WHITE + ": Control a large stream of air that grabs onto enemies allowing you to direct them temporarily.");
 						s.sendMessage(ChatColor.GOLD + "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
-						s.sendMessage(Methods.getAirColor() + "AirSweep" + ChatColor.WHITE + ": Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion.");
+						s.sendMessage(Methods.getAirColor() + "AirSweep" + ChatColor.WHITE + ": Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst");
 						s.sendMessage(ChatColor.GOLD + "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
 					}
-
+					if (args[1].equalsIgnoreCase("WaterCombo")) {
+						s.sendMessage(ChatColor.GOLD + "WaterCombos:");
+						s.sendMessage(Methods.getAirColor() + "IceWave" + ChatColor.WHITE + ": PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
+						s.sendMessage(ChatColor.GOLD + "Create a WaterSpout Wave > PhaseChange (Left Click)");
+						s.sendMessage(Methods.getAirColor() + "IceBullet" + ChatColor.WHITE + ": Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
+						s.sendMessage(ChatColor.GOLD + "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > IceBlast (Left Click) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
+					}
 					if (Methods.abilityExists(args[1])) {
 						String ability = Methods.getAbility(args[1]);
 						if (Methods.isAirAbility(ability)) {
