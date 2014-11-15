@@ -27,6 +27,7 @@ public class Bloodbending {
 	private static final double factor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
 	private static final boolean onlyUsableAtNight = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
 	private static boolean canBeUsedOnUndead = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
+	private static final boolean onlyUsableDuringMoon = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
 	private int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Range");
 
 	private Player player;
@@ -36,8 +37,13 @@ public class Bloodbending {
 			remove(player);
 			return;
 		}
+		
+		
 		if (onlyUsableAtNight && !Methods.isNight(player.getWorld())) {
-			remove(player);
+			return;
+		}
+		
+		if (onlyUsableDuringMoon && !Methods.isFullMoon(player.getWorld())) {
 			return;
 		}
 
@@ -115,6 +121,11 @@ public class Bloodbending {
 					targetentities.remove(entity);
 				}
 			}
+		}
+		
+		if (onlyUsableDuringMoon && !Methods.isFullMoon(player.getWorld())) {
+			remove(player);
+			return;
 		}
 
 		if (onlyUsableAtNight && !Methods.isNight(player.getWorld())) {
