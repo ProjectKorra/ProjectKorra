@@ -267,6 +267,19 @@ Abilities:
         ChargeTime: 1000
         FlightTime: 2000
         Speed: 1.2
+    WaterCombo:
+      Enabled: true
+      IceWave:
+        Damage: 3
+        Cooldown: 6000
+      IceBullet:
+        Damage: 1.5
+        Radius: 2.5
+        Range: 12
+        MaxShots: 30
+        AnimationSpeed: 1
+        ShootTime: 5000
+        Cooldown: 10000
   Earth:
     Passive:
       Duration: 2500

@@ -343,6 +343,17 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterSpout.Wave.ChargeTime", 1000);
 		config.addDefault("Abilities.Water.WaterSpout.Wave.FlightTime", 2000);
 		config.addDefault("Abilities.Water.WaterSpout.Wave.Speed", 1.2);
+		
+		config.addDefault("Abilities.Water.WaterCombo.Enabled", true);
+		config.addDefault("Abilities.Water.WaterCombo.IceWave.Damage", 3);
+		config.addDefault("Abilities.Water.WaterCombo.IceWave.Cooldown", 6000);
+		config.addDefault("Abilities.Water.WaterCombo.IceBullet.Damage", 1.5);
+		config.addDefault("Abilities.Water.WaterCombo.IceBullet.Radius", 2.5);
+		config.addDefault("Abilities.Water.WaterCombo.IceBullet.Range", 12);
+		config.addDefault("Abilities.Water.WaterCombo.IceBullet.MaxShots", 30);
+		config.addDefault("Abilities.Water.WaterCombo.IceBullet.AnimationSpeed", 1);
+		config.addDefault("Abilities.Water.WaterCombo.IceBullet.ShootTime", 5000);
+		config.addDefault("Abilities.Water.WaterCombo.IceBullet.Cooldown", 10000);
 
 		config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 

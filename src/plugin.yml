@@ -79,6 +79,7 @@ permissions:
       bending.ability.WaterManipulation: true
       bending.ability.WaterSpout: true
       bending.ability.WaterSpout.Wave: true
+      bending.ability.WaterCombo: true
       bending.ability.Plantbending: true
       bending.message.nightmessage: true
       bending.water.passive: true
