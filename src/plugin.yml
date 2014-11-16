@@ -26,6 +26,7 @@ permissions:
       bending.command.give: true
       bending.command.invincible: true
       bending.admin.debug: true
+      bending.admin.remove: true
   bending.player:
     default: true
     description: Grants access to most abilities and basic commands.
