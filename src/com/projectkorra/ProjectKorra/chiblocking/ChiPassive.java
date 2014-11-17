@@ -26,7 +26,15 @@ public class ChiPassive {
 	
 	static long ticks = (duration / 1000) * 20;
 	
-	public static boolean willChiBlock(Player player) {
+	public static boolean willChiBlock(Player player, Player attacker) {
+		
+		if(!Methods.isChiBound(Methods.getBendingPlayer(attacker.getName()))) 
+			return false;
+		
+		if(!Methods.getBoundAbility(attacker).equals("null")) 
+			if(!Methods.isChiAbility(Methods.getBoundAbility(attacker))) 
+				return false;
+		
 		Random rand = new Random();
 		if (rand.nextInt(99) + 1 < dodgeChance) {
 			return false;
