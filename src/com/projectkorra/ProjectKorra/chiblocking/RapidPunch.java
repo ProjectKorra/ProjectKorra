@@ -56,7 +56,7 @@ public class RapidPunch {
 			LivingEntity lt = (LivingEntity) target;
 			Methods.damageEntity(p, target, damage);
 			if (target instanceof Player) {
-				if (ChiPassive.willChiBlock((Player) target)) {
+				if (ChiPassive.willChiBlock((Player) target,p)) {
 					ChiPassive.blockChi((Player) target);
 				}
 				if(Suffocate.isChannelingSphere((Player) target)) {
