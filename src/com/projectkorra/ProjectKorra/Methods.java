@@ -1077,7 +1077,19 @@ public class Methods {
 		if (bPlayer.hasElement(element)) return true;
 		return false;
 	}
-
+	/**
+	 * Checks the players bound abilities to see if they have a chi move bound.
+	 * @return true if a chi move is bound
+	 */
+	public static Boolean isChiBound(BendingPlayer bp) {  
+		for(Integer i = 0;i < bp.getAbilities().size() -1;i++)
+		{
+			String ab = bp.getAbilities().get(i);
+			if(Methods.isChiAbility(ab))
+				return true;
+		}
+		return false;
+	}
 	public static boolean isChiAbility(String ability) {
 		return AbilityModuleManager.chiabilities.contains(ability);
 	}
