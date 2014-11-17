@@ -1096,7 +1096,7 @@ public class PKListener implements Listener {
 						if (Methods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 							return;
 						}
-						if (ChiPassive.willChiBlock(targetplayer)) {
+						if (ChiPassive.willChiBlock(targetplayer,sourceplayer)) {
 							if (Methods.getBoundAbility(sourceplayer) != null && Methods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze")) {
 								new Paralyze(sourceplayer, targetplayer);
 							} else {
@@ -1121,7 +1121,7 @@ public class PKListener implements Listener {
 					}
 					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
 						if (Methods.getBoundAbility(sourceplayer) != null && Methods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze") && e.getDamage() == 1) {
-							if (ChiPassive.willChiBlock(targetplayer)) {
+							if (ChiPassive.willChiBlock(targetplayer,sourceplayer)) {
 								new Paralyze(sourceplayer, targetplayer);
 							}
 						}
