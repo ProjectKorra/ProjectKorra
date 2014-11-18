@@ -427,10 +427,14 @@ public class ConfigManager {
 
 		config.addDefault("Abilities.Earth.LavaSurge.Enabled", true);
 		config.addDefault("Abilities.Earth.LavaSurge.Description", "This ability allows an Earthbender to bend an existing Lava Source to create a large wave that deals damage and knocks back anything in its path. To use, simply tap sneak (Default: Shift) while targetting a source of lava. Once a source has been selected, left click to launch the wave off into the direction you are looking. This ability has a small knockback and does a fair amount of damage.");
-		config.addDefault("Abilities.Earth.LavaSurge.Radius", 3);
-		config.addDefault("Abilities.Earth.LavaSurge.HorizontalPush", 0.5);
-		config.addDefault("Abilities.Earth.LavaSurge.VerticalPush", 0.1);
+		config.addDefault("Abilities.Earth.LavaSurge.Damage", 6);
+		config.addDefault("Abilities.Earth.LavaSurge.Radius", 1);
+		config.addDefault("Abilities.Earth.LavaSurge.PrepareRange", 7);
+		config.addDefault("Abilities.Earth.LavaSurge.TravelRange", 15);
+		config.addDefault("Abilities.Earth.LavaSurge.MaxLavaWaves", 10);
+		config.addDefault("Abilities.Earth.LavaSurge.SourceCanBeEarth", true);
 
+		
 		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "
 				+ "A column of earth will shoot upwards from that location. "
