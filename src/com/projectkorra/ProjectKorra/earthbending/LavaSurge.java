@@ -17,23 +17,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.ConfigManager;
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-
-import fr.neatmonster.nocheatplus.config.ConfigManager;
 
 public class LavaSurge 
 {
 	public static ConcurrentHashMap<Player, LavaSurge> instances = new ConcurrentHashMap<Player, LavaSurge>();
-	public static int impactDamage = ConfigManager.getConfigFile().getInt("Abilities.Earth.LavaSurge.Damage");
-	public static int fractureRadius = ConfigManager.getConfigFile().getInt("Abilities.Earth.LavaSurge.Radius");
-	public static int prepareRange = ConfigManager.getConfigFile().getInt("Abilities.Earth.LavaSurge.PrepareRange");
-	public static int travelRange = ConfigManager.getConfigFile().getInt("Abilities.Earth.LavaSurge.TravelRange");
-	public static int maxBlocks = ConfigManager.getConfigFile().getInt("Abilities.Earth.LavaSurge.MaxLavaWaves");
+	public static int impactDamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.Damage");
+	public static int fractureRadius = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.Radius");
+	public static int prepareRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.PrepareRange");
+	public static int travelRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.TravelRange");
+	public static int maxBlocks = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.MaxLavaWaves");
+	public static boolean canSourceBeEarth = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.LavaSurge.SourceCanBeEarth");
 	public static int particleInterval = 100;
 	public static int fallingBlockInterval = 100;
-	public static boolean canSourceBeEarth = ConfigManager.getConfigFile().getBoolean("Abilities.Earth.LavaSurge.SourceCanBeEarth");
 	
 	private Player player;
 	private Block sourceBlock;
@@ -125,7 +125,7 @@ public class LavaSurge
 	
 	public void launch()
 	{
-		Location targetLocation = Methods.getTargetedLocation(player, travelRange);
+		Location targetLocation = Methods.getTargetedLocation(player, travelRange*2);
 
 		try { targetLocation = Methods.getTargetedEntity(player, travelRange*2, null).getLocation(); }
 		catch(NullPointerException e) {};
@@ -137,7 +137,7 @@ public class LavaSurge
 		}
 		
 		time = System.currentTimeMillis();
-		direction = Methods.getDirection(startLocation, targetLocation).multiply(0.15);
+		direction = Methods.getDirection(startLocation, targetLocation).multiply(0.07);
 		
 		if(direction.getY() < 0)
 			direction.setY(0);
@@ -264,7 +264,13 @@ public class LavaSurge
 			{
 				FallingBlock fbs = player.getWorld().spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), Material.STATIONARY_LAVA, (byte) 0);
 				fblocks.add(fbs);
-				fbs.setVelocity(direction.clone().add(new Vector(randy.nextDouble()/10, 0.1, randy.nextDouble()/10)).multiply(1.2));
+				double x = randy.nextDouble()/5;
+				double z = randy.nextDouble()/5;
+				
+				x = (randy.nextBoolean()) ? -x : x;
+				z = (randy.nextBoolean()) ? -z : z;
+				
+				fbs.setVelocity(direction.clone().add(new Vector(x, 0.2, z)).multiply(1.2));
 				fbs.setDropItem(false);
 				
 				for(Block b : fracture)
