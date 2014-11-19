@@ -91,6 +91,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.earthbending.Extraction;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
+import com.projectkorra.ProjectKorra.earthbending.LavaSurge;
 import com.projectkorra.ProjectKorra.earthbending.LavaWall;
 import com.projectkorra.ProjectKorra.earthbending.LavaWave;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
@@ -454,7 +455,7 @@ public class PKListener implements Listener {
 				}
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
-					LavaWall.form(player);
+					new LavaSurge(player);
 				}
 				
 				if (abil.equalsIgnoreCase("LavaFlow")) {
@@ -791,7 +792,8 @@ public class PKListener implements Listener {
 				}
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
-					new LavaWall(player);
+					if(LavaSurge.instances.containsKey(player))
+						LavaSurge.instances.get(player).launch();
 				}
 				
 				if (abil.equalsIgnoreCase("LavaFlow")) {
