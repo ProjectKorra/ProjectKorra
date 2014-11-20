@@ -254,17 +254,7 @@ public class MetalClips
 			{
 				Vector v = Methods.getDirection(e.getLocation(), player.getLocation());
 				
-				if(e instanceof Item)
-				{
-					Item iron = (Item) e;
-					
-					if(Arrays.asList(metalItems).contains(iron.getItemStack().getType()))
-					{
-						iron.setVelocity(v.normalize().multiply(0.4));
-					}
-				}
-				
-				else if(e instanceof Player && player.hasPermission("bending.ability.MetalClips.loot")
+				if(e instanceof Player && player.hasPermission("bending.ability.MetalClips.loot")
 						&& player.getInventory().getItemInHand().getType() == Material.IRON_BLOCK)
 				{
 					Player p = (Player) e;
@@ -276,6 +266,9 @@ public class MetalClips
 					
 					for(ItemStack is : inventory)
 					{
+						if(is == null)
+							continue;
+						
 						if(Arrays.asList(metalItems).contains(is.getType()))
 						{
 							p.getWorld().dropItem(p.getLocation(), is);
@@ -306,7 +299,7 @@ public class MetalClips
 					}
 				}
 				
-				else if((e instanceof Zombie || e instanceof Skeleton) && player.hasPermission("bending.ability.MetalClips.loot")
+				if((e instanceof Zombie || e instanceof Skeleton) && player.hasPermission("bending.ability.MetalClips.loot")
 						 && player.getInventory().getItemInHand().getType() == Material.IRON_BLOCK)
 				{
 					LivingEntity le = (LivingEntity) e;
@@ -329,6 +322,16 @@ public class MetalClips
 					{
 						le.getWorld().dropItem(le.getLocation(), le.getEquipment().getItemInHand());
 						le.getEquipment().setItemInHand(new ItemStack(Material.AIR, 1));
+					}
+				}
+
+				if(e instanceof Item)
+				{
+					Item iron = (Item) e;
+					
+					if(Arrays.asList(metalItems).contains(iron.getItemStack().getType()))
+					{
+						iron.setVelocity(v.normalize().multiply(0.4));
 					}
 				}
 			}
@@ -397,7 +400,8 @@ public class MetalClips
 				if(System.currentTimeMillis() > time + crushInterval)
 				{
 					time = System.currentTimeMillis();
-					Methods.damageEntity(player, target, crushDamage);
+					Methods.damageEntity(player, target, 0);
+					target.setHealth((target.getHealth() - crushDamage < 0) ? 0 : target.getHealth() - crushDamage);
 				}
 			}
 		}
