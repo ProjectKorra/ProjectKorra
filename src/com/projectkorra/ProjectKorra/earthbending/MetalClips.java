@@ -222,7 +222,7 @@ public class MetalClips
 				
 				Vector v = Methods.getDirection(target.getLocation(), player.getLocation());
 				
-				if(distance > 2.5)
+				if(distance > .5)
 					target.setVelocity(v.normalize().multiply(0.1));
 				
 				Methods.breakBreathbendingHold(target);
@@ -237,7 +237,7 @@ public class MetalClips
 				
 				Vector v = Methods.getDirection(target.getLocation(), player.getLocation());
 				
-				if(distance > 2.5)
+				if(distance > .5)
 					target.setVelocity(v.normalize().multiply(0.2));
 				
 				Methods.breakBreathbendingHold(target);
@@ -357,7 +357,7 @@ public class MetalClips
 	{
 		for(Player p : instances.keySet())
 		{
-			if(instances.get(p).getTarget().getEntityId() == player.getEntityId())
+			if(instances.get(p).getTarget() != null && instances.get(p).getTarget().getEntityId() == player.getEntityId())
 			{
 				return true;
 			}
