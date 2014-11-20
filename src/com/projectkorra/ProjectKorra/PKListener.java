@@ -816,7 +816,10 @@ public class PKListener implements Listener {
 				
 				if(abil.equalsIgnoreCase("MetalClips"))
 				{
-					new MetalClips(player);
+					if(!MetalClips.instances.containsKey(player))
+						new MetalClips(player);
+					else if(MetalClips.instances.containsKey(player))
+						MetalClips.instances.get(player).shootMetal();
 				}
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
