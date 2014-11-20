@@ -32,6 +32,7 @@ public class LavaSurge
 	public static int travelRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.TravelRange");
 	public static int maxBlocks = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.MaxLavaWaves");
 	public static boolean canSourceBeEarth = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.LavaSurge.SourceCanBeEarth");
+	public static List<FallingBlock> falling = new ArrayList<FallingBlock>();
 	public static int particleInterval = 100;
 	public static int fallingBlockInterval = 100;
 	
@@ -264,6 +265,7 @@ public class LavaSurge
 			{
 				FallingBlock fbs = player.getWorld().spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), Material.STATIONARY_LAVA, (byte) 0);
 				fblocks.add(fbs);
+				falling.add(fbs);
 				double x = randy.nextDouble()/5;
 				double z = randy.nextDouble()/5;
 				
@@ -278,6 +280,7 @@ public class LavaSurge
 					if(randy.nextBoolean() && b != sourceBlock)
 					{
 						FallingBlock fb = player.getWorld().spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), Material.STATIONARY_LAVA, (byte) 0);
+						falling.add(fb);
 						fblocks.add(fb);
 						fb.setVelocity(direction.clone().add(new Vector(randy.nextDouble()/10, 0.1, randy.nextDouble()/10)).multiply(1.2));
 						fb.setDropItem(false);
