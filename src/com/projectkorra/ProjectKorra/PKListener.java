@@ -473,6 +473,8 @@ public class PKListener implements Listener {
 						else
 							MetalClips.instances.get(player).control();
 					}
+					else
+						new MetalClips(player, 1);
 				}
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
@@ -903,8 +905,9 @@ public class PKListener implements Listener {
 
 		for(Player p : MetalClips.instances.keySet())
 		{
-			if(MetalClips.instances.get(p).getTarget().getEntityId() == event.getWhoClicked().getEntityId())
-				event.setCancelled(true);
+			if(MetalClips.instances.get(p).getTarget() != null)
+				if(MetalClips.instances.get(p).getTarget().getEntityId() == event.getWhoClicked().getEntityId())
+					event.setCancelled(true);
 		}
 		
 		if (event.getSlotType() == SlotType.ARMOR

@@ -107,11 +107,11 @@ public class MetalClips
 		Vector v;
 
 		if(Methods.getTargetedEntity(player, 10, new ArrayList<Entity>()) != null)
-			v = Methods.getDirection(player.getEyeLocation(), Methods.getTargetedEntity(player, 10, new ArrayList<Entity>()).getLocation());
+			v = Methods.getDirection(player.getLocation(), Methods.getTargetedEntity(player, 10, new ArrayList<Entity>()).getLocation());
 		else
-			v = Methods.getDirection(player.getEyeLocation(), Methods.getTargetedLocation(player, 10));
+			v = Methods.getDirection(player.getLocation(), Methods.getTargetedLocation(player, 10));
 		
-		ii.setVelocity(v.normalize().multiply(1.2).add(new Vector(0, 0.2, 0)));
+		ii.setVelocity(v.normalize().add(new Vector(0, 0.2, 0).multiply(1.2)));
 		trackedIngots.add(ii);
 		player.getInventory().removeItem(is);
 
@@ -239,6 +239,11 @@ public class MetalClips
 		
 		if(magnetized)
 		{
+			if(Methods.getEntitiesAroundPoint(player.getLocation(), magnetRange).size() == 0)
+			{
+				remove();
+				return;
+			}
 			for(Entity e : Methods.getEntitiesAroundPoint(player.getLocation(), magnetRange))
 			{
 				if(e instanceof Item)
@@ -249,7 +254,7 @@ public class MetalClips
 					{
 						Vector v = Methods.getDirection(iron.getLocation(), player.getLocation());
 						
-						iron.setVelocity(v.normalize().multiply(0.2));
+						iron.setVelocity(v.normalize().multiply(0.4));
 					}
 				}
 			}
@@ -273,7 +278,7 @@ public class MetalClips
 				Vector v = Methods.getDirection(target.getLocation(), player.getLocation());
 				
 				if(distance > .5)
-					target.setVelocity(v.normalize().multiply(0.1));
+					target.setVelocity(v.normalize().multiply(0.2));
 				
 				Methods.breakBreathbendingHold(target);
 			}
@@ -356,6 +361,7 @@ public class MetalClips
 						
 						else
 						{
+							Methods.damageEntity(player, e, 5);
 							ii.getWorld().dropItem(ii.getLocation(), ii.getItemStack());
 							remove();
 						}
