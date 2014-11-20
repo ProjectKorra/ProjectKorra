@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,6 +28,11 @@ public class MetalClips
 	public static int cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.Cooldown");
 	public static int crushDamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.Damage");
 	public static int magnetRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.MagnetRange");
+	public static Material[] metalItems = {
+		Material.IRON_INGOT, Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS,
+		Material.IRON_BOOTS, Material.IRON_BLOCK, Material.IRON_AXE, Material.IRON_PICKAXE, Material.IRON_SWORD,
+		Material.IRON_HOE, Material.IRON_SPADE, Material.IRON_DOOR
+	};
 	
 	private Player player;
 	private LivingEntity target;
@@ -246,15 +252,83 @@ public class MetalClips
 			}
 			for(Entity e : Methods.getEntitiesAroundPoint(player.getLocation(), magnetRange))
 			{
+				Vector v = Methods.getDirection(e.getLocation(), player.getLocation());
+				
 				if(e instanceof Item)
 				{
 					Item iron = (Item) e;
 					
-					if(iron.getItemStack().getType() == Material.IRON_INGOT)
+					if(Arrays.asList(metalItems).contains(iron.getItemStack().getType()))
 					{
-						Vector v = Methods.getDirection(iron.getLocation(), player.getLocation());
-						
 						iron.setVelocity(v.normalize().multiply(0.4));
+					}
+				}
+				
+				else if(e instanceof Player && player.hasPermission("bending.ability.MetalClips.loot")
+						&& player.getInventory().getItemInHand().getType() == Material.IRON_BLOCK)
+				{
+					Player p = (Player) e;
+					
+					if(p.getEntityId() == player.getEntityId())
+						continue;
+					
+					ItemStack[] inventory = p.getInventory().getContents();
+					
+					for(ItemStack is : inventory)
+					{
+						if(Arrays.asList(metalItems).contains(is.getType()))
+						{
+							p.getWorld().dropItem(p.getLocation(), is);
+							
+							is.setType(Material.AIR);
+							is.setAmount(0);
+						}
+					}
+					
+					p.getInventory().setContents(inventory);
+					ItemStack[] armor = p.getInventory().getArmorContents();
+					
+					for(ItemStack is : armor)
+					{
+						if(Arrays.asList(metalItems).contains(is.getType()))
+						{
+							p.getWorld().dropItem(p.getLocation(), is);
+							
+							is.setType(Material.AIR);;
+						}
+					}
+					
+					p.getInventory().setArmorContents(armor);
+					if(Arrays.asList(metalItems).contains(p.getInventory().getItemInHand().getType()))
+					{
+						p.getWorld().dropItem(p.getLocation(), p.getEquipment().getItemInHand());
+						p.getEquipment().setItemInHand(new ItemStack(Material.AIR, 1));
+					}
+				}
+				
+				else if((e instanceof Zombie || e instanceof Skeleton) && player.hasPermission("bending.ability.MetalClips.loot")
+						 && player.getInventory().getItemInHand().getType() == Material.IRON_BLOCK)
+				{
+					LivingEntity le = (LivingEntity) e;
+					
+					ItemStack[] armor = le.getEquipment().getArmorContents();
+					
+					for(ItemStack is : armor)
+					{
+						if(Arrays.asList(metalItems).contains(is.getType()))
+						{
+							le.getWorld().dropItem(le.getLocation(), is);
+							
+							is.setType(Material.AIR);
+						}
+					}
+					
+					le.getEquipment().setArmorContents(armor);
+					
+					if(Arrays.asList(metalItems).contains(le.getEquipment().getItemInHand().getType()))
+					{
+						le.getWorld().dropItem(le.getLocation(), le.getEquipment().getItemInHand());
+						le.getEquipment().setItemInHand(new ItemStack(Material.AIR, 1));
 					}
 				}
 			}

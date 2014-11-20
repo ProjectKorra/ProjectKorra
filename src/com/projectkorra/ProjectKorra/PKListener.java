@@ -331,7 +331,8 @@ public class PKListener implements Listener {
 		
 		for(Player p : MetalClips.instances.keySet())
 		{
-			if(MetalClips.instances.get(p).getTarget().getEntityId() == event.getPlayer().getEntityId())
+			if(MetalClips.instances.get(p).getTarget() != null &&
+					MetalClips.instances.get(p).getTarget().getEntityId() == event.getPlayer().getEntityId())
 			{
 				MetalClips.instances.get(p).remove();
 			}
