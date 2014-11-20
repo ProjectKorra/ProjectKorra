@@ -89,6 +89,7 @@ public class MetalClips
 			remove();
 			return;
 		}
+		
 		Item ii = player.getWorld().dropItemNaturally(player.getLocation(), is);
 		ii.setVelocity(player.getEyeLocation().getDirection().normalize().add(new Vector(0, .5, 0)));
 		trackedIngots.add(ii);
@@ -190,6 +191,12 @@ public class MetalClips
 			return;
 		}
 		
+		if(!Methods.getBoundAbility(player).equalsIgnoreCase("MetalClips"))
+		{
+			remove();
+			return;
+		}
+		
 		if(target != null)
 		{
 			if((target instanceof Player && !((Player) target).isOnline()) || target.isDead())
@@ -237,7 +244,7 @@ public class MetalClips
 				
 				Vector v = Methods.getDirection(target.getLocation(), player.getLocation());
 				
-				if(distance > .5)
+				if(distance > 1.2)
 					target.setVelocity(v.normalize().multiply(0.2));
 				
 				Methods.breakBreathbendingHold(target);
@@ -254,7 +261,7 @@ public class MetalClips
 				double dz = loc.getZ() - oldLocation.getZ();
 				
 				Vector v = new Vector(dx, dy, dz);
-				if(distance > .5)
+				if(distance > 1.2)
 					target.setVelocity(v.normalize().multiply(.5));
 				else
 					target.setVelocity(new Vector(0, 0, 0));
