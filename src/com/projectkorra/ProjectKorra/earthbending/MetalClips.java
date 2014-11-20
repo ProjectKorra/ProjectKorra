@@ -26,30 +26,37 @@ public class MetalClips
 	public static int crushInterval = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.DamageInterval");;
 	public static int cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.Cooldown");
 	public static int crushDamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.Damage");
+	public static int magnetRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.MagnetRange");
 	
 	private Player player;
 	private LivingEntity target;
 	private boolean isBeingWorn = false;
 	private boolean isControlling = false;
 	private boolean canThrow = false;
+	private boolean magnetized = false;
 	public int metalclips = 0;
+	public int var;
 	private long startTime;
 	private long time;
 	
 	private ItemStack[] oldarmor;
 	private List<Item> trackedIngots = new ArrayList<Item>();
 	
-	public MetalClips(Player player)
+	public MetalClips(Player player, int var)
 	{
 		if(instances.containsKey(player))
 			return;
 		
 		this.player = player;
+		this.var = var;
 		
 		if(!isEligible())
 			return;
 		
-		shootMetal();
+		if(var == 0)
+			shootMetal();
+		else if(var == 1)
+			magnet();
 		
 		instances.put(player, this);
 	}
@@ -79,6 +86,11 @@ public class MetalClips
 		return true;
 	}
 	
+	public void magnet()
+	{
+		magnetized = true;
+	}
+	
 	public void shootMetal()
 	{	
 		ItemStack is = new ItemStack(Material.IRON_INGOT, 1);
@@ -91,7 +103,15 @@ public class MetalClips
 		}
 		
 		Item ii = player.getWorld().dropItemNaturally(player.getLocation(), is);
-		ii.setVelocity(player.getEyeLocation().getDirection().normalize().add(new Vector(0, .5, 0)));
+		
+		Vector v;
+
+		if(Methods.getTargetedEntity(player, 10, new ArrayList<Entity>()) != null)
+			v = Methods.getDirection(player.getEyeLocation(), Methods.getTargetedEntity(player, 10, new ArrayList<Entity>()).getLocation());
+		else
+			v = Methods.getDirection(player.getEyeLocation(), Methods.getTargetedLocation(player, 10));
+		
+		ii.setVelocity(v.normalize().multiply(1.2).add(new Vector(0, 0.2, 0)));
 		trackedIngots.add(ii);
 		player.getInventory().removeItem(is);
 
@@ -161,6 +181,11 @@ public class MetalClips
 		isControlling = true;
 	}
 	
+	public void ceaseControl()
+	{
+		isControlling = false;
+	}
+	
 	public boolean controlling()
 	{
 		return isControlling;
@@ -209,8 +234,26 @@ public class MetalClips
 		if(!player.isSneaking())
 		{
 			isControlling = false;
+			magnetized = false;
 		}
 		
+		if(magnetized)
+		{
+			for(Entity e : Methods.getEntitiesAroundPoint(player.getLocation(), magnetRange))
+			{
+				if(e instanceof Item)
+				{
+					Item iron = (Item) e;
+					
+					if(iron.getItemStack().getType() == Material.IRON_INGOT)
+					{
+						Vector v = Methods.getDirection(iron.getLocation(), player.getLocation());
+						
+						iron.setVelocity(v.normalize().multiply(0.2));
+					}
+				}
+			}
+		}
 		
 		if(isBeingWorn && System.currentTimeMillis() > startTime + armorTime)
 		{
@@ -220,7 +263,7 @@ public class MetalClips
 		
 		if(isControlling && player.isSneaking())
 		{
-			if(metalclips >= 1)
+			if(metalclips == 1)
 			{
 				Location oldLocation = target.getLocation();
 				Location loc = Methods.getTargetedLocation(player, 
@@ -235,7 +278,7 @@ public class MetalClips
 				Methods.breakBreathbendingHold(target);
 			}
 			
-			if(metalclips >= 2)
+			if(metalclips == 2)
 			{
 				Location oldLocation = target.getLocation();
 				Location loc = Methods.getTargetedLocation(player, 
@@ -243,7 +286,7 @@ public class MetalClips
 				double distance = loc.distance(oldLocation);
 				
 				Vector v = Methods.getDirection(target.getLocation(), Methods.getTargetedLocation(player, 10));
-				
+			
 				if(distance > 1.2)
 					target.setVelocity(v.normalize().multiply(0.2));
 				
@@ -283,8 +326,20 @@ public class MetalClips
 		for(int i = 0; i < trackedIngots.size(); i++)
 		{
 			Item ii = trackedIngots.get(i);
+			if(ii.isOnGround())
+			{
+				trackedIngots.remove(i);
+				continue;
+			}
+			
 			if(ii.getItemStack().getType() == Material.IRON_INGOT)
 			{
+				if(Methods.getEntitiesAroundPoint(ii.getLocation(), 2).size() == 0)
+				{
+					remove();
+					return;
+				}
+				
 				for(Entity e : Methods.getEntitiesAroundPoint(ii.getLocation(), 2))
 				{
 					if(e instanceof LivingEntity && e.getEntityId() != player.getEntityId())
