@@ -449,7 +449,7 @@ public class ConfigManager {
         config.addDefault("Abilities.Earth.LavaFlow.ParticleDensity", 0.33);
         
 		config.addDefault("Abilities.Earth.LavaSurge.Enabled", true);
-		config.addDefault("Abilities.Earth.LavaSurge.Description", "This ability allows an Earthbender to bend an existing Lava Source to create a large wave that deals damage and knocks back anything in its path. To use, simply tap sneak (Default: Shift) while targetting a source of lava. Once a source has been selected, left click to launch the wave off into the direction you are looking. This ability has a small knockback and does a fair amount of damage.");
+	    config.addDefault("Abilities.Earth.LavaSurge.Description", "This ability allows an Earthbender to bend an existing Lava Source to create a large wave that deals damage and knocks back anything in its path. To use, simply tap sneak (Default: Shift) while targeting an earthbendable block. Once a source has been selected, left click to launch the wave off into the direction you are looking. This ability has a small knockback and does a fair amount of damage.");
 		config.addDefault("Abilities.Earth.LavaSurge.Damage", 6);
 		config.addDefault("Abilities.Earth.LavaSurge.Radius", 1);
 		config.addDefault("Abilities.Earth.LavaSurge.PrepareRange", 7);
