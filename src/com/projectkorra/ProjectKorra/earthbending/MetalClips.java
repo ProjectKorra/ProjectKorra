@@ -242,7 +242,7 @@ public class MetalClips
 						(int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
 				
-				Vector v = Methods.getDirection(target.getLocation(), player.getLocation());
+				Vector v = Methods.getDirection(target.getLocation(), Methods.getTargetedLocation(player, 10));
 				
 				if(distance > 1.2)
 					target.setVelocity(v.normalize().multiply(0.2));
@@ -289,8 +289,6 @@ public class MetalClips
 				{
 					if(e instanceof LivingEntity && e.getEntityId() != player.getEntityId())
 					{
-						Methods.damageEntity(player, e, 0.5);
-						
 						if(e instanceof Player ||
 								e instanceof Zombie ||
 								e instanceof Skeleton)
