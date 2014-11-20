@@ -352,4 +352,16 @@ public class MetalClips
 			instances.get(p).progress();
 		}
 	}
+	
+	public static boolean isControlled(Player player)
+	{
+		for(Player p : instances.keySet())
+		{
+			if(instances.get(p).getTarget().getEntityId() == player.getEntityId())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }
