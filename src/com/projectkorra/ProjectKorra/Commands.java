@@ -823,7 +823,9 @@ public class Commands {
 								|| p.getName().equalsIgnoreCase("Jacklin213") // Jacklin213
 								|| p.getName().equalsIgnoreCase("kingbirdy") // kingbirdy
 								|| p.getName().equalsIgnoreCase("CherryCoolade") // Coolade
-								|| p.getName().equalsIgnoreCase("sampepere")) { // AlexTheCoder
+								|| p.getName().equalsIgnoreCase("sampepere") // AlexTheCoder
+								|| p.getName().equalsIgnoreCase("EnderLance")) // Carbogen
+						{ 
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra (Core) Developer");
 						}
 						if (p.getName().equalsIgnoreCase("vidcom") // vidcom

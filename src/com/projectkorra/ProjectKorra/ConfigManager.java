@@ -457,6 +457,11 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.LavaSurge.MaxLavaWaves", 10);
 		config.addDefault("Abilities.Earth.LavaSurge.SourceCanBeEarth", true);
 
+		config.addDefault("Abilities.Earth.MetalClips.Damage", 1);
+		config.addDefault("Abilities.Earth.MetalClips.DamageInterval", 1400);
+		config.addDefault("Abilities.Earth.MetalClips.Cooldown", 1000);
+		config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
+
 		
 		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "

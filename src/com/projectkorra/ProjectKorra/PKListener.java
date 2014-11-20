@@ -95,6 +95,7 @@ import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
 import com.projectkorra.ProjectKorra.earthbending.LavaSurge;
 import com.projectkorra.ProjectKorra.earthbending.LavaWall;
 import com.projectkorra.ProjectKorra.earthbending.LavaWave;
+import com.projectkorra.ProjectKorra.earthbending.MetalClips;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
@@ -327,6 +328,14 @@ public class PKListener implements Listener {
 			EarthArmor.removeEffect(event.getPlayer());
 			event.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 		}
+		
+		for(Player p : MetalClips.instances.keySet())
+		{
+			if(MetalClips.instances.get(p).getTarget().getEntityId() == event.getPlayer().getEntityId())
+			{
+				MetalClips.instances.get(p).remove();
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -453,6 +462,12 @@ public class PKListener implements Listener {
 
 				if (abil.equalsIgnoreCase("Extraction")) {
 					new Extraction(player);
+				}
+				
+				if(abil.equalsIgnoreCase("MetalClips"))
+				{
+					if(MetalClips.instances.containsKey(player))
+						MetalClips.instances.get(player).control();
 				}
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
@@ -798,6 +813,11 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Tremorsense")) {
 					new Tremorsense(player);
 				}
+				
+				if(abil.equalsIgnoreCase("MetalClips"))
+				{
+					new MetalClips(player);
+				}
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
 					if(LavaSurge.instances.containsKey(player))
@@ -870,6 +890,12 @@ public class PKListener implements Listener {
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (event.isCancelled()) return;
 
+		for(Player p : MetalClips.instances.keySet())
+		{
+			if(MetalClips.instances.get(p).getTarget().getEntityId() == event.getWhoClicked().getEntityId())
+				event.setCancelled(true);
+		}
+		
 		if (event.getSlotType() == SlotType.ARMOR
 				&& !EarthArmor.canRemoveArmor((Player) event.getWhoClicked()))
 			event.setCancelled(true);
