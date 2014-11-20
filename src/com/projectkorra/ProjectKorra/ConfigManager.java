@@ -457,6 +457,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.LavaSurge.MaxLavaWaves", 10);
 		config.addDefault("Abilities.Earth.LavaSurge.SourceCanBeEarth", true);
 
+		config.addDefault("Abilities.Earth.MetalClips.Enabled", true);
+		config.addDefault("Abilities.Earth.MetalClips.Description", "Shoot multiple metal clips at your enemy to slowly encase them in metal, allowing you to control their movements. This ability only works on Zombies, Skeletons, and Players. You need iron in your inventory to use this ability.");
 		config.addDefault("Abilities.Earth.MetalClips.Damage", 1);
 		config.addDefault("Abilities.Earth.MetalClips.DamageInterval", 1400);
 		config.addDefault("Abilities.Earth.MetalClips.Cooldown", 1000);

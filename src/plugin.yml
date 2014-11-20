@@ -98,6 +98,7 @@ permissions:
       bending.ability.Shockwave: true
       bending.ability.Tremorsense: true
       bending.ability.Extraction: true
+      bending.ability.MetalClips: true
       bending.earth.passive: true
       bending.earth.metalbending: true
       bending.earth.lavabending: true
