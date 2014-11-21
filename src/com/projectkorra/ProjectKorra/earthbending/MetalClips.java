@@ -65,6 +65,7 @@ public class MetalClips
 			magnet();
 		
 		instances.put(player, this);
+		Methods.getBendingPlayer(player.getName()).addCooldown("MetalClips", cooldown);
 	}
 
 	public boolean isEligible()
