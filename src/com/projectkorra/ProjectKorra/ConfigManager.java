@@ -462,6 +462,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.MetalClips.Damage", 2);
 		config.addDefault("Abilities.Earth.MetalClips.DamageInterval", 500);
 		config.addDefault("Abilities.Earth.MetalClips.MagnetRange", 20);
+		config.addDefault("Abilities.Earth.MetalClips.MagnetPower", 0.6);
 		config.addDefault("Abilities.Earth.MetalClips.Cooldown", 1000);
 		config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
 

@@ -28,6 +28,7 @@ public class MetalClips
 	public static int cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.Cooldown");
 	public static int crushDamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.Damage");
 	public static int magnetRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.MagnetRange");
+	public static double magnetPower = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.MetalClips.MagnetPower");
 	public static Material[] metalItems = {
 		Material.IRON_INGOT, Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS,
 		Material.IRON_BOOTS, Material.IRON_BLOCK, Material.IRON_AXE, Material.IRON_PICKAXE, Material.IRON_SWORD,
@@ -334,7 +335,7 @@ public class MetalClips
 					
 					if(Arrays.asList(metalItems).contains(iron.getItemStack().getType()))
 					{
-						iron.setVelocity(v.normalize().multiply(0.4));
+						iron.setVelocity(v.normalize().multiply(magnetPower));
 					}
 				}
 			}
