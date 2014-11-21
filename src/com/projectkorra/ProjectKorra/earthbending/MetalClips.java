@@ -384,11 +384,8 @@ public class MetalClips
 				Location loc = Methods.getTargetedLocation(player, 
 						(int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
-				double dx = loc.getX() - oldLocation.getX();
-				double dy = loc.getY() - oldLocation.getY();
-				double dz = loc.getZ() - oldLocation.getZ();
 				
-				Vector v = new Vector(dx, dy, dz);
+				Vector v = Methods.getDirection(oldLocation, Methods.getTargetedLocation(player, 10));
 				if(distance > 1.2)
 					target.setVelocity(v.normalize().multiply(.5));
 				else
