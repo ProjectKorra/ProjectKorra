@@ -65,7 +65,6 @@ public class MetalClips
 			magnet();
 		
 		instances.put(player, this);
-		Methods.getBendingPlayer(player.getName()).addCooldown("MetalClips", cooldown);
 	}
 
 	public boolean isEligible()
@@ -102,6 +101,9 @@ public class MetalClips
 	{	
 		ItemStack is = new ItemStack(Material.IRON_INGOT, 1);
 
+		if(Methods.getBendingPlayer(player.getName()).isOnCooldown("MetalClips"))
+			return;
+		
 		if(!player.getInventory().containsAtLeast(is, 1))
 		{
 			//ProjectKorra.log.info("Player doesn't have enough ingots!");
