@@ -259,7 +259,8 @@ public class MetalClips
 				Vector v = Methods.getDirection(e.getLocation(), player.getLocation());
 				
 				if(e instanceof Player && player.hasPermission("bending.ability.MetalClips.loot")
-						&& player.getInventory().getItemInHand().getType() == Material.IRON_BLOCK)
+						&& player.getInventory().getItemInHand().getType() == Material.IRON_INGOT
+						&& player.getInventory().getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Magnet"))
 				{
 					Player p = (Player) e;
 					
@@ -304,7 +305,8 @@ public class MetalClips
 				}
 				
 				if((e instanceof Zombie || e instanceof Skeleton) && player.hasPermission("bending.ability.MetalClips.loot")
-						 && player.getInventory().getItemInHand().getType() == Material.IRON_BLOCK)
+						 && player.getInventory().getItemInHand().getType() == Material.IRON_INGOT
+									&& player.getInventory().getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Magnet"))
 				{
 					LivingEntity le = (LivingEntity) e;
 					
