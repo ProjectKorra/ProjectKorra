@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.ComboManager.ClickType;
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -100,10 +101,15 @@ public class FireCombo {
 	private long cooldown = 0;
 
 	public FireCombo(Player player, String ability) {
+		// Dont' call Methods.canBind directly, it doesn't let you combo as fast
 		if (!enabled || !player.hasPermission("bending.ability.FireCombo"))
 			return;
 		if (Methods.isRegionProtectedFromBuild(player, "Blaze",
 				player.getLocation()))
+			return;
+		if (Commands.isToggledForAll) 
+			return;
+		if (!Methods.getBendingPlayer(player.getName()).isToggled()) 
 			return;
 		time = System.currentTimeMillis();
 		this.player = player;
