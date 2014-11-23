@@ -232,9 +232,9 @@ public class WaterWall {
 			return false;
 		}
 		if (!Methods.canBend(player.getName(), "Surge")) {
-			if (!forming)
+			//if (!forming)
 				// removeWater(oldwater);
-				breakBlock();
+			breakBlock();
 			unfocusBlock();
 			returnWater();
 			return false;
