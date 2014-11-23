@@ -116,6 +116,10 @@ public class BendingPlayer {
 	public boolean isChiBlocked() {
 		return blockedChi;
 	}
+	
+	public boolean isToggled() {
+		return isToggled;
+	}
 
 	public void setAbilities(HashMap<Integer, String> abilities) {
 		this.abilities = abilities;
