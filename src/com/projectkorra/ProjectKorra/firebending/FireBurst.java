@@ -21,6 +21,7 @@ public class FireBurst {
 	private long starttime;
 	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.FireBurst.Damage");
 	private long chargetime = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBurst.ChargeTime");
+	private long range = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBurst.Range");
 	private double deltheta = 10;
 	private double delphi = 10;
 	private boolean charged = false;
@@ -68,7 +69,8 @@ public class FireBurst {
 					if (direction.angle(vector) <= angle) {
 						// Methods.verbose(direction.angle(vector));
 						// Methods.verbose(direction);
-						new FireBlast(location, direction.normalize(), player, damage, safeblocks);
+						FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks);
+						fblast.setRange(this.range);
 					}
 				}
 			}
@@ -92,7 +94,8 @@ public class FireBurst {
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
 					Vector direction = new Vector(x, z, y);
-					new FireBlast(location, direction.normalize(), player, damage, safeblocks);
+					FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks);
+					fblast.setRange(this.range);
 				}
 			}
 		}

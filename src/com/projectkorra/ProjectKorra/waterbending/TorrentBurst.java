@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 
 public class TorrentBurst {
@@ -19,9 +20,10 @@ public class TorrentBurst {
 	public static ConcurrentHashMap<Integer, TorrentBurst> instances = new ConcurrentHashMap<Integer, TorrentBurst>();
 
 	private static int ID = Integer.MIN_VALUE;
-	private static double defaultmaxradius = 15;
+	private static double defaultmaxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Torrent.Wave.Radius");
 	private static double dr = 0.5;
-	private static double defaultfactor = 1.5;
+	private static double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Torrent.Wave.Knockback");
+	private static double maxheight = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Torrent.Wave.Height");
 	private static long interval = Torrent.interval;
 
 	//	private static final byte full = 0x0;
@@ -67,7 +69,7 @@ public class TorrentBurst {
 	}
 
 	private void initializeHeightsMap() {
-		for (int i = -1; i <= 1; i++) {
+		for (int i = -1; i <= maxheight; i++) {
 			ConcurrentHashMap<Integer, Double> angles = new ConcurrentHashMap<Integer, Double>();
 			double dtheta = Math.toDegrees(1 / (maxradius + 2));
 			int j = 0;

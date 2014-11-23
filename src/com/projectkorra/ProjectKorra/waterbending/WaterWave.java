@@ -221,6 +221,7 @@ public class WaterWave {
 					remove();
 					return;
 				}
+				player.setFallDistance(0f);
 				double currentSpeed = MAX_SPEED
 						- (MAX_SPEED
 								* (double) (System.currentTimeMillis() - time) / (double) FLIGHT_TIME);

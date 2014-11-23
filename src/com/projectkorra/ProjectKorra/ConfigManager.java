@@ -154,6 +154,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
 		config.addDefault("Abilities.Air.AirBurst.PushFactor", 1.5);
 		config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1750);
+		config.addDefault("Abilities.Air.AirBurst.Damage", 0);
 
 		config.addDefault("Abilities.Air.AirScooter.Enabled", true);
 		config.addDefault("Abilities.Air.AirScooter.Description", "AirScooter is a fast means of transportation. To use, sprint, jump then click with "
@@ -209,7 +210,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
 		config.addDefault("Abilities.Air.AirSwipe.Cooldown", 1500);
 		config.addDefault("Abilities.Air.AirSwipe.ChargeFactor", 3);
-
+		config.addDefault("Abilities.Air.AirSwipe.MaxChargeTime", 3000);
+		
 		config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 		config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. To use, simply look at an entity and hold shift. The entity will begin taking damage as you extract the air from their lungs. Any bender caught in this sphere will only be able to use basic moves, such as AirSwipe, WaterManipulation, FireBlast, or EarthBlast. An entity can be knocked out of the sphere by certain bending arts, and your attention will be disrupted if you are hit by bending.");
 		config.addDefault("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs", true);
@@ -264,6 +266,7 @@ public class ConfigManager {
 				+ "be at least partially submerged in water.");
 		config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
 		config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
+		config.addDefault("Abilities.Water.HealingWaters.Power", 1);
 
 		config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 		config.addDefault("Abilities.Water.IceBlast.Damage", 3);
@@ -282,6 +285,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.IceSpike.Range", 20);
 		config.addDefault("Abilities.Water.IceSpike.ThrowingMult", 0.7);
 		config.addDefault("Abilities.Water.IceSpike.Height", 6);
+		config.addDefault("Abilities.Water.IceSpike.Projectile.Range", 20);
+		config.addDefault("Abilities.Water.IceSpike.Projectile.Damage", 1);
 
 		config.addDefault("Abilities.Water.OctopusForm.Enabled", true);
 		config.addDefault("Abilities.Water.OctopusForm.Description", "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. "
@@ -292,6 +297,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.OctopusForm.Range", 10);
 		config.addDefault("Abilities.Water.OctopusForm.Radius", 3);
 		config.addDefault("Abilities.Water.OctopusForm.Damage", 3);
+		config.addDefault("Abilities.Water.OctopusForm.Knockback", 1.75);
 		config.addDefault("Abilities.Water.OctopusForm.FormDelay", 50);
 
 		config.addDefault("Abilities.Water.PhaseChange.Enabled", true);
@@ -310,6 +316,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Surge.Enabled", true);
 		config.addDefault("Abilities.Water.Surge.Description", "This ability has two distinct features. If you sneak to select a source block, you can then click in a direction and a large wave will be launched in that direction. If you sneak again while the wave is en route, the wave will freeze the next target it hits. If, instead, you click to select a source block, you can hold sneak to form a wall of water at your cursor location. Click to shift between a water wall and an ice wall. Release sneak to dissipate it.");
 		config.addDefault("Abilities.Water.Surge.Wave.Radius", 3);
+		config.addDefault("Abilities.Water.Surge.Wave.Range", 20);
 		config.addDefault("Abilities.Water.Surge.Wave.HorizontalPush", 1);
 		config.addDefault("Abilities.Water.Surge.VerticalPush", 0.2);
 		config.addDefault("Abilities.Water.Surge.Wall.Range", 5);
@@ -320,6 +327,9 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Torrent.Range", 25);
 		config.addDefault("Abilities.Water.Torrent.DeflectDamage", 1);
 		config.addDefault("Abilities.Water.Torrent.Damage", 2);
+		config.addDefault("Abilities.Water.Torrent.Wave.Radius", 15);
+		config.addDefault("Abilities.Water.Torrent.Wave.Knockback", 1.5);
+		config.addDefault("Abilities.Water.Torrent.Wave.Height", 1);
 
 		config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 
@@ -481,6 +491,9 @@ public class ConfigManager {
 				+ "Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave.");
 		config.addDefault("Abilities.Earth.Shockwave.FallThreshold", 10);
 		config.addDefault("Abilities.Earth.Shockwave.ChargeTime", 2500);
+		config.addDefault("Abilities.Earth.Shockwave.Damage", 5);
+		config.addDefault("Abilities.Earth.Shockwave.Knockback", 1.1);
+		config.addDefault("Abilities.Earth.Shockwave.Range", 15);
 
 		config.addDefault("Abilities.Earth.Tremorsense.Enabled", true);
 		config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
@@ -522,6 +535,11 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.FireBlast.Damage", 2);
 		config.addDefault("Abilities.Fire.FireBlast.Cooldown", 1500);
 		config.addDefault("Abilities.Fire.FireBlast.Dissipate", false);
+		config.addDefault("Abilities.Fire.FireBlast.Charged.ChargeTime", 2000);
+		config.addDefault("Abilities.Fire.FireBlast.Charged.Damage", 4);
+		config.addDefault("Abilities.Fire.FireBlast.Charged.DamageRadius", 6);
+		config.addDefault("Abilities.Fire.FireBlast.Charged.Power", 1);
+		config.addDefault("Abilities.Fire.FireBlast.Charged.Range", 20);
 
 		config.addDefault("Abilities.Fire.FireBurst.Enabled", true);
 		config.addDefault("Abilities.Fire.FireBurst.Description", "FireBurst is a very powerful firebending ability. "
@@ -530,6 +548,7 @@ public class ConfigManager {
 				+ "of flames in front of you, or click to release the burst in a sphere around you. ");
 		config.addDefault("Abilities.Fire.FireBurst.Damage", 3);
 		config.addDefault("Abilities.Fire.FireBurst.ChargeTime", 2500);
+		config.addDefault("Abilities.Fire.FireBurst.Range", 15);
 
 		config.addDefault("Abilities.Fire.FireJet.Enabled", true);
 		config.addDefault("Abilities.Fire.FireJet.Description", "This ability is used for a limited burst of flight for firebenders. Clicking with this "
@@ -576,6 +595,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.Lightning.Enabled", true);
 		config.addDefault("Abilities.Fire.Lightning.Description", "Hold sneak while selecting this ability to charge up a lightning strike. Once charged, release sneak to discharge the lightning to the targeted location.");
 		config.addDefault("Abilities.Fire.Lightning.Distance", 15);
+		config.addDefault("Abilities.Fire.Lightning.Damage", 6);
 		config.addDefault("Abilities.Fire.Lightning.WaterAreaOfEffect", 15);
 		config.addDefault("Abilities.Fire.Lightning.Warmup", 3500);
 		config.addDefault("Abilities.Fire.Lightning.MissChance", 10);

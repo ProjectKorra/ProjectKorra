@@ -146,14 +146,13 @@ public class LavaFlow
 			return;
 		}		
 		
-		double removeDelay = AvatarState.isAvatarState(player) ? AS_SHIFT_REMOVE_DELAY : SHIFT_REMOVE_DELAY;
-		if(System.currentTimeMillis() - time > removeDelay){
-			remove();
-			return;
-		}
-		
 		if(type == AbilityType.SHIFT)
 		{
+			double removeDelay = AvatarState.isAvatarState(player) ? AS_SHIFT_REMOVE_DELAY : SHIFT_REMOVE_DELAY;
+			if(System.currentTimeMillis() - time > removeDelay){
+				remove();
+				return;
+			}
 			if(!player.isSneaking() && !removing){
 				if(affectedBlocks.size() > 0){
 					removeOnDelay();

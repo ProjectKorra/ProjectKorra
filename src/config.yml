@@ -120,6 +120,7 @@ Abilities:
       FallThreshold: 10
       PushFactor: 1.5
       ChargeTime: 1750
+      Damage: 0
     AirScooter:
       Enabled: true
       Description: "AirScooter is a fast means of transportation. To use, sprint, jump then click with this ability selected. YOu will hop on a scooter of air and be propelled forward in the direction you're looking (you don't need to press anything). This ability can be used to levitate above liquids, but it cannot go up steep slopes. Any other actions will deactivate this ability."
@@ -151,6 +152,7 @@ Abilities:
       Speed: 25
       Cooldown: 1500
       ChargeFactor: 3
+      MaxChargeTime: 3000
     Suffocate:
       Enabled: true
       Description: "This ability is one of the most dangerous abilities an Airbender possesses. To use, simply look at an entity and hold shift. The entity will begin taking damage as you extract the air from their lungs. Any bender caught in this sphere will only be able to use basic moves, such as AirSwipe, WaterManipulation, FireBlast, or EarthBlast. An entity can be knocked out of the sphere by certain bending arts, and your attention will be disrupted if you are hit by bending."
@@ -202,6 +204,7 @@ Abilities:
       Description: "To use, the bender must be at least partially submerged in water. If the user is not sneaking, this ability will automatically begin working provided the user has it selected. If the user is sneaking, he/she is channeling the healing to their target in front of them. In order for this channel to be successful, the user and the target must be at least partially submerged in water."
       Radius: 5
       Interval: 750
+      Power: 1
     IceBlast:
       Enabled: true
       Damage: 3
@@ -215,6 +218,9 @@ Abilities:
       Range: 20
       ThrowingMult: 0.7
       Height: 6
+      Projectile:
+        Range: 20
+        Damage: 1
     OctopusForm:
       Enabled: true
       Description: "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. To use, click to select a water source. Then, hold sneak to channel this ability. While channleing, the water will form itself around you and has a chance to block incoming attacks. Additionally, you can click while channeling to attack things near you, dealing damage and knocking the target back. Releasing shift at any time will dissipate the form."
@@ -222,6 +228,7 @@ Abilities:
       Damage: 3
       Radius: 3
       FormDelay: 50
+      Knockback: 1.75
     PhaseChange:
       Enabled: true
       Description: "To use, simply left-click. Any water you are looking at within range will instantly freeze over into solid ice. Provided you stay within range of the ice and do not unbind FreezeMelt, that ice will not thaw. If, however, you do either of those things the ice will instantly thaw. If you sneak (default: shift), anything around where you are looking at will instantly melt. Since this is a more favorable state for these things, they will never re-freeze unless they would otherwise by nature or some other bending ability. Additionally, if you tap sneak while targeting water with FreezeMelt, it will evaporate water around that block that is above sea level."
@@ -236,15 +243,21 @@ Abilities:
         Radius: 3
         HorizontalPush: 1
         VerticalPush: 0.2
+        Range: 20
       Wall:
         Range: 5
         Radius: 2
+      VerticalPush: 0.2
     Torrent:
       Enabled: true
       Description: "Torrent is one of the strongest moves in a waterbender's arsenal. To use, first click a source block to select it; then hold shift to begin streaming the water around you. Water flowing around you this way will damage and knock back nearby enemies and projectiles. If you release shift during this, you will create a large wave that expands outwards from you, launching anything in its path back. Instead, if you click you release the water and channel it to flow towards your cursor. Anything caught in the blast will be tossed about violently and take damage. Finally, if you click again when the water is torrenting, it will freeze the area around it when it is obstructed."
       Damage: 2
       DeflectDamage: 1
       Range: 25
+      Wave:
+        Radius: 15
+        Knockback: 1.5
+        Height: 1
     WaterBubble:
       Enabled: true
       Description: "To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability."
@@ -376,6 +389,9 @@ Abilities:
       Description: "This is one of the most powerful moves in the earthbender's arsenal. To use, you must first charge it by holding sneak (default: shift). Once charged, you can release sneak to create an enormous shockwave of earth, disturbing all earth around you and expanding radially outwards. Anything caught in the shockwave will be blasted back and dealt damage. If you instead click while charged, the disruption is focused in a cone in front of you. Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave."
       ChargeTime: 2500
       FallThreshold: 10
+      Damage: 5
+      Knockback: 1.1
+      Range: 15
     Tremorsense:
       Enabled: true
       Description: "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them."
@@ -412,11 +428,18 @@ Abilities:
       Damage: 2
       Cooldown: 1500
       Dissipate: false
+      Charged:
+        ChargeTime: 2000
+        Damage: 4
+        DamageRadius: 6
+        Power: 1
+        Range: 20
     FireBurst:
       Enabled: true
       Description: "FireBurst is a very powerful firebending ability. To use, press and hold sneak to charge your burst. Once charged, you can either release sneak to launch a cone-shaped burst of flames in front of you, or click to release the burst in a sphere around you."
       ChargeTime: 2500
       Damage: 3
+      Range: 15
     FireJet:
       Enabled: true
       Description: "This ability is used for a limited burst of flight for firebenders. Clicking with this ability selected will launch you in the direction you're looking, granting you controlled flight for a short time. This ability can be used mid-air to prevent falling to your death, but on the ground it can only be used if standing on a block that's ignitable (e.g. not snow or water)."
@@ -450,6 +473,7 @@ Abilities:
       WaterAreaOfEffect: 15
       Warmup: 3500
       MissChance: 10
+      Damage: 6
     WallOfFire:
       Enabled: true
       Description: "To use this ability, click at a location. A wall of fire will appear at this location, igniting enemies caught in it and blocking projectiles."

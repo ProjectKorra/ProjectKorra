@@ -21,16 +21,21 @@ public class Fireball {
 	public static ConcurrentHashMap<Integer, Fireball> instances = new ConcurrentHashMap<Integer, Fireball>();
 	private static ConcurrentHashMap<Entity, Fireball> explosions = new ConcurrentHashMap<Entity, Fireball>();
 
-	private static long defaultchargetime = 2000;
+	private static long defaultchargetime = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
 	private static long interval = 25;
 	private static double radius = 1.5;
 	private static int ID = Integer.MIN_VALUE;
+	
+	private static double MAX_DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Damage");
+	private static double DAMAGE_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
+	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Range");
+	private static double POWER = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Power");
 
 	private int id;
-	private double maxdamage = 4;
-	private double range = 20;
-	private double explosionradius = 6;
-	private double innerradius = 3;
+	private double maxdamage = MAX_DAMAGE;
+	private double range = RANGE;
+	private double explosionradius = DAMAGE_RADIUS;
+	private double innerradius = explosionradius / 2;
 	private long starttime;
 	private long time;
 	private long chargetime = defaultchargetime;
@@ -206,7 +211,7 @@ public class Fireball {
 		if (explode) {
 			explosion = player.getWorld().spawn(location, TNTPrimed.class);
 			explosion.setFuseTicks(0);
-			float yield = 1;
+			float yield = (float) POWER;
 			if (!AvatarState.isAvatarState(player)) {
 				if (Methods.isDay(player.getWorld())) {
 					Methods.getFirebendingDayAugment(yield, player.getWorld());

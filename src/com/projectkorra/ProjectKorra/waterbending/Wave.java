@@ -30,7 +30,7 @@ public class Wave {
 
 	private static final long interval = 30;
 	private static final byte full = 0x0;
-	static double defaultrange = 20;
+	static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
 
 	Player player;
 	private Location location = null;

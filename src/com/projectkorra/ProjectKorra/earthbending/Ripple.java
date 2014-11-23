@@ -13,15 +13,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class Ripple {
 
 	private static ConcurrentHashMap<Integer, Ripple> instances = new ConcurrentHashMap<Integer, Ripple>();
 	private static ConcurrentHashMap<Integer[], Block> blocks = new ConcurrentHashMap<Integer[], Block>();
 
-	static final double radius = 15;
-	private static final int damage = 5;
+	static final double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Range");
+	private static final double damage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Damage");
 	private static int ID = Integer.MIN_VALUE;
+	private static double knockback = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Knockback");
 
 	private Player player;
 	private Vector direction;
@@ -258,7 +261,8 @@ public class Ripple {
 
 		Vector vector = direction.clone();
 		vector.setY(.5);
-		entity.setVelocity(vector);
+		double knock = AvatarState.isAvatarState(player) ? AvatarState.getValue(knockback) : knockback;
+		entity.setVelocity(vector.clone().normalize().multiply(knock));
 		
 		Methods.breakBreathbendingHold(entity);
 

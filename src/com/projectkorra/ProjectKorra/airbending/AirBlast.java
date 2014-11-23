@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -46,6 +47,7 @@ public class AirBlast {
 	private double speedfactor;
 	private double range = defaultrange;
 	private double pushfactor = defaultpushfactor;
+	private double damage = 0;
 	private boolean otherorigin = false;
 	private int ticks = 0;
 
@@ -260,7 +262,16 @@ public class AirBlast {
 				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
 			entity.setFireTicks(0);
 			Methods.breakBreathbendingHold(entity);
+			
+			if (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedentities.contains(entity)) {
+				Methods.damageEntity(player, entity, damage);
+				affectedentities.add(entity);
+			}
 		}
+	}
+	
+	public void setDamage(double dmg) {
+		this.damage = dmg;
 	}
 
 	public static void progressAll() {

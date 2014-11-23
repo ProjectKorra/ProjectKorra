@@ -43,7 +43,9 @@ public class Illumination {
 	private void set() {
 		Block standingblock = player.getLocation().getBlock();
 		Block standblock = standingblock.getRelative(BlockFace.DOWN);
-		if ((FireStream.isIgnitable(player, standingblock) && standblock
+		if (standblock.getType() == Material.GLOWSTONE) {
+			revert();
+		} else if ((FireStream.isIgnitable(player, standingblock) && standblock
 				.getType() != Material.LEAVES)
 				&& block == null
 				&& !blocks.containsKey(standblock)) {

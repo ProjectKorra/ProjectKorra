@@ -22,6 +22,7 @@ public class AirBurst {
 	
 	private static double threshold = config.getDouble("Abilities.Air.AirBurst.FallThreshold");
 	private static double pushfactor = config.getDouble("Abilities.Air.AirBurst.PushFactor");
+	private static double damage = config.getDouble("Abilities.Air.AirBurst.Damage");
 	private static double deltheta = 10;
 	private static double delphi = 10;
 
@@ -70,8 +71,9 @@ public class AirBurst {
 					z = r * Math.cos(rtheta);
 					Vector direction = new Vector(x, z, y);
 					if (direction.angle(vector) <= angle) {
-						new AirBlast(location, direction.normalize(), player,
+						AirBlast blast = new AirBlast(location, direction.normalize(), player,
 								pushfactor, this);
+						blast.setDamage(damage);
 					}
 				}
 			}
@@ -93,8 +95,9 @@ public class AirBurst {
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
 					Vector direction = new Vector(x, z, y);
-					new AirBlast(location, direction.normalize(), player,
+					AirBlast blast = new AirBlast(location, direction.normalize(), player,
 							pushfactor, this);
+					blast.setDamage(damage);
 				}
 			}
 		}
@@ -131,8 +134,9 @@ public class AirBurst {
 				y = r * Math.sin(rphi) * Math.sin(rtheta);
 				z = r * Math.cos(rtheta);
 				Vector direction = new Vector(x, z, y);
-				new AirBlast(location, direction.normalize(), player,
+				AirBlast blast = new AirBlast(location, direction.normalize(), player,
 						pushfactor, new AirBurst());
+				blast.setDamage(damage);
 			}
 		}
 	}
