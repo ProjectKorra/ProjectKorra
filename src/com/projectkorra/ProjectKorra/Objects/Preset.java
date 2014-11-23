@@ -68,7 +68,7 @@ public class Preset {
 		if (!presets.containsKey(player.getUniqueId())) return;
 		for (Preset preset: presets.get(player.getUniqueId())) {
 			if (preset.name.equalsIgnoreCase(name)) { // We found it
-				bPlayer.setAbilities(preset.abilities);
+				bPlayer.setAbilities((HashMap<Integer, String>) preset.abilities.clone());
 			} 
 		}
 	}
