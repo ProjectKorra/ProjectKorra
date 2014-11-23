@@ -23,11 +23,12 @@ public class Lightning {
 	private static long defaultwarmup = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.Lightning.Warmup");
 	private static double misschance = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.Lightning.MissChance");
 	private static double WaterAreaOfEffect = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Lightning.WaterAreaOfEffect");
+	private static double MAX_DAMAGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.Lightning.Damage");
 	
 	private static double threshold = 0.1;
 	private static double blockdistance = 4;
 
-	private int maxdamage = 6;
+	private double maxdamage = MAX_DAMAGE;
 	private double strikeradius = 4;
 
 	private Player player;
