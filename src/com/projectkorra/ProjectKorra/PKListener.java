@@ -58,6 +58,7 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.ComboManager.ClickType;
@@ -310,6 +311,22 @@ public class PKListener implements Listener {
 
 		if (chatEnabled) {
 			player.setDisplayName(append + player.getName());
+		}
+		
+		// Handle the AirSpout/WaterSpout login glitches
+		if (player.getGameMode() != GameMode.CREATIVE) {
+			HashMap<Integer, String> bound = Methods.getBendingPlayer(player.getName()).getAbilities();
+			for(String str : bound.values())
+				if(str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout")) {
+					final Player fplayer = player;
+					new BukkitRunnable() {
+						public void run() {
+							fplayer.setFlying(false);
+							fplayer.setAllowFlight(false);
+						}
+					}.runTaskLater(ProjectKorra.plugin, 2);
+					break;
+				}
 		}
 	}
 
