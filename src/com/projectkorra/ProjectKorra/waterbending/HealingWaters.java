@@ -19,7 +19,8 @@ public class HealingWaters {
 
 	private static final double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.HealingWaters.Radius");
 	private static final long interval = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.HealingWaters.Interval");
-
+	private static final int power = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.HealingWaters.Power");
+	
 	private static long time = 0;
 
 	public static void heal(Server server) {
@@ -85,7 +86,7 @@ public class HealingWaters {
 	private static void applyHealing(Player player) {
 		if (!Methods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation()))
 			if(player.getHealth() < player.getMaxHealth()) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, 1));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, power));
 				Methods.breakBreathbendingHold(player);
 			}
 //			for(PotionEffect effect : player.getActivePotionEffects()) {

@@ -265,6 +265,7 @@ public class ConfigManager {
 				+ "be at least partially submerged in water.");
 		config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
 		config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
+		config.addDefault("Abilities.Water.HealingWaters.Power", 1);
 
 		config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 		config.addDefault("Abilities.Water.IceBlast.Damage", 3);
