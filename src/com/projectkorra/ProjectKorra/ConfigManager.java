@@ -154,6 +154,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
 		config.addDefault("Abilities.Air.AirBurst.PushFactor", 1.5);
 		config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1750);
+		config.addDefault("Abilities.Air.AirBurst.Damage", 0);
 
 		config.addDefault("Abilities.Air.AirScooter.Enabled", true);
 		config.addDefault("Abilities.Air.AirScooter.Description", "AirScooter is a fast means of transportation. To use, sprint, jump then click with "
