@@ -540,6 +540,10 @@ Abilities:
       Cooldown: 50000
       Radius: 4
       Duration: 15
+    WarriorStance:
+      Enabled: true
+      Description: "WarriorStance gives a Chiblocker increased damage but makes them a tad more vulnerable. To activate, simply left click."
+      Strength: 1
 Storage:
   engine: sqlite
   MySQL:

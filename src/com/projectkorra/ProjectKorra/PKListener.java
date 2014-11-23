@@ -57,6 +57,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -81,6 +82,7 @@ import com.projectkorra.ProjectKorra.chiblocking.HighJump;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.ProjectKorra.chiblocking.Smokescreen;
+import com.projectkorra.ProjectKorra.chiblocking.WarriorStance;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.Collapse;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
@@ -908,6 +910,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Smokescreen")) {
 					new Smokescreen(player);
+				}
+				if (abil.equalsIgnoreCase("WarriorStance")) {
+					new WarriorStance(player);
 				}
 			}
 
