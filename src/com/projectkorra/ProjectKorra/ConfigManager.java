@@ -209,7 +209,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
 		config.addDefault("Abilities.Air.AirSwipe.Cooldown", 1500);
 		config.addDefault("Abilities.Air.AirSwipe.ChargeFactor", 3);
-
+		config.addDefault("Abilities.Air.AirSwipe.MaxChargeTime", 3000);
+		
 		config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 		config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. To use, simply look at an entity and hold shift. The entity will begin taking damage as you extract the air from their lungs. Any bender caught in this sphere will only be able to use basic moves, such as AirSwipe, WaterManipulation, FireBlast, or EarthBlast. An entity can be knocked out of the sphere by certain bending arts, and your attention will be disrupted if you are hit by bending.");
 		config.addDefault("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs", true);
