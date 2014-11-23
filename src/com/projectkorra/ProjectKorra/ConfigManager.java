@@ -642,7 +642,11 @@ public class ConfigManager {
 		config.addDefault("Abilities.Chi.Passive.Jump", 2);
 		config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 2500);
 		config.addDefault("Abilities.Chi.Passive.DodgeChange", 25);
-
+		      
+		config.addDefault("Abilities.Chi.AcrobatStance.Enabled", true);
+		config.addDefault("Abilities.Chi.AcrobatStance.Description", "AcrobatStance gives a Chiblocker a higher probability of blocking a Bender's Chi while granting them a Speed and Jump Boost. It also increases the rate at which the hunger bar depletes. To use, simply left click. Left clicking again will de-activate the stance.");
+		config.addDefault("Abilities.Chi.ChiBlockBoost", 0.1);
+		
 		config.addDefault("Abilities.Chi.HighJump.Enabled", true);
 		config.addDefault("Abilities.Chi.HighJump.Description", "To use this ability, simply click. You will jump quite high. This ability has a short cooldown.");
 		config.addDefault("Abilities.Chi.HighJump.Height", 1);

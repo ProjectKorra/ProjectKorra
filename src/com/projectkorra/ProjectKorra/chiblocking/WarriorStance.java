@@ -25,6 +25,11 @@ public class WarriorStance {
 			instances.remove(player);
 			return;
 		}
+		
+		if (AcrobatStance.isInAcrobatStance(player)) {
+			AcrobatStance.remove(player);
+		}
+		
 		instances.put(player, this);
 	}
 	
@@ -64,6 +69,10 @@ public class WarriorStance {
 	public static boolean isInWarriorStance(Player player) {
 		if (instances.containsKey(player)) return true;
 		return false;
+	}
+	
+	public static void remove(Player player) {
+		instances.remove(player);
 	}
 
 }

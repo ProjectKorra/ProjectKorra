@@ -517,6 +517,10 @@ Abilities:
       BlockChi:
         Duration: 2500
         DodgeChance: 25
+    AcrobatStance:
+      Enabled: true
+      Description: "AcrobatStance gives a Chiblocker a higher probability of blocking a Bender's Chi while granting them a Speed and Jump boost. It also increases the rate at which the hunger bar depletes. To use, simply left click. Left clicking again will de-activate the stance."
+      ChiBlockBoost: 0.1
     HighJump:
       Enabled: true
       Description: "To use this ability, simply click. You will jump quite high. This ability has a short cooldown."

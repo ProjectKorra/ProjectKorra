@@ -77,6 +77,7 @@ import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
+import com.projectkorra.ProjectKorra.chiblocking.AcrobatStance;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.HighJump;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
@@ -914,6 +915,10 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("WarriorStance")) {
 					new WarriorStance(player);
 				}
+				
+				if (abil.equalsIgnoreCase("AcrobatStance")) {
+					new AcrobatStance(player);
+				}
 			}
 
 			if (abil.equalsIgnoreCase("AvatarState")) {
@@ -1169,7 +1174,7 @@ public class PKListener implements Listener {
 						if (Methods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 							return;
 						}
-						if (ChiPassive.willChiBlock(targetplayer)) {
+						if (ChiPassive.willChiBlock(sourceplayer, targetplayer)) {
 							if (Methods.getBoundAbility(sourceplayer) != null && Methods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze")) {
 								new Paralyze(sourceplayer, targetplayer);
 							} else {
@@ -1194,7 +1199,7 @@ public class PKListener implements Listener {
 					}
 					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
 						if (Methods.getBoundAbility(sourceplayer) != null && Methods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze") && e.getDamage() == 1) {
-							if (ChiPassive.willChiBlock(targetplayer)) {
+							if (ChiPassive.willChiBlock(sourceplayer, targetplayer)) {
 								new Paralyze(sourceplayer, targetplayer);
 							}
 						}

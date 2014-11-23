@@ -91,8 +91,10 @@ import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
+import com.projectkorra.ProjectKorra.chiblocking.AcrobatStance;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
+import com.projectkorra.ProjectKorra.chiblocking.WarriorStance;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
@@ -2025,6 +2027,8 @@ public class Methods {
 		Illumination.removeAll();
 
 		RapidPunch.instances.clear();
+		WarriorStance.instances.clear();
+		AcrobatStance.instances.clear();
 
 		Flight.removeAll();
 		WaterReturn.removeAll();

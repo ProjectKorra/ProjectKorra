@@ -19,6 +19,7 @@ public class ChiblockingManager implements Runnable {
 			ChiPassive.handlePassive();
 			Smokescreen.removeFromHashMap(player);
 			WarriorStance.progressAll();
+			AcrobatStance.progressAll();
 		}
 	}
 

@@ -21,12 +21,16 @@ public class ChiPassive {
 	public static double FallReductionFactor = config.getDouble("Abilities.Chi.Passive.FallReductionFactor");
 	public static int jumpPower = config.getInt("Abilities.Chi.Passive.Jump");
 	public static int speedPower = config.getInt("Abilities.Chi.Passive.Speed");
-	public static int dodgeChance = config.getInt("Abilities.Chi.Passive.BlockChi.DodgeChance");
+	public static double dodgeChance = config.getDouble("Abilities.Chi.Passive.BlockChi.DodgeChance");
 	public static int duration = config.getInt("Abilities.Chi.Passive.BlockChi.Duration");
 	
 	static long ticks = (duration / 1000) * 20;
 	
-	public static boolean willChiBlock(Player player) {
+	public static boolean willChiBlock(Player attacker, Player player) {
+		if (AcrobatStance.isInAcrobatStance(attacker)) {
+			dodgeChance = dodgeChance - AcrobatStance.chiBlockBost;
+		}
+		
 		Random rand = new Random();
 		if (rand.nextInt(99) + 1 < dodgeChance) {
 			return false;
@@ -56,10 +60,10 @@ public class ChiPassive {
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			if (Methods.canBendPassive(player.getName(), Element.Chi)) {
 				if (player.isSprinting()) {
-					if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
+					if (!player.hasPotionEffect(PotionEffectType.JUMP) && !AcrobatStance.isInAcrobatStance(player)) {
 						player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jumpPower - 1));
 					}
-					if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
+					if (!player.hasPotionEffect(PotionEffectType.SPEED) && !AcrobatStance.isInAcrobatStance(player)) {
 						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speedPower - 1));
 					}
 				}
