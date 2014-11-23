@@ -43,7 +43,7 @@ public class AirSwipe {
 	private static double speed = config.getDouble("Abilities.Air.AirSwipe.Speed");
 	private static double maxfactor = config.getDouble("Abilities.Air.AirSwipe.ChargeFactor");
 	private static byte full = AirBlast.full;
-	private static long maxchargetime = 3000;
+	private static long maxchargetime = config.getDouble("Abilities.Air.AirSwipe.ChargeTime");
 
 	private double speedfactor;
 

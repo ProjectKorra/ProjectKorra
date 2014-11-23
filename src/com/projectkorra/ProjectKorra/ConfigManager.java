@@ -209,7 +209,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
 		config.addDefault("Abilities.Air.AirSwipe.Cooldown", 1500);
 		config.addDefault("Abilities.Air.AirSwipe.ChargeFactor", 3);
-
+		config.addDefault("Abilities.Air.AirSwipe.ChargeTime",3000);
 		config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 		config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. To use, simply look at an entity and hold shift. The entity will begin taking damage as you extract the air from their lungs. Any bender caught in this sphere will only be able to use basic moves, such as AirSwipe, WaterManipulation, FireBlast, or EarthBlast. An entity can be knocked out of the sphere by certain bending arts, and your attention will be disrupted if you are hit by bending.");
 		config.addDefault("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs", true);
@@ -250,6 +250,7 @@ public class ConfigManager {
 				+ "launch that target off in the direction you're looking. "
 				+ "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
 		config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight", false);
+		config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedAtFullMoon", false);
 		config.addDefault("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs", true);
 		config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 		config.addDefault("Abilities.Water.Bloodbending.Range", 10);
@@ -268,6 +269,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 		config.addDefault("Abilities.Water.IceBlast.Damage", 3);
 		config.addDefault("Abilities.Water.IceBlast.Range", 20);
+		config.addDefault("Abilities.Water.IceBlast.BlastRadius", 2);
 		config.addDefault("Abilities.Water.IceBlast.Description", "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an explosive burst of ice at an opponent, spraying ice and snow around it. To use, simply tap sneak (Default: Shift) while targeting a block of ice to select it as a source. From there, you can just left click to send the blast off at your opponent.");
 
 		config.addDefault("Abilities.Water.IceSpike.Enabled", true);
@@ -291,6 +293,7 @@ public class ConfigManager {
 				+ "Releasing shift at any time will dissipate the form.");
 		config.addDefault("Abilities.Water.OctopusForm.Range", 10);
 		config.addDefault("Abilities.Water.OctopusForm.Radius", 3);
+		config.addDefault("Abilities.Water.OctopusForm.PushFactor", 1.75);
 		config.addDefault("Abilities.Water.OctopusForm.Damage", 3);
 		config.addDefault("Abilities.Water.OctopusForm.FormDelay", 50);
 
@@ -318,6 +321,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Torrent.Enabled", true);
 		config.addDefault("Abilities.Water.Torrent.Description", "Torrent is one of the strongest moves in a waterbender's arsenal. To use, first click a source block to select it; then hold shift to begin streaming the water around you. Water flowing around you this way will damage and knock back nearby enemies and projectiles. If you release shift during this, you will create a large wave that expands outwards from you, launching anything in its path back. Instead, if you click you release the water and channel it to flow towards your cursor. Anything caught in the blast will be tossed about violently and take damage. Finally, if you click again when the water is torrenting, it will freeze the area around it when it is obstructed.");
 		config.addDefault("Abilities.Water.Torrent.Range", 25);
+		config.addDefault("Abilities.Water.Torrent.WaveRange", 15);
 		config.addDefault("Abilities.Water.Torrent.DeflectDamage", 1);
 		config.addDefault("Abilities.Water.Torrent.Damage", 2);
 

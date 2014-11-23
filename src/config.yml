@@ -151,6 +151,7 @@ Abilities:
       Speed: 25
       Cooldown: 1500
       ChargeFactor: 3
+      ChargeTime: 3000
     Suffocate:
       Enabled: true
       Description: "This ability is one of the most dangerous abilities an Airbender possesses. To use, simply look at an entity and hold shift. The entity will begin taking damage as you extract the air from their lungs. Any bender caught in this sphere will only be able to use basic moves, such as AirSwipe, WaterManipulation, FireBlast, or EarthBlast. An entity can be knocked out of the sphere by certain bending arts, and your attention will be disrupted if you are hit by bending."
@@ -193,6 +194,7 @@ Abilities:
       Enabled: true
       Description: "This ability was made illegal for a reason. With this ability selected, sneak while targeting something and you will bloodbend that target. Bloodbent targets cannot move, bend, or attack. You are free to control their actions by looking elsewhere - they will be forced to move in that direction. Additionally, clicking while bloodbending will launch that target off in the direction you're looking. People who are capable of bloodbending are immune to technique, and you are immune to theirs."
       CanOnlyBeUsedAtNight: false
+      CanOnlyBeUsedAtFullMoon: false
       CanBeUsedOnUndeadMobs: true
       CanOnlyBeUsedDuringFullMoon: false
       ThrowFactor: 2
@@ -206,6 +208,7 @@ Abilities:
       Enabled: true
       Damage: 3
       Range: 20
+      BlastRadius: 2
       Description: "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an explosive burst of ice at an opponent, spraying ice and snow around it. To use, simply tap sneak (Default: Shift) while targeting a block of ice to select it as a source. From there, you can just left click to send the blast off at your opponent."
     IceSpike:
       Enabled: true
@@ -215,12 +218,15 @@ Abilities:
       Range: 20
       ThrowingMult: 0.7
       Height: 6
+      BlastRange: 20
+      BlastDamage: 1
     OctopusForm:
       Enabled: true
       Description: "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. To use, click to select a water source. Then, hold sneak to channel this ability. While channleing, the water will form itself around you and has a chance to block incoming attacks. Additionally, you can click while channeling to attack things near you, dealing damage and knocking the target back. Releasing shift at any time will dissipate the form."
       Range: 10
       Damage: 3
       Radius: 3
+      PushFactor: 1.75
       FormDelay: 50
     PhaseChange:
       Enabled: true
@@ -245,6 +251,7 @@ Abilities:
       Damage: 2
       DeflectDamage: 1
       Range: 25
+      WaveRange: 15
     WaterBubble:
       Enabled: true
       Description: "To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability."

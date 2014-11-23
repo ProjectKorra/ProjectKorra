@@ -22,8 +22,8 @@ public class IceSpike2 {
 
 	private static ConcurrentHashMap<Integer, IceSpike2> instances = new ConcurrentHashMap<Integer, IceSpike2>();
 
-	private static double defaultrange = 20;
-	private static int defaultdamage = 1;
+	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceSpike.BlastRange");
+	private static int defaultdamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.BlastDamage");
 	private static int defaultmod = 2;
 	private static int ID = Integer.MIN_VALUE;
 	static long slowCooldown = 5000;

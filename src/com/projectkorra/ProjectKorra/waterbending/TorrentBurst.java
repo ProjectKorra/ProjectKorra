@@ -19,7 +19,7 @@ public class TorrentBurst {
 	public static ConcurrentHashMap<Integer, TorrentBurst> instances = new ConcurrentHashMap<Integer, TorrentBurst>();
 
 	private static int ID = Integer.MIN_VALUE;
-	private static double defaultmaxradius = 15;
+	private static double defaultmaxradius = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Torrent.WaveRange");
 	private static double dr = 0.5;
 	private static double defaultfactor = 1.5;
 	private static long interval = Torrent.interval;
