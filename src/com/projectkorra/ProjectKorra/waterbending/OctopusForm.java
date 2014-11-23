@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class OctopusForm {
 
@@ -22,7 +23,8 @@ public class OctopusForm {
 
 	private static int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Range");
 	private static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Damage");
-	private static long interval = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.Damage.FormDelay");
+	private static long interval = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
+	private static double knockback = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
 	static double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
 	private static final byte full = 0x0;
 
@@ -131,7 +133,8 @@ public class OctopusForm {
 			// continue;
 			if (Methods.isObstructed(location, entity.getLocation()))
 				continue;
-			entity.setVelocity(Methods.getDirection(player.getLocation(), location).normalize().multiply(1.75));
+			double knock = AvatarState.isAvatarState(player) ? AvatarState.getValue(knockback) : knockback;
+			entity.setVelocity(Methods.getDirection(player.getLocation(), location).normalize().multiply(knock));
 			if (entity instanceof LivingEntity)
 				Methods.damageEntity(player, entity, damage);
 				Methods.breakBreathbendingHold(entity);

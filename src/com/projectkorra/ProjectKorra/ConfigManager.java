@@ -293,6 +293,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.OctopusForm.Range", 10);
 		config.addDefault("Abilities.Water.OctopusForm.Radius", 3);
 		config.addDefault("Abilities.Water.OctopusForm.Damage", 3);
+		config.addDefault("Abilities.Water.OctopusForm.Knockback", 1.75);
 		config.addDefault("Abilities.Water.OctopusForm.FormDelay", 50);
 
 		config.addDefault("Abilities.Water.PhaseChange.Enabled", true);
