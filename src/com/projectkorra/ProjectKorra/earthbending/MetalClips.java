@@ -226,7 +226,8 @@ public class MetalClips
 			return;
 		}
 		
-		if(!Methods.getBoundAbility(player).equalsIgnoreCase("MetalClips"))
+		if(Methods.getBoundAbility(player) == null ||
+				!Methods.getBoundAbility(player).equalsIgnoreCase("MetalClips"))
 		{
 			remove();
 			return;
