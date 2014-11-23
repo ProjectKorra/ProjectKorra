@@ -666,7 +666,12 @@ public class ConfigManager {
 		config.addDefault("Abilities.Chi.Smokescreen.Cooldown", 50000);
 		config.addDefault("Abilities.Chi.Smokescreen.Radius", 4);
 		config.addDefault("Abilities.Chi.Smokescreen.Duration", 15);
-
+		
+		config.addDefault("Abilities.Chi.WarriorStance.Enabled", true);
+		config.addDefault("Abilities.Chi.WarriorStance.Description", "WarriorStance gives a Chiblocker increased damage but makes them a tad more vulnerable. To activate, simply left click.");
+		config.addDefault("Abilities.Chi.WarriorStance.Strength", 1);
+		config.addDefault("Abilities.Chi.WarriorStance.Resistance", -1);
+		
 		config.addDefault("Storage.engine", "sqlite");
 
 		config.addDefault("Storage.MySQL.host", "localhost");

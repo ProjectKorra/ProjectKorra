@@ -544,6 +544,7 @@ Abilities:
       Enabled: true
       Description: "WarriorStance gives a Chiblocker increased damage but makes them a tad more vulnerable. To activate, simply left click."
       Strength: 1
+      Resistance: -1
 Storage:
   engine: sqlite
   MySQL:

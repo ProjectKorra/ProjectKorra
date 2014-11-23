@@ -18,6 +18,7 @@ public class ChiblockingManager implements Runnable {
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			ChiPassive.handlePassive();
 			Smokescreen.removeFromHashMap(player);
+			WarriorStance.progressAll();
 		}
 	}
 
