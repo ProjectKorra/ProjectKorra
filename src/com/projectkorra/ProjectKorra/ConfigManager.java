@@ -545,6 +545,7 @@ public class ConfigManager {
 				+ "of flames in front of you, or click to release the burst in a sphere around you. ");
 		config.addDefault("Abilities.Fire.FireBurst.Damage", 3);
 		config.addDefault("Abilities.Fire.FireBurst.ChargeTime", 2500);
+		config.addDefault("Abilities.Fire.FireBurst.Range", 15);
 
 		config.addDefault("Abilities.Fire.FireJet.Enabled", true);
 		config.addDefault("Abilities.Fire.FireJet.Description", "This ability is used for a limited burst of flight for firebenders. Clicking with this "

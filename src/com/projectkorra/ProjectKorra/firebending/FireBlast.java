@@ -30,9 +30,10 @@ public class FireBlast {
 	public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<Integer, FireBlast>();
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
 	private static double pushfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Push");
+	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Range");
 	static boolean dissipate = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.FireBlast.Damage");
-	double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Range");
+	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.FireBlast.Damage");
+	
 	long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
 
 	public static double affectingradius = 2;
@@ -50,6 +51,8 @@ public class FireBlast {
 	private int id;
 	private double speedfactor;
 	private int ticks = 0;
+	private double range = RANGE;
+	private double damage = DAMAGE;
 
 	public FireBlast(Player player) {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
@@ -184,6 +187,14 @@ public class FireBlast {
 				}
 			}
 		}
+	}
+	
+	public void setDamage(double dmg) {
+		this.damage = dmg;
+	}
+	
+	public void setRange(double range) {
+		this.range = range;
 	}
 
 	public static boolean progress(int ID) {
