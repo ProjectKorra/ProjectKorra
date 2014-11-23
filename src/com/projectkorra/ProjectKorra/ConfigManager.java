@@ -532,6 +532,11 @@ public class ConfigManager {
 		config.addDefault("Abilities.Fire.FireBlast.Damage", 2);
 		config.addDefault("Abilities.Fire.FireBlast.Cooldown", 1500);
 		config.addDefault("Abilities.Fire.FireBlast.Dissipate", false);
+		config.addDefault("Abilities.Fire.FireBlast.Charged.ChargeTime", 2000);
+		config.addDefault("Abilities.Fire.FireBlast.Charged.Damage", 4);
+		config.addDefault("Abilities.Fire.FireBlast.Charged.DamageRadius", 6);
+		config.addDefault("Abilities.Fire.FireBlast.Charged.Power", 1);
+		config.addDefault("Abilities.Fire.FireBlast.Charged.Range", 20);
 
 		config.addDefault("Abilities.Fire.FireBurst.Enabled", true);
 		config.addDefault("Abilities.Fire.FireBurst.Description", "FireBurst is a very powerful firebending ability. "
