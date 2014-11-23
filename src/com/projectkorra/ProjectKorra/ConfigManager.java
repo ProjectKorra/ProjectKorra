@@ -488,6 +488,9 @@ public class ConfigManager {
 				+ "Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave.");
 		config.addDefault("Abilities.Earth.Shockwave.FallThreshold", 10);
 		config.addDefault("Abilities.Earth.Shockwave.ChargeTime", 2500);
+		config.addDefault("Abilities.Earth.Shockwave.Damage", 5);
+		config.addDefault("Abilities.Earth.Shockwave.Knockback", 1.1);
+		config.addDefault("Abilities.Earth.Shockwave.Range", 15);
 
 		config.addDefault("Abilities.Earth.Tremorsense.Enabled", true);
 		config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
