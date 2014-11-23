@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.ComboManager.ClickType;
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -100,6 +101,10 @@ public class AirCombo {
 			return;
 		if (Methods.isRegionProtectedFromBuild(player, "AirBlast",
 				player.getLocation()))
+			return;
+		if (Commands.isToggledForAll) 
+			return;
+		if (!Methods.getBendingPlayer(player.getName()).isToggled()) 
 			return;
 		time = System.currentTimeMillis();
 		this.player = player;
