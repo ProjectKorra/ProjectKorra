@@ -60,7 +60,7 @@ import org.bukkit.util.Vector;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
-import com.massivecraft.factions.listeners.FactionsListenerMain;
+import com.massivecraft.factions.engine.EngineMain;
 import com.massivecraft.massivecore.ps.PS;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyMessaging;
@@ -131,9 +131,6 @@ import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag.State;
-
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
@@ -1378,7 +1375,7 @@ public class Methods {
 			}
 
 			if (fcp != null && massivecore != null && respectFactions) {
-				if (!FactionsListenerMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
+				if (!EngineMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
 					return true;
 				} else {
 					return false;
