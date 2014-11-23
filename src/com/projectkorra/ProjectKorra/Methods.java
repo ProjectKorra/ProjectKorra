@@ -101,6 +101,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
+import com.projectkorra.ProjectKorra.earthbending.MetalClips;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
@@ -292,6 +293,7 @@ public class Methods {
 		if (isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation())) return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p)) return false;
+		if (MetalClips.isControlled(p)) return false;
 		return true;
 	}
 

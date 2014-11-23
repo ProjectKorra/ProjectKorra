@@ -467,6 +467,15 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.LavaSurge.MaxLavaWaves", 10);
 		config.addDefault("Abilities.Earth.LavaSurge.SourceCanBeEarth", true);
 
+		config.addDefault("Abilities.Earth.MetalClips.Enabled", true);
+		config.addDefault("Abilities.Earth.MetalClips.Description", "Shoot multiple metal clips at your enemy to slowly encase them in metal, giving you full control over their movements. This ability only works on Zombies, Skeletons, and Players. You need iron in your inventory to use this ability.");
+		config.addDefault("Abilities.Earth.MetalClips.Damage", 2);
+		config.addDefault("Abilities.Earth.MetalClips.DamageInterval", 500);
+		config.addDefault("Abilities.Earth.MetalClips.MagnetRange", 20);
+		config.addDefault("Abilities.Earth.MetalClips.MagnetPower", 0.6);
+		config.addDefault("Abilities.Earth.MetalClips.Cooldown", 1000);
+		config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
+
 		
 		config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 		config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. "

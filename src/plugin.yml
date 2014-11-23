@@ -98,6 +98,8 @@ permissions:
       bending.ability.Shockwave: true
       bending.ability.Tremorsense: true
       bending.ability.Extraction: true
+      bending.ability.MetalClips: true
+      bending.ability.MetalClips.loot: false
       bending.earth.passive: true
       bending.earth.metalbending: true
       bending.earth.lavabending: true
@@ -134,3 +136,6 @@ permissions:
   bending.avatar:
     default: false
     description: Grants the Avatar Color.
+  bending.ability.MetalClips.loot:
+    default: false
+    description: Lets a Metalbender loot a player's inventory of its iron.

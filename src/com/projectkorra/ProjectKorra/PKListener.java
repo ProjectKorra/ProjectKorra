@@ -96,6 +96,7 @@ import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
 import com.projectkorra.ProjectKorra.earthbending.LavaSurge;
 import com.projectkorra.ProjectKorra.earthbending.LavaWall;
 import com.projectkorra.ProjectKorra.earthbending.LavaWave;
+import com.projectkorra.ProjectKorra.earthbending.MetalClips;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
@@ -344,6 +345,15 @@ public class PKListener implements Listener {
 			EarthArmor.removeEffect(event.getPlayer());
 			event.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 		}
+		
+		for(Player p : MetalClips.instances.keySet())
+		{
+			if(MetalClips.instances.get(p).getTarget() != null &&
+					MetalClips.instances.get(p).getTarget().getEntityId() == event.getPlayer().getEntityId())
+			{
+				MetalClips.instances.get(p).remove();
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -470,6 +480,19 @@ public class PKListener implements Listener {
 
 				if (abil.equalsIgnoreCase("Extraction")) {
 					new Extraction(player);
+				}
+				
+				if(abil.equalsIgnoreCase("MetalClips"))
+				{
+					if(MetalClips.instances.containsKey(player))
+					{
+						if(MetalClips.instances.get(player).getTarget() == null)
+							MetalClips.instances.get(player).magnet();
+						else
+							MetalClips.instances.get(player).control();
+					}
+					else
+						new MetalClips(player, 1);
 				}
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
@@ -815,6 +838,17 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Tremorsense")) {
 					new Tremorsense(player);
 				}
+				
+				if(abil.equalsIgnoreCase("MetalClips"))
+				{
+					if(!MetalClips.instances.containsKey(player))
+						new MetalClips(player, 0);
+					else if(MetalClips.instances.containsKey(player))
+						if(MetalClips.instances.get(player).metalclips < 4)
+							MetalClips.instances.get(player).shootMetal();
+						else
+							MetalClips.instances.get(player).launch();
+				}
 
 				if (abil.equalsIgnoreCase("LavaSurge")) {
 					if(LavaSurge.instances.containsKey(player))
@@ -887,6 +921,13 @@ public class PKListener implements Listener {
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (event.isCancelled()) return;
 
+		for(Player p : MetalClips.instances.keySet())
+		{
+			if(MetalClips.instances.get(p).getTarget() != null)
+				if(MetalClips.instances.get(p).getTarget().getEntityId() == event.getWhoClicked().getEntityId())
+					event.setCancelled(true);
+		}
+		
 		if (event.getSlotType() == SlotType.ARMOR
 				&& !EarthArmor.canRemoveArmor((Player) event.getWhoClicked()))
 			event.setCancelled(true);
