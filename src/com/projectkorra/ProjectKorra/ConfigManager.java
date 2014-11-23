@@ -324,6 +324,9 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Torrent.Range", 25);
 		config.addDefault("Abilities.Water.Torrent.DeflectDamage", 1);
 		config.addDefault("Abilities.Water.Torrent.Damage", 2);
+		config.addDefault("Abilities.Water.Torrent.Wave.Radius", 15);
+		config.addDefault("Abilities.Water.Torrent.Wave.Knockback", 1.5);
+		config.addDefault("Abilities.Water.Torrent.Wave.Height", 1);
 
 		config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 
