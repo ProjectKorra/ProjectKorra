@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.TempPotionEffect;
 
@@ -22,8 +23,8 @@ public class IceSpike2 {
 
 	private static ConcurrentHashMap<Integer, IceSpike2> instances = new ConcurrentHashMap<Integer, IceSpike2>();
 
-	private static double defaultrange = 20;
-	private static int defaultdamage = 1;
+	private static double defaultrange = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
+	private static double defaultdamage = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Damage");
 	private static int defaultmod = 2;
 	private static int ID = Integer.MIN_VALUE;
 	static long slowCooldown = 5000;

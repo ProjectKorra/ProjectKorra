@@ -284,6 +284,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.IceSpike.Range", 20);
 		config.addDefault("Abilities.Water.IceSpike.ThrowingMult", 0.7);
 		config.addDefault("Abilities.Water.IceSpike.Height", 6);
+		config.addDefault("Abilities.Water.IceSpike.Projectile.Range", 20);
+		config.addDefault("Abilities.Water.IceSpike.Projectile.Damage", 1);
 
 		config.addDefault("Abilities.Water.OctopusForm.Enabled", true);
 		config.addDefault("Abilities.Water.OctopusForm.Description", "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. "
