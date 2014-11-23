@@ -313,6 +313,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Surge.Enabled", true);
 		config.addDefault("Abilities.Water.Surge.Description", "This ability has two distinct features. If you sneak to select a source block, you can then click in a direction and a large wave will be launched in that direction. If you sneak again while the wave is en route, the wave will freeze the next target it hits. If, instead, you click to select a source block, you can hold sneak to form a wall of water at your cursor location. Click to shift between a water wall and an ice wall. Release sneak to dissipate it.");
 		config.addDefault("Abilities.Water.Surge.Wave.Radius", 3);
+		config.addDefault("Abilities.Water.Surge.Wave.Range", 20);
 		config.addDefault("Abilities.Water.Surge.Wave.HorizontalPush", 1);
 		config.addDefault("Abilities.Water.Surge.VerticalPush", 0.2);
 		config.addDefault("Abilities.Water.Surge.Wall.Range", 5);
