@@ -199,6 +199,8 @@ Abilities:
       CanOnlyBeUsedDuringFullMoon: false
       ThrowFactor: 2
       Range: 10
+      HoldTime: 2000
+      Cooldown: 4000
     HealingWaters:
       Enabled: true
       Description: "To use, the bender must be at least partially submerged in water. If the user is not sneaking, this ability will automatically begin working provided the user has it selected. If the user is sneaking, he/she is channeling the healing to their target in front of them. In order for this channel to be successful, the user and the target must be at least partially submerged in water."

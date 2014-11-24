@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempPotionEffect;
@@ -29,8 +30,11 @@ public class Bloodbending {
 	private static boolean canBeUsedOnUndead = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
 	private static final boolean onlyUsableDuringMoon = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
 	private int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Range");
-
+	private long HOLD_TIME = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.HoldTime");
+	private long COOLDOWN = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Cooldown");
+	
 	private Player player;
+	private long time;
 
 	public Bloodbending(Player player) {
 		if (instances.containsKey(player)) {
@@ -44,6 +48,11 @@ public class Bloodbending {
 		}
 		
 		if (onlyUsableDuringMoon && !Methods.isFullMoon(player.getWorld())) {
+			return;
+		}
+		
+		BendingPlayer bplayer = Methods.getBendingPlayer(player.getName());
+		if (bplayer.isOnCooldown("Bloodbending") && !AvatarState.isAvatarState(player)) {
 			return;
 		}
 
@@ -83,7 +92,11 @@ public class Bloodbending {
 			Methods.breakBreathbendingHold(target);
 			targetentities.put(target, target.getLocation().clone());
 		}
+		if (targetentities.size() > 0) {
+			bplayer.addCooldown("Bloodbending", COOLDOWN);
+		}
 		this.player = player;
+		this.time = System.currentTimeMillis();
 		instances.put(player, this);
 	}
 
@@ -111,6 +124,11 @@ public class Bloodbending {
 		PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 60, 1);
 
 		if (!player.isSneaking()) {
+			remove(player);
+			return;
+		}
+		
+		if (HOLD_TIME > 0 && System.currentTimeMillis() - this.time > HOLD_TIME) {
 			remove(player);
 			return;
 		}

@@ -255,6 +255,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs", true);
 		config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 		config.addDefault("Abilities.Water.Bloodbending.Range", 10);
+		config.addDefault("Abilities.Water.Bloodbending.HoldTime", 0);
+		config.addDefault("Abilities.Water.Bloodbending.Cooldown", 0);
 		config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon", false);
 
 		config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
