@@ -966,6 +966,22 @@ public class PKListener implements Listener {
 			event.getDrops().addAll(newdrops);
 			EarthArmor.removeEffect(event.getEntity());
 		}
+		if (MetalClips.instances.containsKey(event.getEntity())) {
+			MetalClips.instances.get(event.getEntity()).remove();
+			List<ItemStack> drops = event.getDrops();
+			List<ItemStack> newdrops = new ArrayList<ItemStack>();
+			for (int i = 0; i < drops.size(); i++) {
+				if (!(drops.get(i).getType() == Material.IRON_HELMET
+						|| drops.get(i).getType() == Material.IRON_CHESTPLATE
+						|| drops.get(i).getType() == Material.IRON_LEGGINGS
+						|| drops.get(i).getType() == Material.IRON_BOOTS
+						|| drops.get(i).getType() == Material.AIR))
+					newdrops.add((drops.get(i)));
+			}
+			event.getDrops().clear();
+			event.getDrops().addAll(newdrops);
+			
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
