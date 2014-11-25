@@ -402,15 +402,6 @@ public class MetalClips
 			
 			if(metalclips == 4)
 			{
-				if(target instanceof Player)
-				{
-					Player ptarget = (Player) target;
-					if(ptarget.getGameMode() == GameMode.CREATIVE)
-					{
-						return;
-					}
-				}
-				
 				if(System.currentTimeMillis() > time + crushInterval)
 				{
 					time = System.currentTimeMillis();
