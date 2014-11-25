@@ -53,6 +53,7 @@ public class FireBlast {
 	private int ticks = 0;
 	private double range = RANGE;
 	private double damage = DAMAGE;
+	private boolean showParticles = true;
 
 	public FireBlast(Player player) {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
@@ -168,7 +169,8 @@ public class FireBlast {
 	}
 
 	private void advanceLocation() {
-		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 0, (int) range);
+		if (showParticles)
+			location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 0, (int) range);
 		location = location.add(direction.clone().multiply(speedfactor));
 		if (rand.nextInt(4) == 0) {
 			Methods.playFirebendingSound(location);
@@ -195,6 +197,10 @@ public class FireBlast {
 	
 	public void setRange(double range) {
 		this.range = range;
+	}
+	
+	public void setShowParticles(boolean show) {
+		this.showParticles = show;
 	}
 
 	public static boolean progress(int ID) {
