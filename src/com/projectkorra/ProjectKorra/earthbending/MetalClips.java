@@ -414,7 +414,7 @@ public class MetalClips
 				if(System.currentTimeMillis() > time + crushInterval)
 				{
 					time = System.currentTimeMillis();
-					Methods.damageEntity(player, target, crushDamage * 2.4);
+					Methods.damageEntity(player, target, (crushDamage + (crushDamage * 1.2)));
 				}
 			}
 		}
