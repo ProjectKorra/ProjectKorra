@@ -1113,10 +1113,10 @@ public class Methods {
 					&& WaterManipulation.canPhysicsChange(blocki))
 				sources++;
 			if (FreezeMelt.frozenblocks.containsKey(blocki)) {
-				if (FreezeMelt.frozenblocks.get(blocki) == full)
-					sources++;
+				//if (FreezeMelt.frozenblocks.get(blocki) == full)
+					//sources++;
 			} else if (blocki.getType() == Material.ICE) {
-				sources++;
+				//sources++;
 			}
 		}
 		if (sources >= 2)
