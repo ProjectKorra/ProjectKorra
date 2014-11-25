@@ -176,6 +176,8 @@ Abilities:
         Radius: 3.5
         RemoveDelay: 1500
         Cooldown: 10000
+        DegreesPerParticle: 9
+        HeightPerParticle: 2.0
       AirStream:
         Speed: 0.5
         Range: 40
