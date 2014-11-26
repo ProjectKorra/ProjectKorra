@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -404,8 +405,7 @@ public class MetalClips
 				if(System.currentTimeMillis() > time + crushInterval)
 				{
 					time = System.currentTimeMillis();
-					Methods.damageEntity(player, target, 0);
-					target.setHealth((target.getHealth() - crushDamage < 0) ? 0 : target.getHealth() - crushDamage);
+					Methods.damageEntity(player, target, (crushDamage + (crushDamage * 1.2)));
 				}
 			}
 		}
