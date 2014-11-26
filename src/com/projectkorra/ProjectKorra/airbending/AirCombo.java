@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.ComboManager.ClickType;
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -38,6 +39,10 @@ public class AirCombo {
 			.getDouble("Abilities.Air.AirCombo.Twister.Height");
 	public static double TWISTER_RADIUS = ProjectKorra.plugin.getConfig()
 			.getDouble("Abilities.Air.AirCombo.Twister.Radius");
+	public static double TWISTER_DEGREE_PER_PARTICLE = ProjectKorra.plugin.getConfig()
+			.getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
+	public static double TWISTER_HEIGHT_PER_PARTICLE = ProjectKorra.plugin.getConfig()
+			.getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
 	public static long TWISTER_REMOVE_DELAY = ProjectKorra.plugin.getConfig()
 			.getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");
 	public static long TWISTER_COOLDOWN = ProjectKorra.plugin.getConfig()
@@ -100,6 +105,10 @@ public class AirCombo {
 			return;
 		if (Methods.isRegionProtectedFromBuild(player, "AirBlast",
 				player.getLocation()))
+			return;
+		if (Commands.isToggledForAll) 
+			return;
+		if (!Methods.getBendingPlayer(player.getName()).isToggled()) 
 			return;
 		time = System.currentTimeMillis();
 		this.player = player;
@@ -189,12 +198,12 @@ public class AirCombo {
 				return;
 			}
 			currentLoc.setY(topBlock.getLocation().getY());
-
+			
 			double height = TWISTER_HEIGHT;
 			double radius = TWISTER_RADIUS;
-			for (double y = 0; y < height; y += 1.25) {
+			for (double y = 0; y < height; y += TWISTER_HEIGHT_PER_PARTICLE) {
 				double animRadius = ((radius / height) * y);
-				for (int i = -180; i <= 180; i += 7) {
+				for (double i = -180; i <= 180; i += TWISTER_DEGREE_PER_PARTICLE) {
 					Vector animDir = Methods.rotateXZ(new Vector(1, 0, 1), i);
 					Location animLoc = currentLoc.clone().add(
 							animDir.multiply(animRadius));

@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
@@ -17,6 +18,7 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 public class AirBurst {
 
 	private static ConcurrentHashMap<Player, AirBurst> instances = new ConcurrentHashMap<Player, AirBurst>();
+	private static double PARTICLES_PERCENTAGE = 50;
 	
 	static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	
@@ -30,7 +32,7 @@ public class AirBurst {
 	private long starttime;
 	private long chargetime = config.getLong("Abilities.Air.AirBurst.ChargeTime");
 	private boolean charged = false;
-
+	private ArrayList<AirBlast> blasts = new ArrayList<AirBlast>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
 	public AirBurst(Player player) {
@@ -98,11 +100,14 @@ public class AirBurst {
 					AirBlast blast = new AirBlast(location, direction.normalize(), player,
 							pushfactor, this);
 					blast.setDamage(damage);
+					blast.setShowParticles(false);
+					blasts.add(blast);
 				}
 			}
 		}
 		// Methods.verbose("--" + AirBlast.instances.size() + "--");
 		instances.remove(player);
+		handleSmoothParticles();
 	}
 
 	public static void fallBurst(Player player) {
@@ -183,6 +188,20 @@ public class AirBurst {
 //					Effect.SMOKE,
 //					Methods.getIntCardinalDirection(player.getEyeLocation()
 //							.getDirection()), 3);
+		}
+	}
+	
+	public void handleSmoothParticles() {
+		for (int i = 0; i < blasts.size(); i++) {
+			final AirBlast blast = blasts.get(i);
+			int toggleTime = 0;
+			if (i % 4 != 0)
+				toggleTime = (int) (i % (100 / PARTICLES_PERCENTAGE)) + 3;
+			new BukkitRunnable() {
+				public void run() {
+					blast.setShowParticles(true);
+				}
+			}.runTaskLater(ProjectKorra.plugin, toggleTime);
 		}
 	}
 

@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -18,6 +19,11 @@ public class FreezeMelt {
 
 	public static final int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Range");
 	public static final int defaultradius = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Radius");
+	
+	public static final int OVERLOADING_LIMIT = 1000;
+	public static boolean overloading = false;
+	public static int overloadCounter = 0;
+	
 
 	public FreezeMelt(Player player) {
 
@@ -67,9 +73,34 @@ public class FreezeMelt {
 	}
 
 	public static void handleFrozenBlocks() {
-		for (Block block : frozenblocks.keySet()) {
-			if (canThaw(block))
-				thaw(block);
+		int size = frozenblocks.keySet().size();
+		overloadCounter++;
+		overloadCounter %= 10;
+		if (overloadCounter == 0)
+			overloading = size > OVERLOADING_LIMIT ? true : false;
+		
+		// We only want to run this method once every 10 ticks if we are overloading.
+		if (overloading && overloadCounter != 0)
+			return;
+			
+		if (overloading) {
+			int i = 0;
+			for (Block block : frozenblocks.keySet()) {
+				final Block fblock = block;
+				new BukkitRunnable() {
+					public void run() {
+						if (canThaw(fblock))
+							thaw(fblock);
+					}
+				}.runTaskLater(ProjectKorra.plugin, i % 10);
+				i++;
+			}
+		}
+		else {
+			for (Block block : frozenblocks.keySet()) {
+				if (canThaw(block))
+					thaw(block);
+			}
 		}
 	}
 

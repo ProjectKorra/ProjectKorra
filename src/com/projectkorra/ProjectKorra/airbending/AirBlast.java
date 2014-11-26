@@ -50,6 +50,7 @@ public class AirBlast {
 	private double damage = 0;
 	private boolean otherorigin = false;
 	private int ticks = 0;
+	private boolean showParticles = true;
 
 	private ArrayList<Block> affectedlevers = new ArrayList<Block>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
@@ -205,7 +206,8 @@ public class AirBlast {
 	}
 
 	private void advanceLocation() {
-		Methods.playAirbendingParticles(location, 10);
+		if (showParticles)
+			Methods.playAirbendingParticles(location, 10);
 		if (Methods.rand.nextInt(4) == 0) {
 			Methods.playAirbendingSound(location);
 		}
@@ -272,6 +274,14 @@ public class AirBlast {
 	
 	public void setDamage(double dmg) {
 		this.damage = dmg;
+	}
+	
+	public void setShowParticles(boolean show) {
+		this.showParticles = show;
+	}
+	
+	public boolean getShowParticles() {
+		return this.showParticles;
 	}
 
 	public static void progressAll() {

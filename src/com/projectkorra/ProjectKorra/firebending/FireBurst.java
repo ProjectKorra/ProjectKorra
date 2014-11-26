@@ -1,5 +1,6 @@
 package com.projectkorra.ProjectKorra.firebending;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -7,6 +8,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
@@ -16,6 +18,7 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class FireBurst {
 	private static ConcurrentHashMap<Player, FireBurst> instances = new ConcurrentHashMap<Player, FireBurst>();
+	private static double PARTICLES_PERCENTAGE = 5;
 
 	private Player player;
 	private long starttime;
@@ -25,6 +28,7 @@ public class FireBurst {
 	private double deltheta = 10;
 	private double delphi = 10;
 	private boolean charged = false;
+	private ArrayList<FireBlast> blasts = new ArrayList<FireBlast>();
 
 	public FireBurst(Player player) {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
@@ -96,11 +100,14 @@ public class FireBurst {
 					Vector direction = new Vector(x, z, y);
 					FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks);
 					fblast.setRange(this.range);
+					fblast.setShowParticles(false);
+					blasts.add(fblast);
 				}
 			}
 		}
 		// Methods.verbose("--" + AirBlast.instances.size() + "--");
 		instances.remove(player);
+		handleSmoothParticles();
 	}
 
 	private void progress() {
@@ -132,6 +139,23 @@ public class FireBurst {
 			Location location = player.getEyeLocation();
 			// location = location.add(location.getDirection().normalize());
 			location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 4, 3);
+		}
+	}
+	
+	public void handleSmoothParticles() {
+		/*
+		 * To combat the sphere FireBurst lag we are only going to show a certain
+		 * percentage of FireBurst particles at a time per tick. As the bursts spread out
+		 * then we can show more at a time.
+		 */
+		for (int i = 0; i < blasts.size(); i++) {
+			final FireBlast fblast = blasts.get(i);
+			int toggleTime = (int) (i % (100 / PARTICLES_PERCENTAGE));
+			new BukkitRunnable() {
+				public void run() {
+					fblast.setShowParticles(true);
+				}
+			}.runTaskLater(ProjectKorra.plugin, toggleTime);
 		}
 	}
 

@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
@@ -82,6 +83,10 @@ public class WaterCombo {
 			return;
 		if (Methods.isRegionProtectedFromBuild(player, "WaterManipulation",
 				player.getLocation()))
+			return;
+		if (Commands.isToggledForAll) 
+			return;
+		if (!Methods.getBendingPlayer(player.getName()).isToggled()) 
 			return;
 		time = System.currentTimeMillis();
 		this.player = player;

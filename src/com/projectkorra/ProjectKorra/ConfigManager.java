@@ -231,6 +231,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirCombo.Twister.Radius", 3.5);
 		config.addDefault("Abilities.Air.AirCombo.Twister.RemoveDelay", 1500);
 		config.addDefault("Abilities.Air.AirCombo.Twister.Cooldown", 10000);
+		config.addDefault("Abilities.Air.AirCombo.Twister.DegreesPerParticle", 7);
+		config.addDefault("Abilities.Air.AirCombo.Twister.HeightPerParticle", 1.25);
 		config.addDefault("Abilities.Air.AirCombo.AirStream.Speed", 0.5);
 		config.addDefault("Abilities.Air.AirCombo.AirStream.Range", 40);
 		config.addDefault("Abilities.Air.AirCombo.AirStream.EntityDuration", 4000);
@@ -255,6 +257,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs", true);
 		config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 		config.addDefault("Abilities.Water.Bloodbending.Range", 10);
+		config.addDefault("Abilities.Water.Bloodbending.HoldTime", 0);
+		config.addDefault("Abilities.Water.Bloodbending.Cooldown", 0);
 		config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon", false);
 
 		config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
