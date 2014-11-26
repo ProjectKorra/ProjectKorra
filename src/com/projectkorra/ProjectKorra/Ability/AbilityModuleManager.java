@@ -173,7 +173,12 @@ public class AbilityModuleManager {
                         }
 			if (ab.getElement() == Element.Air.toString()) airbendingabilities.add(ab.getName()); 
 			if (ab.getElement() == Element.Water.toString()) waterbendingabilities.add(ab.getName());
-			if (ab.getElement() == Element.Earth.toString()) earthbendingabilities.add(ab.getName());
+			if (ab.getElement() == Element.Earth.toString()) 
+			{
+				earthbendingabilities.add(ab.getName());
+				if(ab.isSubAbility())
+					earthsubabilities.add(ab.getName());
+			}
 			if (ab.getElement() == Element.Fire.toString()) firebendingabilities.add(ab.getName());
 			if (ab.getElement() == Element.Chi.toString()) chiabilities.add(ab.getName());
 			if (ab.isShiftAbility()) shiftabilities.add(ab.getName());

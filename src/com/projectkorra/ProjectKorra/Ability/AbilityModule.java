@@ -55,5 +55,8 @@ public class AbilityModule extends AbilityLoadable implements Cloneable {
 		return false;
 	}
 	
-
+	public boolean isSubAbility()
+	{
+		return false;
+	}
 }
