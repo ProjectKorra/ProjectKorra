@@ -784,6 +784,7 @@ public class Commands {
 							s.sendMessage(ChatColor.GREEN + "You are running a lookup of an offline player, this may take a second.");
 							ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE player = '" + args[1] + "'");
 							try {
+								UUID uuid = UUID.fromString(rs2.getString("uuid"));
 								if (rs2.next()) {
 									String element = rs2.getString("element");
 									s.sendMessage(args[1] + " - ");
@@ -801,6 +802,15 @@ public class Commands {
 									}
 									if (element.contains("c")) {
 										s.sendMessage(Methods.getChiColor() + "- Chiblocker");
+									}
+									if (Methods.hasRPG()) {
+										if (RPGMethods.isCurrentAvatar(uuid)) {
+											s.sendMessage(Methods.getAvatarColor() + "Current Avatar");
+										} else if (RPGMethods.hasBeenAvatar(uuid)) {
+											s.sendMessage(Methods.getAvatarColor() + "Former Avatar");
+										} else {
+											
+										}
 									}
 								} else {
 									s.sendMessage(ChatColor.RED + "We could not find any player in your database with that username. Are you sure it is typed correctly?");
@@ -850,6 +860,14 @@ public class Commands {
 								} else {
 									s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
 								}
+							}
+						}
+						
+						if (Methods.hasRPG()) {
+							if (RPGMethods.isCurrentAvatar(p.getUniqueId())) {
+								s.sendMessage(Methods.getAvatarColor() + "Current Avatar");
+							} else if (RPGMethods.hasBeenAvatar(p.getUniqueId())) {
+								s.sendMessage(Methods.getAvatarColor() + "Former Avatar");
 							}
 						}
 
