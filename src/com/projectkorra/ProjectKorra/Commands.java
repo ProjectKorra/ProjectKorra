@@ -881,12 +881,12 @@ public class Commands {
 								|| p.getName().equalsIgnoreCase("sampepere") // AlexTheCoder
 								|| p.getName().equalsIgnoreCase("EnderLance")) // Carbogen
 						{ 
-							s.sendMessage(ChatColor.YELLOW + "ProjectKorra (Core) Developer");
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Developer");
 						}
 						if (p.getName().equalsIgnoreCase("vidcom") // vidcom
 								|| p.getName().equalsIgnoreCase("Zolteex") // Zolteex
 								|| p.getName().equalsIgnoreCase("ashe36")) { // ashe36
-							s.sendMessage(ChatColor.YELLOW + "ProjectKorra (Core) Concept Designer");
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
 						}
 						return true;
 					}
