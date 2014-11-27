@@ -28,6 +28,7 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
+import com.projectkorra.rpg.RPGMethods;
 
 public class Commands {
 
@@ -66,6 +67,7 @@ public class Commands {
 	String[] givealiases = {"give", "g", "spawn"};
 	String[] invinciblealiases = {"invincible", "inv"};
 	String[] presetaliases = {"preset", "presets", "pre", "set", "p"};
+	String[] avataraliases = {"avatar", "ava"};
 
 	/*
 	 * Item Aliases
@@ -95,6 +97,41 @@ public class Commands {
 					s.sendMessage(ChatColor.RED + "/bending choose [Element] " + ChatColor.YELLOW + "Choose an element.");
 					s.sendMessage(ChatColor.RED + "/bending bind [Ability] # " + ChatColor.YELLOW + "Bind an ability.");
 					return true;
+				}
+				if (Arrays.asList(avataraliases).contains(args[0].toLowerCase())) {
+					if (!Methods.hasRPG()) {
+						s.sendMessage(ChatColor.RED + "This command cannot be used unless you have ProjectKorra (RPG) installed.");
+						return true;
+					}
+					
+					if (!s.hasPermission("bending.command.avatar")) {
+						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						return true;
+					}
+					
+					if (args.length != 2) {
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending avatar [Player]");
+						return true;
+					}
+					
+					Player player = Bukkit.getPlayer(args[1]);
+					if (player == null) {
+						s.sendMessage(ChatColor.RED + "That player is not online.");
+						return true;
+					}
+					
+					UUID uuid = player.getUniqueId();
+					
+					if (RPGMethods.hasBeenAvatar(uuid)) {
+						s.sendMessage(ChatColor.RED + "This player has already been the Avatar.");
+						return true;
+					}
+					
+					RPGMethods.setAvatar(uuid);
+					s.sendMessage(ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN + " is now the Avatar.");
+					player.sendMessage("You are now the Avatar.");
+					return true;
+					
 				}
 				if (args[0].equalsIgnoreCase("debug")) {
 					if (args.length != 1) {
