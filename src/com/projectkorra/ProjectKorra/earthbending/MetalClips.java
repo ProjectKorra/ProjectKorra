@@ -46,6 +46,7 @@ public class MetalClips
 	public int var;
 	private long startTime;
 	private long time;
+	private double lastDistanceCheck;
 	
 	private ItemStack[] oldarmor;
 	private List<Item> trackedIngots = new ArrayList<Item>();
@@ -134,6 +135,9 @@ public class MetalClips
 		if(metalclips >= 4)
 			return;
 		
+		if(metalclips == 3 && !player.hasPermission("bending.ability.MetalClips.4clips"))
+			return;
+		
 		metalclips = (metalclips < 4) ? metalclips + 1 : 4;
 		
 		if(target instanceof Player)
@@ -167,7 +171,11 @@ public class MetalClips
 			target.getEquipment().setArmorContents(metalarmor);			
 		}
 
-		if(metalclips == 4) time = System.currentTimeMillis();
+		if(metalclips == 4) 
+		{
+			time = System.currentTimeMillis();
+			lastDistanceCheck = player.getLocation().distance(target.getLocation());
+		}
 		startTime = System.currentTimeMillis();
 		isBeingWorn = true;
 	}
@@ -365,7 +373,6 @@ public class MetalClips
 				if(distance > .5)
 					target.setVelocity(v.normalize().multiply(0.2));
 				
-				Methods.breakBreathbendingHold(target);
 			}
 			
 			if(metalclips == 2)
@@ -380,7 +387,6 @@ public class MetalClips
 				if(distance > 1.2)
 					target.setVelocity(v.normalize().multiply(0.2));
 				
-				Methods.breakBreathbendingHold(target);
 			}
 			
 			if(metalclips >= 3)
@@ -397,15 +403,24 @@ public class MetalClips
 					target.setVelocity(new Vector(0, 0, 0));
 				
 				target.setFallDistance(0);
-				Methods.breakBreathbendingHold(target);
 			}
 			
-			if(metalclips == 4)
+			if(metalclips == 4 && player.hasPermission("bending.ability.MetalClips.4clips"))
 			{
-				if(System.currentTimeMillis() > time + crushInterval)
+				double distance = player.getLocation().distance(target.getLocation());
+				if(distance < lastDistanceCheck - 0.3)
 				{
-					time = System.currentTimeMillis();
-					Methods.damageEntity(player, target, (crushDamage + (crushDamage * 1.2)));
+					double height = target.getLocation().getY();
+					if(height > player.getEyeLocation().getY())
+					{	
+						lastDistanceCheck = distance;
+						
+						if(System.currentTimeMillis() > time + crushInterval)
+						{
+							time = System.currentTimeMillis();
+							Methods.damageEntity(player, target, (crushDamage + (crushDamage * 1.2)));
+						}
+					}
 				}
 			}
 		}

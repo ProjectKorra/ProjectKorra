@@ -101,6 +101,7 @@ permissions:
       bending.ability.Extraction: true
       bending.ability.MetalClips: true
       bending.ability.MetalClips.loot: false
+      bending.ability.MetalClips.4clips: false
       bending.earth.passive: true
       bending.earth.metalbending: true
       bending.earth.lavabending: true
