@@ -847,7 +847,7 @@ public class PKListener implements Listener {
 					if(!MetalClips.instances.containsKey(player))
 						new MetalClips(player, 0);
 					else if(MetalClips.instances.containsKey(player))
-						if(MetalClips.instances.get(player).metalclips < 4)
+						if(MetalClips.instances.get(player).metalclips < (player.hasPermission("bending.ability.MetalClips.4clips") ? 4 : 3))
 							MetalClips.instances.get(player).shootMetal();
 						else
 							MetalClips.instances.get(player).launch();

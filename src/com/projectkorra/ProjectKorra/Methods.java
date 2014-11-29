@@ -1442,8 +1442,9 @@ public class Methods {
 			}
 
 			if (gpp != null && respectGriefPrevention) {
-				String reason = GriefPrevention.instance.allowBuild(player,
-						location);
+				Material type = player.getWorld().getBlockAt(location).getType();
+				if (type == null) type = Material.AIR;
+				String reason = GriefPrevention.instance.allowBuild(player, location, type);
 
 				if (ignite.contains(ability)) {
 

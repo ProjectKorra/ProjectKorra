@@ -27,7 +27,7 @@ public class LavaSurge
 {
 	public static ConcurrentHashMap<Player, LavaSurge> instances = new ConcurrentHashMap<Player, LavaSurge>();
 	public static int impactDamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.Damage");
-	public static int fractureRadius = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.Radius");
+	public static int fractureRadius = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.FractureRadius");
 	public static int prepareRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.PrepareRange");
 	public static int travelRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.TravelRange");
 	public static int maxBlocks = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.MaxLavaWaves");

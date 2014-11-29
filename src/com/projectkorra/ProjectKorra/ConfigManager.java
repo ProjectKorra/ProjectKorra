@@ -19,6 +19,7 @@ public class ConfigManager {
 
 		ArrayList<String> earthbendable = new ArrayList<String>();
 		earthbendable.add("STONE");
+		earthbendable.add("CLAY");
 		earthbendable.add("COAL_ORE");
 		earthbendable.add("DIAMOND_ORE");
 		earthbendable.add("DIRT");
@@ -464,15 +465,15 @@ public class ConfigManager {
         
 		config.addDefault("Abilities.Earth.LavaSurge.Enabled", true);
 	    config.addDefault("Abilities.Earth.LavaSurge.Description", "This ability allows an Earthbender to bend an existing Lava Source to create a large wave that deals damage and knocks back anything in its path. To use, simply tap sneak (Default: Shift) while targeting an earthbendable block. Once a source has been selected, left click to launch the wave off into the direction you are looking. This ability has a small knockback and does a fair amount of damage.");
-		config.addDefault("Abilities.Earth.LavaSurge.Damage", 6);
-		config.addDefault("Abilities.Earth.LavaSurge.Radius", 1);
+		config.addDefault("Abilities.Earth.LavaSurge.Damage", 4);
+		config.addDefault("Abilities.Earth.LavaSurge.FractureRadius", 1);
 		config.addDefault("Abilities.Earth.LavaSurge.PrepareRange", 7);
 		config.addDefault("Abilities.Earth.LavaSurge.TravelRange", 15);
 		config.addDefault("Abilities.Earth.LavaSurge.MaxLavaWaves", 10);
 		config.addDefault("Abilities.Earth.LavaSurge.SourceCanBeEarth", true);
 
 		config.addDefault("Abilities.Earth.MetalClips.Enabled", true);
-		config.addDefault("Abilities.Earth.MetalClips.Description", "Shoot multiple metal clips at your enemy to slowly encase them in metal, giving you full control over their movements. This ability only works on Zombies, Skeletons, and Players. You need iron in your inventory to use this ability.");
+		config.addDefault("Abilities.Earth.MetalClips.Description", "MetalClips has the potential to be both an offensive and a utility ability. To start, you must carry smelted Iron Ingots in your inventory. To apply the clips onto an entity, simply click at them. If the entity is a Zombie, a Skeleton, or a Player, the clips will form armor around the entity, giving you some control over them. Each additional clip will give you more control. If you have permission to do so, you may crush the entity against a wall with a 4th clip, hurting them. Without explicit permissions, you will only be able to strap three clips on your target. If the entity is not one of the above, the clip will simply do damage and fall to the ground, to be collected.");
 		config.addDefault("Abilities.Earth.MetalClips.Damage", 2);
 		config.addDefault("Abilities.Earth.MetalClips.DamageInterval", 500);
 		config.addDefault("Abilities.Earth.MetalClips.MagnetRange", 20);
