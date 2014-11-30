@@ -879,6 +879,7 @@ public class Commands {
 								|| p.getName().equalsIgnoreCase("kingbirdy") // kingbirdy
 								|| p.getName().equalsIgnoreCase("CherryCoolade") // Coolade
 								|| p.getName().equalsIgnoreCase("sampepere") // AlexTheCoder
+								|| p.getName().equalsIgnoreCase("EnderLance") // Carbogen (to be replaced).
 								|| p.getName().equalsIgnoreCase("Carbogen")) // Carbogen
 						{ 
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Developer");
