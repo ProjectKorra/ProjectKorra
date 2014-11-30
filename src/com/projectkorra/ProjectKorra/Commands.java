@@ -874,6 +874,7 @@ public class Commands {
 						if (p.getName().equalsIgnoreCase("MistPhizzle")) {
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Founder"); // MistPhizzle
 						}
+						
 						if (p.getName().equalsIgnoreCase("runefist") // codiaz
 								|| p.getName().equalsIgnoreCase("Jacklin213") // Jacklin213
 								|| p.getName().equalsIgnoreCase("kingbirdy") // kingbirdy
@@ -886,8 +887,15 @@ public class Commands {
 						}
 						if (p.getName().equalsIgnoreCase("vidcom") // vidcom
 								|| p.getName().equalsIgnoreCase("Zolteex") // Zolteex
+								|| p.getName().equalsIgnoreCase("Rawry2001") // Majorite
+								|| p.getName().equalsIgnoreCase("OmniCypher") // OmniCypher
+								|| p.getName().equalsIgnoreCase("Gahshunk292") // Gahshunk
 								|| p.getName().equalsIgnoreCase("ashe36")) { // ashe36
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
+						}
+						
+						if (p.getName().equalsIgnoreCase("kiammcquaid")) {
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra GFX Artist");
 						}
 						return true;
 					}
