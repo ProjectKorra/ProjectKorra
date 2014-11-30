@@ -894,7 +894,8 @@ public class Commands {
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
 						}
 						
-						if (p.getName().equalsIgnoreCase("kiammcquaid")) {
+						if (p.getName().equalsIgnoreCase("kiammcquaid")
+								|| p.getName().equalsIgnoreCase("UnlitedOwns")) {
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra GFX Artist");
 						}
 						return true;
