@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.minecraft.server.v1_8_R1.EnumParticle;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -217,8 +219,8 @@ public enum ParticleEffect {
 		for (ParticleEffect p : values())
 			NAME_MAP.put(p.name, p);
 		try {
-			packetPlayOutWorldParticles = ReflectionHandler.getConstructor(PacketType.PLAY_OUT_WORLD_PARTICLES.getPacket(), String.class, float.class, float.class, float.class, float.class, float.class,
-					float.class, float.class, int.class);
+			packetPlayOutWorldParticles = ReflectionHandler.getConstructor(PacketType.PLAY_OUT_WORLD_PARTICLES.getPacket(), net.minecraft.server.v1_8_R1.EnumParticle.class, boolean.class, float.class, float.class, float.class, float.class, float.class,
+					float.class, float.class, int.class, int[].class);
 			getHandle = ReflectionHandler.getMethod("CraftPlayer", SubPackageType.ENTITY, "getHandle");
 			playerConnection = ReflectionHandler.getField("EntityPlayer", PackageType.MINECRAFT_SERVER, "playerConnection");
 			sendPacket = ReflectionHandler.getMethod(playerConnection.getType(), "sendPacket", ReflectionHandler.getClass("Packet", PackageType.MINECRAFT_SERVER));
@@ -288,11 +290,69 @@ public enum ParticleEffect {
 		if (amount < 1)
 			throw new PacketInstantiationException("Amount cannot be lower than 1");
 		try {
-			return packetPlayOutWorldParticles.newInstance(name, (float) center.getX(), (float) center.getY(), (float) center.getZ(), offsetX, offsetY, offsetZ, speed, amount);
+			return packetPlayOutWorldParticles.newInstance(getEnumParticle(name), false, (float) center.getX(), (float) center.getY(), (float) center.getZ(), offsetX, offsetY, offsetZ, speed, amount, new int[0]);
 		} catch (Exception e) {
 			throw new PacketInstantiationException("Packet instantiation failed", e);
 		}
 	}
+	
+	public static EnumParticle getEnumParticle(String name)
+	{
+		switch(name.toUpperCase())
+		{
+			case "HUGEEXPLOSION":
+				return EnumParticle.EXPLOSION_HUGE;
+			case "BUBBLE":
+				return EnumParticle.WATER_BUBBLE;
+			case "SUSPEND":
+				return EnumParticle.SUSPENDED;
+			case "DEPTHSUSPEND":
+				return EnumParticle.SUSPENDED_DEPTH;
+			case "MAGICCRIT":
+				return EnumParticle.CRIT_MAGIC;
+			case "SMOKE":
+				return EnumParticle.SMOKE_NORMAL;
+			case "MOBSPELL":
+				return EnumParticle.SPELL_MOB;
+			case "MOBSPELLAMBIENT":
+				return EnumParticle.SPELL_MOB_AMBIENT;
+			case "INSTANTSPELL":
+				return EnumParticle.SPELL_INSTANT;
+			case "WITCHMAGIC":
+				return EnumParticle.SPELL_WITCH;
+			case "EXPLODE":
+				return EnumParticle.EXPLOSION_NORMAL;
+			case "SPLASH":
+				return EnumParticle.WATER_SPLASH;
+			case "WAKE":
+				return EnumParticle.WATER_WAKE;
+			case "LARGESMOKE":
+				return EnumParticle.SMOKE_LARGE;
+			case "REDDUST":
+				return EnumParticle.REDSTONE;
+			case "SNOWBALLPOOF":
+				return EnumParticle.SNOWBALL;
+			case "ANGRYVILLAGER":
+				return EnumParticle.VILLAGER_ANGRY;
+			case "HAPPYVILLAGER":
+				return EnumParticle.VILLAGER_HAPPY;
+			case "DRIPWATER":
+				return EnumParticle.DRIP_WATER;
+			case "DRIPLAVA":
+				return EnumParticle.DRIP_LAVA;
+			case "SNOWSHOVEL":
+				return EnumParticle.SNOW_SHOVEL;
+			case "ENCHANTMENTTABLE":
+				return EnumParticle.ENCHANTMENT_TABLE;
+			case "TOWNAURA":
+				return EnumParticle.TOWN_AURA;
+			case "FIREWORKSSPARK":
+				return EnumParticle.FIREWORKS_SPARK;
+			default:
+				return EnumParticle.valueOf(name.toUpperCase());
+		}
+	}
+
 
 	/**
 	 * Instantiates a new @PacketPlayOutWorldParticles object through reflection especially for the "iconcrack" effect
