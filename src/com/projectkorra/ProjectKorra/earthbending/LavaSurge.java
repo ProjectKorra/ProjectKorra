@@ -270,7 +270,7 @@ public class LavaSurge
 			
 			if(curTime > time + (fallingBlockInterval * fallingBlocksCount))
 			{
-				FallingBlock fbs = player.getWorld().spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), Material.STATIONARY_LAVA, (byte) 0);
+				FallingBlock fbs = player.getWorld().spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), Material.STATIONARY_LAVA, (byte) 1);
 				fblocks.add(fbs);
 				falling.add(fbs);
 				double x = randy.nextDouble()/5;

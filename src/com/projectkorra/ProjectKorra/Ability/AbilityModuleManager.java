@@ -118,7 +118,7 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.MetalClips) earthsubabilities.add(a.name());
 					if (a == StockAbilities.Extraction) earthsubabilities.add(a.name());
 					if (a == StockAbilities.LavaFlow) earthsubabilities.add(a.name());
-					if (a == StockAbilities.LavaSurge) earthsubabilities.add(a.name());
+//					if (a == StockAbilities.LavaSurge) earthsubabilities.add(a.name());
 					
 				}
 			}

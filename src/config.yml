@@ -348,12 +348,6 @@ Abilities:
       DoubleLootChance: 40
     MetalClips:
       Enabled: true
-    LavaSurge:
-      Enabled: true
-      Description: "This ability allows an Earthbender to bend an existing Lava Source to create a large wave that deals damage and knocks back anything in its path. To use, simply tap sneak (Default: Shift) while targeting an earthbendable block. Once a source has been selected, left click to launch the wave off into the direction you are looking. This ability has a small knockback and does a fair amount of damage."
-      Radius: 3
-      HorizontalPush: 0.5
-      VerticalPush: 0.1
     LavaFlow:
       Enabled: true
       Description: 'This ability allows an Earthbender to create lava using the Earth
