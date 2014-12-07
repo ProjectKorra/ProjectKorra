@@ -205,7 +205,12 @@ public class LavaFlow
 						else if(Math.random() < PARTICLE_DENSITY
 								&& dSquared < Math.pow(currentRadius + PARTICLE_OFFSET, 2)
 								&& currentRadius + PARTICLE_OFFSET < maxRadius) {
-							ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+							try {
+								ParticleEffect.LAVA.sendToPlayers(Methods.getPlayersAroundPoint(loc, 100), loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 					}
 
@@ -254,7 +259,12 @@ public class LavaFlow
 								&& !isLava(tempBlock) 
 								&& Math.random() < PARTICLE_DENSITY
 								&& tempBlock.getLocation().distanceSquared(origin) <= Math.pow(radius,2))
-							ParticleEffect.LAVA.display(loc, 0, 0, 0, 0, 1); 
+							try {
+								ParticleEffect.LAVA.sendToPlayers(Methods.getPlayersAroundPoint(loc, 100), loc, 0, 0, 0, 0, 1);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 
 					}
 				return;
@@ -286,7 +296,12 @@ public class LavaFlow
 								if(Math.random() < LAVA_CREATE_SPEED)
 									createLava(tempBlock);
 								else
-									ParticleEffect.LAVA.display(loc, (float) 0, (float) 0, (float) 0, 0, 1); 
+									try {
+										ParticleEffect.LAVA.sendToPlayers(Methods.getPlayersAroundPoint(loc, 100), loc, 0, 0, 0, 0, 1);
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 							}
 							else if(!makeLava && isLava(tempBlock))
 							{
