@@ -31,7 +31,7 @@ public class LavaFlow
 	public static double SHIFT_REMOVE_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ShiftRemoveSpeed");
 	public static long SHIFT_REMOVE_DELAY = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ShiftCleanupDelay");
 	public static double PARTICLE_DENSITY = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ParticleDensity");
-	
+
 	public static double CLICK_RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ClickRange");
 	public static double CLICK_LAVA_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ClickRadius");
 	public static double CLICK_LAND_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ClickRadius");
@@ -43,7 +43,7 @@ public class LavaFlow
 	public static long CLICK_LAND_CLEANUP_DELAY = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ClickLandCleanupDelay");
 	public static double LAVA_CREATE_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ClickLavaCreateSpeed");
 	public static double LAND_CREATE_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ClickLandCreateSpeed");
-	
+
 	public static long AS_SHIFT_COOLDOWN = 0;
 	public static double AS_SHIFT_PLATFORM_RADIUS = 3;
 	public static double AS_SHIFT_MAX_RADIUS = 16;
@@ -55,16 +55,16 @@ public class LavaFlow
 	public static long AS_CLICK_LAVA_DELAY = 2000;
 	public static long AS_CLICK_LAND_DELAY = 0;
 	public static long AS_CLICK_COOLDOWN = 0;
-	
+
 	public static int UPWARD_FLOW = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaFlow.UpwardFlow");
 	public static int DOWNWARD_FLOW = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaFlow.DownwardFlow");
 	public static boolean ALLOW_NATURAL_FLOW = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.LavaFlow.AllowNaturalFlow");
-	
+
 	private static final double PARTICLE_OFFSET = 3;
 
 	public static ArrayList<LavaFlow> instances = new ArrayList<LavaFlow>();
 	public static ArrayList<TempBlock> totalBlocks = new ArrayList<TempBlock>();
-	
+
 	private Player player;
 	private BendingPlayer bplayer;
 	private long time;
@@ -77,7 +77,7 @@ public class LavaFlow
 	private double currentRadius = 0;
 	private ArrayList<TempBlock> affectedBlocks = new ArrayList<TempBlock>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
-	
+
 	public LavaFlow(Player player, AbilityType type)
 	{
 		time = System.currentTimeMillis();
@@ -92,7 +92,7 @@ public class LavaFlow
 			if(shiftFlows.size() > 0 && !player.isSneaking())
 				for(LavaFlow lf : shiftFlows)
 					lf.shiftCounter++;
-			
+
 			if(bplayer.isOnCooldown("lavaflowcooldownshift")){
 				remove();
 				return;
@@ -111,7 +111,7 @@ public class LavaFlow
 			makeLava = !isLava(sourceBlock);
 			long cooldown = makeLava ? CLICK_LAVA_COOLDOWN : CLICK_LAND_COOLDOWN;
 			cooldown = AvatarState.isAvatarState(player) ? AS_CLICK_COOLDOWN : cooldown;
-			
+
 			if(makeLava){
 				if(bplayer.isOnCooldown("lavaflowmakelava")){
 					remove();
@@ -120,7 +120,7 @@ public class LavaFlow
 				else
 					bplayer.addCooldown("lavaflowmakelava", cooldown);
 			}
-			
+
 			if(!makeLava){
 				if(bplayer.isOnCooldown("lavaflowmakeland")){
 					remove();
@@ -132,7 +132,7 @@ public class LavaFlow
 			instances.add(this);
 		}
 	}
-	
+
 	public void progress()
 	{
 		if(shiftCounter > 0 && type == AbilityType.SHIFT){
@@ -145,7 +145,7 @@ public class LavaFlow
 			remove();
 			return;
 		}		
-		
+
 		if(type == AbilityType.SHIFT)
 		{
 			double removeDelay = AvatarState.isAvatarState(player) ? AS_SHIFT_REMOVE_DELAY : SHIFT_REMOVE_DELAY;
@@ -164,7 +164,7 @@ public class LavaFlow
 					remove();
 				return;
 			}
-			
+
 			String ability = Methods.getBoundAbility(player);
 			if(ability == null){
 				remove();
@@ -181,7 +181,7 @@ public class LavaFlow
 					return;
 				}
 			}
-			
+
 			double platformRadius = AvatarState.isAvatarState(player) ? AS_SHIFT_PLATFORM_RADIUS : SHIFT_PLATFORM_RADIUS;
 			double maxRadius = AvatarState.isAvatarState(player) ? AS_SHIFT_MAX_RADIUS : SHIFT_MAX_RADIUS;
 			double flowSpeed = AvatarState.isAvatarState(player) ? AS_SHIFT_FLOW_SPEED : SHIFT_FLOW_SPEED;
@@ -204,15 +204,21 @@ public class LavaFlow
 						}
 						else if(Math.random() < PARTICLE_DENSITY
 								&& dSquared < Math.pow(currentRadius + PARTICLE_OFFSET, 2)
-								&& currentRadius + PARTICLE_OFFSET < maxRadius)
-							ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1); 
+								&& currentRadius + PARTICLE_OFFSET < maxRadius) {
+							try {
+								ParticleEffect.LAVA.sendToPlayers(Methods.getPlayersAroundPoint(loc, 100), loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 					}
-					
+
 				}
 			currentRadius += flowSpeed;
 			if(currentRadius > maxRadius) currentRadius = maxRadius;		
 		}
-		
+
 		/**
 		 * The variable makeLava refers to whether or not the ability is trying to 
 		 * remove land in place of lava or if makeLava = false then lava is being replaced
@@ -245,17 +251,22 @@ public class LavaFlow
 			{
 				double radius = AvatarState.isAvatarState(player) ? AS_CLICK_RADIUS : CLICK_LAVA_RADIUS;
 				for(double x = -radius; x <= radius; x++)
-						for(double z = -radius; z <= radius; z++)
-						{							
-							Location loc = origin.clone().add(x,0,z);
-							Block tempBlock = getTopBlock(loc,UPWARD_FLOW,DOWNWARD_FLOW);
-							if(tempBlock != null 
-									&& !isLava(tempBlock) 
-									&& Math.random() < PARTICLE_DENSITY
-									&& tempBlock.getLocation().distanceSquared(origin) <= Math.pow(radius,2))
-								ParticleEffect.LAVA.display(loc, 0, 0, 0, 0, 1); 
-								
-						}
+					for(double z = -radius; z <= radius; z++)
+					{							
+						Location loc = origin.clone().add(x,0,z);
+						Block tempBlock = getTopBlock(loc,UPWARD_FLOW,DOWNWARD_FLOW);
+						if(tempBlock != null 
+								&& !isLava(tempBlock) 
+								&& Math.random() < PARTICLE_DENSITY
+								&& tempBlock.getLocation().distanceSquared(origin) <= Math.pow(radius,2))
+							try {
+								ParticleEffect.LAVA.sendToPlayers(Methods.getPlayersAroundPoint(loc, 100), loc, 0, 0, 0, 0, 1);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+
+					}
 				return;
 			}
 
@@ -275,7 +286,7 @@ public class LavaFlow
 						Block tempBlock = getTopBlock(loc,UPWARD_FLOW,DOWNWARD_FLOW);
 						if(tempBlock == null)
 							continue;
-						
+
 						double dSquared = distanceSquaredXZ(tempBlock.getLocation(),origin);					
 						if(dSquared < Math.pow(radius,2) && !Methods.isRegionProtectedFromBuild(player, "LavaFlow", loc))
 						{
@@ -285,7 +296,12 @@ public class LavaFlow
 								if(Math.random() < LAVA_CREATE_SPEED)
 									createLava(tempBlock);
 								else
-									ParticleEffect.LAVA.display(loc, 0, 0, 0, 0, 1); 
+									try {
+										ParticleEffect.LAVA.sendToPlayers(Methods.getPlayersAroundPoint(loc, 100), loc, 0, 0, 0, 0, 1);
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 							}
 							else if(!makeLava && isLava(tempBlock))
 							{
@@ -319,8 +335,8 @@ public class LavaFlow
 		}
 		else if(isEarthbendableMaterial(block.getType(), player))
 			valid = true;
-		
-		
+
+
 		if(valid){
 			TempBlock tblock = new TempBlock(block,Material.STATIONARY_LAVA,(byte) 0);
 			totalBlocks.add(tblock);
@@ -347,9 +363,9 @@ public class LavaFlow
 			}
 		}
 		testBlock.setType(REVERT_MATERIAL);
-		
+
 	}
-	
+
 	public void removeOnDelay()
 	{
 		/**
@@ -366,7 +382,7 @@ public class LavaFlow
 		br.runTaskLater(ProjectKorra.plugin, (long) (delay / 1000.0 * 20.0));
 		tasks.add(br);
 	}
-	
+
 	public void remove()
 	{
 		/**
@@ -393,13 +409,13 @@ public class LavaFlow
 		for(BukkitRunnable task : tasks)
 			task.cancel();
 	}
-	
+
 	public static void progressAll()
 	{
 		for(int i = instances.size() - 1; i >= 0; i--)
 			instances.get(i).progress();
 	}
-	
+
 	public static void removeAll()
 	{
 		for(int i = instances.size() - 1; i >= 0; i--)
@@ -407,7 +423,7 @@ public class LavaFlow
 			instances.get(i).remove();
 		}
 	}
-	
+
 	public static ArrayList<Block> getAdjacentBlocks(Location loc)
 	{
 		/**
@@ -478,14 +494,14 @@ public class LavaFlow
 				return blockHolder;
 			blockHolder = tempBlock;
 		}
-		
+
 		while(blockHolder.getType() == Material.AIR && Math.abs(y) < Math.abs(negativeY))
 		{
 			y--;
 			blockHolder = loc.clone().add(0,y,0).getBlock();
 			if(blockHolder.getType() != Material.AIR) 
 				return blockHolder;
-			
+
 		}
 		return null;
 	}
@@ -506,7 +522,7 @@ public class LavaFlow
 		if ((!Methods.isRegionProtectedFromBuild(player, "LavaFlow", testblock.getLocation()))
 				&& (isEarthbendableMaterial(testblock.getType(), player) || isLava(testblock)))
 			return testblock;
-		
+
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {
