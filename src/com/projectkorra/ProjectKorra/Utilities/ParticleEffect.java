@@ -1,508 +1,659 @@
 package com.projectkorra.ProjectKorra.Utilities;
-
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import net.minecraft.server.v1_8_R1.EnumParticle;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
+import com.projectkorra.ProjectKorra.Utilities.ReflectionHandler.PackageType;
+import com.projectkorra.ProjectKorra.Utilities.ReflectionHandler.PacketType;
+import com.projectkorra.ProjectKorra.Utilities.ReflectionHandler.SubPackageType;
+/**
+ * ParticleEffect Library v1.4
+ *
+ * This library was created by @DarkBlade12 based on content related to particles of @microgeek (names and packet values), it allows you to display all Minecraft particle effects on a Bukkit server
+ *
+ * You are welcome to use it, modify it and redistribute it under the following conditions:
+ * 1. Don't claim this class as your own
+ * 2. Don't remove this text
+ *
+ * (Would be nice if you provide credit to me)
+ *
+ * @author DarkBlade12
+ */
 public enum ParticleEffect {
-
-	// == Support for 1.7 Implementation ==
-	HUGE_EXPLOSION(
-			"hugeexplosion",
-			"EXPLOSION_HUGE"),
-	LARGE_EXPLODE(
-			"largeexplode",
-			"EXPLOSION_LARGE"),
-	BUBBLE(
-			"bubble",
-			"WATER_BUBBLE"),
-	SUSPEND(
-			"suspend",
-			"SUSPENDED"),
-	DEPTH_SUSPEND(
-			"depthSuspend",
-			"SUSPENDED_DEPTH"),
-	MAGIC_CRIT(
-			"magicCrit",
-			"CRIT_MAGIC"),
-	MOB_SPELL(
-			"mobSpell",
-			"SPELL_MOB"),
-	MOB_SPELL_AMBIENT(
-			"mobSpellAmbient",
-			"SPELL_MOB_AMBIENT"),
-	INSTANT_SPELL(
-			"instantSpell",
-			"SPELL_INSTANT"),
-	WITCH_MAGIC(
-			"witchMagic",
-			"SPELL_WITCH"),
-	EXPLODE(
-			"explode",
-			"EXPLOSION_NORMAL"),
-	SPLASH(
-			"splash",
-			"WATER_SPLASH"),
-	LARGE_SMOKE(
-			"largesmoke",
-			"SMOKE_LARGE"),
-	RED_DUST(
-			"reddust",
-			"REDSTONE"),
-	SNOWBALL_POOF(
-			"snowballpoof",
-			"SNOWBALL"),
-	ANGRY_VILLAGER(
-			"angryVillager",
-			"VILLAGER_ANGRY"),
-	HAPPY_VILLAGER(
-			"happerVillager",
-			"VILLAGER_HAPPY"),
-	// == 1.8 Particles and Supported 1.7 Particles ==
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #EXPLODE}
+	 * @appearance Huge explosions
+	 * @displayed by TNT and creepers
 	 */
-	EXPLOSION_NORMAL(
-			EXPLODE.getName()),
+	HUGE_EXPLOSION("hugeexplosion"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #LARGE_EXPLODE}
+	 * @appearance Smaller explosions
+	 * @displayed by TNT and creepers
 	 */
-	EXPLOSION_LARGE(
-			LARGE_EXPLODE.getName()),
+	LARGE_EXPLODE("largeexplode"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #HUGE_EXPLOSION}
+	 * @appearance Little white sparkling stars
+	 * @displayed by Fireworks
 	 */
-	EXPLOSION_HUGE(
-			HUGE_EXPLOSION.getName()),
-	FIREWORKS_SPARK(
-			"fireworksSpark"),
+	FIREWORKS_SPARK("fireworksSpark"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #BUBBLE}
+	 * @appearance Bubbles
+	 * @displayed in water
 	 */
-	WATER_BUBBLE(
-			BUBBLE.getName()),
+	BUBBLE("bubble"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #SPLASH}
+	 * @appearance Unknown
 	 */
-	WATER_SPLASH(
-			SPLASH.getName()),
+	SUSPEND("suspend"),
 	/**
-	 * 1.8 only!
+	 * @appearance Little gray dots
+	 * @displayed in the Void and water
 	 */
-	WATER_WAKE,
+	DEPTH_SUSPEND("depthSuspend"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #SUSPEND}
+	 * @appearance Little gray dots
+	 * @displayed by Mycelium
 	 */
-	SUSPENDED(
-			SUSPEND.getName()),
+	TOWN_AURA("townaura"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #DEPTH_SUSPEND}
+	 * @appearance Light brown crosses
+	 * @displayed by critical hits
 	 */
-	SUSPENDED_DEPTH(
-			DEPTH_SUSPEND.getName()),
-	CRIT(
-			"crit"),
+	CRIT("crit"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #MAGIC_CRIT}
+	 * @appearance Cyan stars
+	 * @displayed by hits with an enchanted weapon
 	 */
-	CRIT_MAGIC(
-			MAGIC_CRIT.getName()),
+	MAGIC_CRIT("magicCrit"),
 	/**
-	 * 1.8 only!
+	 * @appearance Little black/gray clouds
+	 * @displayed by torches, primed TNT and end portals
 	 */
-	SMOKE_NORMAL,
+	SMOKE("smoke"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #LARGE_SMOKE}
+	 * @appearance Colored swirls
+	 * @displayed by potion effects
 	 */
-	SMOKE_LARGE(
-			LARGE_SMOKE.getName()),
-	SPELL(
-			"spell"),
+	MOB_SPELL("mobSpell"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #INSTANT_SPELL}
+	 * @appearance Transparent colored swirls
+	 * @displayed by beacon effect
 	 */
-	SPELL_INSTANT(
-			INSTANT_SPELL.getName()),
+	MOB_SPELL_AMBIENT("mobSpellAmbient"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #MOB_SPELL}
+	 * @appearance Colored swirls
+	 * @displayed by splash potions
 	 */
-	SPELL_MOB(
-			MOB_SPELL.getName()),
+	SPELL("spell"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #MOB_SPELL_AMBIENT}
+	 * @appearance Colored crosses
+	 * @displayed by instant splash potions (instant health/instant damage)
 	 */
-	SPELL_MOB_AMBIENT(
-			MOB_SPELL_AMBIENT.getName()),
+	INSTANT_SPELL("instantSpell"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #WITCH_MAGIC}
+	 * @appearance Colored crosses
+	 * @displayed by witches
 	 */
-	SPELL_WITCH(
-			WITCH_MAGIC.getName()),
-	DRIP_WATER(
-			"dripWater"),
-	DRIP_LAVA(
-			"dripLava"),
+	WITCH_MAGIC("witchMagic"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #ANGRY_VILLAGER}
+	 * @appearance Colored notes
+	 * @displayed by note blocks
 	 */
-	VILLAGER_ANGRY(
-			ANGRY_VILLAGER.getName()),
+	NOTE("note"),
 	/**
-	 * 1.8 only!
-	 * 
-	 * @see {@link #HAPPY_VILLAGER}
+	 * @appearance Little purple clouds
+	 * @displayed by nether portals, endermen, ender pearls, eyes of ender and ender chests
 	 */
-	VILLAGER_HAPPY(
-			HAPPY_VILLAGER.getName()),
-	TOWN_AURA(
-			"townaura"),
-	NOTE(
-			"note"),
-	PORTAL(
-			"portal"),
-	ENCHANTMENT_TABLE(
-			"enchantmenttable"),
-	FLAME(
-			"flame"),
-	LAVA(
-			"lave"),
-	FOOTSTEP(
-			"footstep"),
-	CLOUD(
-			"cloud"),
-	REDSTONE(
-			"reddust"),
-	SNOWBALL(
-			"snowballpoof"),
-	SNOW_SHOVEL(
-			"snowshovel"),
-	SLIME(
-			"slime"),
-	HEART(
-			"heart"),
+	PORTAL("portal"),
 	/**
-	 * 1.8 only!
+	 * @appearance: White letters
+	 * @displayed by enchantment tables that are near bookshelves
 	 */
-	BARRIER,
+	ENCHANTMENT_TABLE("enchantmenttable"),
 	/**
-	 * 1.8 only!
+	 * @appearance White clouds
 	 */
-	ITEM_CRACK,
+	EXPLODE("explode"),
 	/**
-	 * 1.8 only!
+	 * @appearance Little flames
+	 * @displayed by torches, furnaces, magma cubes and monster spawners
 	 */
-	BLOCK_CRACK,
+	FLAME("flame"),
 	/**
-	 * 1.8 only!
+	 * @appearance Little orange blobs
+	 * @displayed by lava
 	 */
-	BLOCK_DUST,
+	LAVA("lava"),
 	/**
-	 * 1.8 only!
+	 * @appearance Gray transparent squares
 	 */
-	WATER_DROP,
+	FOOTSTEP("footstep"),
 	/**
-	 * 1.8 only!
+	 * @appearance Blue drops
+	 * @displayed by water, rain and shaking wolves
 	 */
-	ITEM_TAKE,
+	SPLASH("splash"),
 	/**
-	 * 1.8 only!
+	 * @appearance Blue droplets
+	 * @displayed on water when fishing
 	 */
-	MOB_APPEARANCE;
-
-	private String	particleName;
-	private String	enumValue;
-
-	ParticleEffect(String particleName, String enumValue) {
-		this.particleName = particleName;
-		this.enumValue = enumValue;
+	WAKE("wake"),
+	/**
+	 * @appearance Black/Gray clouds
+	 * @displayed by fire, minecarts with furance and blazes
+	 */
+	LARGE_SMOKE("largesmoke"),
+	/**
+	 * @appearance Large white clouds
+	 * @displayed on mob death
+	 */
+	CLOUD("cloud"),
+	/**
+	 * @appearance Little colored clouds
+	 * @displayed by active redstone wires and redstone torches
+	 */
+	RED_DUST("reddust"),
+	/**
+	 * @appearance Little white parts
+	 * @displayed by cracking snowballs and eggs
+	 */
+	SNOWBALL_POOF("snowballpoof"),
+	/**
+	 * @appearance Blue drips
+	 * @displayed by blocks below a water source
+	 */
+	DRIP_WATER("dripWater"),
+	/**
+	 * @appearance Orange drips
+	 * @displayed by blocks below a lava source
+	 */
+	DRIP_LAVA("dripLava"),
+	/**
+	 * @appearance White clouds
+	 */
+	SNOW_SHOVEL("snowshovel"),
+	/**
+	 * @appearance Little green parts
+	 * @displayed by slimes
+	 */
+	SLIME("slime"),
+	/**
+	 * @appearance Red hearts
+	 * @displayed when breeding
+	 */
+	HEART("heart"),
+	/**
+	 * @appearance Dark gray cracked hearts
+	 * @displayed when attacking a villager in a village
+	 */
+	ANGRY_VILLAGER("angryVillager"),
+	/**
+	 * @appearance Green stars
+	 * @displayed by bone meal and when trading with a villager
+	 */
+	HAPPY_VILLAGER("happyVillager");
+	private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<String, ParticleEffect>();
+	private static final double MAX_RANGE = 16;
+	private static Constructor<?> packetPlayOutWorldParticles;
+	private static Method getHandle;
+	private static Field playerConnection;
+	private static Method sendPacket;
+	private final String name;
+	static {
+		for (ParticleEffect p : values())
+			NAME_MAP.put(p.name, p);
+		try {
+			packetPlayOutWorldParticles = ReflectionHandler.getConstructor(PacketType.PLAY_OUT_WORLD_PARTICLES.getPacket(), net.minecraft.server.v1_8_R1.EnumParticle.class, boolean.class, float.class, float.class, float.class, float.class, float.class,
+					float.class, float.class, int.class, int[].class);
+			getHandle = ReflectionHandler.getMethod("CraftPlayer", SubPackageType.ENTITY, "getHandle");
+			playerConnection = ReflectionHandler.getField("EntityPlayer", PackageType.MINECRAFT_SERVER, "playerConnection");
+			sendPacket = ReflectionHandler.getMethod(playerConnection.getType(), "sendPacket", ReflectionHandler.getClass("Packet", PackageType.MINECRAFT_SERVER));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-
-	ParticleEffect(String particleName) {
-		this(particleName, null);
+	/**
+	 * @param name Name of this particle effect
+	 */
+	private ParticleEffect(String name) {
+		this.name = name;
 	}
-
-	ParticleEffect() {
-		this(null, null);
-	}
-
+	/**
+	 * @return The name of this particle effect
+	 */
 	public String getName() {
-		return this.particleName;
+		return this.name;
 	}
-
-	private static Class<?>	nmsPacketPlayOutParticle	= ReflectionUtilities.getNMSClass("PacketPlayOutWorldParticles");
-	private static Class<?>	nmsEnumParticle;
-	private static int		particleRange				= 25;
-
 	/**
-	 * Modify the maximum Range of particles (only useful for Client versions 1.8+)
-	 * 
-	 * @param range
-	 *            New range
+	 * Gets a particle effect from name
+	 *
+	 * @param name Name of the particle effect
+	 * @return The particle effect
 	 */
-	public static void setRange(int range) {
-		if (range < 0) throw new IllegalArgumentException("Range must be positive!");
-		if (range > Integer.MAX_VALUE) throw new IllegalArgumentException("Range is too big!");
-		particleRange = range;
-	}
-
-	/**
-	 * @return The current maximum Range of particles
-	 */
-	public static int getRange() {
-		return particleRange;
-	}
-
-	/**
-	 * Send the particle to a specific Player
-	 * 
-	 * @param player
-	 *            Receiver of the particle
-	 * @param location
-	 *            Location of the particle
-	 * @param offsetX
-	 *            X size of the area to spawn particles in.
-	 * @param offsetY
-	 *            Y size of the area to spawn particles in.
-	 * @param offsetZ
-	 *            Z size of the area to spawn particles in.
-	 * @param speed
-	 *            Speed of the Particle
-	 * @param count
-	 *            Number of spawned particles
-	 * @throws Exception
-	 */
-	public void sendToPlayer(Player player, Location location, float offsetX, float offsetY, float offsetZ, float speed, int count) throws Exception {
-		if (!isPlayerInRange(player, location)) return;
-		System.out.println(ReflectionUtilities.getVersion());
-		if (ReflectionUtilities.getVersion().contains("v1_8")) {
-			try {
-				if (nmsEnumParticle == null) nmsEnumParticle = ReflectionUtilities.getNMSClass("EnumParticle");
-				Object packet = nmsPacketPlayOutParticle.getConstructor(new Class[] { nmsEnumParticle, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class, int[].class })
-						.newInstance(getEnum(nmsEnumParticle.getName() + "." + (enumValue != null ? enumValue : name().toUpperCase())), true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count, new int[] {});
-				Object handle = ReflectionUtilities.getHandle(player);
-				Object connection = ReflectionUtilities.getField(handle.getClass(), "playerConnection").get(handle);
-				ReflectionUtilities.getMethod(connection.getClass(), "sendPacket", new Class[0]).invoke(connection, new Object[] { packet });
-			} catch (Exception e) {
-				throw new IllegalArgumentException("Unable to send Particle " + name() + ". (Version 1.8): " + e.getMessage());
-			}
-		} else {
-			try {
-				if (particleName == null) throw new Exception();
-				Object packet = nmsPacketPlayOutParticle.getConstructor(new Class[] { String.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class }).newInstance(particleName, (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, speed, count);
-				Object handle = ReflectionUtilities.getHandle(player);
-				Object connection = ReflectionUtilities.getField(handle.getClass(), "playerConnection").get(handle);
-				ReflectionUtilities.getMethod(connection.getClass(), "sendPacket", new Class[0]).invoke(connection, new Object[] { packet });
-			} catch (Exception e) {
-				throw new IllegalArgumentException("Unable to send Particle " + name() + ". (Invalid Server Version: 1.7) " + e.getMessage());
-			}
-		}
-	}
-
-	/**
-	 * Send the particle to a Collection of Players {@link #sendToPlayer(Player, Location, float, float, float, float, int)}
-	 * 
-	 * @param player
-	 *            Receiver of the particle
-	 * @param location
-	 *            Location of the particle
-	 * @param offsetX
-	 *            X size of the area to spawn particles in.
-	 * @param offsetY
-	 *            Y size of the area to spawn particles in.
-	 * @param offsetZ
-	 *            Z size of the area to spawn particles in.
-	 * @param speed
-	 *            Speed of the Particle
-	 * @param count
-	 *            Number of spawned particles
-	 */
-	public void sendToPlayers(Collection<Player> players, Location location, float offsetX, float offsetY, float offsetZ, float speed, int count) throws Exception {
-		for (Player p : players)
-			sendToPlayer(p, location, offsetX, offsetY, offsetZ, speed, count);
-	}
-
-	/**
-	 * Send the particle to an Array of Players {@link #sendToPlayer(Player, Location, float, float, float, float, int)}
-	 * 
-	 * @param player
-	 *            Receiver of the particle
-	 * @param location
-	 *            Location of the particle
-	 * @param offsetX
-	 *            X size of the area to spawn particles in.
-	 * @param offsetY
-	 *            Y size of the area to spawn particles in.
-	 * @param offsetZ
-	 *            Z size of the area to spawn particles in.
-	 * @param speed
-	 *            Speed of the Particle
-	 * @param count
-	 *            Number of spawned particles
-	 */
-	public void sendToPlayers(Player[] players, Location location, float offsetX, float offsetY, float offsetZ, float speed, int count) throws Exception {
-		for (Player p : players)
-			sendToPlayer(p, location, offsetX, offsetY, offsetZ, speed, count);
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static Enum<?> getEnum(String enumFullName) {
-		String[] x = enumFullName.split("\\.(?=[^\\.]+$)");
-		if (x.length == 2) {
-			String enumClassName = x[0];
-			String enumName = x[1];
-			try {
-				Class<Enum> cl = (Class<Enum>) Class.forName(enumClassName);
-				return Enum.valueOf(cl, enumName);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
+	public static ParticleEffect fromName(String name) {
+		if (name != null)
+			for (Entry<String, ParticleEffect> e : NAME_MAP.entrySet())
+				if (e.getKey().equalsIgnoreCase(name))
+					return e.getValue();
 		return null;
 	}
-
-	private static boolean isPlayerInRange(Player p, Location center) {
-		double distance = 0;
-		if ((distance = center.distance(p.getLocation())) > Double.MAX_VALUE) return false;
-		return distance < particleRange;
+	/**
+	 * Gets a list of players in a certain range
+	 *
+	 * @param center Center location
+	 * @param range Range
+	 * @return The list of players in the specified range
+	 */
+	private static List<Player> getPlayers(Location center, double range) {
+		List<Player> players = new ArrayList<Player>();
+		String name = center.getWorld().getName();
+		double squared = range * range;
+		for (Player p : Bukkit.getOnlinePlayers())
+			if (p.getWorld().getName().equals(name) && p.getLocation().distanceSquared(center) <= squared)
+				players.add(p);
+		return players;
 	}
-
-	public static class ReflectionUtilities {
-
+	/**
+	 * Instantiates a new @PacketPlayOutWorldParticles object through reflection
+	 *
+	 * @param center Center location of the effect
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @return The packet object
+	 * @throws #PacketInstantiationException if the amount is lower than 1 or if the @PacketPlayOutWorldParticles has changed its name or constructor parameters
+	 */
+	private static Object instantiatePacket(String name, Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+		if (amount < 1)
+			throw new PacketInstantiationException("Amount cannot be lower than 1");
+		try {
+			return packetPlayOutWorldParticles.newInstance(getEnumParticle(name), false, (float) center.getX(), (float) center.getY(), (float) center.getZ(), offsetX, offsetY, offsetZ, speed, amount, new int[0]);
+		} catch (Exception e) {
+			throw new PacketInstantiationException("Packet instantiation failed", e);
+		}
+	}
+	public static EnumParticle getEnumParticle(String name)
+	{
+		switch(name.toUpperCase())
+		{
+		case "HUGEEXPLOSION":
+			return EnumParticle.EXPLOSION_HUGE;
+		case "BUBBLE":
+			return EnumParticle.WATER_BUBBLE;
+		case "SUSPEND":
+			return EnumParticle.SUSPENDED;
+		case "DEPTHSUSPEND":
+			return EnumParticle.SUSPENDED_DEPTH;
+		case "MAGICCRIT":
+			return EnumParticle.CRIT_MAGIC;
+		case "SMOKE":
+			return EnumParticle.SMOKE_NORMAL;
+		case "MOBSPELL":
+			return EnumParticle.SPELL_MOB;
+		case "MOBSPELLAMBIENT":
+			return EnumParticle.SPELL_MOB_AMBIENT;
+		case "INSTANTSPELL":
+			return EnumParticle.SPELL_INSTANT;
+		case "WITCHMAGIC":
+			return EnumParticle.SPELL_WITCH;
+		case "EXPLODE":
+			return EnumParticle.EXPLOSION_NORMAL;
+		case "SPLASH":
+			return EnumParticle.WATER_SPLASH;
+		case "WAKE":
+			return EnumParticle.WATER_WAKE;
+		case "LARGESMOKE":
+			return EnumParticle.SMOKE_LARGE;
+		case "REDDUST":
+			return EnumParticle.REDSTONE;
+		case "SNOWBALLPOOF":
+			return EnumParticle.SNOWBALL;
+		case "ANGRYVILLAGER":
+			return EnumParticle.VILLAGER_ANGRY;
+		case "HAPPYVILLAGER":
+			return EnumParticle.VILLAGER_HAPPY;
+		case "DRIPWATER":
+			return EnumParticle.DRIP_WATER;
+		case "DRIPLAVA":
+			return EnumParticle.DRIP_LAVA;
+		case "SNOWSHOVEL":
+			return EnumParticle.SNOW_SHOVEL;
+		case "ENCHANTMENTTABLE":
+			return EnumParticle.ENCHANTMENT_TABLE;
+		case "TOWNAURA":
+			return EnumParticle.TOWN_AURA;
+		case "FIREWORKSSPARK":
+			return EnumParticle.FIREWORKS_SPARK;
+		default:
+			return EnumParticle.valueOf(name.toUpperCase());
+		}
+	}
+	/**
+	 * Instantiates a new @PacketPlayOutWorldParticles object through reflection especially for the "iconcrack" effect
+	 *
+	 * @param id Id of the icon
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @return The packet object
+	 * @throws #PacketInstantiationException if the amount is lower than 1 or if the @PacketPlayOutWorldParticles has changed its name or constructor parameters
+	 * @see #instantiatePacket
+	 */
+	private static Object instantiateIconCrackPacket(int id, Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+		return instantiatePacket("iconcrack_" + id, center, offsetX, offsetY, offsetZ, speed, amount);
+	}
+	/**
+	 * Instantiates a new @PacketPlayOutWorldParticles object through reflection especially for the "blockcrack" effect
+	 *
+	 * @param id Id of the block
+	 * @param data Data value
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param amount Amount of particles
+	 * @return The packet object
+	 * @throws #PacketInstantiationException if the amount is lower than 1 or if the @PacketPlayOutWorldParticles has changed its name or constructor parameters
+	 * @see #instantiatePacket
+	 */
+	private static Object instantiateBlockCrackPacket(int id, byte data, Location center, float offsetX, float offsetY, float offsetZ, int amount) {
+		return instantiatePacket("blockcrack_" + id + "_" + data, center, offsetX, offsetY, offsetZ, 0, amount);
+	}
+	/**
+	 * Instantiates a new @PacketPlayOutWorldParticles object through reflection especially for the "blockdust" effect
+	 *
+	 * @param id Id of the block
+	 * @param data Data value
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @return The packet object
+	 * @throws #PacketInstantiationException if the amount is lower than 1 or if the name or the constructor of @PacketPlayOutWorldParticles have changed
+	 * @see #instantiatePacket
+	 */
+	private static Object instantiateBlockDustPacket(int id, byte data, Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+		return instantiatePacket("blockdust_" + id + "_" + data, center, offsetX, offsetY, offsetZ, speed, amount);
+	}
+	/**
+	 * Sends a packet through reflection to a player
+	 *
+	 * @param p Receiver of the packet
+	 * @param packet Packet that is sent
+	 * @throws #PacketSendingException if the packet is null or some methods which are accessed through reflection have changed
+	 */
+	private static void sendPacket(Player p, Object packet) {
+		try {
+			sendPacket.invoke(playerConnection.get(getHandle.invoke(p)), packet);
+		} catch (Exception e) {
+			throw new PacketSendingException("Failed to send a packet to player '" + p.getName() + "'", e);
+		}
+	}
+	/**
+	 * Sends a packet through reflection to a collection of players
+	 *
+	 * @param players Receivers of the packet
+	 * @param packet Packet that is sent
+	 * @throws #PacketSendingException if the sending to a single player fails
+	 * @see #sendPacket
+	 */
+	private static void sendPacket(Collection<Player> players, Object packet) {
+		for (Player p : players)
+			sendPacket(p, packet);
+	}
+	/**
+	 * Displays a particle effect which is only visible for the specified players
+	 *
+	 * @param center Center location of the effect
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @param players Receivers of the effect
+	 * @see #sendPacket
+	 * @see #instantiatePacket
+	 */
+	public void display(Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount, Player... players) {
+		sendPacket(Arrays.asList(players), instantiatePacket(name, center, offsetX, offsetY, offsetZ, speed, amount));
+	}
+	/**
+	 * Displays a particle effect which is only visible for all players within a certain range in the world of @param center
+	 *
+	 * @param center Center location of the effect
+	 * @param range Range of the visibility
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @param players Receivers of the effect
+	 * @throws @IllegalArgumentException if the range is higher than 20
+	 * @see #sendPacket
+	 * @see #instantiatePacket
+	 */
+	public void display(Location center, double range, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+		if (range > MAX_RANGE)
+			throw new IllegalArgumentException("Range cannot exceed the maximum value of 16");
+		sendPacket(getPlayers(center, range), instantiatePacket(name, center, offsetX, offsetY, offsetZ, speed, amount));
+	}
+	/**
+	 * Displays a particle effect which is only visible for all players within a range of 20 in the world of @param center
+	 *
+	 * @param center Center location of the effect
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @param players Receivers of the effect
+	 * @see #display(Location, double, float, float, float, float, int)
+	 */
+	public void display(Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+		display(center, MAX_RANGE, offsetX, offsetY, offsetZ, speed, amount);
+	}
+	/**
+	 * Displays an icon crack (item break) particle effect which is only visible for the specified players
+	 *
+	 * @param center Center location of the effect
+	 * @param id Id of the icon
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @param players Receivers of the effect
+	 * @see #sendPacket
+	 * @see #instantiateIconCrackPacket
+	 */
+	public static void displayIconCrack(Location center, int id, float offsetX, float offsetY, float offsetZ, float speed, int amount, Player... players) {
+		sendPacket(Arrays.asList(players), instantiateIconCrackPacket(id, center, offsetX, offsetY, offsetZ, speed, amount));
+	}
+	/**
+	 * Displays an icon crack (item break) particle effect which is only visible for all players within a certain range in the world of @param center
+	 *
+	 * @param center Center location of the effect
+	 * @param range Range of the visibility
+	 * @param id Id of the icon
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @throws @IllegalArgumentException if the range is higher than 20
+	 * @see #sendPacket
+	 * @see #instantiateIconCrackPacket
+	 */
+	public static void displayIconCrack(Location center, double range, int id, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+		if (range > MAX_RANGE)
+			throw new IllegalArgumentException("Range has to be lower/equal the maximum of 16");
+		sendPacket(getPlayers(center, range), instantiateIconCrackPacket(id, center, offsetX, offsetY, offsetZ, speed, amount));
+	}
+	/**
+	 * Displays an icon crack (item break) effect which is visible for all players whitin the maximum range of 20 blocks in the world of @param center
+	 *
+	 * @param center Center location of the effect
+	 * @param id Id of the icon
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @see #displayIconCrack(Location, double, int, float, float, float, float, int)
+	 */
+	public static void displayIconCrack(Location center, int id, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+		displayIconCrack(center, MAX_RANGE, id, offsetX, offsetY, offsetZ, speed, amount);
+	}
+	/**
+	 * Displays a block crack (block break) particle effect which is only visible for the specified players
+	 *
+	 * @param center Center location of the effect
+	 * @param id Id of the block
+	 * @param data Data value
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param amount Amount of particles
+	 * @param players Receivers of the effect
+	 * @see #sendPacket
+	 * @see #instantiateBlockCrackPacket
+	 */
+	public static void displayBlockCrack(Location center, int id, byte data, float offsetX, float offsetY, float offsetZ, int amount, Player... players) {
+		sendPacket(Arrays.asList(players), instantiateBlockCrackPacket(id, data, center, offsetX, offsetY, offsetZ, amount));
+	}
+	/**
+	 * Displays a block crack (block break) particle effect which is only visible for all players within a certain range in the world of @param center
+	 *
+	 * @param center Center location of the effect
+	 * @param range Range of the visibility
+	 * @param id Id of the block
+	 * @param data Data value
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param amount Amount of particles
+	 * @throws @IllegalArgumentException if the range is higher than 20
+	 * @see #sendPacket
+	 * @see #instantiateBlockCrackPacket
+	 */
+	public static void displayBlockCrack(Location center, double range, int id, byte data, float offsetX, float offsetY, float offsetZ, int amount) {
+		if (range > MAX_RANGE)
+			throw new IllegalArgumentException("Range has to be lower/equal the maximum of 16");
+		sendPacket(getPlayers(center, range), instantiateBlockCrackPacket(id, data, center, offsetX, offsetY, offsetZ, amount));
+	}
+	/**
+	 * Displays a block crack (block break) effect which is visible for all players whitin the maximum range of 20 blocks in the world of @param center
+	 *
+	 * @param center Center location of the effect
+	 * @param id Id of the block
+	 * @param data Data value
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param amount Amount of particles
+	 * @see #displayBlockCrack(Location, double, int, byte, float, float, float, int)
+	 */
+	public static void displayBlockCrack(Location center, int id, byte data, float offsetX, float offsetY, float offsetZ, int amount) {
+		displayBlockCrack(center, MAX_RANGE, id, data, offsetX, offsetY, offsetZ, amount);
+	}
+	/**
+	 * Displays a block dust particle effect which is only visible for the specified players
+	 *
+	 * @param center Center location of the effect
+	 * @param id Id of the block
+	 * @param data Data value
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @param players Receivers of the effect
+	 * @see #sendPacket
+	 * @see #instantiateBlockDustPacket
+	 */
+	public static void displayBlockDust(Location center, int id, byte data, float offsetX, float offsetY, float offsetZ, float speed, int amount, Player... players) {
+		sendPacket(Arrays.asList(players), instantiateBlockDustPacket(id, data, center, offsetX, offsetY, offsetZ, speed, amount));
+	}
+	/**
+	 * Displays a block dust particle effect which is only visible for all players within a certain range in the world of @param center
+	 *
+	 * @param center Center location of the effect
+	 * @param range Range of the visibility
+	 * @param id Id of the block
+	 * @param data Data value
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @throws @IllegalArgumentException if the range is higher than 20
+	 * @see #sendPacket
+	 * @see #instantiateBlockDustPacket
+	 */
+	public static void displayBlockDust(Location center, double range, int id, byte data, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+		if (range > MAX_RANGE)
+			throw new IllegalArgumentException("Range has to be lower/equal the maximum of 16");
+		sendPacket(getPlayers(center, range), instantiateBlockDustPacket(id, data, center, offsetX, offsetY, offsetZ, speed, amount));
+	}
+	/**
+	 * Displays a block dust effect which is visible for all players whitin the maximum range of 20 blocks in the world of @param center
+	 *
+	 * @param center Center location of the effect
+	 * @param id Id of the block
+	 * @param data Data value
+	 * @param offsetX Maximum distance particles can fly away from the center on the x-axis
+	 * @param offsetY Maximum distance particles can fly away from the center on the y-axis
+	 * @param offsetZ Maximum distance particles can fly away from the center on the z-axis
+	 * @param speed Display speed of the particles
+	 * @param amount Amount of particles
+	 * @see #displayBlockDust(Location, double, int, byte, float, float, float, float, int)
+	 */
+	public static void displayBlockDust(Location center, int id, byte data, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+		displayBlockDust(center, MAX_RANGE, id, data, offsetX, offsetY, offsetZ, speed, amount);
+	}
+	/**
+	 * Represents a runtime exception that can be thrown upon packet instantiation
+	 */
+	private static final class PacketInstantiationException extends RuntimeException {
+		private static final long serialVersionUID = 3203085387160737484L;
 		/**
-		 * sets a value of an {@link Object} via reflection
-		 *
-		 * @param instance
-		 *            instance the class to use
-		 * @param fieldName
-		 *            the name of the {@link Field} to modify
-		 * @param value
-		 *            the value to set
-		 * @throws Exception
+		 * @param message Message that will be logged
 		 */
-		public static void setValue(Object instance, String fieldName, Object value) throws Exception {
-			Field field = instance.getClass().getDeclaredField(fieldName);
-			field.setAccessible(true);
-			field.set(instance, value);
+		public PacketInstantiationException(String message) {
+			super(message);
 		}
-
 		/**
-		 * get a value of an {@link Object}'s {@link Field}
-		 *
-		 * @param instance
-		 *            the target {@link Object}
-		 * @param fieldName
-		 *            name of the {@link Field}
-		 * @return the value of {@link Object} instance's {@link Field} with the name of fieldName
-		 * @throws Exception
+		 * @param message Message that will be logged
+		 * @param cause Cause of the exception
 		 */
-		public static Object getValue(Object instance, String fieldName) throws Exception {
-			Field field = instance.getClass().getDeclaredField(fieldName);
-			field.setAccessible(true);
-			return field.get(instance);
+		public PacketInstantiationException(String message, Throwable cause) {
+			super(message, cause);
 		}
-
-		public static String getVersion() {
-			String name = Bukkit.getServer().getClass().getPackage().getName();
-			String version = name.substring(name.lastIndexOf('.') + 1) + ".";
-			return version;
-		}
-
-		public static Class<?> getNMSClass(String className) {
-			String fullName = "net.minecraft.server." + getVersion() + className;
-			Class<?> clazz = null;
-			try {
-				clazz = Class.forName(fullName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return clazz;
-		}
-
-		public static Class<?> getOBCClass(String className) {
-			String fullName = "org.bukkit.craftbukkit." + getVersion() + className;
-			Class<?> clazz = null;
-			try {
-				clazz = Class.forName(fullName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return clazz;
-		}
-
-		public static Object getHandle(Object obj) {
-			try {
-				return getMethod(obj.getClass(), "getHandle", new Class[0]).invoke(obj, new Object[0]);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		public static Field getField(Class<?> clazz, String name) {
-			try {
-				Field field = clazz.getDeclaredField(name);
-				field.setAccessible(true);
-				return field;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		public static Method getMethod(Class<?> clazz, String name, Class<?>... args) {
-			for (Method m : clazz.getMethods()) {
-				if ((m.getName().equals(name)) && ((args.length == 0) || (ClassListEqual(args, m.getParameterTypes())))) {
-					m.setAccessible(true);
-					return m;
-				}
-			}
-			return null;
-		}
-
-		public static boolean ClassListEqual(Class<?>[] l1, Class<?>[] l2) {
-			boolean equal = true;
-			if (l1.length != l2.length) {
-				return false;
-			}
-			for (int i = 0; i < l1.length; i++) {
-				if (l1[i] != l2[i]) {
-					equal = false;
-					break;
-				}
-			}
-			return equal;
+	}
+	/**
+	 * Represents a runtime exception that can be thrown upon packet sending
+	 */
+	private static final class PacketSendingException extends RuntimeException {
+		private static final long serialVersionUID = 3203085387160737484L;
+		/**
+		 * @param message Message that will be logged
+		 * @param cause Cause of the exception
+		 */
+		public PacketSendingException(String message, Throwable cause) {
+			super(message, cause);
 		}
 	}
 }
