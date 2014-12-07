@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -43,7 +44,7 @@ public class RevertChecker implements Runnable {
 		@Override
 		public ArrayList<Chunk> call() throws Exception {
 			ArrayList<Chunk> chunks = new ArrayList<Chunk>();
-			Player[] players = server.getOnlinePlayers();
+			Collection<? extends Player> players = server.getOnlinePlayers();
 
 			for (Player player : players) {
 				Chunk chunk = player.getLocation().getChunk();
