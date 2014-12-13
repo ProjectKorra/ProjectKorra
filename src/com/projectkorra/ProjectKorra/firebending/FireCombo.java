@@ -260,8 +260,8 @@ public class FireCombo {
 					bplayer.addCooldown("JetBlast", cooldown);
 					firstTime = false;
 					float spread = 0F;
-					ParticleEffect.LARGE_EXPLODE.display(player.getLocation(),
-							spread, spread, spread, 0, 1);
+					ParticleEffect.EXPLOSION_LARGE.display(
+                                                spread, spread, spread, 0, 1, player.getLocation(), 20);
 					player.getWorld().playSound(player.getLocation(),
 							Sound.EXPLODE, 15, 0F);
 				}
@@ -303,7 +303,7 @@ public class FireCombo {
 				fs.setSpread(1.0F);
 				fs.setUseNewParticles(true);
 				fs.setCollisionRadius(3);
-				fs.setParticleEffect(ParticleEffect.LARGE_SMOKE);
+				fs.setParticleEffect(ParticleEffect.SMOKE_LARGE);
 				if (progressCounter % 5 != 0)
 					fs.setCollides(false);
 				fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
@@ -365,7 +365,7 @@ public class FireCombo {
 				tempLoc.add(newDir);
 				tempLoc.setY(tempLoc.getY()
 						+ (FIRE_WHEEL_RADIUS * Math.sin(Math.toRadians(i))));
-				ParticleEffect.FLAME.display(tempLoc, 0, 0, 0, 0, 1);
+				ParticleEffect.FLAME.display(0, 0, 0, 0, 1, tempLoc, 20);
 			}
 
 			currentLoc = currentLoc.add(direction.clone().multiply(speed));
@@ -551,8 +551,8 @@ public class FireCombo {
 			}
 			for (int i = 0; i < density; i++) {
 				if (useNewParticles)
-					particleEffect.display(currentLoc, spread, spread, spread,
-							0, 1);
+					particleEffect.display(spread, spread, spread,
+							0, 1, currentLoc, 20);
 				else
 					currentLoc.getWorld().playEffect(currentLoc,
 							Effect.MOBSPAWNER_FLAMES, 0, 15);

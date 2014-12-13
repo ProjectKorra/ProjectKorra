@@ -205,7 +205,7 @@ public class LavaFlow
 						else if(Math.random() < PARTICLE_DENSITY
 								&& dSquared < Math.pow(currentRadius + PARTICLE_OFFSET, 2)
 								&& currentRadius + PARTICLE_OFFSET < maxRadius) {
-							ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+							ParticleEffect.LAVA.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1, loc, 20);
 						}
 					}
 
@@ -254,7 +254,7 @@ public class LavaFlow
 								&& !isLava(tempBlock) 
 								&& Math.random() < PARTICLE_DENSITY
 								&& tempBlock.getLocation().distanceSquared(origin) <= Math.pow(radius,2))
-							ParticleEffect.LAVA.display(loc, 0, 0, 0, 0, 1); 
+							ParticleEffect.LAVA.display(0, 0, 0, 0, 1, loc, 20); 
 
 					}
 				return;
@@ -286,7 +286,7 @@ public class LavaFlow
 								if(Math.random() < LAVA_CREATE_SPEED)
 									createLava(tempBlock);
 								else
-									ParticleEffect.LAVA.display(loc, 0, 0, 0, 0, 1); 
+									ParticleEffect.LAVA.display(0, 0, 0, 0, 1, loc, 20); 
 							}
 							else if(!makeLava && isLava(tempBlock))
 							{
