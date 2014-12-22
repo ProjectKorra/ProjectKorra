@@ -133,6 +133,7 @@ import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
+
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
@@ -2118,6 +2119,28 @@ public class Methods {
 				Suffocate.remove(player);
 			}
 		}
+	}
+	
+	public static FallingBlock spawnFallingBlock(Location loc, int type)
+	{
+		return spawnFallingBlock(loc, type, (byte) 0);
+	}
+	
+	public static FallingBlock spawnFallingBlock(Location loc, Material type)
+	{
+		return spawnFallingBlock(loc, type, (byte) 0);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static FallingBlock spawnFallingBlock(Location loc, int type, byte data)
+	{
+		return loc.getWorld().spawnFallingBlock(loc, type, data);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static FallingBlock spawnFallingBlock(Location loc, Material type, byte data)
+	{
+		return loc.getWorld().spawnFallingBlock(loc, type, data);
 	}
 
 	public static void playFirebendingParticles(Location loc) {
