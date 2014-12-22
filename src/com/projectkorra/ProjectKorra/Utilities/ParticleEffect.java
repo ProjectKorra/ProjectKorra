@@ -1,5 +1,4 @@
 package com.projectkorra.ProjectKorra.Utilities;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -10,17 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import net.minecraft.server.v1_8_R1.EnumParticle;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.Utilities.ReflectionHandler.PackageType;
 import com.projectkorra.ProjectKorra.Utilities.ReflectionHandler.PacketType;
 import com.projectkorra.ProjectKorra.Utilities.ReflectionHandler.SubPackageType;
-
 /**
  * ParticleEffect Library v1.4
  *
@@ -206,7 +201,6 @@ public enum ParticleEffect {
 	 * @displayed by bone meal and when trading with a villager
 	 */
 	HAPPY_VILLAGER("happyVillager");
-
 	private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<String, ParticleEffect>();
 	private static final double MAX_RANGE = 16;
 	private static Constructor<?> packetPlayOutWorldParticles;
@@ -214,7 +208,6 @@ public enum ParticleEffect {
 	private static Field playerConnection;
 	private static Method sendPacket;
 	private final String name;
-
 	static {
 		for (ParticleEffect p : values())
 			NAME_MAP.put(p.name, p);
@@ -228,21 +221,18 @@ public enum ParticleEffect {
 			e.printStackTrace();
 		}
 	}
-
 	/**
 	 * @param name Name of this particle effect
 	 */
 	private ParticleEffect(String name) {
 		this.name = name;
 	}
-
 	/**
 	 * @return The name of this particle effect
 	 */
 	public String getName() {
 		return this.name;
 	}
-
 	/**
 	 * Gets a particle effect from name
 	 *
@@ -256,7 +246,6 @@ public enum ParticleEffect {
 					return e.getValue();
 		return null;
 	}
-
 	/**
 	 * Gets a list of players in a certain range
 	 *
@@ -273,7 +262,6 @@ public enum ParticleEffect {
 				players.add(p);
 		return players;
 	}
-
 	/**
 	 * Instantiates a new @PacketPlayOutWorldParticles object through reflection
 	 *
@@ -295,65 +283,62 @@ public enum ParticleEffect {
 			throw new PacketInstantiationException("Packet instantiation failed", e);
 		}
 	}
-	
 	public static EnumParticle getEnumParticle(String name)
 	{
 		switch(name.toUpperCase())
 		{
-			case "HUGEEXPLOSION":
-				return EnumParticle.EXPLOSION_HUGE;
-			case "BUBBLE":
-				return EnumParticle.WATER_BUBBLE;
-			case "SUSPEND":
-				return EnumParticle.SUSPENDED;
-			case "DEPTHSUSPEND":
-				return EnumParticle.SUSPENDED_DEPTH;
-			case "MAGICCRIT":
-				return EnumParticle.CRIT_MAGIC;
-			case "SMOKE":
-				return EnumParticle.SMOKE_NORMAL;
-			case "MOBSPELL":
-				return EnumParticle.SPELL_MOB;
-			case "MOBSPELLAMBIENT":
-				return EnumParticle.SPELL_MOB_AMBIENT;
-			case "INSTANTSPELL":
-				return EnumParticle.SPELL_INSTANT;
-			case "WITCHMAGIC":
-				return EnumParticle.SPELL_WITCH;
-			case "EXPLODE":
-				return EnumParticle.EXPLOSION_NORMAL;
-			case "SPLASH":
-				return EnumParticle.WATER_SPLASH;
-			case "WAKE":
-				return EnumParticle.WATER_WAKE;
-			case "LARGESMOKE":
-				return EnumParticle.SMOKE_LARGE;
-			case "REDDUST":
-				return EnumParticle.REDSTONE;
-			case "SNOWBALLPOOF":
-				return EnumParticle.SNOWBALL;
-			case "ANGRYVILLAGER":
-				return EnumParticle.VILLAGER_ANGRY;
-			case "HAPPYVILLAGER":
-				return EnumParticle.VILLAGER_HAPPY;
-			case "DRIPWATER":
-				return EnumParticle.DRIP_WATER;
-			case "DRIPLAVA":
-				return EnumParticle.DRIP_LAVA;
-			case "SNOWSHOVEL":
-				return EnumParticle.SNOW_SHOVEL;
-			case "ENCHANTMENTTABLE":
-				return EnumParticle.ENCHANTMENT_TABLE;
-			case "TOWNAURA":
-				return EnumParticle.TOWN_AURA;
-			case "FIREWORKSSPARK":
-				return EnumParticle.FIREWORKS_SPARK;
-			default:
-				return EnumParticle.valueOf(name.toUpperCase());
+		case "HUGEEXPLOSION":
+			return EnumParticle.EXPLOSION_HUGE;
+		case "BUBBLE":
+			return EnumParticle.WATER_BUBBLE;
+		case "SUSPEND":
+			return EnumParticle.SUSPENDED;
+		case "DEPTHSUSPEND":
+			return EnumParticle.SUSPENDED_DEPTH;
+		case "MAGICCRIT":
+			return EnumParticle.CRIT_MAGIC;
+		case "SMOKE":
+			return EnumParticle.SMOKE_NORMAL;
+		case "MOBSPELL":
+			return EnumParticle.SPELL_MOB;
+		case "MOBSPELLAMBIENT":
+			return EnumParticle.SPELL_MOB_AMBIENT;
+		case "INSTANTSPELL":
+			return EnumParticle.SPELL_INSTANT;
+		case "WITCHMAGIC":
+			return EnumParticle.SPELL_WITCH;
+		case "EXPLODE":
+			return EnumParticle.EXPLOSION_NORMAL;
+		case "SPLASH":
+			return EnumParticle.WATER_SPLASH;
+		case "WAKE":
+			return EnumParticle.WATER_WAKE;
+		case "LARGESMOKE":
+			return EnumParticle.SMOKE_LARGE;
+		case "REDDUST":
+			return EnumParticle.REDSTONE;
+		case "SNOWBALLPOOF":
+			return EnumParticle.SNOWBALL;
+		case "ANGRYVILLAGER":
+			return EnumParticle.VILLAGER_ANGRY;
+		case "HAPPYVILLAGER":
+			return EnumParticle.VILLAGER_HAPPY;
+		case "DRIPWATER":
+			return EnumParticle.DRIP_WATER;
+		case "DRIPLAVA":
+			return EnumParticle.DRIP_LAVA;
+		case "SNOWSHOVEL":
+			return EnumParticle.SNOW_SHOVEL;
+		case "ENCHANTMENTTABLE":
+			return EnumParticle.ENCHANTMENT_TABLE;
+		case "TOWNAURA":
+			return EnumParticle.TOWN_AURA;
+		case "FIREWORKSSPARK":
+			return EnumParticle.FIREWORKS_SPARK;
+		default:
+			return EnumParticle.valueOf(name.toUpperCase());
 		}
 	}
-
-
 	/**
 	 * Instantiates a new @PacketPlayOutWorldParticles object through reflection especially for the "iconcrack" effect
 	 *
@@ -370,7 +355,6 @@ public enum ParticleEffect {
 	private static Object instantiateIconCrackPacket(int id, Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
 		return instantiatePacket("iconcrack_" + id, center, offsetX, offsetY, offsetZ, speed, amount);
 	}
-
 	/**
 	 * Instantiates a new @PacketPlayOutWorldParticles object through reflection especially for the "blockcrack" effect
 	 *
@@ -387,7 +371,6 @@ public enum ParticleEffect {
 	private static Object instantiateBlockCrackPacket(int id, byte data, Location center, float offsetX, float offsetY, float offsetZ, int amount) {
 		return instantiatePacket("blockcrack_" + id + "_" + data, center, offsetX, offsetY, offsetZ, 0, amount);
 	}
-
 	/**
 	 * Instantiates a new @PacketPlayOutWorldParticles object through reflection especially for the "blockdust" effect
 	 *
@@ -405,7 +388,6 @@ public enum ParticleEffect {
 	private static Object instantiateBlockDustPacket(int id, byte data, Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
 		return instantiatePacket("blockdust_" + id + "_" + data, center, offsetX, offsetY, offsetZ, speed, amount);
 	}
-
 	/**
 	 * Sends a packet through reflection to a player
 	 *
@@ -420,7 +402,6 @@ public enum ParticleEffect {
 			throw new PacketSendingException("Failed to send a packet to player '" + p.getName() + "'", e);
 		}
 	}
-
 	/**
 	 * Sends a packet through reflection to a collection of players
 	 *
@@ -433,7 +414,6 @@ public enum ParticleEffect {
 		for (Player p : players)
 			sendPacket(p, packet);
 	}
-
 	/**
 	 * Displays a particle effect which is only visible for the specified players
 	 *
@@ -450,7 +430,6 @@ public enum ParticleEffect {
 	public void display(Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount, Player... players) {
 		sendPacket(Arrays.asList(players), instantiatePacket(name, center, offsetX, offsetY, offsetZ, speed, amount));
 	}
-
 	/**
 	 * Displays a particle effect which is only visible for all players within a certain range in the world of @param center
 	 *
@@ -471,7 +450,6 @@ public enum ParticleEffect {
 			throw new IllegalArgumentException("Range cannot exceed the maximum value of 16");
 		sendPacket(getPlayers(center, range), instantiatePacket(name, center, offsetX, offsetY, offsetZ, speed, amount));
 	}
-
 	/**
 	 * Displays a particle effect which is only visible for all players within a range of 20 in the world of @param center
 	 *
@@ -487,7 +465,6 @@ public enum ParticleEffect {
 	public void display(Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
 		display(center, MAX_RANGE, offsetX, offsetY, offsetZ, speed, amount);
 	}
-
 	/**
 	 * Displays an icon crack (item break) particle effect which is only visible for the specified players
 	 *
@@ -505,7 +482,6 @@ public enum ParticleEffect {
 	public static void displayIconCrack(Location center, int id, float offsetX, float offsetY, float offsetZ, float speed, int amount, Player... players) {
 		sendPacket(Arrays.asList(players), instantiateIconCrackPacket(id, center, offsetX, offsetY, offsetZ, speed, amount));
 	}
-
 	/**
 	 * Displays an icon crack (item break) particle effect which is only visible for all players within a certain range in the world of @param center
 	 *
@@ -526,7 +502,6 @@ public enum ParticleEffect {
 			throw new IllegalArgumentException("Range has to be lower/equal the maximum of 16");
 		sendPacket(getPlayers(center, range), instantiateIconCrackPacket(id, center, offsetX, offsetY, offsetZ, speed, amount));
 	}
-
 	/**
 	 * Displays an icon crack (item break) effect which is visible for all players whitin the maximum range of 20 blocks in the world of @param center
 	 *
@@ -542,7 +517,6 @@ public enum ParticleEffect {
 	public static void displayIconCrack(Location center, int id, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
 		displayIconCrack(center, MAX_RANGE, id, offsetX, offsetY, offsetZ, speed, amount);
 	}
-
 	/**
 	 * Displays a block crack (block break) particle effect which is only visible for the specified players
 	 *
@@ -560,7 +534,6 @@ public enum ParticleEffect {
 	public static void displayBlockCrack(Location center, int id, byte data, float offsetX, float offsetY, float offsetZ, int amount, Player... players) {
 		sendPacket(Arrays.asList(players), instantiateBlockCrackPacket(id, data, center, offsetX, offsetY, offsetZ, amount));
 	}
-
 	/**
 	 * Displays a block crack (block break) particle effect which is only visible for all players within a certain range in the world of @param center
 	 *
@@ -581,7 +554,6 @@ public enum ParticleEffect {
 			throw new IllegalArgumentException("Range has to be lower/equal the maximum of 16");
 		sendPacket(getPlayers(center, range), instantiateBlockCrackPacket(id, data, center, offsetX, offsetY, offsetZ, amount));
 	}
-
 	/**
 	 * Displays a block crack (block break) effect which is visible for all players whitin the maximum range of 20 blocks in the world of @param center
 	 *
@@ -597,7 +569,6 @@ public enum ParticleEffect {
 	public static void displayBlockCrack(Location center, int id, byte data, float offsetX, float offsetY, float offsetZ, int amount) {
 		displayBlockCrack(center, MAX_RANGE, id, data, offsetX, offsetY, offsetZ, amount);
 	}
-
 	/**
 	 * Displays a block dust particle effect which is only visible for the specified players
 	 *
@@ -616,7 +587,6 @@ public enum ParticleEffect {
 	public static void displayBlockDust(Location center, int id, byte data, float offsetX, float offsetY, float offsetZ, float speed, int amount, Player... players) {
 		sendPacket(Arrays.asList(players), instantiateBlockDustPacket(id, data, center, offsetX, offsetY, offsetZ, speed, amount));
 	}
-
 	/**
 	 * Displays a block dust particle effect which is only visible for all players within a certain range in the world of @param center
 	 *
@@ -638,7 +608,6 @@ public enum ParticleEffect {
 			throw new IllegalArgumentException("Range has to be lower/equal the maximum of 16");
 		sendPacket(getPlayers(center, range), instantiateBlockDustPacket(id, data, center, offsetX, offsetY, offsetZ, speed, amount));
 	}
-
 	/**
 	 * Displays a block dust effect which is visible for all players whitin the maximum range of 20 blocks in the world of @param center
 	 *
@@ -655,20 +624,17 @@ public enum ParticleEffect {
 	public static void displayBlockDust(Location center, int id, byte data, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
 		displayBlockDust(center, MAX_RANGE, id, data, offsetX, offsetY, offsetZ, speed, amount);
 	}
-
 	/**
 	 * Represents a runtime exception that can be thrown upon packet instantiation
 	 */
 	private static final class PacketInstantiationException extends RuntimeException {
 		private static final long serialVersionUID = 3203085387160737484L;
-
 		/**
 		 * @param message Message that will be logged
 		 */
 		public PacketInstantiationException(String message) {
 			super(message);
 		}
-
 		/**
 		 * @param message Message that will be logged
 		 * @param cause Cause of the exception
@@ -677,13 +643,11 @@ public enum ParticleEffect {
 			super(message, cause);
 		}
 	}
-
 	/**
 	 * Represents a runtime exception that can be thrown upon packet sending
 	 */
 	private static final class PacketSendingException extends RuntimeException {
 		private static final long serialVersionUID = 3203085387160737484L;
-
 		/**
 		 * @param message Message that will be logged
 		 * @param cause Cause of the exception

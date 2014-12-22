@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/BukkitForPlugins1.8.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Desktop/Korra/bukkit-1.8-R0.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Downloads/Factions.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Downloads/GriefPrevention.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Downloads/LWC.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Downloads/MassiveCore.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Downloads/NoCheatPlus.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Downloads/PreciousStones.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Downloads/TagAPI.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Downloads/Towny.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Desktop/Amestria/plugins/WorldEdit.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Downloads/WorldGuard.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Downloads/KorraRPG.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brendan/Desktop/Korra/craftbukkit-180.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/Factions.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/GriefPrevention.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/LWC.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/MassiveCore.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/NoCheatPlus.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/PreciousStones.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/TagAPI.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/Towny.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldEdit.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldGuard.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/KorraRPG.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/Spigot.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

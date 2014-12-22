@@ -43,45 +43,33 @@ public class RevertChecker implements Runnable {
 
 		@Override
 		public ArrayList<Chunk> call() throws Exception {
-			ArrayList<Chunk> chunks = new ArrayList<Chunk>();
-			Collection<? extends Player> players = server.getOnlinePlayers();
 
-			for (Player player : players) {
+			ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+
+			for (Player player : server.getOnlinePlayers()) {
 				Chunk chunk = player.getLocation().getChunk();
 				if (!chunks.contains(chunk))
 					chunks.add(chunk);
 			}
-
 			return chunks;
-		}
 
+		}
 	}
+	
+
 
 	public void run() {
 		time = System.currentTimeMillis();
 
 		if (plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
 
-			// ArrayList<Chunk> chunks = new ArrayList<Chunk>();
-			// Player[] players = plugin.getServer().getOnlinePlayers();
-			//
-			// for (Player player : players) {
-			// Chunk chunk = player.getLocation().getChunk();
-			// if (!chunks.contains(chunk))
-			// chunks.add(chunk);
-			// }
-
 			try {
-				// Tools.verbose("Calling future at t="
-				// + System.currentTimeMillis());
 				returnFuture = plugin
 						.getServer()
 						.getScheduler()
 						.callSyncMethod(plugin,
 								new getOccupiedChunks(plugin.getServer()));
 				ArrayList<Chunk> chunks = returnFuture.get();
-				// Tools.verbose("Future called, t=" +
-				// System.currentTimeMillis());
 
 				Map<Block, Information> earth = new HashMap<Block, Information>();
 				earth.putAll(Methods.movedearth);
@@ -120,41 +108,6 @@ public class RevertChecker implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
-			// for (Block block : Tools.tempearthblocks.keySet()) {
-			// if (revertQueue.containsKey(block))
-			// continue;
-			// boolean remove = true;
-			//
-			// Block index = Tools.tempearthblocks.get(block);
-			// if (Tools.movedearth.containsKey(index)) {
-			// Information info = Tools.movedearth.get(index);
-			// if (time < info.getTime() + ConfigManager.revertchecktime
-			// || (chunks.contains(index.getChunk()) && safeRevert)) {
-			// remove = false;
-			// }
-			// }
-			//
-			// if (remove)
-			// addToRevertQueue(block);
-			//
-			// }
-
-			// for (Block block : Tools.movedearth.keySet()) {
-			// if (movedEarthQueue.containsKey(block))
-			// continue;
-			// Information info = Tools.movedearth.get(block);
-			// if (time >= info.getTime() + ConfigManager.revertchecktime) {
-			// // if (Tools.tempearthblocks.containsKey(info.getBlock()))
-			// // Tools.verbose("PROBLEM!");
-			// // block.setType(info.getType());
-			// // Tools.movedearth.remove(block);
-			// addToMovedEarthQueue(block, info.getType());
-			// }
-			// }
-
-			// Tools.writeToLog("Still " + Tools.tempearthblocks.size()
-			// + " remaining.");
 		}
 	}
 
@@ -174,14 +127,14 @@ public class RevertChecker implements Runnable {
 		if (!earthRevertQueue.containsKey(block))
 			earthRevertQueue.put(block, block);
 	}
-	
+
 	public static void revertEarthBlocks() {
 		for (Block block : earthRevertQueue.keySet()) {
 			Methods.revertBlock(block);
 			earthRevertQueue.remove(block);
 		}
 	}
-	
+
 	public static void revertAirBlocks() {
 		for (int ID : airRevertQueue.keySet()) {
 			Methods.revertAirBlock(ID);

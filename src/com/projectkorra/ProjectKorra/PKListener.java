@@ -498,9 +498,9 @@ public class PKListener implements Listener {
 						new MetalClips(player, 1);
 				}
 
-				if (abil.equalsIgnoreCase("LavaSurge")) {
-					new LavaSurge(player);
-				}
+//				if (abil.equalsIgnoreCase("LavaSurge")) {
+//					new LavaSurge(player);
+//				}
 				
 				if (abil.equalsIgnoreCase("LavaFlow")) {
 					new LavaFlow(player,LavaFlow.AbilityType.SHIFT);

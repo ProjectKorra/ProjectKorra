@@ -463,15 +463,15 @@ public class ConfigManager {
         config.addDefault("Abilities.Earth.LavaFlow.AllowNaturalFlow", false);
         config.addDefault("Abilities.Earth.LavaFlow.ParticleDensity", 0.33);
         
-		config.addDefault("Abilities.Earth.LavaSurge.Enabled", true);
-	    config.addDefault("Abilities.Earth.LavaSurge.Description", "LavaSurge is a fundamental move for any Lavabender out there. To use, simply sneak (Default: Shift) while looking at a source of Earth or Lava, then click in a direction. A surge of lava will swiftly travel towards the target you were pointing at, dealing moderate damage, a large knockback, and setting them on fire.");
-	    config.addDefault("Abilities.Earth.LavaSurge.Damage", 4);
-	    config.addDefault("Abilities.Earth.LavaSurge.Cooldown", 1000);
-		config.addDefault("Abilities.Earth.LavaSurge.FractureRadius", 1);
-		config.addDefault("Abilities.Earth.LavaSurge.PrepareRange", 7);
-		config.addDefault("Abilities.Earth.LavaSurge.TravelRange", 15);
-		config.addDefault("Abilities.Earth.LavaSurge.MaxLavaWaves", 10);
-		config.addDefault("Abilities.Earth.LavaSurge.SourceCanBeEarth", true);
+//		config.addDefault("Abilities.Earth.LavaSurge.Enabled", true);
+//	    config.addDefault("Abilities.Earth.LavaSurge.Description", "LavaSurge is a fundamental move for any Lavabender out there. To use, simply sneak (Default: Shift) while looking at a source of Earth or Lava, then click in a direction. A surge of lava will swiftly travel towards the target you were pointing at, dealing moderate damage, a large knockback, and setting them on fire.");
+//	    config.addDefault("Abilities.Earth.LavaSurge.Damage", 4);
+//	    config.addDefault("Abilities.Earth.LavaSurge.Cooldown", 1000);
+//		config.addDefault("Abilities.Earth.LavaSurge.FractureRadius", 1);
+//		config.addDefault("Abilities.Earth.LavaSurge.PrepareRange", 7);
+//		config.addDefault("Abilities.Earth.LavaSurge.TravelRange", 15);
+//		config.addDefault("Abilities.Earth.LavaSurge.MaxLavaWaves", 10);
+//		config.addDefault("Abilities.Earth.LavaSurge.SourceCanBeEarth", true);
 
 		config.addDefault("Abilities.Earth.MetalClips.Enabled", true);
 		config.addDefault("Abilities.Earth.MetalClips.Description", "MetalClips has the potential to be both an offensive and a utility ability. To start, you must carry smelted Iron Ingots in your inventory. To apply the clips onto an entity, simply click at them. If the entity is a Zombie, a Skeleton, or a Player, the clips will form armor around the entity, giving you some control over them. Each additional clip will give you more control. If you have permission to do so, you may crush the entity against a wall with a 4th clip, hurting them. Without explicit permissions, you will only be able to strap three clips on your target. If the entity is not one of the above, the clip will simply do damage and fall to the ground, to be collected.");

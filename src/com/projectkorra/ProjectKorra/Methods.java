@@ -75,6 +75,9 @@ import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.Information;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -1445,7 +1448,7 @@ public class Methods {
 			if (gpp != null && respectGriefPrevention) {
 				Material type = player.getWorld().getBlockAt(location).getType();
 				if (type == null) type = Material.AIR;
-				String reason = GriefPrevention.instance.allowBuild(player, location);
+				String reason = GriefPrevention.instance.allowBuild(player, location, type);
 
 				if (ignite.contains(ability)) {
 
@@ -1733,6 +1736,16 @@ public class Methods {
 			return ParticleEffect.CLOUD;
 		else 
 			return ParticleEffect.CLOUD;
+	}
+	
+	public static Collection<Player> getPlayersAroundPoint(Location location, double distance) {
+		Collection<Player> players = new HashSet<Player>();
+		for (Player player: Bukkit.getOnlinePlayers()) {
+			if (player.getLocation().distance(location) <= distance) {
+				players.add(player);
+			}
+		}
+		return players;
 	}
 
 	public static void playAirbendingParticles(Location loc, int amount) {
