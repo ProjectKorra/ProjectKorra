@@ -127,15 +127,18 @@ import com.projectkorra.ProjectKorra.waterbending.IceSpike;
 import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
 import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterReturn;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 import com.projectkorra.ProjectKorra.waterbending.WaterWall;
+import com.projectkorra.ProjectKorra.waterbending.WaterWave;
 import com.projectkorra.ProjectKorra.waterbending.Wave;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
+
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
@@ -2007,6 +2010,7 @@ public class Methods {
 		Tornado.instances.clear();
 		AirBurst.removeAll();
 		Suffocate.removeAll();
+		AirCombo.removeAll();
 
 		Catapult.removeAll();
 		CompactColumn.removeAll();
@@ -2017,6 +2021,7 @@ public class Methods {
 		EarthTunnel.instances.clear();
 		Shockwave.removeAll();
 		Tremorsense.removeAll();
+		LavaFlow.removeAll();
 
 		FreezeMelt.removeAll();
 		IceSpike.removeAll();
@@ -2028,6 +2033,8 @@ public class Methods {
 		Plantbending.regrowAll();
 		OctopusForm.removeAll();
 		Bloodbending.instances.clear();
+		WaterWave.removeAll();
+		WaterCombo.removeAll();
 
 		FireStream.removeAll();
 		Fireball.removeAll();
@@ -2039,6 +2046,7 @@ public class Methods {
 		FireJet.instances.clear();
 		Cook.removeAll();
 		Illumination.removeAll();
+		FireCombo.removeAll();
 
 		RapidPunch.instances.clear();
 		WarriorStance.instances.clear();
