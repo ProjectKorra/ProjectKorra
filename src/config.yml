@@ -375,6 +375,28 @@ Abilities:
       DownwardFlow: 4
       AllowNaturalFlow: false
       ParticleDensity: 0.33
+    EarthSmash:
+      Enabled: true
+      Description: 'To raise an EarthSmash hold sneak (default: shift) for approximately
+        1.5 seconds, then release while aiming at dirt. To grab the EarthSmash aim
+        at the center and hold sneak, the EarthSmash will follow your mouse. You can
+        shoot the EarthSmash by grabbing onto it and left clicking. To ride the EarthSmash
+        simply hop ontop of it and hold sneak while aiming in the direction that you
+        wish to go. Another way to ride an EarthSmash is to grab it with sneak and
+        then right click it. Use EarthSmash as a defensive shield, a powerful attack,
+        or an advanced means of transportation.'
+      AllowGrab: true
+      AllowShooting: true
+      AllowFlight: true
+      GrabRange: 10
+      ChargeTime: 1200
+      Cooldown: 0
+      ShotRange: 30
+      Damage: 6
+      Knockback: 3.5
+      Knockup: 0.15
+      FlightSpeed: 0.72
+      FlightTime: 3000
     RaiseEarth:
       Enabled: true
       Description: "To use, simply left-click on an earthbendable block. A column of earth will shoot upwards from that location. Anything in the way of the column will be brought up with it, leaving talented benders the ability to trap brainless entities up there. Additionally, simply sneak (default shift) looking at an earthbendable block. A wall of earth will shoot upwards from that location. Anything in the way of the wall will be brought up with it."

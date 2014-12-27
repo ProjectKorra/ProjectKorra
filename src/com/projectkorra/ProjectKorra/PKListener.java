@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -57,7 +54,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -92,17 +88,17 @@ import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthGrab;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.earthbending.EarthSmash;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.earthbending.Extraction;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
+import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.ProjectKorra.earthbending.LavaSurge;
-import com.projectkorra.ProjectKorra.earthbending.LavaWall;
 import com.projectkorra.ProjectKorra.earthbending.LavaWave;
 import com.projectkorra.ProjectKorra.earthbending.MetalClips;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
-import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.ProjectKorra.firebending.ArcOfFire;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.Cook;
@@ -254,6 +250,9 @@ public class PKListener implements Listener {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Methods.cooldowns.put(player.getName(), System.currentTimeMillis());
 			ComboManager.addComboAbility(player, ClickType.RIGHTCLICK);
+			String ability = Methods.getBoundAbility(player);
+			if(ability != null && ability.equalsIgnoreCase("EarthSmash"))
+				new EarthSmash(player, EarthSmash.ClickType.RIGHTCLICK);
 		}
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
@@ -504,6 +503,9 @@ public class PKListener implements Listener {
 				
 				if (abil.equalsIgnoreCase("LavaFlow")) {
 					new LavaFlow(player,LavaFlow.AbilityType.SHIFT);
+				}
+				if (abil.equalsIgnoreCase("EarthSmash")) {
+					new EarthSmash(player, EarthSmash.ClickType.SHIFT);
 				}
 
 			}
@@ -860,6 +862,10 @@ public class PKListener implements Listener {
 				
 				if (abil.equalsIgnoreCase("LavaFlow")) {
 					new LavaFlow(player,AbilityType.CLICK);
+				}
+				
+				if (abil.equalsIgnoreCase("EarthSmash")) {
+					new EarthSmash(player, EarthSmash.ClickType.LEFTCLICK);
 				}
 			}
 			if (Methods.isFireAbility(abil)) {

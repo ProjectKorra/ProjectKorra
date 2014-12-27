@@ -442,7 +442,7 @@ public class ConfigManager {
 
 		config.addDefault("Abilities.Earth.LavaFlow.Enabled", true);
 		config.addDefault("Abilities.Earth.LavaFlow.Description", "This ability allows an Earthbender to create lava using the Earth around them. To use, simply hold sneak (Default: Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an Earthbendable block to create a pool of lava after a small delay. Additionally, you can left click at any time to turn lava back into its original state -- Earth.");
-		config.addDefault("Abilities.Earth.LavFlow.ShiftCooldown", 16000);
+		config.addDefault("Abilities.Earth.LavaFlow.ShiftCooldown", 16000);
 		config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCooldown", 10000);
 		config.addDefault("Abilities.Earth.LavaFlow.ClickLandCooldown", 500);
 		config.addDefault("Abilities.Earth.LavaFlow.ShiftCleanupDelay", 10000);
@@ -463,6 +463,26 @@ public class ConfigManager {
         config.addDefault("Abilities.Earth.LavaFlow.AllowNaturalFlow", false);
         config.addDefault("Abilities.Earth.LavaFlow.ParticleDensity", 0.33);
         
+		config.addDefault("Abilities.Earth.EarthSmash.Enabled", true);
+		config.addDefault("Abilities.Earth.EarthSmash.Description", "To raise an EarthSmash hold sneak (default: shift) for approximately 1.5 seconds, " +
+				"then release while aiming at dirt. To grab the EarthSmash aim at the center and hold sneak, " +
+				"the EarthSmash will follow your mouse. You can shoot the EarthSmash by grabbing onto it and left clicking. " +
+				"To ride the EarthSmash simply hop ontop of it and hold sneak while aiming in the direction that you wish to go. " +
+				"Another way to ride an EarthSmash is to grab it with sneak and then right click it. " + 
+				"Use EarthSmash as a defensive shield, a powerful attack, or an advanced means of transportation.");
+		config.addDefault("Abilities.Earth.EarthSmash.AllowGrab", true);
+		config.addDefault("Abilities.Earth.EarthSmash.AllowShooting", true);
+		config.addDefault("Abilities.Earth.EarthSmash.AllowFlight", true);
+		config.addDefault("Abilities.Earth.EarthSmash.GrabRange", 10);
+		config.addDefault("Abilities.Earth.EarthSmash.ChargeTime", 1200);
+		config.addDefault("Abilities.Earth.EarthSmash.Cooldown", 0);
+		config.addDefault("Abilities.Earth.EarthSmash.ShotRange", 30);
+		config.addDefault("Abilities.Earth.EarthSmash.Damage", 6);
+		config.addDefault("Abilities.Earth.EarthSmash.Knockback", 3.5);
+		config.addDefault("Abilities.Earth.EarthSmash.Knockup", 0.15);
+		config.addDefault("Abilities.Earth.EarthSmash.FlightSpeed", 0.72);
+		config.addDefault("Abilities.Earth.EarthSmash.FlightTime", 3000);
+		
 //		config.addDefault("Abilities.Earth.LavaSurge.Enabled", true);
 //	    config.addDefault("Abilities.Earth.LavaSurge.Description", "LavaSurge is a fundamental move for any Lavabender out there. To use, simply sneak (Default: Shift) while looking at a source of Earth or Lava, then click in a direction. A surge of lava will swiftly travel towards the target you were pointing at, dealing moderate damage, a large knockback, and setting them on fire.");
 //	    config.addDefault("Abilities.Earth.LavaSurge.Damage", 4);

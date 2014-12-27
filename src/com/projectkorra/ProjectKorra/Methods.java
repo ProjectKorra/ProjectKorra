@@ -104,6 +104,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.earthbending.EarthSmash;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
 import com.projectkorra.ProjectKorra.earthbending.MetalClips;
@@ -154,6 +155,7 @@ public class Methods {
 	public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<Integer, Information>();
 	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	public static ArrayList<Block> tempnophysics = new ArrayList<Block>();
+	public static HashSet<Block> tempNoEarthbending = new HashSet<Block>();
 	private static Integer[] plantIds = { 6, 18, 31, 32, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175};
 
 	public static Integer[] transparentToEarthbending = {0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106};
@@ -1190,6 +1192,9 @@ public class Methods {
 
 		if(!valid)
 			return false;
+		
+		if(tempNoEarthbending.contains(block))
+			return false;
 
 		if (!isRegionProtectedFromBuild(player, ability,
 				block.getLocation()))
@@ -2022,6 +2027,7 @@ public class Methods {
 		Shockwave.removeAll();
 		Tremorsense.removeAll();
 		LavaFlow.removeAll();
+		EarthSmash.removeAll();
 
 		FreezeMelt.removeAll();
 		IceSpike.removeAll();
