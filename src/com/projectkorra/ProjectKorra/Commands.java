@@ -89,6 +89,7 @@ public class Commands {
 		exe = new CommandExecutor() {
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
+                FileConfiguration config = plugin.getConfig();
 				for(int i = 0; i < args.length; i++){
 					args[i] = args[i].toLowerCase();
 				}
@@ -140,7 +141,7 @@ public class Commands {
 					}
 					
 					if (!s.hasPermission("bending.admin.debug")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 					
@@ -162,7 +163,7 @@ public class Commands {
 					String[] listaliases = {"list", "l"};
 					if (args.length == 2 && Arrays.asList(listaliases).contains(args[1].toLowerCase())) {
 						if (!s.hasPermission("bending.command.preset.list")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 
@@ -190,7 +191,7 @@ public class Commands {
 
 					if (Arrays.asList(deletealiases).contains(args[1].toLowerCase())) {
 						if (!s.hasPermission("bending.command.preset.delete")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 						if (!Preset.presetExists(player, name)) {
@@ -205,7 +206,7 @@ public class Commands {
 
 					if (Arrays.asList(bindaliases).contains(args[1].toLowerCase())) {
 						if (!s.hasPermission("bending.command.preset.bind")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 
@@ -221,7 +222,7 @@ public class Commands {
 
 					if (Arrays.asList(createaliases).contains(args[1].toLowerCase())) {
 						if (!s.hasPermission("bending.command.preset.create")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 
@@ -251,7 +252,7 @@ public class Commands {
 				}
 				if (Arrays.asList(invinciblealiases).contains(args[0].toLowerCase())) {
 					if (!s.hasPermission("bending.command.invincible")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 
@@ -279,7 +280,7 @@ public class Commands {
 				}
 				if (Arrays.asList(givealiases).contains(args[0].toLowerCase())) {
 					if (!s.hasPermission("bending.command.give")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 
@@ -331,7 +332,7 @@ public class Commands {
 					}
 
 					if (!s.hasPermission("bending.command.reload")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 
@@ -345,7 +346,7 @@ public class Commands {
 						return true;
 					}
 					if (!s.hasPermission("bending.command.clear")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 
@@ -388,12 +389,12 @@ public class Commands {
 					}
 
 					if (!s.hasPermission("bending.command.bind")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 
 					if (!(s instanceof Player)) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 
@@ -409,27 +410,27 @@ public class Commands {
 						String ability = Methods.getAbility(abil);
 
 						if (!Methods.hasPermission((Player) s, ability)) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 						if (Methods.isAirAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
-							s.sendMessage(Methods.getAirColor() + "You must be an Airbender to bind this ability.");
+							s.sendMessage(Methods.getAirColor() + config.getString("messages.must-be-airbender"));
 							return true;
 						}
 						if (Methods.isWaterAbility(ability) && !Methods.isBender(s.getName(), Element.Water)) {
-							s.sendMessage(Methods.getWaterColor() + "You must be a Waterbender to bind this ability.");
+							s.sendMessage(Methods.getWaterColor() + config.getString("messages.must-be-waterbender"));
 							return true;
 						}
 						if (Methods.isEarthAbility(ability) && !Methods.isBender(s.getName(), Element.Earth)) {
-							s.sendMessage(Methods.getEarthColor() + "You must be an Earthbender to bind this ability.");
+							s.sendMessage(Methods.getEarthColor() + config.getString("messages.must-be-earthbender"));
 							return true;
 						}
 						if (Methods.isFireAbility(ability) && !Methods.isBender(s.getName(), Element.Fire)) {
-							s.sendMessage(Methods.getFireColor() + "You must be a Firebender to bind this ability.");
+							s.sendMessage(Methods.getFireColor() + config.getString("messages.must-be-firebender"));
 							return true;
 						}
 						if (Methods.isChiAbility(ability) && !Methods.isBender(s.getName(), Element.Chi)) {
-							s.sendMessage(Methods.getChiColor() + "You must be a ChiBlocker to bind this ability.");
+							s.sendMessage(Methods.getChiColor() + config.getString("messages.must-be-chiblocker"));
 							return true;
 						}
 
@@ -442,7 +443,7 @@ public class Commands {
 						// bending bind ability [Slot]
 						String abil = args[1];
 						if (!Methods.abilityExists(abil)) {
-							s.sendMessage(ChatColor.RED + "That ability doesn't exist.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.invalid-ability"));
 							return true;
 						}
 						String ability = Methods.getAbility(abil);
@@ -450,16 +451,16 @@ public class Commands {
 						try {
 							slot = Integer.parseInt(args[2]);
 						} catch (NumberFormatException e) {
-							s.sendMessage(ChatColor.RED + "Slot must be an integer between 1 and 9.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.invalid-slot"));
 							return true;
 						}
 						if (slot < 1 || slot > 9) {
-							s.sendMessage(ChatColor.RED + "Slot must be an integer between 1 and 9.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.invalid-slot"));
 							return true;
 						}
 
 						if (!Methods.hasPermission((Player) s, ability)) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 
@@ -490,7 +491,7 @@ public class Commands {
 				}
 				if (Arrays.asList(importaliases).contains(args[0].toLowerCase())) {
 					if (!s.hasPermission("bending.command.import")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 					if (!Methods.isImportEnabled()) {
@@ -605,7 +606,7 @@ public class Commands {
 					}
 
 					if (!s.hasPermission("bending.command.display")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 
@@ -723,7 +724,7 @@ public class Commands {
 					}
 					if (args.length == 1) {
 						if (!s.hasPermission("bending.command.toggle")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 
@@ -745,7 +746,7 @@ public class Commands {
 						}
 					} else if (args.length == 2 && args[1].equalsIgnoreCase("all")) {
 						if (!s.hasPermission("bending.command.toggle.all")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 
@@ -773,7 +774,7 @@ public class Commands {
 						return true;
 					}
 					if (!s.hasPermission("bending.command.who")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 
@@ -947,7 +948,7 @@ public class Commands {
 					}
 
 					if (!s.hasPermission("bending.command.version")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 					s.sendMessage(ChatColor.GREEN + "Core Version: " + ChatColor.RED + plugin.getDescription().getVersion());
@@ -966,7 +967,7 @@ public class Commands {
 					}
 
 					if (!s.hasPermission("bending.admin.remove")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 
@@ -994,7 +995,7 @@ public class Commands {
 					}
 
 					if (!s.hasPermission("bending.admin.permaremove")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 
@@ -1032,7 +1033,7 @@ public class Commands {
 					}
 					if (args.length == 3) {
 						if (!s.hasPermission("bending.command.add.others")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 
@@ -1082,13 +1083,13 @@ public class Commands {
 							return true;
 						}
 
-						s.sendMessage(ChatColor.RED + "You must specify an element.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.must-specify-element"));
 						return true;
 					}
 					if (args.length == 2) {
 						// Target = Self
 						if (!s.hasPermission("bending.command.add")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 
@@ -1132,7 +1133,7 @@ public class Commands {
 							s.sendMessage(Methods.getChiColor() + "You are also a ChiBlocker.");
 							return true;
 						}
-						s.sendMessage(ChatColor.RED + "You must specify an element.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.must-specify-element"));
 					}
 				}
 				if (Arrays.asList(choosealiases).contains(args[0].toLowerCase())) {
@@ -1145,7 +1146,7 @@ public class Commands {
 
 					if (args.length == 2) {
 						if (!s.hasPermission("bending.command.choose")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 
@@ -1163,7 +1164,7 @@ public class Commands {
 
 						if (!bPlayer.getElements().isEmpty()) {
 							if (!s.hasPermission("bending.command.rechoose")) {
-								s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+								s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 								return true;
 							}
 						}
@@ -1208,7 +1209,7 @@ public class Commands {
 					}
 					if (args.length == 3) {
 						if (!s.hasPermission("bending.admin.choose")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 							return true;
 						}
 						Player target = Bukkit.getPlayer(args[1]);
@@ -1230,7 +1231,7 @@ public class Commands {
 						if (Arrays.asList(chialiases).contains(args[2])) e = Element.Chi;
 
 						if (e == null) {
-							s.sendMessage(ChatColor.RED + "You must specify an element.");
+							s.sendMessage(ChatColor.RED + config.getString("messages.must-specify-element"));
 							return true;
 						} else {
 							bTarget.setElement(e);
@@ -1244,7 +1245,7 @@ public class Commands {
 				}
 				if (Arrays.asList(helpaliases).contains(args[0].toLowerCase())) {
 					if (!s.hasPermission("bending.command.help")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						s.sendMessage(ChatColor.RED + config.getString("messages.no-permission"));
 						return true;
 					}
 					if (args.length != 2) {
@@ -1279,46 +1280,33 @@ public class Commands {
 						return true;
 					}
 					if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
-						s.sendMessage(Methods.getAirColor() + "Air is the element of freedom. Airbenders are natural pacifists and "
-								+ "great explorers. There is nothing stopping them from scaling the tallest of mountains and walls easily. They specialize in redirection, "
-								+ "from blasting things away with gusts of winds, to forming a shield around them to prevent damage. Easy to get across flat terrains, "
-								+ "such as oceans, there is practically no terrain off limits to Airbenders. They lack much raw damage output, but make up for it with "
-								+ "with their ridiculous amounts of utility and speed.");
-						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qffg9m3");
+						s.sendMessage(Methods.getAirColor() + config.getString("Properties.Air.Description"));
+//						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qffg9m3");
+						s.sendMessage(ChatColor.YELLOW + config.getString("messages.learn-more") + ChatColor.DARK_AQUA + config.getString("Properties.Air.Reference"));
 					}
 					if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
-						s.sendMessage(Methods.getWaterColor() + "Water is the element of change. Waterbending focuses on using your "
-								+ "opponents own force against them. Using redirection and various dodging tactics, you can be made "
-								+ "practically untouchable by an opponent. Waterbending provides agility, along with strong offensive "
-								+ "skills while in or near water.");
-						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/lod3plv");
+						s.sendMessage(Methods.getWaterColor() + config.getString("Properties.Water.Description"));
+//						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/lod3plv");
+                        s.sendMessage(ChatColor.YELLOW + config.getString("messages.learn-more") + ChatColor.DARK_AQUA + config.getString("Properties.Water.Reference"));
 					}
 					if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
-						s.sendMessage(Methods.getEarthColor() + "Earth is the element of substance. Earthbenders share many of the " 
-								+ "same fundamental techniques as Waterbenders, but their domain is quite different and more readily "
-								+ "accessible. Earthbenders dominate the ground and subterranean, having abilities to pull columns "
-								+ "of rock straight up from the earth or drill their way through the mountain. They can also launch "
-								+ "themselves through the air using pillars of rock, and will not hurt themselves assuming they land "
-								+ "on something they can bend. The more skilled Earthbenders can even bend metal.");
-						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qaudl42");
+						s.sendMessage(Methods.getEarthColor() + config.getString("Properties.Earth.Description"));
+//						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qaudl42");
+                        s.sendMessage(ChatColor.YELLOW + config.getString("messages.learn-more") + ChatColor.DARK_AQUA + config.getString("Properties.Earth.Reference"));
 					}
 					if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
-						s.sendMessage(Methods.getFireColor() + "Fire is the element of power. Firebenders focus on destruction and "
-								+ "incineration. Their abilities are pretty straight forward: set things on fire. They do have a bit "
-								+ "of utility however, being able to make themselves un-ignitable, extinguish large areas, cook food "
-								+ "in their hands, extinguish large areas, small bursts of flight, and then comes the abilities to shoot "
-								+ "fire from your hands.");
-						s.sendMessage(ChatColor.YELLOW + "Firebenders can chain their abilities into combos, type " 
+						s.sendMessage(Methods.getFireColor() + config.getString("Properties.Fire.Description"));
+
+                        //TODO Transfer combo info to config
+						s.sendMessage(ChatColor.YELLOW + "Firebenders can chain their abilities into combos, type "
 								+ Methods.getFireColor() + "/b help FireCombo" + ChatColor.YELLOW + " for more information.");
-						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/k4fkjhb");
+//						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/k4fkjhb");
+                        s.sendMessage(ChatColor.YELLOW + config.getString("messages.learn-more") + ChatColor.DARK_AQUA + config.getString("Properties.Fire.Reference"));
 					}
 					if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
-						s.sendMessage(Methods.getChiColor() + "Chiblockers focus on bare handed combat, utilizing their agility and "
-								+ "speed to stop any bender right in their path. Although they lack the ability to bend any of the "
-								+ "other elements, they are great in combat, and a serious threat to any bender. Chiblocking was "
-								+ "first shown to be used by Ty Lee in Avatar: The Last Airbender, then later by members of the "
-								+ "Equalists in The Legend of Korra.");
-						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/mkp9n6y");
+						s.sendMessage(Methods.getChiColor() + config.getString("Properties.Chi.Description") );
+//						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/mkp9n6y");
+                        s.sendMessage(ChatColor.YELLOW + config.getString("messages.learn-more") + ChatColor.DARK_AQUA + config.getString("Properties.Chi.Reference"));
 					}
 					if (Arrays.asList(invinciblealiases).contains(args[1].toLowerCase())) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending invincible");
