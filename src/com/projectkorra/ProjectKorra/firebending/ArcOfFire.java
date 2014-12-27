@@ -41,6 +41,8 @@ public class ArcOfFire {
 			int range = defaultrange;
 			if (AvatarState.isAvatarState(player))
 				range = AvatarState.getValue(range);
+			else
+				range = Methods.getFirebendingDayAugment(range, player.getWorld());
 
 			new FireStream(location, direction, player, range);
 		}
