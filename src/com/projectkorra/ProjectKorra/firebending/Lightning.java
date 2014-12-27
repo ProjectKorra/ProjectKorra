@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
+import com.projectkorra.ProjectKorra.BendingManager;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -119,6 +120,8 @@ public class Lightning {
 				player.getWorld());
 		long warmup = (int) ((double) defaultwarmup / ProjectKorra.plugin.getConfig().getDouble("Properties.Fire.DayFactor"));
 		if (AvatarState.isAvatarState(player))
+			warmup = 0;
+		if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet"))
 			warmup = 0;
 		if (System.currentTimeMillis() > starttime + warmup)
 			charged = true;
