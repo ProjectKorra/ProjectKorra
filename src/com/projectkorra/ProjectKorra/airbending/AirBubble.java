@@ -104,6 +104,11 @@ public class AirBubble {
 			removeBubble();
 			return false;
 		}
+		
+		if (!player.isSneaking()) {
+			removeBubble();
+			return false;
+		}
 		if (Methods.getBoundAbility(player) != null) {
 			if (Methods.getBoundAbility(player).equalsIgnoreCase("AirBubble") && Methods.canBend(player.getName(), "AirBubble")) {
 				pushWater();
@@ -131,7 +136,7 @@ public class AirBubble {
 		for (Player player : server.getOnlinePlayers()) {
 			if (Methods.getBoundAbility(player) != null) {
 				if (Methods.getBoundAbility(player).equalsIgnoreCase("AirBubble") || Methods.getBoundAbility(player).equalsIgnoreCase("WaterBubble")) {
-					if (!instances.containsKey(player.getEntityId())) {
+					if (!instances.containsKey(player.getEntityId()) && player.isSneaking()) {
 						new AirBubble(player);
 					}
 				}
