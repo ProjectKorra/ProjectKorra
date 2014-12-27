@@ -20,18 +20,13 @@ public class AirBubble {
 
 	private static double defaultAirRadius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirBubble.Radius");
 	private static double defaultWaterRadius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterBubble.Radius");
-	// private static byte full = AirBlast.full;
-
-	// private static final byte full = 0x0;
 
 	private Player player;
 	private double radius;
-	// private ConcurrentHashMap<Block, Byte> waterorigins;
 	private ConcurrentHashMap<Block, BlockState> waterorigins;
 
 	public AirBubble(Player player) {
 		this.player = player;
-		// waterorigins = new ConcurrentHashMap<Block, Byte>();
 		waterorigins = new ConcurrentHashMap<Block, BlockState>();
 		instances.put(player.getEntityId(), this);
 	}
@@ -56,22 +51,10 @@ public class AirBubble {
 			if (block.getWorld() != location.getWorld()) {
 				if (block.getType() == Material.AIR || Methods.isWater(block))
 					waterorigins.get(block).update(true);
-				// byte data = full;
-				// block = block.getLocation().getBlock();
-				// if (block.getType() == Material.AIR) {
-				// block.setType(Material.WATER);
-				// block.setData(data);
-				// }
 				waterorigins.remove(block);
 			} else if (block.getLocation().distance(location) > radius) {
 				if (block.getType() == Material.AIR || Methods.isWater(block))
 					waterorigins.get(block).update(true);
-				// byte data = full;
-				// block = block.getLocation().getBlock();
-				// if (block.getType() == Material.AIR) {
-				// block.setType(Material.WATER);
-				// block.setData(data);
-				// }
 				waterorigins.remove(block);
 			}
 		}
@@ -87,10 +70,7 @@ public class AirBubble {
 			if (block.getType() == Material.STATIONARY_WATER
 					|| block.getType() == Material.WATER) {
 				if (WaterManipulation.canBubbleWater(block)) {
-					// if (block.getData() == full)
 					waterorigins.put(block, block.getState());
-					// waterorigins.put(block, block.getData());
-
 					block.setType(Material.AIR);
 				}
 			}
@@ -122,13 +102,6 @@ public class AirBubble {
 
 		removeBubble();
 		return false;
-		// if ((Methods.getBendingAbility(player) != Abilities.AirBubble && Methods
-		// .getBendingAbility(player) != Abilities.WaterBubble)) {
-		// removeBubble();
-		// return false;
-		// }
-		// pushWater();
-		// return true;
 	}
 
 	public static void handleBubbles(Server server) {
