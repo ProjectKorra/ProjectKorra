@@ -101,6 +101,7 @@ public class BendingManager implements Runnable {
 					}
 					for (Player player: world.getPlayers()) {
 						if (Methods.isBender(player.getName(), Element.Water)) {
+							if(!player.hasPermission("bending.message.nightmessage") return;
 							if (Methods.hasRPG()) {
 								if (RPGMethods.isLunarEclipse(world)) {
 									player.sendMessage(Methods.getWaterColor() + defaultlunareclipsemessage);
