@@ -1236,6 +1236,7 @@ public class Commands {
 							bTarget.setElement(e);
 							Methods.removeUnusableAbilities(target.getName());
 							Methods.saveElements(bTarget);
+							s.sendMessage(ChatColor.RED + "You have changed " + ChatColor.DARK_AQUA + target.getName() + "'s " + ChatColor.RED + "element to " + ChatColor.DARK_AQUA + e.toString() + ChatColor.RED + ".");
 							target.sendMessage(ChatColor.RED + "Your bending has been changed to " + ChatColor.DARK_AQUA + e.toString() + ChatColor.RED + " by " + ChatColor.DARK_AQUA + s.getName());
 							return true;
 						}
