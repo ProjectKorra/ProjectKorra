@@ -768,9 +768,9 @@ public class Methods {
 	public static double getFirebendingDayAugment(double value, World world) {
 		if (isDay(world)) {
 			if (Methods.hasRPG()) {
-				if (RPGMethods.isSozinsComet(world)) {
+				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.SozinsComet.toString())) {
 					return RPGMethods.getFactor(WorldEvents.SozinsComet) * value;
-				} else if (RPGMethods.isSolarEclipse(world) && !RPGMethods.isLunarEclipse(world)) {
+				} else if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.SolarEclipse.toString())) {
 					return RPGMethods.getFactor(WorldEvents.SolarEclipse) * value;
 				} else {
 					return value * plugin.getConfig().getDouble("Properties.Fire.DayFactor");
@@ -982,10 +982,10 @@ public class Methods {
 	public static double getWaterbendingNightAugment(World world) {
 		if (hasRPG()) {
 			if (isNight(world)) {
-				if (RPGMethods.isLunarEclipse(world)) {
+				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
 					return RPGMethods.getFactor(WorldEvents.LunarEclipse);
 				}
-				if (isFullMoon(world)) {
+				else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
 					return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
 				}
 				return plugin.getConfig().getDouble("Properties.Water.NightFactor");
@@ -993,7 +993,9 @@ public class Methods {
 				return 1;
 			}
 		} else {
-			if (isNight(world) && isFullMoon(world)) return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
+			Bukkit.getServer().broadcastMessage("RPG NOT DETECTED");
+
+			if (isNight(world) && BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
 			if (isNight(world)) return plugin.getConfig().getDouble("Properties.Water.NightFactor");
 			return 1;
 		}
@@ -1118,7 +1120,7 @@ public class Methods {
 				sources++;
 			if (FreezeMelt.frozenblocks.containsKey(blocki)) {
 				//if (FreezeMelt.frozenblocks.get(blocki) == full)
-					//sources++;
+				//sources++;
 			} else if (blocki.getType() == Material.ICE) {
 				//sources++;
 			}
@@ -1736,7 +1738,7 @@ public class Methods {
 		else 
 			return ParticleEffect.CLOUD;
 	}
-	
+
 	public static Collection<Player> getPlayersAroundPoint(Location location, double distance) {
 		Collection<Player> players = new HashSet<Player>();
 		for (Player player: Bukkit.getOnlinePlayers()) {
@@ -2071,13 +2073,26 @@ public class Methods {
 
 	public static double waterbendingNightAugment(double value, World world) {
 		if (isNight(world)) {
-			if (isFullMoon(world)) {
-				return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
+			if (hasRPG()) {
+				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
+					return RPGMethods.getFactor(WorldEvents.LunarEclipse) * value;
+				}
+				else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+					return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
+				}
+				else {
+					return value;
+				}
 			} else {
-				return plugin.getConfig().getDouble("Properties.Water.NightFactor") * value;
+				if (isFullMoon(world)) {
+					return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
+				} else {
+					return plugin.getConfig().getDouble("Properties.Water.NightFactor") * value;
+				}
 			}
+		} else {
+			return value;
 		}
-		return value;
 	}
 
 	public Methods(ProjectKorra plugin) {
