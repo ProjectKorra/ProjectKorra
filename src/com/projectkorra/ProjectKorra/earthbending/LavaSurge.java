@@ -225,14 +225,14 @@ public class LavaSurge
 				curTime > lastTime + particleInterval)
 		{
 			lastTime = curTime;
-			ParticleEffect.LAVA.display(sourceBlock.getLocation(), 0, 0, 0, 0, 1);
+			ParticleEffect.LAVA.display(0, 0, 0, 0, 1, sourceBlock.getLocation(), 20);
 		}
 		
 		else if(surgeStarted && curTime > lastTime + particleInterval)
 		{
 			lastTime = curTime;
 			for(FallingBlock fblock : fblocks)
-				ParticleEffect.LAVA.display(fblock.getLocation(), 0, 0, 0, 0, 1);
+				ParticleEffect.LAVA.display(0, 0, 0, 0, 1, fblock.getLocation(), 20);
 		}
 		
 		if(fractureOpen && !surgeStarted)

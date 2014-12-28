@@ -136,6 +136,8 @@ import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
@@ -1325,8 +1327,7 @@ public class Methods {
 				}
 			}
 			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
-				WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit
-						.getPluginManager().getPlugin("WorldGuard");
+				WorldGuardPlugin wg = (WorldGuardPlugin) wgp;
 				if (!player.isOnline())
 					return true;
 
@@ -1353,10 +1354,14 @@ public class Methods {
 					//					if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.TNT).equals(State.DENY))
 					//						return true;
 				}
-
+                                if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(wg.wrapPlayer(player), DefaultFlag.BUILD) == State.DENY)
+                                    return true;
+                                
+                                /*
 				if (!wg.canBuild(player, location.getBlock())) {
 					return true;
 				}
+                                */
 				//				
 				//				if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.BUILD).equals(State.DENY))
 				//					return true;
@@ -1732,7 +1737,7 @@ public class Methods {
 		else if (particle.equalsIgnoreCase("spell"))
 			return ParticleEffect.SPELL;
 		else if (particle.equalsIgnoreCase("blacksmoke"))
-			return ParticleEffect.SMOKE;
+			return ParticleEffect.SMOKE_NORMAL;
 		else if (particle.equalsIgnoreCase("smoke"))
 			return ParticleEffect.CLOUD;
 		else 
@@ -1757,27 +1762,27 @@ public class Methods {
 		String particle = plugin.getConfig().getString("Properties.Air.Particles");
 		if (particle == null) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.CLOUD.display(loc, xOffset, yOffset, zOffset, 0, 1); 
+				ParticleEffect.CLOUD.display(xOffset, yOffset, zOffset, 0, 1, loc, 20); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("spell")) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.SPELL.display(loc, xOffset, yOffset, zOffset, 0, 1); 
+				ParticleEffect.SPELL.display(xOffset, yOffset, zOffset, 0, 1, loc, 20); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("blacksmoke")) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.SMOKE.display(loc, xOffset, yOffset, zOffset, 0, 1); 
+				ParticleEffect.SMOKE_NORMAL.display(xOffset, yOffset, zOffset, 0, 1, loc, 20); 
 			}
 		}
 		else if (particle.equalsIgnoreCase("smoke")) {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.CLOUD.display(loc, xOffset, yOffset, zOffset, 0, 1); 
+				ParticleEffect.CLOUD.display(xOffset, yOffset, zOffset, 0, 1, loc, 20);  
 			}
 		}
 		else {
 			for (int i = 0; i < amount; i++) {
-				ParticleEffect.CLOUD.display(loc, xOffset, yOffset, (float) Math.random(), 0, 1); 
+				ParticleEffect.CLOUD.display((float) Math.random(), yOffset, (float) Math.random(), 0, 1, loc, 20);
 			}
 		}
 	}

@@ -152,13 +152,13 @@ public class Combustion {
 		if (instances.containsKey(player)) {
 			Combustion combustion = instances.get(player);
 			combustion.createExplosion(combustion.location, combustion.power, breakblocks);
-			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 3);
+			ParticleEffect.EXPLOSION_NORMAL.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 3, combustion.location, 20);
 		}
 	}
 
 	private void advanceLocation() {
-		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 5);
-		ParticleEffect.FLAME.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
+		ParticleEffect.FIREWORKS_SPARK.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 5, location, 20);
+		ParticleEffect.FLAME.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2, location, 20);
 		//if (Methods.rand.nextInt(4) == 0) {
 			Methods.playCombustionSound(location);
 		//}

@@ -174,7 +174,7 @@ public class IceBlast {
 		Methods.breakBreathbendingHold(entity);
 		
 		for(Location loc : Methods.getCircle(entity.getLocation(), 6, 7, false, false, 0)) {
-			ParticleEffect.SNOW_SHOVEL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 10);
+			ParticleEffect.SNOW_SHOVEL.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 10, loc, 20);
 		}
 	}
 	
@@ -297,8 +297,8 @@ public class IceBlast {
 			sourceblock = block;
 			source = new TempBlock(sourceblock, Material.PACKED_ICE, data);
 			
-			ParticleEffect.SNOWBALL_POOF.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 100);
-			ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 100);
+			ParticleEffect.SNOWBALL.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 100, location, 20);
+			ParticleEffect.SNOW_SHOVEL.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 100, location, 20);
 			if (Methods.rand.nextInt(4) == 0) {
 				Methods.playFirebendingSound(location);
 			}
