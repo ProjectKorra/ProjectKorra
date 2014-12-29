@@ -214,6 +214,9 @@ public class AirSwipe {
 						}
 					} else {
 						Methods.playAirbendingParticles(location, 10);
+						if (Methods.rand.nextInt(4) == 0) {
+							Methods.playAirbendingSound(location);
+						}
 						affectPeople(location, direction);
 					}
 				}
