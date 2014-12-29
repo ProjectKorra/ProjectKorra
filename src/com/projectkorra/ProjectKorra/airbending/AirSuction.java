@@ -214,6 +214,9 @@ public class AirSuction {
 
 	private void advanceLocation() {
 		Methods.playAirbendingParticles(location, 10);
+		if (Methods.rand.nextInt(4) == 0) {
+			Methods.playAirbendingSound(location);
+		}
 //		location.getWorld().playEffect(location, Effect.SMOKE, 4,
 //				(int) AirBlast.defaultrange);
 		location = location.add(direction.clone().multiply(speedfactor));

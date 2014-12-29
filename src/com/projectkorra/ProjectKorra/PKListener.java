@@ -49,6 +49,7 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
@@ -356,6 +357,15 @@ public class PKListener implements Listener {
 				MetalClips.instances.get(p).remove();
 			}
 		}
+		
+		com.projectkorra.ProjectKorra.airbending.Flight.remove(event.getPlayer());
+	}
+	
+	@EventHandler
+	public void playerIsKicked(PlayerKickEvent event) {
+		if(event.isCancelled()) return;
+		
+		com.projectkorra.ProjectKorra.airbending.Flight.remove(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -419,6 +429,10 @@ public class PKListener implements Listener {
 				}
 				if(abil.equalsIgnoreCase("Suffocate")) {
 					new Suffocate(player);
+				}
+				if(abil.equalsIgnoreCase("Flight")) {
+					if(player.isSneaking()) return;
+					new com.projectkorra.ProjectKorra.airbending.Flight(player);
 				}
 
 			}
@@ -590,6 +604,12 @@ public class PKListener implements Listener {
 			distance2 = event.getTo().distance(loc);
 			if (distance2 > distance1) {
 				player.setVelocity(new Vector(0, 0, 0));
+			}
+		}
+		
+		if(com.projectkorra.ProjectKorra.airbending.Flight.instances.containsKey(event.getPlayer().getName())) {
+			if(com.projectkorra.ProjectKorra.airbending.Flight.isHovering(event.getPlayer())) {
+				event.setTo(new Location(event.getFrom().getWorld(), event.getFrom().getX(), event.getFrom().getY(), event.getFrom().getZ(), event.getTo().getYaw(), event.getTo().getPitch()));
 			}
 		}
 	}
@@ -768,6 +788,17 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("AirSwipe")) {
 					new AirSwipe(player);
+				}
+				if(abil.equalsIgnoreCase("Flight")) {
+					if(!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")) return;
+					
+					if(com.projectkorra.ProjectKorra.airbending.Flight.instances.containsKey(event.getPlayer().getName())) {
+						if(com.projectkorra.ProjectKorra.airbending.Flight.isHovering(event.getPlayer())) {
+							com.projectkorra.ProjectKorra.airbending.Flight.setHovering(event.getPlayer(), false);
+						}else{
+							com.projectkorra.ProjectKorra.airbending.Flight.setHovering(event.getPlayer(), true);
+						}
+					}
 				}
 			}
 			if (Methods.isWaterAbility(abil)) {

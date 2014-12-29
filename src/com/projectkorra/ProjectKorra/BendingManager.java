@@ -100,6 +100,9 @@ public class BendingManager implements Runnable {
 						}
 					}
 					for (Player player: world.getPlayers()) {
+						
+						if(!player.hasPermission("bending.message.nightmessage")) return;
+						
 						if (Methods.isBender(player.getName(), Element.Water)) {
 							if (Methods.hasRPG()) {
 								if (RPGMethods.isLunarEclipse(world)) {
@@ -118,6 +121,7 @@ public class BendingManager implements Runnable {
 							}
 						}
 						if (Methods.isBender(player.getName(), Element.Fire)) {
+							if(player.hasPermission("bending.message.daymessage")) return;
 							player.sendMessage(Methods.getFireColor() + defaultsunsetmessage);
 						}
 					}

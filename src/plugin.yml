@@ -22,6 +22,7 @@ permissions:
       bending.admin.choose: true
       bending.ability.AvatarState: true
       bending.ability.Bloodbending: true
+      bending.ability.Flight: true
       bending.command.import: true
       bending.command.toggle.all: true
       bending.command.give: true

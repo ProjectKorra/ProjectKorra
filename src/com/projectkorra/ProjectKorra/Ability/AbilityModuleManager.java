@@ -77,6 +77,7 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.AirBlast) shiftabilities.add(a.name());
 					if (a == StockAbilities.AirBurst) shiftabilities.add(a.name());
 					if (a == StockAbilities.AirShield) shiftabilities.add(a.name());
+					if (a == StockAbilities.Flight) shiftabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isWaterbending(a)) {

@@ -113,6 +113,12 @@ public class Cook {
 		case POTATO_ITEM:
 			cooked = new ItemStack(Material.BAKED_POTATO, 1);
 			break;
+		case MUTTON:
+			cooked = new ItemStack(Material.COOKED_MUTTON);
+			break;
+		case RABBIT:
+			cooked = new ItemStack(Material.COOKED_RABBIT);
+			break;
 		default:
 			break; //Shouldn't happen
 		}
