@@ -542,13 +542,6 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockIgnite(BlockIgniteEvent event) {
 		if (event.isCancelled()) return;
-
-		if (event.getCause() == IgniteCause.LIGHTNING) {
-			if (Lightning.isNearbyChannel(event.getBlock().getLocation())) {
-				event.setCancelled(true);
-				return;
-			}
-		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1154,7 +1147,6 @@ public class PKListener implements Listener {
 		Entity source = e.getDamager();
 		Entity entity = e.getEntity();
 		Fireball fireball = Fireball.getFireball(source);
-		Lightning lightning = Lightning.getLightning(source);
 
 		if (fireball != null) {
 			e.setCancelled(true);
@@ -1166,24 +1158,10 @@ public class PKListener implements Listener {
 		//			e.setCancelled(true);
 		//		}
 
-		if (e.getCause() == DamageCause.LIGHTNING) {
-			if (Lightning.isNearbyChannel(source.getLocation())) {
-				e.setCancelled(true);
-				return;
-			}
-		}
-
-		if (lightning != null) {
-			e.setCancelled(true);
-			lightning.dealDamage(entity);
-			return;
-		}
-
 		if (Paralyze.isParalyzed(e.getDamager())) {
 			e.setCancelled(true);
 			return;
 		}
-
 
 		Entity en = e.getEntity();
 		if (en instanceof Player) {

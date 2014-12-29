@@ -630,11 +630,23 @@ public class ConfigManager {
 
 		config.addDefault("Abilities.Fire.Lightning.Enabled", true);
 		config.addDefault("Abilities.Fire.Lightning.Description", "Hold sneak while selecting this ability to charge up a lightning strike. Once charged, release sneak to discharge the lightning to the targeted location.");
-		config.addDefault("Abilities.Fire.Lightning.Distance", 15);
-		config.addDefault("Abilities.Fire.Lightning.Damage", 6);
-		config.addDefault("Abilities.Fire.Lightning.WaterAreaOfEffect", 15);
-		config.addDefault("Abilities.Fire.Lightning.Warmup", 3500);
-		config.addDefault("Abilities.Fire.Lightning.MissChance", 10);
+		config.addDefault("Abilities.Fire.Lightning.Damage", 6.0);
+		config.addDefault("Abilities.Fire.Lightning.Range", 13.0);
+		config.addDefault("Abilities.Fire.Lightning.ChargeTime", 3500);
+		config.addDefault("Abilities.Fire.Lightning.Cooldown", 0);
+		config.addDefault("Abilities.Fire.Lightning.StunChance", 0.20);
+		config.addDefault("Abilities.Fire.Lightning.StunDuration", 30.0);
+		config.addDefault("Abilities.Fire.Lightning.MaxArcAngle", 30);
+		config.addDefault("Abilities.Fire.Lightning.SubArcChance", 0.025);
+		config.addDefault("Abilities.Fire.Lightning.ChainArcRange", 6.0);
+		config.addDefault("Abilities.Fire.Lightning.ChainArcChance", 0.50);
+		config.addDefault("Abilities.Fire.Lightning.MaxChainArcs", 2);
+		config.addDefault("Abilities.Fire.Lightning.WaterArcs", 4);
+		config.addDefault("Abilities.Fire.Lightning.WaterArcRange", 12.0);
+		config.addDefault("Abilities.Fire.Lightning.SelfHitWater", true);
+		config.addDefault("Abilities.Fire.Lightning.SelfHitClose", true);
+		config.addDefault("Abilities.Fire.Lightning.ArcOnIce", false);
+		
 
 		config.addDefault("Abilities.Fire.WallOfFire.Enabled", true);
 		config.addDefault("Abilities.Fire.WallOfFire.Description", "To use this ability, click at a location. A wall of fire will appear at this location, igniting enemies caught in it and blocking projectiles.");
