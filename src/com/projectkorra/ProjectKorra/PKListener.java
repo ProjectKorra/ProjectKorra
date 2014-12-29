@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -52,12 +49,12 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -96,13 +93,12 @@ import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.earthbending.Extraction;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
+import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.ProjectKorra.earthbending.LavaSurge;
-import com.projectkorra.ProjectKorra.earthbending.LavaWall;
 import com.projectkorra.ProjectKorra.earthbending.LavaWave;
 import com.projectkorra.ProjectKorra.earthbending.MetalClips;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
-import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.ProjectKorra.firebending.ArcOfFire;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.Cook;
@@ -357,6 +353,15 @@ public class PKListener implements Listener {
 				MetalClips.instances.get(p).remove();
 			}
 		}
+		
+		com.projectkorra.ProjectKorra.airbending.Flight.remove(event.getPlayer());
+	}
+	
+	@EventHandler
+	public void playerIsKicked(PlayerKickEvent event) {
+		if(event.isCancelled()) return;
+		
+		com.projectkorra.ProjectKorra.airbending.Flight.remove(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -420,6 +425,10 @@ public class PKListener implements Listener {
 				}
 				if(abil.equalsIgnoreCase("Suffocate")) {
 					new Suffocate(player);
+				}
+				if(abil.equalsIgnoreCase("Flight")) {
+					if(player.isSneaking()) return;
+					new com.projectkorra.ProjectKorra.airbending.Flight(player);
 				}
 
 			}
@@ -595,6 +604,12 @@ public class PKListener implements Listener {
 			distance2 = event.getTo().distance(loc);
 			if (distance2 > distance1) {
 				player.setVelocity(new Vector(0, 0, 0));
+			}
+		}
+		
+		if(com.projectkorra.ProjectKorra.airbending.Flight.instances.containsKey(event.getPlayer().getName())) {
+			if(com.projectkorra.ProjectKorra.airbending.Flight.isHovering(event.getPlayer())) {
+				event.setTo(new Location(event.getFrom().getWorld(), event.getFrom().getX(), event.getFrom().getY(), event.getFrom().getZ(), event.getTo().getYaw(), event.getTo().getPitch()));
 			}
 		}
 	}
@@ -773,6 +788,17 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("AirSwipe")) {
 					new AirSwipe(player);
+				}
+				if(abil.equalsIgnoreCase("Flight")) {
+					if(!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")) return;
+					
+					if(com.projectkorra.ProjectKorra.airbending.Flight.instances.containsKey(event.getPlayer().getName())) {
+						if(com.projectkorra.ProjectKorra.airbending.Flight.isHovering(event.getPlayer())) {
+							com.projectkorra.ProjectKorra.airbending.Flight.setHovering(event.getPlayer(), false);
+						}else{
+							com.projectkorra.ProjectKorra.airbending.Flight.setHovering(event.getPlayer(), true);
+						}
+					}
 				}
 			}
 			if (Methods.isWaterAbility(abil)) {

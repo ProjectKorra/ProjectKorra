@@ -2441,5 +2441,33 @@ public class Methods {
 			}
 		}
 	}
+	
+	
+	public static boolean canFly(Player player, boolean first, boolean hovering) {
+		BendingPlayer bender = getBendingPlayer(player.getName());
+		
+		if(!player.isOnline()) return false;
+		if(!player.isSneaking()) {
+			if(first) {
+			}else if(hovering) {
+				
+			}else{
+				return false;
+			}
+		}
+		if(bender.isChiBlocked()) return false;
+		if(!player.isOnline()) return false;
+		if(bender.isPermaRemoved()) return false;
+		if(!bender.getElements().contains(Element.Air)) return false;
+		if(!canBend(player.getName(), "Flight")) return false;
+		if(!getBoundAbility(player).equalsIgnoreCase("Flight")) return false;
+		if(isRegionProtectedFromBuild(player, "Flight", player.getLocation())) return false;
+		if(player.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR) return false;
+		return true;
+	}
+	
+	
+	
+	
 
 }
