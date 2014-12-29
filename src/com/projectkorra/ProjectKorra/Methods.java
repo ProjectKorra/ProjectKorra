@@ -104,6 +104,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.earthbending.EarthSmash;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
 import com.projectkorra.ProjectKorra.earthbending.MetalClips;
@@ -127,15 +128,18 @@ import com.projectkorra.ProjectKorra.waterbending.IceSpike;
 import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
 import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterReturn;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 import com.projectkorra.ProjectKorra.waterbending.WaterWall;
+import com.projectkorra.ProjectKorra.waterbending.WaterWave;
 import com.projectkorra.ProjectKorra.waterbending.Wave;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
+
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
@@ -151,6 +155,7 @@ public class Methods {
 	public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<Integer, Information>();
 	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	public static ArrayList<Block> tempnophysics = new ArrayList<Block>();
+	public static HashSet<Block> tempNoEarthbending = new HashSet<Block>();
 	private static Integer[] plantIds = { 6, 18, 31, 32, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175};
 
 	public static Integer[] transparentToEarthbending = {0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106};
@@ -1189,6 +1194,9 @@ public class Methods {
 
 		if(!valid)
 			return false;
+		
+		if(tempNoEarthbending.contains(block))
+			return false;
 
 		if (!isRegionProtectedFromBuild(player, ability,
 				block.getLocation()))
@@ -2009,6 +2017,7 @@ public class Methods {
 		Tornado.instances.clear();
 		AirBurst.removeAll();
 		Suffocate.removeAll();
+		AirCombo.removeAll();
 
 		Catapult.removeAll();
 		CompactColumn.removeAll();
@@ -2019,6 +2028,8 @@ public class Methods {
 		EarthTunnel.instances.clear();
 		Shockwave.removeAll();
 		Tremorsense.removeAll();
+		LavaFlow.removeAll();
+		EarthSmash.removeAll();
 
 		FreezeMelt.removeAll();
 		IceSpike.removeAll();
@@ -2030,6 +2041,8 @@ public class Methods {
 		Plantbending.regrowAll();
 		OctopusForm.removeAll();
 		Bloodbending.instances.clear();
+		WaterWave.removeAll();
+		WaterCombo.removeAll();
 
 		FireStream.removeAll();
 		Fireball.removeAll();
@@ -2041,6 +2054,7 @@ public class Methods {
 		FireJet.instances.clear();
 		Cook.removeAll();
 		Illumination.removeAll();
+		FireCombo.removeAll();
 
 		RapidPunch.instances.clear();
 		WarriorStance.instances.clear();
