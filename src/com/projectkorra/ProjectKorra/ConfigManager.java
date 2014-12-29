@@ -481,7 +481,8 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.EarthSmash.Knockback", 3.5);
 		config.addDefault("Abilities.Earth.EarthSmash.Knockup", 0.15);
 		config.addDefault("Abilities.Earth.EarthSmash.FlightSpeed", 0.72);
-		config.addDefault("Abilities.Earth.EarthSmash.FlightTime", 3000);
+		config.addDefault("Abilities.Earth.EarthSmash.FlightTimer", 3000);
+		config.addDefault("Abilities.Earth.EarthSmash.RemoveTimer", 30000);
 		
 //		config.addDefault("Abilities.Earth.LavaSurge.Enabled", true);
 //	    config.addDefault("Abilities.Earth.LavaSurge.Description", "LavaSurge is a fundamental move for any Lavabender out there. To use, simply sneak (Default: Shift) while looking at a source of Earth or Lava, then click in a direction. A surge of lava will swiftly travel towards the target you were pointing at, dealing moderate damage, a large knockback, and setting them on fire.");

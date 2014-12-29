@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +19,7 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class EarthSmash {
 	public static enum ClickType {
@@ -39,7 +41,8 @@ public class EarthSmash {
 	public static double FLYING_PLAYER_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.FlightSpeed");
 	public static long CHARGE_TIME = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthSmash.ChargeTime");
 	public static long MAIN_COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthSmash.Cooldown");
-	public static long FLYING_REMOVE_TIMER = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthSmash.FlightTime");
+	public static long FLYING_REMOVE_TIMER = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthSmash.FlightTimer");
+	public static long REMOVE_TIMER = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthSmash.RemoveTimer");
 	
 	private static int REQUIRED_BENDABLE_BLOCKS = 11;
 	private static int MAX_BLOCKS_TO_PASS_THROUGH = 3;
@@ -138,6 +141,10 @@ public class EarthSmash {
 	
 	public void progress() {
 		progressCounter++;
+		if(state == State.LIFTED && REMOVE_TIMER > 0 && System.currentTimeMillis() - time > REMOVE_TIMER) {
+			remove();
+			return;
+		}
 		if(state == State.START || state == State.FLYING || state == State.GRABBED) {
 			if(player.isDead() || !player.isOnline()) {
 				remove();
@@ -176,8 +183,10 @@ public class EarthSmash {
 				}
 			}
 			else if(System.currentTimeMillis() - time > chargeTime) {
-				player.getWorld().playEffect(player.getEyeLocation(), Effect.SMOKE,
-						Methods.getIntCardinalDirection(player.getEyeLocation().getDirection()), 3);
+				Location tempLoc = player.getEyeLocation().add(player.getEyeLocation()
+						.getDirection().normalize().multiply(1.2));
+				tempLoc.add(0, 0.3, 0);
+				ParticleEffect.SMOKE.display(tempLoc, 0.3F, 0.1F, 0.3F, 0, 4); 
 			}
 		}
 		else if(state == State.LIFTING) {
