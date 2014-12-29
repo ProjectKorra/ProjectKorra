@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.6.0 BETA 1
+version: 1.6.0 BETA 2
 main: com.projectkorra.ProjectKorra.ProjectKorra
 softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, TagAPI, NoCheatPlus, LWC]
 commands:
