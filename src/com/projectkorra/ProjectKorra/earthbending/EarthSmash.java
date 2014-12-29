@@ -379,6 +379,10 @@ public class EarthSmash {
 		/**
 		 * Redraws the blocks for this instance of EarthSmash.
 		 */
+		if(currentBlocks.size() == 0) {
+			remove();
+			return;
+		}
 		for(BlockRepresenter blockRep : currentBlocks) {
 			Block block = loc.clone().add(blockRep.getX(),blockRep.getY(),blockRep.getZ()).getBlock();
 			if(player != null && Methods.isTransparentToEarthbending(player,block)) {
