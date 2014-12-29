@@ -492,11 +492,22 @@ Abilities:
     Lightning:
       Enabled: true
       Description: "Hold sneak while selecting this ability to charge up a lightning strike. once charged, release sneak to discharge the lightning to the targeted location."
-      Distance: 15
-      WaterAreaOfEffect: 15
-      Warmup: 3500
-      MissChance: 10
       Damage: 6
+      Range: 13.0
+      ChargeTime: 3500
+      Cooldown: 0
+      StunChance: 0.2
+      StunDuration: 30.0
+      MaxArcAngle: 30
+      SubArcChance: 0.025
+      ChainArcRange: 6.0
+      ChainArcChance: 0.5
+      MaxChainArcs: 2
+      WaterArcs: 4
+      WaterArcRange: 12.0
+      SelfHitWater: true
+      SelfHitClose: true
+      ArcOnIce: false
     WallOfFire:
       Enabled: true
       Description: "To use this ability, click at a location. A wall of fire will appear at this location, igniting enemies caught in it and blocking projectiles."
