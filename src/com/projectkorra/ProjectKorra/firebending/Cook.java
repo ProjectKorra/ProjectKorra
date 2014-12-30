@@ -18,7 +18,7 @@ public class Cook {
 	private static final long cooktime = 2000;
 	private static final Material[] cookables = { Material.RAW_BEEF,
 		Material.RAW_CHICKEN, Material.RAW_FISH, Material.PORK,
-		Material.POTATO_ITEM };
+		Material.POTATO_ITEM, Material.RABBIT, Material.MUTTON };
 
 	private Player player;
 	private ItemStack items;
