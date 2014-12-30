@@ -609,7 +609,13 @@ public class PKListener implements Listener {
 		
 		if(com.projectkorra.ProjectKorra.airbending.Flight.instances.containsKey(event.getPlayer().getName())) {
 			if(com.projectkorra.ProjectKorra.airbending.Flight.isHovering(event.getPlayer())) {
-				event.setTo(new Location(event.getFrom().getWorld(), event.getFrom().getX(), event.getFrom().getY(), event.getFrom().getZ(), event.getTo().getYaw(), event.getTo().getPitch()));
+				Location loc = event.getFrom();
+				Location toLoc = player.getLocation();
+
+				if (loc.getX() != toLoc.getX() || loc.getY() != toLoc.getY() || loc.getZ() != toLoc.getZ()) {
+					event.setCancelled(true);
+					return;
+				}
 			}
 		}
 	}
