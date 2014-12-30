@@ -18,7 +18,6 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.rpg.RPGMethods;
 
 public class Lightning {
 	public static enum State {
@@ -88,10 +87,6 @@ public class Lightning {
 			waterRange = AvatarState.getValue(waterRange);
 			stunChance = AvatarState.getValue(stunChance);
 			stunDuration = AvatarState.getValue(stunDuration);
-		}
-		else if(RPGMethods.isSozinsComet(player.getWorld())) {
-			chargeTime = 0;
-			cooldown = 0;
 		}
 		instances.add(this);
 	}
