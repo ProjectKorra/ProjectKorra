@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingManager;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -89,7 +90,7 @@ public class Lightning {
 			stunChance = AvatarState.getValue(stunChance);
 			stunDuration = AvatarState.getValue(stunDuration);
 		}
-		else if(RPGMethods.isSozinsComet(player.getWorld())) {
+		else if(BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) {
 			chargeTime = 0;
 			cooldown = 0;
 		}
