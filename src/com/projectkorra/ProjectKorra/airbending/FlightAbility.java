@@ -7,15 +7,15 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Methods;
 
-public class Flight {
+public class FlightAbility {
 	
-	public static ConcurrentHashMap<String, Flight> instances = new ConcurrentHashMap<String, Flight>();
+	public static ConcurrentHashMap<String, FlightAbility> instances = new ConcurrentHashMap<String, FlightAbility>();
 	private static ConcurrentHashMap<String, Integer> hits = new ConcurrentHashMap<String, Integer>();
 	private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<String, Boolean>();
 	private Player p;
 	
 	
-	public Flight(Player player) {		
+	public FlightAbility(Player player) {		
 		if(!Methods.canFly(player, true, false)) return;
 		
 		player.setAllowFlight(true);

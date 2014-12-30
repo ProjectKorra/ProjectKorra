@@ -358,14 +358,14 @@ public class PKListener implements Listener {
 			}
 		}
 		
-		com.projectkorra.ProjectKorra.airbending.Flight.remove(event.getPlayer());
+		com.projectkorra.ProjectKorra.airbending.FlightAbility.remove(event.getPlayer());
 	}
 	
 	@EventHandler
 	public void playerIsKicked(PlayerKickEvent event) {
 		if(event.isCancelled()) return;
 		
-		com.projectkorra.ProjectKorra.airbending.Flight.remove(event.getPlayer());
+		com.projectkorra.ProjectKorra.airbending.FlightAbility.remove(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -432,7 +432,7 @@ public class PKListener implements Listener {
 				}
 				if(abil.equalsIgnoreCase("Flight")) {
 					if(player.isSneaking()) return;
-					new com.projectkorra.ProjectKorra.airbending.Flight(player);
+					new com.projectkorra.ProjectKorra.airbending.FlightAbility(player);
 				}
 
 			}
@@ -607,8 +607,8 @@ public class PKListener implements Listener {
 			}
 		}
 		
-		if(com.projectkorra.ProjectKorra.airbending.Flight.instances.containsKey(event.getPlayer().getName())) {
-			if(com.projectkorra.ProjectKorra.airbending.Flight.isHovering(event.getPlayer())) {
+		if(FlightAbility.instances.containsKey(event.getPlayer().getName())) {
+			if(com.projectkorra.ProjectKorra.airbending.FlightAbility.isHovering(event.getPlayer())) {
 				Location loc = event.getFrom();
 				Location toLoc = player.getLocation();
 
@@ -798,11 +798,11 @@ public class PKListener implements Listener {
 				if(abil.equalsIgnoreCase("Flight")) {
 					if(!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")) return;
 					
-					if(com.projectkorra.ProjectKorra.airbending.Flight.instances.containsKey(event.getPlayer().getName())) {
-						if(com.projectkorra.ProjectKorra.airbending.Flight.isHovering(event.getPlayer())) {
-							com.projectkorra.ProjectKorra.airbending.Flight.setHovering(event.getPlayer(), false);
+					if(com.projectkorra.ProjectKorra.airbending.FlightAbility.instances.containsKey(event.getPlayer().getName())) {
+						if(com.projectkorra.ProjectKorra.airbending.FlightAbility.isHovering(event.getPlayer())) {
+							com.projectkorra.ProjectKorra.airbending.FlightAbility.setHovering(event.getPlayer(), false);
 						}else{
-							com.projectkorra.ProjectKorra.airbending.Flight.setHovering(event.getPlayer(), true);
+							com.projectkorra.ProjectKorra.airbending.FlightAbility.setHovering(event.getPlayer(), true);
 						}
 					}
 				}

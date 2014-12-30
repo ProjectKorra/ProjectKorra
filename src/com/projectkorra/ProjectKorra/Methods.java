@@ -2018,7 +2018,7 @@ public class Methods {
 		AirBurst.removeAll();
 		Suffocate.removeAll();
 		AirCombo.removeAll();
-		com.projectkorra.ProjectKorra.airbending.Flight.removeAll();
+		com.projectkorra.ProjectKorra.airbending.FlightAbility.removeAll();
 
 		Catapult.removeAll();
 		CompactColumn.removeAll();
