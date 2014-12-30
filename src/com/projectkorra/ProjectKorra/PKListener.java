@@ -1170,6 +1170,17 @@ public class PKListener implements Listener {
 		event.setFormat(format);
 
 	}
+	
+	@EventHandler
+	public void onEntitySuffocatedByTempBlocks(EntityDamageEvent event) {
+		if(event.isCancelled()) return;
+		
+		if(event.getCause() == DamageCause.SUFFOCATION) {
+			if(TempBlock.isTempBlock(event.getEntity().getLocation().add(0, 1, 0).getBlock())) {
+				event.setCancelled(true);
+			}
+		}
+	}
 
 	@EventHandler
 	public void onPlayerDamageByPlayer(EntityDamageByEntityEvent e) {
