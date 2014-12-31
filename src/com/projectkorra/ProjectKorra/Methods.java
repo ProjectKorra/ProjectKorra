@@ -301,6 +301,8 @@ public class Methods {
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation())) return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p)) return false;
 		if (MetalClips.isControlled(p)) return false;
+		if (BendingManager.events.get(p.getWorld()).equalsIgnoreCase("SolarEclipse") && isFireAbility(ability)) return false;
+		if (BendingManager.events.get(p.getWorld()).equalsIgnoreCase("LunarEclipse") && isWaterAbility(ability)) return false;
 		return true;
 	}
 
