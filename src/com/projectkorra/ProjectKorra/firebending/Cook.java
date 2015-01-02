@@ -15,7 +15,7 @@ public class Cook {
 
 	private static ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<Player, Cook>();
 
-	private static final long cooktime = 2000;
+	private static final long COOK_TIME = 2000;
 	private static final Material[] cookables = { Material.RAW_BEEF,
 		Material.RAW_CHICKEN, Material.RAW_FISH, Material.PORK,
 		Material.POTATO_ITEM };
@@ -23,6 +23,7 @@ public class Cook {
 	private Player player;
 	private ItemStack items;
 	private long time;
+	private long cooktime = COOK_TIME;
 
 	public Cook(Player player) {
 		this.player = player;
@@ -133,6 +134,26 @@ public class Cook {
 
 	public static void removeAll() {
 		instances.clear();
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public long getCooktime() {
+		return cooktime;
+	}
+
+	public void setCooktime(long cooktime) {
+		this.cooktime = cooktime;
 	}
 
 }

@@ -24,15 +24,18 @@ public class FireShield {
 	private static ConcurrentHashMap<Player, FireShield> instances = new ConcurrentHashMap<Player, FireShield>();
 
 	private static long interval = 100;
-	private static long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireShield.Duration");
-	private static double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.Radius");
-	private static double discradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.DiscRadius");
+	private static long DURATION = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireShield.Duration");
+	private static double RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.Radius");
+	private static double DISC_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.DiscRadius");
 	private static boolean ignite = true;
 
 	private Player player;
 	private long time;
 	private long starttime;
 	private boolean shield = false;
+	private long duration = DURATION;
+	private double radius = RADIUS;
+	private double discradius = DISC_RADIUS;
 
 	public FireShield(Player player) {
 		this(player, false);
@@ -183,12 +186,12 @@ public class FireShield {
 			Location playerLoc = fshield.player.getLocation();
 
 			if(fshield.shield){
-				if(playerLoc.distance(loc) <= FireShield.radius)
+				if(playerLoc.distance(loc) <= fshield.radius)
 					return true;
 			}
 			else{
-				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(radius));
-				if(tempLoc.distance(loc) <= FireShield.discradius)
+				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(fshield.discradius));
+				if(tempLoc.distance(loc) <= fshield.discradius)
 					return true;
 			}
 		}
@@ -211,5 +214,41 @@ public class FireShield {
 
 	public static void removeAll() {
 		instances.clear();
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public boolean isShield() {
+		return shield;
+	}
+
+	public void setShield(boolean shield) {
+		this.shield = shield;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getDiscradius() {
+		return discradius;
+	}
+
+	public void setDiscradius(double discradius) {
+		this.discradius = discradius;
 	}
 }

@@ -106,4 +106,24 @@ public class FireJet {
 		return players;
 	}
 
+	public Player getPlayer() {
+		return player;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public double getFactor() {
+		return factor;
+	}
+
+	public void setFactor(double factor) {
+		this.factor = factor;
+	}
+
 }

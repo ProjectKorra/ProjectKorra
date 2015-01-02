@@ -177,4 +177,32 @@ public class FireBurst {
 		instances.clear();
 
 	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public long getChargetime() {
+		return chargetime;
+	}
+
+	public void setChargetime(long chargetime) {
+		this.chargetime = chargetime;
+	}
+
+	public long getRange() {
+		return range;
+	}
+
+	public void setRange(long range) {
+		this.range = range;
+	}
 }

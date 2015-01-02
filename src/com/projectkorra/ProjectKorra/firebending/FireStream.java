@@ -201,4 +201,16 @@ public class FireStream {
 
 	}
 
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
 }
