@@ -20,7 +20,7 @@ public class FreezeMelt {
 	public static final int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Range");
 	public static final int defaultradius = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Radius");
 	
-	public static final int OVERLOADING_LIMIT = 1000;
+	public static final int OVERLOADING_LIMIT = 200;
 	public static boolean overloading = false;
 	public static int overloadCounter = 0;
 	
