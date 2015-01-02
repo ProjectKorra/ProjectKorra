@@ -25,8 +25,8 @@ public class Wave {
 
 	private static final double defaultmaxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.Radius");
 	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.HorizontalPush");
-	private static final double upfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.VerticalPush");
-	private static final double maxfreezeradius = 7;
+	private static final double defaultupfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.VerticalPush");
+	private static final double MAX_FREEZE_RADIUS = 7;
 
 	private static final long interval = 30;
 	private static final byte full = 0x0;
@@ -43,6 +43,8 @@ public class Wave {
 	private double radius = 1;
 	private double maxradius = defaultmaxradius;
 	private double factor = defaultfactor;
+	private double upfactor = defaultupfactor;
+	private double maxfreezeradius = MAX_FREEZE_RADIUS;
 	private boolean freeze = false;
 	private boolean activatefreeze = false;
 	private Location frozenlocation;
@@ -495,6 +497,42 @@ public class Wave {
 				+ "If you look towards a creature when you use this ability, it will target that creature. "
 				+ "Additionally, tapping sneak while the wave is en route will cause that wave to encase the "
 				+ "first target it hits in ice.";
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getMaxradius() {
+		return maxradius;
+	}
+
+	public void setMaxradius(double maxradius) {
+		this.maxradius = maxradius;
+	}
+
+	public double getFactor() {
+		return factor;
+	}
+
+	public void setFactor(double factor) {
+		this.factor = factor;
+	}
+
+	public double getUpfactor() {
+		return upfactor;
+	}
+
+	public void setUpfactor(double upfactor) {
+		this.upfactor = upfactor;
+	}
+
+	public double getMaxfreezeradius() {
+		return maxfreezeradius;
+	}
+
+	public void setMaxfreezeradius(double maxfreezeradius) {
+		this.maxfreezeradius = maxfreezeradius;
 	}
 
 }

@@ -21,11 +21,11 @@ public class OctopusForm {
 
 	static ConcurrentHashMap<Player, OctopusForm> instances = new ConcurrentHashMap<Player, OctopusForm>();
 
-	private static int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Range");
-	private static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Damage");
-	private static long interval = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
-	private static double knockback = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
-	static double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
+	private static int RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Range");
+	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Damage");
+	private static long INTERVAL = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
+	private static double KNOCKBACK = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
+	static double RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
 	private static final byte full = 0x0;
 
 	private Player player;
@@ -45,6 +45,11 @@ public class OctopusForm {
 	private boolean settingup = false;
 	private boolean forming = false;
 	private boolean formed = false;
+	private int range = RANGE;
+	private int damage = DAMAGE;
+	private long interval = INTERVAL;
+	private double knockback = KNOCKBACK;
+	private double radius = RADIUS;
 
 	public OctopusForm(Player player) {
 		if (instances.containsKey(player)) {
@@ -449,6 +454,50 @@ public class OctopusForm {
 				+ "While channeling, the water will form itself around you and has a chance to block incoming attacks. "
 				+ "Additionally, you can click while channeling to attack things near you, dealing damage and knocking them back. "
 				+ "Releasing shift at any time will dissipate the form.";
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public int getRange() {
+		return range;
+	}
+
+	public void setRange(int range) {
+		this.range = range;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public long getInterval() {
+		return interval;
+	}
+
+	public void setInterval(long interval) {
+		this.interval = interval;
+	}
+
+	public double getKnockback() {
+		return knockback;
+	}
+
+	public void setKnockback(double knockback) {
+		this.knockback = knockback;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
 	}
 
 }

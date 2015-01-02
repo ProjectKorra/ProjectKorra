@@ -23,8 +23,8 @@ import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 public class IceBlast {
 	
 	private static ConcurrentHashMap<Integer, IceBlast> instances = new ConcurrentHashMap<Integer, IceBlast>();
-	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.Range");
-	private static int defaultdamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
+	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.Range");
+	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
 	private static int ID = Integer.MIN_VALUE;
 	
 	private static final long interval = 20;
@@ -44,6 +44,8 @@ public class IceBlast {
 	private Block sourceblock;
 	private Player player;
 	private TempBlock source;
+	private double defaultrange = RANGE;
+	private double defaultdamage = DAMAGE;
 	
 	public IceBlast(Player player) {
 		block(player);
@@ -111,7 +113,7 @@ public class IceBlast {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = ice.location;
-			if (mloc.distance(location) <= defaultrange
+			if (mloc.distance(location) <= RANGE
 					&& Methods.getDistanceFromLine(vector, location, ice.location) < deflectrange
 					&& mloc.distance(location.clone().add(vector)) < 
 					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
@@ -313,6 +315,30 @@ public class IceBlast {
 		for (int id : instances.keySet()) {
 			instances.get(id).progress();
 		}
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
+	public double getDefaultrange() {
+		return defaultrange;
+	}
+
+	public void setDefaultrange(double defaultrange) {
+		this.defaultrange = defaultrange;
+	}
+
+	public double getDefaultdamage() {
+		return defaultdamage;
+	}
+
+	public void setDefaultdamage(double defaultdamage) {
+		this.defaultdamage = defaultdamage;
 	}
 
 }

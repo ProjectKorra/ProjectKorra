@@ -111,7 +111,7 @@ public class FreezeMelt {
 					return true;
 				}
 				if (Methods.getBoundAbility(player).equalsIgnoreCase("OctopusForm")) {
-					if (block.getLocation().distance(player.getLocation()) <= OctopusForm.radius + 2)
+					if (block.getLocation().distance(player.getLocation()) <= OctopusForm.RADIUS + 2)
 						return false;
 				}
 				if (Methods.canBend(player.getName(), "PhaseChange")) {

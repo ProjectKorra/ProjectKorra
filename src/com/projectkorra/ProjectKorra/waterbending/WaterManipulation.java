@@ -33,11 +33,11 @@ public class WaterManipulation {
 	public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Player, Integer> prepared = new ConcurrentHashMap<Player, Integer>();
 
-	static double range = config.getDouble("Abilities.Water.WaterManipulation.Range");
-	private static double pushfactor = config.getDouble("Abilities.Water.WaterManipulation.Push");
+	static double RANGE = config.getDouble("Abilities.Water.WaterManipulation.Range");
+	private static double PUSH_FACTOR = config.getDouble("Abilities.Water.WaterManipulation.Push");
 	private static double defaultdamage = config.getDouble("Abilities.Water.WaterManipulation.Damage");
 	private static double speed = config.getDouble("Abilities.Water.WaterManipulation.Speed");
-	private static long cooldown = config.getLong("Abilities.Water.WaterManipulation.Cooldown");
+	private static long COOLDOWN = config.getLong("Abilities.Water.WaterManipulation.Cooldown");
 	private static long interval = (long) (1000. / speed);
 	private static final double deflectrange = 3;
 	// private static double speed = 1.5;
@@ -64,6 +64,9 @@ public class WaterManipulation {
 	private boolean settingup = false;
 	// private boolean targetting = false;
 	private final boolean displacing = false;
+	private double range = RANGE;
+	private double pushfactor = PUSH_FACTOR;
+	private long cooldown = COOLDOWN;
 
 	public WaterManipulation(Player player) {
 		if (water.isEmpty()) {
@@ -127,7 +130,7 @@ public class WaterManipulation {
 	public void moveWater() {
 		if (sourceblock != null) {
 			if (sourceblock.getWorld() == player.getWorld()) {
-				targetdestination = getTargetLocation(player);
+				targetdestination = getTargetLocation(player, range);
 
 				if (targetdestination.distance(location) <= 1) {
 					progressing = false;
@@ -151,8 +154,12 @@ public class WaterManipulation {
 			Methods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", Methods.getGlobalCooldown());
 		}
 	}
-
+	
 	private static Location getTargetLocation(Player player) {
+		return getTargetLocation(player, RANGE);
+	}
+
+	private static Location getTargetLocation(Player player, double range) {
 		Entity target = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		Location location;
 		if (target == null) {
@@ -309,7 +316,7 @@ public class WaterManipulation {
 						Methods.playWaterbendingSound(location);
 					}		
 
-					double radius = FireBlast.affectingradius;
+					double radius = FireBlast.AFFECTING_RADIUS;
 					Player source = player;
 					if(!(location == null)) {
 						if (EarthBlast.annihilateBlasts(location, radius, source)
@@ -358,7 +365,7 @@ public class WaterManipulation {
 				}
 
 				if (!displacing) {
-					for (Entity entity : Methods.getEntitiesAroundPoint(location, FireBlast.affectingradius)) {
+					for (Entity entity : Methods.getEntitiesAroundPoint(location, FireBlast.AFFECTING_RADIUS)) {
 						if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId()) {
 
 							// Block testblock = location.getBlock();
@@ -544,7 +551,7 @@ public class WaterManipulation {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
-			if (mloc.distance(location) <= range
+			if (mloc.distance(location) <= manip.range
 					&& Methods.getDistanceFromLine(vector, location, manip.location) < deflectrange
 					&& mloc.distance(location.clone().add(vector)) < 
 					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
@@ -573,7 +580,7 @@ public class WaterManipulation {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
-			if (mloc.distance(location) <= range
+			if (mloc.distance(location) <= manip.range
 					&& Methods.getDistanceFromLine(vector, location, manip.location) < deflectrange
 					&& mloc.distance(location.clone().add(vector)) < 
 					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
@@ -687,6 +694,45 @@ public class WaterManipulation {
 				}
 		}
 		return broke;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getPushfactor() {
+		return pushfactor;
+	}
+
+	public void setPushfactor(double pushfactor) {
+		this.pushfactor = pushfactor;
+	}
+
+	public long getCooldown() {
+		return cooldown;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+		if(player != null)
+			Methods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", cooldown);
+
 	}
 
 }

@@ -25,16 +25,21 @@ public class Bloodbending {
 
 	ConcurrentHashMap<Entity, Location> targetentities = new ConcurrentHashMap<Entity, Location>();
 
-	private static final double factor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
+	private static final double FACTOR = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
 	private static final boolean onlyUsableAtNight = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
 	private static boolean canBeUsedOnUndead = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
 	private static final boolean onlyUsableDuringMoon = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
-	private int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Range");
+	
+	private int RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Range");
 	private long HOLD_TIME = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.HoldTime");
 	private long COOLDOWN = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Cooldown");
 	
 	private Player player;
 	private long time;
+	private double factor = FACTOR;
+	private int range = RANGE;
+	private long holdTime = HOLD_TIME;
+	private long cooldown = COOLDOWN;
 
 	public Bloodbending(Player player) {
 		if (instances.containsKey(player)) {
@@ -93,7 +98,7 @@ public class Bloodbending {
 			targetentities.put(target, target.getLocation().clone());
 		}
 		if (targetentities.size() > 0) {
-			bplayer.addCooldown("Bloodbending", COOLDOWN);
+			bplayer.addCooldown("Bloodbending", cooldown);
 		}
 		this.player = player;
 		this.time = System.currentTimeMillis();
@@ -128,7 +133,7 @@ public class Bloodbending {
 			return;
 		}
 		
-		if (HOLD_TIME > 0 && System.currentTimeMillis() - this.time > HOLD_TIME) {
+		if (holdTime > 0 && System.currentTimeMillis() - this.time > holdTime) {
 			remove(player);
 			return;
 		}
@@ -289,6 +294,44 @@ public class Bloodbending {
 			}
 		}
 		return null;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getFactor() {
+		return factor;
+	}
+
+	public void setFactor(double factor) {
+		this.factor = factor;
+	}
+
+	public int getRange() {
+		return range;
+	}
+
+	public void setRange(int range) {
+		this.range = range;
+	}
+
+	public long getHoldTime() {
+		return holdTime;
+	}
+
+	public void setHoldTime(long holdTime) {
+		this.holdTime = holdTime;
+	}
+
+	public long getCooldown() {
+		return cooldown;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+		if(player != null)
+			Methods.getBendingPlayer(player.getName()).addCooldown("Bloodbending", cooldown);
 	}
 
 }
