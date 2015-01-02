@@ -19,7 +19,7 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class OctopusForm {
 
-	static ConcurrentHashMap<Player, OctopusForm> instances = new ConcurrentHashMap<Player, OctopusForm>();
+	public static ConcurrentHashMap<Player, OctopusForm> instances = new ConcurrentHashMap<Player, OctopusForm>();
 
 	private static int RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Range");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Damage");

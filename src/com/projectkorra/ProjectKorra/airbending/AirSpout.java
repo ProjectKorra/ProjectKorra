@@ -14,7 +14,7 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class AirSpout {
 
-	private static ConcurrentHashMap<Player, AirSpout> instances = new ConcurrentHashMap<Player, AirSpout>();
+	public static ConcurrentHashMap<Player, AirSpout> instances = new ConcurrentHashMap<Player, AirSpout>();
 
 	private static final double HEIGHT = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirSpout.Height");
 	private static final long interval = 100;

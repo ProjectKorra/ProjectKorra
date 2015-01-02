@@ -13,7 +13,7 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class Shockwave {
 
-	private static ConcurrentHashMap<Player, Shockwave> instances = new ConcurrentHashMap<Player, Shockwave>();
+	public static ConcurrentHashMap<Player, Shockwave> instances = new ConcurrentHashMap<Player, Shockwave>();
 
 	private static final double angle = Math.toRadians(40);
 	private static final long defaultchargetime = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Shockwave.ChargeTime");

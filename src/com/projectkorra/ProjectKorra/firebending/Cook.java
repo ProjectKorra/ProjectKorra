@@ -13,7 +13,7 @@ import com.projectkorra.ProjectKorra.Methods;
 
 public class Cook {
 
-	private static ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<Player, Cook>();
+	public static ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<Player, Cook>();
 
 	private static final long COOK_TIME = 2000;
 	private static final Material[] cookables = { Material.RAW_BEEF,

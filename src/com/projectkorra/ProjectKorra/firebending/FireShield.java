@@ -21,7 +21,7 @@ import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 public class FireShield {
 
-	private static ConcurrentHashMap<Player, FireShield> instances = new ConcurrentHashMap<Player, FireShield>();
+	public static ConcurrentHashMap<Player, FireShield> instances = new ConcurrentHashMap<Player, FireShield>();
 
 	private static long interval = 100;
 	private static long DURATION = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireShield.Duration");

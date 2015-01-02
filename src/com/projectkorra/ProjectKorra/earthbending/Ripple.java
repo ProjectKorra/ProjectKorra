@@ -18,7 +18,7 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class Ripple {
 
-	private static ConcurrentHashMap<Integer, Ripple> instances = new ConcurrentHashMap<Integer, Ripple>();
+	public static ConcurrentHashMap<Integer, Ripple> instances = new ConcurrentHashMap<Integer, Ripple>();
 	private static ConcurrentHashMap<Integer[], Block> blocks = new ConcurrentHashMap<Integer[], Block>();
 
 	static final double RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Range");

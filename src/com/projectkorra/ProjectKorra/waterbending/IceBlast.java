@@ -22,7 +22,7 @@ import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class IceBlast {
 	
-	private static ConcurrentHashMap<Integer, IceBlast> instances = new ConcurrentHashMap<Integer, IceBlast>();
+	public static ConcurrentHashMap<Integer, IceBlast> instances = new ConcurrentHashMap<Integer, IceBlast>();
 	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.Range");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
 	private static int ID = Integer.MIN_VALUE;

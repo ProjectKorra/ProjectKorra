@@ -21,7 +21,7 @@ import com.projectkorra.ProjectKorra.TempPotionEffect;
 
 public class IceSpike2 {
 
-	private static ConcurrentHashMap<Integer, IceSpike2> instances = new ConcurrentHashMap<Integer, IceSpike2>();
+	public static ConcurrentHashMap<Integer, IceSpike2> instances = new ConcurrentHashMap<Integer, IceSpike2>();
 
 	private static double RANGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
 	private static double DAMAGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Damage");

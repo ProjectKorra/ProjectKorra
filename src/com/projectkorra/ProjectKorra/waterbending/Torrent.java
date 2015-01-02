@@ -22,7 +22,7 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class Torrent {
 
-	private static ConcurrentHashMap<Player, Torrent> instances = new ConcurrentHashMap<Player, Torrent>();
+	public static ConcurrentHashMap<Player, Torrent> instances = new ConcurrentHashMap<Player, Torrent>();
 	private static ConcurrentHashMap<TempBlock, Player> frozenblocks = new ConcurrentHashMap<TempBlock, Player>();
 
 	static FileConfiguration config = ProjectKorra.plugin.getConfig();
