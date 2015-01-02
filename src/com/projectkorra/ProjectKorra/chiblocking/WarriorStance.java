@@ -13,8 +13,8 @@ import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 
 public class WarriorStance {
 	
-	public static int strength = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
-	public static int resistance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
+	public int strength = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
+	public int resistance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
 	
 	private Player player;
 	public static ConcurrentHashMap<Player, WarriorStance> instances = new ConcurrentHashMap<Player, WarriorStance>();
@@ -75,4 +75,23 @@ public class WarriorStance {
 		instances.remove(player);
 	}
 
+	public int getStrength() {
+		return strength;
+	}
+
+	public void setStrength(int strength) {
+		this.strength = strength;
+	}
+
+	public int getResistance() {
+		return resistance;
+	}
+
+	public void setResistance(int resistance) {
+		this.resistance = resistance;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
 }

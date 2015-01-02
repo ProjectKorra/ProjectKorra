@@ -18,16 +18,18 @@ public class RapidPunch {
 	public static ConcurrentHashMap<Player, RapidPunch> instances = new ConcurrentHashMap<Player, RapidPunch>();
 	public static List<Player> punching = new ArrayList<Player>();
 	
-	private static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
-	private static int punches = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
+	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
+	private int punches = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
 	private int distance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Distance");
 	private long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
 	
 	private int numpunches;
 	// private long timers;
 	private Entity target;
+	private Player player;
 
 	public RapidPunch(Player p) {// , Entity t) {
+		player = p;
 		BendingPlayer bPlayer = Methods.getBendingPlayer(p.getName());
 		if (instances.containsKey(p))
 			return;
@@ -78,4 +80,33 @@ public class RapidPunch {
 				+ " This has a short cooldown.";
 	}
 
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public int getDistance() {
+		return distance;
+	}
+
+	public void setDistance(int distance) {
+		this.distance = distance;
+	}
+
+	public long getCooldown() {
+		return cooldown;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+		if(player != null)
+			Methods.getBendingPlayer(player.getName()).addCooldown("RapidPunch", cooldown);
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
 }
