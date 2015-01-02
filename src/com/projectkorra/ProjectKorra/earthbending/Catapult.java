@@ -20,11 +20,11 @@ public class Catapult {
 
 	public static ConcurrentHashMap<Integer, Catapult> instances = new ConcurrentHashMap<Integer, Catapult>();
 
-	private static int length = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Catapult.Length");
-	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Speed");
-	private static double push = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Push");
+	private static int LENGTH = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Catapult.Length");
+	private static double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Speed");
+	private static double PUSH = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Push");
 
-	private static long interval = (long) (1000. / speed);
+	private static long interval = (long) (1000. / SPEED);
 
 	private Player player;
 	private Location origin;
@@ -34,6 +34,9 @@ public class Catapult {
 	private boolean catapult = false;
 	private boolean moving = false;
 	private boolean flying = false;
+	private int length = LENGTH;
+	private double speed = SPEED;
+	private double push = PUSH;
 	private long time;
 	private long starttime;
 	private int ticks = 0;
@@ -227,5 +230,33 @@ public class Catapult {
 				+ "Skillful use of this ability takes much time and work, and it does result in the "
 				+ "death of certain gung-ho earthbenders. If you plan to use this ability, be sure "
 				+ "you've read about your passive ability you innately have as an earthbender.";
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public int getLength() {
+		return length;
+	}
+
+	public void setLength(int length) {
+		this.length = length;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getPush() {
+		return push;
+	}
+
+	public void setPush(double push) {
+		this.push = push;
 	}
 }

@@ -36,6 +36,7 @@ public class EarthSmash {
 	public static double GRAB_RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.GrabRange");
 	public static double TRAVEL_RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.ShotRange");
 	public static double SHOOTING_DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.Damage");
+
 	public static double KNOCKBACK_POWER = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.Knockback");
 	public static double KNOCKUP_POWER = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.Knockup");
 	public static double FLYING_PLAYER_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.FlightSpeed");
@@ -153,7 +154,7 @@ public class EarthSmash {
 		}
 		else if(state == State.START) {
 			String ability = Methods.getBoundAbility(player);
-			if(ability == null || !ability.equalsIgnoreCase("EarthSmash") || bplayer.isOnCooldown("earthsmashmain")) {
+			if(ability == null || !ability.equalsIgnoreCase("EarthSmash") || bplayer.isOnCooldown("EarthSmash")) {
 				remove();
 				return;
 			}
@@ -173,7 +174,7 @@ public class EarthSmash {
 						remove();
 						return;
 					}
-					bplayer.addCooldown("earthsmashmain", cooldown);
+					bplayer.addCooldown("EarthSmash", cooldown);
 					loc = origin.getLocation();
 					state = State.LIFTING;
 				}
@@ -659,5 +660,87 @@ public class EarthSmash {
 	    public S getSecond() {
 	        return second;
 	    }
+	}
+	
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
+	public long getCooldown() {
+		return cooldown;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+		if(player != null)
+			bplayer.addCooldown("EarthSmash", cooldown);
+	}
+
+	public double getGrabRange() {
+		return grabRange;
+	}
+
+	public void setGrabRange(double grabRange) {
+		this.grabRange = grabRange;
+	}
+
+	public double getChargeTime() {
+		return chargeTime;
+	}
+
+	public void setChargeTime(double chargeTime) {
+		this.chargeTime = chargeTime;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getKnockback() {
+		return knockback;
+	}
+
+	public void setKnockback(double knockback) {
+		this.knockback = knockback;
+	}
+
+	public double getKnockup() {
+		return knockup;
+	}
+
+	public void setKnockup(double knockup) {
+		this.knockup = knockup;
+	}
+
+	public double getFlySpeed() {
+		return flySpeed;
+	}
+
+	public void setFlySpeed(double flySpeed) {
+		this.flySpeed = flySpeed;
+	}
+
+	public double getShootRange() {
+		return shootRange;
+	}
+
+	public void setShootRange(double shootRange) {
+		this.shootRange = shootRange;
+	}
+
+	public long getFlightRemove() {
+		return flightRemove;
+	}
+
+	public void setFlightRemove(long flightRemove) {
+		this.flightRemove = flightRemove;
 	}
 }

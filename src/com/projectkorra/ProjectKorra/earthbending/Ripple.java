@@ -21,10 +21,10 @@ public class Ripple {
 	private static ConcurrentHashMap<Integer, Ripple> instances = new ConcurrentHashMap<Integer, Ripple>();
 	private static ConcurrentHashMap<Integer[], Block> blocks = new ConcurrentHashMap<Integer[], Block>();
 
-	static final double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Range");
-	private static final double damage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Damage");
+	static final double RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Range");
+	private static final double DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Damage");
 	private static int ID = Integer.MIN_VALUE;
-	private static double knockback = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Knockback");
+	private static double KNOCKBACK = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Knockback");
 
 	private Player player;
 	private Vector direction;
@@ -33,6 +33,9 @@ public class Ripple {
 	private int id;
 	private int step = 0;
 	private int maxstep;
+	private double radius = RADIUS;
+	private double damage = DAMAGE;
+	private double knockback = KNOCKBACK;
 	private ArrayList<Location> locations = new ArrayList<Location>();
 	private ArrayList<Entity> entities = new ArrayList<Entity>();
 
@@ -293,6 +296,34 @@ public class Ripple {
 	public static void removeAll() {
 		instances.clear();
 
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getKnockback() {
+		return knockback;
+	}
+
+	public void setKnockback(double knockback) {
+		this.knockback = knockback;
 	}
 
 }

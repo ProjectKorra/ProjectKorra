@@ -89,7 +89,7 @@ public class Shockwave {
 	}
 
 	private static void areaShockwave(Player player) {
-		double dtheta = 360. / (2 * Math.PI * Ripple.radius) - 1;
+		double dtheta = 360. / (2 * Math.PI * Ripple.RADIUS) - 1;
 		for (double theta = 0; theta < 360; theta += dtheta) {
 			double rtheta = Math.toRadians(theta);
 			Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
@@ -100,7 +100,7 @@ public class Shockwave {
 	public static void coneShockwave(Player player) {
 		if (instances.containsKey(player)) {
 			if (instances.get(player).charged) {
-				double dtheta = 360. / (2 * Math.PI * Ripple.radius) - 1;
+				double dtheta = 360. / (2 * Math.PI * Ripple.RADIUS) - 1;
 				for (double theta = 0; theta < 360; theta += dtheta) {
 					double rtheta = Math.toRadians(theta);
 					Vector vector = new Vector(Math.cos(rtheta), 0,
@@ -127,6 +127,18 @@ public class Shockwave {
 		instances.clear();
 		Ripple.removeAll();
 
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public long getChargetime() {
+		return chargetime;
+	}
+
+	public void setChargetime(long chargetime) {
+		this.chargetime = chargetime;
 	}
 
 }
