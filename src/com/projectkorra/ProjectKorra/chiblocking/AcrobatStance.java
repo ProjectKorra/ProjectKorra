@@ -20,6 +20,8 @@ public class AcrobatStance {
 	private Player player;
 	public double chiBlockBost = CHI_BLOCK_BOOST;
 	public double paralyzeDodgeBoost = PARA_DODGE_BOOST;
+	public int speed = ChiPassive.speedPower + 1;
+	public int jump = ChiPassive.jumpPower + 1;
 	
 	public AcrobatStance(Player player) {
 		this.player = player;
@@ -52,11 +54,11 @@ public class AcrobatStance {
 		}
 		
 		if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, ChiPassive.speedPower + 1));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speed));
 		}
 		
 		if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, ChiPassive.jumpPower + 1));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jump));
 		}
 	}
 	
@@ -96,5 +98,21 @@ public class AcrobatStance {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+
+	public int getJump() {
+		return jump;
+	}
+
+	public void setJump(int jump) {
+		this.jump = jump;
 	}
 }

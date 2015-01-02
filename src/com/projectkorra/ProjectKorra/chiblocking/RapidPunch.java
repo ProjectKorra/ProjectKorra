@@ -109,4 +109,20 @@ public class RapidPunch {
 	public Player getPlayer() {
 		return player;
 	}
+
+	public int getPunches() {
+		return punches;
+	}
+
+	public void setPunches(int punches) {
+		this.punches = punches;
+	}
+
+	public int getNumpunches() {
+		return numpunches;
+	}
+
+	public void setNumpunches(int numpunches) {
+		this.numpunches = numpunches;
+	}
 }

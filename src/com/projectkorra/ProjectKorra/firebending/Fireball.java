@@ -353,4 +353,8 @@ public class Fireball {
 	public void setChargetime(long chargetime) {
 		this.chargetime = chargetime;
 	}
+
+	public Player getPlayer() {
+		return player;
+	}
 }
