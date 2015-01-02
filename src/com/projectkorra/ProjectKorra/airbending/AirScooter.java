@@ -18,13 +18,14 @@ public class AirScooter {
 
 	public static ConcurrentHashMap<Player, AirScooter> instances = new ConcurrentHashMap<Player, AirScooter>();
 
-	private static final double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirScooter.Speed");
+	private static final double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirScooter.Speed");
 	private static final long interval = 100;
 	private static final double scooterradius = 1;
 
 	private Player player;
 	private Block floorblock;
 	private long time;
+	private double speed = SPEED;
 	private ArrayList<Double> angles = new ArrayList<Double>();
 
 	public AirScooter(Player player) {
@@ -180,5 +181,17 @@ public class AirScooter {
 			players.add(player);
 		}
 		return players;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
 	}
 }
