@@ -35,15 +35,15 @@ public class AirSwipe {
 
 	private static int ID = Integer.MIN_VALUE;
 	private static int stepsize = 4;
-	private static int arc = config.getInt("Abilities.Air.AirSwipe.Arc");
+	private static int ARC = config.getInt("Abilities.Air.AirSwipe.Arc");
 	private static int defaultdamage = config.getInt("Abilities.Air.AirSwipe.Damage");
-	private static double defaultpushfactor = config.getDouble("Abilities.Air.AirSwipe.Push");
-	private static double affectingradius = config.getDouble("Abilities.Air.AirSwipe.Radius");
-	private static double range = config.getDouble("Abilities.Air.AirSwipe.Range");
-	private static double speed = config.getDouble("Abilities.Air.AirSwipe.Speed");
-	private static double maxfactor = config.getDouble("Abilities.Air.AirSwipe.ChargeFactor");
+	private static double PUSH_FACTOR = config.getDouble("Abilities.Air.AirSwipe.Push");
+	private static double AFFECTING_RADIUS = config.getDouble("Abilities.Air.AirSwipe.Radius");
+	private static double RANGE = config.getDouble("Abilities.Air.AirSwipe.Range");
+	private static double SPEED = config.getDouble("Abilities.Air.AirSwipe.Speed");
+	private static double MAX_FACTOR = config.getDouble("Abilities.Air.AirSwipe.ChargeFactor");
 	private static byte full = AirBlast.full;
-	private static long maxchargetime = config.getLong("Abilities.Air.AirSwipe.MaxChargeTime");
+	private static long MAX_CHARGE_TIME = config.getLong("Abilities.Air.AirSwipe.MaxChargeTime");
 
 	private double speedfactor;
 
@@ -54,8 +54,14 @@ public class AirSwipe {
 	private Player player;
 	private boolean charging = false;
 	private long time;
-	private int damage = defaultdamage;
-	private double pushfactor = defaultpushfactor;
+	private double damage = defaultdamage;
+	private double pushfactor = PUSH_FACTOR;
+	private double speed = SPEED;
+	private double range = RANGE;
+	private double maxfactor = MAX_FACTOR;
+	private double affectingradius = AFFECTING_RADIUS;
+	private int arc = ARC;
+	private long maxchargetime = MAX_CHARGE_TIME;
 	private int id;
 	private ConcurrentHashMap<Vector, Location> elements = new ConcurrentHashMap<Vector, Location>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
@@ -177,7 +183,7 @@ public class AirSwipe {
 				} else {
 					Methods.removeSpouts(location, player);
 
-					double radius = FireBlast.affectingradius;
+					double radius = FireBlast.AFFECTING_RADIUS;
 					Player source = player;
 					if (EarthBlast.annihilateBlasts(location, radius, source)
 							|| WaterManipulation.annihilateBlasts(location,radius, source)
@@ -303,4 +309,71 @@ public class AirSwipe {
 		return removed;
 	}
 
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getMaxfactor() {
+		return maxfactor;
+	}
+
+	public void setMaxfactor(double maxfactor) {
+		this.maxfactor = maxfactor;
+	}
+
+	public double getAffectingradius() {
+		return affectingradius;
+	}
+
+	public void setAffectingradius(double affectingradius) {
+		this.affectingradius = affectingradius;
+	}
+
+	public int getArc() {
+		return arc;
+	}
+
+	public void setArc(int arc) {
+		this.arc = arc;
+	}
+
+	public long getMaxchargetime() {
+		return maxchargetime;
+	}
+
+	public void setMaxchargetime(long maxchargetime) {
+		this.maxchargetime = maxchargetime;
+	}
+
+	public double getPushfactor() {
+		return pushfactor;
+	}
+
+	public void setPushfactor(double pushfactor) {
+		this.pushfactor = pushfactor;
+	}
 }

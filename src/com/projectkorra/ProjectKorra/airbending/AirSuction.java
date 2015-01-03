@@ -31,10 +31,10 @@ public class AirSuction {
 	private static int ID = Integer.MIN_VALUE;
 	private static final int maxticks = AirBlast.maxticks;
 
-	private static double speed = config.getDouble("Abilities.Air.AirSuction.Speed");
-	private static double range = config.getDouble("Abilities.Air.AirSuction.Range");
-	private static double affectingradius = config.getDouble("Abilities.Air.AirSuction.Radius");
-	private static double pushfactor = config.getDouble("Abilities.Air.AirSuction.Push");
+	private static double SPEED = config.getDouble("Abilities.Air.AirSuction.Speed");
+	private static double RANGE = config.getDouble("Abilities.Air.AirSuction.Range");
+	private static double RADIUS = config.getDouble("Abilities.Air.AirSuction.Radius");
+	private static double PUSH_FACTOR = config.getDouble("Abilities.Air.AirSuction.Push");
 	private static double originselectrange = 10;
 
 	private Location location;
@@ -44,6 +44,10 @@ public class AirSuction {
 	private boolean otherorigin = false;
 	private int id;
 	private int ticks = 0;
+	private double speed = SPEED;
+	private double range = RANGE;
+	private double affectingradius = RADIUS;
+	private double pushfactor = PUSH_FACTOR;
 	// private long time;
 
 	private double speedfactor;
@@ -267,6 +271,42 @@ public class AirSuction {
 				+ " Skilled benders can use this technique to pull items from precarious locations. "
 				+ "Additionally, tapping sneak will change the origin of your next "
 				+ "AirSuction to your targeted location.";
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getAffectingradius() {
+		return affectingradius;
+	}
+
+	public void setAffectingradius(double affectingradius) {
+		this.affectingradius = affectingradius;
+	}
+
+	public double getPushfactor() {
+		return pushfactor;
+	}
+
+	public void setPushfactor(double pushfactor) {
+		this.pushfactor = pushfactor;
 	}
 
 }

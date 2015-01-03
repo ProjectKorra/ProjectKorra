@@ -22,10 +22,11 @@ public class AirShield {
 
 	public static ConcurrentHashMap<Integer, AirShield> instances = new ConcurrentHashMap<Integer, AirShield>();
 
-	private static double maxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirShield.Radius");
+	private static double MAX_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirShield.Radius");
 	private static boolean isToggle = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
-	private static int numberOfStreams = (int) (.75 * (double) maxradius);
+	private static int numberOfStreams = (int) (.75 * (double) MAX_RADIUS);
 
+	private double maxradius = MAX_RADIUS;
 	private double radius = 2;
 	private double speedfactor;
 
@@ -204,5 +205,17 @@ public class AirShield {
 				+ "with a small pocket of safe space in the center. "
 				+ "This wind will deflect all projectiles and will prevent any creature from "
 				+ "entering it for as long as its maintained. ";
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getMaxradius() {
+		return maxradius;
+	}
+
+	public void setMaxradius(double maxradius) {
+		this.maxradius = maxradius;
 	}
 }

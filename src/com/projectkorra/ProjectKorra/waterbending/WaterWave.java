@@ -56,6 +56,12 @@ public class WaterWave {
 	private boolean iceWave = false;
 	private int progressCounter = 0;
 	private AnimateState anim;
+	private double range = RANGE;
+	private double speed = MAX_SPEED;
+	private double chargeTime = CHARGE_TIME;
+	private double flightTime = FLIGHT_TIME;
+	private double waveRadius = WAVE_RADIUS;
+	private double damage = ICE_WAVE_DAMAGE;
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks = new ConcurrentHashMap<Block, TempBlock>();
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
@@ -97,7 +103,7 @@ public class WaterWave {
 				removeType(player, AbilityType.CLICK);
 				instances.add(this);
 
-				Block block = Methods.getWaterSourceBlock(player, RANGE,
+				Block block = Methods.getWaterSourceBlock(player, range,
 						Methods.canPlantbend(player));
 				if (block == null) {
 					remove();
@@ -125,7 +131,7 @@ public class WaterWave {
 					return;
 				}
 			}
-			if (player.getLocation().distance(origin) > RANGE) {
+			if (player.getLocation().distance(origin) > range) {
 				remove();
 				return;
 			} else if (player.isSneaking()) {
@@ -157,7 +163,7 @@ public class WaterWave {
 
 			removeType(player, AbilityType.CLICK);
 			if (!player.isSneaking()) {
-				if (System.currentTimeMillis() - time > CHARGE_TIME) {
+				if (System.currentTimeMillis() - time > chargeTime) {
 					WaterWave wwave = new WaterWave(player, AbilityType.RELEASE);
 					wwave.anim = AnimateState.SHRINK;
 					wwave.direction = direction;
@@ -216,27 +222,27 @@ public class WaterWave {
 					anim = null;
 				}
 			} else {
-				if ((System.currentTimeMillis() - time > FLIGHT_TIME && !AvatarState
+				if ((System.currentTimeMillis() - time > flightTime && !AvatarState
 						.isAvatarState(player)) || player.isSneaking()) {
 					remove();
 					return;
 				}
 				player.setFallDistance(0f);
-				double currentSpeed = MAX_SPEED
-						- (MAX_SPEED
-								* (double) (System.currentTimeMillis() - time) / (double) FLIGHT_TIME);
+				double currentSpeed = speed
+						- (speed
+								* (double) (System.currentTimeMillis() - time) / (double) flightTime);
 				double nightSpeed = Methods.waterbendingNightAugment(
 						currentSpeed * 0.9, player.getWorld());
 				currentSpeed = nightSpeed > currentSpeed ? nightSpeed
 						: currentSpeed;
 				if (AvatarState.isAvatarState(player))
-					currentSpeed = Methods.waterbendingNightAugment(MAX_SPEED,
+					currentSpeed = Methods.waterbendingNightAugment(speed,
 							player.getWorld());
 
 				player.setVelocity(player.getEyeLocation().getDirection()
 						.normalize().multiply(currentSpeed));
 				for (Block block : Methods.getBlocksAroundPoint(player
-						.getLocation().add(0, -1, 0), WAVE_RADIUS))
+						.getLocation().add(0, -1, 0), waveRadius))
 					if (block.getType() == Material.AIR
 							&& !Methods.isRegionProtectedFromBuild(player,
 									"WaterSpout", block.getLocation())) {
@@ -250,7 +256,7 @@ public class WaterWave {
 
 				if (iceWave && progressCounter % 3 == 0) {
 					for (Entity entity : Methods.getEntitiesAroundPoint(player
-							.getLocation().add(0, -1, 0), WAVE_RADIUS * 1.5)) {
+							.getLocation().add(0, -1, 0), waveRadius * 1.5)) {
 						if (entity != this.player
 								&& entity instanceof LivingEntity
 								&& !affectedEntities.contains(entity)) {
@@ -259,7 +265,7 @@ public class WaterWave {
 									.getWaterbendingNightAugment(player
 											.getWorld());
 							Methods.damageEntity(player, entity, aug
-									* ICE_WAVE_DAMAGE);
+									* damage);
 							final Player fplayer = this.player;
 							final Entity fent = entity;
 							new BukkitRunnable() {
@@ -272,14 +278,6 @@ public class WaterWave {
 				}
 			}
 		}
-	}
-
-	public void setIceWave(boolean b) {
-		this.iceWave = b;
-	}
-	
-	public boolean isIceWave() {
-		return this.iceWave;
 	}
 
 	public void drawCircle(double theta, double increment) {
@@ -433,5 +431,74 @@ public class WaterWave {
 			frozenBlocks.get(block).revertBlock();
 			frozenBlocks.remove(block);
 		}
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getChargeTime() {
+		return chargeTime;
+	}
+
+	public void setChargeTime(double chargeTime) {
+		this.chargeTime = chargeTime;
+	}
+
+	public double getFlightTime() {
+		return flightTime;
+	}
+
+	public void setFlightTime(double flightTime) {
+		this.flightTime = flightTime;
+	}
+
+	public double getWaveRadius() {
+		return waveRadius;
+	}
+
+	public void setWaveRadius(double waveRadius) {
+		this.waveRadius = waveRadius;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+	
+
+	public void setIceWave(boolean b) {
+		this.iceWave = b;
+	}
+	
+	public boolean isIceWave() {
+		return this.iceWave;
 	}
 }
