@@ -25,7 +25,7 @@ public class EarthArmor {
 	private static long interval = 2000;
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
 	private static long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.Duration");
-	private static int strength = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthArmor.Strength");
+	private static int STRENGTH = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthArmor.Strength");
 	private static int range = 7;
 
 	private Player player;
@@ -36,6 +36,7 @@ public class EarthArmor {
 	private long time, starttime;
 	private boolean formed = false;
 	private boolean complete = false;
+	private int strength = STRENGTH;
 	public ItemStack[] oldarmor;
 
 	public EarthArmor(Player player) {
@@ -258,5 +259,17 @@ public class EarthArmor {
 				return false;
 		}
 		return true;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public int getStrength() {
+		return strength;
+	}
+
+	public void setStrength(int strength) {
+		this.strength = strength;
 	}
 }

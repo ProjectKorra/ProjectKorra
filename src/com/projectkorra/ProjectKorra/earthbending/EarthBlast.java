@@ -25,13 +25,13 @@ public class EarthBlast {
 
 	private static boolean hitself = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
 	private static double preparerange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.PrepareRange");
-	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Range");
-	private static double damage = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Damage");
+	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Range");
+	private static double DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Damage");
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Speed");
 	private static final double deflectrange = 3;
 
 	private static boolean revert = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.Revert");
-	private static double pushfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Push");
+	private static double PUSH_FACTOR = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Push");
 
 	private static long interval = (long) (1000. / speed);
 
@@ -50,6 +50,9 @@ public class EarthBlast {
 	private boolean falling = false;
 	private long time;
 	private boolean settingup = true;
+	private double range = RANGE;
+	private double damage = DAMAGE;
+	private double pushfactor = PUSH_FACTOR;
 
 	public EarthBlast(Player player) {
 		this.player = player;
@@ -76,10 +79,10 @@ public class EarthBlast {
 	}
 
 	private static Location getTargetLocation(Player player) {
-		Entity target = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
+		Entity target = Methods.getTargetedEntity(player, RANGE, new ArrayList<Entity>());
 		Location location;
 		if (target == null) {
-			location = Methods.getTargetedLocation(player, range);
+			location = Methods.getTargetedLocation(player, RANGE);
 		} else {
 			location = ((LivingEntity) target).getEyeLocation();
 		}
@@ -269,7 +272,7 @@ public class EarthBlast {
 					location = location.clone().add(direction);
 
 					Methods.removeSpouts(location, player);
-					double radius = FireBlast.affectingradius;
+					double radius = FireBlast.AFFECTING_RADIUS;
 					Player source = player;
 					if (EarthBlast.annihilateBlasts(location, radius, source)
 							|| WaterManipulation.annihilateBlasts(location,
@@ -298,7 +301,7 @@ public class EarthBlast {
 				}
 
 				for (Entity entity : Methods.getEntitiesAroundPoint(location,
-						FireBlast.affectingradius)) {
+						FireBlast.AFFECTING_RADIUS)) {
 					if (Methods.isRegionProtectedFromBuild(player,
 							"EarthBlast", entity.getLocation()))
 						continue;
@@ -418,7 +421,7 @@ public class EarthBlast {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = blast.location;
-			if (mloc.distance(location) <= range
+			if (mloc.distance(location) <= RANGE
 					&& Methods.getDistanceFromLine(vector, location,
 							blast.location) < deflectrange
 							&& mloc.distance(location.clone().add(vector)) < mloc
@@ -461,7 +464,7 @@ public class EarthBlast {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = blast.location;
-			if (mloc.distance(location) <= range
+			if (mloc.distance(location) <= RANGE
 					&& Methods.getDistanceFromLine(vector, location,
 							blast.location) < deflectrange
 							&& mloc.distance(location.clone().add(vector)) < mloc
@@ -517,6 +520,34 @@ public class EarthBlast {
 				}
 		}
 		return broke;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getPushfactor() {
+		return pushfactor;
+	}
+
+	public void setPushfactor(double pushfactor) {
+		this.pushfactor = pushfactor;
 	}
 
 }

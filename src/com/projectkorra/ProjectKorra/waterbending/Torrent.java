@@ -22,16 +22,16 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 public class Torrent {
 
-	private static ConcurrentHashMap<Player, Torrent> instances = new ConcurrentHashMap<Player, Torrent>();
+	public static ConcurrentHashMap<Player, Torrent> instances = new ConcurrentHashMap<Player, Torrent>();
 	private static ConcurrentHashMap<TempBlock, Player> frozenblocks = new ConcurrentHashMap<TempBlock, Player>();
 
 	static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	static long interval = 30;
-	static double range = config.getInt("Abilities.Water.Torrent.Range");
+	static double RANGE = config.getInt("Abilities.Water.Torrent.Range");
 	private static int defaultrange = 20;
 	private static int selectrange = 10;
-	private static int damage = config.getInt("Abilities.Water.Torrent.Damage");
-	private static int deflectdamage = config.getInt("Abilities.Water.Torrent.DeflectDamage");
+	private static int DAMAGE = config.getInt("Abilities.Water.Torrent.Damage");
+	private static int DEFLECT_DAMAGE = config.getInt("Abilities.Water.Torrent.DeflectDamage");
 	private static int maxlayer = 3;
 	private static double factor = 1;
 	private static double radius = 3;
@@ -54,6 +54,9 @@ public class Torrent {
 	private boolean launch = false;
 	private boolean launching = false;
 	private boolean freeze = false;
+	private double range = RANGE;
+	private int damage = DAMAGE;
+	private int deflectdamage = DEFLECT_DAMAGE;
 
 	private ArrayList<TempBlock> blocks = new ArrayList<TempBlock>();
 	private ArrayList<TempBlock> launchblocks = new ArrayList<TempBlock>();
@@ -554,7 +557,7 @@ public class Torrent {
 				thaw(block);
 				continue;
 			}
-			if (block.getLocation().distance(player.getLocation()) > range || !Methods.canBend(player.getName(), "Torrent")) {
+			if (block.getLocation().distance(player.getLocation()) > instances.get(player).range || !Methods.canBend(player.getName(), "Torrent")) {
 				thaw(block);
 			}
 		}
@@ -603,6 +606,34 @@ public class Torrent {
 
 	public static String getDescription() {
 		return "Torrent is one of the strongest moves in a waterbender's arsenal. To use, first click a source block to select it; then hold shift to begin streaming the water around you. Water flowing around you this way will damage and knock back nearby enemies and projectiles. If you release shift during this, you will create a large wave that expands outwards from you, launching anything in its path back. Instead, if you click you release the water and channel it to flow towards your cursor. Anything caught in the blast will be tossed about violently and take damage. Finally, if you click again when the water is torrenting, it will freeze the area around it when it is obstructed.";
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public int getDeflectdamage() {
+		return deflectdamage;
+	}
+
+	public void setDeflectdamage(int deflectdamage) {
+		this.deflectdamage = deflectdamage;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
 	}
 
 }

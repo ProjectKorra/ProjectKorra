@@ -23,7 +23,7 @@ public class WaterWall {
 	public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Block, Player> wallblocks = new ConcurrentHashMap<Block, Player>();
 
-	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
+	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 	// private static double speed = 1.5;
 	private static final long interval = 30;
@@ -45,6 +45,7 @@ public class WaterWall {
 	private boolean frozen = false;
 	private long time;
 	private double radius = defaultradius;
+	private double range = RANGE;
 
 	public WaterWall(Player player) {
 		this.player = player;
@@ -536,6 +537,26 @@ public class WaterWall {
 				+ "If, instead, you click to select a source block, you can hold sneak to form a wall of water at "
 				+ "your cursor location. Click to shift between a water wall and an ice wall. "
 				+ "Release sneak to dissipate it.";
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
 	}
 
 }

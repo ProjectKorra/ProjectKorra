@@ -19,7 +19,6 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.rpg.RPGMethods;
 
 public class Lightning {
 	public static enum State {
@@ -199,7 +198,6 @@ public class Lightning {
 		}	
 		return !Methods.isRegionProtectedFromBuild(player, "Lightning",
 				block.getLocation());
-		
 	}
 	
 	public void electrocute(LivingEntity lent) {
@@ -472,5 +470,127 @@ public class Lightning {
 				}
 			}
 		}
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getChargeTime() {
+		return chargeTime;
+	}
+
+	public void setChargeTime(double chargeTime) {
+		this.chargeTime = chargeTime;
+	}
+
+	public double getCooldown() {
+		return cooldown;
+	}
+
+	public void setCooldown(double cooldown) {
+		this.cooldown = cooldown;
+		if(player != null)
+			bplayer.addCooldown("Lightning", (long) cooldown);
+	}
+
+	public double getSubArcChance() {
+		return subArcChance;
+	}
+
+	public void setSubArcChance(double subArcChance) {
+		this.subArcChance = subArcChance;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getChainArcs() {
+		return chainArcs;
+	}
+
+	public void setChainArcs(double chainArcs) {
+		this.chainArcs = chainArcs;
+	}
+
+	public double getChainRange() {
+		return chainRange;
+	}
+
+	public void setChainRange(double chainRange) {
+		this.chainRange = chainRange;
+	}
+
+	public double getWaterRange() {
+		return waterRange;
+	}
+
+	public void setWaterRange(double waterRange) {
+		this.waterRange = waterRange;
+	}
+
+	public double getChainArcChance() {
+		return chainArcChance;
+	}
+
+	public void setChainArcChance(double chainArcChance) {
+		this.chainArcChance = chainArcChance;
+	}
+
+	public double getStunChance() {
+		return stunChance;
+	}
+
+	public void setStunChance(double stunChance) {
+		this.stunChance = stunChance;
+	}
+
+	public double getStunDuration() {
+		return stunDuration;
+	}
+
+	public void setStunDuration(double stunDuration) {
+		this.stunDuration = stunDuration;
+	}
+
+	public boolean isCharged() {
+		return charged;
+	}
+
+	public void setCharged(boolean charged) {
+		this.charged = charged;
+	}
+
+	public boolean isHitWater() {
+		return hitWater;
+	}
+
+	public void setHitWater(boolean hitWater) {
+		this.hitWater = hitWater;
+	}
+
+	public boolean isHitIce() {
+		return hitIce;
+	}
+
+	public void setHitIce(boolean hitIce) {
+		this.hitIce = hitIce;
 	}
 }

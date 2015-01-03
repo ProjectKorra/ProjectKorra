@@ -26,20 +26,27 @@ public class WallOfFire {
 	private static double maxangle = 50;
 
 	public static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	private static int range = config.getInt("Abilities.Fire.WallOfFire.Range");
-	private int height = config.getInt("Abilities.Fire.WallOfFire.Height");
-	private int width = config.getInt("Abilities.Fire.WallOfFire.Width");
-	private long duration = config.getLong("Abilities.Fire.WallOfFire.Duration");
-	private int damage = config.getInt("Abilities.Fire.WallOfFire.Damage");
+	private static int RANGE = config.getInt("Abilities.Fire.WallOfFire.Range");
+	private int HEIGHT = config.getInt("Abilities.Fire.WallOfFire.Height");
+	private int WIDTH = config.getInt("Abilities.Fire.WallOfFire.Width");
+	private long DURATION = config.getLong("Abilities.Fire.WallOfFire.Duration");
+	private int DAMAGE = config.getInt("Abilities.Fire.WallOfFire.Damage");
 	private static long interval = 250;
-	private static long cooldown = config.getLong("Abilities.Fire.WallOfFire.Cooldown");
+	private static long COOLDOWN = config.getLong("Abilities.Fire.WallOfFire.Cooldown");
 	public static ConcurrentHashMap<Player, WallOfFire> instances = new ConcurrentHashMap<Player, WallOfFire>();
-	private static long damageinterval = config.getLong("Abilities.Fire.WallOfFire.Interval");
+	private static long DAMAGE_INTERVAL = config.getLong("Abilities.Fire.WallOfFire.Interval");
 
 	private Location origin;
 	private long time, starttime;
 	private boolean active = true;
 	private int damagetick = 0, intervaltick = 0;
+	private int range = RANGE;
+	private int height = HEIGHT;
+	private int width = WIDTH;
+	private long duration = DURATION;
+	private int damage = DAMAGE;
+	private long cooldown = COOLDOWN;
+	private long damageinterval = DAMAGE_INTERVAL;
 	private List<Block> blocks = new ArrayList<Block>();
 
 	public WallOfFire(Player player) {
@@ -191,5 +198,67 @@ public class WallOfFire {
 		for (Player player : instances.keySet()) {
 			instances.get(player).progress();
 		}
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public int getRange() {
+		return range;
+	}
+
+	public void setRange(int range) {
+		this.range = range;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public long getCooldown() {
+		return cooldown;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+		if(player != null)
+			Methods.getBendingPlayer(player.getName()).addCooldown("WallOfFire", cooldown);
+	}
+
+	public long getDamageinterval() {
+		return damageinterval;
+	}
+
+	public void setDamageinterval(long damageinterval) {
+		this.damageinterval = damageinterval;
 	}
 }

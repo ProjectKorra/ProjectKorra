@@ -22,9 +22,9 @@ import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class IceBlast {
 	
-	private static ConcurrentHashMap<Integer, IceBlast> instances = new ConcurrentHashMap<Integer, IceBlast>();
+	public static ConcurrentHashMap<Integer, IceBlast> instances = new ConcurrentHashMap<Integer, IceBlast>();
 	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.Range");
-	private static int defaultdamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
+	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
 	private static int ID = Integer.MIN_VALUE;
 	
 	private static final long interval = 20;
@@ -44,6 +44,7 @@ public class IceBlast {
 	private Block sourceblock;
 	private Player player;
 	private TempBlock source;
+	private double defaultdamage = DAMAGE;
 	
 	public IceBlast(Player player) {
 		block(player);
@@ -313,6 +314,26 @@ public class IceBlast {
 		for (int id : instances.keySet()) {
 			instances.get(id).progress();
 		}
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getDefaultdamage() {
+		return defaultdamage;
+	}
+
+	public void setDefaultdamage(double defaultdamage) {
+		this.defaultdamage = defaultdamage;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
 	}
 
 }

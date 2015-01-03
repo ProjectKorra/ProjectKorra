@@ -20,7 +20,7 @@ public class FreezeMelt {
 	public static final int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Range");
 	public static final int defaultradius = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Radius");
 	
-	public static final int OVERLOADING_LIMIT = 1000;
+	public static final int OVERLOADING_LIMIT = 200;
 	public static boolean overloading = false;
 	public static int overloadCounter = 0;
 	
@@ -111,7 +111,7 @@ public class FreezeMelt {
 					return true;
 				}
 				if (Methods.getBoundAbility(player).equalsIgnoreCase("OctopusForm")) {
-					if (block.getLocation().distance(player.getLocation()) <= OctopusForm.radius + 2)
+					if (block.getLocation().distance(player.getLocation()) <= OctopusForm.RADIUS + 2)
 						return false;
 				}
 				if (Methods.canBend(player.getName(), "PhaseChange")) {

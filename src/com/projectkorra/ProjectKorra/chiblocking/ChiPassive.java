@@ -28,7 +28,7 @@ public class ChiPassive {
 	
 	public static boolean willChiBlock(Player attacker, Player player) {
 		if (AcrobatStance.isInAcrobatStance(attacker)) {
-			dodgeChance = dodgeChance - AcrobatStance.chiBlockBost;
+			dodgeChance = dodgeChance - AcrobatStance.CHI_BLOCK_BOOST;
 		}
 		
 		Random rand = new Random();

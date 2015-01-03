@@ -21,10 +21,10 @@ import com.projectkorra.ProjectKorra.TempPotionEffect;
 
 public class IceSpike2 {
 
-	private static ConcurrentHashMap<Integer, IceSpike2> instances = new ConcurrentHashMap<Integer, IceSpike2>();
+	public static ConcurrentHashMap<Integer, IceSpike2> instances = new ConcurrentHashMap<Integer, IceSpike2>();
 
-	private static double defaultrange = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
-	private static double defaultdamage = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Damage");
+	private static double RANGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
+	private static double DAMAGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Damage");
 	private static int defaultmod = 2;
 	private static int ID = Integer.MIN_VALUE;
 	static long slowCooldown = 5000;
@@ -47,6 +47,8 @@ public class IceSpike2 {
 	private Block sourceblock;
 	private Player player;
 	private TempBlock source;
+	private double defaultrange = RANGE;
+	private double defaultdamage = DAMAGE;
 
 	public IceSpike2(Player player) {
 		block(player);
@@ -126,12 +128,12 @@ public class IceSpike2 {
 			if (Methods.isTransparentToEarthbending(player, block)
 					&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
-				LivingEntity target = (LivingEntity) Methods.getTargetedEntity(player, defaultrange, new ArrayList<Entity>());
+				LivingEntity target = (LivingEntity) Methods.getTargetedEntity(player, RANGE, new ArrayList<Entity>());
 				Location destination;
 				if (target == null) {
-					destination = Methods.getTargetedLocation(player, defaultrange, Methods.transparentToEarthbending);
+					destination = Methods.getTargetedLocation(player, RANGE, Methods.transparentToEarthbending);
 				} else {
-					destination = Methods.getPointOnLine(player.getEyeLocation(), target.getEyeLocation(), defaultrange);
+					destination = Methods.getPointOnLine(player.getEyeLocation(), target.getEyeLocation(), RANGE);
 				}
 
 				if (destination.distance(block.getLocation()) < 1)
@@ -324,13 +326,13 @@ public class IceSpike2 {
 
 			if (ice.player.equals(player)) {
 				Location location;
-				Entity target = Methods.getTargetedEntity(player, defaultrange, new ArrayList<Entity>());
+				Entity target = Methods.getTargetedEntity(player, ice.defaultrange, new ArrayList<Entity>());
 				if (target == null) {
-					location = Methods.getTargetedLocation(player, defaultrange);
+					location = Methods.getTargetedLocation(player, ice.defaultrange);
 				} else {
 					location = ((LivingEntity) target).getEyeLocation();
 				}
-				location = Methods.getPointOnLine(ice.location, location, defaultrange * 2);
+				location = Methods.getPointOnLine(ice.location, location, ice.defaultrange * 2);
 				ice.redirect(location, player);
 			}
 
@@ -339,18 +341,18 @@ public class IceSpike2 {
 			Location mloc = ice.location;
 			if (Methods.isRegionProtectedFromBuild(player, "IceSpike", mloc))
 				continue;
-			if (mloc.distance(location) <= defaultrange
+			if (mloc.distance(location) <= ice.defaultrange
 					&& Methods.getDistanceFromLine(vector, location, ice.location) < deflectrange
 					&& mloc.distance(location.clone().add(vector)) < 
 					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				Location loc;
-				Entity target = Methods.getTargetedEntity(player, defaultrange, new ArrayList<Entity>());
+				Entity target = Methods.getTargetedEntity(player, ice.defaultrange, new ArrayList<Entity>());
 				if (target == null) {
-					loc = Methods.getTargetedLocation(player, defaultrange);
+					loc = Methods.getTargetedLocation(player, ice.defaultrange);
 				} else {
 					loc = ((LivingEntity) target).getEyeLocation();
 				}
-				loc = Methods.getPointOnLine(ice.location, loc, defaultrange * 2);
+				loc = Methods.getPointOnLine(ice.location, loc, ice.defaultrange * 2);
 				ice.redirect(loc, player);
 			}
 
@@ -377,7 +379,7 @@ public class IceSpike2 {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = ice.location;
-			if (mloc.distance(location) <= defaultrange
+			if (mloc.distance(location) <= ice.defaultrange
 					&& Methods.getDistanceFromLine(vector, location, ice.location) < deflectrange
 					&& mloc.distance(location.clone().add(vector)) < 
 					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
@@ -420,5 +422,25 @@ public class IceSpike2 {
 				return true;
 		}
 		return false;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getDefaultrange() {
+		return defaultrange;
+	}
+
+	public void setDefaultrange(double defaultrange) {
+		this.defaultrange = defaultrange;
+	}
+
+	public double getDefaultdamage() {
+		return defaultdamage;
+	}
+
+	public void setDefaultdamage(double defaultdamage) {
+		this.defaultdamage = defaultdamage;
 	}
 }

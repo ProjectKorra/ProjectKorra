@@ -18,11 +18,13 @@ public class AirBubble {
 
 	public static ConcurrentHashMap<Integer, AirBubble> instances = new ConcurrentHashMap<Integer, AirBubble>();
 
-	private static double defaultAirRadius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirBubble.Radius");
-	private static double defaultWaterRadius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterBubble.Radius");
+	private static double DEFAULT_AIR_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirBubble.Radius");
+	private static double DEFAULT_WATER_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterBubble.Radius");
 
 	private Player player;
 	private double radius;
+	private double defaultAirRadius = DEFAULT_AIR_RADIUS;
+	private double defaultWaterRadius = DEFAULT_WATER_RADIUS;
 	private ConcurrentHashMap<Block, BlockState> waterorigins;
 
 	public AirBubble(Player player) {
@@ -169,6 +171,34 @@ public class AirBubble {
 		return "To use, the bender must merely have the ability selected."
 				+ " All water around the user in a small bubble will vanish,"
 				+ " replacing itself once the user either gets too far away or selects a different ability.";
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getDefaultAirRadius() {
+		return defaultAirRadius;
+	}
+
+	public void setDefaultAirRadius(double defaultAirRadius) {
+		this.defaultAirRadius = defaultAirRadius;
+	}
+
+	public double getDefaultWaterRadius() {
+		return defaultWaterRadius;
+	}
+
+	public void setDefaultWaterRadius(double defaultWaterRadius) {
+		this.defaultWaterRadius = defaultWaterRadius;
 	}
 
 }

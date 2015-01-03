@@ -35,6 +35,7 @@ public class Fireball {
 	private double maxdamage = MAX_DAMAGE;
 	private double range = RANGE;
 	private double explosionradius = DAMAGE_RADIUS;
+	private double power = POWER;
 	private double innerradius = explosionradius / 2;
 	private long starttime;
 	private long time;
@@ -211,7 +212,7 @@ public class Fireball {
 		if (explode) {
 			explosion = player.getWorld().spawn(location, TNTPrimed.class);
 			explosion.setFuseTicks(0);
-			float yield = (float) POWER;
+			float yield = (float) power;
 			if (!AvatarState.isAvatarState(player)) {
 				if (Methods.isDay(player.getWorld())) {
 					Methods.getFirebendingDayAugment(yield, player.getWorld());
@@ -246,7 +247,7 @@ public class Fireball {
 	}
 
 	private void ignite(Location location) {
-		for (Block block : Methods.getBlocksAroundPoint(location, FireBlast.affectingradius)) {
+		for (Block block : Methods.getBlocksAroundPoint(location, FireBlast.AFFECTING_RADIUS)) {
 			if (FireStream.isIgnitable(player, block)) {
 				block.setType(Material.FIRE);
 				if (FireBlast.dissipate) {
@@ -303,5 +304,57 @@ public class Fireball {
 
 		return broke;
 
+	}
+
+	public double getMaxdamage() {
+		return maxdamage;
+	}
+
+	public void setMaxdamage(double maxdamage) {
+		this.maxdamage = maxdamage;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getExplosionradius() {
+		return explosionradius;
+	}
+
+	public void setExplosionradius(double explosionradius) {
+		this.explosionradius = explosionradius;
+	}
+
+	public double getPower() {
+		return power;
+	}
+
+	public void setPower(double power) {
+		this.power = power;
+	}
+
+	public double getInnerradius() {
+		return innerradius;
+	}
+
+	public void setInnerradius(double innerradius) {
+		this.innerradius = innerradius;
+	}
+
+	public long getChargetime() {
+		return chargetime;
+	}
+
+	public void setChargetime(long chargetime) {
+		this.chargetime = chargetime;
+	}
+
+	public Player getPlayer() {
+		return player;
 	}
 }

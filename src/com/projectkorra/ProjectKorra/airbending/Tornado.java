@@ -21,17 +21,13 @@ public class Tornado {
 
 	public static ConcurrentHashMap<Integer, Tornado> instances = new ConcurrentHashMap<Integer, Tornado>();
 
-	private static double maxheight = config.getDouble("Abilities.Air.Tornado.Height");
-	private static double PCpushfactor = config.getDouble("Abilities.Air.Tornado.PlayerPushFactor");
-	private static double maxradius = config.getDouble("Abilities.Air.Tornado.Radius");
-	private static double range = config.getDouble("Abilities.Air.Tornado.Range");
-	private static double NPCpushfactor = config.getDouble("Abilities.Air.Tornado.MobPushFactor");
-	private static int numberOfStreams = (int) (.3 * (double) maxheight);
+	private static double MAX_HEIGHT = config.getDouble("Abilities.Air.Tornado.Height");
+	private static double PLAYER_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.PlayerPushFactor");
+	private static double MAX_RADIUS = config.getDouble("Abilities.Air.Tornado.Radius");
+	private static double RANGE = config.getDouble("Abilities.Air.Tornado.Range");
+	private static double NPC_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.MobPushFactor");
+	private static int numberOfStreams = (int) (.3 * (double) MAX_HEIGHT);
 	// private static double speed = .75;
-
-	private double height = 2;
-	private double radius = height / maxheight * maxradius;
-
 	// private static double speedfactor = 1000 * speed
 	// * (Bending.time_step / 1000.);
 	private static double speedfactor = 1;
@@ -39,7 +35,13 @@ public class Tornado {
 	private ConcurrentHashMap<Integer, Integer> angles = new ConcurrentHashMap<Integer, Integer>();
 	private Location origin;
 	private Player player;
-
+	private double maxheight = MAX_HEIGHT;
+	private double PCpushfactor = PLAYER_PUSH_FACTOR;
+	private double maxradius = MAX_RADIUS;
+	private double range = RANGE;
+	private double NPCpushfactor = NPC_PUSH_FACTOR;
+	private double height = 2;
+	private double radius = height / maxheight * maxradius;
 	// private boolean canfly;
 
 	public Tornado(Player player) {
@@ -210,6 +212,50 @@ public class Tornado {
 			players.add(instances.get(id).player);
 		}
 		return players;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getMaxheight() {
+		return maxheight;
+	}
+
+	public void setMaxheight(double maxheight) {
+		this.maxheight = maxheight;
+	}
+
+	public double getPCpushfactor() {
+		return PCpushfactor;
+	}
+
+	public void setPCpushfactor(double pCpushfactor) {
+		PCpushfactor = pCpushfactor;
+	}
+
+	public double getMaxradius() {
+		return maxradius;
+	}
+
+	public void setMaxradius(double maxradius) {
+		this.maxradius = maxradius;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getNPCpushfactor() {
+		return NPCpushfactor;
+	}
+
+	public void setNPCpushfactor(double nPCpushfactor) {
+		NPCpushfactor = nPCpushfactor;
 	}
 
 }
