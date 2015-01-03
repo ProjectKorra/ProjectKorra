@@ -118,7 +118,7 @@ public class EarthSmash {
 				if(smash.state == State.GRABBED && smash.player == player) {
 					smash.state = State.SHOT;
 					smash.destination = player.getEyeLocation().clone().add
-							(player.getEyeLocation().getDirection().normalize().multiply(TRAVEL_RANGE));
+							(player.getEyeLocation().getDirection().normalize().multiply(smash.shootRange));
 					smash.loc.getWorld().playEffect(smash.loc, Effect.GHAST_SHOOT, 0, 10);
 				}
 			}
@@ -263,7 +263,7 @@ public class EarthSmash {
 				}
 				revert();
 				destination = player.getEyeLocation().clone().add
-						(player.getEyeLocation().getDirection().normalize().multiply(TRAVEL_RANGE));
+						(player.getEyeLocation().getDirection().normalize().multiply(shootRange));
 				Vector direction = Methods.getDirection(loc, destination).normalize();
 				
 				List<Entity> entities = Methods.getEntitiesAroundPoint(loc.clone().add(0,2,0), FLIGHT_DETECTION_RADIUS);
