@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class Fireball {
 
@@ -169,7 +170,8 @@ public class Fireball {
 
 	private void fireball() {
 		for (Block block : Methods.getBlocksAroundPoint(location, radius)) {
-			block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
+			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 17);
+			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 17);
 			if (Methods.rand.nextInt(4) == 0) {
 				Methods.playFirebendingSound(location);
 			}

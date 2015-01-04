@@ -18,6 +18,7 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class WallOfFire {
 
@@ -154,8 +155,8 @@ public class WallOfFire {
 
 	private void display() {
 		for (Block block : blocks) {
-			block.getWorld().playEffect(block.getLocation(),
-					Effect.MOBSPAWNER_FLAMES, 0, 15);
+			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
+			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
 			
 			if (Methods.rand.nextInt(7) == 0) {
 				Methods.playFirebendingSound(block.getLocation());

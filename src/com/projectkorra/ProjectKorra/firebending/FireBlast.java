@@ -19,6 +19,7 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
@@ -172,8 +173,10 @@ public class FireBlast {
 	}
 
 	private void advanceLocation() {
-		if (showParticles)
-			location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 0, (int) range);
+		if (showParticles) {
+			ParticleEffect.FLAME.display(location, 0.6F, 0.6F, 0.6F, 0, 20);
+			ParticleEffect.SMOKE.display(location, 0.6F, 0.6F, 0.6F, 0, 20);
+		}
 		location = location.add(direction.clone().multiply(speedfactor));
 		if (rand.nextInt(4) == 0) {
 			Methods.playFirebendingSound(location);

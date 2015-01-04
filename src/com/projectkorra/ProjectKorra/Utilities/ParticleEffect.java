@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra.Utilities;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -397,6 +399,8 @@ public enum ParticleEffect {
 
 	private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<String, ParticleEffect>();
 	private static final Map<Integer, ParticleEffect> ID_MAP = new HashMap<Integer, ParticleEffect>();
+	// If range is less than 257 it automatically reverts back to 16 blocks for some reason.
+	private static final int RANGE = 257;
 	private final String name;
 	private final int id;
 	private final int requiredVersion;
@@ -615,17 +619,8 @@ public enum ParticleEffect {
 	 * @see ParticlePacket
 	 * @see ParticlePacket#sendTo(Location, double)
 	 */
-	public void display(Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount) throws ParticleVersionException, ParticleDataException, IllegalArgumentException {
-		if (!isSupported()) {
-			throw new ParticleVersionException("This particle effect is not supported by your server version");
-		}
-		if (requiresData) {
-			throw new ParticleDataException("This particle effect requires additional data");
-		}
-		if (requiresWater && !isWater(center)) {
-			throw new IllegalArgumentException("There is no water at the center location");
-		}
-		new ParticlePacket(this, offsetX, offsetY, offsetZ, speed, amount, 16 > 256, null).sendTo(center, 16);
+	public void display(Location center, float offsetX, float offsetY, float offsetZ, float speed, int amount) {
+		display(offsetX, offsetY, offsetZ, speed, amount, center, RANGE);
 	}
 
 	/**

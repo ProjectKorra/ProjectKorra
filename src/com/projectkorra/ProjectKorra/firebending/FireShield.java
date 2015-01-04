@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
@@ -106,7 +107,8 @@ public class FireShield {
 
 				for (Block block : blocks) {
 					if (!Methods.isRegionProtectedFromBuild(player,	"FireShield", block.getLocation())) {
-						block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
+						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
+						ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
 						if (Methods.rand.nextInt(7) == 0) {
 							Methods.playFirebendingSound(block.getLocation());
 						}
@@ -148,7 +150,7 @@ public class FireShield {
 
 				for (Block block : blocks) {
 					if (!Methods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
-						block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
+						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
 						if (Methods.rand.nextInt(4) == 0) {
 							Methods.playFirebendingSound(block.getLocation());
 						}
