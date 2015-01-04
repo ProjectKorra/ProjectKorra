@@ -1344,13 +1344,6 @@ public class Methods {
 					if (!wg.hasPermission(player, "worldguard.override.lighter")) {
 						if (wg.getGlobalStateManager().get(world).blockLighter)
 							return true;
-						//						if (player.hasPermission("worldguard.region.bypass." + world.getName())
-						//								&& wg.getRegionContainer()
-						//								.get(world)
-						//								.getApplicableRegions(location)
-						//								.queryState(wg.wrapPlayer(player), DefaultFlag.LIGHTER)
-						//								.equals(State.DENY))
-						//							return true;
 					}
 				}
 				if (explode.contains(ability)) {
@@ -1359,17 +1352,11 @@ public class Methods {
 					if (!wg.getRegionManager(world).getApplicableRegions(location).allows(DefaultFlag.TNT)){
 						return true;
 					}
-					//					if (wg.getRegionContainer().get(world).getApplicableRegions(location) == null) return false;
-					//					if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.TNT).equals(State.DENY))
-					//						return true;
 				}
 
 				if (!wg.canBuild(player, location.getBlock())) {
 					return true;
 				}
-				//				
-				//				if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.BUILD).equals(State.DENY))
-				//					return true;
 			}
 
 			if (psp != null && respectPreciousStones) {
