@@ -557,7 +557,7 @@ public class Torrent {
 				thaw(block);
 				continue;
 			}
-			if (block.getLocation().distance(player.getLocation()) > instances.get(player).range || !Methods.canBend(player.getName(), "Torrent")) {
+			if (block.getLocation().distance(player.getLocation()) > RANGE || !Methods.canBend(player.getName(), "Torrent")) {
 				thaw(block);
 			}
 		}
