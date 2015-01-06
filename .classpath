@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/BukkitForPlugins1.8.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/Factions.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/GriefPrevention.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/LWC.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/MassiveCore.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/NoCheatPlus.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/PreciousStones.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/TagAPI.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/Towny.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldEdit.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldGuard.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/plugins/KorraRPG.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/LocalServer/Spigot.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/bukkit-1.8-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/CombatTag.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/Factions.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/GriefPrevention.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/LogBlock.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/LWC.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/MassiveCore.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/mcore.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/NoCheatPlus.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/PreciousStones.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/ProjectKorraRPG.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/TagAPI.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/Towny.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/Vault.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/WGRegionEvents.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/WorldEdit.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Desktop/Plugins/Files/KorraDependables/WorldGuard.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -95,7 +95,16 @@ public class Lightning {
 		}
 		instances.add(this);
 	}
-
+	
+	public void displayChargedParticles(){
+		Location l =  player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(1));
+		l.setX(l.getX() + Math.random() * (0.1 - -0.1));
+		l.setY(l.getY() + Math.random() * (0.1 - -0.1));
+		l.setZ(l.getZ() + Math.random() * (0.1 - -0.1));
+		
+		ParticleEffect.RED_DUST.display((float) 0, (float) 255, (float) 255, 0.1F, 0, l, 256D);
+	}
+	
 	private void progress() {
 		if (player.isDead() || !player.isOnline()) {
 			removeWithTasks();
@@ -117,7 +126,7 @@ public class Lightning {
 					Location loc = player.getEyeLocation().add(player.getEyeLocation()
 							.getDirection().normalize().multiply(1.2));
 					loc.add(0, 0.3, 0);
-					ParticleEffect.MAGIC_CRIT.display(loc, 0.3F, 0.1F, 0.3F, 0, 4); 
+					displayChargedParticles();
 				}
 				else {
 					state = State.MAINBOLT;
@@ -403,9 +412,9 @@ public class Lightning {
 		}
 		
 		public void run() {
-			ParticleEffect.MAGIC_CRIT.display(loc, 0, 0, 0, 0, 1);
+			ParticleEffect.RED_DUST.display((float) 0, (float) 255, (float) 255, 0.1F, 0, loc, 256D);
 			count++;
-			if(count > 10)
+			if(count > 5)
 				this.cancel();
 			else if(count == 1) {
 				

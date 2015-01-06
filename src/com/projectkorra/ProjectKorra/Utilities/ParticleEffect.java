@@ -1000,9 +1000,6 @@ public enum ParticleEffect {
 			if (speed < 0) {
 				throw new IllegalArgumentException("The speed is lower than 0");
 			}
-			if (amount < 1) {
-				throw new IllegalArgumentException("The amount is lower than 1");
-			}
 			this.effect = effect;
 			this.offsetX = offsetX;
 			this.offsetY = offsetY;
