@@ -26,6 +26,7 @@ public class AirbendingManager implements Runnable {
 		Tornado.progressAll();
 		AirShield.progressAll();
 		AirCombo.progressAll();
+		FlightAbility.progressAll();
 	}
 
 }

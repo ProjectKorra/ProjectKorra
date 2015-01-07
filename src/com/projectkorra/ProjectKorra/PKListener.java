@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -52,12 +49,12 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -75,6 +72,7 @@ import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
+import com.projectkorra.ProjectKorra.airbending.FlightAbility;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.AcrobatStance;
@@ -92,17 +90,17 @@ import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthGrab;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.earthbending.EarthSmash;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.EarthWall;
 import com.projectkorra.ProjectKorra.earthbending.Extraction;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
+import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.ProjectKorra.earthbending.LavaSurge;
-import com.projectkorra.ProjectKorra.earthbending.LavaWall;
 import com.projectkorra.ProjectKorra.earthbending.LavaWave;
 import com.projectkorra.ProjectKorra.earthbending.MetalClips;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
-import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.ProjectKorra.firebending.ArcOfFire;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.Cook;
@@ -254,6 +252,9 @@ public class PKListener implements Listener {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Methods.cooldowns.put(player.getName(), System.currentTimeMillis());
 			ComboManager.addComboAbility(player, ClickType.RIGHTCLICK);
+			String ability = Methods.getBoundAbility(player);
+			if(ability != null && ability.equalsIgnoreCase("EarthSmash"))
+				new EarthSmash(player, EarthSmash.ClickType.RIGHTCLICK);
 		}
 		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
@@ -357,6 +358,15 @@ public class PKListener implements Listener {
 				MetalClips.instances.get(p).remove();
 			}
 		}
+		
+		com.projectkorra.ProjectKorra.airbending.FlightAbility.remove(event.getPlayer());
+	}
+	
+	@EventHandler
+	public void playerIsKicked(PlayerKickEvent event) {
+		if(event.isCancelled()) return;
+		
+		com.projectkorra.ProjectKorra.airbending.FlightAbility.remove(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -420,6 +430,10 @@ public class PKListener implements Listener {
 				}
 				if(abil.equalsIgnoreCase("Suffocate")) {
 					new Suffocate(player);
+				}
+				if(abil.equalsIgnoreCase("Flight")) {
+					if(player.isSneaking()) return;
+					new com.projectkorra.ProjectKorra.airbending.FlightAbility(player);
 				}
 
 			}
@@ -505,6 +519,9 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("LavaFlow")) {
 					new LavaFlow(player,LavaFlow.AbilityType.SHIFT);
 				}
+				if (abil.equalsIgnoreCase("EarthSmash")) {
+					new EarthSmash(player, EarthSmash.ClickType.SHIFT);
+				}
 
 			}
 
@@ -540,13 +557,6 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockIgnite(BlockIgniteEvent event) {
 		if (event.isCancelled()) return;
-
-		if (event.getCause() == IgniteCause.LIGHTNING) {
-			if (Lightning.isNearbyChannel(event.getBlock().getLocation())) {
-				event.setCancelled(true);
-				return;
-			}
-		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -595,6 +605,18 @@ public class PKListener implements Listener {
 			distance2 = event.getTo().distance(loc);
 			if (distance2 > distance1) {
 				player.setVelocity(new Vector(0, 0, 0));
+			}
+		}
+		
+		if(FlightAbility.instances.containsKey(event.getPlayer().getName())) {
+			if(com.projectkorra.ProjectKorra.airbending.FlightAbility.isHovering(event.getPlayer())) {
+				Location loc = event.getFrom();
+				Location toLoc = player.getLocation();
+
+				if (loc.getX() != toLoc.getX() || loc.getY() != toLoc.getY() || loc.getZ() != toLoc.getZ()) {
+					event.setCancelled(true);
+					return;
+				}
 			}
 		}
 	}
@@ -774,6 +796,17 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("AirSwipe")) {
 					new AirSwipe(player);
 				}
+				if(abil.equalsIgnoreCase("Flight")) {
+					if(!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")) return;
+					
+					if(com.projectkorra.ProjectKorra.airbending.FlightAbility.instances.containsKey(event.getPlayer().getName())) {
+						if(com.projectkorra.ProjectKorra.airbending.FlightAbility.isHovering(event.getPlayer())) {
+							com.projectkorra.ProjectKorra.airbending.FlightAbility.setHovering(event.getPlayer(), false);
+						}else{
+							com.projectkorra.ProjectKorra.airbending.FlightAbility.setHovering(event.getPlayer(), true);
+						}
+					}
+				}
 			}
 			if (Methods.isWaterAbility(abil)) {
 				if (Methods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons")) {
@@ -860,6 +893,10 @@ public class PKListener implements Listener {
 				
 				if (abil.equalsIgnoreCase("LavaFlow")) {
 					new LavaFlow(player,AbilityType.CLICK);
+				}
+				
+				if (abil.equalsIgnoreCase("EarthSmash")) {
+					new EarthSmash(player, EarthSmash.ClickType.LEFTCLICK);
 				}
 			}
 			if (Methods.isFireAbility(abil)) {
@@ -1140,6 +1177,17 @@ public class PKListener implements Listener {
 		event.setFormat(format);
 
 	}
+	
+	@EventHandler
+	public void onEntitySuffocatedByTempBlocks(EntityDamageEvent event) {
+		if(event.isCancelled()) return;
+		
+		if(event.getCause() == DamageCause.SUFFOCATION) {
+			if(TempBlock.isTempBlock(event.getEntity().getLocation().add(0, 1, 0).getBlock())) {
+				event.setCancelled(true);
+			}
+		}
+	}
 
 	@EventHandler
 	public void onPlayerDamageByPlayer(EntityDamageByEntityEvent e) {
@@ -1148,7 +1196,6 @@ public class PKListener implements Listener {
 		Entity source = e.getDamager();
 		Entity entity = e.getEntity();
 		Fireball fireball = Fireball.getFireball(source);
-		Lightning lightning = Lightning.getLightning(source);
 
 		if (fireball != null) {
 			e.setCancelled(true);
@@ -1160,24 +1207,10 @@ public class PKListener implements Listener {
 		//			e.setCancelled(true);
 		//		}
 
-		if (e.getCause() == DamageCause.LIGHTNING) {
-			if (Lightning.isNearbyChannel(source.getLocation())) {
-				e.setCancelled(true);
-				return;
-			}
-		}
-
-		if (lightning != null) {
-			e.setCancelled(true);
-			lightning.dealDamage(entity);
-			return;
-		}
-
 		if (Paralyze.isParalyzed(e.getDamager())) {
 			e.setCancelled(true);
 			return;
 		}
-
 
 		Entity en = e.getEntity();
 		if (en instanceof Player) {

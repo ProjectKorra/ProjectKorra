@@ -23,7 +23,7 @@ public class TorrentBurst {
 	private static double defaultmaxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Torrent.Wave.Radius");
 	private static double dr = 0.5;
 	private static double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Torrent.Wave.Knockback");
-	private static double maxheight = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Torrent.Wave.Height");
+	private static double MAX_HEIGHT = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Torrent.Wave.Height");
 	private static long interval = Torrent.interval;
 
 	//	private static final byte full = 0x0;
@@ -34,6 +34,7 @@ public class TorrentBurst {
 	private double radius = dr;
 	private double maxradius = defaultmaxradius;
 	private double factor = defaultfactor;
+	private double maxheight = MAX_HEIGHT;
 	private Location origin;
 	private Player player;
 	private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Double>> heights = new ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Double>>();
@@ -200,4 +201,31 @@ public class TorrentBurst {
 			instances.get(id).remove();
 	}
 
+	public double getMaxradius() {
+		return maxradius;
+	}
+
+	public void setMaxradius(double maxradius) {
+		this.maxradius = maxradius;
+	}
+
+	public double getFactor() {
+		return factor;
+	}
+
+	public void setFactor(double factor) {
+		this.factor = factor;
+	}
+
+	public double getMaxheight() {
+		return maxheight;
+	}
+
+	public void setMaxheight(double maxheight) {
+		this.maxheight = maxheight;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
 }

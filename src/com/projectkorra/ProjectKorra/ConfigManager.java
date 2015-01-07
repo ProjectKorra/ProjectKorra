@@ -213,6 +213,10 @@ public class ConfigManager {
 		config.addDefault("Abilities.Air.AirSwipe.ChargeFactor", 3);
 		config.addDefault("Abilities.Air.AirSwipe.MaxChargeTime", 3000);
 		
+		config.addDefault("Abilities.Air.Flight.Enabled", true);
+		config.addDefault("Abilities.Air.Flight.Description", "Jump in the air, crouch (default: shift) and hold with this ability bound and you will glide around in the direction you look. While flying, click to Hover. Click again to disable Hovering.");
+		config.addDefault("Abilities.Air.Flight.HoverEnabled", true);
+		
 		config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 		config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. To use, simply look at an entity and hold shift. The entity will begin taking damage as you extract the air from their lungs. Any bender caught in this sphere will only be able to use basic moves, such as AirSwipe, WaterManipulation, FireBlast, or EarthBlast. An entity can be knocked out of the sphere by certain bending arts, and your attention will be disrupted if you are hit by bending.");
 		config.addDefault("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs", true);
@@ -442,7 +446,7 @@ public class ConfigManager {
 
 		config.addDefault("Abilities.Earth.LavaFlow.Enabled", true);
 		config.addDefault("Abilities.Earth.LavaFlow.Description", "This ability allows an Earthbender to create lava using the Earth around them. To use, simply hold sneak (Default: Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an Earthbendable block to create a pool of lava after a small delay. Additionally, you can left click at any time to turn lava back into its original state -- Earth.");
-		config.addDefault("Abilities.Earth.LavFlow.ShiftCooldown", 16000);
+		config.addDefault("Abilities.Earth.LavaFlow.ShiftCooldown", 16000);
 		config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCooldown", 10000);
 		config.addDefault("Abilities.Earth.LavaFlow.ClickLandCooldown", 500);
 		config.addDefault("Abilities.Earth.LavaFlow.ShiftCleanupDelay", 10000);
@@ -463,6 +467,27 @@ public class ConfigManager {
         config.addDefault("Abilities.Earth.LavaFlow.AllowNaturalFlow", false);
         config.addDefault("Abilities.Earth.LavaFlow.ParticleDensity", 0.33);
         
+		config.addDefault("Abilities.Earth.EarthSmash.Enabled", true);
+		config.addDefault("Abilities.Earth.EarthSmash.Description", "To raise an EarthSmash hold sneak (default: shift) for approximately 1.5 seconds, " +
+				"then release while aiming at dirt. To grab the EarthSmash aim at the center and hold sneak, " +
+				"the EarthSmash will follow your mouse. You can shoot the EarthSmash by grabbing onto it and left clicking. " +
+				"To ride the EarthSmash simply hop ontop of it and hold sneak while aiming in the direction that you wish to go. " +
+				"Another way to ride an EarthSmash is to grab it with sneak and then right click it. " + 
+				"Use EarthSmash as a defensive shield, a powerful attack, or an advanced means of transportation.");
+		config.addDefault("Abilities.Earth.EarthSmash.AllowGrab", true);
+		config.addDefault("Abilities.Earth.EarthSmash.AllowShooting", true);
+		config.addDefault("Abilities.Earth.EarthSmash.AllowFlight", true);
+		config.addDefault("Abilities.Earth.EarthSmash.GrabRange", 10);
+		config.addDefault("Abilities.Earth.EarthSmash.ChargeTime", 1200);
+		config.addDefault("Abilities.Earth.EarthSmash.Cooldown", 0);
+		config.addDefault("Abilities.Earth.EarthSmash.ShotRange", 30);
+		config.addDefault("Abilities.Earth.EarthSmash.Damage", 6);
+		config.addDefault("Abilities.Earth.EarthSmash.Knockback", 3.5);
+		config.addDefault("Abilities.Earth.EarthSmash.Knockup", 0.15);
+		config.addDefault("Abilities.Earth.EarthSmash.FlightSpeed", 0.72);
+		config.addDefault("Abilities.Earth.EarthSmash.FlightTimer", 3000);
+		config.addDefault("Abilities.Earth.EarthSmash.RemoveTimer", 30000);
+		
 //		config.addDefault("Abilities.Earth.LavaSurge.Enabled", true);
 //	    config.addDefault("Abilities.Earth.LavaSurge.Description", "LavaSurge is a fundamental move for any Lavabender out there. To use, simply sneak (Default: Shift) while looking at a source of Earth or Lava, then click in a direction. A surge of lava will swiftly travel towards the target you were pointing at, dealing moderate damage, a large knockback, and setting them on fire.");
 //	    config.addDefault("Abilities.Earth.LavaSurge.Damage", 4);
@@ -609,11 +634,23 @@ public class ConfigManager {
 
 		config.addDefault("Abilities.Fire.Lightning.Enabled", true);
 		config.addDefault("Abilities.Fire.Lightning.Description", "Hold sneak while selecting this ability to charge up a lightning strike. Once charged, release sneak to discharge the lightning to the targeted location.");
-		config.addDefault("Abilities.Fire.Lightning.Distance", 15);
-		config.addDefault("Abilities.Fire.Lightning.Damage", 6);
-		config.addDefault("Abilities.Fire.Lightning.WaterAreaOfEffect", 15);
-		config.addDefault("Abilities.Fire.Lightning.Warmup", 3500);
-		config.addDefault("Abilities.Fire.Lightning.MissChance", 10);
+		config.addDefault("Abilities.Fire.Lightning.Damage", 6.0);
+		config.addDefault("Abilities.Fire.Lightning.Range", 13.0);
+		config.addDefault("Abilities.Fire.Lightning.ChargeTime", 3500);
+		config.addDefault("Abilities.Fire.Lightning.Cooldown", 0);
+		config.addDefault("Abilities.Fire.Lightning.StunChance", 0.20);
+		config.addDefault("Abilities.Fire.Lightning.StunDuration", 30.0);
+		config.addDefault("Abilities.Fire.Lightning.MaxArcAngle", 30);
+		config.addDefault("Abilities.Fire.Lightning.SubArcChance", 0.025);
+		config.addDefault("Abilities.Fire.Lightning.ChainArcRange", 6.0);
+		config.addDefault("Abilities.Fire.Lightning.ChainArcChance", 0.50);
+		config.addDefault("Abilities.Fire.Lightning.MaxChainArcs", 2);
+		config.addDefault("Abilities.Fire.Lightning.WaterArcs", 4);
+		config.addDefault("Abilities.Fire.Lightning.WaterArcRange", 12.0);
+		config.addDefault("Abilities.Fire.Lightning.SelfHitWater", true);
+		config.addDefault("Abilities.Fire.Lightning.SelfHitClose", true);
+		config.addDefault("Abilities.Fire.Lightning.ArcOnIce", false);
+		
 
 		config.addDefault("Abilities.Fire.WallOfFire.Enabled", true);
 		config.addDefault("Abilities.Fire.WallOfFire.Description", "To use this ability, click at a location. A wall of fire will appear at this location, igniting enemies caught in it and blocking projectiles.");

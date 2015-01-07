@@ -77,6 +77,7 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.AirBlast) shiftabilities.add(a.name());
 					if (a == StockAbilities.AirBurst) shiftabilities.add(a.name());
 					if (a == StockAbilities.AirShield) shiftabilities.add(a.name());
+					if (a == StockAbilities.Flight) shiftabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isWaterbending(a)) {
@@ -113,6 +114,7 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.Extraction) metalbendingabilities.add(a.name());
 					if (a == StockAbilities.MetalClips) metalbendingabilities.add(a.name());
 					if (a == StockAbilities.MetalClips) shiftabilities.add(a.name());
+					if (a == StockAbilities.EarthSmash) shiftabilities.add(a.name());
 					
 					// Earth Sub Abilities
 					if (a == StockAbilities.MetalClips) earthsubabilities.add(a.name());

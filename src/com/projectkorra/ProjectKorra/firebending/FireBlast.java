@@ -19,6 +19,7 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
@@ -28,15 +29,15 @@ public class FireBlast {
 	Random rand = new Random();
 
 	public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<Integer, FireBlast>();
-	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
-	private static double pushfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Push");
+	private static double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
+	private static double PUSH_FACTOR = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Push");
 	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Range");
 	static boolean dissipate = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.FireBlast.Damage");
 	
 	long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
 
-	public static double affectingradius = 2;
+	public static double AFFECTING_RADIUS = 2;
 	// public static long interval = 2000;
 	public static byte full = 0x0;
 	private static int ID = Integer.MIN_VALUE;
@@ -53,6 +54,9 @@ public class FireBlast {
 	private int ticks = 0;
 	private double range = RANGE;
 	private double damage = DAMAGE;
+	private double speed = SPEED;
+	private double pushfactor = PUSH_FACTOR;
+	private double affectingradius = AFFECTING_RADIUS;
 	private boolean showParticles = true;
 
 	public FireBlast(Player player) {
@@ -137,7 +141,7 @@ public class FireBlast {
 
 		Methods.removeSpouts(location, player);
 
-		double radius = FireBlast.affectingradius;
+		double radius = affectingradius;
 		Player source = player;
 		if (EarthBlast.annihilateBlasts(location, radius, source)
 				|| WaterManipulation.annihilateBlasts(location, radius, source)
@@ -169,8 +173,10 @@ public class FireBlast {
 	}
 
 	private void advanceLocation() {
-		if (showParticles)
-			location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 0, (int) range);
+		if (showParticles) {
+			ParticleEffect.FLAME.display(location, 0.6F, 0.6F, 0.6F, 0, 20);
+			ParticleEffect.SMOKE.display(location, 0.6F, 0.6F, 0.6F, 0, 20);
+		}
 		location = location.add(direction.clone().multiply(speedfactor));
 		if (rand.nextInt(4) == 0) {
 			Methods.playFirebendingSound(location);
@@ -286,6 +292,52 @@ public class FireBlast {
 				+ "Additionally, if you hold sneak, you will charge up the fireblast. "
 				+ "If you release it when it's charged, it will instead launch a powerful "
 				+ "fireball that explodes on contact.";
+	}
+
+	public long getCooldown() {
+		return cooldown;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+		if(player != null)
+			Methods.getBendingPlayer(player.getName()).addCooldown("FireBlast", cooldown);
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getPushfactor() {
+		return pushfactor;
+	}
+
+	public void setPushfactor(double pushfactor) {
+		this.pushfactor = pushfactor;
+	}
+
+	public double getAffectingradius() {
+		return affectingradius;
+	}
+
+	public void setAffectingradius(double affectingradius) {
+		this.affectingradius = affectingradius;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public double getDamage() {
+		return damage;
 	}
 
 }

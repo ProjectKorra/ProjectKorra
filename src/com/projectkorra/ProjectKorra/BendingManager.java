@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.rpg.RPGMethods;
+import com.projectkorra.rpg.WorldEvents;
 
 public class BendingManager implements Runnable {
 
@@ -18,6 +19,7 @@ public class BendingManager implements Runnable {
 	long interval;
 
 	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
+	public static HashMap<World, String> events = new HashMap<World, String>(); // holds any current event.
 
 	static final String defaultsozinscometmessage = "Sozin's Comet is passing overhead! Firebending is now at its most powerful.";
 	static final String defaultsolareclipsemessage = "A solar eclipse is out! Firebenders are temporarily powerless.";
@@ -65,6 +67,11 @@ public class BendingManager implements Runnable {
 
 	public void handleDayNight() {
 		for (World world: Bukkit.getServer().getWorlds()) {
+			if (!events.containsKey(world)) {
+				events.put(world, "");
+			}
+		}
+		for (World world: Bukkit.getServer().getWorlds()) {
 			if (!times.containsKey(world)) {
 				if (Methods.isDay(world)) {
 					times.put(world, true);
@@ -75,7 +82,27 @@ public class BendingManager implements Runnable {
 				if (times.get(world) && !Methods.isDay(world)) {
 					// The hashmap says it is day, but it is not.
 					times.put(world, false); // Sets time to night.
+					if (Methods.hasRPG()) {
+						if (RPGMethods.isLunarEclipse(world)) {
+							events.put(world, WorldEvents.LunarEclipse.toString());
+						}
+						else if (Methods.isFullMoon(world)) {
+							events.put(world, "FullMoon");
+						}
+						else {
+							events.put(world, "");
+						}
+					} else {
+						if (Methods.isFullMoon(world)) {
+							events.put(world, "FullMoon");
+						} else {
+							events.put(world, "");
+						}
+					}
 					for (Player player: world.getPlayers()) {
+						
+						if(!player.hasPermission("bending.message.nightmessage")) return;
+						
 						if (Methods.isBender(player.getName(), Element.Water)) {
 							if (Methods.hasRPG()) {
 								if (RPGMethods.isLunarEclipse(world)) {
@@ -94,6 +121,7 @@ public class BendingManager implements Runnable {
 							}
 						}
 						if (Methods.isBender(player.getName(), Element.Fire)) {
+							if(player.hasPermission("bending.message.daymessage")) return;
 							player.sendMessage(Methods.getFireColor() + defaultsunsetmessage);
 						}
 					}
@@ -102,6 +130,19 @@ public class BendingManager implements Runnable {
 				if (!times.get(world) && Methods.isDay(world)) {
 					// The hashmap says it is night, but it is day.
 					times.put(world, true);
+					if (Methods.hasRPG()) {
+						if (RPGMethods.isSozinsComet(world)) {
+							events.put(world, WorldEvents.SozinsComet.toString());
+						}
+						else if (RPGMethods.isSolarEclipse(world) && !RPGMethods.isLunarEclipse(world)) {
+							events.put(world, WorldEvents.SolarEclipse.toString());
+						}
+						else {
+							events.put(world, "");
+						}
+					} else {
+						events.put(world, "");
+					}
 					for (Player player: world.getPlayers()) {
 						if (Methods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
 							player.sendMessage(Methods.getWaterColor() + defaultmoonsetmessage);
@@ -123,5 +164,6 @@ public class BendingManager implements Runnable {
 				}
 			}
 		}
+		
 	}
 }

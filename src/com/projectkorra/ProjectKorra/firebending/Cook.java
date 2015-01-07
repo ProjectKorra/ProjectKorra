@@ -10,19 +10,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class Cook {
 
-	private static ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<Player, Cook>();
+	public static ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<Player, Cook>();
 
-	private static final long cooktime = 2000;
+	private static final long COOK_TIME = 2000;
 	private static final Material[] cookables = { Material.RAW_BEEF,
 		Material.RAW_CHICKEN, Material.RAW_FISH, Material.PORK,
-		Material.POTATO_ITEM };
+		Material.POTATO_ITEM, Material.RABBIT, Material.MUTTON };
 
 	private Player player;
 	private ItemStack items;
 	private long time;
+	private long cooktime = COOK_TIME;
 
 	public Cook(Player player) {
 		this.player = player;
@@ -62,8 +64,8 @@ public class Cook {
 			cook();
 			time = System.currentTimeMillis();
 		}
-
-		player.getWorld().playEffect(player.getEyeLocation(), Effect.MOBSPAWNER_FLAMES, 0, 10);
+		ParticleEffect.FLAME.display(player.getEyeLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
+		ParticleEffect.SMOKE.display(player.getEyeLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
 	}
 
 	private void cancel() {
@@ -113,6 +115,12 @@ public class Cook {
 		case POTATO_ITEM:
 			cooked = new ItemStack(Material.BAKED_POTATO, 1);
 			break;
+		case MUTTON:
+			cooked = new ItemStack(Material.COOKED_MUTTON);
+			break;
+		case RABBIT:
+			cooked = new ItemStack(Material.COOKED_RABBIT);
+			break;
 		default:
 			break; //Shouldn't happen
 		}
@@ -127,6 +135,26 @@ public class Cook {
 
 	public static void removeAll() {
 		instances.clear();
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public long getCooktime() {
+		return cooktime;
+	}
+
+	public void setCooktime(long cooktime) {
+		this.cooktime = cooktime;
 	}
 
 }

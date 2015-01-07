@@ -14,14 +14,15 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class AirSpout {
 
-	private static ConcurrentHashMap<Player, AirSpout> instances = new ConcurrentHashMap<Player, AirSpout>();
+	public static ConcurrentHashMap<Player, AirSpout> instances = new ConcurrentHashMap<Player, AirSpout>();
 
-	private static final double height = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirSpout.Height");
+	private static final double HEIGHT = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirSpout.Height");
 	private static final long interval = 100;
 
 	private Player player;
 	private long time;
 	private int angle = 0;
+	private double height = HEIGHT;
 
 	public AirSpout(Player player) {
 
@@ -167,7 +168,7 @@ public class AirSpout {
 
 				double distance = Math.sqrt(dx * dx + dz * dz);
 
-				if (distance <= radius && dy > 0 && dy < height){
+				if (distance <= radius && dy > 0 && dy < HEIGHT){
 					instances.get(player).remove();
 					removed = true;
 				}
@@ -185,6 +186,18 @@ public class AirSpout {
 		for (Player player : instances.keySet()) {
 			instances.get(player).remove();
 		}
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getHeight() {
+		return height;
+	}
+
+	public void setHeight(double height) {
+		this.height = height;
 	}
 
 }

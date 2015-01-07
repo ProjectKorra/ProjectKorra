@@ -15,24 +15,28 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirShield;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 public class FireShield {
 
-	private static ConcurrentHashMap<Player, FireShield> instances = new ConcurrentHashMap<Player, FireShield>();
+	public static ConcurrentHashMap<Player, FireShield> instances = new ConcurrentHashMap<Player, FireShield>();
 
 	private static long interval = 100;
-	private static long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireShield.Duration");
-	private static double radius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.Radius");
-	private static double discradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.DiscRadius");
+	private static long DURATION = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireShield.Duration");
+	private static double RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.Radius");
+	private static double DISC_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.DiscRadius");
 	private static boolean ignite = true;
 
 	private Player player;
 	private long time;
 	private long starttime;
 	private boolean shield = false;
+	private long duration = DURATION;
+	private double radius = RADIUS;
+	private double discradius = DISC_RADIUS;
 
 	public FireShield(Player player) {
 		this(player, false);
@@ -103,7 +107,8 @@ public class FireShield {
 
 				for (Block block : blocks) {
 					if (!Methods.isRegionProtectedFromBuild(player,	"FireShield", block.getLocation())) {
-						block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
+						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
+						ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
 						if (Methods.rand.nextInt(7) == 0) {
 							Methods.playFirebendingSound(block.getLocation());
 						}
@@ -145,7 +150,7 @@ public class FireShield {
 
 				for (Block block : blocks) {
 					if (!Methods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
-						block.getWorld().playEffect(block.getLocation(), Effect.MOBSPAWNER_FLAMES, 0, 20);
+						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
 						if (Methods.rand.nextInt(4) == 0) {
 							Methods.playFirebendingSound(block.getLocation());
 						}
@@ -183,12 +188,12 @@ public class FireShield {
 			Location playerLoc = fshield.player.getLocation();
 
 			if(fshield.shield){
-				if(playerLoc.distance(loc) <= FireShield.radius)
+				if(playerLoc.distance(loc) <= fshield.radius)
 					return true;
 			}
 			else{
-				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(radius));
-				if(tempLoc.distance(loc) <= FireShield.discradius)
+				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(fshield.discradius));
+				if(tempLoc.distance(loc) <= fshield.discradius)
 					return true;
 			}
 		}
@@ -211,5 +216,41 @@ public class FireShield {
 
 	public static void removeAll() {
 		instances.clear();
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public boolean isShield() {
+		return shield;
+	}
+
+	public void setShield(boolean shield) {
+		this.shield = shield;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getDiscradius() {
+		return discradius;
+	}
+
+	public void setDiscradius(double discradius) {
+		this.discradius = discradius;
 	}
 }

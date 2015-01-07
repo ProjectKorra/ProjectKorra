@@ -14,6 +14,7 @@ import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 
 public class FireJet {
@@ -76,7 +77,8 @@ public class FireJet {
 			if (Methods.rand.nextInt(2) == 0) {
 				Methods.playFirebendingSound(player.getLocation());
 			}
-			player.getWorld().playEffect(player.getLocation(), Effect.MOBSPAWNER_FLAMES, 1);
+			ParticleEffect.FLAME.display(player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
+			ParticleEffect.SMOKE.display(player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
 			double timefactor;
 			if (AvatarState.isAvatarState(player) && isToggle) {
 				timefactor = 1;
@@ -104,6 +106,26 @@ public class FireJet {
 			players.add(player);
 		}
 		return players;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public double getFactor() {
+		return factor;
+	}
+
+	public void setFactor(double factor) {
+		this.factor = factor;
 	}
 
 }

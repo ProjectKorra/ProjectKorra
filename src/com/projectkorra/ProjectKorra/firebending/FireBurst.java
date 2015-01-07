@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingManager;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -43,6 +44,7 @@ public class FireBurst {
 		}
 		if (AvatarState.isAvatarState(player))
 			chargetime = 0;
+		if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) chargetime = 0;
 		this.player = player;
 		instances.put(player, this);
 	}
@@ -174,5 +176,33 @@ public class FireBurst {
 	public static void removeAll() {
 		instances.clear();
 
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public long getChargetime() {
+		return chargetime;
+	}
+
+	public void setChargetime(long chargetime) {
+		this.chargetime = chargetime;
+	}
+
+	public long getRange() {
+		return range;
+	}
+
+	public void setRange(long range) {
+		this.range = range;
 	}
 }

@@ -104,6 +104,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
+import com.projectkorra.ProjectKorra.earthbending.EarthSmash;
 import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
 import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
 import com.projectkorra.ProjectKorra.earthbending.MetalClips;
@@ -127,10 +128,12 @@ import com.projectkorra.ProjectKorra.waterbending.IceSpike;
 import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
 import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterReturn;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 import com.projectkorra.ProjectKorra.waterbending.WaterWall;
+import com.projectkorra.ProjectKorra.waterbending.WaterWave;
 import com.projectkorra.ProjectKorra.waterbending.Wave;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
@@ -152,6 +155,7 @@ public class Methods {
 	public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<Integer, Information>();
 	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	public static ArrayList<Block> tempnophysics = new ArrayList<Block>();
+	public static HashSet<Block> tempNoEarthbending = new HashSet<Block>();
 	private static Integer[] plantIds = { 6, 18, 31, 32, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175};
 
 	public static Integer[] transparentToEarthbending = {0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106};
@@ -297,6 +301,8 @@ public class Methods {
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation())) return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p)) return false;
 		if (MetalClips.isControlled(p)) return false;
+		if (BendingManager.events.get(p.getWorld()).equalsIgnoreCase("SolarEclipse") && isFireAbility(ability)) return false;
+		if (BendingManager.events.get(p.getWorld()).equalsIgnoreCase("LunarEclipse") && isWaterAbility(ability)) return false;
 		return true;
 	}
 
@@ -769,9 +775,9 @@ public class Methods {
 	public static double getFirebendingDayAugment(double value, World world) {
 		if (isDay(world)) {
 			if (Methods.hasRPG()) {
-				if (RPGMethods.isSozinsComet(world)) {
+				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.SozinsComet.toString())) {
 					return RPGMethods.getFactor(WorldEvents.SozinsComet) * value;
-				} else if (RPGMethods.isSolarEclipse(world) && !RPGMethods.isLunarEclipse(world)) {
+				} else if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.SolarEclipse.toString())) {
 					return RPGMethods.getFactor(WorldEvents.SolarEclipse) * value;
 				} else {
 					return value * plugin.getConfig().getDouble("Properties.Fire.DayFactor");
@@ -983,10 +989,10 @@ public class Methods {
 	public static double getWaterbendingNightAugment(World world) {
 		if (hasRPG()) {
 			if (isNight(world)) {
-				if (RPGMethods.isLunarEclipse(world)) {
+				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
 					return RPGMethods.getFactor(WorldEvents.LunarEclipse);
 				}
-				if (isFullMoon(world)) {
+				else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
 					return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
 				}
 				return plugin.getConfig().getDouble("Properties.Water.NightFactor");
@@ -994,7 +1000,9 @@ public class Methods {
 				return 1;
 			}
 		} else {
-			if (isNight(world) && isFullMoon(world)) return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
+			Bukkit.getServer().broadcastMessage("RPG NOT DETECTED");
+
+			if (isNight(world) && BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
 			if (isNight(world)) return plugin.getConfig().getDouble("Properties.Water.NightFactor");
 			return 1;
 		}
@@ -1119,7 +1127,7 @@ public class Methods {
 				sources++;
 			if (FreezeMelt.frozenblocks.containsKey(blocki)) {
 				//if (FreezeMelt.frozenblocks.get(blocki) == full)
-					//sources++;
+				//sources++;
 			} else if (blocki.getType() == Material.ICE) {
 				//sources++;
 			}
@@ -1187,6 +1195,9 @@ public class Methods {
 		}
 
 		if(!valid)
+			return false;
+		
+		if(tempNoEarthbending.contains(block))
 			return false;
 
 		if (!isRegionProtectedFromBuild(player, ability,
@@ -1333,13 +1344,6 @@ public class Methods {
 					if (!wg.hasPermission(player, "worldguard.override.lighter")) {
 						if (wg.getGlobalStateManager().get(world).blockLighter)
 							return true;
-						//						if (player.hasPermission("worldguard.region.bypass." + world.getName())
-						//								&& wg.getRegionContainer()
-						//								.get(world)
-						//								.getApplicableRegions(location)
-						//								.queryState(wg.wrapPlayer(player), DefaultFlag.LIGHTER)
-						//								.equals(State.DENY))
-						//							return true;
 					}
 				}
 				if (explode.contains(ability)) {
@@ -1348,17 +1352,11 @@ public class Methods {
 					if (!wg.getRegionManager(world).getApplicableRegions(location).allows(DefaultFlag.TNT)){
 						return true;
 					}
-					//					if (wg.getRegionContainer().get(world).getApplicableRegions(location) == null) return false;
-					//					if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.TNT).equals(State.DENY))
-					//						return true;
 				}
 
 				if (!wg.canBuild(player, location.getBlock())) {
 					return true;
 				}
-				//				
-				//				if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.BUILD).equals(State.DENY))
-				//					return true;
 			}
 
 			if (psp != null && respectPreciousStones) {
@@ -1737,7 +1735,7 @@ public class Methods {
 		else 
 			return ParticleEffect.CLOUD;
 	}
-	
+
 	public static Collection<Player> getPlayersAroundPoint(Location location, double distance) {
 		Collection<Player> players = new HashSet<Player>();
 		for (Player player: Bukkit.getOnlinePlayers()) {
@@ -2008,6 +2006,8 @@ public class Methods {
 		Tornado.instances.clear();
 		AirBurst.removeAll();
 		Suffocate.removeAll();
+		AirCombo.removeAll();
+		com.projectkorra.ProjectKorra.airbending.FlightAbility.removeAll();
 
 		Catapult.removeAll();
 		CompactColumn.removeAll();
@@ -2018,6 +2018,8 @@ public class Methods {
 		EarthTunnel.instances.clear();
 		Shockwave.removeAll();
 		Tremorsense.removeAll();
+		LavaFlow.removeAll();
+		EarthSmash.removeAll();
 
 		FreezeMelt.removeAll();
 		IceSpike.removeAll();
@@ -2029,6 +2031,8 @@ public class Methods {
 		Plantbending.regrowAll();
 		OctopusForm.removeAll();
 		Bloodbending.instances.clear();
+		WaterWave.removeAll();
+		WaterCombo.removeAll();
 
 		FireStream.removeAll();
 		Fireball.removeAll();
@@ -2040,6 +2044,7 @@ public class Methods {
 		FireJet.instances.clear();
 		Cook.removeAll();
 		Illumination.removeAll();
+		FireCombo.removeAll();
 
 		RapidPunch.instances.clear();
 		WarriorStance.instances.clear();
@@ -2072,13 +2077,26 @@ public class Methods {
 
 	public static double waterbendingNightAugment(double value, World world) {
 		if (isNight(world)) {
-			if (isFullMoon(world)) {
-				return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
+			if (hasRPG()) {
+				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
+					return RPGMethods.getFactor(WorldEvents.LunarEclipse) * value;
+				}
+				else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+					return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
+				}
+				else {
+					return value;
+				}
 			} else {
-				return plugin.getConfig().getDouble("Properties.Water.NightFactor") * value;
+				if (isFullMoon(world)) {
+					return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
+				} else {
+					return plugin.getConfig().getDouble("Properties.Water.NightFactor") * value;
+				}
 			}
+		} else {
+			return value;
 		}
-		return value;
 	}
 
 	public Methods(ProjectKorra plugin) {
@@ -2449,5 +2467,33 @@ public class Methods {
 			}
 		}
 	}
+	
+	
+	public static boolean canFly(Player player, boolean first, boolean hovering) {
+		BendingPlayer bender = getBendingPlayer(player.getName());
+		
+		if(!player.isOnline()) return false;
+		if(!player.isSneaking()) {
+			if(first) {
+			}else if(hovering) {
+				
+			}else{
+				return false;
+			}
+		}
+		if(bender.isChiBlocked()) return false;
+		if(!player.isOnline()) return false;
+		if(bender.isPermaRemoved()) return false;
+		if(!bender.getElements().contains(Element.Air)) return false;
+		if(!canBend(player.getName(), "Flight")) return false;
+		if(!getBoundAbility(player).equalsIgnoreCase("Flight")) return false;
+		if(isRegionProtectedFromBuild(player, "Flight", player.getLocation())) return false;
+		if(player.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR) return false;
+		return true;
+	}
+	
+	
+	
+	
 
 }

@@ -27,5 +27,6 @@ public class EarthbendingManager implements Runnable {
 		MetalClips.progressAll();
 		LavaSurge.progressAll();
 		LavaFlow.progressAll();
+		EarthSmash.progressAll();
 	}
 }

@@ -23,7 +23,7 @@ public class WaterSpout {
 	public static ConcurrentHashMap<Block, Block> newaffectedblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Block, Block> baseblocks = new ConcurrentHashMap<Block, Block>();
 
-	private static final int defaultheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Height");
+	private static final int HEIGHT = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Height");
 
 	// private static final double threshold = .05;
 	// private static final byte half = 0x4;
@@ -31,6 +31,7 @@ public class WaterSpout {
 	private Player player;
 	private Block base;
 	private TempBlock baseblock;
+	private int defaultheight = HEIGHT;
 
 	public WaterSpout(Player player) {
 		//		if (BendingPlayer.getBendingPlayer(player).isOnCooldown(
@@ -166,10 +167,10 @@ public class WaterSpout {
 
 	private static int spoutableWaterHeight(Location location, Player player) {
 		WaterSpout spout = instances.get(player);
-		int height = defaultheight;
+		int height = spout.defaultheight;
 		if (Methods.isNight(player.getWorld()))
 			height = (int) Methods.waterbendingNightAugment((double) height, player.getWorld());
-		int maxheight = (int) ((double) defaultheight * ProjectKorra.plugin.getConfig().getDouble("Properties.Water.NightFactor")) + 5;
+		int maxheight = (int) ((double) spout.defaultheight * ProjectKorra.plugin.getConfig().getDouble("Properties.Water.NightFactor")) + 5;
 		Block blocki;
 		for (int i = 0; i < maxheight; i++) {
 			blocki = location.clone().add(0, -i, 0).getBlock();
@@ -246,7 +247,7 @@ public class WaterSpout {
 
 				double distance = Math.sqrt(dx * dx + dz * dz);
 
-				if (distance <= radius && dy > 0 && dy < defaultheight){
+				if (distance <= radius && dy > 0 && dy < instances.get(player).defaultheight){
 					removed = true;
 					instances.get(player).remove();
 				}
@@ -261,5 +262,17 @@ public class WaterSpout {
 				+ "This ability is a toggle, so you can activate it then use other abilities and it "
 				+ "will remain on. If you try to spout over an area with no water, snow or ice, "
 				+ "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.";
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public int getDefaultheight() {
+		return defaultheight;
+	}
+
+	public void setDefaultheight(int defaultheight) {
+		this.defaultheight = defaultheight;
 	}
 }
