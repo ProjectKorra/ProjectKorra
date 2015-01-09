@@ -75,9 +75,6 @@ import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Information;
-import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -301,8 +298,8 @@ public class Methods {
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation())) return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p)) return false;
 		if (MetalClips.isControlled(p)) return false;
-		if (BendingManager.events.get(p.getWorld()).equalsIgnoreCase("SolarEclipse") && isFireAbility(ability)) return false;
-		if (BendingManager.events.get(p.getWorld()).equalsIgnoreCase("LunarEclipse") && isWaterAbility(ability)) return false;
+		if (BendingManager.events.get(p.getWorld()) != null && BendingManager.events.get(p.getWorld()).equalsIgnoreCase("SolarEclipse") && isFireAbility(ability)) return false;
+		if (BendingManager.events.get(p.getWorld()) != null && BendingManager.events.get(p.getWorld()).equalsIgnoreCase("LunarEclipse") && isWaterAbility(ability)) return false;
 		return true;
 	}
 
@@ -442,23 +439,20 @@ public class Methods {
 		File readFile = new File(".", "bendingPlayers.yml");
 		File writeFile = new File(".", "converted.yml");
 		if (readFile.exists()) {
-			try {
+			try (
 				DataInputStream input = new DataInputStream(new FileInputStream(readFile));
 				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
 				DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile));
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
+			){
+				
 				String line;
 				while ((line = reader.readLine()) != null) {
 					if (!line.trim().contains("==: BendingPlayer")) {
 						writer.write(line + "\n");
 					}
 				}
-
-				reader.close();
-				input.close();
-				writer.close();
-				output.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -882,7 +876,7 @@ public class Methods {
 			}
 		}
 		if(target != null) {
-			List <Block> blklist = new ArrayList();
+			List <Block> blklist = new ArrayList<Block>();
 			blklist = Methods.getBlocksAlongLine(player.getLocation(), target.getLocation(), player.getWorld());
 			for(Block isair:blklist)
 			{
@@ -1344,13 +1338,6 @@ public class Methods {
 					if (!wg.hasPermission(player, "worldguard.override.lighter")) {
 						if (wg.getGlobalStateManager().get(world).blockLighter)
 							return true;
-						//						if (player.hasPermission("worldguard.region.bypass." + world.getName())
-						//								&& wg.getRegionContainer()
-						//								.get(world)
-						//								.getApplicableRegions(location)
-						//								.queryState(wg.wrapPlayer(player), DefaultFlag.LIGHTER)
-						//								.equals(State.DENY))
-						//							return true;
 					}
 				}
 				if (explode.contains(ability)) {
@@ -1359,17 +1346,11 @@ public class Methods {
 					if (!wg.getRegionManager(world).getApplicableRegions(location).allows(DefaultFlag.TNT)){
 						return true;
 					}
-					//					if (wg.getRegionContainer().get(world).getApplicableRegions(location) == null) return false;
-					//					if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.TNT).equals(State.DENY))
-					//						return true;
 				}
 
 				if (!wg.canBuild(player, location.getBlock())) {
 					return true;
 				}
-				//				
-				//				if (wg.getRegionContainer().get(world).getApplicableRegions(location).queryState(null, DefaultFlag.BUILD).equals(State.DENY))
-				//					return true;
 			}
 
 			if (psp != null && respectPreciousStones) {
@@ -2362,7 +2343,8 @@ public class Methods {
 			PrintWriter pw = new PrintWriter(fw);
 			pw.println(message);
 			pw.flush();
-
+			pw.close();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
