@@ -75,9 +75,6 @@ import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Information;
-import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -442,23 +439,20 @@ public class Methods {
 		File readFile = new File(".", "bendingPlayers.yml");
 		File writeFile = new File(".", "converted.yml");
 		if (readFile.exists()) {
-			try {
+			try (
 				DataInputStream input = new DataInputStream(new FileInputStream(readFile));
 				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
 				DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile));
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
+			){
+				
 				String line;
 				while ((line = reader.readLine()) != null) {
 					if (!line.trim().contains("==: BendingPlayer")) {
 						writer.write(line + "\n");
 					}
 				}
-
-				reader.close();
-				input.close();
-				writer.close();
-				output.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -882,7 +876,7 @@ public class Methods {
 			}
 		}
 		if(target != null) {
-			List <Block> blklist = new ArrayList();
+			List <Block> blklist = new ArrayList<Block>();
 			blklist = Methods.getBlocksAlongLine(player.getLocation(), target.getLocation(), player.getWorld());
 			for(Block isair:blklist)
 			{
@@ -2349,7 +2343,8 @@ public class Methods {
 			PrintWriter pw = new PrintWriter(fw);
 			pw.println(message);
 			pw.flush();
-
+			pw.close();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
