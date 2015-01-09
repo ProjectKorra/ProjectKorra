@@ -65,6 +65,7 @@ public class ProjectKorra extends JavaPlugin {
 			MetricsLite metrics = new MetricsLite(this);
 			metrics.start();
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		Methods.deserializeFile();
