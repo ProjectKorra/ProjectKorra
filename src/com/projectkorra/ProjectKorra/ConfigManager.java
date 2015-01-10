@@ -49,10 +49,13 @@ public class ConfigManager {
 		config.addDefault("Properties.Chat.Prefixes.Avatar", "[Avatar]");
 		config.addDefault("Properties.Chat.Colors.Avatar", "DARK_PURPLE");
 		config.addDefault("Properties.Chat.Colors.Air", "GRAY");
+		config.addDefault("Properties.Chat.Colors.AirSub", "DARK_GRAY");
 		config.addDefault("Properties.Chat.Colors.Water", "AQUA");
+		config.addDefault("Properties.Chat.Colors.WaterSub", "DARK_AQUA");
 		config.addDefault("Properties.Chat.Colors.Earth", "GREEN");
-		config.addDefault("Properties.Chat.Colors.Metalbending", "DARK_GREEN");
+		config.addDefault("Properties.Chat.Colors.EarthSub", "DARK_GREEN");
 		config.addDefault("Properties.Chat.Colors.Fire", "RED");
+		config.addDefault("Properties.Chat.Colors.FireSub", "DARK_RED");
 		config.addDefault("Properties.Chat.Colors.Chi", "GOLD");
 
 		config.addDefault("Properties.ImportEnabled", true);

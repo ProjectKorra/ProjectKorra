@@ -22,7 +22,9 @@ public class Melt {
 	private static final byte full = 0x0;
 
 	public Melt(Player player) {
-
+		if(!Methods.canIcebend(player))
+			return;
+		
 		int range = (int) Methods.waterbendingNightAugment(defaultrange, player.getWorld());
 		int radius = (int) Methods.waterbendingNightAugment(defaultradius, player.getWorld());
 

@@ -113,6 +113,9 @@ public class WaterWall {
 	}
 
 	private void freezeThaw() {
+		if(!Methods.canIcebend(player))
+			return;
+		
 		if (frozen) {
 			thaw();
 		} else {

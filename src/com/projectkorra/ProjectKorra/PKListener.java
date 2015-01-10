@@ -431,7 +431,7 @@ public class PKListener implements Listener {
 					new Suffocate(player);
 				}
 				if(abil.equalsIgnoreCase("Flight")) {
-					if(player.isSneaking()) return;
+					if(player.isSneaking() || !Methods.canAirFlight(player)) return;
 					new com.projectkorra.ProjectKorra.airbending.FlightAbility(player);
 				}
 
@@ -796,7 +796,8 @@ public class PKListener implements Listener {
 					new AirSwipe(player);
 				}
 				if(abil.equalsIgnoreCase("Flight")) {
-					if(!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")) return;
+					if(!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")
+							|| !Methods.canAirFlight(player)) return;
 					
 					if(com.projectkorra.ProjectKorra.airbending.FlightAbility.instances.containsKey(event.getPlayer().getName())) {
 						if(com.projectkorra.ProjectKorra.airbending.FlightAbility.isHovering(event.getPlayer())) {

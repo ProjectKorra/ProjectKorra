@@ -51,6 +51,9 @@ public class IceSpike2 {
 	private double defaultdamage = DAMAGE;
 
 	public IceSpike2(Player player) {
+		if(!Methods.canIcebend(player))
+			return;
+		
 		block(player);
 		if (Methods.canPlantbend(player))
 			plantbending = true;

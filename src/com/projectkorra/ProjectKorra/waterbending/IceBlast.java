@@ -47,6 +47,9 @@ public class IceBlast {
 	private double defaultdamage = DAMAGE;
 	
 	public IceBlast(Player player) {
+		if(!Methods.canIcebend(player))
+			return;
+		
 		block(player);
 		range = Methods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;

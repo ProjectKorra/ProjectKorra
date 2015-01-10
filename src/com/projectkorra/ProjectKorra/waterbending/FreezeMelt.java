@@ -26,7 +26,9 @@ public class FreezeMelt {
 	
 
 	public FreezeMelt(Player player) {
-
+		if(!Methods.canIcebend(player))
+			return;
+		
 		int range = (int) Methods.waterbendingNightAugment(defaultrange, player.getWorld());
 		int radius = (int) Methods.waterbendingNightAugment(defaultradius, player.getWorld());
 		if (AvatarState.isAvatarState(player)) {

@@ -622,7 +622,11 @@ public class Commands {
 							}
 							for (String st: AbilityModuleManager.airbendingabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
-									s.sendMessage(Methods.getAirColor() + st);
+									if (Methods.isSubAbility(st)) {
+										s.sendMessage(Methods.getSubBendingColor(Element.Air) + st);
+									} else {
+										s.sendMessage(Methods.getAirColor() + st);
+									}
 								}
 							}
 							return true;
@@ -634,7 +638,11 @@ public class Commands {
 							}
 							for (String st: AbilityModuleManager.waterbendingabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
-									s.sendMessage(Methods.getWaterColor() + st);
+									if (Methods.isSubAbility(st)) {
+										s.sendMessage(Methods.getSubBendingColor(Element.Water) + st);
+									} else {
+										s.sendMessage(Methods.getWaterColor() + st);
+									}
 								}
 							}
 							return true;
@@ -646,8 +654,8 @@ public class Commands {
 							}
 							for (String st: AbilityModuleManager.earthbendingabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
-									if (Methods.isSubAbility(Element.Earth, st)) {
-										s.sendMessage(Methods.getMetalbendingColor() + st);
+									if (Methods.isSubAbility(st)) {
+										s.sendMessage(Methods.getSubBendingColor(Element.Earth) + st);
 									} else {
 										s.sendMessage(Methods.getEarthColor() + st);
 									}
@@ -662,7 +670,11 @@ public class Commands {
 							}
 							for (String st: AbilityModuleManager.firebendingabilities) {
 								if (Methods.hasPermission((Player) s, st)) {
-									s.sendMessage(Methods.getFireColor() + st);
+									if (Methods.isSubAbility(st)) {
+										s.sendMessage(Methods.getSubBendingColor(Element.Fire) + st);
+									} else {
+										s.sendMessage(Methods.getFireColor() + st);
+									}
 								}
 							}
 							return true;
@@ -825,27 +837,45 @@ public class Commands {
 						s.sendMessage(un + " - ");
 						if (Methods.isBender(un, Element.Air)) {
 							s.sendMessage(Methods.getAirColor() + "- Airbender");
+							if(Methods.canAirFlight(p)) {
+								s.sendMessage(Methods.getSubBendingColor(Element.Air) + "    Can Fly");
+							}
+							if(Methods.canUseSpiritualProjection(p)) {
+								s.sendMessage(Methods.getSubBendingColor(Element.Air) + "    Can use Spiritual Projection");
+							}
 						}
 						if (Methods.isBender(un, Element.Water)) {
 							s.sendMessage(Methods.getWaterColor() + "- Waterbender");
 							if (Methods.canPlantbend(p)) {
-								s.sendMessage(Methods.getWaterColor() + "    Can Plantbend");
+								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Plantbend");
 							}
 							if (Methods.canBloodbend(p)) {
-								s.sendMessage(Methods.getWaterColor() + "    Can Bloodbend");
+								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Bloodbend");
+							}
+							if (Methods.canIcebend(p)) {
+								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Icebend");
 							}
 						}
 						if (Methods.isBender(un, Element.Earth)) {
 							s.sendMessage(Methods.getEarthColor() + "- Earthbender");
 							if (Methods.canMetalbend(p)) {
-								s.sendMessage(Methods.getMetalbendingColor() + "    Can Metalbend");
+								s.sendMessage(Methods.getSubBendingColor(Element.Earth) + "    Can Metalbend");
 							}
 							if (Methods.canLavabend(p)) {
-								s.sendMessage(Methods.getMetalbendingColor() + "    Can Lavabend");
+								s.sendMessage(Methods.getSubBendingColor(Element.Earth) + "    Can Lavabend");
+							}
+							if (Methods.canSandbend(p)) {
+								s.sendMessage(Methods.getSubBendingColor(Element.Earth) + "    Can Sandbend");
 							}
 						}
 						if (Methods.isBender(un, Element.Fire)) {
 							s.sendMessage(Methods.getFireColor() + "- Firebender");
+							if(Methods.canCombustionbend(p)) {
+								s.sendMessage(Methods.getSubBendingColor(Element.Fire) + "    Can Combustionbend");
+							}
+							if(Methods.canLightningbend(p)) {
+								s.sendMessage(Methods.getSubBendingColor(Element.Fire) + "    Can Lightningbend");
+							}
 						}
 						if (Methods.isBender(un, Element.Chi)) {
 							s.sendMessage(Methods.getChiColor() + "- ChiBlocker");

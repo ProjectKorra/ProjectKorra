@@ -80,6 +80,9 @@ public class LavaFlow
 
 	public LavaFlow(Player player, AbilityType type)
 	{
+		if(!Methods.canLavabend(player))
+			return;
+		
 		time = System.currentTimeMillis();
 		this.player = player;
 		this.type = type;
