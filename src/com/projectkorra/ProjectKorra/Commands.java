@@ -855,6 +855,9 @@ public class Commands {
 							if (Methods.canIcebend(p)) {
 								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Icebend");
 							}
+							if (Methods.canWaterHeal(p)) {
+								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Heal");
+							}
 						}
 						if (Methods.isBender(un, Element.Earth)) {
 							s.sendMessage(Methods.getEarthColor() + "- Earthbender");
@@ -874,7 +877,7 @@ public class Commands {
 								s.sendMessage(Methods.getSubBendingColor(Element.Fire) + "    Can Combustionbend");
 							}
 							if(Methods.canLightningbend(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Fire) + "    Can Lightningbend");
+								s.sendMessage(Methods.getSubBendingColor(Element.Fire) + "    Can Bend Lightning");
 							}
 						}
 						if (Methods.isBender(un, Element.Chi)) {

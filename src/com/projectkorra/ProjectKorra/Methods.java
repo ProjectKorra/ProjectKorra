@@ -553,10 +553,27 @@ public class Methods {
 	 */
 	public static ChatColor getAbilityColor(String ability) {
 		if (AbilityModuleManager.chiabilities.contains(ability)) return getChiColor();
-		if (AbilityModuleManager.airbendingabilities.contains(ability)) return getAirColor();
-		if (AbilityModuleManager.waterbendingabilities.contains(ability)) return getWaterColor();
-		if (AbilityModuleManager.earthbendingabilities.contains(ability)) return getEarthColor();
-		if (AbilityModuleManager.firebendingabilities.contains(ability)) return getFireColor();
+		if (AbilityModuleManager.airbendingabilities.contains(ability))
+		{
+			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Air);
+			return getAirColor();
+		}
+		if (AbilityModuleManager.waterbendingabilities.contains(ability))
+		{
+			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Water);
+			return getWaterColor();
+		}
+		if (AbilityModuleManager.earthbendingabilities.contains(ability))
+		{
+			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Earth);
+			return getEarthColor();
+		}
+		if (AbilityModuleManager.firebendingabilities.contains(ability))
+		{
+			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Fire);
+			return getFireColor();
+		}
+		
 		else return getAvatarColor();
 	}
 
@@ -904,9 +921,9 @@ public class Methods {
 			case Air:
 				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.AirSub"));
 			case Water:
-				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Watersub"));
+				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.WaterSub"));
 			case Earth:
-				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Earthsub"));
+				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.EarthSub"));
 		}
 		
 		return getAvatarColor();
@@ -1150,7 +1167,7 @@ public class Methods {
 	}
 
 	public static boolean hasPermission(Player player, String ability) {
-		if (player.hasPermission("bending.ability." + ability)) return true;
+		if (player.hasPermission("bending.ability." + ability) && Methods.canBend(player.getName(), ability)) return true;
 		return false;
 	}
 
