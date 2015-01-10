@@ -2,59 +2,132 @@ package com.projectkorra.ProjectKorra.Ability;
 
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable;
 
-public class AbilityModule extends AbilityLoadable implements Cloneable {
-
-	public AbilityModule(final String name) {
+public abstract class AbilityModule extends AbilityLoadable implements Cloneable
+{
+	/**
+	 * AbilityModule Constructor.
+	 * 
+	 * @param name The name of the ability.
+	 */
+	public AbilityModule(final String name)
+	{
 		super(name);
 		// TODO Auto-generated constructor stub
 	}
 
-	public void onThisLoad() {
-		// TODO Auto-generated method stub
-		
-	}
-	
+	/**
+	 * Called when the ability is loaded by PK. This is where the developer registers Listeners and Permissions.
+	 */
+	public abstract void onThisLoad();
+
 	// Must be overridden
-	public String version() {
-		return "outdated";
-	}
 	
-	public String getElement() {
-		return "";	
-	}
-	
-	public String getAuthor() {
-		return "";
-	}
-	
-	public void stop() {
-		
-	}
-	
-	public boolean isShiftAbility() {
+	/**
+	 * Accessor Method to get the version of the ability.
+	 * 
+	 * @return The version of the ability as a String.
+	 */
+	public abstract String getVersion();
+
+	/**
+	 * Accessor Method to get the Element of the ability. 
+	 * It is recommended to use the Element ENUM to get the returned String.
+	 * This can be an empty String, in which case the ability will not belong to any element (such as AvatarState).
+	 * 
+	 * @return The Element the ability belongs to.
+	 */
+	public abstract String getElement();
+
+	/**
+	 * Accessor Method to get the name of the author.
+	 * 
+	 * @return The name of the author.
+	 */
+	public abstract String getAuthor();
+
+	/**
+	 * Accessor Method to get the description of the ability.
+	 * This String is sent to any player who runs /pk display ability.
+	 * 
+	 * @return The Description of the ability.
+	 */
+	public abstract String getDescription();
+
+	/**
+	 * Accessor Method to get whether this ability uses sneaking to operate.
+	 * Some features of the ProjectKorra plugin only work when this is false. (Fast Swimming for Waterbenders)
+	 * 
+	 * @return Whether or not the ability uses the sneak key.
+	 */
+	public abstract boolean isShiftAbility();
+
+	/**
+	 * Accessor Method to get whether this ability harms entities.
+	 * AirSpout is an example of a harmless ability. For AirSpout, this returns true.
+	 * IceBlast is an example of a harmful ability. For IceBlast, this returns false.
+	 * Torrent is an example of both a harmless and a harmful ability. For Torrent, this returns false.
+	 * 
+	 * @return Whether of not the ability can hurt entities.
+	 */
+	public abstract boolean isHarmlessAbility();
+
+	/**
+	 * Accessor Method to get whether this ability can set fire to blocks.
+	 * 
+	 * @return Whether or not this ability can ignite blocks.
+	 */
+	public boolean isIgniteAbility()
+	{
 		return false;
 	}
-	
-	public boolean isHarmlessAbility() {
-		return true;
-	}
-	
-	public String getDescription() {
-		return "";
-	}
-	
-	public boolean isIgniteAbility() {
+
+	/**
+	 * Accessor Method to get whether this ability can create explosions.
+	 * 
+	 * @return Whether or not this ability creates explosions.
+	 */
+	public boolean isExplodeAbility()
+	{
 		return false;
 	}
-	
-	public boolean isExplodeAbility() {
-		return false;
+
+	/**
+	 *  Void Method called whenever ProjectKorra stops and the ability is unloaded.
+	 *  
+	 */
+	public void stop()
+	{
+
 	}
-	
-	public boolean isMetalbendingAbility() {
-		return false;
-	}
-	
+
+	/**
+	 * Accessor Method to get whether this ability belongs to a sub element.
+	 * EarthBlast is a normal earthbending ability. For EarthBlast, this returns false.
+	 * LavaFlow is an earth sub-bending ability. For LavaFlow, this returns true.
+	 * 
+	 * List of sub-elements:
+	 * 
+	 * 		Water:
+	 * 			Icebending.
+	 * 			Bloodbending.
+	 * 			Plantbending.
+	 * 			Healing.
+	 * 
+	 * 		Earth:
+	 * 			Sandbending.
+	 * 			Metalbending.
+	 * 			Lavabending.
+	 * 
+	 * 		Fire:
+	 * 			Combustion.
+	 * 			Lightning.
+	 * 
+	 * 		Air:
+	 * 			Flight.
+	 * 			SpiritualProjection.
+	 * 
+	 * @return Whether or not this ability belongs to its element's sub bending.
+	 */
 	public boolean isSubAbility()
 	{
 		return false;

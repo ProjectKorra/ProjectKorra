@@ -185,7 +185,7 @@ public class AbilityModuleManager {
 			if (ab.getElement() == Element.Chi.toString()) chiabilities.add(ab.getName());
 			if (ab.isShiftAbility()) shiftabilities.add(ab.getName());
 			if (ab.isHarmlessAbility()) harmlessabilities.add(ab.getName());
-			if (ab.isMetalbendingAbility()) metalbendingabilities.add(ab.getName());
+			// if (ab.isMetalbendingAbility()) metalbendingabilities.add(ab.getName());
 			descriptions.put(ab.getName(), ab.getDescription());
 			authors.put(ab.getName(), ab.getAuthor());
 		}
