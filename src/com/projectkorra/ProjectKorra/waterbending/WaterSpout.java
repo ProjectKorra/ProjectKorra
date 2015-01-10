@@ -14,6 +14,7 @@ import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 
 public class WaterSpout {
@@ -32,7 +33,10 @@ public class WaterSpout {
 	private Block base;
 	private TempBlock baseblock;
 	private int defaultheight = HEIGHT;
-
+	private long time = 0;
+	private long interval = 50;
+	private int angle = 0;
+	
 	public WaterSpout(Player player) {
 		//		if (BendingPlayer.getBendingPlayer(player).isOnCooldown(
 		//				Abilities.WaterSpout))
@@ -150,6 +154,7 @@ public class WaterSpout {
 					if (!affectedblocks.containsKey(block)) {
 						affectedblocks.put(block, block);
 					}
+					instances.get(player).rotateParticles(block);
 					newaffectedblocks.put(block, block);
 				}
 				if (player.getLocation().getBlockY() > block.getY()) {
@@ -161,6 +166,41 @@ public class WaterSpout {
 				}
 			} else {
 				instances.get(player).remove();
+			}
+		}
+	}
+	
+	public void rotateParticles(Block block)
+	{
+		if (System.currentTimeMillis() >= time + interval)
+		{
+			time = System.currentTimeMillis();
+
+			Location location = block.getLocation();
+			Location playerloc = player.getLocation();
+			location = new Location(location.getWorld(), playerloc.getX(), location.getY(), playerloc.getZ());
+
+			double dy = playerloc.getY() - block.getY();
+			if (dy > HEIGHT)
+				dy = HEIGHT;
+			float[] directions = { -0.5f, 0.325f, 0.25f, 0.125f, 0.f, 0.125f, 0.25f, 0.325f, 0.5f };
+			int index = angle;
+
+			angle++;
+			if (angle >= directions.length)
+				angle = 0;
+			for (int i = 1; i <= dy; i++)
+			{
+
+				index += 1;
+				if (index >= directions.length)
+					index = 0;
+
+				Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i,
+						location.getZ());
+
+				ParticleEffect.WATER_SPLASH.display(effectloc2, directions[index], directions[index],
+						directions[index], 5, HEIGHT + 5);
 			}
 		}
 	}
