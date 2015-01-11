@@ -1218,10 +1218,8 @@ public class Commands {
 						}
 						BendingPlayer bTarget = Methods.getBendingPlayer(target.getName());
 
-						if (bTarget.isPermaRemoved()) {
-							s.sendMessage(ChatColor.RED + "That player's bending was permanently removed.");
-							return true;
-						}
+						if (bTarget.isPermaRemoved()) bTarget.setPermaRemoved(false);
+						
 						Element e = null;
 						if (Arrays.asList(airaliases).contains(args[2])) e = Element.Air;
 						if (Arrays.asList(wateraliases).contains(args[2])) e = Element.Water;
