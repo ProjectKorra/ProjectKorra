@@ -566,8 +566,14 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Player player = event.getPlayer();
-		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player)) {
+		if (Paralyze.isParalyzed(player)) {
 			event.setCancelled(true);
+			return;
+		}
+		
+		if(ChiComboManager.isParalyzed(player))
+		{
+			event.setTo(event.getFrom());
 			return;
 		}
 

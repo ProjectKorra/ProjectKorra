@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -144,7 +145,11 @@ public class ChiComboManager
 	{
 		for(Entity e : paralyzed)
 		{
-			e.setVelocity(Methods.getDirection(e.getLocation(), paralyzedLocations.get(e)));
+			if(!(e instanceof Player))
+			{
+				e.setVelocity(Methods.getDirection(e.getLocation(), paralyzedLocations.get(e)));
+			}
+			//e.teleport(paralyzedLocations.get(e));
 		}
 	}
 }
