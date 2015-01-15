@@ -168,7 +168,8 @@ public class Lightning {
 								electrocute(player);
 							}
 						}
-						break;
+						remove();
+						return;
 					}
 					
 					while(iterLoc.distance(dest) > 0.15) {
