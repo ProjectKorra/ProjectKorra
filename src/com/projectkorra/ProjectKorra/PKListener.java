@@ -75,11 +75,14 @@ import com.projectkorra.ProjectKorra.airbending.FlightAbility;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.AcrobatStance;
+import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
 import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
 import com.projectkorra.ProjectKorra.chiblocking.HighJump;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
+import com.projectkorra.ProjectKorra.chiblocking.QuickStrike;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.ProjectKorra.chiblocking.Smokescreen;
+import com.projectkorra.ProjectKorra.chiblocking.SwiftKick;
 import com.projectkorra.ProjectKorra.chiblocking.WarriorStance;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.Collapse;
@@ -175,7 +178,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
 
@@ -255,7 +258,7 @@ public class PKListener implements Listener {
 			if(ability != null && ability.equalsIgnoreCase("EarthSmash"))
 				new EarthSmash(player, EarthSmash.ClickType.RIGHTCLICK);
 		}
-		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
 	}
@@ -265,7 +268,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 		Player player = event.getPlayer();
 		Methods.cooldowns.put(player.getName(), System.currentTimeMillis());
-		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
 	}
@@ -385,7 +388,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
+		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -563,7 +566,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Player player = event.getPlayer();
-		if (Paralyze.isParalyzed(player)) {
+		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -625,7 +628,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
+		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
 			event.setCancelled(true);
 		}
 	}
@@ -635,7 +638,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
+		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
 			event.setCancelled(true);
 		}
 	}
@@ -645,7 +648,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 		
 		if (event.getEntityType() == EntityType.FALLING_BLOCK) {
@@ -691,7 +694,7 @@ public class PKListener implements Listener {
 
 		Entity entity = event.getEntity();
 		if (entity != null)
-			if (Paralyze.isParalyzed(entity)
+			if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity)
 					|| Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 				event.setCancelled(true);
 	}
@@ -701,7 +704,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -710,7 +713,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -719,7 +722,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -728,7 +731,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -737,7 +740,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -755,7 +758,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player)) {
+		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -955,6 +958,16 @@ public class PKListener implements Listener {
 				
 				if (abil.equalsIgnoreCase("AcrobatStance")) {
 					new AcrobatStance(player);
+				}
+				
+				if (abil.equalsIgnoreCase("QuickStrike"))
+				{
+					new QuickStrike(player);
+				}
+				
+				if (abil.equalsIgnoreCase("SwiftKick"))
+				{
+					new SwiftKick(player);
 				}
 			}
 
@@ -1207,7 +1220,8 @@ public class PKListener implements Listener {
 		//			e.setCancelled(true);
 		//		}
 
-		if (Paralyze.isParalyzed(e.getDamager())) {
+		if (Paralyze.isParalyzed(e.getDamager())
+				|| ChiComboManager.isParalyzed(e.getDamager())) {
 			e.setCancelled(true);
 			return;
 		}

@@ -3,7 +3,6 @@ package com.projectkorra.ProjectKorra.earthbending;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

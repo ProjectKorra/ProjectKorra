@@ -22,7 +22,6 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 

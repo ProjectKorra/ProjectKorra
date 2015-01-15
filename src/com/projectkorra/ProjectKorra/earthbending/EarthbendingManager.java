@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
 import org.bukkit.Bukkit;
+
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.RevertChecker;
 

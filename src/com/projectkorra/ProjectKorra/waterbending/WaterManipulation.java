@@ -1,9 +1,7 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;

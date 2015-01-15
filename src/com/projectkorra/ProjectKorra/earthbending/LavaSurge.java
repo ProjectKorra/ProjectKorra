@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.ConfigManager;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;

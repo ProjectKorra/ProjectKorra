@@ -716,11 +716,21 @@ public class ConfigManager {
 		config.addDefault("Abilities.Chi.Smokescreen.Cooldown", 50000);
 		config.addDefault("Abilities.Chi.Smokescreen.Radius", 4);
 		config.addDefault("Abilities.Chi.Smokescreen.Duration", 15);
-		
+
 		config.addDefault("Abilities.Chi.WarriorStance.Enabled", true);
 		config.addDefault("Abilities.Chi.WarriorStance.Description", "WarriorStance gives a Chiblocker increased damage but makes them a tad more vulnerable. To activate, simply left click.");
 		config.addDefault("Abilities.Chi.WarriorStance.Strength", 1);
 		config.addDefault("Abilities.Chi.WarriorStance.Resistance", -1);
+		
+		config.addDefault("Abilities.Chi.QuickStrike.Enabled", true);
+		config.addDefault("Abilities.Chi.QuickStrike.Description", "QuickStrike enables a chiblocker to quickly strike an enemy, potentially blocking their chi.");
+		config.addDefault("Abilities.Chi.QuickStrike.Damage", 2);
+		config.addDefault("Abilities.Chi.QuickStrike.ChiBlockChance", 20);
+		
+		config.addDefault("Abilities.Chi.SwiftKick.Enabled", true);
+		config.addDefault("Abilities.Chi.SwiftKick.Description", "SwiftKick allows a chiblocker to swiftly kick an enemy, potentially blocking their chi. The chiblocker must be in the air to use this ability.");
+		config.addDefault("Abilities.Chi.SwiftKick.damage", 4);
+		config.addDefault("Abilities.Chi.SwiftKick.ChiBlockChance", 30);
 		
 		config.addDefault("Storage.engine", "sqlite");
 

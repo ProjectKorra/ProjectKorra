@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
@@ -47,6 +48,7 @@ public class BendingManager implements Runnable {
 			Flight.handle();	
 			RapidPunch.startPunchAll();
 			RevertChecker.revertAirBlocks();
+			ChiComboManager.handleParalysis();
 			handleCooldowns();
 		} catch (Exception e) {
 			Methods.stopBending();
