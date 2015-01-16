@@ -1,5 +1,6 @@
 package com.projectkorra.ProjectKorra.Ability;
 
+import com.projectkorra.ProjectKorra.SubElement;
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable;
 
 public abstract class AbilityModule extends AbilityLoadable implements Cloneable
@@ -99,11 +100,10 @@ public abstract class AbilityModule extends AbilityLoadable implements Cloneable
 	{
 
 	}
-
+	
 	/**
-	 * Accessor Method to get whether this ability belongs to a sub element.
-	 * EarthBlast is a normal earthbending ability. For EarthBlast, this returns false.
-	 * LavaFlow is an earth sub-bending ability. For LavaFlow, this returns true.
+	 * Accessor Method to get which SubElement the ability belongs to.
+	 * If isSubAbility() returns true, the developer absolutely must implement this as well.
 	 * 
 	 * List of sub-elements:
 	 * 
@@ -126,10 +126,10 @@ public abstract class AbilityModule extends AbilityLoadable implements Cloneable
 	 * 			Flight.
 	 * 			SpiritualProjection.
 	 * 
-	 * @return Whether or not this ability belongs to its element's sub bending.
+	 * @return The SubElement the ability belongs to.
 	 */
-	public boolean isSubAbility()
+	public SubElement getSubElement()
 	{
-		return false;
+		return null;
 	}
 }

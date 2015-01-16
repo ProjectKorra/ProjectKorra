@@ -33,6 +33,17 @@ public class AbilityModuleManager {
 	public static HashSet<String> metalbendingabilities;
 	public static HashSet<String> earthsubabilities;
 	public static HashSet<String> subabilities;
+	public static HashSet<String> lightningabilities;
+	public static HashSet<String> combustionabilities;
+	public static HashSet<String> lavaabilities;
+	public static HashSet<String> sandabilities;
+	public static HashSet<String> metalabilities;
+	public static HashSet<String> flightabilities;
+	public static HashSet<String> spiritualprojectionabilities;
+	public static HashSet<String> iceabilities;
+	public static HashSet<String> healingabilities;
+	public static HashSet<String> plantabilities;
+	public static HashSet<String> bloodabilities;
 	
 	public static HashMap<String, String> descriptions;
 
@@ -60,6 +71,17 @@ public class AbilityModuleManager {
 		subabilities = new HashSet<String>();
 		ability = loader.load(AbilityModule.class);
 		disabledStockAbilities = new HashSet<String>();
+		lightningabilities = new HashSet<String>();
+		combustionabilities = new HashSet<String>();
+		flightabilities = new HashSet<String>();
+		spiritualprojectionabilities = new HashSet<String>();
+		metalabilities = new HashSet<String>();
+		sandabilities = new HashSet<String>();
+		lavaabilities = new HashSet<String>();
+		healingabilities = new HashSet<String>();
+		plantabilities = new HashSet<String>();
+		iceabilities = new HashSet<String>();
+		bloodabilities = new HashSet<String>();
 		fill();
 	}
 
@@ -83,6 +105,7 @@ public class AbilityModuleManager {
 					
 					// Air Sub Abilities
 					if (a == StockAbilities.Flight) subabilities.add(a.name());
+					if (a == StockAbilities.Flight) flightabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isWaterbending(a)) {
@@ -108,6 +131,12 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.PhaseChange) subabilities.add(a.name());
 					if (a == StockAbilities.IceSpike) subabilities.add(a.name());
 					if (a == StockAbilities.IceBlast) subabilities.add(a.name());
+					
+					if (a == StockAbilities.HealingWaters) healingabilities.add(a.name());
+					if (a == StockAbilities.Bloodbending) bloodabilities.add(a.name());
+					if (a == StockAbilities.PhaseChange) iceabilities.add(a.name());
+					if (a == StockAbilities.IceSpike) iceabilities.add(a.name());
+					if (a == StockAbilities.IceBlast) iceabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isEarthbending(a)) {
@@ -130,6 +159,10 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.MetalClips) subabilities.add(a.name());
 					if (a == StockAbilities.Extraction) subabilities.add(a.name());
 					if (a == StockAbilities.LavaFlow) subabilities.add(a.name());
+					
+					if (a == StockAbilities.MetalClips) metalabilities.add(a.name());
+					if (a == StockAbilities.Extraction) metalabilities.add(a.name());
+					if (a == StockAbilities.LavaFlow) lavaabilities.add(a.name());
 //					if (a == StockAbilities.LavaSurge) earthsubabilities.add(a.name());
 					
 				}
@@ -153,6 +186,9 @@ public class AbilityModuleManager {
 					// Fire Sub Abilities
 					if (a == StockAbilities.Lightning) subabilities.add(a.name());
 					if (a == StockAbilities.Combustion) subabilities.add(a.name());
+					
+					if (a == StockAbilities.Lightning) lightningabilities.add(a.name());
+					if (a == StockAbilities.Combustion) combustionabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isChiBlocking(a)) {
@@ -194,7 +230,48 @@ public class AbilityModuleManager {
 			if (ab.getElement() == Element.Chi.toString()) chiabilities.add(ab.getName());
 			if (ab.isShiftAbility()) shiftabilities.add(ab.getName());
 			if (ab.isHarmlessAbility()) harmlessabilities.add(ab.getName());
-			if (ab.isSubAbility()) subabilities.add(ab.getName());
+			
+			if (ab.getSubElement() != null)
+			{
+				subabilities.add(ab.getName());
+				switch(ab.getSubElement())
+				{
+					case Bloodbending:
+						bloodabilities.add(ab.getName());
+						break;
+					case Combustion:
+						combustionabilities.add(ab.getName());
+						break;
+					case Flight:
+						flightabilities.add(ab.getName());
+						break;
+					case Healing:
+						healingabilities.add(ab.getName());
+						break;
+					case Icebending:
+						iceabilities.add(ab.getName());
+						break;
+					case Lavabending:
+						lavaabilities.add(ab.getName());
+						break;
+					case Lightning:
+						lightningabilities.add(ab.getName());
+						break;
+					case Metalbending:
+						metalabilities.add(ab.getName());
+						break;
+					case Plantbending:
+						plantabilities.add(ab.getName());
+						break;
+					case Sandbending:
+						sandabilities.add(ab.getName());
+						break;
+					case SpiritualProjection:
+						spiritualprojectionabilities.add(ab.getName());
+						break;
+				}
+			}
+			
 			// if (ab.isMetalbendingAbility()) metalbendingabilities.add(ab.getName());
 			descriptions.put(ab.getName(), ab.getDescription());
 			authors.put(ab.getName(), ab.getAuthor());
