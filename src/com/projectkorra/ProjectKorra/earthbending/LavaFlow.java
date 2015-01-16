@@ -64,6 +64,7 @@ public class LavaFlow
 
 	public static ArrayList<LavaFlow> instances = new ArrayList<LavaFlow>();
 	public static ArrayList<TempBlock> totalBlocks = new ArrayList<TempBlock>();
+	public static ArrayList<TempBlock> totalBlocks2 = new ArrayList<TempBlock>();
 
 	private Player player;
 	private BendingPlayer bplayer;
@@ -80,6 +81,9 @@ public class LavaFlow
 
 	public LavaFlow(Player player, AbilityType type)
 	{
+		if(!Methods.canLavabend(player))
+			return;
+		
 		time = System.currentTimeMillis();
 		this.player = player;
 		this.type = type;
@@ -330,6 +334,7 @@ public class LavaFlow
 				TempBlock.instances.remove(block);
 		}
 	}
+	@SuppressWarnings("deprecation")
 	public void removeLava(Block testBlock)
 	{
 		/**
@@ -347,7 +352,10 @@ public class LavaFlow
 				return;
 			}
 		}
-		testBlock.setType(REVERT_MATERIAL);
+		
+		TempBlock tblock = new TempBlock(testBlock, REVERT_MATERIAL, testBlock.getData());
+		affectedBlocks.add(tblock);
+		totalBlocks2.add(tblock);
 
 	}
 
@@ -389,6 +397,11 @@ public class LavaFlow
 			{
 				affectedBlocks.remove(tblock);
 				totalBlocks.remove(tblock);
+			}
+			if(totalBlocks2.contains(tblock))
+			{
+				affectedBlocks.remove(tblock);
+				totalBlocks2.remove(tblock);
 			}
 		}
 		for(BukkitRunnable task : tasks)

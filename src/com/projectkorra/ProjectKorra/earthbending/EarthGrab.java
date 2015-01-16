@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
 import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;

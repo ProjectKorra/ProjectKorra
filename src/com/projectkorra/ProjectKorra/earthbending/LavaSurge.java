@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.ConfigManager;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
@@ -43,7 +42,6 @@ public class LavaSurge
 	private long time;
 	private int fallingBlocksCount = 0;
 	private boolean surgeStarted = false;
-	private boolean stopSurge = false;
 	private boolean fractureOpen;
 	private Random randy = new Random();
 	private Vector direction;
@@ -51,7 +49,9 @@ public class LavaSurge
 	//private Location currentLocation; // Unused.
 	private List<FallingBlock> fblocks = new ArrayList<FallingBlock>();
 	private List<Block> fracture = new ArrayList<Block>();	
-	private List<TempBlock> fracturetb = new ArrayList<TempBlock>();	
+	private List<TempBlock> fracturetb = new ArrayList<TempBlock>();
+	private List<TempBlock> movingLava = new ArrayList<TempBlock>();
+	private ConcurrentHashMap<FallingBlock, TempBlock> lava = new ConcurrentHashMap<FallingBlock, TempBlock>();
 	private ListIterator<Block> li;
 	
 	public LavaSurge(Player player)
@@ -204,8 +204,17 @@ public class LavaSurge
 			return true;
 		return false;
 	}
+
+	public void removeLava()
+	{
+		for(TempBlock tb : lava.values())
+		{
+			tb.revertBlock();
+		}
+		
+		movingLava.clear();
+	}
 	
-	@SuppressWarnings("deprecation")
 	public void progress()
 	{
 		long curTime = System.currentTimeMillis();
@@ -255,22 +264,15 @@ public class LavaSurge
 		}
 
 		if(surgeStarted)
-		{
-			if(stopSurge)
-			{
-				remove();
-				return;
-			}
-			
+		{	
 			if(fallingBlocksCount >= maxBlocks)
 			{
-				remove();
 				return;
 			}
 			
 			if(curTime > time + (fallingBlockInterval * fallingBlocksCount))
 			{
-				FallingBlock fbs = player.getWorld().spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), Material.STATIONARY_LAVA, (byte) 1);
+				FallingBlock fbs = Methods.spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), 11, (byte) 0);
 				fblocks.add(fbs);
 				falling.add(fbs);
 				double x = randy.nextDouble()/5;
@@ -286,7 +288,7 @@ public class LavaSurge
 				{
 					if(randy.nextBoolean() && b != sourceBlock)
 					{
-						FallingBlock fb = player.getWorld().spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), Material.STATIONARY_LAVA, (byte) 0);
+						FallingBlock fb = Methods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), 11, (byte) 0);
 						falling.add(fb);
 						fblocks.add(fb);
 						fb.setVelocity(direction.clone().add(new Vector(randy.nextDouble()/10, 0.1, randy.nextDouble()/10)).multiply(1.2));
@@ -311,7 +313,6 @@ public class LavaSurge
 						}
 					}
 				}
-				
 			}
 		}
 	}

@@ -67,6 +67,7 @@ permissions:
       bending.ability.Tornado: true
       bending.ability.AirCombo: true
       bending.air.passive: true
+      bending.air.flight: true
   bending.water:
     default: true
     description: Grants access to most waterbending abilities.
@@ -83,9 +84,11 @@ permissions:
       bending.ability.WaterSpout: true
       bending.ability.WaterSpout.Wave: true
       bending.ability.WaterCombo: true
-      bending.ability.Plantbending: true
+      bending.water.plantbending: true
       bending.message.nightmessage: true
       bending.water.passive: true
+      bending.water.icebending: true
+      bending.water.healing: true
   bending.earth:
     default: true
     description: Grants access to all Earthbending abilities.
@@ -106,6 +109,7 @@ permissions:
       bending.earth.passive: true
       bending.earth.metalbending: true
       bending.earth.lavabending: true
+      bending.earth.sandbending: true
       bending.earth.grapplinghook: true
       bending.ability.LavaSurge: true
       bending.ability.LavaFlow: true
@@ -127,6 +131,8 @@ permissions:
       bending.ability.FireCombo: true
       bending.message.daymessage: true
       bending.fire.passive: true
+      bending.fire.lightningbending: true
+      bending.fire.combustionbending: true
   bending.chi:
     default: true
     description: Grants access to all ChiBlocking abilities.

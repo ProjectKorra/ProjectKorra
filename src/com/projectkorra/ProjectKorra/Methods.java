@@ -155,7 +155,7 @@ public class Methods {
 	public static HashSet<Block> tempNoEarthbending = new HashSet<Block>();
 	private static Integer[] plantIds = { 6, 18, 31, 32, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175};
 
-	public static Integer[] transparentToEarthbending = {0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106};
+	public static Integer[] transparentToEarthbending = {0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106, 175};
 
 	public static Integer[] nonOpaque = {0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 68, 69, 70, 72,
 		75, 76, 77, 78, 83, 90, 93, 94, 104, 105, 106, 111, 115, 119, 127, 131, 132};
@@ -273,6 +273,7 @@ public class Methods {
 	 * @param ability The Ability name to check
 	 * @return true If player can bend specified ability and has the permissions to do so
 	 */
+	@SuppressWarnings("deprecation")
 	public static boolean canBend(String player, String ability) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
@@ -295,6 +296,21 @@ public class Methods {
 		if (isEarthAbility(ability) && !isBender(player, Element.Earth)) return false;
 		if (isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
 		if (isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
+		
+		if (isFlightAbility(ability) && !canAirFlight(plugin.getServer().getPlayer(player))) return false;
+		if (isSpiritualProjectionAbility(ability) && !canUseSpiritualProjection(plugin.getServer().getPlayer(player))) return false;
+		if (isCombustionbendingAbility(ability) && !canCombustionbend(plugin.getServer().getPlayer(player))) return false;
+		if (isLightningbendingAbility(ability) && !canLightningbend(plugin.getServer().getPlayer(player))) return false;
+		if (isSandbendingAbility(ability) && !canSandbend(plugin.getServer().getPlayer(player))) return false;
+		if (isMetalbendingAbility(ability) && !canMetalbend(plugin.getServer().getPlayer(player))) return false;
+		if (isLavabendingAbility(ability) && !canLavabend(plugin.getServer().getPlayer(player))) return false;
+		if (isIcebendingAbility(ability) && !canIcebend(plugin.getServer().getPlayer(player))) return false;
+		if (isHealingAbility(ability) && !canWaterHeal(plugin.getServer().getPlayer(player))) return false;
+		if (isPlantbendingAbility(ability) && !canPlantbend(plugin.getServer().getPlayer(player))) return false;
+		if (isBloodbendingAbility(ability) && !canBloodbend(plugin.getServer().getPlayer(player))) return false;
+		
+		
+		
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation())) return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p)) return false;
 		if (MetalClips.isControlled(p)) return false;
@@ -322,10 +338,52 @@ public class Methods {
 	 * @return true If player has permission node "bending.earth.bloodbending"
 	 */
 	public static boolean canBloodbend(Player player) {
-		if (player.hasPermission("bending.ability.bloodbending")) return true;
+		if (player.hasPermission("bending.water.bloodbending")) return true;
+		return false;
+	}
+	
+	public static boolean canIcebend(Player player) 
+	{
+		if(player.hasPermission("bending.water.icebending")) return true;
+		return false;
+	}
+	
+	public static boolean canWaterHeal(Player player)
+	{
+		if(player.hasPermission("bending.water.healing")) return true;
+		return false;
+	}
+	
+	public static boolean canCombustionbend(Player player)
+	{
+		if(player.hasPermission("bending.fire.combustionbending")) return true;
+		return false;
+	}
+	
+	public static boolean canLightningbend(Player player)
+	{
+		if(player.hasPermission("bending.fire.lightningbending")) return true;
+		return false;
+	}
+	
+	public static boolean canAirFlight(Player player)
+	{
+		if(player.hasPermission("bending.air.flight")) return true;
+		return false;
+	}
+	
+	public static boolean canUseSpiritualProjection(Player player)
+	{
+		if(player.hasPermission("bending.air.spiritualprojection")) return true;
 		return false;
 	}
 
+	public static boolean canSandbend(Player player)
+	{
+		if(player.hasPermission("bending.earth.sandbending")) return true;
+		return false;
+	}
+	
 	/**
 	 * Checks to see if a player can MetalBend.
 	 * @param player The player to check
@@ -340,10 +398,8 @@ public class Methods {
 		return player.hasPermission("bending.earth.lavabending");
 	}
 
-	public static boolean isSubAbility(Element element, String ability) {
-		if (element == Element.Earth) {
-			if (AbilityModuleManager.earthsubabilities.contains(ability)) return true;
-		}
+	public static boolean isSubAbility(String ability) {
+		if (AbilityModuleManager.subabilities.contains(ability)) return true;
 		return false;
 	}
 
@@ -353,7 +409,7 @@ public class Methods {
 	 * @return true If player has permission node "bending.ability.plantbending"
 	 */
 	public static boolean canPlantbend(Player player) {
-		return player.hasPermission("bending.ability.plantbending");
+		return player.hasPermission("bending.water.plantbending");
 	}
 
 	/**
@@ -499,10 +555,27 @@ public class Methods {
 	 */
 	public static ChatColor getAbilityColor(String ability) {
 		if (AbilityModuleManager.chiabilities.contains(ability)) return getChiColor();
-		if (AbilityModuleManager.airbendingabilities.contains(ability)) return getAirColor();
-		if (AbilityModuleManager.waterbendingabilities.contains(ability)) return getWaterColor();
-		if (AbilityModuleManager.earthbendingabilities.contains(ability)) return getEarthColor();
-		if (AbilityModuleManager.firebendingabilities.contains(ability)) return getFireColor();
+		if (AbilityModuleManager.airbendingabilities.contains(ability))
+		{
+			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Air);
+			return getAirColor();
+		}
+		if (AbilityModuleManager.waterbendingabilities.contains(ability))
+		{
+			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Water);
+			return getWaterColor();
+		}
+		if (AbilityModuleManager.earthbendingabilities.contains(ability))
+		{
+			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Earth);
+			return getEarthColor();
+		}
+		if (AbilityModuleManager.firebendingabilities.contains(ability))
+		{
+			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Fire);
+			return getFireColor();
+		}
+		
 		else return getAvatarColor();
 	}
 
@@ -840,6 +913,23 @@ public class Methods {
 	public static ChatColor getMetalbendingColor() {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Metalbending"));
 	}
+	
+	public static ChatColor getSubBendingColor(Element element)
+	{
+		switch(element)
+		{
+			case Fire:
+				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.FireSub"));
+			case Air:
+				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.AirSub"));
+			case Water:
+				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.WaterSub"));
+			case Earth:
+				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.EarthSub"));
+		}
+		
+		return getAvatarColor();
+	}
 
 	public static Vector getOrthogonalVector(Vector axis, double degrees, double length) {
 
@@ -1079,7 +1169,7 @@ public class Methods {
 	}
 
 	public static boolean hasPermission(Player player, String ability) {
-		if (player.hasPermission("bending.ability." + ability)) return true;
+		if (player.hasPermission("bending.ability." + ability) && Methods.canBend(player.getName(), ability)) return true;
 		return false;
 	}
 
@@ -1140,6 +1230,61 @@ public class Methods {
 		if (bPlayer == null) return false;
 		if (bPlayer.hasElement(element)) return true;
 		return false;
+	}
+	
+	public static boolean isCombustionbendingAbility(String ability)
+	{
+		return AbilityModuleManager.combustionabilities.contains(ability);
+	}
+	
+	public static boolean isLightningbendingAbility(String ability)
+	{
+		return AbilityModuleManager.lightningabilities.contains(ability);
+	}
+	
+	public static boolean isHealingAbility(String ability)
+	{
+		return AbilityModuleManager.healingabilities.contains(ability);
+	}
+	
+	public static boolean isIcebendingAbility(String ability)
+	{
+		return AbilityModuleManager.iceabilities.contains(ability);
+	}
+	
+	public static boolean isPlantbendingAbility(String ability)
+	{
+		return AbilityModuleManager.plantabilities.contains(ability);
+	}
+	
+	public static boolean isBloodbendingAbility(String ability)
+	{
+		return AbilityModuleManager.bloodabilities.contains(ability);
+	}
+	
+	public static boolean isFlightAbility(String ability)
+	{
+		return AbilityModuleManager.flightabilities.contains(ability);
+	}
+	
+	public static boolean isSpiritualProjectionAbility(String ability)
+	{
+		return AbilityModuleManager.spiritualprojectionabilities.contains(ability);
+	}
+	
+	public static boolean isLavabendingAbility(String ability)
+	{
+		return AbilityModuleManager.lavaabilities.contains(ability);
+	}
+	
+	public static boolean isMetalbendingAbility(String ability)
+	{
+		return AbilityModuleManager.metalabilities.contains(ability);
+	}
+	
+	public static boolean isSandbendingAbility(String ability)
+	{
+		return AbilityModuleManager.sandabilities.contains(ability);
 	}
 
 	public static boolean isChiAbility(String ability) {
@@ -1228,12 +1373,7 @@ public class Methods {
 		}
 		return false;
 	}
-
-	public static boolean isMetalbendingAbility(String ability) {
-		if (AbilityModuleManager.metalbendingabilities.contains(ability)) return true;
-		return false;
-	}
-
+	
 	public static boolean isMetalBlock(Block block) {
 		if (block.getType() == Material.GOLD_BLOCK
 				|| block.getType() == Material.IRON_BLOCK
@@ -1440,7 +1580,7 @@ public class Methods {
 			if (gpp != null && respectGriefPrevention) {
 				Material type = player.getWorld().getBlockAt(location).getType();
 				if (type == null) type = Material.AIR;
-				String reason = GriefPrevention.instance.allowBuild(player, location, type);
+				String reason = GriefPrevention.instance.allowBuild(player, location);
 
 				if (ignite.contains(ability)) {
 
@@ -2144,6 +2284,28 @@ public class Methods {
 				Suffocate.remove(player);
 			}
 		}
+	}
+	
+	public static FallingBlock spawnFallingBlock(Location loc, int type)
+	{
+		return spawnFallingBlock(loc, type, (byte) 0);
+	}
+	
+	public static FallingBlock spawnFallingBlock(Location loc, Material type)
+	{
+		return spawnFallingBlock(loc, type, (byte) 0);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static FallingBlock spawnFallingBlock(Location loc, int type, byte data)
+	{
+		return loc.getWorld().spawnFallingBlock(loc, type, data);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static FallingBlock spawnFallingBlock(Location loc, Material type, byte data)
+	{
+		return loc.getWorld().spawnFallingBlock(loc, type, data);
 	}
 
 	public static void playFirebendingParticles(Location loc) {

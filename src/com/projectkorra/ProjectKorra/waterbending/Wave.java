@@ -410,8 +410,13 @@ public class Wave {
 	}
 
 	private void freeze() {
+		
+		
 		clearWave();
 
+		if(!Methods.canIcebend(player))
+			return;
+		
 		double freezeradius = radius;
 		if (freezeradius > maxfreezeradius) {
 			freezeradius = maxfreezeradius;

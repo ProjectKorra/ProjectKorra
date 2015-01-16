@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -174,6 +173,7 @@ public class FireBlast {
 
 	private void advanceLocation() {
 		if (showParticles) {
+			//ParticleEffect.RED_DUST.display((float) 16, (float) 111, (float) 227, 0.01F, 0, location, 256D);
 			ParticleEffect.FLAME.display(location, 0.6F, 0.6F, 0.6F, 0, 20);
 			ParticleEffect.SMOKE.display(location, 0.6F, 0.6F, 0.6F, 0, 20);
 		}

@@ -18,7 +18,7 @@ public enum StockAbilities {
 	AvatarState,
 
 	// Project Korra
-	Extraction, MetalClips, Smokescreen, Combustion, LavaFlow, Suffocate, IceBlast, WarriorStance, AcrobatStance, EarthSmash, Flight;
+	Extraction, MetalClips, Smokescreen, Combustion, LavaFlow, Suffocate, IceBlast, WarriorStance, AcrobatStance, QuickStrike, SwiftKick, EarthSmash, Flight;
 
 	private enum AirbendingAbilities {
 		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst, Suffocate, Flight;
@@ -38,7 +38,139 @@ public enum StockAbilities {
 	}
 
 	private enum ChiblockingAbilities {
-		HighJump, RapidPunch, Paralyze, Smokescreen, WarriorStance, AcrobatStance;
+		HighJump, RapidPunch, Paralyze, Smokescreen, WarriorStance, AcrobatStance, QuickStrike, SwiftKick;
+	}
+	
+	private enum FlightAbilities
+	{
+		Flight;
+	}
+	
+	private enum SpiritualProjectionAbilities
+	{
+		;
+	}
+	
+	private enum CombustionbendingAbilities
+	{
+		Combustion;
+	}
+	
+	private enum LightningbendingAbilities
+	{
+		Lightning;
+	}
+	
+	private enum LavabendingAbilities
+	{
+		LavaFlow;
+	}
+	
+	private enum MetalbendingAbilities
+	{
+		Extraction, MetalClips;
+	}
+	
+	private enum SandbendingAbilities
+	{
+		;
+	}
+	
+	private enum HealingAbilities
+	{
+		HealingWaters;
+	}
+	
+	private enum IcebendingAbilities
+	{
+		PhaseChange, IceBlast, IceSpike;
+	}
+	
+	private enum BloodbendingAbilities
+	{
+		Bloodbending;
+	}
+	
+	private enum PlantbendingAbilities
+	{
+		;
+	}
+	
+	public static boolean isFlightAbility(String ability)
+	{
+		for(FlightAbilities a : FlightAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isSpiritualProjectionAbility(String ability)
+	{
+		for(SpiritualProjectionAbilities a : SpiritualProjectionAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isCombustionbendingAbility(String ability)
+	{
+		for(CombustionbendingAbilities a : CombustionbendingAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isLightningbendingAbility(String ability)
+	{
+		for(LightningbendingAbilities a : LightningbendingAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isLavabendingAbility(String ability)
+	{
+		for(LavabendingAbilities a : LavabendingAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isMetalbendingAbility(String ability)
+	{
+		for(MetalbendingAbilities a : MetalbendingAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isSandbendingAbility(String ability)
+	{
+		for(SandbendingAbilities a : SandbendingAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isHealingAbility(String ability)
+	{
+		for(HealingAbilities a : HealingAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isIcebendingAbility(String ability)
+	{
+		for(IcebendingAbilities a : IcebendingAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isBloodbendingAbility(String ability)
+	{
+		for(BloodbendingAbilities a : BloodbendingAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
+	}
+	
+	public static boolean isPlantbendingAbility(String ability)
+	{
+		for(PlantbendingAbilities a : PlantbendingAbilities.values())
+			if(a.name().equalsIgnoreCase(ability)) return true;
+		return false;
 	}
 	
 	public static boolean isStockAbility(String ability) {
