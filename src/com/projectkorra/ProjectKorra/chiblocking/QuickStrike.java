@@ -6,10 +6,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager.ChiCombo;
 
 public class QuickStrike
 {
+	public static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.QuickStrike.Damage");
+	public static int blockChance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
+	
 	public QuickStrike(Player player)
 	{
 		if(!isEligible(player))
@@ -20,9 +24,9 @@ public class QuickStrike
 		if(e == null)
 			return;
 		
-		Methods.damageEntity(player, e, 2);
+		Methods.damageEntity(player, e, damage);
 		
-		if(Methods.rand.nextInt(100) < 20 && e instanceof Player)
+		if(Methods.rand.nextInt(100) < blockChance && e instanceof Player)
 		{
 			ChiPassive.blockChi((Player) e);
 		}

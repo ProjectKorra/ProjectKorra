@@ -1469,6 +1469,12 @@ public class Commands {
 						s.sendMessage(Methods.getAirColor() + "IceBullet" + ChatColor.WHITE + ": Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
 						s.sendMessage(ChatColor.GOLD + "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > IceBlast (Left Click) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
 					}
+					if (args[1].equalsIgnoreCase("ChiCombo"))
+					{
+						s.sendMessage(ChatColor.GOLD + "ChiCombos:");
+						s.sendMessage(Methods.getChiColor() + "Immobilize" + ChatColor.WHITE + ": Deliver a series of strikes to an enemy to temporarely immobilize them.");
+						s.sendMessage(ChatColor.GOLD + "QuickStrike > SwiftKick > QuickStrike > QuickStrike");
+					}
 					if (Methods.abilityExists(args[1])) {
 						String ability = Methods.getAbility(args[1]);
 						if (Methods.isAirAbility(ability)) {

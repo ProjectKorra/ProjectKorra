@@ -25,6 +25,7 @@ public class ChiComboManager
 	public static List<List<ChiCombo>> knownCombos = new ArrayList<List<ChiCombo>>();
 	public static List<Entity> paralyzed = new ArrayList<Entity>();
 	public static HashMap<Entity, Location> paralyzedLocations = new HashMap<Entity, Location>();
+	public static long paralysisDuration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.ChiCombo.ParalyzeDuration");
 	
 	public ChiComboManager()
 	{
@@ -38,6 +39,9 @@ public class ChiComboManager
 	
 	public static void addCombo(Player player, ChiCombo combo)
 	{
+		if(!player.hasPermission("bending.ability.ChiCombo"))
+			return;
+		
 		if(!instances.containsKey(player))
 			instances.put(player, new ArrayList<ChiCombo>());
 		instances.get(player).add(combo);
@@ -95,7 +99,7 @@ public class ChiComboManager
 						&& combo.get(2) == ChiCombo.QuickStrike
 						&& combo.get(3) == ChiCombo.QuickStrike)
 				{
-					paralyzeTarget(player, 10000);
+					paralyzeTarget(player, paralysisDuration);
 				}
 				
 				instances.remove(player);

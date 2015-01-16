@@ -729,8 +729,10 @@ public class ConfigManager {
 		
 		config.addDefault("Abilities.Chi.SwiftKick.Enabled", true);
 		config.addDefault("Abilities.Chi.SwiftKick.Description", "SwiftKick allows a chiblocker to swiftly kick an enemy, potentially blocking their chi. The chiblocker must be in the air to use this ability.");
-		config.addDefault("Abilities.Chi.SwiftKick.damage", 4);
+		config.addDefault("Abilities.Chi.SwiftKick.Damage", 4);
 		config.addDefault("Abilities.Chi.SwiftKick.ChiBlockChance", 30);
+		
+		config.addDefault("Abilities.Chi.ChiCombo.ParalyzeDuration", 10000);
 		
 		config.addDefault("Storage.engine", "sqlite");
 
