@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra.firebending;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -77,17 +78,17 @@ public class Lightning {
 		cooldown = COOLDOWN;
 		
 		if(AvatarState.isAvatarState(player)) {
-			range = AvatarState.getValue(range);
+			//range = AvatarState.getValue(range);
 			chargeTime = 0;
 			cooldown = 0;
-			subArcChance = AvatarState.getValue(subArcChance);
+			//subArcChance = AvatarState.getValue(subArcChance);
 			damage = AvatarState.getValue(damage);
 			chainArcs = AvatarState.getValue(chainArcs);
 			chainArcChance = AvatarState.getValue(chainArcChance);
 			chainRange = AvatarState.getValue(chainRange);
-			waterRange = AvatarState.getValue(waterRange);
+			//waterRange = AvatarState.getValue(waterRange);
 			stunChance = AvatarState.getValue(stunChance);
-			stunDuration = AvatarState.getValue(stunDuration);
+			//stunDuration = AvatarState.getValue(stunDuration);
 		}
 		else if(BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) {
 			chargeTime = 0;
@@ -153,16 +154,13 @@ public class Lightning {
 			arcs.addAll(subArcs);
 			state = State.STRIKE;
 		}
-		else if(state == State.STRIKE) {
-			Arc mainArc = null;
-			if(arcs.size() > 0)
-				mainArc = arcs.get(0);
-			
+		else if(state == State.STRIKE) {			
 			for(int i = 0; i < arcs.size(); i++) {
 				Arc arc = arcs.get(i);
 				for(int j = 0; j < arc.getAnimLocs().size() - 1; j++) {
 					final Location iterLoc = arc.getAnimLocs().get(j).getLoc().clone();
 					final Location dest = arc.getAnimLocs().get(j + 1).getLoc().clone();
+					
 					if(!isTransparent(player, iterLoc.getBlock())) {
 						if(SELF_HIT_CLOSE && player.getLocation().distance(iterLoc) < 3) {
 							if(!affectedEntities.contains(player)) {
@@ -170,14 +168,8 @@ public class Lightning {
 								electrocute(player);
 							}
 						}
-						/*
-						 * If it was the main arc then remove everything
-						 */
-						if(arcs.get(i) == mainArc) {
-							remove();
-							return;
-						}
-						break;
+						remove();
+						return;
 					}
 					
 					while(iterLoc.distance(dest) > 0.15) {
@@ -199,14 +191,14 @@ public class Lightning {
 	}
 	
 	public static boolean isTransparent(Player player, Block block) {
-		if (!Arrays.asList(Methods.transparentToEarthbending).contains(block.getTypeId())) {
-			if(isWater(block.getLocation()))
-				return true;
+		if (Arrays.asList(Methods.transparentToEarthbending).contains(block.getTypeId())) {
+			if(Methods.isRegionProtectedFromBuild(player, "Lightning", block.getLocation()))
+				return false;
 			else if(isIce(block.getLocation()))
 				return ARC_ON_ICE;
+			return true;
 		}	
-		return !Methods.isRegionProtectedFromBuild(player, "Lightning",
-				block.getLocation());
+		return false;
 	}
 	
 	public void electrocute(LivingEntity lent) {
@@ -219,6 +211,11 @@ public class Lightning {
 			new BukkitRunnable() {
 				int count = 0;
 				public void run() {
+					if(flent.isDead() || (flent instanceof Player && !((Player) flent).isOnline())) {
+						cancel();
+						return;
+					}
+						
 					Location tempLoc = lentLoc.clone();
 					Vector tempVel = flent.getVelocity();
 					tempVel.setY(Math.min(0, tempVel.getY()));
@@ -234,8 +231,10 @@ public class Lightning {
 	}
 
 	public void removeWithTasks() {
-		for(BukkitRunnable task : tasks)
-			task.cancel();
+		for(int i = 0; i < tasks.size(); i++) {
+			tasks.get(i).cancel();
+			i--;
+		}
 		remove();
 	}
 		public void remove() {

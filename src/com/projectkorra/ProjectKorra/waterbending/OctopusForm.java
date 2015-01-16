@@ -128,7 +128,7 @@ public class OctopusForm {
 	}
 
 	private void affect(Location location) {
-		for (Entity entity : Methods.getEntitiesAroundPoint(location, 2.5)) {
+		for (Entity entity : Methods.getEntitiesAroundPoint(location, range)) {
 			if (entity.getEntityId() == player.getEntityId())
 				continue;
 			if (Methods.isRegionProtectedFromBuild(player, "OctopusForm", entity.getLocation()))

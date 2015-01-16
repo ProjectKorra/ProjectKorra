@@ -1483,9 +1483,6 @@ public class Methods {
 				if (explode.contains(ability)) {
 					if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions)
 						return true;
-					if (!wg.getRegionManager(world).getApplicableRegions(location).allows(DefaultFlag.TNT)){
-						return true;
-					}
 				}
 
 				if (!wg.canBuild(player, location.getBlock())) {
