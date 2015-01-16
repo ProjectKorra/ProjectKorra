@@ -143,6 +143,9 @@ permissions:
       bending.ability.Smokescreen: true
       bending.ability.WarriorStance: true
       bending.ability.AcrobatStance: true
+      bending.ability.QuickStrike: true
+      bending.ability.SwiftKick: true
+      bending.ability.ChiCombo: true
       bending.chi.passive: true
       bending.chi.grapplinghook: true
   bending.avatar:

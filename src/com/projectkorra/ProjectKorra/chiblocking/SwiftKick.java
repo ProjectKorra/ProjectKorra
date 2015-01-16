@@ -6,23 +6,27 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager.ChiCombo;
 
 public class SwiftKick
 {
+	public static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.SwiftKick.Damage");
+	public static int blockChance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.ChiCombo.ChiBlockChance");
+	
 	public SwiftKick(Player player)
 	{
 		if(!isEligible(player))
 			return;
 		
-		Entity e = Methods.getTargetedEntity(player, 2, new ArrayList<Entity>());
+		Entity e = Methods.getTargetedEntity(player, 4, new ArrayList<Entity>());
 		
 		if(e == null)
 			return;
 		
-		Methods.damageEntity(player, e, 4);
+		Methods.damageEntity(player, e, damage);
 		
-		if(Methods.rand.nextInt(100) < 30 && e instanceof Player)
+		if(Methods.rand.nextInt(100) < blockChance && e instanceof Player)
 		{
 			ChiPassive.blockChi((Player) e);
 		}
@@ -49,8 +53,8 @@ public class SwiftKick
 		if(Methods.getBendingPlayer(player.getName()).isOnCooldown("SwiftKick"))
 			return false;
 		
-//		if(player.isOnGround())
-//			return false;
+		if(player.isOnGround())
+			return false;
 		
 		return true;
 	}
