@@ -1169,7 +1169,7 @@ public class Methods {
 	}
 
 	public static boolean hasPermission(Player player, String ability) {
-		if (player.hasPermission("bending.ability." + ability) && Methods.canBend(player.getName(), ability)) return true;
+		if (player.hasPermission("bending.ability." + ability)) return true;
 		return false;
 	}
 
