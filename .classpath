@@ -8,10 +8,10 @@
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/LWC.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/MassiveCore.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/NoCheatPlus.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/PreciousStones.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/Towny.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldEdit.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/WorldGuard.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/GriefPrevention.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Shawn/Documents/Bending Plugins/PreciousStones.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
