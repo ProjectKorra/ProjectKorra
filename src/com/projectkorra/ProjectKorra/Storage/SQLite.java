@@ -38,7 +38,7 @@ public class SQLite extends Database {
             this.printErr("JDBC driver not found!", true);
             return null;
         } catch(SQLException e) {
-            this.printErr("SQL exception during connection.", true);
+            this.printErr("SQLite exception during connection.", true);
             return null;
         }
     }

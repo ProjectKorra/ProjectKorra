@@ -51,6 +51,8 @@ public class ProjectKorra extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 
 		DBConnection.init();
+		if (DBConnection.isOpen() == false) return;
+		
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
 			Preset.loadPresets(player);
@@ -78,6 +80,11 @@ public class ProjectKorra extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		Methods.stopBending();
+		if (DBConnection.isOpen == false) return;
 		DBConnection.sql.close();
+	}
+	
+	public void stopPlugin() {
+		getServer().getPluginManager().disablePlugin(plugin);
 	}
 }
