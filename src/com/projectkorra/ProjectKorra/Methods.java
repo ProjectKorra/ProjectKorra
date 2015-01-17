@@ -318,6 +318,31 @@ public class Methods {
 		if (BendingManager.events.get(p.getWorld()) != null && BendingManager.events.get(p.getWorld()).equalsIgnoreCase("LunarEclipse") && isWaterAbility(ability)) return false;
 		return true;
 	}
+	
+	public static boolean canBind(String player, String ability)
+	{
+		if (getBendingPlayer(player) == null) return false;
+		if (!Bukkit.getServer().getPlayer(player).hasPermission("bending.ability." + ability)) return false;
+		if (isAirAbility(ability) && !isBender(player, Element.Air)) return false;
+		if (isWaterAbility(ability) && !isBender(player, Element.Water)) return false;
+		if (isEarthAbility(ability) && !isBender(player, Element.Earth)) return false;
+		if (isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
+		if (isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
+		
+		if (isFlightAbility(ability) && !canAirFlight(plugin.getServer().getPlayer(player))) return false;
+		if (isSpiritualProjectionAbility(ability) && !canUseSpiritualProjection(plugin.getServer().getPlayer(player))) return false;
+		if (isCombustionbendingAbility(ability) && !canCombustionbend(plugin.getServer().getPlayer(player))) return false;
+		if (isLightningbendingAbility(ability) && !canLightningbend(plugin.getServer().getPlayer(player))) return false;
+		if (isSandbendingAbility(ability) && !canSandbend(plugin.getServer().getPlayer(player))) return false;
+		if (isMetalbendingAbility(ability) && !canMetalbend(plugin.getServer().getPlayer(player))) return false;
+		if (isLavabendingAbility(ability) && !canLavabend(plugin.getServer().getPlayer(player))) return false;
+		if (isIcebendingAbility(ability) && !canIcebend(plugin.getServer().getPlayer(player))) return false;
+		if (isHealingAbility(ability) && !canWaterHeal(plugin.getServer().getPlayer(player))) return false;
+		if (isPlantbendingAbility(ability) && !canPlantbend(plugin.getServer().getPlayer(player))) return false;
+		if (isBloodbendingAbility(ability) && !canBloodbend(plugin.getServer().getPlayer(player))) return false;
+		
+		return true;
+	}
 
 	public static boolean canBendPassive(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
@@ -1169,7 +1194,7 @@ public class Methods {
 	}
 
 	public static boolean hasPermission(Player player, String ability) {
-		if (player.hasPermission("bending.ability." + ability)) return true;
+		if (player.hasPermission("bending.ability." + ability) && canBind(player.getName(), ability)) return true;
 		return false;
 	}
 
@@ -1577,7 +1602,8 @@ public class Methods {
 			if (gpp != null && respectGriefPrevention) {
 				Material type = player.getWorld().getBlockAt(location).getType();
 				if (type == null) type = Material.AIR;
-				String reason = GriefPrevention.instance.allowBuild(player, location, null);
+//				String reason = GriefPrevention.instance.allowBuild(player, location, null); // NOT WORKING with WorldGuard 6.0 BETA 4
+				String reason = GriefPrevention.instance.allowBuild(player, location); // WORKING with WorldGuard 6.0 BETA 4
 
 				if (ignite.contains(ability)) {
 
