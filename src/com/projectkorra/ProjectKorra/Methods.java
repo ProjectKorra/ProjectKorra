@@ -267,6 +267,18 @@ public class Methods {
 		return true;
 	}
 
+	public static boolean canBind(String player, String ability) {
+		@SuppressWarnings("deprecation")
+		Player p = Bukkit.getPlayer(player);
+		if (p == null) return false;
+		if (!p.hasPermission("bending.ability." + ability)) return false;
+		if (isAirAbility(ability) && !isBender(player, Element.Air)) return false;
+		if (isWaterAbility(ability) && !isBender(player, Element.Water)) return false;
+		if (isEarthAbility(ability) && !isBender(player, Element.Earth)) return false;
+		if (isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
+		if (isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
+		return true;
+	}
 	/**
 	 * Checks to see if a Player can bend a specific Ability.
 	 * @param player The player name to check
@@ -297,17 +309,17 @@ public class Methods {
 		if (isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
 		if (isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
 		
-		if (isFlightAbility(ability) && !canAirFlight(plugin.getServer().getPlayer(player))) return false;
-		if (isSpiritualProjectionAbility(ability) && !canUseSpiritualProjection(plugin.getServer().getPlayer(player))) return false;
-		if (isCombustionbendingAbility(ability) && !canCombustionbend(plugin.getServer().getPlayer(player))) return false;
-		if (isLightningbendingAbility(ability) && !canLightningbend(plugin.getServer().getPlayer(player))) return false;
-		if (isSandbendingAbility(ability) && !canSandbend(plugin.getServer().getPlayer(player))) return false;
-		if (isMetalbendingAbility(ability) && !canMetalbend(plugin.getServer().getPlayer(player))) return false;
-		if (isLavabendingAbility(ability) && !canLavabend(plugin.getServer().getPlayer(player))) return false;
-		if (isIcebendingAbility(ability) && !canIcebend(plugin.getServer().getPlayer(player))) return false;
-		if (isHealingAbility(ability) && !canWaterHeal(plugin.getServer().getPlayer(player))) return false;
-		if (isPlantbendingAbility(ability) && !canPlantbend(plugin.getServer().getPlayer(player))) return false;
-		if (isBloodbendingAbility(ability) && !canBloodbend(plugin.getServer().getPlayer(player))) return false;
+//		if (isFlightAbility(ability) && !canAirFlight(plugin.getServer().getPlayer(player))) return false;
+//		if (isSpiritualProjectionAbility(ability) && !canUseSpiritualProjection(plugin.getServer().getPlayer(player))) return false;
+//		if (isCombustionbendingAbility(ability) && !canCombustionbend(plugin.getServer().getPlayer(player))) return false;
+//		if (isLightningbendingAbility(ability) && !canLightningbend(plugin.getServer().getPlayer(player))) return false;
+//		if (isSandbendingAbility(ability) && !canSandbend(plugin.getServer().getPlayer(player))) return false;
+//		if (isMetalbendingAbility(ability) && !canMetalbend(plugin.getServer().getPlayer(player))) return false;
+//		if (isLavabendingAbility(ability) && !canLavabend(plugin.getServer().getPlayer(player))) return false;
+//		if (isIcebendingAbility(ability) && !canIcebend(plugin.getServer().getPlayer(player))) return false;
+//		if (isHealingAbility(ability) && !canWaterHeal(plugin.getServer().getPlayer(player))) return false;
+//		if (isPlantbendingAbility(ability) && !canPlantbend(plugin.getServer().getPlayer(player))) return false;
+//		if (isBloodbendingAbility(ability) && !canBloodbend(plugin.getServer().getPlayer(player))) return false;
 		
 		
 		

@@ -408,9 +408,10 @@ public class Commands {
 
 						String ability = Methods.getAbility(abil);
 
-						if (!Methods.hasPermission((Player) s, ability)) {
+						if (!Methods.canBind(((Player) s).getName(), ability)) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
+
 						}
 						if (Methods.isAirAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
 							s.sendMessage(Methods.getAirColor() + "You must be an Airbender to bind this ability.");
@@ -458,7 +459,7 @@ public class Commands {
 							return true;
 						}
 
-						if (!Methods.hasPermission((Player) s, ability)) {
+						if (!Methods.canBind(((Player) s).getName(), ability)) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
 						}
