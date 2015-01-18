@@ -90,9 +90,11 @@ public class Lightning {
 			stunChance = AvatarState.getValue(stunChance);
 			//stunDuration = AvatarState.getValue(stunDuration);
 		}
-		else if(BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) {
-			chargeTime = 0;
-			cooldown = 0;
+		else if(BendingManager.events.containsKey(player.getWorld())) {
+			if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) {
+				chargeTime = 0;
+				cooldown = 0;
+			}
 		}
 		instances.add(this);
 	}
