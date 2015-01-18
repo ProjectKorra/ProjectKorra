@@ -105,7 +105,7 @@ public class FireStream {
 
 	public static boolean isIgnitable(Player player, Block block) {
 
-		Material[] overwriteable = { Material.SAPLING, Material.LONG_GRASS,
+		Material[] overwriteable = { Material.SAPLING, Material.LONG_GRASS, Material.THIN_GLASS,
 				Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE,
 				Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.FIRE,
 				Material.SNOW, Material.TORCH };
@@ -129,7 +129,7 @@ public class FireStream {
 				Material.OBSIDIAN, Material.REDSTONE_ORE, Material.SAND,
 				Material.SANDSTONE, Material.SMOOTH_BRICK, Material.STONE,
 				Material.SOUL_SAND, Material.WOOD, // Material.SNOW_BLOCK, 
-				Material.WOOL, Material.LEAVES, Material.MELON_BLOCK,
+				Material.WOOL, Material.LEAVES, Material.LEAVES_2, Material.MELON_BLOCK,
 				Material.PUMPKIN, Material.JACK_O_LANTERN, Material.NOTE_BLOCK,
 				Material.GLOWSTONE, Material.IRON_BLOCK, Material.DISPENSER,
 				Material.SPONGE, Material.IRON_ORE, Material.GOLD_ORE,

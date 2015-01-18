@@ -1,4 +1,4 @@
-package com.projectkorra.ProjectKorra;
+ package com.projectkorra.ProjectKorra;
 
 import com.projectkorra.ProjectKorra.Storage.Database;
 import com.projectkorra.ProjectKorra.Storage.MySQL;
@@ -13,11 +13,18 @@ public class DBConnection {
 	public static String db;
 	public static String user;
 	public static String pass;
+	public static boolean isOpen = false;
 
 	public static void init() {
 		if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
 			sql = new MySQL(ProjectKorra.log, "[ProjectKorra] Establishing MySQL Connection...", host, port, user, pass, db);
-			((MySQL) sql).open();
+			if (((MySQL) sql).open() == null) {
+				ProjectKorra.log.severe("Disabling due to database error");
+				ProjectKorra.plugin.stopPlugin();
+				return;
+			}
+            
+			isOpen = true;
 			ProjectKorra.log.info("[ProjectKorra] Database connection established.");
 
 			if (!sql.tableExists("pk_players")) {
@@ -61,8 +68,13 @@ public class DBConnection {
 			}
 		} else {
 			sql = new SQLite(ProjectKorra.log, "[ProjectKorra] Establishing SQLite Connection.", "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
-			((SQLite) sql).open();
+			if (((SQLite) sql).open() == null) {
+				ProjectKorra.log.severe("Disabling due to database error");
+				ProjectKorra.plugin.stopPlugin();
+				return;
+			}
 
+			isOpen = true;
 			if (!sql.tableExists("pk_players")) {
 				ProjectKorra.log.info("Creating pk_players table.");
 				String query = "CREATE TABLE `pk_players` ("
@@ -101,5 +113,9 @@ public class DBConnection {
 				sql.modifyQuery(query);
 			}
 		}
+	}
+	
+	public static boolean isOpen() {
+		return isOpen;
 	}
 }
