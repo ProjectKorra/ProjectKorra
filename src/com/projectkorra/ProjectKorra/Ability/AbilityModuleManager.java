@@ -278,7 +278,7 @@ public class AbilityModuleManager {
 				authors.put(ab.getName(), ab.getAuthor());
 			} catch (AbstractMethodError e) { //If triggered means ability was made pre 1.6 BETA 8
 				ProjectKorra.log.warning("The ability " + ab.getName() + " is either broken or outdated. Please remove it!");
-				e.printStackTrace();
+				//e.printStackTrace();
 				ab.stop();
 				abilities.remove(ab.getName());
 				final AbilityModule skill = ab;
