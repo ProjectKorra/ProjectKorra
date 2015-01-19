@@ -33,6 +33,7 @@ Properties:
     RespectTowny: true
     RespectPreciousStones: true
     RespectLWC: true
+    CacheBlockTime: 5000
   Air:
     CanBendWithWeapons: false
     Particles: smoke
