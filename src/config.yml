@@ -233,6 +233,7 @@ Abilities:
       Enabled: true
       Description: "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. To use, click to select a water source. Then, hold sneak to channel this ability. While channleing, the water will form itself around you and has a chance to block incoming attacks. Additionally, you can click while channeling to attack things near you, dealing damage and knocking the target back. Releasing shift at any time will dissipate the form."
       Range: 10
+      AttackRange: 2.5
       Damage: 3
       Radius: 3
       FormDelay: 50
