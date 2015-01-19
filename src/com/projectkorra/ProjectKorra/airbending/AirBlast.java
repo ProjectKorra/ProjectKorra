@@ -1,8 +1,10 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -190,12 +192,19 @@ public class AirBlast {
 			instances.remove(id);
 			return false;
 		}
-
-		if (location.distance(origin) > range) {
+		
+		/*
+		 *	If a player presses shift and AirBlasts straight down then
+		 *	the AirBlast's location gets messed up and reading the distance
+		 *	returns Double.NaN. If we don't remove this instance then
+		 *	the AirBlast will never be removed. 
+		 */
+		double dist = location.distance(origin);
+		if (Double.isNaN(dist) || dist > range) {
 			instances.remove(id);
 			return false;
 		}
-
+		
 		for (Entity entity : Methods.getEntitiesAroundPoint(location, affectingradius)) {
 			affect(entity);
 		}
@@ -254,7 +263,10 @@ public class AirBlast {
 			if (entity instanceof Player) {
 				if (Commands.invincible.contains(((Player) entity).getName())) return;
 			}
-
+			
+			if(Double.isNaN(velocity.length()))
+				return;
+			
 			Methods.setVelocity(entity, velocity);
 			entity.setFallDistance(0);
 			if (!isUser && entity instanceof Player) {
