@@ -126,9 +126,10 @@ public class FireBlast {
 
 		if (Methods.isSolid(block) || block.isLiquid()) {
 			if (block.getType() == Material.FURNACE && canPowerFurnace) {
-				Furnace f = ((Furnace) block);
-				f.setBurnTime((short) 800);
-				f.setCookTime((short) 800);
+				Furnace furnace = (Furnace) block.getState();
+				furnace.setBurnTime((short) 800);
+				furnace.setCookTime((short) 800);
+				furnace.update();
 			} else if (FireStream.isIgnitable(player, block.getRelative(BlockFace.UP))) {
 				ignite(location);
 			}
