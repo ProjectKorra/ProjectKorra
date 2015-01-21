@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -156,7 +157,7 @@ public class Methods {
 	public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<Integer, Information>();
 	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
-	public static ConcurrentHashMap<String, ConcurrentHashMap<Block, Boolean>> blockProtectionCache = new ConcurrentHashMap<String, ConcurrentHashMap<Block, Boolean>>();
+	public static ConcurrentHashMap<String, ConcurrentHashMap<Block, BlockCacheElement>> blockProtectionCache = new ConcurrentHashMap<String, ConcurrentHashMap<Block, BlockCacheElement>>();
 	public static ArrayList<Block> tempnophysics = new ArrayList<Block>();
 	public static HashSet<Block> tempNoEarthbending = new HashSet<Block>();
 	private static Integer[] plantIds = { 6, 18, 31, 32, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175};
@@ -1451,20 +1452,15 @@ public class Methods {
 	 */
 	public static boolean isRegionProtectedFromBuild(Player player, String ability, Location loc) {
 		if(!blockProtectionCache.containsKey(player.getName()))
-			blockProtectionCache.put(player.getName(), new ConcurrentHashMap<Block, Boolean>());
+			blockProtectionCache.put(player.getName(), new ConcurrentHashMap<Block, BlockCacheElement>());
 		
-		final ConcurrentHashMap<Block, Boolean> blockMap = blockProtectionCache.get(player.getName());
-		final Block block = loc.getBlock();
+		ConcurrentHashMap<Block, BlockCacheElement> blockMap = blockProtectionCache.get(player.getName());
+		Block block = loc.getBlock();
 		if(blockMap.containsKey(block))
-			return blockMap.get(block);
-		
+			return blockMap.get(block).isAllowed();
+
 		boolean value = isRegionProtectedFromBuildPostCache(player, ability, loc);
-		blockMap.put(block, value);
-		new BukkitRunnable() {
-			public void run() {
-				blockMap.remove(block);
-			}
-		}.runTaskLater(ProjectKorra.plugin, (long) (CACHE_TIME / 20));
+		blockMap.put(block, new BlockCacheElement(player, block, value, System.currentTimeMillis()));
 		return value;
 	}
 	
@@ -2669,8 +2665,69 @@ public class Methods {
 		return true;
 	}
 	
+	public static class BlockCacheElement {
+		private Player player;
+		private Block block;
+		private boolean allowed;
+		private long time;
+		
+		public BlockCacheElement(Player player, Block block, boolean allowed, long time) {
+			this.player = player;
+			this.block = block;
+			this.allowed = allowed;
+			this.time = time;
+		}
+
+		public Player getPlayer() {
+			return player;
+		}
+
+		public void setPlayer(Player player) {
+			this.player = player;
+		}
+
+		public Block getBlock() {
+			return block;
+		}
+
+		public void setBlock(Block block) {
+			this.block = block;
+		}
+
+		public long getTime() {
+			return time;
+		}
+
+		public void setTime(long time) {
+			this.time = time;
+		}
+
+		public boolean isAllowed() {
+			return allowed;
+		}
+
+		public void setAllowed(boolean allowed) {
+			this.allowed = allowed;
+		}
+
+	}
 	
-	
+	public static void startCacheCleaner(final double period) {
+		new BukkitRunnable() {
+			public void run() {
+				for(ConcurrentHashMap<Block, BlockCacheElement> map : blockProtectionCache.values()) {
+					for(Iterator<Block> i = map.keySet().iterator(); i.hasNext();) {
+						Block key = i.next();
+						BlockCacheElement value = map.get(key);
+						
+						if(System.currentTimeMillis() - value.getTime() > period) {
+							map.remove(key);
+						}
+					}
+				}
+			}
+		}.runTaskTimer(ProjectKorra.plugin, 0, (long) (period / 20));
+	}
 	
 
 }

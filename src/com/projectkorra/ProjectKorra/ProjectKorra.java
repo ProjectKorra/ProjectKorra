@@ -76,7 +76,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		Methods.deserializeFile();
-
+		Methods.startCacheCleaner(Methods.CACHE_TIME);
 		new CraftingRecipes(this);
 	}
 
