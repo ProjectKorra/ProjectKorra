@@ -44,7 +44,9 @@ public class FireBurst {
 		}
 		if (AvatarState.isAvatarState(player))
 			chargetime = 0;
-		if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) chargetime = 0;
+		if (BendingManager.events.containsKey(player.getWorld())) {
+			if(BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) chargetime = 0;
+		}
 		this.player = player;
 		instances.put(player, this);
 	}
