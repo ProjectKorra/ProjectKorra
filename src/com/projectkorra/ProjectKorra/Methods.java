@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -43,6 +44,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.FallingSand;
@@ -55,6 +57,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.griefcraft.lwc.LWC;
@@ -143,14 +146,18 @@ import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 public class Methods {
 
 	static ProjectKorra plugin;
-
+	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	
 	public static Random rand = new Random();
+	public static double CACHE_TIME = config.getDouble("Properties.RegionProtection.CacheBlockTime"); 
 
 	private static final ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
 
 	public static ConcurrentHashMap<Block, Information> movedearth = new ConcurrentHashMap<Block, Information>();
 	public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<Integer, Information>();
 	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
+	// Represents PlayerName, previously checked blocks, and whether they were true or false
+	public static ConcurrentHashMap<String, ConcurrentHashMap<Block, BlockCacheElement>> blockProtectionCache = new ConcurrentHashMap<String, ConcurrentHashMap<Block, BlockCacheElement>>();
 	public static ArrayList<Block> tempnophysics = new ArrayList<Block>();
 	public static HashSet<Block> tempNoEarthbending = new HashSet<Block>();
 	private static Integer[] plantIds = { 6, 18, 31, 32, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175};
@@ -1096,7 +1103,7 @@ public class Methods {
 				return 1;
 			}
 		} else {
-			Bukkit.getServer().broadcastMessage("RPG NOT DETECTED");
+			//Bukkit.getServer().broadcastMessage("RPG NOT DETECTED");
 
 			if (isNight(world) && BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
 			if (isNight(world)) return plugin.getConfig().getDouble("Properties.Water.NightFactor");
@@ -1436,8 +1443,28 @@ public class Methods {
 		if (Arrays.asList(plantIds).contains(block.getTypeId())) return true;
 		return false;
 	}
-
+	
+	/*
+	 * isRegionProtectedFromBuild is one of the most server intensive methods in the
+	 * plugin. It uses a blockCache that keeps track of recent blocks that may have already been checked.
+	 * Abilities like TremorSense call this ability 5 times per tick even though it only needs to check a single block,
+	 * instead of doing all 5 of those checks this method will now look in the map first.
+	 */
 	public static boolean isRegionProtectedFromBuild(Player player, String ability, Location loc) {
+		if(!blockProtectionCache.containsKey(player.getName()))
+			blockProtectionCache.put(player.getName(), new ConcurrentHashMap<Block, BlockCacheElement>());
+		
+		ConcurrentHashMap<Block, BlockCacheElement> blockMap = blockProtectionCache.get(player.getName());
+		Block block = loc.getBlock();
+		if(blockMap.containsKey(block))
+			return blockMap.get(block).isAllowed();
+
+		boolean value = isRegionProtectedFromBuildPostCache(player, ability, loc);
+		blockMap.put(block, new BlockCacheElement(player, block, value, System.currentTimeMillis()));
+		return value;
+	}
+	
+	private static boolean isRegionProtectedFromBuildPostCache(Player player, String ability, Location loc) {
 
 		boolean allowharmless = plugin.getConfig().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
 		boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
@@ -2638,8 +2665,69 @@ public class Methods {
 		return true;
 	}
 	
+	public static class BlockCacheElement {
+		private Player player;
+		private Block block;
+		private boolean allowed;
+		private long time;
+		
+		public BlockCacheElement(Player player, Block block, boolean allowed, long time) {
+			this.player = player;
+			this.block = block;
+			this.allowed = allowed;
+			this.time = time;
+		}
+
+		public Player getPlayer() {
+			return player;
+		}
+
+		public void setPlayer(Player player) {
+			this.player = player;
+		}
+
+		public Block getBlock() {
+			return block;
+		}
+
+		public void setBlock(Block block) {
+			this.block = block;
+		}
+
+		public long getTime() {
+			return time;
+		}
+
+		public void setTime(long time) {
+			this.time = time;
+		}
+
+		public boolean isAllowed() {
+			return allowed;
+		}
+
+		public void setAllowed(boolean allowed) {
+			this.allowed = allowed;
+		}
+
+	}
 	
-	
+	public static void startCacheCleaner(final double period) {
+		new BukkitRunnable() {
+			public void run() {
+				for(ConcurrentHashMap<Block, BlockCacheElement> map : blockProtectionCache.values()) {
+					for(Iterator<Block> i = map.keySet().iterator(); i.hasNext();) {
+						Block key = i.next();
+						BlockCacheElement value = map.get(key);
+						
+						if(System.currentTimeMillis() - value.getTime() > period) {
+							map.remove(key);
+						}
+					}
+				}
+			}
+		}.runTaskTimer(ProjectKorra.plugin, 0, (long) (period / 20));
+	}
 	
 
 }

@@ -77,6 +77,7 @@ public class ConfigManager {
 		config.addDefault("Properties.RegionProtection.RespectTowny", true);
 		config.addDefault("Properties.RegionProtection.RespectPreciousStones", true);
 		config.addDefault("Properties.RegionProtection.RespectLWC", true);
+		config.addDefault("Properties.RegionProtection.CacheBlockTime", 5000);
 
 		config.addDefault("Properties.TagAPI.Enabled", true);
 
@@ -307,6 +308,7 @@ public class ConfigManager {
 				+ "Additionally, you can click while channeling to attack things near you, dealing damage and knocking them back. "
 				+ "Releasing shift at any time will dissipate the form.");
 		config.addDefault("Abilities.Water.OctopusForm.Range", 10);
+		config.addDefault("Abilities.Water.OctopusForm.AttackRange", 2.5);
 		config.addDefault("Abilities.Water.OctopusForm.Radius", 3);
 		config.addDefault("Abilities.Water.OctopusForm.Damage", 3);
 		config.addDefault("Abilities.Water.OctopusForm.Knockback", 1.75);

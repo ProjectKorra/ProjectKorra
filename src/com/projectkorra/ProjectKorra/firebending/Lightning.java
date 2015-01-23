@@ -2,12 +2,14 @@ package com.projectkorra.ProjectKorra.firebending;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -57,6 +59,7 @@ public class Lightning {
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
+	private HashMap<Block, Boolean> isTransparentCache = new HashMap<Block, Boolean>();
 
 	public Lightning(Player player) {
 		this.player = player;
@@ -162,17 +165,13 @@ public class Lightning {
 				for(int j = 0; j < arc.getAnimLocs().size() - 1; j++) {
 					final Location iterLoc = arc.getAnimLocs().get(j).getLoc().clone();
 					final Location dest = arc.getAnimLocs().get(j + 1).getLoc().clone();
-					
-					if(!isTransparent(player, iterLoc.getBlock())) {
-						if(SELF_HIT_CLOSE && player.getLocation().distance(iterLoc) < 3) {
-							if(!affectedEntities.contains(player)) {
+					if(SELF_HIT_CLOSE 
+							&& player.getLocation().distance(iterLoc) < 3  
+							&& !isTransparent(player, iterLoc.getBlock())
+							&& !affectedEntities.contains(player)) {
 								affectedEntities.add(player);
 								electrocute(player);
-							}
 						}
-						remove();
-						return;
-					}
 					
 					while(iterLoc.distance(dest) > 0.15) {
 						BukkitRunnable task = new LightningParticle(arc, iterLoc.clone());
@@ -192,15 +191,23 @@ public class Lightning {
 		}
 	}
 	
-	public static boolean isTransparent(Player player, Block block) {
+	public boolean isTransparent(Player player, Block block) {
+		if(isTransparentCache.containsKey(block))
+			return isTransparentCache.get(block);
+		
+		boolean value = false;
 		if (Arrays.asList(Methods.transparentToEarthbending).contains(block.getTypeId())) {
 			if(Methods.isRegionProtectedFromBuild(player, "Lightning", block.getLocation()))
-				return false;
+				value = false;
 			else if(isIce(block.getLocation()))
-				return ARC_ON_ICE;
-			return true;
-		}	
-		return false;
+				value = ARC_ON_ICE;
+			else
+				value = true;
+		}
+		else 
+			value = false;
+		isTransparentCache.put(block, new Boolean(value));
+		return value;		
 	}
 	
 	public void electrocute(LivingEntity lent) {
@@ -285,6 +292,8 @@ public class Lightning {
 	public class Arc {
 		private ArrayList<Location> points;
 		private ArrayList<AnimLocation> animLocs;
+		private ArrayList<LightningParticle> particles;
+		private ArrayList<Arc> subArcs;
 		private Vector direction;
 		private int animCounter;
 		
@@ -293,6 +302,8 @@ public class Lightning {
 			points.add(startPoint.clone());
 			points.add(endPoint.clone());
 			direction = Methods.getDirection(startPoint, endPoint);
+			particles = new ArrayList<LightningParticle>();
+			subArcs = new ArrayList<Arc>();
 			animLocs = new ArrayList<AnimLocation>();
 			animCounter = 0;
 		}
@@ -329,6 +340,7 @@ public class Lightning {
 					double randRange = (Math.random() * range) + (range / 3.0);
 					Location loc2 = loc.clone().add(dir.normalize().multiply(randRange));
 					Arc arc = new Arc(loc, loc2);
+					subArcs.add(arc);
 					arc.setAnimCounter(animLocs.get(i).getAnimCounter());
 					arc.generatePoints(POINT_GENERATION);
 					arcs.add(arc);
@@ -336,6 +348,16 @@ public class Lightning {
 				}
 			}
 			return arcs;
+		}
+		
+		public void cancel() {
+			for(int i = 0; i < particles.size(); i++) {
+				particles.get(i).cancel();
+			}
+			
+			for(Arc subArc : subArcs) {
+				subArc.cancel();
+			}
 		}
 
 		public ArrayList<Location> getPoints() {
@@ -369,6 +391,15 @@ public class Lightning {
 		public void setAnimLocs(ArrayList<AnimLocation> animLocs) {
 			this.animLocs = animLocs;
 		}
+
+		public ArrayList<LightningParticle> getParticles() {
+			return particles;
+		}
+
+		public void setParticles(ArrayList<LightningParticle> particles) {
+			this.particles = particles;
+		}
+		
 	}
 	
 	public class AnimLocation {
@@ -405,6 +436,7 @@ public class Lightning {
 		public LightningParticle(Arc arc, Location loc) {
 			this.arc = arc;
 			this.loc = loc;
+			arc.particles.add(this);
 		}
 		
 		public void cancel() {
@@ -418,7 +450,11 @@ public class Lightning {
 			if(count > 5)
 				this.cancel();
 			else if(count == 1) {
-				
+				if(!isTransparent(player, loc.getBlock())) {
+					arc.cancel();
+					return;
+				}
+					
 				// Handle Water electrocution
 				if(!hitWater && (isWater(loc) || (ARC_ON_ICE && isIce(loc)))) {
 					hitWater = true;

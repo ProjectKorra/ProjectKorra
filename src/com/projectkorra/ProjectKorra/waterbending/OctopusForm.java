@@ -22,6 +22,7 @@ public class OctopusForm {
 	public static ConcurrentHashMap<Player, OctopusForm> instances = new ConcurrentHashMap<Player, OctopusForm>();
 
 	private static int RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Range");
+	private static double ATTACK_RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.AttackRange");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Damage");
 	private static long INTERVAL = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
 	private static double KNOCKBACK = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
@@ -46,6 +47,7 @@ public class OctopusForm {
 	private boolean forming = false;
 	private boolean formed = false;
 	private int range = RANGE;
+	private double attackRange = ATTACK_RANGE;
 	private int damage = DAMAGE;
 	private long interval = INTERVAL;
 	private double knockback = KNOCKBACK;
@@ -128,7 +130,7 @@ public class OctopusForm {
 	}
 
 	private void affect(Location location) {
-		for (Entity entity : Methods.getEntitiesAroundPoint(location, range)) {
+		for (Entity entity : Methods.getEntitiesAroundPoint(location, attackRange)) {
 			if (entity.getEntityId() == player.getEntityId())
 				continue;
 			if (Methods.isRegionProtectedFromBuild(player, "OctopusForm", entity.getLocation()))
@@ -499,5 +501,15 @@ public class OctopusForm {
 	public void setRadius(double radius) {
 		this.radius = radius;
 	}
+
+	public double getAttackRange() {
+		return attackRange;
+	}
+
+	public void setAttackRange(double attackRange) {
+		this.attackRange = attackRange;
+	}
+	
+	
 
 }
