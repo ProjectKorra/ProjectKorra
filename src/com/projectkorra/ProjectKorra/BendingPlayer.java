@@ -75,6 +75,10 @@ public class BendingPlayer {
 	public boolean isPermaRemoved() {
 		return this.permaRemoved;
 	}
+	
+	public void setPermaRemoved(boolean b) {
+		this.permaRemoved = b;
+	}
 
 	public void addElement(Element e) {
 		this.elements.add(e);
