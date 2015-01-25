@@ -207,74 +207,89 @@ public class AbilityModuleManager {
 			}
 		}
 		for (AbilityModule ab: ability) {
-			//To check if EarthBlast == Earthblast or for example, EarthBlast == EARTHBLAST
-                        boolean succes = true;
-                        for(String enabledAbility : abilities){
-                            if(enabledAbility.equalsIgnoreCase(ab.getName())){
-                                succes = false;
-                            }
-                        }
-                        if (!succes)
-                            continue;
- 			ab.onThisLoad();
- 			abilities.add(ab.getName());
-                        for (StockAbilities a: StockAbilities.values()) {
-                            if (a.name().equalsIgnoreCase(ab.getName())){
-                                disabledStockAbilities.add(a.name());
-                            }
-                        }
-			if (ab.getElement() == Element.Air.toString()) airbendingabilities.add(ab.getName()); 
-			if (ab.getElement() == Element.Water.toString()) waterbendingabilities.add(ab.getName());
-			if (ab.getElement() == Element.Earth.toString()) earthbendingabilities.add(ab.getName());
-			if (ab.getElement() == Element.Fire.toString()) firebendingabilities.add(ab.getName());
-			if (ab.getElement() == Element.Chi.toString()) chiabilities.add(ab.getName());
-			if (ab.isShiftAbility()) shiftabilities.add(ab.getName());
-			if (ab.isHarmlessAbility()) harmlessabilities.add(ab.getName());
-			
-			if (ab.getSubElement() != null)
-			{
-				subabilities.add(ab.getName());
-				switch(ab.getSubElement())
-				{
-					case Bloodbending:
-						bloodabilities.add(ab.getName());
-						break;
-					case Combustion:
-						combustionabilities.add(ab.getName());
-						break;
-					case Flight:
-						flightabilities.add(ab.getName());
-						break;
-					case Healing:
-						healingabilities.add(ab.getName());
-						break;
-					case Icebending:
-						iceabilities.add(ab.getName());
-						break;
-					case Lavabending:
-						lavaabilities.add(ab.getName());
-						break;
-					case Lightning:
-						lightningabilities.add(ab.getName());
-						break;
-					case Metalbending:
-						metalabilities.add(ab.getName());
-						break;
-					case Plantbending:
-						plantabilities.add(ab.getName());
-						break;
-					case Sandbending:
-						sandabilities.add(ab.getName());
-						break;
-					case SpiritualProjection:
-						spiritualprojectionabilities.add(ab.getName());
-						break;
+			try {
+				//To check if EarthBlast == Earthblast or for example, EarthBlast == EARTHBLAST
+				boolean succes = true;
+				for(String enabledAbility : abilities){
+					if(enabledAbility.equalsIgnoreCase(ab.getName())){
+						succes = false;
+					}
 				}
+				if (!succes)
+					continue;
+				ab.onThisLoad();
+				abilities.add(ab.getName());
+				for (StockAbilities a: StockAbilities.values()) {
+					if (a.name().equalsIgnoreCase(ab.getName())){
+						disabledStockAbilities.add(a.name());
+					}
+				}
+				if (ab.getElement() == Element.Air.toString()) airbendingabilities.add(ab.getName()); 
+				if (ab.getElement() == Element.Water.toString()) waterbendingabilities.add(ab.getName());
+				if (ab.getElement() == Element.Earth.toString()) earthbendingabilities.add(ab.getName());
+				if (ab.getElement() == Element.Fire.toString()) firebendingabilities.add(ab.getName());
+				if (ab.getElement() == Element.Chi.toString()) chiabilities.add(ab.getName());
+				if (ab.isShiftAbility()) shiftabilities.add(ab.getName());
+				if (ab.isHarmlessAbility()) harmlessabilities.add(ab.getName());
+				
+				if (ab.getSubElement() != null)
+				{
+					subabilities.add(ab.getName());
+					switch(ab.getSubElement())
+					{
+						case Bloodbending:
+							bloodabilities.add(ab.getName());
+							break;
+						case Combustion:
+							combustionabilities.add(ab.getName());
+							break;
+						case Flight:
+							flightabilities.add(ab.getName());
+							break;
+						case Healing:
+							healingabilities.add(ab.getName());
+							break;
+						case Icebending:
+							iceabilities.add(ab.getName());
+							break;
+						case Lavabending:
+							lavaabilities.add(ab.getName());
+							break;
+						case Lightning:
+							lightningabilities.add(ab.getName());
+							break;
+						case Metalbending:
+							metalabilities.add(ab.getName());
+							break;
+						case Plantbending:
+							plantabilities.add(ab.getName());
+							break;
+						case Sandbending:
+							sandabilities.add(ab.getName());
+							break;
+						case SpiritualProjection:
+							spiritualprojectionabilities.add(ab.getName());
+							break;
+					}
+				}
+				
+				// if (ab.isMetalbendingAbility()) metalbendingabilities.add(ab.getName());
+				descriptions.put(ab.getName(), ab.getDescription());
+				authors.put(ab.getName(), ab.getAuthor());
+			} catch (AbstractMethodError e) { //If triggered means ability was made pre 1.6 BETA 8
+				ProjectKorra.log.warning("The ability " + ab.getName() + " is either broken or outdated. Please remove it!");
+				//e.printStackTrace();
+				ab.stop();
+				abilities.remove(ab.getName());
+				final AbilityModule skill = ab;
+				//Bellow to avoid ConcurrentModificationException
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					public void run() {
+						ability.remove(skill);
+					}
+				}, 10);
+				continue;
 			}
-			
-			// if (ab.isMetalbendingAbility()) metalbendingabilities.add(ab.getName());
-			descriptions.put(ab.getName(), ab.getDescription());
-			authors.put(ab.getName(), ab.getAuthor());
 		}
 		
 		Collections.sort(airbendingabilities);
