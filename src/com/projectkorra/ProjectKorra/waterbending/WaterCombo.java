@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
@@ -81,10 +82,12 @@ public class WaterCombo {
 	public WaterCombo(Player player, String ability) {
 		if (!enabled || !player.hasPermission("bending.ability.WaterCombo"))
 			return;
-		if (Methods.isRegionProtectedFromBuild(player, "WaterManipulation",
-				player.getLocation()))
+		if(!Methods.getBendingPlayer(player.getName()).hasElement(Element.Water))
 			return;
 		if (Commands.isToggledForAll) 
+			return;
+		if (Methods.isRegionProtectedFromBuild(player, "WaterManipulation",
+				player.getLocation()))
 			return;
 		if (!Methods.getBendingPlayer(player.getName()).isToggled()) 
 			return;
