@@ -2661,7 +2661,7 @@ public class Methods {
 		if(!canBend(player.getName(), "Flight")) return false;
 		if(!getBoundAbility(player).equalsIgnoreCase("Flight")) return false;
 		if(isRegionProtectedFromBuild(player, "Flight", player.getLocation())) return false;
-		if(player.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR) return false;
+		if(player.getLocation().subtract(0, 0.5, 0).getBlock().getType() != Material.AIR) return false;
 		return true;
 	}
 	
