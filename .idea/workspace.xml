@@ -7,9 +7,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="de7eef3a-d60d-459a-96cd-8b7bc4339783" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Dev Builds/Korra.jar" afterPath="$PROJECT_DIR$/Dev Builds/Korra.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.classpath" afterPath="$PROJECT_DIR$/.classpath" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireBlast.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireBlast.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/waterbending/Torrent.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/waterbending/Torrent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Ability/AbilityModuleManager.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Ability/AbilityModuleManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBlast.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBlast.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Commands.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Commands.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/ConfigManager.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/ConfigManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/DBConnection.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/DBConnection.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireBurst.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireBurst.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireStream.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireStream.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/Lightning.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/Lightning.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Methods.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Methods.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Storage/MySQL.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Storage/MySQL.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/waterbending/OctopusForm.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/waterbending/OctopusForm.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/ProjectKorra.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/ProjectKorra.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Storage/SQLite.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Storage/SQLite.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/TagAPIListener.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/TagAPIListener.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/config.yml" afterPath="$PROJECT_DIR$/src/config.yml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/plugin.yml" afterPath="$PROJECT_DIR$/src/plugin.yml" />
     </list>
     <ignored path="ProjectKorra.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -83,7 +98,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="plugin.yml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="plugin.yml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/plugin.yml">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2737">
@@ -93,26 +108,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AbilityLoader.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Utilities/AbilityLoader.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1052" max-vertical-offset="2737">
-              <caret line="72" column="28" selection-start-line="72" selection-start-column="28" selection-end-line="72" selection-end-column="28" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Methods.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Methods.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Methods.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="8702" max-vertical-offset="45271">
-              <caret line="522" column="17" selection-start-line="522" selection-start-column="17" selection-end-line="522" selection-end-column="17" />
-              <folding>
-                <element signature="e#11358#11390#0" expanded="false" />
-                <element signature="e#77465#77497#0" expanded="false" />
-                <element signature="e#77648#77680#0" expanded="false" />
-              </folding>
+            <state vertical-scroll-proportion="0.17237009" vertical-offset="0" max-vertical-offset="43367">
+              <caret line="149" column="4" selection-start-line="149" selection-start-column="4" selection-end-line="149" selection-end-column="4" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -127,6 +128,8 @@
       <list>
         <option value="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/waterbending/Torrent.java" />
         <option value="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireBlast.java" />
+        <option value="$PROJECT_DIR$/src/plugin.yml" />
+        <option value="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Methods.java" />
       </list>
     </option>
   </component>
@@ -335,12 +338,12 @@
       <option name="number" value="Default" />
       <updated>1421974199475</updated>
       <workItem from="1421974203488" duration="120000" />
-      <workItem from="1422716556634" duration="2008000" />
+      <workItem from="1422716556634" duration="2471000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2128000" />
+    <option name="totallyTimeSpent" value="2591000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1456" height="939" extended-state="6" />
@@ -403,18 +406,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Methods.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="8702" max-vertical-offset="45271">
-          <caret line="522" column="17" selection-start-line="522" selection-start-column="17" selection-end-line="522" selection-end-column="17" />
-          <folding>
-            <element signature="e#11358#11390#0" expanded="false" />
-            <element signature="e#77465#77497#0" expanded="false" />
-            <element signature="e#77648#77680#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Utilities/AbilityLoader.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1052" max-vertical-offset="2737">
@@ -471,6 +462,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2737">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/Methods.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17237009" vertical-offset="0" max-vertical-offset="43367">
+          <caret line="149" column="4" selection-start-line="149" selection-start-column="4" selection-end-line="149" selection-end-column="4" />
           <folding />
         </state>
       </provider>

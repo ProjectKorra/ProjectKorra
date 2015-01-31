@@ -44,6 +44,7 @@ public class MySQL extends Database {
             return null;
         } catch(SQLException e) {
             e.printStackTrace();
+            this.printErr("MYSQL exception during connection.", true);
             return null;
         }
     }

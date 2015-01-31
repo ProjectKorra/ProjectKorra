@@ -51,15 +51,20 @@ public class ProjectKorra extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 
 		DBConnection.init();
+		if (DBConnection.isOpen() == false) return;
+		
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
 			Preset.loadPresets(player);
 		}
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
 
-		if (getServer().getPluginManager().getPlugin("TagAPI") != null) {
-			getServer().getPluginManager().registerEvents(new TagAPIListener(this), this);
-		}
+		/*
+		 * TagAPI breaks in 1.8 and is no longer being updated.
+		 */
+//		if (getServer().getPluginManager().getPlugin("TagAPI") != null) {
+//			getServer().getPluginManager().registerEvents(new TagAPIListener(this), this);
+//		}
 		
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 
@@ -71,13 +76,18 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		Methods.deserializeFile();
-
+		Methods.startCacheCleaner(Methods.CACHE_TIME);
 		new CraftingRecipes(this);
 	}
 
 	@Override
 	public void onDisable() {
 		Methods.stopBending();
+		if (DBConnection.isOpen == false) return;
 		DBConnection.sql.close();
+	}
+	
+	public void stopPlugin() {
+		getServer().getPluginManager().disablePlugin(plugin);
 	}
 }
