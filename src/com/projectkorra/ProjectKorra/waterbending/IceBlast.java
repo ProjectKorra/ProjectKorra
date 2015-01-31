@@ -43,7 +43,7 @@ public class IceBlast {
 	private Location destination;
 	private Block sourceblock;
 	private Player player;
-	private TempBlock source;
+	public TempBlock source;
 	private double defaultdamage = DAMAGE;
 	
 	public IceBlast(Player player) {

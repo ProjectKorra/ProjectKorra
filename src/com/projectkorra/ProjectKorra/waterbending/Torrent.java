@@ -52,7 +52,7 @@ public class Torrent {
 	private boolean formed = false;
 	private boolean launch = false;
 	private boolean launching = false;
-	private boolean freeze = false;
+	public boolean freeze = false;
 	private double range = RANGE;
 	private int damage = DAMAGE;
 	private int deflectdamage = DEFLECT_DAMAGE;

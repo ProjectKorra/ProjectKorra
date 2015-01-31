@@ -1,27 +1,24 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import org.bukkit.Bukkit;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingManager;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingManager;
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class Lightning {
 	public static enum State {
@@ -57,7 +54,7 @@ public class Lightning {
 	private boolean charged, hitWater, hitIce;
 	private State state = State.START;
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
-	private ArrayList<Arc> arcs = new ArrayList<Arc>();
+	public ArrayList<Arc> arcs = new ArrayList<Arc>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
 	private HashMap<Block, Boolean> isTransparentCache = new HashMap<Block, Boolean>();
 
@@ -246,7 +243,8 @@ public class Lightning {
 		}
 		remove();
 	}
-		public void remove() {
+	
+	public void remove() {
 		instances.remove(this);
 	}
 	

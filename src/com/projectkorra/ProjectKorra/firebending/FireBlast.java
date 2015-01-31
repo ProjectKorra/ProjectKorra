@@ -42,7 +42,7 @@ public class FireBlast {
 	private static boolean canPowerFurnace = false;
 	static final int maxticks = 10000;
 
-	private Location location;
+	public Location location;
 	private List<Block> safe = new ArrayList<Block>();
 	private Location origin;
 	private Vector direction;
