@@ -108,6 +108,13 @@ public class Lightning {
 		ParticleEffect.RED_DUST.display((float) 0, (float) 255, (float) 255, 0.1F, 0, l, 256D);
 	}
 	
+	/** Progresses the instance of this ability by 1 tick.
+	 * This is the heart of the ability, it checks if it needs to
+	 * remove itself, and handles the initial Lightning Arc generation.
+	 * 
+	 * Once all of the arcs have been created then this ability instance
+	 * gets removed, but the BukkitRunnables continue until they remove
+	 * themselves. **/
 	private void progress() {
 		if (player.isDead() || !player.isOnline()) {
 			removeWithTasks();
@@ -188,6 +195,7 @@ public class Lightning {
 		}
 	}
 	
+	/** Checks if a block is transparent, also considers the ARC_ON_ICE config option **/
 	public boolean isTransparent(Player player, Block block) {
 		if (Arrays.asList(Methods.transparentToEarthbending).contains(block.getTypeId())) {
 			if(Methods.isRegionProtectedFromBuild(player, "Lightning", block.getLocation()))
@@ -200,6 +208,10 @@ public class Lightning {
 		return false;		
 	}
 	
+	/**
+	 * Damages an entity, and may cause paralysis depending on the config.
+	 * @param lent: the LivingEntity that is being damaged
+	 */
 	public void electrocute(LivingEntity lent) {
 		lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
 		player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
@@ -229,6 +241,7 @@ public class Lightning {
 		}
 	}
 
+	/** Removes the instance of this ability and cancels any current runnables **/
 	public void removeWithTasks() {
 		for(int i = 0; i < tasks.size(); i++) {
 			tasks.get(i).cancel();
@@ -236,22 +249,26 @@ public class Lightning {
 		}
 		remove();
 	}
-		public void remove() {
+	
+	/** Removes this ability instance **/	public void remove() {
 		instances.remove(this);
 	}
 	
+	/** Removes every instance of this ability **/
 	public static void removeAll() {
 		for (int i = 0; i < instances.size(); i++) {
 			instances.get(i).remove();
 			i--;
 		}
 	}
-
+	
+	/** Progresses every instance of this ability by 1 tick **/
 	public static void progressAll() {
 		for (int i = 0; i < instances.size(); i++)
 			instances.get(i).progress();
 	}
 	
+	/** Returns an instance of this ability if it was initialized by player **/
 	public static Lightning getLightning(Player player) {
 		for(Lightning light : instances) {
 			if(light.player == player)
@@ -259,17 +276,20 @@ public class Lightning {
 		}
 		return null;
 	}
-		
+	
+	/** Checks if a location contains an ice block **/
 	public static boolean isIce(Location loc) {
 		Material mat = loc.getBlock().getType();
 		return mat == Material.ICE || mat == Material.PACKED_ICE;
 	}
 
+	/** Checks if a location contains a water block **/
 	public static boolean isWater(Location loc) {
 		Material mat = loc.getBlock().getType();
 		return mat == Material.WATER || mat == Material.STATIONARY_WATER;
 	}
 	
+	/** Checks if a location is ice or water **/
 	public static boolean isWaterOrIce(Location loc) {
 		return isIce(loc) || isWater(loc);
 	}
@@ -279,6 +299,10 @@ public class Lightning {
 				+ "charged, release sneak to discharge the lightning to the targetted location.";
 	}
 	
+	/** An Arc represents a Lightning arc for the specific ability.
+	 * These Arcs contain a list of Particles that are used to display
+	 * the entire arc. Arcs can also generate a list of subarcs that
+	 * chain off of their own instance.**/
 	public class Arc {
 		private ArrayList<Location> points;
 		private ArrayList<AnimLocation> animLocs;
@@ -298,6 +322,16 @@ public class Lightning {
 			animCounter = 0;
 		}
 		
+		/** Runs an arc generation algorithm by first creating two points, 
+		 * the starting point and the ending point. Next, it creates a point
+		 * in the middle that has an offset relative to the beginning and
+		 * end points. Now that the arc is split into 3 points, we continue this
+		 * processes by generating middle points in the two halfs of this arc.
+		 * This process continues based on @times
+		 * 
+		 * @param times: The amount of times that the arc will be split in half
+		 * @param times causes O(n^2) complexity
+		 * **/
 		public void generatePoints(int times) {
 			for(int i = 0; i < times; i++) {
 				for(int j = 0; j < points.size() - 1; j += 2) {
@@ -320,6 +354,12 @@ public class Lightning {
 			}
 		}
 		
+		/** Randomly generates subarcs off of this arc.
+		 * 	@param chance - The chance that an arc will be generated
+		 * 	for each specific point in the arc.
+		 * 	Note: if you generate a lot of points then chance will need to be lowered.
+		 *  @param range: The length of each subarc.
+		 *  **/
 		public ArrayList<Arc> generateArcs(double chance, double range) {
 			ArrayList<Arc> arcs = new ArrayList<Arc>();
 			for(int i = 0; i < animLocs.size(); i++) {
@@ -340,6 +380,7 @@ public class Lightning {
 			return arcs;
 		}
 		
+		/** Stops this Arc from further animating or doing damage. **/
 		public void cancel() {
 			for(int i = 0; i < particles.size(); i++) {
 				particles.get(i).cancel();
@@ -349,11 +390,13 @@ public class Lightning {
 				subArc.cancel();
 			}
 		}
-
+		
+		/** Gets every point that makes up this arc. **/
 		public ArrayList<Location> getPoints() {
 			return points;
 		}
-
+		
+		/** Below are accessor and mutators**/
 		public void setPoints(ArrayList<Location> points) {
 			this.points = points;
 		}
@@ -392,6 +435,9 @@ public class Lightning {
 		
 	}
 	
+	/** Represents a Lightning Arc Point particle animation.
+	 * 	This basically just holds a location and counts the
+	 * 	amount of times that a particle has been animated. **/
 	public class AnimLocation {
 		private Location loc;
 		private int animCounter;
@@ -418,6 +464,13 @@ public class Lightning {
 		}
 	}		
 	
+	/** A Runnable Particle that continuously displays itself
+	 * until it reaches a certain time limit.
+	 * 
+	 * These LightningParticles do the actual checking for player collision
+	 * and handle damaging any entities. These Runnables also
+	 * check to see if they reach water, in which case they will generate
+	 * subarcs to branch out.**/
 	public class LightningParticle extends BukkitRunnable {
 		private Arc arc;
 		private Location loc;
@@ -429,11 +482,16 @@ public class Lightning {
 			arc.particles.add(this);
 		}
 		
+		/** Cancels this Runnable**/
 		public void cancel() {
 			super.cancel();
 			tasks.remove(this);
 		}
 		
+		/** 
+		 * Animates the Location, checks for water/player collision
+		 * and also deals with any chain subarcs.
+		 */
 		public void run() {
 			ParticleEffect.RED_DUST.display((float) 0, (float) 255, (float) 255, 0.1F, 0, loc, 256D);
 			count++;
@@ -508,6 +566,7 @@ public class Lightning {
 		}
 	}
 
+	/** Below are all of the accessor/mutator methods **/
 	public Player getPlayer() {
 		return player;
 	}
