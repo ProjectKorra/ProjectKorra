@@ -38,3 +38,4 @@ Icon
 .Trashes
 
 bin/
+*.classpath
