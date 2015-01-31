@@ -7,13 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="de7eef3a-d60d-459a-96cd-8b7bc4339783" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/earthbending/EarthSmash.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/earthbending/EarthSmash.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireBlast.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireBlast.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/Fireball.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/Fireball.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/waterbending/IceBlast.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/waterbending/IceBlast.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/Lightning.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/Lightning.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/waterbending/Torrent.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/waterbending/Torrent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBlast.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBlast.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBurst.java" afterPath="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBurst.java" />
     </list>
     <ignored path="ProjectKorra.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -69,11 +64,43 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Lightning.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Lightning.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/Lightning.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.23954372" vertical-offset="4367" max-vertical-offset="9129">
+            <state vertical-scroll-proportion="0.0" vertical-offset="4367" max-vertical-offset="9129">
               <caret line="290" column="15" selection-start-line="290" selection-start-column="15" selection-end-line="290" selection-end-column="15" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AirBurst.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBurst.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3417">
+              <caret line="33" column="27" selection-start-line="33" selection-start-column="27" selection-end-line="33" selection-end-column="27" />
+              <folding>
+                <element signature="e#1369#1379#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AirBlast.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBlast.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="5644">
+              <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FireStream.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireStream.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-1.0283554" vertical-offset="612" max-vertical-offset="3349">
+              <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -95,6 +122,8 @@
         <option value="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/Fireball.java" />
         <option value="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/earthbending/EarthSmash.java" />
         <option value="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/Lightning.java" />
+        <option value="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBurst.java" />
+        <option value="$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBlast.java" />
       </list>
     </option>
   </component>
@@ -191,6 +220,24 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ProjectKorra" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ProjectKorra" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com.projectkorra.ProjectKorra" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="airbending" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -249,6 +296,22 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
+    <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <method />
+    </configuration>
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
@@ -266,6 +329,11 @@
       <option name="VM_PARAMETERS" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JarApplication" factoryName="JAR Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -311,6 +379,25 @@
       <listeners />
       <method />
     </configuration>
+    <configuration default="true" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="myFilePath" />
+      <option name="GLUE" />
+      <option name="myNameFilter" />
+      <option name="myGeneratedName" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
     <list size="0" />
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
@@ -322,12 +409,12 @@
       <updated>1421974199475</updated>
       <workItem from="1421974203488" duration="120000" />
       <workItem from="1422716556634" duration="4108000" />
-      <workItem from="1422728278975" duration="4126000" />
+      <workItem from="1422728278975" duration="5045000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8354000" />
+    <option name="totallyTimeSpent" value="9273000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1456" height="939" extended-state="6" />
@@ -336,7 +423,7 @@
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32891566" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32891566" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Floobits Chat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -403,8 +490,8 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="10659">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2186#2197#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#2186#2197#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -461,8 +548,8 @@
         <state vertical-scroll-proportion="0.75775194" vertical-offset="527" max-vertical-offset="10659">
           <caret line="54" column="34" selection-start-line="54" selection-start-column="34" selection-end-line="54" selection-end-column="34" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2186#2197#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#2186#2197#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -493,8 +580,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/Lightning.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.23954372" vertical-offset="4367" max-vertical-offset="9129">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4367" max-vertical-offset="9129">
           <caret line="290" column="15" selection-start-line="290" selection-start-column="15" selection-end-line="290" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBurst.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3417">
+          <caret line="33" column="27" selection-start-line="33" selection-start-column="27" selection-end-line="33" selection-end-column="27" />
+          <folding>
+            <element signature="e#1369#1379#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/airbending/AirBlast.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="102" max-vertical-offset="5644">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/projectkorra/ProjectKorra/firebending/FireStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.0283554" vertical-offset="612" max-vertical-offset="3349">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
           <folding />
         </state>
       </provider>
