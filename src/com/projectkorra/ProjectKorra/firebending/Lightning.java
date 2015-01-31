@@ -59,7 +59,6 @@ public class Lightning {
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
-	private HashMap<Block, Boolean> isTransparentCache = new HashMap<Block, Boolean>();
 
 	public Lightning(Player player) {
 		this.player = player;
@@ -81,17 +80,16 @@ public class Lightning {
 		cooldown = COOLDOWN;
 		
 		if(AvatarState.isAvatarState(player)) {
-			//range = AvatarState.getValue(range);
+			/* Some variables aren't considered here because it makes AS too overpowered
+			 * and causes crashing.
+			 */
 			chargeTime = 0;
 			cooldown = 0;
-			//subArcChance = AvatarState.getValue(subArcChance);
 			damage = AvatarState.getValue(damage);
 			chainArcs = AvatarState.getValue(chainArcs);
 			chainArcChance = AvatarState.getValue(chainArcChance);
 			chainRange = AvatarState.getValue(chainRange);
-			//waterRange = AvatarState.getValue(waterRange);
 			stunChance = AvatarState.getValue(stunChance);
-			//stunDuration = AvatarState.getValue(stunDuration);
 		}
 		else if(BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) {
 			chargeTime = 0;
@@ -100,7 +98,8 @@ public class Lightning {
 		instances.add(this);
 	}
 	
-	public void displayChargedParticles(){
+	/** Displays Redstone particles at the players eye location **/
+	public void displayChargedParticles() {
 		Location l =  player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(1));
 		l.setX(l.getX() + Math.random() * (0.1 - -0.1));
 		l.setY(l.getY() + Math.random() * (0.1 - -0.1));
@@ -190,22 +189,15 @@ public class Lightning {
 	}
 	
 	public boolean isTransparent(Player player, Block block) {
-		if(isTransparentCache.containsKey(block))
-			return isTransparentCache.get(block);
-		
-		boolean value = false;
 		if (Arrays.asList(Methods.transparentToEarthbending).contains(block.getTypeId())) {
 			if(Methods.isRegionProtectedFromBuild(player, "Lightning", block.getLocation()))
-				value = false;
+				return false;
 			else if(isIce(block.getLocation()))
-				value = ARC_ON_ICE;
+				return ARC_ON_ICE;
 			else
-				value = true;
+				return true;
 		}
-		else 
-			value = false;
-		isTransparentCache.put(block, new Boolean(value));
-		return value;		
+		return false;		
 	}
 	
 	public void electrocute(LivingEntity lent) {
