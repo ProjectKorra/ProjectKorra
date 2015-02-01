@@ -223,9 +223,24 @@ public class ConfigManager {
 		
 		config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 		config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. To use, simply look at an entity and hold shift. The entity will begin taking damage as you extract the air from their lungs. Any bender caught in this sphere will only be able to use basic moves, such as AirSwipe, WaterManipulation, FireBlast, or EarthBlast. An entity can be knocked out of the sphere by certain bending arts, and your attention will be disrupted if you are hit by bending.");
+		config.addDefault("Abilities.Air.Suffocate.ChargeTime", 1000);
+		config.addDefault("Abilities.Air.Suffocate.Cooldown", 0);
+		config.addDefault("Abilities.Air.Suffocate.Range", 15);
+		config.addDefault("Abilities.Air.Suffocate.Damage", 2);
+		config.addDefault("Abilities.Air.Suffocate.DamageInitialDelay", 2);
+		config.addDefault("Abilities.Air.Suffocate.DamageInterval", 1);
+		config.addDefault("Abilities.Air.Suffocate.SlowPotency", 1);
+		config.addDefault("Abilities.Air.Suffocate.SlowDelay", 0.5);
+		config.addDefault("Abilities.Air.Suffocate.SlowInterval", 1.25);
+		config.addDefault("Abilities.Air.Suffocate.BlindPotentcy", 30);
+		config.addDefault("Abilities.Air.Suffocate.BlindDelay", 2);
+		config.addDefault("Abilities.Air.Suffocate.BlindInterval", 1.5);
 		config.addDefault("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs", true);
-		config.addDefault("Abilities.Air.Suffocate.Range", 5);
-		config.addDefault("Abilities.Air.Suffocate.Damage", 0.5);
+		config.addDefault("Abilities.Air.Suffocate.RequireConstantAim", true);
+		config.addDefault("Abilities.Air.Suffocate.RequireConstantAimRadius", 5);
+		config.addDefault("Abilities.Air.Suffocate.AnimationRadius", 2.0);
+		config.addDefault("Abilities.Air.Suffocate.AnimationParticleAmount", 2);
+		config.addDefault("Abilities.Air.Suffocate.AnimationSpeed", 1.0);
 
 		config.addDefault("Abilities.Air.Tornado.Radius", 10);
 		config.addDefault("Abilities.Air.Tornado.Height", 25);
