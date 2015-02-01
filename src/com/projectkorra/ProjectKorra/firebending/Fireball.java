@@ -198,7 +198,7 @@ public class Fireball {
 		return false;
 	}
 
-	private void explode() {
+	public void explode() {
 		// List<Block> blocks = Methods.getBlocksAroundPoint(location, 3);
 		// List<Block> blocks2 = new ArrayList<Block>();
 

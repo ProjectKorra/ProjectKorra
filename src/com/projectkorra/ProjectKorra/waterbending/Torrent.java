@@ -433,7 +433,7 @@ public class Torrent {
 		blocks.clear();
 	}
 
-	private void remove() {
+	public void remove() {
 		clearRing();
 		for (TempBlock block : launchblocks)
 			block.revertBlock();
