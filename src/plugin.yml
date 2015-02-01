@@ -23,6 +23,8 @@ permissions:
       bending.ability.AvatarState: true
       bending.ability.Bloodbending: true
       bending.ability.Flight: true
+      bending.ability.MetalClips.loot: true
+      bending.ability.MetalClips.4clips: true
       bending.command.import: true
       bending.command.toggle.all: true
       bending.command.give: true
