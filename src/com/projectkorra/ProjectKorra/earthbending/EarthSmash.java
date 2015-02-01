@@ -545,9 +545,12 @@ public class EarthSmash {
 		
 		for(EarthSmash smash : instances) {
 			//Check to see if the player is standing on top of the smash.
-			if(smash.state == State.LIFTED)
-				if(smash.loc.clone().add(0,2,0).distanceSquared(player.getLocation()) <= Math.pow(FLIGHT_DETECTION_RADIUS, 2))
+			if(smash.state == State.LIFTED) {
+				if(smash.loc.getWorld().equals(player.getWorld()) 
+						&& smash.loc.clone().add(0,2,0).distanceSquared(player.getLocation()) <= Math.pow(FLIGHT_DETECTION_RADIUS, 2)) {
 					return smash;
+				}
+			}
 		}
 		return null;
 	}

@@ -13,6 +13,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.ComboManager.ClickType;
 import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -99,10 +100,12 @@ public class AirCombo {
 	public AirCombo(Player player, String ability) {
 		if (!enabled || !player.hasPermission("bending.ability.AirCombo"))
 			return;
-		if (Methods.isRegionProtectedFromBuild(player, "AirBlast",
-				player.getLocation()))
+		if(!Methods.getBendingPlayer(player.getName()).hasElement(Element.Air))
 			return;
 		if (Commands.isToggledForAll) 
+			return;
+		if (Methods.isRegionProtectedFromBuild(player, "AirBlast",
+				player.getLocation()))
 			return;
 		if (!Methods.getBendingPlayer(player.getName()).isToggled()) 
 			return;

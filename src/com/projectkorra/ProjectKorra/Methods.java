@@ -46,6 +46,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.FallingSand;
 import org.bukkit.entity.LivingEntity;
@@ -1456,15 +1457,22 @@ public class Methods {
 		
 		ConcurrentHashMap<Block, BlockCacheElement> blockMap = blockProtectionCache.get(player.getName());
 		Block block = loc.getBlock();
-		if(blockMap.containsKey(block))
-			return blockMap.get(block).isAllowed();
+		if(blockMap.containsKey(block)) {
+			BlockCacheElement elem = blockMap.get(block);
+			
+			// both abilities must be equal to each other to use the cache
+			if((ability == null && elem.getAbility() == null)
+					|| (ability != null && elem.getAbility() != null && elem.getAbility().equals(ability))) {
+				return elem.isAllowed();
+			}
+		}
 
 		boolean value = isRegionProtectedFromBuildPostCache(player, ability, loc);
-		blockMap.put(block, new BlockCacheElement(player, block, value, System.currentTimeMillis()));
+		blockMap.put(block, new BlockCacheElement(player, block, ability, value, System.currentTimeMillis()));
 		return value;
 	}
 	
-	private static boolean isRegionProtectedFromBuildPostCache(Player player, String ability, Location loc) {
+	public static boolean isRegionProtectedFromBuildPostCache(Player player, String ability, Location loc) {
 
 		boolean allowharmless = plugin.getConfig().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
 		boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
@@ -1522,7 +1530,7 @@ public class Methods {
 				if (explode.contains(ability)) {
 					if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions)
 						return true;
-					if (wg.getRegionContainer().createQuery().testBuild(location, player, DefaultFlag.TNT))
+					if (!wg.getRegionContainer().createQuery().testBuild(location, player, DefaultFlag.TNT))
 						return true;
 				}
 
@@ -2661,19 +2669,21 @@ public class Methods {
 		if(!canBend(player.getName(), "Flight")) return false;
 		if(!getBoundAbility(player).equalsIgnoreCase("Flight")) return false;
 		if(isRegionProtectedFromBuild(player, "Flight", player.getLocation())) return false;
-		if(player.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR) return false;
+		if(player.getLocation().subtract(0, 0.5, 0).getBlock().getType() != Material.AIR) return false;
 		return true;
 	}
 	
 	public static class BlockCacheElement {
 		private Player player;
 		private Block block;
+		private String ability;
 		private boolean allowed;
 		private long time;
 		
-		public BlockCacheElement(Player player, Block block, boolean allowed, long time) {
+		public BlockCacheElement(Player player, Block block, String ability, boolean allowed, long time) {
 			this.player = player;
 			this.block = block;
+			this.ability = ability;
 			this.allowed = allowed;
 			this.time = time;
 		}
@@ -2710,6 +2720,14 @@ public class Methods {
 			this.allowed = allowed;
 		}
 
+		public String getAbility() {
+			return ability;
+		}
+
+		public void setAbility(String ability) {
+			this.ability = ability;
+		}
+
 	}
 	
 	public static void startCacheCleaner(final double period) {
@@ -2729,5 +2747,22 @@ public class Methods {
 		}.runTaskTimer(ProjectKorra.plugin, 0, (long) (period / 20));
 	}
 	
+	/** Checks if an entity is Undead **/
+	public static boolean isUndead(Entity entity) {
+		if (entity == null) return false;
+		if (entity.getType() == EntityType.ZOMBIE
+				|| entity.getType() == EntityType.BLAZE
+				|| entity.getType() == EntityType.GIANT
+				|| entity.getType() == EntityType.IRON_GOLEM
+				|| entity.getType() == EntityType.MAGMA_CUBE
+				|| entity.getType() == EntityType.PIG_ZOMBIE
+				|| entity.getType() == EntityType.SKELETON
+				|| entity.getType() == EntityType.SLIME
+				|| entity.getType() == EntityType.SNOWMAN
+				|| entity.getType() == EntityType.ZOMBIE) {
+			return true;
+		}
+		return false;
+	}
 
 }

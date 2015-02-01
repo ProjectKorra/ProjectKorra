@@ -27,22 +27,38 @@ public class Extraction {
 		}
 		if (!Methods.isRegionProtectedFromBuild(player, "Extraction", block.getLocation())) {
 			if (Methods.canMetalbend(player) && Methods.canBend(player.getName(), "Extraction")) {
+				Material type = null;
+				
 				switch(block.getType()) {
 				case IRON_ORE:
 					block.setType(Material.STONE);
 					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, getAmount()));
+					type = Material.STONE;
 					break;
 				case GOLD_ORE:
 					block.setType(Material.STONE);
 					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, getAmount()));
+					type = Material.STONE;
 					break;
 				case QUARTZ_ORE:
 					block.setType(Material.NETHERRACK);
 					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, getAmount()));
+					type = Material.NETHERRACK;
 					break;
 				default:
 					break; // shouldn't happen.
 				}
+				
+				if(type != null) {
+					/* Update the block from Methods.movedearth to Stone otherwise
+					 * players can use RaiseEarth > Extraction > Collapse
+					 * to dupe the material from the block.
+					 * */
+					if(Methods.movedearth.containsKey(block)) {
+						Methods.movedearth.remove(block);
+					}
+				}
+				
 				Methods.playMetalbendingSound(block.getLocation());
 				bPlayer.addCooldown("Extraction", cooldown);
 			}
