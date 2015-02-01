@@ -1691,7 +1691,7 @@ public class Methods {
 		byte full = 0x0;
 		if (TempBlock.isTempBlock(block)){
 			TempBlock tblock = TempBlock.instances.get(block);
-			if(tblock == null || !LavaFlow.totalBlocks.contains(tblock))
+			if(tblock == null || !LavaFlow.TEMP_LAVA_BLOCKS.contains(tblock))
 				return false;
 		}
 		if ((block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) && block.getData() == full) 
