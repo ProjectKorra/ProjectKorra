@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="Korra:jar">
-    <output-path>$USER_HOME$/Desktop/Korra/plugins</output-path>
-    <root id="archive" name="Korra.jar">
-      <element id="module-output" name="ProjectKorra" />
-    </root>
-  </artifact>
-</component>

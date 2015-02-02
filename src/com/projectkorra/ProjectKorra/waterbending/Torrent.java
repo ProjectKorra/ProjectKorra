@@ -1,9 +1,9 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,9 +14,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 
 public class Torrent {
@@ -58,7 +59,7 @@ public class Torrent {
 	private int deflectdamage = DEFLECT_DAMAGE;
 
 	private ArrayList<TempBlock> blocks = new ArrayList<TempBlock>();
-	public ArrayList<TempBlock> launchblocks = new ArrayList<TempBlock>();
+	private ArrayList<TempBlock> launchblocks = new ArrayList<TempBlock>();
 	private ArrayList<Entity> hurtentities = new ArrayList<Entity>();
 
 	public Torrent(Player player) {

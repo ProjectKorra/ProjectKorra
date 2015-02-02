@@ -1,26 +1,28 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
-import com.projectkorra.ProjectKorra.waterbending.Plantbending;
-import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Furnace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
+import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 public class FireBlast {
 
@@ -39,7 +41,7 @@ public class FireBlast {
 	// public static long interval = 2000;
 	public static byte full = 0x0;
 	private static int ID = Integer.MIN_VALUE;
-	private static boolean canPowerFurnace = false;
+	private static boolean canPowerFurnace = true;
 	static final int maxticks = 10000;
 
 	public Location location;
@@ -124,6 +126,10 @@ public class FireBlast {
 
 		if (Methods.isSolid(block) || block.isLiquid()) {
 			if (block.getType() == Material.FURNACE && canPowerFurnace) {
+				Furnace furnace = (Furnace) block.getState();
+				furnace.setBurnTime((short) 800);
+				furnace.setCookTime((short) 800);
+				furnace.update();
 			} else if (FireStream.isIgnitable(player, block.getRelative(BlockFace.UP))) {
 				ignite(location);
 			}
