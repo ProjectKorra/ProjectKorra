@@ -1,7 +1,10 @@
 package com.projectkorra.ProjectKorra.Objects;
 
+import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.HorizontalVelocityChangeEvent;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
@@ -46,12 +49,21 @@ public class HorizontalVelocityTracker
 		if(entity.isOnGround())
 			remove();
 
-		if((diff.getX() > 1 || diff.getX() < -1)
-				|| (diff.getZ() > 1 || diff.getZ() < -1))
+		if(thisVelocity.length() < lastVelocity.length())
 		{
-			ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff));
-			remove();
-			return;
+			if((diff.getX() > 1 || diff.getX() < -1)
+					|| (diff.getZ() > 1 || diff.getZ() < -1))
+			{
+				for(Block b : Methods.getBlocksAroundPoint(entity.getLocation(), 2))
+				{
+					if(b.getType() != Material.AIR)
+					{
+						ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff));
+						remove();
+						return;
+					}
+				}
+			}
 		}
 	}
 
