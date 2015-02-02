@@ -1,23 +1,19 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempPotionEffect;
 import org.bukkit.Location;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempPotionEffect;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Bloodbending {
 
@@ -121,6 +117,7 @@ public class Bloodbending {
 			Vector vector = new Vector(dx, dy, dz);
 			vector.normalize();
 			entity.setVelocity(vector.multiply(factor));
+			new HorizontalVelocityTracker(entity, player, 200);
 		}
 		remove(player);
 	}

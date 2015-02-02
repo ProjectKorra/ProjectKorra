@@ -1,16 +1,16 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.HashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 
 public class BendingManager implements Runnable {
 
@@ -49,6 +49,7 @@ public class BendingManager implements Runnable {
 			RapidPunch.startPunchAll();
 			RevertChecker.revertAirBlocks();
 			ChiComboManager.handleParalysis();
+			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
 		} catch (Exception e) {
 			Methods.stopBending();

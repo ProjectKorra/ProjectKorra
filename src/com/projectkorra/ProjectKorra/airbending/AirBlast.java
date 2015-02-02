@@ -2,6 +2,7 @@ package com.projectkorra.ProjectKorra.airbending;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.*;
+import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -261,6 +262,7 @@ public class AirBlast {
 				return;
 			
 			Methods.setVelocity(entity, velocity);
+			new HorizontalVelocityTracker(entity, player, 200);
 			entity.setFallDistance(0);
 			if (!isUser && entity instanceof Player) {
 				new Flight((Player) entity, player);
