@@ -220,7 +220,7 @@ public class Bloodbending {
 					continue;
 				}
 				Location location = Methods.getTargetedLocation(player,
-						(int) targetentities.get(entity).distance(player.getLocation()));
+						6 /*(int) targetentities.get(entity).distance(player.getLocation())*/);
 				double distance = location.distance(newlocation);
 				double dx, dy, dz;
 				dx = location.getX() - newlocation.getX();
