@@ -111,10 +111,11 @@ public class Bloodbending {
 		for (Entity entity : targetentities.keySet()) {
 			double dx, dy, dz;
 			Location target = entity.getLocation().clone();
-			dx = target.getX() - location.getX();
-			dy = target.getY() - location.getY();
-			dz = target.getZ() - location.getZ();
-			Vector vector = new Vector(dx, dy, dz);
+//			dx = target.getX() - location.getX();
+//			dy = target.getY() - location.getY();
+//			dz = target.getZ() - location.getZ();
+//			Vector vector = new Vector(dx, dy, dz);
+			Vector vector = Methods.getDirection(location, Methods.getTargetedLocation(player, location.distance(target)));
 			vector.normalize();
 			entity.setVelocity(vector.multiply(factor));
 			new HorizontalVelocityTracker(entity, player, 200);
