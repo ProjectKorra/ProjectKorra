@@ -1,8 +1,8 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.ArrayList;
-
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.ArrayList;
 
 public class ConfigManager {
 
@@ -362,6 +362,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
 		config.addDefault("Abilities.Water.WaterSpout.Description", "This ability provides a Waterbender with a means of transportation. To use, simply left click while in or over water to spout water up beneath you, experiencing controlled levitation. Left clicking again while the spout is active will cause it to disappear. Alternatively, tapping a Waterbendable block while not in Water will select a water block as a source, from there, you can tap sneak (Default:Shift) to channel the Water around you. Releasing the sneak will create a wave allowing you a quick burst of controlled transportation. While riding the wave you may press sneak to cause the wave to disappear.");
 		config.addDefault("Abilities.Water.WaterSpout.Height", 20);
+		config.addDefault("Abilities.Water.WaterSpout.Wave.Particles", false);
 		config.addDefault("Abilities.Water.WaterSpout.Wave.Enabled", true);
 		config.addDefault("Abilities.Water.WaterSpout.Wave.Range", 6);
 		config.addDefault("Abilities.Water.WaterSpout.Wave.ChargeTime", 1000);
