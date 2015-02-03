@@ -59,7 +59,7 @@ public class Torrent {
 	private int deflectdamage = DEFLECT_DAMAGE;
 
 	private ArrayList<TempBlock> blocks = new ArrayList<TempBlock>();
-	private ArrayList<TempBlock> launchblocks = new ArrayList<TempBlock>();
+	public ArrayList<TempBlock> launchblocks = new ArrayList<TempBlock>();
 	private ArrayList<Entity> hurtentities = new ArrayList<Entity>();
 
 	public Torrent(Player player) {
