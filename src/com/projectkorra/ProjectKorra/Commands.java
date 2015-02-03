@@ -1,17 +1,10 @@
 package com.projectkorra.ProjectKorra;
 
-import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Objects.Preset;
+import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
+import com.projectkorra.rpg.RPGMethods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,11 +17,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
-import com.projectkorra.ProjectKorra.Objects.Preset;
-import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
-import com.projectkorra.rpg.RPGMethods;
+import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 public class Commands {
 
@@ -852,6 +844,8 @@ public class Commands {
 							}
 							if (Methods.canBloodbend(p)) {
 								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Bloodbend");
+								if(Methods.canBloodbendAtAnytime(p))
+									s.sendMessage(Methods.getSubBendingColor(Element.Water) + "        Anytime, on any day");
 							}
 							if (Methods.canIcebend(p)) {
 								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Icebend");

@@ -44,11 +44,11 @@ public class Bloodbending {
 		}
 		
 		
-		if (onlyUsableAtNight && !Methods.isNight(player.getWorld())) {
+		if (onlyUsableAtNight && !Methods.isNight(player.getWorld()) && !Methods.canBloodbendAtAnytime(player)) {
 			return;
 		}
 		
-		if (onlyUsableDuringMoon && !Methods.isFullMoon(player.getWorld())) {
+		if (onlyUsableDuringMoon && !Methods.isFullMoon(player.getWorld()) && !Methods.canBloodbendAtAnytime(player)) {
 			return;
 		}
 		
