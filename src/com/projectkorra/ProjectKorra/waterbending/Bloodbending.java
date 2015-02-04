@@ -84,7 +84,8 @@ public class Bloodbending {
 			if (target instanceof Player) {
 				if (Methods.canBend(((Player) target).getName(), "Bloodbending")
 						|| AvatarState.isAvatarState((Player) target))
-					return;
+					if(!Methods.isDay(target.getWorld()) || Methods.canBloodbendAtAnytime((Player) target))
+						return;
 			}
 			if (!canBeUsedOnUndead && isUndead(target)) {
 				return;
