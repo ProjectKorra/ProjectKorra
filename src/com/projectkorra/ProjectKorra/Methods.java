@@ -448,7 +448,10 @@ public class Methods {
 			} else {
 				// The player has at least played before.
 				String player2 = rs2.getString("player");
-				if (!player.equalsIgnoreCase(player2)) DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'"); // They have changed names.
+				if (!player.equalsIgnoreCase(player2)){
+					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'"); // They have changed names.
+					ProjectKorra.log.info("Updating Player Name for " + player);
+				}
 				String element = rs2.getString("element");
 				String permaremoved = rs2.getString("permaremoved");
 				boolean p = false;
