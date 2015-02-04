@@ -3,9 +3,9 @@ package com.projectkorra.ProjectKorra.Objects;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.HorizontalVelocityChangeEvent;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,11 +20,11 @@ public class HorizontalVelocityTracker
 	private long delay;
 	private long fireTime;
 	private Entity entity;
-	private Entity instigator;
+	private Player instigator;
 	private Vector lastVelocity;
 	private Vector thisVelocity;
 
-	public HorizontalVelocityTracker(Entity e, Entity instigator, long delay)
+	public HorizontalVelocityTracker(Entity e, Player instigator, long delay)
 	{
 		entity = e;
 		this.instigator = instigator;
@@ -56,7 +56,7 @@ public class HorizontalVelocityTracker
 			{
 				for(Block b : Methods.getBlocksAroundPoint(entity.getLocation(), 2))
 				{
-					if(b.getType() != Material.AIR)
+					if(!Methods.isTransparentToEarthbending(instigator, b))
 					{
 						ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff));
 						remove();

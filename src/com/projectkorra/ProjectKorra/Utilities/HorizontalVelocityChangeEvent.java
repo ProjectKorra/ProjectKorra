@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra.Utilities;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -16,12 +17,12 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable
 	private boolean isCancelled;
 
 	private Entity entity;
-	private Entity instigator;
+	private Player instigator;
 	private Vector from;
 	private Vector to;
 	private Vector difference;
 
-	public HorizontalVelocityChangeEvent(Entity entity, Entity instigator, Vector from, Vector to, Vector difference)
+	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference)
 	{
 		this.entity = entity;
 		this.instigator = instigator;
@@ -35,7 +36,7 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable
 		return entity;
 	}
 
-	public Entity getInstigator()
+	public Player getInstigator()
 	{
 		return instigator;
 	}
