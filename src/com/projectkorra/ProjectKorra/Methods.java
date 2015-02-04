@@ -448,7 +448,7 @@ public class Methods {
 			} else {
 				// The player has at least played before.
 				String player2 = rs2.getString("player");
-				if (!player.equalsIgnoreCase(player2)) DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player2 + "' WHERE uuid = '" + uuid.toString() + "'"); // They have changed names.
+				if (!player.equalsIgnoreCase(player2)) DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'"); // They have changed names.
 				String element = rs2.getString("element");
 				String permaremoved = rs2.getString("permaremoved");
 				boolean p = false;
@@ -477,7 +477,7 @@ public class Methods {
 					p = false;
 				}
 
-				new BendingPlayer(uuid, player2, elements, abilities, p);
+				new BendingPlayer(uuid, player, elements, abilities, p);
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
