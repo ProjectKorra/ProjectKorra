@@ -67,7 +67,6 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onHorizontalCollision(HorizontalVelocityChangeEvent e)
 	{
-
 		if(e.getEntity() instanceof LivingEntity)
 		{
 			Methods.damageEntity(e.getInstigator(), e.getEntity(), e.getDifference().length() * 2);

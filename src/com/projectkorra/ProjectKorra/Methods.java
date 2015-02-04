@@ -186,7 +186,7 @@ public class Methods {
 		if (AvatarState.isAvatarState(player))
 			if (isChiBlocked(player.getName()))
 				return true;
-		if (canBend(player.getName(), "Bloodbending") && Methods.getBendingPlayer(player.getName()).isToggled)
+		if (canBend(player.getName(), "Bloodbending") && !Methods.getBendingPlayer(player.getName()).isToggled)
 			return false;
 		return true;
 	}
