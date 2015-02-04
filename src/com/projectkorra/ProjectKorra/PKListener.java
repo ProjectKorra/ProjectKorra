@@ -1145,6 +1145,10 @@ public class PKListener implements Listener {
 			e.setCancelled(true);
 			return;
 		}
+		
+		if(entity instanceof Player) {
+			Suffocate.remove((Player) entity);
+		}
 
 		Entity en = e.getEntity();
 		if (en instanceof Player) {

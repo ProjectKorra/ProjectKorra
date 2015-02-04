@@ -1,10 +1,12 @@
 package com.projectkorra.ProjectKorra.airbending;
 
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Methods;
 
 public class FlightAbility {
@@ -13,15 +15,13 @@ public class FlightAbility {
 	private static ConcurrentHashMap<String, Integer> hits = new ConcurrentHashMap<String, Integer>();
 	private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<String, Boolean>();
 	private Player p;
-	
+	private Flight flight;
 	
 	public FlightAbility(Player player) {		
-		if(!Methods.canFly(player, true, false)) return;
-		
+		if(!Methods.canFly(player, true, false)) 
+			return;
 		player.setAllowFlight(true);
-		
 		player.setVelocity(player.getEyeLocation().getDirection().normalize());
-		
 		instances.put(player.getName(), this);
 		p = player;
 	}
@@ -32,9 +32,18 @@ public class FlightAbility {
 			return;
 		}
 		
-		p.setAllowFlight(true);
+		if(flight == null)
+			flight = new Flight(p);
 		
-		p.setVelocity(p.getEyeLocation().getDirection().normalize());
+		if(isHovering(p)) {
+			Vector vec = p.getVelocity().clone();
+			vec.setY(0);
+			p.setVelocity(vec);
+		}
+		else {
+			p.setVelocity(p.getEyeLocation().getDirection().normalize());
+		}
+		
 	}
 	
 	public static void addHit(Player player) {
@@ -51,11 +60,7 @@ public class FlightAbility {
 	}
 
 	public static boolean isHovering(Player player) {
-		String playername = player.getName();
-		
-		if(hovering.containsKey(playername) && hovering.get(playername)) return true;
-		if(hovering.containsKey(playername) && hovering.get(playername)) return false; //Shouldn't happen
-		return false;
+		return hovering.containsKey(player.getName());
 	}
 	
 	public static void setHovering(Player player, boolean bool) {
@@ -64,13 +69,11 @@ public class FlightAbility {
 		if(bool) {
 			if(!hovering.containsKey(playername)) {
 				hovering.put(playername, true);
-				player.setFlying(true);
-				player.setVelocity(new Vector(0, 0 ,0));
+				player.setVelocity(new Vector(0, 0, 0));
 			}
 		}else{
 			if(hovering.containsKey(playername)) {
 				hovering.remove(playername);
-				player.setFlying(false);
 			}
 		}
 	}
@@ -81,30 +84,24 @@ public class FlightAbility {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
+	public void remove() {
+		String name = p.getName();
+		instances.remove(name);
+		hits.remove(name);
+		hovering.remove(name);
+		flight.revert();
+	}
+	
 	public static void remove(Player player) {
-		if(instances.containsKey(player.getName())) {
-			instances.remove(player.getName());
-			if(hits.containsKey(player.getName())) {
-				hits.remove(player.getName());
-			}
-			if(hovering.containsKey(player.getName())) {
-				hovering.remove(player.getName());
-			}
-			if((!(player.getGameMode().getValue() == 1))) {
-				if(!(player.getGameMode().getValue() == 1)) {
-					player.setAllowFlight(false);
-				}
-			}
-			if((!(player.getGameMode().getValue() == 3))) {
-				if(!(player.getGameMode().getValue() == 1)) {
-					player.setAllowFlight(false);
-				}
-			}
-		}
+		if(instances.containsKey(player.getName()))
+			instances.get(player.getName()).remove();
 	}
 	
 	public static void removeAll() {
+		Iterator<String> it = instances.keySet().iterator();
+		while (it.hasNext()) {
+		  instances.get(it.next()).remove();
+		}
 		instances.clear();
 		hits.clear();
 		hovering.clear();

@@ -15,11 +15,11 @@ public class ChiblockingManager implements Runnable {
 	
 	@Override
 	public void run() {
+		ChiPassive.handlePassive();
+		WarriorStance.progressAll();
+		AcrobatStance.progressAll();
 		for(Player player : Bukkit.getOnlinePlayers()) {
-			ChiPassive.handlePassive();
 			Smokescreen.removeFromHashMap(player);
-			WarriorStance.progressAll();
-			AcrobatStance.progressAll();
 		}
 	}
 
