@@ -8,6 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -46,15 +47,29 @@ public class HorizontalVelocityTracker
 
 		Vector diff = thisVelocity.subtract(lastVelocity);
 
+		List<Block> blocks = Methods.getBlocksAroundPoint(entity.getLocation(), 1.5);
+
 		if(entity.isOnGround())
+		{
 			remove();
+			return;
+		}
+
+		for(Block b : blocks)
+		{
+			if(Methods.isWater(b))
+			{
+				remove();
+				return;
+			}
+		}
 
 		if(thisVelocity.length() < lastVelocity.length())
 		{
 			if((diff.getX() > 1 || diff.getX() < -1)
 					|| (diff.getZ() > 1 || diff.getZ() < -1))
 			{
-				for(Block b : Methods.getBlocksAroundPoint(entity.getLocation(), 2))
+				for(Block b : blocks)
 				{
 					if(!Methods.isTransparentToEarthbending(instigator, b))
 					{

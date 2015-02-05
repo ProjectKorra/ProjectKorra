@@ -262,7 +262,7 @@ public class AirBlast {
 				return;
 			
 			Methods.setVelocity(entity, velocity);
-			new HorizontalVelocityTracker(entity, player, 200);
+			new HorizontalVelocityTracker(entity, player, 200l);
 			entity.setFallDistance(0);
 			if (!isUser && entity instanceof Player) {
 				new Flight((Player) entity, player);

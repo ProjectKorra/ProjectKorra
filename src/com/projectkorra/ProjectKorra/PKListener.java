@@ -69,7 +69,10 @@ public class PKListener implements Listener {
 	{
 		if(e.getEntity() instanceof LivingEntity)
 		{
-			Methods.damageEntity(e.getInstigator(), e.getEntity(), e.getDifference().length() * 2);
+			if(e.getEntity().getEntityId() != e.getInstigator().getEntityId())
+			{
+				Methods.damageEntity(e.getInstigator(), e.getEntity(), e.getDifference().length() * 2);
+			}
 		}
 	}
 
