@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra.Objects;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.HorizontalVelocityChangeEvent;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -24,6 +25,8 @@ public class HorizontalVelocityTracker
 	private Player instigator;
 	private Vector lastVelocity;
 	private Vector thisVelocity;
+	private Location launchLocation;
+	private Location impactLocation;
 
 	public HorizontalVelocityTracker(Entity e, Player instigator, long delay)
 	{
@@ -31,7 +34,9 @@ public class HorizontalVelocityTracker
 		this.instigator = instigator;
 		fireTime = System.currentTimeMillis();
 		this.delay = delay;
-		thisVelocity = e.getVelocity();
+		thisVelocity = e.getVelocity().clone();
+		launchLocation = e.getLocation().clone();
+		impactLocation = launchLocation.clone();
 		this.delay = delay;
 		update();
 		instances.put(entity, this);
@@ -69,11 +74,12 @@ public class HorizontalVelocityTracker
 			if((diff.getX() > 1 || diff.getX() < -1)
 					|| (diff.getZ() > 1 || diff.getZ() < -1))
 			{
-				for(Block b : blocks)
+				impactLocation = entity.getLocation();
+				for (Block b : blocks)
 				{
-					if(!Methods.isTransparentToEarthbending(instigator, b))
+					if (!Methods.isTransparentToEarthbending(instigator, b))
 					{
-						ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff));
+						ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation));
 						remove();
 						return;
 					}
