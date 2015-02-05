@@ -76,7 +76,7 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable
 		return end;
 	}
 
-	public double getDistanceTravelled()
+	public double getDistanceTraveled()
 	{
 		return start.distance(end);
 	}
