@@ -39,8 +39,3 @@ Icon
 
 bin/
 *.classpath
-.idea/.name
-*.xml
-*.class
-*.class
-ProjectKorra.iml

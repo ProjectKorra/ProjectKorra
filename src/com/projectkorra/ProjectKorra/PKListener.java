@@ -13,7 +13,10 @@ import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.ProjectKorra.firebending.*;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.waterbending.*;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -68,9 +71,7 @@ public class PKListener implements Listener {
 		{
 			if(e.getEntity().getEntityId() != e.getInstigator().getEntityId())
 			{
-				double minimumDistance = plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance");
-				double damage = ((e.getDistanceTravelled() - minimumDistance) < 0 ? 0 : e.getDistanceTravelled() - minimumDistance) / (e.getDifference().length());
-				Methods.damageEntity(e.getInstigator(), e.getEntity(), damage);
+				Methods.damageEntity(e.getInstigator(), e.getEntity(), e.getDifference().length() * 2);
 			}
 		}
 	}
