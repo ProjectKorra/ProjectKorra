@@ -1,0 +1,156 @@
+name: ProjectKorra
+author: ProjectKorra
+version: 1.6.0 BETA 13
+main: com.projectkorra.ProjectKorra.ProjectKorra
+softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC]
+commands:
+  projectkorra:
+    aliases: [b,bending,mtla,tla,korra,pk,bend]
+    usage: /<command>
+permissions:
+  bending.admin:
+    default: op
+    description: Grants access to all commands and abilities.
+    children:
+      bending.player: true
+      bending.command.reload: true
+      bending.admin.permaremove: true
+      bending.command.avatar: true
+      bending.command.add.others: true
+      bending.command.add: true
+      bending.command.rechoose: true
+      bending.admin.choose: true
+      bending.ability.AvatarState: true
+      bending.ability.Bloodbending: true
+      bending.ability.Flight: true
+      bending.command.import: true
+      bending.command.toggle.all: true
+      bending.command.give: true
+      bending.command.invincible: true
+      bending.admin.debug: true
+      bending.admin.remove: true
+  bending.player:
+    default: true
+    description: Grants access to most abilities and basic commands.
+    children:
+      bending.command.bind: true
+      bending.command.display: true
+      bending.command.toggle: true
+      bending.command.choose: true
+      bending.command.version: true
+      bending.command.help: true
+      bending.command.clear: true
+      bending.command.who: true
+      bending.command.preset.list: true
+      bending.command.preset.create.2: true
+      bending.command.preset.create: true
+      bending.command.preset.bind: true
+      bending.command.preset.delete: true
+      bending.air: true
+      bending.water: true
+      bending.earth: true
+      bending.fire: true
+      bending.chi: true
+  bending.air:
+    default: true
+    description: Grants access to all airbending abilities.
+    children:
+      bending.ability.AirBlast: true
+      bending.ability.AirBubble: true
+      bending.ability.AirBurst: true
+      bending.ability.AirScooter: true
+      bending.ability.AirShield: true
+      bending.ability.AirSpout: true
+      bending.ability.AirSuction: true
+      bending.ability.AirSwipe: true
+      bending.ability.Suffocate: true
+      bending.ability.Tornado: true
+      bending.ability.AirCombo: true
+      bending.air.passive: true
+      bending.air.flight: true
+  bending.water:
+    default: true
+    description: Grants access to most waterbending abilities.
+    children:
+      bending.ability.HealingWaters: true
+      bending.ability.IceBlast: true
+      bending.ability.IceSpike: true
+      bending.ability.OctopusForm: true
+      bending.ability.PhaseChange: true
+      bending.ability.Surge: true
+      bending.ability.Torrent: true
+      bending.ability.WaterBubble: true
+      bending.ability.WaterManipulation: true
+      bending.ability.WaterSpout: true
+      bending.ability.WaterSpout.Wave: true
+      bending.ability.WaterCombo: true
+      bending.water.plantbending: true
+      bending.message.nightmessage: true
+      bending.water.passive: true
+      bending.water.icebending: true
+      bending.water.healing: true
+  bending.earth:
+    default: true
+    description: Grants access to all Earthbending abilities.
+    children:
+      bending.ability.Catapult: true
+      bending.ability.Collapse: true
+      bending.ability.EarthArmor: true
+      bending.ability.EarthBlast: true
+      bending.ability.EarthGrab: true
+      bending.ability.EarthTunnel: true
+      bending.ability.RaiseEarth: true
+      bending.ability.Shockwave: true
+      bending.ability.Tremorsense: true
+      bending.ability.Extraction: true
+      bending.ability.MetalClips: true
+      bending.ability.MetalClips.loot: false
+      bending.ability.MetalClips.4clips: false
+      bending.earth.passive: true
+      bending.earth.metalbending: true
+      bending.earth.lavabending: true
+      bending.earth.sandbending: true
+      bending.earth.grapplinghook: true
+      bending.ability.LavaSurge: true
+      bending.ability.LavaFlow: true
+      bending.ability.EarthSmash: true
+  bending.fire:
+    default: true
+    description: Grants access to all firebending abilities.
+    children:
+      bending.ability.Blaze: true
+      bending.ability.FireBlast: true
+      bending.ability.FireBurst: true
+      bending.ability.FireJet: true
+      bending.ability.FireShield: true
+      bending.ability.HeatControl: true
+      bending.ability.Illumination: true
+      bending.ability.Lightning: true
+      bending.ability.WallOfFire: true
+      bending.ability.Combustion: true
+      bending.ability.FireCombo: true
+      bending.message.daymessage: true
+      bending.fire.passive: true
+      bending.fire.lightningbending: true
+      bending.fire.combustionbending: true
+  bending.chi:
+    default: true
+    description: Grants access to all ChiBlocking abilities.
+    children:
+      bending.ability.HighJump: true
+      bending.ability.Paralyze: true
+      bending.ability.RapidPunch: true
+      bending.ability.Smokescreen: true
+      bending.ability.WarriorStance: true
+      bending.ability.AcrobatStance: true
+      bending.ability.QuickStrike: true
+      bending.ability.SwiftKick: true
+      bending.ability.ChiCombo: true
+      bending.chi.passive: true
+      bending.chi.grapplinghook: true
+  bending.avatar:
+    default: false
+    description: Grants the Avatar Color.
+  bending.ability.MetalClips.loot:
+    default: false
+    description: Lets a Metalbender loot a player's inventory of its iron.

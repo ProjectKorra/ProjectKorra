@@ -1,7 +1,10 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,11 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Combustion {
 
@@ -31,7 +30,7 @@ public class Combustion {
 	public static double radius = config.getDouble("Abilities.Fire.Combustion.Radius");
 	public static double defaultdamage = config.getDouble("Abilities.Fire.Combustion.Damage");
 
-	private Location location;
+	public Location location;
 	private Location origin;
 	private Vector direction;
 	private double range = defaultrange;
@@ -41,7 +40,7 @@ public class Combustion {
 	private float power;
 	private double damage;
 
-	private Player player;
+	public Player player;
 	private long starttime;
 	private boolean charged = false;
 	public static ConcurrentHashMap<Player, Combustion> instances = new ConcurrentHashMap<Player, Combustion>();

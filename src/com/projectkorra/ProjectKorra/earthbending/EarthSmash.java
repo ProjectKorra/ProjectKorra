@@ -1,9 +1,11 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,12 +15,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class EarthSmash {
 	public static enum ClickType {
@@ -56,7 +55,7 @@ public class EarthSmash {
 	private BendingPlayer bplayer;
 	private Block origin;
 	private Location loc, destination;
-	private State state = State.START;
+	public State state = State.START;
 	private int animCounter, progressCounter;
 	private long time, delay, cooldown, flightRemove, flightStart;
 	private double grabbedRange;
@@ -442,7 +441,8 @@ public class EarthSmash {
 			for(int y = -1; y <= 1; y++)
 				for(int z = -1; z <= 1; z++)
 					if((Math.abs(x) + Math.abs(y) + Math.abs(z)) % 2 == 0) //Give it the cool shape
-						blocks.add(loc.getWorld().getBlockAt(loc.clone().add(x,y,z)));
+						if(loc != null)
+							blocks.add(loc.getWorld().getBlockAt(loc.clone().add(x,y,z)));
 		return blocks;
 	}
 	
@@ -455,6 +455,7 @@ public class EarthSmash {
 		for(int x = -1; x <= 1; x++)
 			for(int y = -1; y <= 1; y++)
 				for(int z = -1; z <= 1; z++)
+					if(loc != null)
 						blocks.add(loc.getWorld().getBlockAt(loc.clone().add(x,y,z)));
 		return blocks;
 	}
