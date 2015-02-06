@@ -30,6 +30,7 @@ public class HorizontalVelocityTracker
 
 	public HorizontalVelocityTracker(Entity e, Player instigator, long delay)
 	{
+		remove(e);
 		entity = e;
 		this.instigator = instigator;
 		fireTime = System.currentTimeMillis();
