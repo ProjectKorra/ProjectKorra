@@ -19,6 +19,7 @@ public class WaterPassive {
 	public static boolean applyNoFall(Player player) {
 		Block block = player.getLocation().getBlock();
 		Block fallblock = block.getRelative(BlockFace.DOWN);
+		if(!player.isSneaking()) return false;
 		if (Methods.isWaterbendable(block, player) && !Methods.isPlant(block)) return true;
 		if (fallblock.getType() == Material.AIR) return true;
 		if ((Methods.isWaterbendable(fallblock, player) && !Methods.isPlant(fallblock)) || fallblock.getType() == Material.SNOW_BLOCK)
