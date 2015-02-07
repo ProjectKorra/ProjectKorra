@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
+import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
@@ -1448,6 +1450,18 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet. ");
 						s.sendMessage(Methods.getFireColor() + "JetBlaze" + ChatColor.WHITE + ": Damages and burns all enemies in the proximity of your FireJet.");
 						s.sendMessage(ChatColor.GOLD + "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet. ");
+						for(ComboAbilityModule cam : ComboModuleManager.combo)
+						{
+							if(cam.getElement().equals(Element.Fire.toString()))
+							{
+								ChatColor color = Methods.getAvatarColor();
+								if(cam.getSubElement() == null)
+									color = Methods.getFireColor();
+								else color = Methods.getSubBendingColor(Element.Fire);
+								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
+								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
+							}
+						}
 					}
 					if (args[1].equalsIgnoreCase("AirCombo")) {
 						s.sendMessage(ChatColor.GOLD + "AirCombo:");
@@ -1457,19 +1471,70 @@ public class Commands {
 						s.sendMessage(ChatColor.GOLD + "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
 						s.sendMessage(Methods.getAirColor() + "AirSweep" + ChatColor.WHITE + ": Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst");
 						s.sendMessage(ChatColor.GOLD + "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
+						for(ComboAbilityModule cam : ComboModuleManager.combo)
+						{
+							if(cam.getElement().equals(Element.Air.toString()))
+							{
+								ChatColor color = Methods.getAvatarColor();
+								if(cam.getSubElement() == null)
+									color = Methods.getAirColor();
+								else color = Methods.getSubBendingColor(Element.valueOf(cam.getElement()));
+								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
+								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
+							}
+						}
 					}
 					if (args[1].equalsIgnoreCase("WaterCombo")) {
 						s.sendMessage(ChatColor.GOLD + "WaterCombos:");
-						s.sendMessage(Methods.getAirColor() + "IceWave" + ChatColor.WHITE + ": PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
+						s.sendMessage(Methods.getWaterColor() + "IceWave" + ChatColor.WHITE + ": PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
 						s.sendMessage(ChatColor.GOLD + "Create a WaterSpout Wave > PhaseChange (Left Click)");
-						s.sendMessage(Methods.getAirColor() + "IceBullet" + ChatColor.WHITE + ": Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
+						s.sendMessage(Methods.getWaterColor() + "IceBullet" + ChatColor.WHITE + ": Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
 						s.sendMessage(ChatColor.GOLD + "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > IceBlast (Left Click) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
+						for(ComboAbilityModule cam : ComboModuleManager.combo)
+						{
+							if(cam.getElement().equals(Element.Water.toString()))
+							{
+								ChatColor color = Methods.getAvatarColor();
+								if(cam.getSubElement() == null)
+									color = Methods.getWaterColor();
+								else color = Methods.getSubBendingColor(Element.valueOf(cam.getElement()));
+								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
+								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
+							}
+						}
+					}
+					if (args[1].equalsIgnoreCase("EarthCombo")) {
+						s.sendMessage(ChatColor.GOLD + "EarthCombos:");
+						for(ComboAbilityModule cam : ComboModuleManager.combo)
+						{
+							if(cam.getElement().equals(Element.Earth.toString()))
+							{
+								ChatColor color = Methods.getAvatarColor();
+								if(cam.getSubElement() == null)
+									color = Methods.getEarthColor();
+								else color = Methods.getSubBendingColor(Element.valueOf(cam.getElement()));
+								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
+								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
+							}
+						}
 					}
 					if (args[1].equalsIgnoreCase("ChiCombo"))
 					{
 						s.sendMessage(ChatColor.GOLD + "ChiCombos:");
 						s.sendMessage(Methods.getChiColor() + "Immobilize" + ChatColor.WHITE + ": Deliver a series of strikes to an enemy to temporarely immobilize them.");
 						s.sendMessage(ChatColor.GOLD + "QuickStrike > SwiftKick > QuickStrike > QuickStrike");
+						for(ComboAbilityModule cam : ComboModuleManager.combo)
+						{
+							if(cam.getElement().equals(Element.Chi.toString()))
+							{
+								ChatColor color = Methods.getAvatarColor();
+								if(cam.getSubElement() == null)
+									color = Methods.getChiColor();
+								else color = Methods.getSubBendingColor(Element.valueOf(cam.getElement()));
+								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
+								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
+							}
+						}
 					}
 					if (Methods.abilityExists(args[1])) {
 						String ability = Methods.getAbility(args[1]);
