@@ -5,16 +5,16 @@ import java.util.Arrays;
 public enum SubElement {
 
 	//Air
-	Flight, SpiritualProjection,
+	Flight(Element.Air), SpiritualProjection(Element.Air),
 	
 	//Water
-	Bloodbending, Healing, Icebending, Plantbending,
+	Bloodbending(Element.Water), Healing(Element.Water), Icebending(Element.Water), Plantbending(Element.Water),
 	
 	// Earth
-	Metalbending, Sandbending, Lavabending,
+	Metalbending(Element.Earth), Sandbending(Element.Earth), Lavabending(Element.Earth),
 	
 	// Fire
-	Combustion, Lightning;
+	Combustion(Element.Fire), Lightning(Element.Fire);
 	
 	public static SubElement getType(String string) {
 		for (SubElement se: SubElement.values()) {
@@ -28,6 +28,16 @@ public enum SubElement {
 	public static SubElement getType(int index) {
 		if (index == -1) return null;
 		return (SubElement)Arrays.asList(values()).get(index);
+	}
+	
+	private Element element;
+	
+	private SubElement(Element e) {
+		element = e;
+	}
+	
+	public Element getElement() {
+		return element;
 	}
 
 	
