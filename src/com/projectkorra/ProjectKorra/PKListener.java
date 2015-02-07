@@ -73,7 +73,8 @@ public class PKListener implements Listener {
 			{
 				double minimumDistance = plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance");
 				double damage = ((e.getDistanceTraveled() - minimumDistance) < 0 ? 0 : e.getDistanceTraveled() - minimumDistance) / (e.getDifference().length());
-				Methods.damageEntity(e.getInstigator(), e.getEntity(), damage);
+				if(damage > 0)
+					Methods.damageEntity(e.getInstigator(), e.getEntity(), damage);
 			}
 		}
 	}
