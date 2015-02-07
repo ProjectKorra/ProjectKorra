@@ -843,9 +843,10 @@ public class Commands {
 								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Plantbend");
 							}
 							if (Methods.canBloodbend(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Bloodbend");
 								if(Methods.canBloodbendAtAnytime(p))
-									s.sendMessage(Methods.getSubBendingColor(Element.Water) + "        Anytime, on any day");
+									s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Bloodbend anytime, on any day");
+								else
+									s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Bloodbend");
 							}
 							if (Methods.canIcebend(p)) {
 								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Icebend");

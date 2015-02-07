@@ -65,6 +65,8 @@ public class ConfigManager {
 		config.addDefault("Properties.BendingAffectFallingSand.TNTStrengthMultiplier", 1.0);
 		config.addDefault("Properties.GlobalCooldown", 500);
 		config.addDefault("Properties.SeaLevel", 62);
+
+		config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
 		config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance", 5.0);
 
 		config.addDefault("Properties.CustomItems.GrapplingHook.Enable", true);
