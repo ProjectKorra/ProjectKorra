@@ -1208,12 +1208,17 @@ public class PKListener implements Listener {
 			}
 
 			if (Methods.isBender(player.getName(), Element.Air) && event.getCause() == DamageCause.FALL && Methods.canBendPassive(player.getName(), Element.Air)) {
-				new Flight(player);
-				player.setAllowFlight(true);
 				AirBurst.fallBurst(player);
-				player.setFallDistance(0);
-				event.setDamage(0D);
-				event.setCancelled(true);
+			}
+			
+			if (!event.isCancelled() && Methods.isBender(player.getName(), Element.Air) && event.getCause() == DamageCause.FALL && Methods.canBendPassive(player.getName(), Element.Air)) {
+				if(player.isSneaking()) {
+					new Flight(player);
+					player.setAllowFlight(true);
+					player.setFallDistance(0);
+					event.setDamage(0D);
+					event.setCancelled(true);
+				}
 			}
 
 			if (!event.isCancelled() && Methods.isBender(player.getName(), Element.Water) && event.getCause() == DamageCause.FALL && Methods.canBendPassive(player.getName(), Element.Water)) {
