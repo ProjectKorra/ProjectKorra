@@ -789,8 +789,8 @@ public class Commands {
 							s.sendMessage(ChatColor.GREEN + "You are running a lookup of an offline player, this may take a second.");
 							ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE player = '" + args[1] + "'");
 							try {
-								UUID uuid = UUID.fromString(rs2.getString("uuid"));
 								if (rs2.next()) {
+									UUID uuid = UUID.fromString(rs2.getString("uuid"));
 									String element = rs2.getString("element");
 									s.sendMessage(args[1] + " - ");
 									if (element.contains("a")) {
