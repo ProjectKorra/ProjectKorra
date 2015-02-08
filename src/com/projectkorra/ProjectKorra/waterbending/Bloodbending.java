@@ -91,6 +91,7 @@ public class Bloodbending {
 				return;
 			}
 			Methods.damageEntity(player, target, 0);
+			HorizontalVelocityTracker.remove(target);
 			Methods.breakBreathbendingHold(target);
 			targetentities.put(target, target.getLocation().clone());
 		}

@@ -1,15 +1,16 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
+import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
 import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.firebending.FireCombo;
 import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ComboManager 
 {
@@ -19,6 +20,9 @@ public class ComboManager
 	private static final long CLEANUP_DELAY = 10000;
 	public static ConcurrentHashMap<String, ArrayList<AbilityInformation>> recentlyUsedAbilities = new ConcurrentHashMap<String, ArrayList<AbilityInformation>>();
 	public static ArrayList<ComboAbility> comboAbilityList = new ArrayList<ComboAbility>();
+	public static HashMap<String, String> descriptions = new HashMap<String, String>();
+	public static HashMap<String, String> instructions = new HashMap<String, String>();
+	public static HashMap<String, String> authors = new HashMap<String, String>();
 	
 	public ComboManager()
 	{
@@ -120,24 +124,38 @@ public class ComboManager
 	public static void addComboAbility(Player player, ClickType type)
 	{
 		String abilityName = Methods.getBoundAbility(player);
-		if(abilityName == null)
+		if (abilityName == null)
 			return;
-		
-		AbilityInformation info = new AbilityInformation(abilityName,type,System.currentTimeMillis());
-		addRecentAbility(player,info);
-		
+
+		AbilityInformation info = new AbilityInformation(abilityName, type, System.currentTimeMillis());
+		addRecentAbility(player, info);
+
 		ComboAbility comboAbil = checkForValidCombo(player);
-		if(comboAbil == null)
+		if (comboAbil == null)
 			return;
-		
-		if(comboAbil.getComboType().equals(FireCombo.class))
+
+		if (comboAbil.getComboType().equals(FireCombo.class))
 			new FireCombo(player, comboAbil.getName());
-		else if(comboAbil.getComboType().equals(AirCombo.class))
+		else if (comboAbil.getComboType().equals(AirCombo.class))
 			new AirCombo(player, comboAbil.getName());
-		else if(comboAbil.getComboType().equals(WaterCombo.class))
+		else if (comboAbil.getComboType().equals(WaterCombo.class))
 			new WaterCombo(player, comboAbil.getName());
+		else
+		{
+			for (ComboAbility ca : comboAbilityList)
+			{
+				if (comboAbil.getName().equals(ca.getName()))
+				{
+					if (ca.getComboType() instanceof ComboAbilityModule)
+					{
+						((ComboAbilityModule) ca.getComboType()).createNewComboInstance(player);
+						return;
+					}
+				}
+			}
+		}
 	}
-	
+
 	public static class AbilityInformation
 	{
 		private String abilityName;

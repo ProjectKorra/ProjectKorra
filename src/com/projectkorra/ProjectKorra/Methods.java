@@ -17,6 +17,8 @@ import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
+import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.*;
@@ -96,6 +98,24 @@ public class Methods {
 				return true;
 		}
 		return false;
+	}
+
+	public static boolean comboExists(String string)
+	{
+		for(ComboAbilityModule c : ComboModuleManager.combo)
+			if(string.equalsIgnoreCase(c.getName()))
+				return true;
+
+		return false;
+	}
+
+	public ComboAbilityModule getCombo(String name)
+	{
+		for(ComboAbilityModule c : ComboModuleManager.combo)
+			if(name.equalsIgnoreCase(c.getName()))
+				return c;
+
+		return null;
 	}
 
 	public static boolean isDisabledStockAbility(String string){

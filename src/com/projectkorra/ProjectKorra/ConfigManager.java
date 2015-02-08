@@ -66,6 +66,9 @@ public class ConfigManager {
 		config.addDefault("Properties.GlobalCooldown", 500);
 		config.addDefault("Properties.SeaLevel", 62);
 
+		config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
+		config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance", 5.0);
+
 		config.addDefault("Properties.CustomItems.GrapplingHook.Enable", true);
 		config.addDefault("Properties.CustomItems.GrapplingHook.IronUses", 25);
 		config.addDefault("Properties.CustomItems.GrapplingHook.GoldUses", 50);

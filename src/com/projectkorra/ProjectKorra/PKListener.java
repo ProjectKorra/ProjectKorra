@@ -13,10 +13,7 @@ import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.ProjectKorra.firebending.*;
 import com.projectkorra.ProjectKorra.firebending.Fireball;
 import com.projectkorra.ProjectKorra.waterbending.*;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -67,9 +64,18 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onHorizontalCollision(HorizontalVelocityChangeEvent e)
 	{
+		if(!plugin.getConfig().getBoolean("Properties.HorizontalCollisionPhysics.Enabled"))
+			return;
+
 		if(e.getEntity() instanceof LivingEntity)
 		{
-			Methods.damageEntity(e.getInstigator(), e.getEntity(), e.getDifference().length() * 2);
+			if(e.getEntity().getEntityId() != e.getInstigator().getEntityId())
+			{
+				double minimumDistance = plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance");
+				double damage = ((e.getDistanceTraveled() - minimumDistance) < 0 ? 0 : e.getDistanceTraveled() - minimumDistance) / (e.getDifference().length());
+				if(damage > 0)
+					Methods.damageEntity(e.getInstigator(), e.getEntity(), damage);
+			}
 		}
 	}
 
