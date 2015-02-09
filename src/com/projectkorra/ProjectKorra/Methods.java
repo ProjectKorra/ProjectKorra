@@ -32,6 +32,7 @@ import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -1460,9 +1461,9 @@ public class Methods {
 						return true;
 				}
 
-				if (!wg.canBuild(player, location.getBlock())) {
-					return true;
-				}
+				if (wg.getRegionContainer().get(world).getApplicableRegions(location)
+                                        .queryState(wg.wrapPlayer(player), DefaultFlag.BUILD) == State.DENY)
+                                    return true;
 			}
 
 			if (psp != null && respectPreciousStones) {

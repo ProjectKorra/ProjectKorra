@@ -394,6 +394,9 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterCombo.IceBullet.AnimationSpeed", 1);
 		config.addDefault("Abilities.Water.WaterCombo.IceBullet.ShootTime", 5000);
 		config.addDefault("Abilities.Water.WaterCombo.IceBullet.Cooldown", 10000);
+                config.addDefault("Abilities.Water.WaterCombo.IceTorpedo.Range", 20);
+		config.addDefault("Abilities.Water.WaterCombo.IceTorpedo.Cooldown", 5000);
+		config.addDefault("Abilities.Water.WaterCombo.IceTorpedo.Damage", 3);
 
 		config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 

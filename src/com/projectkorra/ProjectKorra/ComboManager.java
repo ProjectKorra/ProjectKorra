@@ -115,6 +115,12 @@ public class ComboManager
 		iceBulletRight.add(new AbilityInformation("IceBlast",ClickType.RIGHTCLICK));
 		comboAbilityList.add(new ComboAbility("IceBulletRightClick",iceBulletRight,WaterCombo.class));
 		
+                ArrayList<AbilityInformation> iceTorpedo = new ArrayList<AbilityInformation>();
+                iceTorpedo.add(new AbilityInformation("Surge",ClickType.SHIFTDOWN));
+                iceTorpedo.add(new AbilityInformation("IceBlast",ClickType.LEFTCLICK));
+                iceTorpedo.add(new AbilityInformation("WaterManipulation",ClickType.LEFTCLICK));
+                comboAbilityList.add(new ComboAbility("IceTorpedo",iceTorpedo,WaterCombo.class));
+                
 		startCleanupTask();
 	}
 	public static void addComboAbility(Player player, ClickType type)

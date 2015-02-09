@@ -1459,10 +1459,12 @@ public class Commands {
 					}
 					if (args[1].equalsIgnoreCase("WaterCombo")) {
 						s.sendMessage(ChatColor.GOLD + "WaterCombos:");
-						s.sendMessage(Methods.getAirColor() + "IceWave" + ChatColor.WHITE + ": PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
+						s.sendMessage(Methods.getWaterColor() + "IceWave" + ChatColor.WHITE + ": PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
 						s.sendMessage(ChatColor.GOLD + "Create a WaterSpout Wave > PhaseChange (Left Click)");
-						s.sendMessage(Methods.getAirColor() + "IceBullet" + ChatColor.WHITE + ": Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
+						s.sendMessage(Methods.getWaterColor() + "IceBullet" + ChatColor.WHITE + ": Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
 						s.sendMessage(ChatColor.GOLD + "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > IceBlast (Left Click) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
+                                                s.sendMessage(Methods.getWaterColor() + "IceTorpedo" + ChatColor.WHITE + ": Shoot a powerful Torpedo made of ice to attack and freeze your opponent.");
+						s.sendMessage(ChatColor.GOLD + "Stand in water > Surge (Hold Shift) > IceBlast (Left Click) > WaterManipulation (Left Click)");
 					}
 					if (args[1].equalsIgnoreCase("ChiCombo"))
 					{
