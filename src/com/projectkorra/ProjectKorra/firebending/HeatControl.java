@@ -28,8 +28,11 @@ public class HeatControl
 
 	private Player player;
 	private int id;
+	private int currentRadius = 1;
+	private long delay = 50;
 	private long lastBlockTime = 0;
 	private long lastParticleTime = 0;
+	private Location center;
 	private List<TempBlock> tblocks = new ArrayList<TempBlock>();
 
 	public double range = RANGE;
@@ -38,21 +41,16 @@ public class HeatControl
 
 	public HeatControl(Player player)
 	{
-		player.sendMessage("HeatControl called.");
 
 		if (!isEligible(player))
 			return;
 
-		player.sendMessage("isEligible() passed.");
 
 		if(Methods.getLavaSourceBlock(player, getRange()) == null)
 		{
-			player.sendMessage("Cannot find lava block.");
 			new Cook(player);
 			return;
 		}
-
-		player.sendMessage("New HeatControl() created.");
 
 		this.player = player;
 
@@ -84,10 +82,8 @@ public class HeatControl
 
 	public void freeze(List<Location> area)
 	{
-		if(System.currentTimeMillis() < lastBlockTime + 100)
+		if(System.currentTimeMillis() < lastBlockTime + delay)
 			return;
-
-		lastBlockTime = System.currentTimeMillis();
 
 		List<Block> lava = new ArrayList<Block>();
 
@@ -95,9 +91,11 @@ public class HeatControl
 			if(Methods.isLava(l.getBlock()))
 				lava.add(l.getBlock());
 
+		lastBlockTime = System.currentTimeMillis();
+
 		if(lava.size() == 0)
 		{
-			stop();
+			currentRadius ++;
 			return;
 		}
 
@@ -115,6 +113,7 @@ public class HeatControl
 
 		if(!tblocks.contains(tb))
 			tblocks.add(tb);
+
 	}
 
 	public void particles(List<Location> area)
@@ -131,6 +130,21 @@ public class HeatControl
 		}
 	}
 
+	public void resetLocation(Location loc)
+	{
+		if(center == null)
+		{
+			center = loc;
+			return;
+		}
+
+		if(!loc.equals(center))
+		{
+			currentRadius = 1;
+			center = loc;
+		}
+	}
+
 	public void progress()
 	{
 		if(!player.isOnline() || player.isDead() || !isEligible(player) || !player.isSneaking())
@@ -139,9 +153,17 @@ public class HeatControl
 			return;
 		}
 
+		if(currentRadius >= getRadius())
+		{
+			stop();
+			return;
+		}
+
 		Location targetlocation = Methods.getTargetedLocation(player, range);
 
-		List<Location> area = Methods.getCircle(targetlocation, radius, 3, false, true, 0);
+		resetLocation(targetlocation);
+
+		List<Location> area = Methods.getCircle(center, currentRadius, 3, true, true, 0);
 
 		particles(area);
 		freeze(area);
