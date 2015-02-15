@@ -645,6 +645,9 @@ public class ConfigManager {
 				+ " will instead melt blocks in that area. Finally, sneaking with this ability will cook any food in your hand.");
 		config.addDefault("Abilities.Fire.HeatControl.Extinguish.Range", 20);
 		config.addDefault("Abilities.Fire.HeatControl.Extinguish.Radius", 7);
+		config.addDefault("Abilities.Fire.HeatControl.Solidify.Range", 10);
+		config.addDefault("Abilities.Fire.HeatControl.Solidify.Radius", 5);
+		config.addDefault("Abilities.Fire.HeatControl.Solidify.RevertTime", 20000);
 		config.addDefault("Abilities.Fire.HeatControl.Melt.Range", 15);
 		config.addDefault("Abilities.Fire.HeatControl.Melt.Radius", 5);
 
