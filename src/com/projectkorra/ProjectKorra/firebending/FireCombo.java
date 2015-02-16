@@ -318,13 +318,12 @@ public class FireCombo {
 				}
 				bplayer.addCooldown("FireWheel", cooldown);
 				origin = player.getLocation();
-				currentLoc = Methods.getTopBlock(player.getLocation(), 3, 3)
-						.getLocation();
-
-				if (currentLoc == null) {
+				
+				if (Methods.getTopBlock(player.getLocation(), 3, 3) == null) {
 					remove();
 					return;
 				}
+				
 				currentLoc = player.getLocation();
 				direction = player.getEyeLocation().getDirection().clone()
 						.normalize();
@@ -480,7 +479,7 @@ public class FireCombo {
 			if (ability.equalsIgnoreCase("FireKick")
 					&& combo.ability.equalsIgnoreCase("FireKick")) {
 				for (FireComboStream fs : combo.tasks) {
-					if (fs.getLocation() != null
+					if (fs.getLocation() != null && fs.getLocation().getWorld() == loc.getWorld()
 							&& Math.abs(fs.getLocation().distance(loc)) <= radius) {
 						fs.remove();
 						removed = true;
