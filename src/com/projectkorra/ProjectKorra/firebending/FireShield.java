@@ -185,12 +185,15 @@ public class FireShield {
 			FireShield fshield = instances.get(player);
 			Location playerLoc = fshield.player.getLocation();
 
-			if(fshield.shield){
+			if(fshield.shield) {
+				if (playerLoc.getWorld() != loc.getWorld())
+					return false;
 				if(playerLoc.distance(loc) <= fshield.radius)
 					return true;
-			}
-			else{
+			} else {
 				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(fshield.discradius));
+				if (playerLoc.getWorld() != tempLoc.getWorld()) 
+					return false;
 				if(tempLoc.distance(loc) <= fshield.discradius)
 					return true;
 			}
