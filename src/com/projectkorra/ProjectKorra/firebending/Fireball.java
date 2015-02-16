@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,10 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Fireball {
 
@@ -45,7 +44,7 @@ public class Fireball {
 	private boolean launched = false;
 	private Player player;
 	private Location origin;
-	private Location location;
+	public Location location;
 	private Vector direction;
 	private TNTPrimed explosion = null;
 
@@ -199,7 +198,7 @@ public class Fireball {
 		return false;
 	}
 
-	private void explode() {
+	public void explode() {
 		// List<Block> blocks = Methods.getBlocksAroundPoint(location, 3);
 		// List<Block> blocks2 = new ArrayList<Block>();
 

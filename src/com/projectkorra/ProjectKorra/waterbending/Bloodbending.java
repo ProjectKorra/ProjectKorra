@@ -1,23 +1,19 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempPotionEffect;
 import org.bukkit.Location;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempPotionEffect;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Bloodbending {
 
@@ -48,11 +44,11 @@ public class Bloodbending {
 		}
 		
 		
-		if (onlyUsableAtNight && !Methods.isNight(player.getWorld())) {
+		if (onlyUsableAtNight && !Methods.isNight(player.getWorld()) && !Methods.canBloodbendAtAnytime(player)) {
 			return;
 		}
 		
-		if (onlyUsableDuringMoon && !Methods.isFullMoon(player.getWorld())) {
+		if (onlyUsableDuringMoon && !Methods.isFullMoon(player.getWorld()) && !Methods.canBloodbendAtAnytime(player)) {
 			return;
 		}
 		
@@ -88,12 +84,14 @@ public class Bloodbending {
 			if (target instanceof Player) {
 				if (Methods.canBend(((Player) target).getName(), "Bloodbending")
 						|| AvatarState.isAvatarState((Player) target))
-					return;
+					if(!Methods.isDay(target.getWorld()) || Methods.canBloodbendAtAnytime((Player) target))
+						return;
 			}
 			if (!canBeUsedOnUndead && isUndead(target)) {
 				return;
 			}
 			Methods.damageEntity(player, target, 0);
+			HorizontalVelocityTracker.remove(target);
 			Methods.breakBreathbendingHold(target);
 			targetentities.put(target, target.getLocation().clone());
 		}
@@ -115,12 +113,14 @@ public class Bloodbending {
 		for (Entity entity : targetentities.keySet()) {
 			double dx, dy, dz;
 			Location target = entity.getLocation().clone();
-			dx = target.getX() - location.getX();
-			dy = target.getY() - location.getY();
-			dz = target.getZ() - location.getZ();
-			Vector vector = new Vector(dx, dy, dz);
+//			dx = target.getX() - location.getX();
+//			dy = target.getY() - location.getY();
+//			dz = target.getZ() - location.getZ();
+//			Vector vector = new Vector(dx, dy, dz);
+			Vector vector = Methods.getDirection(location, Methods.getTargetedLocation(player, location.distance(target)));
 			vector.normalize();
 			entity.setVelocity(vector.multiply(factor));
+			new HorizontalVelocityTracker(entity, player, 200);
 		}
 		remove(player);
 	}
@@ -223,7 +223,7 @@ public class Bloodbending {
 					continue;
 				}
 				Location location = Methods.getTargetedLocation(player,
-						(int) targetentities.get(entity).distance(player.getLocation()));
+						6 /*(int) targetentities.get(entity).distance(player.getLocation())*/);
 				double distance = location.distance(newlocation);
 				double dx, dy, dz;
 				dx = location.getX() - newlocation.getX();

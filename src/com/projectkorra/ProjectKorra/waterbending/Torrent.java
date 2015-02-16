@@ -1,9 +1,9 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,10 +14,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Torrent {
@@ -53,13 +52,13 @@ public class Torrent {
 	private boolean formed = false;
 	private boolean launch = false;
 	private boolean launching = false;
-	private boolean freeze = false;
+	public boolean freeze = false;
 	private double range = RANGE;
 	private int damage = DAMAGE;
 	private int deflectdamage = DEFLECT_DAMAGE;
 
 	private ArrayList<TempBlock> blocks = new ArrayList<TempBlock>();
-	private ArrayList<TempBlock> launchblocks = new ArrayList<TempBlock>();
+	public ArrayList<TempBlock> launchblocks = new ArrayList<TempBlock>();
 	private ArrayList<Entity> hurtentities = new ArrayList<Entity>();
 
 	public Torrent(Player player) {
@@ -434,7 +433,7 @@ public class Torrent {
 		blocks.clear();
 	}
 
-	private void remove() {
+	public void remove() {
 		clearRing();
 		for (TempBlock block : launchblocks)
 			block.revertBlock();

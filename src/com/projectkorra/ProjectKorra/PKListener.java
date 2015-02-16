@@ -1,136 +1,38 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.ComboManager.ClickType;
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
+import com.projectkorra.ProjectKorra.Objects.Preset;
+import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
+import com.projectkorra.ProjectKorra.Utilities.HorizontalVelocityChangeEvent;
+import com.projectkorra.ProjectKorra.airbending.*;
+import com.projectkorra.ProjectKorra.chiblocking.*;
+import com.projectkorra.ProjectKorra.earthbending.*;
+import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
+import com.projectkorra.ProjectKorra.firebending.*;
+import com.projectkorra.ProjectKorra.firebending.Fireball;
+import com.projectkorra.ProjectKorra.waterbending.*;
+import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityInteractEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.ComboManager.ClickType;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
-import com.projectkorra.ProjectKorra.Objects.Preset;
-import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
-import com.projectkorra.ProjectKorra.airbending.AirBlast;
-import com.projectkorra.ProjectKorra.airbending.AirBubble;
-import com.projectkorra.ProjectKorra.airbending.AirBurst;
-import com.projectkorra.ProjectKorra.airbending.AirScooter;
-import com.projectkorra.ProjectKorra.airbending.AirShield;
-import com.projectkorra.ProjectKorra.airbending.AirSpout;
-import com.projectkorra.ProjectKorra.airbending.AirSuction;
-import com.projectkorra.ProjectKorra.airbending.AirSwipe;
-import com.projectkorra.ProjectKorra.airbending.FlightAbility;
-import com.projectkorra.ProjectKorra.airbending.Suffocate;
-import com.projectkorra.ProjectKorra.airbending.Tornado;
-import com.projectkorra.ProjectKorra.chiblocking.AcrobatStance;
-import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
-import com.projectkorra.ProjectKorra.chiblocking.ChiPassive;
-import com.projectkorra.ProjectKorra.chiblocking.HighJump;
-import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
-import com.projectkorra.ProjectKorra.chiblocking.QuickStrike;
-import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
-import com.projectkorra.ProjectKorra.chiblocking.Smokescreen;
-import com.projectkorra.ProjectKorra.chiblocking.SwiftKick;
-import com.projectkorra.ProjectKorra.chiblocking.WarriorStance;
-import com.projectkorra.ProjectKorra.earthbending.Catapult;
-import com.projectkorra.ProjectKorra.earthbending.Collapse;
-import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
-import com.projectkorra.ProjectKorra.earthbending.EarthArmor;
-import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
-import com.projectkorra.ProjectKorra.earthbending.EarthColumn;
-import com.projectkorra.ProjectKorra.earthbending.EarthGrab;
-import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
-import com.projectkorra.ProjectKorra.earthbending.EarthSmash;
-import com.projectkorra.ProjectKorra.earthbending.EarthTunnel;
-import com.projectkorra.ProjectKorra.earthbending.EarthWall;
-import com.projectkorra.ProjectKorra.earthbending.Extraction;
-import com.projectkorra.ProjectKorra.earthbending.LavaFlow;
-import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
-import com.projectkorra.ProjectKorra.earthbending.LavaSurge;
-import com.projectkorra.ProjectKorra.earthbending.LavaWave;
-import com.projectkorra.ProjectKorra.earthbending.MetalClips;
-import com.projectkorra.ProjectKorra.earthbending.Shockwave;
-import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
-import com.projectkorra.ProjectKorra.firebending.ArcOfFire;
-import com.projectkorra.ProjectKorra.firebending.Combustion;
-import com.projectkorra.ProjectKorra.firebending.Cook;
-import com.projectkorra.ProjectKorra.firebending.Enflamed;
-import com.projectkorra.ProjectKorra.firebending.Extinguish;
-import com.projectkorra.ProjectKorra.firebending.FireBlast;
-import com.projectkorra.ProjectKorra.firebending.FireBurst;
-import com.projectkorra.ProjectKorra.firebending.FireJet;
-import com.projectkorra.ProjectKorra.firebending.FireShield;
-import com.projectkorra.ProjectKorra.firebending.FireStream;
-import com.projectkorra.ProjectKorra.firebending.Fireball;
-import com.projectkorra.ProjectKorra.firebending.Illumination;
-import com.projectkorra.ProjectKorra.firebending.Lightning;
-import com.projectkorra.ProjectKorra.firebending.RingOfFire;
-import com.projectkorra.ProjectKorra.firebending.WallOfFire;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
-import com.projectkorra.ProjectKorra.waterbending.FreezeMelt;
-import com.projectkorra.ProjectKorra.waterbending.IceBlast;
-import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
-import com.projectkorra.ProjectKorra.waterbending.Melt;
-import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
-import com.projectkorra.ProjectKorra.waterbending.Torrent;
-import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
-import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
-import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
-import com.projectkorra.ProjectKorra.waterbending.WaterWall;
-import com.projectkorra.ProjectKorra.waterbending.WaterWave;
-import com.projectkorra.ProjectKorra.waterbending.Wave;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class PKListener implements Listener {
 
@@ -157,6 +59,24 @@ public class PKListener implements Listener {
 			}
 		}
 
+	}
+
+	@EventHandler
+	public void onHorizontalCollision(HorizontalVelocityChangeEvent e)
+	{
+		if(!plugin.getConfig().getBoolean("Properties.HorizontalCollisionPhysics.Enabled"))
+			return;
+
+		if(e.getEntity() instanceof LivingEntity)
+		{
+			if(e.getEntity().getEntityId() != e.getInstigator().getEntityId())
+			{
+				double minimumDistance = plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance");
+				double damage = ((e.getDistanceTraveled() - minimumDistance) < 0 ? 0 : e.getDistanceTraveled() - minimumDistance) / (e.getDifference().length());
+				if(damage > 0)
+					Methods.damageEntity(e.getInstigator(), e.getEntity(), damage);
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

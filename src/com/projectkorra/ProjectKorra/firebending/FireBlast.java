@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Furnace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -43,7 +44,7 @@ public class FireBlast {
 	private static boolean canPowerFurnace = true;
 	static final int maxticks = 10000;
 
-	private Location location;
+	public Location location;
 	private List<Block> safe = new ArrayList<Block>();
 	private Location origin;
 	private Vector direction;
@@ -125,7 +126,10 @@ public class FireBlast {
 
 		if (Methods.isSolid(block) || block.isLiquid()) {
 			if (block.getType() == Material.FURNACE && canPowerFurnace) {
-
+				Furnace furnace = (Furnace) block.getState();
+				furnace.setBurnTime((short) 800);
+				furnace.setCookTime((short) 800);
+				furnace.update();
 			} else if (FireStream.isIgnitable(player, block.getRelative(BlockFace.UP))) {
 				ignite(location);
 			}
