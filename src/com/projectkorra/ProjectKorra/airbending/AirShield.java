@@ -193,6 +193,8 @@ public class AirShield {
 	public static boolean isWithinShield(Location loc){
 		for (int ID : instances.keySet()) {
 			AirShield ashield = instances.get(ID);
+			if (ashield.player.getLocation().getWorld() != loc.getWorld()) 
+				return false;
 			if(ashield.player.getLocation().distance(loc) <= ashield.radius)
 				return true;
 		}
