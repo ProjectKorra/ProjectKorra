@@ -192,7 +192,7 @@ public class FireShield {
 					return true;
 			} else {
 				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(fshield.discradius));
-				if (playerLoc.getWorld() != tempLoc.getWorld()) 
+				if (tempLoc.getWorld() != loc.getWorld()) 
 					return false;
 				if(tempLoc.distance(loc) <= fshield.discradius)
 					return true;
