@@ -230,7 +230,7 @@ public class OctopusForm {
 					}
 				} else {
 					incrementStep();
-					source.revertBlock();
+					if (source != null) source.revertBlock();
 					source = null;
 					Vector vector = new Vector(1, 0, 0);
 					startangle = vector.angle(Methods.getDirection(	sourceblock.getLocation(), location));
