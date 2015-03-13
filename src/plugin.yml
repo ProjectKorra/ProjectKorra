@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.6.0 BETA 15
+version: 1.6.0 BETA 16
 main: com.projectkorra.ProjectKorra.ProjectKorra
 softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC]
 commands:
@@ -23,6 +23,8 @@ permissions:
       bending.ability.AvatarState: true
       bending.ability.Bloodbending: true
       bending.ability.Flight: true
+      bending.ability.MetalClips.loot: true
+      bending.ability.MetalClips.4clips: true
       bending.command.import: true
       bending.command.toggle.all: true
       bending.command.give: true
