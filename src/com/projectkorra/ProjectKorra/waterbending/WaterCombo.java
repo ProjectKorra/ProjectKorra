@@ -66,6 +66,7 @@ public class WaterCombo {
 	private long time;
 	private Location origin;
 	private Location currentLoc;
+	@SuppressWarnings("unused")
 	private Location destination;
 	private Vector direction;
 	private AbilityState state;
@@ -75,6 +76,7 @@ public class WaterCombo {
 	private double shots = 0;
 	private long cooldown = 0;
 	private WaterSourceGrabber waterGrabber;
+	@SuppressWarnings("unused")
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks = new ConcurrentHashMap<Block, TempBlock>();

@@ -170,6 +170,7 @@ public class AirSwipe {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void advanceSwipe() {
 		affectedentities.clear();
 		for (Vector direction : elements.keySet()) {
@@ -280,6 +281,7 @@ public class AirSwipe {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private boolean isBlockBreakable(Block block) {
 		Integer id = block.getTypeId();
 		if (Arrays.asList(breakables).contains(id)

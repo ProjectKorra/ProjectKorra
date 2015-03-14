@@ -205,6 +205,7 @@ public class WaterManipulation {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private boolean progress() {
 		if (player.isDead() || !player.isOnline()
 				|| !Methods.canBend(player.getName(), "WaterManipulation")) {
@@ -487,6 +488,7 @@ public class WaterManipulation {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private static void addWater(Block block) {
 		if (!affectedblocks.containsKey(block)) {
 			affectedblocks.put(block, block);
@@ -497,6 +499,7 @@ public class WaterManipulation {
 		block.setData(full);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void moveWater(Player player) {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 

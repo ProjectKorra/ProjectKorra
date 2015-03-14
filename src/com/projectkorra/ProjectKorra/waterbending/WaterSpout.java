@@ -6,6 +6,7 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -28,6 +29,7 @@ public class WaterSpout {
 
 	// private static final double threshold = .05;
 	// private static final byte half = 0x4;
+	@SuppressWarnings("unused")
 	private static final byte full = 0x0;
 	private Player player;
 	private Block base;

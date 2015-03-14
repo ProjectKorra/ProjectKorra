@@ -18,6 +18,7 @@ public class Extinguish {
 
 	private static byte full = AirBlast.full;
 
+	@SuppressWarnings("deprecation")
 	public Extinguish(Player player) {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 

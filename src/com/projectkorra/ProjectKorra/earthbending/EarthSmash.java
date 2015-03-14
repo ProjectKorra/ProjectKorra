@@ -6,6 +6,7 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -288,6 +289,7 @@ public class EarthSmash {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void animateLift()
 	{
 		/**

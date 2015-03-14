@@ -55,6 +55,7 @@ public class IceSpike {
 	private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 	private List<LivingEntity> damaged = new ArrayList<LivingEntity>();
 
+	@SuppressWarnings("deprecation")
 	public IceSpike(Player player) {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("IceSpike")) return;

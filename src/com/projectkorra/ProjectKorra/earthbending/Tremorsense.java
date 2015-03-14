@@ -85,6 +85,7 @@ public class Tremorsense {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private void set() {
 		Block standblock = player.getLocation().getBlock()
 				.getRelative(BlockFace.DOWN);
@@ -127,6 +128,7 @@ public class Tremorsense {
 		// }
 	}
 
+	@SuppressWarnings("deprecation")
 	private void revert() {
 		if (block != null) {
 			player.sendBlockChange(block.getLocation(), block.getTypeId(),

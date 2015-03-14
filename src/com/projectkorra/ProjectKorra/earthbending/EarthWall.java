@@ -21,6 +21,7 @@ public class EarthWall {
 	private int height = defaultheight;
 	private int halfwidth = defaulthalfwidth;
 
+	@SuppressWarnings("deprecation")
 	public EarthWall(Player player) {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 		

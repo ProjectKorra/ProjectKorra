@@ -54,6 +54,7 @@ public class FreezeMelt {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	static void freeze(Player player, Block block) {
 		if (Methods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
 			return;
@@ -65,6 +66,7 @@ public class FreezeMelt {
 		frozenblocks.put(block, data);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void thaw(Block block) {
 		if (frozenblocks.containsKey(block)) {
 			byte data = frozenblocks.get(block);
@@ -131,6 +133,7 @@ public class FreezeMelt {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	private static void thawAll() {
 		for (Block block : frozenblocks.keySet()) {
 			if (block.getType() == Material.ICE) {

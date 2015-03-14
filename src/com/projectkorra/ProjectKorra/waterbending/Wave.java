@@ -29,6 +29,7 @@ public class Wave {
 	private static final double MAX_FREEZE_RADIUS = 7;
 
 	private static final long interval = 30;
+	@SuppressWarnings("unused")
 	private static final byte full = 0x0;
 	static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
 
@@ -113,6 +114,7 @@ public class Wave {
 		instances.remove(player.getEntityId());
 	}
 
+	@SuppressWarnings("deprecation")
 	public void moveWater() {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 

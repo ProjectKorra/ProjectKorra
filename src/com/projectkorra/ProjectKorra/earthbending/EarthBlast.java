@@ -128,6 +128,7 @@ public class EarthBlast {
 		instances.remove(id);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void throwEarth() {
 		if (sourceblock != null) {
 			if (sourceblock.getWorld() == player.getWorld()) {

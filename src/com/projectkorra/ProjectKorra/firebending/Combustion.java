@@ -5,6 +5,7 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -41,7 +42,9 @@ public class Combustion {
 	private double damage;
 
 	public Player player;
+	@SuppressWarnings("unused")
 	private long starttime;
+	@SuppressWarnings("unused")
 	private boolean charged = false;
 	public static ConcurrentHashMap<Player, Combustion> instances = new ConcurrentHashMap<Player, Combustion>();
 

@@ -25,6 +25,7 @@ public class WaterPassive {
 			return true;
 		return false;
 	}
+	@SuppressWarnings("deprecation")
 	public static void handlePassive() {
 		for (Player player: Bukkit.getServer().getOnlinePlayers()) {
 			String ability = Methods.getBoundAbility(player);

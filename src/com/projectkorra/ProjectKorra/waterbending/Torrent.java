@@ -4,6 +4,7 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -255,6 +256,7 @@ public class Torrent {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private boolean launch() {
 		if (launchblocks.isEmpty() && blocks.isEmpty()) {
 			return false;
@@ -453,6 +455,7 @@ public class Torrent {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void create(Player player) {
 		if (instances.containsKey(player))
 			return;

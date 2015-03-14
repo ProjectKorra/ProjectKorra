@@ -27,6 +27,7 @@ public class HeatMelt {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private static void heat(Block block) {
 		if (block.getType() == Material.OBSIDIAN) {
 			block.setType(Material.LAVA);

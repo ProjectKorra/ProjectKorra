@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra.airbending;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.*;
 import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,6 +52,7 @@ public class AirBlast {
 	private ArrayList<Block> affectedlevers = new ArrayList<Block>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
+	@SuppressWarnings("unused")
 	private AirBurst source = null;
 
 	// private long time;
@@ -131,6 +133,7 @@ public class AirBlast {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			instances.remove(id);
