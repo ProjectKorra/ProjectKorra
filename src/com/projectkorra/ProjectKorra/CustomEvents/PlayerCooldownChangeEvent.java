@@ -16,6 +16,7 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
         player = eplayer;
         ability = abilityname;
         eventresult = result;
+        cancelled = false;
     }
     
     public Player getPlayer() {
