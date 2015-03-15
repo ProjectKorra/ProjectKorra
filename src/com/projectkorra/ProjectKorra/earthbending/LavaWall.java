@@ -24,6 +24,7 @@ public class LavaWall {
 	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 	private static final long interval = 30;
+	@SuppressWarnings("unused")
 	private static final byte full = 0x0;
 	Player player;
 	private Location location = null;
@@ -92,6 +93,7 @@ public class LavaWall {
 		instances.remove(player.getEntityId());
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void moveLava() {
 		if (sourceblock != null) {
 			targetdestination = player.getTargetBlock(Methods.getTransparentEarthbending(), (int) range).getLocation();
@@ -290,6 +292,7 @@ public class LavaWall {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
 		if (!instances.containsKey(player.getEntityId())) {
 			new LavaWave(player);

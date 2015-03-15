@@ -7,6 +7,7 @@ import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
 import com.projectkorra.rpg.RPGMethods;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -81,6 +82,7 @@ public class Commands {
 		CommandExecutor exe;
 
 		exe = new CommandExecutor() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
 				for(int i = 0; i < args.length; i++){

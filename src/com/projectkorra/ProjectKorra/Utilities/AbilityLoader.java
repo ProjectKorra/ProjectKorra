@@ -68,6 +68,7 @@ public class AbilityLoader <T extends AbilityLoadable> implements Listener {
 		return plugin.getLogger();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public final List<T> load(Class<? extends AbilityLoadable> classType) {
 		for (File file: files) {
 			try (final JarFile jarFile = new JarFile(file)) {

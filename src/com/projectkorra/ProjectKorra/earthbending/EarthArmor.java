@@ -39,6 +39,7 @@ public class EarthArmor {
 	private int strength = STRENGTH;
 	public ItemStack[] oldarmor;
 
+	@SuppressWarnings("deprecation")
 	public EarthArmor(Player player) {
 		if (instances.containsKey(player)) {
 			return;

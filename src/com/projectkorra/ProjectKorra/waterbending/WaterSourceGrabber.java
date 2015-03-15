@@ -23,6 +23,7 @@ public class WaterSourceGrabber {
 
 	private Player player;
 	private AnimationState state;
+	@SuppressWarnings("unused")
 	private Location origin, currentLoc;
 	private double animSpeed;
 	private Material mat;
@@ -43,6 +44,7 @@ public class WaterSourceGrabber {
 		this(player, origin, 1);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void progress() {
 		if (state == AnimationState.FAILED || state == AnimationState.FINISHED)
 			return;

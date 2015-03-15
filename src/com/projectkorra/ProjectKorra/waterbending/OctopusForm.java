@@ -85,6 +85,7 @@ public class OctopusForm {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
 		if (instances.containsKey(player)) {
 			instances.get(player).form();

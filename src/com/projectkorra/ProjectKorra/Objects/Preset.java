@@ -61,6 +61,7 @@ public class Preset {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void bindPreset(Player player, String name) {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 		if (bPlayer == null) return;

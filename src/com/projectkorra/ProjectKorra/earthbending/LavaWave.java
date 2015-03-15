@@ -25,6 +25,7 @@ public class LavaWave {
 	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaSurge.HorizontalPush");
 	private static final double upfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaSurge.VerticalPush");
 	private static final long interval = 30;
+	@SuppressWarnings("unused")
 	private static final byte full = 0x0;
 	static double defaultrange = 20;
 	Player player;
@@ -92,6 +93,7 @@ public class LavaWave {
 		instances.remove(player.getEntityId());
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void moveLava() {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("LavaSurge")) return;
@@ -261,6 +263,7 @@ public class LavaWave {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void clearWave() {
 		for (Block block : wave.keySet()) {
 			TempBlock.revertBlock(block, Material.AIR);

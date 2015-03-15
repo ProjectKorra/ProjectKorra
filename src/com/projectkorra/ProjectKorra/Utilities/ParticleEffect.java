@@ -1150,7 +1150,6 @@ public enum ParticleEffect {
 		 * @throws IllegalArgumentException If the range is lower than 1
 		 * @see #sendTo(Location center, Player player)
 		 */
-		@SuppressWarnings("deprecation")
 		public void sendTo(Location center, double range) throws IllegalArgumentException {
 			if (range < 1) {
 				throw new IllegalArgumentException("The range is lower than 1");

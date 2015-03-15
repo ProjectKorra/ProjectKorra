@@ -17,6 +17,7 @@ public class TempBlock {
 	byte newdata;
 	BlockState state;
 
+	@SuppressWarnings("deprecation")
 	public TempBlock(Block block, Material newtype, byte newdata) {
 		this.block = block;
 		this.newdata = newdata;
@@ -48,6 +49,7 @@ public class TempBlock {
 		instances.remove(block);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void revertBlock(Block block, Material defaulttype) {
 		if (instances.containsKey(block)) {
 			instances.get(block).revertBlock();
@@ -117,6 +119,7 @@ public class TempBlock {
 		setType(material, newdata);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void setType(Material material, byte data) {
 		newtype = material;
 		newdata = data;

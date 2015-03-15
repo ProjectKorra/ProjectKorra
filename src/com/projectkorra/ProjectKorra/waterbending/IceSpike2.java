@@ -124,6 +124,7 @@ public class IceSpike2 {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private static void waterBottle(Player player) {
 		if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeloc = player.getEyeLocation();

@@ -21,6 +21,7 @@ public class Melt {
 
 	private static final byte full = 0x0;
 
+	@SuppressWarnings("deprecation")
 	public Melt(Player player) {
 		if(!Methods.canIcebend(player))
 			return;
@@ -49,6 +50,7 @@ public class Melt {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void melt(Player player, Block block) {
 		if (Methods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
 			return;

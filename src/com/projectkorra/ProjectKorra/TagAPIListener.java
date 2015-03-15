@@ -1,9 +1,5 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 //import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 

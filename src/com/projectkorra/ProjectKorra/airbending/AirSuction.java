@@ -52,6 +52,7 @@ public class AirSuction {
 
 	private double speedfactor;
 
+	@SuppressWarnings("unused")
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
 	public AirSuction(Player player) {

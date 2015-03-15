@@ -32,6 +32,7 @@ public class EarthTunnel {
 	private long interval = INTERVAL;
 	private long time;
 
+	@SuppressWarnings("deprecation")
 	public EarthTunnel(Player player) {
 		this.player = player;
 		location = player.getEyeLocation().clone();

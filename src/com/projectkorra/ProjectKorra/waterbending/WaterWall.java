@@ -47,6 +47,7 @@ public class WaterWall {
 	private double radius = defaultradius;
 	private double range = RANGE;
 
+	@SuppressWarnings("deprecation")
 	public WaterWall(Player player) {
 		this.player = player;
 
@@ -177,6 +178,7 @@ public class WaterWall {
 		instances.remove(player.getEntityId());
 	}
 
+	@SuppressWarnings("deprecation")
 	public void moveWater() {
 		if (sourceblock != null) {
 			targetdestination = player.getTargetBlock(Methods.getTransparentEarthbending(), (int) range).getLocation();
@@ -453,6 +455,7 @@ public class WaterWall {
 		return instances.get(ID).progress();
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
 
 		if (!instances.containsKey(player.getEntityId())) {

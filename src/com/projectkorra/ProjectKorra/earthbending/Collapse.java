@@ -23,6 +23,7 @@ public class Collapse {
 	private double radius = defaultradius;
 	private Player player;
 
+	@SuppressWarnings("deprecation")
 	public Collapse(Player player) {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("Collapse")) return;

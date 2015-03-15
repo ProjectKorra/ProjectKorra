@@ -198,6 +198,7 @@ public class Lightning {
 	 * @param block the block
 	 * @return true if the block is transparent
 	 */
+	@SuppressWarnings("deprecation")
 	public boolean isTransparent(Player player, Block block) {
 		if (Arrays.asList(Methods.transparentToEarthbending).contains(block.getTypeId())) {
 			if(Methods.isRegionProtectedFromBuild(player, "Lightning", block.getLocation()))

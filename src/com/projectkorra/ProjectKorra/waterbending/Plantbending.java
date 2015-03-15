@@ -21,6 +21,7 @@ public class Plantbending {
 	private long time;
 	private int id;
 
+	@SuppressWarnings("deprecation")
 	public Plantbending(Block block) {
 		if (regrowtime != 0) {
 			this.block = block;
@@ -37,6 +38,7 @@ public class Plantbending {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void revert() {
 		if (block.getType() == Material.AIR) {
 			block.setType(type);

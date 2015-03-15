@@ -6,6 +6,7 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempPotionEffect;
+
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
@@ -108,6 +109,7 @@ public class Bloodbending {
 			instances.get(player).launch();
 	}
 
+	@SuppressWarnings("unused")
 	private void launch() {
 		Location location = player.getLocation();
 		for (Entity entity : targetentities.keySet()) {

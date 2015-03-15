@@ -40,6 +40,7 @@ public class Illumination {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void set() {
 		Block standingblock = player.getLocation().getBlock();
 		Block standblock = standingblock.getRelative(BlockFace.DOWN);
@@ -74,6 +75,7 @@ public class Illumination {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void revert() {
 		if (block != null) {
 			blocks.remove(block);

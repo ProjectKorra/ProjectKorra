@@ -34,11 +34,13 @@ import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
+
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+
 import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -276,6 +278,7 @@ public class Methods {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean canBendPassive(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
@@ -436,6 +439,7 @@ public class Methods {
 	 * @param entity The entity that is receiving the damage
 	 * @param damage The amount of damage to deal
 	 */
+	@SuppressWarnings("deprecation")
 	public static void damageEntity(Player player, Entity entity, double damage) {
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Player) {
@@ -724,6 +728,7 @@ public class Methods {
 	 * @param breakitem Unused
 	 * @return The item drops fromt the specified block
 	 */
+	@SuppressWarnings("deprecation")
 	public static Collection<ItemStack> getDrops(Block block, Material type, byte data, ItemStack breakitem) {
 		BlockState tempstate = block.getState();
 		block.setType(type);
@@ -754,6 +759,7 @@ public class Methods {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Earth"));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Block getEarthSourceBlock(Player player, double range) {
 		Block testblock = player.getTargetBlock(getTransparentEarthbending(), (int) range);
 		if (isEarthbendable(player, testblock))
@@ -846,6 +852,7 @@ public class Methods {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Fire"));
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	public static int getIntCardinalDirection(Vector vector) {
 		BlockFace face = getCardinalDirection(vector);
 
@@ -880,6 +887,7 @@ public class Methods {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Metalbending"));
 	}
 	
+	@SuppressWarnings("incomplete-switch")
 	public static ChatColor getSubBendingColor(Element element)
 	{
 		switch(element)
@@ -913,6 +921,7 @@ public class Methods {
 
 	}
 
+	@SuppressWarnings("unused")
 	public static Entity getTargetedEntity(Player player, double range,	List<Entity> avoid) {
 		double longestr = range + 1;
 		Entity target = null;
@@ -1002,6 +1011,7 @@ public class Methods {
 		return blocks;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Location getTargetedLocation(Player player, double originselectrange, Integer... nonOpaque2) {
 		Location origin = player.getEyeLocation();
 		Vector direction = origin.getDirection();
@@ -1066,6 +1076,7 @@ public class Methods {
 		return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Water"));
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Block getWaterSourceBlock(Player player, double range,
 			boolean plantbending) {
 		Location location = player.getEyeLocation();
@@ -1093,6 +1104,7 @@ public class Methods {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Block getLavaSourceBlock(Player player, double range) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
@@ -1158,6 +1170,7 @@ public class Methods {
 		return adjacent;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
 		if (TempBlock.isTempBlock(block))
 			return false;
@@ -1363,6 +1376,7 @@ public class Methods {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isObstructed(Location location1, Location location2) {
 		Vector loc1 = location1.toVector();
 		Vector loc2 = location2.toVector();
@@ -1386,6 +1400,7 @@ public class Methods {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isPlant(Block block) {
 		if (Arrays.asList(plantIds).contains(block.getTypeId())) return true;
 		return false;
@@ -1592,6 +1607,7 @@ public class Methods {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isSolid(Block block) {
 		if (Arrays.asList(nonOpaque).contains(block.getTypeId())) return false;
 		return true;
@@ -1601,6 +1617,7 @@ public class Methods {
 		return isTransparentToEarthbending(player, "RaiseEarth", block);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isTransparentToEarthbending(Player player,
 			String ability, Block block) {
 		if (!Arrays.asList(transparentToEarthbending).contains(block.getTypeId()))
@@ -1625,6 +1642,7 @@ public class Methods {
 		return AbilityModuleManager.waterbendingabilities.contains(ability);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isWaterbendable(Block block, Player player) {
 		byte full = 0x0;
 		if (TempBlock.isTempBlock(block)) return false;
@@ -1635,6 +1653,7 @@ public class Methods {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isLavabendable(Block block, Player player) {
 		byte full = 0x0;
 		if (TempBlock.isTempBlock(block)){
@@ -1820,6 +1839,7 @@ public class Methods {
 		moveEarth(player, block, direction, chainlength, throwplayer);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void moveEarthBlock(Block source, Block target) {
 		byte full = 0x0;
 		Information info;
@@ -1939,6 +1959,7 @@ public class Methods {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void removeBlock(Block block) {
 		if (isAdjacentToThreeOrMoreSources(block)) {
 			block.setType(Material.WATER);
@@ -1994,6 +2015,7 @@ public class Methods {
 		revertAirBlock(i, false);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void revertAirBlock(int i, boolean force) {
 		if (!tempair.containsKey(i))
 			return;
@@ -2015,6 +2037,7 @@ public class Methods {
 			tempair.remove(i);
 		}
 	}
+	@SuppressWarnings("deprecation")
 	public static boolean revertBlock(Block block) {
 		byte full = 0x0;
 		if(!ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
@@ -2189,6 +2212,7 @@ public class Methods {
 		EarthPassive.removeAll();
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void setVelocity(Entity entity, Vector velocity){
 		if (entity instanceof TNTPrimed){
 			if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.TNT"))
