@@ -95,16 +95,6 @@ public class Lightning {
 		instances.add(this);
 	}
 	
-	/** Displays Redstone particles at the players eye location **/
-	public void displayChargedParticles() {
-		Location l =  player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(1));
-		l.setX(l.getX() + Math.random() * (0.1 - -0.1));
-		l.setY(l.getY() + Math.random() * (0.1 - -0.1));
-		l.setZ(l.getZ() + Math.random() * (0.1 - -0.1));
-		
-		ParticleEffect.RED_DUST.display((float) 0, (float) 255, (float) 255, 0.1F, 0, l, 256D);
-	}
-	
 	/** Progresses the instance of this ability by 1 tick.
 	 * This is the heart of the ability, it checks if it needs to
 	 * remove itself, and handles the initial Lightning Arc generation.
@@ -133,7 +123,7 @@ public class Lightning {
 					Location loc = player.getEyeLocation().add(player.getEyeLocation()
 							.getDirection().normalize().multiply(1.2));
 					loc.add(0, 0.3, 0);
-					displayChargedParticles();
+					Methods.playLightningbendingParticle(loc, 0.2F, 0.2F, 0.2F);
 				}
 				else {
 					state = State.MAINBOLT;
@@ -517,7 +507,7 @@ public class Lightning {
 		 * and also deals with any chain subarcs.
 		 */
 		public void run() {
-			ParticleEffect.RED_DUST.display((float) 0, (float) 255, (float) 255, 0.1F, 0, loc, 256D);
+			Methods.playLightningbendingParticle(loc, 0F, 0F, 0F);
 			count++;
 			if(count > 5)
 				this.cancel();
