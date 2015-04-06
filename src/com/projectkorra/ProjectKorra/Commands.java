@@ -913,14 +913,14 @@ public class Commands {
 								|| p.getName().equalsIgnoreCase("kingbirdy") // kingbirdy
 								|| p.getName().equalsIgnoreCase("CherryCoolade") // Coolade
 								|| p.getName().equalsIgnoreCase("sampepere") // AlexTheCoder
-								|| p.getName().equalsIgnoreCase("Carbogen")) // Carbogen
+								|| p.getName().equalsIgnoreCase("Carbogen") // Carbogen
+								|| p.getName().equalsIgnoreCase("OmniCypher")) // OmniCypher
 						{ 
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Developer");
 						}
 						if (p.getName().equalsIgnoreCase("vidcom") // vidcom
 								|| p.getName().equalsIgnoreCase("Zolteex") // Zolteex
 								|| p.getName().equalsIgnoreCase("Rawry2001") // Majorite
-								|| p.getName().equalsIgnoreCase("OmniCypher") // OmniCypher
 								|| p.getName().equalsIgnoreCase("Gahshunk292") // Gahshunk
 								|| p.getName().equalsIgnoreCase("ashe36")) { // ashe36
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
