@@ -1,5 +1,7 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
+import java.util.HashSet;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,7 +37,7 @@ public class Melt {
 		}
 		boolean evaporate = false;
 		Location location = Methods.getTargetedLocation(player, range);
-		if (Methods.isWater(player.getTargetBlock(null, range))	&& !(player.getEyeLocation().getBlockY() <= 62)) {
+		if (Methods.isWater(player.getTargetBlock((HashSet<Byte>) null, range))	&& !(player.getEyeLocation().getBlockY() <= 62)) {
 			evaporate = true;
 			radius = (int) Methods.waterbendingNightAugment(defaultevaporateradius, player.getWorld());
 		}

@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -65,7 +66,7 @@ public class WaterSourceGrabber {
 				state = AnimationState.TOWARD;
 		} else {
 			revertBlocks();
-			Location eyeLoc = player.getTargetBlock(null, 2).getLocation();
+			Location eyeLoc = player.getTargetBlock((HashSet<Byte>) null, 2).getLocation();
 			eyeLoc.setY(player.getEyeLocation().getY());
 			Vector vec = Methods.getDirection(currentLoc, eyeLoc);
 			currentLoc.add(vec.normalize().multiply(animSpeed));
