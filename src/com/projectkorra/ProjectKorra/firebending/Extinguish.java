@@ -35,8 +35,8 @@ public class Extinguish {
 			
 			Material mat = block.getType();
 			if(mat != Material.FIRE 
-					&& mat != Material.STATIONARY_LAVA
-					&& mat != Material.LAVA)
+					/*&& mat != Material.STATIONARY_LAVA
+					&& mat != Material.LAVA*/)
 				continue;
 			if (Methods.isRegionProtectedFromBuild(player, "Blaze",
 					block.getLocation()))
@@ -44,7 +44,7 @@ public class Extinguish {
 			if (block.getType() == Material.FIRE) {
 				block.setType(Material.AIR);
 				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
-			} else if (block.getType() == Material.STATIONARY_LAVA) {
+			} /*else if (block.getType() == Material.STATIONARY_LAVA) {
 				block.setType(Material.OBSIDIAN);
 				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
 			} else if (block.getType() == Material.LAVA) {
@@ -54,7 +54,7 @@ public class Extinguish {
 					block.setType(Material.COBBLESTONE);
 				}
 				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
-			}
+			}*/
 		}
 
 		bPlayer.addCooldown("HeatControl", Methods.getGlobalCooldown());
