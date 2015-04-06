@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
@@ -298,7 +299,7 @@ public class LavaWall {
 			new LavaWave(player);
 			return;
 		} else {
-			if (Methods.isLavabendable(player.getTargetBlock(null, (int) LavaWave.defaultrange), player)) {
+			if (Methods.isLavabendable(player.getTargetBlock((HashSet<Byte>) null, (int) LavaWave.defaultrange), player)) {
 				new LavaWave(player);
 				return;
 			}

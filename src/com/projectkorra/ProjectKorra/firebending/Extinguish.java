@@ -1,5 +1,7 @@
 package com.projectkorra.ProjectKorra.firebending;
 
+import java.util.HashSet;
+
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,13 +27,13 @@ public class Extinguish {
 		if (bPlayer.isOnCooldown("HeatControl")) return;
 
 		double range = Methods.getFirebendingDayAugment(defaultrange, player.getWorld());
-		if (Methods.isMeltable(player.getTargetBlock(null, (int) range))) {
+		if (Methods.isMeltable(player.getTargetBlock((HashSet<Byte>) null, (int) range))) {
 			new HeatMelt(player);
 			return;
 		}
 		double radius = Methods.getFirebendingDayAugment(defaultradius, player.getWorld());
 		for (Block block : Methods.getBlocksAroundPoint(
-				player.getTargetBlock(null, (int) range).getLocation(), radius)) {
+				player.getTargetBlock((HashSet<Byte>) null, (int) range).getLocation(), radius)) {
 			
 			Material mat = block.getType();
 			if(mat != Material.FIRE 

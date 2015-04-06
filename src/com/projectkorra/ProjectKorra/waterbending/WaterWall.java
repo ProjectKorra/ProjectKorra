@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
@@ -487,7 +488,7 @@ public class WaterWall {
 			new Wave(player);
 			return;
 		} else {
-			if (Methods.isWaterbendable(player.getTargetBlock(null, (int) Wave.defaultrange), player)) {
+			if (Methods.isWaterbendable(player.getTargetBlock((HashSet<Byte>) null, (int) Wave.defaultrange), player)) {
 				new Wave(player);
 				return;
 			}

@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -81,7 +82,7 @@ public class IceSpike {
 				this.block = temptestingblock;
 				// }
 			} else {
-				this.block = player.getTargetBlock(null, (int) range);
+				this.block = player.getTargetBlock((HashSet<Byte>) null, (int) range);
 			}
 			origin = block.getLocation();
 			location = origin.clone();

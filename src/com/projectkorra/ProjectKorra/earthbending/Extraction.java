@@ -1,5 +1,6 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
+import java.util.HashSet;
 import java.util.Random;
 
 import org.bukkit.Material;
@@ -22,7 +23,7 @@ public class Extraction {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("Extraction")) return;
 
-		Block block = player.getTargetBlock(null, 5);
+		Block block = player.getTargetBlock((HashSet<Byte>) null, 5);
 		if (block == null) {
 			return;
 		}
