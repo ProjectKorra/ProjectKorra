@@ -55,6 +55,10 @@ public class Flight {
 	}
 
 	public void revert() {
+		if (player == null) {
+			instances.remove(player);
+			return;
+		}
 		player.setAllowFlight(couldFly);
 		player.setFlying(wasFlying);
 	}
@@ -126,8 +130,12 @@ public class Flight {
 	public static void removeAll() {
 		for (Player player : instances.keySet()) {
 			Flight flight = instances.get(player);
+			if (player == null || flight == null) {
+				instances.remove(player);
+				continue;
+			}
 			//if (flight.source != null)
-				flight.revert();
+			flight.revert();
 			flight.remove();
 		}
 	}

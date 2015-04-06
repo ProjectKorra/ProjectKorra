@@ -1271,7 +1271,10 @@ public class Methods {
 	}
 
 	public static boolean isChiBlocked(String player) {
-		return Methods.getBendingPlayer(player).isChiBlocked();
+		if (Methods.getBendingPlayer(player) != null) {
+			return Methods.getBendingPlayer(player).isChiBlocked();
+		}
+		return false;
 	}
 
 	public static boolean isDay(World world) {

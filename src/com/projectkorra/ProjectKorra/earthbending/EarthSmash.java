@@ -496,7 +496,8 @@ public class EarthSmash {
 		for(EarthSmash smash : instances) {
 			if(reqState == null || smash.state == reqState)
 				for(Block block : blocks)
-					if(block.getLocation().distanceSquared(smash.loc) <= Math.pow(GRAB_DETECTION_RADIUS, 2))
+					if(block.getLocation().getWorld() == smash.loc.getWorld() && 
+					block.getLocation().distanceSquared(smash.loc) <= Math.pow(GRAB_DETECTION_RADIUS, 2))
 						return smash;
 		}
 		return null;	
@@ -528,7 +529,7 @@ public class EarthSmash {
 		for(int i = 0; i < instances.size(); i++) {
 			EarthSmash smash = instances.get(i);
 			if(smash.loc != null) {
-				if(smash != this && smash.loc.distanceSquared(loc) < Math.pow(FLIGHT_DETECTION_RADIUS, 2)) {
+				if(smash != this && smash.loc.getWorld() == loc.getWorld() &&smash.loc.distanceSquared(loc) < Math.pow(FLIGHT_DETECTION_RADIUS, 2)) {
 					smash.remove();
 					remove();
 					i-=2;

@@ -201,6 +201,10 @@ public class WaterManipulation {
 
 	public static void progressAll() {
 		for (int ID : instances.keySet()) {
+			if (instances.get(ID) == null) {
+				instances.remove(ID);
+				continue;
+			}
 			instances.get(ID).progress();
 		}
 	}
