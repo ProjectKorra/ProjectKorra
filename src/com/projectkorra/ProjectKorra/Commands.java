@@ -912,7 +912,7 @@ public class Commands {
 						if (uuid2 == UUID.fromString("9636d66a-bff8-48e4-993e-68f0e7891c3b") // codiaz
 								|| uuid2 == UUID.fromString("833a7132-a9ec-4f0a-ad9c-c3d6b8a1c7eb") // Jacklin213
 								|| uuid2 == UUID.fromString("3b5bdfab-8ae1-4794-b160-4f33f31fde99") // kingbirdy
-								// NEED USERNAME FOR COOLADE
+								|| uuid2 == UUID.fromString("96f40c81-dd5d-46b6-9afe-365114d4a082") // Coolade
 								|| uuid2 == UUID.fromString("81adae76-d647-4b41-bfb0-8166516fa189") // AlexTheCoder
 								|| uuid2 == UUID.fromString("c364ffe2-de9e-4117-9735-6d14bde038f6") // Carbogen
 								|| uuid2 == UUID.fromString("a197291a-cd78-43bb-aa38-52b7c82bc68c")) // OmniCypher
@@ -925,7 +925,7 @@ public class Commands {
 						
 						if (uuid2 == UUID.fromString("5aad055c-6b3b-489e-a2f0-9a711135ea66") // Zolteex
 								|| uuid2 == UUID.fromString("95b92e81-d8ae-4b99-9482-8e5b3dbde5cc") // Majorite
-								// NEED USERNAME FOR GAHSHUNK
+								|| uuid2 = UUID.fromString("b2d82a84-ce22-4518-a8fc-1b28aeda0c0b") // Shunky
 								|| uuid2 == UUID.fromString("15d1a5a7-76ef-49c3-b193-039b27c47e30") // Kiam
 								|| uuid2 == UUID.fromString("ce889d32-c2a0-4765-969f-9ca54d0bd34a")) { // ashe36
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
