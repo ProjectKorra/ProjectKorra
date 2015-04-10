@@ -209,7 +209,6 @@ public class WaterManipulation {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private boolean progress() {
 		if (player.isDead() || !player.isOnline()
 				|| !Methods.canBend(player.getName(), "WaterManipulation")) {
@@ -300,7 +299,7 @@ public class WaterManipulation {
 
 				Block block = location.getBlock();
 				if (displacing) {
-					Block targetblock = player.getTargetBlock((HashSet<Byte>) null, displrange);
+					Block targetblock = player.getTargetBlock((HashSet<Material>) null, displrange);
 					direction = Methods.getDirection(location, targetblock.getLocation()).normalize();
 					if (!location.getBlock().equals(targetblock.getLocation())) {
 						location = location.clone().add(direction);

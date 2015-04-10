@@ -18,22 +18,22 @@ public class Extinguish {
 	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.HeatControl.Extinguish.Range");
 	private static double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.HeatControl.Extinguish.Radius");
 
+	@SuppressWarnings("unused")
 	private static byte full = AirBlast.full;
 
-	@SuppressWarnings("deprecation")
 	public Extinguish(Player player) {
 		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
 
 		if (bPlayer.isOnCooldown("HeatControl")) return;
 
 		double range = Methods.getFirebendingDayAugment(defaultrange, player.getWorld());
-		if (Methods.isMeltable(player.getTargetBlock((HashSet<Byte>) null, (int) range))) {
+		if (Methods.isMeltable(player.getTargetBlock((HashSet<Material>) null, (int) range))) {
 			new HeatMelt(player);
 			return;
 		}
 		double radius = Methods.getFirebendingDayAugment(defaultradius, player.getWorld());
 		for (Block block : Methods.getBlocksAroundPoint(
-				player.getTargetBlock((HashSet<Byte>) null, (int) range).getLocation(), radius)) {
+				player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation(), radius)) {
 			
 			Material mat = block.getType();
 			if(mat != Material.FIRE 

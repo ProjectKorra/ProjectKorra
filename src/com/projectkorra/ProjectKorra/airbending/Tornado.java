@@ -45,12 +45,11 @@ public class Tornado {
 	private double radius = height / maxheight * maxradius;
 	// private boolean canfly;
 
-	@SuppressWarnings("deprecation")
 	public Tornado(Player player) {
 		this.player = player;
 		// canfly = player.getAllowFlight();
 		// player.setAllowFlight(true);
-		origin = player.getTargetBlock((HashSet<Byte>) null, (int) range).getLocation();
+		origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
 		origin.setY(origin.getY() - 1. / 10. * height);
 
 		int angle = 0;
@@ -100,9 +99,8 @@ public class Tornado {
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	private void rotateTornado() {
-		origin = player.getTargetBlock((HashSet<Byte>) null, (int) range).getLocation();
+		origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
 
 		double timefactor = height / maxheight;
 		radius = timefactor * maxradius;
