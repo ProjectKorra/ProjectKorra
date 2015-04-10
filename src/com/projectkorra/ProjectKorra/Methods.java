@@ -2637,6 +2637,18 @@ public class Methods {
 		}
 		return null;
 	}
+	
+	public static boolean hasItems() {
+		if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null) return true;
+		return false;
+	}
+	
+	public static Plugin getItems() {
+		if (hasItems()) {
+			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems");
+		}
+		return null;
+	}
 
 	public static void writeToDebug(String message) {
 		try {

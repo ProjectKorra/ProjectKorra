@@ -923,15 +923,21 @@ public class Commands {
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Community Moderator");
 						}
 						
+						if (uuid2 == UUID.fromString("9c18ff57-04b3-4841-9726-9d64373d0d65")) { // coastyo
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Graphic Artist");
+						}
+						
 						if (uuid2 == UUID.fromString("5aad055c-6b3b-489e-a2f0-9a711135ea66") // Zolteex
 								|| uuid2 == UUID.fromString("95b92e81-d8ae-4b99-9482-8e5b3dbde5cc") // Majorite
-								|| uuid2 = UUID.fromString("b2d82a84-ce22-4518-a8fc-1b28aeda0c0b") // Shunky
+								|| uuid2 == UUID.fromString("b2d82a84-ce22-4518-a8fc-1b28aeda0c0b") // Shunky
 								|| uuid2 == UUID.fromString("15d1a5a7-76ef-49c3-b193-039b27c47e30") // Kiam
 								|| uuid2 == UUID.fromString("ce889d32-c2a0-4765-969f-9ca54d0bd34a")) { // ashe36
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
 						}
 						
-						if (uuid == UUID.fromString("0fd77ff6-07fb-4a7d-ba87-ae6f802ed1f9")) { // Hit_Manx
+						if (uuid2 == UUID.fromString("0fd77ff6-07fb-4a7d-ba87-ae6f802ed1f9")) { // Hit_Manx
+							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Wiki Contributor");
 						}
 						return true;
@@ -990,6 +996,9 @@ public class Commands {
 					s.sendMessage(ChatColor.GREEN + "Core Version: " + ChatColor.RED + plugin.getDescription().getVersion());
 					if (Methods.hasRPG()) {
 						s.sendMessage(ChatColor.GREEN + "RPG Version: " + ChatColor.RED + Methods.getRPG().getDescription().getVersion());
+					}
+					if (Methods.hasItems()) {
+						s.sendMessage(ChatColor.GREEN + "Items Version: " + ChatColor.RED + Methods.getItems().getDescription().getVersion());
 					}
 					s.sendMessage(ChatColor.GREEN + "Founded by: " + ChatColor.RED + "MistPhizzle");
 					s.sendMessage(ChatColor.GREEN + "Learn More: " + ChatColor.RED + "http://projectkorra.com");
