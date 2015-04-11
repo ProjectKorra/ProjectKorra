@@ -89,7 +89,7 @@ public class FlightAbility {
 		instances.remove(name);
 		hits.remove(name);
 		hovering.remove(name);
-		flight.revert();
+		if (flight != null) flight.revert();
 	}
 	
 	public static void remove(Player player) {
