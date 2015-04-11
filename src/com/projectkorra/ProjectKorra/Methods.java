@@ -2706,6 +2706,13 @@ public class Methods {
 			writeToDebug("Version: " + getRPG().getDescription().getVersion());
 			writeToDebug("Author: " + getRPG().getDescription().getAuthors());
 		}
+		if (hasItems()) {
+			writeToDebug("");
+			writeToDebug("ProjectKorra (Items) Information");
+			writeToDebug("====================");
+			writeToDebug("Version: " + getItems().getDescription().getVersion());
+			writeToDebug("Author: " + getItems().getDescription().getAuthors());
+		}
 		writeToDebug("");
 		writeToDebug("Ability Information");
 		writeToDebug("====================");
