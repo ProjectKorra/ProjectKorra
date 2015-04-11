@@ -1514,9 +1514,13 @@ public class Methods {
 						return true;
 				}
 
-				if (ps.getForceFieldManager().hasSourceField(location,
-						FieldFlag.PREVENT_PLACE))
+//				if (ps.getForceFieldManager().hasSourceField(location,
+//						FieldFlag.PREVENT_PLACE))
+//					return true;
+				
+				if (!PreciousStones.API().canBreak(player, location)) {
 					return true;
+				}
 			}
 
 			if (fcp != null && massivecore != null && respectFactions) {
