@@ -80,7 +80,6 @@ public class WaterWave {
 			this.progress();
 	}
 
-	@SuppressWarnings("deprecation")
 	public void progress() {
 		progressCounter++;
 		if (player.isDead() || !player.isOnline()) {
@@ -190,7 +189,7 @@ public class WaterWave {
 					anim = AnimateState.TOWARDPLAYER;
 			} else if (anim == AnimateState.TOWARDPLAYER) {
 				revertBlocks();
-				Location eyeLoc = player.getTargetBlock((HashSet<Byte>) null, 2).getLocation();
+				Location eyeLoc = player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
 				eyeLoc.setY(player.getEyeLocation().getY());
 				Vector vec = Methods.getDirection(currentLoc, eyeLoc);
 				currentLoc.add(vec.normalize().multiply(animSpeed));

@@ -488,7 +488,7 @@ public class WaterWall {
 			new Wave(player);
 			return;
 		} else {
-			if (Methods.isWaterbendable(player.getTargetBlock((HashSet<Byte>) null, (int) Wave.defaultrange), player)) {
+			if (Methods.isWaterbendable(player.getTargetBlock((HashSet<Material>) null, (int) Wave.defaultrange), player)) {
 				new Wave(player);
 				return;
 			}

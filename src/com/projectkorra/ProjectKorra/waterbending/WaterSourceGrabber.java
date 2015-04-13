@@ -45,7 +45,6 @@ public class WaterSourceGrabber {
 		this(player, origin, 1);
 	}
 
-	@SuppressWarnings("deprecation")
 	public void progress() {
 		if (state == AnimationState.FAILED || state == AnimationState.FINISHED)
 			return;
@@ -66,7 +65,7 @@ public class WaterSourceGrabber {
 				state = AnimationState.TOWARD;
 		} else {
 			revertBlocks();
-			Location eyeLoc = player.getTargetBlock((HashSet<Byte>) null, 2).getLocation();
+			Location eyeLoc = player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
 			eyeLoc.setY(player.getEyeLocation().getY());
 			Vector vec = Methods.getDirection(currentLoc, eyeLoc);
 			currentLoc.add(vec.normalize().multiply(animSpeed));

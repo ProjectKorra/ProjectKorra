@@ -215,7 +215,6 @@ public class Methods {
 	}
 
 	public static boolean canBind(String player, String ability) {
-		@SuppressWarnings("deprecation")
 		Player p = Bukkit.getPlayer(player);
 		if (p == null) return false;
 		if (!p.hasPermission("bending.ability." + ability)) return false;
@@ -232,7 +231,6 @@ public class Methods {
 	 * @param ability The Ability name to check
 	 * @return true If player can bend specified ability and has the permissions to do so
 	 */
-	@SuppressWarnings("deprecation")
 	public static boolean canBend(String player, String ability) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);
@@ -278,7 +276,6 @@ public class Methods {
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static boolean canBendPassive(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		Player p = Bukkit.getPlayer(player);

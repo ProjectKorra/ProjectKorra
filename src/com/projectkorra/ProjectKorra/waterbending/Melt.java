@@ -23,7 +23,6 @@ public class Melt {
 
 	private static final byte full = 0x0;
 
-	@SuppressWarnings("deprecation")
 	public Melt(Player player) {
 		if(!Methods.canIcebend(player))
 			return;
@@ -37,7 +36,7 @@ public class Melt {
 		}
 		boolean evaporate = false;
 		Location location = Methods.getTargetedLocation(player, range);
-		if (Methods.isWater(player.getTargetBlock((HashSet<Byte>) null, range))	&& !(player.getEyeLocation().getBlockY() <= 62)) {
+		if (Methods.isWater(player.getTargetBlock((HashSet<Material>) null, range))	&& !(player.getEyeLocation().getBlockY() <= 62)) {
 			evaporate = true;
 			radius = (int) Methods.waterbendingNightAugment(defaultevaporateradius, player.getWorld());
 		}

@@ -78,7 +78,7 @@ public class EarthPassive {
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			if (Methods.canBendPassive(player.getName(), Element.Earth) && Methods.canMetalbend(player)) {
 				if (player.isSneaking() && !Methods.getBendingPlayer(player.getName()).isOnCooldown("MetalPassive")) {
-					Block block = player.getTargetBlock((HashSet<Byte>) null, 5);
+					Block block = player.getTargetBlock((HashSet<Material>) null, 5);
 					if (block == null) continue;
 					if (block.getType() == Material.IRON_DOOR_BLOCK && !Methods.isRegionProtectedFromBuild(player, null, block.getLocation())) {
 						if (block.getData() >= 8) {

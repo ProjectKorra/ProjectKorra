@@ -4,6 +4,7 @@ import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -80,6 +81,7 @@ public class HeatControl
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void freeze(List<Location> area)
 	{
 		if(System.currentTimeMillis() < lastBlockTime + delay)
