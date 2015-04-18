@@ -55,6 +55,8 @@ public class Lightning {
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
+	private double i = 0.0D;
+	private double newY;
 
 	public Lightning(Player player) {
 		this.player = player;
@@ -136,10 +138,28 @@ public class Lightning {
 								player.getEyeLocation().getDirection().normalize().multiply(range));
 				}
 			}
-			else if(!player.isSneaking()) {
-				remove();
-				return;
+			else{
+				if(!player.isSneaking()) {
+					remove();
+					return;
+				}
+				double d1 = 0.1570796326794897D;
+				double d2 = 0.06283185307179587D;
+				double d3 = 1.0D;
+				double d4 = 1.0D;
+				Location localLocation1 = player.getLocation();
+				double d5 = d1 * i;
+				double d6 = d2 * i;
+				newY = (localLocation1.getY() + 1.0D + d4 * Math.cos(d6));
+				double d7 = localLocation1.getX() + d4 * Math.cos(d5);
+				double d8 = localLocation1.getZ() + d4 * Math.sin(d5);
+				Location localLocation2 = new Location(player.getWorld(), d7, newY, d8);
+				
+				Methods.playLightningbendingParticle(localLocation2);
+				
+				i += 1.0D / d3;
 			}
+			
 		}
 		else if(state == State.MAINBOLT) {
 			Arc mainArc = new Arc(origin, destination);
