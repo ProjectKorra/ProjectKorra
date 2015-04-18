@@ -701,4 +701,18 @@ public class Lightning {
 	public void setHitIce(boolean hitIce) {
 		this.hitIce = hitIce;
 	}
+	
+	public ArrayList<Arc> getArcs() {
+		return this.arcs;
+	}
+	
+	public static ArrayList<Arc> getAllArcs() {
+		ArrayList<Arc> a = new ArrayList<Arc>();
+		for(Lightning l : Lightning.instances) {
+			for(Arc arcs : l.getArcs()) {
+				a.add(arcs);
+			}
+		}
+		return a;
+	}
 }
