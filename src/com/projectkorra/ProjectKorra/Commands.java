@@ -789,7 +789,6 @@ public class Commands {
 					if (args.length == 2) {
 
 						Player p = Bukkit.getPlayer(args[1]);
-						UUID uuid2 = p.getUniqueId();
 						if (p == null) {
 							s.sendMessage(ChatColor.GREEN + "You are running a lookup of an offline player, this may take a second.");
 							ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE player = '" + args[1] + "'");
@@ -885,6 +884,7 @@ public class Commands {
 							s.sendMessage(Methods.getChiColor() + "- ChiBlocker");
 						}
 						BendingPlayer bPlayer = Methods.getBendingPlayer(un);
+						UUID uuid2 = bPlayer.uuid;
 						if (bPlayer != null)  {
 							s.sendMessage("Abilities: ");
 							for (int i = 1; i <= 9; i++) {
@@ -905,34 +905,34 @@ public class Commands {
 							}
 						}
 
-						if (uuid2 == UUID.fromString("8621211e-283b-46f5-87bc-95a66d68880e")) {
+						if (uuid2.toString().equals("8621211e-283b-46f5-87bc-95a66d68880e")) {
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Founder"); // MistPhizzle
 						}
 
-						if (uuid2 == UUID.fromString("9636d66a-bff8-48e4-993e-68f0e7891c3b") // codiaz
-								|| uuid2 == UUID.fromString("833a7132-a9ec-4f0a-ad9c-c3d6b8a1c7eb") // Jacklin213
-								|| uuid2 == UUID.fromString("96f40c81-dd5d-46b6-9afe-365114d4a082") // Coolade
-								|| uuid2 == UUID.fromString("81adae76-d647-4b41-bfb0-8166516fa189") // AlexTheCoder
-								|| uuid2 == UUID.fromString("c364ffe2-de9e-4117-9735-6d14bde038f6") // Carbogen
-								|| uuid2 == UUID.fromString("a197291a-cd78-43bb-aa38-52b7c82bc68c")) // OmniCypher
+						if (uuid2.toString().equals("9636d66a-bff8-48e4-993e-68f0e7891c3b") // codiaz
+								|| uuid2.toString().equals("833a7132-a9ec-4f0a-ad9c-c3d6b8a1c7eb") // Jacklin213
+								|| uuid2.toString().equals("96f40c81-dd5d-46b6-9afe-365114d4a082") // Coolade
+								|| uuid2.toString().equals("81adae76-d647-4b41-bfb0-8166516fa189") // AlexTheCoder
+								|| uuid2.toString().equals("c364ffe2-de9e-4117-9735-6d14bde038f6") // Carbogen
+								|| uuid2.toString().equals("a197291a-cd78-43bb-aa38-52b7c82bc68c")) // OmniCypher
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Developer");
 								
-						if (uuid2 == UUID.fromString("929b14fc-aaf1-4f0f-84c2-f20c55493f53")) { // vidcom
+						if (uuid2.toString().equals("929b14fc-aaf1-4f0f-84c2-f20c55493f53")) { // vidcom
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Community Moderator");
 						}
 						
-						if (uuid2 == UUID.fromString("9c18ff57-04b3-4841-9726-9d64373d0d65")) { // coastyo
+						if (uuid2.toString().equals("9c18ff57-04b3-4841-9726-9d64373d0d65")) { // coastyo
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Graphic Artist");
 						}
 						
-						if (uuid2 == UUID.fromString("b2d82a84-ce22-4518-a8fc-1b28aeda0c0b") // Shunky
-								|| uuid2 == UUID.fromString("15d1a5a7-76ef-49c3-b193-039b27c47e30")) { // Kiam
+						if (uuid2.toString().equals("b2d82a84-ce22-4518-a8fc-1b28aeda0c0b") // Shunky
+								|| uuid2.toString().equals("15d1a5a7-76ef-49c3-b193-039b27c47e30")) { // Kiam
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
 						}
 						
-						if (uuid2 == UUID.fromString("0fd77ff6-07fb-4a7d-ba87-ae6f802ed1f9")) { // Hit_Manx
+						if (uuid2.toString().equals("0fd77ff6-07fb-4a7d-ba87-ae6f802ed1f9")) { // Hit_Manx
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Concept Designer");
 							s.sendMessage(ChatColor.YELLOW + "ProjectKorra Wiki Contributor");
 						}
