@@ -219,6 +219,10 @@ public class PKListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 		Methods.createBendingPlayer(e.getPlayer().getUniqueId(), player.getName());
+		if (Methods.toggedOut.contains(player.getUniqueId())) {
+			Methods.getBendingPlayer(player.getName()).isToggled = false;
+			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
+		}
 		Preset.loadPresets(player);
 		String append = "";
 		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
@@ -261,6 +265,13 @@ public class PKListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		
 		Player player = event.getPlayer();
+		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		if (bPlayer != null) {
+			if (Methods.toggedOut.contains(player.getUniqueId()) && bPlayer.isToggled())
+				Methods.toggedOut.remove(player.getUniqueId());
+			if (!bPlayer.isToggled())
+				Methods.toggedOut.add(player.getUniqueId());
+		}
 		
 		if (Commands.invincible.contains(event.getPlayer().getName())) {
 			Commands.invincible.remove(event.getPlayer().getName());

@@ -89,6 +89,9 @@ public class Methods {
 	public static Integer[] nonOpaque = {0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 68, 69, 70, 72,
 		75, 76, 77, 78, 83, 90, 93, 94, 104, 105, 106, 111, 115, 119, 127, 131, 132, 175};
 
+	// Stands for toggled = false while logging out
+	public static List<UUID> toggedOut = new ArrayList<UUID>();
+	
 	/**
 	 * Checks to see if an AbilityExists. Uses method {@link #getAbility(String)} to check if it exists.
 	 * @param string Ability Name
@@ -2890,5 +2893,5 @@ public class Methods {
 		}
 		return false;
 	}
-
+	
 }
