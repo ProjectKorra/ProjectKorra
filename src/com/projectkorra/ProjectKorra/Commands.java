@@ -45,32 +45,32 @@ public class Commands {
     /*
      * Element Aliases
      */
-    String[] airaliases = { "air", "a", "airbending", "airbender" };
-    String[] wateraliases = { "water", "w", "waterbending", "waterbender" };
-    String[] earthaliases = { "earth", "e", "earthbending", "earthbender" };
-    String[] firealiases = { "fire", "f", "firebending", "firebender" };
-    String[] chialiases = { "chi", "c", "chiblocking", "chiblocker" };
+    private String[] airaliases = { "air", "a", "airbending", "airbender" };
+    private String[] wateraliases = { "water", "w", "waterbending", "waterbender" };
+    private String[] earthaliases = { "earth", "e", "earthbending", "earthbender" };
+    private String[] firealiases = { "fire", "f", "firebending", "firebender" };
+    private String[] chialiases = { "chi", "c", "chiblocking", "chiblocker" };
     
     /*
      * Command Aliases
      */
-    String[] helpaliases = { "help", "h" };
-    String[] versionaliases = { "version", "v" };
-    String[] permaremovealiases = { "permaremove", "premove", "permremove", "pr" };
-    String[] choosealiases = { "choose", "ch" };
-    String[] removealiases = { "remove", "rm" };
-    String[] togglealiases = { "toggle", "t" };
-    String[] displayaliases = { "display", "d" };
-    String[] bindaliases = { "bind", "b" };
-    String[] clearaliases = { "clear", "cl", "c" };
-    String[] reloadaliases = { "reload", "r" };
-    String[] addaliases = { "add", "a" };
-    String[] whoaliases = { "who", "w" };
-    String[] importaliases = { "import", "i" };
-    String[] givealiases = { "give", "g", "spawn" };
-    String[] invinciblealiases = { "invincible", "inv" };
-    String[] presetaliases = { "preset", "presets", "pre", "set", "p" };
-    String[] avataraliases = { "avatar", "ava" };
+    private String[] helpaliases = { "help", "h" };
+    private String[] versionaliases = { "version", "v" };
+    private String[] permaremovealiases = { "permaremove", "premove", "permremove", "pr" };
+    private String[] choosealiases = { "choose", "ch" };
+    private String[] removealiases = { "remove", "rm" };
+    private String[] togglealiases = { "toggle", "t" };
+    private String[] displayaliases = { "display", "d" };
+    private String[] bindaliases = { "bind", "b" };
+    private String[] clearaliases = { "clear", "cl", "c" };
+    private String[] reloadaliases = { "reload", "r" };
+    private String[] addaliases = { "add", "a" };
+    private String[] whoaliases = { "who", "w" };
+    private String[] importaliases = { "import", "i" };
+    private String[] givealiases = { "give", "g", "spawn" };
+    private String[] invinciblealiases = { "invincible", "inv" };
+    private String[] presetaliases = { "preset", "presets", "pre", "set", "p" };
+    private String[] avataraliases = { "avatar", "ava" };
     
     /*
      * Item Aliases
@@ -97,12 +97,14 @@ public class Commands {
                 for (int i = 0; i < args.length; i++) {
                     args[i] = args[i].toLowerCase();
                 }
+                
                 if (args.length == 0) {
                     s.sendMessage(ChatColor.RED + "/bending help [Ability/Command] " + ChatColor.YELLOW + "Display help.");
                     s.sendMessage(ChatColor.RED + "/bending choose [Element] " + ChatColor.YELLOW + "Choose an element.");
                     s.sendMessage(ChatColor.RED + "/bending bind [Ability] # " + ChatColor.YELLOW + "Bind an ability.");
                     return true;
                 }
+                
                 if (Arrays.asList(avataraliases).contains(args[0].toLowerCase())) {
                     if (!Methods.hasRPG()) {
                         s.sendMessage(ChatColor.RED + "This command cannot be used unless you have ProjectKorra (RPG) installed.");

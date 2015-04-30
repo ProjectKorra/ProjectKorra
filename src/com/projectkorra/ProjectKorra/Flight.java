@@ -59,6 +59,7 @@ public class Flight {
             instances.remove(player);
             return;
         }
+        
         player.setAllowFlight(couldFly);
         player.setFlying(wasFlying);
     }
@@ -99,6 +100,7 @@ public class Flight {
                     || airspoutplayers.contains(player)) {
                 continue;
             }
+            
             if (Bloodbending.isBloodbended(player)) {
                 player.setAllowFlight(true);
                 player.setFlying(false);

@@ -20,14 +20,11 @@ public class BendingManager implements Runnable {
     long time;
     long interval;
     
-    private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true
-                                                                                 // if
-                                                                                 // day
-                                                                                 // time
-    public static HashMap<World, String> events = new HashMap<World, String>(); // holds
-                                                                                // any
-                                                                                // current
-                                                                                // event.
+    private final HashMap<World, Boolean> times = new HashMap<World, Boolean>();
+    // true if day time
+    
+    public static HashMap<World, String> events = new HashMap<World, String>();
+    // holds any current event.
     
     static final String defaultsozinscometmessage = "Sozin's Comet is passing overhead! Firebending is now at its most powerful.";
     static final String defaultsolareclipsemessage = "A solar eclipse is out! Firebenders are temporarily powerless.";

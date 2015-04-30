@@ -18,6 +18,7 @@ public class DBConnection {
     public static void init() {
         if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
             sql = new MySQL(ProjectKorra.log, "[ProjectKorra] Establishing MySQL Connection...", host, port, user, pass, db);
+            
             if (((MySQL) sql).open() == null) {
                 ProjectKorra.log.severe("Disabling due to database error");
                 ProjectKorra.plugin.stopPlugin();

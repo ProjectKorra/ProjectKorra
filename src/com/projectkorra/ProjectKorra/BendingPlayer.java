@@ -50,15 +50,19 @@ public class BendingPlayer {
     public void addCooldown(String ability, long cooldown) {
         PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, Result.ADDED);
         Bukkit.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled())
+        
+        if (!event.isCancelled()) {
             this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
+        }
     }
     
     public void removeCooldown(String ability) {
         PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, Result.REMOVED);
         Bukkit.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled())
+        
+        if (!event.isCancelled()) {
             this.cooldowns.remove(ability);
+        }
     }
     
     public UUID getUUID() {
@@ -129,8 +133,7 @@ public class BendingPlayer {
     public void setAbilities(HashMap<Integer, String> abilities) {
         this.abilities = abilities;
         for (int i = 1; i <= 9; i++) {
-            DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + (abilities.get(i) == null ? null : abilities.get(i)) + "' WHERE uuid = '"
-                    + uuid + "'");
+            DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + uuid + "'");
         }
     }
 }

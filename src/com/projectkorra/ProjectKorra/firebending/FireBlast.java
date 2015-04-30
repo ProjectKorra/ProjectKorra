@@ -260,8 +260,9 @@ public class FireBlast {
         for (int id : instances.keySet()) {
             Location fireblastlocation = instances.get(id).location;
             if (location.getWorld() == fireblastlocation.getWorld()) {
-                if (location.distance(fireblastlocation) <= radius)
+                if (location.distance(fireblastlocation) <= radius) {
                     list.add(instances.get(id));
+                }
             }
         }
         return list;

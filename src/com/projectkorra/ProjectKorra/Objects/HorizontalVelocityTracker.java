@@ -1,8 +1,7 @@
 package com.projectkorra.ProjectKorra.Objects;
 
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Utilities.HorizontalVelocityChangeEvent;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -10,8 +9,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.HorizontalVelocityChangeEvent;
 
 /**
  * Created by Carbogen on 2/2/2015.
@@ -56,36 +56,25 @@ public class HorizontalVelocityTracker
         
         List<Block> blocks = Methods.getBlocksAroundPoint(entity.getLocation(), 1.5);
         
-        if (entity.isOnGround())
-        {
+        if (entity.isOnGround()) {
             remove();
             return;
         }
         
-        for (Block b : blocks)
-        {
-            if (Methods.isWater(b))
-            {
+        for (Block b : blocks) {
+            if (Methods.isWater(b)) {
                 remove();
                 return;
             }
         }
         
-        if (thisVelocity.length() < lastVelocity.length())
-        {
-            if ((diff.getX() > 1 || diff.getX() < -1)
-                    || (diff.getZ() > 1 || diff.getZ() < -1))
-            {
+        if (thisVelocity.length() < lastVelocity.length()) {
+            if ((diff.getX() > 1 || diff.getX() < -1) || (diff.getZ() > 1 || diff.getZ() < -1)) {
                 impactLocation = entity.getLocation();
-                for (Block b : blocks)
-                {
-                    if (!Methods.isTransparentToEarthbending(instigator, b))
-                    {
-                        ProjectKorra.plugin
-                                .getServer()
-                                .getPluginManager()
-                                .callEvent(
-                                        new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation));
+                for (Block b : blocks) {
+                    if (!Methods.isTransparentToEarthbending(instigator, b)) {
+                        ProjectKorra.plugin.getServer().getPluginManager().callEvent(
+                                new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation));
                         remove();
                         return;
                     }
@@ -96,8 +85,9 @@ public class HorizontalVelocityTracker
     
     public static void updateAll()
     {
-        for (Entity e : instances.keySet())
+        for (Entity e : instances.keySet()) {
             instances.get(e).update();
+        }
     }
     
     public void remove()
@@ -107,7 +97,8 @@ public class HorizontalVelocityTracker
     
     public static void remove(Entity e)
     {
-        if (instances.containsKey(e))
+        if (instances.containsKey(e)) {
             instances.remove(e);
+        }
     }
 }

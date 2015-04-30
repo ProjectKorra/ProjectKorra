@@ -564,12 +564,12 @@ public class Methods {
                 // The player has at least played before.
                 String player2 = rs2.getString("player");
                 if (!player.equalsIgnoreCase(player2)) {
-                    DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'"); // They
-                                                                                                                                            // have
-                                                                                                                                            // changed
-                                                                                                                                            // names.
+                    DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
+                    // They have changed names.
+                    
                     ProjectKorra.log.info("Updating Player Name for " + player);
                 }
+                
                 String element = rs2.getString("element");
                 String permaremoved = rs2.getString("permaremoved");
                 boolean p = false;
@@ -590,19 +590,13 @@ public class Methods {
                 final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
                 for (int i = 1; i <= 9; i++) {
                     String slot = rs2.getString("slot" + i);
-                    if (slot != null)
+                    
+                    if (slot != null) {
                         abilities.put(i, slot);
+                    }
                 }
                 
-                if (permaremoved == null) {
-                    p = false;
-                }
-                else if (permaremoved.equals("true")) {
-                    p = true;
-                }
-                else if (permaremoved.equals("false")) {
-                    p = false;
-                }
+                p = (permaremoved == null ? false : (permaremoved.equals("true") ? true : (permaremoved.equals("false") ? false : p)));
                 
                 final boolean boolean_p = p;
                 new BukkitRunnable() {
@@ -631,9 +625,8 @@ public class Methods {
     @SuppressWarnings("deprecation")
     public static void damageEntity(Player player, Entity entity, double damage) {
         if (entity instanceof LivingEntity) {
-            if (entity instanceof Player) {
-                if (Commands.invincible.contains(((Player) entity).getName()))
-                    return;
+            if (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())) {
+                return;
             }
             
             EntityDamageEvent damageEvent = new EntityDamageEvent(entity, DamageCause.CUSTOM, damage);
@@ -696,8 +689,9 @@ public class Methods {
      *            The items to drop.
      */
     public static void dropItems(Block block, Collection<ItemStack> items) {
-        for (ItemStack item : items)
+        for (ItemStack item : items) {
             block.getWorld().dropItem(block.getLocation(), item);
+        }
     }
     
     /**
@@ -712,8 +706,9 @@ public class Methods {
      */
     public static String getAbility(String string) {
         for (String st : AbilityModuleManager.abilities) {
-            if (st.equalsIgnoreCase(string))
+            if (st.equalsIgnoreCase(string)) {
                 return st;
+            }
         }
         return null;
     }
@@ -733,35 +728,46 @@ public class Methods {
      *         </p>
      */
     public static ChatColor getAbilityColor(String ability) {
-        if (AbilityModuleManager.chiabilities.contains(ability))
+        if (AbilityModuleManager.chiabilities.contains(ability)) {
             return getChiColor();
-        if (AbilityModuleManager.airbendingabilities.contains(ability))
-        {
-            if (AbilityModuleManager.subabilities.contains(ability))
+        }
+        
+        if (AbilityModuleManager.airbendingabilities.contains(ability)) {
+            if (AbilityModuleManager.subabilities.contains(ability)) {
                 return getSubBendingColor(Element.Air);
+            }
+            
             return getAirColor();
         }
+        
         if (AbilityModuleManager.waterbendingabilities.contains(ability))
         {
-            if (AbilityModuleManager.subabilities.contains(ability))
+            if (AbilityModuleManager.subabilities.contains(ability)) {
                 return getSubBendingColor(Element.Water);
+            }
+            
             return getWaterColor();
         }
+        
         if (AbilityModuleManager.earthbendingabilities.contains(ability))
         {
-            if (AbilityModuleManager.subabilities.contains(ability))
+            if (AbilityModuleManager.subabilities.contains(ability)) {
                 return getSubBendingColor(Element.Earth);
+            }
+            
             return getEarthColor();
         }
+        
         if (AbilityModuleManager.firebendingabilities.contains(ability))
         {
-            if (AbilityModuleManager.subabilities.contains(ability))
+            if (AbilityModuleManager.subabilities.contains(ability)) {
                 return getSubBendingColor(Element.Fire);
+            }
+            
             return getFireColor();
         }
         
-        else
-            return getAvatarColor();
+        return getAvatarColor();
     }
     
     /**
@@ -818,7 +824,7 @@ public class Methods {
             for (int y = yorg - r; y <= yorg + r; y++) {
                 for (int z = zorg - r; z <= zorg + r; z++) {
                     Block block = location.getWorld().getBlockAt(x, y, z);
-                    if (block.getLocation().distance(location) <= radius) {
+                    if (block.getLocation().distanceSquared(location) <= radius * radius) {
                         blocks.add(block);
                     }
                 }
@@ -840,8 +846,10 @@ public class Methods {
      */
     public static String getBoundAbility(Player player) {
         BendingPlayer bPlayer = getBendingPlayer(player.getName());
-        if (bPlayer == null)
+        
+        if (bPlayer == null) {
             return null;
+        }
         
         int slot = player.getInventory().getHeldItemSlot() + 1;
         return bPlayer.getAbilities().get(slot);
@@ -928,8 +936,7 @@ public class Methods {
         
     }
     
-    public static double getDistanceFromLine(Vector line, Location pointonline,
-            Location point) {
+    public static double getDistanceFromLine(Vector line, Location pointonline, Location point) {
         
         Vector AP = new Vector();
         double Ax, Ay, Az;
@@ -960,7 +967,7 @@ public class Methods {
      *            The block data to change the block into
      * @param breakitem
      *            Unused
-     * @return The item drops fromt the specified block
+     * @return The item drops from the specified block
      */
     @SuppressWarnings("deprecation")
     public static Collection<ItemStack> getDrops(Block block, Material type, byte data, ItemStack breakitem) {
@@ -997,14 +1004,20 @@ public class Methods {
     @SuppressWarnings("deprecation")
     public static Block getEarthSourceBlock(Player player, double range) {
         Block testblock = player.getTargetBlock(getTransparentEarthbending(), (int) range);
-        if (isEarthbendable(player, testblock))
+        
+        if (isEarthbendable(player, testblock)) {
             return testblock;
+        }
+        
         Location location = player.getEyeLocation();
         Vector vector = location.getDirection().clone().normalize();
         for (double i = 0; i <= range; i++) {
             Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-            if (isRegionProtectedFromBuild(player, "RaiseEarth", location))
+            
+            if (isRegionProtectedFromBuild(player, "RaiseEarth", location)) {
                 continue;
+            }
+            
             if (isEarthbendable(player, block)) {
                 return block;
             }
@@ -1087,8 +1100,10 @@ public class Methods {
      */
     @Deprecated
     public static double getFirebendingDayAugment(World world) {
-        if (isDay(world))
+        if (isDay(world)) {
             return plugin.getConfig().getDouble("Properties.Fire.DayFactor");
+        }
+        
         return 1;
     }
     
@@ -1140,8 +1155,7 @@ public class Methods {
     @SuppressWarnings("incomplete-switch")
     public static ChatColor getSubBendingColor(Element element)
     {
-        switch (element)
-        {
+        switch (element) {
             case Fire:
                 return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.FireSub"));
             case Air:
@@ -1162,12 +1176,10 @@ public class Methods {
         ortho = ortho.multiply(length);
         
         return rotateVectorAroundVector(axis, ortho, degrees);
-        
     }
     
     public static Location getPointOnLine(Location origin, Location target, double distance) {
-        return origin.clone().add(
-                getDirection(origin, target).normalize().multiply(distance));
+        return origin.clone().add(getDirection(origin, target).normalize().multiply(distance));
         
     }
     
@@ -1177,30 +1189,35 @@ public class Methods {
         Entity target = null;
         Location origin = player.getEyeLocation();
         Vector direction = player.getEyeLocation().getDirection().normalize();
+        
         for (Entity entity : origin.getWorld().getEntities()) {
-            if (avoid.contains(entity))
+            if (avoid.contains(entity)) {
                 continue;
-            if (entity.getLocation().distance(origin) < longestr
+            }
+            
+            if (entity.getLocation().distanceSquared(origin) < longestr * longestr
                     && getDistanceFromLine(direction, origin, entity.getLocation()) < 2
                     && (entity instanceof LivingEntity)
                     && entity.getEntityId() != player.getEntityId()
-                    && entity.getLocation().distance(origin.clone().add(direction)) <
-                    entity.getLocation().distance(origin.clone().add(direction.clone().multiply(-1)))) {
+                    && entity.getLocation().distanceSquared(origin.clone().add(direction)) <
+                    entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))) {
+                
                 target = entity;
                 longestr = entity.getLocation().distance(origin);
             }
         }
+        
         if (target != null) {
             List<Block> blklist = new ArrayList<Block>();
             blklist = Methods.getBlocksAlongLine(player.getLocation(), target.getLocation(), player.getWorld());
-            for (Block isair : blklist)
-            {
+            for (Block isair : blklist) {
                 if (Methods.isObstructed(origin, target.getLocation())) {
                     target = null;
                     break;
                 }
             }
         }
+        
         return target;
     }
     
@@ -1216,41 +1233,19 @@ public class Methods {
         int y2 = tloc.getBlockY();
         int z2 = tloc.getBlockZ();
         
-        // Then we create the following integers
-        int xMin, yMin, zMin;
-        int xMax, yMax, zMax;
-        int x, y, z;
+        int xMin = Math.min(x1, x2);
+        int xMax = Math.max(x1, x2);
         
-        // Now we need to make sure xMin is always lower then xMax
-        if (x1 > x2) { // If x1 is a higher number then x2
-            xMin = x2;
-            xMax = x1;
-        } else {
-            xMin = x1;
-            xMax = x2;
-        }
-        // Same with Y
-        if (y1 > y2) {
-            yMin = y2;
-            yMax = y1;
-        } else {
-            yMin = y1;
-            yMax = y2;
-        }
+        int yMin = Math.min(y1, y2);
+        int yMax = Math.max(y1, y2);
         
-        // And Z
-        if (z1 > z2) {
-            zMin = z2;
-            zMax = z1;
-        } else {
-            zMin = z1;
-            zMax = z2;
-        }
+        int zMin = Math.min(z1, z2);
+        int zMax = Math.max(z1, z2);
         
         // Now it's time for the loop
-        for (x = xMin; x <= xMax; x++) {
-            for (y = yMin; y <= yMax; y++) {
-                for (z = zMin; z <= zMax; z++) {
+        for (int x = xMin; x <= xMax; x++) {
+            for (int y = yMin; y <= yMax; y++) {
+                for (int z = zMin; z <= zMax; z++) {
                     Block b = new Location(w, x, y, z).getBlock();
                     blocks.add(b);
                 }
@@ -1266,12 +1261,12 @@ public class Methods {
         Location origin = player.getEyeLocation();
         Vector direction = origin.getDirection();
         
-        HashSet<Byte> trans = new HashSet<Byte>();
-        trans.add((byte) 0);
+        HashSet<Byte> trans = null;
         
-        if (nonOpaque2 == null) {
-            trans = null;
-        } else {
+        if (nonOpaque2 != null) {
+            trans = new HashSet<Byte>();
+            trans.add((byte) 0);
+            
             for (int i : nonOpaque2) {
                 trans.add((byte) i);
             }
@@ -1290,9 +1285,11 @@ public class Methods {
     
     public static HashSet<Byte> getTransparentEarthbending() {
         HashSet<Byte> set = new HashSet<Byte>();
+        
         for (int i : transparentToEarthbending) {
             set.add((byte) i);
         }
+        
         return set;
     }
     
@@ -1301,8 +1298,7 @@ public class Methods {
             if (isNight(world)) {
                 if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
                     return RPGMethods.getFactor(WorldEvents.LunarEclipse);
-                }
-                else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+                } else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
                     return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
                 }
                 return plugin.getConfig().getDouble("Properties.Water.NightFactor");
@@ -1312,10 +1308,14 @@ public class Methods {
         } else {
             // Bukkit.getServer().broadcastMessage("RPG NOT DETECTED");
             
-            if (isNight(world) && BendingManager.events.get(world).equalsIgnoreCase("FullMoon"))
+            if (isNight(world) && BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
                 return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor");
-            if (isNight(world))
+            }
+            
+            if (isNight(world)) {
                 return plugin.getConfig().getDouble("Properties.Water.NightFactor");
+            }
+            
             return 1;
         }
     }
@@ -1330,24 +1330,22 @@ public class Methods {
     }
     
     @SuppressWarnings("deprecation")
-    public static Block getWaterSourceBlock(Player player, double range,
-            boolean plantbending) {
+    public static Block getWaterSourceBlock(Player player, double range, boolean plantbending) {
         Location location = player.getEyeLocation();
         Vector vector = location.getDirection().clone().normalize();
+        
         for (double i = 0; i <= range; i++) {
-            Block block = location.clone().add(vector.clone().multiply(i))
-                    .getBlock();
-            if (isRegionProtectedFromBuild(player, "WaterManipulation",
-                    location))
+            Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+            
+            if (isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
                 continue;
-            if (isWaterbendable(block, player)
-                    && (!isPlant(block) || plantbending)) {
+            }
+            
+            if (isWaterbendable(block, player) && (!isPlant(block) || plantbending)) {
                 if (TempBlock.isTempBlock(block)) {
                     TempBlock tb = TempBlock.get(block);
                     byte full = 0x0;
-                    if (tb.state.getRawData() != full
-                            && (tb.state.getType() != Material.WATER || tb.state
-                                    .getType() != Material.STATIONARY_WATER)) {
+                    if (tb.state.getRawData() != full && (tb.state.getType() != Material.WATER || tb.state.getType() != Material.STATIONARY_WATER)) {
                         continue;
                     }
                 }
@@ -1362,18 +1360,17 @@ public class Methods {
         Location location = player.getEyeLocation();
         Vector vector = location.getDirection().clone().normalize();
         for (double i = 0; i <= range; i++) {
-            Block block = location.clone().add(vector.clone().multiply(i))
-                    .getBlock();
-            if (isRegionProtectedFromBuild(player, "LavaSurge",
-                    location))
+            Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+            
+            if (isRegionProtectedFromBuild(player, "LavaSurge", location)) {
                 continue;
+            }
+            
             if (isLavabendable(block, player)) {
                 if (TempBlock.isTempBlock(block)) {
                     TempBlock tb = TempBlock.get(block);
                     byte full = 0x0;
-                    if (tb.state.getRawData() != full
-                            && (tb.state.getType() != Material.LAVA || tb.state
-                                    .getType() != Material.STATIONARY_LAVA)) {
+                    if (tb.state.getRawData() != full && (tb.state.getType() != Material.LAVA || tb.state.getType() != Material.STATIONARY_LAVA)) {
                         continue;
                     }
                 }
@@ -1388,11 +1385,16 @@ public class Methods {
         Vector vector = location.getDirection().clone().normalize();
         for (double i = 0; i <= range; i++) {
             Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-            if (isRegionProtectedFromBuild(player, "IceBlast", location))
+            
+            if (isRegionProtectedFromBuild(player, "IceBlast", location)) {
                 continue;
+            }
+            
             if (isIcebendable(block)) {
-                if (TempBlock.isTempBlock(block))
+                if (TempBlock.isTempBlock(block)) {
                     continue;
+                }
+                
                 return block;
             }
         }
@@ -1407,20 +1409,26 @@ public class Methods {
     
     public static boolean isAbilityInstalled(String name, String author) {
         String ability = getAbility(name);
-        if (ability == null)
+        
+        if (ability == null) {
             return false;
-        if (AbilityModuleManager.authors.get(name).equalsIgnoreCase(author))
+        }
+        
+        if (AbilityModuleManager.authors.get(name).equalsIgnoreCase(author)) {
             return true;
+        }
+        
         return false;
     }
     
     public static boolean isAdjacentToFrozenBlock(Block block) {
-        BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH,
-                BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
+        BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
         boolean adjacent = false;
+        
         for (BlockFace face : faces) {
-            if (FreezeMelt.frozenblocks.containsKey((block.getRelative(face))))
+            if (FreezeMelt.frozenblocks.containsKey((block.getRelative(face)))) {
                 adjacent = true;
+            }
         }
         
         return adjacent;
@@ -1428,31 +1436,38 @@ public class Methods {
     
     @SuppressWarnings("deprecation")
     public static boolean isAdjacentToThreeOrMoreSources(Block block) {
-        if (TempBlock.isTempBlock(block))
+        if (TempBlock.isTempBlock(block)) {
             return false;
+        }
+        
         int sources = 0;
         byte full = 0x0;
-        BlockFace[] faces = { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH,
-                BlockFace.SOUTH };
+        BlockFace[] faces = { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH };
         for (BlockFace face : faces) {
             Block blocki = block.getRelative(face);
-            if ((blocki.getType() == Material.LAVA || blocki.getType() == Material.STATIONARY_LAVA)
-                    && blocki.getData() == full
-                    && EarthPassive.canPhysicsChange(blocki))
+            
+            if ((blocki.getType() == Material.LAVA || blocki.getType() == Material.STATIONARY_LAVA) && blocki.getData() == full
+                    && EarthPassive.canPhysicsChange(blocki)) {
                 sources++;
-            if ((blocki.getType() == Material.WATER || blocki.getType() == Material.STATIONARY_WATER)
-                    && blocki.getData() == full
-                    && WaterManipulation.canPhysicsChange(blocki))
-                sources++;
-            if (FreezeMelt.frozenblocks.containsKey(blocki)) {
-                // if (FreezeMelt.frozenblocks.get(blocki) == full)
-                // sources++;
-            } else if (blocki.getType() == Material.ICE) {
-                // sources++;
             }
+            
+            if ((blocki.getType() == Material.WATER || blocki.getType() == Material.STATIONARY_WATER) && blocki.getData() == full
+                    && WaterManipulation.canPhysicsChange(blocki)) {
+                sources++;
+            }
+            
+            // if (FreezeMelt.frozenblocks.containsKey(blocki)) {
+            // if (FreezeMelt.frozenblocks.get(blocki) == full)
+            // sources++;
+            // } else if (blocki.getType() == Material.ICE) {
+            // sources++;
+            // }
         }
-        if (sources >= 2)
+        
+        if (sources >= 2) {
             return true;
+        }
+        
         return false;
     }
     
@@ -1462,65 +1477,59 @@ public class Methods {
     
     public static boolean isBender(String player, Element element) {
         BendingPlayer bPlayer = getBendingPlayer(player);
-        if (bPlayer == null)
+        
+        if (bPlayer == null) {
             return false;
-        if (bPlayer.hasElement(element))
+        }
+        
+        if (bPlayer.hasElement(element)) {
             return true;
+        }
+        
         return false;
     }
     
-    public static boolean isCombustionbendingAbility(String ability)
-    {
+    public static boolean isCombustionbendingAbility(String ability) {
         return AbilityModuleManager.combustionabilities.contains(ability);
     }
     
-    public static boolean isLightningbendingAbility(String ability)
-    {
+    public static boolean isLightningbendingAbility(String ability) {
         return AbilityModuleManager.lightningabilities.contains(ability);
     }
     
-    public static boolean isHealingAbility(String ability)
-    {
+    public static boolean isHealingAbility(String ability) {
         return AbilityModuleManager.healingabilities.contains(ability);
     }
     
-    public static boolean isIcebendingAbility(String ability)
-    {
+    public static boolean isIcebendingAbility(String ability) {
         return AbilityModuleManager.iceabilities.contains(ability);
     }
     
-    public static boolean isPlantbendingAbility(String ability)
-    {
+    public static boolean isPlantbendingAbility(String ability) {
         return AbilityModuleManager.plantabilities.contains(ability);
     }
     
-    public static boolean isBloodbendingAbility(String ability)
-    {
+    public static boolean isBloodbendingAbility(String ability) {
         return AbilityModuleManager.bloodabilities.contains(ability);
     }
     
-    public static boolean isFlightAbility(String ability)
-    {
+    public static boolean isFlightAbility(String ability) {
         return AbilityModuleManager.flightabilities.contains(ability);
     }
     
-    public static boolean isSpiritualProjectionAbility(String ability)
-    {
+    public static boolean isSpiritualProjectionAbility(String ability) {
         return AbilityModuleManager.spiritualprojectionabilities.contains(ability);
     }
     
-    public static boolean isLavabendingAbility(String ability)
-    {
+    public static boolean isLavabendingAbility(String ability) {
         return AbilityModuleManager.lavaabilities.contains(ability);
     }
     
-    public static boolean isMetalbendingAbility(String ability)
-    {
+    public static boolean isMetalbendingAbility(String ability) {
         return AbilityModuleManager.metalabilities.contains(ability);
     }
     
-    public static boolean isSandbendingAbility(String ability)
-    {
+    public static boolean isSandbendingAbility(String ability) {
         return AbilityModuleManager.sandabilities.contains(ability);
     }
     
@@ -1532,17 +1541,18 @@ public class Methods {
         if (Methods.getBendingPlayer(player) != null) {
             return Methods.getBendingPlayer(player).isChiBlocked();
         }
+        
         return false;
     }
     
     public static boolean isDay(World world) {
-        long time = world.getTime();
-        if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END)
-            return true;
-        if (time >= 23500 || time <= 12500) {
+        long time = world.getTime() % 24000;
+        
+        if (world.getEnvironment() != Environment.NORMAL) {
             return true;
         }
-        return false;
+        
+        return time >= 23500 || time <= 12500;
     }
     
     public static boolean isEarthAbility(String ability) {
@@ -1562,28 +1572,31 @@ public class Methods {
         return value * ProjectKorra.plugin.getConfig().getDouble("Properties.Earth.MetalPowerFactor");
     }
     
-    public static boolean isEarthbendable(Player player, String ability, Block block)
-    {
+    public static boolean isEarthbendable(Player player, String ability, Block block) {
         Material material = block.getType();
         boolean valid = false;
-        for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks"))
+        for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks")) {
             if (material == Material.getMaterial(s)) {
                 valid = true;
                 break;
             }
+        }
         if (isMetal(block) && canMetalbend(player)) {
             valid = true;
         }
         
-        if (!valid)
+        if (!valid) {
             return false;
+        }
         
-        if (tempNoEarthbending.contains(block))
+        if (tempNoEarthbending.contains(block)) {
             return false;
+        }
         
-        if (!isRegionProtectedFromBuild(player, ability,
-                block.getLocation()))
+        if (!isRegionProtectedFromBuild(player, ability, block.getLocation())) {
             return true;
+        }
+        
         return false;
     }
     
@@ -1594,9 +1607,11 @@ public class Methods {
     public static boolean isFullMoon(World world) {
         long days = world.getFullTime() / 24000;
         long phase = days % 8;
+        
         if (phase == 0) {
             return true;
         }
+        
         return false;
     }
     
@@ -1612,30 +1627,24 @@ public class Methods {
         if (block.getType() == Material.ICE || block.getType() == Material.SNOW) {
             return true;
         }
+        
         return false;
     }
     
     public static boolean isMetalBlock(Block block) {
-        if (block.getType() == Material.GOLD_BLOCK
-                || block.getType() == Material.IRON_BLOCK
-                || block.getType() == Material.IRON_ORE
-                || block.getType() == Material.GOLD_ORE
-                || block.getType() == Material.QUARTZ_BLOCK
-                || block.getType() == Material.QUARTZ_ORE)
-            return true;
-        return false;
+        Material type = block.getType();
+        return type == Material.GOLD_BLOCK
+                || type == Material.IRON_BLOCK
+                || type == Material.IRON_ORE
+                || type == Material.GOLD_ORE
+                || type == Material.QUARTZ_BLOCK
+                || type == Material.QUARTZ_ORE;
     }
     
     public static boolean isNight(World world) {
-        if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
-            return false;
-        }
+        long time = world.getTime() % 24000;
         
-        long time = world.getTime();
-        if (time >= 12950 && time <= 23050) {
-            return true;
-        }
-        return false;
+        return world.getEnvironment() == Environment.NORMAL && time >= 12950 && time <= 23050;
     }
     
     @SuppressWarnings("deprecation")
@@ -1653,10 +1662,9 @@ public class Methods {
         for (double i = 0; i <= max; i++) {
             loc = location1.clone().add(direction.clone().multiply(i));
             Material type = loc.getBlock().getType();
-            if (type != Material.AIR
-                    && !Arrays.asList(transparentToEarthbending).contains(
-                            type.getId()))
+            if (type != Material.AIR && !Arrays.asList(transparentToEarthbending).contains(type.getId())) {
                 return true;
+            }
         }
         
         return false;
@@ -1664,9 +1672,7 @@ public class Methods {
     
     @SuppressWarnings("deprecation")
     public static boolean isPlant(Block block) {
-        if (Arrays.asList(plantIds).contains(block.getTypeId()))
-            return true;
-        return false;
+        return Arrays.asList(plantIds).contains(block.getTypeId());
     }
     
     /*
@@ -1678,8 +1684,9 @@ public class Methods {
      * in the map first.
      */
     public static boolean isRegionProtectedFromBuild(Player player, String ability, Location loc) {
-        if (!blockProtectionCache.containsKey(player.getName()))
+        if (!blockProtectionCache.containsKey(player.getName())) {
             blockProtectionCache.put(player.getName(), new ConcurrentHashMap<Block, BlockCacheElement>());
+        }
         
         ConcurrentHashMap<Block, BlockCacheElement> blockMap = blockProtectionCache.get(player.getName());
         Block block = loc.getBlock();
@@ -1687,8 +1694,7 @@ public class Methods {
             BlockCacheElement elem = blockMap.get(block);
             
             // both abilities must be equal to each other to use the cache
-            if ((ability == null && elem.getAbility() == null)
-                    || (ability != null && elem.getAbility() != null && elem.getAbility().equals(ability))) {
+            if ((ability == null && elem.getAbility() == null) || (ability != null && elem.getAbility() != null && elem.getAbility().equals(ability))) {
                 return elem.isAllowed();
             }
         }
@@ -1711,10 +1717,13 @@ public class Methods {
         Set<String> ignite = AbilityModuleManager.igniteabilities;
         Set<String> explode = AbilityModuleManager.explodeabilities;
         
-        if (ability == null && allowharmless)
+        if (ability == null && allowharmless) {
             return false;
-        if (isHarmlessAbility(ability) && allowharmless)
+        }
+        
+        if (isHarmlessAbility(ability) && allowharmless) {
             return false;
+        }
         
         PluginManager pm = Bukkit.getPluginManager();
         
@@ -1740,22 +1749,22 @@ public class Methods {
                 }
             }
             if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
-                WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit
-                        .getPluginManager().getPlugin("WorldGuard");
-                if (!player.isOnline())
+                WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit.getPluginManager().getPlugin("WorldGuard");
+                
+                if (!player.isOnline()) {
                     return true;
+                }
                 
                 if (ignite.contains(ability)) {
-                    if (!wg.hasPermission(player, "worldguard.override.lighter")) {
-                        if (wg.getGlobalStateManager().get(world).blockLighter)
-                            return true;
+                    if (!wg.hasPermission(player, "worldguard.override.lighter") && wg.getGlobalStateManager().get(world).blockLighter) {
+                        return true;
                     }
                 }
+                
                 if (explode.contains(ability)) {
-                    if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions)
+                    if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions || !wg.canBuild(player, location)) {
                         return true;
-                    if (!wg.canBuild(player, location))
-                        return true;
+                    }
                 }
                 
                 if (!wg.canBuild(player, location.getBlock())) {
@@ -1767,14 +1776,14 @@ public class Methods {
                 PreciousStones ps = (PreciousStones) psp;
                 
                 if (ignite.contains(ability)) {
-                    if (ps.getForceFieldManager().hasSourceField(location,
-                            FieldFlag.PREVENT_FIRE))
+                    if (ps.getForceFieldManager().hasSourceField(location, FieldFlag.PREVENT_FIRE)) {
                         return true;
+                    }
                 }
                 if (explode.contains(ability)) {
-                    if (ps.getForceFieldManager().hasSourceField(location,
-                            FieldFlag.PREVENT_EXPLOSIONS))
+                    if (ps.getForceFieldManager().hasSourceField(location, FieldFlag.PREVENT_EXPLOSIONS)) {
                         return true;
+                    }
                 }
                 
                 // if (ps.getForceFieldManager().hasSourceField(location,
@@ -1796,80 +1805,69 @@ public class Methods {
                 WorldCoord worldCoord;
                 
                 try {
-                    TownyWorld tWorld = TownyUniverse.getDataSource().getWorld(
-                            world.getName());
-                    worldCoord = new WorldCoord(tWorld.getName(),
-                            Coord.parseCoord(location));
+                    TownyWorld tWorld = TownyUniverse.getDataSource().getWorld(world.getName());
+                    worldCoord = new WorldCoord(tWorld.getName(), Coord.parseCoord(location));
                     
-                    boolean bBuild = PlayerCacheUtil.getCachePermission(player,
-                            location, 3, (byte) 0,
-                            TownyPermission.ActionType.BUILD);
+                    boolean bBuild = PlayerCacheUtil.getCachePermission(player, location, 3, (byte) 0, TownyPermission.ActionType.BUILD);
                     
-                    if (ignite.contains(ability)) {
-                        
-                    }
+                    // if (ignite.contains(ability)) {
+                    //
+                    // }
                     
-                    if (explode.contains(ability)) {
-                        
-                    }
+                    // if (explode.contains(ability)) {
+                    //
+                    // }
                     
                     if (!bBuild) {
                         PlayerCache cache = twn.getCache(player);
                         TownBlockStatus status = cache.getStatus();
                         
-                        if (((status == TownBlockStatus.ENEMY) && TownyWarConfig
-                                .isAllowingAttacks())) {
-                            
+                        if (((status == TownBlockStatus.ENEMY) && TownyWarConfig.isAllowingAttacks())) {
                             try {
-                                TownyWar.callAttackCellEvent(twn, player,
-                                        location.getBlock(), worldCoord);
+                                TownyWar.callAttackCellEvent(twn, player, location.getBlock(), worldCoord);
                             } catch (Exception e) {
-                                TownyMessaging.sendErrorMsg(player,
-                                        e.getMessage());
+                                TownyMessaging.sendErrorMsg(player, e.getMessage());
                             }
                             
                             return true;
-                            
-                        } else if (status == TownBlockStatus.WARZONE) {
-                        } else {
+                        } else if (status != TownBlockStatus.WARZONE) {
                             return true;
                         }
                         
-                        if ((cache.hasBlockErrMsg()))
-                            TownyMessaging.sendErrorMsg(player,
-                                    cache.getBlockErrMsg());
+                        if ((cache.hasBlockErrMsg())) {
+                            TownyMessaging.sendErrorMsg(player, cache.getBlockErrMsg());
+                        }
                     }
                     
                 } catch (Exception e1) {
-                    TownyMessaging.sendErrorMsg(player, TownySettings
-                            .getLangString("msg_err_not_configured"));
+                    TownyMessaging.sendErrorMsg(player, TownySettings.getLangString("msg_err_not_configured"));
                 }
                 
             }
             
             if (gpp != null && respectGriefPrevention) {
                 Material type = player.getWorld().getBlockAt(location).getType();
-                if (type == null)
+                
+                if (type == null) {
                     type = Material.AIR;
+                }
+                
                 // String reason = GriefPrevention.instance.allowBuild(player,
                 // location, null); // NOT WORKING with WorldGuard 6.0 BETA 4
-                String reason = GriefPrevention.instance.allowBuild(player, location); // WORKING
-                                                                                       // with
-                                                                                       // WorldGuard
-                                                                                       // 6.0
-                                                                                       // BETA
-                                                                                       // 4
+                String reason = GriefPrevention.instance.allowBuild(player, location);
+                // WORKING with WorldGuard 6.0 BETA 4
                 
-                if (ignite.contains(ability)) {
-                    
-                }
+                // if (ignite.contains(ability)) {
+                //
+                // }
                 
-                if (explode.contains(ability)) {
-                    
-                }
+                // if (explode.contains(ability)) {
+                //
+                // }
                 
-                if (reason != null)
+                if (reason != null) {
                     return true;
+                }
             }
         }
         
@@ -1878,9 +1876,7 @@ public class Methods {
     
     @SuppressWarnings("deprecation")
     public static boolean isSolid(Block block) {
-        if (Arrays.asList(nonOpaque).contains(block.getTypeId()))
-            return false;
-        return true;
+        return !Arrays.asList(nonOpaque).contains(block.getTypeId());
     }
     
     public static boolean isTransparentToEarthbending(Player player, Block block) {
@@ -1888,26 +1884,20 @@ public class Methods {
     }
     
     @SuppressWarnings("deprecation")
-    public static boolean isTransparentToEarthbending(Player player,
-            String ability, Block block) {
-        if (!Arrays.asList(transparentToEarthbending).contains(block.getTypeId()))
+    public static boolean isTransparentToEarthbending(Player player, String ability, Block block) {
+        if (!Arrays.asList(transparentToEarthbending).contains(block.getTypeId())) {
             return false;
-        if (!isRegionProtectedFromBuild(player, ability,
-                block.getLocation()))
-            return true;
-        return false;
+        }
+        
+        return !isRegionProtectedFromBuild(player, ability, block.getLocation());
     }
     
     public static boolean isWater(Block block) {
-        if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER)
-            return true;
-        return false;
+        return block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER;
     }
     
     public static boolean isLava(Block block) {
-        if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA)
-            return true;
-        return false;
+        return block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA;
     }
     
     public static boolean isWaterAbility(String ability) {
@@ -1917,6 +1907,7 @@ public class Methods {
     @SuppressWarnings("deprecation")
     public static boolean isWaterbendable(Block block, Player player) {
         byte full = 0x0;
+        
         if (TempBlock.isTempBlock(block))
             return false;
         if ((block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) && block.getData() == full)
@@ -1927,6 +1918,7 @@ public class Methods {
             return true;
         if (canPlantbend(player) && isPlant(block))
             return true;
+        
         return false;
     }
     
@@ -1935,26 +1927,21 @@ public class Methods {
         byte full = 0x0;
         if (TempBlock.isTempBlock(block)) {
             TempBlock tblock = TempBlock.instances.get(block);
-            if (tblock == null || !LavaFlow.TEMP_LAVA_BLOCKS.contains(tblock))
+            if (tblock == null || !LavaFlow.TEMP_LAVA_BLOCKS.contains(tblock)) {
                 return false;
+            }
         }
-        if ((block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) && block.getData() == full)
-            return true;
-        return false;
+        
+        return (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) && block.getData() == full;
     }
     
     public static boolean isIcebendable(Block block) {
-        if (block.getType() == Material.ICE)
-            return true;
-        if (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce"))
-            return true;
-        return false;
+        return (block.getType() == Material.ICE)
+                || (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce"));
     }
     
     public static boolean isWeapon(Material mat) {
-        if (mat == null)
-            return false;
-        if (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE
+        return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE
                 || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD
                 
                 || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE
@@ -1964,38 +1951,33 @@ public class Methods {
                 || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE
                 
                 || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE
-                || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE)
-            return true;
-        return false;
+                || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE);
     }
     
-    public static void moveEarth(Player player, Block block, Vector direction,
-            int chainlength) {
+    public static void moveEarth(Player player, Block block, Vector direction, int chainlength) {
         moveEarth(player, block, direction, chainlength, true);
     }
     
-    public static boolean moveEarth(Player player, Block block,
-            Vector direction, int chainlength, boolean throwplayer) {
-        if (isEarthbendable(player, block)
-                && !isRegionProtectedFromBuild(player, "RaiseEarth",
-                        block.getLocation())) {
-            
+    public static boolean moveEarth(Player player, Block block, Vector direction, int chainlength, boolean throwplayer) {
+        if (isEarthbendable(player, block) && !isRegionProtectedFromBuild(player, "RaiseEarth", block.getLocation())) {
             boolean up = false;
             boolean down = false;
             Vector norm = direction.clone().normalize();
+            
             if (norm.dot(new Vector(0, 1, 0)) == 1) {
                 up = true;
             } else if (norm.dot(new Vector(0, -1, 0)) == 1) {
                 down = true;
             }
+            
             Vector negnorm = norm.clone().multiply(-1);
             
             Location location = block.getLocation();
             
             ArrayList<Block> blocks = new ArrayList<Block>();
             for (double j = -2; j <= chainlength; j++) {
-                Block checkblock = location.clone()
-                        .add(negnorm.clone().multiply(j)).getBlock();
+                Block checkblock = location.clone().add(negnorm.clone().multiply(j)).getBlock();
+                
                 if (!tempnophysics.contains(checkblock)) {
                     blocks.add(checkblock);
                     tempnophysics.add(checkblock);
@@ -2007,29 +1989,25 @@ public class Methods {
                 EarthPassive.revertSand(block);
             }
             
-            if (affectedblock == null)
+            if (affectedblock == null) {
                 return false;
+            }
+            
             if (isTransparentToEarthbending(player, affectedblock)) {
                 if (throwplayer) {
-                    for (Entity entity : getEntitiesAroundPoint(
-                            affectedblock.getLocation(), 1.75)) {
+                    for (Entity entity : getEntitiesAroundPoint(affectedblock.getLocation(), 1.75)) {
                         if (entity instanceof LivingEntity) {
                             LivingEntity lentity = (LivingEntity) entity;
-                            if (lentity.getEyeLocation().getBlockX() == affectedblock
-                                    .getX()
-                                    && lentity.getEyeLocation().getBlockZ() == affectedblock
-                                            .getZ())
-                                if (!(entity instanceof FallingBlock))
-                                    entity.setVelocity(norm.clone().multiply(
-                                            .75));
-                        } else {
-                            if (entity.getLocation().getBlockX() == affectedblock
-                                    .getX()
-                                    && entity.getLocation().getBlockZ() == affectedblock
-                                            .getZ())
-                                if (!(entity instanceof FallingBlock))
-                                    entity.setVelocity(norm.clone().multiply(
-                                            .75));
+                            
+                            if (lentity.getEyeLocation().getBlockX() == affectedblock.getX() && lentity.getEyeLocation().getBlockZ() == affectedblock.getZ()) {
+                                if (!(entity instanceof FallingBlock)) {
+                                    entity.setVelocity(norm.clone().multiply(0.75));
+                                }
+                            }
+                        } else if (entity.getLocation().getBlockX() == affectedblock.getX() && entity.getLocation().getBlockZ() == affectedblock.getZ()) {
+                            if (!(entity instanceof FallingBlock)) {
+                                entity.setVelocity(norm.clone().multiply(0.75));
+                            }
                         }
                     }
                     
@@ -2039,8 +2017,7 @@ public class Methods {
                     Block topblock = affectedblock.getRelative(BlockFace.UP);
                     if (topblock.getType() != Material.AIR) {
                         breakBlock(affectedblock);
-                    } else if (!affectedblock.isLiquid()
-                            && affectedblock.getType() != Material.AIR) {
+                    } else if (!affectedblock.isLiquid() && affectedblock.getType() != Material.AIR) {
                         moveEarthBlock(affectedblock, topblock);
                     }
                 } else {
@@ -2051,69 +2028,58 @@ public class Methods {
                 playEarthbendingSound(block.getLocation());
                 
                 for (double i = 1; i < chainlength; i++) {
-                    affectedblock = location
-                            .clone()
-                            .add(negnorm.getX() * i, negnorm.getY() * i,
-                                    negnorm.getZ() * i).getBlock();
+                    affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();
                     if (!isEarthbendable(player, affectedblock)) {
-                        if (down) {
-                            if (isTransparentToEarthbending(player,
-                                    affectedblock)
-                                    && !affectedblock.isLiquid()
-                                    && affectedblock.getType() != Material.AIR) {
-                                moveEarthBlock(affectedblock, block);
-                            }
+                        if (down && isTransparentToEarthbending(player, affectedblock) && !affectedblock.isLiquid() && affectedblock.getType() != Material.AIR) {
+                            moveEarthBlock(affectedblock, block);
                         }
+                        
                         break;
                     }
+                    
                     if (EarthPassive.isPassiveSand(affectedblock)) {
                         EarthPassive.revertSand(affectedblock);
                     }
+                    
                     if (block == null) {
                         for (Block checkblock : blocks) {
                             tempnophysics.remove(checkblock);
                         }
                         return false;
                     }
+                    
                     moveEarthBlock(affectedblock, block);
                     block = affectedblock;
                 }
                 
                 int i = chainlength;
-                affectedblock = location
-                        .clone()
-                        .add(negnorm.getX() * i, negnorm.getY() * i,
-                                negnorm.getZ() * i).getBlock();
-                if (!isEarthbendable(player, affectedblock)) {
-                    if (down) {
-                        if (isTransparentToEarthbending(player, affectedblock)
-                                && !affectedblock.isLiquid()) {
-                            moveEarthBlock(affectedblock, block);
-                        }
-                    }
-                }
+                affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();
                 
+                if (!isEarthbendable(player, affectedblock) && down && isTransparentToEarthbending(player, affectedblock) && !affectedblock.isLiquid()) {
+                    moveEarthBlock(affectedblock, block);
+                }
             } else {
                 for (Block checkblock : blocks) {
                     tempnophysics.remove(checkblock);
                 }
+                
                 return false;
             }
+            
             for (Block checkblock : blocks) {
                 tempnophysics.remove(checkblock);
             }
+            
             return true;
         }
         return false;
     }
     
-    public static void moveEarth(Player player, Location location,
-            Vector direction, int chainlength) {
+    public static void moveEarth(Player player, Location location, Vector direction, int chainlength) {
         moveEarth(player, location, direction, chainlength, true);
     }
     
-    public static void moveEarth(Player player, Location location,
-            Vector direction, int chainlength, boolean throwplayer) {
+    public static void moveEarth(Player player, Location location, Vector direction, int chainlength, boolean throwplayer) {
         Block block = location.getBlock();
         moveEarth(player, block, direction, chainlength, throwplayer);
     }
@@ -2141,6 +2107,7 @@ public class Methods {
         } else {
             source.setType(Material.AIR);
         }
+        
         if (info.getState().getType() == Material.SAND) {
             target.setType(Material.SANDSTONE);
         } else {
@@ -2151,16 +2118,18 @@ public class Methods {
     
     public static ParticleEffect getAirbendingParticles() {
         String particle = plugin.getConfig().getString("Properties.Air.Particles");
-        if (particle == null)
+        
+        if (particle == null) {
             return ParticleEffect.CLOUD;
-        else if (particle.equalsIgnoreCase("spell"))
+        } else if (particle.equalsIgnoreCase("spell")) {
             return ParticleEffect.SPELL;
-        else if (particle.equalsIgnoreCase("blacksmoke"))
+        } else if (particle.equalsIgnoreCase("blacksmoke")) {
             return ParticleEffect.SMOKE;
-        else if (particle.equalsIgnoreCase("smoke"))
+        } else if (particle.equalsIgnoreCase("smoke")) {
             return ParticleEffect.CLOUD;
-        else
+        } else {
             return ParticleEffect.CLOUD;
+        }
     }
     
     public static Collection<Player> getPlayersAroundPoint(Location location, double distance) {
@@ -2179,29 +2148,27 @@ public class Methods {
     
     public static void playAirbendingParticles(Location loc, int amount, float xOffset, float yOffset, float zOffset) {
         String particle = plugin.getConfig().getString("Properties.Air.Particles");
-        if (particle == null) {
-            for (int i = 0; i < amount; i++) {
-                ParticleEffect.CLOUD.display(loc, xOffset, yOffset, zOffset, 0, 1);
+        ParticleEffect effect = null;
+        
+        if (particle != null) {
+            if (particle.equalsIgnoreCase("spell")) {
+                effect = ParticleEffect.SPELL;
+            } else if (particle.equalsIgnoreCase("blacksmoke")) {
+                effect = ParticleEffect.SMOKE;
+            } else if (particle.equalsIgnoreCase("smoke")) {
+                effect = ParticleEffect.CLOUD;
             }
+        } else {
+            effect = ParticleEffect.CLOUD;
         }
-        else if (particle.equalsIgnoreCase("spell")) {
-            for (int i = 0; i < amount; i++) {
-                ParticleEffect.SPELL.display(loc, xOffset, yOffset, zOffset, 0, 1);
-            }
-        }
-        else if (particle.equalsIgnoreCase("blacksmoke")) {
-            for (int i = 0; i < amount; i++) {
-                ParticleEffect.SMOKE.display(loc, xOffset, yOffset, zOffset, 0, 1);
-            }
-        }
-        else if (particle.equalsIgnoreCase("smoke")) {
-            for (int i = 0; i < amount; i++) {
-                ParticleEffect.CLOUD.display(loc, xOffset, yOffset, zOffset, 0, 1);
-            }
-        }
-        else {
+        
+        if (effect == null) {
             for (int i = 0; i < amount; i++) {
                 ParticleEffect.CLOUD.display(loc, xOffset, yOffset, (float) Math.random(), 0, 1);
+            }
+        } else {
+            for (int i = 0; i < amount; i++) {
+                effect.display(loc, xOffset, yOffset, zOffset, 0, 1);
             }
         }
     }
@@ -2218,7 +2185,6 @@ public class Methods {
     }
     
     public static void displayColoredParticle(Location loc, String hexVal) {
-        
         int R = 0;
         int G = 0;
         int B = 0;
@@ -2227,15 +2193,18 @@ public class Methods {
             R = Integer.valueOf(hexVal.substring(0, 2), 16);
             G = Integer.valueOf(hexVal.substring(2, 4), 16);
             B = Integer.valueOf(hexVal.substring(4, 6), 16);
-            if (R <= 0)
+            
+            if (R <= 0) {
                 R = 1;
-        }
-        else if (hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
+            }
+        } else if (hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
             R = Integer.valueOf(hexVal.substring(1, 3), 16);
             G = Integer.valueOf(hexVal.substring(3, 5), 16);
             B = Integer.valueOf(hexVal.substring(5, 7), 16);
-            if (R <= 0)
+            
+            if (R <= 0) {
                 R = 1;
+            }
         }
         
         ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);
@@ -2243,7 +2212,6 @@ public class Methods {
     }
     
     public static void displayColoredParticle(Location loc, String hexVal, float xOffset, float yOffset, float zOffset) {
-        
         int R = 0;
         int G = 0;
         int B = 0;
@@ -2252,15 +2220,18 @@ public class Methods {
             R = Integer.valueOf(hexVal.substring(0, 2), 16);
             G = Integer.valueOf(hexVal.substring(2, 4), 16);
             B = Integer.valueOf(hexVal.substring(4, 6), 16);
-            if (R <= 0)
+            
+            if (R <= 0) {
                 R = 1;
-        }
-        else if (hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
+            }
+        } else if (hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
             R = Integer.valueOf(hexVal.substring(1, 3), 16);
             G = Integer.valueOf(hexVal.substring(3, 5), 16);
             B = Integer.valueOf(hexVal.substring(5, 7), 16);
-            if (R <= 0)
+            
+            if (R <= 0) {
                 R = 1;
+            }
         }
         
         loc.setX(loc.getX() + Math.random() * (xOffset / 2 - -(xOffset / 2)));
@@ -2272,7 +2243,6 @@ public class Methods {
     }
     
     public static void displayColoredParticle(Location loc, ParticleEffect type, String hexVal, float xOffset, float yOffset, float zOffset) {
-        
         int R = 0;
         int G = 0;
         int B = 0;
@@ -2281,53 +2251,56 @@ public class Methods {
             R = Integer.valueOf(hexVal.substring(0, 2), 16);
             G = Integer.valueOf(hexVal.substring(2, 4), 16);
             B = Integer.valueOf(hexVal.substring(4, 6), 16);
-            if (R <= 0)
+            
+            if (R <= 0) {
                 R = 1;
+            }
         }
         else if (hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
             R = Integer.valueOf(hexVal.substring(1, 3), 16);
             G = Integer.valueOf(hexVal.substring(3, 5), 16);
             B = Integer.valueOf(hexVal.substring(5, 7), 16);
-            if (R <= 0)
+            
+            if (R <= 0) {
                 R = 1;
+            }
         }
         
         loc.setX(loc.getX() + Math.random() * (xOffset / 2 - -(xOffset / 2)));
         loc.setY(loc.getY() + Math.random() * (yOffset / 2 - -(yOffset / 2)));
         loc.setZ(loc.getZ() + Math.random() * (zOffset / 2 - -(zOffset / 2)));
         
-        if (type == ParticleEffect.RED_DUST || type == ParticleEffect.REDSTONE)
+        if (type == ParticleEffect.RED_DUST || type == ParticleEffect.REDSTONE) {
             ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);
-        else if (type == ParticleEffect.SPELL_MOB || type == ParticleEffect.MOB_SPELL)
+        } else if (type == ParticleEffect.SPELL_MOB || type == ParticleEffect.MOB_SPELL) {
             ParticleEffect.SPELL_MOB.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 256D);
-        else if (type == ParticleEffect.SPELL_MOB_AMBIENT || type == ParticleEffect.MOB_SPELL_AMBIENT)
+        } else if (type == ParticleEffect.SPELL_MOB_AMBIENT || type == ParticleEffect.MOB_SPELL_AMBIENT) {
             ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 256D);
-        else
+        } else {
             ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 256D);
-        
+        }
     }
     
     public static void displayParticleVector(Location loc, ParticleEffect type, float xTrans, float yTrans, float zTrans) {
-        
-        if (type == ParticleEffect.FIREWORKS_SPARK)
+        if (type == ParticleEffect.FIREWORKS_SPARK) {
             ParticleEffect.FIREWORKS_SPARK.display((float) xTrans, (float) yTrans, (float) zTrans, 0.09F, 0, loc, 256D);
-        else if (type == ParticleEffect.SMOKE || type == ParticleEffect.SMOKE_NORMAL)
+        } else if (type == ParticleEffect.SMOKE || type == ParticleEffect.SMOKE_NORMAL) {
             ParticleEffect.SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
-        else if (type == ParticleEffect.LARGE_SMOKE || type == ParticleEffect.SMOKE_LARGE)
+        } else if (type == ParticleEffect.LARGE_SMOKE || type == ParticleEffect.SMOKE_LARGE) {
             ParticleEffect.LARGE_SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
-        else if (type == ParticleEffect.ENCHANTMENT_TABLE)
+        } else if (type == ParticleEffect.ENCHANTMENT_TABLE) {
             ParticleEffect.ENCHANTMENT_TABLE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 256D);
-        else if (type == ParticleEffect.PORTAL)
+        } else if (type == ParticleEffect.PORTAL) {
             ParticleEffect.PORTAL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 256D);
-        else if (type == ParticleEffect.FLAME)
+        } else if (type == ParticleEffect.FLAME) {
             ParticleEffect.FLAME.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
-        else if (type == ParticleEffect.CLOUD)
+        } else if (type == ParticleEffect.CLOUD) {
             ParticleEffect.CLOUD.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
-        else if (type == ParticleEffect.SNOW_SHOVEL)
+        } else if (type == ParticleEffect.SNOW_SHOVEL) {
             ParticleEffect.SNOW_SHOVEL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.2F, 0, loc, 256D);
-        else
+        } else {
             ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 256D);
-        
+        }
     }
     
     public static void playFocusWaterEffect(Block block) {
@@ -2375,11 +2348,14 @@ public class Methods {
     public static void removeRevertIndex(Block block) {
         if (movedearth.containsKey(block)) {
             Information info = movedearth.get(block);
-            if (block.getType() == Material.SANDSTONE
-                    && info.getType() == Material.SAND)
+            
+            if (block.getType() == Material.SANDSTONE && info.getType() == Material.SAND) {
                 block.setType(Material.SAND);
-            if (EarthColumn.blockInAllAffectedBlocks(block))
+            }
+            
+            if (EarthColumn.blockInAllAffectedBlocks(block)) {
                 EarthColumn.revertBlock(block);
+            }
             
             EarthColumn.resetBlock(block);
             
@@ -2387,8 +2363,7 @@ public class Methods {
         }
     }
     
-    public static void removeSpouts(Location location, double radius,
-            Player sourceplayer) {
+    public static void removeSpouts(Location location, double radius, Player sourceplayer) {
         WaterSpout.removeSpouts(location, radius, sourceplayer);
         AirSpout.removeSpouts(location, radius, sourceplayer);
     }
@@ -2407,11 +2382,11 @@ public class Methods {
                     finalabilities.put(i, slots.get(i));
                 }
             }
+            
             bPlayer.setAbilities(finalabilities);
         } catch (Exception ex) {
             
         }
-        
     }
     
     public static void revertAirBlock(int i) {
@@ -2420,20 +2395,20 @@ public class Methods {
     
     @SuppressWarnings("deprecation")
     public static void revertAirBlock(int i, boolean force) {
-        if (!tempair.containsKey(i))
+        if (!tempair.containsKey(i)) {
             return;
+        }
+        
         Information info = tempair.get(i);
         Block block = info.getState().getBlock();
         if (block.getType() != Material.AIR && !block.isLiquid()) {
             if (force || !movedearth.containsKey(block)) {
-                dropItems(
-                        block,
-                        getDrops(block, info.getState().getType(), info
-                                .getState().getRawData(), pickaxe));
+                dropItems(block, getDrops(block, info.getState().getType(), info.getState().getRawData(), pickaxe));
                 tempair.remove(i);
             } else {
                 info.setTime(info.getTime() + 10000);
             }
+            
             return;
         } else {
             info.getState().update(true);
@@ -2448,6 +2423,7 @@ public class Methods {
             movedearth.remove(block);
             return false;
         }
+        
         if (movedearth.containsKey(block)) {
             Information info = movedearth.get(block);
             Block sourceblock = info.getState().getBlock();
@@ -2478,10 +2454,7 @@ public class Methods {
             if (sourceblock.getType() == Material.AIR || sourceblock.isLiquid()) {
                 info.getState().update(true);
             } else {
-                dropItems(
-                        block,
-                        getDrops(block, info.getState().getType(), info
-                                .getState().getRawData(), pickaxe));
+                dropItems(block, getDrops(block, info.getState().getType(), info.getState().getRawData(), pickaxe));
             }
             
             if (isAdjacentToThreeOrMoreSources(block)) {
@@ -2491,10 +2464,14 @@ public class Methods {
                 block.setType(Material.AIR);
             }
             
-            if (EarthColumn.blockInAllAffectedBlocks(sourceblock))
+            if (EarthColumn.blockInAllAffectedBlocks(sourceblock)) {
                 EarthColumn.revertBlock(sourceblock);
-            if (EarthColumn.blockInAllAffectedBlocks(block))
+            }
+            
+            if (EarthColumn.blockInAllAffectedBlocks(block)) {
                 EarthColumn.revertBlock(block);
+            }
+            
             EarthColumn.resetBlock(sourceblock);
             EarthColumn.resetBlock(block);
             movedearth.remove(block);
@@ -2502,23 +2479,22 @@ public class Methods {
         return true;
     }
     
-    public static Vector rotateVectorAroundVector(Vector axis, Vector rotator,
-            double degrees) {
+    public static Vector rotateVectorAroundVector(Vector axis, Vector rotator, double degrees) {
         double angle = Math.toRadians(degrees);
         Vector rotation = axis.clone();
         Vector rotate = rotator.clone();
         rotation = rotation.normalize();
         
-        Vector thirdaxis = rotation.crossProduct(rotate).normalize()
-                .multiply(rotate.length());
+        Vector thirdaxis = rotation.crossProduct(rotate).normalize().multiply(rotate.length());
         
-        return rotate.multiply(Math.cos(angle)).add(
-                thirdaxis.multiply(Math.sin(angle)));
+        return rotate.multiply(Math.cos(angle)).add(thirdaxis.multiply(Math.sin(angle)));
     }
     
     public static void saveElements(BendingPlayer bPlayer) {
-        if (bPlayer == null)
+        if (bPlayer == null) {
             return;
+        }
+        
         String uuid = bPlayer.uuid.toString();
         
         StringBuilder elements = new StringBuilder();
@@ -2537,8 +2513,10 @@ public class Methods {
     }
     
     public static void saveAbility(BendingPlayer bPlayer, int slot, String ability) {
-        if (bPlayer == null)
+        if (bPlayer == null) {
             return;
+        }
+        
         String uuid = bPlayer.uuid.toString();
         
         HashMap<Integer, String> abilities = bPlayer.getAbilities();
@@ -2548,8 +2526,10 @@ public class Methods {
     }
     
     public static void savePermaRemoved(BendingPlayer bPlayer) {
-        if (bPlayer == null)
+        if (bPlayer == null) {
             return;
+        }
+        
         String uuid = bPlayer.uuid.toString();
         
         boolean permaRemoved = bPlayer.permaRemoved;
@@ -2563,9 +2543,11 @@ public class Methods {
         }
         
         ArrayList<ComboManager.ComboAbility> combos = ComboManager.comboAbilityList;
-        for (ComboManager.ComboAbility c : combos)
-            if (c.getComboType() instanceof ComboAbilityModule)
+        for (ComboManager.ComboAbility c : combos) {
+            if (c.getComboType() instanceof ComboAbilityModule) {
                 ((ComboAbilityModule) c.getComboType()).stop();
+            }
+        }
         
         AirBlast.removeAll();
         AirBubble.removeAll();
@@ -2638,11 +2620,13 @@ public class Methods {
                 entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier")));
             return;
         }
+        
         if (entity instanceof FallingBlock) {
             if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.Normal"))
                 entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
             return;
         }
+        
         entity.setVelocity(velocity);
     }
     
@@ -2651,11 +2635,9 @@ public class Methods {
             if (hasRPG()) {
                 if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
                     return RPGMethods.getFactor(WorldEvents.LunarEclipse) * value;
-                }
-                else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+                } else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
                     return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
-                }
-                else {
+                } else {
                     return value;
                 }
             } else {
@@ -2727,9 +2709,7 @@ public class Methods {
     }
     
     public static boolean isNeutralEffect(PotionEffectType effect) {
-        if (effect.equals(PotionEffectType.INVISIBILITY))
-            return true;
-        return false;
+        return effect.equals(PotionEffectType.INVISIBILITY);
     }
     
     public static void breakBreathbendingHold(Entity entity) {
@@ -2746,25 +2726,21 @@ public class Methods {
         }
     }
     
-    public static FallingBlock spawnFallingBlock(Location loc, int type)
-    {
+    public static FallingBlock spawnFallingBlock(Location loc, int type) {
         return spawnFallingBlock(loc, type, (byte) 0);
     }
     
-    public static FallingBlock spawnFallingBlock(Location loc, Material type)
-    {
+    public static FallingBlock spawnFallingBlock(Location loc, Material type) {
         return spawnFallingBlock(loc, type, (byte) 0);
     }
     
     @SuppressWarnings("deprecation")
-    public static FallingBlock spawnFallingBlock(Location loc, int type, byte data)
-    {
+    public static FallingBlock spawnFallingBlock(Location loc, int type, byte data) {
         return loc.getWorld().spawnFallingBlock(loc, type, data);
     }
     
     @SuppressWarnings("deprecation")
-    public static FallingBlock spawnFallingBlock(Location loc, Material type, byte data)
-    {
+    public static FallingBlock spawnFallingBlock(Location loc, Material type, byte data) {
         return loc.getWorld().spawnFallingBlock(loc, type, data);
     }
     
@@ -2833,21 +2809,24 @@ public class Methods {
         Block blockHolder = block;
         int y = 0;
         // Only one of these while statements will go
-        while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY))
-        {
+        while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY)) {
             y++;
             Block tempBlock = loc.clone().add(0, y, 0).getBlock();
-            if (tempBlock.getType() == Material.AIR)
+            
+            if (tempBlock.getType() == Material.AIR) {
                 return blockHolder;
+            }
+            
             blockHolder = tempBlock;
         }
         
-        while (blockHolder.getType() == Material.AIR && Math.abs(y) < Math.abs(negativeY))
-        {
+        while (blockHolder.getType() == Material.AIR && Math.abs(y) < Math.abs(negativeY)) {
             y--;
             blockHolder = loc.clone().add(0, y, 0).getBlock();
-            if (blockHolder.getType() != Material.AIR)
+            
+            if (blockHolder.getType() != Material.AIR) {
                 return blockHolder;
+            }
             
         }
         return null;
@@ -2867,12 +2846,15 @@ public class Methods {
     }
     
     public static int getMaxPresets(Player player) {
-        if (player.isOp())
+        if (player.isOp()) {
             return 500;
+        }
+        
         int cap = 0;
         for (int i = 0; i <= 500; i++) {
-            if (player.hasPermission("bending.command.presets.create." + i))
+            if (player.hasPermission("bending.command.presets.create." + i)) {
                 cap = i;
+            }
         }
         return cap;
     }
@@ -2888,47 +2870,33 @@ public class Methods {
         for (String ability : abilitiesToBlock) {
             if (ability.equalsIgnoreCase("FireBlast")) {
                 hasBlocked = FireBlast.annihilateBlasts(loc, radius, player) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("EarthBlast")) {
+            } else if (ability.equalsIgnoreCase("EarthBlast")) {
                 hasBlocked = EarthBlast.annihilateBlasts(loc, radius, player) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("WaterManipulation")) {
+            } else if (ability.equalsIgnoreCase("WaterManipulation")) {
                 hasBlocked = WaterManipulation.annihilateBlasts(loc, radius, player) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("AirSwipe")) {
+            } else if (ability.equalsIgnoreCase("AirSwipe")) {
                 hasBlocked = AirSwipe.removeSwipesAroundPoint(loc, radius) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("Combustion")) {
+            } else if (ability.equalsIgnoreCase("Combustion")) {
                 hasBlocked = Combustion.removeAroundPoint(loc, radius) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("FireShield")) {
+            } else if (ability.equalsIgnoreCase("FireShield")) {
                 hasBlocked = FireShield.isWithinShield(loc) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("AirShield")) {
+            } else if (ability.equalsIgnoreCase("AirShield")) {
                 hasBlocked = AirShield.isWithinShield(loc) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("WaterSpout")) {
+            } else if (ability.equalsIgnoreCase("WaterSpout")) {
                 hasBlocked = WaterSpout.removeSpouts(loc, radius, player) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("AirSpout")) {
+            } else if (ability.equalsIgnoreCase("AirSpout")) {
                 hasBlocked = AirSpout.removeSpouts(loc, radius, player) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("Twister")) {
+            } else if (ability.equalsIgnoreCase("Twister")) {
                 hasBlocked = AirCombo.removeAroundPoint(player, "Twister", loc, radius) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("AirStream")) {
+            } else if (ability.equalsIgnoreCase("AirStream")) {
                 hasBlocked = AirCombo.removeAroundPoint(player, "AirStream", loc, radius) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("AirSweep")) {
+            } else if (ability.equalsIgnoreCase("AirSweep")) {
                 hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("FireKick")) {
+            } else if (ability.equalsIgnoreCase("FireKick")) {
                 hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("FireSpin")) {
+            } else if (ability.equalsIgnoreCase("FireSpin")) {
                 hasBlocked = FireCombo.removeAroundPoint(player, "FireSpin", loc, radius) || hasBlocked;
-            }
-            else if (ability.equalsIgnoreCase("FireWheel")) {
+            } else if (ability.equalsIgnoreCase("FireWheel")) {
                 hasBlocked = FireCombo.removeAroundPoint(player, "FireWheel", loc, radius) || hasBlocked;
             }
         }
@@ -2943,39 +2911,31 @@ public class Methods {
     }
     
     public static boolean hasRPG() {
-        if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") != null)
-            return true;
-        return false;
+        return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") != null;
     }
     
     public static Plugin getRPG() {
-        if (hasRPG()) {
-            return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG");
-        }
-        return null;
+        return (hasRPG() ? Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") : null);
     }
     
     public static boolean hasItems() {
-        if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null)
-            return true;
-        return false;
+        return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null;
     }
     
     public static Plugin getItems() {
-        if (hasItems()) {
-            return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems");
-        }
-        return null;
+        return (hasItems() ? Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") : null);
     }
     
     public static void writeToDebug(String message) {
         try {
             File dataFolder = plugin.getDataFolder();
+            
             if (!dataFolder.exists()) {
                 dataFolder.mkdir();
             }
             
             File saveTo = new File(plugin.getDataFolder(), "debug.txt");
+            
             if (!saveTo.exists()) {
                 saveTo.createNewFile();
             }
@@ -2985,7 +2945,6 @@ public class Methods {
             pw.println(message);
             pw.flush();
             pw.close();
-            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -2999,9 +2958,11 @@ public class Methods {
     
     public static void runDebug() {
         File debugFile = new File(plugin.getDataFolder(), "debug.txt");
+        
         if (debugFile.exists()) {
             debugFile.delete(); // We're starting brand new.
         }
+        
         writeToDebug("ProjectKorra Debug: Paste this on http://pastie.org and put it in your bug report thread.");
         writeToDebug("====================");
         writeToDebug("");
@@ -3013,6 +2974,7 @@ public class Methods {
         writeToDebug("====================");
         writeToDebug("Version: " + plugin.getDescription().getVersion());
         writeToDebug("Author: " + plugin.getDescription().getAuthors());
+        
         if (hasRPG()) {
             writeToDebug("");
             writeToDebug("ProjectKorra (RPG) Information");
@@ -3020,6 +2982,7 @@ public class Methods {
             writeToDebug("Version: " + getRPG().getDescription().getVersion());
             writeToDebug("Author: " + getRPG().getDescription().getAuthors());
         }
+        
         if (hasItems()) {
             writeToDebug("");
             writeToDebug("ProjectKorra (Items) Information");
@@ -3027,9 +2990,11 @@ public class Methods {
             writeToDebug("Version: " + getItems().getDescription().getVersion());
             writeToDebug("Author: " + getItems().getDescription().getAuthors());
         }
+        
         writeToDebug("");
         writeToDebug("Ability Information");
         writeToDebug("====================");
+        
         for (String ability : AbilityModuleManager.abilities) {
             if (StockAbilities.isStockAbility(ability) && !Methods.isDisabledStockAbility(ability)) {
                 writeToDebug(ability + " - STOCK ABILITY");
@@ -3037,6 +3002,7 @@ public class Methods {
                 writeToDebug(ability + " - UNOFFICIAL ABILITY");
             }
         }
+        
         writeToDebug("");
         writeToDebug("Supported Plugins");
         writeToDebug("====================");
@@ -3060,21 +3026,27 @@ public class Methods {
         if (wgp != null && respectWorldGuard) {
             writeToDebug("WorldGuard v" + wgp.getDescription().getVersion());
         }
+        
         if (psp != null && respectPreciousStones) {
             writeToDebug("PreciousStones v" + psp.getDescription().getVersion());
         }
+        
         if (fcp != null && respectFactions) {
             writeToDebug("Factions v" + fcp.getDescription().getVersion());
         }
+        
         if (massivecore != null && respectFactions) {
             writeToDebug("MassiveCore v" + massivecore.getDescription().getVersion());
         }
+        
         if (twnp != null && respectTowny) {
             writeToDebug("Towny v" + twnp.getDescription().getVersion());
         }
+        
         if (gpp != null && respectGriefPrevention) {
             writeToDebug("GriefPrevention v" + gpp.getDescription().getVersion());
         }
+        
         if (lwc != null && respectLWC) {
             writeToDebug("LWC v" + lwc.getDescription().getVersion());
         }
@@ -3082,6 +3054,7 @@ public class Methods {
         writeToDebug("");
         writeToDebug("Plugins Hooking Into ProjectKorra (Core)");
         writeToDebug("====================");
+        
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             if (plugin.getDescription().getDepend() != null && plugin.getDescription().getDepend().contains("ProjectKorra")) {
                 writeToDebug(plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion());
@@ -3092,13 +3065,13 @@ public class Methods {
     public static boolean canFly(Player player, boolean first, boolean hovering) {
         BendingPlayer bender = getBendingPlayer(player.getName());
         
-        if (!player.isOnline())
+        if (!player.isOnline()) {
             return false;
+        }
+        
         if (!player.isSneaking()) {
             if (first) {
-            } else if (hovering) {
-                
-            } else {
+            } else if (!hovering) {
                 return false;
             }
         }
@@ -3197,9 +3170,7 @@ public class Methods {
     
     /** Checks if an entity is Undead **/
     public static boolean isUndead(Entity entity) {
-        if (entity == null)
-            return false;
-        if (entity.getType() == EntityType.ZOMBIE
+        return entity != null && (entity.getType() == EntityType.ZOMBIE
                 || entity.getType() == EntityType.BLAZE
                 || entity.getType() == EntityType.GIANT
                 || entity.getType() == EntityType.IRON_GOLEM
@@ -3208,10 +3179,7 @@ public class Methods {
                 || entity.getType() == EntityType.SKELETON
                 || entity.getType() == EntityType.SLIME
                 || entity.getType() == EntityType.SNOWMAN
-                || entity.getType() == EntityType.ZOMBIE) {
-            return true;
-        }
-        return false;
+                || entity.getType() == EntityType.ZOMBIE);
     }
     
 }

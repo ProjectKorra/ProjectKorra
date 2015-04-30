@@ -257,59 +257,64 @@ public class ComboManager
         }
     }
     
-    public static void addRecentAbility(Player player, AbilityInformation info)
-    {
+    public static void addRecentAbility(Player player, AbilityInformation info) {
         ArrayList<AbilityInformation> list;
         String name = player.getName();
+        
         if (recentlyUsedAbilities.containsKey(name)) {
             list = recentlyUsedAbilities.get(name);
             recentlyUsedAbilities.remove(player);
-        }
-        else
+        } else {
             list = new ArrayList<AbilityInformation>();
+        }
+        
         list.add(info);
         recentlyUsedAbilities.put(name, list);
     }
     
-    public static ArrayList<AbilityInformation> getRecentlyUsedAbilities(Player player, int amount)
-    {
+    public static ArrayList<AbilityInformation> getRecentlyUsedAbilities(Player player, int amount) {
         String name = player.getName();
-        if (!recentlyUsedAbilities.containsKey(name))
+        
+        if (!recentlyUsedAbilities.containsKey(name)) {
             return new ArrayList<AbilityInformation>();
+        }
         
         ArrayList<AbilityInformation> list = recentlyUsedAbilities.get(name);
-        if (list.size() < amount)
+        
+        if (list.size() < amount) {
             return new ArrayList<AbilityInformation>(list);
+        }
         
         ArrayList<AbilityInformation> tempList = new ArrayList<AbilityInformation>();
-        for (int i = 0; i < amount; i++)
+        
+        for (int i = 0; i < amount; i++) {
             tempList.add(0, list.get(list.size() - 1 - i));
+        }
+        
         return tempList;
     }
     
-    public static ComboAbility checkForValidCombo(Player player)
-    {
+    public static ComboAbility checkForValidCombo(Player player) {
         ArrayList<AbilityInformation> playerCombo = getRecentlyUsedAbilities(player, 8);
-        for (ComboAbility customAbility : comboAbilityList)
-        {
+        for (ComboAbility customAbility : comboAbilityList) {
             ArrayList<AbilityInformation> abilityCombo = customAbility.getAbilities();
             int size = abilityCombo.size();
             
-            if (playerCombo.size() < size)
+            if (playerCombo.size() < size) {
                 continue;
+            }
             
             boolean isValid = true;
-            for (int i = 1; i <= size; i++)
-            {
-                if (!playerCombo.get(playerCombo.size() - i)
-                        .equalsWithoutTime(abilityCombo.get(abilityCombo.size() - i)))
-                {
+            for (int i = 1; i <= size; i++) {
+                if (!playerCombo.get(playerCombo.size() - i).equalsWithoutTime(abilityCombo.get(abilityCombo.size() - i))) {
                     isValid = false;
                     break;
                 }
             }
-            if (isValid)
+            
+            if (isValid) {
                 return customAbility;
+            }
         }
         return null;
     }
@@ -325,13 +330,12 @@ public class ComboManager
     public static void cleanupOldCombos()
     {
         Enumeration<String> keys = recentlyUsedAbilities.keys();
-        while (keys.hasMoreElements())
-        {
+        while (keys.hasMoreElements()) {
             String name = keys.nextElement();
             ArrayList<AbilityInformation> combos = recentlyUsedAbilities.get(name);
             recentlyUsedAbilities.remove(name);
-            for (int i = 0; i < combos.size(); i++)
-            {
+            
+            for (int i = 0; i < combos.size(); i++) {
                 AbilityInformation info = combos.get(i);
                 if (System.currentTimeMillis() - info.getTime() > CLEANUP_DELAY) {
                     combos.remove(i);
@@ -339,8 +343,9 @@ public class ComboManager
                 }
             }
             
-            if (combos.size() > 0)
+            if (combos.size() > 0) {
                 recentlyUsedAbilities.put(name, combos);
+            }
         }
     }
 }
