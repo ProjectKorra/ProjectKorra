@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -328,6 +329,17 @@ public class PKListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         Methods.createBendingPlayer(e.getPlayer().getUniqueId(), player.getName());
+        
+    }
+    
+    public static void login(BendingPlayer pl) {
+        ProjectKorra plugin = ProjectKorra.plugin;
+        Player player = Bukkit.getPlayer(pl.getUUID());
+        
+        if (player == null) {
+            return;
+        }
+        
         Preset.loadPresets(player);
         String append = "";
         boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");

@@ -39,6 +39,8 @@ public class BendingPlayer {
         blockedChi = false;
         
         players.put(player, this);
+        
+        PKListener.login(this);
     }
     
     public boolean isOnCooldown(String ability) {
