@@ -44,6 +44,7 @@ public class WaterSourceGrabber {
         this(player, origin, 1);
     }
     
+    @SuppressWarnings("deprecation")
     public void progress() {
         if (state == AnimationState.FAILED || state == AnimationState.FINISHED)
             return;

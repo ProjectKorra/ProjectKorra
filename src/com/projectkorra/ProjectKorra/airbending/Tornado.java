@@ -45,6 +45,7 @@ public class Tornado {
     
     // private boolean canfly;
     
+    @SuppressWarnings("deprecation")
     public Tornado(Player player) {
         this.player = player;
         // canfly = player.getAllowFlight();
@@ -99,6 +100,7 @@ public class Tornado {
         return true;
     }
     
+    @SuppressWarnings("deprecation")
     private void rotateTornado() {
         origin = player.getTargetBlock(null, (int) range).getLocation();
         

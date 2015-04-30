@@ -79,6 +79,7 @@ public class WaterWave {
             this.progress();
     }
     
+    @SuppressWarnings("deprecation")
     public void progress() {
         progressCounter++;
         if (player.isDead() || !player.isOnline()) {

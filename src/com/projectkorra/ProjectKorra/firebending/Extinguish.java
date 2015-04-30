@@ -19,6 +19,7 @@ public class Extinguish {
     @SuppressWarnings("unused")
     private static byte full = AirBlast.full;
     
+    @SuppressWarnings("deprecation")
     public Extinguish(Player player) {
         BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
         
@@ -31,8 +32,7 @@ public class Extinguish {
             return;
         }
         double radius = Methods.getFirebendingDayAugment(defaultradius, player.getWorld());
-        for (Block block : Methods.getBlocksAroundPoint(
-                player.getTargetBlock(null, (int) range).getLocation(), radius)) {
+        for (Block block : Methods.getBlocksAroundPoint(player.getTargetBlock(null, (int) range).getLocation(), radius)) {
             
             Material mat = block.getType();
             if (mat != Material.FIRE

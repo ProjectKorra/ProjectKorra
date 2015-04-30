@@ -48,7 +48,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.FallingSand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
@@ -2618,14 +2617,13 @@ public class Methods {
         EarthPassive.removeAll();
     }
     
-    @SuppressWarnings("deprecation")
     public static void setVelocity(Entity entity, Vector velocity) {
         if (entity instanceof TNTPrimed) {
             if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.TNT"))
                 entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier")));
             return;
         }
-        if (entity instanceof FallingSand) {
+        if (entity instanceof FallingBlock) {
             if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.Normal"))
                 entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
             return;

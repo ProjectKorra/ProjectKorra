@@ -21,6 +21,7 @@ public class Melt {
     
     private static final byte full = 0x0;
     
+    @SuppressWarnings("deprecation")
     public Melt(Player player) {
         if (!Methods.canIcebend(player))
             return;

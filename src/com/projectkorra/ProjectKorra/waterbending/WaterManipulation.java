@@ -209,6 +209,7 @@ public class WaterManipulation {
         }
     }
     
+    @SuppressWarnings("deprecation")
     private boolean progress() {
         if (player.isDead() || !player.isOnline()
                 || !Methods.canBend(player.getName(), "WaterManipulation")) {

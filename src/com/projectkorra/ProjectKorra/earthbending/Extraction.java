@@ -17,6 +17,7 @@ public class Extraction {
     private static int doublechance = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Extraction.DoubleLootChance");
     private static int triplechance = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");
     
+    @SuppressWarnings("deprecation")
     public Extraction(Player player) {
         BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
         if (bPlayer.isOnCooldown("Extraction"))
