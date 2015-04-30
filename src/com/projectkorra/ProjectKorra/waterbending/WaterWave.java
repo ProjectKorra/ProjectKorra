@@ -2,7 +2,6 @@ package com.projectkorra.ProjectKorra.waterbending;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -189,7 +188,7 @@ public class WaterWave {
                     anim = AnimateState.TOWARDPLAYER;
             } else if (anim == AnimateState.TOWARDPLAYER) {
                 revertBlocks();
-                Location eyeLoc = player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
+                Location eyeLoc = player.getTargetBlock(null, 2).getLocation();
                 eyeLoc.setY(player.getEyeLocation().getY());
                 Vector vec = Methods.getDirection(currentLoc, eyeLoc);
                 currentLoc.add(vec.normalize().multiply(animSpeed));

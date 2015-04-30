@@ -299,7 +299,7 @@ public class WaterManipulation {
                 
                 Block block = location.getBlock();
                 if (displacing) {
-                    Block targetblock = player.getTargetBlock((HashSet<Material>) null, displrange);
+                    Block targetblock = player.getTargetBlock(null, displrange);
                     direction = Methods.getDirection(location, targetblock.getLocation()).normalize();
                     if (!location.getBlock().equals(targetblock.getLocation())) {
                         location = location.clone().add(direction);

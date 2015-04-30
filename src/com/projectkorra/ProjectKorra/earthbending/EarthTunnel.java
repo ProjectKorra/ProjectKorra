@@ -1,10 +1,8 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -37,7 +35,7 @@ public class EarthTunnel {
     public EarthTunnel(Player player) {
         this.player = player;
         location = player.getEyeLocation().clone();
-        origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
+        origin = player.getTargetBlock(null, (int) range).getLocation();
         block = origin.getBlock();
         direction = location.getDirection().clone().normalize();
         depth = origin.distance(location) - 1;

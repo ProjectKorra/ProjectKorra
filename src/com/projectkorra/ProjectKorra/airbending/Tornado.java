@@ -1,7 +1,6 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -50,7 +49,7 @@ public class Tornado {
         this.player = player;
         // canfly = player.getAllowFlight();
         // player.setAllowFlight(true);
-        origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
+        origin = player.getTargetBlock(null, (int) range).getLocation();
         origin.setY(origin.getY() - 1. / 10. * height);
         
         int angle = 0;
@@ -101,7 +100,7 @@ public class Tornado {
     }
     
     private void rotateTornado() {
-        origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
+        origin = player.getTargetBlock(null, (int) range).getLocation();
         
         double timefactor = height / maxheight;
         radius = timefactor * maxradius;
