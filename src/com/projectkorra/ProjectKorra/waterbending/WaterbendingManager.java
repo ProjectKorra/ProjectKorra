@@ -2,7 +2,7 @@ package com.projectkorra.ProjectKorra.waterbending;
 
 import org.bukkit.Bukkit;
 
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public class WaterbendingManager implements Runnable {
 

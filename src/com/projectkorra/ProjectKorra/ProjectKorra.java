@@ -1,15 +1,16 @@
 package com.projectkorra.ProjectKorra;
 
-import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
-import com.projectkorra.ProjectKorra.Objects.Preset;
-import com.projectkorra.ProjectKorra.Utilities.CraftingRecipes;
-import com.projectkorra.ProjectKorra.airbending.AirbendingManager;
-import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
-import com.projectkorra.ProjectKorra.chiblocking.ChiblockingManager;
-import com.projectkorra.ProjectKorra.earthbending.EarthbendingManager;
-import com.projectkorra.ProjectKorra.firebending.FirebendingManager;
-import com.projectkorra.ProjectKorra.waterbending.WaterbendingManager;
+import com.projectkorra.projectkorra.Ability.AbilityModuleManager;
+import com.projectkorra.projectkorra.Ability.Combo.ComboModuleManager;
+import com.projectkorra.projectkorra.Objects.Preset;
+import com.projectkorra.projectkorra.Utilities.CraftingRecipes;
+import com.projectkorra.projectkorra.airbending.AirbendingManager;
+import com.projectkorra.projectkorra.chiblocking.ChiComboManager;
+import com.projectkorra.projectkorra.chiblocking.ChiblockingManager;
+import com.projectkorra.projectkorra.earthbending.EarthbendingManager;
+import com.projectkorra.projectkorra.firebending.FirebendingManager;
+import com.projectkorra.projectkorra.waterbending.WaterbendingManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

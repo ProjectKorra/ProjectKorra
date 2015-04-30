@@ -3,8 +3,8 @@ package com.projectkorra.ProjectKorra.firebending;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Methods;
 
 public class FirePassive {
 	

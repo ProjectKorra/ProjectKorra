@@ -10,10 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.DBConnection;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.DBConnection;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public class Preset {
 

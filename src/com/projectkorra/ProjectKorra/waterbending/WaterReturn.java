@@ -11,8 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.TempBlock;
 
 public class WaterReturn {
 

@@ -2,8 +2,8 @@ package com.projectkorra.ProjectKorra.earthbending;
 
 import org.bukkit.Bukkit;
 
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.RevertChecker;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.RevertChecker;
 
 public class EarthbendingManager implements Runnable {
 

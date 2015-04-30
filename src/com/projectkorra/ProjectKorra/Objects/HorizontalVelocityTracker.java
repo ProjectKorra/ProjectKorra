@@ -1,8 +1,9 @@
 package com.projectkorra.ProjectKorra.Objects;
 
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Utilities.HorizontalVelocityChangeEvent;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.Utilities.HorizontalVelocityChangeEvent;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;

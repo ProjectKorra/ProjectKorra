@@ -3,7 +3,7 @@ package com.projectkorra.ProjectKorra.chiblocking;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public class ChiblockingManager implements Runnable {
 

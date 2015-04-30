@@ -17,8 +17,8 @@ import java.util.logging.Logger;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable.LoadResult;
-import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable.LoadResult.Result;
+import com.projectkorra.projectkorra.Utilities.AbilityLoadable.LoadResult;
+import com.projectkorra.projectkorra.Utilities.AbilityLoadable.LoadResult.Result;
 
 
 public class AbilityLoader <T extends AbilityLoadable> implements Listener {

@@ -1,8 +1,8 @@
 package com.projectkorra.ProjectKorra.Ability.Combo;
 
-import com.projectkorra.ProjectKorra.ComboManager;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Utilities.AbilityLoader;
+import com.projectkorra.projectkorra.ComboManager;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.Utilities.AbilityLoader;
 
 import java.io.File;
 import java.util.List;

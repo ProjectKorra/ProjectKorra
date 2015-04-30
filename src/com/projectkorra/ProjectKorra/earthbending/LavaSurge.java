@@ -16,11 +16,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.TempBlock;
+import com.projectkorra.projectkorra.Utilities.ParticleEffect;
 
 public class LavaSurge 
 {

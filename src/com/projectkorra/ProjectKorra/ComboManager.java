@@ -1,9 +1,10 @@
 package com.projectkorra.ProjectKorra;
 
-import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
-import com.projectkorra.ProjectKorra.airbending.AirCombo;
-import com.projectkorra.ProjectKorra.firebending.FireCombo;
-import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
+import com.projectkorra.projectkorra.Ability.Combo.ComboAbilityModule;
+import com.projectkorra.projectkorra.airbending.AirCombo;
+import com.projectkorra.projectkorra.firebending.FireCombo;
+import com.projectkorra.projectkorra.waterbending.WaterCombo;
+
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 

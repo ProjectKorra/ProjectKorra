@@ -10,18 +10,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.ComboManager.ClickType;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
-import com.projectkorra.ProjectKorra.firebending.FireCombo;
-import com.projectkorra.ProjectKorra.firebending.FireCombo.FireComboStream;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Commands;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Flight;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.Ability.AvatarState;
+import com.projectkorra.projectkorra.ComboManager.ClickType;
+import com.projectkorra.projectkorra.chiblocking.Paralyze;
+import com.projectkorra.projectkorra.firebending.FireCombo;
+import com.projectkorra.projectkorra.firebending.FireCombo.FireComboStream;
+import com.projectkorra.projectkorra.waterbending.Bloodbending;
 
 public class AirCombo {
 	public static enum AbilityState {

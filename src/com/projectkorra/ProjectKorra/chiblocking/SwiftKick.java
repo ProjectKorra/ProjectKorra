@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager.ChiCombo;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.chiblocking.ChiComboManager.ChiCombo;
 
 public class SwiftKick
 {

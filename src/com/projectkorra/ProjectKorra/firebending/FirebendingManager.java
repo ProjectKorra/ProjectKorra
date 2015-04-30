@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public class FirebendingManager implements Runnable {
 

@@ -6,10 +6,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.earthbending.MetalClips;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.earthbending.MetalClips;
+import com.projectkorra.projectkorra.waterbending.Bloodbending;
 
 public class AcrobatStance {
 

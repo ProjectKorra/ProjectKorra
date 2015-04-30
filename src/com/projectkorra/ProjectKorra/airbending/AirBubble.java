@@ -9,10 +9,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
 public class AirBubble {
 

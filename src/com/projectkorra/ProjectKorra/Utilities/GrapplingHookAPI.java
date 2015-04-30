@@ -15,8 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.PKListener;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.projectkorra.PKListener;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public class GrapplingHookAPI {
 

@@ -4,7 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ShapedRecipe;
 
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public class CraftingRecipes {
 

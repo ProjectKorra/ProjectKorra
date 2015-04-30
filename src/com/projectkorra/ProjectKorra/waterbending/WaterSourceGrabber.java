@@ -10,8 +10,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.TempBlock;
 
 public class WaterSourceGrabber {
 	/*

@@ -8,8 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.Utilities.ParticleEffect;
 
 public class Cook {
 

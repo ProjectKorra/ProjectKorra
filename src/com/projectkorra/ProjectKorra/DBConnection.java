@@ -1,8 +1,8 @@
  package com.projectkorra.ProjectKorra;
 
-import com.projectkorra.ProjectKorra.Storage.Database;
-import com.projectkorra.ProjectKorra.Storage.MySQL;
-import com.projectkorra.ProjectKorra.Storage.SQLite;
+import com.projectkorra.projectkorra.Storage.Database;
+import com.projectkorra.projectkorra.Storage.MySQL;
+import com.projectkorra.projectkorra.Storage.SQLite;
 
 public class DBConnection {
 

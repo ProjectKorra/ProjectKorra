@@ -14,7 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Utilities.ReflectionHandler.PackageType;
+import com.projectkorra.projectkorra.Utilities.ReflectionHandler.PackageType;
 
 /**
  * <b>ParticleEffect Library</b>

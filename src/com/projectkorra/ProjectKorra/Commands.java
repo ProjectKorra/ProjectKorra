@@ -1,11 +1,11 @@
 package com.projectkorra.ProjectKorra;
 
-import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
-import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
-import com.projectkorra.ProjectKorra.Objects.Preset;
-import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
+import com.projectkorra.projectkorra.Ability.AbilityModuleManager;
+import com.projectkorra.projectkorra.Ability.StockAbilities;
+import com.projectkorra.projectkorra.Ability.Combo.ComboAbilityModule;
+import com.projectkorra.projectkorra.Ability.Combo.ComboModuleManager;
+import com.projectkorra.projectkorra.Objects.Preset;
+import com.projectkorra.projectkorra.Utilities.GrapplingHookAPI;
 import com.projectkorra.rpg.RPGMethods;
 
 import org.bukkit.Bukkit;

@@ -1,8 +1,9 @@
 package com.projectkorra.ProjectKorra.Ability.Combo;
 
-import com.projectkorra.ProjectKorra.ComboManager;
-import com.projectkorra.ProjectKorra.SubElement;
-import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable;
+import com.projectkorra.projectkorra.ComboManager;
+import com.projectkorra.projectkorra.SubElement;
+import com.projectkorra.projectkorra.Utilities.AbilityLoadable;
+
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

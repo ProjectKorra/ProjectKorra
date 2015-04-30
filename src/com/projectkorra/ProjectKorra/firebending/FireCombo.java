@@ -1,11 +1,12 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.*;
-import com.projectkorra.ProjectKorra.ComboManager.ClickType;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
+import com.projectkorra.projectkorra.*;
+import com.projectkorra.projectkorra.Ability.AvatarState;
+import com.projectkorra.projectkorra.ComboManager.ClickType;
+import com.projectkorra.projectkorra.Utilities.ParticleEffect;
+import com.projectkorra.projectkorra.chiblocking.Paralyze;
+import com.projectkorra.projectkorra.waterbending.Bloodbending;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -10,13 +10,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Commands;
+import com.projectkorra.projectkorra.Flight;
+import com.projectkorra.projectkorra.Methods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.Ability.AvatarState;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class AirSuction {
 	

@@ -2,7 +2,7 @@ package com.projectkorra.ProjectKorra.airbending;
 
 import org.bukkit.Bukkit;
 
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public class AirbendingManager implements Runnable {
 

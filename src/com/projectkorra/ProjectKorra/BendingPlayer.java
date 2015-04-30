@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 
-import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent;
-import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent.Result;
+import com.projectkorra.projectkorra.CustomEvents.PlayerCooldownChangeEvent;
+import com.projectkorra.projectkorra.CustomEvents.PlayerCooldownChangeEvent.Result;
 
 public class BendingPlayer {
 

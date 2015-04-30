@@ -1,8 +1,8 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.*;
-import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.*;
+import com.projectkorra.projectkorra.Ability.AvatarState;
+import com.projectkorra.projectkorra.Objects.HorizontalVelocityTracker;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;

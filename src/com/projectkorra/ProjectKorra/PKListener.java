@@ -1,18 +1,18 @@
 package com.projectkorra.ProjectKorra;
 
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.ComboManager.ClickType;
-import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
-import com.projectkorra.ProjectKorra.Objects.Preset;
-import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
-import com.projectkorra.ProjectKorra.Utilities.HorizontalVelocityChangeEvent;
-import com.projectkorra.ProjectKorra.airbending.*;
-import com.projectkorra.ProjectKorra.chiblocking.*;
-import com.projectkorra.ProjectKorra.earthbending.*;
-import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
-import com.projectkorra.ProjectKorra.firebending.*;
-import com.projectkorra.ProjectKorra.firebending.Fireball;
-import com.projectkorra.ProjectKorra.waterbending.*;
+import com.projectkorra.projectkorra.Ability.AvatarState;
+import com.projectkorra.projectkorra.ComboManager.ClickType;
+import com.projectkorra.projectkorra.CustomEvents.PlayerGrappleEvent;
+import com.projectkorra.projectkorra.Objects.Preset;
+import com.projectkorra.projectkorra.Utilities.GrapplingHookAPI;
+import com.projectkorra.projectkorra.Utilities.HorizontalVelocityChangeEvent;
+import com.projectkorra.projectkorra.airbending.*;
+import com.projectkorra.projectkorra.chiblocking.*;
+import com.projectkorra.projectkorra.earthbending.*;
+import com.projectkorra.projectkorra.earthbending.LavaFlow.AbilityType;
+import com.projectkorra.projectkorra.firebending.*;
+import com.projectkorra.projectkorra.waterbending.*;
+
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -281,14 +281,14 @@ public class PKListener implements Listener {
 			}
 		}
 		
-		com.projectkorra.ProjectKorra.airbending.FlightAbility.remove(event.getPlayer());
+		com.projectkorra.projectkorra.airbending.FlightAbility.remove(event.getPlayer());
 	}
 	
 	@EventHandler
 	public void playerIsKicked(PlayerKickEvent event) {
 		if(event.isCancelled()) return;
 		
-		com.projectkorra.ProjectKorra.airbending.FlightAbility.remove(event.getPlayer());
+		com.projectkorra.projectkorra.airbending.FlightAbility.remove(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -355,7 +355,7 @@ public class PKListener implements Listener {
 				}
 				if(abil.equalsIgnoreCase("Flight")) {
 					if(player.isSneaking() || !Methods.canAirFlight(player)) return;
-					new com.projectkorra.ProjectKorra.airbending.FlightAbility(player);
+					new com.projectkorra.projectkorra.airbending.FlightAbility(player);
 				}
 
 			}
@@ -537,7 +537,7 @@ public class PKListener implements Listener {
 		}
 		
 		if(FlightAbility.instances.containsKey(event.getPlayer().getName())) {
-			if(com.projectkorra.ProjectKorra.airbending.FlightAbility.isHovering(event.getPlayer())) {
+			if(com.projectkorra.projectkorra.airbending.FlightAbility.isHovering(event.getPlayer())) {
 				Location loc = event.getFrom();
 				Location toLoc = player.getLocation();
 
@@ -728,11 +728,11 @@ public class PKListener implements Listener {
 					if(!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")
 							|| !Methods.canAirFlight(player)) return;
 					
-					if(com.projectkorra.ProjectKorra.airbending.FlightAbility.instances.containsKey(event.getPlayer().getName())) {
-						if(com.projectkorra.ProjectKorra.airbending.FlightAbility.isHovering(event.getPlayer())) {
-							com.projectkorra.ProjectKorra.airbending.FlightAbility.setHovering(event.getPlayer(), false);
+					if(com.projectkorra.projectkorra.airbending.FlightAbility.instances.containsKey(event.getPlayer().getName())) {
+						if(com.projectkorra.projectkorra.airbending.FlightAbility.isHovering(event.getPlayer())) {
+							com.projectkorra.projectkorra.airbending.FlightAbility.setHovering(event.getPlayer(), false);
 						}else{
-							com.projectkorra.ProjectKorra.airbending.FlightAbility.setHovering(event.getPlayer(), true);
+							com.projectkorra.projectkorra.airbending.FlightAbility.setHovering(event.getPlayer(), true);
 						}
 					}
 				}

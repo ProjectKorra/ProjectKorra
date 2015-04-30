@@ -1,11 +1,12 @@
 package com.projectkorra.ProjectKorra;
 
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
-import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
-import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
+import com.projectkorra.projectkorra.Ability.AvatarState;
+import com.projectkorra.projectkorra.Objects.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.chiblocking.ChiComboManager;
+import com.projectkorra.projectkorra.chiblocking.RapidPunch;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
