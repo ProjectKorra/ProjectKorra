@@ -4,35 +4,36 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Methods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class HighJump {
-
-	private int jumpheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Height");
-	private long cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Cooldown");
-
-	public HighJump(Player p) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(p.getName());
-		
-		if (bPlayer.isOnCooldown("HighJump")) return;
-		jump(p);
-		bPlayer.addCooldown("HighJump", cooldown);
-		
-	}
-
-	private void jump(Player p) {
-		if (!Methods.isSolid(p.getLocation().getBlock()
-				.getRelative(BlockFace.DOWN)))
-			return;
-		Vector vec = p.getVelocity();
-		vec.setY(jumpheight);
-		p.setVelocity(vec);
-		return;
-	}
-
-	public static String getDescription() {
-		return "To use this ability, simply click. You will jump quite high. This ability has a short cooldown.";
-	}
+    
+    private int jumpheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Height");
+    private long cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Cooldown");
+    
+    public HighJump(Player p) {
+        BendingPlayer bPlayer = Methods.getBendingPlayer(p.getName());
+        
+        if (bPlayer.isOnCooldown("HighJump"))
+            return;
+        jump(p);
+        bPlayer.addCooldown("HighJump", cooldown);
+        
+    }
+    
+    private void jump(Player p) {
+        if (!Methods.isSolid(p.getLocation().getBlock()
+                .getRelative(BlockFace.DOWN)))
+            return;
+        Vector vec = p.getVelocity();
+        vec.setY(jumpheight);
+        p.setVelocity(vec);
+        return;
+    }
+    
+    public static String getDescription() {
+        return "To use this ability, simply click. You will jump quite high. This ability has a short cooldown.";
+    }
 }

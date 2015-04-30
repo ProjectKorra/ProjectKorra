@@ -65,6 +65,8 @@ import org.bukkit.util.Vector;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
+import com.massivecraft.factions.engine.EngineMain;
+import com.massivecraft.massivecore.ps.PS;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
@@ -140,7 +142,6 @@ import com.projectkorra.ProjectKorra.waterbending.Wave;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 public class Methods {
     
@@ -1739,7 +1740,7 @@ public class Methods {
                 if (explode.contains(ability)) {
                     if (wg.getGlobalStateManager().get(location.getWorld()).blockTNTExplosions)
                         return true;
-                    if (!wg.getRegionContainer().createQuery().testBuild(location, player, DefaultFlag.TNT))
+                    if (!wg.canBuild(player, location))
                         return true;
                 }
                 
@@ -1772,11 +1773,7 @@ public class Methods {
             }
             
             if (fcp != null && massivecore != null && respectFactions) {
-                if (!EngineMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return !EngineMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false);
             }
             
             if (twnp != null && respectTowny) {

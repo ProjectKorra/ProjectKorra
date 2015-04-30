@@ -9,54 +9,53 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerGrappleEvent extends Event implements Cancellable {
-
-
-	public static final HandlerList handlers = new HandlerList();
-	private Player player;
-	private Entity entity;
-	private Location pullLocation;
-	private ItemStack hookItem;
-	private boolean cancelled = false;
-
-	public PlayerGrappleEvent(Player p, Entity e, Location l) {
-		player = p;
-		entity = e;
-		pullLocation = l;
-		hookItem = p.getItemInHand();
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public Entity getPulledEntity() {
-		return entity;
-	}
-
-	public Location getPullLocation() {
-		return pullLocation;
-	}
-
-	public ItemStack getHookItem() {
-		return hookItem;
-	}
-
-	public HandlerList getHandlers() {
-		return handlers;
-	}
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
-	@Override
-	public void setCancelled(boolean set) {
-		cancelled = set;
-	}
-
+    
+    public static final HandlerList handlers = new HandlerList();
+    private Player player;
+    private Entity entity;
+    private Location pullLocation;
+    private ItemStack hookItem;
+    private boolean cancelled = false;
+    
+    public PlayerGrappleEvent(Player p, Entity e, Location l) {
+        player = p;
+        entity = e;
+        pullLocation = l;
+        hookItem = p.getItemInHand();
+    }
+    
+    public Player getPlayer() {
+        return player;
+    }
+    
+    public Entity getPulledEntity() {
+        return entity;
+    }
+    
+    public Location getPullLocation() {
+        return pullLocation;
+    }
+    
+    public ItemStack getHookItem() {
+        return hookItem;
+    }
+    
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+    
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+    
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+    
+    @Override
+    public void setCancelled(boolean set) {
+        cancelled = set;
+    }
+    
 }
