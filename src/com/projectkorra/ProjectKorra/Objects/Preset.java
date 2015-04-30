@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.DBConnection;
@@ -38,29 +39,34 @@ public class Preset {
         presets.remove(uuid);
     }
     
-    public static void loadPresets(Player player) {
-        UUID uuid = player.getUniqueId();
-        if (uuid == null)
-            return;
-        ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_presets WHERE uuid = '" + uuid.toString() + "'");
-        try {
-            if (rs2.next()) { // Presets exist.
-                int i = 0;
-                do {
-                    HashMap<Integer, String> moves = new HashMap<Integer, String>();
-                    for (int total = 1; total <= 9; total++) {
-                        String slot = rs2.getString("slot" + total);
-                        if (slot != null)
-                            moves.put(total, slot);
+    public static void loadPresets(final Player player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                UUID uuid = player.getUniqueId();
+                if (uuid == null)
+                    return;
+                ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_presets WHERE uuid = '" + uuid.toString() + "'");
+                try {
+                    if (rs2.next()) { // Presets exist.
+                        int i = 0;
+                        do {
+                            HashMap<Integer, String> moves = new HashMap<Integer, String>();
+                            for (int total = 1; total <= 9; total++) {
+                                String slot = rs2.getString("slot" + total);
+                                if (slot != null)
+                                    moves.put(total, slot);
+                            }
+                            new Preset(uuid, rs2.getString("name"), moves);
+                            i++;
+                        } while (rs2.next());
+                        ProjectKorra.log.info("Loaded " + i + " presets for " + player.getName());
                     }
-                    new Preset(uuid, rs2.getString("name"), moves);
-                    i++;
-                } while (rs2.next());
-                ProjectKorra.log.info("Loaded " + i + " presets for " + player.getName());
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        }.runTaskAsynchronously(ProjectKorra.plugin);
     }
     
     @SuppressWarnings("unchecked")
@@ -99,14 +105,7 @@ public class Preset {
     }
     
     public void delete() {
-        ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_presets WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
-        try {
-            if (rs2.next()) {
-                DBConnection.sql.modifyQuery("DELETE FROM pk_presets WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        DBConnection.sql.modifyQuery("DELETE FROM pk_presets WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
         presets.get(uuid).remove(this);
     }
     
@@ -115,14 +114,8 @@ public class Preset {
     }
     
     public void save() {
-        ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_presets WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
-        try {
-            if (!rs2.next()) { // Preset doesn't already exists.
-                DBConnection.sql.modifyQuery("INSERT INTO pk_presets (uuid, name) VALUES ('" + uuid.toString() + "', '" + name + "')");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        DBConnection.sql.modifyQuery("INSERT INTO pk_presets (uuid, name) VALUES ('" + uuid.toString() + "', '" + name
+                + "') ON DUPLICATE KEY UPDATE uuid=uuid;");
         
         /*
          * Now we know the preset exists in the SQL table, so we can manipulate

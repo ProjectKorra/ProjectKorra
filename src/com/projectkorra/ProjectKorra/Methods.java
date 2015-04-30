@@ -543,7 +543,16 @@ public class Methods {
      *            The player name
      * @throws SQLException
      */
-    public static void createBendingPlayer(UUID uuid, String player) {
+    public static void createBendingPlayer(final UUID uuid, final String player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                createBendingPlayerAsynchronously(uuid, player);
+            }
+        }.runTaskAsynchronously(ProjectKorra.plugin);
+    }
+    
+    private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
         ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
         try {
             if (!rs2.next()) { // Data doesn't exist, we want a completely new
@@ -564,7 +573,7 @@ public class Methods {
                 String element = rs2.getString("element");
                 String permaremoved = rs2.getString("permaremoved");
                 boolean p = false;
-                ArrayList<Element> elements = new ArrayList<Element>();
+                final ArrayList<Element> elements = new ArrayList<Element>();
                 if (element != null) { // Player has an element.
                     if (element.contains("a"))
                         elements.add(Element.Air);
@@ -578,7 +587,7 @@ public class Methods {
                         elements.add(Element.Chi);
                 }
                 
-                HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+                final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
                 for (int i = 1; i <= 9; i++) {
                     String slot = rs2.getString("slot" + i);
                     if (slot != null)
@@ -595,7 +604,13 @@ public class Methods {
                     p = false;
                 }
                 
-                new BendingPlayer(uuid, player, elements, abilities, p);
+                final boolean boolean_p = p;
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        new BendingPlayer(uuid, player, elements, abilities, boolean_p);
+                    }
+                }.runTask(ProjectKorra.plugin);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
