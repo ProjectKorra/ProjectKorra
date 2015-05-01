@@ -5,7 +5,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public final class PlayerCooldownChangeEvent extends Event implements Cancellable{
+public final class PlayerCooldownChangeEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private Player player;
     private String ability;
@@ -20,37 +20,37 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
     }
     
     public Player getPlayer() {
-    	return player;
+        return player;
     }
     
     public String getAbility() {
-    	return ability;
+        return ability;
     }
     
     public Result getResult() {
-    	return eventresult;
+        return eventresult;
     }
     
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
-	public void setCancelled(boolean cancel) {
-		cancelled = cancel;
-	}
+    public boolean isCancelled() {
+        return cancelled;
+    }
+    
+    public void setCancelled(boolean cancel) {
+        cancelled = cancel;
+    }
     
     public HandlerList getHandlers() {
         return handlers;
     }
- 
+    
     public static HandlerList getHandlerList() {
         return handlers;
     }
-	
+    
     public static enum Result {
-    	REMOVED, ADDED;
-    	private Result() {}
+        REMOVED, ADDED;
+        private Result() {
+        }
     }
-	
-	
+    
 }

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Logger;
+
 public class MySQL extends Database {
     
     private String host = "localhost";
@@ -27,26 +28,26 @@ public class MySQL extends Database {
         this.pass = pass;
         this.database = database;
     }
-
+    
     @Override
     public Connection open() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             
             String url = "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database;
-           
+            
             this.connection = DriverManager.getConnection(url, this.user, this.pass);
             this.printInfo("Connection established!");
             
             return this.connection;
-        } catch(ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             this.printErr("JDBC driver not found!", true);
             return null;
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             this.printErr("MYSQL exception during connection.", true);
             return null;
         }
     }
-
+    
 }
