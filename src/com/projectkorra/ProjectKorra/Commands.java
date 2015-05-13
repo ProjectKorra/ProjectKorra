@@ -82,7 +82,7 @@ public class Commands {
 		CommandExecutor exe;
 
 		exe = new CommandExecutor() {
-			@SuppressWarnings("deprecation")
+			@SuppressWarnings({ "deprecation", "unused" })
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
 				for(int i = 0; i < args.length; i++){
