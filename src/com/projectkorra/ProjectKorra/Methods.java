@@ -1594,7 +1594,6 @@ public class Methods {
 			if (gpp != null && respectGriefPrevention) {
 				Material type = player.getWorld().getBlockAt(location).getType();
 				if (type == null) type = Material.AIR;
-//				String reason = GriefPrevention.instance.allowBuild(player, location, null); // NOT WORKING with WorldGuard 6.0 BETA 4
 				String reason = GriefPrevention.instance.allowBuild(player, location); // WORKING with WorldGuard 6.0 BETA 4
 
 
