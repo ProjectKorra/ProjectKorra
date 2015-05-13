@@ -24,6 +24,7 @@ public class EarthPassive {
 
 	public static boolean softenLanding(Player player) {
 		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
+		if(!player.isSneaking()) return false;
 		if (Methods.canMetalbend(player) && Methods.isMetalBlock(block)) {
 			return true;
 		}
