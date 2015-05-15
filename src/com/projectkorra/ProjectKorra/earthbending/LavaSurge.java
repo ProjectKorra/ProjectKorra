@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
@@ -61,7 +61,7 @@ public class LavaSurge
 		if(!isEligible())
 			return;
 
-		if(Methods.getBendingPlayer(player.getName()).isOnCooldown("LavaSurge"))
+		if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("LavaSurge"))
 			return;
 		
 		lastTime = System.currentTimeMillis();
@@ -74,21 +74,21 @@ public class LavaSurge
 	
 	public boolean isEligible()
 	{
-		final BendingPlayer bplayer = Methods.getBendingPlayer(player.getName());
+		final BendingPlayer bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		
-		if(!Methods.canBend(player.getName(), "LavaSurge"))
+		if(!GeneralMethods.canBend(player.getName(), "LavaSurge"))
 			return false;
 		
-		if(Methods.getBoundAbility(player) == null)
+		if(GeneralMethods.getBoundAbility(player) == null)
 			return false;
 		
-		if(!Methods.getBoundAbility(player).equalsIgnoreCase("LavaSurge"))
+		if(!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge"))
 			return false;
 		
-		if(Methods.isRegionProtectedFromBuild(player, "LavaSurge", player.getLocation()))
+		if(GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", player.getLocation()))
 			return false;
 		
-		if(!Methods.canLavabend(player))
+		if(!EarthMethods.canLavabend(player))
 			return false;
 		
 		if(bplayer.isOnCooldown("LavaSurge"))
@@ -99,7 +99,7 @@ public class LavaSurge
 	
 	public boolean prepare()
 	{
-		Block targetBlock = Methods.getEarthSourceBlock(player, prepareRange);
+		Block targetBlock = EarthMethods.getEarthSourceBlock(player, prepareRange);
 		
 		if(targetBlock == null || 
 				!(targetBlock.getRelative(BlockFace.UP).getType() == Material.AIR) &&
@@ -109,8 +109,8 @@ public class LavaSurge
 		if(instances.containsKey(player))
 			instances.get(player).revertFracture();
 		
-		if((canSourceBeEarth && Methods.isEarthbendable(player, targetBlock)) || 
-				Methods.isLavabendable(targetBlock, player))
+		if((canSourceBeEarth && EarthMethods.isEarthbendable(player, targetBlock)) || 
+				EarthMethods.isLavabendable(targetBlock, player))
 		{
 			startLocation = targetBlock.getLocation().add(0, 1, 0);
 			//currentLocation = startLocation; // Not needed.
@@ -130,9 +130,9 @@ public class LavaSurge
 	
 	public void launch()
 	{
-		Location targetLocation = Methods.getTargetedLocation(player, travelRange*2);
+		Location targetLocation = GeneralMethods.getTargetedLocation(player, travelRange*2);
 
-		try { targetLocation = Methods.getTargetedEntity(player, travelRange*2, null).getLocation(); }
+		try { targetLocation = GeneralMethods.getTargetedEntity(player, travelRange*2, null).getLocation(); }
 		catch(NullPointerException e) {};
 		
 		if(targetLocation == null)
@@ -142,7 +142,7 @@ public class LavaSurge
 		}
 		
 		time = System.currentTimeMillis();
-		direction = Methods.getDirection(startLocation, targetLocation).multiply(0.07);
+		direction = GeneralMethods.getDirection(startLocation, targetLocation).multiply(0.07);
 		
 		if(direction.getY() < 0)
 			direction.setY(0);
@@ -156,11 +156,11 @@ public class LavaSurge
 	public void openFracture()
 	{
 		
-		List<Block> affectedBlocks = Methods.getBlocksAroundPoint(sourceBlock.getLocation(), fractureRadius);
+		List<Block> affectedBlocks = GeneralMethods.getBlocksAroundPoint(sourceBlock.getLocation(), fractureRadius);
 		
 		for(Block b : affectedBlocks)
 		{
-			if(Methods.isEarthbendable(player, b))
+			if(EarthMethods.isEarthbendable(player, b))
 			{
 				fracture.add(b);
 			}
@@ -170,7 +170,7 @@ public class LavaSurge
 		
 		fractureOpen = true;
 		
-		Methods.getBendingPlayer(player.getName()).addCooldown("LavaSurge", cooldown);
+		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("LavaSurge", cooldown);
 	}
 	
 	public void skipFracture()
@@ -198,9 +198,9 @@ public class LavaSurge
 	
 	public boolean canMoveThrough(Block block)
 	{
-		if(Methods.isTransparentToEarthbending(player, startLocation.getBlock()) ||
-				Methods.isEarthbendable(player, startLocation.getBlock()) ||
-				Methods.isLavabendable(startLocation.getBlock(), player))
+		if(EarthMethods.isTransparentToEarthbending(player, startLocation.getBlock()) ||
+				EarthMethods.isEarthbendable(player, startLocation.getBlock()) ||
+				EarthMethods.isLavabendable(startLocation.getBlock(), player))
 			return true;
 		return false;
 	}
@@ -224,7 +224,7 @@ public class LavaSurge
 			return;
 		}
 		
-		if(!surgeStarted && !Methods.getBoundAbility(player).equalsIgnoreCase("LavaSurge"))
+		if(!surgeStarted && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge"))
 		{
 			remove();
 			return;
@@ -253,7 +253,7 @@ public class LavaSurge
 			{
 				Block b = li.next();
 	
-				Methods.playEarthbendingSound(b.getLocation());
+				EarthMethods.playEarthbendingSound(b.getLocation());
 				
 				for(int i = 0; i < 2; i++)
 				{
@@ -272,7 +272,7 @@ public class LavaSurge
 			
 			if(curTime > time + (fallingBlockInterval * fallingBlocksCount))
 			{
-				FallingBlock fbs = Methods.spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), 11, (byte) 0);
+				FallingBlock fbs = GeneralMethods.spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), 11, (byte) 0);
 				fblocks.add(fbs);
 				falling.add(fbs);
 				double x = randy.nextDouble()/5;
@@ -288,7 +288,7 @@ public class LavaSurge
 				{
 					if(randy.nextBoolean() && b != sourceBlock)
 					{
-						FallingBlock fb = Methods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), 11, (byte) 0);
+						FallingBlock fb = GeneralMethods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), 11, (byte) 0);
 						falling.add(fb);
 						fblocks.add(fb);
 						fb.setVelocity(direction.clone().add(new Vector(randy.nextDouble()/10, 0.1, randy.nextDouble()/10)).multiply(1.2));
@@ -301,15 +301,15 @@ public class LavaSurge
 			
 			for(FallingBlock fb : fblocks)
 			{
-				for(Entity e : Methods.getEntitiesAroundPoint(fb.getLocation(), 2))
+				for(Entity e : GeneralMethods.getEntitiesAroundPoint(fb.getLocation(), 2))
 				{
 					if(e instanceof LivingEntity)
 					{
 						if(e.getEntityId() != player.getEntityId())
 						{
-							Methods.damageEntity(player, e, impactDamage);
+							GeneralMethods.damageEntity(player, e, impactDamage);
 							e.setFireTicks(100);
-							Methods.setVelocity(e, direction.clone());
+							GeneralMethods.setVelocity(e, direction.clone());
 						}
 					}
 				}

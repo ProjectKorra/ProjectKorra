@@ -1,18 +1,19 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 /**
  * Created by Carbogen on 11/02/15.
@@ -47,8 +48,7 @@ public class HeatControl
 			return;
 
 
-		if(Methods.getLavaSourceBlock(player, getRange()) == null)
-		{
+		if(EarthMethods.getLavaSourceBlock(player, getRange()) == null){
 			new Cook(player);
 			return;
 		}
@@ -67,15 +67,14 @@ public class HeatControl
 		instances.put(id, this);
 	}
 
-	public boolean isEligible(Player player)
-	{
-		if (!Methods.canBend(player.getName(), "HeatControl"))
+	public boolean isEligible(Player player){
+		if (!GeneralMethods.canBend(player.getName(), "HeatControl"))
 			return false;
 
-		if (Methods.getBoundAbility(player) == null)
+		if (GeneralMethods.getBoundAbility(player) == null)
 			return false;
 
-		if (!Methods.getBoundAbility(player).equalsIgnoreCase("HeatControl"))
+		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl"))
 			return false;
 
 		return true;
@@ -90,7 +89,7 @@ public class HeatControl
 		List<Block> lava = new ArrayList<Block>();
 
 		for(Location l : area)
-			if(Methods.isLava(l.getBlock()))
+			if(EarthMethods.isLava(l.getBlock()))
 				lava.add(l.getBlock());
 
 		lastBlockTime = System.currentTimeMillis();
@@ -101,7 +100,7 @@ public class HeatControl
 			return;
 		}
 
-		Block b = lava.get(Methods.rand.nextInt(lava.size()));
+		Block b = lava.get(GeneralMethods.rand.nextInt(lava.size()));
 
 		TempBlock tb;
 
@@ -127,7 +126,7 @@ public class HeatControl
 
 		for(Location l : area)
 		{
-			if(Methods.isLava(l.getBlock()))
+			if(EarthMethods.isLava(l.getBlock()))
 				ParticleEffect.SMOKE.display(l, 0, 0, 0, 0.1f, 2);
 		}
 	}
@@ -161,11 +160,11 @@ public class HeatControl
 			return;
 		}
 
-		Location targetlocation = Methods.getTargetedLocation(player, range);
+		Location targetlocation = GeneralMethods.getTargetedLocation(player, range);
 
 		resetLocation(targetlocation);
 
-		List<Location> area = Methods.getCircle(center, currentRadius, 3, true, true, 0);
+		List<Location> area = GeneralMethods.getCircle(center, currentRadius, 3, true, true, 0);
 
 		particles(area);
 		freeze(area);

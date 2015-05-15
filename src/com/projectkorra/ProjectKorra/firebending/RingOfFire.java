@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
@@ -14,7 +14,7 @@ public class RingOfFire {
 	static final int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.RingOfFire.Range");
 
 	public RingOfFire(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("Blaze")) return;
 
 		Location location = player.getLocation();
@@ -40,7 +40,7 @@ public class RingOfFire {
 			new FireStream(location, direction, player, range);
 		}
 
-		bPlayer.addCooldown("Blaze", Methods.getGlobalCooldown());
+		bPlayer.addCooldown("Blaze", GeneralMethods.getGlobalCooldown());
 	}
 
 	public static String getDescription() {

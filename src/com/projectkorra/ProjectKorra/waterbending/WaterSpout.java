@@ -1,7 +1,7 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
 import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
@@ -54,7 +54,7 @@ public class WaterSpout {
 		if(WaterWave.instances.contains(wwave))
 			return;
 		
-		Block topBlock = Methods.getTopBlock(player.getLocation(), 0, -50);
+		Block topBlock = GeneralMethods.getTopBlock(player.getLocation(), 0, -50);
 		if(topBlock == null)
 			topBlock = player.getLocation().getBlock();
 		Material mat = topBlock.getType();
@@ -81,7 +81,7 @@ public class WaterSpout {
 		for (Player player : instances.keySet()) {
 			if (!player.isOnline() || player.isDead()) {
 				instances.get(player).remove();
-			} else if (Methods.canBend(player.getName(), "WaterSpout")) {
+			} else if (GeneralMethods.canBend(player.getName(), "WaterSpout")) {
 				spout(player);
 			} else {
 				instances.get(player).remove();
@@ -129,8 +129,8 @@ public class WaterSpout {
 
 			player.setFallDistance(0);
 			player.setSprinting(false);
-			if (Methods.rand.nextInt(4) == 0) {
-				Methods.playWaterbendingSound(player.getLocation());
+			if (GeneralMethods.rand.nextInt(4) == 0) {
+				WaterMethods.playWaterbendingSound(player.getLocation());
 			}		
 			// if (player.getVelocity().length() > threshold) {
 			// // Methods.verbose("Too fast!");
@@ -213,13 +213,13 @@ public class WaterSpout {
 	private static int spoutableWaterHeight(Location location, Player player) {
 		WaterSpout spout = instances.get(player);
 		int height = spout.defaultheight;
-		if (Methods.isNight(player.getWorld()))
-			height = (int) Methods.waterbendingNightAugment((double) height, player.getWorld());
+		if (WaterMethods.isNight(player.getWorld()))
+			height = (int) WaterMethods.waterbendingNightAugment((double) height, player.getWorld());
 		int maxheight = (int) ((double) spout.defaultheight * ProjectKorra.plugin.getConfig().getDouble("Properties.Water.NightFactor")) + 5;
 		Block blocki;
 		for (int i = 0; i < maxheight; i++) {
 			blocki = location.clone().add(0, -i, 0).getBlock();
-			if (Methods.isRegionProtectedFromBuild(player, "WaterSpout", blocki.getLocation()))
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", blocki.getLocation()))
 				return -1;
 			if (!affectedblocks.contains(blocki)) {
 				if (blocki.getType() == Material.WATER || blocki.getType() == Material.STATIONARY_WATER) {
@@ -243,7 +243,7 @@ public class WaterSpout {
 						return height;
 					return i;
 				}
-				if ((blocki.getType() != Material.AIR && (!Methods.isPlant(blocki) || !Methods.canPlantbend(player)))) {
+				if ((blocki.getType() != Material.AIR && (!WaterMethods.isPlant(blocki) || !WaterMethods.canPlantbend(player)))) {
 					revertBaseBlock(player);
 					return -1;
 				}

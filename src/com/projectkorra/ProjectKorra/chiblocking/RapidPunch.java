@@ -9,7 +9,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 
@@ -30,12 +30,12 @@ public class RapidPunch {
 
 	public RapidPunch(Player p) {// , Entity t) {
 		player = p;
-		BendingPlayer bPlayer = Methods.getBendingPlayer(p.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(p.getName());
 		if (instances.containsKey(p))
 			return;
 		if (bPlayer.isOnCooldown("RapidPunch")) return;
 
-		Entity t = Methods.getTargetedEntity(p, distance, new ArrayList<Entity>());
+		Entity t = GeneralMethods.getTargetedEntity(p, distance, new ArrayList<Entity>());
 
 		if (t == null)
 			return;
@@ -56,7 +56,7 @@ public class RapidPunch {
 			instances.remove(p);
 		if (target instanceof LivingEntity && target != null) {
 			LivingEntity lt = (LivingEntity) target;
-			Methods.damageEntity(p, target, damage);
+			GeneralMethods.damageEntity(p, target, damage);
 			if (target instanceof Player) {
 				if (ChiPassive.willChiBlock(p, (Player) target)) {
 					ChiPassive.blockChi((Player) target);
@@ -67,7 +67,7 @@ public class RapidPunch {
 			}
 			lt.setNoDamageTicks(0);
 		}
-		Methods.getBendingPlayer(p.getName()).addCooldown("RapidPunch", cooldown);
+		GeneralMethods.getBendingPlayer(p.getName()).addCooldown("RapidPunch", cooldown);
 		swing(p);
 		numpunches++;
 	}
@@ -103,7 +103,7 @@ public class RapidPunch {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 		if(player != null)
-			Methods.getBendingPlayer(player.getName()).addCooldown("RapidPunch", cooldown);
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("RapidPunch", cooldown);
 	}
 
 	public Player getPlayer() {

@@ -123,7 +123,7 @@ public class ComboManager
 	}
 	public static void addComboAbility(Player player, ClickType type)
 	{
-		String abilityName = Methods.getBoundAbility(player);
+		String abilityName = GeneralMethods.getBoundAbility(player);
 		if (abilityName == null)
 			return;
 

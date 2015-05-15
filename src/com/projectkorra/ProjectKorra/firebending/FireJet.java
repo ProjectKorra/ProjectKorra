@@ -10,10 +10,11 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 
 public class FireJet {
@@ -34,11 +35,11 @@ public class FireJet {
 			instances.remove(player);
 			return;
 		}
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 		if (bPlayer.isOnCooldown("FireJet")) return;
 
-		factor = Methods.getFirebendingDayAugment(defaultfactor, player.getWorld());
+		factor = FireMethods.getFirebendingDayAugment(defaultfactor, player.getWorld());
 		Block block = player.getLocation().getBlock();
 		if (FireStream.isIgnitable(player, block) || block.getType() == Material.AIR	|| AvatarState.isAvatarState(player)) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(factor));
@@ -68,13 +69,13 @@ public class FireJet {
 			instances.remove(player);
 			return;
 		}
-		if ((Methods.isWater(player.getLocation().getBlock()) || System.currentTimeMillis() > time + duration)
+		if ((WaterMethods.isWater(player.getLocation().getBlock()) || System.currentTimeMillis() > time + duration)
 				&& (!AvatarState.isAvatarState(player) || !isToggle)) {
 			// player.setAllowFlight(canfly);
 			instances.remove(player);
 		} else {
-			if (Methods.rand.nextInt(2) == 0) {
-				Methods.playFirebendingSound(player.getLocation());
+			if (GeneralMethods.rand.nextInt(2) == 0) {
+				FireMethods.playFirebendingSound(player.getLocation());
 			}
 			ParticleEffect.FLAME.display(player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
 			ParticleEffect.SMOKE.display(player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);

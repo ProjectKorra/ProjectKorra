@@ -16,12 +16,14 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.firebending.FireCombo;
 import com.projectkorra.ProjectKorra.firebending.FireCombo.FireComboStream;
 
@@ -84,21 +86,21 @@ public class WaterCombo {
 	public WaterCombo(Player player, String ability) {
 		if (!enabled || !player.hasPermission("bending.ability.WaterCombo"))
 			return;
-		if(!Methods.getBendingPlayer(player.getName()).hasElement(Element.Water))
+		if(!GeneralMethods.getBendingPlayer(player.getName()).hasElement(Element.Water))
 			return;
 		if (Commands.isToggledForAll) 
 			return;
-		if (Methods.isRegionProtectedFromBuild(player, "WaterManipulation",
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation",
 				player.getLocation()))
 			return;
-		if (!Methods.getBendingPlayer(player.getName()).isToggled()) 
+		if (!GeneralMethods.getBendingPlayer(player.getName()).isToggled()) 
 			return;
 		time = System.currentTimeMillis();
 		this.player = player;
 		this.ability = ability;
-		this.bplayer = Methods.getBendingPlayer(player.getName());
+		this.bplayer = GeneralMethods.getBendingPlayer(player.getName());
 
-		if (Methods.isChiBlocked(player.getName())
+		if (ChiMethods.isChiBlocked(player.getName())
 				|| Bloodbending.isBloodbended(player)
 				|| Paralyze.isParalyzed(player)) {
 			return;
@@ -120,7 +122,7 @@ public class WaterCombo {
 			maxShots = ICE_BULLET_MAX_SHOTS;
 			speed = 1;
 		}
-		double aug = Methods.getWaterbendingNightAugment(player.getWorld());
+		double aug = WaterMethods.getWaterbendingNightAugment(player.getWorld());
 		if(aug > 1)
 			aug = 1 + (aug - 1) / 3;
 		damage *= aug;
@@ -196,14 +198,14 @@ public class WaterCombo {
 					return;
 				}
 				origin = player.getLocation();
-				Entity ent = Methods.getTargetedEntity(player, range,
+				Entity ent = GeneralMethods.getTargetedEntity(player, range,
 						new ArrayList<Entity>());
 				if (ent == null || !(ent instanceof LivingEntity)) {
 					remove();
 					return;
 				}
 
-				Location startingLoc = Methods.getTopBlock(
+				Location startingLoc = GeneralMethods.getTopBlock(
 						ent.getLocation().add(0, -1, 0), (int) range)
 						.getLocation();
 				if (startingLoc == null) {
@@ -219,9 +221,9 @@ public class WaterCombo {
 						if (tmpLoc.distance(startingLoc) > radius)
 							continue;
 
-						Block block = Methods.getTopBlock(tmpLoc, (int) range,
+						Block block = GeneralMethods.getTopBlock(tmpLoc, (int) range,
 								(int) range);
-						if (!Methods.isWaterbendable(block, player))
+						if (!WaterMethods.isWaterbendable(block, player))
 							badBlocks++;
 					}
 				//Bukkit.broadcastMessage("Bad Blocks:" + badBlocks);
@@ -242,11 +244,11 @@ public class WaterCombo {
 					for (double z = -radius; z <= radius; z++) {
 						Block block = currentLoc.clone().add(x, 0, z)
 								.getBlock();
-						if (Methods.isWaterbendable(block, player)
+						if (WaterMethods.isWaterbendable(block, player)
 								|| block.getType() == Material.AIR)
 							if (block.getLocation().distance(currentLoc) > radius)
 								continue;
-						if (Methods.isRegionProtectedFromBuild(player,
+						if (GeneralMethods.isRegionProtectedFromBuild(player,
 								"WaterManipulation", block.getLocation()))
 							continue;
 
@@ -267,7 +269,7 @@ public class WaterCombo {
 					remove();
 					return;
 				}
-				Block waterBlock = Methods.getWaterSourceBlock(player, range,
+				Block waterBlock = WaterMethods.getWaterSourceBlock(player, range,
 						true);
 				if (waterBlock == null) {
 					remove();
@@ -349,14 +351,14 @@ public class WaterCombo {
 			FireComboStream fstream = (FireComboStream) tasks.get(i);
 			Location loc = fstream.getLocation();
 
-			if (!Methods.isTransparentToEarthbending(player,
+			if (!EarthMethods.isTransparentToEarthbending(player,
 					loc.clone().add(0, 0.2, 0).getBlock())) {
 				fstream.remove();
 				return;
 			}
 			if (i % 2 == 0) {
-				for (Entity entity : Methods.getEntitiesAroundPoint(loc, 1.5)) {
-					if (Methods.isRegionProtectedFromBuild(player, "WaterManipulation",
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 1.5)) {
+					if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation",
 							entity.getLocation())) {
 						remove();
 						return;
@@ -371,11 +373,11 @@ public class WaterCombo {
 						}
 						if (damage != 0)
 							if (entity instanceof LivingEntity)
-								Methods.damageEntity(player, entity, damage);
+								GeneralMethods.damageEntity(player, entity, damage);
 					}
 				}
 
-				if (Methods.blockAbilities(player, FireCombo.abilitiesToBlock,
+				if (GeneralMethods.blockAbilities(player, FireCombo.abilitiesToBlock,
 						loc, 1)) {
 					fstream.remove();
 				}
@@ -403,15 +405,15 @@ public class WaterCombo {
 	}
 	public void drawWaterCircle(Location loc, double theta, double increment, double radius, Material mat, byte data) {
 		double rotateSpeed = theta;
-		direction = Methods.rotateXZ(direction, rotateSpeed);
+		direction = GeneralMethods.rotateXZ(direction, rotateSpeed);
 		for (double i = 0; i < theta; i += increment) {
-			Vector dir = Methods.rotateXZ(direction, i - theta / 2).normalize()
+			Vector dir = GeneralMethods.rotateXZ(direction, i - theta / 2).normalize()
 					.multiply(radius);
 			dir.setY(0);
 			Block block = loc.clone().add(dir).getBlock();
 			currentLoc = block.getLocation();
 			if (block.getType() == Material.AIR
-					&& !Methods.isRegionProtectedFromBuild(player,
+					&& !GeneralMethods.isRegionProtectedFromBuild(player,
 							"WaterManipulation", block.getLocation()))
 				createBlock(block, mat, data);
 		}

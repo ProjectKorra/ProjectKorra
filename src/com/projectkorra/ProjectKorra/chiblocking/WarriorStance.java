@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
@@ -38,7 +38,7 @@ public class WarriorStance {
 			remove();
 			return;
 		}
-		if (!Methods.canBend(player.getName(), StockAbilities.WarriorStance.toString())) {
+		if (!GeneralMethods.canBend(player.getName(), StockAbilities.WarriorStance.toString())) {
 			remove();
 			return;
 		}

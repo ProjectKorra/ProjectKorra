@@ -13,11 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class LavaWave {
 	public static ConcurrentHashMap<Integer, LavaWave> instances = new ConcurrentHashMap<Integer, LavaWave>();
@@ -61,7 +62,7 @@ public class LavaWave {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = Methods.getLavaSourceBlock(player, range);
+		Block block = EarthMethods.getLavaSourceBlock(player, range);
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -95,19 +96,19 @@ public class LavaWave {
 	
 	@SuppressWarnings("deprecation")
 	public void moveLava() {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("LavaSurge")) return;
 		
-		bPlayer.addCooldown("LavaSurge", Methods.getGlobalCooldown());
+		bPlayer.addCooldown("LavaSurge", GeneralMethods.getGlobalCooldown());
 		if (sourceblock != null) {
 			if (sourceblock.getWorld() != player.getWorld()) {
 				return;
 			}
 			if (AvatarState.isAvatarState(player))
 				factor = AvatarState.getValue(factor);
-			Entity target = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
+			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 			if (target == null) {
-				targetdestination = player.getTargetBlock(Methods.getTransparentEarthbending(), (int) range).getLocation();
+				targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) range).getLocation();
 			} else {
 				targetdestination = ((LivingEntity) target).getEyeLocation();
 			}
@@ -118,7 +119,7 @@ public class LavaWave {
 				progressing = true;
 				targetdirection = getDirection(sourceblock.getLocation(), targetdestination).normalize();
 				targetdestination = location.clone().add(targetdirection.clone().multiply(range));
-				if (!Methods.isAdjacentToThreeOrMoreSources(sourceblock)) {
+				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceblock)) {
 					sourceblock.setType(Material.AIR);
 				}
 				addLava(sourceblock);
@@ -145,18 +146,18 @@ public class LavaWave {
 	}
 	
 	private boolean progress() {
-		if (player.isDead() || !player.isOnline() || !Methods.canBend(player.getName(), "LavaSurge")) {
+		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "LavaSurge")) {
 			breakBlock();
 			return false;
 		}
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
-			if (Methods.getBoundAbility(player) == null) {
+			if (GeneralMethods.getBoundAbility(player) == null) {
 				unfocusBlock();
 				return false;
 			}
 			if (!progressing
-					&& !Methods.getBoundAbility(player).equalsIgnoreCase("LavaSurge")) {
+					&& !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge")) {
 				unfocusBlock();
 				return false;
 			}
@@ -172,18 +173,18 @@ public class LavaWave {
 			location = location.clone().add(direction);
 			Block blockl = location.getBlock();
 			ArrayList<Block> blocks = new ArrayList<Block>();
-			if (!Methods.isRegionProtectedFromBuild(player, "LavaSurge", location) && (((blockl.getType() == Material.AIR
+			if (!GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", location) && (((blockl.getType() == Material.AIR
 					|| blockl.getType() == Material.FIRE
-					|| Methods.isPlant(blockl)
-					|| Methods.isLava(blockl)
-					|| Methods.isLavabendable(blockl, player))) && blockl.getType() != Material.LEAVES)) {
+					|| WaterMethods.isPlant(blockl)
+					|| EarthMethods.isLava(blockl)
+					|| EarthMethods.isLavabendable(blockl, player))) && blockl.getType() != Material.LEAVES)) {
 				for (double i = 0; i <= radius; i += .5) {
 					for (double angle = 0; angle < 360; angle += 10) {
-						Vector vec = Methods.getOrthogonalVector(targetdirection, angle, i);
+						Vector vec = GeneralMethods.getOrthogonalVector(targetdirection, angle, i);
 						Block block = location.clone().add(vec).getBlock();
 						if (!blocks.contains(block)	&& (block.getType() == Material.AIR
 								|| block.getType() == Material.FIRE)
-								|| Methods.isLavabendable(block, player)) {
+								|| EarthMethods.isLavabendable(block, player)) {
 							blocks.add(block);
 							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 						}
@@ -204,7 +205,7 @@ public class LavaWave {
 				progressing = false;
 				return false;
 			}
-			for (Entity entity : Methods.getEntitiesAroundPoint(location, 2 * radius)) {
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * radius)) {
 				boolean knockback = false;
 				for (Block block : wave.keySet()) {
 					if (entity.getLocation().distance(block.getLocation()) <= 2) {
@@ -255,7 +256,7 @@ public class LavaWave {
 	}
 	
 	private void addLava(Block block) {
-		if (Methods.isRegionProtectedFromBuild(player, "LavaSurge",	block.getLocation()))
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge",	block.getLocation()))
 			return;
 		if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);

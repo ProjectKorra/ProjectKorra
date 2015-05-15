@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.DBConnection;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Preset {
@@ -63,7 +63,7 @@ public class Preset {
 
 	@SuppressWarnings("unchecked")
 	public static void bindPreset(Player player, String name) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer == null) return;
 		if (!presets.containsKey(player.getUniqueId())) return;
 		for (Preset preset: presets.get(player.getUniqueId())) {

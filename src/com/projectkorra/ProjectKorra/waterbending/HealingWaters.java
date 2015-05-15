@@ -10,9 +10,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 import com.projectkorra.ProjectKorra.chiblocking.Smokescreen;
 
 public class HealingWaters {
@@ -27,8 +28,8 @@ public class HealingWaters {
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			for (Player player : server.getOnlinePlayers()) {
-				if (Methods.getBoundAbility(player) != null) {
-					if (Methods.getBoundAbility(player).equalsIgnoreCase("HealingWaters") && Methods.canBend(player.getName(),"HealingWaters")) {
+				if (GeneralMethods.getBoundAbility(player) != null) {
+					if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HealingWaters") && GeneralMethods.canBend(player.getName(),"HealingWaters")) {
 						heal(player);
 					}
 				}
@@ -39,7 +40,7 @@ public class HealingWaters {
 	private static void heal(Player player) {
 		if (inWater(player)) {
 			if (player.isSneaking()) {
-				Entity entity = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
+				Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 				if (entity instanceof LivingEntity && inWater(entity)) {
 					giveHPToEntity((LivingEntity) entity);
 				}
@@ -54,7 +55,7 @@ public class HealingWaters {
 			applyHealingToEntity(le);
 		}
 		for(PotionEffect effect : le.getActivePotionEffects()) {
-			if(Methods.isNegativeEffect(effect.getType())) {
+			if(WaterMethods.isNegativeEffect(effect.getType())) {
 				le.removePotionEffect(effect.getType());
 			}
 		}
@@ -65,7 +66,7 @@ public class HealingWaters {
 			applyHealing(player);
 		}
 		for(PotionEffect effect : player.getActivePotionEffects()) {
-			if(Methods.isNegativeEffect(effect.getType())) {
+			if(WaterMethods.isNegativeEffect(effect.getType())) {
 				if((effect.getType() == PotionEffectType.BLINDNESS) && Smokescreen.blinded.containsKey(player.getName())) {
 					return;
 				}
@@ -78,16 +79,16 @@ public class HealingWaters {
 
 	private static boolean inWater(Entity entity) {
 		Block block = entity.getLocation().getBlock();
-		if (Methods.isWater(block) && !TempBlock.isTempBlock(block))
+		if (WaterMethods.isWater(block) && !TempBlock.isTempBlock(block))
 			return true;
 		return false;
 	}
 
 	private static void applyHealing(Player player) {
-		if (!Methods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation()))
+		if (!GeneralMethods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation()))
 			if(player.getHealth() < player.getMaxHealth()) {
 				player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, power));
-				Methods.breakBreathbendingHold(player);
+				AirMethods.breakBreathbendingHold(player);
 			}
 //			for(PotionEffect effect : player.getActivePotionEffects()) {
 //				if(Methods.isNegativeEffect(effect.getType())) {
@@ -99,7 +100,7 @@ public class HealingWaters {
 	private static void applyHealingToEntity(LivingEntity le) {
 		if(le.getHealth() < le.getMaxHealth()) {
 			le.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 70, 1));
-			Methods.breakBreathbendingHold(le);
+			AirMethods.breakBreathbendingHold(le);
 		}
 //		for(PotionEffect effect : le.getActivePotionEffects()) {
 //			if(Methods.isNegativeEffect(effect.getType())) {

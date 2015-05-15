@@ -12,6 +12,8 @@ import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+
 public class RevertChecker implements Runnable {
 
 	public static ConcurrentHashMap<Block, Block> earthRevertQueue = new ConcurrentHashMap<Block, Block>();
@@ -71,7 +73,7 @@ public class RevertChecker implements Runnable {
 				ArrayList<Chunk> chunks = returnFuture.get();
 
 				Map<Block, Information> earth = new HashMap<Block, Information>();
-				earth.putAll(Methods.movedearth);
+				earth.putAll(EarthMethods.movedearth);
 
 				for (Block block : earth.keySet()) {
 					if (earthRevertQueue.containsKey(block))
@@ -88,7 +90,7 @@ public class RevertChecker implements Runnable {
 				}
 
 				Map<Integer, Information> air = new HashMap<Integer, Information>();
-				air.putAll(Methods.tempair);
+				air.putAll(EarthMethods.tempair);
 
 				for (Integer i : air.keySet()) {
 					if (airRevertQueue.containsKey(i))
@@ -129,14 +131,14 @@ public class RevertChecker implements Runnable {
 
 	public static void revertEarthBlocks() {
 		for (Block block : earthRevertQueue.keySet()) {
-			Methods.revertBlock(block);
+			EarthMethods.revertBlock(block);
 			earthRevertQueue.remove(block);
 		}
 	}
 
 	public static void revertAirBlocks() {
 		for (int ID : airRevertQueue.keySet()) {
-			Methods.revertAirBlock(ID);
+			EarthMethods.revertAirBlock(ID);
 			RevertChecker.airRevertQueue.remove(ID);
 		}
 	}

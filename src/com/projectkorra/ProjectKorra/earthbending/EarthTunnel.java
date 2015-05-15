@@ -9,7 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class EarthTunnel {
@@ -63,8 +63,8 @@ public class EarthTunnel {
 				instances.remove(player);
 				return false;
 			} else {
-				while (!Methods.isEarthbendable(player, block)) {
-					if (!Methods.isTransparentToEarthbending(player, block)) {
+				while (!EarthMethods.isEarthbendable(player, block)) {
+					if (!EarthMethods.isTransparentToEarthbending(player, block)) {
 						instances.remove(player);
 						return false;
 					}
@@ -84,7 +84,7 @@ public class EarthTunnel {
 					} else {
 						angle += 20;
 					}
-					Vector vec = Methods.getOrthogonalVector(direction, angle,
+					Vector vec = GeneralMethods.getOrthogonalVector(direction, angle,
 							radius);
 					block = location.clone()
 							.add(direction.clone().normalize().multiply(depth))
@@ -92,7 +92,7 @@ public class EarthTunnel {
 				}
 
 				if (revert) {
-					Methods.addTempAirBlock(block);
+					EarthMethods.addTempAirBlock(block);
 				} else {
 					block.breakNaturally();
 				}

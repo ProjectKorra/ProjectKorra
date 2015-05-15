@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
@@ -36,14 +36,14 @@ public class Shockwave {
 	}
 
 	public static void fallShockwave(Player player) {
-		if (!Methods.canBend(player.getName(), "Shockwave")) {
+		if (!GeneralMethods.canBend(player.getName(), "Shockwave")) {
 			return;
 		}
-		if (Methods.getBoundAbility(player) == null || !Methods.getBoundAbility(player).equalsIgnoreCase("Shockwave")) {
+		if (GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Shockwave")) {
 			return;
 		}
 		
-		if (instances.containsKey(player) || player.getFallDistance() < threshold || !Methods.isEarthbendable(player, player.getLocation().add(0, -1, 0).getBlock())) {
+		if (instances.containsKey(player) || player.getFallDistance() < threshold || !EarthMethods.isEarthbendable(player, player.getLocation().add(0, -1, 0).getBlock())) {
 			return;
 		}
 
@@ -51,11 +51,11 @@ public class Shockwave {
 	}
 
 	private void progress() {
-		if (Methods.getBoundAbility(player) == null) {
+		if (GeneralMethods.getBoundAbility(player) == null) {
 			instances.remove(player);
 			return;
 		}
-		if (!Methods.canBend(player.getName(), "Shockwave") || !Methods.getBoundAbility(player).equalsIgnoreCase("Shockwave")) {
+		if (!GeneralMethods.canBend(player.getName(), "Shockwave") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Shockwave")) {
 			instances.remove(player);
 			return;
 		}
@@ -77,7 +77,7 @@ public class Shockwave {
 			location.getWorld().playEffect(
 					location,
 					Effect.SMOKE,
-					Methods.getIntCardinalDirection(player.getEyeLocation()
+					GeneralMethods.getIntCardinalDirection(player.getEyeLocation()
 							.getDirection()), 3);
 		}
 	}

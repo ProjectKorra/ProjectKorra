@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager.ChiCombo;
 
@@ -19,38 +19,38 @@ public class SwiftKick
 		if(!isEligible(player))
 			return;
 		
-		Entity e = Methods.getTargetedEntity(player, 4, new ArrayList<Entity>());
+		Entity e = GeneralMethods.getTargetedEntity(player, 4, new ArrayList<Entity>());
 		
 		if(e == null)
 			return;
 		
-		Methods.damageEntity(player, e, damage);
+		GeneralMethods.damageEntity(player, e, damage);
 		
-		if(Methods.rand.nextInt(100) < blockChance && e instanceof Player)
+		if(GeneralMethods.rand.nextInt(100) < blockChance && e instanceof Player)
 		{
 			ChiPassive.blockChi((Player) e);
 		}
 		
-		Methods.getBendingPlayer(player.getName()).addCooldown("SwiftKick", 4000);
+		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("SwiftKick", 4000);
 		ChiComboManager.addCombo(player, ChiCombo.SwiftKick);
 	}
 	
 	@SuppressWarnings("deprecation")
 	public boolean isEligible(Player player)
 	{
-		if(!Methods.canBend(player.getName(), "SwiftKick"))
+		if(!GeneralMethods.canBend(player.getName(), "SwiftKick"))
 			return false;
 		
-		if(Methods.getBoundAbility(player) == null)
+		if(GeneralMethods.getBoundAbility(player) == null)
 			return false;
 		
-		if(!Methods.getBoundAbility(player).equalsIgnoreCase("SwiftKick"))
+		if(!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("SwiftKick"))
 			return false;
 		
-		if(Methods.isRegionProtectedFromBuild(player, "SwiftKick", player.getLocation()))
+		if(GeneralMethods.isRegionProtectedFromBuild(player, "SwiftKick", player.getLocation()))
 			return false;
 
-		if(Methods.getBendingPlayer(player.getName()).isOnCooldown("SwiftKick"))
+		if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("SwiftKick"))
 			return false;
 		
 		if(player.isOnGround())

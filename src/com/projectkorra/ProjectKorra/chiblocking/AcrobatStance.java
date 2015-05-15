@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.earthbending.MetalClips;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
@@ -43,7 +43,7 @@ public class AcrobatStance {
 			return;
 		}
 		
-		if (!Methods.canBend(player.getName(), "AcrobatStance")) {
+		if (!GeneralMethods.canBend(player.getName(), "AcrobatStance")) {
 			remove();
 			return;
 		}

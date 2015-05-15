@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class SpikeField {
@@ -28,7 +28,7 @@ public class SpikeField {
 	private Vector thrown = new Vector(0, 1, 0);
 
 	public SpikeField(Player p) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(p.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(p.getName());
 
 		if (bPlayer.isOnCooldown("IceSpike")) return;
 		int locX = p.getLocation().getBlockX();
@@ -46,14 +46,14 @@ public class SpikeField {
 							.getEyeLocation().getBlock().getZ())) {
 						iceblocks.add(testblock);
 						for(Block iceblockforsound : iceblocks) {
-							Methods.playIcebendingSound(iceblockforsound.getLocation());
+							WaterMethods.playIcebendingSound(iceblockforsound.getLocation());
 						}
 					}
 				}
 			}
 		}
 
-		List<Entity> entities = Methods.getEntitiesAroundPoint(p.getLocation(),	radius);
+		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(p.getLocation(),	radius);
 
 		for (int i = 0; i < numofspikes; i++) {
 			if (iceblocks.isEmpty())

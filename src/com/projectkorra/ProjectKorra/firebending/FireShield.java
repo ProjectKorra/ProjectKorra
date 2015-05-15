@@ -12,7 +12,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
@@ -45,7 +45,7 @@ public class FireShield {
 		this.shield = shield;
 		if (instances.containsKey(player))
 			return;
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 		if (bPlayer.isOnCooldown("FireShield")) return;
 
@@ -54,7 +54,7 @@ public class FireShield {
 			starttime = time;
 			instances.put(player, this);
 			if (!shield)
-				bPlayer.addCooldown("FireShield", Methods.getGlobalCooldown());
+				bPlayer.addCooldown("FireShield", GeneralMethods.getGlobalCooldown());
 		}
 	}
 
@@ -67,7 +67,7 @@ public class FireShield {
 	}
 
 	private void progress() {
-		if (((!player.isSneaking()) && shield) || !Methods.canBend(player.getName(), "FireShield")) {
+		if (((!player.isSneaking()) && shield) || !GeneralMethods.canBend(player.getName(), "FireShield")) {
 			remove();
 			return;
 		}
@@ -98,23 +98,23 @@ public class FireShield {
 								radius * Math.cos(rphi) * Math.sin(rtheta),
 								radius * Math.cos(rtheta),
 								radius * Math.sin(rphi)	* Math.sin(rtheta)).getBlock();
-						if (!blocks.contains(block) && !Methods.isSolid(block) && !block.isLiquid())
+						if (!blocks.contains(block) && !GeneralMethods.isSolid(block) && !block.isLiquid())
 							blocks.add(block);
 					}
 				}
 
 				for (Block block : blocks) {
-					if (!Methods.isRegionProtectedFromBuild(player,	"FireShield", block.getLocation())) {
+					if (!GeneralMethods.isRegionProtectedFromBuild(player,	"FireShield", block.getLocation())) {
 						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
 						ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
-						if (Methods.rand.nextInt(7) == 0) {
-							Methods.playFirebendingSound(block.getLocation());
+						if (GeneralMethods.rand.nextInt(7) == 0) {
+							FireMethods.playFirebendingSound(block.getLocation());
 						}
 					}
 				}
 
-				for (Entity entity : Methods.getEntitiesAroundPoint(location, radius)) {
-					if (Methods.isRegionProtectedFromBuild(player, "FireShield", entity.getLocation()))
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
+					if (GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", entity.getLocation()))
 						continue;
 					if (player.getEntityId() != entity.getEntityId() && ignite) {
 						entity.setFireTicks(120);
@@ -134,29 +134,29 @@ public class FireShield {
 				Vector direction = location.getDirection();
 				location = location.clone().add(direction.multiply(radius));
 
-				if (Methods.isRegionProtectedFromBuild(player, "FireShield", location)) {
+				if (GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", location)) {
 					remove();
 					return;
 				}
 
 				for (double theta = 0; theta < 360; theta += 20) {
-					Vector vector = Methods.getOrthogonalVector(direction, theta, discradius);
+					Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, discradius);
 					Block block = location.clone().add(vector).getBlock();
-					if (!blocks.contains(block) && !Methods.isSolid(block) && !block.isLiquid())
+					if (!blocks.contains(block) && !GeneralMethods.isSolid(block) && !block.isLiquid())
 						blocks.add(block);
 				}
 
 				for (Block block : blocks) {
-					if (!Methods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
+					if (!GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
 						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
-						if (Methods.rand.nextInt(4) == 0) {
-							Methods.playFirebendingSound(block.getLocation());
+						if (GeneralMethods.rand.nextInt(4) == 0) {
+							FireMethods.playFirebendingSound(block.getLocation());
 						}
 					}
 				}
 
-				for (Entity entity : Methods.getEntitiesAroundPoint(location, discradius)) {
-					if (Methods.isRegionProtectedFromBuild(player, "FireShield", entity.getLocation()))
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, discradius)) {
+					if (GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", entity.getLocation()))
 						continue;
 					if (player.getEntityId() != entity.getEntityId() && ignite) {
 						entity.setFireTicks(120);
@@ -171,7 +171,7 @@ public class FireShield {
 				EarthBlast.removeAroundPoint(location, discradius);
 				FireStream.removeAroundPoint(location, discradius);
 				Combustion.removeAroundPoint(location, discradius);
-				for (Entity entity: Methods.getEntitiesAroundPoint(location, discradius)) {
+				for (Entity entity: GeneralMethods.getEntitiesAroundPoint(location, discradius)) {
 					if (entity instanceof Projectile) {
 						entity.remove();
 					}

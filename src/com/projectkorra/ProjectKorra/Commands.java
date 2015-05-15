@@ -1,12 +1,16 @@
 package com.projectkorra.ProjectKorra;
 
-import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
-import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
-import com.projectkorra.ProjectKorra.Objects.Preset;
-import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
-import com.projectkorra.rpg.RPGMethods;
+import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,10 +24,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
+import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
+import com.projectkorra.ProjectKorra.Objects.Preset;
+import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.firebending.FireMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import com.projectkorra.rpg.RPGMethods;
 
 public class Commands {
 
@@ -82,7 +94,7 @@ public class Commands {
 		CommandExecutor exe;
 
 		exe = new CommandExecutor() {
-			@SuppressWarnings({ "deprecation", "unused" })
+			@SuppressWarnings("deprecation")
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
 				for(int i = 0; i < args.length; i++){
@@ -95,7 +107,7 @@ public class Commands {
 					return true;
 				}
 				if (Arrays.asList(avataraliases).contains(args[0].toLowerCase())) {
-					if (!Methods.hasRPG()) {
+					if (!GeneralMethods.hasRPG()) {
 						s.sendMessage(ChatColor.RED + "This command cannot be used unless you have ProjectKorra (RPG) installed.");
 						return true;
 					}
@@ -140,7 +152,7 @@ public class Commands {
 						return true;
 					}
 					
-					Methods.runDebug();
+					GeneralMethods.runDebug();
 					s.sendMessage(ChatColor.GREEN + "Debug File Created as debug.txt in the ProjectKorra plugin folder.");
 					s.sendMessage(ChatColor.GREEN + "Put contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
 					return true;
@@ -221,7 +233,7 @@ public class Commands {
 							return true;
 						}
 
-						int limit = Methods.getMaxPresets(player);
+						int limit = GeneralMethods.getMaxPresets(player);
 
 						if (Preset.presets.get(player) != null && Preset.presets.get(player).size() >= limit) {
 							s.sendMessage(ChatColor.RED + "You have reached your max number of Presets.");
@@ -233,7 +245,7 @@ public class Commands {
 							return true;
 						}
 
-						BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 						if (bPlayer == null) return true;
 
@@ -331,7 +343,7 @@ public class Commands {
 						return true;
 					}
 
-					Methods.reloadPlugin();
+					GeneralMethods.reloadPlugin();
 					s.sendMessage(ChatColor.AQUA + "Bending config reloaded.");
 					return true;
 				}
@@ -349,11 +361,11 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
 						return true;
 					}
-					BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
+					BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
 					if (args.length == 1) {
 						bPlayer.getAbilities().clear();
 						for (int i = 1; i <= 9; i++) {
-							Methods.saveAbility(bPlayer, i, null);
+							GeneralMethods.saveAbility(bPlayer, i, null);
 						}
 						s.sendMessage("Your bound abilities have been cleared.");
 						return true;
@@ -368,7 +380,7 @@ public class Commands {
 							}
 							if (bPlayer.getAbilities().get(slot) != null) {
 								bPlayer.getAbilities().remove(slot);
-								Methods.saveAbility(bPlayer, slot, null);
+								GeneralMethods.saveAbility(bPlayer, slot, null);
 							}
 							s.sendMessage("You have cleared slot #" + slot);
 							return true;
@@ -397,40 +409,40 @@ public class Commands {
 						// We bind the ability to the slot they have selected..
 						// bending bind [Ability]
 						String abil = args[1];
-						if (!Methods.abilityExists(abil)) {
+						if (!GeneralMethods.abilityExists(abil)) {
 							s.sendMessage(ChatColor.RED + "That is not an ability.");
 							return true;
 						}
 
-						String ability = Methods.getAbility(abil);
+						String ability = GeneralMethods.getAbility(abil);
 
-						if (!Methods.canBind(((Player) s).getName(), ability)) {
+						if (!GeneralMethods.canBind(((Player) s).getName(), ability)) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
 
 						}
-						if (Methods.isAirAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
-							s.sendMessage(Methods.getAirColor() + "You must be an Airbender to bind this ability.");
+						if (AirMethods.isAirAbility(ability) && !GeneralMethods.isBender(s.getName(), Element.Air)) {
+							s.sendMessage(AirMethods.getAirColor() + "You must be an Airbender to bind this ability.");
 							return true;
 						}
-						if (Methods.isWaterAbility(ability) && !Methods.isBender(s.getName(), Element.Water)) {
-							s.sendMessage(Methods.getWaterColor() + "You must be a Waterbender to bind this ability.");
+						if (WaterMethods.isWaterAbility(ability) && !GeneralMethods.isBender(s.getName(), Element.Water)) {
+							s.sendMessage(WaterMethods.getWaterColor() + "You must be a Waterbender to bind this ability.");
 							return true;
 						}
-						if (Methods.isEarthAbility(ability) && !Methods.isBender(s.getName(), Element.Earth)) {
-							s.sendMessage(Methods.getEarthColor() + "You must be an Earthbender to bind this ability.");
+						if (EarthMethods.isEarthAbility(ability) && !GeneralMethods.isBender(s.getName(), Element.Earth)) {
+							s.sendMessage(EarthMethods.getEarthColor() + "You must be an Earthbender to bind this ability.");
 							return true;
 						}
-						if (Methods.isFireAbility(ability) && !Methods.isBender(s.getName(), Element.Fire)) {
-							s.sendMessage(Methods.getFireColor() + "You must be a Firebender to bind this ability.");
+						if (FireMethods.isFireAbility(ability) && !GeneralMethods.isBender(s.getName(), Element.Fire)) {
+							s.sendMessage(FireMethods.getFireColor() + "You must be a Firebender to bind this ability.");
 							return true;
 						}
-						if (Methods.isChiAbility(ability) && !Methods.isBender(s.getName(), Element.Chi)) {
-							s.sendMessage(Methods.getChiColor() + "You must be a ChiBlocker to bind this ability.");
+						if (ChiMethods.isChiAbility(ability) && !GeneralMethods.isBender(s.getName(), Element.Chi)) {
+							s.sendMessage(ChiMethods.getChiColor() + "You must be a ChiBlocker to bind this ability.");
 							return true;
 						}
 
-						Methods.bindAbility((Player) s, ability);
+						GeneralMethods.bindAbility((Player) s, ability);
 						//						s.sendMessage("Ability Bound to slot");
 						return true;
 					}
@@ -438,11 +450,11 @@ public class Commands {
 					if (args.length == 3) {
 						// bending bind ability [Slot]
 						String abil = args[1];
-						if (!Methods.abilityExists(abil)) {
+						if (!GeneralMethods.abilityExists(abil)) {
 							s.sendMessage(ChatColor.RED + "That ability doesn't exist.");
 							return true;
 						}
-						String ability = Methods.getAbility(abil);
+						String ability = GeneralMethods.getAbility(abil);
 						int slot = 0;
 						try {
 							slot = Integer.parseInt(args[2]);
@@ -455,32 +467,32 @@ public class Commands {
 							return true;
 						}
 
-						if (!Methods.canBind(((Player) s).getName(), ability)) {
+						if (!GeneralMethods.canBind(((Player) s).getName(), ability)) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
 						}
 
-						if (Methods.isAirAbility(ability) && !Methods.isBender(s.getName(), Element.Air)) {
-							s.sendMessage(Methods.getAirColor() + "You must be an Airbender to bind this ability.");
+						if (AirMethods.isAirAbility(ability) && !GeneralMethods.isBender(s.getName(), Element.Air)) {
+							s.sendMessage(AirMethods.getAirColor() + "You must be an Airbender to bind this ability.");
 							return true;
 						}
-						if (Methods.isWaterAbility(ability) && !Methods.isBender(s.getName(), Element.Water)) {
-							s.sendMessage(Methods.getWaterColor() + "You must be a Waterbender to bind this ability.");
+						if (WaterMethods.isWaterAbility(ability) && !GeneralMethods.isBender(s.getName(), Element.Water)) {
+							s.sendMessage(WaterMethods.getWaterColor() + "You must be a Waterbender to bind this ability.");
 							return true;
 						}
-						if (Methods.isEarthAbility(ability) && !Methods.isBender(s.getName(), Element.Earth)) {
-							s.sendMessage(Methods.getEarthColor() + "You must be an Earthbender to bind this ability.");
+						if (EarthMethods.isEarthAbility(ability) && !GeneralMethods.isBender(s.getName(), Element.Earth)) {
+							s.sendMessage(EarthMethods.getEarthColor() + "You must be an Earthbender to bind this ability.");
 							return true;
 						}
-						if (Methods.isFireAbility(ability) && !Methods.isBender(s.getName(), Element.Fire)) {
-							s.sendMessage(Methods.getFireColor() + "You must be a Firebender to bind this ability.");
+						if (FireMethods.isFireAbility(ability) && !GeneralMethods.isBender(s.getName(), Element.Fire)) {
+							s.sendMessage(FireMethods.getFireColor() + "You must be a Firebender to bind this ability.");
 							return true;
 						}
-						if (Methods.isChiAbility(ability) && !Methods.isBender(s.getName(), Element.Chi)) {
-							s.sendMessage(Methods.getChiColor() + "You must be a ChiBlocker to bind this ability.");
+						if (ChiMethods.isChiAbility(ability) && !GeneralMethods.isBender(s.getName(), Element.Chi)) {
+							s.sendMessage(ChiMethods.getChiColor() + "You must be a ChiBlocker to bind this ability.");
 							return true;
 						}
-						Methods.bindAbility((Player) s, ability, slot);
+						GeneralMethods.bindAbility((Player) s, ability, slot);
 						//						s.sendMessage("Ability Bound");
 						return true;
 					}
@@ -490,7 +502,7 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
 					}
-					if (!Methods.isImportEnabled()) {
+					if (!GeneralMethods.isImportEnabled()) {
 						s.sendMessage(ChatColor.RED + "Importing has been disabled in the config");
 						return true;
 					}
@@ -552,7 +564,7 @@ public class Commands {
 									plugin.getConfig().set("Properties.ImportEnabled", false);
 									plugin.saveConfig();
 									for (Player player: Bukkit.getOnlinePlayers()) {
-										Methods.createBendingPlayer(player.getUniqueId(), player.getName());
+										GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 									}
 									return;
 								}
@@ -614,15 +626,15 @@ public class Commands {
 						//bending display [Element]
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.airbendingabilities.isEmpty()) {
-								s.sendMessage(Methods.getAirColor() + "There are no airbending abilities available.");
+								s.sendMessage(AirMethods.getAirColor() + "There are no airbending abilities available.");
 								return true;
 							}
 							for (String st: AbilityModuleManager.airbendingabilities) {
-								if (Methods.hasPermission((Player) s, st)) {
-									if (Methods.isSubAbility(st)) {
-										s.sendMessage(Methods.getSubBendingColor(Element.Air) + st);
+								if (GeneralMethods.hasPermission((Player) s, st)) {
+									if (GeneralMethods.isSubAbility(st)) {
+										s.sendMessage(GeneralMethods.getSubBendingColor(Element.Air) + st);
 									} else {
-										s.sendMessage(Methods.getAirColor() + st);
+										s.sendMessage(AirMethods.getAirColor() + st);
 									}
 								}
 							}
@@ -630,15 +642,15 @@ public class Commands {
 						}
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.waterbendingabilities.isEmpty()) {
-								s.sendMessage(Methods.getWaterColor() + "There are no waterbending abilities available.");
+								s.sendMessage(WaterMethods.getWaterColor() + "There are no waterbending abilities available.");
 								return true;
 							}
 							for (String st: AbilityModuleManager.waterbendingabilities) {
-								if (Methods.hasPermission((Player) s, st)) {
-									if (Methods.isSubAbility(st)) {
-										s.sendMessage(Methods.getSubBendingColor(Element.Water) + st);
+								if (GeneralMethods.hasPermission((Player) s, st)) {
+									if (GeneralMethods.isSubAbility(st)) {
+										s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + st);
 									} else {
-										s.sendMessage(Methods.getWaterColor() + st);
+										s.sendMessage(WaterMethods.getWaterColor() + st);
 									}
 								}
 							}
@@ -646,15 +658,15 @@ public class Commands {
 						}
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.earthbendingabilities.isEmpty()) {
-								s.sendMessage(Methods.getEarthColor() + "There are no earthbending abilities available.");
+								s.sendMessage(EarthMethods.getEarthColor() + "There are no earthbending abilities available.");
 								return true;
 							}
 							for (String st: AbilityModuleManager.earthbendingabilities) {
-								if (Methods.hasPermission((Player) s, st)) {
-									if (Methods.isSubAbility(st)) {
-										s.sendMessage(Methods.getSubBendingColor(Element.Earth) + st);
+								if (GeneralMethods.hasPermission((Player) s, st)) {
+									if (GeneralMethods.isSubAbility(st)) {
+										s.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + st);
 									} else {
-										s.sendMessage(Methods.getEarthColor() + st);
+										s.sendMessage(EarthMethods.getEarthColor() + st);
 									}
 								}
 							}
@@ -662,15 +674,15 @@ public class Commands {
 						}
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.firebendingabilities.isEmpty()) {
-								s.sendMessage(Methods.getFireColor() + "There are no firebending abilities available.");
+								s.sendMessage(FireMethods.getFireColor() + "There are no firebending abilities available.");
 								return true;
 							}
 							for (String st: AbilityModuleManager.firebendingabilities) {
-								if (Methods.hasPermission((Player) s, st)) {
-									if (Methods.isSubAbility(st)) {
-										s.sendMessage(Methods.getSubBendingColor(Element.Fire) + st);
+								if (GeneralMethods.hasPermission((Player) s, st)) {
+									if (GeneralMethods.isSubAbility(st)) {
+										s.sendMessage(GeneralMethods.getSubBendingColor(Element.Fire) + st);
 									} else {
-										s.sendMessage(Methods.getFireColor() + st);
+										s.sendMessage(FireMethods.getFireColor() + st);
 									}
 								}
 							}
@@ -678,27 +690,27 @@ public class Commands {
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.chiabilities.isEmpty()) {
-								s.sendMessage(Methods.getChiColor() + "There are no chiblocking abilities available.");
+								s.sendMessage(ChiMethods.getChiColor() + "There are no chiblocking abilities available.");
 								return true;
 							}
 
 							for (String st: AbilityModuleManager.chiabilities) {
-								if (Methods.hasPermission((Player) s, st)) {
-									s.sendMessage(Methods.getChiColor()  + st);
+								if (GeneralMethods.hasPermission((Player) s, st)) {
+									s.sendMessage(ChiMethods.getChiColor()  + st);
 								}
 							}
 							return true;
 						} else {
 							s.sendMessage(ChatColor.RED + "Not a valid Element." + ChatColor.WHITE + " Elements: " + 
-									Methods.getAirColor() + "Air" + 
+									AirMethods.getAirColor() + "Air" + 
 									ChatColor.WHITE + " | " +
-									Methods.getWaterColor() + "Water" +
+									WaterMethods.getWaterColor() + "Water" +
 									ChatColor.WHITE + " | " +
-									Methods.getEarthColor() + "Earth" + 
+									EarthMethods.getEarthColor() + "Earth" + 
 									ChatColor.WHITE + " | " +
-									Methods.getFireColor() + "Fire" +
+									FireMethods.getFireColor() + "Fire" +
 									ChatColor.WHITE + " | " +
-									Methods.getChiColor() + "Chi");
+									ChiMethods.getChiColor() + "Chi");
 
 						}
 					}
@@ -708,7 +720,7 @@ public class Commands {
 							s.sendMessage(ChatColor.RED + "This command is only usable by players.");
 							return true;
 						}
-						BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
+						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
 						HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
 						if (abilities.isEmpty()) {
@@ -719,7 +731,7 @@ public class Commands {
 
 						for (int i = 1; i <= 9; i++) {
 							String ability = abilities.get(i);
-							if (ability != null) s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
+							if (ability != null) s.sendMessage(i + " - " + GeneralMethods.getAbilityColor(ability) + ability);
 						}
 
 						return true;
@@ -741,7 +753,7 @@ public class Commands {
 							return true;
 						}
 
-						BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
+						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
 
 						if (bPlayer.isToggled) {
 							s.sendMessage(ChatColor.RED + "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
@@ -798,25 +810,25 @@ public class Commands {
 									String element = rs2.getString("element");
 									s.sendMessage(args[1] + " - ");
 									if (element.contains("a")) {
-										s.sendMessage(Methods.getAirColor() + "- Airbender");
+										s.sendMessage(AirMethods.getAirColor() + "- Airbender");
 									}
 									if (element.contains("w")) {
-										s.sendMessage(Methods.getWaterColor() + "- Waterbender");
+										s.sendMessage(WaterMethods.getWaterColor() + "- Waterbender");
 									}
 									if (element.contains("e")) {
-										s.sendMessage(Methods.getEarthColor() + "- Earthbender");
+										s.sendMessage(EarthMethods.getEarthColor() + "- Earthbender");
 									}
 									if (element.contains("f")) {
-										s.sendMessage(Methods.getFireColor() + "- Firebender");
+										s.sendMessage(FireMethods.getFireColor() + "- Firebender");
 									}
 									if (element.contains("c")) {
-										s.sendMessage(Methods.getChiColor() + "- Chiblocker");
+										s.sendMessage(ChiMethods.getChiColor() + "- Chiblocker");
 									}
-									if (Methods.hasRPG()) {
+									if (GeneralMethods.hasRPG()) {
 										if (RPGMethods.isCurrentAvatar(uuid)) {
-											s.sendMessage(Methods.getAvatarColor() + "Current Avatar");
+											s.sendMessage(GeneralMethods.getAvatarColor() + "Current Avatar");
 										} else if (RPGMethods.hasBeenAvatar(uuid)) {
-											s.sendMessage(Methods.getAvatarColor() + "Former Avatar");
+											s.sendMessage(GeneralMethods.getAvatarColor() + "Former Avatar");
 										} else {
 											
 										}
@@ -832,58 +844,58 @@ public class Commands {
 
 						String un = p.getName();
 						s.sendMessage(un + " - ");
-						if (Methods.isBender(un, Element.Air)) {
-							s.sendMessage(Methods.getAirColor() + "- Airbender");
-							if(Methods.canAirFlight(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Air) + "    Can Fly");
+						if (GeneralMethods.isBender(un, Element.Air)) {
+							s.sendMessage(AirMethods.getAirColor() + "- Airbender");
+							if(AirMethods.canAirFlight(p)) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Air) + "    Can Fly");
 							}
-							if(Methods.canUseSpiritualProjection(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Air) + "    Can use Spiritual Projection");
+							if(AirMethods.canUseSpiritualProjection(p)) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Air) + "    Can use Spiritual Projection");
 							}
 						}
-						if (Methods.isBender(un, Element.Water)) {
-							s.sendMessage(Methods.getWaterColor() + "- Waterbender");
-							if (Methods.canPlantbend(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Plantbend");
+						if (GeneralMethods.isBender(un, Element.Water)) {
+							s.sendMessage(WaterMethods.getWaterColor() + "- Waterbender");
+							if (WaterMethods.canPlantbend(p)) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Plantbend");
 							}
-							if (Methods.canBloodbend(p)) {
-								if(Methods.canBloodbendAtAnytime(p))
-									s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Bloodbend anytime, on any day");
+							if (WaterMethods.canBloodbend(p)) {
+								if(WaterMethods.canBloodbendAtAnytime(p))
+									s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Bloodbend anytime, on any day");
 								else
-									s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Bloodbend");
+									s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Bloodbend");
 							}
-							if (Methods.canIcebend(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Icebend");
+							if (WaterMethods.canIcebend(p)) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Icebend");
 							}
-							if (Methods.canWaterHeal(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Water) + "    Can Heal");
-							}
-						}
-						if (Methods.isBender(un, Element.Earth)) {
-							s.sendMessage(Methods.getEarthColor() + "- Earthbender");
-							if (Methods.canMetalbend(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Earth) + "    Can Metalbend");
-							}
-							if (Methods.canLavabend(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Earth) + "    Can Lavabend");
-							}
-							if (Methods.canSandbend(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Earth) + "    Can Sandbend");
+							if (WaterMethods.canWaterHeal(p)) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Heal");
 							}
 						}
-						if (Methods.isBender(un, Element.Fire)) {
-							s.sendMessage(Methods.getFireColor() + "- Firebender");
-							if(Methods.canCombustionbend(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Fire) + "    Can Combustionbend");
+						if (GeneralMethods.isBender(un, Element.Earth)) {
+							s.sendMessage(EarthMethods.getEarthColor() + "- Earthbender");
+							if (EarthMethods.canMetalbend(p)) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + "    Can Metalbend");
 							}
-							if(Methods.canLightningbend(p)) {
-								s.sendMessage(Methods.getSubBendingColor(Element.Fire) + "    Can Bend Lightning");
+							if (EarthMethods.canLavabend(p)) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + "    Can Lavabend");
+							}
+							if (EarthMethods.canSandbend(p)) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + "    Can Sandbend");
 							}
 						}
-						if (Methods.isBender(un, Element.Chi)) {
-							s.sendMessage(Methods.getChiColor() + "- ChiBlocker");
+						if (GeneralMethods.isBender(un, Element.Fire)) {
+							s.sendMessage(FireMethods.getFireColor() + "- Firebender");
+							if(FireMethods.canCombustionbend(p)) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Fire) + "    Can Combustionbend");
+							}
+							if(FireMethods.canLightningbend(p)) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Fire) + "    Can Bend Lightning");
+							}
 						}
-						BendingPlayer bPlayer = Methods.getBendingPlayer(un);
+						if (GeneralMethods.isBender(un, Element.Chi)) {
+							s.sendMessage(ChiMethods.getChiColor() + "- ChiBlocker");
+						}
+						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(un);
 						UUID uuid2 = bPlayer.uuid;
 						if (bPlayer != null)  {
 							s.sendMessage("Abilities: ");
@@ -892,16 +904,16 @@ public class Commands {
 								if (ability == null || ability.equalsIgnoreCase("null")) {
 									continue;
 								} else {
-									s.sendMessage(i + " - " + Methods.getAbilityColor(ability) + ability);
+									s.sendMessage(i + " - " + GeneralMethods.getAbilityColor(ability) + ability);
 								}
 							}
 						}
 						
-						if (Methods.hasRPG()) {
+						if (GeneralMethods.hasRPG()) {
 							if (RPGMethods.isCurrentAvatar(p.getUniqueId())) {
-								s.sendMessage(Methods.getAvatarColor() + "Current Avatar");
+								s.sendMessage(GeneralMethods.getAvatarColor() + "Current Avatar");
 							} else if (RPGMethods.hasBeenAvatar(p.getUniqueId())) {
-								s.sendMessage(Methods.getAvatarColor() + "Former Avatar");
+								s.sendMessage(GeneralMethods.getAvatarColor() + "Former Avatar");
 							}
 						}
 
@@ -943,33 +955,33 @@ public class Commands {
 						for (Player player: Bukkit.getOnlinePlayers()) {
 							String un = player.getName();
 
-							BendingPlayer bp = Methods.getBendingPlayer(un);
+							BendingPlayer bp = GeneralMethods.getBendingPlayer(un);
 							if (bp.elements.size() > 1) {
-								players.add(Methods.getAvatarColor() + un);
+								players.add(GeneralMethods.getAvatarColor() + un);
 								continue;
 							}
 							if (bp.elements.size() == 0) {
 								players.add(un);
 								continue;
 							}
-							if (Methods.isBender(un, Element.Air)) {
-								players.add(Methods.getAirColor() + un);
+							if (GeneralMethods.isBender(un, Element.Air)) {
+								players.add(AirMethods.getAirColor() + un);
 								continue;
 							}
-							if (Methods.isBender(un, Element.Water)){
-								players.add(Methods.getWaterColor() + un);
+							if (GeneralMethods.isBender(un, Element.Water)){
+								players.add(WaterMethods.getWaterColor() + un);
 								continue;
 							}
-							if (Methods.isBender(un, Element.Earth)) {
-								players.add(Methods.getEarthColor() + un);
+							if (GeneralMethods.isBender(un, Element.Earth)) {
+								players.add(EarthMethods.getEarthColor() + un);
 								continue;
 							}
-							if (Methods.isBender(un, Element.Chi)) {
-								players.add(Methods.getChiColor() + un);
+							if (GeneralMethods.isBender(un, Element.Chi)) {
+								players.add(ChiMethods.getChiColor() + un);
 								continue;
 							}
-							if (Methods.isBender(un, Element.Fire)) {
-								players.add(Methods.getFireColor() + un);
+							if (GeneralMethods.isBender(un, Element.Fire)) {
+								players.add(FireMethods.getFireColor() + un);
 								continue;
 							}
 						}
@@ -990,11 +1002,11 @@ public class Commands {
 						return true;
 					}
 					s.sendMessage(ChatColor.GREEN + "Core Version: " + ChatColor.RED + plugin.getDescription().getVersion());
-					if (Methods.hasRPG()) {
-						s.sendMessage(ChatColor.GREEN + "RPG Version: " + ChatColor.RED + Methods.getRPG().getDescription().getVersion());
+					if (GeneralMethods.hasRPG()) {
+						s.sendMessage(ChatColor.GREEN + "RPG Version: " + ChatColor.RED + GeneralMethods.getRPG().getDescription().getVersion());
 					}
-					if (Methods.hasItems()) {
-						s.sendMessage(ChatColor.GREEN + "Items Version: " + ChatColor.RED + Methods.getItems().getDescription().getVersion());
+					if (GeneralMethods.hasItems()) {
+						s.sendMessage(ChatColor.GREEN + "Items Version: " + ChatColor.RED + GeneralMethods.getItems().getDescription().getVersion());
 					}
 					s.sendMessage(ChatColor.GREEN + "Founded by: " + ChatColor.RED + "MistPhizzle");
 					s.sendMessage(ChatColor.GREEN + "Learn More: " + ChatColor.RED + "http://projectkorra.com");
@@ -1019,10 +1031,10 @@ public class Commands {
 						return true;
 					}
 
-					BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
-					Methods.removeUnusableAbilities(player.getName());
+					BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+					GeneralMethods.removeUnusableAbilities(player.getName());
 					bPlayer.elements.clear();
-					Methods.saveElements(bPlayer);
+					GeneralMethods.saveElements(bPlayer);
 					s.sendMessage(ChatColor.GREEN + "You have removed the bending of " + ChatColor.DARK_AQUA + player.getName());
 					player.sendMessage(ChatColor.GREEN + "Your bending has been removed by " + ChatColor.DARK_AQUA + s.getName());
 					return true;
@@ -1047,20 +1059,20 @@ public class Commands {
 						return true;
 					}
 
-					BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+					BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 					if (bPlayer.isPermaRemoved()) {
 						bPlayer.permaRemoved = false;
-						Methods.savePermaRemoved(bPlayer);
+						GeneralMethods.savePermaRemoved(bPlayer);
 						s.sendMessage(ChatColor.RED + "You have restored the bending of: " + ChatColor.DARK_AQUA + player.getName());
 						return true;
 					}
 
 					bPlayer.elements.clear();
-					Methods.removeUnusableAbilities(player.getName());
-					Methods.saveElements(bPlayer);
+					GeneralMethods.removeUnusableAbilities(player.getName());
+					GeneralMethods.saveElements(bPlayer);
 					bPlayer.permaRemoved = true;
-					Methods.savePermaRemoved(bPlayer);
+					GeneralMethods.savePermaRemoved(bPlayer);
 					player.sendMessage(ChatColor.RED + "Your bending has been permanently removed.");
 					s.sendMessage(ChatColor.RED + "You have permanently removed the bending of: " + ChatColor.DARK_AQUA + player.getName());
 					return true;
@@ -1084,43 +1096,43 @@ public class Commands {
 							return true;
 						}
 
-						BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 						if (Arrays.asList(airaliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Air);
-							Methods.saveElements(bPlayer);
-							player.sendMessage(Methods.getAirColor() + "You are also an Airbender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getAirColor() + " is also an Airbender.");
+							GeneralMethods.saveElements(bPlayer);
+							player.sendMessage(AirMethods.getAirColor() + "You are also an Airbender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + AirMethods.getAirColor() + " is also an Airbender.");
 							return true;
 						}
 
 						if (Arrays.asList(wateraliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Water);
-							Methods.saveElements(bPlayer);
-							player.sendMessage(Methods.getWaterColor() + "You are also a waterbender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getWaterColor() + " is also a Waterbender.");
+							GeneralMethods.saveElements(bPlayer);
+							player.sendMessage(WaterMethods.getWaterColor() + "You are also a waterbender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + WaterMethods.getWaterColor() + " is also a Waterbender.");
 							return true;
 						}
 
 						if (Arrays.asList(earthaliases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Earth);
-							Methods.saveElements(bPlayer);
-							player.sendMessage(Methods.getEarthColor() + "You are also an Earthbender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getEarthColor() + " is also an Earthbender.");
+							GeneralMethods.saveElements(bPlayer);
+							player.sendMessage(EarthMethods.getEarthColor() + "You are also an Earthbender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + EarthMethods.getEarthColor() + " is also an Earthbender.");
 							return true;
 						}
 
 						if (Arrays.asList(firealiases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Fire);
-							Methods.saveElements(bPlayer);
-							player.sendMessage(Methods.getFireColor() + "You are also a Firebender.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getFireColor() + " is also a Firebender");
+							GeneralMethods.saveElements(bPlayer);
+							player.sendMessage(FireMethods.getFireColor() + "You are also a Firebender.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + FireMethods.getFireColor() + " is also a Firebender");
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[2].toLowerCase())) {
 							bPlayer.addElement(Element.Chi);
-							Methods.saveElements(bPlayer);
-							player.sendMessage(Methods.getChiColor() + "You are also a ChiBlocker.");
-							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + Methods.getChiColor() + " is also a ChiBlocker");
+							GeneralMethods.saveElements(bPlayer);
+							player.sendMessage(ChiMethods.getChiColor() + "You are also a ChiBlocker.");
+							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + ChiMethods.getChiColor() + " is also a ChiBlocker");
 							return true;
 						}
 
@@ -1139,39 +1151,39 @@ public class Commands {
 							return true;
 						}
 
-						BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
+						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
 
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Air);
-							Methods.saveElements(bPlayer);
-							s.sendMessage(Methods.getAirColor() + "You are also an airbender.");
+							GeneralMethods.saveElements(bPlayer);
+							s.sendMessage(AirMethods.getAirColor() + "You are also an Airbender.");
 							return true;
 						}
 
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Water);
-							Methods.saveElements(bPlayer);
-							s.sendMessage(Methods.getWaterColor() + "You are also a waterbender.");
+							GeneralMethods.saveElements(bPlayer);
+							s.sendMessage(WaterMethods.getWaterColor() + "You are also a Waterbender.");
 							return true;
 						}
 
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Earth);
-							Methods.saveElements(bPlayer);
-							s.sendMessage(Methods.getEarthColor() + "You are also an Earthbender.");
+							GeneralMethods.saveElements(bPlayer);
+							s.sendMessage(EarthMethods.getEarthColor() + "You are also an Earthbender.");
 							return true;
 						}
 
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Fire);
-							Methods.saveElements(bPlayer);
-							s.sendMessage(Methods.getFireColor() + "You are also a Firebender.");
+							GeneralMethods.saveElements(bPlayer);
+							s.sendMessage(FireMethods.getFireColor() + "You are also a Firebender.");
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Chi);
-							Methods.saveElements(bPlayer);
-							s.sendMessage(Methods.getChiColor() + "You are also a ChiBlocker.");
+							GeneralMethods.saveElements(bPlayer);
+							s.sendMessage(ChiMethods.getChiColor() + "You are also a ChiBlocker.");
 							return true;
 						}
 						s.sendMessage(ChatColor.RED + "You must specify an element.");
@@ -1196,7 +1208,7 @@ public class Commands {
 							return true;
 						}
 
-						BendingPlayer bPlayer = Methods.getBendingPlayer(s.getName());
+						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
 
 						if (bPlayer.isPermaRemoved()) {
 							s.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
@@ -1211,37 +1223,37 @@ public class Commands {
 						}
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Air);
-							s.sendMessage(Methods.getAirColor() + "You are now an Airbender.");
-							Methods.removeUnusableAbilities(s.getName());
-							Methods.saveElements(bPlayer);
+							s.sendMessage(AirMethods.getAirColor() + "You are now an Airbender.");
+							GeneralMethods.removeUnusableAbilities(s.getName());
+							GeneralMethods.saveElements(bPlayer);
 							return true;
 						}
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Water);
-							s.sendMessage(Methods.getWaterColor() + "You are now a Waterbender.");
-							Methods.removeUnusableAbilities(s.getName());
-							Methods.saveElements(bPlayer);
+							s.sendMessage(WaterMethods.getWaterColor() + "You are now a Waterbender.");
+							GeneralMethods.removeUnusableAbilities(s.getName());
+							GeneralMethods.saveElements(bPlayer);
 							return true;
 						}
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Earth);
-							s.sendMessage(Methods.getEarthColor() + "You are now an Earthbender.");
-							Methods.removeUnusableAbilities(s.getName());
-							Methods.saveElements(bPlayer);
+							s.sendMessage(EarthMethods.getEarthColor() + "You are now an Earthbender.");
+							GeneralMethods.removeUnusableAbilities(s.getName());
+							GeneralMethods.saveElements(bPlayer);
 							return true;
 						}
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Fire);
-							s.sendMessage(Methods.getFireColor() + "You are now a Firebender.");
-							Methods.removeUnusableAbilities(s.getName());
-							Methods.saveElements(bPlayer);
+							s.sendMessage(FireMethods.getFireColor() + "You are now a Firebender.");
+							GeneralMethods.removeUnusableAbilities(s.getName());
+							GeneralMethods.saveElements(bPlayer);
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
 							bPlayer.setElement(Element.Chi);
-							s.sendMessage(Methods.getChiColor() + "You are now a ChiBlocker.");
-							Methods.removeUnusableAbilities(s.getName());
-							Methods.saveElements(bPlayer);
+							s.sendMessage(ChiMethods.getChiColor() + "You are now a ChiBlocker.");
+							GeneralMethods.removeUnusableAbilities(s.getName());
+							GeneralMethods.saveElements(bPlayer);
 							return true;
 						}
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending choose [Element]");
@@ -1258,7 +1270,7 @@ public class Commands {
 							s.sendMessage(ChatColor.RED + "That player is not online.");
 							return true;
 						}
-						BendingPlayer bTarget = Methods.getBendingPlayer(target.getName());
+						BendingPlayer bTarget = GeneralMethods.getBendingPlayer(target.getName());
 
 						if (bTarget.isPermaRemoved()) {
 							s.sendMessage(ChatColor.RED + "That player's bending was permanently removed.");
@@ -1276,8 +1288,8 @@ public class Commands {
 							return true;
 						} else {
 							bTarget.setElement(e);
-							Methods.removeUnusableAbilities(target.getName());
-							Methods.saveElements(bTarget);
+							GeneralMethods.removeUnusableAbilities(target.getName());
+							GeneralMethods.saveElements(bTarget);
 							s.sendMessage(ChatColor.RED + "You have changed " + ChatColor.DARK_AQUA + target.getName() + "'s " + ChatColor.RED + "element to " + ChatColor.DARK_AQUA + e.toString() + ChatColor.RED + ".");
 							target.sendMessage(ChatColor.RED + "Your bending has been changed to " + ChatColor.DARK_AQUA + e.toString() + ChatColor.RED + " by " + ChatColor.DARK_AQUA + s.getName());
 							return true;
@@ -1321,7 +1333,7 @@ public class Commands {
 						return true;
 					}
 					if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
-						s.sendMessage(Methods.getAirColor() + "Air is the element of freedom. Airbenders are natural pacifists and "
+						s.sendMessage(AirMethods.getAirColor() + "Air is the element of freedom. Airbenders are natural pacifists and "
 								+ "great explorers. There is nothing stopping them from scaling the tallest of mountains and walls easily. They specialize in redirection, "
 								+ "from blasting things away with gusts of winds, to forming a shield around them to prevent damage. Easy to get across flat terrains, "
 								+ "such as oceans, there is practically no terrain off limits to Airbenders. They lack much raw damage output, but make up for it with "
@@ -1329,14 +1341,14 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qffg9m3");
 					}
 					if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
-						s.sendMessage(Methods.getWaterColor() + "Water is the element of change. Waterbending focuses on using your "
+						s.sendMessage(WaterMethods.getWaterColor() + "Water is the element of change. Waterbending focuses on using your "
 								+ "opponents own force against them. Using redirection and various dodging tactics, you can be made "
 								+ "practically untouchable by an opponent. Waterbending provides agility, along with strong offensive "
 								+ "skills while in or near water.");
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/lod3plv");
 					}
 					if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
-						s.sendMessage(Methods.getEarthColor() + "Earth is the element of substance. Earthbenders share many of the " 
+						s.sendMessage(EarthMethods.getEarthColor() + "Earth is the element of substance. Earthbenders share many of the " 
 								+ "same fundamental techniques as Waterbenders, but their domain is quite different and more readily "
 								+ "accessible. Earthbenders dominate the ground and subterranean, having abilities to pull columns "
 								+ "of rock straight up from the earth or drill their way through the mountain. They can also launch "
@@ -1345,17 +1357,17 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qaudl42");
 					}
 					if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
-						s.sendMessage(Methods.getFireColor() + "Fire is the element of power. Firebenders focus on destruction and "
+						s.sendMessage(FireMethods.getFireColor() + "Fire is the element of power. Firebenders focus on destruction and "
 								+ "incineration. Their abilities are pretty straight forward: set things on fire. They do have a bit "
 								+ "of utility however, being able to make themselves un-ignitable, extinguish large areas, cook food "
 								+ "in their hands, extinguish large areas, small bursts of flight, and then comes the abilities to shoot "
 								+ "fire from your hands.");
 						s.sendMessage(ChatColor.YELLOW + "Firebenders can chain their abilities into combos, type " 
-								+ Methods.getFireColor() + "/b help FireCombo" + ChatColor.YELLOW + " for more information.");
+								+ FireMethods.getFireColor() + "/b help FireCombo" + ChatColor.YELLOW + " for more information.");
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/k4fkjhb");
 					}
 					if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
-						s.sendMessage(Methods.getChiColor() + "Chiblockers focus on bare handed combat, utilizing their agility and "
+						s.sendMessage(ChiMethods.getChiColor() + "Chiblockers focus on bare handed combat, utilizing their agility and "
 								+ "speed to stop any bender right in their path. Although they lack the ability to bend any of the "
 								+ "other elements, they are great in combat, and a serious threat to any bender. Chiblocking was "
 								+ "first shown to be used by Ty Lee in Avatar: The Last Airbender, then later by members of the "
@@ -1451,24 +1463,24 @@ public class Commands {
 					}
 					if (args[1].equalsIgnoreCase("FireCombo")) {
 						s.sendMessage(ChatColor.GOLD + "Fire Combos:");
-						s.sendMessage(Methods.getFireColor() + "FireKick" + ChatColor.WHITE + ": A short ranged arc of fire launches from the player's feet dealing moderate damage to enemies.");
+						s.sendMessage(FireMethods.getFireColor() + "FireKick" + ChatColor.WHITE + ": A short ranged arc of fire launches from the player's feet dealing moderate damage to enemies.");
 						s.sendMessage(ChatColor.GOLD + "FireBlast > FireBlast > (Hold Shift) > FireBlast. ");
-						s.sendMessage(Methods.getFireColor() + "FireSpin" + ChatColor.WHITE + ": A circular array of fire that causes damage and massive knockback to nearby enemies.");
+						s.sendMessage(FireMethods.getFireColor() + "FireSpin" + ChatColor.WHITE + ": A circular array of fire that causes damage and massive knockback to nearby enemies.");
 						s.sendMessage(ChatColor.GOLD + "FireBlast > FireBlast > FireShield > (Tap Shift). ");
-						s.sendMessage(Methods.getFireColor() + "FireWheel" + ChatColor.WHITE + ": A high-speed wheel of fire that travels along the ground for long distances dealing high damage.");
+						s.sendMessage(FireMethods.getFireColor() + "FireWheel" + ChatColor.WHITE + ": A high-speed wheel of fire that travels along the ground for long distances dealing high damage.");
 						s.sendMessage(ChatColor.GOLD + "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift. ");
-						s.sendMessage(Methods.getFireColor() + "JetBlast" + ChatColor.WHITE + ": Create an explosive blast that propels your FireJet at higher speeds.");
+						s.sendMessage(FireMethods.getFireColor() + "JetBlast" + ChatColor.WHITE + ": Create an explosive blast that propels your FireJet at higher speeds.");
 						s.sendMessage(ChatColor.GOLD + "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet. ");
-						s.sendMessage(Methods.getFireColor() + "JetBlaze" + ChatColor.WHITE + ": Damages and burns all enemies in the proximity of your FireJet.");
+						s.sendMessage(FireMethods.getFireColor() + "JetBlaze" + ChatColor.WHITE + ": Damages and burns all enemies in the proximity of your FireJet.");
 						s.sendMessage(ChatColor.GOLD + "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet. ");
 						for(ComboAbilityModule cam : ComboModuleManager.combo)
 						{
 							if(cam.getElement().equals(Element.Fire.toString()))
 							{
-								ChatColor color = Methods.getAvatarColor();
+								ChatColor color = GeneralMethods.getAvatarColor();
 								if(cam.getSubElement() == null)
-									color = Methods.getFireColor();
-								else color = Methods.getSubBendingColor(Element.Fire);
+									color = FireMethods.getFireColor();
+								else color = GeneralMethods.getSubBendingColor(Element.Fire);
 								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
 								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
 							}
@@ -1476,20 +1488,20 @@ public class Commands {
 					}
 					if (args[1].equalsIgnoreCase("AirCombo")) {
 						s.sendMessage(ChatColor.GOLD + "AirCombo:");
-						s.sendMessage(Methods.getAirColor() + "Twister" + ChatColor.WHITE + ": Create a cyclone of air that travels along the ground grabbing nearby entities.");
+						s.sendMessage(AirMethods.getAirColor() + "Twister" + ChatColor.WHITE + ": Create a cyclone of air that travels along the ground grabbing nearby entities.");
 						s.sendMessage(ChatColor.GOLD + "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
-						s.sendMessage(Methods.getAirColor() + "AirStream" + ChatColor.WHITE + ": Control a large stream of air that grabs onto enemies allowing you to direct them temporarily.");
+						s.sendMessage(AirMethods.getAirColor() + "AirStream" + ChatColor.WHITE + ": Control a large stream of air that grabs onto enemies allowing you to direct them temporarily.");
 						s.sendMessage(ChatColor.GOLD + "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
-						s.sendMessage(Methods.getAirColor() + "AirSweep" + ChatColor.WHITE + ": Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst");
+						s.sendMessage(AirMethods.getAirColor() + "AirSweep" + ChatColor.WHITE + ": Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst");
 						s.sendMessage(ChatColor.GOLD + "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
 						for(ComboAbilityModule cam : ComboModuleManager.combo)
 						{
 							if(cam.getElement().equals(Element.Air.toString()))
 							{
-								ChatColor color = Methods.getAvatarColor();
+								ChatColor color = GeneralMethods.getAvatarColor();
 								if(cam.getSubElement() == null)
-									color = Methods.getAirColor();
-								else color = Methods.getSubBendingColor(Element.valueOf(cam.getElement()));
+									color = AirMethods.getAirColor();
+								else color = GeneralMethods.getSubBendingColor(Element.valueOf(cam.getElement()));
 								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
 								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
 							}
@@ -1497,18 +1509,18 @@ public class Commands {
 					}
 					if (args[1].equalsIgnoreCase("WaterCombo")) {
 						s.sendMessage(ChatColor.GOLD + "WaterCombos:");
-						s.sendMessage(Methods.getWaterColor() + "IceWave" + ChatColor.WHITE + ": PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
+						s.sendMessage(WaterMethods.getWaterColor() + "IceWave" + ChatColor.WHITE + ": PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
 						s.sendMessage(ChatColor.GOLD + "Create a WaterSpout Wave > PhaseChange (Left Click)");
-						s.sendMessage(Methods.getWaterColor() + "IceBullet" + ChatColor.WHITE + ": Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
+						s.sendMessage(WaterMethods.getWaterColor() + "IceBullet" + ChatColor.WHITE + ": Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
 						s.sendMessage(ChatColor.GOLD + "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > IceBlast (Left Click) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
 						for(ComboAbilityModule cam : ComboModuleManager.combo)
 						{
 							if(cam.getElement().equals(Element.Water.toString()))
 							{
-								ChatColor color = Methods.getAvatarColor();
+								ChatColor color = GeneralMethods.getAvatarColor();
 								if(cam.getSubElement() == null)
-									color = Methods.getWaterColor();
-								else color = Methods.getSubBendingColor(Element.valueOf(cam.getElement()));
+									color = WaterMethods.getWaterColor();
+								else color = GeneralMethods.getSubBendingColor(Element.valueOf(cam.getElement()));
 								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
 								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
 							}
@@ -1520,10 +1532,10 @@ public class Commands {
 						{
 							if(cam.getElement().equals(Element.Earth.toString()))
 							{
-								ChatColor color = Methods.getAvatarColor();
+								ChatColor color = GeneralMethods.getAvatarColor();
 								if(cam.getSubElement() == null)
-									color = Methods.getEarthColor();
-								else color = Methods.getSubBendingColor(Element.valueOf(cam.getElement()));
+									color = EarthMethods.getEarthColor();
+								else color = GeneralMethods.getSubBendingColor(Element.valueOf(cam.getElement()));
 								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
 								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
 							}
@@ -1532,51 +1544,51 @@ public class Commands {
 					if (args[1].equalsIgnoreCase("ChiCombo"))
 					{
 						s.sendMessage(ChatColor.GOLD + "ChiCombos:");
-						s.sendMessage(Methods.getChiColor() + "Immobilize" + ChatColor.WHITE + ": Deliver a series of strikes to an enemy to temporarely immobilize them.");
+						s.sendMessage(ChiMethods.getChiColor() + "Immobilize" + ChatColor.WHITE + ": Deliver a series of strikes to an enemy to temporarely immobilize them.");
 						s.sendMessage(ChatColor.GOLD + "QuickStrike > SwiftKick > QuickStrike > QuickStrike");
 						for(ComboAbilityModule cam : ComboModuleManager.combo)
 						{
 							if(cam.getElement().equals(Element.Chi.toString()))
 							{
-								ChatColor color = Methods.getAvatarColor();
+								ChatColor color = GeneralMethods.getAvatarColor();
 								if(cam.getSubElement() == null)
-									color = Methods.getChiColor();
-								else color = Methods.getSubBendingColor(Element.valueOf(cam.getElement()));
+									color = ChiMethods.getChiColor();
+								else color = GeneralMethods.getSubBendingColor(Element.valueOf(cam.getElement()));
 								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
 								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
 							}
 						}
 					}
-					if (Methods.abilityExists(args[1])) {
-						String ability = Methods.getAbility(args[1]);
-						if (Methods.isAirAbility(ability)) {
-							s.sendMessage(Methods.getAirColor() + ability + " - ");
-							s.sendMessage(Methods.getAirColor() + AbilityModuleManager.descriptions.get(ability));
+					if (GeneralMethods.abilityExists(args[1])) {
+						String ability = GeneralMethods.getAbility(args[1]);
+						if (AirMethods.isAirAbility(ability)) {
+							s.sendMessage(AirMethods.getAirColor() + ability + " - ");
+							s.sendMessage(AirMethods.getAirColor() + AbilityModuleManager.descriptions.get(ability));
 						}
-						else if (Methods.isWaterAbility(ability)) {
-							s.sendMessage(Methods.getWaterColor() + ability + " - ");
-							s.sendMessage(Methods.getWaterColor() + AbilityModuleManager.descriptions.get(ability));
+						else if (WaterMethods.isWaterAbility(ability)) {
+							s.sendMessage(WaterMethods.getWaterColor() + ability + " - ");
+							s.sendMessage(WaterMethods.getWaterColor() + AbilityModuleManager.descriptions.get(ability));
 						}
-						else if (Methods.isEarthAbility(ability)) {
-							if (Methods.isMetalbendingAbility(ability)) {
-								s.sendMessage(Methods.getMetalbendingColor() + ability + " - ");
-								s.sendMessage(Methods.getMetalbendingColor() + AbilityModuleManager.descriptions.get(ability));
+						else if (EarthMethods.isEarthAbility(ability)) {
+							if (EarthMethods.isMetalbendingAbility(ability)) {
+								s.sendMessage(EarthMethods.getMetalbendingColor() + ability + " - ");
+								s.sendMessage(EarthMethods.getMetalbendingColor() + AbilityModuleManager.descriptions.get(ability));
 							} else {
-								s.sendMessage(Methods.getEarthColor() + ability + " - ");
-								s.sendMessage(Methods.getEarthColor() + AbilityModuleManager.descriptions.get(ability));
+								s.sendMessage(EarthMethods.getEarthColor() + ability + " - ");
+								s.sendMessage(EarthMethods.getEarthColor() + AbilityModuleManager.descriptions.get(ability));
 							}
 						}
-						else if (Methods.isFireAbility(ability)) {
-							s.sendMessage(Methods.getFireColor() + ability + " - ");
-							s.sendMessage(Methods.getFireColor() + AbilityModuleManager.descriptions.get(ability));
+						else if (FireMethods.isFireAbility(ability)) {
+							s.sendMessage(FireMethods.getFireColor() + ability + " - ");
+							s.sendMessage(FireMethods.getFireColor() + AbilityModuleManager.descriptions.get(ability));
 						}
-						else if (Methods.isChiAbility(ability)) {
-							s.sendMessage(Methods.getChiColor() + ability + " - ");
-							s.sendMessage(Methods.getChiColor() + AbilityModuleManager.descriptions.get(ability));
+						else if (ChiMethods.isChiAbility(ability)) {
+							s.sendMessage(ChiMethods.getChiColor() + ability + " - ");
+							s.sendMessage(ChiMethods.getChiColor() + AbilityModuleManager.descriptions.get(ability));
 						}
 						else {
-							s.sendMessage(Methods.getAvatarColor() + ability + " - ");
-							s.sendMessage(Methods.getAvatarColor() + AbilityModuleManager.descriptions.get(ability));
+							s.sendMessage(GeneralMethods.getAvatarColor() + ability + " - ");
+							s.sendMessage(GeneralMethods.getAvatarColor() + AbilityModuleManager.descriptions.get(ability));
 						}
 					}
 				}

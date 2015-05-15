@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Methods;
 
 public class FlightAbility {
 	
@@ -18,7 +17,7 @@ public class FlightAbility {
 	private Flight flight;
 	
 	public FlightAbility(Player player) {		
-		if(!Methods.canFly(player, true, false)) 
+		if(!AirMethods.canFly(player, true, false)) 
 			return;
 		player.setAllowFlight(true);
 		player.setVelocity(player.getEyeLocation().getDirection().normalize());
@@ -27,7 +26,7 @@ public class FlightAbility {
 	}
 	
 	private void progress() {
-		if(!Methods.canFly(p, false, isHovering(p))) {
+		if(!AirMethods.canFly(p, false, isHovering(p))) {
 			remove(p);
 			return;
 		}

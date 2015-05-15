@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class EarthColumn {
@@ -36,17 +36,17 @@ public class EarthColumn {
 	private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 
 	public EarthColumn(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		
 		if (bPlayer.isOnCooldown("RaiseEarth")) return;
 
 		try {
-			block = Methods.getEarthSourceBlock(player, range);
+			block = EarthMethods.getEarthSourceBlock(player, range);
 			if (block == null)
 				return;
 			origin = block.getLocation();
 			location = origin.clone();
-			distance = Methods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
+			distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
 		} catch (IllegalStateException e) {
 			return;
 		}
@@ -59,7 +59,7 @@ public class EarthColumn {
 			if (canInstantiate()) {
 				id = ID;
 				instances.put(id, this);
-				bPlayer.addCooldown("RaiseEarth", Methods.getGlobalCooldown());
+				bPlayer.addCooldown("RaiseEarth", GeneralMethods.getGlobalCooldown());
 				if (ID >= Integer.MAX_VALUE) {
 					ID = Integer.MIN_VALUE;
 				}
@@ -74,7 +74,7 @@ public class EarthColumn {
 		location = origin.clone();
 		block = location.getBlock();
 		this.player = player;
-		distance = Methods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
+		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
 
 		loadAffectedBlocks();
 
@@ -97,7 +97,7 @@ public class EarthColumn {
 		location = origin.clone();
 		block = location.getBlock();
 		this.player = player;
-		distance = Methods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
+		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
 
 		loadAffectedBlocks();
 
@@ -183,7 +183,7 @@ public class EarthColumn {
 	private boolean moveEarth() {
 		Block block = location.getBlock();
 		location = location.add(direction);
-		Methods.moveEarth(player, block, direction, distance);
+		EarthMethods.moveEarth(player, block, direction, distance);
 		loadAffectedBlocks();
 
 		if (location.distance(origin) >= distance) {

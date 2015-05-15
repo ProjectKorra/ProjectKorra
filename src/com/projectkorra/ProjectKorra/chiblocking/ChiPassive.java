@@ -10,7 +10,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 
@@ -35,7 +35,7 @@ public class ChiPassive {
 		if (rand.nextInt(99) + 1 < dodgeChance) {
 			return false;
 		}
-		if (Methods.isChiBlocked(player.getName())) {
+		if (ChiMethods.isChiBlocked(player.getName())) {
 			return false;
 		}
 		return true;
@@ -45,7 +45,7 @@ public class ChiPassive {
 		if(Suffocate.isChannelingSphere(player)) {
 			Suffocate.remove(player);
 		}
-		final BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		final BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer == null) return;
 		bPlayer.blockChi();
 		
@@ -58,7 +58,7 @@ public class ChiPassive {
 	
 	public static void handlePassive() {
 		for (Player player: Bukkit.getOnlinePlayers()) {
-			if (Methods.canBendPassive(player.getName(), Element.Chi)) {
+			if (GeneralMethods.canBendPassive(player.getName(), Element.Chi)) {
 				if (player.isSprinting()) {
 					if (!player.hasPotionEffect(PotionEffectType.JUMP) && !AcrobatStance.isInAcrobatStance(player)) {
 						player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jumpPower - 1));

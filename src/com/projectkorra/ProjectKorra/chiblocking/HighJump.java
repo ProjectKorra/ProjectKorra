@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class HighJump {
@@ -14,7 +14,7 @@ public class HighJump {
 	private long cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Cooldown");
 
 	public HighJump(Player p) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(p.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(p.getName());
 		
 		if (bPlayer.isOnCooldown("HighJump")) return;
 		jump(p);
@@ -23,7 +23,7 @@ public class HighJump {
 	}
 
 	private void jump(Player p) {
-		if (!Methods.isSolid(p.getLocation().getBlock()
+		if (!GeneralMethods.isSolid(p.getLocation().getBlock()
 				.getRelative(BlockFace.DOWN)))
 			return;
 		Vector vec = p.getVelocity();

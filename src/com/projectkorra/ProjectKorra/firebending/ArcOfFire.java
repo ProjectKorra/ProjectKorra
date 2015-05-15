@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
@@ -16,12 +16,12 @@ public class ArcOfFire {
 	private static int stepsize = 2;
 	
 	public ArcOfFire(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		
 		if (bPlayer.isOnCooldown("Blaze")) return;
 		Location location = player.getLocation();
 
-		int arc = (int) Methods.getFirebendingDayAugment(defaultarc,
+		int arc = (int) FireMethods.getFirebendingDayAugment(defaultarc,
 				player.getWorld());
 
 		for (int i = -arc; i <= arc; i += stepsize) {
@@ -45,7 +45,7 @@ public class ArcOfFire {
 			new FireStream(location, direction, player, range);
 		}
 
-		bPlayer.addCooldown("Blaze", Methods.getGlobalCooldown());
+		bPlayer.addCooldown("Blaze", GeneralMethods.getGlobalCooldown());
 	}
 
 	public static String getDescription() {

@@ -16,7 +16,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
@@ -77,7 +77,7 @@ public class Suffocate {
 	
 	public Suffocate(Player player) {
 		this.player = player;
-		bplayer = Methods.getBendingPlayer(player.getName());
+		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		targets = new ArrayList<LivingEntity>();
 		tasks = new ArrayList<BukkitRunnable>();
 		time = System.currentTimeMillis();
@@ -121,12 +121,12 @@ public class Suffocate {
 			particleScale = 2;
 		
 		if(AvatarState.isAvatarState(player)) {
-			for(Entity ent : Methods.getEntitiesAroundPoint(player.getLocation(), range))
+			for(Entity ent : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range))
 				if(ent instanceof LivingEntity && !ent.equals(player))
 					targets.add((LivingEntity) ent);
 		}
 		else {
-			Entity ent = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
+			Entity ent = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 			if(ent != null && ent instanceof LivingEntity)
 				targets.add((LivingEntity) ent);
 		}
@@ -134,7 +134,7 @@ public class Suffocate {
 		if(!canSuffUndead) {
 			for(int i = 0; i < targets.size(); i++) {
 				LivingEntity target = targets.get(i);
-				if(Methods.isUndead(target)) {
+				if(GeneralMethods.isUndead(target)) {
 					targets.remove(i);
 					i--;
 				}
@@ -159,10 +159,10 @@ public class Suffocate {
 			remove();
 			return;
 		}
-		String ability = Methods.getBoundAbility(player);
+		String ability = GeneralMethods.getBoundAbility(player);
 		if(ability == null 
 				|| !ability.equalsIgnoreCase("Suffocate") 
-				|| !Methods.canBend(player.getName(), "Suffocate")) {
+				|| !GeneralMethods.canBend(player.getName(), "Suffocate")) {
 			remove();
 			return;
 		}
@@ -192,7 +192,7 @@ public class Suffocate {
 			double dist = player.getEyeLocation().distance(targets.get(0).getEyeLocation());
 			Location targetLoc = player.getEyeLocation().clone().add
 					(player.getEyeLocation().getDirection().normalize().multiply(dist));
-			List<Entity> ents = Methods.getEntitiesAroundPoint(targetLoc, aimRadius);
+			List<Entity> ents = GeneralMethods.getEntitiesAroundPoint(targetLoc, aimRadius);
 			
 			for(int i = 0; i < targets.size(); i++) {
 				LivingEntity target = targets.get(i);
@@ -218,7 +218,7 @@ public class Suffocate {
 				BukkitRunnable br1 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						Methods.damageEntity(fplayer, target, damage);
+						GeneralMethods.damageEntity(fplayer, target, damage);
 					}
 				};
 				BukkitRunnable br2 = new BukkitRunnable() {
@@ -404,7 +404,7 @@ public class Suffocate {
 				loc.setZ(tempLoc.getZ() + radius * Math.cos(Math.toRadians((double)i / (double)totalSteps * 360)));
 			}
 
-			Methods.getAirbendingParticles().display(loc, (float) 0, (float) 0, (float) 0, 0, 1); 		
+			AirMethods.getAirbendingParticles().display(loc, (float) 0, (float) 0, (float) 0, 0, 1); 		
 			if(i == totalSteps + 1)
 				this.cancel();
 			i++;

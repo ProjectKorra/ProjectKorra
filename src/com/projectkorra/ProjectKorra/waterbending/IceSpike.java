@@ -17,9 +17,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempPotionEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 public class IceSpike {
 
@@ -57,15 +58,15 @@ public class IceSpike {
 	private List<LivingEntity> damaged = new ArrayList<LivingEntity>();
 
 	public IceSpike(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("IceSpike")) return;
 		try {
 			this.player = player;
 
 			double lowestdistance = range + 1;
 			Entity closestentity = null;
-			for (Entity entity : Methods.getEntitiesAroundPoint(player.getLocation(), range)) {
-				if (Methods.getDistanceFromLine(player.getLocation().getDirection(), player.getLocation(), entity.getLocation()) <= 2
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
+				if (GeneralMethods.getDistanceFromLine(player.getLocation().getDirection(), player.getLocation(), entity.getLocation()) <= 2
 						&& (entity instanceof LivingEntity)
 						&& (entity.getEntityId() != player.getEntityId())) {
 					double distance = player.getLocation().distance(entity.getLocation());
@@ -209,9 +210,9 @@ public class IceSpike {
 		progress++;
 		Block affectedblock = location.clone().add(direction).getBlock();
 		location = location.add(direction);
-		if (Methods.isRegionProtectedFromBuild(player, "IceSpike", location))
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike", location))
 			return false;
-		for (Entity en : Methods.getEntitiesAroundPoint(location, 1.4)) {
+		for (Entity en : GeneralMethods.getEntitiesAroundPoint(location, 1.4)) {
 			if (en instanceof LivingEntity && en != player && !damaged.contains(((LivingEntity) en))) {
 				LivingEntity le = (LivingEntity) en;
 				affect(le);
@@ -222,7 +223,7 @@ public class IceSpike {
 			}
 		}
 		affectedblock.setType(Material.ICE);
-		Methods.playIcebendingSound(block.getLocation());	
+		WaterMethods.playIcebendingSound(block.getLocation());	
 		loadAffectedBlocks();
 
 		if (location.distance(origin) >= height) {
@@ -239,7 +240,7 @@ public class IceSpike {
 		long slowCooldown = IceSpike2.slowCooldown;
 		int mod = 2;
 		if (entity instanceof Player) {
-			BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 			if (bPlayer.canBeSlowed()) {
 				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 				new TempPotionEffect(entity, effect);
@@ -249,7 +250,7 @@ public class IceSpike {
 			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 			new TempPotionEffect(entity, effect);
 		}
-		Methods.breakBreathbendingHold(entity);
+		AirMethods.breakBreathbendingHold(entity);
 
 	}
 
@@ -309,7 +310,7 @@ public class IceSpike {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 		if(player != null)
-			Methods.getBendingPlayer(player.getName()).addCooldown("IceSpike", cooldown);
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("IceSpike", cooldown);
 	}
 
 	public static String getDescription() {
