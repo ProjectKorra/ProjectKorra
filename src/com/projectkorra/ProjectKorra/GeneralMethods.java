@@ -305,54 +305,73 @@ public class GeneralMethods {
 	 * @param player The player name
 	 * @throws SQLException
 	 */
-	public static void createBendingPlayer(UUID uuid, String player) {
-		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
-		try {
-			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
-				new BendingPlayer(uuid, player, new ArrayList<Element>(), new HashMap<Integer, String>(), false);
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player) VALUES ('" + uuid.toString() + "', '" + player + "')");
-				ProjectKorra.log.info("Created new BendingPlayer for " + player);
-			} else {
-				// The player has at least played before.
-				String player2 = rs2.getString("player");
-				if (!player.equalsIgnoreCase(player2)){
-					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'"); // They have changed names.
-					ProjectKorra.log.info("Updating Player Name for " + player);
-				}
-				String element = rs2.getString("element");
-				String permaremoved = rs2.getString("permaremoved");
-				boolean p = false;
-				ArrayList<Element> elements = new ArrayList<Element>();
-				if (element != null) { // Player has an element.
-					if (element.contains("a")) elements.add(Element.Air);
-					if (element.contains("w")) elements.add(Element.Water);
-					if (element.contains("e")) elements.add(Element.Earth);
-					if (element.contains("f")) elements.add(Element.Fire);
-					if (element.contains("c")) elements.add(Element.Chi);
-				}
-
-				HashMap<Integer, String> abilities = new HashMap<Integer, String>();
-				for (int i = 1; i <= 9; i++) {
-					String slot = rs2.getString("slot" + i);
-					if (slot != null) abilities.put(i, slot);
-				}
-
-				if (permaremoved == null) {
-					p = false;
-				}
-				else if (permaremoved.equals("true")) {
-					p = true;
-				}
-				else if (permaremoved.equals("false")) {
-					p = false;
-				}
-
-				new BendingPlayer(uuid, player, elements, abilities, p);
+	public static void createBendingPlayer(final UUID uuid, final String player) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				createBendingPlayerAsynchronously(uuid, player);
 			}
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
+		}.runTaskAsynchronously(ProjectKorra.plugin);
 	}
+	
+	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
+        ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
+        try {
+            if (!rs2.next()) { // Data doesn't exist, we want a completely new
+                               // player.
+                new BendingPlayer(uuid, player, new ArrayList<Element>(), new HashMap<Integer, String>(), false);
+                DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player) VALUES ('" + uuid.toString() + "', '" + player + "')");
+                ProjectKorra.log.info("Created new BendingPlayer for " + player);
+            } else {
+                // The player has at least played before.
+                String player2 = rs2.getString("player");
+                if (!player.equalsIgnoreCase(player2)) {
+                    DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
+                    // They have changed names.
+                    
+                    ProjectKorra.log.info("Updating Player Name for " + player);
+                }
+                
+                String element = rs2.getString("element");
+                String permaremoved = rs2.getString("permaremoved");
+                boolean p = false;
+                final ArrayList<Element> elements = new ArrayList<Element>();
+                if (element != null) { // Player has an element.
+                    if (element.contains("a"))
+                        elements.add(Element.Air);
+                    if (element.contains("w"))
+                        elements.add(Element.Water);
+                    if (element.contains("e"))
+                        elements.add(Element.Earth);
+                    if (element.contains("f"))
+                        elements.add(Element.Fire);
+                    if (element.contains("c"))
+                        elements.add(Element.Chi);
+                }
+                
+                final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+                for (int i = 1; i <= 9; i++) {
+                    String slot = rs2.getString("slot" + i);
+                    
+                    if (slot != null) {
+                        abilities.put(i, slot);
+                    }
+                }
+                
+                p = (permaremoved == null ? false : (permaremoved.equals("true") ? true : (permaremoved.equals("false") ? false : p)));
+                
+                final boolean boolean_p = p;
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        new BendingPlayer(uuid, player, elements, abilities, boolean_p);
+                    }
+                }.runTask(ProjectKorra.plugin);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 
 	/**
 	 * Damages an Entity by amount of damage specified. Starts a {@link EntityDamageByEntityEvent}.

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -323,47 +324,59 @@ public class PKListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 		GeneralMethods.createBendingPlayer(e.getPlayer().getUniqueId(), player.getName());
-		if (GeneralMethods.toggedOut.contains(player.getUniqueId())) {
+	}
+	
+	public static void login(BendingPlayer pl) {
+        ProjectKorra plugin = ProjectKorra.plugin;
+        Player player = Bukkit.getPlayer(pl.getUUID());
+        
+        if (player == null) {
+            return;
+        }
+        
+        if (GeneralMethods.toggedOut.contains(player.getUniqueId())) {
 			GeneralMethods.getBendingPlayer(player.getName()).isToggled = false;
 			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
 		}
-		Preset.loadPresets(player);
-		String append = "";
-		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
-		if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).elements.size() > 1) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
-		} else if (GeneralMethods.isBender(player.getName(), Element.Air) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Air");
-		} else if (GeneralMethods.isBender(player.getName(), Element.Water) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Water");
-		} else if (GeneralMethods.isBender(player.getName(), Element.Earth) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Earth");
-		} else if (GeneralMethods.isBender(player.getName(), Element.Fire) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Fire");
-		} else if (GeneralMethods.isBender(player.getName(), Element.Chi) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
-		}
-
-		if (chatEnabled) {
-			player.setDisplayName(append + player.getName());
-		}
-		
-		// Handle the AirSpout/WaterSpout login glitches
-		if (player.getGameMode() != GameMode.CREATIVE) {
-			HashMap<Integer, String> bound = GeneralMethods.getBendingPlayer(player.getName()).getAbilities();
-			for(String str : bound.values())
-				if(str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout")) {
-					final Player fplayer = player;
-					new BukkitRunnable() {
-						public void run() {
-							fplayer.setFlying(false);
-							fplayer.setAllowFlight(false);
-						}
-					}.runTaskLater(ProjectKorra.plugin, 2);
-					break;
-				}
-		}
-	}
+        
+        Preset.loadPresets(player);
+        String append = "";
+        boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
+        if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).elements.size() > 1) && chatEnabled) {
+            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
+        } else if (GeneralMethods.isBender(player.getName(), Element.Air) && chatEnabled) {
+            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Air");
+        } else if (GeneralMethods.isBender(player.getName(), Element.Water) && chatEnabled) {
+            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Water");
+        } else if (GeneralMethods.isBender(player.getName(), Element.Earth) && chatEnabled) {
+            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Earth");
+        } else if (GeneralMethods.isBender(player.getName(), Element.Fire) && chatEnabled) {
+            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Fire");
+        } else if (GeneralMethods.isBender(player.getName(), Element.Chi) && chatEnabled) {
+            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
+        }
+        
+        if (chatEnabled) {
+            player.setDisplayName(append + player.getName());
+        }
+        
+        // Handle the AirSpout/WaterSpout login glitches
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            HashMap<Integer, String> bound = GeneralMethods.getBendingPlayer(player.getName()).getAbilities();
+            for (String str : bound.values()) {
+                if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout")) {
+                    final Player fplayer = player;
+                    new BukkitRunnable() {
+                        public void run() {
+                            fplayer.setFlying(false);
+                            fplayer.setAllowFlight(false);
+                        }
+                    }.runTaskLater(ProjectKorra.plugin, 2);
+                    break;
+                }
+            }
+        }
+    }
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {

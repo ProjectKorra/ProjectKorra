@@ -22,6 +22,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
@@ -803,42 +804,53 @@ public class Commands {
 						Player p = Bukkit.getPlayer(args[1]);
 						if (p == null) {
 							s.sendMessage(ChatColor.GREEN + "You are running a lookup of an offline player, this may take a second.");
-							ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE player = '" + args[1] + "'");
-							try {
-								if (rs2.next()) {
-									UUID uuid = UUID.fromString(rs2.getString("uuid"));
-									String element = rs2.getString("element");
-									s.sendMessage(args[1] + " - ");
-									if (element.contains("a")) {
-										s.sendMessage(AirMethods.getAirColor() + "- Airbender");
-									}
-									if (element.contains("w")) {
-										s.sendMessage(WaterMethods.getWaterColor() + "- Waterbender");
-									}
-									if (element.contains("e")) {
-										s.sendMessage(EarthMethods.getEarthColor() + "- Earthbender");
-									}
-									if (element.contains("f")) {
-										s.sendMessage(FireMethods.getFireColor() + "- Firebender");
-									}
-									if (element.contains("c")) {
-										s.sendMessage(ChiMethods.getChiColor() + "- Chiblocker");
-									}
-									if (GeneralMethods.hasRPG()) {
-										if (RPGMethods.isCurrentAvatar(uuid)) {
-											s.sendMessage(GeneralMethods.getAvatarColor() + "Current Avatar");
-										} else if (RPGMethods.hasBeenAvatar(uuid)) {
-											s.sendMessage(GeneralMethods.getAvatarColor() + "Former Avatar");
-										} else {
+						
+							final String player = args[1];
+							final CommandSender sender = s;
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE player = '" + player + "'");
+									try {
+										final List<String> messages = new ArrayList<String>();
+										
+										if (rs2.next()) {
+											UUID uuid = UUID.fromString(rs2.getString("uuid"));
+											String element = rs2.getString("element");
 											
+											messages.add(player + " - ");
+											if (element.contains("a")) messages.add(AirMethods.getAirColor() + "- Airbender");
+											if (element.contains("w")) messages.add(WaterMethods.getWaterColor() + "- Waterbender");
+											if (element.contains("e")) messages.add(EarthMethods.getEarthColor() + "- Earthbender");
+											if (element.contains("f")) messages.add(FireMethods.getFireColor() + "- Firebender");
+											if (element.contains("c")) messages.add(ChiMethods.getChiColor() + "- Chiblocker");
+											
+											if (GeneralMethods.hasRPG()) {
+												if (RPGMethods.isCurrentAvatar(uuid)) {
+													messages.add(GeneralMethods.getAvatarColor() + "Current Avatar");
+												} else if (RPGMethods.hasBeenAvatar(uuid)) {
+													messages.add(GeneralMethods.getAvatarColor() + "Former Avatar");
+												} else {
+													
+												}
+											}
+										} else {
+											messages.add(ChatColor.RED + "We could not find any player in your database with that username. Are you sure it is typed correctly?");
 										}
+										
+										new BukkitRunnable() {
+											@Override
+											public void run() {
+												for (String message : messages) {
+													sender.sendMessage(message);
+												}
+											}
+										}.runTask(ProjectKorra.plugin);
+									} catch (SQLException e) {
+										e.printStackTrace();
 									}
-								} else {
-									s.sendMessage(ChatColor.RED + "We could not find any player in your database with that username. Are you sure it is typed correctly?");
 								}
-							} catch (SQLException e) {
-								e.printStackTrace();
-							}
+							}.runTaskAsynchronously(ProjectKorra.plugin);
 							return true;
 						}
 
