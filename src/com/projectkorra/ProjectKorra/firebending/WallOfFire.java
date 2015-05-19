@@ -14,10 +14,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 public class WallOfFire {
 
@@ -54,22 +55,22 @@ public class WallOfFire {
 			return;
 		}
 
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 		if (bPlayer.isOnCooldown("WallOfFire")) return;
 
 		this.player = player;
 
-		origin = Methods.getTargetedLocation(player, range);
+		origin = GeneralMethods.getTargetedLocation(player, range);
 
 		World world = player.getWorld();
 
-		if (Methods.isDay(player.getWorld())) {
-			width = (int) Methods.getFirebendingDayAugment((double) width, world);
-			height = (int) Methods.getFirebendingDayAugment((double) height, world);
-			duration = (long) Methods.getFirebendingDayAugment((double) duration,
+		if (FireMethods.isDay(player.getWorld())) {
+			width = (int) FireMethods.getFirebendingDayAugment((double) width, world);
+			height = (int) FireMethods.getFirebendingDayAugment((double) height, world);
+			duration = (long) FireMethods.getFirebendingDayAugment((double) duration,
 					world);
-			damage = (int) Methods.getFirebendingDayAugment((double) damage, world);
+			damage = (int) FireMethods.getFirebendingDayAugment((double) damage, world);
 		}
 
 		time = System.currentTimeMillis();
@@ -77,7 +78,7 @@ public class WallOfFire {
 
 		Block block = origin.getBlock();
 
-		if (block.isLiquid() || Methods.isSolid(block)) {
+		if (block.isLiquid() || GeneralMethods.isSolid(block)) {
 			return;
 		}
 
@@ -127,10 +128,10 @@ public class WallOfFire {
 		Vector direction = player.getEyeLocation().getDirection();
 		direction = direction.normalize();
 
-		Vector ortholr = Methods.getOrthogonalVector(direction, 0, 1);
+		Vector ortholr = GeneralMethods.getOrthogonalVector(direction, 0, 1);
 		ortholr = ortholr.normalize();
 
-		Vector orthoud = Methods.getOrthogonalVector(direction, 90, 1);
+		Vector orthoud = GeneralMethods.getOrthogonalVector(direction, 90, 1);
 		orthoud = orthoud.normalize();
 
 		double w = (double) width;
@@ -141,7 +142,7 @@ public class WallOfFire {
 				Location location = origin.clone().add(
 						orthoud.clone().multiply(j));
 				location = location.add(ortholr.clone().multiply(i));
-				if (Methods.isRegionProtectedFromBuild(player,
+				if (GeneralMethods.isRegionProtectedFromBuild(player,
 						"WallOfFire", location))
 					continue;
 				Block block = location.getBlock();
@@ -157,8 +158,8 @@ public class WallOfFire {
 			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
 			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
 			
-			if (Methods.rand.nextInt(7) == 0) {
-				Methods.playFirebendingSound(block.getLocation());
+			if (GeneralMethods.rand.nextInt(7) == 0) {
+				FireMethods.playFirebendingSound(block.getLocation());
 			}
 		}
 	}
@@ -168,11 +169,11 @@ public class WallOfFire {
 		if (radius < width)
 			radius = width;
 		radius = radius + 1;
-		List<Entity> entities = Methods.getEntitiesAroundPoint(origin, radius);
+		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(origin, radius);
 		if (entities.contains(player))
 			entities.remove(player);
 		for (Entity entity : entities) {
-			if (Methods.isRegionProtectedFromBuild(player, "WallOfFire",
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "WallOfFire",
 					entity.getLocation()))
 				continue;
 			for (Block block : blocks) {
@@ -186,11 +187,11 @@ public class WallOfFire {
 
 	private void affect(Entity entity) {
 		entity.setFireTicks(50);
-		Methods.setVelocity(entity, new Vector(0, 0, 0));
+		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
 		if (entity instanceof LivingEntity) {
-			Methods.damageEntity(player, entity, damage);
+			GeneralMethods.damageEntity(player, entity, damage);
 			new Enflamed(entity, player);
-			Methods.breakBreathbendingHold(entity);
+			AirMethods.breakBreathbendingHold(entity);
 		}
 	}
 
@@ -251,7 +252,7 @@ public class WallOfFire {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 		if(player != null)
-			Methods.getBendingPlayer(player.getName()).addCooldown("WallOfFire", cooldown);
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WallOfFire", cooldown);
 	}
 
 	public long getDamageinterval() {

@@ -5,9 +5,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.waterbending.Melt;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class HeatMelt {
 
@@ -15,11 +16,11 @@ public class HeatMelt {
 	private static final int radius = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.HeatControl.Melt.Radius");
 
 	public HeatMelt(Player player) {
-		Location location = Methods.getTargetedLocation(player,
-				(int) Methods.getFirebendingDayAugment(range, player.getWorld()));
-		for (Block block : Methods.getBlocksAroundPoint(location,
-				(int) Methods.getFirebendingDayAugment(radius, player.getWorld()))) {
-			if (Methods.isMeltable(block)) {
+		Location location = GeneralMethods.getTargetedLocation(player,
+				(int) FireMethods.getFirebendingDayAugment(range, player.getWorld()));
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location,
+				(int) FireMethods.getFirebendingDayAugment(radius, player.getWorld()))) {
+			if (WaterMethods.isMeltable(block)) {
 				Melt.melt(player, block);
 			} else if (isHeatable(block)) {
 				heat(block);

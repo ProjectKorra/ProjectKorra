@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Extraction {
@@ -19,15 +19,15 @@ public class Extraction {
 	private static int triplechance = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");
 
 	public Extraction(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("Extraction")) return;
 
 		Block block = player.getTargetBlock((HashSet<Material>) null, 5);
 		if (block == null) {
 			return;
 		}
-		if (!Methods.isRegionProtectedFromBuild(player, "Extraction", block.getLocation())) {
-			if (Methods.canMetalbend(player) && Methods.canBend(player.getName(), "Extraction")) {
+		if (!GeneralMethods.isRegionProtectedFromBuild(player, "Extraction", block.getLocation())) {
+			if (EarthMethods.canMetalbend(player) && GeneralMethods.canBend(player.getName(), "Extraction")) {
 				Material type = null;
 				
 				switch(block.getType()) {
@@ -55,12 +55,12 @@ public class Extraction {
 					 * players can use RaiseEarth > Extraction > Collapse
 					 * to dupe the material from the block.
 					 * */
-					if(Methods.movedearth.containsKey(block)) {
-						Methods.movedearth.remove(block);
+					if(EarthMethods.movedearth.containsKey(block)) {
+						EarthMethods.movedearth.remove(block);
 					}
 				}
 				
-				Methods.playMetalbendingSound(block.getLocation());
+				EarthMethods.playMetalbendingSound(block.getLocation());
 				bPlayer.addCooldown("Extraction", cooldown);
 			}
 		}

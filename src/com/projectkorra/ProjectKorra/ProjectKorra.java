@@ -29,7 +29,7 @@ public class ProjectKorra extends JavaPlugin {
 		plugin = this;
 		new ConfigManager(this);
 
-		new Methods(this);
+		new GeneralMethods(this);
 		new Commands(this);
 		new AbilityModuleManager(this);
 		new ComboModuleManager();
@@ -55,7 +55,7 @@ public class ProjectKorra extends JavaPlugin {
 		if (DBConnection.isOpen() == false) return;
 		
 		for (Player player: Bukkit.getOnlinePlayers()) {
-			Methods.createBendingPlayer(player.getUniqueId(), player.getName());
+			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			Preset.loadPresets(player);
 		}
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
@@ -76,14 +76,14 @@ public class ProjectKorra extends JavaPlugin {
 			e.printStackTrace();
 		}
 
-		Methods.deserializeFile();
-		Methods.startCacheCleaner(Methods.CACHE_TIME);
+		GeneralMethods.deserializeFile();
+		GeneralMethods.startCacheCleaner(GeneralMethods.CACHE_TIME);
 		new CraftingRecipes(this);
 	}
 
 	@Override
 	public void onDisable() {
-		Methods.stopBending();
+		GeneralMethods.stopBending();
 		if (DBConnection.isOpen == false) return;
 		DBConnection.sql.close();
 	}

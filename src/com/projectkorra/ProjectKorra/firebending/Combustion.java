@@ -1,10 +1,6 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +11,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 public class Combustion {
 
@@ -50,7 +51,7 @@ public class Combustion {
 
 	public Combustion(Player player) {
 
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 		if (instances.containsKey(player)) return;
 		if (bPlayer.isOnCooldown("Combustion")) return;
@@ -63,15 +64,15 @@ public class Combustion {
 		if (AvatarState.isAvatarState(player)) {
 			range = AvatarState.getValue(defaultrange);
 			damage = AvatarState.getValue(defaultdamage);
-		} else if (Methods.isDay(player.getWorld())) {
-			range = Methods.getFirebendingDayAugment(defaultrange, player.getWorld());
-			damage = Methods.getFirebendingDayAugment(defaultdamage, player.getWorld());
+		} else if (FireMethods.isDay(player.getWorld())) {
+			range = FireMethods.getFirebendingDayAugment(defaultrange, player.getWorld());
+			damage = FireMethods.getFirebendingDayAugment(defaultdamage, player.getWorld());
 		} else {
 			range = defaultrange;
 			damage = defaultdamage;
 		}
 
-		if (Methods.isRegionProtectedFromBuild(player, "Combustion", Methods.getTargetedLocation(player, range))) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "Combustion", GeneralMethods.getTargetedLocation(player, range))) {
 			return;
 		}
 
@@ -90,17 +91,17 @@ public class Combustion {
 			return;
 		}
 
-		if (!Methods.canBend(player.getName(), "Combustion")) {
+		if (!GeneralMethods.canBend(player.getName(), "Combustion")) {
 			instances.remove(player);
 			return;
 		}
 
-		if (Methods.getBoundAbility(player) == null || !Methods.getBoundAbility(player).equalsIgnoreCase("Combustion")) {
+		if (GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Combustion")) {
 			instances.remove(player);
 			return;
 		}
 
-		if (Methods.isRegionProtectedFromBuild(player, "Combustion", location)) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "Combustion", location)) {
 			instances.remove(player);
 			return;
 		}
@@ -141,8 +142,8 @@ public class Combustion {
 		for (Entity entity: block.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
 				if (entity.getLocation().distance(block) < radius) { // They are close enough to the explosion.
-					Methods.damageEntity(player, entity, damage);
-					Methods.breakBreathbendingHold(entity);
+					GeneralMethods.damageEntity(player, entity, damage);
+					AirMethods.breakBreathbendingHold(entity);
 				}
 			}
 		}
@@ -162,7 +163,7 @@ public class Combustion {
 		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 5);
 		ParticleEffect.FLAME.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
 		//if (Methods.rand.nextInt(4) == 0) {
-			Methods.playCombustionSound(location);
+			FireMethods.playCombustionSound(location);
 		//}
 		location = location.add(direction.clone().multiply(speedfactor));
 	}

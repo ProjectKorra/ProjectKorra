@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -24,23 +24,23 @@ public class Melt {
 	private static final byte full = 0x0;
 
 	public Melt(Player player) {
-		if(!Methods.canIcebend(player))
+		if(!WaterMethods.canIcebend(player))
 			return;
 		
-		int range = (int) Methods.waterbendingNightAugment(defaultrange, player.getWorld());
-		int radius = (int) Methods.waterbendingNightAugment(defaultradius, player.getWorld());
+		int range = (int) WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
+		int radius = (int) WaterMethods.waterbendingNightAugment(defaultradius, player.getWorld());
 
 		if (AvatarState.isAvatarState(player)) {
 			range = AvatarState.getValue(range);
 			radius = AvatarState.getValue(radius);
 		}
 		boolean evaporate = false;
-		Location location = Methods.getTargetedLocation(player, range);
-		if (Methods.isWater(player.getTargetBlock((HashSet<Material>) null, range))	&& !(player.getEyeLocation().getBlockY() <= 62)) {
+		Location location = GeneralMethods.getTargetedLocation(player, range);
+		if (WaterMethods.isWater(player.getTargetBlock((HashSet<Material>) null, range))	&& !(player.getEyeLocation().getBlockY() <= 62)) {
 			evaporate = true;
-			radius = (int) Methods.waterbendingNightAugment(defaultevaporateradius, player.getWorld());
+			radius = (int) WaterMethods.waterbendingNightAugment(defaultevaporateradius, player.getWorld());
 		}
-		for (Block block : Methods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
 			if (evaporate) {
 				if (block.getY() > seaLevel)
 					evaporate(player, block);
@@ -53,7 +53,7 @@ public class Melt {
 
 	@SuppressWarnings("deprecation")
 	public static void melt(Player player, Block block) {
-		if (Methods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
 			return;
 		if (!Wave.canThaw(block)) {
 			Wave.thaw(block);
@@ -65,7 +65,7 @@ public class Melt {
 		}
 		WaterWave.thaw(block);
 		WaterCombo.thaw(block);
-		if (Methods.isMeltable(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
+		if (WaterMethods.isMeltable(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
 			if (block.getType() == Material.SNOW) {
 				block.setType(Material.AIR);
 				return;
@@ -80,9 +80,9 @@ public class Melt {
 	}
 
 	public static void evaporate(Player player, Block block) {
-		if (Methods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
 			return;
-		if (Methods.isWater(block) && !TempBlock.isTempBlock(block)	&& WaterManipulation.canPhysicsChange(block)) {
+		if (WaterMethods.isWater(block) && !TempBlock.isTempBlock(block)	&& WaterManipulation.canPhysicsChange(block)) {
 			block.setType(Material.AIR);
 			block.getWorld().playEffect(block.getLocation(), Effect.SMOKE, 1);
 		}

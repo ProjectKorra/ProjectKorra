@@ -15,11 +15,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
@@ -86,7 +88,7 @@ public class WaterManipulation {
 
 	public boolean prepare() {
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = Methods.getWaterSourceBlock(player, range, Methods.canPlantbend(player));
+		Block block = WaterMethods.getWaterSourceBlock(player, range, WaterMethods.canPlantbend(player));
 		// if (prepared.containsKey(player)
 		// && !Methods.isWaterbendable(block, player)) {
 		// instances.get(prepared.get(player)).displacing = true;
@@ -138,18 +140,18 @@ public class WaterManipulation {
 					progressing = true;
 					settingup = true;
 					firstdestination = getToEyeLevel();
-					firstdirection = Methods.getDirection(sourceblock.getLocation(), firstdestination).normalize();
-					targetdestination = Methods.getPointOnLine(firstdestination, targetdestination, range);
-					targetdirection = Methods.getDirection(firstdestination, targetdestination).normalize();
+					firstdirection = GeneralMethods.getDirection(sourceblock.getLocation(), firstdestination).normalize();
+					targetdestination = GeneralMethods.getPointOnLine(firstdestination, targetdestination, range);
+					targetdirection = GeneralMethods.getDirection(firstdestination, targetdestination).normalize();
 
-					if (Methods.isPlant(sourceblock))
+					if (WaterMethods.isPlant(sourceblock))
 						new Plantbending(sourceblock);
 					addWater(sourceblock);
 				}
 
 			}
 
-			Methods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", Methods.getGlobalCooldown());
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", GeneralMethods.getGlobalCooldown());
 		}
 	}
 	
@@ -158,10 +160,10 @@ public class WaterManipulation {
 	}
 
 	private static Location getTargetLocation(Player player, double range) {
-		Entity target = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
+		Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		Location location;
 		if (target == null) {
-			location = Methods.getTargetedLocation(player, range, Methods.transparentToEarthbending);
+			location = GeneralMethods.getTargetedLocation(player, range, EarthMethods.transparentToEarthbending);
 		} else {
 			// targetting = true;
 			location = ((LivingEntity) target).getEyeLocation();
@@ -193,7 +195,7 @@ public class WaterManipulation {
 	private void redirect(Player player, Location targetlocation) {
 		if (progressing && !settingup) {
 			if (location.distance(player.getLocation()) <= range)
-				targetdirection = Methods.getDirection(location, targetlocation).normalize();
+				targetdirection = GeneralMethods.getDirection(location, targetlocation).normalize();
 			targetdestination = targetlocation;
 			this.player = player;
 		}
@@ -211,24 +213,24 @@ public class WaterManipulation {
 
 	private boolean progress() {
 		if (player.isDead() || !player.isOnline()
-				|| !Methods.canBend(player.getName(), "WaterManipulation")) {
+				|| !GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
 			breakBlock();
 			return false;
 		}
 		if (System.currentTimeMillis() - time >= interval) {
 			// removeWater(oldwater);
-			if (Methods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 				breakBlock();
 				return false;
 			}
 
 			time = System.currentTimeMillis();
 
-			if (Methods.getBoundAbility(player) == null) {
+			if (GeneralMethods.getBoundAbility(player) == null) {
 				unfocusBlock();
 				return false;
 			}
-			if (!progressing && !falling && !Methods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
+			if (!progressing && !falling && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				unfocusBlock();
 				return false;
 			}
@@ -300,7 +302,7 @@ public class WaterManipulation {
 				Block block = location.getBlock();
 				if (displacing) {
 					Block targetblock = player.getTargetBlock((HashSet<Material>) null, displrange);
-					direction = Methods.getDirection(location, targetblock.getLocation()).normalize();
+					direction = GeneralMethods.getDirection(location, targetblock.getLocation()).normalize();
 					if (!location.getBlock().equals(targetblock.getLocation())) {
 						location = location.clone().add(direction);
 
@@ -312,10 +314,11 @@ public class WaterManipulation {
 					}
 
 				} else {
-					Methods.removeSpouts(location, player);
+					WaterMethods.removeWaterSpouts(location, player);
+					AirMethods.removeAirSpouts(location, player);
 					
-					if (Methods.rand.nextInt(4) == 0) {
-						Methods.playWaterbendingSound(location);
+					if (GeneralMethods.rand.nextInt(4) == 0) {
+						WaterMethods.playWaterbendingSound(location);
 					}		
 
 					double radius = FireBlast.AFFECTING_RADIUS;
@@ -358,16 +361,16 @@ public class WaterManipulation {
 					}
 				}
 
-				if (Methods.isTransparentToEarthbending(player, block) && !block.isLiquid()) {
-					Methods.breakBlock(block);
-				} else if (block.getType() != Material.AIR && !Methods.isWater(block)) {
+				if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid()) {
+					GeneralMethods.breakBlock(block);
+				} else if (block.getType() != Material.AIR && !WaterMethods.isWater(block)) {
 					breakBlock();
 					new WaterReturn(player, sourceblock);
 					return false;
 				}
 
 				if (!displacing) {
-					for (Entity entity : Methods.getEntitiesAroundPoint(location, FireBlast.AFFECTING_RADIUS)) {
+					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, FireBlast.AFFECTING_RADIUS)) {
 						if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId()) {
 
 							// Block testblock = location.getBlock();
@@ -385,8 +388,8 @@ public class WaterManipulation {
 							// .add(direction));
 							if (AvatarState.isAvatarState(player))
 								damage = AvatarState.getValue(damage);
-							Methods.damageEntity(player, entity, (int) Methods.waterbendingNightAugment(damage, player.getWorld()));
-							Methods.breakBreathbendingHold(entity);
+							GeneralMethods.damageEntity(player, entity, (int) WaterMethods.waterbendingNightAugment(damage, player.getWorld()));
+							AirMethods.breakBreathbendingHold(entity);
 							progressing = false;
 							// }
 						}
@@ -445,7 +448,7 @@ public class WaterManipulation {
 			return;
 		}
 		if (affectedblocks.containsKey(block)) {
-			if (!Methods.isAdjacentToThreeOrMoreSources(block)) {
+			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				// && !Methods.adjacentToAnyWater(block)) {
 				block.setType(Material.AIR);
 				// block.setType(Material.WATER);
@@ -459,7 +462,7 @@ public class WaterManipulation {
 	private void removeWater(Block block) {
 		if (block != null) {
 			if (affectedblocks.containsKey(block)) {
-				if (!Methods.isAdjacentToThreeOrMoreSources(block)) {
+				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 					block.setType(Material.AIR);
 				}
 				affectedblocks.remove(block);
@@ -481,7 +484,7 @@ public class WaterManipulation {
 			return;
 		}
 		if (affectedblocks.containsKey(block)) {
-			if (!Methods.isAdjacentToThreeOrMoreSources(block)) {
+			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				// && !Methods.adjacentToAnyWater(block)) {
 				block.setType(Material.AIR);
 				// block.setType(Material.WATER);
@@ -504,7 +507,7 @@ public class WaterManipulation {
 
 	@SuppressWarnings("deprecation")
 	public static void moveWater(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 		if (bPlayer.isOnCooldown("WaterManipulation")) return;
 
@@ -516,8 +519,8 @@ public class WaterManipulation {
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-			if (Methods.isTransparentToEarthbending(player, block)
-					&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+			if (EarthMethods.isTransparentToEarthbending(player, block)
+					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
 				if (getTargetLocation(player).distance(block.getLocation()) > 1) {
 					block.setType(Material.WATER);
@@ -546,7 +549,7 @@ public class WaterManipulation {
 			if (!manip.location.getWorld().equals(player.getWorld()))
 				continue;
 
-			if (Methods.isRegionProtectedFromBuild(player, "WaterManipulation", manip.location))
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", manip.location))
 				continue;
 
 			if (manip.player.equals(player))
@@ -556,7 +559,7 @@ public class WaterManipulation {
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
 			if (mloc.distance(location) <= manip.range
-					&& Methods.getDistanceFromLine(vector, location, manip.location) < deflectrange
+					&& GeneralMethods.getDistanceFromLine(vector, location, manip.location) < deflectrange
 					&& mloc.distance(location.clone().add(vector)) < 
 					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.redirect(player, getTargetLocation(player));
@@ -578,14 +581,14 @@ public class WaterManipulation {
 			if (!manip.progressing)
 				continue;
 
-			if (Methods.isRegionProtectedFromBuild(player, "WaterManipulation", manip.location))
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", manip.location))
 				continue;
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
 			if (mloc.distance(location) <= manip.range
-					&& Methods.getDistanceFromLine(vector, location, manip.location) < deflectrange
+					&& GeneralMethods.getDistanceFromLine(vector, location, manip.location) < deflectrange
 					&& mloc.distance(location.clone().add(vector)) < 
 					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.breakBlock();
@@ -630,8 +633,8 @@ public class WaterManipulation {
 			// Methods.verbose("tempblock");
 			return false;
 		}
-		if (Methods.isAdjacentToFrozenBlock(to)
-				|| Methods.isAdjacentToFrozenBlock(from)) {
+		if (WaterMethods.isAdjacentToFrozenBlock(to)
+				|| WaterMethods.isAdjacentToFrozenBlock(from)) {
 			// Methods.verbose("frozen");
 			return false;
 		}
@@ -735,7 +738,7 @@ public class WaterManipulation {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 		if(player != null)
-			Methods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", cooldown);
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", cooldown);
 
 	}
 

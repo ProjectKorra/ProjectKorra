@@ -10,7 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.TempBlock;
 
 public class WaterSourceGrabber {
@@ -54,8 +54,8 @@ public class WaterSourceGrabber {
 			double locDiff = player.getEyeLocation().getY() - currentLoc.getY();
 			currentLoc.add(0, animSpeed * Math.signum(locDiff), 0);
 			Block block = currentLoc.getBlock();
-			if (!(Methods.isWaterbendable(block, player) || block.getType() == Material.AIR)
-					|| Methods.isRegionProtectedFromBuild(player, "WaterSpout",
+			if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR)
+					|| GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout",
 							block.getLocation())) {
 				remove();
 				return;
@@ -67,12 +67,12 @@ public class WaterSourceGrabber {
 			revertBlocks();
 			Location eyeLoc = player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
 			eyeLoc.setY(player.getEyeLocation().getY());
-			Vector vec = Methods.getDirection(currentLoc, eyeLoc);
+			Vector vec = GeneralMethods.getDirection(currentLoc, eyeLoc);
 			currentLoc.add(vec.normalize().multiply(animSpeed));
 
 			Block block = currentLoc.getBlock();
-			if (!(Methods.isWaterbendable(block, player) || block.getType() == Material.AIR)
-					|| Methods.isRegionProtectedFromBuild(player,
+			if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR)
+					|| GeneralMethods.isRegionProtectedFromBuild(player,
 							"WaterManipulation", block.getLocation())) {
 				remove();
 				return;

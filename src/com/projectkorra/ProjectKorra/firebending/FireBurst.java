@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingManager;
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
@@ -32,14 +32,14 @@ public class FireBurst {
 	private ArrayList<FireBlast> blasts = new ArrayList<FireBlast>();
 
 	public FireBurst(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 		if (bPlayer.isOnCooldown("FireBurst")) return;
 
 		if (instances.containsKey(player))
 			return;
 		starttime = System.currentTimeMillis();
-		if (Methods.isDay(player.getWorld())) {
+		if (FireMethods.isDay(player.getWorld())) {
 			chargetime /= ProjectKorra.plugin.getConfig().getDouble("Properties.Fire.DayFactor");
 		}
 		if (AvatarState.isAvatarState(player))
@@ -59,7 +59,7 @@ public class FireBurst {
 	private void coneBurst() {
 		if (charged) {
 			Location location = player.getEyeLocation();
-			List<Block> safeblocks = Methods.getBlocksAroundPoint(
+			List<Block> safeblocks = GeneralMethods.getBlocksAroundPoint(
 					player.getLocation(), 2);
 			Vector vector = location.getDirection();
 			double angle = Math.toRadians(30);
@@ -90,7 +90,7 @@ public class FireBurst {
 	private void sphereBurst() {
 		if (charged) {
 			Location location = player.getEyeLocation();
-			List<Block> safeblocks = Methods.getBlocksAroundPoint(player.getLocation(), 2);
+			List<Block> safeblocks = GeneralMethods.getBlocksAroundPoint(player.getLocation(), 2);
 			double x, y, z;
 			double r = 1;
 			for (double theta = 0; theta <= 180; theta += deltheta) {
@@ -115,16 +115,16 @@ public class FireBurst {
 	}
 
 	private void progress() {
-		if (!Methods.canBend(player.getName(), "FireBurst")) {
+		if (!GeneralMethods.canBend(player.getName(), "FireBurst")) {
 			instances.remove(player);
 			return;
 		}
-		if (Methods.getBoundAbility(player) == null) {
+		if (GeneralMethods.getBoundAbility(player) == null) {
 			instances.remove(player);
 			return;
 		}
 
-		if (!Methods.getBoundAbility(player).equalsIgnoreCase("FireBurst")) {
+		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBurst")) {
 			instances.remove(player);
 			return;
 		}

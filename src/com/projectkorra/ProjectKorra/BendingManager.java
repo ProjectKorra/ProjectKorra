@@ -1,16 +1,19 @@
 package com.projectkorra.ProjectKorra;
 
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
-import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
-import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
-import com.projectkorra.rpg.RPGMethods;
-import com.projectkorra.rpg.WorldEvents;
+import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
+import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
+import com.projectkorra.ProjectKorra.firebending.FireMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import com.projectkorra.rpg.RPGMethods;
+import com.projectkorra.rpg.WorldEvents;
 
 public class BendingManager implements Runnable {
 
@@ -52,7 +55,7 @@ public class BendingManager implements Runnable {
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
 		} catch (Exception e) {
-			Methods.stopBending();
+			GeneralMethods.stopBending();
 			e.printStackTrace();
 		}
 	}
@@ -76,27 +79,27 @@ public class BendingManager implements Runnable {
 		}
 		for (World world: Bukkit.getServer().getWorlds()) {
 			if (!times.containsKey(world)) {
-				if (Methods.isDay(world)) {
+				if (FireMethods.isDay(world)) {
 					times.put(world, true);
 				} else {
 					times.put(world, false);
 				}
 			} else {
-				if (times.get(world) && !Methods.isDay(world)) {
+				if (times.get(world) && !FireMethods.isDay(world)) {
 					// The hashmap says it is day, but it is not.
 					times.put(world, false); // Sets time to night.
-					if (Methods.hasRPG()) {
+					if (GeneralMethods.hasRPG()) {
 						if (RPGMethods.isLunarEclipse(world)) {
 							events.put(world, WorldEvents.LunarEclipse.toString());
 						}
-						else if (Methods.isFullMoon(world)) {
+						else if (WaterMethods.isFullMoon(world)) {
 							events.put(world, "FullMoon");
 						}
 						else {
 							events.put(world, "");
 						}
 					} else {
-						if (Methods.isFullMoon(world)) {
+						if (WaterMethods.isFullMoon(world)) {
 							events.put(world, "FullMoon");
 						} else {
 							events.put(world, "");
@@ -106,34 +109,34 @@ public class BendingManager implements Runnable {
 						
 						if(!player.hasPermission("bending.message.nightmessage")) return;
 						
-						if (Methods.isBender(player.getName(), Element.Water)) {
-							if (Methods.hasRPG()) {
+						if (GeneralMethods.isBender(player.getName(), Element.Water)) {
+							if (GeneralMethods.hasRPG()) {
 								if (RPGMethods.isLunarEclipse(world)) {
-									player.sendMessage(Methods.getWaterColor() + defaultlunareclipsemessage);
-								} else if (Methods.isFullMoon(world)) {
-									player.sendMessage(Methods.getWaterColor() + defaultfullmoonrisemessage);
+									player.sendMessage(WaterMethods.getWaterColor() + defaultlunareclipsemessage);
+								} else if (WaterMethods.isFullMoon(world)) {
+									player.sendMessage(WaterMethods.getWaterColor() + defaultfullmoonrisemessage);
 								} else {
-									player.sendMessage(Methods.getWaterColor() + defaultmoonrisemessage);
+									player.sendMessage(WaterMethods.getWaterColor() + defaultmoonrisemessage);
 								}
 							} else {
-								if (Methods.isFullMoon(world)) {
-									player.sendMessage(Methods.getWaterColor() + defaultfullmoonrisemessage);
+								if (WaterMethods.isFullMoon(world)) {
+									player.sendMessage(WaterMethods.getWaterColor() + defaultfullmoonrisemessage);
 								} else {
-									player.sendMessage(Methods.getWaterColor() + defaultmoonrisemessage);
+									player.sendMessage(WaterMethods.getWaterColor() + defaultmoonrisemessage);
 								}
 							}
 						}
-						if (Methods.isBender(player.getName(), Element.Fire)) {
+						if (GeneralMethods.isBender(player.getName(), Element.Fire)) {
 							if(player.hasPermission("bending.message.daymessage")) return;
-							player.sendMessage(Methods.getFireColor() + defaultsunsetmessage);
+							player.sendMessage(FireMethods.getFireColor() + defaultsunsetmessage);
 						}
 					}
 				}
 
-				if (!times.get(world) && Methods.isDay(world)) {
+				if (!times.get(world) && FireMethods.isDay(world)) {
 					// The hashmap says it is night, but it is day.
 					times.put(world, true);
-					if (Methods.hasRPG()) {
+					if (GeneralMethods.hasRPG()) {
 						if (RPGMethods.isSozinsComet(world)) {
 							events.put(world, WorldEvents.SozinsComet.toString());
 						}
@@ -147,20 +150,20 @@ public class BendingManager implements Runnable {
 						events.put(world, "");
 					}
 					for (Player player: world.getPlayers()) {
-						if (Methods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
-							player.sendMessage(Methods.getWaterColor() + defaultmoonsetmessage);
+						if (GeneralMethods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
+							player.sendMessage(WaterMethods.getWaterColor() + defaultmoonsetmessage);
 						}
-						if (Methods.isBender(player.getName(), Element.Fire) && player.hasPermission("bending.message.daymessage")) {
-							if (Methods.hasRPG()) {
+						if (GeneralMethods.isBender(player.getName(), Element.Fire) && player.hasPermission("bending.message.daymessage")) {
+							if (GeneralMethods.hasRPG()) {
 								if (RPGMethods.isSozinsComet(world)) {
-									player.sendMessage(Methods.getFireColor() + defaultsozinscometmessage);
+									player.sendMessage(FireMethods.getFireColor() + defaultsozinscometmessage);
 								} else if (RPGMethods.isSolarEclipse(world) && !RPGMethods.isLunarEclipse(world)) {
-									player.sendMessage(Methods.getFireColor() + defaultsolareclipsemessage);
+									player.sendMessage(FireMethods.getFireColor() + defaultsolareclipsemessage);
 								} else {
-									player.sendMessage(Methods.getFireColor() + defaultsunrisemessage);
+									player.sendMessage(FireMethods.getFireColor() + defaultsunrisemessage);
 								}
 							} else {
-								player.sendMessage(Methods.getFireColor() + defaultsunrisemessage);
+								player.sendMessage(FireMethods.getFireColor() + defaultsunrisemessage);
 							}
 						}
 					}

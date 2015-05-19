@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Tremorsense {
@@ -31,10 +31,10 @@ public class Tremorsense {
 
 
 	public Tremorsense(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("Tremorsense")) return;
 
-		if (Methods.isEarthbendable(player, player
+		if (EarthMethods.isEarthbendable(player, player
 				.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
 			this.player = player;
 			bPlayer.addCooldown("Tremorsense", cooldown);
@@ -59,17 +59,17 @@ public class Tremorsense {
 					Block blocki = block.getRelative(BlockFace.EAST, i)
 							.getRelative(BlockFace.NORTH, j)
 							.getRelative(BlockFace.DOWN, k);
-					if (Methods.isRegionProtectedFromBuild(player,
+					if (GeneralMethods.isRegionProtectedFromBuild(player,
 							"RaiseEarth", blocki.getLocation()))
 						continue;
-					if (Methods.isEarthbendable(player,
+					if (EarthMethods.isEarthbendable(player,
 							blocki) && !earth) {
 						earth = true;
 						smokeblock = blocki;
-					} else if (!Methods.isEarthbendable(player, blocki) && earth) {
+					} else if (!EarthMethods.isEarthbendable(player, blocki) && earth) {
 						foundair = true;
 						break;
-					} else if (!Methods.isEarthbendable(player, blocki)
+					} else if (!EarthMethods.isEarthbendable(player, blocki)
 							&& !earth
 							&& blocki.getType() != Material.AIR) {
 						break;
@@ -90,19 +90,19 @@ public class Tremorsense {
 		Block standblock = player.getLocation().getBlock()
 				.getRelative(BlockFace.DOWN);
 
-		BendingPlayer bp = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bp = GeneralMethods.getBendingPlayer(player.getName());
 		if (!bp.isTremorsensing()) {
 			if (block != null)
 				revert();
 			return;
 		}
 
-		if (Methods.isEarthbendable(player, standblock)
+		if (EarthMethods.isEarthbendable(player, standblock)
 				&& block == null) {
 			block = standblock;
 			player.sendBlockChange(block.getLocation(), 89, (byte) 1);
 			instances.put(player, this);
-		} else if (Methods.isEarthbendable(player,
+		} else if (EarthMethods.isEarthbendable(player,
 				standblock) && !block.equals(standblock)) {
 			revert();
 			block = standblock;
@@ -112,7 +112,7 @@ public class Tremorsense {
 			return;
 		} else if (player.getWorld() != block.getWorld()) {
 			revert();
-		} else if (!Methods.isEarthbendable(player,
+		} else if (!EarthMethods.isEarthbendable(player,
 				standblock)) {
 			revert();
 		}
@@ -140,12 +140,12 @@ public class Tremorsense {
 	public static void manage(Server server) {
 		for (Player player : server.getOnlinePlayers()) {
 			if (instances.containsKey(player)
-					&& (!Methods.canBend(player.getName(), "Tremorsense") || player
+					&& (!GeneralMethods.canBend(player.getName(), "Tremorsense") || player
 							.getLocation().getBlock().getLightLevel() > lightthreshold)) {
 				instances.get(player).revert();
 			} else if (instances.containsKey(player)) {
 				instances.get(player).set();
-			} else if (Methods.canBend(player.getName(), "Tremorsense")
+			} else if (GeneralMethods.canBend(player.getName(), "Tremorsense")
 					&& player.getLocation().getBlock().getLightLevel() < lightthreshold) {
 				new Tremorsense(player, false);
 			}

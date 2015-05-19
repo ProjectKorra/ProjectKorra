@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
@@ -22,10 +22,10 @@ public class Paralyze {
 	private static final long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Paralyze.Duration");
 
 	public Paralyze(Player sourceplayer, Entity targetentity) {
-		if (Methods.getBoundAbility(sourceplayer) == null) return;
-		if (Methods.isBender(sourceplayer.getName(), Element.Chi)
-				&& Methods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze")
-				&& Methods.canBend(sourceplayer.getName(), "Paralyze")) {
+		if (GeneralMethods.getBoundAbility(sourceplayer) == null) return;
+		if (GeneralMethods.isBender(sourceplayer.getName(), Element.Chi)
+				&& GeneralMethods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze")
+				&& GeneralMethods.canBend(sourceplayer.getName(), "Paralyze")) {
 			if (cooldowns.containsKey(targetentity)) {
 				if (System.currentTimeMillis() < cooldowns.get(targetentity)
 						+ cooldown) {

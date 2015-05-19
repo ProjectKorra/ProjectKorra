@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class Cook {
@@ -40,11 +40,11 @@ public class Cook {
 			return;
 		}
 
-		if (Methods.getBoundAbility(player) == null) {
+		if (GeneralMethods.getBoundAbility(player) == null) {
 			cancel();
 			return;
 		}
-		if (!player.isSneaking() || !Methods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
+		if (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
 			cancel();
 			return;
 		}

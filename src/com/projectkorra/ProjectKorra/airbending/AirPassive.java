@@ -9,7 +9,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class AirPassive {
@@ -40,7 +40,7 @@ public class AirPassive {
 		for (World world: server.getWorlds()) {
 			for (Player player: world.getPlayers()) {
 				if (!player.isOnline()) return;
-				if (Methods.canBendPassive(player.getName(), Element.Air)) {
+				if (GeneralMethods.canBendPassive(player.getName(), Element.Air)) {
 					player.setExhaustion(getExhaustion(player, player.getExhaustion())); // Handles Food Passive
 					if (player.isSprinting()) {
 						if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
