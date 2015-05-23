@@ -864,6 +864,11 @@ public class GeneralMethods {
 		if (player.hasPermission("bending.ability." + ability) && canBind(player.getName(), ability)) return true;
 		return false;
 	}
+	
+	public static boolean canView(Player player, String ability) {
+		if (player.hasPermission("bending.ability." + ability)) return true;
+		return false;
+	}
 
 	public static boolean isAbilityInstalled(String name, String author) {
 		String ability = getAbility(name);
