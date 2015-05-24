@@ -29,6 +29,8 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerChangeElementEvent;
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerChangeElementEvent.Result;
 import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
@@ -1233,6 +1235,7 @@ public class Commands {
 					GeneralMethods.saveElements(bPlayer);
 					s.sendMessage(ChatColor.GREEN + "You have removed the bending of " + ChatColor.DARK_AQUA + player.getName());
 					player.sendMessage(ChatColor.GREEN + "Your bending has been removed by " + ChatColor.DARK_AQUA + s.getName());
+					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, player, null, Result.REMOVE));
 					return true;
 
 				}
@@ -1271,6 +1274,7 @@ public class Commands {
 					GeneralMethods.savePermaRemoved(bPlayer);
 					player.sendMessage(ChatColor.RED + "Your bending has been permanently removed.");
 					s.sendMessage(ChatColor.RED + "You have permanently removed the bending of: " + ChatColor.DARK_AQUA + player.getName());
+					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, player, null, Result.PERMAREMOVE));
 					return true;
 				}
 				if (Arrays.asList(addaliases).contains(args[0].toLowerCase())) {
@@ -1298,6 +1302,7 @@ public class Commands {
 							GeneralMethods.saveElements(bPlayer);
 							player.sendMessage(AirMethods.getAirColor() + "You are also an Airbender.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + AirMethods.getAirColor() + " is also an Airbender.");
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, player, Element.Air, Result.ADD));
 							return true;
 						}
 
@@ -1306,6 +1311,7 @@ public class Commands {
 							GeneralMethods.saveElements(bPlayer);
 							player.sendMessage(WaterMethods.getWaterColor() + "You are also a waterbender.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + WaterMethods.getWaterColor() + " is also a Waterbender.");
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, player, Element.Water, Result.ADD));
 							return true;
 						}
 
@@ -1314,6 +1320,8 @@ public class Commands {
 							GeneralMethods.saveElements(bPlayer);
 							player.sendMessage(EarthMethods.getEarthColor() + "You are also an Earthbender.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + EarthMethods.getEarthColor() + " is also an Earthbender.");
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, player, Element.Earth, Result.ADD));
+
 							return true;
 						}
 
@@ -1322,6 +1330,7 @@ public class Commands {
 							GeneralMethods.saveElements(bPlayer);
 							player.sendMessage(FireMethods.getFireColor() + "You are also a Firebender.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + FireMethods.getFireColor() + " is also a Firebender");
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, player, Element.Fire, Result.ADD));
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[2].toLowerCase())) {
@@ -1329,6 +1338,7 @@ public class Commands {
 							GeneralMethods.saveElements(bPlayer);
 							player.sendMessage(ChiMethods.getChiColor() + "You are also a ChiBlocker.");
 							s.sendMessage(ChatColor.DARK_AQUA + player.getName() + ChiMethods.getChiColor() + " is also a ChiBlocker");
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, player, Element.Chi, Result.ADD));
 							return true;
 						}
 
@@ -1353,6 +1363,7 @@ public class Commands {
 							bPlayer.addElement(Element.Air);
 							GeneralMethods.saveElements(bPlayer);
 							s.sendMessage(AirMethods.getAirColor() + "You are also an Airbender.");
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, (Player) s, Element.Air, Result.ADD));
 							return true;
 						}
 
@@ -1360,6 +1371,7 @@ public class Commands {
 							bPlayer.addElement(Element.Water);
 							GeneralMethods.saveElements(bPlayer);
 							s.sendMessage(WaterMethods.getWaterColor() + "You are also a Waterbender.");
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, (Player) s, Element.Water, Result.ADD));
 							return true;
 						}
 
@@ -1367,6 +1379,7 @@ public class Commands {
 							bPlayer.addElement(Element.Earth);
 							GeneralMethods.saveElements(bPlayer);
 							s.sendMessage(EarthMethods.getEarthColor() + "You are also an Earthbender.");
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, (Player) s, Element.Earth, Result.ADD));
 							return true;
 						}
 
@@ -1374,12 +1387,14 @@ public class Commands {
 							bPlayer.addElement(Element.Fire);
 							GeneralMethods.saveElements(bPlayer);
 							s.sendMessage(FireMethods.getFireColor() + "You are also a Firebender.");
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, (Player) s, Element.Fire, Result.ADD));
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
 							bPlayer.addElement(Element.Chi);
 							GeneralMethods.saveElements(bPlayer);
 							s.sendMessage(ChiMethods.getChiColor() + "You are also a ChiBlocker.");
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, (Player) s, Element.Chi, Result.ADD));
 							return true;
 						}
 						s.sendMessage(ChatColor.RED + "You must specify an element.");
@@ -1422,6 +1437,7 @@ public class Commands {
 							s.sendMessage(AirMethods.getAirColor() + "You are now an Airbender.");
 							GeneralMethods.removeUnusableAbilities(s.getName());
 							GeneralMethods.saveElements(bPlayer);
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, (Player) s, Element.Air, Result.CHOOSE));
 							return true;
 						}
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
@@ -1429,6 +1445,7 @@ public class Commands {
 							s.sendMessage(WaterMethods.getWaterColor() + "You are now a Waterbender.");
 							GeneralMethods.removeUnusableAbilities(s.getName());
 							GeneralMethods.saveElements(bPlayer);
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, (Player) s, Element.Water, Result.CHOOSE));
 							return true;
 						}
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
@@ -1436,6 +1453,7 @@ public class Commands {
 							s.sendMessage(EarthMethods.getEarthColor() + "You are now an Earthbender.");
 							GeneralMethods.removeUnusableAbilities(s.getName());
 							GeneralMethods.saveElements(bPlayer);
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, (Player) s, Element.Earth, Result.CHOOSE));
 							return true;
 						}
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
@@ -1443,6 +1461,7 @@ public class Commands {
 							s.sendMessage(FireMethods.getFireColor() + "You are now a Firebender.");
 							GeneralMethods.removeUnusableAbilities(s.getName());
 							GeneralMethods.saveElements(bPlayer);
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, (Player) s, Element.Fire, Result.CHOOSE));
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
@@ -1450,6 +1469,7 @@ public class Commands {
 							s.sendMessage(ChiMethods.getChiColor() + "You are now a ChiBlocker.");
 							GeneralMethods.removeUnusableAbilities(s.getName());
 							GeneralMethods.saveElements(bPlayer);
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, (Player) s, Element.Chi, Result.CHOOSE));
 							return true;
 						}
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending choose [Element]");
@@ -1488,6 +1508,7 @@ public class Commands {
 							GeneralMethods.saveElements(bTarget);
 							s.sendMessage(ChatColor.RED + "You have changed " + ChatColor.DARK_AQUA + target.getName() + "'s " + ChatColor.RED + "element to " + ChatColor.DARK_AQUA + e.toString() + ChatColor.RED + ".");
 							target.sendMessage(ChatColor.RED + "Your bending has been changed to " + ChatColor.DARK_AQUA + e.toString() + ChatColor.RED + " by " + ChatColor.DARK_AQUA + s.getName());
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(s, target, e, Result.CHOOSE));
 							return true;
 						}
 					}
