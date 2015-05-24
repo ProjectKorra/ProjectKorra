@@ -57,6 +57,8 @@ permissions:
     default: true
     description: Grants access to all airbending abilities.
     children:
+      bending.command.add.air: true
+      bending.command.choose.air: true
       bending.ability.AirBlast: true
       bending.ability.AirBubble: true
       bending.ability.AirBurst: true
@@ -74,6 +76,8 @@ permissions:
     default: true
     description: Grants access to most waterbending abilities.
     children:
+      bending.command.add.water: true
+      bending.command.choose.water: true
       bending.ability.HealingWaters: true
       bending.ability.IceBlast: true
       bending.ability.IceSpike: true
@@ -95,6 +99,8 @@ permissions:
     default: true
     description: Grants access to all Earthbending abilities.
     children:
+      bending.command.add.earth: true
+      bending.command.choose.earth: true
       bending.ability.Catapult: true
       bending.ability.Collapse: true
       bending.ability.EarthArmor: true
@@ -120,6 +126,8 @@ permissions:
     default: true
     description: Grants access to all firebending abilities.
     children:
+      bending.command.add.fire: true
+      bending.command.choose.fire: true
       bending.ability.Blaze: true
       bending.ability.FireBlast: true
       bending.ability.FireBurst: true
@@ -139,6 +147,8 @@ permissions:
     default: true
     description: Grants access to all ChiBlocking abilities.
     children:
+      bending.command.add.chi: true
+      bending.command.choose.chi: true
       bending.ability.HighJump: true
       bending.ability.Paralyze: true
       bending.ability.RapidPunch: true

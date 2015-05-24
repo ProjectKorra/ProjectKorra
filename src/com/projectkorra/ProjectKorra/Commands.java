@@ -1360,6 +1360,10 @@ public class Commands {
 						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
 
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
+							if (!s.hasPermission("bending.command.add.air")) {
+								s.sendMessage(ChatColor.RED + "You don't have permsision to add " + AirMethods.getAirColor() + "Airbending");
+								return true;
+							}
 							bPlayer.addElement(Element.Air);
 							GeneralMethods.saveElements(bPlayer);
 							s.sendMessage(AirMethods.getAirColor() + "You are also an Airbender.");
@@ -1368,6 +1372,10 @@ public class Commands {
 						}
 
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
+							if (!s.hasPermission("bending.command.add.water")) {
+								s.sendMessage(ChatColor.RED + "You don't have permission to add " + WaterMethods.getWaterColor() + "Waterbending");
+								return true;
+							}
 							bPlayer.addElement(Element.Water);
 							GeneralMethods.saveElements(bPlayer);
 							s.sendMessage(WaterMethods.getWaterColor() + "You are also a Waterbender.");
@@ -1376,6 +1384,10 @@ public class Commands {
 						}
 
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
+							if (!s.hasPermission("bending.command.add.earth")) {
+								s.sendMessage(ChatColor.RED + "You dont' have permission to add " + EarthMethods.getEarthColor() + "Earthbending");
+								return true;
+							}
 							bPlayer.addElement(Element.Earth);
 							GeneralMethods.saveElements(bPlayer);
 							s.sendMessage(EarthMethods.getEarthColor() + "You are also an Earthbender.");
@@ -1384,6 +1396,10 @@ public class Commands {
 						}
 
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
+							if (!s.hasPermission("bending.command.add.fire")) {
+								s.sendMessage(ChatColor.RED + "You don't have permission to add " + FireMethods.getFireColor() + "Firebending");
+								return true;
+							}
 							bPlayer.addElement(Element.Fire);
 							GeneralMethods.saveElements(bPlayer);
 							s.sendMessage(FireMethods.getFireColor() + "You are also a Firebender.");
@@ -1391,6 +1407,10 @@ public class Commands {
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
+							if (!s.hasPermission("bending.command.add.chi")) {
+								s.sendMessage(ChatColor.RED + "You don't have permission to add " + ChiMethods.getChiColor() + "Chiblocking");
+								return true;
+							}
 							bPlayer.addElement(Element.Chi);
 							GeneralMethods.saveElements(bPlayer);
 							s.sendMessage(ChiMethods.getChiColor() + "You are also a ChiBlocker.");
@@ -1433,6 +1453,10 @@ public class Commands {
 							}
 						}
 						if (Arrays.asList(airaliases).contains(args[1].toLowerCase())) {
+							if (!s.hasPermission("bending.command.choose.air")) {
+								s.sendMessage(ChatColor.RED + "You don't have permission to choose " + AirMethods.getAirColor() + "Airbending");
+								return true;
+							}
 							bPlayer.setElement(Element.Air);
 							s.sendMessage(AirMethods.getAirColor() + "You are now an Airbender.");
 							GeneralMethods.removeUnusableAbilities(s.getName());
@@ -1441,6 +1465,10 @@ public class Commands {
 							return true;
 						}
 						if (Arrays.asList(wateraliases).contains(args[1].toLowerCase())) {
+							if (!s.hasPermission("bending.command.choose.water")) {
+								s.sendMessage(ChatColor.RED + "You don't have permission to choose " + WaterMethods.getWaterColor() + "Waterbending");
+								return true;
+							}
 							bPlayer.setElement(Element.Water);
 							s.sendMessage(WaterMethods.getWaterColor() + "You are now a Waterbender.");
 							GeneralMethods.removeUnusableAbilities(s.getName());
@@ -1449,6 +1477,10 @@ public class Commands {
 							return true;
 						}
 						if (Arrays.asList(earthaliases).contains(args[1].toLowerCase())) {
+							if (!s.hasPermission("bending.command.choose.earth")) {
+								s.sendMessage(ChatColor.RED + "You don't have permission to choose " + EarthMethods.getEarthColor() + "Earthbending");
+								return true;
+							}
 							bPlayer.setElement(Element.Earth);
 							s.sendMessage(EarthMethods.getEarthColor() + "You are now an Earthbender.");
 							GeneralMethods.removeUnusableAbilities(s.getName());
@@ -1457,6 +1489,10 @@ public class Commands {
 							return true;
 						}
 						if (Arrays.asList(firealiases).contains(args[1].toLowerCase())) {
+							if (!s.hasPermission("bending.command.choose.fire")) {
+								s.sendMessage(ChatColor.RED + "You don't have permission to choose " + FireMethods.getFireColor() + "Firebending");
+								return true;
+							}
 							bPlayer.setElement(Element.Fire);
 							s.sendMessage(FireMethods.getFireColor() + "You are now a Firebender.");
 							GeneralMethods.removeUnusableAbilities(s.getName());
@@ -1465,6 +1501,10 @@ public class Commands {
 							return true;
 						}
 						if (Arrays.asList(chialiases).contains(args[1].toLowerCase())) {
+							if (!s.hasPermission("bending.command.choose.chi")) {
+								s.sendMessage(ChatColor.RED + "You don't have permission to choose " + ChiMethods.getChiColor() + "Chiblocking");
+								return true;
+							}
 							bPlayer.setElement(Element.Chi);
 							s.sendMessage(ChiMethods.getChiColor() + "You are now a ChiBlocker.");
 							GeneralMethods.removeUnusableAbilities(s.getName());
