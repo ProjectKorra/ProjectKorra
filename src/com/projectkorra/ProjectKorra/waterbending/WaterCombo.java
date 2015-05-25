@@ -84,7 +84,7 @@ public class WaterCombo {
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks = new ConcurrentHashMap<Block, TempBlock>();
 
 	public WaterCombo(Player player, String ability) {
-		if (!enabled || !player.hasPermission("bending.ability.WaterCombo"))
+		if (!enabled)
 			return;
 		if(!GeneralMethods.getBendingPlayer(player.getName()).hasElement(Element.Water))
 			return;

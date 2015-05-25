@@ -156,3 +156,27 @@ permissions:
   bending.ability.MetalClips.loot:
     default: false
     description: Lets a Metalbender loot a player's inventory of its iron.
+  bending.ability.AirCombo:
+    default: false
+    description: Grants access to all AirCombos.
+    children:
+        bending.ability.AirSweep: true
+        bending.ability.AirStream: true
+        bending.ability.Tornado: true
+  bending.ability.WaterCombo:
+    default: false
+    description: Grants access to all WaterCombos.
+    children:
+        bending.ability.IceWave: true
+        bending.ability.IceBullet: true
+        bending.ability.IceBulletLeftClick: true
+        bending.ability.IceBulletRightClick: true
+  bending.ability.FireCombo:
+    default: false
+    description: Grants access to all FireCombos.
+    children:
+        bending.ability.FireKick: true
+        bending.ability.FireSpin: true
+        bending.ability.JetBlast: true
+        bending.ability.JetBlaze: true
+        bending.ability.FireWheel: true
