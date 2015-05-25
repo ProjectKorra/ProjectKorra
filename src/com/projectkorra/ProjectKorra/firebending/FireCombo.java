@@ -105,7 +105,7 @@ public class FireCombo {
 
 	public FireCombo(Player player, String ability) {
 		// Dont' call Methods.canBind directly, it doesn't let you combo as fast
-		if (!enabled || !player.hasPermission("bending.ability.FireCombo"))
+		if (!enabled)
 			return;
 		if(!GeneralMethods.getBendingPlayer(player.getName()).hasElement(Element.Fire))
 			return;

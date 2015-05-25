@@ -101,7 +101,7 @@ public class AirCombo {
 	private ArrayList<Flight> flights = new ArrayList<Flight>();
 
 	public AirCombo(Player player, String ability) {
-		if (!enabled || !player.hasPermission("bending.ability.AirCombo"))
+		if (!enabled)
 			return;
 		if(!GeneralMethods.getBendingPlayer(player.getName()).hasElement(Element.Air))
 			return;

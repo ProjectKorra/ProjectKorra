@@ -132,8 +132,11 @@ public class ComboManager {
 		addRecentAbility(player, info);
 
 		ComboAbility comboAbil = checkForValidCombo(player);
-		if (comboAbil == null)
+		if (comboAbil == null) {
 			return;
+		} else if (!player.hasPermission("bending.ability." + comboAbil.getName())) {
+			return;
+		}
 
 		if (comboAbil.getComboType().equals(FireCombo.class))
 			new FireCombo(player, comboAbil.getName());
