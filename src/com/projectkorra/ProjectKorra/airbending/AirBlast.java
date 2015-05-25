@@ -7,7 +7,9 @@ import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -55,14 +57,8 @@ public class AirBlast {
 	@SuppressWarnings("unused")
 	private AirBurst source = null;
 
-	// private long time;
 
 	public AirBlast(Player player) {
-		// if (timers.containsKey(player)) {
-		// if (System.currentTimeMillis() < timers.get(player) + soonesttime) {
-		// return;
-		// }
-		// }
 		
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		
@@ -71,7 +67,6 @@ public class AirBlast {
 		if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
 		}
-		// timers.put(player, System.currentTimeMillis());
 		this.player = player;
 		if (origins.containsKey(player)) {
 			otherorigin = true;
@@ -158,6 +153,19 @@ public class AirBlast {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
+			}
+			if (block.getType() == Material.WOODEN_DOOR) {
+				if (block.getData() >= 8) {
+					block = block.getRelative(BlockFace.DOWN);
+				}
+				
+				if (block.getData() < 4) {
+					block.setData((byte) (block.getData() + 4));
+					block.getWorld().playSound(block.getLocation(), Sound.DOOR_CLOSE, 10, 1);
+				} else {
+					block.setData((byte) (block.getData() - 4));
+					block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
+				}
 			}
 			if (((block.getType() == Material.LEVER) || (block.getType() == Material.STONE_BUTTON))
 					&& !affectedlevers.contains(block)) {
