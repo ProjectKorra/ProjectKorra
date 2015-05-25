@@ -18,14 +18,12 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class EarthSmash {
-	public static enum ClickType {
-		LEFTCLICK, RIGHTCLICK, SHIFT;
-	}
 	public static enum State {
 		START, LIFTING, LIFTED, GRABBED, SHOT, FLYING, REMOVED
 	}
@@ -74,7 +72,7 @@ public class EarthSmash {
 		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		this.time = System.currentTimeMillis();
 		
-		if(type == ClickType.SHIFT && !player.isSneaking()) {		
+		if(type == ClickType.SHIFTDOWN || type == ClickType.SHIFTUP && !player.isSneaking()) {		
 			grabRange = GRAB_RANGE;
 			chargeTime = CHARGE_TIME;
 			cooldown = MAIN_COOLDOWN;

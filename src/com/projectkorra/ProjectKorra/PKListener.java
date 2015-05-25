@@ -59,10 +59,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.ComboManager.ClickType;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
 import com.projectkorra.ProjectKorra.Objects.Preset;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.Utilities.GrapplingHookAPI;
 import com.projectkorra.ProjectKorra.Utilities.HorizontalVelocityChangeEvent;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
@@ -281,7 +281,7 @@ public class PKListener implements Listener {
 			ComboManager.addComboAbility(player, ClickType.RIGHTCLICK);
 			String ability = GeneralMethods.getBoundAbility(player);
 			if(ability != null && ability.equalsIgnoreCase("EarthSmash"))
-				new EarthSmash(player, EarthSmash.ClickType.RIGHTCLICK);
+				new EarthSmash(player, ClickType.RIGHTCLICK);
 		}
 		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
@@ -426,9 +426,9 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 		
 		if(player.isSneaking())
-			ComboManager.addComboAbility(player, ComboManager.ClickType.SHIFTUP);
+			ComboManager.addComboAbility(player, ClickType.SHIFTUP);
 		else
-			ComboManager.addComboAbility(player, ComboManager.ClickType.SHIFTDOWN);
+			ComboManager.addComboAbility(player, ClickType.SHIFTDOWN);
 		
 		if(Suffocate.isBreathbent(player)) {
 			if(!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
@@ -570,7 +570,7 @@ public class PKListener implements Listener {
 					new LavaFlow(player,LavaFlow.AbilityType.SHIFT);
 				}
 				if (abil.equalsIgnoreCase("EarthSmash")) {
-					new EarthSmash(player, EarthSmash.ClickType.SHIFT);
+					new EarthSmash(player, ClickType.SHIFTDOWN);
 				}
 
 			}
@@ -804,7 +804,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) return;
 
 		Player player = event.getPlayer();
-		ComboManager.addComboAbility(player, ComboManager.ClickType.LEFTCLICK);
+		ComboManager.addComboAbility(player, ClickType.LEFTCLICK);
 		
 		if(Suffocate.isBreathbent(player)) {
 			if(!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
@@ -953,7 +953,7 @@ public class PKListener implements Listener {
 				}
 				
 				if (abil.equalsIgnoreCase("EarthSmash")) {
-					new EarthSmash(player, EarthSmash.ClickType.LEFTCLICK);
+					new EarthSmash(player, ClickType.LEFTCLICK);
 				}
 			}
 			if (FireMethods.isFireAbility(abil)) {

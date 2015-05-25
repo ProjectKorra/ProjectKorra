@@ -1,9 +1,11 @@
 package com.projectkorra.ProjectKorra;
 
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.firebending.FireCombo;
 import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
+
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -13,10 +15,6 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ComboManager {
-	public static enum ClickType {
-		SHIFTDOWN, SHIFTUP, LEFTCLICK, RIGHTCLICK
-	}
-
 	private static final long CLEANUP_DELAY = 10000;
 	public static ConcurrentHashMap<String, ArrayList<AbilityInformation>> recentlyUsedAbilities = new ConcurrentHashMap<String, ArrayList<AbilityInformation>>();
 	public static ArrayList<ComboAbility> comboAbilityList = new ArrayList<ComboAbility>();
