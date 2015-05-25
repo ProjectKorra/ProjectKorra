@@ -1285,12 +1285,10 @@ public class GeneralMethods {
 	}
 
 	public static void reloadPlugin() {
-		//		for (Player player: Bukkit.getOnlinePlayers()) {
-		//			Methods.saveBendingPlayer(player.getName());
-		//		}
 		DBConnection.sql.close();
 		plugin.reloadConfig();
 		GeneralMethods.stopBending();
+		new AbilityModuleManager(plugin);
 		DBConnection.host = plugin.getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = plugin.getConfig().getInt("Storage.MySQL.port");
 		DBConnection.pass = plugin.getConfig().getString("Storage.MySQL.pass");

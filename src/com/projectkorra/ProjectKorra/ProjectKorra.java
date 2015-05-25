@@ -60,12 +60,6 @@ public class ProjectKorra extends JavaPlugin {
 		}
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
 
-		/*
-		 * TagAPI breaks in 1.8 and is no longer being updated.
-		 */
-//		if (getServer().getPluginManager().getPlugin("TagAPI") != null) {
-//			getServer().getPluginManager().registerEvents(new TagAPIListener(this), this);
-//		}
 		
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 

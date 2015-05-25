@@ -14,6 +14,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Button;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -154,6 +155,7 @@ public class AirBlast {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
+
 			if (block.getType() == Material.WOODEN_DOOR) {
 				if (block.getData() >= 8) {
 					block = block.getRelative(BlockFace.DOWN);
