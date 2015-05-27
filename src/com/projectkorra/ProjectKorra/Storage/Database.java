@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public abstract class Database {
@@ -69,6 +70,7 @@ public abstract class Database {
                 this.connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                GeneralMethods.logError(e);
             }
         } else {
             this.printErr("There was no SQL connection open.", false);
@@ -91,6 +93,7 @@ public abstract class Database {
     				stmt.close();
     			} catch (SQLException e) {
     				e.printStackTrace();
+    				GeneralMethods.logError(e);
     			}
     		}
     	}.runTaskAsynchronously(ProjectKorra.plugin);
@@ -110,6 +113,7 @@ public abstract class Database {
             return rs;
         } catch(SQLException e) {
             e.printStackTrace();
+            GeneralMethods.logError(e);
             return null;
         }
     }
@@ -129,6 +133,7 @@ public abstract class Database {
             else return false;
         } catch(Exception e) {
             e.printStackTrace();
+            GeneralMethods.logError(e);
             return false;
         }
     }

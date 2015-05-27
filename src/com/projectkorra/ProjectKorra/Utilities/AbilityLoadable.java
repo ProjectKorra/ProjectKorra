@@ -1,5 +1,7 @@
 package com.projectkorra.ProjectKorra.Utilities;
 
+import com.projectkorra.ProjectKorra.GeneralMethods;
+
 public class AbilityLoadable implements Cloneable {
 
 	private final String name;
@@ -14,6 +16,7 @@ public class AbilityLoadable implements Cloneable {
 			return (AbilityLoadable) super.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
+			GeneralMethods.logError(e);
 		}
 		return null;
 	}

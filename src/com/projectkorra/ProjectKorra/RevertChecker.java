@@ -107,7 +107,7 @@ public class RevertChecker implements Runnable {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				GeneralMethods.logError(e, false);
 			}
 		}
 	}
