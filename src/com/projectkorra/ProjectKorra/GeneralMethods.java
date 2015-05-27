@@ -1832,12 +1832,14 @@ public class GeneralMethods {
 		} else {
 			try(PrintWriter out = new PrintWriter(new FileWriter(errorFile, true))) {
 				if (!silent) {
-					ProjectKorra.log.severe("#################################################");
-					ProjectKorra.log.severe("#################====[ERROR]====#################");
-					ProjectKorra.log.severe("             An error has been caught");
-					ProjectKorra.log.severe("Please check the ERROR.log file for more details.");
-					ProjectKorra.log.severe("#################====[ERROR]====#################");
-					ProjectKorra.log.severe("#################################################");
+					ProjectKorra.log.severe("###################################################");
+					ProjectKorra.log.severe("##################====[ERROR]====##################");
+					ProjectKorra.log.severe("              An error has been caught");
+					ProjectKorra.log.severe(" Please check the ERROR.log file for stack trace.");
+					ProjectKorra.log.severe("   Create a bug report with the log contents at.");
+					ProjectKorra.log.severe("http://projectkorra.com/forum/forums/bug-reports.6/");
+					ProjectKorra.log.severe("##################====[ERROR]====##################");
+					ProjectKorra.log.severe("###################################################");
 				}
 				e.printStackTrace(out);
 			} catch (IOException ex) {
