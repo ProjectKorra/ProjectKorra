@@ -58,7 +58,7 @@ public class ChiPassive {
 	
 	public static void handlePassive() {
 		for (Player player: Bukkit.getOnlinePlayers()) {
-			if (GeneralMethods.canBendPassive(player.getName(), Element.Chi)) {
+			if (GeneralMethods.canBendPassive(player.getName(), Element.Chi) && !GeneralMethods.canBendPassive(player.getName(), Element.Air)) { // If they're an airbender and gets the boosts we want to give them that instead of the Chi.
 				if (player.isSprinting()) {
 					if (!player.hasPotionEffect(PotionEffectType.JUMP) && !AcrobatStance.isInAcrobatStance(player)) {
 						player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jumpPower - 1));
