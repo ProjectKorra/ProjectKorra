@@ -22,6 +22,7 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
 import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
@@ -116,6 +117,16 @@ public class WaterMethods {
 		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Water"));
 	}
 	
+	/**
+	 * Finds a valid Water source for a Player. To use dynamic source selection, use
+	 * BlockSource.getWaterSourceBlock() instead of this method. Dynamic source selection
+	 * saves the user's previous source for future use.
+	 * {@link BlockSource#getWaterSourceBlock(Player, double)}
+	 * @param player the player that is attempting to Waterbend.
+	 * @param range the maximum block selection range.
+	 * @param plantbending true if the player can bend plants.
+	 * @return a valid Water source block, or null if one could not be found.
+	 */
 	@SuppressWarnings("deprecation")
 	public static Block getWaterSourceBlock(Player player, double range,
 			boolean plantbending) {
