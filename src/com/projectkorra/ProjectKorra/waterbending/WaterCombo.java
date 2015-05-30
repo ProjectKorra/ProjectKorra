@@ -20,6 +20,8 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
@@ -269,8 +271,8 @@ public class WaterCombo {
 					remove();
 					return;
 				}
-				Block waterBlock = WaterMethods.getWaterSourceBlock(player, range,
-						true);
+				Block waterBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, 
+						true, true, WaterMethods.canPlantbend(player));
 				if (waterBlock == null) {
 					remove();
 					return;

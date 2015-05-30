@@ -19,6 +19,8 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
 public class WaterWave {
 	public static enum AbilityType {
@@ -104,8 +106,8 @@ public class WaterWave {
 				removeType(player, AbilityType.CLICK);
 				instances.add(this);
 
-				Block block = WaterMethods.getWaterSourceBlock(player, range,
-						WaterMethods.canPlantbend(player));
+				Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, 
+						true, true, WaterMethods.canPlantbend(player));
 				if (block == null) {
 					remove();
 					return;
