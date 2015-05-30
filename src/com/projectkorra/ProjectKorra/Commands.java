@@ -69,6 +69,7 @@ public class Commands {
 	//Water
 	String[] bloodaliases = {"bloodbending", "bb"};
 	String[] healingaliases = {"healing", "heal"};
+	String[] icealiases = {"icebending", "ice", "ib"};
 	String[] plantaliases = {"plantbending", "plant"};
 
 	//Earth
@@ -716,6 +717,9 @@ public class Commands {
 							if (!AbilityModuleManager.healingabilities.isEmpty()) {
 								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "Use /bending display Healing for Healing sub abilities.");
 							}
+							if (!AbilityModuleManager.iceabilities.isEmpty()) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "Use /bending display Icebending for Ice sub abilities.");
+							}
 							if (!AbilityModuleManager.plantabilities.isEmpty()) {
 								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "Use /bending display Plant for Plantbending sub abilities.");
 							}
@@ -749,6 +753,22 @@ public class Commands {
 							}
 							return true;
 						}
+						
+						if (Arrays.asList(icealiases).contains(args[1].toLowerCase())) {
+							if (AbilityModuleManager.iceabilities.isEmpty()) {
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "There are no Icebending abilities installed on this server.");
+								return true;
+							}
+							
+							for (String st: AbilityModuleManager.iceabilities) {
+								if (GeneralMethods.canView((Player) s, st)) {
+									s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + st);
+								}
+							}
+							
+							return true;
+						}
+						
 
 						if (Arrays.asList(plantaliases).contains(args[1].toLowerCase())) {
 							if (AbilityModuleManager.plantabilities.isEmpty()) {
@@ -882,7 +902,7 @@ public class Commands {
 							}
 
 							for (String st: AbilityModuleManager.chiabilities) {
-								if (GeneralMethods.hasPermission((Player) s, st)) {
+								if (GeneralMethods.canView((Player) s, st)) {
 									s.sendMessage(ChiMethods.getChiColor()  + st);
 								}
 							}
