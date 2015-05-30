@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
 public class Collapse {
 	
@@ -29,7 +31,7 @@ public class Collapse {
 		if (bPlayer.isOnCooldown("Collapse")) return;
 
 		this.player = player;
-		Block sblock = EarthMethods.getEarthSourceBlock(player, range);
+		Block sblock = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
 		Location location;
 		if (sblock == null) {
 			location = player.getTargetBlock(

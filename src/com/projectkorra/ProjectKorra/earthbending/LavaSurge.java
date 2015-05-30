@@ -20,6 +20,8 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class LavaSurge 
@@ -99,7 +101,7 @@ public class LavaSurge
 	
 	public boolean prepare()
 	{
-		Block targetBlock = EarthMethods.getEarthSourceBlock(player, prepareRange);
+		Block targetBlock = BlockSource.getEarthSourceBlock(player, prepareRange, ClickType.SHIFT_DOWN);
 		
 		if(targetBlock == null || 
 				!(targetBlock.getRelative(BlockFace.UP).getType() == Material.AIR) &&

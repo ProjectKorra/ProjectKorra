@@ -11,6 +11,8 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
 public class EarthWall {
 
@@ -42,7 +44,7 @@ public class EarthWall {
 		Vector orth = new Vector(ox, oy, oz);
 		orth = orth.normalize();
 
-		Block sblock = EarthMethods.getEarthSourceBlock(player, range);
+		Block sblock = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
 		Location origin;
 		if (sblock == null) {
 			origin = player.getTargetBlock(EarthMethods.getTransparentEarthbending(),

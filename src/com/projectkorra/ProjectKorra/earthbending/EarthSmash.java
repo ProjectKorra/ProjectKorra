@@ -18,6 +18,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
 import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
@@ -72,7 +73,7 @@ public class EarthSmash {
 		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		this.time = System.currentTimeMillis();
 		
-		if(type == ClickType.SHIFTDOWN || type == ClickType.SHIFTUP && !player.isSneaking()) {		
+		if(type == ClickType.SHIFT_DOWN || type == ClickType.SHIFT_UP && !player.isSneaking()) {		
 			grabRange = GRAB_RANGE;
 			chargeTime = CHARGE_TIME;
 			cooldown = MAIN_COOLDOWN;
@@ -112,7 +113,7 @@ public class EarthSmash {
 				return;
 			}
 		}
-		else if(type == ClickType.LEFTCLICK && player.isSneaking()) {
+		else if(type == ClickType.LEFT_CLICK && player.isSneaking()) {
 			for(EarthSmash smash : instances) {
 				if(smash.state == State.GRABBED && smash.player == player) {
 					smash.state = State.SHOT;
@@ -123,7 +124,7 @@ public class EarthSmash {
 			}
 			return;
 		}
-		else if(type == ClickType.RIGHTCLICK && player.isSneaking()) {
+		else if(type == ClickType.RIGHT_CLICK && player.isSneaking()) {
 			EarthSmash grabbedSmash = aimingAtSmashCheck(player, State.GRABBED);
 			if(grabbedSmash != null) {
 				player.teleport(grabbedSmash.loc.clone().add(0, 2, 0));
@@ -168,7 +169,7 @@ public class EarthSmash {
 		if(state == State.START && progressCounter > 1) {
 			if(!player.isSneaking()) {
 				if(System.currentTimeMillis() - time > chargeTime) {
-					origin = EarthMethods.getEarthSourceBlock(player, grabRange);
+					origin = BlockSource.getEarthSourceBlock(player, grabRange, ClickType.SHIFT_DOWN);
 					if(origin == null){
 						remove();
 						return;

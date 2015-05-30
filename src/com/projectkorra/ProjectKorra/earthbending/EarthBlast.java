@@ -14,6 +14,8 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
@@ -69,7 +71,7 @@ public class EarthBlast {
 
 	public boolean prepare() {
 		cancelPrevious();
-		Block block = EarthMethods.getEarthSourceBlock(player, preparerange);
+		Block block = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
 		block(player);
 		if (block != null) {
 			sourceblock = block;
