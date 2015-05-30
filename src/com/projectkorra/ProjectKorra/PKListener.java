@@ -390,6 +390,8 @@ public class PKListener implements Listener {
 				GeneralMethods.toggedOut.add(player.getUniqueId());
 		}
 		
+		MultiAbilityManager.remove(player);
+		
 		if (Commands.invincible.contains(event.getPlayer().getName())) {
 			Commands.invincible.remove(event.getPlayer().getName());
 		}
