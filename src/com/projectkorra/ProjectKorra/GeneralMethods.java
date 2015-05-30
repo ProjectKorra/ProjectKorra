@@ -180,15 +180,23 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Binds a Ability to a specific hotbar slot. 
+	 * Binds a Ability to a specific hotbar slot.
+	 * Is cancelled if player has a MultiAbility bound.
 	 * @param player The player to bind to
 	 * @param ability 
 	 * @param slot
 	 * @see {@link #bindAbility(Player, String)}
 	 */
 	public static void bindAbility(Player player, String ability, int slot) {
+		//Temp code to block modifications of binds, Should be replaced when bind event is added.
+		if(MultiAbilityManager.playerAbilities.containsKey(player)){
+			player.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
+			return;
+		}
+		
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
 		bPlayer.getAbilities().put(slot, ability);
+		
 		if (AirMethods.isAirAbility(ability)) {
 			player.sendMessage(AirMethods.getAirColor() + "Succesfully bound " + ability + " to slot " + slot);
 		}
@@ -1357,7 +1365,11 @@ public class GeneralMethods {
 	public static void saveAbility(BendingPlayer bPlayer, int slot, String ability) {
 		if (bPlayer == null) return;
 		String uuid = bPlayer.uuid.toString();
-
+		
+		//Temp code to block modifications of binds, Should be replaced when bind event is added.
+		if(MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getPlayerName())))
+			return;
+		
 		HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
@@ -1372,6 +1384,7 @@ public class GeneralMethods {
 	}
 
 	public static void stopBending() {
+		
 		List<AbilityModule> abilities = AbilityModuleManager.ability;
 		for (AbilityModule ab: abilities) {
 			ab.stop();
@@ -1394,6 +1407,8 @@ public class GeneralMethods {
 
 		Flight.removeAll();
 		TempBlock.removeAll();
+		
+		MultiAbilityManager.removeAll();
 	}
 
 	
