@@ -712,7 +712,7 @@ public class Commands {
 								}
 							}
 							if (!AbilityModuleManager.bloodabilities.isEmpty()) {
-								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "Use /bending display Blood for bloodbending sub abilities.");
+								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "Use /bending display Bloodbending for bloodbending sub abilities.");
 							}
 							if (!AbilityModuleManager.healingabilities.isEmpty()) {
 								s.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "Use /bending display Healing for Healing sub abilities.");
