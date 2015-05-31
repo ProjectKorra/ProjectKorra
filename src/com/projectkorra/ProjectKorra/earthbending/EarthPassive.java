@@ -73,7 +73,6 @@ public class EarthPassive {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static void handleMetalPassives() {
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			if (GeneralMethods.canBendPassive(player.getName(), Element.Earth) && EarthMethods.canMetalbend(player)) {
