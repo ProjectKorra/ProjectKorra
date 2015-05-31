@@ -10,6 +10,7 @@ import com.projectkorra.ProjectKorra.chiblocking.ChiblockingManager;
 import com.projectkorra.ProjectKorra.earthbending.EarthbendingManager;
 import com.projectkorra.ProjectKorra.firebending.FirebendingManager;
 import com.projectkorra.ProjectKorra.waterbending.WaterbendingManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -68,6 +69,7 @@ public class ProjectKorra extends JavaPlugin {
 			metrics.start();
 		} catch (IOException e) {
 			e.printStackTrace();
+			GeneralMethods.logError(e);
 		}
 
 		GeneralMethods.deserializeFile();
