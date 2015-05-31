@@ -25,6 +25,9 @@ permissions:
       bending.ability.Flight: true
       bending.ability.MetalClips.loot: true
       bending.ability.MetalClips.4clips: true
+      bending.ability.WaterArms.Grab: true
+      bending.ability.WaterArms.Freeze: true
+      bending.ability.WaterArms.Spear: true
       bending.command.import: true
       bending.command.toggle.all: true
       bending.command.give: true
@@ -90,6 +93,10 @@ permissions:
       bending.ability.WaterSpout: true
       bending.ability.WaterSpout.Wave: true
       bending.ability.WaterCombo: true
+      bending.ability.WaterArms: true
+      bending.ability.WaterArms.Pull: true
+      bending.ability.WaterArms.Punch: true
+      bending.ability.WaterArms.Grapple: true
       bending.water.plantbending: true
       bending.message.nightmessage: true
       bending.water.passive: true
