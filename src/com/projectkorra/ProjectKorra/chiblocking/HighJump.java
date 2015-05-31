@@ -7,6 +7,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.waterbending.WaterArmsWhip;
 
 public class HighJump {
 
@@ -17,6 +18,12 @@ public class HighJump {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(p.getName());
 		
 		if (bPlayer.isOnCooldown("HighJump")) return;
+		if (WaterArmsWhip.grabbedEntities.containsKey(p)) {
+			WaterArmsWhip waw = WaterArmsWhip.instances.get(WaterArmsWhip.grabbedEntities.get(p));
+			if (waw != null) {
+				waw.setGrabbed(false);
+			}
+		}
 		jump(p);
 		bPlayer.addCooldown("HighJump", cooldown);
 		
