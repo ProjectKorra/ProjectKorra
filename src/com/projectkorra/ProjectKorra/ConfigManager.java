@@ -368,12 +368,12 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterArms.Enabled", true);
 		config.addDefault("Abilities.Water.WaterArms.Description", "One of the most diverse moves in a waterbenders arsenal, this move creates tendrils "
 				+ "of water from the players arms to emulate their actual arms. Each water arms mode will be binded to a slot, switch slots to change mode. "
-				+ "To deactive the arms, hold Sneak and Double Left-Click. Tapping Sneak will tell you what mode you currently have active! "
-				+ "Pull: Pulls entities and blocks towards the player! "
-				+ "Punch: Damages entities and knocks them back! "
-				+ "Grapple: Pull yourself towards blocks like a grappling hook! "
-				+ "Freeze: Shoot blocks from your arms like mini ice blasts! "
-				+ "Spear: Shoot your arms to create spears through the air, and capturing anything it hits!");
+				+ "To deactive the arms, hold Sneak and Double Left-Click."
+				+ "\nPull - Use your Arms to pull blocks, items, mobs or even players towards you!"
+				+ "\nPunch - An offensive attack, harming players or mobs!"
+				+ "\nGrapple - Scale walls and speed across battlefields, using your Arms as a grappling hook!"
+				+ "\nFreeze - Use your Arms to fire small blasts of ice in any direction!"
+				+ "\nSpear - Throw your Arms in any direction, freezing whatever it hits!");
 		
 		config.addDefault("Abilities.Water.WaterArms.Arms.InitialLength", 4);
 		config.addDefault("Abilities.Water.WaterArms.Arms.SourceGrabRange", 4);
