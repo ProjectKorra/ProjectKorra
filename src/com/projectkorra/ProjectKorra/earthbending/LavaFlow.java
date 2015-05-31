@@ -15,6 +15,8 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
@@ -164,7 +166,7 @@ public class LavaFlow {
 			instances.add(this);
 		}
 		else if(type == AbilityType.CLICK) {
-			Block sourceBlock = getEarthSourceBlock(player, clickRange);
+			Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, clickRange, ClickType.LEFT_CLICK);
 			if(sourceBlock == null) {
 				remove();
 				return;
@@ -541,38 +543,6 @@ public class LavaFlow {
 	
 	public static boolean isLava(Block block) {
 		return block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA;
-	}
-
-	/**
-	 * A version of Methods.getEarthSourceBlock but this one force
-	 * allows the use of Lava.
-	 * @param player the player that is viewing earth material
-	 * @param range the maximum range to locate a block
-	 * @return a block if one was found, else null
-	 */
-	public static Block getEarthSourceBlock(Player player, double range) {
-		HashSet<Byte> bendables = EarthMethods.getTransparentEarthbending();
-		bendables.remove((byte) 10);
-		bendables.remove((byte) 11);
-		
-		@SuppressWarnings("deprecation")
-		Block testblock = player.getTargetBlock(bendables, (int) range);
-		if ((!GeneralMethods.isRegionProtectedFromBuild(player, "LavaFlow", testblock.getLocation()))
-				&& (isEarthbendableMaterial(testblock.getType(), player) || isLava(testblock)))
-			return testblock;
-
-		Location location = player.getEyeLocation();
-		Vector vector = location.getDirection().clone().normalize();
-		for (double i = 0; i <= range; i++) {
-			Block block = location.clone().add(vector.clone().multiply(i))
-					.getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "RaiseEarth", location))
-				continue;
-			if (isEarthbendableMaterial(testblock.getType(), player) || isLava(testblock)) {
-				return block;
-			}
-		}
-		return null;
 	}
 	
 	/**

@@ -10,6 +10,8 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
 public class CompactColumn {
 
@@ -36,7 +38,7 @@ public class CompactColumn {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("Collapse")) return;
 
-		block = EarthMethods.getEarthSourceBlock(player, range);
+		block = BlockSource.getEarthSourceBlock(player, range, ClickType.LEFT_CLICK);
 		if (block == null)
 			return;
 		origin = block.getLocation();

@@ -25,6 +25,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
 
 public class EarthMethods {
 	
@@ -114,6 +115,15 @@ public class EarthMethods {
 		return maxlength;
 	}
 	
+	/**
+	 * Finds a valid Earth source for a Player. To use dynamic source selection, use
+	 * BlockSource.getEarthSourceBlock() instead of this method. Dynamic source selection
+	 * saves the user's previous source for future use.
+	 * {@link BlockSource#getEarthSourceBlock(Player, double, com.projectkorra.ProjectKorra.Utilities.ClickType)}
+	 * @param player the player that is attempting to Earthbend.
+	 * @param range the maximum block selection range.
+	 * @return a valid Earth source block, or null if one could not be found.
+	 */
 	@SuppressWarnings("deprecation")
 	public static Block getEarthSourceBlock(Player player, double range) {
 		Block testblock = player.getTargetBlock(getTransparentEarthbending(), (int) range);
@@ -149,6 +159,15 @@ public class EarthMethods {
 		return set;
 	}
 	
+	/**
+	 * Finds a valid Lava source for a Player. To use dynamic source selection, use
+	 * BlockSource.getLavaSourceBlock() instead of this method. Dynamic source selection
+	 * saves the user's previous source for future use.
+	 * {@link BlockSource#getLavaSourceBlock(Player, double, com.projectkorra.ProjectKorra.Utilities.ClickType)}
+	 * @param player the player that is attempting to Earthbend.
+	 * @param range the maximum block selection range.
+	 * @return a valid Lava source block, or null if one could not be found.
+	 */
 	@SuppressWarnings("deprecation")
 	public static Block getLavaSourceBlock(Player player, double range) {
 		Location location = player.getEyeLocation();

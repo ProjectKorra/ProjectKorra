@@ -16,6 +16,8 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
@@ -148,7 +150,8 @@ public class WaterWall {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = WaterMethods.getWaterSourceBlock(player, range, WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, 
+				true, true, WaterMethods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -462,7 +465,8 @@ public class WaterWall {
 
 		if (!instances.containsKey(player.getEntityId())) {
 			if (!Wave.instances.containsKey(player.getEntityId())
-					&& WaterMethods.getWaterSourceBlock(player, (int) Wave.defaultrange, WaterMethods.canPlantbend(player)) == null
+					&& BlockSource.getWaterSourceBlock(player, (int) Wave.defaultrange, ClickType.LEFT_CLICK,
+							true, true, WaterMethods.canPlantbend(player)) == null
 					&& WaterReturn.hasWaterBottle(player)) {
 				BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 

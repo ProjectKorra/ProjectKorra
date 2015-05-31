@@ -19,6 +19,8 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
@@ -88,7 +90,8 @@ public class WaterManipulation {
 
 	public boolean prepare() {
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = WaterMethods.getWaterSourceBlock(player, range, WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, range, 
+				ClickType.SHIFT_DOWN, true, true, WaterMethods.canPlantbend(player));
 		// if (prepared.containsKey(player)
 		// && !Methods.isWaterbendable(block, player)) {
 		// instances.get(prepared.get(player)).displacing = true;

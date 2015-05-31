@@ -1,9 +1,11 @@
 package com.projectkorra.ProjectKorra;
 
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.firebending.FireCombo;
 import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
+
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -13,10 +15,6 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ComboManager {
-	public static enum ClickType {
-		SHIFTDOWN, SHIFTUP, LEFTCLICK, RIGHTCLICK
-	}
-
 	private static final long CLEANUP_DELAY = 10000;
 	public static ConcurrentHashMap<String, ArrayList<AbilityInformation>> recentlyUsedAbilities = new ConcurrentHashMap<String, ArrayList<AbilityInformation>>();
 	public static ArrayList<ComboAbility> comboAbilityList = new ArrayList<ComboAbility>();
@@ -26,58 +24,58 @@ public class ComboManager {
 
 	public ComboManager() {
 		ArrayList<AbilityInformation> fireKick = new ArrayList<AbilityInformation>();
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFTCLICK));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFTCLICK));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.SHIFTDOWN));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFTCLICK));
+		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+		fireKick.add(new AbilityInformation("FireBlast", ClickType.SHIFT_DOWN));
+		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
 		comboAbilityList.add(new ComboAbility("FireKick", fireKick, FireCombo.class));
 
 		ArrayList<AbilityInformation> fireSpin = new ArrayList<AbilityInformation>();
-		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFTCLICK));
-		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFTCLICK));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.LEFTCLICK));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFTDOWN));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFTUP));
+		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+		fireSpin.add(new AbilityInformation("FireShield", ClickType.LEFT_CLICK));
+		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
 		comboAbilityList.add(new ComboAbility("FireSpin", fireSpin, FireCombo.class));
 
 		ArrayList<AbilityInformation> jetBlast = new ArrayList<AbilityInformation>();
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFTDOWN));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFTUP));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFTDOWN));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFTUP));
-		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFTDOWN));
-		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFTUP));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.LEFTCLICK));
+		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
+		jetBlast.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
 		comboAbilityList.add(new ComboAbility("JetBlast", jetBlast, FireCombo.class));
 
 		ArrayList<AbilityInformation> jetBlaze = new ArrayList<AbilityInformation>();
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFTDOWN));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFTUP));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFTDOWN));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFTUP));
-		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFTDOWN));
-		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFTUP));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.LEFTCLICK));
+		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_DOWN));
+		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
+		jetBlaze.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
 		comboAbilityList.add(new ComboAbility("JetBlaze", jetBlaze, FireCombo.class));
 
 		ArrayList<AbilityInformation> fireWheel = new ArrayList<AbilityInformation>();
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFTDOWN));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHTCLICK));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHTCLICK));
-		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFTUP));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK));
+		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
 		comboAbilityList.add(new ComboAbility("FireWheel", fireWheel, FireCombo.class));
 
 		ArrayList<AbilityInformation> twister = new ArrayList<AbilityInformation>();
-		twister.add(new AbilityInformation("AirShield", ClickType.SHIFTDOWN));
-		twister.add(new AbilityInformation("AirShield", ClickType.SHIFTUP));
-		twister.add(new AbilityInformation("Tornado", ClickType.SHIFTDOWN));
-		twister.add(new AbilityInformation("AirBlast", ClickType.LEFTCLICK));
+		twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
+		twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_UP));
+		twister.add(new AbilityInformation("Tornado", ClickType.SHIFT_DOWN));
+		twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
 		comboAbilityList.add(new ComboAbility("Twister", twister, AirCombo.class));
 
 		ArrayList<AbilityInformation> airStream = new ArrayList<AbilityInformation>();
-		airStream.add(new AbilityInformation("AirShield", ClickType.SHIFTDOWN));
-		airStream.add(new AbilityInformation("AirSuction", ClickType.LEFTCLICK));
-		airStream.add(new AbilityInformation("AirBlast", ClickType.LEFTCLICK));
+		airStream.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
+		airStream.add(new AbilityInformation("AirSuction", ClickType.LEFT_CLICK));
+		airStream.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
 		comboAbilityList.add(new ComboAbility("AirStream", airStream, AirCombo.class));
 
 		/*
@@ -89,35 +87,35 @@ public class ComboManager {
 		 */
 
 		ArrayList<AbilityInformation> airSweep = new ArrayList<AbilityInformation>();
-		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFTCLICK));
-		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFTCLICK));
-		airSweep.add(new AbilityInformation("AirBurst", ClickType.SHIFTDOWN));
-		airSweep.add(new AbilityInformation("AirBurst", ClickType.LEFTCLICK));
+		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
+		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
+		airSweep.add(new AbilityInformation("AirBurst", ClickType.SHIFT_DOWN));
+		airSweep.add(new AbilityInformation("AirBurst", ClickType.LEFT_CLICK));
 		comboAbilityList.add(new ComboAbility("AirSweep", airSweep, AirCombo.class));
 
 		ArrayList<AbilityInformation> iceWave = new ArrayList<AbilityInformation>();
-		iceWave.add(new AbilityInformation("WaterSpout", ClickType.SHIFTUP));
-		iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFTCLICK));
+		iceWave.add(new AbilityInformation("WaterSpout", ClickType.SHIFT_UP));
+		iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFT_CLICK));
 		comboAbilityList.add(new ComboAbility("IceWave", iceWave, WaterCombo.class));
 
 		ArrayList<AbilityInformation> icePillar = new ArrayList<AbilityInformation>();
-		icePillar.add(new AbilityInformation("IceSpike", ClickType.LEFTCLICK));
-		icePillar.add(new AbilityInformation("IceSpike", ClickType.LEFTCLICK));
-		icePillar.add(new AbilityInformation("WaterSpout", ClickType.LEFTCLICK));
+		icePillar.add(new AbilityInformation("IceSpike", ClickType.LEFT_CLICK));
+		icePillar.add(new AbilityInformation("IceSpike", ClickType.LEFT_CLICK));
+		icePillar.add(new AbilityInformation("WaterSpout", ClickType.LEFT_CLICK));
 		comboAbilityList.add(new ComboAbility("IcePillar", icePillar, WaterCombo.class));
 
 		ArrayList<AbilityInformation> iceBullet = new ArrayList<AbilityInformation>();
-		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFTDOWN));
-		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFTUP));
-		iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFTDOWN));
-		iceBullet.add(new AbilityInformation("IceBlast", ClickType.LEFTCLICK));
+		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_DOWN));
+		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_UP));
+		iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFT_DOWN));
+		iceBullet.add(new AbilityInformation("IceBlast", ClickType.LEFT_CLICK));
 		comboAbilityList.add(new ComboAbility("IceBullet", iceBullet, WaterCombo.class));
 
 		ArrayList<AbilityInformation> iceBulletLeft = new ArrayList<AbilityInformation>();
-		iceBulletLeft.add(new AbilityInformation("IceBlast", ClickType.LEFTCLICK));
+		iceBulletLeft.add(new AbilityInformation("IceBlast", ClickType.LEFT_CLICK));
 		comboAbilityList.add(new ComboAbility("IceBulletLeftClick", iceBulletLeft, WaterCombo.class));
 		ArrayList<AbilityInformation> iceBulletRight = new ArrayList<AbilityInformation>();
-		iceBulletRight.add(new AbilityInformation("IceBlast", ClickType.RIGHTCLICK));
+		iceBulletRight.add(new AbilityInformation("IceBlast", ClickType.RIGHT_CLICK));
 		comboAbilityList.add(new ComboAbility("IceBulletRightClick", iceBulletRight, WaterCombo.class));
 
 		startCleanupTask();

@@ -16,6 +16,9 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource.BlockSourceType;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
 public class LavaWall {
@@ -62,7 +65,7 @@ public class LavaWall {
 
 	public boolean prepare() {
 		cancelPrevious();
-		Block block = EarthMethods.getLavaSourceBlock(player, range);
+		Block block = BlockSource.getSourceBlock(player, range, BlockSourceType.LAVA, ClickType.LEFT_CLICK);
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
