@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -13,6 +15,8 @@ import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleMana
 import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.CraftingRecipes;
 import com.projectkorra.ProjectKorra.Utilities.Updater;
+import com.projectkorra.ProjectKorra.Utilities.logging.PKFilter;
+import com.projectkorra.ProjectKorra.Utilities.logging.PKLogHandler;
 import com.projectkorra.ProjectKorra.airbending.AirbendingManager;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
 import com.projectkorra.ProjectKorra.chiblocking.ChiblockingManager;
@@ -26,12 +30,19 @@ public class ProjectKorra extends JavaPlugin {
 	public static long time_step = 1;
 	public static ProjectKorra plugin;
 	public static Logger log;
-
+	public static PKLogHandler handler;
 	public Updater updater;
 	
 	@Override
 	public void onEnable() {
 		ProjectKorra.log = this.getLogger();
+		try {
+			handler = new PKLogHandler(getDataFolder() + File.separator + "ERROR.log");
+			log.getParent().setFilter(new PKFilter());
+			log.getParent().addHandler(handler);
+		} catch (SecurityException | IOException e) {
+			e.printStackTrace();
+		}
 		plugin = this;
 		new ConfigManager(this);
 		new GeneralMethods(this);
@@ -74,7 +85,6 @@ public class ProjectKorra extends JavaPlugin {
 			metrics.start();
 		} catch (IOException e) {
 			e.printStackTrace();
-			GeneralMethods.logError(e);
 		}
 
 		GeneralMethods.deserializeFile();
@@ -89,6 +99,9 @@ public class ProjectKorra extends JavaPlugin {
 		GeneralMethods.stopBending();
 		if (DBConnection.isOpen == false) return;
 		DBConnection.sql.close();
+		for (Handler handler : log.getHandlers()) {
+			handler.close();
+		}
 	}
 	
 	public void stopPlugin() {
