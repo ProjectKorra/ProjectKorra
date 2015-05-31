@@ -44,6 +44,7 @@ public class WaterSourceGrabber {
 	public WaterSourceGrabber(Player player, Location origin) {
 		this(player, origin, 1);
 	}
+	
 
 	public void progress() {
 		if (state == AnimationState.FAILED || state == AnimationState.FINISHED)
