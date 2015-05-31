@@ -1811,4 +1811,28 @@ public class GeneralMethods {
 		return false;
 	}
 	
+	/**
+	 * Returns a location with a specified distance away from the left side of a location.
+	 * @param location
+	 * @param distance
+	 * @return
+	 */
+	public static Location getLeftSide(Location location, double distance){
+		float angle = location.getYaw()/60;
+		return location.clone().add(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
+	}
+	
+	/**
+	 * Returns a location with a specified distance away from the right side of a location.
+	 * @param location
+	 * @param distance
+	 * @return
+	 */
+	public static Location getRightSide(Location location, double distance){
+		float angle = location.getYaw()/60;
+		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
+	}
+	
+	
+	
 }
