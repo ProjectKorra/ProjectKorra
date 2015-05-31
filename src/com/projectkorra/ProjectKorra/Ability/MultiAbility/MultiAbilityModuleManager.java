@@ -1,11 +1,11 @@
 package com.projectkorra.ProjectKorra.Ability.MultiAbility;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.MultiAbilityManager;
+import com.projectkorra.ProjectKorra.MultiAbilityManager.MultiAbility;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
@@ -15,7 +15,6 @@ public class MultiAbilityModuleManager
 {
 	private final AbilityLoader<MultiAbilityModule> loader;
 	public static List<MultiAbilityModule> multiAbility;
-	public static HashMap<String, ArrayList<String>> multiAbilities;
 	
 	public MultiAbilityModuleManager()
 	{
@@ -27,7 +26,6 @@ public class MultiAbilityModuleManager
 
 		loader = new AbilityLoader<MultiAbilityModule>(ProjectKorra.plugin, path, new Object[] {});		
 		multiAbility = loader.load(MultiAbilityModule.class);
-		multiAbilities = new HashMap<String, ArrayList<String>>();
 		
 		loadMAModules();
 	}
@@ -92,7 +90,7 @@ public class MultiAbilityModuleManager
 				}
 			}
 			
-			multiAbilities.put(mam.getName(), mam.getAbilities());
+			MultiAbilityManager.multiAbilityList.add(new MultiAbility(mam.getName(), mam.getAbilities()));
 			AbilityModuleManager.descriptions.put(mam.getName(), mam.getDescription());
 			AbilityModuleManager.authors.put(mam.getName(), mam.getAuthor());
 		}

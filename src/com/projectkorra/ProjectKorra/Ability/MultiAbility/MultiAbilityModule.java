@@ -2,6 +2,7 @@ package com.projectkorra.ProjectKorra.Ability.MultiAbility;
 
 import java.util.ArrayList;
 
+import com.projectkorra.ProjectKorra.MultiAbilityManager.MultiAbilitySub;
 import com.projectkorra.ProjectKorra.SubElement;
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable;
 
@@ -117,10 +118,11 @@ public abstract class MultiAbilityModule extends AbilityLoadable implements Clon
 	}
 	
 	/**
-	 * Returns what abilities should be bound when ability is used. Colors can be used on these abilities!
+	 * Returns the sub abilities of a MultiAbility.
+	 * e.g. new MultiAbilitySub("SubAbility", Element.Fire, SubElement.Lightning);
 	 * @return
 	 */
-	public abstract ArrayList<String> getAbilities();
+	public abstract ArrayList<MultiAbilitySub> getAbilities();
 	
 	/**
 	 *  Void Method called whenever ProjectKorra stops and the ability is unloaded.
