@@ -96,6 +96,11 @@ public enum StockAbilities {
 		;
 	}
 	
+	private enum MultiAbilities
+	{
+		WaterArms;
+	}
+	
 	public static boolean isFlightAbility(String ability)
 	{
 		for(FlightAbilities a : FlightAbilities.values())
@@ -213,6 +218,13 @@ public enum StockAbilities {
 			if (a.name().equalsIgnoreCase(ability.name())) return true;
 		}
 
+		return false;
+	}
+	
+	public static boolean isMultiAbility(StockAbilities ability) {
+		for(MultiAbilities a: MultiAbilities.values()) {
+			if (a.name().equalsIgnoreCase(ability.name())) return true;
+		}
 		return false;
 	}
 
