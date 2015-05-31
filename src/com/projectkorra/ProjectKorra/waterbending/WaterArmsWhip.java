@@ -1,6 +1,6 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -10,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -26,7 +25,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.waterbending.WaterArms.Arm;
 import com.projectkorra.rpg.WorldEvents;
 
-public class WaterArmsWhip{
+public class WaterArmsWhip {
 
 	/**
 	 * Whip Enum value for deciding what ability should be executed.
@@ -38,31 +37,43 @@ public class WaterArmsWhip{
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
 	public static ConcurrentHashMap<Integer, WaterArmsWhip> instances = new ConcurrentHashMap<Integer, WaterArmsWhip>();
-	public static ArrayList<LivingEntity> grabbedEntities = new ArrayList<LivingEntity>();
+	public static HashMap<LivingEntity, Integer> grabbedEntities = new HashMap<LivingEntity, Integer>();
 
 	private Player player;
 	private WaterArms waterArms;
 
-	private int whipLength = config.getInt("Abilities.Water.WaterArms.WhipMode.MaxLength");
-	private int whipLengthWeak = config.getInt("Abilities.Water.WaterArms.WhipMode.MaxLengthWeak");
+	private int whipLength = config
+			.getInt("Abilities.Water.WaterArms.Whip.MaxLength");
+	private int whipLengthWeak = config
+			.getInt("Abilities.Water.WaterArms.Whip.MaxLengthWeak");
 
-	private int whipLengthNight = config.getInt("Abilities.Water.WaterArms.WhipMode.NightAugments.MaxLength.Normal");
-	private int whipLengthFullMoon = config.getInt("Abilities.Water.WaterArms.WhipMode.NightAugments.MaxLength.FullMoon");
+	private int whipLengthNight = config
+			.getInt("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.Normal");
+	private int whipLengthFullMoon = config
+			.getInt("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.FullMoon");
 
-	private int initLength = config.getInt("Abilities.Water.WaterArms.Arms.InitialLength");
-	private double damage = config.getDouble("Abilities.Water.WaterArms.WhipMode.Punch.PunchDamage");
-	private boolean pullBlocks = config.getBoolean("Abilities.Water.WaterArms.WhipMode.Pull.PullBlocks");
-	private long pullBlocksRevertDelay = config.getLong("Abilities.Water.WaterArms.WhipMode.Pull.BlockRevertDelay");
-	private boolean grappleRespectRegions = config.getBoolean("Abilities.Water.WaterArms.WhipMode.Grapple.RespectRegions");
-	private boolean usageCooldownEnabled = config.getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
-	private long usageCooldown = config.getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
+	private int initLength = config
+			.getInt("Abilities.Water.WaterArms.Arms.InitialLength");
+	private double punchDamage = config
+			.getDouble("Abilities.Water.WaterArms.Whip.Punch.PunchDamage");
+	private boolean grappleRespectRegions = config
+			.getBoolean("Abilities.Water.WaterArms.Whip.Grapple.RespectRegions");
+	private long holdTime = config
+			.getLong("Abilities.Water.WaterArms.Whip.Grab.HoldTime");
+	private boolean usageCooldownEnabled = config
+			.getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
+	private long usageCooldown = config
+			.getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
 
 	private int activeLength = initLength;
 	private int whipSpeed = 2;
 	private boolean reverting = false;
-	private boolean damaged = false;
+	private boolean hasDamaged = false;
 	private boolean grappled = false;
 	private boolean grabbed = false;
+	private double playerHealth;
+	private long time;
+
 	private LivingEntity grabbedEntity;
 	private Location end;
 	private Arm arm;
@@ -71,62 +82,86 @@ public class WaterArmsWhip{
 	private int id;
 	private static int ID = Integer.MIN_VALUE;
 
-	public WaterArmsWhip(Player player, Whip m){
+	public WaterArmsWhip(Player player, Whip ability) {
+		if (instances.containsKey(getId(player))) {
+			WaterArmsWhip waw = instances.get(getId(player));
+			if (waw.grabbed) {
+				waw.grabbed = false;
+				if (waw.grabbedEntity != null) {
+					grabbedEntities.remove(waw.grabbedEntity);
+					waw.grabbedEntity.setVelocity(waw.grabbedEntity
+							.getVelocity().multiply(2.5));
+				}
+				return;
+			}
+			if (!waw.arm.equals(WaterArms.instances.get(player).getActiveArm())) {
+				return;
+			}
+		}
 		this.player = player;
-		ability = m;
+		this.ability = ability;
 		getNightAugments();
 		createInstance();
 	}
 
-	private void getNightAugments(){
+	private void getNightAugments() {
 		World world = player.getWorld();
-		if(WaterMethods.isNight(world)){
-			if(GeneralMethods.hasRPG()){
-				if(BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())){
+		if (WaterMethods.isNight(world)) {
+			if (GeneralMethods.hasRPG()) {
+				if (BendingManager.events.get(world).equalsIgnoreCase(
+						WorldEvents.LunarEclipse.toString())) {
 					whipLength = whipLengthFullMoon;
-				}else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")){
+				} else if (BendingManager.events.get(world).equalsIgnoreCase(
+						"FullMoon")) {
 					whipLength = whipLengthFullMoon;
-				}else{
+				} else {
 					whipLength = whipLengthNight;
 				}
-			}else{
-				if(WaterMethods.isFullMoon(world)){
+			} else {
+				if (WaterMethods.isFullMoon(world)) {
 					whipLength = whipLengthFullMoon;
-				}else{
+				} else {
 					whipLength = whipLengthNight;
 				}
 			}
 		}
 	}
 
-	private void createInstance(){
-		if(WaterArms.instances.containsKey(player)){
+	private void createInstance() {
+		if (WaterArms.instances.containsKey(player)) {
 			waterArms = WaterArms.instances.get(player);
 			waterArms.switchPreferredArm();
 			arm = waterArms.getActiveArm();
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-			if(arm.equals(Arm.Left)){
-				if(waterArms.isLeftArmCooldown() || bPlayer.isOnCooldown("WaterArms_LEFT")){
+			time = System.currentTimeMillis() + holdTime;
+			playerHealth = player.getHealth();
+			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player
+					.getName());
+			if (arm.equals(Arm.Left)) {
+				if (waterArms.isLeftArmCooldown()
+						|| bPlayer.isOnCooldown("WaterArms_LEFT")) {
 					return;
-				}else{
-					if(usageCooldownEnabled)
+				} else {
+					if (usageCooldownEnabled) {
 						bPlayer.addCooldown("WaterArms_LEFT", usageCooldown);
+					}
 					waterArms.setLeftArmCooldown(true);
 				}
 			}
-			if(arm.equals(Arm.Right)){
-				if(waterArms.isRightArmCooldown() || bPlayer.isOnCooldown("WaterArms_RIGHT")){
+			if (arm.equals(Arm.Right)) {
+				if (waterArms.isRightArmCooldown()
+						|| bPlayer.isOnCooldown("WaterArms_RIGHT")) {
 					return;
-				}else{
-					if(usageCooldownEnabled)
+				} else {
+					if (usageCooldownEnabled) {
 						bPlayer.addCooldown("WaterArms_RIGHT", usageCooldown);
+					}
 					waterArms.setRightArmCooldown(true);
 				}
 			}
-		}else{
+		} else {
 			return;
 		}
-		if(!waterArms.isFullSource()){
+		if (!waterArms.isFullSource()) {
 			whipLength = whipLengthWeak;
 		}
 		id = ID;
@@ -136,116 +171,99 @@ public class WaterArmsWhip{
 		ID++;
 	}
 
-	private void progress(){
-		if(!WaterArms.instances.containsKey(player)){
+	private void progress() {
+		if (!WaterArms.instances.containsKey(player)) {
 			remove();
 			return;
 		}
-		if(player.isDead() || !player.isOnline()){
+		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
 		}
-		if(!MultiAbilityManager.hasMultiAbilityBound(player, "WaterArms")){
+		if (!MultiAbilityManager.hasMultiAbilityBound(player, "WaterArms")) {
 			remove();
 			return;
 		}
 
-		if(activeLength < whipLength && !reverting){
-			activeLength+=whipSpeed;
-		}else if(activeLength > initLength){
-			if(!grabbed){
-				activeLength-=whipSpeed;
+		if (activeLength < whipLength && !reverting) {
+			activeLength += whipSpeed;
+		} else if (activeLength > initLength) {
+			if (!grabbed) {
+				activeLength -= whipSpeed;
 			}
-		}else{
+		} else {
 			remove();
 			return;
 		}
 
-		if(activeLength == whipLength && !grabbed){
+		if (activeLength == whipLength && !grabbed) {
 			reverting = true;
 		}
 
-		if(arm.equals(Arm.Left)){
-			useLeftArm();
-		}else{
-			useRightArm();
+		if (grabbed
+				&& (System.currentTimeMillis() > time || playerHealth > player
+						.getHealth())) {
+			grabbed = false;
+			reverting = true;
 		}
+
+		useArm();
 		dragEntity(end);
 		grapplePlayer(end);
 	}
 
-	//START OF RECODE
-
-	private boolean canPlaceBlock(Block block){
-		if(!EarthMethods.isTransparentToEarthbending(player, block) && !(WaterMethods.isWater(block) && TempBlock.isTempBlock(block))){
+	private boolean canPlaceBlock(Block block) {
+		if (!EarthMethods.isTransparentToEarthbending(player, block)
+				&& !(WaterMethods.isWater(block) && TempBlock
+						.isTempBlock(block))) {
+			return false;
+		}
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms",
+				block.getLocation())) {
 			return false;
 		}
 		return true;
 	}
 
-	private void useLeftArm(){
-		if(waterArms.displayLeftArm()){
-			Location l1 = waterArms.getLeftArmEnd().clone();
-			Vector dir = player.getLocation().getDirection();
-			for(int i = 1; i <= activeLength; i++){
-				Location l2 = l1.clone().add(dir.normalize().multiply(i));
-
-				if(!canPlaceBlock(l2.getBlock())){
-					if(!l2.getBlock().getType().equals(Material.BARRIER)){
-						grappled = true;
-					}
-					reverting = true;
-					break;
-				}
-
-				new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 0);
-				WaterArms.revert.put(l2.getBlock(), 0L);
-
-				if(i == activeLength){
-					Location l3 = GeneralMethods.getRightSide(l2, 1);
-					end = l3.clone();
-					if(canPlaceBlock(l3.getBlock())){
-						new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 3);
-						WaterArms.revert.put(l3.getBlock(), 0L);
-						checkLocation(l3);
-					}else{
-						if(!l3.getBlock().getType().equals(Material.BARRIER)){
-							grappled = true;
-						}
-						reverting = true;
-					}
-				}
+	private void useArm() {
+		if (waterArms.canDisplayActiveArm()) {
+			Location l1 = null;
+			if (arm.equals(Arm.Left)) {
+				l1 = waterArms.getLeftArmEnd().clone();
+			} else {
+				l1 = waterArms.getRightArmEnd().clone();
 			}
-		}
-	}
-	
-	private void useRightArm(){
-		if(waterArms.displayLeftArm()){
-			Location l1 = waterArms.getRightArmEnd().clone();
 			Vector dir = player.getLocation().getDirection();
-			for(int i = 1; i <= activeLength; i++){
+			for (int i = 1; i <= activeLength; i++) {
 				Location l2 = l1.clone().add(dir.normalize().multiply(i));
 
-				if(!canPlaceBlock(l2.getBlock())){
-					if(!l2.getBlock().getType().equals(Material.BARRIER)){
+				if (!canPlaceBlock(l2.getBlock())) {
+					if (!l2.getBlock().getType().equals(Material.BARRIER)) {
 						grappled = true;
 					}
 					reverting = true;
 					break;
 				}
 
-				new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 0);
+				new TempBlock(l2.getBlock(), Material.STATIONARY_WATER,
+						(byte) 0);
 				WaterArms.revert.put(l2.getBlock(), 0L);
 
-				if(i == activeLength){
-					Location l3 = GeneralMethods.getLeftSide(l2, 1);
+				if (i == activeLength) {
+					Location l3 = null;
+					if (arm.equals(Arm.Left)) {
+						l3 = GeneralMethods.getRightSide(l2, 1);
+					} else {
+						l3 = GeneralMethods.getLeftSide(l2, 1);
+					}
 					end = l3.clone();
-					if(canPlaceBlock(l3.getBlock())){
-						new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 3);
+					if (canPlaceBlock(l3.getBlock())) {
+						new TempBlock(l3.getBlock(), Material.STATIONARY_WATER,
+								(byte) 3);
 						WaterArms.revert.put(l3.getBlock(), 0L);
-						checkLocation(l3);
-					}else{
-						if(!l3.getBlock().getType().equals(Material.BARRIER)){
+						performAction(l3);
+					} else {
+						if (!l3.getBlock().getType().equals(Material.BARRIER)) {
 							grappled = true;
 						}
 						reverting = true;
@@ -255,29 +273,38 @@ public class WaterArmsWhip{
 		}
 	}
 
-	private void checkLocation(Location location){
+	private void performAction(Location location) {
 		Location endOfArm = waterArms.getLeftArmEnd().clone();
-		switch(ability){
+		switch (ability) {
 		case Pull:
-			for(Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)){
-				if(entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())){
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(
+					location, 2)) {
+				if (entity instanceof Player
+						&& Commands.invincible.contains(((Player) entity)
+								.getName())) {
 					continue;
 				}
-				Vector vector = endOfArm.toVector().subtract(entity.getLocation().toVector());
+				Vector vector = endOfArm.toVector().subtract(
+						entity.getLocation().toVector());
 				entity.setVelocity(vector.multiply(0.15));
 			}
 			break;
 		case Punch:
-			for(Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)){
-				if(entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())){
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(
+					location, 2)) {
+				if (entity instanceof Player
+						&& Commands.invincible.contains(((Player) entity)
+								.getName())) {
 					continue;
 				}
-				Vector vector = entity.getLocation().toVector().subtract(endOfArm.toVector());
+				Vector vector = entity.getLocation().toVector()
+						.subtract(endOfArm.toVector());
 				entity.setVelocity(vector.multiply(0.15));
-				if(entity instanceof LivingEntity){
-					if(entity.getEntityId() != player.getEntityId()){
-						damaged = true;
-						GeneralMethods.damageEntity(player, entity, damage);
+				if (entity instanceof LivingEntity) {
+					if (entity.getEntityId() != player.getEntityId()) {
+						hasDamaged = true;
+						GeneralMethods
+								.damageEntity(player, entity, punchDamage);
 					}
 				}
 			}
@@ -286,11 +313,13 @@ public class WaterArmsWhip{
 			grapplePlayer(end);
 			break;
 		case Grab:
-			if(grabbedEntity == null){
-				for(Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)){
-					if(entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !grabbedEntities.contains(entity)){
-						System.out.println("Grabbed Entity!");
-						grabbedEntities.add((LivingEntity) entity);
+			if (grabbedEntity == null) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(
+						location, 2)) {
+					if (entity instanceof LivingEntity
+							&& entity.getEntityId() != player.getEntityId()
+							&& !grabbedEntities.containsKey(entity)) {
+						grabbedEntities.put((LivingEntity) entity, id);
 						grabbedEntity = (LivingEntity) entity;
 						grabbed = true;
 						reverting = true;
@@ -305,9 +334,9 @@ public class WaterArmsWhip{
 		}
 	}
 
-	private void dragEntity(Location location){
-		if(grabbedEntity != null){
-			if(!waterArms.canDisplayCurrentArm() || grabbedEntity.isDead()){
+	private void dragEntity(Location location) {
+		if (grabbedEntity != null && grabbed) {
+			if (!waterArms.canDisplayActiveArm() || grabbedEntity.isDead()) {
 				grabbed = false;
 				grabbedEntities.remove(grabbedEntity);
 				return;
@@ -330,103 +359,121 @@ public class WaterArmsWhip{
 			}
 		}
 	}
-	
-	private void grapplePlayer(Location location){
-		if(reverting && grappled && player != null && end != null && ability.equals(Whip.Grapple)){
-			Vector vector = player.getLocation().toVector().subtract(location.toVector());
+
+	private void grapplePlayer(Location location) {
+		if (reverting && grappled && player != null && end != null
+				&& ability.equals(Whip.Grapple)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms",
+					location) && grappleRespectRegions) {
+				return;
+			}
+			Vector vector = player.getLocation().toVector()
+					.subtract(location.toVector());
 			player.setVelocity(vector.multiply(-0.25));
 			player.setFallDistance(0);
 		}
 	}
 
-	//END OF RECODE
-
-	@SuppressWarnings("deprecation")
-	private void spawnFallingBlock(Location location, Location armbase){
-		Block block = location.getBlock();
-		Material mat = block.getType();
-		byte data = block.getData();
-		if(!GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", location)){
-			Location spawnLoc = location.clone().toVector().subtract(player.getLocation().clone().getDirection().multiply(1)).toLocation(player.getWorld());
-
-			new TempBlock(block, Material.AIR, (byte) 0);
-			WaterArms.revert.put(block, System.currentTimeMillis() + pullBlocksRevertDelay);
-
-			if(!WaterArms.isUnbreakable(spawnLoc.getBlock())){
-				new TempBlock(spawnLoc.getBlock(), Material.AIR, (byte) 0);
-				WaterArms.revert.put(spawnLoc.getBlock(), System.currentTimeMillis() + pullBlocksRevertDelay);
-			}else{
-				return;
+	public static Integer getId(Player player) {
+		for (int id : instances.keySet()) {
+			if (instances.get(id).player.equals(player)) {
+				return id;
 			}
+		}
+		return 0;
+	}
 
-			FallingBlock fBlock = player.getWorld().spawnFallingBlock(spawnLoc.clone(), mat, data);
-			fBlock.setDropItem(false);
-			Vector from = fBlock.getLocation().toVector();
-			Vector to = armbase.clone().toVector();
-			Vector vector = to.subtract(from);
-			fBlock.setVelocity(vector.multiply(0.15));
-			WaterArms.falling.put(fBlock, player);
+	public static void checkValidEntities() {
+		for (LivingEntity e : grabbedEntities.keySet()) {
+			if (instances.containsKey(grabbedEntities.get(e))) {
+				if (instances.get(grabbedEntities.get(e)).grabbedEntity == null) {
+					grabbedEntities.remove(e);
+				}
+			} else {
+				grabbedEntities.remove(e);
+			}
 		}
 	}
 
-	private boolean canModifyBlock(Block block, Location toLoc){
-		if(!EarthMethods.isTransparentToEarthbending(player, block) && !WaterMethods.isWater(block)){
-			if(GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", block.getLocation())){
-				if(!grappleRespectRegions() && block.getType().isSolid() && !EarthMethods.isTransparentToEarthbending(player, block))
-					grappled = true;
-				reverting = true;
-				return true;
-			}
-			if(EarthMethods.isTransparentToEarthbending(player, block)){
-				if(!block.getType().equals(Material.BARRIER)){
-					grappled = true;
-				}
-				reverting = true;
-				return true;
-			}
-			if(!(TempBlock.isTempBlock(block) && TempBlock.get(block).equals(Material.AIR))){
-				if(!block.isLiquid() && block.getType().isSolid() && ability.equals(Whip.Pull) && pullBlocks && player.hasPermission("bending.ability.WaterArms.PullBlocks")){
-					if(!EarthMethods.isTransparentToEarthbending(player, block))
-						spawnFallingBlock(block.getLocation(), toLoc);
-				}
-				grappled = true;
-				reverting = true;
-				return true;
-			}	
-		}
-		return false;
-	}
-
-	private boolean grappleRespectRegions(){
-		if(!grappleRespectRegions)
-			if(!ability.equals(Whip.Grapple))
-				return true;
-			else
-				return false;
-		else
-			return true;
-	}
-
-	private void remove(){
-		if(WaterArms.instances.containsKey(player)){
-			if(arm.equals(Arm.Left)){
+	private void remove() {
+		if (WaterArms.instances.containsKey(player)) {
+			if (arm.equals(Arm.Left)) {
 				waterArms.setLeftArmCooldown(false);
-			}else{
+			} else {
 				waterArms.setRightArmCooldown(false);
 			}
-			if(damaged)
+			if (hasDamaged) {
 				waterArms.setMaxPunches(waterArms.getMaxPunches() - 1);
+			}
 			waterArms.setMaxUses(waterArms.getMaxUses() - 1);
 		}
 		instances.remove(id);
 	}
 
-	public static void progressAll(){
-		for(int ID : instances.keySet())
+	public static void progressAll() {
+		checkValidEntities();
+		for (int ID : instances.keySet())
 			instances.get(ID).progress();
 	}
 
-	public static void removeAll(){
+	public static void removeAll() {
+		grabbedEntities.clear();
 		instances.clear();
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public Integer getWhipLength() {
+		return whipLength;
+	}
+
+	public void setArmLength(int armLength) {
+		this.whipLength = armLength;
+	}
+
+	public Double getPunchDamage() {
+		return punchDamage;
+	}
+
+	public void setPunchDamage(double damage) {
+		this.punchDamage = damage;
+	}
+
+	public long getHoldTime() {
+		return holdTime;
+	}
+
+	public void setHoldTime(long holdTime) {
+		this.holdTime = holdTime;
+	}
+
+	public boolean getReverting() {
+		return reverting;
+	}
+
+	public void setReverting(boolean reverting) {
+		this.reverting = reverting;
+	}
+
+	public boolean getGrappled() {
+		return grappled;
+	}
+
+	public void setGrappled(boolean grappled) {
+		this.grappled = grappled;
+	}
+
+	public boolean getGrabbed() {
+		return grabbed;
+	}
+
+	public void setGrabbed(boolean grabbed) {
+		this.grabbed = grabbed;
+	}
+
+	public LivingEntity getHeldEntity() {
+		return grabbedEntity;
 	}
 }
