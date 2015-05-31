@@ -11,9 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.GeneralMethods;
@@ -26,7 +23,7 @@ import com.projectkorra.ProjectKorra.firebending.FireMethods;
 import com.projectkorra.ProjectKorra.firebending.Lightning;
 import com.projectkorra.ProjectKorra.waterbending.WaterArmsWhip.Whip;
 
-public class WaterArms{
+public class WaterArms {
 
 	/**
 	 * Arm Enum value for deciding which arm is being used.
@@ -34,14 +31,14 @@ public class WaterArms{
 	public enum Arm {
 		Right, Left;
 	}
-	
+
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
 	public static ConcurrentHashMap<Player, WaterArms> instances = new ConcurrentHashMap<Player, WaterArms>();
 	public static ConcurrentHashMap<Block, Long> revert = new ConcurrentHashMap<Block, Long>();
-	public static ConcurrentHashMap<FallingBlock, Player> falling = new ConcurrentHashMap<FallingBlock, Player>();
-	
-	private static Integer[] unbreakable = {7, 8, 9, 10, 11, 49, 54, 90, 119, 120, 130, 146};
+
+	private static Integer[] unbreakable = { 7, 8, 9, 10, 11, 49, 54, 90, 119,
+			120, 130, 146 };
 
 	private Player player;
 	private World world;
@@ -57,49 +54,78 @@ public class WaterArms{
 
 	private int lengthReduction = 0;
 
-	private int initLength = config.getInt("Abilities.Water.WaterArms.Arms.InitialLength");
-	private int sourceGrabRange = config.getInt("Abilities.Water.WaterArms.Arms.SourceGrabRange");
-	private int maxPunches = config.getInt("Abilities.Water.WaterArms.Arms.MaxAttacks");
-	private int maxIceBlasts = config.getInt("Abilities.Water.WaterArms.Arms.MaxIceShots");
-	private int maxUses = config.getInt("Abilities.Water.WaterArms.Arms.MaxAlternateUsage");
-	private long cooldown = config.getLong("Abilities.Water.WaterArms.Arms.cooldown");
-	private boolean canUsePlantSource = config.getBoolean("Abilities.Water.WaterArms.Arms.AllowPlantSource");
+	private int initLength = config
+			.getInt("Abilities.Water.WaterArms.Arms.InitialLength");
+	private int sourceGrabRange = config
+			.getInt("Abilities.Water.WaterArms.Arms.SourceGrabRange");
+	private int maxPunches = config
+			.getInt("Abilities.Water.WaterArms.Arms.MaxAttacks");
+	private int maxIceBlasts = config
+			.getInt("Abilities.Water.WaterArms.Arms.MaxIceShots");
+	private int maxUses = config
+			.getInt("Abilities.Water.WaterArms.Arms.MaxAlternateUsage");
+	private long cooldown = config
+			.getLong("Abilities.Water.WaterArms.Arms.Cooldown");
+	private boolean canUsePlantSource = config
+			.getBoolean("Abilities.Water.WaterArms.Arms.AllowPlantSource");
 
-	private boolean lightningEnabled = config.getBoolean("Abilities.Water.WaterArms.Arms.Lightning.Enabled");
-	private double lightningDamage = config.getDouble("Abilities.Water.WaterArms.Arms.Lightning.Damage");
-	private boolean lightningKill = config.getBoolean("Abilities.Water.WaterArms.Arms.Lightning.KillUser");
-	
-	private static double blockDamage = config.getDouble("Abilities.Water.WaterArms.WhipMode.Pull.BlockDamage");
-	private static boolean pullBlocksDamageUser = config.getBoolean("Abilities.Water.WaterArms.WhipMode.Pull.BlockDamageUser");
+	private boolean lightningEnabled = config
+			.getBoolean("Abilities.Water.WaterArms.Arms.Lightning.Enabled");
+	private double lightningDamage = config
+			.getDouble("Abilities.Water.WaterArms.Arms.Lightning.Damage");
+	private boolean lightningKill = config
+			.getBoolean("Abilities.Water.WaterArms.Arms.Lightning.KillUser");
+
+	private static String sneakMsg = config
+			.getString("Abilities.Water.WaterArms.SneakMessage");
 
 	private int selectedSlot = 0;
 	private int freezeSlot = 4;
 
 	private long lastClickTime;
 
-	public WaterArms(Player player){
-		if(instances.containsKey(player)){
-			if(player.isSneaking()){
+	public WaterArms(Player player) {
+		if (instances.containsKey(player)) {
+			if (player.isSneaking()) {
 				instances.get(player).prepareCancel();
-			}else{
-				switch(player.getInventory().getHeldItemSlot()){
+			} else {
+				switch (player.getInventory().getHeldItemSlot()) {
 				case 0:
-					new WaterArmsWhip(player, Whip.Pull);
+					if (player.hasPermission("bending.ability.WaterArms.Pull")) {
+						new WaterArmsWhip(player, Whip.Pull);
+					}
 					break;
 				case 1:
-					new WaterArmsWhip(player, Whip.Punch);
+					if (player.hasPermission("bending.ability.WaterArms.Punch")) {
+						new WaterArmsWhip(player, Whip.Punch);
+					}
 					break;
 				case 2:
-					new WaterArmsWhip(player, Whip.Grapple);
+					if (player
+							.hasPermission("bending.ability.WaterArms.Grapple")) {
+						new WaterArmsWhip(player, Whip.Grapple);
+					}
 					break;
 				case 3:
-					new WaterArmsWhip(player, Whip.Grab);
+					if (player.hasPermission("bending.ability.WaterArms.Grab")) {
+						new WaterArmsWhip(player, Whip.Grab);
+					}
 					break;
 				case 4:
-					//new WaterArmsIce(player);
+					if (player
+							.hasPermission("bending.ability.WaterArms.Freeze")
+							&& WaterMethods.canIcebend(player)) {
+						new WaterArmsFreeze(player);
+					}
 					break;
 				case 5:
-					//new WaterArmsSpear(player);
+					if (player.hasPermission("bending.ability.WaterArms.Spear")) {
+						if (WaterMethods.canIcebend(player)) {
+							new WaterArmsSpear(player, true);
+						} else {
+							new WaterArmsSpear(player, false);
+						}
+					}
 					break;
 				default:
 					break;
@@ -108,40 +134,50 @@ public class WaterArms{
 			return;
 		}
 		this.player = player;
-		if(canUse(player) && prepare()){
+		if (canUse(player) && prepare()) {
 			world = player.getWorld();
 			instances.put(player, this);
 			MultiAbilityManager.bindMultiAbility(player, "WaterArms");
-			if(ChatColor.stripColor(GeneralMethods.getBoundAbility(player)) == null){
+			if (ChatColor.stripColor(GeneralMethods.getBoundAbility(player)) == null) {
 				remove();
 				return;
 			}
+			player.sendMessage(WaterMethods.getWaterColor() + sneakMsg + " "
+					+ GeneralMethods.getBoundAbility(player));
 		}
 	}
 
-	private boolean canUse(Player player){
-		if(GeneralMethods.getBoundAbility(player) == null)
+	private boolean canUse(Player player) {
+		if (GeneralMethods.getBoundAbility(player) == null)
 			return false;
-		if(!GeneralMethods.canBend(player.getName(), "WaterArms"))
+		if (!GeneralMethods.canBend(player.getName(), "WaterArms"))
 			return false;
-		if(GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", player.getLocation()))
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms",
+				player.getLocation()))
 			return false;
-		if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("WaterArms"))
+		if (GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown(
+				"WaterArms"))
 			return false;
-		if(GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterArms"))
+		if (GeneralMethods.getBoundAbility(player)
+				.equalsIgnoreCase("WaterArms"))
 			return true;
 		return false;
 	}
 
-	private boolean prepare(){
-		Block sourceblock = WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource);
-		if(sourceblock != null){
-			if(WaterMethods.isPlant(sourceblock)){
+	private boolean prepare() {
+		Block sourceblock = WaterMethods.getWaterSourceBlock(player,
+				sourceGrabRange, canUsePlantSource);
+		if (sourceblock != null) {
+			if (WaterMethods.isPlant(sourceblock)) {
 				fullSource = false;
 			}
-			ParticleEffect.LARGE_SMOKE.display(WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource).getLocation().clone().add(0.5,0.5,0.5), 0, 0, 0, 0F, 4);
+			ParticleEffect.LARGE_SMOKE.display(
+					WaterMethods
+							.getWaterSourceBlock(player, sourceGrabRange,
+									canUsePlantSource).getLocation().clone()
+							.add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
 			return true;
-		}else if(WaterReturn.hasWaterBottle(player)){
+		} else if (WaterReturn.hasWaterBottle(player)) {
 			WaterReturn.emptyWaterBottle(player);
 			fullSource = false;
 			return true;
@@ -149,23 +185,24 @@ public class WaterArms{
 		return false;
 	}
 
-	private void progress(){
-		if (!instances.containsKey(player)){
+	private void progress() {
+		if (!instances.containsKey(player)) {
 			return;
 		}
-		if(player.isDead() || !player.isOnline() || world != player.getWorld()){
+		if (player.isDead() || !player.isOnline() || world != player.getWorld()) {
 			remove();
 			return;
 		}
-		if(!GeneralMethods.getBendingPlayer(player.getName()).isToggled()){
+		if (!GeneralMethods.getBendingPlayer(player.getName()).isToggled()) {
 			remove();
 			return;
 		}
-		if(!MultiAbilityManager.hasMultiAbilityBound(player, "WaterArms")){
+		if (!MultiAbilityManager.hasMultiAbilityBound(player, "WaterArms")) {
 			remove();
 			return;
 		}
-		if(maxPunches == 0 || maxUses == 0 || maxIceBlasts == 0 || (leftArmConsumed && rightArmConsumed)){
+		if (maxPunches == 0 || maxUses == 0 || maxIceBlasts == 0
+				|| (leftArmConsumed && rightArmConsumed)) {
 			remove();
 			return;
 		}
@@ -174,54 +211,67 @@ public class WaterArms{
 		displayRightArm();
 		displayLeftArm();
 
-		if(lightningEnabled)
+		if (lightningEnabled)
 			checkIfZapped();
 	}
 
-	private boolean canPlaceBlock(Block block){
-		if(!EarthMethods.isTransparentToEarthbending(player, block) && !(WaterMethods.isWater(block) && TempBlock.isTempBlock(block)))
+	private boolean canPlaceBlock(Block block) {
+		if (!EarthMethods.isTransparentToEarthbending(player, block)
+				&& !(WaterMethods.isWater(block) && TempBlock
+						.isTempBlock(block)))
 			return false;
 		return true;
 	}
 
 	/**
-	 * Displays the right arm.
-	 * Returns false if the arm cannot be fully displayed.
+	 * Displays the right arm. Returns false if the arm cannot be fully
+	 * displayed.
+	 * 
 	 * @return
 	 */
-	public boolean displayRightArm(){
-		if(rightArmConsumed)
+	public boolean displayRightArm() {
+		if (rightArmConsumed)
 			return false;
 
-		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 1).add(0, 1.5, 0);
-		if(!canPlaceBlock(r1.getBlock()))
+		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 1).add(
+				0, 1.5, 0);
+		if (!canPlaceBlock(r1.getBlock()))
 			return false;
 
-		if(!(getRightHandPos().getBlock().getLocation().equals(r1.getBlock().getLocation()))){
+		if (!(getRightHandPos().getBlock().getLocation().equals(r1.getBlock()
+				.getLocation()))) {
 			new TempBlock(r1.getBlock(), Material.STATIONARY_WATER, (byte) 5);
 			revert.put(r1.getBlock(), 0L);
 		}
 
-		Location r2 = GeneralMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
-		if(!canPlaceBlock(r2.getBlock()))
+		Location r2 = GeneralMethods.getRightSide(player.getLocation(), 2).add(
+				0, 1.5, 0);
+		if (!canPlaceBlock(r2.getBlock()))
 			return false;
 
 		new TempBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 0);
 		revert.put(r2.getBlock(), 0L);
 
-		for(int j = 0; j <= initLength; j++){
-			Location r3 = r2.clone().toVector().add(player.getLocation().clone().getDirection().multiply(j)).toLocation(player.getWorld());
-			if(!canPlaceBlock(r3.getBlock())){
-				if(selectedSlot == freezeSlot && r3.getBlock().getType().equals(Material.ICE))
+		for (int j = 0; j <= initLength; j++) {
+			Location r3 = r2
+					.clone()
+					.toVector()
+					.add(player.getLocation().clone().getDirection()
+							.multiply(j)).toLocation(player.getWorld());
+			if (!canPlaceBlock(r3.getBlock())) {
+				if (selectedSlot == freezeSlot
+						&& r3.getBlock().getType().equals(Material.ICE))
 					continue;
 				return false;
 			}
 
-			if(j >= 1 && selectedSlot == freezeSlot){
+			if (j >= 1 && selectedSlot == freezeSlot
+					&& WaterMethods.canIcebend(player)) {
 				new TempBlock(r3.getBlock(), Material.ICE, (byte) 0);
 				revert.put(r3.getBlock(), 0L);
-			}else{
-				new TempBlock(r3.getBlock(), Material.STATIONARY_WATER, (byte) 0);
+			} else {
+				new TempBlock(r3.getBlock(), Material.STATIONARY_WATER,
+						(byte) 0);
 				revert.put(r3.getBlock(), 0L);
 			}
 		}
@@ -230,43 +280,54 @@ public class WaterArms{
 	}
 
 	/**
-	 * Displays the left arm.
-	 * Returns false if the arm cannot be fully displayed.
+	 * Displays the left arm. Returns false if the arm cannot be fully
+	 * displayed.
+	 * 
 	 * @return
 	 */
-	public boolean displayLeftArm(){
-		if(leftArmConsumed)
+	public boolean displayLeftArm() {
+		if (leftArmConsumed)
 			return false;
 
-		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 1).add(0, 1.5, 0);
-		if(!canPlaceBlock(l1.getBlock()))
+		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 1).add(
+				0, 1.5, 0);
+		if (!canPlaceBlock(l1.getBlock()))
 			return false;
 
-		if(!(getLeftHandPos().getBlock().getLocation().equals(l1.getBlock().getLocation()))){
+		if (!(getLeftHandPos().getBlock().getLocation().equals(l1.getBlock()
+				.getLocation()))) {
 			new TempBlock(l1.getBlock(), Material.STATIONARY_WATER, (byte) 5);
 			revert.put(l1.getBlock(), 0L);
 		}
 
-		Location l2 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
-		if(!canPlaceBlock(l2.getBlock()))
+		Location l2 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(
+				0, 1.5, 0);
+		if (!canPlaceBlock(l2.getBlock()))
 			return false;
 
 		new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 0);
 		revert.put(l2.getBlock(), 0L);
 
-		for(int j = 0; j <= initLength; j++){
-			Location l3 = l2.clone().toVector().add(player.getLocation().clone().getDirection().multiply(j)).toLocation(player.getWorld());
-			if(!canPlaceBlock(l3.getBlock())){
-				if(selectedSlot == freezeSlot && l3.getBlock().getType().equals(Material.ICE))
+		for (int j = 0; j <= initLength; j++) {
+			Location l3 = l2
+					.clone()
+					.toVector()
+					.add(player.getLocation().clone().getDirection()
+							.multiply(j)).toLocation(player.getWorld());
+			if (!canPlaceBlock(l3.getBlock())) {
+				if (selectedSlot == freezeSlot
+						&& l3.getBlock().getType().equals(Material.ICE))
 					continue;
 				return false;
 			}
 
-			if(j >= 1 && selectedSlot == freezeSlot){
+			if (j >= 1 && selectedSlot == freezeSlot
+					&& WaterMethods.canIcebend(player)) {
 				new TempBlock(l3.getBlock(), Material.ICE, (byte) 0);
 				revert.put(l3.getBlock(), 0L);
-			}else{
-				new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 0);
+			} else {
+				new TempBlock(l3.getBlock(), Material.STATIONARY_WATER,
+						(byte) 0);
 				revert.put(l3.getBlock(), 0L);
 			}
 		}
@@ -276,85 +337,81 @@ public class WaterArms{
 
 	/**
 	 * Calculate roughly where the player's right hand is.
+	 * 
 	 * @return
 	 */
-	private Location getRightHandPos(){
-		return GeneralMethods.getRightSide(player.getLocation(), .34).add(0, 1.5, 0);
+	private Location getRightHandPos() {
+		return GeneralMethods.getRightSide(player.getLocation(), .34).add(0,
+				1.5, 0);
 	}
 
 	/**
 	 * Calculate roughly where the player's left hand is.
+	 * 
 	 * @return
 	 */
-	private Location getLeftHandPos(){
-		return GeneralMethods.getLeftSide(player.getLocation(), .34).add(0, 1.5, 0);
+	private Location getLeftHandPos() {
+		return GeneralMethods.getLeftSide(player.getLocation(), .34).add(0,
+				1.5, 0);
 	}
 
 	/**
-	 * Returns the location of the tip of the right arm, assuming it is fully extended.
-	 * Use the displayRightArm() check to see if it is fully extended.
+	 * Returns the location of the tip of the right arm, assuming it is fully
+	 * extended. Use the displayRightArm() check to see if it is fully extended.
+	 * 
 	 * @return
 	 */
-	public Location getRightArmEnd(){
-		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
-		return r1.clone().add(player.getLocation().getDirection().normalize().multiply(initLength));
+	public Location getRightArmEnd() {
+		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 2).add(
+				0, 1.5, 0);
+		return r1.clone().add(
+				player.getLocation().getDirection().normalize()
+						.multiply(initLength));
 	}
 
 	/**
-	 * Returns the location of the tip of the left arm assuming it is fully extended.
-	 * Use the displayLeftArm() check to see if it is fully extended.
+	 * Returns the location of the tip of the left arm assuming it is fully
+	 * extended. Use the displayLeftArm() check to see if it is fully extended.
+	 * 
 	 * @return
 	 */
-	public Location getLeftArmEnd(){
-		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
-		return l1.clone().add(player.getLocation().getDirection().normalize().multiply(initLength));
+	public Location getLeftArmEnd() {
+		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(
+				0, 1.5, 0);
+		return l1.clone().add(
+				player.getLocation().getDirection().normalize()
+						.multiply(initLength));
 	}
 
-	private static void progressRevert(boolean ignoreTime){
-		for(Block block : revert.keySet()){
+	private static void progressRevert(boolean ignoreTime) {
+		for (Block block : revert.keySet()) {
 			long time = revert.get(block);
-			if(System.currentTimeMillis() > time || ignoreTime){
-				if(TempBlock.isTempBlock(block))
+			if (System.currentTimeMillis() > time || ignoreTime) {
+				if (TempBlock.isTempBlock(block))
 					TempBlock.revertBlock(block, Material.AIR);
 				revert.remove(block);
 			}
 		}
 	}
-	
-	private static void trackEntities(boolean remove){
-		for(FallingBlock fallingBlock : falling.keySet()){
-			if(remove){
-				fallingBlock.remove();
-				falling.remove(fallingBlock);
-			}
 
-			if(!fallingBlock.isDead()){
-				for(Entity entity : GeneralMethods.getEntitiesAroundPoint(fallingBlock.getLocation(), 2.0)){
-					if(entity instanceof LivingEntity){
-						if(!pullBlocksDamageUser && entity.getEntityId() == falling.get(fallingBlock).getEntityId())
-							continue;
-						GeneralMethods.damageEntity(falling.get(fallingBlock), entity, blockDamage);
-						fallingBlock.remove();
-						falling.remove(fallingBlock);
-					}
-				}
-			}
-		}
-	}
-
-	private void checkIfZapped(){
-		for (int i = 0; i < Lightning.instances.size(); i++){
+	private void checkIfZapped() {
+		for (int i = 0; i < Lightning.instances.size(); i++) {
 			Lightning l = Lightning.instances.get(i);
-			for(Lightning.Arc arc : l.getArcs()){
-				for(Block arm : revert.keySet()){
-					for(Location loc : arc.getPoints()){
-						if(arm.getLocation().getWorld() == loc.getWorld() && loc.distance(arm.getLocation()) <= 2.5){
-							for(Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25))
+			for (Lightning.Arc arc : l.getArcs()) {
+				for (Block arm : revert.keySet()) {
+					for (Location loc : arc.getPoints()) {
+						if (arm.getLocation().getWorld() == loc.getWorld()
+								&& loc.distance(arm.getLocation()) <= 2.5) {
+							for (Location l1 : getOffsetLocations(4,
+									arm.getLocation(), 1.25))
 								FireMethods.playLightningbendingParticle(l1);
-							if(lightningKill)
-								GeneralMethods.damageEntity(Lightning.instances.get(i).getPlayer(), player, 60D);
+							if (lightningKill)
+								GeneralMethods.damageEntity(Lightning.instances
+										.get(i).getPlayer(), player, 60D);
 							else
-								GeneralMethods.damageEntity(Lightning.instances.get(i).getPlayer(), player, lightningDamage);
+								GeneralMethods.damageEntity(Lightning.instances
+										.get(i).getPlayer(), player,
+										lightningDamage);
 						}
 					}
 				}
@@ -362,70 +419,87 @@ public class WaterArms{
 		}
 	}
 
-	private static List<Location> getOffsetLocations(int amount, Location location, double offset){
+	private static List<Location> getOffsetLocations(int amount,
+			Location location, double offset) {
 		List<Location> locations = new ArrayList<Location>();
-		for(int i = 0; i < amount; i++)
-			locations.add(location.clone().add((float) (Math.random()*offset), (float) (Math.random()*offset), (float) (Math.random()*offset)));
+		for (int i = 0; i < amount; i++)
+			locations.add(location.clone().add(
+					(float) (Math.random() * offset),
+					(float) (Math.random() * offset),
+					(float) (Math.random() * offset)));
 		return locations;
 	}
 
-	public static void remove(Player player){
-		if(instances.containsKey(player))
+	public static void remove(Player player) {
+		if (instances.containsKey(player))
 			instances.get(player).remove();
 	}
-	
-	public void remove(){
+
+	public void remove() {
 		MultiAbilityManager.unbindMultiAbility(player);
-		if(player.isOnline())
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterArms", cooldown);
+		if (player.isOnline())
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown(
+					"WaterArms", cooldown);
 		instances.remove(player);
 	}
 
-	public void prepareCancel(){
-		if(System.currentTimeMillis() < lastClickTime + 500L){
+	public void prepareCancel() {
+		if (System.currentTimeMillis() < lastClickTime + 500L) {
 			remove();
-		}else{
+		} else {
 			lastClickTime = System.currentTimeMillis();
 		}
 	}
 
-	public static void progressAll(){
+	public static void progressAll() {
 		progressRevert(false);
-		trackEntities(false);
-		for(Player p : instances.keySet())
+		for (Player p : instances.keySet())
 			instances.get(p).progress();
 		WaterArmsWhip.progressAll();
+		WaterArmsFreeze.progressAll();
+		WaterArmsSpear.progressAll();
 	}
 
-	public static void removeAll(){
+	public static void removeAll() {
 		progressRevert(true);
-		trackEntities(true);
 		revert.clear();
-		falling.clear();
 		instances.clear();
 		WaterArmsWhip.removeAll();
+		WaterArmsFreeze.removeAll();
+		WaterArmsSpear.removeAll();
 	}
-	
-	
+
 	@SuppressWarnings("deprecation")
 	public static boolean isUnbreakable(Block block) {
-		if (Arrays.asList(unbreakable).contains(block.getTypeId())) return true;
+		if (Arrays.asList(unbreakable).contains(block.getTypeId()))
+			return true;
 		return false;
 	}
 	
+	public static void displayBoundMsg(Player player){
+		player.sendMessage(WaterMethods.getWaterColor() + sneakMsg + " "
+				+ GeneralMethods.getBoundAbility(player));
+	}
+	
+	public void displayBoundMsg(){
+		player.sendMessage(WaterMethods.getWaterColor() + sneakMsg + " "
+				+ GeneralMethods.getBoundAbility(player));
+	}
+
 	/**
 	 * Returns the active arm of the player.
+	 * 
 	 * @return
 	 */
-	public Arm getActiveArm(){
+	public Arm getActiveArm() {
 		return activeArm;
 	}
 
 	/**
 	 * Switches the active arm of a player.
 	 */
-	public void switchActiveArm(){
-		if(activeArm.equals(Arm.Right))
+	public void switchActiveArm() {
+		if (activeArm.equals(Arm.Right))
 			activeArm = Arm.Left;
 		else
 			activeArm = Arm.Right;
@@ -433,25 +507,26 @@ public class WaterArms{
 
 	/**
 	 * Switches to the most suitable arm for the player.
+	 * 
 	 * @return
 	 */
-	public Arm switchPreferredArm(){
+	public Arm switchPreferredArm() {
 		switchActiveArm();
-		if(activeArm.equals(Arm.Left)){
-			if(!displayLeftArm()){
+		if (activeArm.equals(Arm.Left)) {
+			if (!displayLeftArm()) {
 				switchActiveArm();
 			}
 		}
-		if(activeArm.equals(Arm.Right)){
-			if(!displayRightArm()){
+		if (activeArm.equals(Arm.Right)) {
+			if (!displayRightArm()) {
 				switchActiveArm();
-			}	
+			}
 		}
 		return getActiveArm();
 	}
-	
-	public boolean canDisplayCurrentArm(){
-		switch(activeArm){
+
+	public boolean canDisplayActiveArm() {
+		switch (activeArm) {
 		case Left:
 			return displayLeftArm();
 		case Right:
@@ -460,81 +535,115 @@ public class WaterArms{
 			return false;
 		}
 	}
-	
-	public Player getPlayer(){
+
+	public Location getActiveArmEnd() {
+		switch (activeArm) {
+		case Left:
+			return getLeftArmEnd();
+		case Right:
+			return getRightArmEnd();
+		default:
+			return null;
+		}
+	}
+
+	public static boolean hasPlayer(Player player) {
+		if (instances.containsKey(player)) {
+			return true;
+		}
+		return false;
+	}
+
+	public Player getPlayer() {
 		return player;
 	}
-	
-	public Boolean isFullSource(){
+
+	public Boolean isFullSource() {
 		return fullSource;
 	}
-	
-	public Integer getLengthReduction(){
+
+	public boolean getLeftArmConsumed() {
+		return leftArmConsumed;
+	}
+
+	public void setLeftArmConsumed(boolean consumed) {
+		this.leftArmConsumed = consumed;
+	}
+
+	public boolean getRightArmConsumed() {
+		return rightArmConsumed;
+	}
+
+	public void setRightArmConsumed(boolean consumed) {
+		this.rightArmConsumed = consumed;
+	}
+
+	public Integer getLengthReduction() {
 		return lengthReduction;
 	}
-	
-	public void setLengthReduction(int lengthReduction){
+
+	public void setLengthReduction(int lengthReduction) {
 		this.lengthReduction = lengthReduction;
 	}
-	
-	public Integer getMaxPunches(){
+
+	public Integer getMaxPunches() {
 		return maxPunches;
 	}
-	
-	public void setMaxPunches(int maxPunches){
+
+	public void setMaxPunches(int maxPunches) {
 		this.maxPunches = maxPunches;
 	}
-	
-	public Integer getMaxUses(){
+
+	public Integer getMaxUses() {
 		return maxUses;
 	}
-	
-	public void setMaxUses(int maxUses){
+
+	public void setMaxUses(int maxUses) {
 		this.maxUses = maxUses;
 	}
-	
-	public Integer getMaxIceBlasts(){
+
+	public Integer getMaxIceBlasts() {
 		return maxIceBlasts;
 	}
-	
-	public void setMaxIceBlasts(int maxIceBlasts){
+
+	public void setMaxIceBlasts(int maxIceBlasts) {
 		this.maxIceBlasts = maxIceBlasts;
 	}
-	
-	public boolean canLightningDamage(){
+
+	public boolean canLightningDamage() {
 		return lightningEnabled;
 	}
-	
-	public void setCanLightningDamage(boolean lightningEnabled){
+
+	public void setCanLightningDamage(boolean lightningEnabled) {
 		this.lightningEnabled = lightningEnabled;
 	}
-	
-	public double getLightningDamage(){
+
+	public double getLightningDamage() {
 		return lightningDamage;
 	}
-	
-	public void setLightningDamage(double lightningDamage){
+
+	public void setLightningDamage(double lightningDamage) {
 		this.lightningDamage = lightningDamage;
 	}
-	
-	public boolean isLeftArmCooldown(){
+
+	public boolean isLeftArmCooldown() {
 		return cooldownLeft;
 	}
-	
-	public void setLeftArmCooldown(boolean cooldown){
+
+	public void setLeftArmCooldown(boolean cooldown) {
 		this.cooldownLeft = cooldown;
 	}
-	
-	public boolean isRightArmCooldown(){
+
+	public boolean isRightArmCooldown() {
 		return cooldownRight;
 	}
-	
-	public void setRightArmCooldown(boolean cooldown){
+
+	public void setRightArmCooldown(boolean cooldown) {
 		this.cooldownRight = cooldown;
 	}
-	
-	public void setActiveArmCooldown(boolean cooldown){
-		switch(activeArm){
+
+	public void setActiveArmCooldown(boolean cooldown) {
+		switch (activeArm) {
 		case Left:
 			setLeftArmCooldown(cooldown);
 			return;
@@ -545,7 +654,7 @@ public class WaterArms{
 			break;
 		}
 	}
-	
+
 	public long getCooldown() {
 		return cooldown;
 	}
