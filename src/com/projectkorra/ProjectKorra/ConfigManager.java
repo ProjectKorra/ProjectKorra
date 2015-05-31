@@ -366,7 +366,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 		
 		config.addDefault("Abilities.Water.WaterArms.Enabled", true);
-		config.addDefault("Abilities.Water.WaterArms.Description", "One of the most diverse moves in a waterbenders arsenal, this move creates tendrils "
+		config.addDefault("Abilities.Water.WaterArms.Description", "One of the most diverse moves in a Waterbender's arsenal, this move creates tendrils "
 				+ "of water from the players arms to emulate their actual arms. Each water arms mode will be binded to a slot, switch slots to change mode. "
 				+ "To deactive the arms, hold Sneak and Double Left-Click."
 				+ "\nPull - Use your Arms to pull blocks, items, mobs or even players towards you!"
