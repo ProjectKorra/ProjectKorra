@@ -443,6 +443,11 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		
+		if(!player.isSneaking() && WaterArms.hasPlayer(player)){
+			WaterArms.displayBoundMsg(player);
+			return;
+		}
 
 		AirScooter.check(player);
 
@@ -714,10 +719,6 @@ public class PKListener implements Listener {
 		if (event.getEntityType() == EntityType.FALLING_BLOCK) {
 			if (LavaSurge.falling.contains(entity)) {
 				LavaSurge.falling.remove(entity);
-				event.setCancelled(true);
-			}
-			if (WaterArms.falling.containsKey(entity)) {
-				WaterArms.falling.remove(entity);
 				event.setCancelled(true);
 			}
 		}
