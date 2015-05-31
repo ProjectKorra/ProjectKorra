@@ -372,8 +372,10 @@ public class ConfigManager {
 				+ "\nPull - Use your Arms to pull blocks, items, mobs or even players towards you!"
 				+ "\nPunch - An offensive attack, harming players or mobs!"
 				+ "\nGrapple - Scale walls and speed across battlefields, using your Arms as a grappling hook!"
+				+ "\nGrab - Grab an entity with your arm, and swing them about!"
 				+ "\nFreeze - Use your Arms to fire small blasts of ice in any direction!"
 				+ "\nSpear - Throw your Arms in any direction, freezing whatever it hits!");
+		config.addDefault("Abilities.Water.WaterArms.SneakMessage", "Active Ability:");
 		
 		config.addDefault("Abilities.Water.WaterArms.Arms.InitialLength", 4);
 		config.addDefault("Abilities.Water.WaterArms.Arms.SourceGrabRange", 4);
@@ -381,7 +383,6 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterArms.Arms.MaxAlternateUsage", 50);
 		config.addDefault("Abilities.Water.WaterArms.Arms.MaxIceShots", 5);
 		config.addDefault("Abilities.Water.WaterArms.Arms.Cooldown", 20000);
-		config.addDefault("Abilities.Water.WaterArms.Arms.AllowSpectatorUse", false);
 		config.addDefault("Abilities.Water.WaterArms.Arms.AllowPlantSource", true);
 		
 		config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Enabled", true);
@@ -391,38 +392,34 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled", false);
 		config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown", 200);
 		
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.MaxLength", 20);
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.MaxLengthWeak", 12);
+		config.addDefault("Abilities.Water.WaterArms.Whip.MaxLength", 20);
+		config.addDefault("Abilities.Water.WaterArms.Whip.MaxLengthWeak", 12);
 		
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.NightAugments.MaxLength.Normal", 24);
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.NightAugments.MaxLength.FullMoon", 30);
+		config.addDefault("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.Normal", 24);
+		config.addDefault("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.FullMoon", 30);
 		
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.Pull.PullBlocks", true);
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.Pull.BlockDamage", Double.valueOf(2.0));
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.Pull.BlockRevertDelay", 20000);
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.Pull.BlockDamageUser", false);
+		config.addDefault("Abilities.Water.WaterArms.Whip.Punch.PunchDamage", Double.valueOf(3.0));
 		
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.Punch.PunchDamage", Double.valueOf(3.0));
+		config.addDefault("Abilities.Water.WaterArms.Whip.Grapple.RespectRegions", false);
 		
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.Grapple.GrappleBarriers", false);
-		config.addDefault("Abilities.Water.WaterArms.WhipMode.Grapple.RespectRegions", false);
+		config.addDefault("Abilities.Water.WaterArms.Whip.Grab.HoldTime", 10000);
 		
-		config.addDefault("Abilities.Water.WaterArms.IceMode.Range", 20);
-		config.addDefault("Abilities.Water.WaterArms.IceMode.Damage", Double.valueOf(2.0));
+		config.addDefault("Abilities.Water.WaterArms.Freeze.Range", 20);
+		config.addDefault("Abilities.Water.WaterArms.Freeze.Damage", Double.valueOf(2.0));
 		
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.Range", 40);
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.Damage", Double.valueOf(4.0));
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.DamageEnabled", true);
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.Sphere", 2);
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.Duration", 6000);
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.Length", 18);
+		config.addDefault("Abilities.Water.WaterArms.Spear.Range", 40);
+		config.addDefault("Abilities.Water.WaterArms.Spear.Damage", Double.valueOf(4.0));
+		config.addDefault("Abilities.Water.WaterArms.Spear.DamageEnabled", true);
+		config.addDefault("Abilities.Water.WaterArms.Spear.Sphere", 2);
+		config.addDefault("Abilities.Water.WaterArms.Spear.Duration", 6000);
+		config.addDefault("Abilities.Water.WaterArms.Spear.Length", 18);
 		
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.NightAugments.Range.Normal", 45);
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.NightAugments.Range.FullMoon", 60);
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.NightAugments.Sphere.Normal", 3);
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.NightAugments.Sphere.FullMoon", 6);
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.NightAugments.Duration.Normal", 7000);
-		config.addDefault("Abilities.Water.WaterArms.SpearMode.NightAugments.Duration.FullMoon", 12000);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Range.Normal", 45);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Range.FullMoon", 60);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.Normal", 3);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.FullMoon", 6);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal", 7000);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon", 12000);
 
 		config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
 		config.addDefault("Abilities.Water.WaterBubble.Description","To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
