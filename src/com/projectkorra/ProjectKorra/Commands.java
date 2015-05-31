@@ -189,6 +189,11 @@ public class Commands {
 						return true;
 					}
 
+					if (MultiAbilityManager.hasMultiAbilityBound((Player) s)) {
+						s.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
+						return true;
+					}
+					
 					Player player = (Player) s;
 
 					String[] deletealiases = {"delete", "d", "del"};
@@ -385,6 +390,10 @@ public class Commands {
 
 					if (!(s instanceof Player)) {
 						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
+						return true;
+					}
+					if (MultiAbilityManager.hasMultiAbilityBound((Player) s)) {
+						s.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
 						return true;
 					}
 					BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
