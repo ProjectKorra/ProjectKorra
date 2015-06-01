@@ -57,7 +57,6 @@ public class BendingManager implements Runnable {
 		} catch (Exception e) {
 			GeneralMethods.stopBending();
 			e.printStackTrace();
-			GeneralMethods.logError(e);
 		}
 	}
 

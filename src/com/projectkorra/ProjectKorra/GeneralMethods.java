@@ -379,7 +379,6 @@ public class GeneralMethods {
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
-			GeneralMethods.logError(ex);
 		}
 	}
 
@@ -467,7 +466,6 @@ public class GeneralMethods {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				GeneralMethods.logError(e);
 			}
 		}
 	}

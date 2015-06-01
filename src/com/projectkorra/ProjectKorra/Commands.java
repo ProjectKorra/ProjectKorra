@@ -636,7 +636,6 @@ public class Commands {
 									}
 								} catch (SQLException ex) {
 									ex.printStackTrace();
-									GeneralMethods.logError(ex);
 								}
 								i++;
 								if (debug) {
@@ -1068,7 +1067,6 @@ public class Commands {
 										}.runTask(ProjectKorra.plugin);
 									} catch (SQLException e) {
 										e.printStackTrace();
-										GeneralMethods.logError(e);
 									}
 								}
 							}.runTaskAsynchronously(ProjectKorra.plugin);

@@ -64,7 +64,6 @@ public class Preset {
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    GeneralMethods.logError(ex);
                 }
             }
         }.runTaskAsynchronously(ProjectKorra.plugin);
