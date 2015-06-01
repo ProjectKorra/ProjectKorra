@@ -8,7 +8,7 @@ import java.util.logging.LogRecord;
 
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
-public class PKFilter implements Filter {
+public class LogFilter implements Filter {
 
 	List<String> consoleError = Arrays.asList(
 			"###################################################",

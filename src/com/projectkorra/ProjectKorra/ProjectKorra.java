@@ -15,7 +15,7 @@ import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleMana
 import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.CraftingRecipes;
 import com.projectkorra.ProjectKorra.Utilities.Updater;
-import com.projectkorra.ProjectKorra.Utilities.logging.PKFilter;
+import com.projectkorra.ProjectKorra.Utilities.logging.LogFilter;
 import com.projectkorra.ProjectKorra.Utilities.logging.PKLogHandler;
 import com.projectkorra.ProjectKorra.airbending.AirbendingManager;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
@@ -38,7 +38,7 @@ public class ProjectKorra extends JavaPlugin {
 		ProjectKorra.log = this.getLogger();
 		try {
 			handler = new PKLogHandler(getDataFolder() + File.separator + "ERROR.log");
-			log.getParent().setFilter(new PKFilter());
+			log.getParent().setFilter(new LogFilter());
 			log.getParent().addHandler(handler);
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();

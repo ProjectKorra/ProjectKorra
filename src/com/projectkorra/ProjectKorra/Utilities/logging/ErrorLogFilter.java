@@ -2,7 +2,7 @@ package com.projectkorra.ProjectKorra.Utilities.logging;
 
 import java.util.logging.LogRecord;
 
-public class PKErrorFilter extends PKFilter {
+public class ErrorLogFilter extends LogFilter {
 
 	@Override
 	public boolean isLoggable(LogRecord record) {

@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-public class PKFormatter extends Formatter {
+public class LogFormatter extends Formatter {
 
 private final SimpleDateFormat date = new SimpleDateFormat("HH:mm:ss");
 	

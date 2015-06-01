@@ -9,8 +9,8 @@ public class PKLogHandler extends FileHandler {
 	public PKLogHandler(String filename) throws IOException {
 		super(filename);
 		this.setLevel(Level.WARNING);
-		this.setFilter(new PKErrorFilter());
-		this.setFormatter(new PKFormatter());
+		this.setFilter(new ErrorLogFilter());
+		this.setFormatter(new LogFormatter());
 	}
 
 }
