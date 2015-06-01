@@ -1,8 +1,8 @@
 package com.projectkorra.ProjectKorra;
 
-import org.bukkit.configuration.file.FileConfiguration;
-
 import java.util.ArrayList;
+
+import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigManager {
 
@@ -364,6 +364,62 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.Torrent.Wave.Height", 1);
 
 		config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
+		
+		config.addDefault("Abilities.Water.WaterArms.Enabled", true);
+		config.addDefault("Abilities.Water.WaterArms.Description", "One of the most diverse moves in a Waterbender's arsenal, this move creates tendrils "
+				+ "of water from the players arms to emulate their actual arms. Each water arms mode will be binded to a slot, switch slots to change mode. "
+				+ "To deactive the arms, hold Sneak and Double Left-Click."
+				+ "\nPull - Use your Arms to pull blocks, items, mobs or even players towards you!"
+				+ "\nPunch - An offensive attack, harming players or mobs!"
+				+ "\nGrapple - Scale walls and speed across battlefields, using your Arms as a grappling hook!"
+				+ "\nGrab - Grab an entity with your arm, and swing them about!"
+				+ "\nFreeze - Use your Arms to fire small blasts of ice in any direction!"
+				+ "\nSpear - Throw your Arms in any direction, freezing whatever it hits!");
+		config.addDefault("Abilities.Water.WaterArms.SneakMessage", "Active Ability:");
+		
+		config.addDefault("Abilities.Water.WaterArms.Arms.InitialLength", 4);
+		config.addDefault("Abilities.Water.WaterArms.Arms.SourceGrabRange", 4);
+		config.addDefault("Abilities.Water.WaterArms.Arms.MaxAttacks", 10);
+		config.addDefault("Abilities.Water.WaterArms.Arms.MaxAlternateUsage", 50);
+		config.addDefault("Abilities.Water.WaterArms.Arms.MaxIceShots", 5);
+		config.addDefault("Abilities.Water.WaterArms.Arms.Cooldown", 20000);
+		config.addDefault("Abilities.Water.WaterArms.Arms.AllowPlantSource", true);
+		
+		config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Enabled", true);
+		config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Damage", Double.valueOf(10.0));
+		config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.KillUser", false);
+		
+		config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled", false);
+		config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown", 200);
+		
+		config.addDefault("Abilities.Water.WaterArms.Whip.MaxLength", 20);
+		config.addDefault("Abilities.Water.WaterArms.Whip.MaxLengthWeak", 12);
+		
+		config.addDefault("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.Normal", 24);
+		config.addDefault("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.FullMoon", 30);
+		
+		config.addDefault("Abilities.Water.WaterArms.Whip.Punch.PunchDamage", Double.valueOf(3.0));
+		
+		config.addDefault("Abilities.Water.WaterArms.Whip.Grapple.RespectRegions", false);
+		
+		config.addDefault("Abilities.Water.WaterArms.Whip.Grab.HoldTime", 10000);
+		
+		config.addDefault("Abilities.Water.WaterArms.Freeze.Range", 20);
+		config.addDefault("Abilities.Water.WaterArms.Freeze.Damage", Double.valueOf(2.0));
+		
+		config.addDefault("Abilities.Water.WaterArms.Spear.Range", 40);
+		config.addDefault("Abilities.Water.WaterArms.Spear.Damage", Double.valueOf(4.0));
+		config.addDefault("Abilities.Water.WaterArms.Spear.DamageEnabled", true);
+		config.addDefault("Abilities.Water.WaterArms.Spear.Sphere", 2);
+		config.addDefault("Abilities.Water.WaterArms.Spear.Duration", 6000);
+		config.addDefault("Abilities.Water.WaterArms.Spear.Length", 18);
+		
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Range.Normal", 45);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Range.FullMoon", 60);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.Normal", 3);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.FullMoon", 6);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal", 7000);
+		config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon", 12000);
 
 		config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
 		config.addDefault("Abilities.Water.WaterBubble.Description","To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");

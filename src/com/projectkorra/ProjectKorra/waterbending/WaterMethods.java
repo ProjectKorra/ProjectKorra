@@ -368,5 +368,6 @@ public class WaterMethods {
 		WaterWave.removeAll();
 		WaterCombo.removeAll();
 		WaterReturn.removeAll();
+		WaterArms.removeAll();
 	}
 }

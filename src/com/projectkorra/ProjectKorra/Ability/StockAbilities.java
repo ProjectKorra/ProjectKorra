@@ -18,14 +18,14 @@ public enum StockAbilities {
 	AvatarState,
 
 	// Project Korra
-	Extraction, MetalClips, Smokescreen, Combustion, LavaFlow, Suffocate, IceBlast, WarriorStance, AcrobatStance, QuickStrike, SwiftKick, EarthSmash, Flight;
+	Extraction, MetalClips, Smokescreen, Combustion, LavaFlow, Suffocate, IceBlast, WarriorStance, AcrobatStance, QuickStrike, SwiftKick, EarthSmash, Flight, WaterArms;
 
 	private enum AirbendingAbilities {
 		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst, Suffocate, Flight;
 	}
 
 	private enum WaterbendingAbilities {
-		WaterBubble, PhaseChange, HealingWaters, WaterManipulation, Surge, Bloodbending, WaterSpout, IceSpike, IceBlast, OctopusForm, Torrent;
+		WaterBubble, PhaseChange, HealingWaters, WaterManipulation, Surge, Bloodbending, WaterSpout, IceSpike, IceBlast, OctopusForm, Torrent, WaterArms;
 
 	}
 
@@ -94,6 +94,11 @@ public enum StockAbilities {
 	private enum PlantbendingAbilities
 	{
 		;
+	}
+	
+	private enum MultiAbilities
+	{
+		WaterArms;
 	}
 	
 	public static boolean isFlightAbility(String ability)
@@ -213,6 +218,13 @@ public enum StockAbilities {
 			if (a.name().equalsIgnoreCase(ability.name())) return true;
 		}
 
+		return false;
+	}
+	
+	public static boolean isMultiAbility(StockAbilities ability) {
+		for(MultiAbilities a: MultiAbilities.values()) {
+			if (a.name().equalsIgnoreCase(ability.name())) return true;
+		}
 		return false;
 	}
 

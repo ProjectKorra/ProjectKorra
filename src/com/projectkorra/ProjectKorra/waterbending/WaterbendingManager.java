@@ -34,6 +34,7 @@ public class WaterbendingManager implements Runnable {
 			IceBlast.progressAll();
 			WaterWave.progressAll();
 			WaterCombo.progressAll();
+			WaterArms.progressAll();
 		} catch (Exception e) {
 			GeneralMethods.logError(e, false);
 		}

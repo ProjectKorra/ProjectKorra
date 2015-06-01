@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package com.projectkorra.ProjectKorra.Ability;
 
 import java.io.File;
@@ -125,6 +126,7 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.WaterManipulation) shiftabilities.add(a.name());
 					if (a == StockAbilities.IceSpike) shiftabilities.add(a.name());
 					if (a == StockAbilities.IceBlast) shiftabilities.add(a.name());
+					if (a == StockAbilities.WaterArms) shiftabilities.add(a.name());
 					
 					// Water Sub Abilities
 					if (a == StockAbilities.HealingWaters) subabilities.add(a.name());
