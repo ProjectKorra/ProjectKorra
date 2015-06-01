@@ -832,7 +832,6 @@ public class PKListener implements Listener {
 
 		String abil = GeneralMethods.getBoundAbility(player);
 		if (abil == null && !MultiAbilityManager.hasMultiAbilityBound(player)) return;
-		if (abil == null) return;
 		if (GeneralMethods.canBend(player.getName(), abil)) {
                         if (GeneralMethods.isDisabledStockAbility(abil))
                             return;
@@ -1032,12 +1031,12 @@ public class PKListener implements Listener {
 			if (abil.equalsIgnoreCase("AvatarState")) {
 				new AvatarState(player);
 			}
-			
-			if(MultiAbilityManager.hasMultiAbilityBound(player)){
-				abil = MultiAbilityManager.getBoundMultiAbility(player);
-				if (abil.equalsIgnoreCase("WaterArms")) {
-					new WaterArms(player);
-				}
+		}
+		
+		if(MultiAbilityManager.hasMultiAbilityBound(player)){
+			abil = MultiAbilityManager.getBoundMultiAbility(player);
+			if (abil.equalsIgnoreCase("WaterArms")) {
+				new WaterArms(player);
 			}
 		}
 	}
