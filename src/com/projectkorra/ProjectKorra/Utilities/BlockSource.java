@@ -187,8 +187,35 @@ public class BlockSource {
 	 */
 	public static Block getWaterSourceBlock(Player player, double range, ClickType clickType, boolean allowWater,
 			boolean allowIce, boolean allowPlant) {
+		return getWaterSourceBlock(player, range, clickType, allowWater, allowIce, allowPlant, true);
+	}
+	
+	/**
+	 * Attempts to access a Water bendable block that was recently shifted or clicked on by the
+	 * player.
+	 * 
+	 * @param player the player that is trying to bend.
+	 * @param range the maximum range to access the block.
+	 * @param clickType the action that was performed to access the source, either
+	 *            ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
+	 * @param allowWater true if water blocks are allowed.
+	 * @param allowIce true if ice blocks are allowed.
+	 * @param allowPlant true if plant blocks are allowed.
+	 * @param allowWaterBottles true if we should look for a close water block, that may have
+	 * been created by a WaterBottle.
+	 * @return a valid Water bendable block, or null if none was found.
+	 */
+	public static Block getWaterSourceBlock(Player player, double range, ClickType clickType, boolean allowWater,
+			boolean allowIce, boolean allowPlant, boolean allowWaterBottles) {
 		Block sourceBlock = null;
-		if (allowWater) {
+		if (allowWaterBottles) {
+			// Check the block in front of the player's eyes, it may have been created by a WaterBottle.
+			sourceBlock = WaterMethods.getWaterSourceBlock(player, range, allowPlant);
+			if (sourceBlock == null || sourceBlock.getLocation().distance(player.getEyeLocation()) > 3) {
+				sourceBlock = null;
+			}
+		}
+		if (allowWater && sourceBlock == null) {
 			sourceBlock = getSourceBlock(player, range, BlockSourceType.WATER, clickType);
 		}
 		if (allowIce && sourceBlock == null) {
