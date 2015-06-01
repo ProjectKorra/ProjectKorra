@@ -115,7 +115,7 @@ public class GeneralMethods {
 
 	static ProjectKorra plugin;
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
+
 	public static Random rand = new Random();
 	public static double CACHE_TIME = config.getDouble("Properties.RegionProtection.CacheBlockTime"); 
 
@@ -128,7 +128,7 @@ public class GeneralMethods {
 
 	// Stands for toggled = false while logging out
 	public static List<UUID> toggedOut = new ArrayList<UUID>();
-	
+
 	/**
 	 * Checks to see if an AbilityExists. Uses method {@link #getAbility(String)} to check if it exists.
 	 * @param string Ability Name
@@ -187,6 +187,12 @@ public class GeneralMethods {
 	 * @see {@link #bindAbility(Player, String)}
 	 */
 	public static void bindAbility(Player player, String ability, int slot) {
+		
+		if(MultiAbilityManager.playerAbilities.containsKey(player)){
+			player.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
+			return;
+		}
+		
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
 		bPlayer.getAbilities().put(slot, ability);
 		if (AirMethods.isAirAbility(ability)) {
@@ -229,7 +235,7 @@ public class GeneralMethods {
 		if (ChiMethods.isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
 		return true;
 	}
-	
+
 	/**
 	 * Checks to see if a Player can bend a specific Ability.
 	 * @param player The player name to check
@@ -258,21 +264,21 @@ public class GeneralMethods {
 		if (EarthMethods.isEarthAbility(ability) && !isBender(player, Element.Earth)) return false;
 		if (FireMethods.isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
 		if (ChiMethods.isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
-		
-//		if (isFlightAbility(ability) && !canAirFlight(plugin.getServer().getPlayer(player))) return false;
-//		if (isSpiritualProjectionAbility(ability) && !canUseSpiritualProjection(plugin.getServer().getPlayer(player))) return false;
-//		if (isCombustionbendingAbility(ability) && !canCombustionbend(plugin.getServer().getPlayer(player))) return false;
-//		if (isLightningbendingAbility(ability) && !canLightningbend(plugin.getServer().getPlayer(player))) return false;
-//		if (isSandbendingAbility(ability) && !canSandbend(plugin.getServer().getPlayer(player))) return false;
-//		if (isMetalbendingAbility(ability) && !canMetalbend(plugin.getServer().getPlayer(player))) return false;
-//		if (isLavabendingAbility(ability) && !canLavabend(plugin.getServer().getPlayer(player))) return false;
-//		if (isIcebendingAbility(ability) && !canIcebend(plugin.getServer().getPlayer(player))) return false;
-//		if (isHealingAbility(ability) && !canWaterHeal(plugin.getServer().getPlayer(player))) return false;
-//		if (isPlantbendingAbility(ability) && !canPlantbend(plugin.getServer().getPlayer(player))) return false;
-//		if (isBloodbendingAbility(ability) && !canBloodbend(plugin.getServer().getPlayer(player))) return false;
-		
-		
-		
+
+		//		if (isFlightAbility(ability) && !canAirFlight(plugin.getServer().getPlayer(player))) return false;
+		//		if (isSpiritualProjectionAbility(ability) && !canUseSpiritualProjection(plugin.getServer().getPlayer(player))) return false;
+		//		if (isCombustionbendingAbility(ability) && !canCombustionbend(plugin.getServer().getPlayer(player))) return false;
+		//		if (isLightningbendingAbility(ability) && !canLightningbend(plugin.getServer().getPlayer(player))) return false;
+		//		if (isSandbendingAbility(ability) && !canSandbend(plugin.getServer().getPlayer(player))) return false;
+		//		if (isMetalbendingAbility(ability) && !canMetalbend(plugin.getServer().getPlayer(player))) return false;
+		//		if (isLavabendingAbility(ability) && !canLavabend(plugin.getServer().getPlayer(player))) return false;
+		//		if (isIcebendingAbility(ability) && !canIcebend(plugin.getServer().getPlayer(player))) return false;
+		//		if (isHealingAbility(ability) && !canWaterHeal(plugin.getServer().getPlayer(player))) return false;
+		//		if (isPlantbendingAbility(ability) && !canPlantbend(plugin.getServer().getPlayer(player))) return false;
+		//		if (isBloodbendingAbility(ability) && !canBloodbend(plugin.getServer().getPlayer(player))) return false;
+
+
+
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation())) return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p)) return false;
 		if (MetalClips.isControlled(p)) return false;
@@ -313,66 +319,66 @@ public class GeneralMethods {
 			}
 		}.runTaskAsynchronously(ProjectKorra.plugin);
 	}
-	
+
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
-        ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
-        try {
-            if (!rs2.next()) { // Data doesn't exist, we want a completely new
-                               // player.
-                new BendingPlayer(uuid, player, new ArrayList<Element>(), new HashMap<Integer, String>(), false);
-                DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player) VALUES ('" + uuid.toString() + "', '" + player + "')");
-                ProjectKorra.log.info("Created new BendingPlayer for " + player);
-            } else {
-                // The player has at least played before.
-                String player2 = rs2.getString("player");
-                if (!player.equalsIgnoreCase(player2)) {
-                    DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
-                    // They have changed names.
-                    
-                    ProjectKorra.log.info("Updating Player Name for " + player);
-                }
-                
-                String element = rs2.getString("element");
-                String permaremoved = rs2.getString("permaremoved");
-                boolean p = false;
-                final ArrayList<Element> elements = new ArrayList<Element>();
-                if (element != null) { // Player has an element.
-                    if (element.contains("a"))
-                        elements.add(Element.Air);
-                    if (element.contains("w"))
-                        elements.add(Element.Water);
-                    if (element.contains("e"))
-                        elements.add(Element.Earth);
-                    if (element.contains("f"))
-                        elements.add(Element.Fire);
-                    if (element.contains("c"))
-                        elements.add(Element.Chi);
-                }
-                
-                final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
-                for (int i = 1; i <= 9; i++) {
-                    String slot = rs2.getString("slot" + i);
-                    
-                    if (slot != null) {
-                        abilities.put(i, slot);
-                    }
-                }
-                
-                p = (permaremoved == null ? false : (permaremoved.equals("true") ? true : (permaremoved.equals("false") ? false : p)));
-                
-                final boolean boolean_p = p;
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        new BendingPlayer(uuid, player, elements, abilities, boolean_p);
-                    }
-                }.runTask(ProjectKorra.plugin);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            GeneralMethods.logError(ex);
-        }
-    }
+		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
+		try {
+			if (!rs2.next()) { // Data doesn't exist, we want a completely new
+				// player.
+				new BendingPlayer(uuid, player, new ArrayList<Element>(), new HashMap<Integer, String>(), false);
+				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player) VALUES ('" + uuid.toString() + "', '" + player + "')");
+				ProjectKorra.log.info("Created new BendingPlayer for " + player);
+			} else {
+				// The player has at least played before.
+				String player2 = rs2.getString("player");
+				if (!player.equalsIgnoreCase(player2)) {
+					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
+					// They have changed names.
+
+					ProjectKorra.log.info("Updating Player Name for " + player);
+				}
+
+				String element = rs2.getString("element");
+				String permaremoved = rs2.getString("permaremoved");
+				boolean p = false;
+				final ArrayList<Element> elements = new ArrayList<Element>();
+				if (element != null) { // Player has an element.
+					if (element.contains("a"))
+						elements.add(Element.Air);
+					if (element.contains("w"))
+						elements.add(Element.Water);
+					if (element.contains("e"))
+						elements.add(Element.Earth);
+					if (element.contains("f"))
+						elements.add(Element.Fire);
+					if (element.contains("c"))
+						elements.add(Element.Chi);
+				}
+
+				final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+				for (int i = 1; i <= 9; i++) {
+					String slot = rs2.getString("slot" + i);
+
+					if (slot != null) {
+						abilities.put(i, slot);
+					}
+				}
+
+				p = (permaremoved == null ? false : (permaremoved.equals("true") ? true : (permaremoved.equals("false") ? false : p)));
+
+				final boolean boolean_p = p;
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						new BendingPlayer(uuid, player, elements, abilities, boolean_p);
+					}
+				}.runTask(ProjectKorra.plugin);
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			GeneralMethods.logError(ex);
+		}
+	}
 
 	/**
 	 * Damages an Entity by amount of damage specified. Starts a {@link EntityDamageByEntityEvent}.
@@ -406,13 +412,13 @@ public class GeneralMethods {
 		File writeFile = new File(".", "converted.yml");
 		if (readFile.exists()) {
 			try (
-				DataInputStream input = new DataInputStream(new FileInputStream(readFile));
-				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+					DataInputStream input = new DataInputStream(new FileInputStream(readFile));
+					BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-				DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile));
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
-			){
-				
+					DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile));
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
+					){
+
 				String line;
 				while ((line = reader.readLine()) != null) {
 					if (!line.trim().contains("==: BendingPlayer")) {
@@ -486,7 +492,7 @@ public class GeneralMethods {
 			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Fire);
 			return FireMethods.getFireColor();
 		}
-		
+
 		else return getAvatarColor();
 	}
 
@@ -585,7 +591,7 @@ public class GeneralMethods {
 		return faces[besti];
 
 	}
-	
+
 	public static List<Location> getCircle(Location loc, int radius, int height, boolean hollow, boolean sphere, int plusY){
 		List<Location> circleblocks = new ArrayList<Location>();
 		int cx = loc.getBlockX();
@@ -711,22 +717,22 @@ public class GeneralMethods {
 		return 4;
 
 	}
-	
+
 	@SuppressWarnings("incomplete-switch")
 	public static ChatColor getSubBendingColor(Element element)
 	{
 		switch(element)
 		{
-			case Fire:
-				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.FireSub"));
-			case Air:
-				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.AirSub"));
-			case Water:
-				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.WaterSub"));
-			case Earth:
-				return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.EarthSub"));
+		case Fire:
+			return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.FireSub"));
+		case Air:
+			return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.AirSub"));
+		case Water:
+			return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.WaterSub"));
+		case Earth:
+			return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.EarthSub"));
 		}
-		
+
 		return getAvatarColor();
 	}
 
@@ -866,7 +872,7 @@ public class GeneralMethods {
 		if (player.hasPermission("bending.ability." + ability) && canBind(player.getName(), ability)) return true;
 		return false;
 	}
-	
+
 	public static boolean canView(Player player, String ability) {
 		if (player.hasPermission("bending.ability." + ability)) return true;
 		return false;
@@ -878,7 +884,7 @@ public class GeneralMethods {
 		if (AbilityModuleManager.authors.get(name).equalsIgnoreCase(author)) return true;
 		return false;
 	}
-	
+
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
 		if (TempBlock.isTempBlock(block))
 			return false;
@@ -922,7 +928,7 @@ public class GeneralMethods {
 	public static boolean isImportEnabled() {
 		return plugin.getConfig().getBoolean("Properties.ImportEnabled");
 	}
-	
+
 	public static boolean isObstructed(Location location1, Location location2) {
 		Vector loc1 = location1.toVector();
 		Vector loc2 = location2.toVector();
@@ -945,7 +951,7 @@ public class GeneralMethods {
 
 		return false;
 	}
-	
+
 	/*
 	 * isRegionProtectedFromBuild is one of the most server intensive methods in the
 	 * plugin. It uses a blockCache that keeps track of recent blocks that may have already been checked.
@@ -955,12 +961,12 @@ public class GeneralMethods {
 	public static boolean isRegionProtectedFromBuild(Player player, String ability, Location loc) {
 		if(!blockProtectionCache.containsKey(player.getName()))
 			blockProtectionCache.put(player.getName(), new ConcurrentHashMap<Block, BlockCacheElement>());
-		
+
 		ConcurrentHashMap<Block, BlockCacheElement> blockMap = blockProtectionCache.get(player.getName());
 		Block block = loc.getBlock();
 		if(blockMap.containsKey(block)) {
 			BlockCacheElement elem = blockMap.get(block);
-			
+
 			// both abilities must be equal to each other to use the cache
 			if((ability == null && elem.getAbility() == null)
 					|| (ability != null && elem.getAbility() != null && elem.getAbility().equals(ability))) {
@@ -972,7 +978,7 @@ public class GeneralMethods {
 		blockMap.put(block, new BlockCacheElement(player, block, ability, value, System.currentTimeMillis()));
 		return value;
 	}
-	
+
 	public static boolean isRegionProtectedFromBuildPostCache(Player player, String ability, Location loc) {
 
 		boolean allowharmless = plugin.getConfig().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
@@ -1054,10 +1060,10 @@ public class GeneralMethods {
 						return true;
 				}
 
-//				if (ps.getForceFieldManager().hasSourceField(location,
-//						FieldFlag.PREVENT_PLACE))
-//					return true;
-				
+				//				if (ps.getForceFieldManager().hasSourceField(location,
+				//						FieldFlag.PREVENT_PLACE))
+				//					return true;
+
 				if (!PreciousStones.API().canBreak(player, location)) {
 					return true;
 				}
@@ -1150,7 +1156,7 @@ public class GeneralMethods {
 		return false;
 	}
 
-	
+
 	public static boolean isSolid(Block block) {
 		if (Arrays.asList(nonOpaque).contains(block.getTypeId())) return false;
 		return true;
@@ -1182,12 +1188,12 @@ public class GeneralMethods {
 		}
 		return players;
 	}
-	
+
 	public static void displayColoredParticle(Location loc, String hexVal) {
 		int R = 0;
 		int G = 0;
 		int B = 0;
-		
+
 		if(hexVal.length() <= 6){
 			R = Integer.valueOf(hexVal.substring( 0, 2 ), 16);
 			G = Integer.valueOf(hexVal.substring( 2, 4 ), 16);
@@ -1201,15 +1207,15 @@ public class GeneralMethods {
 			if(R <= 0)
 				R=1;
 		}
-			
+
 		ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);	
 	}
-	
+
 	public static void displayColoredParticle(Location loc, String hexVal, float xOffset, float yOffset, float zOffset) {
 		int R = 0;
 		int G = 0;
 		int B = 0;
-		
+
 		if(hexVal.length() <= 6){
 			R = Integer.valueOf(hexVal.substring( 0, 2 ), 16);
 			G = Integer.valueOf(hexVal.substring( 2, 4 ), 16);
@@ -1223,19 +1229,19 @@ public class GeneralMethods {
 			if(R <= 0)
 				R=1;
 		}
-		
+
 		loc.setX(loc.getX() + Math.random() * (xOffset/2 - -(xOffset/2)));
 		loc.setY(loc.getY() + Math.random() * (yOffset/2 - -(yOffset/2)));
 		loc.setZ(loc.getZ() + Math.random() * (zOffset/2 - -(zOffset/2)));
-		
+
 		ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);	
 	}
-	
+
 	public static void displayColoredParticle(Location loc, ParticleEffect type, String hexVal, float xOffset, float yOffset, float zOffset) {
 		int R = 0;
 		int G = 0;
 		int B = 0;
-		
+
 		if(hexVal.length() <= 6){
 			R = Integer.valueOf(hexVal.substring( 0, 2 ), 16);
 			G = Integer.valueOf(hexVal.substring( 2, 4 ), 16);
@@ -1249,11 +1255,11 @@ public class GeneralMethods {
 			if(R <= 0)
 				R=1;
 		}
-		
+
 		loc.setX(loc.getX() + Math.random() * (xOffset/2 - -(xOffset/2)));
 		loc.setY(loc.getY() + Math.random() * (yOffset/2 - -(yOffset/2)));
 		loc.setZ(loc.getZ() + Math.random() * (zOffset/2 - -(zOffset/2)));
-		
+
 		if(type == ParticleEffect.RED_DUST || type == ParticleEffect.REDSTONE)
 			ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);
 		else if(type == ParticleEffect.SPELL_MOB || type == ParticleEffect.MOB_SPELL)
@@ -1263,7 +1269,7 @@ public class GeneralMethods {
 		else
 			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 256D);	
 	}
-	
+
 	public static void displayParticleVector(Location loc, ParticleEffect type, float xTrans, float yTrans, float zTrans) {
 		if(type == ParticleEffect.FIREWORKS_SPARK)
 			ParticleEffect.FIREWORKS_SPARK.display((float) xTrans, (float) yTrans, (float) zTrans, 0.09F, 0, loc, 256D);
@@ -1283,7 +1289,7 @@ public class GeneralMethods {
 			ParticleEffect.SNOW_SHOVEL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.2F, 0, loc, 256D);
 		else
 			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 256D);
-		
+
 	}
 
 	public static void reloadPlugin() {
@@ -1301,7 +1307,7 @@ public class GeneralMethods {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 		}
 	}
-	
+
 	public static void removeBlock(Block block) {
 		if (isAdjacentToThreeOrMoreSources(block)) {
 			block.setType(Material.WATER);
@@ -1327,7 +1333,7 @@ public class GeneralMethods {
 		}
 
 	}
-	
+
 	public static Vector rotateVectorAroundVector(Vector axis, Vector rotator,
 			double degrees) {
 		double angle = Math.toRadians(degrees);
@@ -1360,6 +1366,9 @@ public class GeneralMethods {
 		if (bPlayer == null) return;
 		String uuid = bPlayer.uuid.toString();
 
+		//Temp code to block modifications of binds, Should be replaced when bind event is added.
+		if(MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getPlayerName())))
+			return;
 		HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
@@ -1385,7 +1394,7 @@ public class GeneralMethods {
 				((ComboAbilityModule) c.getComboType()).stop();
 
 		AirMethods.stopBending();
-		
+
 		EarthMethods.stopBending();
 
 		WaterMethods.stopBending();
@@ -1396,9 +1405,11 @@ public class GeneralMethods {
 
 		Flight.removeAll();
 		TempBlock.removeAll();
+
+		MultiAbilityManager.removeAll();
 	}
 
-	
+
 	public static void setVelocity(Entity entity, Vector velocity){
 		if (entity instanceof TNTPrimed){
 			if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.TNT"))
@@ -1421,24 +1432,24 @@ public class GeneralMethods {
 		new FireMethods(plugin);
 		new WaterMethods(plugin);
 	}
-	
+
 	public static FallingBlock spawnFallingBlock(Location loc, int type)
 	{
 		return spawnFallingBlock(loc, type, (byte) 0);
 	}
-	
+
 	public static FallingBlock spawnFallingBlock(Location loc, Material type)
 	{
 		return spawnFallingBlock(loc, type, (byte) 0);
 	}
-	
-	
+
+
 	public static FallingBlock spawnFallingBlock(Location loc, int type, byte data)
 	{
 		return loc.getWorld().spawnFallingBlock(loc, type, data);
 	}
-	
-	
+
+
 	public static FallingBlock spawnFallingBlock(Location loc, Material type, byte data)
 	{
 		return loc.getWorld().spawnFallingBlock(loc, type, data);
@@ -1572,12 +1583,12 @@ public class GeneralMethods {
 		}
 		return null;
 	}
-	
+
 	public static boolean hasItems() {
 		if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null) return true;
 		return false;
 	}
-	
+
 	public static Plugin getItems() {
 		if (hasItems()) {
 			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems");
@@ -1602,7 +1613,7 @@ public class GeneralMethods {
 			pw.println(message);
 			pw.flush();
 			pw.close();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1705,14 +1716,14 @@ public class GeneralMethods {
 			}
 		}
 	}
-	
+
 	public static class BlockCacheElement {
 		private Player player;
 		private Block block;
 		private String ability;
 		private boolean allowed;
 		private long time;
-		
+
 		public BlockCacheElement(Player player, Block block, String ability, boolean allowed, long time) {
 			this.player = player;
 			this.block = block;
@@ -1762,7 +1773,7 @@ public class GeneralMethods {
 		}
 
 	}
-	
+
 	public static void startCacheCleaner(final double period) {
 		new BukkitRunnable() {
 			public void run() {
@@ -1770,7 +1781,7 @@ public class GeneralMethods {
 					for(Iterator<Block> i = map.keySet().iterator(); i.hasNext();) {
 						Block key = i.next();
 						BlockCacheElement value = map.get(key);
-						
+
 						if(System.currentTimeMillis() - value.getTime() > period) {
 							map.remove(key);
 						}
@@ -1779,7 +1790,7 @@ public class GeneralMethods {
 			}
 		}.runTaskTimer(ProjectKorra.plugin, 0, (long) (period / 20));
 	}
-	
+
 	/** Checks if an entity is Undead **/
 	public static boolean isUndead(Entity entity) {
 		if (entity == null) return false;
@@ -1797,7 +1808,7 @@ public class GeneralMethods {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Logs a throwable into an ERROR.log file in the ProjectKorra root folder.
 	 * <p>
@@ -1809,7 +1820,7 @@ public class GeneralMethods {
 	public static void logError(Throwable e) {
 		logError(e, true);
 	}
-	
+
 	/**
 	 * Logs a throwable into an ERROR.log file in the ProjectKorra root folder.
 	 * <p>
@@ -1848,5 +1859,27 @@ public class GeneralMethods {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * Returns a location with a specified distance away from the left side of a location.
+	 * @param location
+	 * @param distance
+	 * @return
+	 */
+	public static Location getLeftSide(Location location, double distance){
+		float angle = location.getYaw()/60;
+		return location.clone().add(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
+	}
+
+	/**
+	 * Returns a location with a specified distance away from the right side of a location.
+	 * @param location
+	 * @param distance
+	 * @return
+	 */
+	public static Location getRightSide(Location location, double distance){
+		float angle = location.getYaw()/60;
+		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
 }

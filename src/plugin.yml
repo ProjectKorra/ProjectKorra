@@ -31,6 +31,9 @@ permissions:
       bending.command.invincible: true
       bending.admin.debug: true
       bending.admin.remove: true
+      bending.ability.WaterArms.Grab: true
+      bending.ability.WaterArms.Freeze: true
+      bending.ability.WaterArms.Spear: true
   bending.player:
     default: true
     description: Grants access to most abilities and basic commands.
@@ -95,6 +98,10 @@ permissions:
       bending.water.passive: true
       bending.water.icebending: true
       bending.water.healing: true
+      bending.ability.WaterArms: true
+      bending.ability.WaterArms.Pull: true
+      bending.ability.WaterArms.Punch: true
+      bending.ability.WaterArms.Grapple: true
   bending.earth:
     default: true
     description: Grants access to all Earthbending abilities.

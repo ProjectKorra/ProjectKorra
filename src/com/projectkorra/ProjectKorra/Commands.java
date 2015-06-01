@@ -189,6 +189,11 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
 						return true;
 					}
+					
+					if (MultiAbilityManager.hasMultiAbilityBound((Player) s)) {
+						s.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
+						return true;
+					}
 
 					Player player = (Player) s;
 
@@ -388,6 +393,12 @@ public class Commands {
 						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
 						return true;
 					}
+					
+					if (MultiAbilityManager.hasMultiAbilityBound((Player) s)) {
+						s.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
+						return true;
+					}
+					
 					BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
 					if (args.length == 1) {
 						bPlayer.getAbilities().clear();

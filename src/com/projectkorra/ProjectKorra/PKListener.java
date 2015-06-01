@@ -132,6 +132,7 @@ import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
 import com.projectkorra.ProjectKorra.waterbending.Melt;
 import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
 import com.projectkorra.ProjectKorra.waterbending.Torrent;
+import com.projectkorra.ProjectKorra.waterbending.WaterArms;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 import com.projectkorra.ProjectKorra.waterbending.WaterPassive;
@@ -404,6 +405,7 @@ public class PKListener implements Listener {
 			}
 		}
 		
+		MultiAbilityManager.remove(player);
 		FlightAbility.remove(event.getPlayer());
 	}
 	
@@ -438,6 +440,11 @@ public class PKListener implements Listener {
 
 		if (!player.isSneaking()) {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
+		}
+		
+		if(!player.isSneaking() && WaterArms.hasPlayer(player)){
+			WaterArms.displayBoundMsg(player);
+			return;
 		}
 		
 		AirScooter.check(player);
@@ -514,6 +521,10 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("Torrent")) {
 					Torrent.create(player);
+				}
+				
+				if (abil.equalsIgnoreCase("WaterArms")) {
+					new WaterArms(player);
 				}
 			}
 
@@ -820,6 +831,7 @@ public class PKListener implements Listener {
 		AirScooter.check(player);
 
 		String abil = GeneralMethods.getBoundAbility(player);
+		if (abil == null && !MultiAbilityManager.hasMultiAbilityBound(player)) return;
 		if (abil == null) return;
 		if (GeneralMethods.canBend(player.getName(), abil)) {
                         if (GeneralMethods.isDisabledStockAbility(abil))
@@ -1019,6 +1031,13 @@ public class PKListener implements Listener {
 
 			if (abil.equalsIgnoreCase("AvatarState")) {
 				new AvatarState(player);
+			}
+			
+			if(MultiAbilityManager.hasMultiAbilityBound(player)){
+				abil = MultiAbilityManager.getBoundMultiAbility(player);
+				if (abil.equalsIgnoreCase("WaterArms")) {
+					new WaterArms(player);
+				}
 			}
 		}
 	}

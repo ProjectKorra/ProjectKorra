@@ -318,6 +318,66 @@ Abilities:
         AnimationSpeed: 1
         ShootTime: 5000
         Cooldown: 10000
+    WaterArms:
+      Enabled: true
+      Description: |-
+        One of the most diverse moves in a Waterbender's arsenal, this move creates tendrils of water from the players arms to emulate their actual arms. Each water arms mode will be binded to a slot, switch slots to change mode. To deactive the arms, hold Sneak and Double Left-Click.
+        Pull - Use your Arms to pull blocks, items, mobs or even players towards you!
+        Punch - An offensive attack, harming players or mobs!
+        Grapple - Scale walls and speed across battlefields, using your Arms as a grappling hook!
+        Grab - Grab an entity with your arm, and swing them about!
+        Freeze - Use your Arms to fire small blasts of ice in any direction!
+        Spear - Throw your Arms in any direction, freezing whatever it hits!
+      SneakMessage: 'Active Ability:'
+      Arms:
+        InitialLength: 4
+        SourceGrabRange: 4
+        MaxAttacks: 10
+        MaxAlternateUsage: 50
+        MaxIceShots: 5
+        Cooldown: 20000
+        AllowPlantSource: true
+        Lightning:
+          Enabled: true
+          Damage: 10.0
+          KillUser: false
+        Cooldowns:
+          UsageCooldownEnabled: false
+          UsageCooldown: 200
+        AllowSpectatorUse: false
+      Whip:
+        MaxLength: 20
+        MaxLengthWeak: 12
+        NightAugments:
+          MaxLength:
+            Normal: 24
+            FullMoon: 30
+        Punch:
+          PunchDamage: 3.0
+        Grapple:
+          RespectRegions: false
+        Grab:
+          HoldTime: 10000
+      Freeze:
+        Range: 20
+        Damage: 2.0
+      Spear:
+        Range: 40
+        Damage: 4.0
+        DamageEnabled: true
+        Sphere: 2
+        Duration: 6000
+        Length: 18
+        NightAugments:
+          Range:
+            Normal: 45
+            FullMoon: 60
+          Sphere:
+            Normal: 3
+            FullMoon: 6
+          Duration:
+            Normal: 7000
+            FullMoon: 12000
   Earth:
     Passive:
       Duration: 2500

@@ -2,6 +2,7 @@ package com.projectkorra.ProjectKorra;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
+import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleManager;
 import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.CraftingRecipes;
 import com.projectkorra.ProjectKorra.airbending.AirbendingManager;
@@ -33,6 +34,8 @@ public class ProjectKorra extends JavaPlugin {
 		new GeneralMethods(this);
 		new Commands(this);
 		new AbilityModuleManager(this);
+		new MultiAbilityModuleManager();
+		new MultiAbilityManager();
 		new ComboModuleManager();
 		new ComboManager();
 		new ChiComboManager();
