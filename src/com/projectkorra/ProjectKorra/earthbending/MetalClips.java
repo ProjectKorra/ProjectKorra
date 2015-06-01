@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class MetalClips 
@@ -71,21 +71,21 @@ public class MetalClips
 
 	public boolean isEligible()
 	{
-		final BendingPlayer bplayer = Methods.getBendingPlayer(player.getName());
+		final BendingPlayer bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		
-		if(!Methods.canBend(player.getName(), "MetalClips"))
+		if(!GeneralMethods.canBend(player.getName(), "MetalClips"))
 			return false;
 		
-		if(Methods.getBoundAbility(player) == null)
+		if(GeneralMethods.getBoundAbility(player) == null)
 			return false;
 		
-		if(!Methods.getBoundAbility(player).equalsIgnoreCase("MetalClips"))
+		if(!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("MetalClips"))
 			return false;
 		
-		if(Methods.isRegionProtectedFromBuild(player, "MetalClips", player.getLocation()))
+		if(GeneralMethods.isRegionProtectedFromBuild(player, "MetalClips", player.getLocation()))
 			return false;
 		
-		if(!Methods.canMetalbend(player))
+		if(!EarthMethods.canMetalbend(player))
 			return false;
 		
 		if(bplayer.isOnCooldown("MetalClips"))
@@ -103,7 +103,7 @@ public class MetalClips
 	{	
 		ItemStack is = new ItemStack(Material.IRON_INGOT, 1);
 
-		if(Methods.getBendingPlayer(player.getName()).isOnCooldown("MetalClips"))
+		if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("MetalClips"))
 			return;
 		
 		if(!player.getInventory().containsAtLeast(is, 1))
@@ -117,16 +117,16 @@ public class MetalClips
 		
 		Vector v;
 
-		if(Methods.getTargetedEntity(player, 10, new ArrayList<Entity>()) != null)
-			v = Methods.getDirection(player.getLocation(), Methods.getTargetedEntity(player, 10, new ArrayList<Entity>()).getLocation());
+		if(GeneralMethods.getTargetedEntity(player, 10, new ArrayList<Entity>()) != null)
+			v = GeneralMethods.getDirection(player.getLocation(), GeneralMethods.getTargetedEntity(player, 10, new ArrayList<Entity>()).getLocation());
 		else
-			v = Methods.getDirection(player.getLocation(), Methods.getTargetedLocation(player, 10));
+			v = GeneralMethods.getDirection(player.getLocation(), GeneralMethods.getTargetedLocation(player, 10));
 		
 		ii.setVelocity(v.normalize().add(new Vector(0, 0.2, 0).multiply(1.2)));
 		trackedIngots.add(ii);
 		player.getInventory().removeItem(is);
 
-		Methods.getBendingPlayer(player.getName()).addCooldown("MetalManipulation", cooldown);
+		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("MetalManipulation", cooldown);
 	}
 	
 	public void formArmor()
@@ -234,8 +234,8 @@ public class MetalClips
 			return;
 		}
 		
-		if(Methods.getBoundAbility(player) == null ||
-				!Methods.getBoundAbility(player).equalsIgnoreCase("MetalClips"))
+		if(GeneralMethods.getBoundAbility(player) == null ||
+				!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("MetalClips"))
 		{
 			remove();
 			return;
@@ -258,14 +258,14 @@ public class MetalClips
 		
 		if(magnetized)
 		{
-			if(Methods.getEntitiesAroundPoint(player.getLocation(), magnetRange).size() == 0)
+			if(GeneralMethods.getEntitiesAroundPoint(player.getLocation(), magnetRange).size() == 0)
 			{
 				remove();
 				return;
 			}
-			for(Entity e : Methods.getEntitiesAroundPoint(player.getLocation(), magnetRange))
+			for(Entity e : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), magnetRange))
 			{
-				Vector v = Methods.getDirection(e.getLocation(), player.getLocation());
+				Vector v = GeneralMethods.getDirection(e.getLocation(), player.getLocation());
 				
 				if(e instanceof Player && player.hasPermission("bending.ability.MetalClips.loot")
 						&& player.getInventory().getItemInHand().getType() == Material.IRON_INGOT
@@ -363,11 +363,11 @@ public class MetalClips
 			if(metalclips == 1)
 			{
 				Location oldLocation = target.getLocation();
-				Location loc = Methods.getTargetedLocation(player, 
+				Location loc = GeneralMethods.getTargetedLocation(player, 
 						(int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
 				
-				Vector v = Methods.getDirection(target.getLocation(), player.getLocation());
+				Vector v = GeneralMethods.getDirection(target.getLocation(), player.getLocation());
 				
 				if(distance > .5)
 					target.setVelocity(v.normalize().multiply(0.2));
@@ -377,11 +377,11 @@ public class MetalClips
 			if(metalclips == 2)
 			{
 				Location oldLocation = target.getLocation();
-				Location loc = Methods.getTargetedLocation(player, 
+				Location loc = GeneralMethods.getTargetedLocation(player, 
 						(int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
 				
-				Vector v = Methods.getDirection(target.getLocation(), Methods.getTargetedLocation(player, 10));
+				Vector v = GeneralMethods.getDirection(target.getLocation(), GeneralMethods.getTargetedLocation(player, 10));
 			
 				if(distance > 1.2)
 					target.setVelocity(v.normalize().multiply(0.2));
@@ -391,11 +391,11 @@ public class MetalClips
 			if(metalclips >= 3)
 			{
 				Location oldLocation = target.getLocation();
-				Location loc = Methods.getTargetedLocation(player, 
+				Location loc = GeneralMethods.getTargetedLocation(player, 
 						(int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
 				
-				Vector v = Methods.getDirection(oldLocation, Methods.getTargetedLocation(player, 10));
+				Vector v = GeneralMethods.getDirection(oldLocation, GeneralMethods.getTargetedLocation(player, 10));
 				if(distance > 1.2)
 					target.setVelocity(v.normalize().multiply(.5));
 				else
@@ -417,7 +417,7 @@ public class MetalClips
 						if(System.currentTimeMillis() > time + crushInterval)
 						{
 							time = System.currentTimeMillis();
-							Methods.damageEntity(player, target, (crushDamage + (crushDamage * 1.2)));
+							GeneralMethods.damageEntity(player, target, (crushDamage + (crushDamage * 1.2)));
 						}
 					}
 				}
@@ -435,13 +435,13 @@ public class MetalClips
 			
 			if(ii.getItemStack().getType() == Material.IRON_INGOT)
 			{
-				if(Methods.getEntitiesAroundPoint(ii.getLocation(), 2).size() == 0)
+				if(GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2).size() == 0)
 				{
 					remove();
 					return;
 				}
 				
-				for(Entity e : Methods.getEntitiesAroundPoint(ii.getLocation(), 2))
+				for(Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2))
 				{
 					if(e instanceof LivingEntity && e.getEntityId() != player.getEntityId())
 					{
@@ -457,7 +457,7 @@ public class MetalClips
 						
 						else
 						{
-							Methods.damageEntity(player, e, 5);
+							GeneralMethods.damageEntity(player, e, 5);
 							ii.getWorld().dropItem(ii.getLocation(), ii.getItemStack());
 							remove();
 						}

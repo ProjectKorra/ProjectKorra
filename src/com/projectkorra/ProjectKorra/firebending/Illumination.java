@@ -9,7 +9,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Illumination {
@@ -25,7 +25,7 @@ public class Illumination {
 	private byte normaldata;
 
 	public Illumination(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 		if (bPlayer.isOnCooldown("Illumination")) return;
 
@@ -36,7 +36,7 @@ public class Illumination {
 			this.player = player;
 			set();
 			instances.put(player, this);
-			bPlayer.addCooldown("Illumination", Methods.getGlobalCooldown());
+			bPlayer.addCooldown("Illumination", GeneralMethods.getGlobalCooldown());
 		}
 	}
 
@@ -58,7 +58,7 @@ public class Illumination {
 		} else if ((FireStream.isIgnitable(player, standingblock) && standblock
 				.getType() != Material.LEAVES)
 				&& !block.equals(standblock)
-				&& !blocks.containsKey(standblock) && Methods.isSolid(standblock)) {
+				&& !blocks.containsKey(standblock) && GeneralMethods.isSolid(standblock)) {
 			revert();
 			block = standingblock;
 			normaltype = block.getType();
@@ -69,7 +69,7 @@ public class Illumination {
 			return;
 		} else if (player.getWorld() != block.getWorld()) {
 			revert();
-		} else if (player.getLocation().distance(block.getLocation()) > Methods
+		} else if (player.getLocation().distance(block.getLocation()) > FireMethods
 				.getFirebendingDayAugment(range, player.getWorld())) {
 			revert();
 		}
@@ -92,7 +92,7 @@ public class Illumination {
 	public static void manage(Server server) {
 		for (Player player : server.getOnlinePlayers()) {
 			if (instances.containsKey(player)) {
-				if (!Methods.canBend(player.getName(), "Illumination")) {
+				if (!GeneralMethods.canBend(player.getName(), "Illumination")) {
 					instances.get(player).revert();
 					instances.remove(player);
 				} else {

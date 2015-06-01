@@ -56,13 +56,13 @@ public class TempBlock {
 		} else {
 			if ((defaulttype == Material.LAVA
 					|| defaulttype == Material.STATIONARY_LAVA)
-					&& Methods.isAdjacentToThreeOrMoreSources(block)) {
+					&& GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.LAVA);
 				block.setData((byte) 0x0);
 			}
 			else if ((defaulttype == Material.WATER
 					|| defaulttype == Material.STATIONARY_WATER )
-					&& Methods.isAdjacentToThreeOrMoreSources(block)) {
+					&& GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.WATER);
 				block.setData((byte) 0x0);
 			} else {
@@ -106,6 +106,14 @@ public class TempBlock {
 
 	public Block getBlock() {
 		return block;
+	}
+	
+	public BlockState getState() {
+		return state;
+	}
+	
+	public void setState(BlockState newstate) {
+		state = newstate;
 	}
 
 	public static void removeAll() {

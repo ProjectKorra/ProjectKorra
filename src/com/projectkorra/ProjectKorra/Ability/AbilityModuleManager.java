@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoader;
 
@@ -124,6 +125,7 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.WaterManipulation) shiftabilities.add(a.name());
 					if (a == StockAbilities.IceSpike) shiftabilities.add(a.name());
 					if (a == StockAbilities.IceBlast) shiftabilities.add(a.name());
+					if (a == StockAbilities.WaterArms) shiftabilities.add(a.name());
 					
 					// Water Sub Abilities
 					if (a == StockAbilities.HealingWaters) subabilities.add(a.name());
@@ -217,7 +219,11 @@ public class AbilityModuleManager {
 				}
 				if (!succes)
 					continue;
-				ab.onThisLoad();
+				try {
+					ab.onThisLoad();
+				} catch (Exception e) {
+					GeneralMethods.logError(e);
+				}
 				abilities.add(ab.getName());
 				for (StockAbilities a: StockAbilities.values()) {
 					if (a.name().equalsIgnoreCase(ab.getName())){
@@ -276,9 +282,9 @@ public class AbilityModuleManager {
 				// if (ab.isMetalbendingAbility()) metalbendingabilities.add(ab.getName());
 				descriptions.put(ab.getName(), ab.getDescription());
 				authors.put(ab.getName(), ab.getAuthor());
-			} catch (AbstractMethodError e) { //If triggered means ability was made pre 1.6 BETA 8
+			} catch (AbstractMethodError /*pre 1.6 BETA 8*/ | NoSuchMethodError /*pre 1.7 BETA 2*/ e) { //If triggered means ability was made before commented versions
 				ProjectKorra.log.warning("The ability " + ab.getName() + " is either broken or outdated. Please remove it!");
-				//e.printStackTrace();
+				GeneralMethods.logError(e);
 				ab.stop();
 				abilities.remove(ab.getName());
 				final AbilityModule skill = ab;

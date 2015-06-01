@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable.LoadResult;
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable.LoadResult.Result;
 
@@ -58,6 +59,7 @@ public class AbilityLoader <T extends AbilityLoadable> implements Listener {
 				urls.add(file.toURI().toURL());
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
+				GeneralMethods.logError(e);
 			}
 		}
 		
@@ -112,14 +114,17 @@ public class AbilityLoader <T extends AbilityLoadable> implements Listener {
 				}
 			} catch (ClassCastException e) {
 				e.printStackTrace();
+				GeneralMethods.logError(e);
 				getLogger().log(Level.WARNING, "The JAR file " + file.getPath() + " is in the wrong directory");
 				getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " failed to load");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
+				GeneralMethods.logError(e);
 				getLogger().log(Level.WARNING, "Invalid path.yml");
 				getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " failed to load.");
 			} catch (Exception e) {
 				e.printStackTrace();
+				GeneralMethods.logError(e);
 				getLogger().log(Level.WARNING, "Unknown cause");
 				getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " failed to load");
 			}
@@ -141,6 +146,7 @@ public class AbilityLoader <T extends AbilityLoadable> implements Listener {
 					urls.add(file.toURI().toURL());
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
+					GeneralMethods.logError(e);
 				}
 			}
 		}

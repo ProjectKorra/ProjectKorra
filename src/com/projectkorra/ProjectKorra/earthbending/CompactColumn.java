@@ -8,8 +8,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
 public class CompactColumn {
 
@@ -33,16 +35,16 @@ public class CompactColumn {
 	private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 
 	public CompactColumn(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("Collapse")) return;
 
-		block = Methods.getEarthSourceBlock(player, range);
+		block = BlockSource.getEarthSourceBlock(player, range, ClickType.LEFT_CLICK);
 		if (block == null)
 			return;
 		origin = block.getLocation();
 		location = origin.clone();
 		this.player = player;
-		distance = Methods.getEarthbendableBlocksLength(player, block, direction
+		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction
 				.clone().multiply(-1), height);
 
 		loadAffectedBlocks();
@@ -51,7 +53,7 @@ public class CompactColumn {
 			if (canInstantiate()) {
 				id = ID;
 				instances.put(id, this);
-				bPlayer.addCooldown("Collapse", Methods.getGlobalCooldown());
+				bPlayer.addCooldown("Collapse", GeneralMethods.getGlobalCooldown());
 				if (ID >= Integer.MAX_VALUE) {
 					ID = Integer.MIN_VALUE;
 				}
@@ -69,7 +71,7 @@ public class CompactColumn {
 		// Methods.verbose(block);
 		// Methods.verbose(origin);
 		location = origin.clone();
-		distance = Methods.getEarthbendableBlocksLength(player, block, direction
+		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction
 				.clone().multiply(-1), height);
 
 		loadAffectedBlocks();
@@ -164,7 +166,7 @@ public class CompactColumn {
 		if (block == null || location == null || distance == 0) {
 			return false;
 		}
-		Methods.moveEarth(player, block, direction, distance);
+		EarthMethods.moveEarth(player, block, direction, distance);
 		loadAffectedBlocks();
 
 		if (location.distance(origin) >= distance) {

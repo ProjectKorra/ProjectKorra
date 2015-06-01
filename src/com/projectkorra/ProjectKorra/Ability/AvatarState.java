@@ -11,7 +11,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class AvatarState {
@@ -51,13 +51,13 @@ public class AvatarState {
 				//cooldowns.remove(player.getName());
 			//}
 		//}
-		if(Methods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
+		if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
 			return;
 		}
 		new Flight(player);
-		Methods.playAvatarSound(player.getLocation());
+		GeneralMethods.playAvatarSound(player.getLocation());
 		instances.put(player, this);
-		Methods.getBendingPlayer(player.getName()).addCooldown("AvatarState", cooldown);
+		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("AvatarState", cooldown);
 		if (duration != 0) {
 			startTimes.put(player.getName(), System.currentTimeMillis());
 		}
@@ -77,10 +77,10 @@ public class AvatarState {
 		if (player.isDead() || !player.isOnline()) {
 			instances.remove(player);
 		}
-		if (!Methods.canBend(player.getName(), StockAbilities.AvatarState.name())) {
+		if (!GeneralMethods.canBend(player.getName(), StockAbilities.AvatarState.name())) {
 			instances.remove(player);
-			if(Methods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
-				Methods.getBendingPlayer(player.getName()).removeCooldown("AvatarState");
+			if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
+				GeneralMethods.getBendingPlayer(player.getName()).removeCooldown("AvatarState");
 			}
 			return false;
 		}

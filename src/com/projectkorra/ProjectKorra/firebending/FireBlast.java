@@ -16,13 +16,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class FireBlast {
 
@@ -60,14 +62,14 @@ public class FireBlast {
 	private boolean showParticles = true;
 
 	public FireBlast(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 		if (bPlayer.isOnCooldown("FireBlast")) return;
 
 		if (player.getEyeLocation().getBlock().isLiquid() || Fireball.isCharging(player)) {
 			return;
 		}
-		range = Methods.getFirebendingDayAugment(range, player.getWorld());
+		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
 		this.player = player;
 		location = player.getEyeLocation();
 		origin = player.getEyeLocation();
@@ -88,7 +90,7 @@ public class FireBlast {
 			return;
 		}
 		safe = safeblocks;
-		range = Methods.getFirebendingDayAugment(range, player.getWorld());
+		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
 		// timers.put(player, System.currentTimeMillis());
 		this.player = player;
 		this.location = location.clone();
@@ -108,7 +110,7 @@ public class FireBlast {
 			return false;
 		}
 
-		if (Methods.isRegionProtectedFromBuild(player, "Blaze", location)) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze", location)) {
 			instances.remove(id);
 			return false;
 		}
@@ -124,7 +126,7 @@ public class FireBlast {
 
 		Block block = location.getBlock();
 
-		if (Methods.isSolid(block) || block.isLiquid()) {
+		if (GeneralMethods.isSolid(block) || block.isLiquid()) {
 			if (block.getType() == Material.FURNACE && canPowerFurnace) {
 				Furnace furnace = (Furnace) block.getState();
 				furnace.setBurnTime((short) 800);
@@ -142,7 +144,8 @@ public class FireBlast {
 			return false;
 		}
 
-		Methods.removeSpouts(location, player);
+		WaterMethods.removeWaterSpouts(location, player);
+		AirMethods.removeAirSpouts(location, player);
 
 		double radius = affectingradius;
 		Player source = player;
@@ -153,7 +156,7 @@ public class FireBlast {
 			return false;
 		}
 
-		for (Entity entity : Methods.getEntitiesAroundPoint(location, affectingradius)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, affectingradius)) {
 			// Block bblock = location.getBlock();
 			// Block block1 = entity.getLocation().getBlock();
 			// if (bblock.equals(block1))
@@ -183,14 +186,14 @@ public class FireBlast {
 		}
 		location = location.add(direction.clone().multiply(speedfactor));
 		if (rand.nextInt(4) == 0) {
-			Methods.playFirebendingSound(location);
+			FireMethods.playFirebendingSound(location);
 		}		
 	}
 
 	private void ignite(Location location) {
-		for (Block block : Methods.getBlocksAroundPoint(location, affectingradius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, affectingradius)) {
 			if (FireStream.isIgnitable(player, block) && !safe.contains(block)) {
-				if (Methods.isPlant(block))
+				if (WaterMethods.isPlant(block))
 					new Plantbending(block);
 				block.setType(Material.FIRE);
 				if (dissipate) {
@@ -228,14 +231,14 @@ public class FireBlast {
 	private void affect(Entity entity) {
 		if (entity.getEntityId() != player.getEntityId()) {
 			if (AvatarState.isAvatarState(player)) {
-				Methods.setVelocity(entity, direction.clone().multiply(AvatarState.getValue(pushfactor)));
+				GeneralMethods.setVelocity(entity, direction.clone().multiply(AvatarState.getValue(pushfactor)));
 			} else {
-				Methods.setVelocity(entity, direction.clone().multiply(pushfactor));
+				GeneralMethods.setVelocity(entity, direction.clone().multiply(pushfactor));
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks(50);
-				Methods.damageEntity(player, entity, (int) Methods.getFirebendingDayAugment((double) damage, entity.getWorld()));
-				Methods.breakBreathbendingHold(entity);
+				GeneralMethods.damageEntity(player, entity, (int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()));
+				AirMethods.breakBreathbendingHold(entity);
 				new Enflamed(entity, player);
 				instances.remove(id);
 			}
@@ -305,7 +308,7 @@ public class FireBlast {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 		if(player != null)
-			Methods.getBendingPlayer(player.getName()).addCooldown("FireBlast", cooldown);
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("FireBlast", cooldown);
 	}
 
 	public Player getPlayer() {

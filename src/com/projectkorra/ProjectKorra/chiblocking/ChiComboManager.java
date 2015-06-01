@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class ChiComboManager
@@ -112,7 +112,7 @@ public class ChiComboManager
 	@SuppressWarnings("deprecation")
 	public static void paralyzeTarget(Player player, long time)
 	{
-		Entity e = Methods.getTargetedEntity(player, 4, new ArrayList<Entity>());
+		Entity e = GeneralMethods.getTargetedEntity(player, 4, new ArrayList<Entity>());
 		
 		if(e == null)
 			return;
@@ -150,7 +150,7 @@ public class ChiComboManager
 		{
 			if(!(e instanceof Player))
 			{
-				e.setVelocity(Methods.getDirection(e.getLocation(), paralyzedLocations.get(e)));
+				e.setVelocity(GeneralMethods.getDirection(e.getLocation(), paralyzedLocations.get(e)));
 			}
 			//e.teleport(paralyzedLocations.get(e));
 		}

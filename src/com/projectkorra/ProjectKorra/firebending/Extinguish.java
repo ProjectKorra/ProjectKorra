@@ -9,9 +9,10 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class Extinguish {
 
@@ -22,17 +23,17 @@ public class Extinguish {
 	private static byte full = AirBlast.full;
 
 	public Extinguish(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 		if (bPlayer.isOnCooldown("HeatControl")) return;
 
-		double range = Methods.getFirebendingDayAugment(defaultrange, player.getWorld());
-		if (Methods.isMeltable(player.getTargetBlock((HashSet<Material>) null, (int) range))) {
+		double range = FireMethods.getFirebendingDayAugment(defaultrange, player.getWorld());
+		if (WaterMethods.isMeltable(player.getTargetBlock((HashSet<Material>) null, (int) range))) {
 			new HeatMelt(player);
 			return;
 		}
-		double radius = Methods.getFirebendingDayAugment(defaultradius, player.getWorld());
-		for (Block block : Methods.getBlocksAroundPoint(
+		double radius = FireMethods.getFirebendingDayAugment(defaultradius, player.getWorld());
+		for (Block block : GeneralMethods.getBlocksAroundPoint(
 				player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation(), radius)) {
 			
 			Material mat = block.getType();
@@ -40,7 +41,7 @@ public class Extinguish {
 					/*&& mat != Material.STATIONARY_LAVA
 					&& mat != Material.LAVA*/)
 				continue;
-			if (Methods.isRegionProtectedFromBuild(player, "Blaze",
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze",
 					block.getLocation()))
 				continue;
 			if (block.getType() == Material.FIRE) {
@@ -59,18 +60,18 @@ public class Extinguish {
 			}*/
 		}
 
-		bPlayer.addCooldown("HeatControl", Methods.getGlobalCooldown());
+		bPlayer.addCooldown("HeatControl", GeneralMethods.getGlobalCooldown());
 	}
 
 	public static boolean canBurn(Player player) {
-		if (Methods.getBoundAbility(player) != null) {
-			if (Methods.getBoundAbility(player).equalsIgnoreCase("HeatControl") || FireJet.checkTemporaryImmunity(player)) {
+		if (GeneralMethods.getBoundAbility(player) != null) {
+			if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl") || FireJet.checkTemporaryImmunity(player)) {
 				player.setFireTicks(-1);
 				return false;
 			}
 		}
 
-		if (player.getFireTicks() > 80 && Methods.canBendPassive(player.getName(), Element.Fire)) {
+		if (player.getFireTicks() > 80 && GeneralMethods.canBendPassive(player.getName(), Element.Fire)) {
 			player.setFireTicks(80);
 		}
 

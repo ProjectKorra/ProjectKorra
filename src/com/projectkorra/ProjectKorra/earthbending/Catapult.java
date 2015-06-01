@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Catapult {
@@ -41,7 +41,7 @@ public class Catapult {
 	private int ticks = 0;
 
 	public Catapult(Player player) {
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("Catapult")) return;
 
 		this.player = player;
@@ -54,11 +54,11 @@ public class Catapult {
 		for (int i = 0; i <= length; i++) {
 			location = origin.clone().add(neg.clone().multiply((double) i));
 			block = location.getBlock();
-			if (Methods.isEarthbendable(player, block)) {
-				distance = Methods.getEarthbendableBlocksLength(player, block,
+			if (EarthMethods.isEarthbendable(player, block)) {
+				distance = EarthMethods.getEarthbendableBlocksLength(player, block,
 						neg, length - i);
 				break;
-			} else if (!Methods.isTransparentToEarthbending(player, block)) {
+			} else if (!EarthMethods.isTransparentToEarthbending(player, block)) {
 				break;
 			}
 		}
@@ -72,7 +72,7 @@ public class Catapult {
 			starttime = System.currentTimeMillis();
 			moving = true;
 			instances.put(player.getEntityId(), this);
-			bPlayer.addCooldown("Catapult", Methods.getGlobalCooldown());
+			bPlayer.addCooldown("Catapult", GeneralMethods.getGlobalCooldown());
 		}
 
 	}
@@ -87,7 +87,7 @@ public class Catapult {
 		distance = source.distance;
 		time = source.time;
 		instances.put(player.getEntityId(), this);
-		Methods.playEarthbendingSound(player.getLocation());
+		EarthMethods.playEarthbendingSound(player.getLocation());
 		fly();
 	}
 	
@@ -137,9 +137,9 @@ public class Catapult {
 			return;
 		}
 
-		for (Block block : Methods
+		for (Block block : GeneralMethods
 				.getBlocksAroundPoint(player.getLocation(), 1.5)) {
-			if ((Methods.isSolid(block) || block.isLiquid())) {
+			if ((GeneralMethods.isSolid(block) || block.isLiquid())) {
 				// Methods.verbose("Catapulting stopped");
 				flying = false;
 				return;
@@ -171,7 +171,7 @@ public class Catapult {
 		if (catapult) {
 			if (location.distance(origin) < .5) {
 				boolean remove = false;
-				for (Entity entity : Methods.getEntitiesAroundPoint(origin, 2)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, 2)) {
 					if (entity instanceof Player) {
 						Player target = (Player) entity;
 						boolean equal = target.getEntityId() == player
@@ -194,14 +194,14 @@ public class Catapult {
 			}
 		} else {
 			if (location.distance(origin) <= length - distance) {
-				for (Entity entity : Methods.getEntitiesAroundPoint(location, 2)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
 					entity.setVelocity(direction.clone().multiply(
 							push * distance / length));
 				}
 				return false;
 			}
 		}
-		Methods.moveEarth(player, location.clone().subtract(direction),
+		EarthMethods.moveEarth(player, location.clone().subtract(direction),
 				direction, distance, false);
 		return true;
 	}

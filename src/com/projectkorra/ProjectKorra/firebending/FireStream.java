@@ -11,9 +11,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Methods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class FireStream {
 
@@ -41,7 +41,7 @@ public class FireStream {
 	private double range;
 
 	public FireStream(Location location, Vector direction, Player player, int range) {
-		this.range = Methods.getFirebendingDayAugment(range, player.getWorld());
+		this.range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
 		this.player = player;
 		origin = location.clone();
 		this.location = origin.clone();
@@ -94,7 +94,7 @@ public class FireStream {
 	}
 
 	private void ignite(Block block) {
-		if (Methods.isPlant(block)) {
+		if (WaterMethods.isPlant(block)) {
 			new Plantbending(block);
 		}
 

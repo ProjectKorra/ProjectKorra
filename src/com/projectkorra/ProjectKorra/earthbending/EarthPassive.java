@@ -11,7 +11,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 
@@ -24,13 +24,13 @@ public class EarthPassive {
 
 	public static boolean softenLanding(Player player) {
 		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
-		if (Methods.canMetalbend(player) && Methods.isMetalBlock(block)) {
+		if (EarthMethods.canMetalbend(player) && EarthMethods.isMetalBlock(block)) {
 			return true;
 		}
-		if (Methods.isEarthbendable(player, block) || Methods.isTransparentToEarthbending(player, block)) {
-			if (!Methods.isTransparentToEarthbending(player, block)) {
+		if (EarthMethods.isEarthbendable(player, block) || EarthMethods.isTransparentToEarthbending(player, block)) {
+			if (!EarthMethods.isTransparentToEarthbending(player, block)) {
 				Material type = block.getType();
-				if (Methods.isSolid(block.getRelative(BlockFace.DOWN))) {
+				if (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
 					block.setType(Material.SAND);
 					if (!sandblocks.containsKey(block)) {
 						sandidentities.put(block, type);
@@ -39,9 +39,9 @@ public class EarthPassive {
 				}
 			}
 			
-			for (Block affectedBlock: Methods.getBlocksAroundPoint(block.getLocation(), 2)) {
-				if (Methods.isEarthbendable(player, affectedBlock)) {
-					if (Methods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
+			for (Block affectedBlock: GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
+				if (EarthMethods.isEarthbendable(player, affectedBlock)) {
+					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
 						Material type = affectedBlock.getType();
 						affectedBlock.setType(Material.SAND);
 						if (!sandblocks.containsKey(affectedBlock)) {
@@ -54,7 +54,7 @@ public class EarthPassive {
 			return true;
 		}
 		
-		if (Methods.isEarthbendable(player, block) || Methods.isTransparentToEarthbending(player, block)) {
+		if (EarthMethods.isEarthbendable(player, block) || EarthMethods.isTransparentToEarthbending(player, block)) {
 			return true;
 		}
 		return false;
@@ -73,14 +73,13 @@ public class EarthPassive {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static void handleMetalPassives() {
 		for (Player player: Bukkit.getOnlinePlayers()) {
-			if (Methods.canBendPassive(player.getName(), Element.Earth) && Methods.canMetalbend(player)) {
-				if (player.isSneaking() && !Methods.getBendingPlayer(player.getName()).isOnCooldown("MetalPassive")) {
+			if (GeneralMethods.canBendPassive(player.getName(), Element.Earth) && EarthMethods.canMetalbend(player)) {
+				if (player.isSneaking() && !GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("MetalPassive")) {
 					Block block = player.getTargetBlock((HashSet<Material>) null, 5);
 					if (block == null) continue;
-					if (block.getType() == Material.IRON_DOOR_BLOCK && !Methods.isRegionProtectedFromBuild(player, null, block.getLocation())) {
+					if (block.getType() == Material.IRON_DOOR_BLOCK && !GeneralMethods.isRegionProtectedFromBuild(player, null, block.getLocation())) {
 						if (block.getData() >= 8) {
 							block = block.getRelative(BlockFace.DOWN);
 						}
@@ -93,7 +92,7 @@ public class EarthPassive {
 							block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
 						}
 						
-						Methods.getBendingPlayer(player.getName()).addCooldown("MetalPassive", 200);
+						GeneralMethods.getBendingPlayer(player.getName()).addCooldown("MetalPassive", 200);
 						
 //						Door door = (Door) block.getState().getData();
 //						if (door.isTopHalf()) {

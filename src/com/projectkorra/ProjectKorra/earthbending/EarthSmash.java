@@ -1,11 +1,8 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -16,14 +13,18 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class EarthSmash {
-	public static enum ClickType {
-		LEFTCLICK, RIGHTCLICK, SHIFT;
-	}
 	public static enum State {
 		START, LIFTING, LIFTED, GRABBED, SHOT, FLYING, REMOVED
 	}
@@ -66,13 +67,13 @@ public class EarthSmash {
 	private ArrayList<TempBlock> affectedBlocks = new ArrayList<TempBlock>();
 	
 	public EarthSmash(Player player, ClickType type) {
-		if(!Methods.hasPermission(player, "EarthSmash"))
+		if(!GeneralMethods.hasPermission(player, "EarthSmash"))
 			return;
 		this.player = player;
-		bplayer = Methods.getBendingPlayer(player.getName());
+		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		this.time = System.currentTimeMillis();
 		
-		if(type == ClickType.SHIFT && !player.isSneaking()) {		
+		if(type == ClickType.SHIFT_DOWN || type == ClickType.SHIFT_UP && !player.isSneaking()) {		
 			grabRange = GRAB_RANGE;
 			chargeTime = CHARGE_TIME;
 			cooldown = MAIN_COOLDOWN;
@@ -112,7 +113,7 @@ public class EarthSmash {
 				return;
 			}
 		}
-		else if(type == ClickType.LEFTCLICK && player.isSneaking()) {
+		else if(type == ClickType.LEFT_CLICK && player.isSneaking()) {
 			for(EarthSmash smash : instances) {
 				if(smash.state == State.GRABBED && smash.player == player) {
 					smash.state = State.SHOT;
@@ -123,7 +124,7 @@ public class EarthSmash {
 			}
 			return;
 		}
-		else if(type == ClickType.RIGHTCLICK && player.isSneaking()) {
+		else if(type == ClickType.RIGHT_CLICK && player.isSneaking()) {
 			EarthSmash grabbedSmash = aimingAtSmashCheck(player, State.GRABBED);
 			if(grabbedSmash != null) {
 				player.teleport(grabbedSmash.loc.clone().add(0, 2, 0));
@@ -152,14 +153,14 @@ public class EarthSmash {
 			}
 		}
 		else if(state == State.START) {
-			String ability = Methods.getBoundAbility(player);
+			String ability = GeneralMethods.getBoundAbility(player);
 			if(ability == null || !ability.equalsIgnoreCase("EarthSmash") || bplayer.isOnCooldown("EarthSmash")) {
 				remove();
 				return;
 			}
 		}
 		else if(state == State.START || state == State.FLYING || state == State.GRABBED) {
-			if(!Methods.canBend(player.getName(), "EarthSmash")) {
+			if(!GeneralMethods.canBend(player.getName(), "EarthSmash")) {
 				remove();
 				return;
 			}
@@ -168,7 +169,7 @@ public class EarthSmash {
 		if(state == State.START && progressCounter > 1) {
 			if(!player.isSneaking()) {
 				if(System.currentTimeMillis() - time > chargeTime) {
-					origin = Methods.getEarthSourceBlock(player, grabRange);
+					origin = BlockSource.getEarthSourceBlock(player, grabRange, ClickType.SHIFT_DOWN);
 					if(origin == null){
 						remove();
 						return;
@@ -204,11 +205,12 @@ public class EarthSmash {
 				
 				//Check to make sure the new location is available to move to
 				for(Block block : getBlocks())
-					if(block.getType() != Material.AIR && !Methods.isTransparentToEarthbending(player, block)) {
+					if(block.getType() != Material.AIR && !EarthMethods.isTransparentToEarthbending(player, block)) {
 						loc = oldLoc;
 						break;
 					}
-				Methods.removeSpouts(loc, 2, player);
+				WaterMethods.removeWaterSpouts(loc, 2, player);
+				AirMethods.removeAirSpouts(loc, 2, player);
 				draw();
 				return;
 			}
@@ -220,12 +222,12 @@ public class EarthSmash {
 		else if(state == State.SHOT) {
 			if(System.currentTimeMillis() - delay >= SHOOTING_ANIMATION_COOLDOWN) {
 				delay = System.currentTimeMillis();
-				if(Methods.isRegionProtectedFromBuild(player, "EarthSmash", loc)) {
+				if(GeneralMethods.isRegionProtectedFromBuild(player, "EarthSmash", loc)) {
 					remove();
 					return;
 				}
 				revert();
-				loc.add(Methods.getDirection(loc, destination).normalize().multiply(1));
+				loc.add(GeneralMethods.getDirection(loc, destination).normalize().multiply(1));
 				if(loc.distanceSquared(destination) < 4) {
 					remove();
 					return;
@@ -234,14 +236,15 @@ public class EarthSmash {
 				int badBlocksFound = 0;
 				for(Block block : getBlocks())
 					if(block.getType() != Material.AIR && 
-						(!Methods.isTransparentToEarthbending(player, block) || block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER))
+						(!EarthMethods.isTransparentToEarthbending(player, block) || block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER))
 						badBlocksFound++;
 				
 				if(badBlocksFound > MAX_BLOCKS_TO_PASS_THROUGH) {
 					remove();
 					return;
 				}
-				Methods.removeSpouts(loc, 2, player);
+				WaterMethods.removeWaterSpouts(loc, 2, player);
+				AirMethods.removeAirSpouts(loc, 2, player);
 				shootingCollisionDetection();
 				draw();
 				smashToSmashCollisionDetection();
@@ -256,16 +259,16 @@ public class EarthSmash {
 			else if(System.currentTimeMillis() - delay >= FLYING_ANIMATION_COOLDOWN)
 			{
 				delay = System.currentTimeMillis();
-				if(Methods.isRegionProtectedFromBuild(player, "EarthSmash", loc)) {
+				if(GeneralMethods.isRegionProtectedFromBuild(player, "EarthSmash", loc)) {
 					remove();
 					return;
 				}
 				revert();
 				destination = player.getEyeLocation().clone().add
 						(player.getEyeLocation().getDirection().normalize().multiply(shootRange));
-				Vector direction = Methods.getDirection(loc, destination).normalize();
+				Vector direction = GeneralMethods.getDirection(loc, destination).normalize();
 				
-				List<Entity> entities = Methods.getEntitiesAroundPoint(loc.clone().add(0,2,0), FLIGHT_DETECTION_RADIUS);
+				List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(loc.clone().add(0,2,0), FLIGHT_DETECTION_RADIUS);
 				if(entities.size() == 0){
 					remove();
 					return;
@@ -309,7 +312,7 @@ public class EarthSmash {
 					for(int y = -2; y <= -1; y++)
 						for(int z = -1; z <= 1; z++) {
 							Block block = loc.clone().add(x,y,z).getBlock();
-							if(Methods.isRegionProtectedFromBuild(player, "EarthSmash", block.getLocation())) {
+							if(GeneralMethods.isRegionProtectedFromBuild(player, "EarthSmash", block.getLocation())) {
 								remove();
 								return;
 							}
@@ -323,7 +326,7 @@ public class EarthSmash {
 				//Make sure there is a clear path upward otherwise remove
 				for(int y = 0; y <= 3; y++) {
 					Block tempBlock = loc.clone().add(0,y,0).getBlock();
-					if(!Methods.isTransparentToEarthbending(player, tempBlock) && tempBlock.getType() != Material.AIR) {
+					if(!EarthMethods.isTransparentToEarthbending(player, tempBlock) && tempBlock.getType() != Material.AIR) {
 						remove();
 						return;
 					}
@@ -344,13 +347,13 @@ public class EarthSmash {
 						if((Math.abs(x) + Math.abs(z)) % 2 == 1) {
 							Block block = loc.clone().add(x,-2,z).getBlock();
 							if(isEarthbendableMaterial(block.getType()))
-								Methods.addTempAirBlock(block);
+								EarthMethods.addTempAirBlock(block);
 						}	
 						
 						//Remove the first level of dirt
 						Block block = loc.clone().add(x,-1,z).getBlock();
 						if(isEarthbendableMaterial(block.getType()))
-								Methods.addTempAirBlock(block);
+								EarthMethods.addTempAirBlock(block);
 						
 					}
 				/*
@@ -362,7 +365,7 @@ public class EarthSmash {
 
 			}
 			//Move any entities that are above the rock
-			List<Entity> entities = Methods.getEntitiesAroundPoint(loc, 2.5);
+			List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(loc, 2.5);
 			for(Entity entity : entities) {
 				org.bukkit.util.Vector velocity = entity.getVelocity();
 				entity.setVelocity(velocity.add(new Vector(0,0.36,0)));
@@ -386,9 +389,9 @@ public class EarthSmash {
 		}
 		for(BlockRepresenter blockRep : currentBlocks) {
 			Block block = loc.clone().add(blockRep.getX(),blockRep.getY(),blockRep.getZ()).getBlock();
-			if(player != null && Methods.isTransparentToEarthbending(player,block)) {
+			if(player != null && EarthMethods.isTransparentToEarthbending(player,block)) {
 				affectedBlocks.add(new TempBlock(block, blockRep.getType(), blockRep.getData()));
-				Methods.tempNoEarthbending.add(block);
+				EarthMethods.tempNoEarthbending.add(block);
 			}
 		}
 	}	
@@ -397,7 +400,7 @@ public class EarthSmash {
 		checkRemainingBlocks();
 		for(int i = 0; i < affectedBlocks.size(); i++) {
 			TempBlock tblock = affectedBlocks.get(i);
-			Methods.tempNoEarthbending.remove(tblock.getBlock());
+			EarthMethods.tempNoEarthbending.remove(tblock.getBlock());
 			tblock.revertBlock();
 			affectedBlocks.remove(i);
 			i--;
@@ -492,7 +495,7 @@ public class EarthSmash {
 		if(!ALLOW_GRAB) 
 			return null;
 		@SuppressWarnings("deprecation")
-		List<Block> blocks = player.getLineOfSight(Methods.getTransparentEarthbending(), (int) Math.round(grabRange));
+		List<Block> blocks = player.getLineOfSight(EarthMethods.getTransparentEarthbending(), (int) Math.round(grabRange));
 		for(EarthSmash smash : instances) {
 			if(reqState == null || smash.state == reqState)
 				for(Block block : blocks)
@@ -508,15 +511,15 @@ public class EarthSmash {
 		 * This method handles any collision between an EarthSmash and the surrounding entities,
 		 * the method only applies to earthsmashes that have already been shot.
 		 */
-		List<Entity> entities = Methods.getEntitiesAroundPoint(loc, FLIGHT_DETECTION_RADIUS);
+		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(loc, FLIGHT_DETECTION_RADIUS);
 		for(Entity entity : entities)
 			if(entity instanceof LivingEntity 
 					&& entity != player
 					&& !affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
 				double damage = currentBlocks.size() / 13 * this.damage;
-				Methods.damageEntity(player, entity, damage);
-				Vector travelVec = Methods.getDirection(loc, entity.getLocation());
+				GeneralMethods.damageEntity(player, entity, damage);
+				Vector travelVec = GeneralMethods.getDirection(loc, entity.getLocation());
 				entity.setVelocity(travelVec.setY(knockup).normalize().multiply(knockback));
 			}
 	}	

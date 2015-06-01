@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra.earthbending;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,12 +12,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class LavaFlow {	
 	public static enum AbilityType {
@@ -90,13 +94,13 @@ public class LavaFlow {
 	 * @param type either shift or sneak
 	 */
 	public LavaFlow(Player player, AbilityType type) {
-		if(!Methods.canLavabend(player))
+		if(!EarthMethods.canLavabend(player))
 			return;
 		
 		time = System.currentTimeMillis();
 		this.player = player;
 		this.type = type;
-		bplayer = Methods.getBendingPlayer(player.getName());
+		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		
 		shiftCounter = 0;
 		currentRadius = 0;
@@ -163,7 +167,7 @@ public class LavaFlow {
 			instances.add(this);
 		}
 		else if(type == AbilityType.CLICK) {
-			Block sourceBlock = getEarthSourceBlock(player, clickRange);
+			Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, clickRange, ClickType.LEFT_CLICK);
 			if(sourceBlock == null) {
 				remove();
 				return;
@@ -227,18 +231,18 @@ public class LavaFlow {
 				return;
 			}
 
-			String ability = Methods.getBoundAbility(player);
+			String ability = GeneralMethods.getBoundAbility(player);
 			if(ability == null) {
 				remove();
 				return;
 			}
-			else if (!ability.equalsIgnoreCase("LavaFlow") || !Methods.canBend(player.getName(), "LavaFlow")) {
+			else if (!ability.equalsIgnoreCase("LavaFlow") || !GeneralMethods.canBend(player.getName(), "LavaFlow")) {
 				remove();
 				return;
 			}
 			else if(origin == null) {
 				origin = player.getLocation().clone().add(0,-1,0);
-				if(!Methods.isEarthbendable(player, origin.getBlock()) && origin.getBlock().getType() != Material.GLOWSTONE){
+				if(!EarthMethods.isEarthbendable(player, origin.getBlock()) && origin.getBlock().getType() != Material.GLOWSTONE){
 					remove();
 					return;
 				}
@@ -247,14 +251,14 @@ public class LavaFlow {
 			for(double x = -currentRadius; x <= currentRadius + PARTICLE_OFFSET; x++) {
 				for(double z = -currentRadius; z < currentRadius + PARTICLE_OFFSET; z++) {
 					Location loc = origin.clone().add(x,0,z);
-					Block block = Methods.getTopBlock(loc, upwardFlow, downwardFlow);
+					Block block = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
 					if(block == null)
 						continue;
 
 					double dSquared = distanceSquaredXZ(block.getLocation(),origin);	
 					if(!isLava(block) && dSquared > Math.pow(shiftPlatformRadius, 2)) {
 						if(dSquared < Math.pow(currentRadius, 2) 
-								&&	!Methods.isRegionProtectedFromBuild(player, "LavaFlow", block.getLocation())) {
+								&&	!GeneralMethods.isRegionProtectedFromBuild(player, "LavaFlow", block.getLocation())) {
 							if(dSquared < shiftPlatformRadius * 4 || getAdjacentLavaBlocks(block.getLocation()).size() > 0)
 								createLava(block);
 						}
@@ -297,7 +301,7 @@ public class LavaFlow {
 				for(double x = -clickLavaRadius; x <= clickLavaRadius; x++)
 					for(double z = -clickLavaRadius; z <= clickLavaRadius; z++) {							
 						Location loc = origin.clone().add(x,0,z);
-						Block tempBlock = Methods.getTopBlock(loc, upwardFlow, downwardFlow);
+						Block tempBlock = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
 						if(tempBlock != null 
 								&& !isLava(tempBlock) 
 								&& Math.random() < PARTICLE_DENSITY
@@ -317,12 +321,12 @@ public class LavaFlow {
 				for(double x = -radius; x <= radius; x++)
 					for(double z = -radius; z <= radius; z++) {
 						Location loc = origin.clone().add(x,0,z);
-						Block tempBlock = Methods.getTopBlock(loc, upwardFlow, downwardFlow);
+						Block tempBlock = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
 						if(tempBlock == null)
 							continue;
 
 						double dSquared = distanceSquaredXZ(tempBlock.getLocation(),origin);					
-						if(dSquared < Math.pow(radius,2) && !Methods.isRegionProtectedFromBuild(player, "LavaFlow", loc)) {
+						if(dSquared < Math.pow(radius,2) && !GeneralMethods.isRegionProtectedFromBuild(player, "LavaFlow", loc)) {
 							if(makeLava && !isLava(tempBlock)) {
 								clickIsFinished = false;
 								if(Math.random() < lavaCreateSpeed)
@@ -355,7 +359,7 @@ public class LavaFlow {
 	 */
 	public void createLava(Block block) {
 		boolean valid = false;
-		if(!isEarthbendableMaterial(block.getType(), player) && Methods.isPlant(block)) {
+		if(!isEarthbendableMaterial(block.getType(), player) && WaterMethods.isPlant(block)) {
 			new Plantbending(block);
 			block.setType(Material.AIR);
 			valid = true;
@@ -532,7 +536,7 @@ public class LavaFlow {
 		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks"))
 			if (mat == Material.getMaterial(s))
 				return true;
-		if (ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.MetalBlocks").contains(mat.toString()) && Methods.canMetalbend(player)) {
+		if (ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.MetalBlocks").contains(mat.toString()) && EarthMethods.canMetalbend(player)) {
 			return true;
 		}
 		return false;
@@ -540,38 +544,6 @@ public class LavaFlow {
 	
 	public static boolean isLava(Block block) {
 		return block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA;
-	}
-
-	/**
-	 * A version of Methods.getEarthSourceBlock but this one force
-	 * allows the use of Lava.
-	 * @param player the player that is viewing earth material
-	 * @param range the maximum range to locate a block
-	 * @return a block if one was found, else null
-	 */
-	public static Block getEarthSourceBlock(Player player, double range) {
-		HashSet<Byte> bendables = Methods.getTransparentEarthbending();
-		bendables.remove((byte) 10);
-		bendables.remove((byte) 11);
-		
-		@SuppressWarnings("deprecation")
-		Block testblock = player.getTargetBlock(bendables, (int) range);
-		if ((!Methods.isRegionProtectedFromBuild(player, "LavaFlow", testblock.getLocation()))
-				&& (isEarthbendableMaterial(testblock.getType(), player) || isLava(testblock)))
-			return testblock;
-
-		Location location = player.getEyeLocation();
-		Vector vector = location.getDirection().clone().normalize();
-		for (double i = 0; i <= range; i++) {
-			Block block = location.clone().add(vector.clone().multiply(i))
-					.getBlock();
-			if (Methods.isRegionProtectedFromBuild(player, "RaiseEarth", location))
-				continue;
-			if (isEarthbendableMaterial(testblock.getType(), player) || isLava(testblock)) {
-				return block;
-			}
-		}
-		return null;
 	}
 	
 	/**

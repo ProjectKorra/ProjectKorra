@@ -15,9 +15,10 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingManager;
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 public class Lightning {
 	public static enum State {
@@ -55,23 +56,25 @@ public class Lightning {
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<Arc> arcs = new ArrayList<Arc>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
+	private double i = 0.0D;
+	private double newY;
 
 	public Lightning(Player player) {
 		this.player = player;
-		bplayer = Methods.getBendingPlayer(player.getName());
+		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		charged = false;
 		hitWater = false;
 		hitIce = false;
 		time = System.currentTimeMillis();
-		range = Methods.getFirebendingDayAugment(RANGE, player.getWorld());
-		subArcChance = Methods.getFirebendingDayAugment(SUB_ARC_CHANCE, player.getWorld());
-		damage = Methods.getFirebendingDayAugment(DAMAGE, player.getWorld());
-		chainArcs = Methods.getFirebendingDayAugment(MAX_CHAIN_ARCS, player.getWorld());
-		chainArcChance = Methods.getFirebendingDayAugment(CHAIN_ARC_CHANCE, player.getWorld());
-		chainRange = Methods.getFirebendingDayAugment(CHAIN_ARC_RANGE, player.getWorld());
-		waterRange = Methods.getFirebendingDayAugment(WATER_ARC_RANGE, player.getWorld());
-		stunChance = Methods.getFirebendingDayAugment(STUN_CHANCE, player.getWorld());
-		stunDuration = Methods.getFirebendingDayAugment(STUN_DURATION, player.getWorld());
+		range = FireMethods.getFirebendingDayAugment(RANGE, player.getWorld());
+		subArcChance = FireMethods.getFirebendingDayAugment(SUB_ARC_CHANCE, player.getWorld());
+		damage = FireMethods.getFirebendingDayAugment(DAMAGE, player.getWorld());
+		chainArcs = FireMethods.getFirebendingDayAugment(MAX_CHAIN_ARCS, player.getWorld());
+		chainArcChance = FireMethods.getFirebendingDayAugment(CHAIN_ARC_CHANCE, player.getWorld());
+		chainRange = FireMethods.getFirebendingDayAugment(CHAIN_ARC_RANGE, player.getWorld());
+		waterRange = FireMethods.getFirebendingDayAugment(WATER_ARC_RANGE, player.getWorld());
+		stunChance = FireMethods.getFirebendingDayAugment(STUN_CHANCE, player.getWorld());
+		stunDuration = FireMethods.getFirebendingDayAugment(STUN_DURATION, player.getWorld());
 		chargeTime = CHARGETIME;
 		cooldown = COOLDOWN;
 		
@@ -106,7 +109,7 @@ public class Lightning {
 			removeWithTasks();
 			return;
 		}
-		else if (Methods.getBoundAbility(player) == null || !Methods.getBoundAbility(player).equalsIgnoreCase("Lightning")) {
+		else if (GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Lightning")) {
 			remove();
 			return;
 		}
@@ -122,12 +125,12 @@ public class Lightning {
 					Location loc = player.getEyeLocation().add(player.getEyeLocation()
 							.getDirection().normalize().multiply(1.2));
 					loc.add(0, 0.3, 0);
-					Methods.playLightningbendingParticle(loc, 0.2F, 0.2F, 0.2F);
+					FireMethods.playLightningbendingParticle(loc, 0.2F, 0.2F, 0.2F);
 				}
 				else {
 					state = State.MAINBOLT;
 					bplayer.addCooldown("Lightning", (long) cooldown);
-					Entity target = Methods.getTargetedEntity(player, range, new ArrayList<Entity>());
+					Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 					origin = player.getEyeLocation();
 					if(target != null)
 						destination = target.getLocation();
@@ -136,10 +139,28 @@ public class Lightning {
 								player.getEyeLocation().getDirection().normalize().multiply(range));
 				}
 			}
-			else if(!player.isSneaking()) {
-				remove();
-				return;
+			else{
+				if(!player.isSneaking()) {
+					remove();
+					return;
+				}
+				double d1 = 0.1570796326794897D;
+				double d2 = 0.06283185307179587D;
+				double d3 = 1.0D;
+				double d4 = 1.0D;
+				Location localLocation1 = player.getLocation();
+				double d5 = d1 * i;
+				double d6 = d2 * i;
+				newY = (localLocation1.getY() + 1.0D + d4 * Math.cos(d6));
+				double d7 = localLocation1.getX() + d4 * Math.cos(d5);
+				double d8 = localLocation1.getZ() + d4 * Math.sin(d5);
+				Location localLocation2 = new Location(player.getWorld(), d7, newY, d8);
+				
+				FireMethods.playLightningbendingParticle(localLocation2);
+				
+				i += 1.0D / d3;
 			}
+			
 		}
 		else if(state == State.MAINBOLT) {
 			Arc mainArc = new Arc(origin, destination);
@@ -168,7 +189,7 @@ public class Lightning {
 						double timer = arc.getAnimLocs().get(j).getAnimCounter() / 2;
 						task.runTaskTimer(ProjectKorra.plugin, (long) timer, 1);
 						tasks.add(task);						
-						iterLoc.add(Methods.getDirection(iterLoc, dest).normalize().multiply(0.15));
+						iterLoc.add(GeneralMethods.getDirection(iterLoc, dest).normalize().multiply(0.15));
 					}
 				}
 				arcs.remove(i);
@@ -189,8 +210,8 @@ public class Lightning {
 	 */
 	@SuppressWarnings("deprecation")
 	public boolean isTransparent(Player player, Block block) {
-		if (Arrays.asList(Methods.transparentToEarthbending).contains(block.getTypeId())) {
-			if(Methods.isRegionProtectedFromBuild(player, "Lightning", block.getLocation()))
+		if (Arrays.asList(EarthMethods.transparentToEarthbending).contains(block.getTypeId())) {
+			if(GeneralMethods.isRegionProtectedFromBuild(player, "Lightning", block.getLocation()))
 				return false;
 			else if(isIce(block.getLocation()))
 				return ARC_ON_ICE;
@@ -207,7 +228,7 @@ public class Lightning {
 	public void electrocute(LivingEntity lent) {
 		lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
 		player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
-		Methods.damageEntity(player, lent, damage);
+		GeneralMethods.damageEntity(player, lent, damage);
 		if(Math.random() < stunChance) {
 			final Location lentLoc = lent.getLocation();
 			final LivingEntity flent = lent;
@@ -326,7 +347,7 @@ public class Lightning {
 			points = new ArrayList<Location>();
 			points.add(startPoint.clone());
 			points.add(endPoint.clone());
-			direction = Methods.getDirection(startPoint, endPoint);
+			direction = GeneralMethods.getDirection(startPoint, endPoint);
 			particles = new ArrayList<LightningParticle>();
 			subArcs = new ArrayList<Arc>();
 			animLocs = new ArrayList<AnimLocation>();
@@ -353,7 +374,7 @@ public class Lightning {
 					angle += angle >= 0 ? 10 : -10;
 					double radians = Math.toRadians(angle);
 					double hypot = adjac / Math.cos(radians);
-					Vector dir = Methods.rotateXZ(direction.clone(), angle);
+					Vector dir = GeneralMethods.rotateXZ(direction.clone(), angle);
 					Location newLoc = loc1.clone().add(dir.normalize().multiply(hypot));
 					newLoc.add(0, (Math.random() - 0.5) / 2.0, 0);
 					points.add(j + 1, newLoc);
@@ -377,7 +398,7 @@ public class Lightning {
 				if(Math.random() < chance) {
 					Location loc = animLocs.get(i).getLoc();
 					double angle = (Math.random() - 0.5) * MAX_ARC_ANGLE * 2;
-					Vector dir = Methods.rotateXZ(direction.clone(), angle);
+					Vector dir = GeneralMethods.rotateXZ(direction.clone(), angle);
 					double randRange = (Math.random() * range) + (range / 3.0);
 					Location loc2 = loc.clone().add(dir.normalize().multiply(randRange));
 					Arc arc = new Arc(loc, loc2);
@@ -506,7 +527,7 @@ public class Lightning {
 		 * and also deals with any chain subarcs.
 		 */
 		public void run() {
-			Methods.playLightningbendingParticle(loc, 0F, 0F, 0F);
+			FireMethods.playLightningbendingParticle(loc, 0F, 0F, 0F);
 			count++;
 			if(count > 5)
 				this.cancel();
@@ -532,7 +553,7 @@ public class Lightning {
 					}
 				}
 				
-				for(Entity entity : Methods.getEntitiesAroundPoint(loc, 2.5)) {
+				for(Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
 					/*
 					 * If the player is in water we will electrocute them only if they are standing in water.
 					 * If the lightning hit ice we can electrocute them all the time.
@@ -561,7 +582,7 @@ public class Lightning {
 						// Handle Chain Lightning
 						if(chainArcs >= 1 && Math.random() <= chainArcChance) {
 							chainArcs--;
-							for(Entity ent : Methods.getEntitiesAroundPoint(lent.getLocation(), chainRange)) {
+							for(Entity ent : GeneralMethods.getEntitiesAroundPoint(lent.getLocation(), chainRange)) {
 								if(!ent.equals(player) && !ent.equals(lent) && ent instanceof LivingEntity && !affectedEntities.contains(ent)) {
 									origin = lent.getLocation().add(0, 1, 0);
 									destination = ent.getLocation().add(0, 1, 0);
@@ -700,5 +721,19 @@ public class Lightning {
 
 	public void setHitIce(boolean hitIce) {
 		this.hitIce = hitIce;
+	}
+	
+	public ArrayList<Arc> getArcs() {
+		return this.arcs;
+	}
+	
+	public static ArrayList<Arc> getAllArcs() {
+		ArrayList<Arc> a = new ArrayList<Arc>();
+		for(Lightning l : Lightning.instances) {
+			for(Arc arcs : l.getArcs()) {
+				a.add(arcs);
+			}
+		}
+		return a;
 	}
 }

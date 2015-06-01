@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager.ChiCombo;
 
@@ -19,14 +19,14 @@ public class QuickStrike
 		if(!isEligible(player))
 			return;
 		
-		Entity e = Methods.getTargetedEntity(player, 2, new ArrayList<Entity>());
+		Entity e = GeneralMethods.getTargetedEntity(player, 2, new ArrayList<Entity>());
 		
 		if(e == null)
 			return;
 		
-		Methods.damageEntity(player, e, damage);
+		GeneralMethods.damageEntity(player, e, damage);
 		
-		if(Methods.rand.nextInt(100) < blockChance && e instanceof Player)
+		if(GeneralMethods.rand.nextInt(100) < blockChance && e instanceof Player)
 		{
 			ChiPassive.blockChi((Player) e);
 		}
@@ -36,16 +36,16 @@ public class QuickStrike
 	
 	public boolean isEligible(Player player)
 	{
-		if(!Methods.canBend(player.getName(), "QuickStrike"))
+		if(!GeneralMethods.canBend(player.getName(), "QuickStrike"))
 			return false;
 		
-		if(Methods.getBoundAbility(player) == null)
+		if(GeneralMethods.getBoundAbility(player) == null)
 			return false;
 		
-		if(!Methods.getBoundAbility(player).equalsIgnoreCase("QuickStrike"))
+		if(!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("QuickStrike"))
 			return false;
 		
-		if(Methods.isRegionProtectedFromBuild(player, "QuickStrike", player.getLocation()))
+		if(GeneralMethods.isRegionProtectedFromBuild(player, "QuickStrike", player.getLocation()))
 			return false;
 		
 		return true;

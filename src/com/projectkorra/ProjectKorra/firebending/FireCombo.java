@@ -1,11 +1,8 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.*;
-import com.projectkorra.ProjectKorra.ComboManager.ClickType;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,8 +15,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
+import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
+import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class FireCombo {
 	public static final List<String> abilitiesToBlock = new ArrayList<String>() {
@@ -97,23 +105,23 @@ public class FireCombo {
 
 	public FireCombo(Player player, String ability) {
 		// Dont' call Methods.canBind directly, it doesn't let you combo as fast
-		if (!enabled || !player.hasPermission("bending.ability.FireCombo"))
+		if (!enabled)
 			return;
-		if(!Methods.getBendingPlayer(player.getName()).hasElement(Element.Fire))
+		if(!GeneralMethods.getBendingPlayer(player.getName()).hasElement(Element.Fire))
 			return;
 		if (Commands.isToggledForAll) 
 			return;
-		if (Methods.isRegionProtectedFromBuild(player, "Blaze",
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze",
 				player.getLocation()))
 			return;
-		if (!Methods.getBendingPlayer(player.getName()).isToggled()) 
+		if (!GeneralMethods.getBendingPlayer(player.getName()).isToggled()) 
 			return;
 		time = System.currentTimeMillis();
 		this.player = player;
 		this.ability = ability;
-		this.bplayer = Methods.getBendingPlayer(player.getName());
+		this.bplayer = GeneralMethods.getBendingPlayer(player.getName());
 
-		if (Methods.isChiBlocked(player.getName())
+		if (ChiMethods.isChiBlocked(player.getName())
 				|| Bloodbending.isBloodbended(player)
 				|| Paralyze.isParalyzed(player)) {
 			return;
@@ -182,9 +190,9 @@ public class FireCombo {
 				player.getWorld().playSound(player.getLocation(), Sound.FIZZ,
 						0.5f, 1f);
 				for (int i = -30; i <= 30; i += 5) {
-					Vector vec = Methods.getDirection(player.getLocation(),
+					Vector vec = GeneralMethods.getDirection(player.getLocation(),
 							destination.clone());
-					vec = Methods.rotateXZ(vec, i);
+					vec = GeneralMethods.rotateXZ(vec, i);
 
 					FireComboStream fs = new FireComboStream(this, vec,
 							player.getLocation(), range, speed);
@@ -200,7 +208,7 @@ public class FireCombo {
 				}
 				currentLoc = ((FireComboStream) tasks.get(0)).getLocation();
 				for (FireComboStream stream : tasks)
-					if (Methods.blockAbilities(player, abilitiesToBlock,
+					if (GeneralMethods.blockAbilities(player, abilitiesToBlock,
 							stream.currentLoc, 2))
 						stream.remove();
 			} else if (tasks.size() == 0) {
@@ -220,9 +228,9 @@ public class FireCombo {
 						0.5f, 0.5f);
 
 				for (int i = 0; i <= 360; i += 5) {
-					Vector vec = Methods.getDirection(player.getLocation(),
+					Vector vec = GeneralMethods.getDirection(player.getLocation(),
 							destination.clone());
-					vec = Methods.rotateXZ(vec, i - 180);
+					vec = GeneralMethods.rotateXZ(vec, i - 180);
 					vec.setY(0);
 
 					FireComboStream fs = new FireComboStream(this, vec, player
@@ -240,9 +248,12 @@ public class FireCombo {
 				remove();
 				return;
 			}
-			for (FireComboStream stream : tasks)
-				if (Methods.isWithinShields(stream.getLocation()))
+			for (FireComboStream stream : tasks) {
+				if (FireMethods.isWithinFireShield(stream.getLocation()))
 					stream.remove();
+				if (AirMethods.isWithinAirShield(stream.getLocation()))
+					stream.remove();
+			}
 		} else if (ability.equalsIgnoreCase("JetBlast")) {
 			if (System.currentTimeMillis() - time > 5000) {
 				remove();
@@ -319,7 +330,7 @@ public class FireCombo {
 				bplayer.addCooldown("FireWheel", cooldown);
 				origin = player.getLocation();
 				
-				if (Methods.getTopBlock(player.getLocation(), 3, 3) == null) {
+				if (GeneralMethods.getTopBlock(player.getLocation(), 3, 3) == null) {
 					remove();
 					return;
 				}
@@ -333,15 +344,15 @@ public class FireCombo {
 				return;
 			}
 
-			Block topBlock = Methods.getTopBlock(currentLoc, 2, -4);
+			Block topBlock = GeneralMethods.getTopBlock(currentLoc, 2, -4);
 			if (topBlock == null
-					|| (Methods.isWaterbendable(topBlock, player) && !Methods
+					|| (WaterMethods.isWaterbendable(topBlock, player) && !WaterMethods
 							.isPlant(topBlock))) {
 				remove();
 				return;
 			}
 			if (topBlock.getType() == Material.FIRE
-					|| Methods.isPlant(topBlock))
+					|| WaterMethods.isPlant(topBlock))
 				topBlock = topBlock.getLocation().add(0, -1, 0).getBlock();
 			currentLoc.setY(topBlock.getY() + FIRE_WHEEL_STARTING_HEIGHT);
 
@@ -366,7 +377,7 @@ public class FireCombo {
 
 			currentLoc = currentLoc.add(direction.clone().multiply(speed));
 			currentLoc.getWorld().playSound(currentLoc, Sound.FIRE, 1, 1);
-			if (Methods.blockAbilities(player, abilitiesToBlock, currentLoc, 2)) {
+			if (GeneralMethods.blockAbilities(player, abilitiesToBlock, currentLoc, 2)) {
 				remove();
 				return;
 			}
@@ -379,14 +390,14 @@ public class FireCombo {
 
 	public void checkSafeZone() {
 		if (currentLoc != null
-				&& Methods.isRegionProtectedFromBuild(player, "Blaze",
+				&& GeneralMethods.isRegionProtectedFromBuild(player, "Blaze",
 						currentLoc))
 			remove();
 	}
 
 	public void collision(LivingEntity entity, Vector direction,
 			FireComboStream fstream) {
-		if (Methods.isRegionProtectedFromBuild(player, "Blaze",
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze",
 				entity.getLocation()))
 			return;
 		entity.getLocation()
@@ -394,24 +405,24 @@ public class FireCombo {
 				.playSound(entity.getLocation(), Sound.VILLAGER_HIT, 0.3f, 0.3f);
 
 		if (ability.equalsIgnoreCase("FireKick")) {
-			Methods.damageEntity(player, entity, damage);
+			GeneralMethods.damageEntity(player, entity, damage);
 			fstream.remove();
 		} else if (ability.equalsIgnoreCase("FireSpin")) {
 			double knockback = AvatarState.isAvatarState(player) ? FIRE_SPIN_KNOCKBACK + 0.5
 					: FIRE_SPIN_KNOCKBACK;
-			Methods.damageEntity(player, entity, damage);
+			GeneralMethods.damageEntity(player, entity, damage);
 			entity.setVelocity(direction.normalize().multiply(knockback));
 			fstream.remove();
 		} else if (ability.equalsIgnoreCase("JetBlaze")) {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
-				Methods.damageEntity(player, entity, damage);
+				GeneralMethods.damageEntity(player, entity, damage);
 				entity.setFireTicks((int) (BURN_TIME * 20));
 			}
 		} else if (ability.equalsIgnoreCase("FireWheel")) {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
-				Methods.damageEntity(player, entity, damage);
+				GeneralMethods.damageEntity(player, entity, damage);
 				entity.setFireTicks((int) (BURN_TIME * 20));
 				this.remove();
 			}
@@ -541,7 +552,7 @@ public class FireCombo {
 		public void run() {
 			Block block = currentLoc.getBlock();
 			if (block.getRelative(BlockFace.UP).getType() != Material.AIR
-					&& !Methods.isPlant(block)) {
+					&& !WaterMethods.isPlant(block)) {
 				remove();
 				return;
 			}
@@ -560,7 +571,7 @@ public class FireCombo {
 				return;
 			} else if (collides
 					&& checkCollisionCounter % checkCollisionDelay == 0) {
-				for (Entity entity : Methods.getEntitiesAroundPoint(currentLoc,
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(currentLoc,
 						collisionRadius)) {
 					if (entity instanceof LivingEntity
 							&& !entity.equals(fireCombo.getPlayer()))

@@ -13,7 +13,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.TempPotionEffect;
@@ -45,14 +45,14 @@ public class EarthArmor {
 			return;
 		}
 		
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		
 		if (bPlayer.isOnCooldown("EarthArmor")) return;
 
 		this.player = player;
-		headblock = player.getTargetBlock(Methods.getTransparentEarthbending(),
+		headblock = player.getTargetBlock(EarthMethods.getTransparentEarthbending(),
 				range);
-		if (Methods.getEarthbendableBlocksLength(player, headblock, new Vector(0,-1, 0), 2) >= 2) {
+		if (EarthMethods.getEarthbendableBlocksLength(player, headblock, new Vector(0,-1, 0), 2) >= 2) {
 			legsblock = headblock.getRelative(BlockFace.DOWN);
 			headtype = headblock.getType();
 			legstype = legsblock.getType();
@@ -66,11 +66,11 @@ public class EarthArmor {
 			if (!moveBlocks())
 				return;
 			if (ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
-				Methods.addTempAirBlock(oldheadblock);
-				Methods.addTempAirBlock(oldlegsblock);
+				EarthMethods.addTempAirBlock(oldheadblock);
+				EarthMethods.addTempAirBlock(oldlegsblock);
 			} else {
-				Methods.removeBlock(oldheadblock);
-				Methods.removeBlock(oldlegsblock);
+				GeneralMethods.removeBlock(oldheadblock);
+				GeneralMethods.removeBlock(oldlegsblock);
 			}
 			instances.put(player, this);
 		}
@@ -103,18 +103,18 @@ public class EarthArmor {
 			newlegsblock = legsblocklocation.getBlock();
 		}
 
-		if (Methods.isTransparentToEarthbending(player, newheadblock) && !newheadblock.isLiquid()) {
-			Methods.breakBlock(newheadblock);
-		} else if (!Methods.isEarthbendable(player, newheadblock)
+		if (EarthMethods.isTransparentToEarthbending(player, newheadblock) && !newheadblock.isLiquid()) {
+			GeneralMethods.breakBlock(newheadblock);
+		} else if (!EarthMethods.isEarthbendable(player, newheadblock)
 				&& !newheadblock.isLiquid()
 				&& newheadblock.getType() != Material.AIR) {
 			cancel();
 			return false;
 		}
 
-		if (Methods.isTransparentToEarthbending(player, newlegsblock) && !newlegsblock.isLiquid()) {
-			Methods.breakBlock(newlegsblock);
-		} else if (!Methods.isEarthbendable(player, newlegsblock)
+		if (EarthMethods.isTransparentToEarthbending(player, newlegsblock) && !newlegsblock.isLiquid()) {
+			GeneralMethods.breakBlock(newlegsblock);
+		} else if (!EarthMethods.isEarthbendable(player, newlegsblock)
 				&& !newlegsblock.isLiquid()
 				&& newlegsblock.getType() != Material.AIR) {
 			cancel();

@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Tornado {
@@ -77,11 +77,11 @@ public class Tornado {
 			instances.remove(player.getEntityId());
 			return false;
 		}
-		if (!Methods.canBend(player.getName(), "Tornado") || player.getEyeLocation().getBlock().isLiquid()) {
+		if (!GeneralMethods.canBend(player.getName(), "Tornado") || player.getEyeLocation().getBlock().isLiquid()) {
 			instances.remove(player.getEntityId());
 			return false;
 		}
-		String abil = Methods.getBoundAbility(player);
+		String abil = GeneralMethods.getBoundAbility(player);
 		if (abil == null) {
 			instances.remove(player.getEntityId());
 			return false;
@@ -91,7 +91,7 @@ public class Tornado {
 			return false;
 		}
 
-		if (Methods.isRegionProtectedFromBuild(player, "AirBlast", origin)) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", origin)) {
 			instances.remove(player.getEntityId());
 			return false;
 		}
@@ -108,8 +108,8 @@ public class Tornado {
 		if (origin.getBlock().getType() != Material.AIR) {
 			origin.setY(origin.getY() - 1. / 10. * height);
 
-			for (Entity entity : Methods.getEntitiesAroundPoint(origin, height)) {
-				if (Methods.isRegionProtectedFromBuild(player, "AirBlast", entity.getLocation()))
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, height)) {
+				if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", entity.getLocation()))
 					continue;
 				double y = entity.getLocation().getY();
 				double factor;
@@ -160,10 +160,10 @@ public class Tornado {
 						velocity.setZ(vz);
 						velocity.setY(vy);
 						velocity.multiply(timefactor);
-						Methods.setVelocity(entity, velocity);
+						GeneralMethods.setVelocity(entity, velocity);
 						entity.setFallDistance(0);
 						
-						Methods.breakBreathbendingHold(entity);
+						AirMethods.breakBreathbendingHold(entity);
 
 						if (entity instanceof Player) {
 							new Flight((Player) entity);
@@ -185,10 +185,10 @@ public class Tornado {
 				z = origin.getZ() + timefactor * factor * radius * Math.sin(angle);
 
 				Location effect = new Location(origin.getWorld(), x, y, z);
-				if (!Methods.isRegionProtectedFromBuild(player, "AirBlast", effect)) {
-					Methods.playAirbendingParticles(effect, 20);
-					if (Methods.rand.nextInt(20) == 0) {
-						Methods.playAirbendingSound(effect);
+				if (!GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", effect)) {
+					AirMethods.playAirbendingParticles(effect, 20);
+					if (GeneralMethods.rand.nextInt(20) == 0) {
+						AirMethods.playAirbendingSound(effect);
 					}		
 				}
 //					origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int) AirBlast.defaultrange);

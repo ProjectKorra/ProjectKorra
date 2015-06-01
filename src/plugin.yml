@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.6.0
+version: 1.7.0 BETA 7
 main: com.projectkorra.ProjectKorra.ProjectKorra
 softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC]
 commands:
@@ -31,6 +31,9 @@ permissions:
       bending.command.invincible: true
       bending.admin.debug: true
       bending.admin.remove: true
+      bending.ability.WaterArms.Grab: true
+      bending.ability.WaterArms.Freeze: true
+      bending.ability.WaterArms.Spear: true
   bending.player:
     default: true
     description: Grants access to most abilities and basic commands.
@@ -57,6 +60,8 @@ permissions:
     default: true
     description: Grants access to all airbending abilities.
     children:
+      bending.command.add.air: true
+      bending.command.choose.air: true
       bending.ability.AirBlast: true
       bending.ability.AirBubble: true
       bending.ability.AirBurst: true
@@ -74,6 +79,8 @@ permissions:
     default: true
     description: Grants access to most waterbending abilities.
     children:
+      bending.command.add.water: true
+      bending.command.choose.water: true
       bending.ability.HealingWaters: true
       bending.ability.IceBlast: true
       bending.ability.IceSpike: true
@@ -91,10 +98,16 @@ permissions:
       bending.water.passive: true
       bending.water.icebending: true
       bending.water.healing: true
+      bending.ability.WaterArms: true
+      bending.ability.WaterArms.Pull: true
+      bending.ability.WaterArms.Punch: true
+      bending.ability.WaterArms.Grapple: true
   bending.earth:
     default: true
     description: Grants access to all Earthbending abilities.
     children:
+      bending.command.add.earth: true
+      bending.command.choose.earth: true
       bending.ability.Catapult: true
       bending.ability.Collapse: true
       bending.ability.EarthArmor: true
@@ -120,6 +133,8 @@ permissions:
     default: true
     description: Grants access to all firebending abilities.
     children:
+      bending.command.add.fire: true
+      bending.command.choose.fire: true
       bending.ability.Blaze: true
       bending.ability.FireBlast: true
       bending.ability.FireBurst: true
@@ -139,6 +154,8 @@ permissions:
     default: true
     description: Grants access to all ChiBlocking abilities.
     children:
+      bending.command.add.chi: true
+      bending.command.choose.chi: true
       bending.ability.HighJump: true
       bending.ability.Paralyze: true
       bending.ability.RapidPunch: true
@@ -156,3 +173,27 @@ permissions:
   bending.ability.MetalClips.loot:
     default: false
     description: Lets a Metalbender loot a player's inventory of its iron.
+  bending.ability.AirCombo:
+    default: false
+    description: Grants access to all AirCombos.
+    children:
+        bending.ability.AirSweep: true
+        bending.ability.AirStream: true
+        bending.ability.Tornado: true
+  bending.ability.WaterCombo:
+    default: false
+    description: Grants access to all WaterCombos.
+    children:
+        bending.ability.IceWave: true
+        bending.ability.IceBullet: true
+        bending.ability.IceBulletLeftClick: true
+        bending.ability.IceBulletRightClick: true
+  bending.ability.FireCombo:
+    default: false
+    description: Grants access to all FireCombos.
+    children:
+        bending.ability.FireKick: true
+        bending.ability.FireSpin: true
+        bending.ability.JetBlast: true
+        bending.ability.JetBlaze: true
+        bending.ability.FireWheel: true

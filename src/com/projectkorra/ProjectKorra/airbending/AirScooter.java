@@ -11,7 +11,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class AirScooter {
@@ -35,10 +35,10 @@ public class AirScooter {
 			return;
 		}
 		if (!player.isSprinting()
-				|| Methods.isSolid(player.getEyeLocation().getBlock())
+				|| GeneralMethods.isSolid(player.getEyeLocation().getBlock())
 				|| player.getEyeLocation().getBlock().isLiquid())
 			return;
-		if (Methods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
+		if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
 			return;
 		this.player = player;
 		// wasflying = player.isFlying();
@@ -62,7 +62,7 @@ public class AirScooter {
 			remove();
 			return;
 		}
-		if (!Methods.canBend(player.getName(), "AirScooter")) {
+		if (!GeneralMethods.canBend(player.getName(), "AirScooter")) {
 			remove();
 			return;
 		}
@@ -71,7 +71,7 @@ public class AirScooter {
 			return;
 		}
 
-		if (Methods.isRegionProtectedFromBuild(player, "AirScooter",
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirScooter",
 				player.getLocation())) {
 			remove();
 			return;
@@ -117,8 +117,8 @@ public class AirScooter {
 		player.setSprinting(false);
 		player.removePotionEffect(PotionEffectType.SPEED);
 		player.setVelocity(velocity);
-		if (Methods.rand.nextInt(4) == 0) {
-			Methods.playAirbendingSound(player.getLocation());
+		if (GeneralMethods.rand.nextInt(4) == 0) {
+			AirMethods.playAirbendingSound(player.getLocation());
 		}
 	}
 
@@ -129,7 +129,7 @@ public class AirScooter {
 			double x = Math.cos(Math.toRadians(angles.get(i))) * scooterradius;
 			double y = ((double) i) / 2 * scooterradius - scooterradius;
 			double z = Math.sin(Math.toRadians(angles.get(i))) * scooterradius;
-			Methods.playAirbendingParticles(origin.clone().add(x, y, z), 10);
+			AirMethods.playAirbendingParticles(origin.clone().add(x, y, z), 10);
 //			player.getWorld().playEffect(origin.clone().add(x, y, z),
 //					Effect.SMOKE, 4, (int) AirBlast.defaultrange);
 		}
@@ -143,7 +143,7 @@ public class AirScooter {
 		for (int i = 0; i <= 7; i++) {
 			Block block = player.getEyeLocation().getBlock()
 					.getRelative(BlockFace.DOWN, i);
-			if (Methods.isSolid(block) || block.isLiquid()) {
+			if (GeneralMethods.isSolid(block) || block.isLiquid()) {
 				floorblock = block;
 				return;
 			}

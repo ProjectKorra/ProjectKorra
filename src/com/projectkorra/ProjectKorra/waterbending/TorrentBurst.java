@@ -11,9 +11,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 public class TorrentBurst {
 
@@ -59,8 +60,8 @@ public class TorrentBurst {
 		origin = location.clone();
 		time = System.currentTimeMillis();
 		id = ID++;
-		factor = Methods.waterbendingNightAugment(factor, world);
-		maxradius = Methods.waterbendingNightAugment(maxradius, world);
+		factor = WaterMethods.waterbendingNightAugment(factor, world);
+		maxradius = WaterMethods.waterbendingNightAugment(maxradius, world);
 		this.radius = radius;
 		if (ID >= Integer.MAX_VALUE) {
 			ID = Integer.MIN_VALUE;
@@ -88,7 +89,7 @@ public class TorrentBurst {
 			return;
 		}
 
-		if (!Methods.canBend(player.getName(), "Torrent")) {
+		if (!GeneralMethods.canBend(player.getName(), "Torrent")) {
 			remove();
 			return;
 		}
@@ -119,7 +120,7 @@ public class TorrentBurst {
 		affectedentities.clear();
 
 		ArrayList<Entity> indexlist = new ArrayList<Entity>();
-		indexlist.addAll(Methods.getEntitiesAroundPoint(origin, radius + 2));
+		indexlist.addAll(GeneralMethods.getEntitiesAroundPoint(origin, radius + 2));
 
 		ArrayList<Block> torrentblocks = new ArrayList<Block>();
 
@@ -138,7 +139,7 @@ public class TorrentBurst {
 				Block block = location.getBlock();
 				if (torrentblocks.contains(block))
 					continue;
-				if (Methods.isTransparentToEarthbending(player,	block)) {
+				if (EarthMethods.isTransparentToEarthbending(player,	block)) {
 					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 					blocks.add(tempBlock);
 					torrentblocks.add(block);
@@ -156,8 +157,8 @@ public class TorrentBurst {
 				}
 				
 				for(Block sound : torrentblocks) {
-					if (Methods.rand.nextInt(50) == 0) {
-						Methods.playWaterbendingSound(sound.getLocation());
+					if (GeneralMethods.rand.nextInt(50) == 0) {
+						WaterMethods.playWaterbendingSound(sound.getLocation());
 					}		
 				}
 			}
@@ -169,7 +170,7 @@ public class TorrentBurst {
 	}
 
 	private void affect(Entity entity) {
-		Vector direction = Methods.getDirection(origin, entity.getLocation());
+		Vector direction = GeneralMethods.getDirection(origin, entity.getLocation());
 		direction.setY(0);
 		direction.normalize();
 		entity.setVelocity(entity.getVelocity().clone().add(direction.multiply(factor)));

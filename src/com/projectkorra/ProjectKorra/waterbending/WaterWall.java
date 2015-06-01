@@ -12,10 +12,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
 public class WaterWall {
@@ -83,7 +86,7 @@ public class WaterWall {
 			time = System.currentTimeMillis();
 		}
 
-		BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 		if (bPlayer.isOnCooldown("Surge")) return;
 
@@ -91,8 +94,8 @@ public class WaterWall {
 
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-			if (Methods.isTransparentToEarthbending(player, block)
-					&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+			if (EarthMethods.isTransparentToEarthbending(player, block)
+					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData(full);
 				Wave wave = new Wave(player);
@@ -115,7 +118,7 @@ public class WaterWall {
 	}
 
 	private void freezeThaw() {
-		if(!Methods.canIcebend(player))
+		if(!WaterMethods.canIcebend(player))
 			return;
 		
 		if (frozen) {
@@ -130,7 +133,7 @@ public class WaterWall {
 		for (Block block : wallblocks.keySet()) {
 			if (wallblocks.get(block) == player) {
 				new TempBlock(block, Material.ICE, (byte) 0);
-				Methods.playIcebendingSound(block.getLocation());
+				WaterMethods.playIcebendingSound(block.getLocation());
 			}
 		}
 	}
@@ -147,7 +150,8 @@ public class WaterWall {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = Methods.getWaterSourceBlock(player, range, Methods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, 
+				true, true, WaterMethods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -182,7 +186,7 @@ public class WaterWall {
 	@SuppressWarnings("deprecation")
 	public void moveWater() {
 		if (sourceblock != null) {
-			targetdestination = player.getTargetBlock(Methods.getTransparentEarthbending(), (int) range).getLocation();
+			targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) range).getLocation();
 
 			if (targetdestination.distance(location) <= 1) {
 				progressing = false;
@@ -193,9 +197,9 @@ public class WaterWall {
 				firstdestination = getToEyeLevel();
 				firstdirection = getDirection(sourceblock.getLocation(), firstdestination);
 				targetdirection = getDirection(firstdestination, targetdestination);
-				if (Methods.isPlant(sourceblock))
+				if (WaterMethods.isPlant(sourceblock))
 					new Plantbending(sourceblock);
-				if (!Methods.isAdjacentToThreeOrMoreSources(sourceblock)) {
+				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceblock)) {
 					sourceblock.setType(Material.AIR);
 				}
 				addWater(sourceblock);
@@ -238,7 +242,7 @@ public class WaterWall {
 			// instances.remove(player.getEntityId());
 			return false;
 		}
-		if (!Methods.canBend(player.getName(), "Surge")) {
+		if (!GeneralMethods.canBend(player.getName(), "Surge")) {
 			//if (!forming)
 				// removeWater(oldwater);
 			breakBlock();
@@ -254,18 +258,18 @@ public class WaterWall {
 				// removeWater(oldwater);
 			}
 
-			if (Methods.getBoundAbility(player) == null) {
+			if (GeneralMethods.getBoundAbility(player) == null) {
 				unfocusBlock();
 				return false;
 			}
 			if (!progressing
-					&& !Methods.getBoundAbility(player).equalsIgnoreCase("Surge")) {
+					&& !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge")) {
 				unfocusBlock();
 				return false;
 			}
 
 			if (progressing
-					&& (!player.isSneaking() || !Methods.getBoundAbility(player).equalsIgnoreCase("Surge"))) {
+					&& (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge"))) {
 				breakBlock();
 				returnWater();
 				return false;
@@ -277,28 +281,28 @@ public class WaterWall {
 			}
 
 			if (forming) {
-				if (Methods.rand.nextInt(7) == 0) {
-					Methods.playWaterbendingSound(location);
+				if (GeneralMethods.rand.nextInt(7) == 0) {
+					WaterMethods.playWaterbendingSound(location);
 				}	
 				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location loc = Methods.getTargetedLocation(player, (int) range,	8, 9, 79);
+				Location loc = GeneralMethods.getTargetedLocation(player, (int) range,	8, 9, 79);
 				location = loc.clone();
 				Vector dir = player.getEyeLocation().getDirection();
 				Vector vec;
 				Block block;
-				for (double i = 0; i <= Methods.waterbendingNightAugment(radius, player.getWorld()); i += 0.5) {
+				for (double i = 0; i <= WaterMethods.waterbendingNightAugment(radius, player.getWorld()); i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
 						// loc.getBlock().setType(Material.GLOWSTONE);
-						vec = Methods.getOrthogonalVector(dir.clone(), angle, i);
+						vec = GeneralMethods.getOrthogonalVector(dir.clone(), angle, i);
 						block = loc.clone().add(vec).getBlock();
-						if (Methods.isRegionProtectedFromBuild(player, "Surge", block.getLocation()))
+						if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge", block.getLocation()))
 							continue;
 						if (wallblocks.containsKey(block)) {
 							blocks.add(block);
 						} else if (!blocks.contains(block)
 								&& (block.getType() == Material.AIR
 								|| block.getType() == Material.FIRE 
-								|| Methods.isWaterbendable(block, player))) {
+								|| WaterMethods.isWaterbendable(block, player))) {
 							wallblocks.put(block, player);
 							addWallBlock(block);
 							// if (frozen) {
@@ -402,7 +406,7 @@ public class WaterWall {
 	private void removeWater(Block block) {
 		if (block != null) {
 			if (affectedblocks.containsKey(block)) {
-				if (!Methods.isAdjacentToThreeOrMoreSources(block)) {
+				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 					TempBlock.revertBlock(block, Material.AIR);
 				}
 				affectedblocks.remove(block);
@@ -436,7 +440,7 @@ public class WaterWall {
 
 	private void addWater(Block block) {
 
-		if (Methods.isRegionProtectedFromBuild(player, "Surge", block.getLocation()))
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge", block.getLocation()))
 			return;
 
 		if (!TempBlock.isTempBlock(block)) {
@@ -461,16 +465,17 @@ public class WaterWall {
 
 		if (!instances.containsKey(player.getEntityId())) {
 			if (!Wave.instances.containsKey(player.getEntityId())
-					&& Methods.getWaterSourceBlock(player, (int) Wave.defaultrange, Methods.canPlantbend(player)) == null
+					&& BlockSource.getWaterSourceBlock(player, (int) Wave.defaultrange, ClickType.LEFT_CLICK,
+							true, true, WaterMethods.canPlantbend(player)) == null
 					&& WaterReturn.hasWaterBottle(player)) {
-				BendingPlayer bPlayer = Methods.getBendingPlayer(player.getName());
+				BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 				if (bPlayer.isOnCooldown("Surge")) return;
 
 				Location eyeloc = player.getEyeLocation();
 				Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-				if (Methods.isTransparentToEarthbending(player, block)
-						&& Methods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+				if (EarthMethods.isTransparentToEarthbending(player, block)
+						&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 					block.setType(Material.WATER);
 					block.setData(full);
 					WaterWall wall = new WaterWall(player);
@@ -488,7 +493,7 @@ public class WaterWall {
 			new Wave(player);
 			return;
 		} else {
-			if (Methods.isWaterbendable(player.getTargetBlock((HashSet<Material>) null, (int) Wave.defaultrange), player)) {
+			if (WaterMethods.isWaterbendable(player.getTargetBlock((HashSet<Material>) null, (int) Wave.defaultrange), player)) {
 				new Wave(player);
 				return;
 			}

@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import com.projectkorra.ProjectKorra.Methods;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class Plantbending {
@@ -44,7 +44,7 @@ public class Plantbending {
 			block.setType(type);
 			block.setData(data);
 		} else {
-			Methods.dropItems(block, Methods.getDrops(block, type, data, null));
+			GeneralMethods.dropItems(block, GeneralMethods.getDrops(block, type, data, null));
 		}
 		instances.remove(id);
 	}

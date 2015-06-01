@@ -7,6 +7,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
+import org.bukkit.scheduler.BukkitRunnable;
+
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+
 public abstract class Database {
 
     protected final Logger log;
@@ -65,6 +70,7 @@ public abstract class Database {
                 this.connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                GeneralMethods.logError(e);
             }
         } else {
             this.printErr("There was no SQL connection open.", false);
@@ -76,15 +82,21 @@ public abstract class Database {
      *
      * @param query Query to run
      */
-    public void modifyQuery(String query) {
-        try {
-            Statement stmt = this.connection.createStatement();
-            stmt.execute(query);
-
-            stmt.close();
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
+    public void modifyQuery(final String query) {
+    	new BukkitRunnable() {
+    		@Override
+    		public void run() {
+    			try {
+    				Statement stmt = connection.createStatement();
+    				stmt.execute(query);
+    				
+    				stmt.close();
+    			} catch (SQLException e) {
+    				e.printStackTrace();
+    				GeneralMethods.logError(e);
+    			}
+    		}
+    	}.runTaskAsynchronously(ProjectKorra.plugin);
     }
 
     /**
@@ -101,6 +113,7 @@ public abstract class Database {
             return rs;
         } catch(SQLException e) {
             e.printStackTrace();
+            GeneralMethods.logError(e);
             return null;
         }
     }
@@ -120,6 +133,7 @@ public abstract class Database {
             else return false;
         } catch(Exception e) {
             e.printStackTrace();
+            GeneralMethods.logError(e);
             return false;
         }
     }
