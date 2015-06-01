@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package com.projectkorra.ProjectKorra.Ability;
 
 import java.io.File;
