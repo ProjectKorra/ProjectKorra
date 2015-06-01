@@ -6,6 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+/**
+ * Logger formatter class based on bukkit's formatter
+ */
 public class LogFormatter extends Formatter {
 
 private final SimpleDateFormat date = new SimpleDateFormat("HH:mm:ss");

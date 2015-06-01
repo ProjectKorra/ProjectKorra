@@ -8,6 +8,15 @@ import java.util.logging.LogRecord;
 
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
+/**
+ * This class should only be used to set 
+ * {@code plugin.getLogger().getParent()}'s filter
+ * <p>
+ * To set the filter for PKLogHandler use {@link PKLogFilter}
+ * </p>
+ * @author Jacklin213
+ * @version 2.0
+ */
 public class LogFilter implements Filter {
 
 	List<String> consoleError = Arrays.asList(
