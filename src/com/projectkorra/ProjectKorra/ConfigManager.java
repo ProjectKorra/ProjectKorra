@@ -398,7 +398,12 @@ public class ConfigManager {
 		config.addDefault("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.Normal", 24);
 		config.addDefault("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.FullMoon", 30);
 		
+		config.addDefault("Abilities.Water.WaterArms.Whip.Pull.Multiplier", Double.valueOf(0.15));
+		
 		config.addDefault("Abilities.Water.WaterArms.Whip.Punch.PunchDamage", Double.valueOf(3.0));
+		config.addDefault("Abilities.Water.WaterArms.Whip.Punch.MaxLength", 10);
+		config.addDefault("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.Normal", 11);
+		config.addDefault("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.FullMoon", 13);
 		
 		config.addDefault("Abilities.Water.WaterArms.Whip.Grapple.RespectRegions", false);
 		
