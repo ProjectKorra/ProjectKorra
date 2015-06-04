@@ -23,9 +23,11 @@ public class WaterSpout {
 	public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Block, Block> newaffectedblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Block, Block> baseblocks = new ConcurrentHashMap<Block, Block>();
-
+	public static ConcurrentHashMap<Block, Long> revert = new ConcurrentHashMap<Block, Long>();
+	
 	private static final int HEIGHT = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Height");
 	private static final boolean PARTICLES = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
+	private static final boolean BLOCKS = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
 
 	// private static final double threshold = .05;
 	// private static final byte half = 0x4;
@@ -38,6 +40,7 @@ public class WaterSpout {
 	private long time = 0;
 	private long interval = 50;
 	private int angle = 0;
+	private double rotation;
 	
 	public WaterSpout(Player player) {
 		//		if (BendingPlayer.getBendingPlayer(player).isOnCooldown(
@@ -73,11 +76,23 @@ public class WaterSpout {
 		revertBaseBlock(player);
 		instances.remove(player);
 	}
+	
+	private static void progressRevert(boolean ignoreTime){
+		for(Block block : revert.keySet()){
+			long time = revert.get(block);
+			if(System.currentTimeMillis() > time || ignoreTime){
+				if(TempBlock.isTempBlock(block))
+					TempBlock.revertBlock(block, Material.AIR);
+				revert.remove(block);
+			}
+		}
+	}
 
 	public static void handleSpouts(Server server) {
 		// affectedblocks.clear();
 		newaffectedblocks.clear();
-
+		progressRevert(false);
+		
 		for (Player player : instances.keySet()) {
 			if (!player.isOnline() || player.isDead()) {
 				instances.get(player).remove();
@@ -159,6 +174,7 @@ public class WaterSpout {
 					instances.get(player).rotateParticles(block);
 					newaffectedblocks.put(block, block);
 				}
+				instances.get(player).displayWaterSpiral(location.clone().add(.5,0,.5));
 				if (player.getLocation().getBlockY() > block.getY()) {
 					player.setFlying(false);
 				} else {
@@ -252,6 +268,35 @@ public class WaterSpout {
 		revertBaseBlock(player);
 		return -1;
 	}
+	
+	private void displayWaterSpiral(Location location) {
+
+		if (!BLOCKS) {
+			return;
+		}
+
+		double maxHeight = player.getLocation().getY() - location.getY() - .5;
+		double height = 0;
+		rotation += .4;
+		int i = 0;
+		while (height < maxHeight) {
+			i += 20;
+			height += .4;
+			double angle = (i * Math.PI / 180);
+			double x = 1 * Math.cos(angle + rotation);
+			double z = 1 * Math.sin(angle + rotation);
+			Location loc = location.clone().getBlock().getLocation()
+					.add(.5, .5, .5);
+			loc.add(x, height, z);
+
+			Block block = loc.getBlock();
+			if (block.getType().equals(Material.AIR)
+					|| !GeneralMethods.isSolid(block)) {
+				revert.put(block, 0L);
+				new TempBlock(block, Material.STATIONARY_WATER, (byte) 1);
+			}
+		}
+	}
 
 	public static void revertBaseBlock(Player player) {
 		if (instances.containsKey(player)) {
@@ -263,6 +308,9 @@ public class WaterSpout {
 	}
 
 	public static void removeAll() {
+		progressRevert(true);
+		revert.clear();
+		
 		for (Player player : instances.keySet()) {
 			instances.get(player).remove();
 		}
