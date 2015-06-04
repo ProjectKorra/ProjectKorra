@@ -54,8 +54,16 @@ public class WaterArmsWhip {
 
 	private int initLength = config
 			.getInt("Abilities.Water.WaterArms.Arms.InitialLength");
+	private double pullMultiplier = config
+			.getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
 	private double punchDamage = config
 			.getDouble("Abilities.Water.WaterArms.Whip.Punch.PunchDamage");
+	private int punchLength = config
+			.getInt("Abilities.Water.WaterArms.Whip.Punch.MaxLength");
+	private int punchLengthNight = config
+			.getInt("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.Normal");
+	private int punchLengthFullMoon = config
+			.getInt("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.FullMoon");
 	private boolean grappleRespectRegions = config
 			.getBoolean("Abilities.Water.WaterArms.Whip.Grapple.RespectRegions");
 	private long holdTime = config
@@ -100,28 +108,51 @@ public class WaterArmsWhip {
 		}
 		this.player = player;
 		this.ability = ability;
-		getNightAugments();
+		getAugments();
 		createInstance();
 	}
 
-	private void getNightAugments() {
+	private void getAugments() {
+		if (ability.equals(Whip.Punch)) {
+			whipLength = punchLength;
+		}
 		World world = player.getWorld();
 		if (WaterMethods.isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
 				if (BendingManager.events.get(world).equalsIgnoreCase(
 						WorldEvents.LunarEclipse.toString())) {
-					whipLength = whipLengthFullMoon;
+					if (ability.equals(Whip.Punch)) {
+						whipLength = punchLengthFullMoon;
+					} else {
+						whipLength = whipLengthFullMoon;
+					}
 				} else if (BendingManager.events.get(world).equalsIgnoreCase(
 						"FullMoon")) {
-					whipLength = whipLengthFullMoon;
+					if (ability.equals(Whip.Punch)) {
+						whipLength = punchLengthFullMoon;
+					} else {
+						whipLength = whipLengthFullMoon;
+					}
 				} else {
-					whipLength = whipLengthNight;
+					if (ability.equals(Whip.Punch)) {
+						whipLength = punchLengthNight;
+					} else {
+						whipLength = whipLengthNight;
+					}
 				}
 			} else {
 				if (WaterMethods.isFullMoon(world)) {
-					whipLength = whipLengthFullMoon;
+					if (ability.equals(Whip.Punch)) {
+						whipLength = punchLengthFullMoon;
+					} else {
+						whipLength = whipLengthFullMoon;
+					}
 				} else {
-					whipLength = whipLengthNight;
+					if (ability.equals(Whip.Punch)) {
+						whipLength = punchLengthNight;
+					} else {
+						whipLength = whipLengthNight;
+					}
 				}
 			}
 		}
@@ -286,7 +317,7 @@ public class WaterArmsWhip {
 				}
 				Vector vector = endOfArm.toVector().subtract(
 						entity.getLocation().toVector());
-				entity.setVelocity(vector.multiply(0.15));
+				entity.setVelocity(vector.multiply(pullMultiplier));
 			}
 			break;
 		case Punch:
@@ -349,7 +380,7 @@ public class WaterArmsWhip {
 			dz = location.getZ() - newlocation.getZ();
 			Vector vector = new Vector(dx, dy, dz);
 			if (distance > .5) {
-				grabbedEntity.setVelocity(vector.normalize().multiply(1));
+				grabbedEntity.setVelocity(vector.normalize().multiply(.65));
 			} else {
 				grabbedEntity.setVelocity(new Vector(0, 0, 0));
 			}

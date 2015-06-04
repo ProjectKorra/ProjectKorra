@@ -356,6 +356,12 @@ Abilities:
             FullMoon: 30
         Punch:
           PunchDamage: 3.0
+          MaxLength:
+            Normal: 10
+          NightAugments:
+            MaxLength:
+              Normal: 11
+              FullMoon: 13
         Grapple:
           RespectRegions: false
         Grab:
