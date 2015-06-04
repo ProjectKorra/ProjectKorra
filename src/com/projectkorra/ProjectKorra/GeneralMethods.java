@@ -1041,9 +1041,9 @@ public class GeneralMethods {
 						return true;
 				}
 
-				if (!wg.canBuild(player, location.getBlock())) {
+				if (wg.getRegionContainer().get(world).getApplicableRegions(location)
+						.queryState(wg.wrapPlayer(player), DefaultFlag.BUILD) == State.DENY)
 					return true;
-				}
 			}
 
 			if (psp != null && respectPreciousStones) {

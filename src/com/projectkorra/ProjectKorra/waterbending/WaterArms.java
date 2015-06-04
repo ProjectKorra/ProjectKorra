@@ -249,7 +249,7 @@ public class WaterArms {
 		if (!canPlaceBlock(r2.getBlock()))
 			return false;
 
-		new TempBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 0);
+		new TempBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 		revert.put(r2.getBlock(), 0L);
 
 		for (int j = 0; j <= initLength; j++) {
