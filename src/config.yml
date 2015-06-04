@@ -354,8 +354,6 @@ Abilities:
           MaxLength:
             Normal: 24
             FullMoon: 30
-        Pull:
-          Multiplier: 0.15
         Punch:
           PunchDamage: 3.0
           MaxLength:
