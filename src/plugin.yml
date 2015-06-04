@@ -29,6 +29,7 @@ permissions:
       bending.command.toggle.all: true
       bending.command.give: true
       bending.command.invincible: true
+      bending.command.check: true
       bending.admin.debug: true
       bending.admin.remove: true
       bending.ability.WaterArms.Grab: true

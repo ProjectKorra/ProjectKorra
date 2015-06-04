@@ -1,10 +1,18 @@
 package com.projectkorra.ProjectKorra;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
 import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleManager;
 import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.CraftingRecipes;
+import com.projectkorra.ProjectKorra.Utilities.Updater;
 import com.projectkorra.ProjectKorra.airbending.AirbendingManager;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
 import com.projectkorra.ProjectKorra.chiblocking.ChiblockingManager;
@@ -12,26 +20,21 @@ import com.projectkorra.ProjectKorra.earthbending.EarthbendingManager;
 import com.projectkorra.ProjectKorra.firebending.FirebendingManager;
 import com.projectkorra.ProjectKorra.waterbending.WaterbendingManager;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.IOException;
-import java.util.logging.Logger;
-
 public class ProjectKorra extends JavaPlugin {
 
 	public static long time_step = 1;
 	public static ProjectKorra plugin;
 	public static Logger log;
 
+	public Updater updater;
+	
 	@Override
 	public void onEnable() {
 		ProjectKorra.log = this.getLogger();
 		plugin = this;
 		new ConfigManager(this);
-
 		new GeneralMethods(this);
+		updater = new Updater(this, "http://projectkorra.com/forum/forums/dev-builds.16/index.rss");
 		new Commands(this);
 		new AbilityModuleManager(this);
 		new MultiAbilityModuleManager();
@@ -78,6 +81,8 @@ public class ProjectKorra extends JavaPlugin {
 		GeneralMethods.deserializeFile();
 		GeneralMethods.startCacheCleaner(GeneralMethods.CACHE_TIME);
 		new CraftingRecipes(this);
+		
+		updater.checkUpdate();
 	}
 
 	@Override

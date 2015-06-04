@@ -17,6 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -102,6 +103,7 @@ public class Commands {
 	String[] invinciblealiases = {"invincible", "inv"};
 	String[] presetaliases = {"preset", "presets", "pre", "set", "p"};
 	String[] avataraliases = {"avatar", "ava"};
+	String[] checkaliases = {"check", "chk"};
 
 	/*
 	 * Item Aliases
@@ -1880,6 +1882,24 @@ public class Commands {
 							s.sendMessage(GeneralMethods.getAvatarColor() + ability + " - ");
 							s.sendMessage(GeneralMethods.getAvatarColor() + AbilityModuleManager.descriptions.get(ability));
 						}
+					}
+				}//available 
+				if (Arrays.asList(checkaliases).contains(args[0].toLowerCase())) {
+					if (!s.hasPermission("bending.command.avatar")) {
+						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+						return true;
+					}
+					
+					if (s instanceof Player) {
+						if (plugin.updater.updateAvalible()) {
+							s.sendMessage(ChatColor.GREEN + "There is a new version of " + ChatColor.GOLD + "ProjectKorra" + ChatColor.GREEN + " available!");
+							s.sendMessage(ChatColor.YELLOW + "Current version: " + ChatColor.RED + plugin.updater.getCurrentVersion());
+							s.sendMessage(ChatColor.YELLOW + "Latest version: " + ChatColor.GOLD + plugin.updater.getCurrentVersion());
+						} else {
+							s.sendMessage(ChatColor.YELLOW + "You have the latest version of " + ChatColor.GOLD + "ProjectKorra");
+						}	
+					} else if (s instanceof ConsoleCommandSender) {
+						plugin.updater.checkUpdate();
 					}
 				}
 				return true;
