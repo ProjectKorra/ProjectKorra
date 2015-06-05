@@ -81,6 +81,8 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
+import com.projectkorra.ProjectKorra.ComboManager.AbilityInformation;
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerBendingDeathEvent;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
@@ -387,12 +389,30 @@ public class GeneralMethods {
 	 * @param damage The amount of damage to deal
 	 */
 	public static void damageEntity(Player player, Entity entity, double damage) {
+		damageEntity(player, entity, damage, null);
+	}
+	
+	/**
+	 * Damages an Entity by amount of damage specified. Starts a {@link EntityDamageByEntityEvent}.
+	 * @param player The player dealing the damage
+	 * @param entity The entity that is receiving the damage
+	 * @param damage The amount of damage to deal
+	 * @param ability The ability that is used to damage the entity
+	 */
+	public static void damageEntity(Player player, Entity entity, double damage, String ability) {
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Player) {
 				if (Commands.invincible.contains(((Player) entity).getName())) return;
 			}
 			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
 				NCPExemptionManager.exemptPermanently(player, CheckType.FIGHT_REACH);
+			}
+			if (((LivingEntity) entity).getHealth() - damage <= 0 && entity instanceof Player) {
+				if (ability == null) {
+					ability = getLastUsedAbility(player);
+				}
+				PlayerBendingDeathEvent event = new PlayerBendingDeathEvent((Player) entity, player, ability, damage);
+				Bukkit.getServer().getPluginManager().callEvent(event);
 			}
 			((LivingEntity) entity).damage(damage, player);
 			((LivingEntity) entity).setLastDamageCause(
@@ -401,6 +421,23 @@ public class GeneralMethods {
 				NCPExemptionManager.unexempt(player);
 			}
 		}
+	}
+	
+	/**
+	 * Returns the last ability used by a player. Also checks if a combo was used.
+	 * @param player
+	 * @return
+	 */
+	public static String getLastUsedAbility(Player player){
+		List<AbilityInformation> lastUsedAbility = ComboManager.getRecentlyUsedAbilities(player, 1);
+		if (!lastUsedAbility.isEmpty()) {
+			if(ComboManager.checkForValidCombo(player) != null){
+				return ComboManager.checkForValidCombo(player).getName();
+			}else {
+				return lastUsedAbility.get(0).getAbilityName();
+			}
+		}
+		return null;
 	}
 
 	/**
