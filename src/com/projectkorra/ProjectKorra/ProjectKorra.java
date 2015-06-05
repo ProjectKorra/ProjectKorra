@@ -25,6 +25,7 @@ public class ProjectKorra extends JavaPlugin {
 	public static long time_step = 1;
 	public static ProjectKorra plugin;
 	public static Logger log;
+    public static Config deathMsgConfig;
 
 	public Updater updater;
 	
@@ -32,7 +33,9 @@ public class ProjectKorra extends JavaPlugin {
 	public void onEnable() {
 		ProjectKorra.log = this.getLogger();
 		plugin = this;
+        deathMsgConfig = new Config(new File("deathmessages.yml"));
 		new ConfigManager(this);
+        new DeathMessageConfigManager(this);
 		new GeneralMethods(this);
 		updater = new Updater(this, "http://projectkorra.com/forum/forums/dev-builds.16/index.rss");
 		new Commands(this);
