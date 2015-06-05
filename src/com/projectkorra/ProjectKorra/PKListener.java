@@ -60,6 +60,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerBendingDeathEvent;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
 import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.BlockSource;
@@ -151,6 +152,7 @@ public class PKListener implements Listener {
 
 	public static HashMap<Integer, Integer> noFallEntities = new HashMap<Integer, Integer>(); // Grappling Hooks
 	public static HashMap<String, Integer> noGrapplePlayers = new HashMap<String, Integer>(); // Grappling Hooks
+	public static HashMap<Player, String> bendingDeathPlayer = new HashMap<Player, String>(); // Player killed by Bending
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
@@ -1056,6 +1058,13 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 	}
 
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerBendingDeath(PlayerBendingDeathEvent event) {
+		if (event.getAbility() != null && !event.getAbility().isEmpty() && ProjectKorra.deathMsgConfig.getConfig().getBoolean("Properties.Enabled")) {
+			bendingDeathPlayer.put(event.getVictim(), event.getAbility());
+		}
+	}
+	
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		if (EarthArmor.instances.containsKey(event.getEntity())) {
@@ -1094,6 +1103,11 @@ public class PKListener implements Listener {
 			event.getDrops().clear();
 			event.getDrops().addAll(newdrops);
 			
+		}
+		if (bendingDeathPlayer.containsKey(event.getEntity())) {
+			String ability = bendingDeathPlayer.get(event.getEntity());
+			event.setDeathMessage(event.getDeathMessage() + " using " + GeneralMethods.getAbilityColor(ability) + ability);
+			bendingDeathPlayer.remove(event.getEntity());
 		}
 	}
 
