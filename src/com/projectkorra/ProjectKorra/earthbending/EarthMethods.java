@@ -143,6 +143,34 @@ public class EarthMethods {
 	}
 	
 	/**
+	 * Attempts to find the closest earth block near a given location.
+	 * @param loc the initial location to search from.
+	 * @param radius the maximum radius to search for the earth block.
+	 * @param maxVertical the maximum block height difference between the starting
+	 * location and the earth bendable block.
+	 * @return an earth bendable block, or null.
+	 */
+	public static Block getNearbyEarthBlock(Location loc, double radius, int maxVertical) {
+		if (loc == null) {
+			return null;
+		}
+		int rotation = 30;
+		for (int i = 0; i < radius; i++) {
+			Vector tracer = new Vector(i, 0, 0);
+			for (int deg = 0; deg < 360; deg += rotation) {
+				Location searchLoc = loc.clone().add(tracer);
+				Block block = GeneralMethods.getTopBlock(searchLoc, maxVertical);
+				
+				if (block != null && EarthMethods.isEarthbendable(block.getType())) {
+					return block;
+				}
+				tracer = GeneralMethods.rotateXZ(tracer, rotation);
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Gets the MetalBendingColor from the config.
 	 * @return Config specified ChatColor
 	 */
@@ -221,6 +249,15 @@ public class EarthMethods {
 
 	public static double getMetalAugment(double value) {
 		return value * config.getDouble("Properties.Earth.MetalPowerFactor");
+	}
+	
+	public static boolean isEarthbendable(Material mat) {
+		for (String s : config.getStringList("Properties.Earth.EarthbendableBlocks")) {
+			if (mat == Material.getMaterial(s)){
+				 return true;
+			}
+		}
+		return false;
 	}
 	
 	public static boolean isEarthbendable(Player player, String ability, Block block){
