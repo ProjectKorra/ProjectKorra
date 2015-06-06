@@ -25,8 +25,7 @@ public class Config {
 		if (!file.getParentFile().exists()) {
 			try {
 				file.getParentFile().mkdir();
-				plugin.getLogger().info(
-						"Generating new directory for " + file.getName() + "!");
+				plugin.getLogger().info("Generating new directory for " + file.getName() + "!");
 			} catch (Exception e) {
 				plugin.getLogger().info("Failed to generate directory!");
 				e.printStackTrace();
@@ -36,11 +35,9 @@ public class Config {
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
-				plugin.getLogger().info(
-						"Generating new " + file.getName() + "!");
+				plugin.getLogger().info("Generating new " + file.getName() + "!");
 			} catch (Exception e) {
-				plugin.getLogger().info(
-						"Failed to generate " + file.getName() + "!");
+				plugin.getLogger().info("Failed to generate " + file.getName() + "!");
 				e.printStackTrace();
 			}
 		}

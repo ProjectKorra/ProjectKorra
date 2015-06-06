@@ -90,6 +90,7 @@ import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.ProjectKorra.chiblocking.Smokescreen;
 import com.projectkorra.ProjectKorra.chiblocking.SwiftKick;
 import com.projectkorra.ProjectKorra.chiblocking.WarriorStance;
+import com.projectkorra.ProjectKorra.configuration.ConfigManager;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.Collapse;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
@@ -1060,7 +1061,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerBendingDeath(PlayerBendingDeathEvent event) {
-		if (event.getAbility() != null && !event.getAbility().isEmpty() && ProjectKorra.deathMsgConfig.getConfig().getBoolean("Properties.Enabled")) {
+		if (event.getAbility() != null && !event.getAbility().isEmpty() && ConfigManager.deathMsgConfig.getConfig().getBoolean("Properties.Enabled")) {
 			bendingDeathPlayer.put(event.getVictim(), event.getAbility());
 		}
 	}
