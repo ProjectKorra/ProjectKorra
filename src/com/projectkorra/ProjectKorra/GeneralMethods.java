@@ -1919,4 +1919,23 @@ public class GeneralMethods {
 		float angle = location.getYaw()/60;
 		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
+	
+	/**
+	 * Returns the element an ability belongs to.
+	 * @param ability
+	 * @return
+	 */
+	public static Element getAbilityElement(String ability){
+		if(AbilityModuleManager.airbendingabilities.contains(ability))
+			return Element.Air;
+		if(AbilityModuleManager.earthbendingabilities.contains(ability))
+			return Element.Earth;
+		if(AbilityModuleManager.firebendingabilities.contains(ability))
+			return Element.Fire;
+		if(AbilityModuleManager.waterbendingabilities.contains(ability))
+			return Element.Water;
+		if(AbilityModuleManager.chiabilities.contains(ability))
+			return Element.Chi;
+		return null;
+	}
 }
