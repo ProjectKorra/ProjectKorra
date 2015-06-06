@@ -26,8 +26,6 @@ public class ConfigManager {
 			config = deathMsgConfig.getConfig();
 			
 			config.addDefault("Properties.Enabled", true);
-			config.addDefault("Air.AirBlast", "example message");
-			config.addDefault("Fire.FireBlast", "example message");
 			
 			config.options().copyDefaults(true);
 			deathMsgConfig.saveConfig();
