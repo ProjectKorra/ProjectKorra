@@ -624,7 +624,7 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.Shockwave.Range", 15);
 		
 		config.addDefault("Abilities.Earth.SandSpout.Enabled", true);
-		config.addDefault("Abilities.Earth.SandSpout.Description", "This ability provides a Sandbenders with a means of transportation. To use, simply left click while over sand or sandstone to raise the sand up beneath you, experiencing controlled levitation. Left clicking again while the spout is active will cause it to disappear.");
+		config.addDefault("Abilities.Earth.SandSpout.Description", "SandSpout is a core move for travelling, evasion, and mobility for sandbenders. To use, simply left click while over sand or sandstone, and a column of sand will form at your feet, enabling you to levitate. Any mobs or players that touch your column will receive damage and be blinded. Beware, as the spout will stop working when no longer over sand!");
 		config.addDefault("Abilities.Earth.SandSpout.Height", 7);
 		config.addDefault("Abilities.Earth.SandSpout.BlindnessTime", 10);
 		config.addDefault("Abilities.Earth.SandSpout.SpoutDamage", 1);
