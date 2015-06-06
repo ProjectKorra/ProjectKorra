@@ -345,7 +345,7 @@ public class BlockSource {
 			return false;
 		} else if (info.getClickType() != clickType) {
 			return false;
-		} else if (info.getPlayer().getWorld() != info.getBlock().getWorld()) {
+		} else if (!info.getPlayer().getWorld().equals(info.getBlock().getWorld())) {
 			return false;
 		} else if (Math.abs(info.getPlayer().getLocation().distance(info.getBlock().getLocation())) > range) {
 			return false;
