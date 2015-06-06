@@ -11,6 +11,7 @@ import com.projectkorra.ProjectKorra.airbending.AirScooter;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
+import com.projectkorra.ProjectKorra.earthbending.SandSpout;
 import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
@@ -81,6 +82,7 @@ public class Flight {
 		ArrayList<Player> airscooterplayers = new ArrayList<Player>();
 		ArrayList<Player> waterspoutplayers = new ArrayList<Player>();
 		ArrayList<Player> airspoutplayers = new ArrayList<Player>();
+		ArrayList<Player> sandspoutplayers = new ArrayList<Player>();
 
 		players.addAll(Tornado.getPlayers());
 //		players.addAll(Speed.getPlayers());
@@ -90,13 +92,15 @@ public class Flight {
 		airscooterplayers = AirScooter.getPlayers();
 		waterspoutplayers = WaterSpout.getPlayers();
 		airspoutplayers = AirSpout.getPlayers();
+		sandspoutplayers = SandSpout.getPlayers();
 
 		for (Player player : instances.keySet()) {
 			Flight flight = instances.get(player);
 			if (avatarstateplayers.contains(player)
 					|| airscooterplayers.contains(player)
 					|| waterspoutplayers.contains(player)
-					|| airspoutplayers.contains(player)) {
+					|| airspoutplayers.contains(player) 
+					|| sandspoutplayers.contains(player)) {
 				continue;
 			}
 			if (Bloodbending.isBloodbended(player)) {

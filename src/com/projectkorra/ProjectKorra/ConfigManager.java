@@ -621,6 +621,12 @@ public class ConfigManager {
 		config.addDefault("Abilities.Earth.Shockwave.Damage", 5);
 		config.addDefault("Abilities.Earth.Shockwave.Knockback", 1.1);
 		config.addDefault("Abilities.Earth.Shockwave.Range", 15);
+		
+		config.addDefault("Abilities.Earth.SandSpout.Enabled", true);
+		config.addDefault("Abilities.Earth.SandSpout.Description", "This ability provides a Sandbenders with a means of transportation. To use, simply left click while over sand or sandstone to raise the sand up beneath you, experiencing controlled levitation. Left clicking again while the spout is active will cause it to disappear.");
+		config.addDefault("Abilities.Earth.SandSpout.Height", 7);
+		config.addDefault("Abilities.Earth.SandSpout.BlindnessTime", 10);
+		config.addDefault("Abilities.Earth.SandSpout.SpoutDamage", 1);
 
 		config.addDefault("Abilities.Earth.Tremorsense.Enabled", true);
 		config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");

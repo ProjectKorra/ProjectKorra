@@ -147,6 +147,7 @@ public class AbilityModuleManager {
 					earthbendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Earth." + a.name() + ".Description"));
 					if (a == StockAbilities.Tremorsense) harmlessabilities.add(a.name());
+					if (a == StockAbilities.SandSpout) harmlessabilities.add(a.name());
 					if (a == StockAbilities.RaiseEarth) shiftabilities.add(a.name());
 					if (a == StockAbilities.Collapse) shiftabilities.add(a.name());
 					if (a == StockAbilities.EarthBlast) shiftabilities.add(a.name());
@@ -161,10 +162,13 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.MetalClips) subabilities.add(a.name());
 					if (a == StockAbilities.Extraction) subabilities.add(a.name());
 					if (a == StockAbilities.LavaFlow) subabilities.add(a.name());
+					if (a == StockAbilities.SandSpout) subabilities.add(a.name());
 					
 					if (a == StockAbilities.MetalClips) metalabilities.add(a.name());
 					if (a == StockAbilities.Extraction) metalabilities.add(a.name());
 					if (a == StockAbilities.LavaFlow) lavaabilities.add(a.name());
+					
+					if (a == StockAbilities.SandSpout) sandabilities.add(a.name());
 //					if (a == StockAbilities.LavaSurge) earthsubabilities.add(a.name());
 					
 				}

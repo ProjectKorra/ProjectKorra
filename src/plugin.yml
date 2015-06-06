@@ -130,6 +130,7 @@ permissions:
       bending.ability.LavaSurge: true
       bending.ability.LavaFlow: true
       bending.ability.EarthSmash: true
+      bending.ability.SandSpout: true
   bending.fire:
     default: true
     description: Grants access to all firebending abilities.
