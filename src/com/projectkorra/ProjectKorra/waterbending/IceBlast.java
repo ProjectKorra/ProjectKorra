@@ -30,6 +30,7 @@ public class IceBlast {
 	public static ConcurrentHashMap<Integer, IceBlast> instances = new ConcurrentHashMap<Integer, IceBlast>();
 	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.Range");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
+	private static int COOLDOWN = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
 	private static int ID = Integer.MIN_VALUE;
 	
 	private static final long interval = 20;
@@ -50,10 +51,16 @@ public class IceBlast {
 	private Player player;
 	public TempBlock source;
 	private double defaultdamage = DAMAGE;
+	private long cooldown = COOLDOWN;
 	
 	public IceBlast(Player player) {
 		if(!WaterMethods.canIcebend(player))
 			return;
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if(bPlayer.isOnCooldown("IceBlast")) {
+			return;
+		}
+		
 		
 		block(player);
 		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
@@ -75,10 +82,12 @@ public class IceBlast {
 				ice.cancel();
 			}
 		}
+
 		sourceblock = block;
 		location = sourceblock.getLocation();
 		prepared = true;
-		createInstance();
+		if(getInstances(player).isEmpty())
+			createInstance();
 	}
 	
 	private void createInstance() {
@@ -149,7 +158,8 @@ public class IceBlast {
 				source.revertBlock();
 			progressing = false;
 		}
-		breakParticles(20);
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		bPlayer.addCooldown("IceBlast", cooldown);
 		instances.remove(id);
 	}
 	
@@ -217,7 +227,8 @@ public class IceBlast {
 	}
 	
 	private void progress() {
-		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "IceBlast")) {
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "IceBlast") || bPlayer.isOnCooldown("IceBlast")) {
 			cancel();
 			return;
 		}
@@ -229,9 +240,11 @@ public class IceBlast {
 
 		if (player.getEyeLocation().distance(location) >= range) {
 			if (progressing) {
+				breakParticles(20);
 				cancel();
 				returnWater();
 			} else {
+				breakParticles(20);
 				cancel();
 			}
 			return;
@@ -279,6 +292,7 @@ public class IceBlast {
 			if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid()) {
 				GeneralMethods.breakBlock(block);
 			} else if (!WaterMethods.isWater(block)) {
+				breakParticles(20);
 				cancel();
 				returnWater();
 				return;
