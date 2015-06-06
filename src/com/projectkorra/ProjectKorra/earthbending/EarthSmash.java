@@ -18,7 +18,6 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
 import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
@@ -169,7 +168,7 @@ public class EarthSmash {
 		if(state == State.START && progressCounter > 1) {
 			if(!player.isSneaking()) {
 				if(System.currentTimeMillis() - time > chargeTime) {
-					origin = BlockSource.getEarthSourceBlock(player, grabRange, ClickType.SHIFT_DOWN);
+					origin = EarthMethods.getEarthSourceBlock(player, grabRange);
 					if(origin == null){
 						remove();
 						return;
