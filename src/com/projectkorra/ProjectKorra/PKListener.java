@@ -1106,8 +1106,16 @@ public class PKListener implements Listener {
 			
 		}
 		if (bendingDeathPlayer.containsKey(event.getEntity())) {
+			String message = ConfigManager.deathMsgConfig.getConfig().getString("Properties.Default");
 			String ability = bendingDeathPlayer.get(event.getEntity());
-			event.setDeathMessage(event.getDeathMessage() + " using " + GeneralMethods.getAbilityColor(ability) + ability);
+			String element = GeneralMethods.getAbilityElement(ability).name();
+			if(ConfigManager.deathMsgConfig.getConfig().contains(element + "." + ability)){
+				message = ConfigManager.deathMsgConfig.getConfig().getString(element + "." + ability);
+			}
+			message = message.replace("{victim}", event.getEntity().getName())
+					.replace("{attacker}", event.getEntity().getKiller().getName())
+					.replace("{ability}", GeneralMethods.getAbilityColor(ability) + ability);
+			event.setDeathMessage(message);
 			bendingDeathPlayer.remove(event.getEntity());
 		}
 	}
