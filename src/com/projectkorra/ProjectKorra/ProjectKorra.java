@@ -99,9 +99,7 @@ public class ProjectKorra extends JavaPlugin {
 		GeneralMethods.stopBending();
 		if (DBConnection.isOpen == false) return;
 		DBConnection.sql.close();
-		for (Handler handler : log.getHandlers()) {
-			handler.close();
-		}
+		handler.close();
 	}
 	
 	public void stopPlugin() {

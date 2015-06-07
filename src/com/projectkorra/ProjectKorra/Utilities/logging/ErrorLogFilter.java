@@ -19,6 +19,13 @@ public class ErrorLogFilter extends LogFilter {
 	public boolean isLoggable(LogRecord record) {
 		if (consoleError.contains(record.getMessage().replace("[ProjectKorra] ", ""))) {
 			return false;
+		} else if (!record.getMessage().contains("ProjectKorra")) {
+			if (record.getThrown() != null) {
+				if (record.getThrown().getMessage().contains("ProjectKorra")) {
+					return true;
+				}
+			}
+			return false;
 		}
 		return true;
 	}
