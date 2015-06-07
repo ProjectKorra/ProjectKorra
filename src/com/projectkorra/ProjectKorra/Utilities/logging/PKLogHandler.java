@@ -23,7 +23,7 @@ import java.util.logging.Level;
 public class PKLogHandler extends FileHandler {
 
 	public PKLogHandler(String filename) throws IOException {
-		super(filename);
+		super(filename, true);
 		this.setLevel(Level.WARNING);
 		this.setFilter(new ErrorLogFilter());
 		this.setFormatter(new LogFormatter());
