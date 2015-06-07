@@ -1068,6 +1068,15 @@ public class PKListener implements Listener {
 	public void onPlayerBendingDeath(PlayerBendingDeathEvent event) {
 		if (event.getAbility() != null && !event.getAbility().isEmpty() && ConfigManager.deathMsgConfig.getConfig().getBoolean("Properties.Enabled")) {
 			bendingDeathPlayer.put(event.getVictim(), event.getAbility());
+			
+			final Player player = event.getVictim();
+			
+			new BukkitRunnable() {
+				@Override
+				public void run () {
+					bendingDeathPlayer.remove(player);
+				}
+			}.runTaskLater(ProjectKorra.plugin, 20);
 		}
 	}
 	
