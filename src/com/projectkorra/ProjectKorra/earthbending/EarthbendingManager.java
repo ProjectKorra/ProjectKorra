@@ -31,6 +31,7 @@ public class EarthbendingManager implements Runnable {
 			LavaSurge.progressAll();
 			LavaFlow.progressAll();
 			EarthSmash.progressAll();
+			SandSpout.spoutAll();
 		} catch (Exception e) {
 			GeneralMethods.logError(e, false);
 		}

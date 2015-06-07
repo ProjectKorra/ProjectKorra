@@ -156,15 +156,18 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.LavaFlow) shiftabilities.add(a.name());
 					if (a == StockAbilities.MetalClips) shiftabilities.add(a.name());
 					if (a == StockAbilities.EarthSmash) shiftabilities.add(a.name());
+					if (a == StockAbilities.SandSpout) shiftabilities.add(a.name());
 					
 					// Earth Sub Abilities
 					if (a == StockAbilities.MetalClips) subabilities.add(a.name());
 					if (a == StockAbilities.Extraction) subabilities.add(a.name());
 					if (a == StockAbilities.LavaFlow) subabilities.add(a.name());
+					if (a == StockAbilities.SandSpout) subabilities.add(a.name());
 					
 					if (a == StockAbilities.MetalClips) metalabilities.add(a.name());
 					if (a == StockAbilities.Extraction) metalabilities.add(a.name());
 					if (a == StockAbilities.LavaFlow) lavaabilities.add(a.name());
+					if (a == StockAbilities.SandSpout) sandabilities.add(a.name());
 //					if (a == StockAbilities.LavaSurge) earthsubabilities.add(a.name());
 					
 				}
