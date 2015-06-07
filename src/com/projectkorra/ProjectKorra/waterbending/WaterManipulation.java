@@ -45,7 +45,7 @@ public class WaterManipulation {
 	// private static double speed = 1.5;
 	private static int ID = Integer.MIN_VALUE;
 
-	private static final byte full = 0x0;
+	private static final byte full = 0x8;
 	private static HashSet<Byte> water = new HashSet<Byte>();
 	// private static final byte half = 0x4;
 
@@ -419,9 +419,9 @@ public class WaterManipulation {
 				}
 				if (trail != null) {
 					trail2 = trail;
-					trail2.setType(Material.WATER, (byte) 2);
+					trail2.setType(Material.STATIONARY_WATER, (byte) 2);
 				}
-				trail = new TempBlock(sourceblock, Material.WATER, (byte) 1);
+				trail = new TempBlock(sourceblock, Material.STATIONARY_WATER, (byte) 1);
 				sourceblock = block;
 
 				if (location.distance(targetdestination) <= 1 || location.distance(firstdestination) > range) {
@@ -504,7 +504,7 @@ public class WaterManipulation {
 		}
 		if (FreezeMelt.frozenblocks.containsKey(block))
 			FreezeMelt.frozenblocks.remove(block);
-		block.setType(Material.WATER);
+		block.setType(Material.STATIONARY_WATER);
 		block.setData(full);
 	}
 
@@ -526,7 +526,7 @@ public class WaterManipulation {
 					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
 				if (getTargetLocation(player).distance(block.getLocation()) > 1) {
-					block.setType(Material.WATER);
+					block.setType(Material.STATIONARY_WATER);
 					block.setData(full);
 					WaterManipulation watermanip = new WaterManipulation(player);
 					watermanip.moveWater();

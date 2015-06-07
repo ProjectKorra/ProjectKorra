@@ -213,7 +213,7 @@ public class WaterArmsSpear {
 				}
 			}
 			new TempBlock(location.getBlock(), Material.STATIONARY_WATER,
-					(byte) 0);
+					(byte) 8);
 			WaterArms.revert.put(location.getBlock(),
 					System.currentTimeMillis() + 600L);
 			Vector direction = GeneralMethods.getDirection(

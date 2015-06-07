@@ -249,7 +249,7 @@ public class WaterArms {
 		if (!canPlaceBlock(r2.getBlock()))
 			return false;
 
-		new TempBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 0);
+		new TempBlock(r2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 		revert.put(r2.getBlock(), 0L);
 
 		for (int j = 0; j <= initLength; j++) {
@@ -271,7 +271,7 @@ public class WaterArms {
 				revert.put(r3.getBlock(), 0L);
 			} else {
 				new TempBlock(r3.getBlock(), Material.STATIONARY_WATER,
-						(byte) 0);
+						(byte) 8);
 				revert.put(r3.getBlock(), 0L);
 			}
 		}
@@ -305,7 +305,7 @@ public class WaterArms {
 		if (!canPlaceBlock(l2.getBlock()))
 			return false;
 
-		new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 0);
+		new TempBlock(l2.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 		revert.put(l2.getBlock(), 0L);
 
 		for (int j = 0; j <= initLength; j++) {
@@ -327,7 +327,7 @@ public class WaterArms {
 				revert.put(l3.getBlock(), 0L);
 			} else {
 				new TempBlock(l3.getBlock(), Material.STATIONARY_WATER,
-						(byte) 0);
+						(byte) 8);
 				revert.put(l3.getBlock(), 0L);
 			}
 		}
