@@ -356,6 +356,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 			config.addDefault("Abilities.Water.IceBlast.Damage", 3);
 			config.addDefault("Abilities.Water.IceBlast.Range", 20);
+			config.addDefault("Abilities.Water.IceBlast.Cooldown", 1500);
 			config.addDefault("Abilities.Water.IceBlast.Description", "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an explosive burst of ice at an opponent, spraying ice and snow around it. To use, simply tap sneak (Default: Shift) while targeting a block of ice to select it as a source. From there, you can just left click to send the blast off at your opponent.");
 
 			config.addDefault("Abilities.Water.IceSpike.Enabled", true);
@@ -675,6 +676,12 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Shockwave.Damage", 5);
 			config.addDefault("Abilities.Earth.Shockwave.Knockback", 1.1);
 			config.addDefault("Abilities.Earth.Shockwave.Range", 15);
+			
+			config.addDefault("Abilities.Earth.SandSpout.Enabled", true);
+			config.addDefault("Abilities.Earth.SandSpout.Description", "SandSpout is a core move for travelling, evasion, and mobility for sandbenders. To use, simply left click while over sand or sandstone, and a column of sand will form at your feet, enabling you to levitate. Any mobs or players that touch your column will receive damage and be blinded. Beware, as the spout will stop working when no longer over sand!");
+			config.addDefault("Abilities.Earth.SandSpout.Height", 7);
+			config.addDefault("Abilities.Earth.SandSpout.BlindnessTime", 10);
+			config.addDefault("Abilities.Earth.SandSpout.SpoutDamage", 1);
 
 			config.addDefault("Abilities.Earth.Tremorsense.Enabled", true);
 			config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");

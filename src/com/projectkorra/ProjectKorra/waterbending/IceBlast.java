@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -29,6 +30,7 @@ public class IceBlast {
 	public static ConcurrentHashMap<Integer, IceBlast> instances = new ConcurrentHashMap<Integer, IceBlast>();
 	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.Range");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
+	private static int COOLDOWN = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
 	private static int ID = Integer.MIN_VALUE;
 	
 	private static final long interval = 20;
@@ -49,10 +51,16 @@ public class IceBlast {
 	private Player player;
 	public TempBlock source;
 	private double defaultdamage = DAMAGE;
+	private long cooldown = COOLDOWN;
 	
 	public IceBlast(Player player) {
 		if(!WaterMethods.canIcebend(player))
 			return;
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if(bPlayer.isOnCooldown("IceBlast")) {
+			return;
+		}
+		
 		
 		block(player);
 		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
@@ -74,10 +82,12 @@ public class IceBlast {
 				ice.cancel();
 			}
 		}
+
 		sourceblock = block;
 		location = sourceblock.getLocation();
 		prepared = true;
-		createInstance();
+		if(getInstances(player).isEmpty())
+			createInstance();
 	}
 	
 	private void createInstance() {
@@ -148,7 +158,8 @@ public class IceBlast {
 				source.revertBlock();
 			progressing = false;
 		}
-
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		bPlayer.addCooldown("IceBlast", cooldown);
 		instances.remove(id);
 	}
 	
@@ -181,8 +192,8 @@ public class IceBlast {
 		}
 		AirMethods.breakBreathbendingHold(entity);
 		
-		for(Location loc : GeneralMethods.getCircle(entity.getLocation(), 6, 7, false, false, 0)) {
-			ParticleEffect.SNOW_SHOVEL.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 10);
+		for(int x = 0; x < 30; x++) {
+			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte)0), new Vector(((Math.random()-0.5)*.5), ((Math.random() - 0.5)*.5), ((Math.random() - 0.5)*.5)), .3f, location, 257.0D);
 		}
 	}
 	
@@ -216,7 +227,8 @@ public class IceBlast {
 	}
 	
 	private void progress() {
-		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "IceBlast")) {
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "IceBlast") || bPlayer.isOnCooldown("IceBlast")) {
 			cancel();
 			return;
 		}
@@ -228,9 +240,11 @@ public class IceBlast {
 
 		if (player.getEyeLocation().distance(location) >= range) {
 			if (progressing) {
+				breakParticles(20);
 				cancel();
 				returnWater();
 			} else {
+				breakParticles(20);
 				cancel();
 			}
 			return;
@@ -278,6 +292,7 @@ public class IceBlast {
 			if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid()) {
 				GeneralMethods.breakBlock(block);
 			} else if (!WaterMethods.isWater(block)) {
+				breakParticles(20);
 				cancel();
 				returnWater();
 				return;
@@ -305,8 +320,10 @@ public class IceBlast {
 			sourceblock = block;
 			source = new TempBlock(sourceblock, Material.PACKED_ICE, data);
 			
-			ParticleEffect.SNOWBALL_POOF.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 100);
-			ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 100);
+			for(int x = 0; x < 10; x++) {
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte)0), new Vector(((Math.random()-0.5)*.5), ((Math.random() - 0.5)*.5), ((Math.random() - 0.5)*.5)), .5f, location, 257.0D);
+				ParticleEffect.SNOW_SHOVEL.display(location, (float) (Math.random()-0.5), (float) (Math.random()-0.5), (float) (Math.random()-0.5), 0, 5);
+			}
 			if (GeneralMethods.rand.nextInt(4) == 0) {
 				WaterMethods.playIcebendingSound(location);
 			}
@@ -341,6 +358,15 @@ public class IceBlast {
 
 	public void setRange(double range) {
 		this.range = range;
+		
+	}
+
+	public void breakParticles(int amount) {
+		for(int x = 0; x < amount; x++) {
+			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte)0), new Vector(((Math.random()-0.5)*.5), ((Math.random() - 0.5)*.5), ((Math.random() - 0.5)*.5)), 2f, location, 257.0D);
+			ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
+		}
+			location.getWorld().playSound(location, Sound.GLASS, 5, 1.3f);
 	}
 
 }

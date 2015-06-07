@@ -26,6 +26,7 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class EarthMethods {
 	
@@ -92,6 +93,18 @@ public class EarthMethods {
 	 */
 	public static boolean canLavabend(Player player) {
 		return player.hasPermission("bending.earth.lavabending");
+	}
+	
+	public static void displaySandParticle(Location loc, float xOffset, float yOffset, float zOffset, float amount, float speed) {
+		if(amount <= 0)
+			return;
+		
+		for(int x = 0; x < amount; x++){
+			
+			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte)0), new Vector(((Math.random()-0.5)*xOffset), ((Math.random() - 0.5)*yOffset), ((Math.random() - 0.5)*zOffset)), speed, loc, 257.0D);
+			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SANDSTONE, (byte)0), new Vector(((Math.random()-0.5)*xOffset), ((Math.random() - 0.5)*yOffset), ((Math.random() - 0.5)*zOffset)), speed, loc, 257.0D);
+		
+		}
 	}
 	
 	/**
@@ -507,6 +520,12 @@ public class EarthMethods {
 		} else {
 			target.setType(info.getState().getType());
 			target.setData(info.getState().getRawData());
+		}
+	}
+	
+	public static void playSandBendingSound(Location loc) {
+		if (plugin.getConfig().getBoolean("Properties.Earth.PlaySound")) {
+			loc.getWorld().playSound(loc, Sound.DIG_SAND, 1.5f, 5);
 		}
 	}
 	

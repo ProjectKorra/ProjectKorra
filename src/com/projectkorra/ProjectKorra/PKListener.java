@@ -109,6 +109,7 @@ import com.projectkorra.ProjectKorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.ProjectKorra.earthbending.LavaSurge;
 import com.projectkorra.ProjectKorra.earthbending.LavaWave;
 import com.projectkorra.ProjectKorra.earthbending.MetalClips;
+import com.projectkorra.ProjectKorra.earthbending.SandSpout;
 import com.projectkorra.ProjectKorra.earthbending.Shockwave;
 import com.projectkorra.ProjectKorra.earthbending.Tremorsense;
 import com.projectkorra.ProjectKorra.firebending.ArcOfFire;
@@ -366,7 +367,7 @@ public class PKListener implements Listener {
         if (player.getGameMode() != GameMode.CREATIVE) {
             HashMap<Integer, String> bound = GeneralMethods.getBendingPlayer(player.getName()).getAbilities();
             for (String str : bound.values()) {
-                if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout")) {
+                if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
                     final Player fplayer = player;
                     new BukkitRunnable() {
                         public void run() {
@@ -645,7 +646,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		if (WaterSpout.instances.containsKey(event.getPlayer()) || AirSpout.getPlayers().contains(event.getPlayer())) {
+		if (WaterSpout.instances.containsKey(event.getPlayer()) || AirSpout.getPlayers().contains(event.getPlayer()) || SandSpout.getPlayers().contains(event.getPlayer())) {
 			Vector vel = new Vector();
 			vel.setX(event.getTo().getX() - event.getFrom().getX());
 			vel.setY(event.getTo().getY() - event.getFrom().getY());
@@ -962,6 +963,10 @@ public class PKListener implements Listener {
 				
 				if (abil.equalsIgnoreCase("EarthSmash")) {
 					new EarthSmash(player, ClickType.LEFT_CLICK);
+				}
+				
+				if (abil.equalsIgnoreCase("SandSpout")) {
+					new SandSpout(player);
 				}
 			}
 			if (FireMethods.isFireAbility(abil)) {
