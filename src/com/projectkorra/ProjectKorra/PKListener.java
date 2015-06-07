@@ -1122,13 +1122,20 @@ public class PKListener implements Listener {
 		if (bendingDeathPlayer.containsKey(event.getEntity())) {
 			String message = ConfigManager.deathMsgConfig.getConfig().getString("Properties.Default");
 			String ability = bendingDeathPlayer.get(event.getEntity());
-			String element = GeneralMethods.getAbilityElement(ability).name();
-			if(ConfigManager.deathMsgConfig.getConfig().contains(element + "." + ability)){
+			String element = null;
+			if (GeneralMethods.abilityExists(ability)) {
+				element = GeneralMethods.getAbilityElement(ability).name();
+			}
+			if (ComboManager.checkForValidCombo(event.getEntity().getKiller()).getName().equalsIgnoreCase(ability)) {
+				element = GeneralMethods.getAbilityElement(GeneralMethods.getLastUsedAbility(event.getEntity().getKiller(), false)).name();
+				ability = element + "Combo";
+			}
+			if (ConfigManager.deathMsgConfig.getConfig().contains(element + "." + ability)) {
 				message = ConfigManager.deathMsgConfig.getConfig().getString(element + "." + ability);
 			}
 			message = message.replace("{victim}", event.getEntity().getName())
 					.replace("{attacker}", event.getEntity().getKiller().getName())
-					.replace("{ability}", GeneralMethods.getAbilityColor(ability) + ability);
+					.replace("{ability}", GeneralMethods.getAbilityColor(GeneralMethods.getLastUsedAbility(event.getEntity().getKiller(), false)) + ability);
 			event.setDeathMessage(message);
 			bendingDeathPlayer.remove(event.getEntity());
 		}

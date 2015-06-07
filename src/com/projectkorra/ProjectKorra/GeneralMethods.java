@@ -409,7 +409,7 @@ public class GeneralMethods {
 			}
 			if (((LivingEntity) entity).getHealth() - damage <= 0 && entity instanceof Player && !entity.isDead()) {
 				if (ability == null) {
-					ability = getLastUsedAbility(player);
+					ability = getLastUsedAbility(player, true);
 				}
 				if (ability != null && !ability.isEmpty()) {
 					PlayerBendingDeathEvent event = new PlayerBendingDeathEvent((Player) entity, player, ability, damage);
@@ -430,10 +430,10 @@ public class GeneralMethods {
 	 * @param player
 	 * @return
 	 */
-	public static String getLastUsedAbility(Player player){
+	public static String getLastUsedAbility(Player player, boolean checkCombos){
 		List<AbilityInformation> lastUsedAbility = ComboManager.getRecentlyUsedAbilities(player, 1);
 		if (!lastUsedAbility.isEmpty()) {
-			if(ComboManager.checkForValidCombo(player) != null){
+			if(ComboManager.checkForValidCombo(player) != null && checkCombos){
 				return ComboManager.checkForValidCombo(player).getName();
 			}else {
 				return lastUsedAbility.get(0).getAbilityName();
