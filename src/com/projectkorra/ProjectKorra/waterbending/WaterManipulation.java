@@ -526,8 +526,8 @@ public class WaterManipulation {
 					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
 				if (getTargetLocation(player).distance(block.getLocation()) > 1) {
-					block.setType(Material.STATIONARY_WATER);
-					block.setData(full);
+					block.setType(Material.WATER);
+					block.setData((byte) 0x0);
 					WaterManipulation watermanip = new WaterManipulation(player);
 					watermanip.moveWater();
 					if (!watermanip.progressing) {
