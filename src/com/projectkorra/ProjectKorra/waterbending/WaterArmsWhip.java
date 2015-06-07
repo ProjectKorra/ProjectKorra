@@ -277,7 +277,7 @@ public class WaterArmsWhip {
 				}
 
 				new TempBlock(l2.getBlock(), Material.STATIONARY_WATER,
-						(byte) 0);
+						(byte) 8);
 				WaterArms.revert.put(l2.getBlock(), 0L);
 
 				if (i == activeLength) {
