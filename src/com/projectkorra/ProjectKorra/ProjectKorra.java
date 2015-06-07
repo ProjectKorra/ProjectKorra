@@ -16,6 +16,7 @@ import com.projectkorra.ProjectKorra.Utilities.Updater;
 import com.projectkorra.ProjectKorra.airbending.AirbendingManager;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
 import com.projectkorra.ProjectKorra.chiblocking.ChiblockingManager;
+import com.projectkorra.ProjectKorra.configuration.ConfigManager;
 import com.projectkorra.ProjectKorra.earthbending.EarthbendingManager;
 import com.projectkorra.ProjectKorra.firebending.FirebendingManager;
 import com.projectkorra.ProjectKorra.waterbending.WaterbendingManager;
@@ -42,8 +43,6 @@ public class ProjectKorra extends JavaPlugin {
 		new ComboModuleManager();
 		new ComboManager();
 		new ChiComboManager();
-
-		ConfigManager.configCheck();
 
 		DBConnection.host = getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = getConfig().getInt("Storage.MySQL.port");

@@ -60,6 +60,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerBendingDeathEvent;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
 import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.BlockSource;
@@ -89,6 +90,7 @@ import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.ProjectKorra.chiblocking.Smokescreen;
 import com.projectkorra.ProjectKorra.chiblocking.SwiftKick;
 import com.projectkorra.ProjectKorra.chiblocking.WarriorStance;
+import com.projectkorra.ProjectKorra.configuration.ConfigManager;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.Collapse;
 import com.projectkorra.ProjectKorra.earthbending.CompactColumn;
@@ -151,6 +153,7 @@ public class PKListener implements Listener {
 
 	public static HashMap<Integer, Integer> noFallEntities = new HashMap<Integer, Integer>(); // Grappling Hooks
 	public static HashMap<String, Integer> noGrapplePlayers = new HashMap<String, Integer>(); // Grappling Hooks
+	public static HashMap<Player, String> bendingDeathPlayer = new HashMap<Player, String>(); // Player killed by Bending
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
@@ -1056,6 +1059,13 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 	}
 
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerBendingDeath(PlayerBendingDeathEvent event) {
+		if (event.getAbility() != null && !event.getAbility().isEmpty() && ConfigManager.deathMsgConfig.getConfig().getBoolean("Properties.Enabled")) {
+			bendingDeathPlayer.put(event.getVictim(), event.getAbility());
+		}
+	}
+	
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		if (EarthArmor.instances.containsKey(event.getEntity())) {
@@ -1094,6 +1104,19 @@ public class PKListener implements Listener {
 			event.getDrops().clear();
 			event.getDrops().addAll(newdrops);
 			
+		}
+		if (bendingDeathPlayer.containsKey(event.getEntity())) {
+			String message = ConfigManager.deathMsgConfig.getConfig().getString("Properties.Default");
+			String ability = bendingDeathPlayer.get(event.getEntity());
+			String element = GeneralMethods.getAbilityElement(ability).name();
+			if(ConfigManager.deathMsgConfig.getConfig().contains(element + "." + ability)){
+				message = ConfigManager.deathMsgConfig.getConfig().getString(element + "." + ability);
+			}
+			message = message.replace("{victim}", event.getEntity().getName())
+					.replace("{attacker}", event.getEntity().getKiller().getName())
+					.replace("{ability}", GeneralMethods.getAbilityColor(ability) + ability);
+			event.setDeathMessage(message);
+			bendingDeathPlayer.remove(event.getEntity());
 		}
 	}
 
