@@ -126,7 +126,7 @@ public class Catapult {
 		}
 
 		// Methods.verbose(player.getLocation().distance(location));
-		if (player.getWorld() != location.getWorld()) {
+		if (!player.getWorld().equals(location.getWorld())) {
 			remove();
 			return;
 		}

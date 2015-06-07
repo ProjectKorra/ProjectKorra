@@ -110,7 +110,7 @@ public class Tremorsense {
 			instances.put(player, this);
 		} else if (block == null) {
 			return;
-		} else if (player.getWorld() != block.getWorld()) {
+		} else if (!player.getWorld().equals(block.getWorld())) {
 			revert();
 		} else if (!EarthMethods.isEarthbendable(player,
 				standblock)) {

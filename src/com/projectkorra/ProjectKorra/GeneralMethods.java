@@ -1219,8 +1219,10 @@ public class GeneralMethods {
 	public static Collection<Player> getPlayersAroundPoint(Location location, double distance) {
 		Collection<Player> players = new HashSet<Player>();
 		for (Player player: Bukkit.getOnlinePlayers()) {
-			if (player.getLocation().distance(location) <= distance) {
-				players.add(player);
+			if (player.getLocation().getWorld().equals(location.getWorld())) {
+				if (player.getLocation().distance(location) <= distance) {
+					players.add(player);
+				}
 			}
 		}
 		return players;

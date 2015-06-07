@@ -132,7 +132,7 @@ public class WaterManipulation {
 
 	public void moveWater() {
 		if (sourceblock != null) {
-			if (sourceblock.getWorld() == player.getWorld()) {
+			if (sourceblock.getWorld().equals(player.getWorld())) {
 				targetdestination = getTargetLocation(player, range);
 
 				if (targetdestination.distance(location) <= 1) {

@@ -104,7 +104,7 @@ public class LavaWave {
 		
 		bPlayer.addCooldown("LavaSurge", GeneralMethods.getGlobalCooldown());
 		if (sourceblock != null) {
-			if (sourceblock.getWorld() != player.getWorld()) {
+			if (!sourceblock.getWorld().equals(player.getWorld())) {
 				return;
 			}
 			if (AvatarState.isAvatarState(player))
