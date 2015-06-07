@@ -116,31 +116,15 @@ public class Preset {
     
     public void save() {
         DBConnection.sql.modifyQuery("INSERT INTO pk_presets (uuid, name) VALUES ('" + uuid.toString() + "', '" + name
-                + "') ON DUPLICATE KEY UPDATE uuid=uuid;");
+                + "') ON DUPLICATE KEY UPDATE name=VALUES(name)");
         
         /*
          * Now we know the preset exists in the SQL table, so we can manipulate
          * it normally.
          */
-        
-        DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot1 = '" + abilities.get(1) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name
-                + "'");
-        DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot2 = '" + abilities.get(2) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name
-                + "'");
-        DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot3 = '" + abilities.get(3) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name
-                + "'");
-        DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot4 = '" + abilities.get(4) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name
-                + "'");
-        DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot5 = '" + abilities.get(5) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name
-                + "'");
-        DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot6 = '" + abilities.get(6) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name
-                + "'");
-        DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot7 = '" + abilities.get(7) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name
-                + "'");
-        DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot8 = '" + abilities.get(8) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name
-                + "'");
-        DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot9 = '" + abilities.get(9) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name
-                + "'");
+        for (int i = 1; i <= 9; i++) {
+        	DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name);
+        }
     }
     
 }
