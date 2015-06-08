@@ -31,7 +31,7 @@ public class WaterMethods {
 	
 	static ProjectKorra plugin;
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	private static Integer[] plantIds = { 6, 18, 31, 32, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175};
+	private static Integer[] plantIds = { 6, 18, 31, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175};
 	
 	public WaterMethods(ProjectKorra plugin) {
 		WaterMethods.plugin = plugin;
