@@ -227,7 +227,7 @@ public class WaterArmsWhip {
 			return;
 		}
 
-		if (activeLength == whipLength && !grabbed) {
+		if (activeLength >= whipLength && !grabbed) {
 			reverting = true;
 		}
 
