@@ -11,11 +11,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModule;
 import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleManager;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.firebending.FireMethods;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class MultiAbilityManager {
 
@@ -102,28 +97,6 @@ public class MultiAbilityManager {
 		public void setSubElement(SubElement sub) {
 			this.sub = sub;
 		}
-
-		public ChatColor getAbilityColor() {
-			if (sub == null) {
-				switch (element) {
-				case Air:
-					return AirMethods.getAirColor();
-				case Water:
-					return WaterMethods.getWaterColor();
-				case Fire:
-					return FireMethods.getFireColor();
-				case Earth:
-					return EarthMethods.getEarthColor();
-				case Chi:
-					return ChiMethods.getChiColor();
-				default:
-					return GeneralMethods.getAvatarColor();
-
-				}
-			} else {
-				return GeneralMethods.getSubBendingColor(element);
-			}
-		}
 	}
 
 	/**
@@ -165,18 +138,19 @@ public class MultiAbilityManager {
 		bPlayer.getAbilities().clear();
 		for (int i = 0; i < modes.size(); i++) {
 			if (!player.hasPermission("bending.ability." + multiAbility + "."
-					+ modes.get(i).getName()))
+					+ modes.get(i).getName())) {
 				bPlayer.getAbilities().put(
 						i + 1,
 						new StringBuilder()
-								.append(modes.get(i).getAbilityColor())
+								.append(GeneralMethods.getAbilityColor(modes.get(i).getName()))
 								.append(ChatColor.STRIKETHROUGH)
 								.append(modes.get(i).getName()).toString());
-			else
+			} else {
 				bPlayer.getAbilities()
 						.put(i + 1,
-								modes.get(i).getAbilityColor()
+								GeneralMethods.getAbilityColor(modes.get(i).getName())
 										+ modes.get(i).getName());
+			}
 		}
 
 		if (player.isOnline()) {
