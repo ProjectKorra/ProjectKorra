@@ -11,7 +11,7 @@ import java.util.logging.LogRecord;
  * </p>
  * 
  * @author Jacklin213
- * @version 2.0
+ * @version 2.0.1
  */
 public class ErrorLogFilter extends LogFilter {
 
