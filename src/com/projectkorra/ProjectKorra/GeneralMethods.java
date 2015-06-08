@@ -91,6 +91,7 @@ import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
 import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
+import com.projectkorra.ProjectKorra.configuration.ConfigManager;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.earthbending.EarthPassive;
@@ -1332,6 +1333,7 @@ public class GeneralMethods {
 	public static void reloadPlugin() {
 		DBConnection.sql.close();
 		plugin.reloadConfig();
+		ConfigManager.deathMsgConfig.reloadConfig();
 		GeneralMethods.stopBending();
 		new AbilityModuleManager(plugin);
 		DBConnection.host = plugin.getConfig().getString("Storage.MySQL.host");
