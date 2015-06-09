@@ -123,7 +123,7 @@ public class Preset {
          * it normally.
          */
         for (int i = 1; i <= 9; i++) {
-        	DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name);
+        	DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
         }
     }
     
