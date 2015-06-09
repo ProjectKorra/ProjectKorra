@@ -23,7 +23,7 @@ import org.xml.sax.SAXException;
  *   <li>{@link #checkUpdate()} called in {@code plugin.onEnable()} to display update message in log</li>
  *   <li>{@link #getCurrentVersion()} to get the version of the plugin</li>
  *   <li>{@link #getUpdateVersion()} to get the update version</li>
- *   <li>{@link #updateAvalible()} to check if theres an update</li>
+ *   <li>{@link #updateAvailable()} to check if theres an update</li>
  * </ul>
  * </p>
  * 
@@ -66,11 +66,12 @@ public class Updater {
 	
 	/**
 	 * Logs and update message in console. 
-	 * Displays different messages dependent on {@link #updateAvalible()}
+	 * Displays different messages dependent on {@link #updateAvailable()}
+	 * 
 	 */
 	public void checkUpdate() {
-		if (updateAvalible()) {
-			plugin.getLogger().info("===================[Update Avalible]===================");
+		if (updateAvailable()) {
+			plugin.getLogger().info("===================[Update Available]===================");
 			plugin.getLogger().info("You are running version " + getCurrentVersion());
 			plugin.getLogger().info("The latest version avaliable is " + getUpdateVersion());
 		} else {
@@ -96,7 +97,7 @@ public class Updater {
 	 * 
 	 * @return true If there is an update
 	 */
-	public boolean updateAvalible() {
+	public boolean updateAvailable() {
 		if (currentVersion.equalsIgnoreCase(getUpdateVersion())) {
 			return false;
 		}
