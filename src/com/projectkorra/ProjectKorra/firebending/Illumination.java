@@ -47,7 +47,7 @@ public class Illumination {
 		if (standblock.getType() == Material.GLOWSTONE) {
 			revert();
 		} else if ((FireStream.isIgnitable(player, standingblock) && standblock
-				.getType() != Material.LEAVES)
+				.getType() != Material.LEAVES && standblock.getType() != Material.LEAVES_2)
 				&& block == null
 				&& !blocks.containsKey(standblock)) {
 			block = standingblock;
@@ -56,7 +56,7 @@ public class Illumination {
 			block.setType(Material.TORCH);
 			blocks.put(block, player);
 		} else if ((FireStream.isIgnitable(player, standingblock) && standblock
-				.getType() != Material.LEAVES)
+				.getType() != Material.LEAVES && standblock.getType() != Material.LEAVES_2)
 				&& !block.equals(standblock)
 				&& !blocks.containsKey(standblock) && GeneralMethods.isSolid(standblock)) {
 			revert();
@@ -67,7 +67,7 @@ public class Illumination {
 			blocks.put(block, player);
 		} else if (block == null) {
 			return;
-		} else if (player.getWorld() != block.getWorld()) {
+		} else if (!player.getWorld().equals(block.getWorld())) {
 			revert();
 		} else if (player.getLocation().distance(block.getLocation()) > FireMethods
 				.getFirebendingDayAugment(range, player.getWorld())) {

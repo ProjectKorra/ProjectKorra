@@ -303,11 +303,13 @@ public class AirSwipe {
 		for (int ID : instances.keySet()) {
 			AirSwipe aswipe = instances.get(ID);
 			
-			for(Vector vec : aswipe.elements.keySet()) {
+			for (Vector vec : aswipe.elements.keySet()) {
 				Location vectorLoc = aswipe.elements.get(vec);
-				if(vectorLoc != null && vectorLoc.getWorld() != loc.getWorld() && vectorLoc.distance(loc) <= radius){
-					instances.remove(aswipe.id);
-					removed = true;
+				if (vectorLoc != null && !vectorLoc.getWorld().equals(loc.getWorld())) {
+					if (vectorLoc.distance(loc) <= radius) {
+						instances.remove(aswipe.id);
+						removed = true;
+					}
 				}
 			}
 		}

@@ -1219,8 +1219,10 @@ public class GeneralMethods {
 	public static Collection<Player> getPlayersAroundPoint(Location location, double distance) {
 		Collection<Player> players = new HashSet<Player>();
 		for (Player player: Bukkit.getOnlinePlayers()) {
-			if (player.getLocation().distance(location) <= distance) {
-				players.add(player);
+			if (player.getLocation().getWorld().equals(location.getWorld())) {
+				if (player.getLocation().distance(location) <= distance) {
+					players.add(player);
+				}
 			}
 		}
 		return players;
@@ -1404,7 +1406,7 @@ public class GeneralMethods {
 		String uuid = bPlayer.uuid.toString();
 
 		//Temp code to block modifications of binds, Should be replaced when bind event is added.
-		if(MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getPlayerName())))
+		if(MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.uuid)))
 			return;
 		HashMap<Integer, String> abilities = bPlayer.getAbilities();
 

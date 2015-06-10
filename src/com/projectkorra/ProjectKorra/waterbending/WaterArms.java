@@ -54,30 +54,19 @@ public class WaterArms {
 
 	private int lengthReduction = 0;
 
-	private int initLength = config
-			.getInt("Abilities.Water.WaterArms.Arms.InitialLength");
-	private int sourceGrabRange = config
-			.getInt("Abilities.Water.WaterArms.Arms.SourceGrabRange");
-	private int maxPunches = config
-			.getInt("Abilities.Water.WaterArms.Arms.MaxAttacks");
-	private int maxIceBlasts = config
-			.getInt("Abilities.Water.WaterArms.Arms.MaxIceShots");
-	private int maxUses = config
-			.getInt("Abilities.Water.WaterArms.Arms.MaxAlternateUsage");
-	private long cooldown = config
-			.getLong("Abilities.Water.WaterArms.Arms.Cooldown");
-	private boolean canUsePlantSource = config
-			.getBoolean("Abilities.Water.WaterArms.Arms.AllowPlantSource");
+	private int initLength = config.getInt("Abilities.Water.WaterArms.Arms.InitialLength");
+	private int sourceGrabRange = config.getInt("Abilities.Water.WaterArms.Arms.SourceGrabRange");
+	private int maxPunches = config.getInt("Abilities.Water.WaterArms.Arms.MaxAttacks");
+	private int maxIceBlasts = config.getInt("Abilities.Water.WaterArms.Arms.MaxIceShots");
+	private int maxUses = config.getInt("Abilities.Water.WaterArms.Arms.MaxAlternateUsage");
+	private long cooldown = config.getLong("Abilities.Water.WaterArms.Arms.Cooldown");
+	private boolean canUsePlantSource = config.getBoolean("Abilities.Water.WaterArms.Arms.AllowPlantSource");
 
-	private boolean lightningEnabled = config
-			.getBoolean("Abilities.Water.WaterArms.Arms.Lightning.Enabled");
-	private double lightningDamage = config
-			.getDouble("Abilities.Water.WaterArms.Arms.Lightning.Damage");
-	private boolean lightningKill = config
-			.getBoolean("Abilities.Water.WaterArms.Arms.Lightning.KillUser");
+	private boolean lightningEnabled = config.getBoolean("Abilities.Water.WaterArms.Arms.Lightning.Enabled");
+	private double lightningDamage = config.getDouble("Abilities.Water.WaterArms.Arms.Lightning.Damage");
+	private boolean lightningKill = config.getBoolean("Abilities.Water.WaterArms.Arms.Lightning.KillUser");
 
-	private static String sneakMsg = config
-			.getString("Abilities.Water.WaterArms.SneakMessage");
+	private static String sneakMsg = config.getString("Abilities.Water.WaterArms.SneakMessage");
 
 	private int selectedSlot = 0;
 	private int freezeSlot = 4;
@@ -112,8 +101,7 @@ public class WaterArms {
 					}
 					break;
 				case 4:
-					if (player
-							.hasPermission("bending.ability.WaterArms.Freeze")
+					if (player.hasPermission("bending.ability.WaterArms.Freeze")
 							&& WaterMethods.canIcebend(player)) {
 						new WaterArmsFreeze(player);
 					}
@@ -152,30 +140,24 @@ public class WaterArms {
 			return false;
 		if (!GeneralMethods.canBend(player.getName(), "WaterArms"))
 			return false;
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms",
-				player.getLocation()))
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", player.getLocation()))
 			return false;
-		if (GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown(
-				"WaterArms"))
+		if (GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("WaterArms"))
 			return false;
-		if (GeneralMethods.getBoundAbility(player)
-				.equalsIgnoreCase("WaterArms"))
+		if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterArms"))
 			return true;
 		return false;
 	}
 
 	private boolean prepare() {
-		Block sourceblock = WaterMethods.getWaterSourceBlock(player,
-				sourceGrabRange, canUsePlantSource);
+		Block sourceblock = WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource);
 		if (sourceblock != null) {
 			if (WaterMethods.isPlant(sourceblock)) {
 				fullSource = false;
 			}
 			ParticleEffect.LARGE_SMOKE.display(
-					WaterMethods
-							.getWaterSourceBlock(player, sourceGrabRange,
-									canUsePlantSource).getLocation().clone()
-							.add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
+					WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource)
+									.getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			WaterReturn.emptyWaterBottle(player);
@@ -189,7 +171,7 @@ public class WaterArms {
 		if (!instances.containsKey(player)) {
 			return;
 		}
-		if (player.isDead() || !player.isOnline() || world != player.getWorld()) {
+		if (player.isDead() || !player.isOnline() || !world.equals(player.getWorld())) {
 			remove();
 			return;
 		}

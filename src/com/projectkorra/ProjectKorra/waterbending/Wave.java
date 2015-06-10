@@ -126,7 +126,7 @@ public class Wave {
 		if (bPlayer.isOnCooldown("Surge")) return;
 		bPlayer.addCooldown("Surge", GeneralMethods.getGlobalCooldown());
 		if (sourceblock != null) {
-			if (sourceblock.getWorld() != player.getWorld()) {
+			if (!sourceblock.getWorld().equals(player.getWorld())) {
 				return;
 			}
 			range = WaterMethods.waterbendingNightAugment(range, player.getWorld());

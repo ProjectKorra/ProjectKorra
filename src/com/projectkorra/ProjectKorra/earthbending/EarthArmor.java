@@ -77,7 +77,7 @@ public class EarthArmor {
 	}
 
 	private boolean moveBlocks() {
-		if (player.getWorld() != headblock.getWorld()) {
+		if (!player.getWorld().equals(headblock.getWorld())) {
 			cancel();
 			return false;
 		}

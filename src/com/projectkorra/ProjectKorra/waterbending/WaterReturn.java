@@ -60,7 +60,7 @@ public class WaterReturn {
 			return;
 		}
 
-		if (player.getWorld() != location.getWorld()) {
+		if (!player.getWorld().equals(location.getWorld())) {
 			remove();
 			return;
 		}

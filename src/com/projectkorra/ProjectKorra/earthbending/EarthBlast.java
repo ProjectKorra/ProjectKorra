@@ -135,7 +135,7 @@ public class EarthBlast {
 	@SuppressWarnings("deprecation")
 	public void throwEarth() {
 		if (sourceblock != null) {
-			if (sourceblock.getWorld() == player.getWorld()) {
+			if (sourceblock.getWorld().equals(player.getWorld())) {
 				if (EarthMethods.movedearth.containsKey(sourceblock)) {
 					if (!revert)
 						EarthMethods.removeRevertIndex(sourceblock);
@@ -223,7 +223,7 @@ public class EarthBlast {
 					instances.remove(id);
 					return false;
 				}
-				if (player.getWorld() != sourceblock.getWorld()) {
+				if (!player.getWorld().equals(sourceblock.getWorld())) {
 					unfocusBlock();
 					return false;
 				}
