@@ -952,7 +952,7 @@ public class Commands {
 
 						for (int i = 1; i <= 9; i++) {
 							String ability = abilities.get(i);
-							if (ability != null) s.sendMessage(i + " - " + GeneralMethods.getAbilityColor(ability) + ability);
+							if (ability != null && !ability.equalsIgnoreCase("null")) s.sendMessage(i + " - " + GeneralMethods.getAbilityColor(ability) + ability);
 						}
 
 						return true;
