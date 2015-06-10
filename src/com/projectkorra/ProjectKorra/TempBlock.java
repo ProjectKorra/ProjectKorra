@@ -43,10 +43,37 @@ public class TempBlock {
 		if (state.getType() == Material.FIRE)
 			state.setType(Material.AIR);
 	}
+	
+	public static TempBlock get(Block block) {
+		if (isTempBlock(block))
+			return instances.get(block);
+		return null;
+	}
+	public static boolean isTempBlock(Block block) {
+		if (instances.containsKey(block))
+			return true;
+		return false;
+	}
+	public static boolean isTouchingTempBlock(Block block) {
+		BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
+				BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
+		for (BlockFace face : faces) {
+			if (instances.containsKey(block.getRelative(face)))
+				return true;
+		}
+		return false;
+	}
+	public static void removeAll() {
+		for (Block block : instances.keySet()) {
+			revertBlock(block, Material.AIR);
+		}
 
-	public void revertBlock() {
-		state.update(true);
-		instances.remove(block);
+	}
+
+	public static void removeBlock(Block block) {
+		if (instances.containsKey(block)) {
+			instances.remove(block);
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -72,55 +99,25 @@ public class TempBlock {
 		// block.setType(defaulttype);
 	}
 
-	public static void removeBlock(Block block) {
-		if (instances.containsKey(block)) {
-			instances.remove(block);
-		}
-	}
-
-	public static boolean isTempBlock(Block block) {
-		if (instances.containsKey(block))
-			return true;
-		return false;
-	}
-
-	public static boolean isTouchingTempBlock(Block block) {
-		BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
-				BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
-		for (BlockFace face : faces) {
-			if (instances.containsKey(block.getRelative(face)))
-				return true;
-		}
-		return false;
-	}
-
-	public static TempBlock get(Block block) {
-		if (isTempBlock(block))
-			return instances.get(block);
-		return null;
+	public Block getBlock() {
+		return block;
 	}
 
 	public Location getLocation() {
 		return block.getLocation();
-	}
-
-	public Block getBlock() {
-		return block;
 	}
 	
 	public BlockState getState() {
 		return state;
 	}
 	
-	public void setState(BlockState newstate) {
-		state = newstate;
+	public void revertBlock() {
+		state.update(true);
+		instances.remove(block);
 	}
 
-	public static void removeAll() {
-		for (Block block : instances.keySet()) {
-			revertBlock(block, Material.AIR);
-		}
-
+	public void setState(BlockState newstate) {
+		state = newstate;
 	}
 
 	public void setType(Material material) {

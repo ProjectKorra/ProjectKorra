@@ -32,8 +32,8 @@ public class BendingPlayer {
 		this.player = player;
 		this.elements = elements;
 		this.setAbilities(abilities);
-		cooldowns = new ConcurrentHashMap<String, Long>();
 		this.permaRemoved = permaRemoved;
+		cooldowns = new ConcurrentHashMap<String, Long>();
 		isToggled = true;
 		blockedChi = false;
 
@@ -41,87 +41,72 @@ public class BendingPlayer {
 		PKListener.login(this);
 	}
 
-	public boolean isOnCooldown(String ability) {
-		return this.cooldowns.containsKey(ability);
-	}
-
 	public void addCooldown(String ability, long cooldown) {
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
-		if(!event.isCancelled())
+		if(!event.isCancelled()) {
 			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
-	}
-
-	public void removeCooldown(String ability) {
-		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, Result.REMOVED);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-		if(!event.isCancelled())
-			this.cooldowns.remove(ability);
-	}
-
-	public UUID getUUID() {
-		return this.uuid;
-	}
-
-	public String getPlayerName() {
-		return this.player;
-	}
-
-	public List<Element> getElements() {
-		return this.elements;
-	}
-
-	public HashMap<Integer, String> getAbilities() {
-		return this.abilities;
-	}
-
-	public boolean isPermaRemoved() {
-		return this.permaRemoved;
+		}
 	}
 
 	public void addElement(Element e) {
 		this.elements.add(e);
 	}
 
-	public boolean hasElement(Element e) {
-		return this.elements.contains(e);
+	public void blockChi() {
+		blockedChi = true;
 	}
-
-	public void setElement(Element e) {
-		this.elements.clear();
-		this.elements.add(e);
-	} 
 
 	public boolean canBeSlowed() {
 		return (System.currentTimeMillis() > slowTime);
 	}
 
-	public void slow(long cooldown) {
-		slowTime = System.currentTimeMillis() + cooldown;
+	public HashMap<Integer, String> getAbilities() {
+		return this.abilities;
 	}
 
-	public void toggleTremorsense() {
-		tremorsense = !tremorsense;
+	public List<Element> getElements() {
+		return this.elements;
 	}
 
-	public boolean isTremorsensing() {
-		return tremorsense;
+	public String getPlayerName() {
+		return this.player;
 	}
 
-	public void blockChi() {
-		blockedChi = true;
+	public UUID getUUID() {
+		return this.uuid;
 	}
 
-	public void unblockChi() {
-		blockedChi = false;
+	public boolean hasElement(Element e) {
+		return this.elements.contains(e);
 	}
 
 	public boolean isChiBlocked() {
-		return blockedChi;
+		return this.blockedChi;
 	}
-	
+
+	public boolean isOnCooldown(String ability) {
+		return this.cooldowns.containsKey(ability);
+	} 
+
+	public boolean isPermaRemoved() {
+		return this.permaRemoved;
+	}
+
 	public boolean isToggled() {
-		return isToggled;
+		return this.isToggled;
+	}
+
+	public boolean isTremorsensing() {
+		return this.tremorsense;
+	}
+
+	public void removeCooldown(String ability) {
+		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, Result.REMOVED);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		if(!event.isCancelled()) {
+			this.cooldowns.remove(ability);
+		}
 	}
 
 	public void setAbilities(HashMap<Integer, String> abilities) {
@@ -129,5 +114,22 @@ public class BendingPlayer {
 		for (int i = 1; i <= 9; i++) {
 			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + (abilities.get(i) == null ? null: abilities.get(i)) + "' WHERE uuid = '" + uuid + "'");
 		}
+	}
+
+	public void setElement(Element e) {
+		this.elements.clear();
+		this.elements.add(e);
+	}
+
+	public void slow(long cooldown) {
+		slowTime = System.currentTimeMillis() + cooldown;
+	}
+	
+	public void toggleTremorsense() {
+		tremorsense = !tremorsense;
+	}
+
+	public void unblockChi() {
+		blockedChi = false;
 	}
 }

@@ -77,12 +77,12 @@ import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
+import com.projectkorra.ProjectKorra.ComboManager.AbilityInformation;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
-import com.projectkorra.ProjectKorra.ComboManager.AbilityInformation;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerBendingDeathEvent;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirCombo;
@@ -113,17 +113,17 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
-
 @SuppressWarnings("deprecation")
 public class GeneralMethods {
 
 	static ProjectKorra plugin;
+
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	public static Random rand = new Random(); 
 
-	public static Random rand = new Random();
-	public static double CACHE_TIME = config.getDouble("Properties.RegionProtection.CacheBlockTime"); 
-
+	public static double CACHE_TIME = config.getDouble("Properties.RegionProtection.CacheBlockTime");
 	public static ConcurrentHashMap<String, Long> cooldowns = new ConcurrentHashMap<String, Long>();
+
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
 	public static ConcurrentHashMap<String, ConcurrentHashMap<Block, BlockCacheElement>> blockProtectionCache = new ConcurrentHashMap<String, ConcurrentHashMap<Block, BlockCacheElement>>();
 
@@ -133,6 +133,15 @@ public class GeneralMethods {
 	// Stands for toggled = false while logging out
 	public static List<UUID> toggedOut = new ArrayList<UUID>();
 
+	public GeneralMethods(ProjectKorra plugin) {
+		GeneralMethods.plugin = plugin;
+		new AirMethods(plugin);
+		new ChiMethods(plugin);
+		new EarthMethods(plugin);
+		new FireMethods(plugin);
+		new WaterMethods(plugin);
+	}
+	
 	/**
 	 * Checks to see if an AbilityExists. Uses method {@link #getAbility(String)} to check if it exists.
 	 * @param string Ability Name
@@ -140,32 +149,6 @@ public class GeneralMethods {
 	 */
 	public static boolean abilityExists(String string) {
 		for (String st: AbilityModuleManager.abilities) {
-			if (string.equalsIgnoreCase(st))
-				return true;
-		}
-		return false;
-	}
-
-	public static boolean comboExists(String string)
-	{
-		for(ComboAbilityModule c : ComboModuleManager.combo)
-			if(string.equalsIgnoreCase(c.getName()))
-				return true;
-
-		return false;
-	}
-
-	public ComboAbilityModule getCombo(String name)
-	{
-		for(ComboAbilityModule c : ComboModuleManager.combo)
-			if(name.equalsIgnoreCase(c.getName()))
-				return c;
-
-		return null;
-	}
-
-	public static boolean isDisabledStockAbility(String string){
-		for (String st : AbilityModuleManager.disabledStockAbilities){
 			if (string.equalsIgnoreCase(st))
 				return true;
 		}
@@ -191,7 +174,6 @@ public class GeneralMethods {
 	 * @see {@link #bindAbility(Player, String)}
 	 */
 	public static void bindAbility(Player player, String ability, int slot) {
-		
 		if(MultiAbilityManager.playerAbilities.containsKey(player)){
 			player.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
 			return;
@@ -201,23 +183,61 @@ public class GeneralMethods {
 		bPlayer.getAbilities().put(slot, ability);
 		if (AirMethods.isAirAbility(ability)) {
 			player.sendMessage(AirMethods.getAirColor() + "Succesfully bound " + ability + " to slot " + slot);
-		}
-		else if (WaterMethods.isWaterAbility(ability)) {
+		} else if (WaterMethods.isWaterAbility(ability)) {
 			player.sendMessage(WaterMethods.getWaterColor() + "Succesfully bound " + ability + " to slot " + slot);
-		}
-		else if (EarthMethods.isEarthAbility(ability)) {
+		} else if (EarthMethods.isEarthAbility(ability)) {
 			player.sendMessage(EarthMethods.getEarthColor() + "Succesfully bound " + ability + " to slot " + slot);
-		}
-		else if (FireMethods.isFireAbility(ability)) {
+		} else if (FireMethods.isFireAbility(ability)) {
 			player.sendMessage(FireMethods.getFireColor() + "Succesfully bound " + ability + " to slot " + slot);
-		}
-		else if (ChiMethods.isChiAbility(ability)) {
+		} else if (ChiMethods.isChiAbility(ability)) {
 			player.sendMessage(ChiMethods.getChiColor() + "Succesfully bound " + ability + " to slot " + slot);
 		} else {
 			player.sendMessage(getAvatarColor() + "Successfully bound " + ability + " to slot " + slot);
 		}
-
 		saveAbility(bPlayer, slot, ability);
+	}
+
+	/**
+	 * Cycles through a list of ability names to check if any instances of
+	 * the abilities exist at a specific location. If an instance of the ability is
+	 * found then it will be removed, with the exception FireShield, and AirShield.
+	 */
+	public static boolean blockAbilities(Player player, List<String> abilitiesToBlock, Location loc, double radius) {
+		boolean hasBlocked = false;
+		for (String ability : abilitiesToBlock) {
+			if(ability.equalsIgnoreCase("FireBlast")) {
+				hasBlocked = FireBlast.annihilateBlasts(loc, radius, player) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("EarthBlast")) {
+				hasBlocked = EarthBlast.annihilateBlasts(loc, radius, player) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("WaterManipulation")) {
+				hasBlocked = WaterManipulation.annihilateBlasts(loc, radius, player) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("AirSwipe")) {
+				hasBlocked = AirSwipe.removeSwipesAroundPoint(loc, radius) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("Combustion")) {
+				hasBlocked = Combustion.removeAroundPoint(loc, radius) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("FireShield")) {
+				hasBlocked = FireShield.isWithinShield(loc) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("AirShield")) {
+				hasBlocked = AirShield.isWithinShield(loc) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("WaterSpout")) {
+				hasBlocked = WaterSpout.removeSpouts(loc, radius, player) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("AirSpout")) {
+				hasBlocked = AirSpout.removeSpouts(loc, radius, player) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("Twister")) {
+				hasBlocked = AirCombo.removeAroundPoint(player, "Twister", loc, radius) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("AirStream")) {
+				hasBlocked = AirCombo.removeAroundPoint(player, "AirStream", loc, radius) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("AirSweep")) {
+				hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("FireKick")) {
+				hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("FireSpin")) {
+				hasBlocked = FireCombo.removeAroundPoint(player, "FireSpin", loc, radius) || hasBlocked;
+			} else if(ability.equalsIgnoreCase("FireWheel")) {
+				hasBlocked = FireCombo.removeAroundPoint(player, "FireWheel", loc, radius) || hasBlocked;
+			}
+		}
+		return hasBlocked;
 	}
 
 	/**
@@ -226,18 +246,6 @@ public class GeneralMethods {
 	 */
 	public static void breakBlock(Block block) {
 		block.breakNaturally(new ItemStack(Material.AIR));
-	}
-
-	public static boolean canBind(String player, String ability) {
-		Player p = Bukkit.getPlayer(player);
-		if (p == null) return false;
-		if (!p.hasPermission("bending.ability." + ability)) return false;
-		if (AirMethods.isAirAbility(ability) && !isBender(player, Element.Air)) return false;
-		if (WaterMethods.isWaterAbility(ability) && !isBender(player, Element.Water)) return false;
-		if (EarthMethods.isEarthAbility(ability) && !isBender(player, Element.Earth)) return false;
-		if (FireMethods.isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
-		if (ChiMethods.isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
-		return true;
 	}
 
 	/**
@@ -289,8 +297,28 @@ public class GeneralMethods {
 		return true;
 	}
 
-	public static boolean isSubAbility(String ability) {
-		if (AbilityModuleManager.subabilities.contains(ability)) return true;
+	public static boolean canBind(String player, String ability) {
+		Player p = Bukkit.getPlayer(player);
+		if (p == null) return false;
+		if (!p.hasPermission("bending.ability." + ability)) return false;
+		if (AirMethods.isAirAbility(ability) && !isBender(player, Element.Air)) return false;
+		if (WaterMethods.isWaterAbility(ability) && !isBender(player, Element.Water)) return false;
+		if (EarthMethods.isEarthAbility(ability) && !isBender(player, Element.Earth)) return false;
+		if (FireMethods.isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
+		if (ChiMethods.isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
+		return true;
+	}
+
+	public static boolean canView(Player player, String ability) {
+		if (player.hasPermission("bending.ability." + ability)) return true;
+		return false;
+	}
+
+	public static boolean comboExists(String string) {
+		for (ComboAbilityModule c : ComboModuleManager.combo)
+			if (string.equalsIgnoreCase(c.getName()))
+				return true;
+
 		return false;
 	}
 
@@ -323,7 +351,6 @@ public class GeneralMethods {
 				if (!player.equalsIgnoreCase(player2)) {
 					DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + player + "' WHERE uuid = '" + uuid.toString() + "'");
 					// They have changed names.
-
 					ProjectKorra.log.info("Updating Player Name for " + player);
 				}
 
@@ -412,23 +439,6 @@ public class GeneralMethods {
 	}
 	
 	/**
-	 * Returns the last ability used by a player. Also checks if a combo was used.
-	 * @param player
-	 * @return
-	 */
-	public static String getLastUsedAbility(Player player, boolean checkCombos){
-		List<AbilityInformation> lastUsedAbility = ComboManager.getRecentlyUsedAbilities(player, 1);
-		if (!lastUsedAbility.isEmpty()) {
-			if(ComboManager.checkForValidCombo(player) != null && checkCombos){
-				return ComboManager.checkForValidCombo(player).getName();
-			}else {
-				return lastUsedAbility.get(0).getAbilityName();
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Deserializes the configuration file "bendingPlayers.yml" of the old BendingPlugin and creates a converted.yml ready for conversion.
 	 * @throws IOException If the "bendingPlayers.yml" file is not found
 	 */
@@ -454,6 +464,107 @@ public class GeneralMethods {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static void displayColoredParticle(Location loc, ParticleEffect type, String hexVal, float xOffset, float yOffset, float zOffset) {
+		int R = 0;
+		int G = 0;
+		int B = 0;
+
+		if (hexVal.length() <= 6) {
+			R = Integer.valueOf(hexVal.substring( 0, 2 ), 16);
+			G = Integer.valueOf(hexVal.substring( 2, 4 ), 16);
+			B = Integer.valueOf(hexVal.substring( 4, 6 ), 16);
+			if(R <= 0)
+				R=1;
+		} else if(hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
+			R = Integer.valueOf(hexVal.substring( 1, 3 ), 16);
+			G = Integer.valueOf(hexVal.substring( 3, 5 ), 16);
+			B = Integer.valueOf(hexVal.substring( 5, 7 ), 16);
+			if(R <= 0)
+				R=1;
+		}
+
+		loc.setX(loc.getX() + Math.random() * (xOffset/2 - -(xOffset/2)));
+		loc.setY(loc.getY() + Math.random() * (yOffset/2 - -(yOffset/2)));
+		loc.setZ(loc.getZ() + Math.random() * (zOffset/2 - -(zOffset/2)));
+
+		if (type == ParticleEffect.RED_DUST || type == ParticleEffect.REDSTONE)
+			ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);
+		else if (type == ParticleEffect.SPELL_MOB || type == ParticleEffect.MOB_SPELL)
+			ParticleEffect.SPELL_MOB.display((float) 255-R, (float) 255-G, (float) 255-B, 1, 0, loc, 256D);
+		else if (type == ParticleEffect.SPELL_MOB_AMBIENT || type == ParticleEffect.MOB_SPELL_AMBIENT)
+			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255-R, (float) 255-G, (float) 255-B, 1, 0, loc, 256D);
+		else
+			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 256D);	
+	}
+
+	public static void displayColoredParticle(Location loc, String hexVal) {
+		int R = 0;
+		int G = 0;
+		int B = 0;
+
+		if(hexVal.length() <= 6){
+			R = Integer.valueOf(hexVal.substring( 0, 2 ), 16);
+			G = Integer.valueOf(hexVal.substring( 2, 4 ), 16);
+			B = Integer.valueOf(hexVal.substring( 4, 6 ), 16);
+			if(R <= 0)
+				R=1;
+		} else if(hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
+			R = Integer.valueOf(hexVal.substring( 1, 3 ), 16);
+			G = Integer.valueOf(hexVal.substring( 3, 5 ), 16);
+			B = Integer.valueOf(hexVal.substring( 5, 7 ), 16);
+			if(R <= 0)
+				R=1;
+		}
+		ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);	
+	}
+
+	public static void displayColoredParticle(Location loc, String hexVal, float xOffset, float yOffset, float zOffset) {
+		int R = 0;
+		int G = 0;
+		int B = 0;
+
+		if (hexVal.length() <= 6) {
+			R = Integer.valueOf(hexVal.substring( 0, 2 ), 16);
+			G = Integer.valueOf(hexVal.substring( 2, 4 ), 16);
+			B = Integer.valueOf(hexVal.substring( 4, 6 ), 16);
+			if(R <= 0)
+				R=1;
+		} else if(hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")) {
+			R = Integer.valueOf(hexVal.substring( 1, 3 ), 16);
+			G = Integer.valueOf(hexVal.substring( 3, 5 ), 16);
+			B = Integer.valueOf(hexVal.substring( 5, 7 ), 16);
+			if(R <= 0)
+				R=1;
+		}
+
+		loc.setX(loc.getX() + Math.random() * (xOffset/2 - -(xOffset/2)));
+		loc.setY(loc.getY() + Math.random() * (yOffset/2 - -(yOffset/2)));
+		loc.setZ(loc.getZ() + Math.random() * (zOffset/2 - -(zOffset/2)));
+
+		ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);	
+	}
+
+	public static void displayParticleVector(Location loc, ParticleEffect type, float xTrans, float yTrans, float zTrans) {
+		if (type == ParticleEffect.FIREWORKS_SPARK)
+			ParticleEffect.FIREWORKS_SPARK.display((float) xTrans, (float) yTrans, (float) zTrans, 0.09F, 0, loc, 256D);
+		else if (type == ParticleEffect.SMOKE || type == ParticleEffect.SMOKE_NORMAL)
+			ParticleEffect.SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
+		else if (type == ParticleEffect.LARGE_SMOKE || type == ParticleEffect.SMOKE_LARGE)
+			ParticleEffect.LARGE_SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
+		else if (type == ParticleEffect.ENCHANTMENT_TABLE)
+			ParticleEffect.ENCHANTMENT_TABLE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 256D);
+		else if (type == ParticleEffect.PORTAL)
+			ParticleEffect.PORTAL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 256D);
+		else if (type == ParticleEffect.FLAME)
+			ParticleEffect.FLAME.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
+		else if (type == ParticleEffect.CLOUD)
+			ParticleEffect.CLOUD.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
+		else if (type == ParticleEffect.SNOW_SHOVEL)
+			ParticleEffect.SNOW_SHOVEL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.2F, 0, loc, 256D);
+		else
+			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 256D);
 	}
 
 	/**
@@ -496,28 +607,43 @@ public class GeneralMethods {
 	 */
 	public static ChatColor getAbilityColor(String ability) {
 		if (AbilityModuleManager.chiabilities.contains(ability)) return ChiMethods.getChiColor();
-		if (AbilityModuleManager.airbendingabilities.contains(ability))
-		{
+		if (AbilityModuleManager.airbendingabilities.contains(ability)) {
 			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Air);
 			return AirMethods.getAirColor();
 		}
-		if (AbilityModuleManager.waterbendingabilities.contains(ability))
-		{
+		if (AbilityModuleManager.waterbendingabilities.contains(ability)) {
 			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Water);
 			return WaterMethods.getWaterColor();
 		}
-		if (AbilityModuleManager.earthbendingabilities.contains(ability))
-		{
+		if (AbilityModuleManager.earthbendingabilities.contains(ability)) {
 			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Earth);
 			return EarthMethods.getEarthColor();
 		}
-		if (AbilityModuleManager.firebendingabilities.contains(ability))
-		{
+		if (AbilityModuleManager.firebendingabilities.contains(ability)) {
 			if (AbilityModuleManager.subabilities.contains(ability)) return getSubBendingColor(Element.Fire);
 			return FireMethods.getFireColor();
 		}
 
 		else return getAvatarColor();
+	}
+
+	/**
+	 * Returns the element an ability belongs to.
+	 * @param ability
+	 * @return
+	 */
+	public static Element getAbilityElement(String ability) {
+		if(AbilityModuleManager.airbendingabilities.contains(ability))
+			return Element.Air;
+		if(AbilityModuleManager.earthbendingabilities.contains(ability))
+			return Element.Earth;
+		if(AbilityModuleManager.firebendingabilities.contains(ability))
+			return Element.Fire;
+		if(AbilityModuleManager.waterbendingabilities.contains(ability))
+			return Element.Water;
+		if(AbilityModuleManager.chiabilities.contains(ability))
+			return Element.Chi;
+		return null;
 	}
 
 	/**
@@ -535,6 +661,63 @@ public class GeneralMethods {
 	 */
 	public static BendingPlayer getBendingPlayer(String player) {
 		return BendingPlayer.players.get(player);
+	}
+
+	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
+		List<Block> blocks = new ArrayList<Block>();
+
+		//Next we will name each coordinate
+		int x1 = ploc.getBlockX();
+		int y1 = ploc.getBlockY();
+		int z1 = ploc.getBlockZ();
+
+		int x2 = tloc.getBlockX();
+		int y2 = tloc.getBlockY();
+		int z2 = tloc.getBlockZ();
+
+		//Then we create the following integers
+		int xMin, yMin, zMin;
+		int xMax, yMax, zMax;
+		int x, y, z;
+
+		//Now we need to make sure xMin is always lower then xMax
+		if (x1 > x2) { //If x1 is a higher number then x2
+			xMin = x2;
+			xMax = x1;
+		} else {
+			xMin = x1;
+			xMax = x2;
+		}
+		//Same with Y
+		if (y1 > y2) {
+			yMin = y2;
+			yMax = y1;
+		} else {
+			yMin = y1;
+			yMax = y2;
+		}
+
+		//And Z
+		if (z1 > z2) {
+			zMin = z2;
+			zMax = z1;
+		} else {
+			zMin = z1;
+			zMax = z2;
+		}
+
+		//Now it's time for the loop
+		for (x = xMin; x <= xMax; x ++) {
+			for (y = yMin; y <= yMax; y ++) {
+				for (z = zMin; z <= zMax; z ++) {
+					Block b = new Location(w, x, y, z).getBlock();
+					blocks.add(b);
+				}
+			}
+		}
+
+		//And last but not least, we return with the list
+		return blocks;
 	}
 
 	/**
@@ -562,7 +745,6 @@ public class GeneralMethods {
 				}
 			}
 		}
-
 		return blocks;
 	}
 
@@ -577,19 +759,16 @@ public class GeneralMethods {
 	public static String getBoundAbility(Player player) {
 		BendingPlayer bPlayer = getBendingPlayer(player.getName());
 		if (bPlayer == null) return null;
-
 		int slot = player.getInventory().getHeldItemSlot() + 1;
 		return bPlayer.getAbilities().get(slot);
 	}
 
-	public static long getGlobalCooldown() {
-		return plugin.getConfig().getLong("Properties.GlobalCooldown");
-	}
-
 	public static BlockFace getCardinalDirection(Vector vector) {
-		BlockFace[] faces = { BlockFace.NORTH, BlockFace.NORTH_EAST,
+		BlockFace[] faces = { 
+				BlockFace.NORTH, BlockFace.NORTH_EAST,
 				BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH,
-				BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
+				BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST 
+		};
 		Vector n, ne, e, se, s, sw, w, nw;
 		w = new Vector(-1, 0, 0);
 		n = new Vector(0, 0, -1);
@@ -611,31 +790,34 @@ public class GeneralMethods {
 				besti = i;
 			}
 		}
-
 		return faces[besti];
-
 	}
 
-	public static List<Location> getCircle(Location loc, int radius, int height, boolean hollow, boolean sphere, int plusY){
+	public static List<Location> getCircle(Location loc, int radius, int height, boolean hollow, boolean sphere, int plusY) {
 		List<Location> circleblocks = new ArrayList<Location>();
 		int cx = loc.getBlockX();
 		int cy = loc.getBlockY();
 		int cz = loc.getBlockZ();
 
-		for(int x = cx - radius; x <= cx + radius; x++){
-			for (int z = cz - radius; z <= cz + radius; z++){
-				for(int y = (sphere ? cy - radius : cy); y < (sphere ? cy + radius : cy + height); y++){
+		for (int x = cx - radius; x <= cx + radius; x++) {
+			for (int z = cz - radius; z <= cz + radius; z++) {
+				for (int y = (sphere ? cy - radius : cy); y < (sphere ? cy + radius : cy + height); y++) {
 					double dist = (cx - x) * (cx - x) + (cz - z) * (cz - z) + (sphere ? (cy - y) * (cy - y) : 0);
 
-					if(dist < radius * radius && !(hollow && dist < (radius - 1) * (radius - 1))){
+					if (dist < radius * radius && !(hollow && dist < (radius - 1) * (radius - 1))) {
 						Location l = new Location(loc.getWorld(), x, y + plusY, z);
 						circleblocks.add(l);
 					}
 				}
 			}
 		}
-
 		return circleblocks;
+	}
+
+	public static String getCurrentDate() {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		return dateFormat.format(date);
 	}
 
 	public static Vector getDirection(Location location, Location destination) {
@@ -651,12 +833,9 @@ public class GeneralMethods {
 		z0 = location.getZ();
 
 		return new Vector(x1 - x0, y1 - y0, z1 - z0);
-
 	}
 
-	public static double getDistanceFromLine(Vector line, Location pointonline,
-			Location point) {
-
+	public static double getDistanceFromLine(Vector line, Location pointonline, Location point) {
 		Vector AP = new Vector();
 		double Ax, Ay, Az;
 		Ax = pointonline.getX();
@@ -699,7 +878,6 @@ public class GeneralMethods {
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(Location location, double radius) {
-
 		List<Entity> entities = location.getWorld().getEntities();
 		List<Entity> list = location.getWorld().getEntities();
 
@@ -710,9 +888,11 @@ public class GeneralMethods {
 				list.remove(entity);
 			}
 		}
-
 		return list;
+	}
 
+	public static long getGlobalCooldown() {
+		return plugin.getConfig().getLong("Properties.GlobalCooldown");
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -737,16 +917,98 @@ public class GeneralMethods {
 		case SOUTH_EAST:
 			return 8;
 		}
-
 		return 4;
+	}
 
+	public static Plugin getItems() {
+		if (hasItems()) {
+			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems");
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the last ability used by a player. Also checks if a combo was used.
+	 * @param player
+	 * @return
+	 */
+	public static String getLastUsedAbility(Player player, boolean checkCombos) {
+		List<AbilityInformation> lastUsedAbility = ComboManager.getRecentlyUsedAbilities(player, 1);
+		if (!lastUsedAbility.isEmpty()) {
+			if (ComboManager.checkForValidCombo(player) != null && checkCombos) {
+				return ComboManager.checkForValidCombo(player).getName();
+			} else {
+				return lastUsedAbility.get(0).getAbilityName();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a location with a specified distance away from the left side of a location.
+	 * @param location
+	 * @param distance
+	 * @return
+	 */
+	public static Location getLeftSide(Location location, double distance) {
+		float angle = location.getYaw() / 60;
+		return location.clone().add(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
+	}
+
+	public static int getMaxPresets(Player player) {
+		if (player.isOp()) return 500;
+		int cap = 0;
+		for (int i = 0; i <= 500; i++) {
+			if (player.hasPermission("bending.command.presets.create." + i)) cap = i;
+		}
+		return cap;
+	}
+
+	public static Vector getOrthogonalVector(Vector axis, double degrees, double length) {
+		Vector ortho = new Vector(axis.getY(), -axis.getX(), 0);
+		ortho = ortho.normalize();
+		ortho = ortho.multiply(length);
+
+		return rotateVectorAroundVector(axis, ortho, degrees);
+	}
+
+	public static Collection<Player> getPlayersAroundPoint(Location location, double distance) {
+		Collection<Player> players = new HashSet<Player>();
+		for (Player player: Bukkit.getOnlinePlayers()) {
+			if (player.getLocation().getWorld().equals(location.getWorld())) {
+				if (player.getLocation().distance(location) <= distance) {
+					players.add(player);
+				}
+			}
+		}
+		return players;
+	}
+
+	public static Location getPointOnLine(Location origin, Location target,	double distance) {
+		return origin.clone().add(getDirection(origin, target).normalize().multiply(distance));
+	}
+
+	/**
+	 * Returns a location with a specified distance away from the right side of a location.
+	 * @param location
+	 * @param distance
+	 * @return
+	 */
+	public static Location getRightSide(Location location, double distance) {
+		float angle = location.getYaw() / 60;
+		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
+	}
+
+	public static Plugin getRPG() {
+		if (hasRPG()) {
+			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG");
+		}
+		return null;
 	}
 
 	@SuppressWarnings("incomplete-switch")
-	public static ChatColor getSubBendingColor(Element element)
-	{
-		switch(element)
-		{
+	public static ChatColor getSubBendingColor(Element element) {
+		switch(element) {
 		case Fire:
 			return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.FireSub"));
 		case Air:
@@ -756,24 +1018,7 @@ public class GeneralMethods {
 		case Earth:
 			return ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.EarthSub"));
 		}
-
 		return getAvatarColor();
-	}
-
-	public static Vector getOrthogonalVector(Vector axis, double degrees, double length) {
-
-		Vector ortho = new Vector(axis.getY(), -axis.getX(), 0);
-		ortho = ortho.normalize();
-		ortho = ortho.multiply(length);
-
-		return rotateVectorAroundVector(axis, ortho, degrees);
-
-	}
-
-	public static Location getPointOnLine(Location origin, Location target,	double distance) {
-		return origin.clone().add(
-				getDirection(origin, target).normalize().multiply(distance));
-
 	}
 
 	@SuppressWarnings("unused")
@@ -796,10 +1041,9 @@ public class GeneralMethods {
 			}
 		}
 		if(target != null) {
-			List <Block> blklist = new ArrayList<Block>();
-			blklist = GeneralMethods.getBlocksAlongLine(player.getLocation(), target.getLocation(), player.getWorld());
-			for(Block isair:blklist)
-			{
+			List<Block> blocklist = new ArrayList<Block>();
+			blocklist = GeneralMethods.getBlocksAlongLine(player.getLocation(), target.getLocation(), player.getWorld());
+			for(Block isAir: blocklist) {
 				if(GeneralMethods.isObstructed(origin, target.getLocation())) {
 					target = null;
 					break;
@@ -807,63 +1051,6 @@ public class GeneralMethods {
 			}
 		}
 		return target;
-	}
-
-	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
-		List<Block> blocks = new ArrayList<Block>();
-
-		//Next we will name each coordinate
-		int x1 = ploc.getBlockX();
-		int y1 = ploc.getBlockY();
-		int z1 = ploc.getBlockZ();
-
-		int x2 = tloc.getBlockX();
-		int y2 = tloc.getBlockY();
-		int z2 = tloc.getBlockZ();
-
-		//Then we create the following integers
-		int xMin, yMin, zMin;
-		int xMax, yMax, zMax;
-		int x, y, z;
-
-		//Now we need to make sure xMin is always lower then xMax
-		if(x1 > x2){ //If x1 is a higher number then x2
-			xMin = x2;
-			xMax = x1;
-		}else{
-			xMin = x1;
-			xMax = x2;
-		}
-		//Same with Y
-		if(y1 > y2){
-			yMin = y2;
-			yMax = y1;
-		}else{
-			yMin = y1;
-			yMax = y2;
-		}
-
-		//And Z
-		if(z1 > z2){
-			zMin = z2;
-			zMax = z1;
-		}else{
-			zMin = z1;
-			zMax = z2;
-		}
-
-		//Now it's time for the loop
-		for(x = xMin; x <= xMax; x ++){
-			for(y = yMin; y <= yMax; y ++){
-				for(z = zMin; z <= zMax; z ++){
-					Block b = new Location(w, x, y, z).getBlock();
-					blocks.add(b);
-				}
-			}
-		}
-
-		//And last but not least, we return with the list
-		return blocks;
 	}
 
 	public static Location getTargetedLocation(Player player, double originselectrange, Integer... nonOpaque2) {
@@ -892,13 +1079,49 @@ public class GeneralMethods {
 		return getTargetedLocation(player, range, 0);
 	}
 
+	public static Block getTopBlock(Location loc, int range) {
+		return getTopBlock(loc,range,range);
+	}
+
+	/**
+	 * Returns the top block based around loc.
+	 * PositiveY is the maximum amount of distance it will check upward.
+	 * Similarly, negativeY is for downward.
+	 */
+	public static Block getTopBlock(Location loc, int positiveY, int negativeY) {
+		Block block = loc.getBlock();
+		Block blockHolder = block;
+		int y = 0;
+		//Only one of these while statements will go
+		while(blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY)) {
+			y++;
+			Block tempBlock = loc.clone().add(0,y,0).getBlock();
+			if(tempBlock.getType() == Material.AIR) 
+				return blockHolder;
+			blockHolder = tempBlock;
+		}
+
+		while(blockHolder.getType() == Material.AIR && Math.abs(y) < Math.abs(negativeY)) {
+			y--;
+			blockHolder = loc.clone().add(0,y,0).getBlock();
+			if(blockHolder.getType() != Material.AIR) 
+				return blockHolder;
+		}
+		return null;
+	}
+
+	public static boolean hasItems() {
+		if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null) return true;
+		return false;
+	}
+
 	public static boolean hasPermission(Player player, String ability) {
 		if (player.hasPermission("bending.ability." + ability) && canBind(player.getName(), ability)) return true;
 		return false;
 	}
 
-	public static boolean canView(Player player, String ability) {
-		if (player.hasPermission("bending.ability." + ability)) return true;
+	public static boolean hasRPG() {
+		if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") != null) return true;
 		return false;
 	}
 
@@ -945,6 +1168,14 @@ public class GeneralMethods {
 		return false;
 	}
 
+	public static boolean isDisabledStockAbility(String string) {
+		for (String st : AbilityModuleManager.disabledStockAbilities) {
+			if (string.equalsIgnoreCase(st))
+				return true;
+		}
+		return false;
+	}
+
 	public static boolean isHarmlessAbility(String ability) {
 		return AbilityModuleManager.harmlessabilities.contains(ability);
 	}
@@ -968,15 +1199,13 @@ public class GeneralMethods {
 			loc = location1.clone().add(direction.clone().multiply(i));
 			Material type = loc.getBlock().getType();
 			if (type != Material.AIR
-					&& !Arrays.asList(EarthMethods.getTransparentEarthbending()).contains(
-							type.getId()))
+					&& !Arrays.asList(EarthMethods.getTransparentEarthbending()).contains(type.getId()))
 				return true;
 		}
-
 		return false;
 	}
 
-	/*
+	/**
 	 * isRegionProtectedFromBuild is one of the most server intensive methods in the
 	 * plugin. It uses a blockCache that keeps track of recent blocks that may have already been checked.
 	 * Abilities like TremorSense call this ability 5 times per tick even though it only needs to check a single block,
@@ -1004,7 +1233,6 @@ public class GeneralMethods {
 	}
 
 	public static boolean isRegionProtectedFromBuildPostCache(Player player, String ability, Location loc) {
-
 		boolean allowharmless = plugin.getConfig().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
 		boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
 		boolean respectPreciousStones = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectPreciousStones");
@@ -1031,8 +1259,6 @@ public class GeneralMethods {
 		Plugin massivecore = pm.getPlugin("MassiveCore");
 		Plugin lwc = pm.getPlugin("LWC");
 
-
-
 		for (Location location : new Location[] { loc, player.getLocation() }) {
 			World world = location.getWorld();
 
@@ -1047,8 +1273,7 @@ public class GeneralMethods {
 				}
 			}
 			if (wgp != null && respectWorldGuard && !player.hasPermission("worldguard.region.bypass." + world.getName())) {
-				WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit
-						.getPluginManager().getPlugin("WorldGuard");
+				WorldGuardPlugin wg = (WorldGuardPlugin) Bukkit.getPluginManager().getPlugin("WorldGuard");
 				if (!player.isOnline())
 					return true;
 
@@ -1074,13 +1299,11 @@ public class GeneralMethods {
 				PreciousStones ps = (PreciousStones) psp;
 
 				if (ignite.contains(ability)) {
-					if (ps.getForceFieldManager().hasSourceField(location,
-							FieldFlag.PREVENT_FIRE))
+					if (ps.getForceFieldManager().hasSourceField(location, FieldFlag.PREVENT_FIRE))
 						return true;
 				}
 				if (explode.contains(ability)) {
-					if (ps.getForceFieldManager().hasSourceField(location,
-							FieldFlag.PREVENT_EXPLOSIONS))
+					if (ps.getForceFieldManager().hasSourceField(location, FieldFlag.PREVENT_EXPLOSIONS))
 						return true;
 				}
 
@@ -1107,14 +1330,11 @@ public class GeneralMethods {
 				WorldCoord worldCoord;
 
 				try {
-					TownyWorld tWorld = TownyUniverse.getDataSource().getWorld(
-							world.getName());
-					worldCoord = new WorldCoord(tWorld.getName(),
-							Coord.parseCoord(location));
+					TownyWorld tWorld = TownyUniverse.getDataSource().getWorld(world.getName());
+					worldCoord = new WorldCoord(tWorld.getName(), Coord.parseCoord(location));
 
 					boolean bBuild = PlayerCacheUtil.getCachePermission(player,
-							location, 3, (byte) 0,
-							TownyPermission.ActionType.BUILD);
+							location, 3, (byte) 0, TownyPermission.ActionType.BUILD);
 
 					if (ignite.contains(ability)) {
 
@@ -1128,34 +1348,25 @@ public class GeneralMethods {
 						PlayerCache cache = twn.getCache(player);
 						TownBlockStatus status = cache.getStatus();
 
-						if (((status == TownBlockStatus.ENEMY) && TownyWarConfig
-								.isAllowingAttacks())) {
-
+						if (((status == TownBlockStatus.ENEMY) && TownyWarConfig.isAllowingAttacks())) {
 							try {
-								TownyWar.callAttackCellEvent(twn, player,
-										location.getBlock(), worldCoord);
+								TownyWar.callAttackCellEvent(twn, player, location.getBlock(), worldCoord);
 							} catch (Exception e) {
-								TownyMessaging.sendErrorMsg(player,
-										e.getMessage());
+								TownyMessaging.sendErrorMsg(player, e.getMessage());
 							}
-
 							return true;
-
 						} else if (status == TownBlockStatus.WARZONE) {
+							
 						} else {
 							return true;
 						}
 
 						if ((cache.hasBlockErrMsg()))
-							TownyMessaging.sendErrorMsg(player,
-									cache.getBlockErrMsg());
+							TownyMessaging.sendErrorMsg(player, cache.getBlockErrMsg());
 					}
-
 				} catch (Exception e1) {
-					TownyMessaging.sendErrorMsg(player, TownySettings
-							.getLangString("msg_err_not_configured"));
+					TownyMessaging.sendErrorMsg(player, TownySettings.getLangString("msg_err_not_configured"));
 				}
-
 			}
 
 			if (gpp != null && respectGriefPrevention) {
@@ -1176,15 +1387,37 @@ public class GeneralMethods {
 					return true;
 			}
 		}
-
 		return false;
 	}
-
 
 	public static boolean isSolid(Block block) {
 		if (Arrays.asList(nonOpaque).contains(block.getTypeId())) return false;
 		return true;
 	}
+
+	public static boolean isSubAbility(String ability) {
+		if (AbilityModuleManager.subabilities.contains(ability)) return true;
+		return false;
+	}
+
+	/** Checks if an entity is Undead **/
+	public static boolean isUndead(Entity entity) {
+		if (entity == null) return false;
+		if (entity.getType() == EntityType.ZOMBIE
+				|| entity.getType() == EntityType.BLAZE
+				|| entity.getType() == EntityType.GIANT
+				|| entity.getType() == EntityType.IRON_GOLEM
+				|| entity.getType() == EntityType.MAGMA_CUBE
+				|| entity.getType() == EntityType.PIG_ZOMBIE
+				|| entity.getType() == EntityType.SKELETON
+				|| entity.getType() == EntityType.SLIME
+				|| entity.getType() == EntityType.SNOWMAN
+				|| entity.getType() == EntityType.ZOMBIE) {
+			return true;
+		}
+		return false;
+	}
+
 
 	public static boolean isWeapon(Material mat) {
 		if (mat == null) return false;
@@ -1203,119 +1436,9 @@ public class GeneralMethods {
 		return false;
 	}
 
-	public static Collection<Player> getPlayersAroundPoint(Location location, double distance) {
-		Collection<Player> players = new HashSet<Player>();
-		for (Player player: Bukkit.getOnlinePlayers()) {
-			if (player.getLocation().getWorld().equals(location.getWorld())) {
-				if (player.getLocation().distance(location) <= distance) {
-					players.add(player);
-				}
-			}
-		}
-		return players;
-	}
 
-	public static void displayColoredParticle(Location loc, String hexVal) {
-		int R = 0;
-		int G = 0;
-		int B = 0;
-
-		if(hexVal.length() <= 6){
-			R = Integer.valueOf(hexVal.substring( 0, 2 ), 16);
-			G = Integer.valueOf(hexVal.substring( 2, 4 ), 16);
-			B = Integer.valueOf(hexVal.substring( 4, 6 ), 16);
-			if(R <= 0)
-				R=1;
-		}else if(hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")){
-			R = Integer.valueOf(hexVal.substring( 1, 3 ), 16);
-			G = Integer.valueOf(hexVal.substring( 3, 5 ), 16);
-			B = Integer.valueOf(hexVal.substring( 5, 7 ), 16);
-			if(R <= 0)
-				R=1;
-		}
-
-		ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);	
-	}
-
-	public static void displayColoredParticle(Location loc, String hexVal, float xOffset, float yOffset, float zOffset) {
-		int R = 0;
-		int G = 0;
-		int B = 0;
-
-		if(hexVal.length() <= 6){
-			R = Integer.valueOf(hexVal.substring( 0, 2 ), 16);
-			G = Integer.valueOf(hexVal.substring( 2, 4 ), 16);
-			B = Integer.valueOf(hexVal.substring( 4, 6 ), 16);
-			if(R <= 0)
-				R=1;
-		}else if(hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")){
-			R = Integer.valueOf(hexVal.substring( 1, 3 ), 16);
-			G = Integer.valueOf(hexVal.substring( 3, 5 ), 16);
-			B = Integer.valueOf(hexVal.substring( 5, 7 ), 16);
-			if(R <= 0)
-				R=1;
-		}
-
-		loc.setX(loc.getX() + Math.random() * (xOffset/2 - -(xOffset/2)));
-		loc.setY(loc.getY() + Math.random() * (yOffset/2 - -(yOffset/2)));
-		loc.setZ(loc.getZ() + Math.random() * (zOffset/2 - -(zOffset/2)));
-
-		ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);	
-	}
-
-	public static void displayColoredParticle(Location loc, ParticleEffect type, String hexVal, float xOffset, float yOffset, float zOffset) {
-		int R = 0;
-		int G = 0;
-		int B = 0;
-
-		if(hexVal.length() <= 6){
-			R = Integer.valueOf(hexVal.substring( 0, 2 ), 16);
-			G = Integer.valueOf(hexVal.substring( 2, 4 ), 16);
-			B = Integer.valueOf(hexVal.substring( 4, 6 ), 16);
-			if(R <= 0)
-				R=1;
-		}else if(hexVal.length() <= 7 && hexVal.substring(0, 1).equals("#")){
-			R = Integer.valueOf(hexVal.substring( 1, 3 ), 16);
-			G = Integer.valueOf(hexVal.substring( 3, 5 ), 16);
-			B = Integer.valueOf(hexVal.substring( 5, 7 ), 16);
-			if(R <= 0)
-				R=1;
-		}
-
-		loc.setX(loc.getX() + Math.random() * (xOffset/2 - -(xOffset/2)));
-		loc.setY(loc.getY() + Math.random() * (yOffset/2 - -(yOffset/2)));
-		loc.setZ(loc.getZ() + Math.random() * (zOffset/2 - -(zOffset/2)));
-
-		if(type == ParticleEffect.RED_DUST || type == ParticleEffect.REDSTONE)
-			ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);
-		else if(type == ParticleEffect.SPELL_MOB || type == ParticleEffect.MOB_SPELL)
-			ParticleEffect.SPELL_MOB.display((float) 255-R, (float) 255-G, (float) 255-B, 1, 0, loc, 256D);
-		else if(type == ParticleEffect.SPELL_MOB_AMBIENT || type == ParticleEffect.MOB_SPELL_AMBIENT)
-			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255-R, (float) 255-G, (float) 255-B, 1, 0, loc, 256D);
-		else
-			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 256D);	
-	}
-
-	public static void displayParticleVector(Location loc, ParticleEffect type, float xTrans, float yTrans, float zTrans) {
-		if(type == ParticleEffect.FIREWORKS_SPARK)
-			ParticleEffect.FIREWORKS_SPARK.display((float) xTrans, (float) yTrans, (float) zTrans, 0.09F, 0, loc, 256D);
-		else if(type == ParticleEffect.SMOKE || type == ParticleEffect.SMOKE_NORMAL)
-			ParticleEffect.SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
-		else if(type == ParticleEffect.LARGE_SMOKE || type == ParticleEffect.SMOKE_LARGE)
-			ParticleEffect.LARGE_SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
-		else if(type == ParticleEffect.ENCHANTMENT_TABLE)
-			ParticleEffect.ENCHANTMENT_TABLE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 256D);
-		else if(type == ParticleEffect.PORTAL)
-			ParticleEffect.PORTAL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 256D);
-		else if(type == ParticleEffect.FLAME)
-			ParticleEffect.FLAME.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
-		else if(type == ParticleEffect.CLOUD)
-			ParticleEffect.CLOUD.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
-		else if(type == ParticleEffect.SNOW_SHOVEL)
-			ParticleEffect.SNOW_SHOVEL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.2F, 0, loc, 256D);
-		else
-			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 256D);
-
+	public static void playAvatarSound(Location loc) {
+		loc.getWorld().playSound(loc, Sound.ANVIL_LAND, 1, 10);
 	}
 
 	public static void reloadPlugin() {
@@ -1343,313 +1466,39 @@ public class GeneralMethods {
 			block.setType(Material.AIR);
 		}
 	}
-
 	public static void removeUnusableAbilities(String player) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
 		HashMap<Integer, String> slots = bPlayer.getAbilities();
 		HashMap<Integer, String> finalabilities = new HashMap<Integer, String>();
-		try {
-			for (int i: slots.keySet()) {
-				if (canBend(player, slots.get(i))) {
-					finalabilities.put(i, slots.get(i));
-				}
+		for (int i: slots.keySet()) {
+			if (canBend(player, slots.get(i))) {
+				finalabilities.put(i, slots.get(i));
 			}
-			bPlayer.setAbilities(finalabilities);
-		} catch (Exception ex) {
-
 		}
-
+		bPlayer.setAbilities(finalabilities);
 	}
 
-	public static Vector rotateVectorAroundVector(Vector axis, Vector rotator,
-			double degrees) {
+	public static Vector rotateVectorAroundVector(Vector axis, Vector rotator, double degrees) {
 		double angle = Math.toRadians(degrees);
 		Vector rotation = axis.clone();
 		Vector rotate = rotator.clone();
 		rotation = rotation.normalize();
 
-		Vector thirdaxis = rotation.crossProduct(rotate).normalize()
-				.multiply(rotate.length());
+		Vector thirdaxis = rotation.crossProduct(rotate).normalize().multiply(rotate.length());
 
-		return rotate.multiply(Math.cos(angle)).add(
-				thirdaxis.multiply(Math.sin(angle)));
+		return rotate.multiply(Math.cos(angle)).add(thirdaxis.multiply(Math.sin(angle)));
 	}
 
-	public static void saveElements(BendingPlayer bPlayer) {
-		if (bPlayer == null) return;
-		String uuid = bPlayer.uuid.toString();
-
-		StringBuilder elements = new StringBuilder();
-		if (bPlayer.hasElement(Element.Air)) elements.append("a");
-		if (bPlayer.hasElement(Element.Water)) elements.append("w");
-		if (bPlayer.hasElement(Element.Earth)) elements.append("e");
-		if (bPlayer.hasElement(Element.Fire)) elements.append("f");
-		if (bPlayer.hasElement(Element.Chi)) elements.append("c");
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
-	}
-
-	public static void saveAbility(BendingPlayer bPlayer, int slot, String ability) {
-		if (bPlayer == null) return;
-		String uuid = bPlayer.uuid.toString();
-
-		//Temp code to block modifications of binds, Should be replaced when bind event is added.
-		if(MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.uuid)))
-			return;
-		HashMap<Integer, String> abilities = bPlayer.getAbilities();
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
-	}
-
-	public static void savePermaRemoved(BendingPlayer bPlayer) {
-		if (bPlayer == null) return;
-		String uuid = bPlayer.uuid.toString();
-
-		boolean permaRemoved = bPlayer.permaRemoved;
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
-	}
-
-	public static void stopBending() {
-		List<AbilityModule> abilities = AbilityModuleManager.ability;
-		for (AbilityModule ab: abilities) {
-			ab.stop();
-		}
-
-		ArrayList<ComboManager.ComboAbility> combos = ComboManager.comboAbilityList;
-		for(ComboManager.ComboAbility c : combos)
-			if(c.getComboType() instanceof ComboAbilityModule)
-				((ComboAbilityModule) c.getComboType()).stop();
-
-		AirMethods.stopBending();
-
-		EarthMethods.stopBending();
-
-		WaterMethods.stopBending();
-
-		FireMethods.stopBending();
-
-		ChiMethods.stopBending();
-
-		Flight.removeAll();
-		TempBlock.removeAll();
-
-		MultiAbilityManager.removeAll();
-	}
-
-
-	public static void setVelocity(Entity entity, Vector velocity){
-		if (entity instanceof TNTPrimed){
-			if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.TNT"))
-				entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier")));
-			return;
-		}
-		if (entity instanceof FallingSand){
-			if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.Normal"))
-				entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
-			return;
-		}
-		entity.setVelocity(velocity);
-	}
-
-	public GeneralMethods(ProjectKorra plugin) {
-		GeneralMethods.plugin = plugin;
-		new AirMethods(plugin);
-		new ChiMethods(plugin);
-		new EarthMethods(plugin);
-		new FireMethods(plugin);
-		new WaterMethods(plugin);
-	}
-
-	public static FallingBlock spawnFallingBlock(Location loc, int type)
-	{
-		return spawnFallingBlock(loc, type, (byte) 0);
-	}
-
-	public static FallingBlock spawnFallingBlock(Location loc, Material type)
-	{
-		return spawnFallingBlock(loc, type, (byte) 0);
-	}
-
-
-	public static FallingBlock spawnFallingBlock(Location loc, int type, byte data)
-	{
-		return loc.getWorld().spawnFallingBlock(loc, type, data);
-	}
-
-
-	public static FallingBlock spawnFallingBlock(Location loc, Material type, byte data)
-	{
-		return loc.getWorld().spawnFallingBlock(loc, type, data);
-	}
-
-	public static void playAvatarSound(Location loc) {
-		loc.getWorld().playSound(loc, Sound.ANVIL_LAND, 1, 10);
-	}
-
-	public static Block getTopBlock(Location loc, int range){
-		return getTopBlock(loc,range,range);
-	}
-	public static Block getTopBlock(Location loc, int positiveY, int negativeY)
-	{
-		/**
-		 * Returns the top block based around loc.
-		 * PositiveY is the maximum amount of distance it will check upward.
-		 * Similarly, negativeY is for downward.
-		 */
-		Block block = loc.getBlock();
-		Block blockHolder = block;
-		int y = 0;
-		//Only one of these while statements will go
-		while(blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY))
-		{
-			y++;
-			Block tempBlock = loc.clone().add(0,y,0).getBlock();
-			if(tempBlock.getType() == Material.AIR) 
-				return blockHolder;
-			blockHolder = tempBlock;
-		}
-
-		while(blockHolder.getType() == Material.AIR && Math.abs(y) < Math.abs(negativeY))
-		{
-			y--;
-			blockHolder = loc.clone().add(0,y,0).getBlock();
-			if(blockHolder.getType() != Material.AIR) 
-				return blockHolder;
-
-		}
-		return null;
-	}
-
-	public static Vector rotateXZ(Vector vec, double theta)
-	{
-		/**
-		 * Rotates a vector around the Y plane.
-		 */
+	/**
+	 * Rotates a vector around the Y plane.
+	 */
+	public static Vector rotateXZ(Vector vec, double theta) {
 		Vector vec2 = vec.clone();
 		double x = vec2.getX();
 		double z = vec2.getZ();
 		vec2.setX(x * Math.cos(Math.toRadians(theta)) - z * Math.sin(Math.toRadians(theta)));
 		vec2.setZ(x * Math.sin(Math.toRadians(theta)) + z * Math.cos(Math.toRadians(theta)));
 		return vec2;
-	}
-
-	public static int getMaxPresets(Player player) {
-		if (player.isOp()) return 500;
-		int cap = 0;
-		for (int i = 0; i <= 500; i++) {
-			if (player.hasPermission("bending.command.presets.create." + i)) cap = i;
-		}
-		return cap;
-	}
-
-	public static boolean blockAbilities(Player player, List<String> abilitiesToBlock, Location loc, double radius) {
-		/**
-		 * Cycles through a list of ability names to check if any instances of
-		 * the abilities exist at a specific location. If an instance of the ability is
-		 * found then it will be removed, with the exception FireShield, and AirShield.
-		 */
-		boolean hasBlocked = false;
-		for(String ability : abilitiesToBlock){
-			if(ability.equalsIgnoreCase("FireBlast")){
-				hasBlocked = FireBlast.annihilateBlasts(loc, radius, player) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("EarthBlast")){
-				hasBlocked = EarthBlast.annihilateBlasts(loc, radius, player) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("WaterManipulation")){
-				hasBlocked = WaterManipulation.annihilateBlasts(loc, radius, player) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("AirSwipe")){
-				hasBlocked = AirSwipe.removeSwipesAroundPoint(loc, radius) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("Combustion")){
-				hasBlocked = Combustion.removeAroundPoint(loc, radius) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("FireShield")){
-				hasBlocked = FireShield.isWithinShield(loc) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("AirShield")){
-				hasBlocked = AirShield.isWithinShield(loc) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("WaterSpout")){
-				hasBlocked = WaterSpout.removeSpouts(loc, radius, player) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("AirSpout")){
-				hasBlocked = AirSpout.removeSpouts(loc, radius, player) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("Twister")){
-				hasBlocked = AirCombo.removeAroundPoint(player, "Twister", loc, radius) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("AirStream")){
-				hasBlocked = AirCombo.removeAroundPoint(player, "AirStream", loc, radius) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("AirSweep")){
-				hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("FireKick")){
-				hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("FireSpin")){
-				hasBlocked = FireCombo.removeAroundPoint(player, "FireSpin", loc, radius) || hasBlocked;
-			}
-			else if(ability.equalsIgnoreCase("FireWheel")){
-				hasBlocked = FireCombo.removeAroundPoint(player, "FireWheel", loc, radius) || hasBlocked;
-			}
-		}
-		return hasBlocked;
-	}
-
-	public static boolean hasRPG() {
-		if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") != null) return true;
-		return false;
-	}
-
-	public static Plugin getRPG() {
-		if (hasRPG()) {
-			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG");
-		}
-		return null;
-	}
-
-	public static boolean hasItems() {
-		if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null) return true;
-		return false;
-	}
-
-	public static Plugin getItems() {
-		if (hasItems()) {
-			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems");
-		}
-		return null;
-	}
-
-	public static void writeToDebug(String message) {
-		try {
-			File dataFolder = plugin.getDataFolder();
-			if (!dataFolder.exists()) {
-				dataFolder.mkdir();
-			}
-
-			File saveTo = new File(plugin.getDataFolder(), "debug.txt");
-			if (!saveTo.exists()) {
-				saveTo.createNewFile();
-			}
-
-			FileWriter fw = new FileWriter(saveTo, true);
-			PrintWriter pw = new PrintWriter(fw);
-			pw.println(message);
-			pw.flush();
-			pw.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static String getCurrentDate() {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date();
-		return dateFormat.format(date);
 	}
 
 	public static void runDebug() {
@@ -1744,6 +1593,138 @@ public class GeneralMethods {
 		}
 	}
 
+	public static void saveAbility(BendingPlayer bPlayer, int slot, String ability) {
+		if (bPlayer == null) return;
+		String uuid = bPlayer.uuid.toString();
+
+		//Temp code to block modifications of binds, Should be replaced when bind event is added.
+		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.uuid)))
+			return;
+		HashMap<Integer, String> abilities = bPlayer.getAbilities();
+
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + (abilities.get(slot) == null ? null : abilities.get(slot)) + "' WHERE uuid = '" + uuid + "'");
+	}
+
+	public static void saveElements(BendingPlayer bPlayer) {
+		if (bPlayer == null) return;
+		String uuid = bPlayer.uuid.toString();
+
+		StringBuilder elements = new StringBuilder();
+		if (bPlayer.hasElement(Element.Air)) elements.append("a");
+		if (bPlayer.hasElement(Element.Water)) elements.append("w");
+		if (bPlayer.hasElement(Element.Earth)) elements.append("e");
+		if (bPlayer.hasElement(Element.Fire)) elements.append("f");
+		if (bPlayer.hasElement(Element.Chi)) elements.append("c");
+
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
+	}
+
+	public static void savePermaRemoved(BendingPlayer bPlayer) {
+		if (bPlayer == null) return;
+		String uuid = bPlayer.uuid.toString();
+		boolean permaRemoved = bPlayer.permaRemoved;
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
+	}
+
+	public static void setVelocity(Entity entity, Vector velocity) {
+		if (entity instanceof TNTPrimed) {
+			if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.TNT"))
+				entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier")));
+			return;
+		}
+		if (entity instanceof FallingSand) {
+			if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.Normal"))
+				entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
+			return;
+		}
+		entity.setVelocity(velocity);
+	}
+
+	public static FallingBlock spawnFallingBlock(Location loc, int type) {
+		return spawnFallingBlock(loc, type, (byte) 0);
+	}
+
+	public static FallingBlock spawnFallingBlock(Location loc, int type, byte data) {
+		return loc.getWorld().spawnFallingBlock(loc, type, data);
+	}
+
+	public static FallingBlock spawnFallingBlock(Location loc, Material type) {
+		return spawnFallingBlock(loc, type, (byte) 0);
+	}
+
+	public static FallingBlock spawnFallingBlock(Location loc, Material type, byte data) {
+		return loc.getWorld().spawnFallingBlock(loc, type, data);
+	}
+
+	public static void startCacheCleaner(final double period) {
+		new BukkitRunnable() {
+			public void run() {
+				for (ConcurrentHashMap<Block, BlockCacheElement> map : blockProtectionCache.values()) {
+					for (Iterator<Block> i = map.keySet().iterator(); i.hasNext();) {
+						Block key = i.next();
+						BlockCacheElement value = map.get(key);
+
+						if(System.currentTimeMillis() - value.getTime() > period) {
+							map.remove(key);
+						}
+					}
+				}
+			}
+		}.runTaskTimer(ProjectKorra.plugin, 0, (long) (period / 20));
+	}
+
+	public static void stopBending() {
+		List<AbilityModule> abilities = AbilityModuleManager.ability;
+		for (AbilityModule ab: abilities) {
+			ab.stop();
+		}
+
+		ArrayList<ComboManager.ComboAbility> combos = ComboManager.comboAbilityList;
+		for(ComboManager.ComboAbility c : combos)
+			if(c.getComboType() instanceof ComboAbilityModule)
+				((ComboAbilityModule) c.getComboType()).stop();
+
+		AirMethods.stopBending();
+		EarthMethods.stopBending();
+		WaterMethods.stopBending();
+		FireMethods.stopBending();
+		ChiMethods.stopBending();
+
+		Flight.removeAll();
+		TempBlock.removeAll();
+		MultiAbilityManager.removeAll();
+	}
+
+	public static void writeToDebug(String message) {
+		try {
+			File dataFolder = plugin.getDataFolder();
+			if (!dataFolder.exists()) {
+				dataFolder.mkdir();
+			}
+
+			File saveTo = new File(plugin.getDataFolder(), "debug.txt");
+			if (!saveTo.exists()) {
+				saveTo.createNewFile();
+			}
+
+			FileWriter fw = new FileWriter(saveTo, true);
+			PrintWriter pw = new PrintWriter(fw);
+			pw.println(message);
+			pw.flush();
+			pw.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public ComboAbilityModule getCombo(String name) {
+		for (ComboAbilityModule c : ComboModuleManager.combo)
+			if (name.equalsIgnoreCase(c.getName()))
+				return c;
+		return null;
+	}
+	
 	public static class BlockCacheElement {
 		private Player player;
 		private Block block;
@@ -1759,121 +1740,45 @@ public class GeneralMethods {
 			this.time = time;
 		}
 
-		public Player getPlayer() {
-			return player;
-		}
-
-		public void setPlayer(Player player) {
-			this.player = player;
+		public String getAbility() {
+			return ability;
 		}
 
 		public Block getBlock() {
 			return block;
 		}
 
-		public void setBlock(Block block) {
-			this.block = block;
+		public Player getPlayer() {
+			return player;
 		}
 
 		public long getTime() {
 			return time;
 		}
 
-		public void setTime(long time) {
-			this.time = time;
-		}
-
 		public boolean isAllowed() {
 			return allowed;
-		}
-
-		public void setAllowed(boolean allowed) {
-			this.allowed = allowed;
-		}
-
-		public String getAbility() {
-			return ability;
 		}
 
 		public void setAbility(String ability) {
 			this.ability = ability;
 		}
 
-	}
-
-	public static void startCacheCleaner(final double period) {
-		new BukkitRunnable() {
-			public void run() {
-				for(ConcurrentHashMap<Block, BlockCacheElement> map : blockProtectionCache.values()) {
-					for(Iterator<Block> i = map.keySet().iterator(); i.hasNext();) {
-						Block key = i.next();
-						BlockCacheElement value = map.get(key);
-
-						if(System.currentTimeMillis() - value.getTime() > period) {
-							map.remove(key);
-						}
-					}
-				}
-			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, (long) (period / 20));
-	}
-
-	/** Checks if an entity is Undead **/
-	public static boolean isUndead(Entity entity) {
-		if (entity == null) return false;
-		if (entity.getType() == EntityType.ZOMBIE
-				|| entity.getType() == EntityType.BLAZE
-				|| entity.getType() == EntityType.GIANT
-				|| entity.getType() == EntityType.IRON_GOLEM
-				|| entity.getType() == EntityType.MAGMA_CUBE
-				|| entity.getType() == EntityType.PIG_ZOMBIE
-				|| entity.getType() == EntityType.SKELETON
-				|| entity.getType() == EntityType.SLIME
-				|| entity.getType() == EntityType.SNOWMAN
-				|| entity.getType() == EntityType.ZOMBIE) {
-			return true;
+		public void setAllowed(boolean allowed) {
+			this.allowed = allowed;
 		}
-		return false;
-	}
 
-	/**
-	 * Returns a location with a specified distance away from the left side of a location.
-	 * @param location
-	 * @param distance
-	 * @return
-	 */
-	public static Location getLeftSide(Location location, double distance){
-		float angle = location.getYaw()/60;
-		return location.clone().add(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
-	}
+		public void setBlock(Block block) {
+			this.block = block;
+		}
 
-	/**
-	 * Returns a location with a specified distance away from the right side of a location.
-	 * @param location
-	 * @param distance
-	 * @return
-	 */
-	public static Location getRightSide(Location location, double distance){
-		float angle = location.getYaw()/60;
-		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
-	}
-	
-	/**
-	 * Returns the element an ability belongs to.
-	 * @param ability
-	 * @return
-	 */
-	public static Element getAbilityElement(String ability){
-		if(AbilityModuleManager.airbendingabilities.contains(ability))
-			return Element.Air;
-		if(AbilityModuleManager.earthbendingabilities.contains(ability))
-			return Element.Earth;
-		if(AbilityModuleManager.firebendingabilities.contains(ability))
-			return Element.Fire;
-		if(AbilityModuleManager.waterbendingabilities.contains(ability))
-			return Element.Water;
-		if(AbilityModuleManager.chiabilities.contains(ability))
-			return Element.Chi;
-		return null;
+		public void setPlayer(Player player) {
+			this.player = player;
+		}
+
+		public void setTime(long time) {
+			this.time = time;
+		}
+
 	}
 }

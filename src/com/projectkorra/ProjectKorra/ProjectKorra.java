@@ -2,7 +2,6 @@ package com.projectkorra.ProjectKorra;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -27,14 +26,15 @@ import com.projectkorra.ProjectKorra.waterbending.WaterbendingManager;
 
 public class ProjectKorra extends JavaPlugin {
 
-	public static long time_step = 1;
 	public static ProjectKorra plugin;
 	public static Logger log;
 	public static PKLogHandler handler;
+	public static long time_step = 1;
 	public Updater updater;
 	
 	@Override
 	public void onEnable() {
+		plugin = this;
 		ProjectKorra.log = this.getLogger();
 		try {
 			handler = new PKLogHandler(getDataFolder() + File.separator + "ERROR.log");
@@ -43,7 +43,6 @@ public class ProjectKorra extends JavaPlugin {
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
 		}
-		plugin = this;
 		new ConfigManager(this);
 		new GeneralMethods(this);
 		updater = new Updater(this, "http://projectkorra.com/forum/forums/dev-builds.16/index.rss");
@@ -54,31 +53,32 @@ public class ProjectKorra extends JavaPlugin {
 		new ComboModuleManager();
 		new ComboManager();
 		new ChiComboManager();
+		new CraftingRecipes(this);
 
 		DBConnection.host = getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = getConfig().getInt("Storage.MySQL.port");
 		DBConnection.pass = getConfig().getString("Storage.MySQL.pass");
 		DBConnection.db = getConfig().getString("Storage.MySQL.db");
 		DBConnection.user = getConfig().getString("Storage.MySQL.user");
+		DBConnection.init();
+		if (DBConnection.isOpen() == false) {
+			//TODO: Log a proper message displaying database problem, pk will not function
+			return;
+		}
 
+		getServer().getPluginManager().registerEvents(new PKListener(this), this);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
-
-		DBConnection.init();
-		if (DBConnection.isOpen() == false) return;
+		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 		
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			Preset.loadPresets(player);
 		}
-		getServer().getPluginManager().registerEvents(new PKListener(this), this);
-
-		
-		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 
 		try {
 			MetricsLite metrics = new MetricsLite(this);
@@ -89,16 +89,15 @@ public class ProjectKorra extends JavaPlugin {
 
 		GeneralMethods.deserializeFile();
 		GeneralMethods.startCacheCleaner(GeneralMethods.CACHE_TIME);
-		new CraftingRecipes(this);
-		
 		updater.checkUpdate();
 	}
 
 	@Override
 	public void onDisable() {
 		GeneralMethods.stopBending();
-		if (DBConnection.isOpen == false) return;
-		DBConnection.sql.close();
+		if (DBConnection.isOpen != false) {
+			DBConnection.sql.close();
+		}
 		handler.close();
 	}
 	
