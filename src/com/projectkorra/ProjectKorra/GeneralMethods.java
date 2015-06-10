@@ -1406,7 +1406,7 @@ public class GeneralMethods {
 		String uuid = bPlayer.uuid.toString();
 
 		//Temp code to block modifications of binds, Should be replaced when bind event is added.
-		if(MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getPlayerName())))
+		if(MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.uuid)))
 			return;
 		HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
