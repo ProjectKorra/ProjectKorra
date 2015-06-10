@@ -115,15 +115,21 @@ public class Preset {
     }
     
     public void save() {
-        DBConnection.sql.modifyQuery("INSERT INTO pk_presets (uuid, name) VALUES ('" + uuid.toString() + "', '" + name
-                + "') ON DUPLICATE KEY UPDATE name=VALUES(name)");
+    	if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
+    		DBConnection.sql.modifyQuery("INSERT INTO pk_presets (uuid, name) VALUES ('" + uuid.toString() + "', '" + name + "') "
+    				+ "ON DUPLICATE KEY UPDATE name=VALUES(name)");
+    	} else {
+//    		DBConnection.sql.modifyQuery("INSERT OR IGNORE INTO pk_presets (uuid, name) VALUES ('" + uuid.toString() + "', '" + name + "')");
+//    		DBConnection.sql.modifyQuery("UPDATE pk_presets SET uuid = '" + uuid.toString() + "', name = '" + name + "'");
+    		DBConnection.sql.modifyQuery("INSERT OR REPLACE INTO pk_presets (uuid, name) VALUES ('" + uuid.toString() + "', '" + name + "')");
+    	}
         
         /*
          * Now we know the preset exists in the SQL table, so we can manipulate
          * it normally.
          */
         for (int i = 1; i <= 9; i++) {
-        	DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
+        	DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot" + i + " = '" + (abilities.get(i) == null ? null: abilities.get(i)) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
         }
     }
     
