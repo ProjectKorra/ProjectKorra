@@ -45,7 +45,7 @@ public class WaterManipulation {
 	// private static double speed = 1.5;
 	private static int ID = Integer.MIN_VALUE;
 
-	private static final byte full = 0x8;
+	private static final byte full = 0x0;
 	private static HashSet<Byte> water = new HashSet<Byte>();
 	// private static final byte half = 0x4;
 
@@ -526,7 +526,7 @@ public class WaterManipulation {
 					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
 				if (getTargetLocation(player).distance(block.getLocation()) > 1) {
-					block.setType(Material.STATIONARY_WATER);
+					block.setType(Material.WATER);
 					block.setData(full);
 					WaterManipulation watermanip = new WaterManipulation(player);
 					watermanip.moveWater();

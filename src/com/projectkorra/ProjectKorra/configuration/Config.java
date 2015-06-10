@@ -18,7 +18,7 @@ public class Config {
 		this.plugin = ProjectKorra.plugin;
 		this.file = new File(plugin.getDataFolder() + File.separator + file);
 		this.config = YamlConfiguration.loadConfiguration(this.file);
-		loadConfig();
+		reloadConfig();
 	}
 
 	public void createConfig() {
@@ -46,8 +46,8 @@ public class Config {
 	public FileConfiguration getConfig() {
 		return config;
 	}
-
-	public void loadConfig() {
+	
+	public void reloadConfig() {
 		createConfig();
 		try {
 			config.load(file);
