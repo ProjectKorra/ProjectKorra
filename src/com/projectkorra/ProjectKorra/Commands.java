@@ -242,7 +242,7 @@ public class Commands {
 
 						Preset preset = Preset.getPreset(player, name);
 						preset.delete();
-						s.sendMessage(ChatColor.GREEN + "You have deleted your preset named: " + name);
+						s.sendMessage(ChatColor.GREEN + "You have deleted your preset named: " + ChatColor.YELLOW + name);
 					}
 
 					if (Arrays.asList(bindaliases).contains(args[1].toLowerCase())) {
@@ -257,7 +257,7 @@ public class Commands {
 						}
 
 						Preset.bindPreset(player, name);
-						s.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + name + " preset.");
+						s.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
 						return true;
 					}
 
@@ -286,7 +286,7 @@ public class Commands {
 						HashMap<Integer, String> abilities = bPlayer.getAbilities();
 						Preset preset = new Preset(player.getUniqueId(), name, abilities);
 						preset.save();
-						s.sendMessage(ChatColor.GREEN + "Created preset with the name: " + name);
+						s.sendMessage(ChatColor.GREEN + "Created preset with the name: " + ChatColor.YELLOW + name);
 						return true;
 					}
 
@@ -945,7 +945,7 @@ public class Commands {
 						HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
 						if (abilities.isEmpty()) {
-							s.sendMessage("You don't have any bound abilities.");
+							s.sendMessage(ChatColor.RED + "You don't have any bound abilities.");
 							s.sendMessage("If you would like to see a list of available abilities, please use the /bending display [Element] command. Use /bending help for more information.");
 							return true;
 						}
