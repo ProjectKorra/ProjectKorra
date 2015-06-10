@@ -1891,7 +1891,7 @@ public class Commands {
 					}
 					
 					if (s instanceof Player) {
-						if (plugin.updater.updateAvalible()) {
+						if (plugin.updater.updateAvailable()) {
 							s.sendMessage(ChatColor.GREEN + "There is a new version of " + ChatColor.GOLD + "ProjectKorra" + ChatColor.GREEN + " available!");
 							s.sendMessage(ChatColor.YELLOW + "Current version: " + ChatColor.RED + plugin.updater.getCurrentVersion());
 							s.sendMessage(ChatColor.YELLOW + "Latest version: " + ChatColor.GOLD + plugin.updater.getCurrentVersion());
