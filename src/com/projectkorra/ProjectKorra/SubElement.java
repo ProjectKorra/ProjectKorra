@@ -29,6 +29,5 @@ public enum SubElement {
 		if (index == -1) return null;
 		return (SubElement)Arrays.asList(values()).get(index);
 	}
-
 	
 }

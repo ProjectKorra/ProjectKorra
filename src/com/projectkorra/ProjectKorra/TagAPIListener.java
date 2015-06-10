@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra;
 import org.bukkit.event.Listener;
 //import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 
+@Deprecated
 public class TagAPIListener implements Listener {
 	
 }

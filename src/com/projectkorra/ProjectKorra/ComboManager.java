@@ -1,27 +1,27 @@
 package com.projectkorra.ProjectKorra;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
 import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.firebending.FireCombo;
 import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
 
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class ComboManager {
 	private static final long CLEANUP_DELAY = 10000;
 	public static ConcurrentHashMap<String, ArrayList<AbilityInformation>> recentlyUsedAbilities = new ConcurrentHashMap<String, ArrayList<AbilityInformation>>();
 	public static ArrayList<ComboAbility> comboAbilityList = new ArrayList<ComboAbility>();
+	public static HashMap<String, String> authors = new HashMap<String, String>();
 	public static HashMap<String, String> descriptions = new HashMap<String, String>();
 	public static HashMap<String, String> instructions = new HashMap<String, String>();
-	public static HashMap<String, String> authors = new HashMap<String, String>();
-
+	
 	public ComboManager() {
 		ArrayList<AbilityInformation> fireKick = new ArrayList<AbilityInformation>();
 		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
@@ -154,94 +154,6 @@ public class ComboManager {
 		}
 	}
 
-	public static class AbilityInformation {
-		private String abilityName;
-		private ClickType clickType;
-		private long time;
-
-		public AbilityInformation(String name, ClickType type, long time) {
-			this.abilityName = name;
-			this.clickType = type;
-			this.time = time;
-		}
-
-		public AbilityInformation(String name, ClickType type) {
-			this(name, type, 0);
-		}
-
-		public String getAbilityName() {
-			return abilityName;
-		}
-
-		public void setAbilityName(String abilityName) {
-			this.abilityName = abilityName;
-		}
-
-		public ClickType getClickType() {
-			return clickType;
-		}
-
-		public void setClickType(ClickType clickType) {
-			this.clickType = clickType;
-		}
-
-		public long getTime() {
-			return time;
-		}
-
-		public void setTime(long time) {
-			this.time = time;
-		}
-
-		public String toString() {
-			return abilityName + " " + clickType + " " + time;
-		}
-
-		public boolean equalsWithoutTime(AbilityInformation info) {
-			return this.getAbilityName().equals(info.getAbilityName()) && this.getClickType().equals(info.getClickType());
-		}
-	}
-
-	public static class ComboAbility {
-		private String name;
-		private ArrayList<AbilityInformation> abilities;
-		private Object comboType;
-
-		public ComboAbility(String name, ArrayList<AbilityInformation> abilities, Object comboType) {
-			this.name = name;
-			this.abilities = abilities;
-			this.comboType = comboType;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public ArrayList<AbilityInformation> getAbilities() {
-			return abilities;
-		}
-
-		public void setAbilities(ArrayList<AbilityInformation> abilities) {
-			this.abilities = abilities;
-		}
-
-		public Object getComboType() {
-			return comboType;
-		}
-
-		public void setComboType(Object comboType) {
-			this.comboType = comboType;
-		}
-
-		public String toString() {
-			return name;
-		}
-	}
-
 	public static void addRecentAbility(Player player, AbilityInformation info) {
 		ArrayList<AbilityInformation> list;
 		String name = player.getName();
@@ -252,21 +164,6 @@ public class ComboManager {
 			list = new ArrayList<AbilityInformation>();
 		list.add(info);
 		recentlyUsedAbilities.put(name, list);
-	}
-
-	public static ArrayList<AbilityInformation> getRecentlyUsedAbilities(Player player, int amount) {
-		String name = player.getName();
-		if (!recentlyUsedAbilities.containsKey(name))
-			return new ArrayList<AbilityInformation>();
-
-		ArrayList<AbilityInformation> list = recentlyUsedAbilities.get(name);
-		if (list.size() < amount)
-			return new ArrayList<AbilityInformation>(list);
-
-		ArrayList<AbilityInformation> tempList = new ArrayList<AbilityInformation>();
-		for (int i = 0; i < amount; i++)
-			tempList.add(0, list.get(list.size() - 1 - i));
-		return tempList;
 	}
 
 	public static ComboAbility checkForValidCombo(Player player) {
@@ -291,14 +188,6 @@ public class ComboManager {
 		return null;
 	}
 
-	public static void startCleanupTask() {
-		new BukkitRunnable() {
-			public void run() {
-				cleanupOldCombos();
-			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, CLEANUP_DELAY);
-	}
-
 	public static void cleanupOldCombos() {
 		Enumeration<String> keys = recentlyUsedAbilities.keys();
 		while (keys.hasMoreElements()) {
@@ -315,6 +204,117 @@ public class ComboManager {
 
 			if (combos.size() > 0)
 				recentlyUsedAbilities.put(name, combos);
+		}
+	}
+
+	public static ArrayList<AbilityInformation> getRecentlyUsedAbilities(Player player, int amount) {
+		String name = player.getName();
+		if (!recentlyUsedAbilities.containsKey(name))
+			return new ArrayList<AbilityInformation>();
+
+		ArrayList<AbilityInformation> list = recentlyUsedAbilities.get(name);
+		if (list.size() < amount)
+			return new ArrayList<AbilityInformation>(list);
+
+		ArrayList<AbilityInformation> tempList = new ArrayList<AbilityInformation>();
+		for (int i = 0; i < amount; i++)
+			tempList.add(0, list.get(list.size() - 1 - i));
+		return tempList;
+	}
+
+	public static void startCleanupTask() {
+		new BukkitRunnable() {
+			public void run() {
+				cleanupOldCombos();
+			}
+		}.runTaskTimer(ProjectKorra.plugin, 0, CLEANUP_DELAY);
+	}
+
+	public static class AbilityInformation {
+		private String abilityName;
+		private ClickType clickType;
+		private long time;
+
+		public AbilityInformation(String name, ClickType type) {
+			this(name, type, 0);
+		}
+
+		public AbilityInformation(String name, ClickType type, long time) {
+			this.abilityName = name;
+			this.clickType = type;
+			this.time = time;
+		}
+
+		public boolean equalsWithoutTime(AbilityInformation info) {
+			return this.getAbilityName().equals(info.getAbilityName()) && this.getClickType().equals(info.getClickType());
+		}
+
+		public String getAbilityName() {
+			return abilityName;
+		}
+
+		public ClickType getClickType() {
+			return clickType;
+		}
+
+		public long getTime() {
+			return time;
+		}
+
+		public void setAbilityName(String abilityName) {
+			this.abilityName = abilityName;
+		}
+
+		public void setClickType(ClickType clickType) {
+			this.clickType = clickType;
+		}
+
+		public void setTime(long time) {
+			this.time = time;
+		}
+
+		public String toString() {
+			return abilityName + " " + clickType + " " + time;
+		}
+	}
+	
+	public static class ComboAbility {
+		private String name;
+		private ArrayList<AbilityInformation> abilities;
+		private Object comboType;
+
+		public ComboAbility(String name, ArrayList<AbilityInformation> abilities, Object comboType) {
+			this.name = name;
+			this.abilities = abilities;
+			this.comboType = comboType;
+		}
+
+		public ArrayList<AbilityInformation> getAbilities() {
+			return abilities;
+		}
+
+		public Object getComboType() {
+			return comboType;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setAbilities(ArrayList<AbilityInformation> abilities) {
+			this.abilities = abilities;
+		}
+
+		public void setComboType(Object comboType) {
+			this.comboType = comboType;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String toString() {
+			return name;
 		}
 	}
 }
