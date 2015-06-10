@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
@@ -260,27 +261,12 @@ public class GeneralMethods {
 			cooldowns.remove(p.getName());
 		}
 		if (bPlayer.blockedChi) return false;
-		//		if (bPlayer.isChiBlocked()) return false;
 		if (!p.hasPermission("bending.ability." + ability)) return false;
 		if (AirMethods.isAirAbility(ability) && !isBender(player, Element.Air)) return false;
 		if (WaterMethods.isWaterAbility(ability) && !isBender(player, Element.Water)) return false;
 		if (EarthMethods.isEarthAbility(ability) && !isBender(player, Element.Earth)) return false;
 		if (FireMethods.isFireAbility(ability) && !isBender(player, Element.Fire)) return false;
 		if (ChiMethods.isChiAbility(ability) && !isBender(player, Element.Chi)) return false;
-
-		//		if (isFlightAbility(ability) && !canAirFlight(plugin.getServer().getPlayer(player))) return false;
-		//		if (isSpiritualProjectionAbility(ability) && !canUseSpiritualProjection(plugin.getServer().getPlayer(player))) return false;
-		//		if (isCombustionbendingAbility(ability) && !canCombustionbend(plugin.getServer().getPlayer(player))) return false;
-		//		if (isLightningbendingAbility(ability) && !canLightningbend(plugin.getServer().getPlayer(player))) return false;
-		//		if (isSandbendingAbility(ability) && !canSandbend(plugin.getServer().getPlayer(player))) return false;
-		//		if (isMetalbendingAbility(ability) && !canMetalbend(plugin.getServer().getPlayer(player))) return false;
-		//		if (isLavabendingAbility(ability) && !canLavabend(plugin.getServer().getPlayer(player))) return false;
-		//		if (isIcebendingAbility(ability) && !canIcebend(plugin.getServer().getPlayer(player))) return false;
-		//		if (isHealingAbility(ability) && !canWaterHeal(plugin.getServer().getPlayer(player))) return false;
-		//		if (isPlantbendingAbility(ability) && !canPlantbend(plugin.getServer().getPlayer(player))) return false;
-		//		if (isBloodbendingAbility(ability) && !canBloodbend(plugin.getServer().getPlayer(player))) return false;
-
-
 
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation())) return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p)) return false;
@@ -1177,7 +1163,7 @@ public class GeneralMethods {
 				if (type == null) type = Material.AIR;
 				String reason = GriefPrevention.instance.allowBuild(player, location); // WORKING with WorldGuard 6.0 BETA 4
 
-
+				Claim claim = GriefPrevention.instance.dataStore.getClaimAt(loc, true, null);
 				if (ignite.contains(ability)) {
 
 				}
@@ -1186,7 +1172,7 @@ public class GeneralMethods {
 
 				}
 
-				if (reason != null)
+				if (reason != null && claim.siegeData != null)
 					return true;
 			}
 		}
