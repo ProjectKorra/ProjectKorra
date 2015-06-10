@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class FirebendingManager implements Runnable {
@@ -16,30 +15,25 @@ public class FirebendingManager implements Runnable {
 	}
 	
 	public void run() {
-		try {
-			FirePassive.handlePassive();
-			FireJet.progressAll();
-			Cook.progressAll();
-			Illumination.manage(Bukkit.getServer());
-			FireBlast.progressAll();
-			Fireball.progressAll();
-			FireBurst.progressAll();
-			FireShield.progressAll();
-			Lightning.progressAll();
-			WallOfFire.manage();
-			Combustion.progressAll();
-			for (Block block : FireStream.ignitedblocks.keySet()) {
-				if (block.getType() != Material.FIRE) {
-					FireStream.ignitedblocks.remove(block);
-				}
+		FirePassive.handlePassive();
+		FireJet.progressAll();
+		Cook.progressAll();
+		Illumination.manage(Bukkit.getServer());
+		FireBlast.progressAll();
+		Fireball.progressAll();
+		FireBurst.progressAll();
+		FireShield.progressAll();
+		Lightning.progressAll();
+		WallOfFire.manage();
+		Combustion.progressAll();
+		for (Block block : FireStream.ignitedblocks.keySet()) {
+			if (block.getType() != Material.FIRE) {
+				FireStream.ignitedblocks.remove(block);
 			}
-			HeatControl.progressAll();
-			FireStream.dissipateAll();
-			FireStream.progressAll();
-			FireCombo.progressAll();
-		} catch (Exception e) {
-			GeneralMethods.logError(e, false);
 		}
-		
+		HeatControl.progressAll();
+		FireStream.dissipateAll();
+		FireStream.progressAll();
+		FireCombo.progressAll();
 	}
 }

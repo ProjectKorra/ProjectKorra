@@ -379,7 +379,6 @@ public class GeneralMethods {
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
-			GeneralMethods.logError(ex);
 		}
 	}
 
@@ -467,7 +466,6 @@ public class GeneralMethods {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				GeneralMethods.logError(e);
 			}
 		}
 	}
@@ -1850,58 +1848,6 @@ public class GeneralMethods {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Logs a throwable into an ERROR.log file in the ProjectKorra root folder.
-	 * <p>
-	 * Calls {@link #logError(Throwable, boolean)} with silent set to true
-	 * </p>
-	 * 
-	 * @param e The throwable/exception to log
-	 */
-	public static void logError(Throwable e) {
-		logError(e, true);
-	}
-
-	/**
-	 * Logs a throwable into an ERROR.log file in the ProjectKorra root folder.
-	 * <p>
-	 * If silent is {@code true} this method will display
-	 * will display an error in console indicating admins to check ERROR.log
-	 * <br>
-	 * Otherwise it will log the error silently
-	 * </p>
-	 * 
-	 * @param e The throwable/exception to log
-	 * @param silent Wether or not the console should be notified of an error
-	 */
-	public static void logError(Throwable e, boolean silent) {
-		File errorFile = new File(plugin.getDataFolder(), "ERROR.log");
-		if (!errorFile.exists()) {
-			try {
-				errorFile.createNewFile();
-			} catch (IOException ex) {
-				ProjectKorra.log.severe("Unable to generate error log!");
-				ex.printStackTrace();
-			}
-		} else {
-			try(PrintWriter out = new PrintWriter(new FileWriter(errorFile, true))) {
-				if (!silent) {
-					ProjectKorra.log.severe("###################################################");
-					ProjectKorra.log.severe("##################====[ERROR]====##################");
-					ProjectKorra.log.severe("              An error has been caught");
-					ProjectKorra.log.severe(" Please check the ERROR.log file for stack trace.");
-					ProjectKorra.log.severe("   Create a bug report with the log contents at.");
-					ProjectKorra.log.severe("http://projectkorra.com/forum/forums/bug-reports.6/");
-					ProjectKorra.log.severe("##################====[ERROR]====##################");
-					ProjectKorra.log.severe("###################################################");
-				}
-				e.printStackTrace(out);
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
 	}
 
 	/**

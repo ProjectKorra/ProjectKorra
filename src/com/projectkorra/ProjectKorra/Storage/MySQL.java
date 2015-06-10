@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Logger;
-
-import com.projectkorra.ProjectKorra.GeneralMethods;
 public class MySQL extends Database {
     
     private String host = "localhost";
@@ -42,12 +40,10 @@ public class MySQL extends Database {
             
             return this.connection;
         } catch(ClassNotFoundException e) {
-        	GeneralMethods.logError(e);
             this.printErr("JDBC driver not found!", true);
             return null;
         } catch(SQLException e) {
             e.printStackTrace();
-            GeneralMethods.logError(e);
             this.printErr("MYSQL exception during connection.", true);
             return null;
         }

@@ -179,11 +179,8 @@ public class MetricsLite {
 						firstPost = false;
 					} catch (IOException e) {
 						if (debug) {
-							GeneralMethods.logError(e, false);
 							Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
-						} else {
-							GeneralMethods.logError(e);
-						}
+						} 
 					}
 				}
 			}, 0, PING_INTERVAL * 1200);
@@ -399,7 +396,6 @@ public class MetricsLite {
 			gzos.write(input.getBytes("UTF-8"));
 		} catch (IOException e) {
 			e.printStackTrace();
-			GeneralMethods.logError(e);
 		} finally {
 			if (gzos != null) try {
 				gzos.close();
