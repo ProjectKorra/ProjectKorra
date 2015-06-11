@@ -517,6 +517,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Cooldown", 10000);
 
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
+			config.addDefault("Properties.Earth.Passive.SandRunPower", 1);
 
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
 			config.addDefault("Abilities.Earth.Catapult.Description", "To use, left-click while looking in the direction you want to be launched. "

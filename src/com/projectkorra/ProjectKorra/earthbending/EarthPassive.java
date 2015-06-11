@@ -9,6 +9,8 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.GeneralMethods;
@@ -21,6 +23,7 @@ public class EarthPassive {
 	public static ConcurrentHashMap<Block, Material> sandidentities = new ConcurrentHashMap<Block, Material>();
 	
 	private static final long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Passive.Duration");
+	private static int sandspeed = ProjectKorra.plugin.getConfig().getInt("Properties.Earth.Passive.SandRunPower");
 
 	public static boolean softenLanding(Player player) {
 		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
@@ -73,6 +76,19 @@ public class EarthPassive {
 		}
 	}
 	
+	public static void sandSpeed() {
+		for(Player p : Bukkit.getOnlinePlayers()){
+			if(EarthMethods.canSandbend(p)){
+				if(p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SAND || 
+						p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SANDSTONE ||
+						p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.RED_SANDSTONE){
+					p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, sandspeed - 1));
+				}
+			}
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
 	public static void handleMetalPassives() {
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			if (GeneralMethods.canBendPassive(player.getName(), Element.Earth) && EarthMethods.canMetalbend(player)) {

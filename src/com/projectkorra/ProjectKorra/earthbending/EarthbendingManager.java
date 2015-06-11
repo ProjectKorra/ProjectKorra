@@ -16,6 +16,7 @@ public class EarthbendingManager implements Runnable {
 	public void run() {
 		EarthPassive.revertSands();
 		EarthPassive.handleMetalPassives();
+		EarthPassive.sandSpeed();
 		RevertChecker.revertEarthBlocks();
 		EarthTunnel.progressAll();
 		EarthArmor.moveArmorAll();
