@@ -11,22 +11,29 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModule;
 import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleManager;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.firebending.FireMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class MultiAbilityManager {
-	
+
 	public static ConcurrentHashMap<Player, HashMap<Integer, String>> playerAbilities = new ConcurrentHashMap<Player, HashMap<Integer, String>>();
 	public static ConcurrentHashMap<Player, Integer> playerSlot = new ConcurrentHashMap<Player, Integer>();
 	public static ConcurrentHashMap<Player, String> playerBoundAbility = new ConcurrentHashMap<Player, String>();
 	public static ArrayList<MultiAbility> multiAbilityList = new ArrayList<MultiAbility>();
-	
+
 	public MultiAbilityManager() {
 		ArrayList<MultiAbilitySub> waterArms = new ArrayList<MultiAbilitySub>();
 		waterArms.add(new MultiAbilitySub("Pull", Element.Water, null));
 		waterArms.add(new MultiAbilitySub("Punch", Element.Water, null));
 		waterArms.add(new MultiAbilitySub("Grapple", Element.Water, null));
 		waterArms.add(new MultiAbilitySub("Grab", Element.Water, null));
-		waterArms.add(new MultiAbilitySub("Freeze", Element.Water, SubElement.Icebending));
-		waterArms.add(new MultiAbilitySub("Spear", Element.Water, SubElement.Icebending));
+		waterArms.add(new MultiAbilitySub("Freeze", Element.Water,
+				SubElement.Icebending));
+		waterArms.add(new MultiAbilitySub("Spear", Element.Water,
+				SubElement.Icebending));
 		multiAbilityList.add(new MultiAbility("WaterArms", waterArms));
 		manage();
 	}
@@ -60,20 +67,20 @@ public class MultiAbilityManager {
 				bPlayer.getAbilities().put(
 						i + 1,
 						new StringBuilder()
-								.append(GeneralMethods.getAbilityColor(modes.get(i).getName()))
+								.append(modes.get(i).getAbilityColor())
 								.append(ChatColor.STRIKETHROUGH)
 								.append(modes.get(i).getName()).toString());
 			} else {
 				bPlayer.getAbilities()
 						.put(i + 1,
-								GeneralMethods.getAbilityColor(modes.get(i).getName())
+								modes.get(i).getAbilityColor()
 										+ modes.get(i).getName());
 			}
 		}
 
 		if (player.isOnline()) {
 			bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending
-													// scoreboards.
+			// scoreboards.
 			player.getInventory().setHeldItemSlot(0);
 		}
 	}
@@ -219,7 +226,7 @@ public class MultiAbilityManager {
 
 			if (player.isOnline())
 				bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending
-														// scoreboards.
+			// scoreboards.
 			playerAbilities.remove(player);
 		}
 
@@ -235,7 +242,7 @@ public class MultiAbilityManager {
 		if (playerBoundAbility.containsKey(player))
 			playerBoundAbility.remove(player);
 	}
-	
+
 	/**
 	 * MultiAbility class. Manages each MultiAbility's sub abilities.
 	 *
@@ -265,7 +272,7 @@ public class MultiAbilityManager {
 			this.name = name;
 		}
 	}
-	
+
 	public static class MultiAbilitySub {
 		private String name;
 		private Element element;
@@ -299,6 +306,27 @@ public class MultiAbilityManager {
 
 		public void setSubElement(SubElement sub) {
 			this.sub = sub;
+		}
+
+		public ChatColor getAbilityColor() {
+			if (sub == null) {
+				switch (element) {
+				case Air:
+					return AirMethods.getAirColor();
+				case Water:
+					return WaterMethods.getWaterColor();
+				case Fire:
+					return FireMethods.getFireColor();
+				case Earth:
+					return EarthMethods.getEarthColor();
+				case Chi:
+					return ChiMethods.getChiColor();
+				default:
+					return GeneralMethods.getAvatarColor();
+				}
+			} else {
+				return GeneralMethods.getSubBendingColor(element);
+			}
 		}
 	}
 
