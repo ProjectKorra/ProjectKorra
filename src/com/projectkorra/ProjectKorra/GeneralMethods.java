@@ -83,6 +83,7 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
+import com.projectkorra.ProjectKorra.CustomEvents.BendingReloadEvent;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerBendingDeathEvent;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirCombo;
@@ -1446,6 +1447,8 @@ public class GeneralMethods {
 		plugin.reloadConfig();
 		ConfigManager.deathMsgConfig.reloadConfig();
 		GeneralMethods.stopBending();
+		BendingReloadEvent event = new BendingReloadEvent();
+		Bukkit.getServer().getPluginManager().callEvent(event);
 		new AbilityModuleManager(plugin);
 		DBConnection.host = plugin.getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = plugin.getConfig().getInt("Storage.MySQL.port");
