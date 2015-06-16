@@ -181,7 +181,7 @@ permissions:
     children:
         bending.ability.AirSweep: true
         bending.ability.AirStream: true
-        bending.ability.Tornado: true
+        bending.ability.Twister: true
   bending.ability.WaterCombo:
     default: false
     description: Grants access to all WaterCombos.
