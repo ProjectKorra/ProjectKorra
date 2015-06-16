@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,6 +23,7 @@ public class SandSpout {
 	private static final double HEIGHT = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.SandSpout.Height");
 	private static final int BTIME = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.SandSpout.BlindnessTime");
 	private static final int SPOUTDAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.SandSpout.SpoutDamage");
+	private static final boolean SPIRAL = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.SandSpout.Spiral");
 	private static final long interval = 100;
 
 	private Player player;
@@ -32,6 +32,7 @@ public class SandSpout {
 	private double height = HEIGHT;
 	private int bTime = BTIME;
 	private double spoutDamage = SPOUTDAMAGE;
+	private double y = 0D;
 
 	public SandSpout(Player player) {
 
@@ -45,7 +46,7 @@ public class SandSpout {
 		if(topBlock == null)
 			topBlock = player.getLocation().getBlock();
 		Material mat = topBlock.getType();
-		if(mat != Material.SAND && mat != Material.SANDSTONE)
+		if(mat != Material.SAND && mat != Material.SANDSTONE && mat != Material.RED_SANDSTONE)
 			return;
 		new Flight(player);
 		instances.put(player, this);
@@ -79,7 +80,7 @@ public class SandSpout {
 			EarthMethods.playSandBendingSound(player.getLocation());
 		}
 		Block block = getGround();
-		if (block != null && (block.getType() == Material.SAND || block.getType() == Material.SANDSTONE)) {
+		if (block != null && (block.getType() == Material.SAND || block.getType() == Material.SANDSTONE || block.getType() == Material.RED_SANDSTONE)) {
 			double dy = player.getLocation().getY() - block.getY();
 			if (dy > height) {
 				removeFlight();
@@ -114,6 +115,7 @@ public class SandSpout {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void rotateSandColumn(Block block) {
 
 		if (System.currentTimeMillis() >= time + interval) {
@@ -141,8 +143,15 @@ public class SandSpout {
 
 				Location effectloc2 = new Location(location.getWorld(),
 						location.getX(), block.getY() + i, location.getZ());
-
-				EarthMethods.displaySandParticle(effectloc2,2f,3f,2f,40,.2f);
+				
+				if(SPIRAL){
+					displayHelix(block.getLocation(), this.player.getLocation(), block);
+				}
+				if (block != null && ((block.getType() == Material.SAND && block.getData() == (byte)0) || block.getType() == Material.SANDSTONE)) {
+					EarthMethods.displaySandParticle(effectloc2, 1f ,3f ,1f , 20, .2f, false);
+				}else if (block != null && ((block.getType() == Material.SAND && block.getData() == (byte)1) || block.getType() == Material.RED_SANDSTONE)) {
+					EarthMethods.displaySandParticle(effectloc2, 1f ,3f ,1f , 20, .2f, true);
+				}
 				
 				Collection<Player> players = GeneralMethods.getPlayersAroundPoint(effectloc2, 1.5f);
 				if(!players.isEmpty())
@@ -153,6 +162,31 @@ public class SandSpout {
 						}
 					}
 			}
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void displayHelix(Location location, Location player, Block block) {
+		// TODO Auto-generated method stub
+		//double radius = 1.5;
+		this.y += 0.1;
+		if(this.y >= player.getY() - location.getY()){
+			this.y = 0D;
+		}
+			for(int points = 0; points <= 5; points++){
+				double x = Math.cos(y);
+				double z = Math.sin(y);
+				double nx = x * -1;
+				double nz = z * -1;
+				Location newloc = new Location(player.getWorld(), location.getX() + x, location.getY() + y, location.getZ() + z);
+				Location secondloc = new Location(player.getWorld(), location.getX() + nx, location.getY() + y, location.getZ() + nz);
+				if (block != null && ((block.getType() == Material.SAND && block.getData() == (byte)0) || block.getType() == Material.SANDSTONE)) {
+					EarthMethods.displaySandParticle(newloc.add(0.5, 0.5, 0.5), 0.1F, 0.1F, 0.1F, 2, 1, false);
+		        	EarthMethods.displaySandParticle(secondloc.add(0.5, 0.5, 0.5), 0.1F, 0.1F, 0.1F, 2, 1, false);
+				}else if (block != null && ((block.getType() == Material.SAND && block.getData() == (byte)1) || block.getType() == Material.RED_SANDSTONE)) {
+					EarthMethods.displaySandParticle(newloc.add(0.5, 0.5, 0.5), 0.1F, 0.1F, 0.1F, 2, 1, true);
+		        	EarthMethods.displaySandParticle(secondloc.add(0.5, 0.5, 0.5), 0.1F, 0.1F, 0.1F, 2, 1, true);
+				}
 		}
 	}
 
