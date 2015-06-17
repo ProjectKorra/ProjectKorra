@@ -36,6 +36,7 @@ public class WallOfFire {
 	private static long COOLDOWN = config.getLong("Abilities.Fire.WallOfFire.Cooldown");
 	public static ConcurrentHashMap<Player, WallOfFire> instances = new ConcurrentHashMap<Player, WallOfFire>();
 	private static long DAMAGE_INTERVAL = config.getLong("Abilities.Fire.WallOfFire.Interval");
+	private static double fireticks = config.getDouble("Abilities.Fire.WallOfFire.FireTicks");
 
 	private Location origin;
 	private long time, starttime;
@@ -186,7 +187,7 @@ public class WallOfFire {
 	}
 
 	private void affect(Entity entity) {
-		entity.setFireTicks(50);
+		entity.setFireTicks((int) (fireticks * 20));
 		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
 		if (entity instanceof LivingEntity) {
 			GeneralMethods.damageEntity(player, entity, damage);

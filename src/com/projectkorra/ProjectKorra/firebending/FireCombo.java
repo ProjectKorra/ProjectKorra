@@ -49,7 +49,10 @@ public class FireCombo {
 			.getBoolean("Abilities.Fire.FireCombo.Enabled");
 	private static final double FIRE_WHEEL_STARTING_HEIGHT = 2;
 	private static final double FIRE_WHEEL_RADIUS = 1;
-	public static double BURN_TIME = 2.5;
+	public static double fireticksFireWheel = ProjectKorra.plugin.getConfig()
+			.getDouble("Abilities.Fire.FireCombo.FireWheel.FireTicks");
+	public static double fireticksJetBlaze = ProjectKorra.plugin.getConfig()
+			.getDouble("Abilities.Fire.FireCombo.JetBlaze.FireTicks");
 	public static double FIRE_KICK_RANGE = ProjectKorra.plugin.getConfig()
 			.getDouble("Abilities.Fire.FireCombo.FireKick.Range");
 	public static double FIRE_KICK_DAMAGE = ProjectKorra.plugin.getConfig()
@@ -417,13 +420,13 @@ public class FireCombo {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
 				GeneralMethods.damageEntity(player, entity, damage);
-				entity.setFireTicks((int) (BURN_TIME * 20));
+				entity.setFireTicks((int) (fireticksJetBlaze * 20));
 			}
 		} else if (ability.equalsIgnoreCase("FireWheel")) {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
 				GeneralMethods.damageEntity(player, entity, damage);
-				entity.setFireTicks((int) (BURN_TIME * 20));
+				entity.setFireTicks((int) (fireticksFireWheel * 20));
 				this.remove();
 			}
 		}

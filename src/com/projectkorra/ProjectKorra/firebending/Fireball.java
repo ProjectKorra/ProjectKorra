@@ -32,6 +32,7 @@ public class Fireball {
 	private static double DAMAGE_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
 	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Range");
 	private static double POWER = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Power");
+	private static double fireticks = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Charged.FireTicks");
 
 	private int id;
 	private double maxdamage = MAX_DAMAGE;
@@ -182,7 +183,7 @@ public class Fireball {
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * radius)) {
 			if (entity.getEntityId() == player.getEntityId())
 				continue;
-			entity.setFireTicks(120);
+			entity.setFireTicks((int) (fireticks * 20));
 			if (entity instanceof LivingEntity) {
 				explode();
 				dealDamage(entity);
