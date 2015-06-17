@@ -36,6 +36,7 @@ public class FireBlast {
 	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Range");
 	static boolean dissipate = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.FireBlast.Damage");
+	private static double fireticks = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
 	
 	long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
 
@@ -236,7 +237,7 @@ public class FireBlast {
 				GeneralMethods.setVelocity(entity, direction.clone().multiply(pushfactor));
 			}
 			if (entity instanceof LivingEntity) {
-				entity.setFireTicks(50);
+				entity.setFireTicks((int) (fireticks * 20));
 				GeneralMethods.damageEntity(player, entity, (int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()));
 				AirMethods.breakBreathbendingHold(entity);
 				new Enflamed(entity, player);

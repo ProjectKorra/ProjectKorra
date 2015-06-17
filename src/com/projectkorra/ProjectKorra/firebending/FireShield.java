@@ -26,6 +26,7 @@ public class FireShield {
 	private static long DURATION = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireShield.Duration");
 	private static double RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.Radius");
 	private static double DISC_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.DiscRadius");
+	private static double fireticks = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireShield.FireTicks");
 	private static boolean ignite = true;
 
 	private Player player;
@@ -159,7 +160,7 @@ public class FireShield {
 					if (GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", entity.getLocation()))
 						continue;
 					if (player.getEntityId() != entity.getEntityId() && ignite) {
-						entity.setFireTicks(120);
+						entity.setFireTicks((int) (fireticks * 20));
 						if (!(entity instanceof LivingEntity)) {
 							entity.remove();
 						}

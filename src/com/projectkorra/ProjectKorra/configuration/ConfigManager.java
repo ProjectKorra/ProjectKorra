@@ -725,11 +725,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireBlast.Damage", 2);
 			config.addDefault("Abilities.Fire.FireBlast.Cooldown", 1500);
 			config.addDefault("Abilities.Fire.FireBlast.Dissipate", false);
+			config.addDefault("Abilities.Fire.FireBlast.FireTicks", 2.5);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.ChargeTime", 2000);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.Damage", 4);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.DamageRadius", 6);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.Power", 1);
 			config.addDefault("Abilities.Fire.FireBlast.Charged.Range", 20);
+			config.addDefault("Abilities.Fire.FireBlast.Charged.FireTicks", 6);
 
 			config.addDefault("Abilities.Fire.FireBurst.Enabled", true);
 			config.addDefault("Abilities.Fire.FireBurst.Description", "FireBurst is a very powerful firebending ability. "
@@ -761,6 +763,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireShield.Radius", 3);
 			config.addDefault("Abilities.Fire.FireShield.DiscRadius", 1.5);
 			config.addDefault("Abilities.Fire.FireShield.Duration", 1000);
+			config.addDefault("Abilities.Fire.FireShield.FireTicks", 6);
 
 			config.addDefault("Abilities.Fire.HeatControl.Enabled", true);
 			config.addDefault("Abilities.Fire.HeatControl.Description", "While this ability is selected, the firebender becomes impervious "
@@ -814,6 +817,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.WallOfFire.Damage", 2);
 			config.addDefault("Abilities.Fire.WallOfFire.Cooldown", 7500);
 			config.addDefault("Abilities.Fire.WallOfFire.Interval", 500);
+			config.addDefault("Abilities.Fire.WallOfFire.FireTicks", 3);
 
 			config.addDefault("Abilities.Fire.FireCombo.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Range", 7.0);
@@ -827,11 +831,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Damage", 4.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Speed", 0.55);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Cooldown", 200);
+			config.addDefault("Abilities.Fire.FireCombo.FireWheel.FireTicks", 2.5);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Speed", 1.2);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Speed", 1.1);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Damage", 3);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Cooldown", 6000);
+			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.FireTicks", 2.5);
 
 			config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 			config.addDefault("Abilities.Chi.Passive.Speed", 1);
