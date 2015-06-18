@@ -132,7 +132,6 @@ public class Flight {
 
 	public void revert() {
 		if (player == null) {
-			instances.remove(player);
 			return;
 		}
 		player.setAllowFlight(couldFly);
