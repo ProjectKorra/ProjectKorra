@@ -805,9 +805,12 @@ public class PKListener implements Listener {
 			if (GeneralMethods.abilityExists(ability)) {
 				element = GeneralMethods.getAbilityElement(ability).name();
 			}
-			if (ComboManager.checkForValidCombo(event.getEntity().getKiller()).getName().equalsIgnoreCase(ability)) {
-				element = GeneralMethods.getAbilityElement(GeneralMethods.getLastUsedAbility(event.getEntity().getKiller(), false)).name();
-				ability = element + "Combo";
+			if (ComboManager.checkForValidCombo(event.getEntity().getKiller()) != null) {
+				String combo = ComboManager.checkForValidCombo(event.getEntity().getKiller()).getName();
+				if (combo != null && !combo.isEmpty() && combo.equalsIgnoreCase(ability)) {
+					element = GeneralMethods.getAbilityElement(GeneralMethods.getLastUsedAbility(event.getEntity().getKiller(), false)).name();
+					ability = element + "Combo";
+				}
 			}
 			if (ConfigManager.deathMsgConfig.getConfig().contains(element + "." + ability)) {
 				message = ConfigManager.deathMsgConfig.getConfig().getString(element + "." + ability);
