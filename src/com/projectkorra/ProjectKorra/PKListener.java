@@ -807,17 +807,14 @@ public class PKListener implements Listener {
 			if (ability == null) {
 				ability = GeneralMethods.getLastUsedAbility(killer, false);
 				if (ComboManager.checkForValidCombo(killer) != null) {
-					System.out.println("Combo isnt null!");
 					String combo = ComboManager.checkForValidCombo(killer).getName();
 					if (combo != null && !combo.isEmpty()) {
 						element = GeneralMethods.getAbilityElement(killerAbility).name();
 						ability = element + "Combo";
 					}
 				} else if (GeneralMethods.abilityExists(ability)) {
-					System.out.println("Combo was null but Ability exists!");
 					element = GeneralMethods.getAbilityElement(ability).name();
 				} else {
-					System.out.println("Combo was null and Ability doesn't exist!");
 					bendingDeathPlayer.remove(event.getEntity());
 					return;
 				}
