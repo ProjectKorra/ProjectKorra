@@ -20,7 +20,7 @@ public class ErrorLogFilter extends LogFilter {
 		if (consoleError.contains(record.getMessage().replace("[ProjectKorra] ", ""))) {
 			return false;
 		} else if (!record.getMessage().contains("ProjectKorra")) {
-			if (record.getThrown() != null) {
+			if (record.getThrown() != null && record.getThrown().getMessage() != null) {
 				if (record.getThrown().getMessage().contains("ProjectKorra")) {
 					return true;
 				}
