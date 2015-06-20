@@ -145,68 +145,68 @@ import com.projectkorra.ProjectKorra.waterbending.WaterWave;
 import com.projectkorra.ProjectKorra.waterbending.Wave;
 
 public class PKListener implements Listener {
-	
+
 	ProjectKorra plugin;
 
 	public static HashMap<Integer, Integer> noFallEntities = new HashMap<Integer, Integer>(); // Grappling Hooks
 	public static HashMap<String, Integer> noGrapplePlayers = new HashMap<String, Integer>(); // Grappling Hooks
 	public static HashMap<Player, String> bendingDeathPlayer = new HashMap<Player, String>(); // Player killed by Bending
-	
+
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	public static void login(BendingPlayer pl) {
-        ProjectKorra plugin = ProjectKorra.plugin;
-        Player player = Bukkit.getPlayer(pl.getUUID());
-        
-        if (player == null) {
-            return;
-        }
-        
-        if (GeneralMethods.toggedOut.contains(player.getUniqueId())) {
+		ProjectKorra plugin = ProjectKorra.plugin;
+		Player player = Bukkit.getPlayer(pl.getUUID());
+
+		if (player == null) {
+			return;
+		}
+
+		if (GeneralMethods.toggedOut.contains(player.getUniqueId())) {
 			GeneralMethods.getBendingPlayer(player.getName()).isToggled = false;
 			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
 		}
-        
-        Preset.loadPresets(player);
-        String append = "";
-        boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
-        if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).elements.size() > 1) && chatEnabled) {
-            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
-        } else if (GeneralMethods.isBender(player.getName(), Element.Air) && chatEnabled) {
-            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Air");
-        } else if (GeneralMethods.isBender(player.getName(), Element.Water) && chatEnabled) {
-            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Water");
-        } else if (GeneralMethods.isBender(player.getName(), Element.Earth) && chatEnabled) {
-            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Earth");
-        } else if (GeneralMethods.isBender(player.getName(), Element.Fire) && chatEnabled) {
-            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Fire");
-        } else if (GeneralMethods.isBender(player.getName(), Element.Chi) && chatEnabled) {
-            append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
-        }
-        
-        if (chatEnabled) {
-            player.setDisplayName(append + player.getName());
-        }
-        
-        // Handle the AirSpout/WaterSpout login glitches
-        if (player.getGameMode() != GameMode.CREATIVE) {
-            HashMap<Integer, String> bound = GeneralMethods.getBendingPlayer(player.getName()).getAbilities();
-            for (String str : bound.values()) {
-                if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
-                    final Player fplayer = player;
-                    new BukkitRunnable() {
-                        public void run() {
-                            fplayer.setFlying(false);
-                            fplayer.setAllowFlight(false);
-                        }
-                    }.runTaskLater(ProjectKorra.plugin, 2);
-                    break;
-                }
-            }
-        }
-    }
+
+		Preset.loadPresets(player);
+		String append = "";
+		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
+		if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).elements.size() > 1) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
+		} else if (GeneralMethods.isBender(player.getName(), Element.Air) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Air");
+		} else if (GeneralMethods.isBender(player.getName(), Element.Water) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Water");
+		} else if (GeneralMethods.isBender(player.getName(), Element.Earth) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Earth");
+		} else if (GeneralMethods.isBender(player.getName(), Element.Fire) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Fire");
+		} else if (GeneralMethods.isBender(player.getName(), Element.Chi) && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
+		}
+
+		if (chatEnabled) {
+			player.setDisplayName(append + player.getName());
+		}
+
+		// Handle the AirSpout/WaterSpout login glitches
+		if (player.getGameMode() != GameMode.CREATIVE) {
+			HashMap<Integer, String> bound = GeneralMethods.getBendingPlayer(player.getName()).getAbilities();
+			for (String str : bound.values()) {
+				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
+					final Player fplayer = player;
+					new BukkitRunnable() {
+						public void run() {
+							fplayer.setFlying(false);
+							fplayer.setAllowFlight(false);
+						}
+					}.runTaskLater(ProjectKorra.plugin, 2);
+					break;
+				}
+			}
+		}
+	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
@@ -282,7 +282,7 @@ public class PKListener implements Listener {
 		if (!EarthPassive.canPhysicsChange(event.getBlock()))
 			event.setCancelled(true);
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockIgnite(BlockIgniteEvent event) {
 		if (event.isCancelled()) return;
@@ -339,7 +339,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityChangeBlockEvent(EntityChangeBlockEvent event) {
 		if (event.isCancelled()) return;
@@ -347,7 +347,7 @@ public class PKListener implements Listener {
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
-		
+
 		if (event.getEntityType() == EntityType.FALLING_BLOCK) {
 			if (LavaSurge.falling.contains(entity)) {
 				LavaSurge.falling.remove(entity);
@@ -366,7 +366,7 @@ public class PKListener implements Listener {
 			new Enflamed(entity, FireStream.ignitedblocks.get(block));
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDamageBlock(EntityDamageByBlockEvent event) {
 
@@ -488,14 +488,14 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onEntitySuffocatedByTempBlocks(EntityDamageEvent event) {
 		if(event.isCancelled()) return;
-		
+
 		if(event.getCause() == DamageCause.SUFFOCATION) {
 			if(TempBlock.isTempBlock(event.getEntity().getLocation().add(0, 1, 0).getBlock())) {
 				event.setCancelled(true);
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityTarget(EntityTargetEvent event) {
 		if (event.isCancelled()) return;
@@ -549,7 +549,7 @@ public class PKListener implements Listener {
 				if (MetalClips.instances.get(p).getTarget().getEntityId() == event.getWhoClicked().getEntityId())
 					event.setCancelled(true);
 		}
-		
+
 		if (event.getSlotType() == SlotType.ARMOR
 				&& !EarthArmor.canRemoveArmor((Player) event.getWhoClicked()))
 			event.setCancelled(true);
@@ -558,10 +558,10 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerBendingDeath(PlayerBendingDeathEvent event) {
-		if (event.getAbility() != null && !event.getAbility().isEmpty() && ConfigManager.deathMsgConfig.getConfig().getBoolean("Properties.Enabled")) {
+		if (ConfigManager.deathMsgConfig.getConfig().getBoolean("Properties.Enabled")) {
 			bendingDeathPlayer.put(event.getVictim(), event.getAbility());
 			final Player player = event.getVictim();
-			
+
 			new BukkitRunnable() {
 				@Override
 				public void run () {
@@ -681,7 +681,7 @@ public class PKListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onPlayerDamageByPlayer(EntityDamageByEntityEvent e) {
 		if (e.isCancelled()) return;
@@ -705,7 +705,7 @@ public class PKListener implements Listener {
 			e.setCancelled(true);
 			return;
 		}
-		
+
 		if (entity instanceof Player) {
 			Suffocate.remove((Player) entity);
 		}
@@ -796,25 +796,35 @@ public class PKListener implements Listener {
 			}
 			event.getDrops().clear();
 			event.getDrops().addAll(newdrops);
-			
+
 		}
 		if (bendingDeathPlayer.containsKey(event.getEntity())) {
 			String message = ConfigManager.deathMsgConfig.getConfig().getString("Properties.Default");
 			String ability = bendingDeathPlayer.get(event.getEntity());
 			String element = null;
-			if (GeneralMethods.abilityExists(ability)) {
-				element = GeneralMethods.getAbilityElement(ability).name();
-			}
-			if (ComboManager.checkForValidCombo(event.getEntity().getKiller()).getName().equalsIgnoreCase(ability)) {
-				element = GeneralMethods.getAbilityElement(GeneralMethods.getLastUsedAbility(event.getEntity().getKiller(), false)).name();
-				ability = element + "Combo";
+			Player killer = event.getEntity().getKiller();
+			String killerAbility = GeneralMethods.getLastUsedAbility(killer, false);
+			if (ability == null) {
+				ability = GeneralMethods.getLastUsedAbility(killer, false);
+				if (ComboManager.checkForValidCombo(killer) != null) {
+					String combo = ComboManager.checkForValidCombo(killer).getName();
+					if (combo != null && !combo.isEmpty()) {
+						element = GeneralMethods.getAbilityElement(killerAbility).name();
+						ability = element + "Combo";
+					}
+				} else if (GeneralMethods.abilityExists(ability)) {
+					element = GeneralMethods.getAbilityElement(ability).name();
+				} else {
+					bendingDeathPlayer.remove(event.getEntity());
+					return;
+				}
 			}
 			if (ConfigManager.deathMsgConfig.getConfig().contains(element + "." + ability)) {
 				message = ConfigManager.deathMsgConfig.getConfig().getString(element + "." + ability);
 			}
 			message = message.replace("{victim}", event.getEntity().getName())
 					.replace("{attacker}", event.getEntity().getKiller().getName())
-					.replace("{ability}", GeneralMethods.getAbilityColor(GeneralMethods.getLastUsedAbility(event.getEntity().getKiller(), false)) + ability);
+					.replace("{ability}", GeneralMethods.getAbilityColor(killerAbility) + ability);
 			event.setDeathMessage(message);
 			bendingDeathPlayer.remove(event.getEntity());
 		}
@@ -839,7 +849,7 @@ public class PKListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerGrapple(PlayerGrappleEvent event) {
 		if (event.isCancelled()) return;
@@ -900,13 +910,13 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 		}
 	}
-	
+
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 		GeneralMethods.createBendingPlayer(e.getPlayer().getUniqueId(), player.getName());
 	}
-	
+
 	@EventHandler
 	public void onPlayerKick(PlayerKickEvent event) {
 		if(event.isCancelled()) return;
@@ -922,7 +932,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		if(ChiComboManager.isParalyzed(player)) {
 			event.setTo(event.getFrom());
 			return;
@@ -966,7 +976,7 @@ public class PKListener implements Listener {
 				player.setVelocity(new Vector(0, 0, 0));
 			}
 		}
-		
+
 		if(FlightAbility.instances.containsKey(event.getPlayer().getName())) {
 			if(FlightAbility.isHovering(event.getPlayer())) {
 				Location loc = event.getFrom();
@@ -990,7 +1000,7 @@ public class PKListener implements Listener {
 			if (!bPlayer.isToggled())
 				GeneralMethods.toggedOut.add(player.getUniqueId());
 		}
-		
+
 		if (Commands.invincible.contains(event.getPlayer().getName())) {
 			Commands.invincible.remove(event.getPlayer().getName());
 		}
@@ -1000,14 +1010,14 @@ public class PKListener implements Listener {
 			EarthArmor.removeEffect(event.getPlayer());
 			event.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 		}
-		
+
 		for (Player p : MetalClips.instances.keySet()) {
 			if (MetalClips.instances.get(p).getTarget() != null &&
 					MetalClips.instances.get(p).getTarget().getEntityId() == event.getPlayer().getEntityId()) {
 				MetalClips.instances.get(p).remove();
 			}
 		}
-		
+
 		MultiAbilityManager.remove(player);
 		FlightAbility.remove(event.getPlayer());
 	}
@@ -1017,12 +1027,12 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.isCancelled()) return;
-		
+
 		if (player.isSneaking())
 			ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
 		else
 			ComboManager.addComboAbility(player, ClickType.SHIFT_DOWN);
-		
+
 		if(Suffocate.isBreathbent(player)) {
 			if(!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
@@ -1037,12 +1047,12 @@ public class PKListener implements Listener {
 		if (!player.isSneaking()) {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
-		
+
 		if(!player.isSneaking() && WaterArms.hasPlayer(player)){
 			WaterArms.displayBoundMsg(player);
 			return;
 		}
-		
+
 		AirScooter.check(player);
 
 		String abil = GeneralMethods.getBoundAbility(player);
@@ -1160,9 +1170,9 @@ public class PKListener implements Listener {
 					else
 						new MetalClips(player, 1);
 				}
-//				if (abil.equalsIgnoreCase("LavaSurge")) {
-//					new LavaSurge(player);
-//				}
+				//				if (abil.equalsIgnoreCase("LavaSurge")) {
+				//					new LavaSurge(player);
+				//				}
 				if (abil.equalsIgnoreCase("LavaFlow")) {
 					new LavaFlow(player,LavaFlow.AbilityType.SHIFT);
 				}
@@ -1199,14 +1209,14 @@ public class PKListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true) 
 	public void onPlayerSwing(PlayerAnimationEvent event) {
 		if (event.isCancelled()) return;
 
 		Player player = event.getPlayer();
 		ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
-		
+
 		if (Suffocate.isBreathbent(player)) {
 			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
@@ -1222,7 +1232,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		BlockSource.update(player, ClickType.LEFT_CLICK);
 
 		AirScooter.check(player);
@@ -1258,7 +1268,7 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Flight")) {
 					if (!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")
 							|| !AirMethods.canAirFlight(player)) return;
-					
+
 					if (FlightAbility.instances.containsKey(event.getPlayer().getName())) {
 						if (FlightAbility.isHovering(event.getPlayer())) {
 							FlightAbility.setHovering(event.getPlayer(), false);
@@ -1268,7 +1278,7 @@ public class PKListener implements Listener {
 					}
 				}
 			}
-			
+
 			if (WaterMethods.isWaterAbility(abil)) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons")) {
 					return;
@@ -1354,7 +1364,7 @@ public class PKListener implements Listener {
 					new SandSpout(player);
 				}
 			}
-			
+
 			if (FireMethods.isFireAbility(abil)) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
@@ -1422,7 +1432,7 @@ public class PKListener implements Listener {
 				new AvatarState(player);
 			}
 		}
-		
+
 		if(MultiAbilityManager.hasMultiAbilityBound(player)){
 			abil = MultiAbilityManager.getBoundMultiAbility(player);
 			if (abil.equalsIgnoreCase("WaterArms")) {

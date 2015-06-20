@@ -335,7 +335,7 @@ public class WaterArmsWhip {
 					if (entity.getEntityId() != player.getEntityId()) {
 						hasDamaged = true;
 						GeneralMethods
-								.damageEntity(player, entity, punchDamage);
+								.damageEntity(player, entity, punchDamage, WaterMethods.getWaterColor() + "WaterArms Punch");
 					}
 				}
 			}

@@ -422,13 +422,8 @@ public class GeneralMethods {
 				NCPExemptionManager.exemptPermanently(player, CheckType.FIGHT_REACH);
 			}
 			if (((LivingEntity) entity).getHealth() - damage <= 0 && entity instanceof Player && !entity.isDead()) {
-				if (ability == null) {
-					ability = getLastUsedAbility(player, true);
-				}
-				if (ability != null && !ability.isEmpty()) {
-					PlayerBendingDeathEvent event = new PlayerBendingDeathEvent((Player) entity, player, ability, damage);
-					Bukkit.getServer().getPluginManager().callEvent(event);
-				}
+				PlayerBendingDeathEvent event = new PlayerBendingDeathEvent((Player) entity, player, ability, damage);
+				Bukkit.getServer().getPluginManager().callEvent(event);
 			}
 			((LivingEntity) entity).damage(damage, player);
 			((LivingEntity) entity).setLastDamageCause(
