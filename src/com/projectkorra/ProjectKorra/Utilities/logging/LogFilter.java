@@ -15,7 +15,7 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
  * To set the filter for PKLogHandler use {@link PKLogFilter}
  * </p>
  * @author Jacklin213
- * @version 2.0.1
+ * @version 2.0.2
  */
 public class LogFilter implements Filter {
 

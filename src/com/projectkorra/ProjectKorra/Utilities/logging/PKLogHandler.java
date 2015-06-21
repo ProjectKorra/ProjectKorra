@@ -18,7 +18,7 @@ import java.util.logging.Level;
  *   <li>Formatter - {@link LogFormatter}</li>
  * </ul>
  * @author Jacklin213
- * @version 2.0.1
+ * @version 2.0.2
  */
 public class PKLogHandler extends FileHandler {
 
