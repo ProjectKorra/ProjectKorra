@@ -46,6 +46,16 @@ public class Flight {
 		instances.put(player, this);
 	}
 	
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof Flight )) {
+			return false;
+		}
+		Flight flight = (Flight) object;
+		return flight.player == this.player && flight.source == this.source && 
+				flight.couldFly == this.couldFly && flight.wasFlying == this.wasFlying;
+	}
+	
 	public static Player getLaunchedBy(Player player) {
 		if (instances.containsKey(player)) {
 			return instances.get(player).source;
@@ -127,6 +137,14 @@ public class Flight {
 	}
 
 	public void remove() {
+		if (player == null) {
+			for (Player player : instances.keySet()) {
+				if (instances.get(player).equals(this)) {
+					instances.remove(player);
+				}
+			}
+			return;
+		}
 		instances.remove(player);
 	}
 
