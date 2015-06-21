@@ -505,9 +505,11 @@ public class FireCombo {
 					&& combo.ability.equalsIgnoreCase("FireSpin")) {
 				for (FireComboStream fs : combo.tasks) {
 					if (fs.getLocation() != null
-							&& Math.abs(fs.getLocation().distance(loc)) <= radius) {
-						fs.remove();
-						removed = true;
+							&& fs.getLocation().getWorld().equals(loc.getWorld())) {
+						if (Math.abs(fs.getLocation().distance(loc)) <= radius) {
+							fs.remove();
+							removed = true;
+						}
 					}
 				}
 			}
