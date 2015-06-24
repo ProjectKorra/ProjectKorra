@@ -1,46 +1,85 @@
 package com.projectkorra.ProjectKorra.Utilities.logging;
 
-import java.util.Arrays;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Filter;
-import java.util.logging.Level;
 import java.util.logging.LogRecord;
+
+import org.bukkit.Bukkit;
 
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 /**
  * This class should only be used to set 
- * {@code plugin.getLogger().getParent()}'s filter
- * <p>
- * To set the filter for PKLogHandler use {@link PKLogFilter}
- * </p>
+ * {@link PKLogHandler}'s filter.
+ * 
  * @author Jacklin213
- * @version 2.0.2
+ * @version 2.1.0
  */
 public class LogFilter implements Filter {
 
-	List<String> consoleError = Arrays.asList(
-			"###################################################",
-			"##################====[ERROR]====##################",
-			"              An error has been caught",
-			" Please check the ERROR.log file for stack trace.",
-			"   Create a bug report with the log contents at.",
-			"http://projectkorra.com/forum/forums/bug-reports.6/",
-			"##################====[ERROR]====##################",
-			"###################################################"
-	);
-	
+	private List<String> loggedRecords = new ArrayList<>();
+
 	@Override
 	public boolean isLoggable(LogRecord record) {
-		if (record.getLevel() == Level.SEVERE && record.getMessage().contains("ProjectKorra") && record.getThrown() != null) {
-			for (String line : consoleError) {
-				ProjectKorra.log.severe(line);
-			}
-			ProjectKorra.handler.publish(record);
-			ProjectKorra.handler.flush();
+		if (record.getMessage() == null && record.getThrown() == null) {
 			return false;
 		}
+		String recordString = "";
+		if (record.getMessage() != null) {
+			if (!record.getMessage().contains("LogTest")) {
+				if (record.getThrown() == null) {
+					return false;
+				}
+				if (record.getThrown().getMessage() == null) {
+					return false;
+				}
+				if (!record.getThrown().getMessage().contains("LogTest")) {
+					return false;
+				}
+				// record message doesnt have logtest but throwable does
+			} 
+			recordString = buildString(record);
+		} else {
+			if (record.getThrown() != null) {
+				if (record.getThrown().getMessage() == null) {
+					return false;
+				}
+				if (!record.getThrown().getMessage().contains("LogTest")) {
+					return false;
+				}
+				// record message null but throwable has logtest
+				recordString = buildString(record);
+			}
+		}
+		
+		if (loggedRecords.contains(recordString)) {
+			// Logged records contains record 
+			return false;
+		}
+		
+		final String toRecord = recordString;
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
+			public void run() {
+				loggedRecords.add(toRecord);
+			}
+		}, 10);
 		return true;
 	}
-
+	
+	private String buildString(LogRecord record) {
+		StringBuilder builder = new StringBuilder();
+		if (record.getMessage() != null) {
+			builder.append(record.getMessage());
+		}
+		if (record.getThrown() != null) {
+			StringWriter writer = new StringWriter();
+			record.getThrown().printStackTrace(new PrintWriter(writer));
+			builder.append(writer);
+		}
+		
+		return builder.toString();
+	}
 }
