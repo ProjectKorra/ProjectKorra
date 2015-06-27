@@ -104,6 +104,17 @@ public class Preset {
         return null;
     }
     
+    public static HashMap<Integer, String> getPresetContents(Player player, String name) {
+    	if (!presets.containsKey(player.getUniqueId()))
+    		return null;
+    	for (Preset preset : presets.get(player.getUniqueId())) {
+    		if (preset.name.equalsIgnoreCase(name)) {
+    			return preset.abilities;
+    		}
+    	}
+    	return null;
+    }
+    
     public void delete() {
         DBConnection.sql.modifyQuery("DELETE FROM pk_presets WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
         presets.get(uuid).remove(this);
