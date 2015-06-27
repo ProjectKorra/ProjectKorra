@@ -486,13 +486,13 @@ public class GeneralMethods {
 		loc.setZ(loc.getZ() + Math.random() * (zOffset/2 - -(zOffset/2)));
 
 		if (type == ParticleEffect.RED_DUST || type == ParticleEffect.REDSTONE)
-			ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 257D);
+			ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);
 		else if (type == ParticleEffect.SPELL_MOB || type == ParticleEffect.MOB_SPELL)
-			ParticleEffect.SPELL_MOB.display((float) 255-R, (float) 255-G, (float) 255-B, 1, 0, loc, 257D);
+			ParticleEffect.SPELL_MOB.display((float) 255-R, (float) 255-G, (float) 255-B, 1, 0, loc, 256D);
 		else if (type == ParticleEffect.SPELL_MOB_AMBIENT || type == ParticleEffect.MOB_SPELL_AMBIENT)
-			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255-R, (float) 255-G, (float) 255-B, 1, 0, loc, 257D);
+			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255-R, (float) 255-G, (float) 255-B, 1, 0, loc, 256D);
 		else
-			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 257D);	
+			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 256D);	
 	}
 
 	public static void displayColoredParticle(Location loc, String hexVal) {
@@ -513,7 +513,7 @@ public class GeneralMethods {
 			if(R <= 0)
 				R=1;
 		}
-		ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 257D);	
+		ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);	
 	}
 
 	public static void displayColoredParticle(Location loc, String hexVal, float xOffset, float yOffset, float zOffset) {
@@ -539,28 +539,28 @@ public class GeneralMethods {
 		loc.setY(loc.getY() + Math.random() * (yOffset/2 - -(yOffset/2)));
 		loc.setZ(loc.getZ() + Math.random() * (zOffset/2 - -(zOffset/2)));
 
-		ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 257D);	
+		ParticleEffect.RED_DUST.display((float) R, (float) G, (float) B, 0.004F, 0, loc, 256D);	
 	}
 
 	public static void displayParticleVector(Location loc, ParticleEffect type, float xTrans, float yTrans, float zTrans) {
 		if (type == ParticleEffect.FIREWORKS_SPARK)
-			ParticleEffect.FIREWORKS_SPARK.display((float) xTrans, (float) yTrans, (float) zTrans, 0.09F, 0, loc, 257D);
+			ParticleEffect.FIREWORKS_SPARK.display((float) xTrans, (float) yTrans, (float) zTrans, 0.09F, 0, loc, 256D);
 		else if (type == ParticleEffect.SMOKE || type == ParticleEffect.SMOKE_NORMAL)
-			ParticleEffect.SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 257D);
+			ParticleEffect.SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
 		else if (type == ParticleEffect.LARGE_SMOKE || type == ParticleEffect.SMOKE_LARGE)
-			ParticleEffect.LARGE_SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 257D);
+			ParticleEffect.LARGE_SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
 		else if (type == ParticleEffect.ENCHANTMENT_TABLE)
-			ParticleEffect.ENCHANTMENT_TABLE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 257D);
+			ParticleEffect.ENCHANTMENT_TABLE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 256D);
 		else if (type == ParticleEffect.PORTAL)
-			ParticleEffect.PORTAL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 257D);
+			ParticleEffect.PORTAL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 256D);
 		else if (type == ParticleEffect.FLAME)
-			ParticleEffect.FLAME.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 257D);
+			ParticleEffect.FLAME.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
 		else if (type == ParticleEffect.CLOUD)
-			ParticleEffect.CLOUD.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 257D);
+			ParticleEffect.CLOUD.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 256D);
 		else if (type == ParticleEffect.SNOW_SHOVEL)
-			ParticleEffect.SNOW_SHOVEL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.2F, 0, loc, 257D);
+			ParticleEffect.SNOW_SHOVEL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.2F, 0, loc, 256D);
 		else
-			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 257D);
+			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 256D);
 	}
 
 	/**
