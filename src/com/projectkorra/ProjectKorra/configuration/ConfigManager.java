@@ -504,6 +504,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterSpout.Wave.ChargeTime", 1000);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.FlightTime", 2000);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Speed", 1.2);
+			config.addDefault("Abilities.Water.WaterSpout.Wave.Cooldown", 2000);
 			
 			config.addDefault("Abilities.Water.WaterCombo.Enabled", true);
 			config.addDefault("Abilities.Water.WaterCombo.IceWave.Damage", 3);
@@ -889,6 +890,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.SwiftKick.ChiBlockChance", 30);
 			
 			config.addDefault("Abilities.Chi.ChiCombo.ParalyzeDuration", 10000);
+			config.addDefault("Abilities.Chi.ChiCombo.Cooldown", 20000);
 			
 			config.addDefault("Storage.engine", "sqlite");
 

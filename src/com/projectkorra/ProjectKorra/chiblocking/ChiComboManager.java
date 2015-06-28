@@ -25,6 +25,7 @@ public class ChiComboManager
 	public static List<Entity> paralyzed = new ArrayList<Entity>();
 	public static HashMap<Entity, Location> paralyzedLocations = new HashMap<Entity, Location>();
 	public static long paralysisDuration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.ChiCombo.ParalyzeDuration");
+	public static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.ChiCombo.Cooldown");
 	
 	public ChiComboManager()
 	{
@@ -47,7 +48,6 @@ public class ChiComboManager
 		
 		if(instances.get(player).size() > 4)
 			instances.put(player, shiftList(instances.get(player)));
-		
 		//ProjectKorra.log.info(instances.get(player).toString());
 		
 		 checkForValidCombo(player);
@@ -98,7 +98,10 @@ public class ChiComboManager
 						&& combo.get(2) == ChiCombo.QuickStrike
 						&& combo.get(3) == ChiCombo.QuickStrike)
 				{
-					paralyzeTarget(player, paralysisDuration);
+					if(!GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("Immobilize")){
+						GeneralMethods.getBendingPlayer(player.getName()).addCooldown("Immobilize", cooldown);
+						paralyzeTarget(player, paralysisDuration);
+					}
 				}
 				
 				instances.remove(player);
