@@ -892,6 +892,7 @@ public class Commands {
 									s.sendMessage(GeneralMethods.getSubBendingColor(Element.Fire) + st);
 								}
 							}
+							return true;
 						}
 						
 						if (Arrays.asList(combustionaliases).contains(args[1])) {
@@ -905,6 +906,7 @@ public class Commands {
 									s.sendMessage(GeneralMethods.getSubBendingColor(Element.Fire) + st);
 								}
 							}
+							return true;
 						}
 						
 						if (Arrays.asList(chialiases).contains(args[1])) {
