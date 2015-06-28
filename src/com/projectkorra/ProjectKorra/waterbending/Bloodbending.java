@@ -72,7 +72,7 @@ public class Bloodbending {
 					if (entity instanceof Player) {
 						if (GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation())
 								|| (AvatarState.isAvatarState((Player) entity)
-										|| entity.getEntityId() == player.getEntityId()
+										|| entity.getEntityId() != player.getEntityId()
 										|| GeneralMethods.canBend(((Player) entity).getName(), "Bloodbending")))
 							continue;
 					}
