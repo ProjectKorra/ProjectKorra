@@ -45,6 +45,8 @@ public class WaterWave {
 			"Abilities.Water.WaterSpout.Wave.ChargeTime");
 	public static long FLIGHT_TIME = ProjectKorra.plugin.getConfig().getLong(
 			"Abilities.Water.WaterSpout.Wave.FlightTime");
+	public static long COOLDOWN = ProjectKorra.plugin.getConfig().getLong(
+			"Abilities.Water.WaterSpout.Wave.Cooldown");
 	public static double WAVE_RADIUS = 1.5;
 	public static double ICE_WAVE_DAMAGE = ProjectKorra.plugin.getConfig().getDouble(
 			"Abilities.Water.WaterCombo.IceWave.Damage");
@@ -65,12 +67,13 @@ public class WaterWave {
 	private double flightTime = FLIGHT_TIME;
 	private double waveRadius = WAVE_RADIUS;
 	private double damage = ICE_WAVE_DAMAGE;
+	private long cooldown = COOLDOWN;
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks = new ConcurrentHashMap<Block, TempBlock>();
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
 
 	public WaterWave(Player player, AbilityType type) {
-		if (!ENABLED)
+		if (!ENABLED || GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("WaterSpout"))
 			return;
 
 		this.player = player;
@@ -302,6 +305,7 @@ public class WaterWave {
 
 	public void remove() {
 		instances.remove(this);
+		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterSpout", cooldown);
 		revertBlocks();
 		for (BukkitRunnable task : tasks)
 			task.cancel();
