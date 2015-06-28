@@ -1194,8 +1194,7 @@ public class GeneralMethods {
 		for (double i = 0; i <= max; i++) {
 			loc = location1.clone().add(direction.clone().multiply(i));
 			Material type = loc.getBlock().getType();
-			if (type != Material.AIR
-					&& !Arrays.asList(EarthMethods.getTransparentEarthbending()).contains(type.getId()))
+			if (type != Material.AIR && !(Arrays.asList(EarthMethods.getTransparentEarthbending()).contains(type.getId()) || WaterMethods.isWater(loc.getBlock())))
 				return true;
 		}
 		return false;
