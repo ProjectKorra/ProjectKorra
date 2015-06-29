@@ -159,7 +159,9 @@ public class IceBlast {
 			progressing = false;
 		}
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		bPlayer.addCooldown("IceBlast", cooldown);
+		if (bPlayer != null) {
+			bPlayer.addCooldown("IceBlast", cooldown);
+		}
 		instances.remove(id);
 	}
 	
