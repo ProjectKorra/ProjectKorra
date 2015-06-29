@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -30,7 +31,7 @@ import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 public class AirBlast {
 
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
+
 	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<Integer, AirBlast>();
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
@@ -67,9 +68,9 @@ public class AirBlast {
 
 
 	public AirBlast(Player player) {
-		
+
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
+
 		if (bPlayer.isOnCooldown("AirBlast")) return;
 
 		if (player.getEyeLocation().getBlock().isLiquid()) {
@@ -169,7 +170,7 @@ public class AirBlast {
 				if (block.getData() >= 8) {
 					block = block.getRelative(BlockFace.DOWN);
 				}
-				
+
 				if (block.getData() < 4) {
 					block.setData((byte) (block.getData() + 4));
 					block.getWorld().playSound(block.getLocation(), Sound.DOOR_CLOSE, 10, 1);
@@ -193,43 +194,88 @@ public class AirBlast {
 				// for (Block block2 : Methods.getBlocksAroundPoint(
 				// relative.getLocation(), 2))
 				// block2.getState().update(true, true);
-				
+
 				Lever lever = new Lever(Material.LEVER, block.getData());
 				lever.setPowered(!lever.isPowered());
 				block.setData(lever.getData());
-				
+
+				Block supportBlock = block.getRelative(lever.getAttachedFace());
+				if (supportBlock != null && supportBlock.getType() != Material.AIR) {
+					BlockState initialSupportState = supportBlock.getState();
+					BlockState supportState = supportBlock.getState();
+					supportState.setType(Material.AIR);
+					supportState.update(true, false);
+					initialSupportState.update(true);
+				}
+
 				affectedlevers.add(block);
-				
+
 			} else if ((block.getType() == Material.STONE_BUTTON) 
 					&& !affectedlevers.contains(block)) {
-				
+
 				final Button button = new Button(Material.STONE_BUTTON, block.getData());
 				button.setPowered(!button.isPowered());
 				block.setData(button.getData());
+
+				Block supportBlock = block.getRelative(button.getAttachedFace());
+				if (supportBlock != null && supportBlock.getType() != Material.AIR) {
+					BlockState initialSupportState = supportBlock.getState();
+					BlockState supportState = supportBlock.getState();
+					supportState.setType(Material.AIR);
+					supportState.update(true, false);
+					initialSupportState.update(true);
+				}
 				
 				final Block btBlock = block;
-				
+
 				new BukkitRunnable() {
 					public void run() {
 						button.setPowered(!button.isPowered());
 						btBlock.setData(button.getData());
+						
+						Block supportBlock = btBlock.getRelative(button.getAttachedFace());
+						if (supportBlock != null && supportBlock.getType() != Material.AIR) {
+							BlockState initialSupportState = supportBlock.getState();
+							BlockState supportState = supportBlock.getState();
+							supportState.setType(Material.AIR);
+							supportState.update(true, false);
+							initialSupportState.update(true);
+						}
 					}
 				}.runTaskLater(ProjectKorra.plugin, 10);
 
 				affectedlevers.add(block);
 			} else if ((block.getType() == Material.WOOD_BUTTON) 
 					&& !affectedlevers.contains(block)) {
-				
+
 				final Button button = new Button(Material.WOOD_BUTTON, block.getData());
 				button.setPowered(!button.isPowered());
 				block.setData(button.getData());
+
+				Block supportBlock = block.getRelative(button.getAttachedFace());
+				if (supportBlock != null && supportBlock.getType() != Material.AIR) {
+					BlockState initialSupportState = supportBlock.getState();
+					BlockState supportState = supportBlock.getState();
+					supportState.setType(Material.AIR);
+					supportState.update(true, false);
+					initialSupportState.update(true);
+				}
 				
 				final Block btBlock = block;
-				
+
 				new BukkitRunnable() {
 					public void run() {
 						button.setPowered(!button.isPowered());
 						btBlock.setData(button.getData());
+						
+						Block supportBlock = btBlock.getRelative(button.getAttachedFace());
+						if (supportBlock != null && supportBlock.getType() != Material.AIR) {
+							BlockState initialSupportState = supportBlock.getState();
+							BlockState supportState = supportBlock.getState();
+							supportState.setType(Material.AIR);
+							supportState.update(true, false);
+							initialSupportState.update(true);
+						}
 					}
 				}.runTaskLater(ProjectKorra.plugin, 15);
 
@@ -247,7 +293,7 @@ public class AirBlast {
 			instances.remove(id);
 			return false;
 		}
-		
+
 		/*
 		 *	If a player presses shift and AirBlasts straight down then
 		 *	the AirBlast's location gets messed up and reading the distance
@@ -259,7 +305,7 @@ public class AirBlast {
 			instances.remove(id);
 			return false;
 		}
-		
+
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, affectingradius)) {
 			affect(entity);
 		}
@@ -314,14 +360,14 @@ public class AirBlast {
 			} else {
 				velocity.add(push.clone().multiply(factor * .5));
 			}
-			
+
 			if (entity instanceof Player) {
 				if (Commands.invincible.contains(((Player) entity).getName())) return;
 			}
-			
+
 			if(Double.isNaN(velocity.length()))
 				return;
-			
+
 			GeneralMethods.setVelocity(entity, velocity);
 			new HorizontalVelocityTracker(entity, player, 200l);
 			entity.setFallDistance(0);
@@ -332,22 +378,22 @@ public class AirBlast {
 				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
 			entity.setFireTicks(0);
 			AirMethods.breakBreathbendingHold(entity);
-			
+
 			if (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedentities.contains(entity)) {
 				GeneralMethods.damageEntity(player, entity, damage);
 				affectedentities.add(entity);
 			}
 		}
 	}
-	
+
 	public void setDamage(double dmg) {
 		this.damage = dmg;
 	}
-	
+
 	public void setShowParticles(boolean show) {
 		this.showParticles = show;
 	}
-	
+
 	public boolean getShowParticles() {
 		return this.showParticles;
 	}
@@ -373,7 +419,7 @@ public class AirBlast {
 			origins.remove(player);
 			return;
 		}
-		
+
 		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBlast") || !GeneralMethods.canBend(player.getName(), "AirBlast")) {
 			origins.remove(player);
 			return;
@@ -385,8 +431,8 @@ public class AirBlast {
 		}
 
 		AirMethods.playAirbendingParticles(origin, 10);
-//		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
-//				(int) originselectrange);
+		//		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
+		//				(int) originselectrange);
 	}
 
 	public static void removeAll() {
@@ -414,6 +460,6 @@ public class AirBlast {
 	public void setPushfactor(double pushfactor) {
 		this.pushfactor = pushfactor;
 	}
-	
-	
+
+
 }
