@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
@@ -13,6 +14,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Button;
+import org.bukkit.material.Lever;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
@@ -159,7 +163,9 @@ public class AirBlast {
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
 
-			if (block.getType() == Material.WOODEN_DOOR) {
+			Material doorTypes[] = {Material.WOODEN_DOOR, Material.SPRUCE_DOOR, 
+					Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR};
+			if (Arrays.asList(doorTypes).contains(block.getType())) {
 				if (block.getData() >= 8) {
 					block = block.getRelative(BlockFace.DOWN);
 				}
@@ -172,7 +178,7 @@ public class AirBlast {
 					block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
 				}
 			}
-			if (((block.getType() == Material.LEVER) || (block.getType() == Material.STONE_BUTTON))
+			if ((block.getType() == Material.LEVER)
 					&& !affectedlevers.contains(block)) {
 				// BlockState state = block.getState();
 				// Lever lever = (Lever) (state.getData());
@@ -187,6 +193,45 @@ public class AirBlast {
 				// for (Block block2 : Methods.getBlocksAroundPoint(
 				// relative.getLocation(), 2))
 				// block2.getState().update(true, true);
+				
+				Lever lever = new Lever(Material.LEVER, block.getData());
+				lever.setPowered(!lever.isPowered());
+				block.setData(lever.getData());
+				
+				affectedlevers.add(block);
+				
+			} else if ((block.getType() == Material.STONE_BUTTON) 
+					&& !affectedlevers.contains(block)) {
+				
+				final Button button = new Button(Material.STONE_BUTTON, block.getData());
+				button.setPowered(!button.isPowered());
+				block.setData(button.getData());
+				
+				final Block btBlock = block;
+				
+				new BukkitRunnable() {
+					public void run() {
+						button.setPowered(!button.isPowered());
+						btBlock.setData(button.getData());
+					}
+				}.runTaskLater(ProjectKorra.plugin, 10);
+
+				affectedlevers.add(block);
+			} else if ((block.getType() == Material.WOOD_BUTTON) 
+					&& !affectedlevers.contains(block)) {
+				
+				final Button button = new Button(Material.WOOD_BUTTON, block.getData());
+				button.setPowered(!button.isPowered());
+				block.setData(button.getData());
+				
+				final Block btBlock = block;
+				
+				new BukkitRunnable() {
+					public void run() {
+						button.setPowered(!button.isPowered());
+						btBlock.setData(button.getData());
+					}
+				}.runTaskLater(ProjectKorra.plugin, 15);
 
 				affectedlevers.add(block);
 			}
