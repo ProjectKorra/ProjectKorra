@@ -504,7 +504,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterSpout.Wave.ChargeTime", 1000);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.FlightTime", 2000);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Speed", 1.2);
-			config.addDefault("Abilities.Water.WaterSpout.Wave.Cooldown", 2000);
+			config.addDefault("Abilities.Water.WaterSpout.Wave.Cooldown", 6000);
 			
 			config.addDefault("Abilities.Water.WaterCombo.Enabled", true);
 			config.addDefault("Abilities.Water.WaterCombo.IceWave.Damage", 3);
@@ -845,6 +845,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.Passive.Jump", 2);
 			config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 2500);
 			config.addDefault("Abilities.Chi.Passive.DodgeChange", 25);
+
+			config.addDefault("Abilities.Chi.ChiCombo.ParalyzeDuration", 10000);
+			config.addDefault("Abilities.Chi.ChiCombo.Cooldown", 20000);
 			      
 			config.addDefault("Abilities.Chi.AcrobatStance.Enabled", true);
 			config.addDefault("Abilities.Chi.AcrobatStance.Description", "AcrobatStance gives a Chiblocker a higher probability of blocking a Bender's Chi while granting them a Speed and Jump Boost. It also increases the rate at which the hunger bar depletes. To use, simply left click. Left clicking again will de-activate the stance.");
@@ -888,9 +891,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.SwiftKick.Description", "SwiftKick allows a chiblocker to swiftly kick an enemy, potentially blocking their chi. The chiblocker must be in the air to use this ability.");
 			config.addDefault("Abilities.Chi.SwiftKick.Damage", 4);
 			config.addDefault("Abilities.Chi.SwiftKick.ChiBlockChance", 30);
-			
-			config.addDefault("Abilities.Chi.ChiCombo.ParalyzeDuration", 10000);
-			config.addDefault("Abilities.Chi.ChiCombo.Cooldown", 20000);
 			
 			config.addDefault("Storage.engine", "sqlite");
 
