@@ -79,10 +79,12 @@ public class AvatarState {
 		}
 		if (!GeneralMethods.canBend(player.getName(), StockAbilities.AvatarState.name())) {
 			instances.remove(player);
-			if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
-				GeneralMethods.getBendingPlayer(player.getName()).removeCooldown("AvatarState");
-			}
+			if(player != null){
+				if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
+					GeneralMethods.getBendingPlayer(player.getName()).removeCooldown("AvatarState");
+				}
 			return false;
+			}
 		}
 		
 		if (startTimes.containsKey(player.getName())) {

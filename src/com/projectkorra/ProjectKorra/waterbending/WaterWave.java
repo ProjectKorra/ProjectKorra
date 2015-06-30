@@ -73,7 +73,7 @@ public class WaterWave {
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
 
 	public WaterWave(Player player, AbilityType type) {
-		if (!ENABLED || GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("WaterSpout"))
+		if (!ENABLED || GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("WaterWave"))
 			return;
 
 		this.player = player;
@@ -305,7 +305,7 @@ public class WaterWave {
 
 	public void remove() {
 		instances.remove(this);
-		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterSpout", cooldown);
+		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterWave", cooldown);
 		revertBlocks();
 		for (BukkitRunnable task : tasks)
 			task.cancel();
