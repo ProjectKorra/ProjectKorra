@@ -227,8 +227,9 @@ public class OctopusForm {
 					sourcelocation.add(vector);
 					Block newblock = sourcelocation.getBlock();
 					if (!newblock.equals(sourceblock)) {
-						source.revertBlock();
-						source = null;
+						if (source != null) {
+							source.revertBlock();
+						}
 						if (!GeneralMethods.isSolid(newblock)) {
 							source = new TempBlock(newblock, Material.STATIONARY_WATER, (byte) 8);
 							sourceblock = newblock;

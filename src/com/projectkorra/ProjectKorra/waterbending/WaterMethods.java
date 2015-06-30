@@ -229,7 +229,12 @@ public class WaterMethods {
 	
 	@SuppressWarnings("deprecation")
 	public static boolean isPlant(Block block) {
-		if (Arrays.asList(plantIds).contains(block.getTypeId())) return true;
+		if (block == null) {
+			return false;
+		}
+		if (Arrays.asList(plantIds).contains(block.getTypeId())) {
+			return true;
+		}
 		return false;
 	}
 	

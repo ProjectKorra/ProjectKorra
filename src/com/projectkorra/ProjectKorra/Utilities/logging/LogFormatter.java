@@ -7,10 +7,10 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
- * Logger formatter class based on bukkit's formatter
+ * Logger formatter class based on bukkit's formatter.
  * 
  * @author Jacklin213
- * @version 2.0.1
+ * @version 2.1.0
  */
 public class LogFormatter extends Formatter {
 

@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra.Utilities.logging;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 /**
  * Main handler used to listen to LogRecords and logs them.
@@ -14,19 +15,24 @@ import java.util.logging.Level;
  * Current Handler settings:
  * <ul>
  *   <li>Level - Set to log {@link Level#WARNING warnings} and {@link Level#SEVERE errors}</li>
- *   <li>Filter - {@link ErrorLogFilter}</li>
  *   <li>Formatter - {@link LogFormatter}</li>
  * </ul>
  * @author Jacklin213
- * @version 2.0.1
+ * @version 2.1.0
  */
 public class PKLogHandler extends FileHandler {
 
 	public PKLogHandler(String filename) throws IOException {
-		super(filename, true);
+		super(filename, 500 * 1024, 20, true);
 		this.setLevel(Level.WARNING);
-		this.setFilter(new ErrorLogFilter());
+		this.setFilter(new LogFilter());
 		this.setFormatter(new LogFormatter());
+	}
+	
+	@Override
+	public synchronized void publish(LogRecord record) {
+		super.publish(record);
+		flush();
 	}
 
 }
