@@ -529,7 +529,7 @@ public class AirCombo {
 					&& combo.ability.equalsIgnoreCase("AirSweep")) {
 				for (int j = 0; j < combo.tasks.size(); j++) {
 					FireComboStream fs = (FireComboStream) combo.tasks.get(j);
-					if (fs.getLocation() != null
+					if (fs.getLocation() != null && fs.getLocation().getWorld().equals(loc.getWorld())
 							&& Math.abs(fs.getLocation().distance(loc)) <= radius) {
 						fs.remove();
 						removed = true;
