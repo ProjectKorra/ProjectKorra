@@ -132,12 +132,14 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.PhaseChange) subabilities.add(a.name());
 					if (a == StockAbilities.IceSpike) subabilities.add(a.name());
 					if (a == StockAbilities.IceBlast) subabilities.add(a.name());
+					if (a == StockAbilities.PlantArmor) subabilities.add(a.name());
 					
 					if (a == StockAbilities.HealingWaters) healingabilities.add(a.name());
 					if (a == StockAbilities.Bloodbending) bloodabilities.add(a.name());
 					if (a == StockAbilities.PhaseChange) iceabilities.add(a.name());
 					if (a == StockAbilities.IceSpike) iceabilities.add(a.name());
 					if (a == StockAbilities.IceBlast) iceabilities.add(a.name());
+					if (a == StockAbilities.PlantArmor) plantabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isEarthbending(a)) {

@@ -171,6 +171,22 @@ public class WaterMethods {
 		return null;
 	}
 	
+	public static Block getPlantSourceBlock(Player player, double range, boolean onlyLeaves) {
+		Location location = player.getEyeLocation();
+		Vector vector = location.getDirection().clone().normalize();
+		for (double i = 0; i <= range; i++) {
+			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location))
+				continue;
+			if (isPlantbendable(block, onlyLeaves)) {
+				if (TempBlock.isTempBlock(block))
+					continue;
+				return block;
+			}
+		}
+		return null;
+	}
+	
 	public static boolean isAdjacentToFrozenBlock(Block block) {
 		BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH,
 				BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
@@ -262,6 +278,13 @@ public class WaterMethods {
 	public static boolean isIcebendable(Block block) {
 		if (block.getType() == Material.ICE) return true;
 		if (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce")) return true;
+		return false;
+	}
+	
+	public static boolean isPlantbendable(Block block, boolean leavesOnly) {
+		if (block.getType() == Material.LEAVES) return true;
+		if (block.getType() == Material.LEAVES_2) return true;
+		if (isPlant(block) && !leavesOnly) return true;
 		return false;
 	}
 	
@@ -359,6 +382,12 @@ public class WaterMethods {
 		}
 	}
 	
+	public static void playPlantbendingSound(Location loc) {
+		if (plugin.getConfig().getBoolean("Properties.Water.PlaySound")) {
+			loc.getWorld().playSound(loc, Sound.STEP_GRASS, 1, 10);
+		}
+	}
+	
 	public static void stopBending() {
 		FreezeMelt.removeAll();
 		IceSpike.removeAll();
@@ -374,5 +403,6 @@ public class WaterMethods {
 		WaterCombo.removeAll();
 		WaterReturn.removeAll();
 		WaterArms.removeAll();
+		PlantArmor.removeAll();
 	}
 }
