@@ -399,6 +399,13 @@ public class ConfigManager {
 					+ "sea level. ");
 			config.addDefault("Abilities.Water.PhaseChange.Range", 20);
 			config.addDefault("Abilities.Water.PhaseChange.Radius", 5);
+			
+			config.addDefault("Abilities.Water.PlantArmor.Enabled", true);
+			config.addDefault("Abilities.Water.PlantArmor.Description", "PlantArmor is a defensive ability in the arsenal of the plantbender. Clicking on leaves with this ability will temporarily clad you in strong armor made out of plants! You can use this defensively, but you can also use the armor as a source for other plantbending skills.");
+			config.addDefault("Abilities.Water.PlantArmor.Duration", 10000);
+			config.addDefault("Abilities.Water.PlantArmor.Resistance", 1);
+			config.addDefault("Abilities.Water.PlantArmor.Cooldown", 17500);
+			config.addDefault("Abilities.Water.PlantArmor.Range", 10);
 
 			config.addDefault("Abilities.Water.Surge.Enabled", true);
 			config.addDefault("Abilities.Water.Surge.Description", "This ability has two distinct features. If you sneak to select a source block, you can then click in a direction and a large wave will be launched in that direction. If you sneak again while the wave is en route, the wave will freeze the next target it hits. If, instead, you click to select a source block, you can hold sneak to form a wall of water at your cursor location. Click to shift between a water wall and an ice wall. Release sneak to dissipate it.");
@@ -549,7 +556,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthArmor.Description", "This ability encases the earthbender in temporary armor. To use, click on a block that is earthbendable. If there is another block under it that is earthbendable, the block will fly to you and grant you temporary armor and damage reduction. This ability has a long cooldown.");
 			config.addDefault("Abilities.Earth.EarthArmor.Duration", 10000);
 			config.addDefault("Abilities.Earth.EarthArmor.Strength", 2);
-			config.addDefault("Abilities.Earth.EarthArmor.Duration", 17500);
+			config.addDefault("Abilities.Earth.EarthArmor.Cooldown", 17500);
 
 			config.addDefault("Abilities.Earth.EarthBlast.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthBlast.Description", "To use, place your cursor over an earthbendable object (dirt, rock, ores, etc) "

@@ -134,6 +134,7 @@ import com.projectkorra.ProjectKorra.waterbending.IceBlast;
 import com.projectkorra.ProjectKorra.waterbending.IceSpike2;
 import com.projectkorra.ProjectKorra.waterbending.Melt;
 import com.projectkorra.ProjectKorra.waterbending.OctopusForm;
+import com.projectkorra.ProjectKorra.waterbending.PlantArmor;
 import com.projectkorra.ProjectKorra.waterbending.Torrent;
 import com.projectkorra.ProjectKorra.waterbending.WaterArms;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
@@ -553,6 +554,9 @@ public class PKListener implements Listener {
 		if (event.getSlotType() == SlotType.ARMOR
 				&& !EarthArmor.canRemoveArmor((Player) event.getWhoClicked()))
 			event.setCancelled(true);
+		if (event.getSlotType() == SlotType.ARMOR
+				&& !PlantArmor.canRemoveArmor((Player) event.getWhoClicked()))
+			event.setCancelled(true);
 	}
 
 
@@ -782,6 +786,28 @@ public class PKListener implements Listener {
 			event.getDrops().addAll(newdrops);
 			EarthArmor.removeEffect(event.getEntity());
 		}
+		if (PlantArmor.instances.containsKey(event.getEntity())) {
+			List<ItemStack> drops = event.getDrops();
+			List<ItemStack> newdrops = new ArrayList<ItemStack>();
+			for (int i = 0; i < drops.size(); i++) {
+				if (!(drops.get(i).getType() == Material.LEATHER_BOOTS
+						|| drops.get(i).getType() == Material.LEATHER_CHESTPLATE
+						|| drops.get(i).getType() == Material.LEAVES
+						|| drops.get(i).getType() == Material.LEAVES_2
+						|| drops.get(i).getType() == Material.LEATHER_LEGGINGS || drops
+						.get(i).getType() == Material.AIR))
+					newdrops.add((drops.get(i)));
+			}
+			if (PlantArmor.instances.get(event.getEntity()).oldarmor != null) {
+				for (ItemStack is : PlantArmor.instances.get(event.getEntity()).oldarmor) {
+					if (!(is.getType() == Material.AIR))
+						newdrops.add(is);
+				}
+			}
+			event.getDrops().clear();
+			event.getDrops().addAll(newdrops);
+			PlantArmor.removeEffect(event.getEntity());
+		}
 		if (MetalClips.instances.containsKey(event.getEntity())) {
 			MetalClips.instances.get(event.getEntity()).remove();
 			List<ItemStack> drops = event.getDrops();
@@ -1009,6 +1035,9 @@ public class PKListener implements Listener {
 		if (EarthArmor.instances.containsKey(event.getPlayer())) {
 			EarthArmor.removeEffect(event.getPlayer());
 			event.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+		}
+		if (PlantArmor.instances.containsKey(event.getPlayer())) {
+			PlantArmor.removeEffect(event.getPlayer());
 		}
 
 		for (Player p : MetalClips.instances.keySet()) {
@@ -1297,6 +1326,9 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("PhaseChange")) {
 					new FreezeMelt(player);
+				}
+				if (abil.equalsIgnoreCase("PlantArmor")) {
+					new PlantArmor(player);
 				}
 				if (abil.equalsIgnoreCase("WaterSpout")) {
 					new WaterSpout(player);

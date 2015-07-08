@@ -211,10 +211,8 @@ public class EarthArmor {
 			if (System.currentTimeMillis() > eartharmor.starttime + duration && !eartharmor.complete) {
 				eartharmor.complete = true;
 				eartharmor.removeEffect();
-				return;
-			}
-			if (System.currentTimeMillis() > eartharmor.starttime + cooldown) {
-				instances.remove(player);
+				eartharmor.cancel();
+				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("EarthArmor", cooldown);
 				return;
 			}
 		} else if (System.currentTimeMillis() > eartharmor.time + interval) {
