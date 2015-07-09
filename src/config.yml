@@ -36,14 +36,18 @@ Properties:
     CacheBlockTime: 5000
   Air:
     CanBendWithWeapons: false
-    Particles: smoke
+    Particles: cloud
     PlaySound: true
   Water:
     CanBendWithWeapons: false
     NightFactor: 1.5
-    FullMoonFactor: 3.0
+    FullMoonFactor: 2.0
     CanBendPackedIce: true
     PlaySound: true
+    NightMessage: "You feel the strength of the rising moon empowering your waterbending."
+    DayMessage: "You feel the empowering of your waterbending subside as the moon sets."
+    LunarEclipseMessage: "A lunar eclipse is out! Waterbenders are temporarily powerless."
+    FullMoonMessage: "A full moon is rising, empowering your waterbending like never before."
   Earth:
     RevertEarthbending: true
     SafeRevert: true
@@ -74,6 +78,10 @@ Properties:
     CanBendWithWeapons: true
     DayFactor: 1.5
     PlaySound: true
+    DayMessage: "You feel the strength of the rising sun empowering your firebending."
+    NightMessage: "You feel the empowering of your firebending subside as the sun sets."
+    SolarEclipseMessage: "A solar eclipse is out! Firebenders are temporarily powerless."
+    CometMessage: "Sozin's Comet is passing overhead! Firebending is now at its most powerful."
   Chi:
     CanBendWithWeapons: false
   DisabledWorlds:
@@ -209,7 +217,7 @@ Abilities:
         Range: 14
         Damage: 4
         Knockback: 3.5
-        Cooldown: 5000
+        Cooldown: 6500
   Water:
     Passive:
       SwimSpeedFactor: 0.7
@@ -250,7 +258,7 @@ Abilities:
       Description: "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. To use, click to select a water source. Then, hold sneak to channel this ability. While channleing, the water will form itself around you and has a chance to block incoming attacks. Additionally, you can click while channeling to attack things near you, dealing damage and knocking the target back. Releasing shift at any time will dissipate the form."
       Range: 10
       AttackRange: 2.5
-      Damage: 3
+      Damage: 4
       Radius: 3
       FormDelay: 50
       Knockback: 1.75
@@ -290,7 +298,7 @@ Abilities:
     WaterManipulation:
       Enabled: true
       Description: "To use, place your cursor over a waterbendable object and tap sneak (default: shift). Smoke will appear where you've selected, indicating the origin of your ability. After you have selected an origin, simply left-click in any direction and you will see your water spout off in that direction, slicing any creature in its path. If you look towards a creature when you use this ability, it will target that creature. A collision from Water Manipulation both knocks the target back and deals some damage. Alternatively, if you have the source selected and tap shift again, you will be able to control the water more directly."
-      Damage: 3.0
+      Damage: 2.0
       Range: 20
       Speed: 35
       Push: .3
@@ -349,16 +357,16 @@ Abilities:
           UsageCooldown: 200
         AllowSpectatorUse: false
       Whip:
-        MaxLength: 20
+        MaxLength: 16
         MaxLengthWeak: 12
         NightAugments:
           MaxLength:
-            Normal: 24
-            FullMoon: 30
+            Normal: 20
+            FullMoon: 26
         Pull:
           Multiplier: 0.15
         Punch:
-          PunchDamage: 3.0
+          PunchDamage: 0.5
           MaxLength:
             Normal: 10
           NightAugments:
@@ -368,16 +376,16 @@ Abilities:
         Grapple:
           RespectRegions: false
         Grab:
-          HoldTime: 10000
+          HoldTime: 4500
       Freeze:
         Range: 20
-        Damage: 2.0
+        Damage: 0.5
       Spear:
         Range: 40
-        Damage: 4.0
+        Damage: 3.0
         DamageEnabled: true
         Sphere: 2
-        Duration: 6000
+        Duration: 4000
         Length: 18
         NightAugments:
           Range:
@@ -396,8 +404,8 @@ Abilities:
       Enabled: true
       Description: "To use, left-click while looking in the direction you want to be launched. A pillar of earth will jut up from under you and launch you in that direction - if and only if there is enough earth behind where you're looking to launch you. Skillful use of this ability takes much time and work, and it does result in the death of certain gung-ho earthbenders. if you plan to use this ability, be sure you've read about your passive ability you innately have as an earthbender."
       Length: 7
-      Speed: 12
-      Push: 5
+      Speed: 10
+      Push: 4
     Collapse:
       Enabled: true
       Description: "To use, simply left-click an earthbendable block. That block and the earthbendable blocks above it will be shoved back into the earth below, if they can. This ability does have the capacity to trap something inside of it, although it is incredibly difficult to do so. Additionally, press sneak with this ability to affect an area around your targeted location - all earth that can be moved downwards will be moved downwards. This ability is especially risky or deadly in caves, depending on the earthbender's goal and technique."
@@ -418,7 +426,7 @@ Abilities:
       Range: 20
       Speed: 35
       Revert: true
-      Damage: 4
+      Damage: 3
       Push: 0.3
     EarthGrab:
       Enabled: true
@@ -435,7 +443,7 @@ Abilities:
     Extraction:
       Enabled: true
       Description: "This ability allows metalbenders to extract the minerals from ore blocks. To use, simply tap sneak while looking at an ore block with metal in it (iron, gold, etc) and the ore will be extracted and drop in front of you. This ability has a small chance of doubling or tripling the loot. This ability has a short cooldown."
-      Cooldown: 10000
+      Cooldown: 2000
       TripleLootChance: 15
       DoubleLootChance: 40
     MetalClips:
@@ -454,7 +462,7 @@ Abilities:
       ClickLavaCleanupDelay: 7000
       ClickLandCleanupDelay: 20000
       ClickRange: 10.0
-      ShiftRadius: 8.0
+      ShiftRadius: 6.0
       ClickRadius: 5.0
       ShiftPlatformRadius: 1.5
       ClickLavaCreateSpeed: 0.05
@@ -484,7 +492,7 @@ Abilities:
       ChargeTime: 1200
       Cooldown: 0
       ShotRange: 30
-      Damage: 6
+      Damage: 3
       Knockback: 3.5
       Knockup: 0.15
       FlightSpeed: 0.72
@@ -504,7 +512,7 @@ Abilities:
       Description: "This is one of the most powerful moves in the earthbender's arsenal. To use, you must first charge it by holding sneak (default: shift). Once charged, you can release sneak to create an enormous shockwave of earth, disturbing all earth around you and expanding radially outwards. Anything caught in the shockwave will be blasted back and dealt damage. If you instead click while charged, the disruption is focused in a cone in front of you. Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave."
       ChargeTime: 2500
       FallThreshold: 10
-      Damage: 5
+      Damage: 3
       Knockback: 1.1
       Range: 15
     Tremorsense:
@@ -519,17 +527,17 @@ Abilities:
       Enabled: true
       Description: "To use, simply click in any direction. An arc of fire will flow from your location, igniting anything in its path. Additionally, tap sneak to engulf the area around you in roaring flames."
       ArcOfFire:
-        Arc: 20
-        Range: 9
+        Arc: 16
+        Range: 7
       RingOfFire:
         Range: 7
     Combustion:
       Enabled: true
       Description: "Combustion is a powerful ability only known by a few skilled Firebenders. It allows the bender to Firebend with their mind, concentrating energy to create a powerful blast. To use, simply tap sneak (Default: Shift) to launch the blast. This technique is highly destructive and very effective, it also comes with a long cooldown."
-      Cooldown: 15000
+      Cooldown: 10000
       BreakBlocks: false
       Power: 1.0
-      Damage: 5
+      Damage: 3
       Radius: 4
       Range: 20
       Speed: 25
@@ -540,28 +548,28 @@ Abilities:
       Range: 15
       Radius: 2
       Push: 0.3
-      Damage: 2
+      Damage: 1
       Cooldown: 1500
       Dissipate: false
-      FireTicks: 6
+      FireTicks: 2.5
       Charged:
-        ChargeTime: 2000
-        Damage: 4
+        ChargeTime: 3000
+        Damage: 3
         DamageRadius: 6
         Power: 1
         Range: 20
-        FireTicks: 6
+        FireTicks: 4
     FireBurst:
       Enabled: true
       Description: "FireBurst is a very powerful firebending ability. To use, press and hold sneak to charge your burst. Once charged, you can either release sneak to launch a cone-shaped burst of flames in front of you, or click to release the burst in a sphere around you."
-      ChargeTime: 2500
-      Damage: 3
+      ChargeTime: 3000
+      Damage: 2
       Range: 15
     FireJet:
       Enabled: true
       Description: "This ability is used for a limited burst of flight for firebenders. Clicking with this ability selected will launch you in the direction you're looking, granting you controlled flight for a short time. This ability can be used mid-air to prevent falling to your death, but on the ground it can only be used if standing on a block that's ignitable (e.g. not snow or water)."
       Speed: 0.7
-      Duration: 1500
+      Duration: 2000
       Cooldown: 6000
       IsAvatarStateToggle: true
     FireShield:
@@ -589,7 +597,7 @@ Abilities:
       Description: "Hold sneak while selecting this ability to charge up a lightning strike. once charged, release sneak to discharge the lightning to the targeted location."
       Damage: 6
       Range: 13.0
-      ChargeTime: 3500
+      ChargeTime: 4000
       Cooldown: 0
       StunChance: 0.2
       StunDuration: 30.0
@@ -611,25 +619,25 @@ Abilities:
       Width: 4
       Duration: 5000
       Damage: 2
-      Cooldown: 7500
+      Cooldown: 11000
       Interval: 500
       FireTicks: 3
     FireCombo:
       Enabled: true
       FireKick:
         Range: 7.0
-        Damage: 3.0
-        Cooldown: 2000
+        Damage: 2.0
+        Cooldown: 4500
       FireSpin:
         Range: 7
         Damage: 3.0
         Knockback: 3.2
-        Cooldown: 2000
+        Cooldown: 6000
       FireWheel:
         Range: 20.0
         Damage: 4.0
         Speed: 0.55
-        Cooldown: 200
+        Cooldown: 2000
         FireTicks: 2.5
       JetBlast:
         Speed: 1.2
@@ -637,7 +645,7 @@ Abilities:
         FireTicks: 2.5
       JetBlaze:
         Speed: 1.1
-        Damage: 3
+        Damage: 1
         Cooldown: 6000
         FireTicks: 2.5
   Chi:
@@ -646,11 +654,11 @@ Abilities:
       Speed: 1
       Jump: 2
       BlockChi:
-        Duration: 2500
+        Duration: 2000
         DodgeChance: 25
     ChiCombo:
-      ParalyzeDuration: 10000
-      Cooldown: 20000
+      ParalyzeDuration: 3500
+      Cooldown: 10000
     AcrobatStance:
       Enabled: true
       Description: "AcrobatStance gives a Chiblocker a higher probability of blocking a Bender's Chi while granting them a Speed and Jump boost. It also increases the rate at which the hunger bar depletes. To use, simply left click. Left clicking again will de-activate the stance."
@@ -658,8 +666,8 @@ Abilities:
     HighJump:
       Enabled: true
       Description: "To use this ability, simply click. You will jump quite high. This ability has a short cooldown."
-      Cooldown: 10000
-      Height: 1
+      Cooldown: 3500
+      Height: 2
     Paralyze:
       Enabled: true
       Description: "Paralyzes the target, making them unable to do anything for a short period of time. This ability has a long cooldown."
@@ -670,12 +678,12 @@ Abilities:
       Description: "This ability allows the chiblocker to punch rapidly in a short period. To use, simply punch. This has a short cooldown."
       Damage: 1
       Distance: 4
-      Cooldown: 15000
+      Cooldown: 8000
       Punches: 4
     Smokescreen:
       Enabled: true
       Description: "Smokescren, if used correctly, can serve as a defensive and offensive ability for Chiblockers. To use, simply left click and you will toss out a Smoke Bomb. When the bomb hits the ground, it will explode and give all players within a small radius of the explosion temporary blindness, allowing you to either get away, or move in for the kill. This ability has a long cooldown."
-      Cooldown: 50000
+      Cooldown: 15000
       Radius: 4
       Duration: 15
     WarriorStance:
