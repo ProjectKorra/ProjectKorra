@@ -44,6 +44,10 @@ Properties:
     FullMoonFactor: 3.0
     CanBendPackedIce: true
     PlaySound: true
+    NightMessage: "You feel the strength of the rising moon empowering your waterbending."
+    DayMessage: "You feel the empowering of your waterbending subside as the moon sets."
+    LunarEclipseMessage: "A lunar eclipse is out! Waterbenders are temporarily powerless."
+    FullMoonMessage: "A full moon is rising, empowering your waterbending like never before."
   Earth:
     RevertEarthbending: true
     SafeRevert: true
@@ -74,6 +78,10 @@ Properties:
     CanBendWithWeapons: true
     DayFactor: 1.5
     PlaySound: true
+    DayMessage: "You feel the strength of the rising sun empowering your firebending."
+    NightMessage: "You feel the empowering of your firebending subside as the sun sets."
+    SolarEclipseMessage: "A solar eclipse is out! Firebenders are temporarily powerless."
+    CometMessage: "Sozin's Comet is passing overhead! Firebending is now at its most powerful."
   Chi:
     CanBendWithWeapons: false
   DisabledWorlds:
