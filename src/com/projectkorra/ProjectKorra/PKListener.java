@@ -51,6 +51,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
@@ -1081,10 +1082,20 @@ public class PKListener implements Listener {
 			}
 		}
 
+		SpiritualProjection.cancel(player);
 		MultiAbilityManager.remove(player);
 		FlightAbility.remove(event.getPlayer());
 	}
 
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onItemPickup(PlayerPickupItemEvent event) {
+		Player player = event.getPlayer();
+		if (SpiritualProjection.instances.containsKey(player)) {
+			event.setCancelled(true);
+			return;
+		}
+	}
+	
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSneak(PlayerToggleSneakEvent event) {
 		Player player = event.getPlayer();

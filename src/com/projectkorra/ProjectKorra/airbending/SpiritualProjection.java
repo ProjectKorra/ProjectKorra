@@ -21,6 +21,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -322,7 +323,10 @@ public class SpiritualProjection {
 	private void cancel() {
 		if (isSpiritState) {
 			if (player.isOnline()) {
-				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("SpiritualProjection", cooldown);
+				BendingPlayer bplayer = GeneralMethods.getBendingPlayer(player.getName());
+				if (bplayer != null) {
+					bplayer.addCooldown("SpiritualProjection", cooldown);
+				}
 			}
 			Location npcLoc = npc.getLocation();
 			removeNPC();
