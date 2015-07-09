@@ -25,6 +25,7 @@ public class EarthPassive {
 	private static final long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Passive.Duration");
 	private static int sandspeed = ProjectKorra.plugin.getConfig().getInt("Properties.Earth.Passive.SandRunPower");
 
+	@SuppressWarnings("deprecation")
 	public static boolean softenLanding(Player player) {
 		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
 		if (EarthMethods.canMetalbend(player) && EarthMethods.isMetalBlock(block)) {
@@ -34,7 +35,13 @@ public class EarthPassive {
 			if (!EarthMethods.isTransparentToEarthbending(player, block)) {
 				Material type = block.getType();
 				if (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
-					block.setType(Material.SAND);
+					if (type == Material.SAND) {
+						byte data = block.getData();
+						block.setType(Material.SAND);
+						block.setData(data);
+					} else {
+						block.setType(Material.SAND);
+					}
 					if (!sandblocks.containsKey(block)) {
 						sandidentities.put(block, type);
 						sandblocks.put(block, System.currentTimeMillis());
@@ -46,7 +53,13 @@ public class EarthPassive {
 				if (EarthMethods.isEarthbendable(player, affectedBlock)) {
 					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
 						Material type = affectedBlock.getType();
-						affectedBlock.setType(Material.SAND);
+						if (type == Material.SAND) {
+							byte data = affectedBlock.getData();
+							affectedBlock.setType(Material.SAND);
+							affectedBlock.setData(data);
+						} else {
+							affectedBlock.setType(Material.SAND);
+						}
 						if (!sandblocks.containsKey(affectedBlock)) {
 							sandidentities.putIfAbsent(affectedBlock, type);
 							sandblocks.put(affectedBlock, System.currentTimeMillis());
@@ -67,12 +80,18 @@ public class EarthPassive {
 		return (sandblocks.containsKey(block));
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static void revertSand(Block block) {
 		Material type = sandidentities.get(block);
 		sandidentities.remove(block);
 		sandblocks.remove(block);
 		if (block.getType() == Material.SAND) {
-			block.setType(type);
+			if (block.getData() == (byte) 0x1) {
+				block.setType(type);
+				block.setData((byte) 0x1);
+			} else {
+				block.setType(type);
+			}
 		}
 	}
 	
