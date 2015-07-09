@@ -68,6 +68,7 @@ public class EarthSmash {
 	public EarthSmash(Player player, ClickType type) {
 		if(!GeneralMethods.hasPermission(player, "EarthSmash"))
 			return;
+		
 		this.player = player;
 		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		this.time = System.currentTimeMillis();
@@ -103,8 +104,12 @@ public class EarthSmash {
 			}
 			
 			EarthSmash grabbedSmash = aimingAtSmashCheck(player, State.LIFTED);
-			if(grabbedSmash == null)
-			grabbedSmash = aimingAtSmashCheck(player, State.SHOT);
+			if (grabbedSmash == null) {
+				if (bplayer.isOnCooldown("EarthSmash")) {
+					return;
+				}
+				grabbedSmash = aimingAtSmashCheck(player, State.SHOT);
+			}
 			if(grabbedSmash != null) {
 				grabbedSmash.state = State.GRABBED;
 				grabbedSmash.grabbedRange = grabbedSmash.loc.distance(player.getEyeLocation());
