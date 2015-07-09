@@ -39,7 +39,7 @@ public class Plantbending {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void revert() {
+	public void revert() {
 		if (block.getType() == Material.AIR) {
 			block.setType(type);
 			block.setData(data);

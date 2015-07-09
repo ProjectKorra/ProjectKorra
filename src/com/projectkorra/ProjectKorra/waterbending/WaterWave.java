@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
@@ -305,7 +306,10 @@ public class WaterWave {
 
 	public void remove() {
 		instances.remove(this);
-		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterWave", cooldown);
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (bPlayer != null) {
+		    bPlayer.addCooldown("WaterWave", cooldown);
+		}
 		revertBlocks();
 		for (BukkitRunnable task : tasks)
 			task.cancel();

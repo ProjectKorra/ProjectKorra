@@ -29,17 +29,17 @@ public class LogFilter implements Filter {
 		}
 		String recordString = "";
 		if (record.getMessage() != null) {
-			if (!record.getMessage().contains("LogTest")) {
+			if (!record.getMessage().contains("ProjectKorra")) {
 				if (record.getThrown() == null) {
 					return false;
 				}
 				if (record.getThrown().getMessage() == null) {
 					return false;
 				}
-				if (!record.getThrown().getMessage().contains("LogTest")) {
+				if (!record.getThrown().getMessage().contains("ProjectKorra")) {
 					return false;
 				}
-				// record message doesnt have logtest but throwable does
+				// record message doesnt have ProjectKorra but throwable does
 			} 
 			recordString = buildString(record);
 		} else {
@@ -47,10 +47,10 @@ public class LogFilter implements Filter {
 				if (record.getThrown().getMessage() == null) {
 					return false;
 				}
-				if (!record.getThrown().getMessage().contains("LogTest")) {
+				if (!record.getThrown().getMessage().contains("ProjectKorra")) {
 					return false;
 				}
-				// record message null but throwable has logtest
+				// record message null but throwable has ProjectKorra
 				recordString = buildString(record);
 			}
 		}

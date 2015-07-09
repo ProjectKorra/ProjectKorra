@@ -40,7 +40,7 @@ public class ProjectKorra extends JavaPlugin {
 		    if (!logFolder.exists()) {
 		        logFolder.mkdirs();
 		    }
-		    handler = new PKLogHandler(getDataFolder() + File.separator + "ERROR.log");
+		    handler = new PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
 			log.getParent().addHandler(handler);
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
