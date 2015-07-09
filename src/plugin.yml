@@ -25,6 +25,7 @@ permissions:
       bending.ability.Flight: true
       bending.ability.MetalClips.loot: true
       bending.ability.MetalClips.4clips: true
+      bending.ability.SpiritualProjection: true
       bending.command.import: true
       bending.command.toggle.all: true
       bending.command.give: true

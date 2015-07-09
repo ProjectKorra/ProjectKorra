@@ -170,6 +170,7 @@ public class AirMethods {
 		Tornado.instances.clear();
 		AirBurst.removeAll();
 		Suffocate.removeAll();
+		SpiritualProjection.removeAll();
 		AirCombo.removeAll();
 		com.projectkorra.ProjectKorra.airbending.FlightAbility.removeAll();
 	}

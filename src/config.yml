@@ -179,6 +179,15 @@ Abilities:
       AnimationRadius: 2.0
       AnimationParticleAmount: 2
       AnimationSpeed: 1.0
+    SpiritualProjection:
+      Enabled: true
+      Description: "A few Airbenders have shown the ability to project their spirit, leaving their human form vunerable but in return are able to roam free. While in the projected state a spirit can pass through blocks and fly around as well as being unable to take damage, however travelling too far away from their human counterpart will cause the connection to be lost and the spirit to be sent back to the body. Although a spirit cannot be damaged, the spirit should be cautious as if the human counterpart is damaged the spirit will also receive damage, and if the human counter part dies, so does the spirit along with it."
+      Cooldown: 60000
+      MeditateDuration: 6000
+      ProjectionDuration: 30000
+      MaxNoClipWallThickness: 8
+      ProjectionRange: 45
+      ProjectionRangeBuffer: 5
     Tornado: 
       Enabled: true
       Description: "To use, simply sneak (default: shift). This will create a swirling vortex at the targeted location. Any creature or object caught in the vortex will be launched up and out in some random direction. If another player gets caught in the vortex, the launching effect is minimal. Tornado can also be used to transport the user. If the user gets caught in his/her own tornado, his/her movements are much more manageable. Provided the user doesn't fall out of the vortex, it will take him to a maximum height and move him in the general direction he/she is looking. Skilled airbenders can scale anything with this ability."

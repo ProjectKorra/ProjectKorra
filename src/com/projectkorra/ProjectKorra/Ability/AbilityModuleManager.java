@@ -102,10 +102,15 @@ public class AbilityModuleManager {
 					if (a == StockAbilities.AirBurst) shiftabilities.add(a.name());
 					if (a == StockAbilities.AirShield) shiftabilities.add(a.name());
 					if (a == StockAbilities.Flight) shiftabilities.add(a.name());
-					
+					if (a == StockAbilities.SpiritualProjection) shiftabilities.add(a.name());
+					if (a == StockAbilities.SpiritualProjection) harmlessabilities.add(a.name());
+						
 					// Air Sub Abilities
 					if (a == StockAbilities.Flight) subabilities.add(a.name());
+					if (a == StockAbilities.SpiritualProjection) subabilities.add(a.name());
+					
 					if (a == StockAbilities.Flight) flightabilities.add(a.name());
+					if (a == StockAbilities.SpiritualProjection) spiritualprojectionabilities.add(a.name());
 				}
 			}
 			else if (StockAbilities.isWaterbending(a)) {

@@ -27,6 +27,7 @@ public class AirbendingManager implements Runnable {
 		AirShield.progressAll();
 		AirCombo.progressAll();
 		FlightAbility.progressAll();
+		SpiritualProjection.progressAll();
 	}
 
 }

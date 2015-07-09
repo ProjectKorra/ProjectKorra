@@ -298,6 +298,21 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Suffocate.AnimationRadius", 2.0);
 			config.addDefault("Abilities.Air.Suffocate.AnimationParticleAmount", 2);
 			config.addDefault("Abilities.Air.Suffocate.AnimationSpeed", 1.0);
+			
+			config.addDefault("Abilities.Air.SpiritualProjection.Enabled", true);
+			config.addDefault("Abilities.Air.SpiritualProjection.Description", "A few Airbenders have shown the ability to project their spirit, "
+					+ "leaving their human form vunerable but in return are able to roam free. While in the projected state "
+					+ "a spirit can pass through blocks and fly around as well as being unable to take damage, "
+					+ "however travelling too far away from their human counterpart will cause the connection to be "
+					+ "lost and the spirit to be sent back to the body. Although a spirit cannot be damaged, the spirit "
+					+ "should be cautious as if the human counterpart is damaged the spirit will also receive damage, and if "
+					+ "the human counter part dies, so does the spirit along with it.");
+			config.addDefault("Abilities.Air.SpiritualProjection.Cooldown", 60000);
+			config.addDefault("Abilities.Air.SpiritualProjection.MeditateDuration", 6000);
+			config.addDefault("Abilities.Air.SpiritualProjection.ProjectionDuration", 30000);
+			config.addDefault("Abilities.Air.SpiritualProjection.MaxNoClipWallThickness", 8);
+			config.addDefault("Abilities.Air.SpiritualProjection.ProjectionRange", 45);
+			config.addDefault("Abilities.Air.SpiritualProjection.ProjectionRangeBuffer", 5);
 
 			config.addDefault("Abilities.Air.Tornado.Radius", 10);
 			config.addDefault("Abilities.Air.Tornado.Height", 25);
