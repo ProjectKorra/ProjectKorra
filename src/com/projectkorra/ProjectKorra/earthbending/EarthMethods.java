@@ -520,11 +520,7 @@ public class EarthMethods {
 			source.setType(Material.AIR);
 		}
 		if (info.getState().getType() == Material.SAND) {
-			if (info.getState().getRawData() == (byte) 0x1) {
-				target.setType(Material.RED_SANDSTONE);
-			} else {
-				target.setType(Material.SANDSTONE);
-			}
+			target.setType(Material.SANDSTONE);
 		} else {
 			target.setType(info.getState().getType());
 			target.setData(info.getState().getRawData());
