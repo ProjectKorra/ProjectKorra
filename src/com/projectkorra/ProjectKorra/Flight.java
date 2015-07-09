@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.airbending.AirScooter;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
+import com.projectkorra.ProjectKorra.airbending.SpiritualProjection;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.earthbending.Catapult;
 import com.projectkorra.ProjectKorra.earthbending.SandSpout;
@@ -72,6 +73,7 @@ public class Flight {
 		ArrayList<Player> waterspoutplayers = new ArrayList<Player>();
 		ArrayList<Player> airspoutplayers = new ArrayList<Player>();
 		ArrayList<Player> sandspoutplayers = new ArrayList<Player>();
+		ArrayList<Player> spiritualprojectionplayers = new ArrayList<Player>();
 
 		players.addAll(Tornado.getPlayers());
 //		players.addAll(Speed.getPlayers());
@@ -82,6 +84,7 @@ public class Flight {
 		waterspoutplayers = WaterSpout.getPlayers();
 		airspoutplayers = AirSpout.getPlayers();
 		sandspoutplayers = SandSpout.getPlayers();
+		spiritualprojectionplayers = SpiritualProjection.getPlayers();
 
 		for (Player player : instances.keySet()) {
 			Flight flight = instances.get(player);
@@ -89,7 +92,8 @@ public class Flight {
 					|| airscooterplayers.contains(player)
 					|| waterspoutplayers.contains(player)
 					|| airspoutplayers.contains(player) 
-					|| sandspoutplayers.contains(player)) {
+					|| sandspoutplayers.contains(player)
+					|| spiritualprojectionplayers.contains(player)) {
 				continue;
 			}
 			if (Bloodbending.isBloodbended(player)) {
