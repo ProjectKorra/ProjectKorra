@@ -32,6 +32,7 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -630,6 +631,15 @@ public class PKListener implements Listener {
 		format = format.replace("<message>", "%2$s");
 		format = format.replace("<name>", color + player.getDisplayName() + ChatColor.RESET);
 		event.setFormat(format);
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityDeath(EntityDeathEvent event) {
+		LivingEntity entity = event.getEntity();
+		
+		if (entity.hasMetadata("spirit")) {
+			event.getDrops().clear();
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
