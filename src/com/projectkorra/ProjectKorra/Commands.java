@@ -1555,7 +1555,7 @@ public class Commands {
 						}
 						
 						if (uuid2.toString().equals("929b14fc-aaf1-4f0f-84c2-f20c55493f53")) { // vidcom
-							s.sendMessage(ChatColor.DARK_GREEN + "ProjectKorra Concept Designer");
+							s.sendMessage(ChatColor.GREEN + "ProjectKorra Concept Designer");
 							s.sendMessage(ChatColor.GOLD + "ProjectKorra Head Moderator");
 						}
 
@@ -1567,7 +1567,7 @@ public class Commands {
 						}
 
 						if (uuid2.toString().equals("9c18ff57-04b3-4841-9726-9d64373d0d65")) { // coastyo
-							s.sendMessage(ChatColor.DARK_GREEN + "ProjectKorra Concept Designer");
+							s.sendMessage(ChatColor.GREEN + "ProjectKorra Concept Designer");
 							s.sendMessage(ChatColor.BLUE + "ProjectKorra Graphic Artist");
 						}
 
@@ -1576,11 +1576,11 @@ public class Commands {
 								|| uuid2.toString().equals("80f9072f-e37e-4adc-8675-1ba6af87d63b") // Cross
 								|| uuid2.toString().equals("38217173-8a32-4ba7-9fe1-dd4fed031a74") // Fly
 								|| uuid2.toString().equals("15d1a5a7-76ef-49c3-b193-039b27c47e30")) { // Kiam
-							s.sendMessage(ChatColor.DARK_GREEN + "ProjectKorra Concept Designer");
+							s.sendMessage(ChatColor.GREEN + "ProjectKorra Concept Designer");
 						}
 
 						if (uuid2.toString().equals("0fd77ff6-07fb-4a7d-ba87-ae6f802ed1f9")) { // Hit_Manx
-							s.sendMessage(ChatColor.DARK_GREEN + "ProjectKorra Concept Designer");
+							s.sendMessage(ChatColor.GREEN + "ProjectKorra Concept Designer");
 							s.sendMessage(ChatColor.GOLD + "ProjectKorra Wiki Contributor");
 						}
 						return true;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -246,8 +247,8 @@ public class WaterWall {
 			//if (!forming)
 				// removeWater(oldwater);
 			breakBlock();
+			returnWater(location);
 			unfocusBlock();
-			returnWater();
 			return false;
 		}	
 		
@@ -271,7 +272,7 @@ public class WaterWall {
 			if (progressing
 					&& (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge"))) {
 				breakBlock();
-				returnWater();
+				returnWater(location);
 				return false;
 			}
 
@@ -348,7 +349,7 @@ public class WaterWall {
 			}
 			if (block.getType() != Material.AIR) {
 				breakBlock();
-				returnWater();
+				returnWater(location.subtract(direction));
 				return false;
 			}
 
@@ -536,7 +537,7 @@ public class WaterWall {
 		return false;
 	}
 
-	private void returnWater() {
+	private void returnWater(Location location) {
 		if (location != null) {
 			new WaterReturn(player, location.getBlock());
 		}

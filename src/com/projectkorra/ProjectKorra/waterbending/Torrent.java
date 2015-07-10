@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -133,7 +134,6 @@ public class Torrent {
 				}
 
 				if (sourceblock.getLocation().distance(player.getLocation()) > selectrange) {
-					remove();
 					return;
 				}
 
@@ -241,6 +241,7 @@ public class Torrent {
 				launch = false;
 				formed = false;
 				if (!launch()) {
+					returnWater(location);
 					remove();
 					return;
 				}
@@ -253,6 +254,7 @@ public class Torrent {
 				}
 				if (!launch()) {
 					remove();
+					returnWater(location);
 					return;
 				}
 

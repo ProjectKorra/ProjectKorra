@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra.waterbending;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -100,7 +101,7 @@ public class Wave {
 			if (old.progressing) {
 				old.breakBlock();
 				old.thaw();
-				old.returnWater();
+				old.returnWater(old.location);
 			} else {
 				old.cancel();
 			}
@@ -221,14 +222,14 @@ public class Wave {
 					progressing = false;
 					thaw();
 					breakBlock();
-					returnWater();
+					returnWater(location);
 					return false;
 				}
 				if (!GeneralMethods.canBend(player.getName(), "Surge")) {
 					progressing = false;
 					thaw();
 					breakBlock();
-					returnWater();
+					returnWater(location);
 					return false;
 				}
 
@@ -284,6 +285,7 @@ public class Wave {
 				if (wave.isEmpty()) {
 					// blockl.setType(Material.GLOWSTONE);
 					breakBlock();
+					returnWater(location.subtract(direction));
 					progressing = false;
 					return false;
 				}
@@ -327,7 +329,7 @@ public class Wave {
 				if (location.distance(targetdestination) < 1) {
 					progressing = false;
 					breakBlock();
-					returnWater();
+					returnWater(location);
 					return false;
 				}
 
@@ -493,7 +495,7 @@ public class Wave {
 		return true;
 	}
 
-	void returnWater() {
+	void returnWater(Location location) {
 		if (location != null) {
 			new WaterReturn(player, location.getBlock());
 		}

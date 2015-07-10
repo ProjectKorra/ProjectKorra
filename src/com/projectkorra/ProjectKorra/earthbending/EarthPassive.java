@@ -34,7 +34,13 @@ public class EarthPassive {
 			if (!EarthMethods.isTransparentToEarthbending(player, block)) {
 				Material type = block.getType();
 				if (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
-					block.setType(Material.SAND);
+					if (type == Material.RED_SANDSTONE) {
+						byte data = (byte) 0x1;
+						block.setType(Material.SAND);
+						block.setData(data);
+					} else {
+						block.setType(Material.SAND);
+					}
 					if (!sandblocks.containsKey(block)) {
 						sandidentities.put(block, type);
 						sandblocks.put(block, System.currentTimeMillis());
@@ -46,7 +52,13 @@ public class EarthPassive {
 				if (EarthMethods.isEarthbendable(player, affectedBlock)) {
 					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
 						Material type = affectedBlock.getType();
-						affectedBlock.setType(Material.SAND);
+						if (type == Material.RED_SANDSTONE) {
+							byte data = (byte) 0x1;
+							affectedBlock.setType(Material.SAND);
+							affectedBlock.setData(data);
+						} else {
+							affectedBlock.setType(Material.SAND);
+						}
 						if (!sandblocks.containsKey(affectedBlock)) {
 							sandidentities.putIfAbsent(affectedBlock, type);
 							sandblocks.put(affectedBlock, System.currentTimeMillis());
@@ -72,17 +84,23 @@ public class EarthPassive {
 		sandidentities.remove(block);
 		sandblocks.remove(block);
 		if (block.getType() == Material.SAND) {
-			block.setType(type);
+			if (block.getData() == (byte) 0x1) {
+				block.setType(type);
+			} else {
+				block.setType(type);
+			}
 		}
 	}
 	
 	public static void sandSpeed() {
 		for(Player p : Bukkit.getOnlinePlayers()){
-			if(EarthMethods.canSandbend(p)){
-				if(p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SAND || 
-						p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SANDSTONE ||
-						p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.RED_SANDSTONE){
-					p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, sandspeed - 1));
+			if(p != null && GeneralMethods.getBendingPlayer(p.getName()) != null){
+				if(EarthMethods.canSandbend(p) && GeneralMethods.getBendingPlayer(p.getName()).hasElement(Element.Earth) && !GeneralMethods.canBendPassive(p.getName(), Element.Air) && !GeneralMethods.canBendPassive(p.getName(), Element.Chi)){
+					if(p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SAND || 
+							p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SANDSTONE ||
+							p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.RED_SANDSTONE){
+				   	   		p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, sandspeed - 1));
+					}
 				}
 			}
 		}
