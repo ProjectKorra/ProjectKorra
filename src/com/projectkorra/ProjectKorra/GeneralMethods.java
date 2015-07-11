@@ -1438,7 +1438,7 @@ public class GeneralMethods {
 
 	public static void reloadPlugin() {
 		DBConnection.sql.close();
-		plugin.reloadConfig();
+		ConfigManager.defaultConfig.reloadConfig();
 		ConfigManager.deathMsgConfig.reloadConfig();
 		GeneralMethods.stopBending();
 		BendingReloadEvent event = new BendingReloadEvent();

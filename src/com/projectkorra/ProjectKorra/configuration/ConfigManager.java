@@ -10,11 +10,13 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 public class ConfigManager {
 
 	public static Config deathMsgConfig;
+	public static Config defaultConfig;
 	static ProjectKorra plugin;
 
 	public ConfigManager(ProjectKorra plugin) {
 		ConfigManager.plugin = plugin;
 		deathMsgConfig = new Config(new File("deathmessages.yml"));
+		defaultConfig = new Config(new File("config.yml"));
 		configCheck(ConfigType.DEFAULT);
 		configCheck(ConfigType.DEATH_MESSAGE);
 	}
@@ -69,7 +71,7 @@ public class ConfigManager {
 			deathMsgConfig.saveConfig();
 			break;
 		case DEFAULT:
-			config = ProjectKorra.plugin.getConfig();
+			config = defaultConfig.getConfig();
 
 			ArrayList<String> earthbendable = new ArrayList<String>();
 			earthbendable.add("STONE");
@@ -86,6 +88,7 @@ public class ConfigManager {
 			earthbendable.add("REDSTONE_ORE");
 			earthbendable.add("SAND");
 			earthbendable.add("SANDSTONE");
+			earthbendable.add("RED_SANDSTONE");
 			earthbendable.add("MYCEL");
 			
 			ArrayList<String> metals = new ArrayList<String>();
@@ -908,8 +911,9 @@ public class ConfigManager {
 			config.addDefault("Storage.MySQL.user", "root");
 
 			config.addDefault("debug", false);
+			
 			config.options().copyDefaults(true);
-			plugin.saveConfig();
+			defaultConfig.saveConfig();
 			break;
 		}
 	}
