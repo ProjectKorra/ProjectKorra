@@ -75,7 +75,7 @@ public class Updater {
 			plugin.getLogger().info("You are running version " + getCurrentVersion());
 			plugin.getLogger().info("The latest version avaliable is " + getUpdateVersion());
 		} else {
-			plugin.getLogger().info("You are running the latest version of" + pluginName);
+			plugin.getLogger().info("You are running the latest version of " + pluginName);
 		}
 	}
 	
