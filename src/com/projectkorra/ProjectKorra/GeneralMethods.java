@@ -83,8 +83,10 @@ import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
+import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleManager;
 import com.projectkorra.ProjectKorra.CustomEvents.BendingReloadEvent;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerBendingDeathEvent;
+import com.projectkorra.ProjectKorra.Objects.Preset;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
@@ -1437,22 +1439,33 @@ public class GeneralMethods {
 	}
 
 	public static void reloadPlugin() {
-		DBConnection.sql.close();
-		ConfigManager.defaultConfig.reloadConfig();
-		ConfigManager.deathMsgConfig.reloadConfig();
-		GeneralMethods.stopBending();
+		ProjectKorra.log.info("Reloading ProjectKorra and configuration");
 		BendingReloadEvent event = new BendingReloadEvent();
 		Bukkit.getServer().getPluginManager().callEvent(event);
+		if (DBConnection.isOpen != false) {
+			DBConnection.sql.close();
+		}
+		GeneralMethods.stopBending();
+		ConfigManager.defaultConfig.reloadConfig();
+		ConfigManager.deathMsgConfig.reloadConfig();
 		new AbilityModuleManager(plugin);
+		new MultiAbilityModuleManager();
 		DBConnection.host = plugin.getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = plugin.getConfig().getInt("Storage.MySQL.port");
 		DBConnection.pass = plugin.getConfig().getString("Storage.MySQL.pass");
 		DBConnection.db = plugin.getConfig().getString("Storage.MySQL.db");
 		DBConnection.user = plugin.getConfig().getString("Storage.MySQL.user");
 		DBConnection.init();
+		if (DBConnection.isOpen() == false) {
+			ProjectKorra.log.severe("Unable to enable ProjectKorra due to the database not being open");
+			stopPlugin();
+		}
 		for (Player player: Bukkit.getOnlinePlayers()) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			Preset.loadPresets(player);
 		}
+		plugin.updater.checkUpdate();
+		ProjectKorra.log.info("Reload complete");
 	}
 
 	public static void removeBlock(Block block) {
@@ -1690,6 +1703,10 @@ public class GeneralMethods {
 		Flight.removeAll();
 		TempBlock.removeAll();
 		MultiAbilityManager.removeAll();
+	}
+	
+	public static void stopPlugin() {
+		plugin.getServer().getPluginManager().disablePlugin(plugin);
 	}
 
 	public static void writeToDebug(String message) {

@@ -67,7 +67,6 @@ public class ConfigManager {
 			config.addDefault("Chi.RapidPunch", "{victim} took all the hits against {attacker}'s {ability}");
 			config.addDefault("Chi.ChiCombo", "{victim} was overwhelmed by {attacker}'s skill {ability}");
 			
-			config.options().copyDefaults(true);
 			deathMsgConfig.saveConfig();
 			break;
 		case DEFAULT:
@@ -912,7 +911,6 @@ public class ConfigManager {
 
 			config.addDefault("debug", false);
 			
-			config.options().copyDefaults(true);
 			defaultConfig.saveConfig();
 			break;
 		}
