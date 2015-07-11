@@ -152,10 +152,10 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.FullMoonFactor", 2.0);
 			config.addDefault("Properties.Water.CanBendPackedIce", true);
 			config.addDefault("Properties.Water.PlaySound", true);
-			config.addDefault("Properties.Water.NightMessage", WaterMethods.getWaterColor() + "You feel the strength of the rising moon empowering your waterbending.");
-			config.addDefault("Properties.Water.DayMessage", WaterMethods.getWaterColor() + "You feel the empowering of your waterbending subside as the moon sets.");
-			config.addDefault("Properties.Water.LunarEclipseMessage", WaterMethods.getWaterColor() + "A lunar eclipse is out! Waterbendings are temporarily powerless.");
-			config.addDefault("Properties.Water.FullMoonMessage", WaterMethods.getWaterColor() + "A full moon is rising, empowering your waterbending like never before.");
+			config.addDefault("Properties.Water.NightMessage", "You feel the strength of the rising moon empowering your waterbending.");
+			config.addDefault("Properties.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
+			config.addDefault("Properties.Water.LunarEclipseMessage", "A lunar eclipse is out! Waterbendings are temporarily powerless.");
+			config.addDefault("Properties.Water.FullMoonMessage", "A full moon is rising, empowering your waterbending like never before.");
 
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
 			config.addDefault("Properties.Earth.SafeRevert", true);
@@ -169,10 +169,10 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 			config.addDefault("Properties.Fire.DayFactor", 1.5);
 			config.addDefault("Properties.Fire.PlaySound", true);
-			config.addDefault("Properties.Fire.NightMessage", FireMethods.getFireColor() + "You feel the empowering of your firebending subside as the sun sets.");
-			config.addDefault("Properties.Fire.DayMessage", FireMethods.getFireColor() + "You feel the strength of the rising sun empowering your firebending.");
-			config.addDefault("Properties.Fire.SolarEclipseMessage", FireMethods.getFireColor() + "A solar eclipse is out! Firebenders are temporarily powerless.");
-			config.addDefault("Properties.Fire.CometMessage", FireMethods.getFireColor() + "Sozin's Comet is passing overhead! Firebending is now at its most powerful.");
+			config.addDefault("Properties.Fire.NightMessage", "You feel the empowering of your firebending subside as the sun sets.");
+			config.addDefault("Properties.Fire.DayMessage", "You feel the strength of the rising sun empowering your firebending.");
+			config.addDefault("Properties.Fire.SolarEclipseMessage", "A solar eclipse is out! Firebenders are temporarily powerless.");
+			config.addDefault("Properties.Fire.CometMessage", "Sozin's Comet is passing overhead! Firebending is now at its most powerful.");
 
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
