@@ -1691,6 +1691,10 @@ public class GeneralMethods {
 		TempBlock.removeAll();
 		MultiAbilityManager.removeAll();
 	}
+	
+	public static void stopPlugin() {
+		plugin.getServer().getPluginManager().disablePlugin(plugin);
+	}
 
 	public static void writeToDebug(String message) {
 		try {

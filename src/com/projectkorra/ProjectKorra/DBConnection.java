@@ -20,7 +20,7 @@ public class DBConnection {
 			sql = new MySQL(ProjectKorra.log, "[ProjectKorra] Establishing MySQL Connection...", host, port, user, pass, db);
 			if (((MySQL) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");
-				ProjectKorra.plugin.stopPlugin();
+				GeneralMethods.stopPlugin();
 				return;
 			}
             
@@ -70,7 +70,7 @@ public class DBConnection {
 			sql = new SQLite(ProjectKorra.log, "[ProjectKorra] Establishing SQLite Connection.", "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
 			if (((SQLite) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");
-				ProjectKorra.plugin.stopPlugin();
+				GeneralMethods.stopPlugin();
 				return;
 			}
 
