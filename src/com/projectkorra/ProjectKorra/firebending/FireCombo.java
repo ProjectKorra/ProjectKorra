@@ -124,9 +124,7 @@ public class FireCombo {
 		this.ability = ability;
 		this.bplayer = GeneralMethods.getBendingPlayer(player.getName());
 
-		if (ChiMethods.isChiBlocked(player.getName())
-				|| Bloodbending.isBloodbended(player)
-				|| Paralyze.isParalyzed(player)) {
+		if (GeneralMethods.canBend(player.getDisplayName(), ability)) {
 			return;
 		}
 
