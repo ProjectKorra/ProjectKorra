@@ -143,7 +143,7 @@ public class ConfigManager {
 			config.addDefault("Properties.TagAPI.Enabled", true);
 
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);
-			config.addDefault("Properties.Air.Particles", "spell");
+			config.addDefault("Properties.Air.Particles", "cloud");
 			config.addDefault("Properties.Air.PlaySound", true);
 
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);

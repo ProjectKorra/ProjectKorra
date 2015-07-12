@@ -87,6 +87,7 @@ import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleMana
 import com.projectkorra.ProjectKorra.CustomEvents.BendingReloadEvent;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerBendingDeathEvent;
 import com.projectkorra.ProjectKorra.Objects.Preset;
+import com.projectkorra.ProjectKorra.Utilities.CraftingRecipes;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirCombo;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
@@ -1450,6 +1451,7 @@ public class GeneralMethods {
 		ConfigManager.deathMsgConfig.reloadConfig();
 		new AbilityModuleManager(plugin);
 		new MultiAbilityModuleManager();
+		new CraftingRecipes(plugin);
 		DBConnection.host = plugin.getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = plugin.getConfig().getInt("Storage.MySQL.port");
 		DBConnection.pass = plugin.getConfig().getString("Storage.MySQL.pass");
