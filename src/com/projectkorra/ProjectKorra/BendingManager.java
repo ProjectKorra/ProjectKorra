@@ -21,16 +21,16 @@ public class BendingManager implements Runnable {
 	
 	public static HashMap<World, String> events = new HashMap<World, String>(); // holds any current event.
 
-	static final String DEFAULT_SOZINS_COMET_MESSAGE = "Sozin's Comet is passing overhead! Firebending is now at its most powerful.";
-	static final String DEFAULT_SOLAR_ECLIPSE_MESSAGE = "A solar eclipse is out! Firebenders are temporarily powerless.";
+	static final String DEFAULT_SOZINS_COMET_MESSAGE = ProjectKorra.plugin.getConfig().getString("Properties.Fire.CometMessage");
+	static final String DEFAULT_SOLAR_ECLIPSE_MESSAGE = ProjectKorra.plugin.getConfig().getString("Properties.Fire.SolarEclipseMessage");
 
-	static final String DEFAULT_SUNRISE_MESSAGE = "You feel the strength of the rising sun empowering your firebending.";
-	static final String DEFAULT_SUNSET_MESSAGE = "You feel the empowering of your firebending subside as the sun sets.";
+	static final String DEFAULT_SUNRISE_MESSAGE = ProjectKorra.plugin.getConfig().getString("Properties.Fire.DayMessage");
+	static final String DEFAULT_SUNSET_MESSAGE = ProjectKorra.plugin.getConfig().getString("Properties.Fire.NightMessage");
 
-	static final String DEFAULT_MOONRISE_MESSAGE = "You feel the strength of the rising moon empowering your waterbending.";
-	static final String DEFAULT_FULL_MOONRISE_MESSAGE = "A full moon is rising, empowering your waterbending like never before.";
-	static final String DEFAULT_LUNAR_ECLIPSE_MESSAGE = "A lunar eclipse is out! Waterbenders are temporarily powerless.";
-	static final String DEFAULT_MOONSET_MESSAGE = "You feel the empowering of your waterbending subside as the moon sets.";
+	static final String DEFAULT_MOONRISE_MESSAGE = ProjectKorra.plugin.getConfig().getString("Properties.Water.NightMessage");
+	static final String DEFAULT_FULL_MOONRISE_MESSAGE = ProjectKorra.plugin.getConfig().getString("Properties.Water.FullMoonMessage");
+	static final String DEFAULT_LUNAR_ECLIPSE_MESSAGE = ProjectKorra.plugin.getConfig().getString("Properties.Water.LunarEclipsetMessage");
+	static final String DEFAULT_MOONSET_MESSAGE = ProjectKorra.plugin.getConfig().getString("Properties.Water.DayMessage");
 	
 	long time;
 	long interval;

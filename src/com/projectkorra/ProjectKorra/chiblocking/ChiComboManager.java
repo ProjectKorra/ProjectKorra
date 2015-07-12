@@ -98,7 +98,7 @@ public class ChiComboManager
 						&& combo.get(2) == ChiCombo.QuickStrike
 						&& combo.get(3) == ChiCombo.QuickStrike)
 				{
-					if(!GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("Immobilize")){
+					if(!GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("Immobilize") && GeneralMethods.canBend(player.getDisplayName(), "Immobilize")){
 						GeneralMethods.getBendingPlayer(player.getName()).addCooldown("Immobilize", cooldown);
 						paralyzeTarget(player, paralysisDuration);
 					}
