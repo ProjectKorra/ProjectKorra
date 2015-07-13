@@ -198,7 +198,7 @@ public class PKListener implements Listener {
 		if (player.getGameMode() != GameMode.CREATIVE) {
 			HashMap<Integer, String> bound = GeneralMethods.getBendingPlayer(player.getName()).getAbilities();
 			for (String str : bound.values()) {
-				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
+				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout") || str.equalsIgnoreCase("SpiritualProjection")) {
 					final Player fplayer = player;
 					new BukkitRunnable() {
 						public void run() {
