@@ -3,17 +3,15 @@ package com.projectkorra.ProjectKorra.Ability;
 import com.projectkorra.ProjectKorra.SubElement;
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable;
 
-public abstract class AbilityModule extends AbilityLoadable implements Cloneable
-{
+public abstract class AbilityModule extends AbilityLoadable implements Cloneable {
+	
 	/**
 	 * AbilityModule Constructor.
 	 * 
 	 * @param name The name of the ability.
 	 */
-	public AbilityModule(final String name)
-	{
+	public AbilityModule(final String name) {
 		super(name);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -77,8 +75,7 @@ public abstract class AbilityModule extends AbilityLoadable implements Cloneable
 	 * 
 	 * @return Whether or not this ability can ignite blocks.
 	 */
-	public boolean isIgniteAbility()
-	{
+	public boolean isIgniteAbility() {
 		return false;
 	}
 
@@ -87,8 +84,7 @@ public abstract class AbilityModule extends AbilityLoadable implements Cloneable
 	 * 
 	 * @return Whether or not this ability creates explosions.
 	 */
-	public boolean isExplodeAbility()
-	{
+	public boolean isExplodeAbility() {
 		return false;
 	}
 
@@ -96,10 +92,7 @@ public abstract class AbilityModule extends AbilityLoadable implements Cloneable
 	 *  Void Method called whenever ProjectKorra stops and the ability is unloaded.
 	 *  
 	 */
-	public void stop()
-	{
-
-	}
+	public void stop() {}
 	
 	/**
 	 * Accessor Method to get which SubElement the ability belongs to.
@@ -128,8 +121,7 @@ public abstract class AbilityModule extends AbilityLoadable implements Cloneable
 	 * 
 	 * @return The SubElement the ability belongs to.
 	 */
-	public SubElement getSubElement()
-	{
+	public SubElement getSubElement() {
 		return null;
 	}
 }
