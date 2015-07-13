@@ -44,7 +44,6 @@ public class Flight {
 		this.source = source;
 		time = System.currentTimeMillis();
 		instances.put(player, this);
-		System.out.println("Giving flight to player...");
 	}
 
 	@Override
@@ -111,25 +110,21 @@ public class Flight {
 					continue;
 				}
 				if (flight.source == null) {
-					System.out.println("Removing flight from player... [1]");
 					flight.revert();
 					flight.remove();
 				} else {
 					if (System.currentTimeMillis() >= flight.time + duration) {
-						System.out.println("Removing flight from player... [2]");
 						flight.revert();
 						flight.remove();
 					}
 				}
 			} else {
 				if (flight.source == null) {
-					System.out.println("Removing flight from player... [3]");
 					flight.revert();
 					flight.remove();
 					continue;
 				}
 				if (System.currentTimeMillis() > flight.time + duration) {
-					System.out.println("Removing flight from player... [4]");
 					flight.revert();
 					flight.remove();
 				}
