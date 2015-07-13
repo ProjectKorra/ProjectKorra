@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
 public class AvatarState {
 
@@ -54,7 +54,6 @@ public class AvatarState {
 		if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
 			return;
 		}
-		new Flight(player);
 		GeneralMethods.playAvatarSound(player.getLocation());
 		instances.put(player, this);
 		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("AvatarState", cooldown);
@@ -104,7 +103,7 @@ public class AvatarState {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,
 					duration, regenPower));
 		}
-		if (speedEnabled) {
+		if (speedEnabled && !WaterSpout.getPlayers().contains(player)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,
 					duration, speedPower));
 		}
