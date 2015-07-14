@@ -297,7 +297,7 @@ public class SpiritualProjection {
 
 	public static boolean isSpiritualProjected(Player player) {
 		if (instances.containsKey(player)) {
-			return true;
+			return instances.get(player).isSpiritState;
 		}
 		return false;
 	}
