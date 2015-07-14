@@ -28,60 +28,39 @@ public class AirCombo implements ConfigLoadable {
 	public static enum AbilityState {
 		TWISTER_MOVING, TWISTER_STATIONARY
 	}
+	
+	public static ArrayList<AirCombo> instances = new ArrayList<AirCombo>();
 
-	public double twister_speed = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.Speed");
-	public double twister_range = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.Range");
-	public double twister_height = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.Height");
-	public double twister_radius = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.Radius");
-	public double twister_degree_per_particle = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
-	public double twister_height_per_particle = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
-	public long twister_remove_delay = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");
-	public long twister_cooldown = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Air.AirCombo.Twister.Cooldown");
+	public double twister_speed = config.getDouble("Abilities.Air.AirCombo.Twister.Speed");
+	public double twister_range = config.getDouble("Abilities.Air.AirCombo.Twister.Range");
+	public double twister_height = config.getDouble("Abilities.Air.AirCombo.Twister.Height");
+	public double twister_radius = config.getDouble("Abilities.Air.AirCombo.Twister.Radius");
+	public double twister_degree_per_particle = config.getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
+	public double twister_height_per_particle = config.getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
+	public long twister_remove_delay = config.getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");
+	public long twister_cooldown = config.getLong("Abilities.Air.AirCombo.Twister.Cooldown");
 
-	public double air_stream_speed = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirStream.Speed");
-	public double air_stream_range = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirStream.Range");
-	public double air_stream_entity_height = ProjectKorra.plugin
-			.getConfig().getDouble(
-					"Abilities.Air.AirCombo.AirStream.EntityHeight");
-	public long air_stream_entity_duration = ProjectKorra.plugin
-			.getConfig().getLong(
-					"Abilities.Air.AirCombo.AirStream.EntityDuration");
-	public long air_stream_cooldown = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
+	public double air_stream_speed = config.getDouble("Abilities.Air.AirCombo.AirStream.Speed");
+	public double air_stream_range = config.getDouble("Abilities.Air.AirCombo.AirStream.Range");
+	public double air_stream_entity_height = config.getDouble("Abilities.Air.AirCombo.AirStream.EntityHeight");
+	public long air_stream_entity_duration = config.getLong("Abilities.Air.AirCombo.AirStream.EntityDuration");
+	public long air_stream_cooldown = config.getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
 
+	public double air_sweep_speed = config.getDouble("Abilities.Air.AirCombo.AirSweep.Speed");
+	public double air_sweep_range = config.getDouble("Abilities.Air.AirCombo.AirSweep.Range");
+	public double air_sweep_damage = config.getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
+	public double air_sweep_knockback = config.getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
+	public long air_sweep_cooldown = config.getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
+
+	private boolean enabled = config.getBoolean("Abilities.Air.AirCombo.Enabled");
+	
 	public double AIR_SLICE_SPEED = 0.7;
 	public double AIR_SLICE_RANGE = 10;
 	public double AIR_SLICE_DAMAGE = 3;
 	public long AIR_SLICE_COOLDOWN = 500;
 
-	public double air_sweep_speed = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirSweep.Speed");
-	public double air_sweep_range = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirSweep.Range");
-	public double air_sweep_damage = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
-	public double air_sweep_knockback = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
-	public long air_sweep_cooldown = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
-
-	private boolean enabled = ProjectKorra.plugin.getConfig()
-			.getBoolean("Abilities.Air.AirCombo.Enabled");
-
-	public static ArrayList<AirCombo> instances = new ArrayList<AirCombo>();
-
 	private Player player;
-	private BendingPlayer bplayer;
+	private BendingPlayer bPlayer;
 	private ClickType type;
 	private String ability;
 
@@ -99,25 +78,27 @@ public class AirCombo implements ConfigLoadable {
 	private ArrayList<Flight> flights = new ArrayList<Flight>();
 
 	public AirCombo(Player player, String ability) {
+		/* Initial Checks */
 		if (!enabled)
-			return;
-		if(!GeneralMethods.getBendingPlayer(player.getName()).hasElement(Element.Air))
 			return;
 		if (Commands.isToggledForAll) 
 			return;
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast",
-				player.getLocation()))
+		this.bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (!bPlayer.isToggled()) 
 			return;
-		if (!GeneralMethods.getBendingPlayer(player.getName()).isToggled()) 
+		if(!bPlayer.hasElement(Element.Air))
 			return;
-		time = System.currentTimeMillis();
-		this.player = player;
-		this.ability = ability;
-		this.bplayer = GeneralMethods.getBendingPlayer(player.getName());
-
 		if (GeneralMethods.canBend(player.getDisplayName(), ability)) {
 			return;
 		}
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast",
+				player.getLocation()))
+			return;
+		/* End Initial Checks */
+		reloadVariables();
+		time = System.currentTimeMillis();
+		this.player = player;
+		this.ability = ability;
 
 		if (ability.equalsIgnoreCase("Twister")) {
 			damage = 0;
@@ -159,12 +140,12 @@ public class AirCombo implements ConfigLoadable {
 
 		if (ability.equalsIgnoreCase("Twister")) {
 			if (destination == null) {
-				if (bplayer.isOnCooldown("Twister")
+				if (bPlayer.isOnCooldown("Twister")
 						&& !AvatarState.isAvatarState(player)) {
 					remove();
 					return;
 				}
-				bplayer.addCooldown("Twister", cooldown);
+				bPlayer.addCooldown("Twister", cooldown);
 				state = AbilityState.TWISTER_MOVING;
 				direction = player.getEyeLocation().getDirection().clone()
 						.normalize();
@@ -227,12 +208,12 @@ public class AirCombo implements ConfigLoadable {
 
 		else if (ability.equalsIgnoreCase("AirStream")) {
 			if (destination == null) {
-				if (bplayer.isOnCooldown("AirStream")
+				if (bPlayer.isOnCooldown("AirStream")
 						&& !AvatarState.isAvatarState(player)) {
 					remove();
 					return;
 				}
-				bplayer.addCooldown("AirStream", cooldown);
+				bPlayer.addCooldown("AirStream", cooldown);
 				origin = player.getEyeLocation();
 				currentLoc = origin.clone();
 			}
@@ -323,12 +304,12 @@ public class AirCombo implements ConfigLoadable {
 
 		else if (ability.equalsIgnoreCase("AirSlice")) {
 			if (origin == null) {
-				if (bplayer.isOnCooldown("AirSlice")
+				if (bPlayer.isOnCooldown("AirSlice")
 						&& !AvatarState.isAvatarState(player)) {
 					remove();
 					return;
 				}
-				bplayer.addCooldown("AirSlice", cooldown);
+				bPlayer.addCooldown("AirSlice", cooldown);
 				origin = player.getLocation();
 				currentLoc = origin.clone();
 				direction = player.getEyeLocation().getDirection();
@@ -356,12 +337,12 @@ public class AirCombo implements ConfigLoadable {
 
 		else if (ability.equalsIgnoreCase("AirSweep")) {
 			if (origin == null) {
-				if (bplayer.isOnCooldown("AirSweep")
+				if (bPlayer.isOnCooldown("AirSweep")
 						&& !AvatarState.isAvatarState(player)) {
 					remove();
 					return;
 				}
-				bplayer.addCooldown("AirSweep", cooldown);
+				bPlayer.addCooldown("AirSweep", cooldown);
 				direction = player.getEyeLocation().getDirection().normalize();
 				origin = player.getLocation().add(
 						direction.clone().multiply(10));
@@ -538,48 +519,27 @@ public class AirCombo implements ConfigLoadable {
 
 	@Override
 	public void reloadVariables() {
-		twister_speed = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.Twister.Speed");
-		twister_range = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.Twister.Range");
-		twister_height = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.Twister.Height");
-		twister_radius = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.Twister.Radius");
-		twister_degree_per_particle = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
-		twister_height_per_particle = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
-		twister_remove_delay = ProjectKorra.plugin.getConfig()
-				.getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");
-		twister_cooldown = ProjectKorra.plugin.getConfig()
-				.getLong("Abilities.Air.AirCombo.Twister.Cooldown");
+		twister_speed = config.getDouble("Abilities.Air.AirCombo.Twister.Speed");
+		twister_range = config.getDouble("Abilities.Air.AirCombo.Twister.Range");
+		twister_height = config.getDouble("Abilities.Air.AirCombo.Twister.Height");
+		twister_radius = config.getDouble("Abilities.Air.AirCombo.Twister.Radius");
+		twister_degree_per_particle = config.getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
+		twister_height_per_particle = config.getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
+		twister_remove_delay = config.getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");
+		twister_cooldown = config.getLong("Abilities.Air.AirCombo.Twister.Cooldown");
 
-		air_stream_speed = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.AirStream.Speed");
-		air_stream_range = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.AirStream.Range");
-		air_stream_entity_height = ProjectKorra.plugin
-				.getConfig().getDouble(
-						"Abilities.Air.AirCombo.AirStream.EntityHeight");
-		air_stream_entity_duration = ProjectKorra.plugin
-				.getConfig().getLong(
-						"Abilities.Air.AirCombo.AirStream.EntityDuration");
-		air_stream_cooldown = ProjectKorra.plugin.getConfig()
-				.getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
+		air_stream_speed = config.getDouble("Abilities.Air.AirCombo.AirStream.Speed");
+		air_stream_range = config.getDouble("Abilities.Air.AirCombo.AirStream.Range");
+		air_stream_entity_height = config.getDouble("Abilities.Air.AirCombo.AirStream.EntityHeight");
+		air_stream_entity_duration = config.getLong("Abilities.Air.AirCombo.AirStream.EntityDuration");
+		air_stream_cooldown = config.getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
 		
-		air_sweep_speed = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.AirSweep.Speed");
-		air_sweep_range = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.AirSweep.Range");
-		air_sweep_damage = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
-		air_sweep_knockback = ProjectKorra.plugin.getConfig()
-				.getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
-		air_sweep_cooldown = ProjectKorra.plugin.getConfig()
-				.getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
+		air_sweep_speed = config.getDouble("Abilities.Air.AirCombo.AirSweep.Speed");
+		air_sweep_range = config.getDouble("Abilities.Air.AirCombo.AirSweep.Range");
+		air_sweep_damage = config.getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
+		air_sweep_knockback = config.getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
+		air_sweep_cooldown = config.getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
 
-		enabled = ProjectKorra.plugin.getConfig()
-				.getBoolean("Abilities.Air.AirCombo.Enabled");
+		enabled = config.getBoolean("Abilities.Air.AirCombo.Enabled");
 	}
 }

@@ -2,11 +2,12 @@ package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -14,14 +15,11 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.Ability;
+import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
-public class Tornado {
+public class Tornado extends Ability {
 	
-	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-
-	public static ConcurrentHashMap<Integer, Tornado> instances = new ConcurrentHashMap<Integer, Tornado>();
-
 	private static double MAX_HEIGHT = config.getDouble("Abilities.Air.Tornado.Height");
 	private static double PLAYER_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.PlayerPushFactor");
 	private static double MAX_RADIUS = config.getDouble("Abilities.Air.Tornado.Radius");
@@ -36,6 +34,7 @@ public class Tornado {
 	private ConcurrentHashMap<Integer, Integer> angles = new ConcurrentHashMap<Integer, Integer>();
 	private Location origin;
 	private Player player;
+	private UUID uuid;
 	private double maxheight = MAX_HEIGHT;
 	private double PCpushfactor = PLAYER_PUSH_FACTOR;
 	private double maxradius = MAX_RADIUS;
@@ -46,7 +45,9 @@ public class Tornado {
 	// private boolean canfly;
 
 	public Tornado(Player player) {
+		reloadVariables();
 		this.player = player;
+		this.uuid = player.getUniqueId();
 		// canfly = player.getAllowFlight();
 		// player.setAllowFlight(true);
 		origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
@@ -62,41 +63,95 @@ public class Tornado {
 
 		new Flight(player);
 		player.setAllowFlight(true);
-		instances.put(player.getEntityId(), this);
-
+		//instances.put(player.getEntityId(), this);
+		putInstance(StockAbilities.Tornado, uuid, this);
 	}
 
-	public static void progressAll() {
-		for (int ID : instances.keySet()) {
-			instances.get(ID).progress();
+	public static ArrayList<Player> getPlayers() {
+		ArrayList<Player> players = new ArrayList<Player>();
+		for (UUID uuid : getInstance(StockAbilities.Tornado).keySet()) {
+			players.add(Bukkit.getPlayer(uuid));
 		}
+		return players;
 	}
 	
-	private boolean progress() {
+	public static void progressAll() {
+		for (UUID uuid : getInstance(StockAbilities.Tornado).keySet()) {
+			((Tornado) getInstance(StockAbilities.Tornado).get(uuid)).progress();
+		}
+	}
+
+	public double getMaxheight() {
+		return maxheight;
+	}
+
+	public double getMaxradius() {
+		return maxradius;
+	}
+
+	public double getNPCpushfactor() {
+		return NPCpushfactor;
+	}
+
+	public double getPCpushfactor() {
+		return PCpushfactor;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	@Override
+	public void progress() {
 		if (player.isDead() || !player.isOnline()) {
-			instances.remove(player.getEntityId());
-			return false;
+			remove();
+			return;
 		}
 		if (!GeneralMethods.canBend(player.getName(), "Tornado") || player.getEyeLocation().getBlock().isLiquid()) {
-			instances.remove(player.getEntityId());
-			return false;
+			remove();
+			return;
 		}
 		String abil = GeneralMethods.getBoundAbility(player);
 		if (abil == null) {
-			instances.remove(player.getEntityId());
-			return false;
+			remove();
+			return;
 		}
 		if (!abil.equalsIgnoreCase("Tornado") || !player.isSneaking()) {
-			instances.remove(player.getEntityId());
-			return false;
+			remove();
+			return;
 		}
 
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", origin)) {
-			instances.remove(player.getEntityId());
-			return false;
+			remove();
+			return;
 		}
 		rotateTornado();
-		return true;
+	}
+
+	@Override
+	public void reloadVariables() {
+		MAX_HEIGHT = config.getDouble("Abilities.Air.Tornado.Height");
+		PLAYER_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.PlayerPushFactor");
+		MAX_RADIUS = config.getDouble("Abilities.Air.Tornado.Radius");
+		RANGE = config.getDouble("Abilities.Air.Tornado.Range");
+		NPC_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.MobPushFactor");
+		numberOfStreams = (int) (.3 * (double) MAX_HEIGHT);
+		
+		maxheight = MAX_HEIGHT;
+		PCpushfactor = PLAYER_PUSH_FACTOR;
+		maxradius = MAX_RADIUS;
+		range = RANGE;
+		NPCpushfactor = NPC_PUSH_FACTOR;
+		radius = height / maxheight * maxradius;
+	}
+
+	@Override
+	public void remove() {
+		removeInstance(StockAbilities.Tornado, uuid);
 	}
 
 	private void rotateTornado() {
@@ -207,56 +262,24 @@ public class Tornado {
 
 	}
 
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (int id : instances.keySet()) {
-			players.add(instances.get(id).player);
-		}
-		return players;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public double getMaxheight() {
-		return maxheight;
-	}
-
 	public void setMaxheight(double maxheight) {
 		this.maxheight = maxheight;
-	}
-
-	public double getPCpushfactor() {
-		return PCpushfactor;
-	}
-
-	public void setPCpushfactor(double pCpushfactor) {
-		PCpushfactor = pCpushfactor;
-	}
-
-	public double getMaxradius() {
-		return maxradius;
 	}
 
 	public void setMaxradius(double maxradius) {
 		this.maxradius = maxradius;
 	}
 
-	public double getRange() {
-		return range;
+	public void setNPCpushfactor(double nPCpushfactor) {
+		NPCpushfactor = nPCpushfactor;
+	}
+
+	public void setPCpushfactor(double pCpushfactor) {
+		PCpushfactor = pCpushfactor;
 	}
 
 	public void setRange(double range) {
 		this.range = range;
-	}
-
-	public double getNPCpushfactor() {
-		return NPCpushfactor;
-	}
-
-	public void setNPCpushfactor(double nPCpushfactor) {
-		NPCpushfactor = nPCpushfactor;
 	}
 
 }

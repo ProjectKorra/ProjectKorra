@@ -1003,7 +1003,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		if(FlightAbility.instances.containsKey(event.getPlayer().getName())) {
+		if(FlightAbility.contains(event.getPlayer())) {
 			if(FlightAbility.isHovering(event.getPlayer())) {
 				Location loc = event.getFrom();
 				Location toLoc = player.getLocation();
@@ -1298,7 +1298,7 @@ public class PKListener implements Listener {
 					if (!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")
 							|| !AirMethods.canAirFlight(player)) return;
 
-					if (FlightAbility.instances.containsKey(event.getPlayer().getName())) {
+					if (FlightAbility.contains(event.getPlayer())) {
 						if (FlightAbility.isHovering(event.getPlayer())) {
 							FlightAbility.setHovering(event.getPlayer(), false);
 						} else {

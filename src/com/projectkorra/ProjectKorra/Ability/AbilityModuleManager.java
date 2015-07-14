@@ -10,12 +10,14 @@ import java.util.List;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoader;
+import com.projectkorra.ProjectKorra.airbending.AirBlast;
 
 
 public class AbilityModuleManager {
 
 	static ProjectKorra plugin;
 	public static List<AbilityModule> ability;
+//	public static List<Ability> defaultAbilities;
 	private final AbilityLoader<AbilityModule> loader;
 
 	public static HashSet<String> abilities;
@@ -82,9 +84,24 @@ public class AbilityModuleManager {
 		plantabilities = new HashSet<String>();
 		iceabilities = new HashSet<String>();
 		bloodabilities = new HashSet<String>();
+//		loadDefaultAbilities();
 		fill();
 	}
-
+	
+//	private void loadDefaultAbilities() {
+//		defaultAbilities = new ArrayList<Ability>();
+//		defaultAbilities.add(new AirBlast()));
+//		defaultAbilities.add(new AirBubble());
+//		defaultAbilities.add(new AirBurst());
+//		defaultAbilities.add(new AirBlast());
+//		defaultAbilities.add(new AirBlast());
+//		defaultAbilities.add(new AirBlast());
+//		defaultAbilities.add(new AirBlast());
+//		defaultAbilities.add(new AirBlast());
+//		defaultAbilities.add(new AirBlast());
+//		defaultAbilities.add(new AirBlast());
+//	}
+	
 	private void fill() {
 
 		for (StockAbilities a: StockAbilities.values()) {
@@ -238,44 +255,42 @@ public class AbilityModuleManager {
 				if (ab.isShiftAbility()) shiftabilities.add(ab.getName());
 				if (ab.isHarmlessAbility()) harmlessabilities.add(ab.getName());
 				
-				if (ab.getSubElement() != null)
-				{
+				if (ab.getSubElement() != null) {
 					subabilities.add(ab.getName());
-					switch(ab.getSubElement())
-					{
-						case Bloodbending:
-							bloodabilities.add(ab.getName());
-							break;
-						case Combustion:
-							combustionabilities.add(ab.getName());
-							break;
-						case Flight:
-							flightabilities.add(ab.getName());
-							break;
-						case Healing:
-							healingabilities.add(ab.getName());
-							break;
-						case Icebending:
-							iceabilities.add(ab.getName());
-							break;
-						case Lavabending:
-							lavaabilities.add(ab.getName());
-							break;
-						case Lightning:
-							lightningabilities.add(ab.getName());
-							break;
-						case Metalbending:
-							metalabilities.add(ab.getName());
-							break;
-						case Plantbending:
-							plantabilities.add(ab.getName());
-							break;
-						case Sandbending:
-							sandabilities.add(ab.getName());
-							break;
-						case SpiritualProjection:
-							spiritualprojectionabilities.add(ab.getName());
-							break;
+					switch(ab.getSubElement()) {
+					case Bloodbending:
+						bloodabilities.add(ab.getName());
+						break;
+					case Combustion:
+						combustionabilities.add(ab.getName());
+						break;
+					case Flight:
+						flightabilities.add(ab.getName());
+						break;
+					case Healing:
+						healingabilities.add(ab.getName());
+						break;
+					case Icebending:
+						iceabilities.add(ab.getName());
+						break;
+					case Lavabending:
+						lavaabilities.add(ab.getName());
+						break;
+					case Lightning:
+						lightningabilities.add(ab.getName());
+						break;
+					case Metalbending:
+						metalabilities.add(ab.getName());
+						break;
+					case Plantbending:
+						plantabilities.add(ab.getName());
+						break;
+					case Sandbending:
+						sandabilities.add(ab.getName());
+						break;
+					case SpiritualProjection:
+						spiritualprojectionabilities.add(ab.getName());
+						break;
 					}
 				}
 				
