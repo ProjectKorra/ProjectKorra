@@ -11,7 +11,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.Ability;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
@@ -19,7 +19,7 @@ import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
-public class AirShield extends Ability {
+public class AirShield extends BaseAbility {
 
 	private static double MAX_RADIUS = config.getDouble("Abilities.Air.AirShield.Radius");
 	private static boolean isToggle = config.getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");

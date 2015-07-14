@@ -11,10 +11,10 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.Ability;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
-public class AirSpout extends Ability {
+public class AirSpout extends BaseAbility {
 
 	private static double HEIGHT = config.getDouble("Abilities.Air.AirSpout.Height");
 	private static final long interval = 100;

@@ -15,13 +15,13 @@ import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.Ability;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
-public class AirSuction extends Ability {
+public class AirSuction extends BaseAbility {
 	
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
@@ -134,7 +134,7 @@ public class AirSuction extends Ability {
 	}
 
 	public static void progressAll() {
-		Ability.progressAll(StockAbilities.AirSuction);
+		BaseAbility.progressAll(StockAbilities.AirSuction);
 		for (Player player : origins.keySet()) {
 			playOriginEffect(player);
 		}

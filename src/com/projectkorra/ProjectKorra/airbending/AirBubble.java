@@ -12,12 +12,12 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.Ability;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
-public class AirBubble extends Ability {
+public class AirBubble extends BaseAbility {
 
 	private static double DEFAULT_AIR_RADIUS = config.getDouble("Abilities.Air.AirBubble.Radius");
 	private static double DEFAULT_WATER_RADIUS = config.getDouble("Abilities.Water.WaterBubble.Radius");
@@ -64,7 +64,7 @@ public class AirBubble extends Ability {
 			}
 		}
 
-		Ability.progressAll(StockAbilities.AirBubble);
+		BaseAbility.progressAll(StockAbilities.AirBubble);
 	}
 
 	public boolean blockInBubble(Block block) {

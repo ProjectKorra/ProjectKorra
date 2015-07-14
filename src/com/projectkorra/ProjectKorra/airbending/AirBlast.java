@@ -25,12 +25,12 @@ import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.Ability;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 
-public class AirBlast extends Ability {
+public class AirBlast extends BaseAbility {
 
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
@@ -145,7 +145,7 @@ public class AirBlast extends Ability {
 	}
 	
 	public static void progressAll() {
-		Ability.progressAll(StockAbilities.AirBlast);
+		BaseAbility.progressAll(StockAbilities.AirBlast);
 		for (Player player : origins.keySet()) {
 			playOriginEffect(player);
 		}

@@ -7,10 +7,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Ability.Ability;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
-public class FlightAbility extends Ability {
+public class FlightAbility extends BaseAbility {
 	
 	private static ConcurrentHashMap<String, Integer> hits = new ConcurrentHashMap<String, Integer>();
 	private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<String, Boolean>();
@@ -56,7 +56,7 @@ public class FlightAbility extends Ability {
 	}
 	
 	public static void removeAll() {
-		Ability.removeAll(StockAbilities.Flight);
+		BaseAbility.removeAll(StockAbilities.Flight);
 		hits.clear();
 		hovering.clear();
 	}

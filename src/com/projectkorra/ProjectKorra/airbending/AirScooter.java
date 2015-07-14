@@ -13,10 +13,10 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.Ability;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
-public class AirScooter extends Ability {
+public class AirScooter extends BaseAbility {
 
 	private static double speed = config.getDouble("Abilities.Air.AirScooter.Speed");
 	private static final long interval = 100;
