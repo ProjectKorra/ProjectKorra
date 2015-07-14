@@ -20,161 +20,138 @@ public enum StockAbilities {
 	// Project Korra
 	Extraction, MetalClips, Smokescreen, Combustion, LavaFlow, Suffocate, IceBlast, WarriorStance, AcrobatStance, QuickStrike, SwiftKick, EarthSmash, Flight, WaterArms, SandSpout, PlantArmor;
 
-	private enum AirbendingAbilities {
+	public enum AirbendingAbilities {
 		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst, Suffocate, Flight;
 	}
 
-	private enum WaterbendingAbilities {
+	public enum WaterbendingAbilities {
 		WaterBubble, PhaseChange, HealingWaters, WaterManipulation, Surge, Bloodbending, WaterSpout, IceSpike, IceBlast, OctopusForm, Torrent, WaterArms, PlantArmor;
 
 	}
 
-	private enum EarthbendingAbilities {
+	public enum EarthbendingAbilities {
 		Catapult, RaiseEarth, EarthGrab, EarthTunnel, EarthBlast, Collapse, Tremorsense, EarthArmor, Shockwave, Extraction, MetalClips, LavaFlow, EarthSmash, SandSpout;
 	}
 
-	private enum FirebendingAbilities {
+	public enum FirebendingAbilities {
 		HeatControl, Blaze, FireJet, Illumination, WallOfFire, FireBlast, Lightning, FireBurst, FireShield, Combustion;
 	}
 
-	private enum ChiblockingAbilities {
+	public enum ChiblockingAbilities {
 		HighJump, RapidPunch, Paralyze, Smokescreen, WarriorStance, AcrobatStance, QuickStrike, SwiftKick;
 	}
 	
-	private enum FlightAbilities
-	{
+	public enum FlightAbilities {
 		Flight;
 	}
 	
-	private enum SpiritualProjectionAbilities
-	{
+	private enum SpiritualProjectionAbilities {
 		;
 	}
 	
-	private enum CombustionbendingAbilities
-	{
+	public enum CombustionbendingAbilities {
 		Combustion;
 	}
 	
-	private enum LightningbendingAbilities
-	{
+	public enum LightningbendingAbilities {
 		Lightning;
 	}
 	
-	private enum LavabendingAbilities
-	{
+	public enum LavabendingAbilities {
 		LavaFlow;
 	}
 	
-	private enum MetalbendingAbilities
-	{
+	public enum MetalbendingAbilities {
 		Extraction, MetalClips;
 	}
 	
-	private enum SandbendingAbilities
-	{
+	public enum SandbendingAbilities {
 		SandSpout;
 	}
 	
-	private enum HealingAbilities
-	{
+	public enum HealingAbilities {
 		HealingWaters;
 	}
 	
-	private enum IcebendingAbilities
-	{
+	public enum IcebendingAbilities {
 		PhaseChange, IceBlast, IceSpike;
 	}
 	
-	private enum BloodbendingAbilities
-	{
+	public enum BloodbendingAbilities {
 		Bloodbending;
 	}
 	
-	private enum PlantbendingAbilities
-	{
+	public enum PlantbendingAbilities {
 		PlantArmor;
 	}
 	
-	private enum MultiAbilities
-	{
+	public enum MultiAbilities {
 		WaterArms;
 	}
 	
-	public static boolean isFlightAbility(String ability)
-	{
-		for(FlightAbilities a : FlightAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isFlightAbility(String ability) {
+		for (FlightAbilities a : FlightAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
-	public static boolean isSpiritualProjectionAbility(String ability)
-	{
-		for(SpiritualProjectionAbilities a : SpiritualProjectionAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isSpiritualProjectionAbility(String ability) {
+		for (SpiritualProjectionAbilities a : SpiritualProjectionAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
-	public static boolean isCombustionbendingAbility(String ability)
-	{
-		for(CombustionbendingAbilities a : CombustionbendingAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isCombustionbendingAbility(String ability) {
+		for (CombustionbendingAbilities a : CombustionbendingAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
-	public static boolean isLightningbendingAbility(String ability)
-	{
-		for(LightningbendingAbilities a : LightningbendingAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isLightningbendingAbility(String ability) {
+		for (LightningbendingAbilities a : LightningbendingAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
-	public static boolean isLavabendingAbility(String ability)
-	{
-		for(LavabendingAbilities a : LavabendingAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isLavabendingAbility(String ability) {
+		for (LavabendingAbilities a : LavabendingAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
-	public static boolean isMetalbendingAbility(String ability)
-	{
-		for(MetalbendingAbilities a : MetalbendingAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isMetalbendingAbility(String ability)	{
+		for (MetalbendingAbilities a : MetalbendingAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
-	public static boolean isSandbendingAbility(String ability)
-	{
-		for(SandbendingAbilities a : SandbendingAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isSandbendingAbility(String ability) {
+		for (SandbendingAbilities a : SandbendingAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
-	public static boolean isHealingAbility(String ability)
-	{
-		for(HealingAbilities a : HealingAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isHealingAbility(String ability) {
+		for (HealingAbilities a : HealingAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
-	public static boolean isIcebendingAbility(String ability)
-	{
-		for(IcebendingAbilities a : IcebendingAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isIcebendingAbility(String ability) {
+		for (IcebendingAbilities a : IcebendingAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
-	public static boolean isBloodbendingAbility(String ability)
-	{
-		for(BloodbendingAbilities a : BloodbendingAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isBloodbendingAbility(String ability) {
+		for (BloodbendingAbilities a : BloodbendingAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
-	public static boolean isPlantbendingAbility(String ability)
-	{
-		for(PlantbendingAbilities a : PlantbendingAbilities.values())
-			if(a.name().equalsIgnoreCase(ability)) return true;
+	public static boolean isPlantbendingAbility(String ability) {
+		for (PlantbendingAbilities a : PlantbendingAbilities.values())
+			if (a.name().equalsIgnoreCase(ability)) return true;
 		return false;
 	}
 	
@@ -222,7 +199,7 @@ public enum StockAbilities {
 	}
 	
 	public static boolean isMultiAbility(StockAbilities ability) {
-		for(MultiAbilities a: MultiAbilities.values()) {
+		for (MultiAbilities a: MultiAbilities.values()) {
 			if (a.name().equalsIgnoreCase(ability.name())) return true;
 		}
 		return false;
@@ -231,7 +208,7 @@ public enum StockAbilities {
 	public static StockAbilities getAbility(int index) {
 		if (index == -1)
 			return null;
-		if (index > 41) return null;
+		if (index > StockAbilities.values().length) return null;
 		return Arrays.asList(StockAbilities.values()).get(index);
 	}
 }
