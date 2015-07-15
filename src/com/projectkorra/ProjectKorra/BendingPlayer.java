@@ -115,6 +115,10 @@ public class BendingPlayer {
 			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + (abilities.get(i) == null ? null: abilities.get(i)) + "' WHERE uuid = '" + uuid + "'");
 		}
 	}
+	
+	public void setBendingToggle(boolean toggle) {
+		isToggled = toggle;
+	}
 
 	public void setElement(Element e) {
 		this.elements.clear();
