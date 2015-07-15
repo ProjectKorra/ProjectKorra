@@ -1290,6 +1290,19 @@ public class Commands {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
 						}
+						if (Preset.presetExists(player, args[2])) {
+							player.sendMessage(ChatColor.DARK_GRAY + "-=+[" + ChatColor.GOLD + "Abilites for preset: " + ChatColor.DARK_AQUA + args[1] + ChatColor.DARK_GRAY + "]+=-"
+				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 1" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Methods.getPresetAbility(player, args[1], 1)) + Preset.getPresetContents(player, args[1]).get(Integer.valueOf(1))
+				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 2" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Methods.getPresetAbility(player, args[1], 2)) + Preset.getPresetContents(player, args[1]).get(Integer.valueOf(2))
+				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 3" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Methods.getPresetAbility(player, args[1], 3)) + Preset.getPresetContents(player, args[1]).get(Integer.valueOf(3))
+				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 4" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Methods.getPresetAbility(player, args[1], 4)) + Preset.getPresetContents(player, args[1]).get(Integer.valueOf(4))
+				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 5" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Methods.getPresetAbility(player, args[1], 5)) + Preset.getPresetContents(player, args[1]).get(Integer.valueOf(5))
+				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 6" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Methods.getPresetAbility(player, args[1], 6)) + Preset.getPresetContents(player, args[1]).get(Integer.valueOf(6))
+				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 7" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Methods.getPresetAbility(player, args[1], 7)) + Preset.getPresetContents(player, args[1]).get(Integer.valueOf(7))
+				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 8" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Methods.getPresetAbility(player, args[1], 8)) + Preset.getPresetContents(player, args[1]).get(Integer.valueOf(8))
+				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 9" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Methods.getPresetAbility(player, args[1], 9)) + Preset.getPresetContents(player, args[1]).get(Integer.valueOf(9)));
+				    			return true;
+						}
 					}
 				}
 				
