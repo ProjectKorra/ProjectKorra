@@ -1199,7 +1199,6 @@ public class Commands {
 					String[] createaliases = {"create", "c", "save"};
 					String[] deletealiases = {"delete", "d", "del"};
 					String[] listaliases = {"list", "l"};
-					String[] abilitiesaliases = {"abilities", "abil", "a"};
 					if (args.length == 2 && Arrays.asList(listaliases).contains(args[1])) {
 						if (!s.hasPermission("bending.command.preset.list")) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
@@ -1283,26 +1282,6 @@ public class Commands {
 						preset.save();
 						s.sendMessage(ChatColor.GREEN + "Created preset with the name: " + ChatColor.YELLOW + name);
 						return true;
-					}
-					
-					if (Arrays.asList(abilitiesaliases).contains(args[1])) {
-						if (!s.hasPermission("bending.command.preset.abilities")) {
-							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
-							return true;
-						}
-						if (Preset.presetExists(player, name)) {
-							player.sendMessage(ChatColor.DARK_GRAY + "-=+[" + ChatColor.GOLD + "Abilites for preset: " + ChatColor.DARK_AQUA + name + ChatColor.DARK_GRAY + "]+=-"
-				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 1" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Preset.getPresetContents(player, name).get(Integer.valueOf(1))) + Preset.getPresetContents(player, name).get(Integer.valueOf(1))
-				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 2" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Preset.getPresetContents(player, name).get(Integer.valueOf(2))) + Preset.getPresetContents(player, name).get(Integer.valueOf(2))
-				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 3" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Preset.getPresetContents(player, name).get(Integer.valueOf(3))) + Preset.getPresetContents(player, name).get(Integer.valueOf(3))
-				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 4" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Preset.getPresetContents(player, name).get(Integer.valueOf(4))) + Preset.getPresetContents(player, name).get(Integer.valueOf(4))
-				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 5" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Preset.getPresetContents(player, name).get(Integer.valueOf(5))) + Preset.getPresetContents(player, name).get(Integer.valueOf(5))
-				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 6" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Preset.getPresetContents(player, name).get(Integer.valueOf(6))) + Preset.getPresetContents(player, name).get(Integer.valueOf(6))
-				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 7" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Preset.getPresetContents(player, name).get(Integer.valueOf(7))) + Preset.getPresetContents(player, name).get(Integer.valueOf(7))
-				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 8" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Preset.getPresetContents(player, name).get(Integer.valueOf(8))) + Preset.getPresetContents(player, name).get(Integer.valueOf(8))
-				    				+ "\n" + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "Slot 9" + ChatColor.DARK_GRAY + "]" + GeneralMethods.getAbilityColor(Preset.getPresetContents(player, name).get(Integer.valueOf(9))) + Preset.getPresetContents(player, name).get(Integer.valueOf(9)));
-				    			return true;
-						}
 					}
 				}
 				
