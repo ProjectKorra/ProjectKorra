@@ -1,7 +1,6 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -12,8 +11,8 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
 public class AirBurst extends BaseAbility {
@@ -27,7 +26,6 @@ public class AirBurst extends BaseAbility {
 	private static double delphi = 10;
 
 	private Player player;
-	private UUID uuid;
 	private long starttime;
 	private long chargetime = config.getLong("Abilities.Air.AirBurst.ChargeTime");
 	private boolean charged = false;
@@ -51,9 +49,8 @@ public class AirBurst extends BaseAbility {
 		if (AvatarState.isAvatarState(player))
 			chargetime = 0;
 		this.player = player;
-		this.uuid = player.getUniqueId();
 		//instances.put(player.getUniqueId(), this);
-		putInstance(StockAbilities.AirBurst, uuid, this);
+		putInstance(player, this);
 	}
 
 	public static void coneBurst(Player player) {
@@ -128,6 +125,11 @@ public class AirBurst extends BaseAbility {
 		remove();
 	}
 
+	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.AirBurst;
+	}
+
 	public void handleSmoothParticles() {
 		for (int i = 0; i < blasts.size(); i++) {
 			final AirBlast blast = blasts.get(i);
@@ -192,12 +194,6 @@ public class AirBurst extends BaseAbility {
 		pushfactor = config.getDouble("Abilities.Air.AirBurst.PushFactor");
 		damage = config.getDouble("Abilities.Air.AirBurst.Damage");
 		chargetime = config.getLong("Abilities.Air.AirBurst.ChargeTime");
-	}
-
-	@Override
-	public void remove() {
-		//instances.remove(uuid);
-		removeInstance(StockAbilities.AirBurst, uuid);
 	}
 
 	private void sphereBurst() {

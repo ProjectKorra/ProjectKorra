@@ -34,7 +34,6 @@ public class Tornado extends BaseAbility {
 	private ConcurrentHashMap<Integer, Integer> angles = new ConcurrentHashMap<Integer, Integer>();
 	private Location origin;
 	private Player player;
-	private UUID uuid;
 	private double maxheight = MAX_HEIGHT;
 	private double PCpushfactor = PLAYER_PUSH_FACTOR;
 	private double maxradius = MAX_RADIUS;
@@ -47,7 +46,6 @@ public class Tornado extends BaseAbility {
 	public Tornado(Player player) {
 		reloadVariables();
 		this.player = player;
-		this.uuid = player.getUniqueId();
 		// canfly = player.getAllowFlight();
 		// player.setAllowFlight(true);
 		origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
@@ -64,7 +62,7 @@ public class Tornado extends BaseAbility {
 		new Flight(player);
 		player.setAllowFlight(true);
 		//instances.put(player.getEntityId(), this);
-		putInstance(StockAbilities.Tornado, uuid, this);
+		putInstance(player, this);
 	}
 
 	public static ArrayList<Player> getPlayers() {
@@ -103,6 +101,11 @@ public class Tornado extends BaseAbility {
 
 	public double getRange() {
 		return range;
+	}
+
+	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.Tornado;
 	}
 
 	@Override
@@ -148,11 +151,6 @@ public class Tornado extends BaseAbility {
 		range = RANGE;
 		NPCpushfactor = NPC_PUSH_FACTOR;
 		radius = height / maxheight * maxradius;
-	}
-
-	@Override
-	public void remove() {
-		removeInstance(StockAbilities.Tornado, uuid);
 	}
 
 	private void rotateTornado() {

@@ -52,7 +52,6 @@ public class AirSwipe extends BaseAbility {
 
 	private Location origin;
 	private Player player;
-	private UUID uuid;
 	private boolean charging = false;
 	private long time;
 	private double damage = defaultdamage;
@@ -80,13 +79,12 @@ public class AirSwipe extends BaseAbility {
 		/* End Initial Check */
 		reloadVariables();
 		this.player = player;
-		this.uuid = player.getUniqueId();
 		this.charging = charging;
 		origin = player.getEyeLocation();
 		time = System.currentTimeMillis();
 
 		//instances.put(uuid, this);
-		putInstance(StockAbilities.AirSwipe, uuid, this);
+		putInstance(player, this);
 		
 		bPlayer.addCooldown("AirSwipe", ProjectKorra.plugin.getConfig().getLong("Abilities.Air.AirSwipe.Cooldown"));
 
@@ -108,7 +106,7 @@ public class AirSwipe extends BaseAbility {
 				if (vectorLoc != null && vectorLoc.getWorld().equals(loc.getWorld())) {
 					if (vectorLoc.distance(loc) <= radius) {
 						//instances.remove(aswipe.uuid);
-						getInstance(StockAbilities.AirSwipe).remove(aswipe.uuid); //TODO: Check if this works
+						getInstance(StockAbilities.AirSwipe).remove(aswipe.player.getUniqueId()); //TODO: Check if this works
 						removed = true;
 					}
 				}
@@ -266,6 +264,11 @@ public class AirSwipe extends BaseAbility {
 		return speed;
 	}
 
+	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.AirSwipe;
+	}
+
 	@SuppressWarnings("deprecation")
 	private boolean isBlockBreakable(Block block) {
 		Integer id = block.getTypeId();
@@ -355,12 +358,6 @@ public class AirSwipe extends BaseAbility {
 		SPEED = config.getDouble("Abilities.Air.AirSwipe.Speed");
 		MAX_FACTOR = config.getDouble("Abilities.Air.AirSwipe.ChargeFactor");
 		MAX_CHARGE_TIME = config.getLong("Abilities.Air.AirSwipe.MaxChargeTime");
-	}
-
-	@Override
-	public void remove() {
-		//instances.remove(uuid);
-		removeInstance(StockAbilities.AirSwipe, uuid);
 	}
 
 	public void setAffectingradius(double affectingradius) {

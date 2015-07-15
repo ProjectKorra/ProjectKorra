@@ -23,7 +23,6 @@ public class AirBubble extends BaseAbility {
 	private static double DEFAULT_WATER_RADIUS = config.getDouble("Abilities.Water.WaterBubble.Radius");
 
 	private Player player;
-	private UUID uuid;
 	private double radius;
 	private double defaultAirRadius = DEFAULT_AIR_RADIUS;
 	private double defaultWaterRadius = DEFAULT_WATER_RADIUS;
@@ -32,10 +31,9 @@ public class AirBubble extends BaseAbility {
 	public AirBubble(Player player) {
 		reloadVariables();
 		this.player = player;
-		this.uuid = player.getUniqueId();
 		waterorigins = new ConcurrentHashMap<Block, BlockState>();
 		//instances.put(uuid, this);
-		putInstance(StockAbilities.AirBlast, uuid, this);
+		putInstance(player, this);
 	}
 
 	public static boolean canFlowTo(Block block) {
@@ -91,6 +89,11 @@ public class AirBubble extends BaseAbility {
 
 	public double getRadius() {
 		return radius;
+	}
+
+	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.AirBubble;
 	}
 
 	@Override
@@ -188,7 +191,7 @@ public class AirBubble extends BaseAbility {
 				waterorigins.get(block).update(true);
 		}
 		//instances.remove(uuid);
-		removeInstance(StockAbilities.AirBubble, uuid);
+		super.remove();
 	}
 
 	public void setDefaultAirRadius(double defaultAirRadius) {

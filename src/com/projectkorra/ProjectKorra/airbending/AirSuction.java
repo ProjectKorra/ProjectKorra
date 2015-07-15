@@ -1,7 +1,6 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
@@ -15,8 +14,8 @@ import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
@@ -40,7 +39,6 @@ public class AirSuction extends BaseAbility {
 	private Location origin;
 	private Vector direction;
 	private Player player;
-	private UUID uuid;
 	private boolean otherorigin = false;
 	private int ticks = 0;
 	private double speed = SPEED;
@@ -67,7 +65,6 @@ public class AirSuction extends BaseAbility {
 		/* End Initial Check */
 		reloadVariables();
 		this.player = player;
-		this.uuid = player.getUniqueId();
 		if (origins.containsKey(player)) {
 			origin = origins.get(player);
 			otherorigin = true;
@@ -88,7 +85,7 @@ public class AirSuction extends BaseAbility {
 		// }
 
 		//instances.put(uuid, this);
-		putInstance(StockAbilities.AirSuction, uuid, this);
+		putInstance(player, this);
 		bPlayer.addCooldown("AirSuction", GeneralMethods.getGlobalCooldown());
 		// time = System.currentTimeMillis();
 		// timers.put(player, System.currentTimeMillis());
@@ -200,6 +197,11 @@ public class AirSuction extends BaseAbility {
 	}
 
 	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.AirSuction;
+	}
+
+	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
@@ -301,12 +303,6 @@ public class AirSuction extends BaseAbility {
 		range = RANGE;
 		affectingradius = RADIUS;
 		pushfactor = PUSH_FACTOR;
-	}
-
-	@Override
-	public void remove() {
-		//instances.remove(uuid);
-		removeInstance(StockAbilities.AirSuction, uuid);
 	}
 
 	public void setAffectingradius(double affectingradius) {

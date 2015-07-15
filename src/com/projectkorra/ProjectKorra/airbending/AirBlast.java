@@ -2,7 +2,6 @@ package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
@@ -25,8 +24,8 @@ import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 
@@ -51,7 +50,6 @@ public class AirBlast extends BaseAbility {
 	private Location origin;
 	private Vector direction;
 	private Player player;
-	private UUID uuid;
 	private double speedfactor;
 	private double range = defaultrange;
 	private double pushfactor = defaultpushfactor;
@@ -66,7 +64,7 @@ public class AirBlast extends BaseAbility {
 
 	@SuppressWarnings("unused")
 	private AirBurst source = null;
-
+	
 	public AirBlast(Location location, Vector direction, Player player, double factorpush, AirBurst burst) {
 		if (location.getBlock().isLiquid()) {
 			return;
@@ -80,7 +78,7 @@ public class AirBlast extends BaseAbility {
 		this.location = location.clone();
 		pushfactor *= factorpush;
 		//instances.put(uuid, this);
-		putInstance(StockAbilities.AirBlast, uuid, this);
+		putInstance(player, this);
 	}
 	
 	public AirBlast(Player player) {
@@ -93,7 +91,6 @@ public class AirBlast extends BaseAbility {
 		/* End Initial Checks */
 		reloadVariables();
 		this.player = player;
-		this.uuid = player.getUniqueId();
 		if (origins.containsKey(player)) {
 			otherorigin = true;
 			origin = origins.get(player);
@@ -109,7 +106,7 @@ public class AirBlast extends BaseAbility {
 			direction = player.getEyeLocation().getDirection().normalize();
 		}
 		location = origin.clone();
-		putInstance(StockAbilities.AirBlast, uuid, this);
+		putInstance(player, this);
 		//instances.put(uuid, this);
 		bPlayer.addCooldown("AirBlast", GeneralMethods.getGlobalCooldown());
 
@@ -253,6 +250,11 @@ public class AirBlast extends BaseAbility {
 
 	public boolean getShowParticles() {
 		return this.showParticles;
+	}
+
+	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.AirBlast;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -443,20 +445,14 @@ public class AirBlast extends BaseAbility {
 		pushfactor = defaultpushfactor;
 	}
 
-	@Override
-	public void remove() {
-		removeInstance(StockAbilities.AirBlast, uuid);
-		//instances.remove(uuid);
-	}
-
 	public void setDamage(double dmg) {
 		this.damage = dmg;
 	}
-
+	
 	public void setPushfactor(double pushfactor) {
 		this.pushfactor = pushfactor;
 	}
-	
+
 	public void setRange(double range) {
 		this.range = range;
 	}
@@ -464,4 +460,5 @@ public class AirBlast extends BaseAbility {
 	public void setShowParticles(boolean show) {
 		this.showParticles = show;
 	}
+
 }

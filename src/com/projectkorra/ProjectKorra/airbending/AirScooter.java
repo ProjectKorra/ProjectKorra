@@ -23,7 +23,6 @@ public class AirScooter extends BaseAbility {
 	private static final double scooterradius = 1;
 
 	private Player player;
-	private UUID uuid;
 	private Block floorblock;
 	private long time;
 	private ArrayList<Double> angles = new ArrayList<Double>();
@@ -43,7 +42,6 @@ public class AirScooter extends BaseAbility {
 		/* End Initial Check */
 		reloadVariables();
 		this.player = player;
-		this.uuid = player.getUniqueId();
 		// wasflying = player.isFlying();
 		// canfly = player.getAllowFlight();
 		new Flight(player);
@@ -55,7 +53,7 @@ public class AirScooter extends BaseAbility {
 			angles.add((double) (60 * i));
 		}
 		//instances.put(uuid, this);
-		putInstance(StockAbilities.AirScooter, uuid, this);
+		putInstance(player, this);
 		progress();
 	}
 
@@ -90,6 +88,11 @@ public class AirScooter extends BaseAbility {
 	
 	public double getSpeed() {
 		return speed;
+	}
+
+	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.AirScooter;
 	}
 
 	@Override
@@ -168,7 +171,7 @@ public class AirScooter extends BaseAbility {
 	@Override
 	public void remove() {
 		//instances.remove(uuid);
-		removeInstance(StockAbilities.AirScooter, uuid);
+		super.remove();
 		player.setFlying(false);
 		player.setAllowFlight(false);
 		player.setSprinting(false);

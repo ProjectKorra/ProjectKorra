@@ -1,6 +1,5 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
@@ -15,7 +14,6 @@ public class FlightAbility extends BaseAbility {
 	private static ConcurrentHashMap<String, Integer> hits = new ConcurrentHashMap<String, Integer>();
 	private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<String, Boolean>();
 	private Player player;
-	private UUID uuid;
 	private Flight flight;
 	
 	public FlightAbility(Player player) {		
@@ -24,9 +22,8 @@ public class FlightAbility extends BaseAbility {
 		player.setAllowFlight(true);
 		player.setVelocity(player.getEyeLocation().getDirection().normalize());
 		this.player = player;
-		this.uuid = player.getUniqueId();
 		//instances.put(player.getUniqueId(), this);
-		putInstance(StockAbilities.Flight, uuid, this);
+		putInstance(player, this);
 	}
 	
 	public static void addHit(Player player) {
@@ -52,7 +49,7 @@ public class FlightAbility extends BaseAbility {
 
 	public static void remove(Player player) {
 		if (contains(player))
-			((FlightAbility) getInstance(StockAbilities.Flight).get(player.getUniqueId())).remove();
+			getInstance(StockAbilities.Flight).get(player.getUniqueId()).remove();
 	}
 	
 	public static void removeAll() {
@@ -77,6 +74,11 @@ public class FlightAbility extends BaseAbility {
 	}
 	
 	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.Flight;
+	}
+	
+	@Override
 	public boolean progress() {
 		if (!AirMethods.canFly(player, false, isHovering(player))) {
 			remove(player);
@@ -95,7 +97,7 @@ public class FlightAbility extends BaseAbility {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public void reloadVariables() {}
 
@@ -103,7 +105,7 @@ public class FlightAbility extends BaseAbility {
 	public void remove() {
 		String name = player.getName();
 		//instances.remove(uuid);
-		removeInstance(StockAbilities.Flight, uuid);
+		super.remove();
 		hits.remove(name);
 		hovering.remove(name);
 		if (flight != null) flight.revert();

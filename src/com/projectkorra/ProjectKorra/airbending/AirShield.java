@@ -37,7 +37,7 @@ public class AirShield extends BaseAbility {
 		if (AvatarState.isAvatarState(player)
 				&& getInstance(StockAbilities.AirShield).containsKey(player.getUniqueId()) && isToggle) {
 			//instances.remove(player.getUniqueId());
-			removeInstance(StockAbilities.AirShield, player.getUniqueId());
+			super.remove();
 			return;
 		}
 		/* End Initial Check */
@@ -53,7 +53,7 @@ public class AirShield extends BaseAbility {
 		}
 
 		//instances.put(player.getUniqueId(), this);
-		putInstance(StockAbilities.AirShield, player.getUniqueId(), this);
+		putInstance(player, this);
 	}
 
 	public static String getDescription() {
@@ -80,6 +80,11 @@ public class AirShield extends BaseAbility {
 	}
 	public Player getPlayer() {
 		return player;
+	}
+
+	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.AirShield;
 	}
 
 	@Override
@@ -136,12 +141,6 @@ public class AirShield extends BaseAbility {
 		numberOfStreams = (int) (.75 * (double) MAX_RADIUS);
 
 		maxradius = MAX_RADIUS;
-	}
-
-	@Override
-	public void remove() {
-		//instances.remove(player.getUniqueId());
-		removeInstance(StockAbilities.AirShield, player.getUniqueId());
 	}
 
 	private void rotateShield() {

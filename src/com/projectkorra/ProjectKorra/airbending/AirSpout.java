@@ -20,7 +20,6 @@ public class AirSpout extends BaseAbility {
 	private static final long interval = 100;
 
 	private Player player;
-	private UUID uuid;
 	private long time;
 	private int angle = 0;
 	private double height = HEIGHT;
@@ -34,11 +33,10 @@ public class AirSpout extends BaseAbility {
 		/* End Initial Check */
 		reloadVariables();
 		this.player = player;
-		this.uuid = player.getUniqueId();
 		time = System.currentTimeMillis();
 		new Flight(player);
 		//instances.put(player.getUniqueId(), this);
-		putInstance(StockAbilities.AirSpout, uuid, this);
+		putInstance(player, this);
 		progress();
 	}
 
@@ -99,6 +97,11 @@ public class AirSpout extends BaseAbility {
 	}
 
 	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.AirSpout;
+	}
+
+	@Override
 	public boolean progress() {
 		if (!GeneralMethods.canBend(player.getName(), "AirSpout")
 //				|| !Methods.hasAbility(player, Abilities.AirSpout)
@@ -138,7 +141,7 @@ public class AirSpout extends BaseAbility {
 	public void remove() {
 		removeFlight();
 		//instances.remove(uuid);
-		removeInstance(StockAbilities.AirSpout, uuid);
+		super.remove();
 	}
 
 	private void removeFlight() {
