@@ -69,7 +69,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(this), 0, 1);
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);

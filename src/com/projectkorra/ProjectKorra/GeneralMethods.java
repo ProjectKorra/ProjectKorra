@@ -1449,6 +1449,7 @@ public class GeneralMethods {
 		GeneralMethods.stopBending();
 		ConfigManager.defaultConfig.reloadConfig();
 		ConfigManager.deathMsgConfig.reloadConfig();
+		BendingManager.getInstance().reloadVariables();
 		new AbilityModuleManager(plugin);
 		new MultiAbilityModuleManager();
 		new CraftingRecipes(plugin);
