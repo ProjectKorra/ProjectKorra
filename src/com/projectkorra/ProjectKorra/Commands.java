@@ -1199,6 +1199,7 @@ public class Commands {
 					String[] createaliases = {"create", "c", "save"};
 					String[] deletealiases = {"delete", "d", "del"};
 					String[] listaliases = {"list", "l"};
+					String[] abilitiesaliases = {"abilities", "abil", "a"};
 					if (args.length == 2 && Arrays.asList(listaliases).contains(args[1])) {
 						if (!s.hasPermission("bending.command.preset.list")) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
@@ -1283,7 +1284,13 @@ public class Commands {
 						s.sendMessage(ChatColor.GREEN + "Created preset with the name: " + ChatColor.YELLOW + name);
 						return true;
 					}
-
+					
+					if (Arrays.asList(abilitiesaliases).contains(args[1].toLowerCase())) {
+						if (!s.hasPermission("bending.command.preset.abilities")) {
+							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+							return true;
+						}
+					}
 				}
 				
 				if (Arrays.asList(reloadaliases).contains(args[0])) {
