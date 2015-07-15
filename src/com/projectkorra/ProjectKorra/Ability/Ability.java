@@ -7,7 +7,7 @@ public interface Ability extends ConfigLoadable {
 	/**
 	 * A method to tell an Ability to start.
 	 */
-	public void progress();
+	public boolean progress();
 	
 	/**
 	 * A method to remove an instance of an Ability.
