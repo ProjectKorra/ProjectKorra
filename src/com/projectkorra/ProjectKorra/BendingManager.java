@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -47,10 +48,10 @@ public class BendingManager implements Runnable, ConfigLoadable {
 	}
 
 	public void handleCooldowns() {
-		for (String bP: BendingPlayer.players.keySet()) {
-			BendingPlayer bPlayer = BendingPlayer.players.get(bP);
-			for (String abil: bPlayer.cooldowns.keySet()) {
-				if (System.currentTimeMillis() >= bPlayer.cooldowns.get(abil)) {
+		for (UUID uuid: BendingPlayer.getPlayers().keySet()) {
+			BendingPlayer bPlayer = BendingPlayer.getPlayers().get(uuid);
+			for (String abil: bPlayer.getCooldowns().keySet()) {
+				if (System.currentTimeMillis() >= bPlayer.getCooldown(abil)) {
 					bPlayer.removeCooldown(abil);
 				}
 			}

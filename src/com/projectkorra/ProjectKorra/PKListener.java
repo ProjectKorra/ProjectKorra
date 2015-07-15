@@ -166,14 +166,14 @@ public class PKListener implements Listener {
 		}
 
 		if (GeneralMethods.toggedOut.contains(player.getUniqueId())) {
-			GeneralMethods.getBendingPlayer(player.getName()).isToggled = false;
+			GeneralMethods.getBendingPlayer(player.getName()).toggleBending();
 			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
 		}
 
 		Preset.loadPresets(player);
 		String append = "";
 		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
-		if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).elements.size() > 1) && chatEnabled) {
+		if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).getElements().size() > 1) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
 		} else if (GeneralMethods.isBender(player.getName(), Element.Air) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Air");
@@ -586,7 +586,7 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		ChatColor color = ChatColor.WHITE;
 
-		if (player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).elements.size() > 1) {
+		if (player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).getElements().size() > 1) {
 			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
 		} else if (GeneralMethods.isBender(player.getName(), Element.Air)) {
 			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Air"));
@@ -1031,7 +1031,7 @@ public class PKListener implements Listener {
 			Commands.invincible.remove(event.getPlayer().getName());
 		}
 		Preset.unloadPreset(player);
-		BendingPlayer.players.remove(event.getPlayer().getName());
+		BendingPlayer.getPlayers().remove(event.getPlayer().getUniqueId());
 		if (EarthArmor.instances.containsKey(event.getPlayer())) {
 			EarthArmor.removeEffect(event.getPlayer());
 			event.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
@@ -1184,7 +1184,7 @@ public class PKListener implements Listener {
 					new EarthTunnel(player);
 				}
 				if (abil.equalsIgnoreCase("Tremorsense")) {
-					GeneralMethods.getBendingPlayer(player.getName()).toggleTremorsense();
+					GeneralMethods.getBendingPlayer(player.getName()).toggleTremorSense();
 				}
 				if (abil.equalsIgnoreCase("Extraction")) {
 					new Extraction(player);

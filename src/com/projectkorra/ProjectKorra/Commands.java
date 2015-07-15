@@ -1086,20 +1086,20 @@ public class Commands {
 
 								HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
-								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.uuid.toString() + "'");
+								ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + bPlayer.getUUIDString() + "'");
 
 								try {
 									if (rs2.next()) { // SQL Data already exists for player.
-										DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + bPlayer.player + "' WHERE uuid = '" + bPlayer.uuid.toString());
-										DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + bPlayer.uuid.toString());
-										DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + bPlayer.isPermaRemoved() + "' WHERE uuid = '" + bPlayer.uuid.toString());
+										DBConnection.sql.modifyQuery("UPDATE pk_players SET player = '" + bPlayer.getName() + "' WHERE uuid = '" + bPlayer.getUUIDString());
+										DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + bPlayer.getUUIDString());
+										DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + bPlayer.isPermaRemoved() + "' WHERE uuid = '" + bPlayer.getUUIDString());
 										for (int slot = 1; slot < 10; slot++) {
-											DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
+											DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getName() + "'");
 										}
 									} else {
-										DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, element, permaremoved) VALUES ('" + bPlayer.uuid.toString() + "', '" + bPlayer.player + "', '" + elements + "', '" + bPlayer.isPermaRemoved() +"')");
+										DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, element, permaremoved) VALUES ('" + bPlayer.getUUIDString() + "', '" + bPlayer.getName() + "', '" + elements + "', '" + bPlayer.isPermaRemoved() +"')");
 										for (int slot = 1; slot < 10; slot++) {
-											DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getPlayerName() + "'");
+											DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + slot + " = '" + abilities.get(slot) + "' WHERE player = '" + bPlayer.getName() + "'");
 										}
 									}
 								} catch (SQLException ex) {
@@ -1107,7 +1107,7 @@ public class Commands {
 								}
 								i++;
 								if (debug) {
-									System.out.println("[ProjectKorra] Successfully imported " + bPlayer.player + ". " + bPlayers.size() + " players left to import.");
+									System.out.println("[ProjectKorra] Successfully imported " + bPlayer.getName() + ". " + bPlayers.size() + " players left to import.");
 								}
 							}
 						}
@@ -1166,16 +1166,16 @@ public class Commands {
 					BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 					if (bPlayer.isPermaRemoved()) {
-						bPlayer.permaRemoved = false;
+						bPlayer.setPermaRemoved(false);
 						GeneralMethods.savePermaRemoved(bPlayer);
 						s.sendMessage(ChatColor.RED + "You have restored the bending of: " + ChatColor.DARK_AQUA + player.getName());
 						return true;
 					}
 
-					bPlayer.elements.clear();
+					bPlayer.getElements().clear();
 					GeneralMethods.removeUnusableAbilities(player.getName());
 					GeneralMethods.saveElements(bPlayer);
-					bPlayer.permaRemoved = true;
+					bPlayer.setPermaRemoved(true);
 					GeneralMethods.savePermaRemoved(bPlayer);
 					player.sendMessage(ChatColor.RED + "Your bending has been permanently removed.");
 					s.sendMessage(ChatColor.RED + "You have permanently removed the bending of: " + ChatColor.DARK_AQUA + player.getName());
@@ -1323,7 +1323,7 @@ public class Commands {
 
 					BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 					GeneralMethods.removeUnusableAbilities(player.getName());
-					bPlayer.elements.clear();
+					bPlayer.getElements().clear();
 					GeneralMethods.saveElements(bPlayer);
 					s.sendMessage(ChatColor.GREEN + "You have removed the bending of " + ChatColor.DARK_AQUA + player.getName());
 					player.sendMessage(ChatColor.GREEN + "Your bending has been removed by " + ChatColor.DARK_AQUA + s.getName());
@@ -1372,13 +1372,13 @@ public class Commands {
 
 						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
 
-						if (bPlayer.isToggled) {
+						if (bPlayer.isToggled()) {
 							s.sendMessage(ChatColor.RED + "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
-							bPlayer.isToggled = false;
+							bPlayer.toggleBending();
 							return true;
 						} else {
 							s.sendMessage(ChatColor.GREEN + "You have turned your Bending back on.");
-							bPlayer.isToggled = true;
+							bPlayer.toggleBending();
 							return true;
 						}
 					} else if (args.length == 2 && args[1].equalsIgnoreCase("all")) {
@@ -1525,7 +1525,7 @@ public class Commands {
 							s.sendMessage(ChiMethods.getChiColor() + "- ChiBlocker");
 						}
 						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(un);
-						UUID uuid2 = bPlayer.uuid;
+						UUID uuid2 = bPlayer.getUUID();
 						if (bPlayer != null)  {
 							s.sendMessage("Abilities: ");
 							for (int i = 1; i <= 9; i++) {
@@ -1591,11 +1591,11 @@ public class Commands {
 							String un = player.getName();
 
 							BendingPlayer bp = GeneralMethods.getBendingPlayer(un);
-							if (bp.elements.size() > 1) {
+							if (bp.getElements().size() > 1) {
 								players.add(GeneralMethods.getAvatarColor() + un);
 								continue;
 							}
-							if (bp.elements.size() == 0) {
+							if (bp.getElements().size() == 0) {
 								players.add(un);
 								continue;
 							}

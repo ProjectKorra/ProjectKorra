@@ -91,7 +91,7 @@ public class Tremorsense {
 				.getRelative(BlockFace.DOWN);
 
 		BendingPlayer bp = GeneralMethods.getBendingPlayer(player.getName());
-		if (!bp.isTremorsensing()) {
+		if (!bp.isTremorSensing()) {
 			if (block != null)
 				revert();
 			return;

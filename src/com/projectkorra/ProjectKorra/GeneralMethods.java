@@ -264,7 +264,7 @@ public class GeneralMethods {
 		if (bPlayer == null) return false;
 		if (plugin.getConfig().getStringList("Properties.DisabledWorlds") != null && plugin.getConfig().getStringList("Properties.DisabledWorlds").contains(p.getWorld().getName())) return false;
 		if (Commands.isToggledForAll) return false;
-		if (!bPlayer.isToggled) return false;
+		if (!bPlayer.isToggled()) return false;
 		if (p == null) return false;
 		if (cooldowns.containsKey(p.getName())) {
 			if (cooldowns.get(p.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
@@ -272,7 +272,7 @@ public class GeneralMethods {
 			}
 			cooldowns.remove(p.getName());
 		}
-		if (bPlayer.blockedChi) return false;
+		if (bPlayer.isChiBlocked()) return false;
 		if (!p.hasPermission("bending.ability." + ability)) return false;
 		if (AirMethods.isAirAbility(ability) && !isBender(player, Element.Air)) return false;
 		if (WaterMethods.isWaterAbility(ability) && !isBender(player, Element.Water)) return false;
@@ -294,10 +294,10 @@ public class GeneralMethods {
 		if (bPlayer == null) return false;
 		if (p == null) return false;
 		if (!p.hasPermission("bending." + element.toString().toLowerCase() + ".passive")) return false;
-		if (!bPlayer.isToggled) return false;
+		if (!bPlayer.isToggled()) return false;
 		if (!bPlayer.hasElement(element)) return false;
 		if (isRegionProtectedFromBuild(p, null, p.getLocation())) return false;
-		if (bPlayer.blockedChi) return false;
+		if (bPlayer.isChiBlocked()) return false;
 		return true;
 	}
 
@@ -659,7 +659,7 @@ public class GeneralMethods {
 	 * @return The BendingPlayer object if {@link BendingPlayer#players} contains the player name
 	 */
 	public static BendingPlayer getBendingPlayer(String player) {
-		return BendingPlayer.players.get(player);
+		return BendingPlayer.getPlayers().get(player);
 	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
@@ -1608,10 +1608,10 @@ public class GeneralMethods {
 
 	public static void saveAbility(BendingPlayer bPlayer, int slot, String ability) {
 		if (bPlayer == null) return;
-		String uuid = bPlayer.uuid.toString();
+		String uuid = bPlayer.getUUIDString();
 
 		//Temp code to block modifications of binds, Should be replaced when bind event is added.
-		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.uuid)))
+		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getUUID())))
 			return;
 		HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
@@ -1620,7 +1620,7 @@ public class GeneralMethods {
 
 	public static void saveElements(BendingPlayer bPlayer) {
 		if (bPlayer == null) return;
-		String uuid = bPlayer.uuid.toString();
+		String uuid = bPlayer.getUUIDString();
 
 		StringBuilder elements = new StringBuilder();
 		if (bPlayer.hasElement(Element.Air)) elements.append("a");
@@ -1634,8 +1634,8 @@ public class GeneralMethods {
 
 	public static void savePermaRemoved(BendingPlayer bPlayer) {
 		if (bPlayer == null) return;
-		String uuid = bPlayer.uuid.toString();
-		boolean permaRemoved = bPlayer.permaRemoved;
+		String uuid = bPlayer.getUUIDString();
+		boolean permaRemoved = bPlayer.isPermaRemoved();
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
 	}
 
