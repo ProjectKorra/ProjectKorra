@@ -1,13 +1,12 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -19,6 +18,8 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
 /**
  * Suffocate
@@ -30,14 +31,11 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
  * be used on multiple entities within a large radius.
  * If the user is damaged while performing this ability then the ability is removed.
  */
-public class Suffocate {
+public class Suffocate extends BaseAbility {
 	public static enum SpiralType {
 		HORIZONTAL1, HORIZONTAL2, VERTICAL1, VERTICAL2, DIAGONAL1, DIAGONAL2
 	};
 	
-	private static ConcurrentHashMap<Player, Suffocate> instances = new ConcurrentHashMap<Player, Suffocate>();
-	
-	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	private static final boolean CAN_SUFFOCATE_UNDEAD = config.getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
 	private static final boolean REQUIRE_CONSTANT_AIM = config.getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
 	private static final double ANIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.AnimationRadius");
@@ -59,6 +57,7 @@ public class Suffocate {
 	private static double BLIND_INTERVAL = config.getDouble("Abilities.Air.Suffocate.BlindInterval");
 	
 	private Player player;
+	private UUID uuid;
 	private BendingPlayer bplayer;
 	private boolean started = false;
 	private long time;
@@ -77,6 +76,7 @@ public class Suffocate {
 	
 	public Suffocate(Player player) {
 		this.player = player;
+		this.uuid = player.getUniqueId();
 		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		targets = new ArrayList<LivingEntity>();
 		tasks = new ArrayList<BukkitRunnable>();
@@ -101,7 +101,7 @@ public class Suffocate {
 		blindDelay = BLIND_DELAY; 
 		blindRepeat = BLIND_INTERVAL;
 		
-		if(instances.containsKey(player))
+		if(getInstances().containsKey(player.getUniqueId()))
 			return;
 		
 		if(AvatarState.isAvatarState(player)) {
@@ -146,25 +146,30 @@ public class Suffocate {
 		else if(bplayer.isOnCooldown("suffocate"))
 			return;
 		bplayer.addCooldown("suffocate", cooldown);
-		instances.put(player,this);
+		//instances.put(player,this);
+		putInstance(StockAbilities.Suffocate, uuid, this);
 	}
 	
-	/** Progresses this instance of Suffocate by 1 tick. **/
-	public void progress() {
+	/**
+	 * Progresses this instance of Suffocate by 1 tick. 
+	 * 
+	 * @return true If progress does not stop, progresses succesfully
+	 */
+	public boolean progress() {
 		if(targets.size() == 0) {
 			remove();
-			return;
+			return false;
 		}
 		if (player.isDead() || !player.isOnline()) {
 			remove();
-			return;
+			return false;
 		}
 		String ability = GeneralMethods.getBoundAbility(player);
 		if(ability == null 
 				|| !ability.equalsIgnoreCase("Suffocate") 
 				|| !GeneralMethods.canBend(player.getName(), "Suffocate")) {
 			remove();
-			return;
+			return false;
 		}
 		
 		for(int i = 0; i < targets.size(); i++) {
@@ -185,7 +190,7 @@ public class Suffocate {
 		}
 		if(targets.size() == 0) {
 			remove();
-			return;
+			return false;
 		}
 		
 		if(reqConstantAim) {
@@ -203,12 +208,12 @@ public class Suffocate {
 			}
 			if(targets.size() == 0) {
 				remove();
-				return;
+				return false;
 			}
 		}
 		
 		if(System.currentTimeMillis() - time < chargeTime) {
-			return;
+			return false;
 		}
 		else if(!started) {
 			started = true;
@@ -246,8 +251,9 @@ public class Suffocate {
 		animate();
 		if(!player.isSneaking()) {
 			remove();
-			return;
+			return false;
 		}
+		return true;
 	}
 	
 	/** 
@@ -411,15 +417,10 @@ public class Suffocate {
 		}
 	}
 	
-	/** Progresses every instance of Suffocate by 1 tick **/
-	public static void progressAll() {
-		for(Suffocate suff : instances.values())
-			suff.progress();
-	}
-	
 	/** Removes this instance of the ability **/
 	public void remove() {
-		instances.remove(player);
+		//instances.remove(player);
+		removeInstance(StockAbilities.Suffocate, uuid);
 		for(int i = 0; i < tasks.size(); i++) {
 			tasks.get(i).cancel();
 			tasks.remove(i);
@@ -433,10 +434,10 @@ public class Suffocate {
 	 * @param causer: the player causing this instance to be removed
 	 * **/
 	public static boolean removeAtLocation(Player causer, Location loc, double radius) {
-		Iterator<Player> it = instances.keySet().iterator();
+		Iterator<UUID> it = getInstances().keySet().iterator();
 		while(it.hasNext()) {
-		    Player key = it.next();
-		    Suffocate val = instances.get(key);
+		    UUID key = it.next();
+		    Suffocate val = (Suffocate) getInstances().get(key);
 		    
 		    if (causer == null || !key.equals(causer)) {
 		    	Location playerLoc = val.getPlayer().getLocation();
@@ -451,21 +452,13 @@ public class Suffocate {
 	
 	/** Removes an instance of Suffocate if player is the one suffocating entities **/
 	public static void remove(Player player) {
-		if (instances.containsKey(player))
-			instances.get(player).remove();
-	}
-	
-	/** Removes every instance of Suffocate **/
-	public static void removeAll() {
-		Enumeration<Player> keys = instances.keys();
-		while(keys.hasMoreElements()) {
-			instances.get(keys.nextElement()).remove();
-		}
+		if (getInstances().containsKey(player.getUniqueId()))
+			getInstances().get(player.getUniqueId()).remove();
 	}
 	
 	/** Determines if a player is Suffocating entities **/
 	public static boolean isChannelingSphere(Player player){
-		if(instances.containsKey(player)) return true;
+		if (getInstances().containsKey(player.getUniqueId())) return true;
 		return false;
 	}
 	
@@ -477,25 +470,27 @@ public class Suffocate {
 	
 	/** Stops an entity from being suffocated **/
 	public static void breakSuffocate(Entity entity) {
-		for (Player player : instances.keySet()) {
-			if (instances.get(player).targets.contains(entity)) {
-				instances.get(player).breakSuffocateLocal(entity);
+		for (UUID uuid : getInstances().keySet()) {
+			Suffocate suffocate = (Suffocate) getInstances().get(uuid);
+			if (suffocate.targets.contains(entity)) {
+				suffocate.breakSuffocateLocal(entity);
 			}
 		}
 	}
 	
 	/** Checks if an entity is being suffocated **/
 	public static boolean isBreathbent(Entity entity) {
-		for (Player player : instances.keySet()) {
-			if (instances.get(player).targets.contains(entity)) {
-				return instances.get(player).started;
+		for (UUID uuid : getInstances().keySet()) {
+			Suffocate suffocate = (Suffocate) getInstances().get(uuid);
+			if (suffocate.targets.contains(entity)) {
+				return suffocate.started;
 			}
 		}
 		return false;
 	}
 
-	public static ConcurrentHashMap<Player, Suffocate> getInstances() {
-		return instances;
+	public static ConcurrentHashMap<UUID, ? extends BaseAbility> getInstances() {
+		return getInstance(StockAbilities.Suffocate);
 	}
 
 	public Player getPlayer() {
@@ -676,5 +671,11 @@ public class Suffocate {
 
 	public void setBlindRepeat(double blindRepeat) {
 		this.blindRepeat = blindRepeat;
+	}
+
+	@Override
+	public void reloadVariables() {
+		// TODO Auto-generated method stub
+		
 	}
 }

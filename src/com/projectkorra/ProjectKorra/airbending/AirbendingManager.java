@@ -19,7 +19,7 @@ public class AirbendingManager implements Runnable {
 		AirPassive.handlePassive(Bukkit.getServer());
 		AirBurst.progressAll(StockAbilities.AirBurst);
 		AirScooter.progressAll(StockAbilities.AirScooter);
-		Suffocate.progressAll();
+		Suffocate.progressAll(StockAbilities.Suffocate);
 		AirSpout.progressAll(StockAbilities.AirSpout);
 		AirBubble.handleBubbles(Bukkit.getServer());
 		AirSuction.progressAll();
