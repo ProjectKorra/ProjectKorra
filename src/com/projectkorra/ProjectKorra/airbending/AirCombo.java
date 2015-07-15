@@ -117,9 +117,7 @@ public class AirCombo {
 		this.ability = ability;
 		this.bplayer = GeneralMethods.getBendingPlayer(player.getName());
 
-		if (ChiMethods.isChiBlocked(player.getName())
-				|| Bloodbending.isBloodbended(player)
-				|| Paralyze.isParalyzed(player)) {
+		if (GeneralMethods.canBend(player.getDisplayName(), ability)) {
 			return;
 		}
 
@@ -529,7 +527,7 @@ public class AirCombo {
 					&& combo.ability.equalsIgnoreCase("AirSweep")) {
 				for (int j = 0; j < combo.tasks.size(); j++) {
 					FireComboStream fs = (FireComboStream) combo.tasks.get(j);
-					if (fs.getLocation() != null
+					if (fs.getLocation() != null && fs.getLocation().getWorld().equals(loc.getWorld())
 							&& Math.abs(fs.getLocation().distance(loc)) <= radius) {
 						fs.remove();
 						removed = true;

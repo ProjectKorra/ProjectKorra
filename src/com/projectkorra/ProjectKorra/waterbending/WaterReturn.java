@@ -38,7 +38,7 @@ public class WaterReturn {
 		if (GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
 			if (!GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)
 					&& GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
-				if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid())
+				if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid() && hasEmptyWaterBottle())
 					this.block = new TempBlock(block, Material.WATER, full);
 			}
 		}

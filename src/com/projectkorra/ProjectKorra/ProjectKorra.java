@@ -40,7 +40,7 @@ public class ProjectKorra extends JavaPlugin {
 		    if (!logFolder.exists()) {
 		        logFolder.mkdirs();
 		    }
-		    handler = new PKLogHandler(getDataFolder() + File.separator + "ERROR.log");
+		    handler = new PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
 			log.getParent().addHandler(handler);
 		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class ProjectKorra extends JavaPlugin {
 		DBConnection.user = getConfig().getString("Storage.MySQL.user");
 		DBConnection.init();
 		if (DBConnection.isOpen() == false) {
-			//TODO: Log a proper message displaying database problem, pk will not function
+			//Message is logged by DBConnection
 			return;
 		}
 
@@ -103,7 +103,4 @@ public class ProjectKorra extends JavaPlugin {
 		handler.close();
 	}
 	
-	public void stopPlugin() {
-		getServer().getPluginManager().disablePlugin(plugin);
-	}
 }

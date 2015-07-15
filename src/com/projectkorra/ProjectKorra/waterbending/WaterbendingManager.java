@@ -16,6 +16,7 @@ public class WaterbendingManager implements Runnable {
 	public void run() {
 		WaterPassive.handlePassive();
 		Plantbending.regrow();
+		PlantArmor.progressAll();
 		Bloodbending.progressAll();
 		WaterSpout.handleSpouts(Bukkit.getServer());
 		FreezeMelt.handleFrozenBlocks();

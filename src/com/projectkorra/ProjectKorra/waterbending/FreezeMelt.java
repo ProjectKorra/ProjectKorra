@@ -152,12 +152,12 @@ public class FreezeMelt {
 	public static String getDescription() {
 		return "To use, simply left-click. "
 				+ "Any water you are looking at within range will instantly freeze over into solid ice. "
-				+ "Provided you stay within range of the ice and do not unbind FreezeMelt, "
+				+ "Provided you stay within range of the ice and do not unbind PhaseChange, "
 				+ "that ice will not thaw. If, however, you do either of those the ice will instantly thaw. "
 				+ "If you sneak (default: shift), anything around where you are looking at will instantly melt. "
 				+ "Since this is a more favorable state for these things, they will never re-freeze unless they "
 				+ "would otherwise by nature or some other bending ability. Additionally, if you tap sneak while "
-				+ "targetting water with FreezeMelt, it will evaporate water around that block that is above "
+				+ "targetting water with PhaseChange, it will evaporate water around that block that is above "
 				+ "sea level. ";
 	}
 

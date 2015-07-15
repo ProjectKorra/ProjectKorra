@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra.earthbending;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -110,8 +111,12 @@ public class EarthBlast {
 		if (EarthPassive.isPassiveSand(sourceblock))
 			EarthPassive.revertSand(sourceblock);
 		if (sourceblock.getType() == Material.SAND) {
-			sourceblock.setType(Material.SANDSTONE);
 			sourcetype = Material.SAND;
+			if (sourceblock.getData() == (byte) 0x1) {
+				sourceblock.setType(Material.RED_SANDSTONE);
+			} else {
+				sourceblock.setType(Material.SANDSTONE);
+			}
 		} else if (sourceblock.getType() == Material.STONE) {
 			sourceblock.setType(Material.COBBLESTONE);
 			sourcetype = Material.STONE;
@@ -128,7 +133,18 @@ public class EarthBlast {
 			breakBlock();
 			return;
 		}
-		sourceblock.setType(sourcetype);
+		if (sourceblock.getType() == Material.SAND) {
+			if (sourceblock.getData() == (byte) 0x1) {
+				sourceblock.setType(sourcetype);
+				sourceblock.setData((byte) 0x1);
+			}
+			else{
+				sourceblock.setType(sourcetype);
+			}
+		}
+		else {
+			sourceblock.setType(sourcetype);
+		}
 		instances.remove(id);
 	}
 
@@ -162,8 +178,7 @@ public class EarthBlast {
 					progressing = true;
 					EarthMethods.playEarthbendingSound(sourceblock.getLocation());
 					// direction = getDirection().normalize();
-					if (sourcetype != Material.SAND
-							&& sourcetype != Material.GRAVEL) {
+					if (sourcetype != Material.SAND && sourcetype != Material.GRAVEL) {
 						sourceblock.setType(sourcetype);
 					}
 				}
@@ -335,8 +350,16 @@ public class EarthBlast {
 
 				if (revert) {
 					// Methods.addTempEarthBlock(sourceblock, block);
-					sourceblock.setType(sourcetype);
+					if (sourceblock.getType() == Material.RED_SANDSTONE) {
+						sourceblock.setType(sourcetype);
+						if(sourcetype == Material.SAND)
+							sourceblock.setData((byte) 0x1);
+					}
+					else {
+						sourceblock.setType(sourcetype);
+					}
 					EarthMethods.moveEarthBlock(sourceblock, block);
+					
 					if (block.getType() == Material.SAND)
 						block.setType(Material.SANDSTONE);
 					if (block.getType() == Material.GRAVEL)
@@ -349,10 +372,16 @@ public class EarthBlast {
 				sourceblock = block;
 
 				if (location.distance(destination) < 1) {
-					if (sourcetype == Material.SAND
-							|| sourcetype == Material.GRAVEL) {
+					if (sourcetype == Material.SAND || sourcetype == Material.GRAVEL) {
 						progressing = false;
-						sourceblock.setType(sourcetype);
+						if (sourceblock.getType() == Material.RED_SANDSTONE) {
+							sourcetype = Material.SAND;
+							sourceblock.setType(sourcetype);
+							sourceblock.setData((byte) 0x1);
+						}
+						else {
+							sourceblock.setType(sourcetype);
+						}
 					}
 
 					falling = true;
