@@ -83,39 +83,39 @@ public class AirShield extends BaseAbility {
 	}
 
 	@Override
-	public void progress() {
+	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
-			return;
+			return false;
 		}
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirShield",
 				player.getLocation())) {
 			remove();
-			return;
+			return false;
 		}
 		speedfactor = 1;
 		if (!GeneralMethods.canBend(player.getName(), "AirShield")
 				|| player.getEyeLocation().getBlock().isLiquid()) {
 			remove();
-			return;
+			return false;
 		}
 
 		if (GeneralMethods.getBoundAbility(player) == null) {
 			remove();
-			return;
+			return false;
 		}
 
 		if (isToggle) {
 			if (((!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player
 					.isSneaking())) && !AvatarState.isAvatarState(player)) {
 				remove();
-				return;
+				return false;
 			}
 		} else {
 			if (((!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player
 					.isSneaking()))) {
 				remove();
-				return;
+				return false;
 			}
 		}
 
@@ -126,7 +126,7 @@ public class AirShield extends BaseAbility {
 		//			return false;
 		//		}
 		rotateShield();
-		return;
+		return true;
 	}
 
 	@Override

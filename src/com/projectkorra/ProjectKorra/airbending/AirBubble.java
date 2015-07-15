@@ -94,28 +94,29 @@ public class AirBubble extends BaseAbility {
 	}
 
 	@Override
-	public void progress() {
+	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
-			return;
+			return false;
 		}
 		
 		if (!player.isSneaking()) {
 			remove();
-			return;
+			return false;
 		}
 		if (GeneralMethods.getBoundAbility(player) != null) {
 			if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble") && GeneralMethods.canBend(player.getName(), "AirBubble")) {
 				pushWater();
-				return;
+				return false;
 			}
 			if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble") && GeneralMethods.canBend(player.getName(), "WaterBubble")) {
 				pushWater();
-				return;
+				return false;
 			}
 		}
 
 		remove();
+		return true;
 	}
 
 	private void pushWater() {

@@ -106,30 +106,31 @@ public class Tornado extends BaseAbility {
 	}
 
 	@Override
-	public void progress() {
+	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
-			return;
+			return false;
 		}
 		if (!GeneralMethods.canBend(player.getName(), "Tornado") || player.getEyeLocation().getBlock().isLiquid()) {
 			remove();
-			return;
+			return false;
 		}
 		String abil = GeneralMethods.getBoundAbility(player);
 		if (abil == null) {
 			remove();
-			return;
+			return false;
 		}
 		if (!abil.equalsIgnoreCase("Tornado") || !player.isSneaking()) {
 			remove();
-			return;
+			return false;
 		}
 
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", origin)) {
 			remove();
-			return;
+			return false;
 		}
 		rotateTornado();
+		return true;
 	}
 
 	@Override

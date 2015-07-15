@@ -200,15 +200,15 @@ public class AirSuction extends BaseAbility {
 	}
 
 	@Override
-	public void progress() {
+	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
-			return;
+			return false;
 		}
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction",
 				location)) {
 			remove();
-			return;
+			return false;
 		}
 		speedfactor = speed * (ProjectKorra.time_step / 1000.);
 
@@ -216,7 +216,7 @@ public class AirSuction extends BaseAbility {
 
 		if (ticks > maxticks) {
 			remove();
-			return;
+			return false;
 		}
 		// if (player.isSneaking()
 		// && Methods.getBendingAbility(player) == Abilities.AirSuction) {
@@ -226,7 +226,7 @@ public class AirSuction extends BaseAbility {
 		if ((location.distance(origin) > range)
 				|| (location.distance(origin) <= 1)) {
 			remove();
-			return;
+			return false;
 		}
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location,
@@ -288,6 +288,7 @@ public class AirSuction extends BaseAbility {
 		}
 
 		advanceLocation();
+		return true;
 	}
 
 	@Override

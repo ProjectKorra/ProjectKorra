@@ -147,16 +147,19 @@ public class AirBurst extends BaseAbility {
 	}
 
 	@Override
-	public void progress() {
+	public boolean progress() {
 		if (!GeneralMethods.canBend(player.getName(), "AirBurst")) {
 			remove();
+			return false;
 		}
 		if (GeneralMethods.getBoundAbility(player) == null) {
 			remove();
+			return false;
 		}
 		
 		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBurst")) {
 			remove();
+			return false;
 		}
 
 		if (System.currentTimeMillis() > starttime + chargetime && !charged) {
@@ -168,6 +171,7 @@ public class AirBurst extends BaseAbility {
 				sphereBurst();
 			} else {
 				remove();
+				return false;
 			}
 		} else if (charged) {
 			Location location = player.getEyeLocation();
@@ -179,6 +183,7 @@ public class AirBurst extends BaseAbility {
 //					Methods.getIntCardinalDirection(player.getEyeLocation()
 //							.getDirection()), 3);
 		}
+		return true;
 	}
 
 	@Override

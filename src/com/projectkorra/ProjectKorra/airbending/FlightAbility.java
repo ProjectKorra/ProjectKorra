@@ -77,10 +77,10 @@ public class FlightAbility extends BaseAbility {
 	}
 	
 	@Override
-	public void progress() {
+	public boolean progress() {
 		if (!AirMethods.canFly(player, false, isHovering(player))) {
 			remove(player);
-			return;
+			return false;
 		}
 		
 		if (flight == null)
@@ -93,7 +93,7 @@ public class FlightAbility extends BaseAbility {
 		} else {
 			player.setVelocity(player.getEyeLocation().getDirection().normalize());
 		}
-		
+		return true;
 	}
 	
 	@Override

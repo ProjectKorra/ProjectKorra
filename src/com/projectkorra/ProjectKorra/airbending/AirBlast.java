@@ -34,18 +34,20 @@ public class AirBlast extends BaseAbility {
 
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
-	static final int maxticks = 10000;
-
 	public static double speed = config.getDouble("Abilities.Air.AirBlast.Speed");
 	public static double defaultrange = config.getDouble("Abilities.Air.AirBlast.Range");
 	public static double affectingradius = config.getDouble("Abilities.Air.AirBlast.Radius");
 	public static double defaultpushfactor = config.getDouble("Abilities.Air.AirBlast.Push");
 	private static double originselectrange = 10;
+	/* Package visible variables */
+	static final int maxticks = 10000;
 	static double maxspeed = 1. / defaultpushfactor;
+	/* End Package visible variables */
+	
 	// public static long interval = 2000;
 	public static byte full = 0x0;
-
-	public Location location;
+	
+	private Location location;
 	private Location origin;
 	private Vector direction;
 	private Player player;
@@ -254,15 +256,15 @@ public class AirBlast extends BaseAbility {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void progress() {
+	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
-			return;
+			return false;
 		}
 
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", location)) {
 			remove();
-			return;
+			return false;
 		}
 
 		speedfactor = speed * (ProjectKorra.time_step / 1000.);
@@ -271,7 +273,7 @@ public class AirBlast extends BaseAbility {
 
 		if (ticks > maxticks) {
 			remove();
-			return;
+			return false;
 		}
 		Block block = location.getBlock();
 		for (Block testblock : GeneralMethods.getBlocksAroundPoint(location, affectingradius)) {
@@ -407,7 +409,7 @@ public class AirBlast extends BaseAbility {
 				}
 			}
 			remove();
-			return;
+			return false;
 		}
 
 		/*
@@ -419,7 +421,7 @@ public class AirBlast extends BaseAbility {
 		double dist = location.distance(origin);
 		if (Double.isNaN(dist) || dist > range) {
 			remove();
-			return;
+			return false;
 		}
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, affectingradius)) {
@@ -427,6 +429,7 @@ public class AirBlast extends BaseAbility {
 		}
 
 		advanceLocation();
+		return true;
 	}
 
 	@Override

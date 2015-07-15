@@ -170,7 +170,7 @@ public class AirMethods {
 		AirSwipe.removeAll(StockAbilities.AirSwipe);
 		Tornado.removeAll(StockAbilities.Tornado);;
 		AirBurst.removeAll(StockAbilities.AirBurst);
-		Suffocate.removeAll();
+		Suffocate.removeAll(StockAbilities.Suffocate);
 		AirCombo.removeAll();
 		FlightAbility.removeAll();
 	}

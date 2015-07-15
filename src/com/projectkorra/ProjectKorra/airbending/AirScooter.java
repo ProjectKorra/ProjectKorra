@@ -93,26 +93,26 @@ public class AirScooter extends BaseAbility {
 	}
 
 	@Override
-	public void progress() {
+	public boolean progress() {
 		getFloor();
 		// Methods.verbose(player);
 		if (floorblock == null) {
 			remove();
-			return;
+			return false;
 		}
 		if (!GeneralMethods.canBend(player.getName(), "AirScooter")) {
 			remove();
-			return;
+			return false;
 		}
 		if (!player.isOnline() || player.isDead() || !player.isFlying()) {
 			remove();
-			return;
+			return false;
 		}
 
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirScooter",
 				player.getLocation())) {
 			remove();
-			return;
+			return false;
 		}
 		
 		// if (Methods
@@ -134,7 +134,7 @@ public class AirScooter extends BaseAbility {
 			time = System.currentTimeMillis();
 			if (player.getVelocity().length() < speed * .5) {
 				remove();
-				return;
+				return false;
 			}
 			spinScooter();
 		}
@@ -157,6 +157,7 @@ public class AirScooter extends BaseAbility {
 		if (GeneralMethods.rand.nextInt(4) == 0) {
 			AirMethods.playAirbendingSound(player.getLocation());
 		}
+		return true;
 	}
 
 	@Override

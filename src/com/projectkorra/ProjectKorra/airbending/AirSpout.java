@@ -99,14 +99,14 @@ public class AirSpout extends BaseAbility {
 	}
 
 	@Override
-	public void progress() {
+	public boolean progress() {
 		if (!GeneralMethods.canBend(player.getName(), "AirSpout")
 //				|| !Methods.hasAbility(player, Abilities.AirSpout)
 				|| player.getEyeLocation().getBlock().isLiquid()
 				|| GeneralMethods.isSolid(player.getEyeLocation().getBlock())
 				|| player.isDead() || !player.isOnline()) {
 			remove();
-			return;
+			return false;
 		}
 		player.setFallDistance(0);
 		player.setSprinting(false);
@@ -125,6 +125,7 @@ public class AirSpout extends BaseAbility {
 		} else {
 			remove();
 		}
+		return true;
 	}
 
 	@Override
