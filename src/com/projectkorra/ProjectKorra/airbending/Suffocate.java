@@ -36,15 +36,15 @@ public class Suffocate extends BaseAbility {
 		HORIZONTAL1, HORIZONTAL2, VERTICAL1, VERTICAL2, DIAGONAL1, DIAGONAL2
 	};
 	
-	private static final boolean CAN_SUFFOCATE_UNDEAD = config.getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
-	private static final boolean REQUIRE_CONSTANT_AIM = config.getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
-	private static final double ANIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.AnimationRadius");
-	private static final int ANIM_PARTICLE_AMOUNT = config.getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
-	private static final double ANIM_SPEED = config.getDouble("Abilities.Air.Suffocate.AnimationSpeed");
+	private static boolean CAN_SUFFOCATE_UNDEAD = config.getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
+	private static boolean REQUIRE_CONSTANT_AIM = config.getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
+	private static double ANIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.AnimationRadius");
+	private static int ANIM_PARTICLE_AMOUNT = config.getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
+	private static double ANIM_SPEED = config.getDouble("Abilities.Air.Suffocate.AnimationSpeed");
 	
-	private static final long CHARGE_TIME = config.getLong("Abilities.Air.Suffocate.ChargeTime");
-	private static final long COOLDOWN = config.getLong("Abilities.Air.Suffocate.Cooldown");
-	private static final double RANGE = config.getDouble("Abilities.Air.Suffocate.Range");
+	private static long CHARGE_TIME = config.getLong("Abilities.Air.Suffocate.ChargeTime");
+	private static long COOLDOWN = config.getLong("Abilities.Air.Suffocate.Cooldown");
+	private static double RANGE = config.getDouble("Abilities.Air.Suffocate.Range");
 	private static double AIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.RequireConstantAimRadius");
 	private static double DAMAGE = config.getDouble("Abilities.Air.Suffocate.Damage");
 	private static double DAMAGE_INITIAL_DELAY = config.getDouble("Abilities.Air.Suffocate.DamageInitialDelay");
@@ -82,6 +82,7 @@ public class Suffocate extends BaseAbility {
 		tasks = new ArrayList<BukkitRunnable>();
 		time = System.currentTimeMillis();
 		
+		reloadVariables();
 		reqConstantAim = REQUIRE_CONSTANT_AIM;
 		canSuffUndead = CAN_SUFFOCATE_UNDEAD;
 		chargeTime = CHARGE_TIME; 
@@ -675,7 +676,24 @@ public class Suffocate extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		// TODO Auto-generated method stub
+		CAN_SUFFOCATE_UNDEAD = config.getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
+		REQUIRE_CONSTANT_AIM = config.getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
+		ANIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.AnimationRadius");
+		ANIM_PARTICLE_AMOUNT = config.getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
+		ANIM_SPEED = config.getDouble("Abilities.Air.Suffocate.AnimationSpeed");
 		
+		CHARGE_TIME = config.getLong("Abilities.Air.Suffocate.ChargeTime");
+		COOLDOWN = config.getLong("Abilities.Air.Suffocate.Cooldown");
+		RANGE = config.getDouble("Abilities.Air.Suffocate.Range");
+		AIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.RequireConstantAimRadius");
+		DAMAGE = config.getDouble("Abilities.Air.Suffocate.Damage");
+		DAMAGE_INITIAL_DELAY = config.getDouble("Abilities.Air.Suffocate.DamageInitialDelay");
+		DAMAGE_INTERVAL = config.getDouble("Abilities.Air.Suffocate.DamageInterval");
+		SLOW = config.getInt("Abilities.Air.Suffocate.SlowPotency");
+		SLOW_INTERVAL = config.getDouble("Abilities.Air.Suffocate.SlowInterval");
+		SLOW_DELAY = config.getDouble("Abilities.Air.Suffocate.SlowDelay");
+		BLIND = config.getInt("Abilities.Air.Suffocate.BlindPotentcy");
+		BLIND_DELAY = config.getDouble("Abilities.Air.Suffocate.BlindDelay");
+		BLIND_INTERVAL = config.getDouble("Abilities.Air.Suffocate.BlindInterval");
 	}
 }
