@@ -1285,7 +1285,7 @@ public class Commands {
 						return true;
 					}
 					
-					if (Arrays.asList(abilitiesaliases).contains(args[1].toLowerCase())) {
+					if (Arrays.asList(abilitiesaliases).contains(args[1])) {
 						if (!s.hasPermission("bending.command.preset.abilities")) {
 							s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 							return true;
