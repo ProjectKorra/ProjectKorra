@@ -38,6 +38,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -654,12 +655,29 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Gets a {@link BendingPlayer} from specified player name.
+	 * Attempts to get a {@link BendingPlayer} from specified player name.
+	 * this method tries to get a {@link Player} object and gets the uuid
+	 * and then calls {@link #getBendingPlayer(UUID)}
+	 * 
 	 * @param player The name of the Player
 	 * @return The BendingPlayer object if {@link BendingPlayer#players} contains the player name
+	 * 
+	 * @see #getBendingPlayer(UUID)
 	 */
-	public static BendingPlayer getBendingPlayer(String player) {
-		return BendingPlayer.getPlayers().get(player);
+	public static BendingPlayer getBendingPlayer(String playerName) {
+		OfflinePlayer player = Bukkit.getPlayer(playerName);
+		if (player == null) {
+			player = Bukkit.getOfflinePlayer(playerName);
+		}
+		return getBendingPlayer(player.getUniqueId());
+	}
+	
+	public static BendingPlayer getBendingPlayer(UUID uuid) {
+		return BendingPlayer.getPlayers().get(uuid);
+	}
+	
+	public static BendingPlayer getBendingPlayer(Player player) {
+		return getBendingPlayer(player.getUniqueId());
 	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
