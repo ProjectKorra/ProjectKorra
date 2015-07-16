@@ -16,7 +16,7 @@ import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
 public class AirSpout extends BaseAbility {
 
-	private static double HEIGHT = config.getDouble("Abilities.Air.AirSpout.Height");
+	private static double HEIGHT = config.get().getDouble("Abilities.Air.AirSpout.Height");
 	private static final long interval = 100;
 
 	private Player player;
@@ -133,7 +133,7 @@ public class AirSpout extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		HEIGHT = config.getDouble("Abilities.Air.AirSpout.Height");
+		HEIGHT = config.get().getDouble("Abilities.Air.AirSpout.Height");
 		height = HEIGHT;
 	}
 

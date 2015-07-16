@@ -20,11 +20,11 @@ import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
 public class Tornado extends BaseAbility {
 	
-	private static double MAX_HEIGHT = config.getDouble("Abilities.Air.Tornado.Height");
-	private static double PLAYER_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.PlayerPushFactor");
-	private static double MAX_RADIUS = config.getDouble("Abilities.Air.Tornado.Radius");
-	private static double RANGE = config.getDouble("Abilities.Air.Tornado.Range");
-	private static double NPC_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.MobPushFactor");
+	private static double MAX_HEIGHT = config.get().getDouble("Abilities.Air.Tornado.Height");
+	private static double PLAYER_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
+	private static double MAX_RADIUS = config.get().getDouble("Abilities.Air.Tornado.Radius");
+	private static double RANGE = config.get().getDouble("Abilities.Air.Tornado.Range");
+	private static double NPC_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.MobPushFactor");
 	private static int numberOfStreams = (int) (.3 * (double) MAX_HEIGHT);
 	// private static double speed = .75;
 	// private static double speedfactor = 1000 * speed
@@ -138,11 +138,11 @@ public class Tornado extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		MAX_HEIGHT = config.getDouble("Abilities.Air.Tornado.Height");
-		PLAYER_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.PlayerPushFactor");
-		MAX_RADIUS = config.getDouble("Abilities.Air.Tornado.Radius");
-		RANGE = config.getDouble("Abilities.Air.Tornado.Range");
-		NPC_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.MobPushFactor");
+		MAX_HEIGHT = config.get().getDouble("Abilities.Air.Tornado.Height");
+		PLAYER_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
+		MAX_RADIUS = config.get().getDouble("Abilities.Air.Tornado.Radius");
+		RANGE = config.get().getDouble("Abilities.Air.Tornado.Range");
+		NPC_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.MobPushFactor");
 		numberOfStreams = (int) (.3 * (double) MAX_HEIGHT);
 		
 		maxheight = MAX_HEIGHT;

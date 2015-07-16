@@ -28,11 +28,11 @@ public class AirSuction extends BaseAbility {
 	
 	private static final int maxticks = AirBlast.maxticks;
 
-	//private static long soonesttime = config.getLong("Properties.GlobalCooldown");
-	private static double SPEED = config.getDouble("Abilities.Air.AirSuction.Speed");
-	private static double RANGE = config.getDouble("Abilities.Air.AirSuction.Range");
-	private static double RADIUS = config.getDouble("Abilities.Air.AirSuction.Radius");
-	private static double PUSH_FACTOR = config.getDouble("Abilities.Air.AirSuction.Push");
+	//private static long soonesttime = config.get().getLong("Properties.GlobalCooldown");
+	private static double SPEED = config.get().getDouble("Abilities.Air.AirSuction.Speed");
+	private static double RANGE = config.get().getDouble("Abilities.Air.AirSuction.Range");
+	private static double RADIUS = config.get().getDouble("Abilities.Air.AirSuction.Radius");
+	private static double PUSH_FACTOR = config.get().getDouble("Abilities.Air.AirSuction.Push");
 	private static double originselectrange = 10;
 
 	private Location location;
@@ -295,10 +295,10 @@ public class AirSuction extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		SPEED = config.getDouble("Abilities.Air.AirSuction.Speed");
-		RANGE = config.getDouble("Abilities.Air.AirSuction.Range");
-		RADIUS = config.getDouble("Abilities.Air.AirSuction.Radius");
-		PUSH_FACTOR = config.getDouble("Abilities.Air.AirSuction.Push");
+		SPEED = config.get().getDouble("Abilities.Air.AirSuction.Speed");
+		RANGE = config.get().getDouble("Abilities.Air.AirSuction.Range");
+		RADIUS = config.get().getDouble("Abilities.Air.AirSuction.Radius");
+		PUSH_FACTOR = config.get().getDouble("Abilities.Air.AirSuction.Push");
 		speed = SPEED;
 		range = RANGE;
 		affectingradius = RADIUS;

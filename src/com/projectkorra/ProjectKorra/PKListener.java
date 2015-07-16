@@ -562,7 +562,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerBendingDeath(PlayerBendingDeathEvent event) {
-		if (ConfigManager.deathMsgConfig.getConfig().getBoolean("Properties.Enabled")) {
+		if (ConfigManager.deathMsgConfig.get().getBoolean("Properties.Enabled")) {
 			bendingDeathPlayer.put(event.getVictim(), event.getAbility());
 			final Player player = event.getVictim();
 
@@ -825,7 +825,7 @@ public class PKListener implements Listener {
 
 		}
 		if (bendingDeathPlayer.containsKey(event.getEntity())) {
-			String message = ConfigManager.deathMsgConfig.getConfig().getString("Properties.Default");
+			String message = ConfigManager.deathMsgConfig.get().getString("Properties.Default");
 			String ability = bendingDeathPlayer.get(event.getEntity());
 			String element = null;
 			Player killer = event.getEntity().getKiller();
@@ -845,8 +845,8 @@ public class PKListener implements Listener {
 					return;
 				}
 			}
-			if (ConfigManager.deathMsgConfig.getConfig().contains(element + "." + ability)) {
-				message = ConfigManager.deathMsgConfig.getConfig().getString(element + "." + ability);
+			if (ConfigManager.deathMsgConfig.get().contains(element + "." + ability)) {
+				message = ConfigManager.deathMsgConfig.get().getString(element + "." + ability);
 			}
 			message = message.replace("{victim}", event.getEntity().getName())
 					.replace("{attacker}", event.getEntity().getKiller().getName())

@@ -23,16 +23,16 @@ public class BendingManager implements Runnable, ConfigLoadable {
 	
 	public static HashMap<World, String> events = new HashMap<World, String>(); // holds any current event.
 
-	private static String sozinsCometMessage = config.getString("Properties.Fire.CometMessage");
-	private static String solarEclipseMessage = config.getString("Properties.Fire.SolarEclipseMessage");
+	private static String sozinsCometMessage = config.get().getString("Properties.Fire.CometMessage");
+	private static String solarEclipseMessage = config.get().getString("Properties.Fire.SolarEclipseMessage");
 
-	private static String sunriseMessage = config.getString("Properties.Fire.DayMessage");
-	private static String sunsetMessage = config.getString("Properties.Fire.NightMessage");
+	private static String sunriseMessage = config.get().getString("Properties.Fire.DayMessage");
+	private static String sunsetMessage = config.get().getString("Properties.Fire.NightMessage");
 
-	private static String moonriseMessage = config.getString("Properties.Water.NightMessage");
-	private static String fullMoonriseMessage = config.getString("Properties.Water.FullMoonMessage");
-	private static String lunarEclipseMessage = config.getString("Properties.Water.LunarEclipsetMessage");
-	private static String moonsetMessage = config.getString("Properties.Water.DayMessage");
+	private static String moonriseMessage = config.get().getString("Properties.Water.NightMessage");
+	private static String fullMoonriseMessage = config.get().getString("Properties.Water.FullMoonMessage");
+	private static String lunarEclipseMessage = config.get().getString("Properties.Water.LunarEclipsetMessage");
+	private static String moonsetMessage = config.get().getString("Properties.Water.DayMessage");
 	
 	long time;
 	long interval;
@@ -178,16 +178,16 @@ public class BendingManager implements Runnable, ConfigLoadable {
 
 	@Override
 	public void reloadVariables() {
-		sozinsCometMessage = config.getString("Properties.Fire.CometMessage");
-		solarEclipseMessage = config.getString("Properties.Fire.SolarEclipseMessage");
+		sozinsCometMessage = config.get().getString("Properties.Fire.CometMessage");
+		solarEclipseMessage = config.get().getString("Properties.Fire.SolarEclipseMessage");
 
-		sunriseMessage = config.getString("Properties.Fire.DayMessage");
-		sunsetMessage = config.getString("Properties.Fire.NightMessage");
+		sunriseMessage = config.get().getString("Properties.Fire.DayMessage");
+		sunsetMessage = config.get().getString("Properties.Fire.NightMessage");
 
-		moonriseMessage = config.getString("Properties.Water.NightMessage");
-		fullMoonriseMessage = config.getString("Properties.Water.FullMoonMessage");
-		lunarEclipseMessage = config.getString("Properties.Water.LunarEclipsetMessage");
-		moonsetMessage = config.getString("Properties.Water.DayMessage");
+		moonriseMessage = config.get().getString("Properties.Water.NightMessage");
+		fullMoonriseMessage = config.get().getString("Properties.Water.FullMoonMessage");
+		lunarEclipseMessage = config.get().getString("Properties.Water.LunarEclipsetMessage");
+		moonsetMessage = config.get().getString("Properties.Water.DayMessage");
 	}
 	
 }

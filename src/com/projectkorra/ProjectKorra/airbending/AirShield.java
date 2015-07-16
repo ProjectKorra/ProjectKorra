@@ -21,8 +21,8 @@ import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 public class AirShield extends BaseAbility {
 
-	private static double MAX_RADIUS = config.getDouble("Abilities.Air.AirShield.Radius");
-	private static boolean isToggle = config.getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
+	private static double MAX_RADIUS = config.get().getDouble("Abilities.Air.AirShield.Radius");
+	private static boolean isToggle = config.get().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
 	private static int numberOfStreams = (int) (.75 * (double) MAX_RADIUS);
 
 	private double maxradius = MAX_RADIUS;
@@ -136,8 +136,8 @@ public class AirShield extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		MAX_RADIUS = config.getDouble("Abilities.Air.AirShield.Radius");
-		isToggle = config.getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
+		MAX_RADIUS = config.get().getDouble("Abilities.Air.AirShield.Radius");
+		isToggle = config.get().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
 		numberOfStreams = (int) (.75 * (double) MAX_RADIUS);
 
 		maxradius = MAX_RADIUS;

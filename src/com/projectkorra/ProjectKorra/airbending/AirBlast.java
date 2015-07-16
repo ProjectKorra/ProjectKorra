@@ -33,10 +33,10 @@ public class AirBlast extends BaseAbility {
 
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
-	public static double speed = config.getDouble("Abilities.Air.AirBlast.Speed");
-	public static double defaultrange = config.getDouble("Abilities.Air.AirBlast.Range");
-	public static double affectingradius = config.getDouble("Abilities.Air.AirBlast.Radius");
-	public static double defaultpushfactor = config.getDouble("Abilities.Air.AirBlast.Push");
+	public static double speed = config.get().getDouble("Abilities.Air.AirBlast.Speed");
+	public static double defaultrange = config.get().getDouble("Abilities.Air.AirBlast.Range");
+	public static double affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
+	public static double defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push");
 	private static double originselectrange = 10;
 	/* Package visible variables */
 	static final int maxticks = 10000;
@@ -436,10 +436,10 @@ public class AirBlast extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		speed = config.getDouble("Abilities.Air.AirBlast.Speed");
-		defaultrange = config.getDouble("Abilities.Air.AirBlast.Range");
-		affectingradius = config.getDouble("Abilities.Air.AirBlast.Radius");
-		defaultpushfactor = config.getDouble("Abilities.Air.AirBlast.Push");
+		speed = config.get().getDouble("Abilities.Air.AirBlast.Speed");
+		defaultrange = config.get().getDouble("Abilities.Air.AirBlast.Range");
+		affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
+		defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push");
 		maxspeed = 1. / defaultpushfactor;
 		range = defaultrange;
 		pushfactor = defaultpushfactor;

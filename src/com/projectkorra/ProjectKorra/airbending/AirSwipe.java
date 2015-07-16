@@ -34,15 +34,15 @@ public class AirSwipe extends BaseAbility {
 
 	private static int stepsize = 4;	
 
-	private static int ARC = config.getInt("Abilities.Air.AirSwipe.Arc");
-	private static int defaultdamage = config.getInt("Abilities.Air.AirSwipe.Damage");
-	private static double PUSH_FACTOR = config.getDouble("Abilities.Air.AirSwipe.Push");
-	private static double AFFECTING_RADIUS = config.getDouble("Abilities.Air.AirSwipe.Radius");
-	private static double RANGE = config.getDouble("Abilities.Air.AirSwipe.Range");
-	private static double SPEED = config.getDouble("Abilities.Air.AirSwipe.Speed");
-	private static double MAX_FACTOR = config.getDouble("Abilities.Air.AirSwipe.ChargeFactor");
+	private static int ARC = config.get().getInt("Abilities.Air.AirSwipe.Arc");
+	private static int defaultdamage = config.get().getInt("Abilities.Air.AirSwipe.Damage");
+	private static double PUSH_FACTOR = config.get().getDouble("Abilities.Air.AirSwipe.Push");
+	private static double AFFECTING_RADIUS = config.get().getDouble("Abilities.Air.AirSwipe.Radius");
+	private static double RANGE = config.get().getDouble("Abilities.Air.AirSwipe.Range");
+	private static double SPEED = config.get().getDouble("Abilities.Air.AirSwipe.Speed");
+	private static double MAX_FACTOR = config.get().getDouble("Abilities.Air.AirSwipe.ChargeFactor");
 	private static byte full = AirBlast.full;
-	private static long MAX_CHARGE_TIME = config.getLong("Abilities.Air.AirSwipe.MaxChargeTime");
+	private static long MAX_CHARGE_TIME = config.get().getLong("Abilities.Air.AirSwipe.MaxChargeTime");
 	private static Integer[] breakables = { 6, 31, 32, 37, 38, 39, 40, 59, 81,
 		83, 106, 175 };
 
@@ -350,14 +350,14 @@ public class AirSwipe extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		ARC = config.getInt("Abilities.Air.AirSwipe.Arc");
-		defaultdamage = config.getInt("Abilities.Air.AirSwipe.Damage");
-		PUSH_FACTOR = config.getDouble("Abilities.Air.AirSwipe.Push");
-		AFFECTING_RADIUS = config.getDouble("Abilities.Air.AirSwipe.Radius");
-		RANGE = config.getDouble("Abilities.Air.AirSwipe.Range");
-		SPEED = config.getDouble("Abilities.Air.AirSwipe.Speed");
-		MAX_FACTOR = config.getDouble("Abilities.Air.AirSwipe.ChargeFactor");
-		MAX_CHARGE_TIME = config.getLong("Abilities.Air.AirSwipe.MaxChargeTime");
+		ARC = config.get().getInt("Abilities.Air.AirSwipe.Arc");
+		defaultdamage = config.get().getInt("Abilities.Air.AirSwipe.Damage");
+		PUSH_FACTOR = config.get().getDouble("Abilities.Air.AirSwipe.Push");
+		AFFECTING_RADIUS = config.get().getDouble("Abilities.Air.AirSwipe.Radius");
+		RANGE = config.get().getDouble("Abilities.Air.AirSwipe.Range");
+		SPEED = config.get().getDouble("Abilities.Air.AirSwipe.Speed");
+		MAX_FACTOR = config.get().getDouble("Abilities.Air.AirSwipe.ChargeFactor");
+		MAX_CHARGE_TIME = config.get().getLong("Abilities.Air.AirSwipe.MaxChargeTime");
 	}
 
 	public void setAffectingradius(double affectingradius) {

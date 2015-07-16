@@ -18,7 +18,7 @@ import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
 public class AirScooter extends BaseAbility {
 
-	private static double speed = config.getDouble("Abilities.Air.AirScooter.Speed");
+	private static double speed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
 	private static final long interval = 100;
 	private static final double scooterradius = 1;
 
@@ -165,7 +165,7 @@ public class AirScooter extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		speed = config.getDouble("Abilities.Air.AirScooter.Speed");
+		speed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
 	}
 
 	@Override

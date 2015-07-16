@@ -1465,8 +1465,8 @@ public class GeneralMethods {
 			DBConnection.sql.close();
 		}
 		GeneralMethods.stopBending();
-		ConfigManager.defaultConfig.reloadConfig();
-		ConfigManager.deathMsgConfig.reloadConfig();
+		ConfigManager.defaultConfig.reload();
+		ConfigManager.deathMsgConfig.reload();
 		BendingManager.getInstance().reloadVariables();
 		new AbilityModuleManager(plugin);
 		new MultiAbilityModuleManager();

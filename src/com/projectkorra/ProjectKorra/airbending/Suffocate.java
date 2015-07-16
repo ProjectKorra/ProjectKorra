@@ -32,26 +32,26 @@ import com.projectkorra.ProjectKorra.Ability.StockAbilities;
  * If the user is damaged while performing this ability then the ability is removed.
  */
 public class Suffocate extends BaseAbility {
-	private static boolean CAN_SUFFOCATE_UNDEAD = config.getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
-	private static boolean REQUIRE_CONSTANT_AIM = config.getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
-	private static double ANIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.AnimationRadius");
-	private static int ANIM_PARTICLE_AMOUNT = config.getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
+	private static boolean CAN_SUFFOCATE_UNDEAD = config.get().getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
+	private static boolean REQUIRE_CONSTANT_AIM = config.get().getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
+	private static double ANIM_RADIUS = config.get().getDouble("Abilities.Air.Suffocate.AnimationRadius");
+	private static int ANIM_PARTICLE_AMOUNT = config.get().getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
 	
-	private static double ANIM_SPEED = config.getDouble("Abilities.Air.Suffocate.AnimationSpeed");
-	private static long CHARGE_TIME = config.getLong("Abilities.Air.Suffocate.ChargeTime");
-	private static long COOLDOWN = config.getLong("Abilities.Air.Suffocate.Cooldown");
-	private static double RANGE = config.getDouble("Abilities.Air.Suffocate.Range");
-	private static double AIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.RequireConstantAimRadius");
-	private static double DAMAGE = config.getDouble("Abilities.Air.Suffocate.Damage");
-	private static double DAMAGE_INITIAL_DELAY = config.getDouble("Abilities.Air.Suffocate.DamageInitialDelay");
-	private static double DAMAGE_INTERVAL = config.getDouble("Abilities.Air.Suffocate.DamageInterval");
-	private static int SLOW = config.getInt("Abilities.Air.Suffocate.SlowPotency");
-	private static double SLOW_INTERVAL = config.getDouble("Abilities.Air.Suffocate.SlowInterval");
-	private static double SLOW_DELAY = config.getDouble("Abilities.Air.Suffocate.SlowDelay");
-	private static int BLIND = config.getInt("Abilities.Air.Suffocate.BlindPotentcy");
-	private static double BLIND_DELAY = config.getDouble("Abilities.Air.Suffocate.BlindDelay");
+	private static double ANIM_SPEED = config.get().getDouble("Abilities.Air.Suffocate.AnimationSpeed");
+	private static long CHARGE_TIME = config.get().getLong("Abilities.Air.Suffocate.ChargeTime");
+	private static long COOLDOWN = config.get().getLong("Abilities.Air.Suffocate.Cooldown");
+	private static double RANGE = config.get().getDouble("Abilities.Air.Suffocate.Range");
+	private static double AIM_RADIUS = config.get().getDouble("Abilities.Air.Suffocate.RequireConstantAimRadius");
+	private static double DAMAGE = config.get().getDouble("Abilities.Air.Suffocate.Damage");
+	private static double DAMAGE_INITIAL_DELAY = config.get().getDouble("Abilities.Air.Suffocate.DamageInitialDelay");
+	private static double DAMAGE_INTERVAL = config.get().getDouble("Abilities.Air.Suffocate.DamageInterval");
+	private static int SLOW = config.get().getInt("Abilities.Air.Suffocate.SlowPotency");
+	private static double SLOW_INTERVAL = config.get().getDouble("Abilities.Air.Suffocate.SlowInterval");
+	private static double SLOW_DELAY = config.get().getDouble("Abilities.Air.Suffocate.SlowDelay");
+	private static int BLIND = config.get().getInt("Abilities.Air.Suffocate.BlindPotentcy");
+	private static double BLIND_DELAY = config.get().getDouble("Abilities.Air.Suffocate.BlindDelay");
 	
-	private static double BLIND_INTERVAL = config.getDouble("Abilities.Air.Suffocate.BlindInterval");
+	private static double BLIND_INTERVAL = config.get().getDouble("Abilities.Air.Suffocate.BlindInterval");
 	private Player player;
 	private BendingPlayer bplayer;
 	private boolean started = false;
@@ -452,25 +452,25 @@ public class Suffocate extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		CAN_SUFFOCATE_UNDEAD = config.getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
-		REQUIRE_CONSTANT_AIM = config.getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
-		ANIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.AnimationRadius");
-		ANIM_PARTICLE_AMOUNT = config.getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
-		ANIM_SPEED = config.getDouble("Abilities.Air.Suffocate.AnimationSpeed");
+		CAN_SUFFOCATE_UNDEAD = config.get().getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
+		REQUIRE_CONSTANT_AIM = config.get().getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
+		ANIM_RADIUS = config.get().getDouble("Abilities.Air.Suffocate.AnimationRadius");
+		ANIM_PARTICLE_AMOUNT = config.get().getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
+		ANIM_SPEED = config.get().getDouble("Abilities.Air.Suffocate.AnimationSpeed");
 		
-		CHARGE_TIME = config.getLong("Abilities.Air.Suffocate.ChargeTime");
-		COOLDOWN = config.getLong("Abilities.Air.Suffocate.Cooldown");
-		RANGE = config.getDouble("Abilities.Air.Suffocate.Range");
-		AIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.RequireConstantAimRadius");
-		DAMAGE = config.getDouble("Abilities.Air.Suffocate.Damage");
-		DAMAGE_INITIAL_DELAY = config.getDouble("Abilities.Air.Suffocate.DamageInitialDelay");
-		DAMAGE_INTERVAL = config.getDouble("Abilities.Air.Suffocate.DamageInterval");
-		SLOW = config.getInt("Abilities.Air.Suffocate.SlowPotency");
-		SLOW_INTERVAL = config.getDouble("Abilities.Air.Suffocate.SlowInterval");
-		SLOW_DELAY = config.getDouble("Abilities.Air.Suffocate.SlowDelay");
-		BLIND = config.getInt("Abilities.Air.Suffocate.BlindPotentcy");
-		BLIND_DELAY = config.getDouble("Abilities.Air.Suffocate.BlindDelay");
-		BLIND_INTERVAL = config.getDouble("Abilities.Air.Suffocate.BlindInterval");
+		CHARGE_TIME = config.get().getLong("Abilities.Air.Suffocate.ChargeTime");
+		COOLDOWN = config.get().getLong("Abilities.Air.Suffocate.Cooldown");
+		RANGE = config.get().getDouble("Abilities.Air.Suffocate.Range");
+		AIM_RADIUS = config.get().getDouble("Abilities.Air.Suffocate.RequireConstantAimRadius");
+		DAMAGE = config.get().getDouble("Abilities.Air.Suffocate.Damage");
+		DAMAGE_INITIAL_DELAY = config.get().getDouble("Abilities.Air.Suffocate.DamageInitialDelay");
+		DAMAGE_INTERVAL = config.get().getDouble("Abilities.Air.Suffocate.DamageInterval");
+		SLOW = config.get().getInt("Abilities.Air.Suffocate.SlowPotency");
+		SLOW_INTERVAL = config.get().getDouble("Abilities.Air.Suffocate.SlowInterval");
+		SLOW_DELAY = config.get().getDouble("Abilities.Air.Suffocate.SlowDelay");
+		BLIND = config.get().getInt("Abilities.Air.Suffocate.BlindPotentcy");
+		BLIND_DELAY = config.get().getDouble("Abilities.Air.Suffocate.BlindDelay");
+		BLIND_INTERVAL = config.get().getDouble("Abilities.Air.Suffocate.BlindInterval");
 	}
 
 	/** Removes this instance of the ability **/

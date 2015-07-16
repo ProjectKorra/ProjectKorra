@@ -19,8 +19,8 @@ import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class AirBubble extends BaseAbility {
 
-	private static double DEFAULT_AIR_RADIUS = config.getDouble("Abilities.Air.AirBubble.Radius");
-	private static double DEFAULT_WATER_RADIUS = config.getDouble("Abilities.Water.WaterBubble.Radius");
+	private static double DEFAULT_AIR_RADIUS = config.get().getDouble("Abilities.Air.AirBubble.Radius");
+	private static double DEFAULT_WATER_RADIUS = config.get().getDouble("Abilities.Water.WaterBubble.Radius");
 
 	private Player player;
 	private double radius;
@@ -172,8 +172,8 @@ public class AirBubble extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		DEFAULT_AIR_RADIUS = config.getDouble("Abilities.Air.AirBubble.Radius");
-		DEFAULT_WATER_RADIUS = config.getDouble("Abilities.Water.WaterBubble.Radius");
+		DEFAULT_AIR_RADIUS = config.get().getDouble("Abilities.Air.AirBubble.Radius");
+		DEFAULT_WATER_RADIUS = config.get().getDouble("Abilities.Water.WaterBubble.Radius");
 		defaultAirRadius = DEFAULT_AIR_RADIUS;
 		defaultWaterRadius = DEFAULT_WATER_RADIUS;
 	}

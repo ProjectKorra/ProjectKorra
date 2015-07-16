@@ -15,10 +15,10 @@ import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 public class AirPassive implements ConfigLoadable {
 	
 	private static ConcurrentHashMap<Player, Float> food = new ConcurrentHashMap<Player, Float>();
-	private static float factor = (float) config.getDouble("Abilities.Air.Passive.Factor");
+	private static float factor = (float) config.get().getDouble("Abilities.Air.Passive.Factor");
 	
-	private static int speedPower = config.getInt("Abilities.Air.Passive.Speed");
-	private static int jumpPower = config.getInt("Abilities.Air.Passive.Jump");
+	private static int speedPower = config.get().getInt("Abilities.Air.Passive.Speed");
+	private static int jumpPower = config.get().getInt("Abilities.Air.Passive.Jump");
 	
 	public static float getExhaustion(Player player, float level) {
 		if (!food.keySet().contains(player)) {
@@ -29,7 +29,7 @@ public class AirPassive implements ConfigLoadable {
 			if (level < oldlevel) {
 				level = 0;
 			} else {
-				factor = (float) config.getDouble("Abilities.Air.Passive.Factor");
+				factor = (float) config.get().getDouble("Abilities.Air.Passive.Factor");
 				level = (level - oldlevel) * factor + oldlevel;
 			}
 			food.replace(player, level);
@@ -45,11 +45,11 @@ public class AirPassive implements ConfigLoadable {
 					player.setExhaustion(getExhaustion(player, player.getExhaustion())); // Handles Food Passive
 					if (player.isSprinting()) {
 						if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
-							speedPower = config.getInt("Abilities.Air.Passive.Speed");
+							speedPower = config.get().getInt("Abilities.Air.Passive.Speed");
 							player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speedPower - 1)); // Handles Speed Passive
 						}
 						if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
-							jumpPower = config.getInt("Abilities.Air.Passive.Jump");
+							jumpPower = config.get().getInt("Abilities.Air.Passive.Jump");
 							player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jumpPower - 1)); // Handles jump passive.
 						}
 					}
@@ -60,10 +60,10 @@ public class AirPassive implements ConfigLoadable {
 
 	@Override
 	public void reloadVariables() {
-		factor = (float) config.getDouble("Abilities.Air.Passive.Factor");
+		factor = (float) config.get().getDouble("Abilities.Air.Passive.Factor");
 		
-		speedPower = config.getInt("Abilities.Air.Passive.Speed");
-		jumpPower = config.getInt("Abilities.Air.Passive.Jump");
+		speedPower = config.get().getInt("Abilities.Air.Passive.Speed");
+		jumpPower = config.get().getInt("Abilities.Air.Passive.Jump");
 	}
 
 }

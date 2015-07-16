@@ -19,15 +19,15 @@ public class AirBurst extends BaseAbility {
 	
 	private static double PARTICLES_PERCENTAGE = 50;
 	
-	private static double threshold = config.getDouble("Abilities.Air.AirBurst.FallThreshold");
-	private static double pushfactor = config.getDouble("Abilities.Air.AirBurst.PushFactor");
-	private static double damage = config.getDouble("Abilities.Air.AirBurst.Damage");
+	private static double threshold = config.get().getDouble("Abilities.Air.AirBurst.FallThreshold");
+	private static double pushfactor = config.get().getDouble("Abilities.Air.AirBurst.PushFactor");
+	private static double damage = config.get().getDouble("Abilities.Air.AirBurst.Damage");
 	private static double deltheta = 10;
 	private static double delphi = 10;
 
 	private Player player;
 	private long starttime;
-	private long chargetime = config.getLong("Abilities.Air.AirBurst.ChargeTime");
+	private long chargetime = config.get().getLong("Abilities.Air.AirBurst.ChargeTime");
 	private boolean charged = false;
 	public ArrayList<AirBlast> blasts = new ArrayList<AirBlast>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
@@ -190,10 +190,10 @@ public class AirBurst extends BaseAbility {
 
 	@Override
 	public void reloadVariables() {
-		threshold = config.getDouble("Abilities.Air.AirBurst.FallThreshold");
-		pushfactor = config.getDouble("Abilities.Air.AirBurst.PushFactor");
-		damage = config.getDouble("Abilities.Air.AirBurst.Damage");
-		chargetime = config.getLong("Abilities.Air.AirBurst.ChargeTime");
+		threshold = config.get().getDouble("Abilities.Air.AirBurst.FallThreshold");
+		pushfactor = config.get().getDouble("Abilities.Air.AirBurst.PushFactor");
+		damage = config.get().getDouble("Abilities.Air.AirBurst.Damage");
+		chargetime = config.get().getLong("Abilities.Air.AirBurst.ChargeTime");
 	}
 
 	private void sphereBurst() {
