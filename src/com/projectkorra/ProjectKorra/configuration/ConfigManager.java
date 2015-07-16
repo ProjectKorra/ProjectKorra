@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.firebending.FireMethods;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 public class ConfigManager {
 
@@ -27,7 +25,7 @@ public class ConfigManager {
 		FileConfiguration config;
 		switch (type) {
 		case DEATH_MESSAGE:
-			config = deathMsgConfig.getConfig();
+			config = deathMsgConfig.get();
 			
 			config.addDefault("Properties.Enabled", true);
 			config.addDefault("Properties.Default", "{victim} was slain by {attacker}'s {ability}");
@@ -69,10 +67,10 @@ public class ConfigManager {
 			config.addDefault("Chi.RapidPunch", "{victim} took all the hits against {attacker}'s {ability}");
 			config.addDefault("Chi.ChiCombo", "{victim} was overwhelmed by {attacker}'s skill {ability}");
 			
-			deathMsgConfig.saveConfig();
+			deathMsgConfig.save();
 			break;
 		case DEFAULT:
-			config = defaultConfig.getConfig();
+			config = defaultConfig.get();
 
 			ArrayList<String> earthbendable = new ArrayList<String>();
 			earthbendable.add("STONE");
@@ -921,7 +919,7 @@ public class ConfigManager {
 
 			config.addDefault("debug", false);
 			
-			defaultConfig.saveConfig();
+			defaultConfig.save();
 			break;
 		}
 	}
