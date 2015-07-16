@@ -18,22 +18,43 @@ public abstract class BaseAbility implements Ability {
 	 * ability instance or {@link #getInstance(StockAbilities)} from the
 	 * outside.
 	 */
-	private static ConcurrentHashMap<StockAbilities, ConcurrentHashMap<UUID, BaseAbility>> instances = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<StockAbilities, ConcurrentHashMap<Object, BaseAbility>> instances = new ConcurrentHashMap<>();
 	//protected static AbilityMap<Ability> instances = new AbilityMap<>();
 	
+	private static int ID = Integer.MIN_VALUE;
 	private final StockAbilities stockAbility = getStockAbility();
+	private final InstanceType type = getInstanceType();
 	private Player player;
 	private UUID uniqueId;
+	private int id;
 	
 	protected final void putInstance(Player player, BaseAbility ability) {
+		if (type == InstanceType.MULTIPLE) {
+			this.id = ID;
+		} else {
+			this.id = -1;
+		}
 		this.uniqueId = player.getUniqueId();
 		this.player = player;
 		if (instances.containsKey(stockAbility)) {
-			instances.get(stockAbility).put(uniqueId, ability);
+			if (type == InstanceType.MULTIPLE) {
+				instances.get(stockAbility).put(id, ability);
+			} else {
+				instances.get(stockAbility).put(uniqueId, ability);
+			}
 		} else {
-			ConcurrentHashMap<UUID, BaseAbility> map = new ConcurrentHashMap<>();
-			map.put(uniqueId, ability);
+			ConcurrentHashMap<Object, BaseAbility> map = new ConcurrentHashMap<>();
+			if (type == InstanceType.MULTIPLE) {
+				map.put(id, ability);
+			} else {
+				map.put(uniqueId, ability);
+			}
 			instances.put(stockAbility, map);
+		}
+		if (id != -1) {
+			if (ID == Integer.MAX_VALUE)
+				ID = Integer.MIN_VALUE;
+			ID++;
 		}
 	}
 	
@@ -43,7 +64,11 @@ public abstract class BaseAbility implements Ability {
 	private final void removeInstance() {
 		if (instances.containsKey(stockAbility)) {
 			if (instances.get(stockAbility) != null) {
-				instances.get(getStockAbility()).remove(uniqueId);
+				if (type == InstanceType.MULTIPLE) {
+					instances.get(getStockAbility()).remove(id);
+				} else {
+					instances.get(getStockAbility()).remove(uniqueId);
+				}
 			}
 		}
 	}
@@ -54,28 +79,56 @@ public abstract class BaseAbility implements Ability {
 	 * @param abilty The instances map to get
 	 * @return a map of instances from the specified {@link StockAbilities StockAbility}
 	 */
-	public final static ConcurrentHashMap<UUID, BaseAbility> getInstance(StockAbilities abilty) {
-		if (instances.containsKey(abilty)) {
-			return instances.get(abilty);
+	public final static ConcurrentHashMap<Object, BaseAbility> getInstance(StockAbilities ability) {
+		if (instances.containsKey(ability)) {
+			return instances.get(ability);
 		}
-		return new ConcurrentHashMap<UUID, BaseAbility>();
+		return new ConcurrentHashMap<Object, BaseAbility>();
+	}
+	
+	/**
+	 * Convenience method that calls {@link #progress()} for all instances
+	 * of a specified ability.
+	 * 
+	 * @see #progressAll()
+	 */
+	public static void progressAll(StockAbilities ability) {
+		for (Object object : getInstance(ability).keySet()) {
+			instances.get(ability).get(object).progress();
+		}
 	}
 	
 	/**
 	 * Convenience method that calls {@link #progress()} for all instances.
+	 * 
+	 * @see #progressAll(StockAbilities)
 	 */
-	public static void progressAll(StockAbilities ability) {
-		for (UUID uuid : getInstance(ability).keySet()) {
-			instances.get(ability).get(uuid).progress();
+	public static void progressAll() {
+		for (StockAbilities ability : instances.keySet()) {
+			progressAll(ability);
+		}
+	}
+	
+	/**
+	 * Convenience method that calls {@link #remove()} for all instances
+	 * of a specified ability.
+	 * 
+	 * @see #removeAll()
+	 */
+	public static void removeAll(StockAbilities ability) {
+		for (Object object : getInstance(ability).keySet()) {
+			instances.get(ability).get(object).remove();
 		}
 	}
 	
 	/**
 	 * Convenience method that calls {@link #remove()} for all instances.
+	 * 
+	 * @see #removeAll(StockAbilities)
 	 */
-	public static void removeAll(StockAbilities ability) {
-		for (UUID uuid : getInstance(ability).keySet()) {
-			instances.get(ability).get(uuid).remove();
+	public static void removeAll() {
+		for (StockAbilities ability : instances.keySet()) {
+			removeAll(ability);
 		}
 	}
 	
@@ -102,10 +155,10 @@ public abstract class BaseAbility implements Ability {
 	 *  
 	 * @return {@link #getInstance(StockAbilities)} for the current ability
 	 */
-	public ConcurrentHashMap<UUID, BaseAbility> getInstance() {
+	public ConcurrentHashMap<Object, BaseAbility> getInstance() {
 		return getInstance(stockAbility);
 	}
-
+	
 	public Player getPlayer() {
 		return player;
 	}
@@ -113,5 +166,12 @@ public abstract class BaseAbility implements Ability {
 	public UUID getUniqueId() {
 		return uniqueId;
 	}
-
+	
+	public InstanceType getInstanceType() {
+		return InstanceType.SINGLE;
+	}
+	
+	public int getID() {
+		return id;
+	}
 }
