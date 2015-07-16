@@ -3,7 +3,6 @@ package com.projectkorra.ProjectKorra.airbending;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -147,7 +146,7 @@ public class Suffocate extends BaseAbility {
 	
 	/** Stops an entity from being suffocated **/
 	public static void breakSuffocate(Entity entity) {
-		for (UUID uuid : getInstances().keySet()) {
+		for (Object uuid : getInstances().keySet()) {
 			Suffocate suffocate = (Suffocate) getInstances().get(uuid);
 			if (suffocate.targets.contains(entity)) {
 				suffocate.breakSuffocateLocal(entity);
@@ -155,13 +154,13 @@ public class Suffocate extends BaseAbility {
 		}
 	}
 	
-	public static ConcurrentHashMap<UUID, ? extends BaseAbility> getInstances() {
+	public static ConcurrentHashMap<Object, ? extends BaseAbility> getInstances() {
 		return getInstance(StockAbilities.Suffocate);
 	}
 	
 	/** Checks if an entity is being suffocated **/
 	public static boolean isBreathbent(Entity entity) {
-		for (UUID uuid : getInstances().keySet()) {
+		for (Object uuid : getInstances().keySet()) {
 			Suffocate suffocate = (Suffocate) getInstances().get(uuid);
 			if (suffocate.targets.contains(entity)) {
 				return suffocate.started;
@@ -188,9 +187,9 @@ public class Suffocate extends BaseAbility {
 	 * @param causer: the player causing this instance to be removed
 	 * **/
 	public static boolean removeAtLocation(Player causer, Location loc, double radius) {
-		Iterator<UUID> it = getInstances().keySet().iterator();
+		Iterator<Object> it = getInstances().keySet().iterator();
 		while (it.hasNext()) {
-		    UUID key = it.next();
+		    Object key = it.next();
 		    Suffocate val = (Suffocate) getInstances().get(key);
 		    
 		    if (causer == null || !key.equals(causer)) {

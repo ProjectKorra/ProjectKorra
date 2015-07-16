@@ -67,14 +67,14 @@ public class Tornado extends BaseAbility {
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (UUID uuid : getInstance(StockAbilities.Tornado).keySet()) {
-			players.add(Bukkit.getPlayer(uuid));
+		for (Object uuid : getInstance(StockAbilities.Tornado).keySet()) {
+			players.add(Bukkit.getPlayer((UUID) uuid));
 		}
 		return players;
 	}
 	
 	public static void progressAll() {
-		for (UUID uuid : getInstance(StockAbilities.Tornado).keySet()) {
+		for (Object uuid : getInstance(StockAbilities.Tornado).keySet()) {
 			((Tornado) getInstance(StockAbilities.Tornado).get(uuid)).progress();
 		}
 	}

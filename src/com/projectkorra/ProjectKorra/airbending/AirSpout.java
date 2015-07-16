@@ -42,8 +42,8 @@ public class AirSpout extends BaseAbility {
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (UUID uuid: getInstance(StockAbilities.AirSpout).keySet()) {
-			players.add(Bukkit.getPlayer(uuid));
+		for (Object uuid: getInstance(StockAbilities.AirSpout).keySet()) {
+			players.add(Bukkit.getPlayer((UUID) uuid));
 		}
 		return players;
 	}
@@ -51,8 +51,8 @@ public class AirSpout extends BaseAbility {
 	public static boolean removeSpouts(Location loc0, double radius,
 			Player sourceplayer) {
 		boolean removed = false;
-		for (UUID uuid : getInstance(StockAbilities.AirSpout).keySet()) {
-			Player player = Bukkit.getPlayer(uuid);
+		for (Object uuid : getInstance(StockAbilities.AirSpout).keySet()) {
+			Player player = Bukkit.getPlayer((UUID) uuid);
 			if (!player.equals(sourceplayer)) {
 				Location loc1 = player.getLocation().getBlock().getLocation();
 				loc0 = loc0.getBlock().getLocation();

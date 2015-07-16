@@ -2,7 +2,6 @@ package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.HashMap;
 import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -11,8 +10,8 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
@@ -66,7 +65,7 @@ public class AirShield extends BaseAbility {
 	}
 	
 	public static boolean isWithinShield(Location loc){
-		for (UUID uuid : getInstance(StockAbilities.AirShield).keySet()) {
+		for (Object uuid : getInstance(StockAbilities.AirShield).keySet()) {
 			AirShield ashield = (AirShield) getInstance(StockAbilities.AirShield).get(uuid);
 			if (ashield.player.getLocation().getWorld() != loc.getWorld()) 
 				return false;
@@ -75,9 +74,11 @@ public class AirShield extends BaseAbility {
 		}
 		return false;
 	}
+	
 	public double getMaxradius() {
 		return maxradius;
 	}
+	
 	public Player getPlayer() {
 		return player;
 	}

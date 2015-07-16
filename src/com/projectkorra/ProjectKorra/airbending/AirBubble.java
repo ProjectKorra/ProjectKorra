@@ -1,6 +1,5 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -37,7 +36,7 @@ public class AirBubble extends BaseAbility {
 	}
 
 	public static boolean canFlowTo(Block block) {
-		for (UUID uuid : getInstance(StockAbilities.AirBubble).keySet()) {
+		for (Object uuid : getInstance(StockAbilities.AirBubble).keySet()) {
 			if (((AirBubble) getInstance(StockAbilities.AirBubble).get(uuid)).blockInBubble(block)) {
 				return false;
 			}

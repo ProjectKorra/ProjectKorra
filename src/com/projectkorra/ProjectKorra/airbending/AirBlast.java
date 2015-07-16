@@ -175,7 +175,7 @@ public class AirBlast extends BaseAbility {
 	}
 
 	private void affect(Entity entity) {
-		boolean isUser = entity.getEntityId() == player.getEntityId();
+		boolean isUser = entity.getUniqueId() == player.getUniqueId();
 
 		if (!isUser || otherorigin) {
 			Vector velocity = entity.getVelocity();
@@ -459,6 +459,11 @@ public class AirBlast extends BaseAbility {
 
 	public void setShowParticles(boolean show) {
 		this.showParticles = show;
+	}
+	
+	@Override
+	public InstanceType getInstanceType() {
+		return InstanceType.MULTIPLE;
 	}
 
 }

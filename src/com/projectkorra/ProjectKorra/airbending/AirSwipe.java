@@ -3,7 +3,6 @@ package com.projectkorra.ProjectKorra.airbending;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -20,8 +19,8 @@ import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
@@ -98,15 +97,15 @@ public class AirSwipe extends BaseAbility {
 
 	public static boolean removeSwipesAroundPoint(Location loc, double radius) {
 		boolean removed = false;
-		for (UUID uuid : getInstance(StockAbilities.AirSwipe).keySet()) {
-			AirSwipe aswipe = (AirSwipe) getInstance(StockAbilities.AirSwipe).get(uuid);
+		for (Object id : getInstance(StockAbilities.AirSwipe).keySet()) {
+			AirSwipe aswipe = (AirSwipe) getInstance(StockAbilities.AirSwipe).get(id);
 			
 			for (Vector vec : aswipe.elements.keySet()) {
 				Location vectorLoc = aswipe.elements.get(vec);
 				if (vectorLoc != null && vectorLoc.getWorld().equals(loc.getWorld())) {
 					if (vectorLoc.distance(loc) <= radius) {
 						//instances.remove(aswipe.uuid);
-						getInstance(StockAbilities.AirSwipe).remove(aswipe.player.getUniqueId()); //TODO: Check if this works
+						getInstance(StockAbilities.AirSwipe).remove(id); //TODO: Check if this works
 						removed = true;
 					}
 				}

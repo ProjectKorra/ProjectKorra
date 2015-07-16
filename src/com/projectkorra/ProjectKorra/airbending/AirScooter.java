@@ -65,8 +65,8 @@ public class AirScooter extends BaseAbility {
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (UUID uuid : getInstance(StockAbilities.AirScooter).keySet()) {
-			players.add(Bukkit.getPlayer(uuid));
+		for (Object uuid : getInstance(StockAbilities.AirScooter).keySet()) {
+			players.add(Bukkit.getPlayer((UUID) uuid));
 		}
 		return players;
 	}

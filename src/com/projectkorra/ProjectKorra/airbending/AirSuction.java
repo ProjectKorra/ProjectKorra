@@ -321,4 +321,8 @@ public class AirSuction extends BaseAbility {
 		this.speed = speed;
 	}
 
+	@Override
+	public InstanceType getInstanceType() {
+		return InstanceType.MULTIPLE;
+	}
 }
