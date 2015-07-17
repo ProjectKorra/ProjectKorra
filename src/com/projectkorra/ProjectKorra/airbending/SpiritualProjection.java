@@ -77,11 +77,17 @@ public class SpiritualProjection {
 			cancel();
 			return;
 		}
-		if(GeneralMethods.getBoundAbility(player) == null){
+		if (npc != null) {
+			if (player.getWorld() != npc.getWorld()) {
+				cancel();
+				return;
+			}
+		}
+		if (GeneralMethods.getBoundAbility(player) == null) {
 			cancel();
 			return;
 		}
-		if(!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("SpiritualProjection")){
+		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("SpiritualProjection")) {
 			cancel();
 			return;
 		}
