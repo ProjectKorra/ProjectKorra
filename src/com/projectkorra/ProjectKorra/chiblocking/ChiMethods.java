@@ -1,11 +1,11 @@
 package com.projectkorra.ProjectKorra.chiblocking;
 
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-
+import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 
 public class ChiMethods {
 	
@@ -39,11 +39,9 @@ public class ChiMethods {
 	 * @return true If the player is chiblocked.
 	 */
 	public static boolean isChiBlocked(String player) {
-		if (GeneralMethods.getBendingPlayer(player) != null) {
-			return GeneralMethods.getBendingPlayer(player).isChiBlocked();
-		}
-		return false;
-	}
+        return GeneralMethods.getBendingPlayer(player) != null
+                && GeneralMethods.getBendingPlayer(player).isChiBlocked();
+    }
 	
 	public static void stopBending() {
 		RapidPunch.instances.clear();

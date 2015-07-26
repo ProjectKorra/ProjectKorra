@@ -1,25 +1,25 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.BlockSource;
 import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.concurrent.ConcurrentHashMap;
+
 public class EarthColumn {
 
-	public static ConcurrentHashMap<Integer, EarthColumn> instances = new ConcurrentHashMap<Integer, EarthColumn>();
-	private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<Block, Block>();
-	private static ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
-	
-	public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
+    public static ConcurrentHashMap<Integer, EarthColumn> instances = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<>();
+
+    public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
 	private static int ID = Integer.MIN_VALUE;
 
 	private static double range = 20;
@@ -35,7 +35,7 @@ public class EarthColumn {
 	private int id;
 	private long time;
 	private int height = standardheight;
-	private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
+    private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<>();
 
 	public EarthColumn(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
@@ -128,11 +128,8 @@ public class EarthColumn {
 	}
 
 	private boolean blockInAffectedBlocks(Block block) {
-		if (affectedblocks.containsKey(block)) {
-			return true;
-		}
-		return false;
-	}
+        return affectedblocks.containsKey(block);
+    }
 
 	public static boolean blockInAllAffectedBlocks(Block block) {
 		for (int ID : instances.keySet()) {
@@ -143,12 +140,10 @@ public class EarthColumn {
 	}
 
 	public static void revertBlock(Block block) {
-		for (int ID : instances.keySet()) {
-			if (instances.get(ID).blockInAffectedBlocks(block)) {
-				instances.get(ID).affectedblocks.remove(block);
-			}
-		}
-	}
+        instances.keySet().stream()
+                .filter(ID -> instances.get(ID).blockInAffectedBlocks(block))
+                .forEach(ID -> instances.get(ID).affectedblocks.remove(block));
+    }
 
 	private boolean canInstantiate() {
 		for (Block block : affectedblocks.keySet()) {
@@ -188,19 +183,13 @@ public class EarthColumn {
 		EarthMethods.moveEarth(player, block, direction, distance);
 		loadAffectedBlocks();
 
-		if (location.distance(origin) >= distance) {
-			return false;
-		}
+        return location.distance(origin) < distance;
 
-		return true;
-	}
+    }
 
 	public static boolean blockIsBase(Block block) {
-		if (baseblocks.containsKey(block)) {
-			return true;
-		}
-		return false;
-	}
+        return baseblocks.containsKey(block);
+    }
 
 	public static void removeBlockBase(Block block) {
 		if (baseblocks.containsKey(block)) {
@@ -210,10 +199,8 @@ public class EarthColumn {
 	}
 
 	public static void removeAll() {
-		for (int id : instances.keySet()) {
-			instances.remove(id);
-		}
-	}
+        instances.keySet().forEach(instances::remove);
+    }
 
 	public static void resetBlock(Block block) {
 

@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,17 +14,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthPassive {
-	
-	public static ConcurrentHashMap<Block, Long> sandblocks = new ConcurrentHashMap<Block, Long>();
-	public static ConcurrentHashMap<Block, Material> sandidentities = new ConcurrentHashMap<Block, Material>();
-	
-	private static final long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Passive.Duration");
+
+    public static ConcurrentHashMap<Block, Long> sandblocks = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Block, Material> sandidentities = new ConcurrentHashMap<>();
+
+    private static final long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Passive.Duration");
 	private static int sandspeed = ProjectKorra.plugin.getConfig().getInt("Properties.Earth.Passive.SandRunPower");
 
 	public static boolean softenLanding(Player player) {
@@ -47,35 +47,31 @@ public class EarthPassive {
 					}
 				}
 			}
-			
-			for (Block affectedBlock: GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
-				if (EarthMethods.isEarthbendable(player, affectedBlock)) {
-					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
-						Material type = affectedBlock.getType();
-						if (type == Material.RED_SANDSTONE) {
-							byte data = (byte) 0x1;
-							affectedBlock.setType(Material.SAND);
-							affectedBlock.setData(data);
-						} else {
-							affectedBlock.setType(Material.SAND);
-						}
-						if (!sandblocks.containsKey(affectedBlock)) {
-							sandidentities.putIfAbsent(affectedBlock, type);
-							sandblocks.put(affectedBlock, System.currentTimeMillis());
-						}
-					}
-				}
-			}
-			return true;
+
+            GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2).stream()
+                    .filter(affectedBlock -> EarthMethods.isEarthbendable(player, affectedBlock))
+                    .filter(affectedBlock -> GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN)))
+                    .forEach(affectedBlock -> {
+                        Material type = affectedBlock.getType();
+                        if (type == Material.RED_SANDSTONE) {
+                            byte data = (byte) 0x1;
+                            affectedBlock.setType(Material.SAND);
+                            affectedBlock.setData(data);
+                        } else {
+                            affectedBlock.setType(Material.SAND);
+                        }
+                        if (!sandblocks.containsKey(affectedBlock)) {
+                            sandidentities.putIfAbsent(affectedBlock, type);
+                            sandblocks.put(affectedBlock, System.currentTimeMillis());
+                        }
+                    });
+            return true;
 		}
-		
-		if (EarthMethods.isEarthbendable(player, block) || EarthMethods.isTransparentToEarthbending(player, block)) {
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean isPassiveSand(Block block) {
+
+        return EarthMethods.isEarthbendable(player, block) || EarthMethods.isTransparentToEarthbending(player, block);
+    }
+
+    public static boolean isPassiveSand(Block block) {
 		return (sandblocks.containsKey(block));
 	}
 	
@@ -93,18 +89,16 @@ public class EarthPassive {
 	}
 	
 	public static void sandSpeed() {
-		for(Player p : Bukkit.getOnlinePlayers()){
-			if(p != null && GeneralMethods.getBendingPlayer(p.getName()) != null){
-				if(EarthMethods.canSandbend(p) && GeneralMethods.getBendingPlayer(p.getName()).hasElement(Element.Earth) && !GeneralMethods.canBendPassive(p.getName(), Element.Air) && !GeneralMethods.canBendPassive(p.getName(), Element.Chi)){
-					if(p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SAND || 
-							p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SANDSTONE ||
-							p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.RED_SANDSTONE){
-				   	   		p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, sandspeed - 1));
-					}
-				}
-			}
-		}
-	}
+        Bukkit.getOnlinePlayers().stream()
+                .filter(p -> p != null && GeneralMethods.getBendingPlayer(p.getName()) != null)
+                .filter(p -> EarthMethods.canSandbend(p) && GeneralMethods.getBendingPlayer(p.getName()).hasElement(Element.Earth)
+                        && !GeneralMethods.canBendPassive(p.getName(), Element.Air)
+                        && !GeneralMethods.canBendPassive(p.getName(), Element.Chi))
+                .filter(p -> p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SAND ||
+                        p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SANDSTONE ||
+                        p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.RED_SANDSTONE)
+                .forEach(p -> p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, sandspeed - 1)));
+    }
 	
 	@SuppressWarnings("deprecation")
 	public static void handleMetalPassives() {
@@ -144,38 +138,28 @@ public class EarthPassive {
 	}
 	
 	public static void revertSands() {
-		for (Block block: sandblocks.keySet()) {
-			if (System.currentTimeMillis() >= sandblocks.get(block) + duration) {
-				revertSand(block);
-			}
-		}
-	}
+        sandblocks.keySet().stream()
+                .filter(block -> System.currentTimeMillis() >= sandblocks.get(block) + duration)
+                .forEach(com.projectkorra.ProjectKorra.earthbending.EarthPassive::revertSand);
+    }
 	
 	public static void revertAllSand() {
-		for (Block block: sandblocks.keySet()) {
-			revertSand(block);
-		}
-	}
+        sandblocks.keySet().forEach(EarthPassive::revertSand);
+    }
 	
 	public static void removeAll() {
 		revertAllSand();
 	}
 	
 	public static boolean canPhysicsChange(Block block) {
-		if (LavaWall.affectedblocks.containsKey(block))
-			return false;
-		if (LavaWall.wallblocks.containsKey(block))
-			return false;
-		if (LavaWave.isBlockWave(block))
-			return false;
-		if (TempBlock.isTempBlock(block))
-			return false;
-		if (TempBlock.isTouchingTempBlock(block))
-			return false;
-		return true;
-	}
-	
-	public static boolean canFlowFromTo(Block from, Block to) {
+        return !LavaWall.affectedblocks.containsKey(block)
+                && !LavaWall.wallblocks.containsKey(block)
+                && !LavaWave.isBlockWave(block)
+                && !TempBlock.isTempBlock(block)
+                && !TempBlock.isTouchingTempBlock(block);
+    }
+
+    public static boolean canFlowFromTo(Block from, Block to) {
 		// if (to.getType() == Material.TORCH)
 		// return true;
 		if (LavaWall.affectedblocks.containsKey(to)

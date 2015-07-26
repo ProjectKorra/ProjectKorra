@@ -1,19 +1,18 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Flight;
 
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Flight;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FlightAbility {
-	
-	public static ConcurrentHashMap<String, FlightAbility> instances = new ConcurrentHashMap<String, FlightAbility>();
-	private static ConcurrentHashMap<String, Integer> hits = new ConcurrentHashMap<String, Integer>();
-	private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<String, Boolean>();
-	private Player p;
+
+    public static ConcurrentHashMap<String, FlightAbility> instances = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, Integer> hits = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<>();
+    private Player p;
 	private Flight flight;
 	
 	public FlightAbility(Player player) {		
@@ -97,11 +96,8 @@ public class FlightAbility {
 	}
 	
 	public static void removeAll() {
-		Iterator<String> it = instances.keySet().iterator();
-		while (it.hasNext()) {
-		  instances.get(it.next()).remove();
-		}
-		instances.clear();
+        instances.keySet().forEach(s -> instances.get(s).remove());
+        instances.clear();
 		hits.clear();
 		hovering.clear();
 	}

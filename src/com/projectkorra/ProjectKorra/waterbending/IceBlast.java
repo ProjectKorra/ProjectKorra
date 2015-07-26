@@ -1,19 +1,5 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -25,10 +11,23 @@ import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class IceBlast {
-	
-	public static ConcurrentHashMap<Integer, IceBlast> instances = new ConcurrentHashMap<Integer, IceBlast>();
-	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.Range");
+
+    public static ConcurrentHashMap<Integer, IceBlast> instances = new ConcurrentHashMap<>();
+    private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.Range");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
 	private static int COOLDOWN = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
 	private static int ID = Integer.MIN_VALUE;
@@ -77,11 +76,8 @@ public class IceBlast {
 	}
 	
 	private void prepare(Block block) {
-		for (IceBlast ice : getInstances(player)) {
-			if (ice.prepared) {
-				ice.cancel();
-			}
-		}
+        getInstances(player).stream()
+                .filter(ice -> ice.prepared).forEach(IceBlast::cancel);
 
 		sourceblock = block;
 		location = sourceblock.getLocation();
@@ -99,8 +95,8 @@ public class IceBlast {
 	}
 	
 	private static ArrayList<IceBlast> getInstances(Player player) {
-		ArrayList<IceBlast> list = new ArrayList<IceBlast>();
-		for (int id : instances.keySet()) {
+        ArrayList<IceBlast> list = new ArrayList<>();
+        for (int id : instances.keySet()) {
 			IceBlast ice = instances.get(id);
 			if (ice.player.equals(player)) {
 				list.add(ice);
@@ -145,12 +141,10 @@ public class IceBlast {
 
 		if (bPlayer.isOnCooldown("IceBlast")) return;
 
-		for (IceBlast ice : getInstances(player)) {
-			if (ice.prepared) {
-				ice.throwIce();
-			}
-		}
-	}
+        getInstances(player).stream()
+                .filter(ice -> ice.prepared)
+                .forEach(IceBlast::throwIce);
+    }
 	
 	private void cancel() {
 		if (progressing) {
@@ -202,8 +196,8 @@ public class IceBlast {
 	private void throwIce() {
 		if (!prepared)
 			return;
-		LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-		if (target == null) {
+        LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range, new ArrayList<>());
+        if (target == null) {
 			destination = GeneralMethods.getTargetedLocation(player, range, EarthMethods.transparentToEarthbending);
 		} else {
 			destination = target.getEyeLocation();
@@ -252,8 +246,10 @@ public class IceBlast {
 			return;
 		}
 
-		if ((GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("IceBlast")) && prepared) {
-			cancel();
+        if ((GeneralMethods.getBoundAbility(player) == null
+                || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("IceBlast"))
+                && prepared) {
+            cancel();
 			return;
 		}
 
@@ -306,13 +302,14 @@ public class IceBlast {
 				return;
 			}
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, affectingradius)) {
-				if (entity.getEntityId() != player.getEntityId() && entity instanceof LivingEntity) {
-					affect((LivingEntity) entity);
-					progressing = false;
-					returnWater();
-				}
-			}
+            GeneralMethods.getEntitiesAroundPoint(location, affectingradius).stream()
+                    .filter(entity -> entity.getEntityId() != player.getEntityId()
+                            && entity instanceof LivingEntity)
+                    .forEach(entity -> {
+                        affect((LivingEntity) entity);
+                        progressing = false;
+                        returnWater();
+                    });
 
 			if (!progressing) {
 				cancel();

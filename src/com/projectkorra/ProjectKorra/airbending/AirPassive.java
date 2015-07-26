@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -8,13 +10,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirPassive {
-	
-	private static ConcurrentHashMap<Player, Float> food = new ConcurrentHashMap<Player, Float>();
+
+	private static ConcurrentHashMap<Player, Float> food = new ConcurrentHashMap<>();
 	private static float factor = (float) ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.Passive.Factor");
 	
 	private static int speedPower = ProjectKorra.plugin.getConfig().getInt("Abilities.Air.Passive.Speed");

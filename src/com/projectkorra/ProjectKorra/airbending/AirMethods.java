@@ -1,7 +1,11 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -11,12 +15,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AirMethods {
 	
@@ -33,8 +33,7 @@ public class AirMethods {
 	 * @return true If player has permission node "bending.air.flight"
 	 */
 	public static boolean canAirFlight(Player player){
-		if(player.hasPermission("bending.air.flight")) return true;
-		return false;
+		return player.hasPermission("bending.air.flight");
 	}
 	
 	/**
@@ -43,8 +42,7 @@ public class AirMethods {
 	 * @return true If player has permission node "bending.air.spiritualprojection"
 	 */
 	public static boolean canUseSpiritualProjection(Player player){
-		if(player.hasPermission("bending.air.spiritualprojection")) return true;
-		return false;
+		return player.hasPermission("bending.air.spiritualprojection");
 	}
 	
 	/**
@@ -208,7 +206,7 @@ public class AirMethods {
 	 * @return true If the location is inside an AirShield.
 	 */
 	public static boolean isWithinAirShield(Location loc) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("AirShield");
 		return GeneralMethods.blockAbilities(null, list, loc, 0);
 	}

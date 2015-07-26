@@ -1,64 +1,5 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityInteractEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.entity.SlimeSplitEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerBendingDeathEvent;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerGrappleEvent;
@@ -145,13 +86,72 @@ import com.projectkorra.ProjectKorra.waterbending.WaterWall;
 import com.projectkorra.ProjectKorra.waterbending.WaterWave;
 import com.projectkorra.ProjectKorra.waterbending.Wave;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.SlimeSplitEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class PKListener implements Listener {
 
 	ProjectKorra plugin;
 
-	public static HashMap<Integer, Integer> noFallEntities = new HashMap<Integer, Integer>(); // Grappling Hooks
-	public static HashMap<String, Integer> noGrapplePlayers = new HashMap<String, Integer>(); // Grappling Hooks
-	public static HashMap<Player, String> bendingDeathPlayer = new HashMap<Player, String>(); // Player killed by Bending
+	public static HashMap<Integer, Integer> noFallEntities = new HashMap<>(); // Grappling Hooks
+	public static HashMap<String, Integer> noGrapplePlayers = new HashMap<>(); // Grappling Hooks
+	public static HashMap<Player, String> bendingDeathPlayer = new HashMap<>(); // Player killed by Bending
 
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
@@ -286,7 +286,6 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onBlockIgnite(BlockIgniteEvent event) {
-		if (event.isCancelled()) return;
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -370,7 +369,6 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDamageBlock(EntityDamageByBlockEvent event) {
-
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -545,11 +543,10 @@ public class PKListener implements Listener {
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (event.isCancelled()) return;
 
-		for (Player p : MetalClips.instances.keySet()) {
-			if (MetalClips.instances.get(p).getTarget() != null)
-				if (MetalClips.instances.get(p).getTarget().getEntityId() == event.getWhoClicked().getEntityId())
-					event.setCancelled(true);
-		}
+		MetalClips.instances.keySet().stream()
+				.filter(p -> MetalClips.instances.get(p).getTarget() != null)
+				.filter(p -> MetalClips.instances.get(p).getTarget().getEntityId() == event.getWhoClicked().getEntityId())
+				.forEach(p -> event.setCancelled(true));
 
 		if (event.getSlotType() == SlotType.ARMOR
 				&& !EarthArmor.canRemoveArmor((Player) event.getWhoClicked()))
@@ -767,7 +764,7 @@ public class PKListener implements Listener {
 		}
 		if (EarthArmor.instances.containsKey(event.getEntity())) {
 			List<ItemStack> drops = event.getDrops();
-			List<ItemStack> newdrops = new ArrayList<ItemStack>();
+			List<ItemStack> newdrops = new ArrayList<>();
 			for (int i = 0; i < drops.size(); i++) {
 				if (!(drops.get(i).getType() == Material.LEATHER_BOOTS
 						|| drops.get(i).getType() == Material.LEATHER_CHESTPLATE
@@ -788,7 +785,7 @@ public class PKListener implements Listener {
 		}
 		if (PlantArmor.instances.containsKey(event.getEntity())) {
 			List<ItemStack> drops = event.getDrops();
-			List<ItemStack> newdrops = new ArrayList<ItemStack>();
+			List<ItemStack> newdrops = new ArrayList<>();
 			for (int i = 0; i < drops.size(); i++) {
 				if (!(drops.get(i).getType() == Material.LEATHER_BOOTS
 						|| drops.get(i).getType() == Material.LEATHER_CHESTPLATE
@@ -811,7 +808,7 @@ public class PKListener implements Listener {
 		if (MetalClips.instances.containsKey(event.getEntity())) {
 			MetalClips.instances.get(event.getEntity()).remove();
 			List<ItemStack> drops = event.getDrops();
-			List<ItemStack> newdrops = new ArrayList<ItemStack>();
+			List<ItemStack> newdrops = new ArrayList<>();
 			for (int i = 0; i < drops.size(); i++) {
 				if (!(drops.get(i).getType() == Material.IRON_HELMET
 						|| drops.get(i).getType() == Material.IRON_CHESTPLATE
@@ -1040,12 +1037,10 @@ public class PKListener implements Listener {
 			PlantArmor.removeEffect(event.getPlayer());
 		}
 
-		for (Player p : MetalClips.instances.keySet()) {
-			if (MetalClips.instances.get(p).getTarget() != null &&
-					MetalClips.instances.get(p).getTarget().getEntityId() == event.getPlayer().getEntityId()) {
-				MetalClips.instances.get(p).remove();
-			}
-		}
+		MetalClips.instances.keySet().stream()
+				.filter(p -> MetalClips.instances.get(p).getTarget() != null
+						&& MetalClips.instances.get(p).getTarget().getEntityId() == event.getPlayer().getEntityId())
+				.forEach(p -> MetalClips.instances.get(p).remove());
 
 		MultiAbilityManager.remove(player);
 		FlightAbility.remove(event.getPlayer());
@@ -1063,7 +1058,10 @@ public class PKListener implements Listener {
 			ComboManager.addComboAbility(player, ClickType.SHIFT_DOWN);
 
 		if(Suffocate.isBreathbent(player)) {
-			if(!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
+			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe")
+					|| !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast")
+					|| !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast")
+					|| !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
 			}
 		}
@@ -1247,7 +1245,10 @@ public class PKListener implements Listener {
 		ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
 
 		if (Suffocate.isBreathbent(player)) {
-			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
+			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe")
+					|| !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast")
+					|| !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast")
+					|| !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
 			}
 		}
@@ -1491,9 +1492,8 @@ public class PKListener implements Listener {
 		if (Smokescreen.snowballs.contains(id)) {
 			Location loc = event.getEntity().getLocation();
 			Smokescreen.playEffect(loc);
-			for (Entity en: GeneralMethods.getEntitiesAroundPoint(loc, Smokescreen.radius)) {
-				Smokescreen.applyBlindness(en);
-			}
+			GeneralMethods.getEntitiesAroundPoint(loc, Smokescreen.radius)
+					.forEach(Smokescreen::applyBlindness);
 			Smokescreen.snowballs.remove(id);
 		}
 		//		if (Combustion.fireballs.contains(id)) {

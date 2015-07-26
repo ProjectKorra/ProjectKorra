@@ -27,7 +27,7 @@ public enum SubElement {
 	
 	public static SubElement getType(int index) {
 		if (index == -1) return null;
-		return (SubElement)Arrays.asList(values()).get(index);
+		return Arrays.asList(values()).get(index);
 	}
 	
 }

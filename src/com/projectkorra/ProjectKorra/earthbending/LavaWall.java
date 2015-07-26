@@ -1,8 +1,14 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource.BlockSourceType;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -11,21 +17,15 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource.BlockSourceType;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.firebending.FireBlast;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LavaWall {
-	public static ConcurrentHashMap<Integer, LavaWall> instances = new ConcurrentHashMap<Integer, LavaWall>();
-	public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
-	public static ConcurrentHashMap<Block, Player> wallblocks = new ConcurrentHashMap<Block, Player>();
-	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
+    public static ConcurrentHashMap<Integer, LavaWall> instances = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Block, Player> wallblocks = new ConcurrentHashMap<>();
+    private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 	private static final long interval = 30;
 	@SuppressWarnings("unused")
@@ -163,14 +163,12 @@ public class LavaWall {
 				unfocusBlock();
 				return false;
 			}
-			if (!progressing
-					&& !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge")) {
-				unfocusBlock();
+            if (!progressing && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge")) {
+                unfocusBlock();
 				return false;
 			}
-			if (progressing
-					&& (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge"))) {
-				breakBlock();
+            if (progressing && (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge"))) {
+                breakBlock();
 				return false;
 			}
 			if (!progressing) {
@@ -178,8 +176,8 @@ public class LavaWall {
 				return false;
 			}
 			if (forming) {
-				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) range,	8, 9, 79);
+                ArrayList<Block> blocks = new ArrayList<>();
+                Location loc = GeneralMethods.getTargetedLocation(player, (int) range,	8, 9, 79);
 				location = loc.clone();
 				Vector dir = player.getEyeLocation().getDirection();
 				Vector vec;
@@ -203,12 +201,10 @@ public class LavaWall {
 						}
 					}
 				}
-				for (Block blocki : wallblocks.keySet()) {
-					if (wallblocks.get(blocki) == player && !blocks.contains(blocki)) {
-						finalRemoveLava(blocki);
-					}
-				}
-				return true;
+                wallblocks.keySet().stream()
+                        .filter(blocki -> wallblocks.get(blocki) == player && !blocks.contains(blocki))
+                        .forEach(LavaWall::finalRemoveLava);
+                return true;
 			}
 			if (sourceblock.getLocation().distance(firstdestination) < .5 && settingup) {
 				settingup = false;
@@ -251,12 +247,10 @@ public class LavaWall {
 	
 	private void breakBlock() {
 		finalRemoveLava(sourceblock);
-		for (Block block : wallblocks.keySet()) {
-			if (wallblocks.get(block) == player) {
-				finalRemoveLava(block);
-			}
-		}
-		instances.remove(player.getEntityId());
+        wallblocks.keySet().stream()
+                .filter(block -> wallblocks.get(block) == player)
+                .forEach(LavaWall::finalRemoveLava);
+        instances.remove(player.getEntityId());
 	}
 	
 	private void removeLava(Block block) {

@@ -1,9 +1,12 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Information;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -20,27 +23,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Information;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthMethods {
 	
 	static ProjectKorra plugin;
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
-	public static ConcurrentHashMap<Block, Information> movedearth = new ConcurrentHashMap<Block, Information>();
-	public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<Integer, Information>();
-	public static HashSet<Block> tempNoEarthbending = new HashSet<Block>();
-	public static Integer[] transparentToEarthbending = {0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106, 175};
+
+    public static ConcurrentHashMap<Block, Information> movedearth = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<>();
+    public static HashSet<Block> tempNoEarthbending = new HashSet<>();
+    public static Integer[] transparentToEarthbending = {0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106, 175};
 	private static final ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
-	public static ArrayList<Block> tempnophysics = new ArrayList<Block>();
-	
-	public EarthMethods(ProjectKorra plugin) {
+    public static ArrayList<Block> tempnophysics = new ArrayList<>();
+
+    public EarthMethods(ProjectKorra plugin) {
 		EarthMethods.plugin = plugin;
 	}
 	
@@ -72,9 +72,8 @@ public class EarthMethods {
 	 * @return true If player has permission node "bending.earth.sandbending"
 	 */
 	public static boolean canSandbend(Player player){
-		if(player.hasPermission("bending.earth.sandbending")) return true;
-		return false;
-	}
+        return player.hasPermission("bending.earth.sandbending");
+    }
 	
 	/**
 	 * Checks to see if a player can MetalBend.
@@ -82,9 +81,8 @@ public class EarthMethods {
 	 * @return true If player has permission node "bending.earth.metalbending"
 	 */
 	public static boolean canMetalbend(Player player) {
-		if (player.hasPermission("bending.earth.metalbending")) return true;
-		return false;
-	}
+        return player.hasPermission("bending.earth.metalbending");
+    }
 	
 	/**
 	 * Checks to see if a player can LavaBend.
@@ -103,8 +101,8 @@ public class EarthMethods {
 			if(!red){
 				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte)0), new Vector(((Math.random()-0.5)*xOffset), ((Math.random() - 0.5)*yOffset), ((Math.random() - 0.5)*zOffset)), speed, loc, 257.0D);
 				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SANDSTONE, (byte)0), new Vector(((Math.random()-0.5)*xOffset), ((Math.random() - 0.5)*yOffset), ((Math.random() - 0.5)*zOffset)), speed, loc, 257.0D);
-			}else if(red){
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte)1), new Vector(((Math.random()-0.5)*xOffset), ((Math.random() - 0.5)*yOffset), ((Math.random() - 0.5)*zOffset)), speed, loc, 257.0D);
+            } else {
+                ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte)1), new Vector(((Math.random()-0.5)*xOffset), ((Math.random() - 0.5)*yOffset), ((Math.random() - 0.5)*zOffset)), speed, loc, 257.0D);
 				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.RED_SANDSTONE, (byte)0), new Vector(((Math.random()-0.5)*xOffset), ((Math.random() - 0.5)*yOffset), ((Math.random() - 0.5)*zOffset)), speed, loc, 257.0D);
 			}
 		
@@ -197,8 +195,8 @@ public class EarthMethods {
 	}
 	
 	public static HashSet<Byte> getTransparentEarthbending() {
-		HashSet<Byte> set = new HashSet<Byte>();
-		for (int i : transparentToEarthbending) {
+        HashSet<Byte> set = new HashSet<>();
+        for (int i : transparentToEarthbending) {
 			set.add((byte) i);
 		}
 		return set;
@@ -302,15 +300,13 @@ public class EarthMethods {
 	}
 	
 	public static boolean isMetalBlock(Block block) {
-		if (block.getType() == Material.GOLD_BLOCK
-				|| block.getType() == Material.IRON_BLOCK
+        return block.getType() == Material.GOLD_BLOCK
+                || block.getType() == Material.IRON_BLOCK
 				|| block.getType() == Material.IRON_ORE
 				|| block.getType() == Material.GOLD_ORE
 				|| block.getType() == Material.QUARTZ_BLOCK
-				|| block.getType() == Material.QUARTZ_ORE)
-			return true;
-		return false;
-	}
+                || block.getType() == Material.QUARTZ_ORE;
+    }
 	
 	public static boolean isTransparentToEarthbending(Player player, Block block) {
 		return isTransparentToEarthbending(player, "RaiseEarth", block);
@@ -329,9 +325,8 @@ public class EarthMethods {
 	}
 	
 	public static boolean isLava(Block block) {
-		if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) return true;
-		return false;
-	}
+        return block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA;
+    }
 	
 	@SuppressWarnings("deprecation")
 	public static boolean isLavabendable(Block block, Player player) {
@@ -341,10 +336,8 @@ public class EarthMethods {
 			if(tblock == null || !LavaFlow.TEMP_LAVA_BLOCKS.contains(tblock))
 				return false;
 		}
-		if ((block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) && block.getData() == full) 
-			return true;
-		return false;
-	}
+        return (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) && block.getData() == full;
+    }
 	
 	public static void moveEarth(Player player, Block block, Vector direction,
 			int chainlength) {
@@ -369,8 +362,8 @@ public class EarthMethods {
 
 			Location location = block.getLocation();
 
-			ArrayList<Block> blocks = new ArrayList<Block>();
-			for (double j = -2; j <= chainlength; j++) {
+            ArrayList<Block> blocks = new ArrayList<>();
+            for (double j = -2; j <= chainlength; j++) {
 				Block checkblock = location.clone()
 						.add(negnorm.clone().multiply(j)).getBlock();
 				if (!tempnophysics.contains(checkblock)) {
@@ -447,21 +440,16 @@ public class EarthMethods {
 						EarthPassive.revertSand(affectedblock);
 					}
 					if (block == null) {
-						for (Block checkblock : blocks) {
-							tempnophysics.remove(checkblock);
-						}
-						return false;
+                        blocks.forEach(tempnophysics::remove);
+                        return false;
 					}
 					moveEarthBlock(affectedblock, block);
 					block = affectedblock;
 				}
 
-				int i = chainlength;
-				affectedblock = location
-						.clone()
-						.add(negnorm.getX() * i, negnorm.getY() * i,
-								negnorm.getZ() * i).getBlock();
-				if (!isEarthbendable(player, affectedblock)) {
+                affectedblock = location.clone()
+                        .add(negnorm.getX() * chainlength, negnorm.getY() * chainlength, negnorm.getZ() * chainlength).getBlock();
+                if (!isEarthbendable(player, affectedblock)) {
 					if (down) {
 						if (isTransparentToEarthbending(player, affectedblock)
 								&& !affectedblock.isLiquid()) {
@@ -471,15 +459,11 @@ public class EarthMethods {
 				}
 
 			} else {
-				for (Block checkblock : blocks) {
-					tempnophysics.remove(checkblock);
-				}
-				return false;
+                blocks.forEach(tempnophysics::remove);
+                return false;
 			}
-			for (Block checkblock : blocks) {
-				tempnophysics.remove(checkblock);
-			}
-			return true;
+            blocks.forEach(tempnophysics::remove);
+            return true;
 		}
 		return false;
 	}
@@ -539,9 +523,7 @@ public class EarthMethods {
 	}
 	
 	public static void removeAllEarthbendedBlocks() {
-		for (Block block : movedearth.keySet()) {
-			revertBlock(block);
-		}
+        movedearth.keySet().forEach(EarthMethods::revertBlock);
 
 		for (Integer i : tempair.keySet()) {
 			revertAirBlock(i, true);
@@ -583,9 +565,8 @@ public class EarthMethods {
 			} else {
 				info.setTime(info.getTime() + 10000);
 			}
-			return;
-		} else {
-			info.getState().update(true);
+        } else {
+            info.getState().update(true);
 			tempair.remove(i);
 		}
 	}

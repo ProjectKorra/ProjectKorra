@@ -1,9 +1,17 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Flight;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
+import com.projectkorra.ProjectKorra.firebending.Combustion;
+import com.projectkorra.ProjectKorra.firebending.FireBlast;
+import com.projectkorra.ProjectKorra.firebending.Illumination;
+import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,24 +23,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
-import com.projectkorra.ProjectKorra.firebending.Combustion;
-import com.projectkorra.ProjectKorra.firebending.FireBlast;
-import com.projectkorra.ProjectKorra.firebending.Illumination;
-import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirSwipe {
 
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	private final int MAX_AFFECTABLE_ENTITIES = 10;	
-	public static ConcurrentHashMap<Integer, AirSwipe> instances = new ConcurrentHashMap<Integer, AirSwipe>();
+	private final int MAX_AFFECTABLE_ENTITIES = 10;
+    public static ConcurrentHashMap<Integer, AirSwipe> instances = new ConcurrentHashMap<>();
 
 	private static int ID = Integer.MIN_VALUE;
 	private static int stepsize = 4;
@@ -64,8 +64,8 @@ public class AirSwipe {
 	private int arc = ARC;
 	private long maxchargetime = MAX_CHARGE_TIME;
 	private int id;
-	private ConcurrentHashMap<Vector, Location> elements = new ConcurrentHashMap<Vector, Location>();
-	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
+    private ConcurrentHashMap<Vector, Location> elements = new ConcurrentHashMap<>();
+    private ArrayList<Entity> affectedentities = new ArrayList<>();
 
 	public AirSwipe(Player player) {
 		this(player, false);
@@ -141,8 +141,9 @@ public class AirSwipe {
 				instances.remove(id);
 				return false;
 			}
-			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.canBend(player.getName(), "AirSwipe")) {
-				instances.remove(id);
+            if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe")
+                    || !GeneralMethods.canBend(player.getName(), "AirSwipe")) {
+                instances.remove(id);
 				return false;
 			}
 
@@ -176,8 +177,8 @@ public class AirSwipe {
 		affectedentities.clear();
 		for (Vector direction : elements.keySet()) {
 			Location location = elements.get(direction);
-			if (direction != null && location != null) {
-				location = location.clone().add(direction.clone().multiply(speedfactor));
+            if (location != null) {
+                location = location.clone().add(direction.clone().multiply(speedfactor));
 				elements.replace(direction, location);
 
 				if (location.distance(origin) > range || GeneralMethods.isRegionProtectedFromBuild(player, "AirSwipe", location)) {
@@ -255,8 +256,8 @@ public class AirSwipe {
 						return;
 					if (entity.getEntityId() != player.getEntityId()) {
 						if (entity instanceof Player) {
-							if (Commands.invincible.contains(((Player) entity).getName())) 
-								return;
+                            if (Commands.invincible.contains(entity.getName()))
+                                return;
 						}
 						if(surroundingEntities.size() < MAX_AFFECTABLE_ENTITIES){
 							if (AvatarState.isAvatarState(player)) {
@@ -287,12 +288,9 @@ public class AirSwipe {
 	@SuppressWarnings("deprecation")
 	private boolean isBlockBreakable(Block block) {
 		Integer id = block.getTypeId();
-		if (Arrays.asList(breakables).contains(id)
-				&& !Illumination.blocks.containsKey(block)) {
-			return true;
-		}
-		return false;
-	}
+        return Arrays.asList(breakables).contains(id)
+                && !Illumination.blocks.containsKey(block);
+    }
 
 	public static void charge(Player player) {
 		new AirSwipe(player, true);

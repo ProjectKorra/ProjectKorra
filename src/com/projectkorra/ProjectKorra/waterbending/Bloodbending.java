@@ -1,7 +1,13 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempPotionEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.firebending.FireMethods;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Creature;
@@ -13,20 +19,14 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempPotionEffect;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.firebending.FireMethods;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Bloodbending {
 
-	public static ConcurrentHashMap<Player, Bloodbending> instances = new ConcurrentHashMap<Player, Bloodbending>();
+    public static ConcurrentHashMap<Player, Bloodbending> instances = new ConcurrentHashMap<>();
 
-	ConcurrentHashMap<Entity, Location> targetentities = new ConcurrentHashMap<Entity, Location>();
+    ConcurrentHashMap<Entity, Location> targetentities = new ConcurrentHashMap<>();
 
 	private static final double FACTOR = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
 	private static final boolean onlyUsableAtNight = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
@@ -73,8 +73,8 @@ public class Bloodbending {
 						if (GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation())
 								|| (AvatarState.isAvatarState((Player) entity)
 										|| entity.getEntityId() != player.getEntityId()
-										|| GeneralMethods.canBend(((Player) entity).getName(), "Bloodbending")))
-							continue;
+                                || GeneralMethods.canBend(entity.getName(), "Bloodbending")))
+                            continue;
 					}
 					GeneralMethods.damageEntity(player, entity, 0);
 					AirMethods.breakBreathbendingHold(entity);
@@ -82,15 +82,15 @@ public class Bloodbending {
 				}
 			}
 		} else {
-			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-			if (target == null)
+            Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<>());
+            if (target == null)
 				return;
 			if (!(target instanceof LivingEntity)|| GeneralMethods.isRegionProtectedFromBuild(player,
 					"Bloodbending", target.getLocation()))
 				return;
 			if (target instanceof Player) {
-				if (GeneralMethods.canBend(((Player) target).getName(), "Bloodbending")
-						|| AvatarState.isAvatarState((Player) target))
+                if (GeneralMethods.canBend(target.getName(), "Bloodbending")
+                        || AvatarState.isAvatarState((Player) target))
 					if(!FireMethods.isDay(target.getWorld()) || WaterMethods.canBloodbendAtAnytime((Player) target))
 						return;
 			}
@@ -147,12 +147,10 @@ public class Bloodbending {
 		}
 
 		if (!canBeUsedOnUndead) {
-			for (Entity entity: targetentities.keySet()) {
-				if (isUndead(entity)) {
-					targetentities.remove(entity);
-				}
-			}
-		}
+            targetentities.keySet().stream()
+                    .filter(Bloodbending::isUndead)
+                    .forEach(targetentities::remove);
+        }
 		
 		if (onlyUsableDuringMoon && !WaterMethods.isFullMoon(player.getWorld())) {
 			remove(player);
@@ -178,8 +176,8 @@ public class Bloodbending {
 		}
 
 		if (AvatarState.isAvatarState(player)) {
-			ArrayList<Entity> entities = new ArrayList<Entity>();
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
+            ArrayList<Entity> entities = new ArrayList<>();
+            for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
 				if (GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation()))
 					continue;
 				if (entity instanceof Player) {
@@ -213,11 +211,10 @@ public class Bloodbending {
 					AirMethods.breakBreathbendingHold(entity);
 				}
 			}
-			for (Entity entity : targetentities.keySet()) {
-				if (!entities.contains(entity))
-					targetentities.remove(entity);
-			}
-		} else {
+            targetentities.keySet().stream()
+                    .filter(entity -> !entities.contains(entity))
+                    .forEach(targetentities::remove);
+        } else {
 			for (Entity entity : targetentities.keySet()) {
 				if (entity instanceof Player) {
 					if (!WaterMethods.canBeBloodbent((Player) entity)) {
@@ -279,21 +276,18 @@ public class Bloodbending {
 	}
 
 	public static boolean isUndead(Entity entity) {
-		if (entity == null) return false;
-		if (entity.getType() == EntityType.ZOMBIE
-				|| entity.getType() == EntityType.BLAZE
-				|| entity.getType() == EntityType.GIANT
-				|| entity.getType() == EntityType.IRON_GOLEM
-				|| entity.getType() == EntityType.MAGMA_CUBE
-				|| entity.getType() == EntityType.PIG_ZOMBIE
-				|| entity.getType() == EntityType.SKELETON
-				|| entity.getType() == EntityType.SLIME
-				|| entity.getType() == EntityType.SNOWMAN
-				|| entity.getType() == EntityType.ZOMBIE) {
-			return true;
-		}
-		return false;
-	}
+        return entity != null
+                && (entity.getType() == EntityType.ZOMBIE
+                || entity.getType() == EntityType.BLAZE
+                || entity.getType() == EntityType.GIANT
+                || entity.getType() == EntityType.IRON_GOLEM
+                || entity.getType() == EntityType.MAGMA_CUBE
+                || entity.getType() == EntityType.PIG_ZOMBIE
+                || entity.getType() == EntityType.SKELETON
+                || entity.getType() == EntityType.SLIME
+                || entity.getType() == EntityType.SNOWMAN
+                || entity.getType() == EntityType.ZOMBIE);
+    }
 
 	public static Location getBloodbendingLocation(Entity entity) {
 		for (Player player : instances.keySet()) {

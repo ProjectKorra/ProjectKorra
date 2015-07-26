@@ -1,24 +1,24 @@
 package com.projectkorra.ProjectKorra.chiblocking;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class RapidPunch {
 
-	public static ConcurrentHashMap<Player, RapidPunch> instances = new ConcurrentHashMap<Player, RapidPunch>();
-	public static List<Player> punching = new ArrayList<Player>();
-	
-	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
+    public static ConcurrentHashMap<Player, RapidPunch> instances = new ConcurrentHashMap<>();
+    public static List<Player> punching = new ArrayList<>();
+
+    private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
 	private int punches = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
 	private int distance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Distance");
 	private long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
@@ -35,7 +35,7 @@ public class RapidPunch {
 			return;
 		if (bPlayer.isOnCooldown("RapidPunch")) return;
 
-		Entity t = GeneralMethods.getTargetedEntity(p, distance, new ArrayList<Entity>());
+        Entity t = GeneralMethods.getTargetedEntity(p, distance, new ArrayList<>());
 
 		if (t == null)
 			return;
@@ -46,16 +46,16 @@ public class RapidPunch {
 	}
 	
 	public static void startPunchAll() {
-		for (Player player : instances.keySet()) {
-			if (player != null) instances.get(player).startPunch(player);
-		}
-	}
+        instances.keySet().stream()
+                .filter(player -> player != null)
+                .forEach(player -> instances.get(player).startPunch(player));
+    }
 
 	public void startPunch(Player p) {
 		if (numpunches >= punches)
 			instances.remove(p);
-		if (target instanceof LivingEntity && target != null) {
-			LivingEntity lt = (LivingEntity) target;
+        if (target instanceof LivingEntity) {
+            LivingEntity lt = (LivingEntity) target;
 			GeneralMethods.damageEntity(p, target, damage);
 			if (target instanceof Player) {
 				if (ChiPassive.willChiBlock(p, (Player) target)) {

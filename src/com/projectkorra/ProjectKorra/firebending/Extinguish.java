@@ -1,18 +1,18 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.HashSet;
-
-import org.bukkit.Effect;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+
+import org.bukkit.Effect;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
+import java.util.HashSet;
 
 public class Extinguish {
 
@@ -65,8 +65,9 @@ public class Extinguish {
 
 	public static boolean canBurn(Player player) {
 		if (GeneralMethods.getBoundAbility(player) != null) {
-			if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl") || FireJet.checkTemporaryImmunity(player)) {
-				player.setFireTicks(-1);
+            if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl")
+                    || FireJet.checkTemporaryImmunity(player)) {
+                player.setFireTicks(-1);
 				return false;
 			}
 		}

@@ -20,7 +20,7 @@ public class ComboModuleManager
 			path.mkdir();
 		}
 
-		loader = new AbilityLoader<ComboAbilityModule>(ProjectKorra.plugin, path, new Object[] {});
+		loader = new AbilityLoader<>(ProjectKorra.plugin, path, new Object[]{});
 		
 		combo = loader.load(ComboAbilityModule.class);
 		

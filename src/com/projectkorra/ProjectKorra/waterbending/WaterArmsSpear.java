@@ -1,9 +1,13 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingManager;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterArms.Arm;
+import com.projectkorra.rpg.WorldEvents;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,20 +20,16 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingManager;
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.waterbending.WaterArms.Arm;
-import com.projectkorra.rpg.WorldEvents;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterArmsSpear {
 
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
-	public static ConcurrentHashMap<Integer, WaterArmsSpear> instances = new ConcurrentHashMap<Integer, WaterArmsSpear>();
+    public static ConcurrentHashMap<Integer, WaterArmsSpear> instances = new ConcurrentHashMap<>();
 
 	private Player player;
 	private WaterArms waterArms;
@@ -190,9 +190,8 @@ public class WaterArmsSpear {
 				createSpear();
 			}
 			remove();
-			return;
-		}
-	}
+        }
+    }
 
 	private void progressSpear() {
 		for (int i = 0; i < 2; i++) {
@@ -218,9 +217,8 @@ public class WaterArmsSpear {
 					System.currentTimeMillis() + 600L);
 			Vector direction = GeneralMethods.getDirection(
 					initLocation,
-					GeneralMethods.getTargetedLocation(player, spearRange,
-							new Integer[] { 8, 9, 79, 174 })).normalize();
-			location = location.add(direction.clone().multiply(1));
+                    GeneralMethods.getTargetedLocation(player, spearRange, 8, 9, 79, 174)).normalize();
+            location = location.add(direction.clone().multiply(1));
 			spearLocations.add(location.clone());
 			if (!canPlaceBlock(location.getBlock())) {
 				return;
@@ -249,34 +247,27 @@ public class WaterArmsSpear {
 
 	private void createIceBall() {
 		layer++;
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, layer)) {
-			if (EarthMethods.isTransparentToEarthbending(player, block)
-					&& block.getType() != Material.ICE
-					&& !WaterArms.isUnbreakable(block)) {
-				WaterMethods.playIcebendingSound(block.getLocation());
-				new TempBlock(block, Material.ICE, (byte) 0);
-				WaterArms.revert.put(block, System.currentTimeMillis()
-						+ spearDuration + (long) (Math.random() * 500));
-			}
-		}
-	}
+        GeneralMethods.getBlocksAroundPoint(location, layer).stream()
+                .filter(block -> EarthMethods.isTransparentToEarthbending(player, block)
+                        && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block))
+                .forEach(block -> {
+                    WaterMethods.playIcebendingSound(block.getLocation());
+                    new TempBlock(block, Material.ICE, (byte) 0);
+                    WaterArms.revert.put(block, System.currentTimeMillis() + spearDuration
+                            + (long) (Math.random() * 500));
+                });
+    }
 
 	private boolean canPlaceBlock(Block block) {
-		if (!EarthMethods.isTransparentToEarthbending(player, block)
-				&& !((WaterMethods.isWater(block) || WaterMethods
-						.isIcebendable(block)) && (TempBlock.isTempBlock(block) && !WaterArms.revert
-						.containsKey(block)))) {
-			return false;
-		}
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms",
-				block.getLocation())) {
-			return false;
-		}
-		if (WaterArms.isUnbreakable(block) && !WaterMethods.isWater(block)) {
-			return false;
-		}
-		return true;
-	}
+        return !(!EarthMethods.isTransparentToEarthbending(player, block)
+                && !((WaterMethods.isWater(block)
+                || WaterMethods.isIcebendable(block))
+                && (TempBlock.isTempBlock(block)
+                && !WaterArms.revert.containsKey(block))))
+                && !GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", block.getLocation())
+                && !(WaterArms.isUnbreakable(block)
+                && !WaterMethods.isWater(block));
+    }
 
 	private void remove() {
 		if (WaterArms.instances.containsKey(player)) {

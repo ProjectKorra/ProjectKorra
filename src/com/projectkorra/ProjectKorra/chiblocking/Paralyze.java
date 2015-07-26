@@ -1,22 +1,22 @@
 package com.projectkorra.ProjectKorra.chiblocking;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.airbending.Suffocate;
 
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.airbending.Suffocate;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Paralyze {
 
-	private static ConcurrentHashMap<Entity, Long> entities = new ConcurrentHashMap<Entity, Long>();
-	private static ConcurrentHashMap<Entity, Long> cooldowns = new ConcurrentHashMap<Entity, Long>();
+	private static ConcurrentHashMap<Entity, Long> entities = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<Entity, Long> cooldowns = new ConcurrentHashMap<>();
 
 	private static final long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Paralyze.Cooldown");
 	private static final long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Paralyze.Duration");
@@ -35,7 +35,7 @@ public class Paralyze {
 				}
 			}
 			if (targetentity instanceof Player) {
-				if (Commands.invincible.contains(((Player) targetentity).getName())) return;
+				if (Commands.invincible.contains(targetentity.getName())) return;
 			}
 			paralyze(targetentity);
 			cooldowns.put(targetentity, System.currentTimeMillis());

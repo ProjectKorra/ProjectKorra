@@ -1,7 +1,15 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource.BlockSourceType;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.firebending.FireBlast;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -12,20 +20,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource.BlockSourceType;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.firebending.FireBlast;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LavaWave {
-	public static ConcurrentHashMap<Integer, LavaWave> instances = new ConcurrentHashMap<Integer, LavaWave>();
-	private static final double defaultmaxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaSurge.Radius");
+    public static ConcurrentHashMap<Integer, LavaWave> instances = new ConcurrentHashMap<>();
+    private static final double defaultmaxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaSurge.Radius");
 	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaSurge.HorizontalPush");
 	private static final double upfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaSurge.VerticalPush");
 	private static final long interval = 30;
@@ -37,9 +37,9 @@ public class LavaWave {
 	private Block sourceblock = null;
 	private Location targetdestination = null;
 	private Vector targetdirection = null;
-	private ConcurrentHashMap<Block, Block> wave = new ConcurrentHashMap<Block, Block>();
-	private ConcurrentHashMap<Block, Block> frozenblocks = new ConcurrentHashMap<Block, Block>();
-	private long time;
+    private ConcurrentHashMap<Block, Block> wave = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Block, Block> frozenblocks = new ConcurrentHashMap<>();
+    private long time;
 	private double radius = 1;
 	private double maxradius = defaultmaxradius;
 	private double factor = defaultfactor;
@@ -109,8 +109,8 @@ public class LavaWave {
 			}
 			if (AvatarState.isAvatarState(player))
 				factor = AvatarState.getValue(factor);
-			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-			if (target == null) {
+            Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<>());
+            if (target == null) {
 				targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) range).getLocation();
 			} else {
 				targetdestination = ((LivingEntity) target).getEyeLocation();
@@ -175,8 +175,8 @@ public class LavaWave {
 			Vector direction = targetdirection;
 			location = location.clone().add(direction);
 			Block blockl = location.getBlock();
-			ArrayList<Block> blocks = new ArrayList<Block>();
-			if (!GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", location) && (((blockl.getType() == Material.AIR
+            ArrayList<Block> blocks = new ArrayList<>();
+            if (!GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", location) && (((blockl.getType() == Material.AIR
 					|| blockl.getType() == Material.FIRE
 					|| WaterMethods.isPlant(blockl)
 					|| EarthMethods.isLava(blockl)
@@ -195,15 +195,13 @@ public class LavaWave {
 
 				}
 			}
-			for (Block block : wave.keySet()) {
-				if (!blocks.contains(block))
-					finalRemoveLava(block);
-			}
-			for (Block block : blocks) {
-				if (!wave.containsKey(block))
-					addLava(block);
-			}
-			if (wave.isEmpty()) {
+            wave.keySet().stream()
+                    .filter(block -> !blocks.contains(block))
+                    .forEach(this::finalRemoveLava);
+            blocks.stream()
+                    .filter(block -> !wave.containsKey(block))
+                    .forEach(this::addLava);
+            if (wave.isEmpty()) {
 				breakBlock();
 				progressing = false;
 				return false;
@@ -245,10 +243,8 @@ public class LavaWave {
 	}
 	
 	private void breakBlock() {
-		for (Block block : wave.keySet()) {
-			finalRemoveLava(block);
-		}
-		instances.remove(player.getEntityId());
+        wave.keySet().forEach(this::finalRemoveLava);
+        instances.remove(player.getEntityId());
 	}
 	
 	private void finalRemoveLava(Block block) {
@@ -283,12 +279,9 @@ public class LavaWave {
 	
 	public static boolean isBlockInWave(Block block) {
 		for (int ID: instances.keySet()) {
-			if (block.getLocation().distance(instances.get(ID).location) <= 2 * instances.get(ID).radius) {
-				return true;
-			}
-			return false;
-		}
-		return false;
+            return block.getLocation().distance(instances.get(ID).location) <= 2 * instances.get(ID).radius;
+        }
+        return false;
 	}
 	
 	public static boolean isBlockWave(Block block) {

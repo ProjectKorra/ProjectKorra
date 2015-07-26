@@ -1,21 +1,21 @@
 package com.projectkorra.ProjectKorra.chiblocking;
 
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.earthbending.MetalClips;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.concurrent.ConcurrentHashMap;
+
 public class AcrobatStance {
 
 	public static double CHI_BLOCK_BOOST = ProjectKorra.plugin.getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 	public static double PARA_DODGE_BOOST = ProjectKorra.plugin.getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
-	public static ConcurrentHashMap<Player, AcrobatStance> instances = new ConcurrentHashMap<Player, AcrobatStance>();
+	public static ConcurrentHashMap<Player, AcrobatStance> instances = new ConcurrentHashMap<>();
 	
 	private Player player;
 	public double chiBlockBost = CHI_BLOCK_BOOST;

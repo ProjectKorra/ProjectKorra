@@ -1,22 +1,21 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Combustion {
 
@@ -47,7 +46,7 @@ public class Combustion {
 	private long starttime;
 	@SuppressWarnings("unused")
 	private boolean charged = false;
-	public static ConcurrentHashMap<Player, Combustion> instances = new ConcurrentHashMap<Player, Combustion>();
+    public static ConcurrentHashMap<Player, Combustion> instances = new ConcurrentHashMap<>();
 
 	public Combustion(Player player) {
 
@@ -96,8 +95,9 @@ public class Combustion {
 			return;
 		}
 
-		if (GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Combustion")) {
-			instances.remove(player);
+        if (GeneralMethods.getBoundAbility(player) == null
+                || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Combustion")) {
+            instances.remove(player);
 			return;
 		}
 
@@ -125,13 +125,10 @@ public class Combustion {
 			}
 		}
 
-		for (Entity entity: location.getWorld().getEntities()) {
-			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distance(location) <= 1) {
-					createExplosion(location, power, breakblocks);
-				}
-			}
-		}
+        location.getWorld().getEntities().stream()
+                .filter(entity -> entity instanceof LivingEntity)
+                .filter(entity -> entity.getLocation().distance(location) <= 1)
+                .forEach(entity -> createExplosion(location, power, breakblocks));
 
 
 		advanceLocation();
@@ -139,15 +136,16 @@ public class Combustion {
 
 	private void createExplosion(Location block, float power, boolean breakblocks) {
 		block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), (float) defaultpower, true, breakblocks);
-		for (Entity entity: block.getWorld().getEntities()) {
-			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distance(block) < radius) { // They are close enough to the explosion.
-					GeneralMethods.damageEntity(player, entity, damage);
-					AirMethods.breakBreathbendingHold(entity);
-				}
-			}
-		}
-		instances.remove(player);
+        // They are close enough to the explosion.
+        block.getWorld().getEntities().stream()
+                .filter(entity -> entity instanceof LivingEntity)
+                .filter(entity -> entity.getLocation().distance(block) < radius)
+                .forEach(entity -> {
+                    // They are close enough to the explosion.
+                    GeneralMethods.damageEntity(player, entity, damage);
+                    AirMethods.breakBreathbendingHold(entity);
+                });
+        instances.remove(player);
 
 	}
 

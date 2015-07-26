@@ -1,8 +1,9 @@
 package com.projectkorra.ProjectKorra.chiblocking;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -12,16 +13,15 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class Smokescreen {
 
-	public static HashMap<String, Long> cooldowns = new HashMap<String, Long>();
-	public static List<Integer> snowballs = new ArrayList<Integer>();
-	public static HashMap<String, Long> blinded = new HashMap<String, Long>();
+	public static HashMap<String, Long> cooldowns = new HashMap<>();
+	public static List<Integer> snowballs = new ArrayList<>();
+	public static HashMap<String, Long> blinded = new HashMap<>();
 
 	private long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Smokescreen.Cooldown");
 	public static int duration = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.Smokescreen.Duration");
@@ -64,7 +64,7 @@ public class Smokescreen {
 	
 	public static void applyBlindness(Entity entity) {
 		if (entity instanceof Player) {
-			if (Commands.invincible.contains(((Player) entity).getName())) return;
+			if (Commands.invincible.contains(entity.getName())) return;
 			Player p = (Player) entity;
 			p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration * 20, 2));
 			blinded.put(p.getName(), System.currentTimeMillis());

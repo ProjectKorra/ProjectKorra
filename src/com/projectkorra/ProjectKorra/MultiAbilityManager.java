@@ -1,14 +1,5 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModule;
 import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleManager;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
@@ -17,15 +8,24 @@ import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.firebending.FireMethods;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class MultiAbilityManager {
 
-	public static ConcurrentHashMap<Player, HashMap<Integer, String>> playerAbilities = new ConcurrentHashMap<Player, HashMap<Integer, String>>();
-	public static ConcurrentHashMap<Player, Integer> playerSlot = new ConcurrentHashMap<Player, Integer>();
-	public static ConcurrentHashMap<Player, String> playerBoundAbility = new ConcurrentHashMap<Player, String>();
-	public static ArrayList<MultiAbility> multiAbilityList = new ArrayList<MultiAbility>();
+	public static ConcurrentHashMap<Player, HashMap<Integer, String>> playerAbilities = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, Integer> playerSlot = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, String> playerBoundAbility = new ConcurrentHashMap<>();
+	public static ArrayList<MultiAbility> multiAbilityList = new ArrayList<>();
 
 	public MultiAbilityManager() {
-		ArrayList<MultiAbilitySub> waterArms = new ArrayList<MultiAbilitySub>();
+		ArrayList<MultiAbilitySub> waterArms = new ArrayList<>();
 		waterArms.add(new MultiAbilitySub("Pull", Element.Water, null));
 		waterArms.add(new MultiAbilitySub("Punch", Element.Water, null));
 		waterArms.add(new MultiAbilitySub("Grapple", Element.Water, null));
@@ -51,14 +51,13 @@ public class MultiAbilityManager {
 		playerBoundAbility.put(player, multiAbility);
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player
 				.getName());
-		HashMap<Integer, String> currAbilities = new HashMap<Integer, String>();
+		HashMap<Integer, String> currAbilities = new HashMap<>();
 		for (int i : bPlayer.getAbilities().keySet()) {
 			currAbilities.put(i, bPlayer.getAbilities().get(i));
 		}
 		playerAbilities.put(player, currAbilities);
 
-		List<MultiAbilitySub> modes = getMultiAbility(multiAbility)
-				.getAbilities();
+		List<MultiAbilitySub> modes = getMultiAbility(multiAbility).getAbilities();
 
 		bPlayer.getAbilities().clear();
 		for (int i = 0; i < modes.size(); i++) {
@@ -66,10 +65,7 @@ public class MultiAbilityManager {
 					+ modes.get(i).getName())) {
 				bPlayer.getAbilities().put(
 						i + 1,
-						new StringBuilder()
-								.append(modes.get(i).getAbilityColor())
-								.append(ChatColor.STRIKETHROUGH)
-								.append(modes.get(i).getName()).toString());
+						String.valueOf(modes.get(i).getAbilityColor()) + ChatColor.STRIKETHROUGH + modes.get(i).getName());
 			} else {
 				bPlayer.getAbilities()
 						.put(i + 1,
@@ -180,26 +176,17 @@ public class MultiAbilityManager {
 	 */
 	public static void scrollHotBarSlots() {
 		if (!playerAbilities.isEmpty()) {
-			for (Player player : playerAbilities.keySet()) {
-				if (playerBoundAbility.containsKey(player)) {
-					if (GeneralMethods.getBoundAbility(player) == null) {
-						if (multiAbilityList
-								.contains(getMultiAbility(playerBoundAbility
-										.get(player)))) {
-							if (player.getInventory().getHeldItemSlot() > getMultiAbility(
-									playerBoundAbility.get(player))
-									.getAbilities().size()) {
-								player.getInventory().setHeldItemSlot(
-										getMultiAbility(
-												playerBoundAbility.get(player))
-												.getAbilities().size() - 1);
-							} else {
-								player.getInventory().setHeldItemSlot(0);
-							}
+			playerAbilities.keySet().stream()
+					.filter(player -> playerBoundAbility.containsKey(player))
+					.filter(player -> GeneralMethods.getBoundAbility(player) == null)
+					.filter(player -> multiAbilityList.contains(getMultiAbility(playerBoundAbility.get(player))))
+					.forEach(player -> {
+						if (player.getInventory().getHeldItemSlot() > getMultiAbility(playerBoundAbility.get(player)).getAbilities().size()) {
+							player.getInventory().setHeldItemSlot(getMultiAbility(playerBoundAbility.get(player)).getAbilities().size() - 1);
+						} else {
+							player.getInventory().setHeldItemSlot(0);
 						}
-					}
-				}
-			}
+					});
 		}
 	}
 

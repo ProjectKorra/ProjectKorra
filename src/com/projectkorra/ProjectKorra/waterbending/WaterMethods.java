@@ -1,6 +1,15 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.Arrays;
+import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingManager;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
+import com.projectkorra.rpg.RPGMethods;
+import com.projectkorra.rpg.WorldEvents;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -16,16 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingManager;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
-import com.projectkorra.rpg.RPGMethods;
-import com.projectkorra.rpg.WorldEvents;
+import java.util.Arrays;
 
 public class WaterMethods {
 	
@@ -50,10 +50,9 @@ public class WaterMethods {
 		if (AvatarState.isAvatarState(player))
 			if (ChiMethods.isChiBlocked(player.getName()))
 				return true;
-		if (GeneralMethods.canBend(player.getName(), "Bloodbending") && !GeneralMethods.getBendingPlayer(player.getName()).isToggled())
-			return false;
-		return true;
-	}
+        return !(GeneralMethods.canBend(player.getName(), "Bloodbending")
+                && !GeneralMethods.getBendingPlayer(player.getName()).isToggled());
+    }
 	
 	/**
 	 * Checks to see if a player can BloodBend.
@@ -61,26 +60,22 @@ public class WaterMethods {
 	 * @return true If player has permission node "bending.earth.bloodbending"
 	 */
 	public static boolean canBloodbend(Player player) {
-		if (player.hasPermission("bending.water.bloodbending")) return true;
-		return false;
-	}
+        return player.hasPermission("bending.water.bloodbending");
+    }
 
 	public static boolean canBloodbendAtAnytime(Player player){
-		if(canBloodbend(player) && player.hasPermission("bending.water.bloodbending.anytime")) return true;
-		return false;
-	}
-	
-	public static boolean canIcebend(Player player) {
-		if(player.hasPermission("bending.water.icebending")) return true;
-		return false;
-	}
-	
-	public static boolean canWaterHeal(Player player){
-		if(player.hasPermission("bending.water.healing")) return true;
-		return false;
-	}
-	
-	/**
+        return canBloodbend(player) && player.hasPermission("bending.water.bloodbending.anytime");
+    }
+
+    public static boolean canIcebend(Player player) {
+        return player.hasPermission("bending.water.icebending");
+    }
+
+    public static boolean canWaterHeal(Player player){
+        return player.hasPermission("bending.water.healing");
+    }
+
+    /**
 	 * Checks to see if a player can PlantBend.
 	 * @param player The player to check
 	 * @return true If player has permission node "bending.ability.plantbending"
@@ -218,18 +213,12 @@ public class WaterMethods {
 	public static boolean isFullMoon(World world) {
 		long days = world.getFullTime() / 24000;
 		long phase = days%8;
-		if (phase == 0) {
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean isMeltable(Block block) {
-		if (block.getType() == Material.ICE || block.getType() == Material.SNOW) {
-			return true;
-		}
-		return false;
-	}
+        return phase == 0;
+    }
+
+    public static boolean isMeltable(Block block) {
+        return block.getType() == Material.ICE || block.getType() == Material.SNOW;
+    }
 
 	public static boolean isNight(World world) {
 		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
@@ -237,27 +226,17 @@ public class WaterMethods {
 		}
 
 		long time = world.getTime();
-		if (time >= 12950 && time <= 23050) {
-			return true;
-		}
-		return false;
-	}
-	
-	@SuppressWarnings("deprecation")
+        return time >= 12950 && time <= 23050;
+    }
+
+    @SuppressWarnings("deprecation")
 	public static boolean isPlant(Block block) {
-		if (block == null) {
-			return false;
-		}
-		if (Arrays.asList(plantIds).contains(block.getTypeId())) {
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean isWater(Block block) {
-		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) return true;
-		return false;
-	}
+        return block != null && Arrays.asList(plantIds).contains(block.getTypeId());
+    }
+
+    public static boolean isWater(Block block) {
+        return block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER;
+    }
 
 	public static boolean isWaterAbility(String ability) {
 		return AbilityModuleManager.waterbendingabilities.contains(ability);
@@ -266,29 +245,26 @@ public class WaterMethods {
 	
 	@SuppressWarnings("deprecation")
 	public static boolean isWaterbendable(Block block, Player player) {
-		byte full = 0x0;
-		if (TempBlock.isTempBlock(block)) return false;
-		if ((block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) && block.getData() == full) return true;
-		if (block.getType() == Material.ICE || block.getType() == Material.SNOW) return true;
-		if (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce")) return true;
-		if (canPlantbend(player) && isPlant(block)) return true;
-		return false;
-	}
+        byte full = 0x0;
+        return !TempBlock.isTempBlock(block)
+                && ((block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER)
+                && block.getData() == full || block.getType() == Material.ICE || block.getType() == Material.SNOW || block.getType() == Material.PACKED_ICE
+                && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce") || canPlantbend(player)
+                && isPlant(block));
+    }
 
 	public static boolean isIcebendable(Block block) {
-		if (block.getType() == Material.ICE) return true;
-		if (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce")) return true;
-		return false;
-	}
-	
-	public static boolean isPlantbendable(Block block, boolean leavesOnly) {
-		if (block.getType() == Material.LEAVES) return true;
-		if (block.getType() == Material.LEAVES_2) return true;
-		if (isPlant(block) && !leavesOnly) return true;
-		return false;
-	}
-	
-	public static void playFocusWaterEffect(Block block) {
+        return block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE
+                && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce");
+    }
+
+    public static boolean isPlantbendable(Block block, boolean leavesOnly) {
+        return block.getType() == Material.LEAVES
+                || block.getType() == Material.LEAVES_2
+                || isPlant(block) && !leavesOnly;
+    }
+
+    public static void playFocusWaterEffect(Block block) {
 		block.getWorld().playEffect(block.getLocation(), Effect.SMOKE, 4, 20);
 	}
 	
@@ -336,41 +312,38 @@ public class WaterMethods {
 	}
 	
 	public static boolean isNegativeEffect(PotionEffectType effect) {
-		if(effect.equals(PotionEffectType.POISON)) return true;
-		if(effect.equals(PotionEffectType.BLINDNESS)) return true;
-		if(effect.equals(PotionEffectType.CONFUSION)) return true;
-		if(effect.equals(PotionEffectType.HARM)) return true;
-		if(effect.equals(PotionEffectType.HUNGER)) return true;
-		if(effect.equals(PotionEffectType.SLOW)) return true;
-		if(effect.equals(PotionEffectType.SLOW_DIGGING)) return true;
-		if(effect.equals(PotionEffectType.WEAKNESS)) return true;
-		if(effect.equals(PotionEffectType.WITHER)) return true;
-		return false;
-	}
+        return effect.equals(PotionEffectType.POISON)
+                || effect.equals(PotionEffectType.BLINDNESS)
+                || effect.equals(PotionEffectType.CONFUSION)
+                || effect.equals(PotionEffectType.HARM)
+                || effect.equals(PotionEffectType.HUNGER)
+                || effect.equals(PotionEffectType.SLOW)
+                || effect.equals(PotionEffectType.SLOW_DIGGING)
+                || effect.equals(PotionEffectType.WEAKNESS)
+                || effect.equals(PotionEffectType.WITHER);
+    }
 
 	public static boolean isPositiveEffect(PotionEffectType effect) {
-		if(effect.equals(PotionEffectType.ABSORPTION)) return true;
-		if(effect.equals(PotionEffectType.DAMAGE_RESISTANCE)) return true;
-		if(effect.equals(PotionEffectType.FAST_DIGGING)) return true;
-		if(effect.equals(PotionEffectType.FIRE_RESISTANCE)) return true;
-		if(effect.equals(PotionEffectType.HEAL)) return true;
-		if(effect.equals(PotionEffectType.HEALTH_BOOST)) return true;
-		if(effect.equals(PotionEffectType.INCREASE_DAMAGE)) return true;
-		if(effect.equals(PotionEffectType.JUMP)) return true;
-		if(effect.equals(PotionEffectType.NIGHT_VISION)) return true;
-		if(effect.equals(PotionEffectType.REGENERATION)) return true;
-		if(effect.equals(PotionEffectType.SATURATION)) return true;
-		if(effect.equals(PotionEffectType.SPEED)) return true;
-		if(effect.equals(PotionEffectType.WATER_BREATHING)) return true;
-		return false;
-	}
+        return effect.equals(PotionEffectType.ABSORPTION)
+                || effect.equals(PotionEffectType.DAMAGE_RESISTANCE)
+                || effect.equals(PotionEffectType.FAST_DIGGING)
+                || effect.equals(PotionEffectType.FIRE_RESISTANCE)
+                || effect.equals(PotionEffectType.HEAL)
+                || effect.equals(PotionEffectType.HEALTH_BOOST)
+                || effect.equals(PotionEffectType.INCREASE_DAMAGE)
+                || effect.equals(PotionEffectType.JUMP)
+                || effect.equals(PotionEffectType.NIGHT_VISION)
+                || effect.equals(PotionEffectType.REGENERATION)
+                || effect.equals(PotionEffectType.SATURATION)
+                || effect.equals(PotionEffectType.SPEED)
+                || effect.equals(PotionEffectType.WATER_BREATHING);
+    }
 
 	public static boolean isNeutralEffect(PotionEffectType effect) {
-		if(effect.equals(PotionEffectType.INVISIBILITY)) return true;
-		return false;
-	}
-	
-	public static void playWaterbendingSound(Location loc) {
+        return effect.equals(PotionEffectType.INVISIBILITY);
+    }
+
+    public static void playWaterbendingSound(Location loc) {
 		if (plugin.getConfig().getBoolean("Properties.Water.PlaySound")) {
 			loc.getWorld().playSound(loc, Sound.WATER, 1, 10);
 		}

@@ -1,6 +1,13 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.TempPotionEffect;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterArms.Arm;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,20 +21,13 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.TempPotionEffect;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.waterbending.WaterArms.Arm;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterArmsFreeze {
 
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
-	public static ConcurrentHashMap<Integer, WaterArmsFreeze> instances = new ConcurrentHashMap<Integer, WaterArmsFreeze>();
+    public static ConcurrentHashMap<Integer, WaterArmsFreeze> instances = new ConcurrentHashMap<>();
 
 	private Player player;
 	private WaterArms waterArms;
@@ -91,9 +91,8 @@ public class WaterArmsFreeze {
 					dir.normalize().multiply(1));
 			direction = GeneralMethods.getDirection(
 					location,
-					GeneralMethods.getTargetedLocation(player, iceRange,
-							new Integer[] { 8, 9, 79, 174 })).normalize();
-		} else {
+                    GeneralMethods.getTargetedLocation(player, iceRange, 8, 9, 79, 174)).normalize();
+        } else {
 			return;
 		}
 		id = ID;
@@ -131,17 +130,12 @@ public class WaterArmsFreeze {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!EarthMethods.isTransparentToEarthbending(player, block)
-				&& !((WaterMethods.isWater(block) || WaterMethods
-						.isIcebendable(block)) && TempBlock.isTempBlock(block))) {
-			return false;
-		}
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms",
-				block.getLocation())) {
-			return false;
-		}
-		return true;
-	}
+        return !(!EarthMethods.isTransparentToEarthbending(player, block)
+                && !((WaterMethods.isWater(block)
+                || WaterMethods.isIcebendable(block))
+                && TempBlock.isTempBlock(block)))
+                && !GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", block.getLocation());
+    }
 
 	private void progressIce() {
 		ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(),

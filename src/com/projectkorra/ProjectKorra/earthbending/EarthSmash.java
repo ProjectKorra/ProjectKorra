@@ -1,8 +1,14 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -13,23 +19,17 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class EarthSmash {
-	public static enum State {
-		START, LIFTING, LIFTED, GRABBED, SHOT, FLYING, REMOVED
+    public enum State {
+        START, LIFTING, LIFTED, GRABBED, SHOT, FLYING, REMOVED
 	}
-	
-	public static ArrayList<EarthSmash> instances = new ArrayList<EarthSmash>();
-	public static boolean ALLOW_GRAB = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowGrab");
+
+    public static ArrayList<EarthSmash> instances = new ArrayList<>();
+    public static boolean ALLOW_GRAB = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowGrab");
 	public static boolean ALLOW_SHOOTING = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowShooting");
 	public static boolean ALLOW_FLIGHT = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowFlight");
 	public static double GRAB_RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.GrabRange");
@@ -61,11 +61,11 @@ public class EarthSmash {
 	private long time, delay, cooldown, flightRemove, flightStart;
 	private double grabbedRange;
 	private double grabRange, chargeTime, damage, knockback, knockup, flySpeed, shootRange;
-	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
-	private ArrayList<BlockRepresenter> currentBlocks = new ArrayList<BlockRepresenter>();
-	private ArrayList<TempBlock> affectedBlocks = new ArrayList<TempBlock>();
-	
-	public EarthSmash(Player player, ClickType type) {
+    private ArrayList<Entity> affectedEntities = new ArrayList<>();
+    private ArrayList<BlockRepresenter> currentBlocks = new ArrayList<>();
+    private ArrayList<TempBlock> affectedBlocks = new ArrayList<>();
+
+    public EarthSmash(Player player, ClickType type) {
 		if(!GeneralMethods.hasPermission(player, "EarthSmash"))
 			return;
 		
@@ -118,15 +118,15 @@ public class EarthSmash {
 			}
 		}
 		else if(type == ClickType.LEFT_CLICK && player.isSneaking()) {
-			for(EarthSmash smash : instances) {
-				if(smash.state == State.GRABBED && smash.player == player) {
-					smash.state = State.SHOT;
-					smash.destination = player.getEyeLocation().clone().add
-							(player.getEyeLocation().getDirection().normalize().multiply(smash.shootRange));
-					smash.loc.getWorld().playEffect(smash.loc, Effect.GHAST_SHOOT, 0, 10);
-				}
-			}
-			return;
+            instances.stream()
+                    .filter(smash -> smash.state == State.GRABBED && smash.player == player)
+                    .forEach(smash -> {
+                        smash.state = State.SHOT;
+                        smash.destination = player.getEyeLocation().clone()
+                                .add(player.getEyeLocation().getDirection().normalize().multiply(smash.shootRange));
+                        smash.loc.getWorld().playEffect(smash.loc, Effect.GHAST_SHOOT, 0, 10);
+                    });
+            return;
 		}
 		else if(type == ClickType.RIGHT_CLICK && player.isSneaking()) {
 			EarthSmash grabbedSmash = aimingAtSmashCheck(player, State.GRABBED);
@@ -184,9 +184,8 @@ public class EarthSmash {
 				}
 				else {
 					remove();
-					return;
-				}
-			}
+                }
+            }
 			else if(System.currentTimeMillis() - time > chargeTime) {
 				Location tempLoc = player.getEyeLocation().add(player.getEyeLocation()
 						.getDirection().normalize().multiply(1.2));
@@ -216,13 +215,10 @@ public class EarthSmash {
 				WaterMethods.removeWaterSpouts(loc, 2, player);
 				AirMethods.removeAirSpouts(loc, 2, player);
 				draw();
-				return;
-			}
-			else {
+            } else {
 				state = State.LIFTED;
-				return;
-			}
-		}
+            }
+        }
 		else if(state == State.SHOT) {
 			if(System.currentTimeMillis() - delay >= SHOOTING_ANIMATION_COOLDOWN) {
 				delay = System.currentTimeMillis();
@@ -253,9 +249,7 @@ public class EarthSmash {
 				draw();
 				smashToSmashCollisionDetection();
 			}
-			return;
-		}
-		else if(state == State.FLYING) {
+        } else if(state == State.FLYING) {
 			if(!player.isSneaking()){
 				remove();
 				return;
@@ -291,9 +285,8 @@ public class EarthSmash {
 			}
 			if(System.currentTimeMillis() - flightStart > flightRemove){
 				remove();
-				return;
-			}
-		}
+            }
+        }
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -445,8 +438,8 @@ public class EarthSmash {
 		 * Gets the blocks surrounding the EarthSmash's loc.
 		 * This method ignores the blocks that should be Air, and only returns the ones that are dirt.
 		 */
-		List<Block> blocks = new ArrayList<Block>();
-		for(int x = -1; x <= 1; x++)
+        List<Block> blocks = new ArrayList<>();
+        for(int x = -1; x <= 1; x++)
 			for(int y = -1; y <= 1; y++)
 				for(int z = -1; z <= 1; z++)
 					if((Math.abs(x) + Math.abs(y) + Math.abs(z)) % 2 == 0) //Give it the cool shape
@@ -460,8 +453,8 @@ public class EarthSmash {
 		 * Gets the blocks surrounding the EarthSmash's loc.
 		 * This method returns all the blocks surrounding the loc, including dirt and air.
 		 */
-		List<Block> blocks = new ArrayList<Block>();
-		for(int x = -1; x <= 1; x++)
+        List<Block> blocks = new ArrayList<>();
+        for(int x = -1; x <= 1; x++)
 			for(int y = -1; y <= 1; y++)
 				for(int z = -1; z <= 1; z++)
 					if(loc != null)
@@ -516,17 +509,17 @@ public class EarthSmash {
 		 * the method only applies to earthsmashes that have already been shot.
 		 */
 		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(loc, FLIGHT_DETECTION_RADIUS);
-		for(Entity entity : entities)
-			if(entity instanceof LivingEntity 
-					&& entity != player
-					&& !affectedEntities.contains(entity)) {
-				affectedEntities.add(entity);
-				double damage = currentBlocks.size() / 13 * this.damage;
-				GeneralMethods.damageEntity(player, entity, damage);
-				Vector travelVec = GeneralMethods.getDirection(loc, entity.getLocation());
-				entity.setVelocity(travelVec.setY(knockup).normalize().multiply(knockback));
-			}
-	}	
+        entities.stream()
+                .filter(entity -> entity instanceof LivingEntity && entity != player
+                        && !affectedEntities.contains(entity))
+                .forEach(entity -> {
+                    affectedEntities.add(entity);
+                    double damage = currentBlocks.size() / 13 * this.damage;
+                    GeneralMethods.damageEntity(player, entity, damage);
+                    Vector travelVec = GeneralMethods.getDirection(loc, entity.getLocation());
+                    entity.setVelocity(travelVec.setY(knockup).normalize().multiply(knockback));
+                });
+    }
 	public void smashToSmashCollisionDetection() {
 		/**
 		 * EarthSmash to EarthSmash collision can only happen when one of the Smashes have
@@ -575,9 +568,8 @@ public class EarthSmash {
 	}
 	
 	public static void progressAll() {
-		for(int i = 0; i < instances.size(); i++)
-			instances.get(i).progress();
-	}
+        instances.forEach(EarthSmash::progress);
+    }
 	
 	public static void removeAll() {
 		for(int i = 0; i < instances.size(); i++) {

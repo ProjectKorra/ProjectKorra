@@ -1,8 +1,8 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,9 +12,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class SpikeField {
 
@@ -34,7 +34,7 @@ public class SpikeField {
 		int locX = p.getLocation().getBlockX();
 		int locY = p.getLocation().getBlockY();
 		int locZ = p.getLocation().getBlockZ();
-		List<Block> iceblocks = new ArrayList<Block>();
+		List<Block> iceblocks = new ArrayList<>();
 		for (int x = -(radius - 1); x <= (radius - 1); x++) {
 			for (int z = -(radius - 1); z <= (radius - 1); z++) {
 				for (int y = -1; y <= 1; y++) {
@@ -70,8 +70,6 @@ public class SpikeField {
 							break;
 						}
 					}
-				} else {
-					continue;
 				}
 			}
 

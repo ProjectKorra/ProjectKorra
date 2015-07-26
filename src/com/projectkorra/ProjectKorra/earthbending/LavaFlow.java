@@ -1,6 +1,15 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -8,32 +17,25 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.waterbending.Plantbending;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class LavaFlow {	
-	public static enum AbilityType {
-		SHIFT, CLICK
+public class LavaFlow {
+    public enum AbilityType {
+        SHIFT, CLICK
 	}
 	
 	/** The material that lava will be converted into **/
 	public static final Material REVERT_MATERIAL = Material.STONE;
 	/** A list of every instance of this ability **/
-	public static final ArrayList<LavaFlow> instances = new ArrayList<LavaFlow>();
-	/** The temporary lava blocks that have been created by every LavaFlow **/
-	public static final ArrayList<TempBlock> TEMP_LAVA_BLOCKS = new ArrayList<TempBlock>();
-	/** The temporary land blocks that have been created by every LavaFlow **/
-	public static final ArrayList<TempBlock> TEMP_LAND_BLOCKS = new ArrayList<TempBlock>();
-	
-	public static final long SHIFT_COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ShiftCooldown");
+    public static final ArrayList<LavaFlow> instances = new ArrayList<>();
+    /** The temporary lava blocks that have been created by every LavaFlow **/
+    public static final ArrayList<TempBlock> TEMP_LAVA_BLOCKS = new ArrayList<>();
+    /** The temporary land blocks that have been created by every LavaFlow **/
+    public static final ArrayList<TempBlock> TEMP_LAND_BLOCKS = new ArrayList<>();
+
+    public static final long SHIFT_COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ShiftCooldown");
 	public static final long CLICK_LAVA_DELAY = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ClickLavaStartDelay");
 	public static final long CLICK_LAND_DELAY = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ClickLandStartDelay");
 	public static final long CLICK_LAVA_COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.LavaFlow.ClickLavaCooldown");
@@ -104,10 +106,10 @@ public class LavaFlow {
 		removing = false;
 		makeLava = true;
 		clickIsFinished = false;
-		affectedBlocks = new ArrayList<TempBlock>();
-		tasks = new ArrayList<BukkitRunnable>();
-		
-		shiftCooldown = SHIFT_COOLDOWN; 
+        affectedBlocks = new ArrayList<>();
+        tasks = new ArrayList<>();
+
+        shiftCooldown = SHIFT_COOLDOWN;
 		shiftPlatformRadius = SHIFT_PLATFORM_RADIUS; 
 		shiftMaxRadius = SHIFT_MAX_RADIUS;
 		shiftFlowSpeed = SHIFT_FLOW_SPEED; 
@@ -150,8 +152,8 @@ public class LavaFlow {
 
 		if(type == AbilityType.SHIFT) {
 			// Update the shift counter for all the player's LavaFlows
-			ArrayList<LavaFlow> shiftFlows = LavaFlow.getLavaFlow(player,LavaFlow.AbilityType.SHIFT);
-			if(shiftFlows.size() > 0 && !player.isSneaking()) {
+            List<LavaFlow> shiftFlows = LavaFlow.getLavaFlow(player, LavaFlow.AbilityType.SHIFT);
+            if(shiftFlows.size() > 0 && !player.isSneaking()) {
 				for(LavaFlow lf : shiftFlows) {
 					lf.shiftCounter++;
 				}
@@ -338,7 +340,6 @@ public class LavaFlow {
 							}
 						}
 					}
-				return;
 			}
 
 		}
@@ -439,10 +440,9 @@ public class LavaFlow {
 				TEMP_LAND_BLOCKS.remove(tblock);
 			}
 		}
-		
-		for(BukkitRunnable task : tasks)
-			task.cancel();
-	}
+
+        tasks.forEach(BukkitRunnable::cancel);
+    }
 	
 	/**
 	 * Removes this ability instance instantly.
@@ -463,10 +463,9 @@ public class LavaFlow {
 				TEMP_LAND_BLOCKS.remove(tblock);
 			}
 		}
-		
-		for(BukkitRunnable task : tasks)
-			task.cancel();
-	}
+
+        tasks.forEach(BukkitRunnable::cancel);
+    }
 
 	/**
 	 * Progresses every instance of LavaFlow by 1 tick
@@ -493,8 +492,8 @@ public class LavaFlow {
 	 * @return a list of adjacent blocks
 	 */
 	public static ArrayList<Block> getAdjacentBlocks(Location loc) {
-		ArrayList<Block> list = new ArrayList<Block>();
-		Block block = loc.getBlock();
+        ArrayList<Block> list = new ArrayList<>();
+        Block block = loc.getBlock();
 		for(int x = -1; x <= 1; x++)
 			for(int y = -1; y <= 1; y++)
 				for(int z = -1; z <= 1; z++)
@@ -526,18 +525,18 @@ public class LavaFlow {
 	 * isRegionProtected call since it isn't necessary in the case of just
 	 * checking a specific material.
 	 * @param mat the material to check
-	 * @param the player that is earthbending
-	 * @return true if the material is earthbendable
+     * @param player the player that is earthbending
+     * @return true if the material is earthbendable
 	 */
 	public static boolean isEarthbendableMaterial(Material mat, Player player) {
-		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks"))
-			if (mat == Material.getMaterial(s))
-				return true;
-		if (ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.MetalBlocks").contains(mat.toString()) && EarthMethods.canMetalbend(player)) {
-			return true;
-		}
-		return false;
-	}
+        for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks")) {
+            if (mat == Material.getMaterial(s)) {
+                return true;
+            }
+        }
+        return ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.MetalBlocks").contains(mat.toString())
+                && EarthMethods.canMetalbend(player);
+    }
 	
 	public static boolean isLava(Block block) {
 		return block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA;
@@ -564,13 +563,11 @@ public class LavaFlow {
 	 * @param player the player that created the ability instance
 	 * @return a list of all the LavaFlows created by player
 	 */
-	public static ArrayList<LavaFlow> getLavaFlow(Player player) {
-		ArrayList<LavaFlow> list = new ArrayList<LavaFlow>();
-		for(LavaFlow lf : instances)
-			if(lf.player != null && lf.player == player)
-				list.add(lf);
-		return list;
-	}
+    public static List<LavaFlow> getLavaFlow(Player player) {
+        return instances.stream()
+                .filter(lf -> lf.player != null && lf.player == player)
+                .collect(Collectors.toList());
+    }
 	
 	/**
 	 * Returns all of the LavaFlows created by a specific player but
@@ -579,13 +576,11 @@ public class LavaFlow {
 	 * @param type the specific type of ability we are looking for
 	 * @return a list of all the LavaFlow instances
 	 */
-	public static ArrayList<LavaFlow> getLavaFlow(Player player, AbilityType type) {
-		ArrayList<LavaFlow> list = new ArrayList<LavaFlow>();
-		for(LavaFlow lf : instances)
-			if(lf.player != null && lf.player == player && lf.type != null && lf.type == type)
-				list.add(lf);
-		return list;
-	}
+    public static List<LavaFlow> getLavaFlow(Player player, AbilityType type) {
+        return instances.stream()
+                .filter(lf -> lf.player != null && lf.player == player && lf.type != null && lf.type == type)
+                .collect(Collectors.toList());
+    }
 
 	public Player getPlayer() {
 		return player;

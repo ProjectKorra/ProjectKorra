@@ -1,7 +1,8 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,16 +12,15 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.waterbending.Plantbending;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FireStream {
 
-	public static ConcurrentHashMap<Integer, FireStream> instances = new ConcurrentHashMap<Integer, FireStream>();
-	public static ConcurrentHashMap<Block, Player> ignitedblocks = new ConcurrentHashMap<Block, Player>();
-	public static ConcurrentHashMap<Block, Long> ignitedtimes = new ConcurrentHashMap<Block, Long>();
-	public static ConcurrentHashMap<LivingEntity, Player> ignitedentities = new ConcurrentHashMap<LivingEntity, Player>();
+	public static ConcurrentHashMap<Integer, FireStream> instances = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Block, Player> ignitedblocks = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Block, Long> ignitedtimes = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<LivingEntity, Player> ignitedentities = new ConcurrentHashMap<>();
 
 	static final long soonesttime = ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown");
 
@@ -141,11 +141,8 @@ public class FireStream {
 		};
 
 		Block belowblock = block.getRelative(BlockFace.DOWN);
-		if (Arrays.asList(ignitable).contains(belowblock.getType())) {
-			return true;
-		}
+		return Arrays.asList(ignitable).contains(belowblock.getType());
 
-		return false;
 	}
 
 	private void remove() {
@@ -153,8 +150,7 @@ public class FireStream {
 	}
 
 	public static void removeAll() {
-		for (Block block : ignitedblocks.keySet())
-			remove(block);
+		ignitedblocks.keySet().forEach(FireStream::remove);
 	}
 
 	public static void dissipateAll() {

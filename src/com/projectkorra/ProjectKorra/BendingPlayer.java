@@ -1,19 +1,19 @@
 package com.projectkorra.ProjectKorra;
 
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent;
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent.Result;
+
+import org.bukkit.Bukkit;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
-
-import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent;
-import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent.Result;
-
 public class BendingPlayer {
 
-	public static ConcurrentHashMap<String, BendingPlayer> players = new ConcurrentHashMap<String, BendingPlayer>();
+	public static ConcurrentHashMap<String, BendingPlayer> players = new ConcurrentHashMap<>();
 	//	public static ConcurrentHashMap<String, Long> blockedChi = new ConcurrentHashMap<String, Long>();
 
 	UUID uuid;
@@ -33,7 +33,7 @@ public class BendingPlayer {
 		this.elements = elements;
 		this.setAbilities(abilities);
 		this.permaRemoved = permaRemoved;
-		cooldowns = new ConcurrentHashMap<String, Long>();
+		cooldowns = new ConcurrentHashMap<>();
 		isToggled = true;
 		blockedChi = false;
 

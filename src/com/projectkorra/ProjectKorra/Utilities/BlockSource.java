@@ -1,16 +1,16 @@
 package com.projectkorra.ProjectKorra.Utilities;
 
-import java.util.HashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.HashMap;
 
 /**
  * BlockSource is a class that handles water and earth bending sources. When a Player left clicks or
@@ -20,11 +20,11 @@ import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
  * has two different ways to select a source, one involving shift and another involving left clicks.
  */
 public class BlockSource {
-	public static enum BlockSourceType {
+	public enum BlockSourceType {
 		WATER, ICE, PLANT, EARTH, METAL, LAVA
 	}
 
-	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>>();
+	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<>();
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	// The player should never need to grab source blocks from farther than this.
 	private static double MAX_RANGE = config.getDouble("Abilities.Water.WaterManipulation.Range");
@@ -84,10 +84,10 @@ public class BlockSource {
 	 */
 	private static void putSource(Player player, Block block, BlockSourceType sourceType, ClickType clickType) {
 		if (!playerSources.containsKey(player)) {
-			playerSources.put(player, new HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>());
+			playerSources.put(player, new HashMap<>());
 		}
 		if (!playerSources.get(player).containsKey(sourceType)) {
-			playerSources.get(player).put(sourceType, new HashMap<ClickType, BlockSourceInformation>());
+			playerSources.get(player).put(sourceType, new HashMap<>());
 		}
 		BlockSourceInformation info = new BlockSourceInformation(player, block, sourceType, clickType);
 		playerSources.get(player).get(sourceType).put(clickType, info);

@@ -1,5 +1,13 @@
 package com.projectkorra.ProjectKorra.Objects;
 
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.DBConnection;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,17 +16,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.DBConnection;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-
 public class Preset {
-    
-    public static ConcurrentHashMap<UUID, List<Preset>> presets = new ConcurrentHashMap<UUID, List<Preset>>();
+
+    public static ConcurrentHashMap<UUID, List<Preset>> presets = new ConcurrentHashMap<>();
     
     UUID uuid;
     HashMap<Integer, String> abilities;
@@ -29,7 +29,7 @@ public class Preset {
         this.name = name;
         this.abilities = abilities;
         if (!presets.containsKey(uuid)) {
-            presets.put(uuid, new ArrayList<Preset>());
+            presets.put(uuid, new ArrayList<>());
         }
         presets.get(uuid).add(this);
     }
@@ -51,7 +51,7 @@ public class Preset {
                     if (rs2.next()) { // Presets exist.
                         int i = 0;
                         do {
-                            HashMap<Integer, String> moves = new HashMap<Integer, String>();
+                            HashMap<Integer, String> moves = new HashMap<>();
                             for (int total = 1; total <= 9; total++) {
                                 String slot = rs2.getString("slot" + total);
                                 if (slot != null)
@@ -76,11 +76,12 @@ public class Preset {
             return;
         if (!presets.containsKey(player.getUniqueId()))
             return;
-        for (Preset preset : presets.get(player.getUniqueId())) {
-            if (preset.name.equalsIgnoreCase(name)) { // We found it
-                bPlayer.setAbilities((HashMap<Integer, String>) preset.abilities.clone());
-            }
-        }
+        // We found it
+        presets.get(player.getUniqueId()).stream()
+                .filter(preset -> preset.name.equalsIgnoreCase(name))
+                .forEach(preset -> { // We found it
+                    bPlayer.setAbilities((HashMap<Integer, String>) preset.abilities.clone());
+                });
     }
     
     public static boolean presetExists(Player player, String name) {

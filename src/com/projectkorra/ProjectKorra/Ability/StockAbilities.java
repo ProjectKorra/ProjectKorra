@@ -21,84 +21,84 @@ public enum StockAbilities {
 	Extraction, MetalClips, Smokescreen, Combustion, LavaFlow, Suffocate, IceBlast, WarriorStance, AcrobatStance, QuickStrike, SwiftKick, EarthSmash, Flight, WaterArms, SandSpout, PlantArmor;
 
 	private enum AirbendingAbilities {
-		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst, Suffocate, Flight;
+		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst, Suffocate, Flight
 	}
 
 	private enum WaterbendingAbilities {
-		WaterBubble, PhaseChange, HealingWaters, WaterManipulation, Surge, Bloodbending, WaterSpout, IceSpike, IceBlast, OctopusForm, Torrent, WaterArms, PlantArmor;
+		WaterBubble, PhaseChange, HealingWaters, WaterManipulation, Surge, Bloodbending, WaterSpout, IceSpike, IceBlast, OctopusForm, Torrent, WaterArms, PlantArmor
 
 	}
 
 	private enum EarthbendingAbilities {
-		Catapult, RaiseEarth, EarthGrab, EarthTunnel, EarthBlast, Collapse, Tremorsense, EarthArmor, Shockwave, Extraction, MetalClips, LavaFlow, EarthSmash, SandSpout;
+		Catapult, RaiseEarth, EarthGrab, EarthTunnel, EarthBlast, Collapse, Tremorsense, EarthArmor, Shockwave, Extraction, MetalClips, LavaFlow, EarthSmash, SandSpout
 	}
 
 	private enum FirebendingAbilities {
-		HeatControl, Blaze, FireJet, Illumination, WallOfFire, FireBlast, Lightning, FireBurst, FireShield, Combustion;
+		HeatControl, Blaze, FireJet, Illumination, WallOfFire, FireBlast, Lightning, FireBurst, FireShield, Combustion
 	}
 
 	private enum ChiblockingAbilities {
-		HighJump, RapidPunch, Paralyze, Smokescreen, WarriorStance, AcrobatStance, QuickStrike, SwiftKick;
+		HighJump, RapidPunch, Paralyze, Smokescreen, WarriorStance, AcrobatStance, QuickStrike, SwiftKick
 	}
 	
 	private enum FlightAbilities
 	{
-		Flight;
+		Flight
 	}
 	
 	private enum SpiritualProjectionAbilities
 	{
-		;
+
 	}
 	
 	private enum CombustionbendingAbilities
 	{
-		Combustion;
+		Combustion
 	}
 	
 	private enum LightningbendingAbilities
 	{
-		Lightning;
+		Lightning
 	}
 	
 	private enum LavabendingAbilities
 	{
-		LavaFlow;
+		LavaFlow
 	}
 	
 	private enum MetalbendingAbilities
 	{
-		Extraction, MetalClips;
+		Extraction, MetalClips
 	}
 	
 	private enum SandbendingAbilities
 	{
-		SandSpout;
+		SandSpout
 	}
 	
 	private enum HealingAbilities
 	{
-		HealingWaters;
+		HealingWaters
 	}
 	
 	private enum IcebendingAbilities
 	{
-		PhaseChange, IceBlast, IceSpike;
+		PhaseChange, IceBlast, IceSpike
 	}
 	
 	private enum BloodbendingAbilities
 	{
-		Bloodbending;
+		Bloodbending
 	}
 	
 	private enum PlantbendingAbilities
 	{
-		PlantArmor;
+		PlantArmor
 	}
 	
 	private enum MultiAbilities
 	{
-		WaterArms;
+		WaterArms
 	}
 	
 	public static boolean isFlightAbility(String ability)

@@ -1,18 +1,5 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.MultiAbilityManager;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -22,6 +9,19 @@ import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.firebending.FireMethods;
 import com.projectkorra.ProjectKorra.firebending.Lightning;
 import com.projectkorra.ProjectKorra.waterbending.WaterArmsWhip.Whip;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterArms {
 
@@ -34,8 +34,8 @@ public class WaterArms {
 
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
-	public static ConcurrentHashMap<Player, WaterArms> instances = new ConcurrentHashMap<Player, WaterArms>();
-	public static ConcurrentHashMap<Block, Long> revert = new ConcurrentHashMap<Block, Long>();
+    public static ConcurrentHashMap<Player, WaterArms> instances = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Block, Long> revert = new ConcurrentHashMap<>();
 
 	private static Integer[] unbreakable = { 7, 8, 9, 10, 11, 49, 54, 90, 119,
 			120, 130, 146 };
@@ -136,18 +136,12 @@ public class WaterArms {
 	}
 
 	private boolean canUse(Player player) {
-		if (GeneralMethods.getBoundAbility(player) == null)
-			return false;
-		if (!GeneralMethods.canBend(player.getName(), "WaterArms"))
-			return false;
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", player.getLocation()))
-			return false;
-		if (GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("WaterArms"))
-			return false;
-		if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterArms"))
-			return true;
-		return false;
-	}
+        return GeneralMethods.getBoundAbility(player) != null
+                && GeneralMethods.canBend(player.getName(), "WaterArms")
+                && !GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", player.getLocation())
+                && !GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("WaterArms")
+                && GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterArms");
+    }
 
 	private boolean prepare() {
 		Block sourceblock = WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource);
@@ -155,10 +149,9 @@ public class WaterArms {
 			if (WaterMethods.isPlant(sourceblock)) {
 				fullSource = false;
 			}
-			ParticleEffect.LARGE_SMOKE.display(
-					WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource)
-									.getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
-			return true;
+            ParticleEffect.LARGE_SMOKE.display(WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource)
+                    .getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
+            return true;
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			WaterReturn.emptyWaterBottle(player);
 			fullSource = false;
@@ -198,12 +191,10 @@ public class WaterArms {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!EarthMethods.isTransparentToEarthbending(player, block)
-				&& !(WaterMethods.isWater(block) && TempBlock
-						.isTempBlock(block)))
-			return false;
-		return true;
-	}
+        return !(!EarthMethods.isTransparentToEarthbending(player, block)
+                && !(WaterMethods.isWater(block) && TempBlock
+                .isTempBlock(block)));
+    }
 
 	/**
 	 * Displays the right arm. Returns false if the arm cannot be fully
@@ -384,17 +375,16 @@ public class WaterArms {
 					for (Location loc : arc.getPoints()) {
 						if (arm.getLocation().getWorld() == loc.getWorld()
 								&& loc.distance(arm.getLocation()) <= 2.5) {
-							for (Location l1 : getOffsetLocations(4,
-									arm.getLocation(), 1.25))
-								FireMethods.playLightningbendingParticle(l1);
-							if (lightningKill)
-								GeneralMethods.damageEntity(Lightning.instances
-										.get(i).getPlayer(), player, 60D);
-							else
-								GeneralMethods.damageEntity(Lightning.instances
-										.get(i).getPlayer(), player,
-										lightningDamage);
-						}
+                            getOffsetLocations(4, arm.getLocation(), 1.25).forEach(FireMethods::playLightningbendingParticle);
+                            if (lightningKill) {
+                                GeneralMethods.damageEntity(Lightning.instances
+                                        .get(i).getPlayer(), player, 60D);
+                            } else {
+                                GeneralMethods.damageEntity(Lightning.instances
+                                                .get(i).getPlayer(), player,
+                                        lightningDamage);
+                            }
+                        }
 					}
 				}
 			}
@@ -403,8 +393,8 @@ public class WaterArms {
 
 	private static List<Location> getOffsetLocations(int amount,
 			Location location, double offset) {
-		List<Location> locations = new ArrayList<Location>();
-		for (int i = 0; i < amount; i++)
+        List<Location> locations = new ArrayList<>();
+        for (int i = 0; i < amount; i++)
 			locations.add(location.clone().add(
 					(float) (Math.random() * offset),
 					(float) (Math.random() * offset),
@@ -453,12 +443,10 @@ public class WaterArms {
 
 	@SuppressWarnings("deprecation")
 	public static boolean isUnbreakable(Block block) {
-		if (Arrays.asList(unbreakable).contains(block.getTypeId()))
-			return true;
-		return false;
-	}
-	
-	public static void displayBoundMsg(Player player){
+        return Arrays.asList(unbreakable).contains(block.getTypeId());
+    }
+
+    public static void displayBoundMsg(Player player){
 		player.sendMessage(WaterMethods.getWaterColor() + sneakMsg + " "
 				+ GeneralMethods.getBoundAbility(player));
 	}
@@ -530,11 +518,8 @@ public class WaterArms {
 	}
 
 	public static boolean hasPlayer(Player player) {
-		if (instances.containsKey(player)) {
-			return true;
-		}
-		return false;
-	}
+        return instances.containsKey(player);
+    }
 
 	public Player getPlayer() {
 		return player;

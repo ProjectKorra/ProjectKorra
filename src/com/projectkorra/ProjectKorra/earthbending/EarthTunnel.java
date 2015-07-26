@@ -1,7 +1,7 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,12 +9,12 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthTunnel {
 
-	public static ConcurrentHashMap<Player, EarthTunnel> instances = new ConcurrentHashMap<Player, EarthTunnel>();
+	public static ConcurrentHashMap<Player, EarthTunnel> instances = new ConcurrentHashMap<>();
 
 	private static final double MAX_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthTunnel.MaxRadius");
 	private static final double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthTunnel.Range");

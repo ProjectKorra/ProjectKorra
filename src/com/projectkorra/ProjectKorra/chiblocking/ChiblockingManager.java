@@ -1,9 +1,8 @@
 package com.projectkorra.ProjectKorra.chiblocking;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.ProjectKorra;
+
+import org.bukkit.Bukkit;
 
 public class ChiblockingManager implements Runnable {
 
@@ -18,9 +17,7 @@ public class ChiblockingManager implements Runnable {
 		ChiPassive.handlePassive();
 		WarriorStance.progressAll();
 		AcrobatStance.progressAll();
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			Smokescreen.removeFromHashMap(player);
-		}
+		Bukkit.getOnlinePlayers().forEach(Smokescreen::removeFromHashMap);
 	}
 
 }

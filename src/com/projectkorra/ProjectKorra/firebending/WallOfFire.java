@@ -1,8 +1,11 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,12 +16,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WallOfFire {
 
@@ -34,7 +34,7 @@ public class WallOfFire {
 	private int DAMAGE = config.getInt("Abilities.Fire.WallOfFire.Damage");
 	private static long interval = 250;
 	private static long COOLDOWN = config.getLong("Abilities.Fire.WallOfFire.Cooldown");
-	public static ConcurrentHashMap<Player, WallOfFire> instances = new ConcurrentHashMap<Player, WallOfFire>();
+	public static ConcurrentHashMap<Player, WallOfFire> instances = new ConcurrentHashMap<>();
 	private static long DAMAGE_INTERVAL = config.getLong("Abilities.Fire.WallOfFire.Interval");
 	private static double fireticks = config.getDouble("Abilities.Fire.WallOfFire.FireTicks");
 
@@ -49,7 +49,7 @@ public class WallOfFire {
 	private int damage = DAMAGE;
 	private long cooldown = COOLDOWN;
 	private long damageinterval = DAMAGE_INTERVAL;
-	private List<Block> blocks = new ArrayList<Block>();
+	private List<Block> blocks = new ArrayList<>();
 
 	public WallOfFire(Player player) {
 		if (instances.containsKey(player) && !AvatarState.isAvatarState(player)) {

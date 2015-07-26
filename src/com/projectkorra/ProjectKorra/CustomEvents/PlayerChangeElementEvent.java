@@ -1,11 +1,11 @@
 package com.projectkorra.ProjectKorra.CustomEvents;
 
+import com.projectkorra.ProjectKorra.Element;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import com.projectkorra.ProjectKorra.Element;
 
 public class PlayerChangeElementEvent extends Event {
 	
@@ -45,10 +45,12 @@ public class PlayerChangeElementEvent extends Event {
 	public Result getResult() {
 		return r;
 	}
-	
-	public static enum Result {
-    	CHOOSE, REMOVE, ADD, PERMAREMOVE;
-    	private Result() {}
-    }
+
+	public enum Result {
+		CHOOSE, REMOVE, ADD, PERMAREMOVE;
+
+		Result() {
+		}
+	}
 
 }

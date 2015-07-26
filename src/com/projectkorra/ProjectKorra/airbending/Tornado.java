@@ -1,8 +1,9 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Flight;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,30 +12,30 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class Tornado {
 	
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
-	public static ConcurrentHashMap<Integer, Tornado> instances = new ConcurrentHashMap<Integer, Tornado>();
+    public static ConcurrentHashMap<Integer, Tornado> instances = new ConcurrentHashMap<>();
 
 	private static double MAX_HEIGHT = config.getDouble("Abilities.Air.Tornado.Height");
 	private static double PLAYER_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.PlayerPushFactor");
 	private static double MAX_RADIUS = config.getDouble("Abilities.Air.Tornado.Radius");
 	private static double RANGE = config.getDouble("Abilities.Air.Tornado.Range");
 	private static double NPC_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.MobPushFactor");
-	private static int numberOfStreams = (int) (.3 * (double) MAX_HEIGHT);
-	// private static double speed = .75;
+    private static int numberOfStreams = (int) (.3 * MAX_HEIGHT);
+    // private static double speed = .75;
 	// private static double speedfactor = 1000 * speed
 	// * (Bending.time_step / 1000.);
 	private static double speedfactor = 1;
 
-	private ConcurrentHashMap<Integer, Integer> angles = new ConcurrentHashMap<Integer, Integer>();
-	private Location origin;
+    private ConcurrentHashMap<Integer, Integer> angles = new ConcurrentHashMap<>();
+    private Location origin;
 	private Player player;
 	private double maxheight = MAX_HEIGHT;
 	private double PCpushfactor = PLAYER_PUSH_FACTOR;
@@ -152,8 +153,8 @@ public class Tornado {
 						}
 						
 						if (entity instanceof Player) {
-							if (Commands.invincible.contains(((Player) entity).getName())) continue;
-						}
+                            if (Commands.invincible.contains(entity.getName())) continue;
+                        }
 
 						Vector velocity = entity.getVelocity();
 						velocity.setX(vx);
@@ -207,13 +208,11 @@ public class Tornado {
 
 	}
 
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (int id : instances.keySet()) {
-			players.add(instances.get(id).player);
-		}
-		return players;
-	}
+    public static List<Player> getPlayers() {
+        return instances.keySet().stream()
+                .map(id -> instances.get(id).player)
+                .collect(Collectors.toList());
+    }
 
 	public Player getPlayer() {
 		return player;

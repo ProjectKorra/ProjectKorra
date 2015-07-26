@@ -1,17 +1,17 @@
 package com.projectkorra.ProjectKorra.Utilities;
 
+import org.bukkit.plugin.Plugin;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.bukkit.plugin.Plugin;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Updater class that takes an rss feed and checks for updates there
@@ -87,9 +87,8 @@ public class Updater {
 	public String getUpdateVersion() {
 		Node latestFile = document.getElementsByTagName("item").item(0);
 		NodeList children = latestFile.getChildNodes();
-		
-		String version = children.item(1).getTextContent();
-		return version;
+
+		return children.item(1).getTextContent();
 	}
 	
 	/**
@@ -98,10 +97,7 @@ public class Updater {
 	 * @return true If there is an update
 	 */
 	public boolean updateAvailable() {
-		if (currentVersion.equalsIgnoreCase(getUpdateVersion())) {
-			return false;
-		}
-		return true;
+		return !currentVersion.equalsIgnoreCase(getUpdateVersion());
 	}
 	
 	/**

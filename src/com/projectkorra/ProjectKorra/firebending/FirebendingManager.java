@@ -1,10 +1,9 @@
 package com.projectkorra.ProjectKorra.firebending;
 
+import com.projectkorra.ProjectKorra.ProjectKorra;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-
-import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class FirebendingManager implements Runnable {
 
@@ -26,12 +25,10 @@ public class FirebendingManager implements Runnable {
 		Lightning.progressAll();
 		WallOfFire.manage();
 		Combustion.progressAll();
-		for (Block block : FireStream.ignitedblocks.keySet()) {
-			if (block.getType() != Material.FIRE) {
-				FireStream.ignitedblocks.remove(block);
-			}
-		}
-		HeatControl.progressAll();
+        FireStream.ignitedblocks.keySet().stream()
+                .filter(block -> block.getType() != Material.FIRE)
+                .forEach(FireStream.ignitedblocks::remove);
+        HeatControl.progressAll();
 		FireStream.dissipateAll();
 		FireStream.progressAll();
 		FireCombo.progressAll();

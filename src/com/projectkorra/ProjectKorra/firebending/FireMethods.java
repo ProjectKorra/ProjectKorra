@@ -1,7 +1,11 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.BendingManager;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.rpg.RPGMethods;
+import com.projectkorra.rpg.WorldEvents;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -12,12 +16,8 @@ import org.bukkit.World.Environment;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.BendingManager;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.rpg.RPGMethods;
-import com.projectkorra.rpg.WorldEvents;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FireMethods {
 	
@@ -29,14 +29,12 @@ public class FireMethods {
 	}
 	
 	public static boolean canCombustionbend(Player player){
-		if(player.hasPermission("bending.fire.combustionbending")) return true;
-		return false;
-	}
+        return player.hasPermission("bending.fire.combustionbending");
+    }
 	
 	public static boolean canLightningbend(Player player){
-		if(player.hasPermission("bending.fire.lightningbending")) return true;
-		return false;
-	}
+        return player.hasPermission("bending.fire.lightningbending");
+    }
 	
 	/**
 	 * Gets the firebending dayfactor from the config multiplied by a specific value if it is day.
@@ -84,12 +82,11 @@ public class FireMethods {
 	
 	public static boolean isDay(World world) {
 		long time = world.getTime();
-		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) return true;
-		if (time >= 23500 || time <= 12500) {
-			return true;
-		}
-		return false;
-	}
+        return world.getEnvironment() == Environment.NETHER
+                || world.getEnvironment() == Environment.THE_END
+                || time >= 23500
+                || time <= 12500;
+    }
 
 	public static boolean isFireAbility(String ability) {
 		return AbilityModuleManager.firebendingabilities.contains(ability);
@@ -128,8 +125,8 @@ public class FireMethods {
 	 * @return true If the location is inside a FireShield.
 	 */
 	public static boolean isWithinFireShield(Location loc) {
-		List<String> list = new ArrayList<String>();
-		list.add("FireShield");
+        List<String> list = new ArrayList<>();
+        list.add("FireShield");
 		return GeneralMethods.blockAbilities(null, list, loc, 0);
 	}
 	

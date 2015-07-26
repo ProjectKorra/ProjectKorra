@@ -1,13 +1,13 @@
 package com.projectkorra.ProjectKorra.chiblocking;
 
-import java.util.ArrayList;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager.ChiCombo;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager.ChiCombo;
+import java.util.ArrayList;
 
 public class SwiftKick
 {
@@ -18,8 +18,8 @@ public class SwiftKick
 	{
 		if(!isEligible(player))
 			return;
-		
-		Entity e = GeneralMethods.getTargetedEntity(player, 4, new ArrayList<Entity>());
+
+		Entity e = GeneralMethods.getTargetedEntity(player, 4, new ArrayList<>());
 		
 		if(e == null)
 			return;

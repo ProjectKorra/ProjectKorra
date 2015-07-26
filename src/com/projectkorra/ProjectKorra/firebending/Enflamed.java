@@ -1,15 +1,15 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Enflamed {
 
-	private static ConcurrentHashMap<Entity, Player> instances = new ConcurrentHashMap<Entity, Player>();
-	private static ConcurrentHashMap<Entity, Long> times = new ConcurrentHashMap<Entity, Long>();
+    private static ConcurrentHashMap<Entity, Player> instances = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Entity, Long> times = new ConcurrentHashMap<>();
 
 	private static final int damage = 1;
 	private static final int max = 90;
@@ -57,11 +57,9 @@ public class Enflamed {
 	}
 
 	public static void handleFlames() {
-		for (Entity entity : instances.keySet()) {
-			if (entity.getFireTicks() <= 0) {
-				instances.remove(entity);
-			}
-		}
-	}
+        instances.keySet().stream()
+                .filter(entity -> entity.getFireTicks() <= 0)
+                .forEach(instances::remove);
+    }
 
 }

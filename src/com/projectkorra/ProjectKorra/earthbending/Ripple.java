@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -12,15 +14,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Ripple {
 
-	public static ConcurrentHashMap<Integer, Ripple> instances = new ConcurrentHashMap<Integer, Ripple>();
-	private static ConcurrentHashMap<Integer[], Block> blocks = new ConcurrentHashMap<Integer[], Block>();
+    public static ConcurrentHashMap<Integer, Ripple> instances = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Integer[], Block> blocks = new ConcurrentHashMap<>();
 
 	static final double RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Range");
 	private static final double DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Shockwave.Damage");
@@ -37,8 +37,8 @@ public class Ripple {
 	private double radius = RADIUS;
 	private double damage = DAMAGE;
 	private double knockback = KNOCKBACK;
-	private ArrayList<Location> locations = new ArrayList<Location>();
-	private ArrayList<Entity> entities = new ArrayList<Entity>();
+    private ArrayList<Location> locations = new ArrayList<>();
+    private ArrayList<Entity> entities = new ArrayList<>();
 
 	public Ripple(Player player, Vector direction) {
 		this(player, getInitialLocation(player, direction), direction);
@@ -182,9 +182,8 @@ public class Ripple {
 
 		step += 1;
 
-		for (Entity entity : entities)
-			affect(entity);
-		entities.clear();
+        entities.forEach(this::affect);
+        entities.clear();
 
 	}
 
@@ -244,15 +243,11 @@ public class Ripple {
 			length = 2;
 		}
 		if (EarthMethods.moveEarth(player, block, new Vector(0, 1, 0), length, false)) {
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(block
-					.getLocation().clone().add(0, 1, 0), 2)) {
-				if (entity.getEntityId() != player.getEntityId()
-						&& !entities.contains(entity)) {
-					if (!(entity instanceof FallingBlock))
-						entities.add(entity);
-				}
-			}
-			return true;
+            GeneralMethods.getEntitiesAroundPoint(block.getLocation().clone().add(0, 1, 0), 2).stream()
+                    .filter(entity -> entity.getEntityId() != player.getEntityId() && !entities.contains(entity))
+                    .filter(entity -> !(entity instanceof FallingBlock))
+                    .forEach(entities::add);
+            return true;
 		}
 		return false;
 	}
@@ -283,10 +278,8 @@ public class Ripple {
 		int x = block.getX();
 		int z = block.getZ();
 		Integer[] pair = new Integer[] { x, z };
-		if (blocks.containsKey(pair))
-			return true;
-		return false;
-	}
+        return blocks.containsKey(pair);
+    }
 
 	public static void progressAll() {
 		blocks.clear();

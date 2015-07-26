@@ -1,7 +1,15 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingManager;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.MultiAbilityManager;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterArms.Arm;
+import com.projectkorra.rpg.WorldEvents;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,16 +22,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingManager;
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.MultiAbilityManager;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.waterbending.WaterArms.Arm;
-import com.projectkorra.rpg.WorldEvents;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterArmsWhip {
 
@@ -31,13 +31,13 @@ public class WaterArmsWhip {
 	 * Whip Enum value for deciding what ability should be executed.
 	 */
 	public enum Whip {
-		Pull, Punch, Grapple, Grab;
-	}
+        Pull, Punch, Grapple, Grab
+    }
 
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
-	public static ConcurrentHashMap<Integer, WaterArmsWhip> instances = new ConcurrentHashMap<Integer, WaterArmsWhip>();
-	public static HashMap<LivingEntity, Integer> grabbedEntities = new HashMap<LivingEntity, Integer>();
+    public static ConcurrentHashMap<Integer, WaterArmsWhip> instances = new ConcurrentHashMap<>();
+    public static HashMap<LivingEntity, Integer> grabbedEntities = new HashMap<>();
 
 	private Player player;
 	private WaterArms waterArms;
@@ -244,22 +244,16 @@ public class WaterArmsWhip {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!EarthMethods.isTransparentToEarthbending(player, block)
-				&& !(WaterMethods.isWater(block) && TempBlock
-						.isTempBlock(block))) {
-			return false;
-		}
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms",
-				block.getLocation())) {
-			return false;
-		}
-		return true;
-	}
+        return !(!EarthMethods.isTransparentToEarthbending(player, block)
+                && !(WaterMethods.isWater(block)
+                && TempBlock.isTempBlock(block)))
+                && !GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", block.getLocation());
+    }
 
 	private void useArm() {
 		if (waterArms.canDisplayActiveArm()) {
-			Location l1 = null;
-			if (arm.equals(Arm.Left)) {
+            Location l1;
+            if (arm.equals(Arm.Left)) {
 				l1 = waterArms.getLeftArmEnd().clone();
 			} else {
 				l1 = waterArms.getRightArmEnd().clone();
@@ -281,8 +275,8 @@ public class WaterArmsWhip {
 				WaterArms.revert.put(l2.getBlock(), 0L);
 
 				if (i == activeLength) {
-					Location l3 = null;
-					if (arm.equals(Arm.Left)) {
+                    Location l3;
+                    if (arm.equals(Arm.Left)) {
 						l3 = GeneralMethods.getRightSide(l2, 1);
 					} else {
 						l3 = GeneralMethods.getLeftSide(l2, 1);
@@ -311,8 +305,8 @@ public class WaterArmsWhip {
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(
 					location, 2)) {
 				if (entity instanceof Player
-						&& Commands.invincible.contains(((Player) entity)
-								.getName())) {
+                        && Commands.invincible.contains(entity
+                        .getName())) {
 					continue;
 				}
 				Vector vector = endOfArm.toVector().subtract(
@@ -324,8 +318,8 @@ public class WaterArmsWhip {
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(
 					location, 2)) {
 				if (entity instanceof Player
-						&& Commands.invincible.contains(((Player) entity)
-								.getName())) {
+                        && Commands.invincible.contains(entity
+                        .getName())) {
 					continue;
 				}
 				Vector vector = entity.getLocation().toVector()

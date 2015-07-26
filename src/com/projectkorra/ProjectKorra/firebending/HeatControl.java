@@ -1,239 +1,199 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 /**
  * Created by Carbogen on 11/02/15.
  */
-public class HeatControl
-{
-	public static ConcurrentHashMap<Integer, HeatControl> instances = new ConcurrentHashMap<Integer, HeatControl>();
+public class HeatControl {
+    public static ConcurrentHashMap<Integer, HeatControl> instances = new ConcurrentHashMap<>();
 
-	public final double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
-	public final int RADIUS = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.HeatControl.Solidify.Radius");
-	public final int REVERT_TIME = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.HeatControl.Solidify.RevertTime");
+    public final double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
+    public final int RADIUS = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.HeatControl.Solidify.Radius");
+    public final int REVERT_TIME = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.HeatControl.Solidify.RevertTime");
 
-	public static int ID = 1;
+    public static int ID = 1;
 
-	private Player player;
-	private int id;
-	private int currentRadius = 1;
-	private long delay = 50;
-	private long lastBlockTime = 0;
-	private long lastParticleTime = 0;
-	private Location center;
-	private List<TempBlock> tblocks = new ArrayList<TempBlock>();
+    private Player player;
+    private int id;
+    private int currentRadius = 1;
+    private long delay = 50;
+    private long lastBlockTime = 0;
+    private long lastParticleTime = 0;
+    private Location center;
+    private List<TempBlock> tblocks = new ArrayList<>();
 
-	public double range = RANGE;
-	public int radius = RADIUS;
-	public long revertTime = REVERT_TIME;
+    public double range = RANGE;
+    public int radius = RADIUS;
+    public long revertTime = REVERT_TIME;
 
-	public HeatControl(Player player)
-	{
+    public HeatControl(Player player) {
 
-		if (!isEligible(player))
-			return;
+        if (!isEligible(player))
+            return;
 
 
-		if(EarthMethods.getLavaSourceBlock(player, getRange()) == null){
-			new Cook(player);
-			return;
-		}
+        if (EarthMethods.getLavaSourceBlock(player, getRange()) == null) {
+            new Cook(player);
+            return;
+        }
 
-		this.player = player;
+        this.player = player;
 
-		if(ID == Integer.MAX_VALUE - 1)
-			ID = 0;
+        if (ID == Integer.MAX_VALUE - 1)
+            ID = 0;
 
-		this.id = ID;
+        this.id = ID;
 
-		ID++;
+        ID++;
 
-		lastBlockTime = System.currentTimeMillis();
+        lastBlockTime = System.currentTimeMillis();
 
-		instances.put(id, this);
-	}
+        instances.put(id, this);
+    }
 
-	public boolean isEligible(Player player){
-		if (!GeneralMethods.canBend(player.getName(), "HeatControl"))
-			return false;
+    public boolean isEligible(Player player) {
+        return GeneralMethods.canBend(player.getName(), "HeatControl")
+                && GeneralMethods.getBoundAbility(player) != null
+                && GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl");
 
-		if (GeneralMethods.getBoundAbility(player) == null)
-			return false;
+    }
 
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl"))
-			return false;
+    @SuppressWarnings("deprecation")
+    public void freeze(List<Location> area) {
+        if (System.currentTimeMillis() < lastBlockTime + delay)
+            return;
 
-		return true;
-	}
+        List<Block> lava = area.stream()
+                .filter(l -> EarthMethods.isLava(l.getBlock()))
+                .map(Location::getBlock)
+                .collect(Collectors.toList());
 
-	@SuppressWarnings("deprecation")
-	public void freeze(List<Location> area)
-	{
-		if(System.currentTimeMillis() < lastBlockTime + delay)
-			return;
+        lastBlockTime = System.currentTimeMillis();
 
-		List<Block> lava = new ArrayList<Block>();
+        if (lava.size() == 0) {
+            currentRadius++;
+            return;
+        }
 
-		for(Location l : area)
-			if(EarthMethods.isLava(l.getBlock()))
-				lava.add(l.getBlock());
+        Block b = lava.get(GeneralMethods.rand.nextInt(lava.size()));
 
-		lastBlockTime = System.currentTimeMillis();
+        TempBlock tb;
 
-		if(lava.size() == 0)
-		{
-			currentRadius ++;
-			return;
-		}
+        if (TempBlock.isTempBlock(b)) {
+            tb = TempBlock.get(b);
+            tb.setType(Material.STONE);
+        } else tb = new TempBlock(b, Material.STONE, b.getData());
 
-		Block b = lava.get(GeneralMethods.rand.nextInt(lava.size()));
+        if (!tblocks.contains(tb))
+            tblocks.add(tb);
 
-		TempBlock tb;
+    }
 
-		if(TempBlock.isTempBlock(b))
-		{
-			tb = TempBlock.get(b);
-			tb.setType(Material.STONE);
-		}
+    public void particles(List<Location> area) {
+        if (System.currentTimeMillis() < lastParticleTime + 300)
+            return;
 
-		else tb = new TempBlock(b, Material.STONE, b.getData());
+        lastParticleTime = System.currentTimeMillis();
 
-		if(!tblocks.contains(tb))
-			tblocks.add(tb);
+        area.stream()
+                .filter(l -> EarthMethods.isLava(l.getBlock()))
+                .forEach(l -> ParticleEffect.SMOKE.display(l, 0, 0, 0, 0.1f, 2));
+    }
 
-	}
+    public void resetLocation(Location loc) {
+        if (center == null) {
+            center = loc;
+            return;
+        }
 
-	public void particles(List<Location> area)
-	{
-		if(System.currentTimeMillis() < lastParticleTime + 300)
-			return;
+        if (!loc.equals(center)) {
+            currentRadius = 1;
+            center = loc;
+        }
+    }
 
-		lastParticleTime = System.currentTimeMillis();
+    public void progress() {
+        if (!player.isOnline() || player.isDead() || !isEligible(player) || !player.isSneaking()) {
+            stop();
+            return;
+        }
 
-		for(Location l : area)
-		{
-			if(EarthMethods.isLava(l.getBlock()))
-				ParticleEffect.SMOKE.display(l, 0, 0, 0, 0.1f, 2);
-		}
-	}
+        if (currentRadius >= getRadius()) {
+            stop();
+            return;
+        }
 
-	public void resetLocation(Location loc)
-	{
-		if(center == null)
-		{
-			center = loc;
-			return;
-		}
+        Location targetlocation = GeneralMethods.getTargetedLocation(player, range);
 
-		if(!loc.equals(center))
-		{
-			currentRadius = 1;
-			center = loc;
-		}
-	}
+        resetLocation(targetlocation);
 
-	public void progress()
-	{
-		if(!player.isOnline() || player.isDead() || !isEligible(player) || !player.isSneaking())
-		{
-			stop();
-			return;
-		}
+        List<Location> area = GeneralMethods.getCircle(center, currentRadius, 3, true, true, 0);
 
-		if(currentRadius >= getRadius())
-		{
-			stop();
-			return;
-		}
+        particles(area);
+        freeze(area);
+    }
 
-		Location targetlocation = GeneralMethods.getTargetedLocation(player, range);
+    public static void progressAll() {
+        for (Integer id : instances.keySet()) {
+            instances.get(id).progress();
+        }
+    }
 
-		resetLocation(targetlocation);
+    public void stop() {
+        ProjectKorra.plugin.getServer().getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, () -> {
+            revertAll();
+            if (instances.containsKey(id))
+                instances.remove(id);
+        }, getRevertTime());
 
-		List<Location> area = GeneralMethods.getCircle(center, currentRadius, 3, true, true, 0);
+    }
 
-		particles(area);
-		freeze(area);
-	}
+    public void revertAll() {
+        tblocks.forEach(TempBlock::revertBlock);
 
-	public static void progressAll()
-	{
-		for(Integer id : instances.keySet())
-		{
-			instances.get(id).progress();
-		}
-	}
+        tblocks.clear();
+    }
 
-	public void stop()
-	{
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new Runnable()
-		{
-			public void run()
-			{
-				revertAll();
-				if(instances.containsKey(id))
-					instances.remove(id);
-			}
-		}, getRevertTime());
+    public Player getPlayer() {
+        return player;
+    }
 
-	}
+    public double getRange() {
+        return range;
+    }
 
-	public void revertAll()
-	{
-		for(TempBlock tb : tblocks)
-		{
-			tb.revertBlock();
-		}
+    public int getRadius() {
+        return radius;
+    }
 
-		tblocks.clear();
-	}
+    public long getRevertTime() {
+        return revertTime;
+    }
 
-	public Player getPlayer()
-	{
-		return player;
-	}
+    public void setRange(double value) {
+        range = value;
+    }
 
-	public double getRange()
-	{
-		return range;
-	}
+    public void setRadius(int value) {
+        radius = value;
+    }
 
-	public int getRadius()
-	{
-		return radius;
-	}
-
-	public long getRevertTime()
-	{
-		return revertTime;
-	}
-
-	public void setRange(double value)
-	{
-		range = value;
-	}
-
-	public void setRadius(int value)
-	{
-		radius = value;
-	}
-
-	public void setRevertTime(long value)
-	{
-		revertTime = value;
-	}
+    public void setRevertTime(long value) {
+        revertTime = value;
+    }
 }

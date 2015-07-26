@@ -1,6 +1,10 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,15 +13,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirBubble {
 
-	public static ConcurrentHashMap<Integer, AirBubble> instances = new ConcurrentHashMap<Integer, AirBubble>();
+    public static ConcurrentHashMap<Integer, AirBubble> instances = new ConcurrentHashMap<>();
 
 	private static double DEFAULT_AIR_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirBubble.Radius");
 	private static double DEFAULT_WATER_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterBubble.Radius");
@@ -30,8 +30,8 @@ public class AirBubble {
 
 	public AirBubble(Player player) {
 		this.player = player;
-		waterorigins = new ConcurrentHashMap<Block, BlockState>();
-		instances.put(player.getEntityId(), this);
+        waterorigins = new ConcurrentHashMap<>();
+        instances.put(player.getEntityId(), this);
 	}
 
 	private void pushWater() {
@@ -109,34 +109,21 @@ public class AirBubble {
 
 	public static void handleBubbles(Server server) {
 
-		for (Player player : server.getOnlinePlayers()) {
-			if (GeneralMethods.getBoundAbility(player) != null) {
-				if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble") || GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble")) {
-					if (!instances.containsKey(player.getEntityId()) && player.isSneaking()) {
-						new AirBubble(player);
-					}
-				}
-			}
-		}
+        server.getOnlinePlayers().stream()
+                .filter(player -> GeneralMethods.getBoundAbility(player) != null)
+                .filter(player -> GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble")
+                        || GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble"))
+                .filter(player -> !instances.containsKey(player.getEntityId()) && player.isSneaking())
+                .forEach(com.projectkorra.ProjectKorra.airbending.AirBubble::new);
 
-		for (int ID : instances.keySet()) {
-			progress(ID);
-		}
-	}
+        instances.keySet().forEach(AirBubble::progress);
+    }
 
 	private void removeBubble() {
-		for (Block block : waterorigins.keySet()) {
-			// byte data = waterorigins.get(block);
-			// byte data = 0x0;
-			// block = block.getLocation().getBlock();
-			// if (block.getType() == Material.AIR) {
-			// block.setType(Material.WATER);
-			// block.setData(data);
-			// }
-			if (block.getType() == Material.AIR || block.isLiquid())
-				waterorigins.get(block).update(true);
-		}
-		instances.remove(player.getEntityId());
+        waterorigins.keySet().stream()
+                .filter(block -> block.getType() == Material.AIR || block.isLiquid())
+                .forEach(block -> waterorigins.get(block).update(true));
+        instances.remove(player.getEntityId());
 	}
 
 	public static boolean progress(int ID) {

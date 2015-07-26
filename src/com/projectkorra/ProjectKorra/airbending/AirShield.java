@@ -1,37 +1,37 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
+import com.projectkorra.ProjectKorra.firebending.Combustion;
+import com.projectkorra.ProjectKorra.firebending.FireBlast;
+import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
-import com.projectkorra.ProjectKorra.firebending.Combustion;
-import com.projectkorra.ProjectKorra.firebending.FireBlast;
-import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirShield {
 
-	public static ConcurrentHashMap<Integer, AirShield> instances = new ConcurrentHashMap<Integer, AirShield>();
+	public static ConcurrentHashMap<Integer, AirShield> instances = new ConcurrentHashMap<>();
 
 	private static double MAX_RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirShield.Radius");
 	private static boolean isToggle = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
-	private static int numberOfStreams = (int) (.75 * (double) MAX_RADIUS);
+	private static int numberOfStreams = (int) (.75 * MAX_RADIUS);
 
 	private double maxradius = MAX_RADIUS;
 	private double radius = 2;
 	private double speedfactor;
 
 	private Player player;
-	private HashMap<Integer, Integer> angles = new HashMap<Integer, Integer>();
+	private HashMap<Integer, Integer> angles = new HashMap<>();
 
 	public AirShield(Player player) {
 		if (AvatarState.isAvatarState(player)
@@ -87,7 +87,7 @@ public class AirShield {
 				}
 				
 				if (entity instanceof Player) {
-					if (Commands.invincible.contains(((Player) entity).getName())) {
+					if (Commands.invincible.contains(entity.getName())) {
 						continue;
 					}
 				}
