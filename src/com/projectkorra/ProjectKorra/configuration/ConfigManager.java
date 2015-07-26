@@ -1,13 +1,11 @@
 package com.projectkorra.ProjectKorra.configuration;
 
-import java.io.File;
-import java.util.ArrayList;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.firebending.FireMethods;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.io.File;
+import java.util.ArrayList;
 
 public class ConfigManager {
 
@@ -74,7 +72,7 @@ public class ConfigManager {
 		case DEFAULT:
 			config = defaultConfig.getConfig();
 
-			ArrayList<String> earthbendable = new ArrayList<String>();
+			ArrayList<String> earthbendable = new ArrayList<>();
 			earthbendable.add("STONE");
 			earthbendable.add("CLAY");
 			earthbendable.add("COAL_ORE");
@@ -91,8 +89,8 @@ public class ConfigManager {
 			earthbendable.add("SANDSTONE");
 			earthbendable.add("RED_SANDSTONE");
 			earthbendable.add("MYCEL");
-			
-			ArrayList<String> metals = new ArrayList<String>();
+
+			ArrayList<String> metals = new ArrayList<>();
 			metals.add("IRON_BLOCK");
 			metals.add("GOLD_BLOCK");
 			metals.add("QUARTZ_BLOCK");
@@ -175,7 +173,7 @@ public class ConfigManager {
 
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
-			ArrayList<String> disabledWorlds = new ArrayList<String>();
+			ArrayList<String> disabledWorlds = new ArrayList<>();
 			disabledWorlds.add("TestWorld");
 			disabledWorlds.add("TestWorld2");
 			config.addDefault("Properties.DisabledWorlds", disabledWorlds);
