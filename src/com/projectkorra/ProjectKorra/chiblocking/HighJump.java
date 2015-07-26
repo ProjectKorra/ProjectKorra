@@ -1,13 +1,13 @@
 package com.projectkorra.ProjectKorra.chiblocking;
 
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.waterbending.WaterArmsWhip;
+
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class HighJump {
 
@@ -36,7 +36,6 @@ public class HighJump {
 		Vector vec = p.getVelocity();
 		vec.setY(jumpheight);
 		p.setVelocity(vec);
-		return;
 	}
 
 	public static String getDescription() {

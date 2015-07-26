@@ -1,15 +1,15 @@
 package com.projectkorra.ProjectKorra.chiblocking;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WarriorStance {
 	
@@ -17,7 +17,7 @@ public class WarriorStance {
 	public int resistance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
 	
 	private Player player;
-	public static ConcurrentHashMap<Player, WarriorStance> instances = new ConcurrentHashMap<Player, WarriorStance>();
+	public static ConcurrentHashMap<Player, WarriorStance> instances = new ConcurrentHashMap<>();
 	
 	public WarriorStance(Player player) {
 		this.player = player;
@@ -67,8 +67,7 @@ public class WarriorStance {
 	}
 	
 	public static boolean isInWarriorStance(Player player) {
-		if (instances.containsKey(player)) return true;
-		return false;
+		return instances.containsKey(player);
 	}
 	
 	public static void remove(Player player) {
