@@ -46,10 +46,12 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
     public static HandlerList getHandlerList() {
         return handlers;
     }
-	
-    public static enum Result {
-    	REMOVED, ADDED;
-    	private Result() {}
+
+    public enum Result {
+        REMOVED, ADDED;
+
+        Result() {
+        }
     }
 	
 	
