@@ -1,13 +1,5 @@
 package com.projectkorra.ProjectKorra;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
 import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleManager;
@@ -22,6 +14,14 @@ import com.projectkorra.ProjectKorra.configuration.ConfigManager;
 import com.projectkorra.ProjectKorra.earthbending.EarthbendingManager;
 import com.projectkorra.ProjectKorra.firebending.FirebendingManager;
 import com.projectkorra.ProjectKorra.waterbending.WaterbendingManager;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
 
 public class ProjectKorra extends JavaPlugin {
 
@@ -63,7 +63,7 @@ public class ProjectKorra extends JavaPlugin {
 		DBConnection.db = getConfig().getString("Storage.MySQL.db");
 		DBConnection.user = getConfig().getString("Storage.MySQL.user");
 		DBConnection.init();
-		if (DBConnection.isOpen() == false) {
+		if (!DBConnection.isOpen()) {
 			//Message is logged by DBConnection
 			return;
 		}
@@ -97,7 +97,7 @@ public class ProjectKorra extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		GeneralMethods.stopBending();
-		if (DBConnection.isOpen != false) {
+		if (DBConnection.isOpen) {
 			DBConnection.sql.close();
 		}
 		handler.close();

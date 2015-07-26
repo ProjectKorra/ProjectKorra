@@ -1,16 +1,16 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class TempBlock {
 
-	public static ConcurrentHashMap<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();
+	public static ConcurrentHashMap<Block, TempBlock> instances = new ConcurrentHashMap<>();
 
 	Block block;
 	Material newtype;
@@ -50,9 +50,7 @@ public class TempBlock {
 		return null;
 	}
 	public static boolean isTempBlock(Block block) {
-		if (instances.containsKey(block))
-			return true;
-		return false;
+		return instances.containsKey(block);
 	}
 	public static boolean isTouchingTempBlock(Block block) {
 		BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,

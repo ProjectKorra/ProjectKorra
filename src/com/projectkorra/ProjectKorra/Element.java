@@ -18,6 +18,6 @@ public enum Element {
 	public static Element getType(int index) {
 	    if (index == -1)
 	    	return null;
-	    return (Element)Arrays.asList(values()).get(index);
+		return Arrays.asList(values()).get(index);
 	}
 }

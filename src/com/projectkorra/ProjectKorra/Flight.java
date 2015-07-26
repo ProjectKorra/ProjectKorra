@@ -1,11 +1,5 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.airbending.AirScooter;
 import com.projectkorra.ProjectKorra.airbending.AirSpout;
@@ -16,9 +10,15 @@ import com.projectkorra.ProjectKorra.firebending.FireJet;
 import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Flight {
 
-	private static ConcurrentHashMap<Player, Flight> instances = new ConcurrentHashMap<Player, Flight>();
+	private static ConcurrentHashMap<Player, Flight> instances = new ConcurrentHashMap<>();
 	private static long duration = 5000;
 	
 	private Player player = null, source = null;
@@ -65,13 +65,13 @@ public class Flight {
 	}
 	
 	public static void handle() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		ArrayList<Player> newflyingplayers = new ArrayList<Player>();
-		ArrayList<Player> avatarstateplayers = new ArrayList<Player>();
-		ArrayList<Player> airscooterplayers = new ArrayList<Player>();
-		ArrayList<Player> waterspoutplayers = new ArrayList<Player>();
-		ArrayList<Player> airspoutplayers = new ArrayList<Player>();
-		ArrayList<Player> sandspoutplayers = new ArrayList<Player>();
+		ArrayList<Player> players = new ArrayList<>();
+		ArrayList<Player> newflyingplayers = new ArrayList<>();
+		ArrayList<Player> avatarstateplayers;
+		ArrayList<Player> airscooterplayers;
+		ArrayList<Player> waterspoutplayers;
+		ArrayList<Player> airspoutplayers;
+		ArrayList<Player> sandspoutplayers;
 
 		players.addAll(Tornado.getPlayers());
 //		players.addAll(Speed.getPlayers());
@@ -120,7 +120,7 @@ public class Flight {
 	public static void removeAll() {
 		for (Player player : instances.keySet()) {
 			Flight flight = instances.get(player);
-			if (player == null || flight == null) {
+			if (flight == null) {
 				instances.remove(player);
 				continue;
 			}
@@ -138,11 +138,9 @@ public class Flight {
 
 	public void remove() {
 		if (player == null) {
-			for (Player player : instances.keySet()) {
-				if (instances.get(player).equals(this)) {
-					instances.remove(player);
-				}
-			}
+			instances.keySet().stream()
+					.filter(player -> instances.get(player).equals(this))
+					.forEach(instances::remove);
 			return;
 		}
 		instances.remove(player);

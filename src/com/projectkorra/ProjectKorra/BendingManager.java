@@ -1,11 +1,5 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.HashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
@@ -15,11 +9,17 @@ import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+
 public class BendingManager implements Runnable {
 
 	public ProjectKorra plugin;
-	
-	public static HashMap<World, String> events = new HashMap<World, String>(); // holds any current event.
+
+	public static HashMap<World, String> events = new HashMap<>(); // holds any current event.
 
 	static final String DEFAULT_SOZINS_COMET_MESSAGE = ProjectKorra.plugin.getConfig().getString("Properties.Fire.CometMessage");
 	static final String DEFAULT_SOLAR_ECLIPSE_MESSAGE = ProjectKorra.plugin.getConfig().getString("Properties.Fire.SolarEclipseMessage");
@@ -34,7 +34,7 @@ public class BendingManager implements Runnable {
 	
 	long time;
 	long interval;
-	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
+	private final HashMap<World, Boolean> times = new HashMap<>(); // true if day time
 
 	public BendingManager(ProjectKorra plugin) {
 		this.plugin = plugin;
@@ -44,20 +44,16 @@ public class BendingManager implements Runnable {
 	public void handleCooldowns() {
 		for (String bP: BendingPlayer.players.keySet()) {
 			BendingPlayer bPlayer = BendingPlayer.players.get(bP);
-			for (String abil: bPlayer.cooldowns.keySet()) {
-				if (System.currentTimeMillis() >= bPlayer.cooldowns.get(abil)) {
-					bPlayer.removeCooldown(abil);
-				}
-			}
+			bPlayer.cooldowns.keySet().stream()
+					.filter(abil -> System.currentTimeMillis() >= bPlayer.cooldowns.get(abil))
+					.forEach(bPlayer::removeCooldown);
 		}
 	}
 
 	public void handleDayNight() {
-		for (World world: Bukkit.getServer().getWorlds()) {
-			if (!events.containsKey(world)) {
-				events.put(world, "");
-			}
-		}
+		Bukkit.getServer().getWorlds().stream()
+				.filter(world -> !events.containsKey(world))
+				.forEach(world -> events.put(world, ""));
 		for (World world: Bukkit.getServer().getWorlds()) {
 			if (!times.containsKey(world)) {
 				if (FireMethods.isDay(world)) {

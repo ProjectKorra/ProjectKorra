@@ -1,5 +1,12 @@
 package com.projectkorra.ProjectKorra;
 
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+
+import org.bukkit.Chunk;
+import org.bukkit.Server;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,21 +14,14 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
-import org.bukkit.Chunk;
-import org.bukkit.Server;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-
 public class RevertChecker implements Runnable {
 
 	private ProjectKorra plugin;
 	
 	private static final boolean safeRevert = ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.SafeRevert");
-	public static ConcurrentHashMap<Block, Block> earthRevertQueue = new ConcurrentHashMap<Block, Block>();
-	static ConcurrentHashMap<Integer, Integer> airRevertQueue = new ConcurrentHashMap<Integer, Integer>();
-	static ConcurrentHashMap<Chunk, Chunk> chunks = new ConcurrentHashMap<Chunk, Chunk>();
+	public static ConcurrentHashMap<Block, Block> earthRevertQueue = new ConcurrentHashMap<>();
+	static ConcurrentHashMap<Integer, Integer> airRevertQueue = new ConcurrentHashMap<>();
+	static ConcurrentHashMap<Chunk, Chunk> chunks = new ConcurrentHashMap<>();
 	// static ConcurrentHashMap<Block, Material> movedEarthQueue = new
 	// ConcurrentHashMap<Block, Material>();
 
@@ -77,7 +77,7 @@ public class RevertChecker implements Runnable {
 								new getOccupiedChunks(plugin.getServer()));
 				ArrayList<Chunk> chunks = returnFuture.get();
 
-				Map<Block, Information> earth = new HashMap<Block, Information>();
+				Map<Block, Information> earth = new HashMap<>();
 				earth.putAll(EarthMethods.movedearth);
 
 				for (Block block : earth.keySet()) {
@@ -94,7 +94,7 @@ public class RevertChecker implements Runnable {
 					}
 				}
 
-				Map<Integer, Information> air = new HashMap<Integer, Information>();
+				Map<Integer, Information> air = new HashMap<>();
 				air.putAll(EarthMethods.tempair);
 
 				for (Integer i : air.keySet()) {
@@ -127,7 +127,7 @@ public class RevertChecker implements Runnable {
 		@Override
 		public ArrayList<Chunk> call() throws Exception {
 
-			ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+			ArrayList<Chunk> chunks = new ArrayList<>();
 
 			for (Player player : server.getOnlinePlayers()) {
 				Chunk chunk = player.getLocation().getChunk();
