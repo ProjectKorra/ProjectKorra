@@ -23,6 +23,7 @@ import com.projectkorra.ProjectKorra.TempBlock;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.airbending.SpiritualProjection;
 import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
@@ -51,6 +52,8 @@ public class WaterMethods {
 			if (ChiMethods.isChiBlocked(player.getName()))
 				return true;
 		if (GeneralMethods.canBend(player.getName(), "Bloodbending") && !GeneralMethods.getBendingPlayer(player.getName()).isToggled())
+			return false;
+		if (SpiritualProjection.isSpiritualProjected(player))
 			return false;
 		return true;
 	}

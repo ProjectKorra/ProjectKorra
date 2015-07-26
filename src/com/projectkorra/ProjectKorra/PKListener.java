@@ -32,6 +32,7 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -51,6 +52,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
@@ -77,6 +79,7 @@ import com.projectkorra.ProjectKorra.airbending.AirSpout;
 import com.projectkorra.ProjectKorra.airbending.AirSuction;
 import com.projectkorra.ProjectKorra.airbending.AirSwipe;
 import com.projectkorra.ProjectKorra.airbending.FlightAbility;
+import com.projectkorra.ProjectKorra.airbending.SpiritualProjection;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 import com.projectkorra.ProjectKorra.airbending.Tornado;
 import com.projectkorra.ProjectKorra.chiblocking.AcrobatStance;
@@ -195,7 +198,7 @@ public class PKListener implements Listener {
 		if (player.getGameMode() != GameMode.CREATIVE) {
 			HashMap<Integer, String> bound = GeneralMethods.getBendingPlayer(player.getName()).getAbilities();
 			for (String str : bound.values()) {
-				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
+				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout") || str.equalsIgnoreCase("SpiritualProjection")) {
 					final Player fplayer = player;
 					new BukkitRunnable() {
 						public void run() {
@@ -225,6 +228,10 @@ public class PKListener implements Listener {
 		EarthBlast blast = EarthBlast.getBlastFromSource(block);
 		if (blast != null) {
 			blast.cancel();
+		}
+		
+		if (SpiritualProjection.isSpiritualProjected(player)) {
+			event.setCancelled(true);
 		}
 
 		if (FreezeMelt.frozenblocks.containsKey(block)) {
@@ -397,6 +404,10 @@ public class PKListener implements Listener {
 		if (event.getCause() == DamageCause.FIRE && FireStream.ignitedblocks.containsKey(entity.getLocation().getBlock())) {
 			new Enflamed(entity, FireStream.ignitedblocks.get(entity.getLocation().getBlock()));
 		}
+		
+		if (SpiritualProjection.isSpiritualProjected(entity)) {
+			event.setCancelled(true);
+		}
 
 		if (Enflamed.isEnflamed(entity) && event.getCause() == DamageCause.FIRE_TICK) {
 			event.setCancelled(true);
@@ -505,6 +516,10 @@ public class PKListener implements Listener {
 		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
 			event.setCancelled(true);
 		}
+		
+		if (SpiritualProjection.isSpiritualProjected(entity)) {
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -513,6 +528,10 @@ public class PKListener implements Listener {
 
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
+			event.setCancelled(true);
+		}
+		
+		if (SpiritualProjection.isSpiritualProjected(entity)) {
 			event.setCancelled(true);
 		}
 	}
@@ -524,6 +543,10 @@ public class PKListener implements Listener {
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
+		
+		if (SpiritualProjection.isSpiritualProjected(entity)) {
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler
@@ -549,6 +572,10 @@ public class PKListener implements Listener {
 			if (MetalClips.instances.get(p).getTarget() != null)
 				if (MetalClips.instances.get(p).getTarget().getEntityId() == event.getWhoClicked().getEntityId())
 					event.setCancelled(true);
+		}
+		
+		if (SpiritualProjection.isSpiritualProjected(event.getWhoClicked())) {
+			event.setCancelled(true);
 		}
 
 		if (event.getSlotType() == SlotType.ARMOR
@@ -605,6 +632,15 @@ public class PKListener implements Listener {
 		format = format.replace("<name>", color + player.getDisplayName() + ChatColor.RESET);
 		event.setFormat(format);
 	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onEntityDeath(EntityDeathEvent event) {
+		LivingEntity entity = event.getEntity();
+		
+		if (entity.hasMetadata("spirit")) {
+			event.getDrops().clear();
+		}
+	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerDamage(EntityDamageEvent event) {
@@ -613,6 +649,10 @@ public class PKListener implements Listener {
 		if (event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
 
+			if (SpiritualProjection.isSpiritualProjected(player)) {
+				event.setCancelled(true);
+			}
+			
 			if (GeneralMethods.isBender(player.getName(), Element.Earth) && event.getCause() == DamageCause.FALL) {
 				Shockwave.fallShockwave(player);
 			}
@@ -706,6 +746,11 @@ public class PKListener implements Listener {
 
 		if (Paralyze.isParalyzed(e.getDamager())
 				|| ChiComboManager.isParalyzed(e.getDamager())) {
+			e.setCancelled(true);
+			return;
+		}
+		
+		if (SpiritualProjection.isSpiritualProjected(e.getDamager())) {
 			e.setCancelled(true);
 			return;
 		}
@@ -932,7 +977,7 @@ public class PKListener implements Listener {
 			if (ability != null && ability.equalsIgnoreCase("EarthSmash"))
 				new EarthSmash(player, ClickType.RIGHT_CLICK);
 		}
-		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player) || SpiritualProjection.isSpiritualProjected(player)) {
 			event.setCancelled(true);
 		}
 	}
@@ -1047,10 +1092,20 @@ public class PKListener implements Listener {
 			}
 		}
 
+		SpiritualProjection.cancel(player);
 		MultiAbilityManager.remove(player);
 		FlightAbility.remove(event.getPlayer());
 	}
 
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onItemPickup(PlayerPickupItemEvent event) {
+		Player player = event.getPlayer();
+		if (SpiritualProjection.instances.containsKey(player)) {
+			event.setCancelled(true);
+			return;
+		}
+	}
+	
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSneak(PlayerToggleSneakEvent event) {
 		Player player = event.getPlayer();
@@ -1125,6 +1180,9 @@ public class PKListener implements Listener {
 				if(abil.equalsIgnoreCase("Flight")) {
 					if(player.isSneaking() || !AirMethods.canAirFlight(player)) return;
 					new FlightAbility(player);
+				}
+				if (abil.equalsIgnoreCase("SpiritualProjection")) {
+					new SpiritualProjection(player);
 				}
 			}
 

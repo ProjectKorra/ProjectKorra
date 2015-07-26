@@ -19,10 +19,14 @@ public class FlightAbility {
 	public FlightAbility(Player player) {		
 		if(!AirMethods.canFly(player, true, false)) 
 			return;
-		player.setAllowFlight(true);
+		//player.setAllowFlight(true);
 		player.setVelocity(player.getEyeLocation().getDirection().normalize());
 		instances.put(player.getName(), this);
 		p = player;
+		
+		if(flight == null)
+			flight = new Flight(p);
+		player.setAllowFlight(true);
 	}
 	
 	private void progress() {

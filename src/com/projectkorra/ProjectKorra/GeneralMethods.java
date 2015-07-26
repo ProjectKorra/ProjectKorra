@@ -36,6 +36,7 @@ import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -272,6 +273,7 @@ public class GeneralMethods {
 			}
 			cooldowns.remove(p.getName());
 		}
+		if (p.getGameMode().equals(GameMode.SPECTATOR)) return false;
 		if (bPlayer.blockedChi) return false;
 		if (!p.hasPermission("bending.ability." + ability)) return false;
 		if (AirMethods.isAirAbility(ability) && !isBender(player, Element.Air)) return false;
