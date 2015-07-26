@@ -1,6 +1,10 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -12,16 +16,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Fireball {
 
-	public static ConcurrentHashMap<Integer, Fireball> instances = new ConcurrentHashMap<Integer, Fireball>();
-	private static ConcurrentHashMap<Entity, Fireball> explosions = new ConcurrentHashMap<Entity, Fireball>();
+    public static ConcurrentHashMap<Integer, Fireball> instances = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Entity, Fireball> explosions = new ConcurrentHashMap<>();
 
 	private static long defaultchargetime = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
 	private static long interval = 25;
@@ -251,16 +251,16 @@ public class Fireball {
 	}
 
 	private void ignite(Location location) {
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, FireBlast.AFFECTING_RADIUS)) {
-			if (FireStream.isIgnitable(player, block)) {
-				block.setType(Material.FIRE);
-				if (FireBlast.dissipate) {
-					FireStream.ignitedblocks.put(block, player);
-					FireStream.ignitedtimes.put(block, System.currentTimeMillis());
-				}
-			}
-		}
-	}
+        GeneralMethods.getBlocksAroundPoint(location, FireBlast.AFFECTING_RADIUS).stream()
+                .filter(block -> FireStream.isIgnitable(player, block))
+                .forEach(block -> {
+                    block.setType(Material.FIRE);
+                    if (FireBlast.dissipate) {
+                        FireStream.ignitedblocks.put(block, player);
+                        FireStream.ignitedtimes.put(block, System.currentTimeMillis());
+                    }
+                });
+    }
 
 	public static void progressAll() {
 		for (int id : instances.keySet())

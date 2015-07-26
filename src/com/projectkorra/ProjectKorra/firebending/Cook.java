@@ -1,19 +1,19 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Cook {
 
-	public static ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<Player, Cook>();
+    public static ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<>();
 
 	private static final long COOK_TIME = 2000;
 	private static final Material[] cookables = { Material.RAW_BEEF,
@@ -44,8 +44,9 @@ public class Cook {
 			cancel();
 			return;
 		}
-		if (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
-			cancel();
+        if (!player.isSneaking()
+                || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
+            cancel();
 			return;
 		}
 

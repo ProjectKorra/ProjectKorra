@@ -1,7 +1,15 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -9,25 +17,14 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
-import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FireCombo {
 	public static final List<String> abilitiesToBlock = new ArrayList<String>() {
@@ -87,7 +84,7 @@ public class FireCombo {
 	public static long JET_BLAZE_COOLDOWN = ProjectKorra.plugin.getConfig()
 			.getLong("Abilities.Fire.FireCombo.JetBlaze.Cooldown");
 
-	public static ArrayList<FireCombo> instances = new ArrayList<FireCombo>();
+    public static ArrayList<FireCombo> instances = new ArrayList<>();
 
 	private Player player;
 	private BendingPlayer bplayer;
@@ -100,9 +97,9 @@ public class FireCombo {
 	private Location destination;
 	private Vector direction;
 	private boolean firstTime = true;
-	private ArrayList<LivingEntity> affectedEntities = new ArrayList<LivingEntity>();
-	private ArrayList<FireComboStream> tasks = new ArrayList<FireComboStream>();
-	private int progressCounter = 0;
+    private ArrayList<LivingEntity> affectedEntities = new ArrayList<>();
+    private ArrayList<FireComboStream> tasks = new ArrayList<>();
+    private int progressCounter = 0;
 	private double damage = 0, speed = 0, range = 0;
 	private long cooldown = 0;
 
@@ -163,8 +160,8 @@ public class FireCombo {
 		progressCounter++;
 		for (int i = 0; i < tasks.size(); i++) {
 			BukkitRunnable br = tasks.get(i);
-			if (br instanceof FireComboStream) {
-				FireComboStream fs = (FireComboStream) br;
+            if (br != null) {
+                FireComboStream fs = (FireComboStream) br;
 				if (fs.isCancelled())
 					tasks.remove(fs);
 			}
@@ -207,12 +204,11 @@ public class FireCombo {
 					player.getWorld().playSound(player.getLocation(),
 							Sound.FIRE_IGNITE, 0.5f, 1f);
 				}
-				currentLoc = ((FireComboStream) tasks.get(0)).getLocation();
-				for (FireComboStream stream : tasks)
-					if (GeneralMethods.blockAbilities(player, abilitiesToBlock,
-							stream.currentLoc, 2))
-						stream.remove();
-			} else if (tasks.size() == 0) {
+                currentLoc = tasks.get(0).getLocation();
+                tasks.stream()
+                        .filter(stream -> GeneralMethods.blockAbilities(player, abilitiesToBlock, stream.currentLoc, 2))
+                        .forEach(FireCombo.FireComboStream::remove);
+            } else if (tasks.size() == 0) {
 				remove();
 				return;
 			}
@@ -382,7 +378,6 @@ public class FireCombo {
 				remove();
 				return;
 			}
-			;
 		}
 
 		if (progressCounter % 3 == 0)
@@ -436,9 +431,8 @@ public class FireCombo {
 		 * remaining in totalBlocks, and cancels any remaining tasks.
 		 */
 		instances.remove(this);
-		for (BukkitRunnable task : tasks)
-			task.cancel();
-	}
+        tasks.forEach(BukkitRunnable::cancel);
+    }
 
 	public static void progressAll() {
 		for (int i = instances.size() - 1; i >= 0; i--)
@@ -455,30 +449,25 @@ public class FireCombo {
 		return player;
 	}
 
-	public static ArrayList<FireCombo> getFireCombo(Player player) {
-		/**
+    public static List<FireCombo> getFireCombo(Player player) {
+        /**
 		 * Returns all the FireCombos created by a specific player.
 		 */
-		ArrayList<FireCombo> list = new ArrayList<FireCombo>();
-		for (FireCombo lf : instances)
-			if (lf.player != null && lf.player == player)
-				list.add(lf);
-		return list;
-	}
+        return instances.stream()
+                .filter(lf -> lf.player != null && lf.player == player)
+                .collect(Collectors.toList());
+    }
 
-	public static ArrayList<FireCombo> getFireCombo(Player player,
-			ClickType type) {
+    public static List<FireCombo> getFireCombo(Player player,
+                                               ClickType type) {
 		/**
 		 * Returns all of the FireCombos created by a specific player but
 		 * filters the abilities based on shift or click.
 		 */
-		ArrayList<FireCombo> list = new ArrayList<FireCombo>();
-		for (FireCombo lf : instances)
-			if (lf.player != null && lf.player == player && lf.type != null
-					&& lf.type == type)
-				list.add(lf);
-		return list;
-	}
+        return instances.stream()
+                .filter(lf -> lf.player != null && lf.player == player && lf.type != null && lf.type == type)
+                .collect(Collectors.toList());
+    }
 
 	public static boolean removeAroundPoint(Player player, String ability,
 			Location loc, double radius) {
@@ -572,17 +561,12 @@ public class FireCombo {
 			if (initialLoc.distance(currentLoc) > distance) {
 				remove();
 				return;
-			} else if (collides
-					&& checkCollisionCounter % checkCollisionDelay == 0) {
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(currentLoc,
-						collisionRadius)) {
-					if (entity instanceof LivingEntity
-							&& !entity.equals(fireCombo.getPlayer()))
-						fireCombo.collision((LivingEntity) entity, direction,
-								this);
-				}
-			}
-			checkCollisionCounter++;
+            } else if (collides && checkCollisionCounter % checkCollisionDelay == 0) {
+                GeneralMethods.getEntitiesAroundPoint(currentLoc, collisionRadius).stream()
+                        .filter(entity -> entity instanceof LivingEntity && !entity.equals(fireCombo.getPlayer()))
+                        .forEach(entity -> fireCombo.collision((LivingEntity) entity, direction, this));
+            }
+            checkCollisionCounter++;
 			if (singlePoint)
 				remove();
 		}

@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -8,14 +10,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Illumination {
 
-	public static ConcurrentHashMap<Player, Illumination> instances = new ConcurrentHashMap<Player, Illumination>();
-	public static ConcurrentHashMap<Block, Player> blocks = new ConcurrentHashMap<Block, Player>();
+    public static ConcurrentHashMap<Player, Illumination> instances = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Block, Player> blocks = new ConcurrentHashMap<>();
 
 	private static final int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Illumination.Range");
 
@@ -90,24 +90,24 @@ public class Illumination {
 	}
 
 	public static void manage(Server server) {
-		for (Player player : server.getOnlinePlayers()) {
-			if (instances.containsKey(player)) {
-				if (!GeneralMethods.canBend(player.getName(), "Illumination")) {
-					instances.get(player).revert();
-					instances.remove(player);
-				} else {
-					instances.get(player).set();
-				}
-			}
-		}
+        server.getOnlinePlayers().stream()
+                .filter(instances::containsKey)
+                .forEach(player -> {
+                    if (!GeneralMethods.canBend(player.getName(), "Illumination")) {
+                        instances.get(player).revert();
+                        instances.remove(player);
+                    } else {
+                        instances.get(player).set();
+                    }
+                });
 
-		for (Player player : instances.keySet()) {
-			if (!player.isOnline() || player.isDead()) {
-				instances.get(player).revert();
-				instances.remove(player);
-			}
-		}
-	}
+        instances.keySet().stream()
+                .filter(player -> !player.isOnline() || player.isDead())
+                .forEach(player -> {
+                    instances.get(player).revert();
+                    instances.remove(player);
+                });
+    }
 
 	public static void removeAll() {
 		for (Player player : instances.keySet()) {

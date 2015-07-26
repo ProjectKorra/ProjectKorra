@@ -1,8 +1,10 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingManager;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -11,14 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingManager;
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FireBurst {
-	private static ConcurrentHashMap<Player, FireBurst> instances = new ConcurrentHashMap<Player, FireBurst>();
+	private static ConcurrentHashMap<Player, FireBurst> instances = new ConcurrentHashMap<>();
 	private static double PARTICLES_PERCENTAGE = 5;
 
 	private Player player;
@@ -29,7 +29,7 @@ public class FireBurst {
 	private double deltheta = 10;
 	private double delphi = 10;
 	private boolean charged = false;
-	private ArrayList<FireBlast> blasts = new ArrayList<FireBlast>();
+	private ArrayList<FireBlast> blasts = new ArrayList<>();
 
 	public FireBurst(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());

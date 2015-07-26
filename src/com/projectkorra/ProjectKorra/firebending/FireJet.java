@@ -1,25 +1,26 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Flight;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 public class FireJet {
 
-	public static ConcurrentHashMap<Player, FireJet> instances = new ConcurrentHashMap<Player, FireJet>();
+    public static ConcurrentHashMap<Player, FireJet> instances = new ConcurrentHashMap<>();
 
 	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireJet.Speed");
 	private static final long defaultduration = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireJet.Duration");
@@ -57,11 +58,8 @@ public class FireJet {
 	}
 
 	public static boolean checkTemporaryImmunity(Player player) {
-		if (instances.containsKey(player)) {
-			return true;
-		}
-		return false;
-	}
+        return instances.containsKey(player);
+    }
 
 	public void progress() {
 		if (player.isDead() || !player.isOnline()) {
@@ -100,13 +98,9 @@ public class FireJet {
 		}
 	}
 
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (Player player : instances.keySet()) {
-			players.add(player);
-		}
-		return players;
-	}
+    public static List<Player> getPlayers() {
+        return instances.keySet().stream().collect(Collectors.toList());
+    }
 
 	public Player getPlayer() {
 		return player;

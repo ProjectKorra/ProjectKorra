@@ -1,9 +1,15 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
+import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,23 +21,17 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
-import com.projectkorra.ProjectKorra.waterbending.Plantbending;
-import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FireBlast {
 
 	Random rand = new Random();
 
-	public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<Integer, FireBlast>();
-	private static double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
+    public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<>();
+    private static double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
 	private static double PUSH_FACTOR = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Push");
 	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireBlast.Range");
 	static boolean dissipate = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
@@ -48,8 +48,8 @@ public class FireBlast {
 	static final int maxticks = 10000;
 
 	public Location location;
-	private List<Block> safe = new ArrayList<Block>();
-	private Location origin;
+    private List<Block> safe = new ArrayList<>();
+    private Location origin;
 	private Vector direction;
 	private Player player;
 	private int id;
@@ -192,18 +192,19 @@ public class FireBlast {
 	}
 
 	private void ignite(Location location) {
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, affectingradius)) {
-			if (FireStream.isIgnitable(player, block) && !safe.contains(block)) {
-				if (WaterMethods.isPlant(block))
-					new Plantbending(block);
-				block.setType(Material.FIRE);
-				if (dissipate) {
-					FireStream.ignitedblocks.put(block, player);
-					FireStream.ignitedtimes.put(block, System.currentTimeMillis());
-				}
-			}
-		}
-	}
+        GeneralMethods.getBlocksAroundPoint(location, affectingradius).stream()
+                .filter(block -> FireStream.isIgnitable(player, block) && !safe.contains(block))
+                .forEach(block -> {
+                    if (WaterMethods.isPlant(block)) {
+                        new Plantbending(block);
+                    }
+                    block.setType(Material.FIRE);
+                    if (dissipate) {
+                        FireStream.ignitedblocks.put(block, player);
+                        FireStream.ignitedtimes.put(block, System.currentTimeMillis());
+                    }
+                });
+    }
 	
 	public void setDamage(double dmg) {
 		this.damage = dmg;
@@ -218,16 +219,12 @@ public class FireBlast {
 	}
 
 	public static boolean progress(int ID) {
-		if (instances.containsKey(ID))
-			return instances.get(ID).progress();
-		return false;
-	}
+        return instances.containsKey(ID) && instances.get(ID).progress();
+    }
 
 	public static void progressAll() {
-		for (int id : instances.keySet()) {
-			progress(id);
-		}
-	}
+        instances.keySet().forEach(FireBlast::progress);
+    }
 
 	private void affect(Entity entity) {
 		if (entity.getEntityId() != player.getEntityId()) {
@@ -238,8 +235,8 @@ public class FireBlast {
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks((int) (fireticks * 20));
-				GeneralMethods.damageEntity(player, entity, (int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()));
-				AirMethods.breakBreathbendingHold(entity);
+                GeneralMethods.damageEntity(player, entity, (int) FireMethods.getFirebendingDayAugment(damage, entity.getWorld()));
+                AirMethods.breakBreathbendingHold(entity);
 				new Enflamed(entity, player);
 				instances.remove(id);
 			}
@@ -257,8 +254,8 @@ public class FireBlast {
 		Fireball.removeFireballsAroundPoint(location, radius);
 	}
 	public static ArrayList<FireBlast> getAroundPoint(Location location, double radius) {
-		ArrayList<FireBlast> list = new ArrayList<FireBlast>();
-		for (int id : instances.keySet()) {
+        ArrayList<FireBlast> list = new ArrayList<>();
+        for (int id : instances.keySet()) {
 			Location fireblastlocation = instances.get(id).location;
 			if (location.getWorld() == fireblastlocation.getWorld()) {
 				if (location.distance(fireblastlocation) <= radius)
@@ -286,10 +283,8 @@ public class FireBlast {
 	}
 
 	public static void removeAll() {
-		for (int id : instances.keySet()) {
-			instances.remove(id);
-		}
-	}
+        instances.keySet().forEach(instances::remove);
+    }
 
 	public static String getDescription() {
 		return "FireBlast is the most fundamental bending technique of a firebender. "
