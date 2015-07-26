@@ -1,20 +1,20 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Flight;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirSpout {
 
-	public static ConcurrentHashMap<Player, AirSpout> instances = new ConcurrentHashMap<Player, AirSpout>();
+	public static ConcurrentHashMap<Player, AirSpout> instances = new ConcurrentHashMap<>();
 
 	private static final double HEIGHT = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirSpout.Height");
 	private static final long interval = 100;
@@ -44,7 +44,7 @@ public class AirSpout {
 	}
 
 	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<Player> players = new ArrayList<>();
 		players.addAll(instances.keySet());
 		return players;
 	}

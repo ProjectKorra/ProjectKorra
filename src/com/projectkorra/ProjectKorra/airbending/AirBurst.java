@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,14 +12,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirBurst {
 
-	private static ConcurrentHashMap<Player, AirBurst> instances = new ConcurrentHashMap<Player, AirBurst>();
+	private static ConcurrentHashMap<Player, AirBurst> instances = new ConcurrentHashMap<>();
 	private static double PARTICLES_PERCENTAGE = 50;
 	
 	static FileConfiguration config = ProjectKorra.plugin.getConfig();
@@ -32,8 +32,8 @@ public class AirBurst {
 	private long starttime;
 	private long chargetime = config.getLong("Abilities.Air.AirBurst.ChargeTime");
 	private boolean charged = false;
-	public ArrayList<AirBlast> blasts = new ArrayList<AirBlast>();
-	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
+	public ArrayList<AirBlast> blasts = new ArrayList<>();
+	private ArrayList<Entity> affectedentities = new ArrayList<>();
 
 	public AirBurst(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());

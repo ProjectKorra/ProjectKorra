@@ -1,8 +1,12 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Flight;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -20,20 +24,16 @@ import org.bukkit.material.Lever;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirBlast {
 
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
-	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<Integer, AirBlast>();
-	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
+	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<>();
 
 	private static int ID = Integer.MIN_VALUE;
 	static final int maxticks = 10000;
@@ -60,8 +60,8 @@ public class AirBlast {
 	private int ticks = 0;
 	private boolean showParticles = true;
 
-	private ArrayList<Block> affectedlevers = new ArrayList<Block>();
-	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
+	private ArrayList<Block> affectedlevers = new ArrayList<>();
+	private ArrayList<Entity> affectedentities = new ArrayList<>();
 
 	@SuppressWarnings("unused")
 	private AirBurst source = null;
@@ -81,7 +81,7 @@ public class AirBlast {
 			otherorigin = true;
 			origin = origins.get(player);
 			origins.remove(player);
-			Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+			Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<>());
 			if (entity != null) {
 				direction = GeneralMethods.getDirection(origin, entity.getLocation()).normalize();
 			} else {
@@ -306,9 +306,7 @@ public class AirBlast {
 			return false;
 		}
 
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, affectingradius)) {
-			affect(entity);
-		}
+		GeneralMethods.getEntitiesAroundPoint(location, affectingradius).forEach(this::affect);
 
 		advanceLocation();
 
@@ -362,7 +360,7 @@ public class AirBlast {
 			}
 
 			if (entity instanceof Player) {
-				if (Commands.invincible.contains(((Player) entity).getName())) return;
+				if (Commands.invincible.contains(entity.getName())) return;
 			}
 
 			if(Double.isNaN(velocity.length()))
@@ -401,9 +399,7 @@ public class AirBlast {
 	public static void progressAll() {
 		for (int id : instances.keySet())
 			instances.get(id).progress();
-		for (Player player : origins.keySet()) {
-			playOriginEffect(player);
-		}
+		origins.keySet().forEach(AirBlast::playOriginEffect);
 	}
 
 	private static void playOriginEffect(Player player) {
@@ -436,9 +432,7 @@ public class AirBlast {
 	}
 
 	public static void removeAll() {
-		for (int id : instances.keySet()) {
-			instances.remove(id);
-		}
+		instances.keySet().forEach(instances::remove);
 	}
 
 	public Player getPlayer() {

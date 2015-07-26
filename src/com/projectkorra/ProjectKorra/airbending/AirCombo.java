@@ -1,6 +1,17 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.Flight;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.firebending.FireCombo;
+import com.projectkorra.ProjectKorra.firebending.FireCombo.FireComboStream;
+import com.projectkorra.ProjectKorra.firebending.FireMethods;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -10,21 +21,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
-import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.firebending.FireCombo;
-import com.projectkorra.ProjectKorra.firebending.FireCombo.FireComboStream;
-import com.projectkorra.ProjectKorra.firebending.FireMethods;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AirCombo {
 	public static enum AbilityState {
@@ -80,7 +79,7 @@ public class AirCombo {
 	private static boolean enabled = ProjectKorra.plugin.getConfig()
 			.getBoolean("Abilities.Air.AirCombo.Enabled");
 
-	public static ArrayList<AirCombo> instances = new ArrayList<AirCombo>();
+    public static ArrayList<AirCombo> instances = new ArrayList<>();
 
 	private Player player;
 	private BendingPlayer bplayer;
@@ -96,9 +95,9 @@ public class AirCombo {
 	private double damage = 0, speed = 0, range = 0, knockback = 0;
 	private long cooldown = 0;
 	private AbilityState state;
-	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
-	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
-	private ArrayList<Flight> flights = new ArrayList<Flight>();
+    private ArrayList<Entity> affectedEntities = new ArrayList<>();
+    private ArrayList<BukkitRunnable> tasks = new ArrayList<>();
+    private ArrayList<Flight> flights = new ArrayList<>();
 
 	public AirCombo(Player player, String ability) {
 		if (!enabled)
@@ -214,11 +213,9 @@ public class AirCombo {
 			AirMethods.playAirbendingSound(currentLoc);
 
 			for (int i = 0; i < height; i += 3)
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(currentLoc
-						.clone().add(0, i, 0), radius * 0.75))
-					if (!affectedEntities.contains(entity)
-							&& !entity.equals(player))
-						affectedEntities.add(entity);
+                GeneralMethods.getEntitiesAroundPoint(currentLoc.clone().add(0, i, 0), radius * 0.75).stream()
+                        .filter(entity -> !affectedEntities.contains(entity) && !entity.equals(player))
+                        .forEach(affectedEntities::add);
 
 			for (Entity entity : affectedEntities) {
 				Vector forceDir = GeneralMethods.getDirection(entity.getLocation(),
@@ -239,8 +236,8 @@ public class AirCombo {
 				currentLoc = origin.clone();
 			}
 			Entity target = GeneralMethods.getTargetedEntity(player, range,
-					new ArrayList<Entity>());
-			if (target != null && target.getLocation().distance(currentLoc) > 7)
+                    new ArrayList<>());
+            if (target != null && target.getLocation().distance(currentLoc) > 7)
 				destination = target.getLocation();
 			else
 				destination = GeneralMethods.getTargetedLocation(player, range,
@@ -454,9 +451,8 @@ public class AirCombo {
 
 	public void remove() {
 		instances.remove(this);
-		for (BukkitRunnable task : tasks)
-			task.cancel();
-		for (int i = 0; i < flights.size(); i++) {
+        tasks.forEach(BukkitRunnable::cancel);
+        for (int i = 0; i < flights.size(); i++) {
 			Flight flight = flights.get(i);
 			flight.revert();
 			flight.remove();
@@ -480,22 +476,19 @@ public class AirCombo {
 		return player;
 	}
 
-	public static ArrayList<AirCombo> getAirCombo(Player player) {
-		ArrayList<AirCombo> list = new ArrayList<AirCombo>();
-		for (AirCombo combo : instances)
-			if (combo.player != null && combo.player == player)
-				list.add(combo);
-		return list;
-	}
+    public static List<AirCombo> getAirCombo(Player player) {
+        return instances.stream()
+                .filter(combo -> combo.player != null && combo.player == player)
+                .collect(Collectors.toList());
+    }
 
-	public static ArrayList<AirCombo> getAirCombo(Player player, ClickType type) {
-		ArrayList<AirCombo> list = new ArrayList<AirCombo>();
-		for (AirCombo combo : instances)
-			if (combo.player != null && combo.player == player
-					&& combo.type != null && combo.type == type)
-				list.add(combo);
-		return list;
-	}
+    public static List<AirCombo> getAirCombo(Player player, ClickType type) {
+        return instances.stream()
+                .filter(combo -> combo.player != null
+                        && combo.player == player && combo.type != null
+                        && combo.type == type)
+                .collect(Collectors.toList());
+    }
 
 	public static boolean removeAroundPoint(Player player, String ability,
 			Location loc, double radius) {

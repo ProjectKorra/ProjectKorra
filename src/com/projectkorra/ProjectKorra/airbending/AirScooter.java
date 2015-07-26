@@ -1,7 +1,8 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Flight;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -10,13 +11,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class AirScooter {
 
-	public static ConcurrentHashMap<Player, AirScooter> instances = new ConcurrentHashMap<Player, AirScooter>();
+    public static ConcurrentHashMap<Player, AirScooter> instances = new ConcurrentHashMap<>();
 
 	private static final double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirScooter.Speed");
 	private static final long interval = 100;
@@ -26,7 +28,7 @@ public class AirScooter {
 	private Block floorblock;
 	private long time;
 	private double speed = SPEED;
-	private ArrayList<Double> angles = new ArrayList<Double>();
+    private ArrayList<Double> angles = new ArrayList<>();
 
 	public AirScooter(Player player) {
 
@@ -175,13 +177,10 @@ public class AirScooter {
 		}
 	}
 
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (Player player : instances.keySet()) {
-			players.add(player);
-		}
-		return players;
-	}
+    public static List<Player> getPlayers() {
+        return instances.keySet().stream()
+                .collect(Collectors.toList());
+    }
 
 	public Player getPlayer() {
 		return player;

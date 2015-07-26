@@ -1,7 +1,13 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Flight;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -10,21 +16,15 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirSuction {
 	
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 
-	public static ConcurrentHashMap<Integer, AirSuction> instances = new ConcurrentHashMap<Integer, AirSuction>();
-	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
+    public static ConcurrentHashMap<Integer, AirSuction> instances = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<>();
 
 	static final long soonesttime = config.getLong("Properties.GlobalCooldown");
 	static final double maxspeed = AirBlast.maxspeed;
@@ -54,7 +54,7 @@ public class AirSuction {
 	private double speedfactor;
 
 	@SuppressWarnings("unused")
-	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
+    private ArrayList<Entity> affectedentities = new ArrayList<>();
 
 	public AirSuction(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
@@ -77,8 +77,8 @@ public class AirSuction {
 		}
 		location = GeneralMethods.getTargetedLocation(player, range, GeneralMethods.nonOpaque);
 		direction = GeneralMethods.getDirection(location, origin).normalize();
-		Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-		if (entity != null) {
+        Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<>());
+        if (entity != null) {
 			direction = GeneralMethods.getDirection(entity.getLocation(), origin)
 					.normalize();
 			location = getLocation(origin, direction.clone().multiply(-1));
@@ -196,8 +196,8 @@ public class AirSuction {
 				}
 				
 				if (entity instanceof Player) {
-					if (Commands.invincible.contains(((Player) entity).getName())) continue;
-				}
+                    if (Commands.invincible.contains(entity.getName())) continue;
+                }
 				GeneralMethods.setVelocity(entity, velocity);
 				entity.setFallDistance(0);
 				if (entity.getEntityId() != player.getEntityId()
@@ -231,10 +231,8 @@ public class AirSuction {
 	public static void progressAll() {
 		for (int id : instances.keySet())
 			instances.get(id).progress();
-		for (Player player : origins.keySet()) {
-			playOriginEffect(player);
-		}
-	}
+        origins.keySet().forEach(AirSuction::playOriginEffect);
+    }
 
 	private static void playOriginEffect(Player player) {
 		if (!origins.containsKey(player))
@@ -249,9 +247,10 @@ public class AirSuction {
 			origins.remove(player);
 			return;
 		}
-		
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSuction") || !GeneralMethods.canBend(player.getName(), "AirSuction")) {
-			origins.remove(player);
+
+        if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSuction")
+                || !GeneralMethods.canBend(player.getName(), "AirSuction")) {
+            origins.remove(player);
 			return;
 		}
 

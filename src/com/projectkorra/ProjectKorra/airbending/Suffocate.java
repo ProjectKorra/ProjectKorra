@@ -1,10 +1,9 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -15,10 +14,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Suffocate
@@ -31,13 +32,13 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
  * If the user is damaged while performing this ability then the ability is removed.
  */
 public class Suffocate {
-	public static enum SpiralType {
-		HORIZONTAL1, HORIZONTAL2, VERTICAL1, VERTICAL2, DIAGONAL1, DIAGONAL2
-	};
-	
-	private static ConcurrentHashMap<Player, Suffocate> instances = new ConcurrentHashMap<Player, Suffocate>();
-	
-	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+    public enum SpiralType {
+        HORIZONTAL1, HORIZONTAL2, VERTICAL1, VERTICAL2, DIAGONAL1, DIAGONAL2
+    }
+
+    private static ConcurrentHashMap<Player, Suffocate> instances = new ConcurrentHashMap<>();
+
+    private static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	private static final boolean CAN_SUFFOCATE_UNDEAD = config.getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
 	private static final boolean REQUIRE_CONSTANT_AIM = config.getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
 	private static final double ANIM_RADIUS = config.getDouble("Abilities.Air.Suffocate.AnimationRadius");
@@ -78,9 +79,9 @@ public class Suffocate {
 	public Suffocate(Player player) {
 		this.player = player;
 		bplayer = GeneralMethods.getBendingPlayer(player.getName());
-		targets = new ArrayList<LivingEntity>();
-		tasks = new ArrayList<BukkitRunnable>();
-		time = System.currentTimeMillis();
+        targets = new ArrayList<>();
+        tasks = new ArrayList<>();
+        time = System.currentTimeMillis();
 		
 		reqConstantAim = REQUIRE_CONSTANT_AIM;
 		canSuffUndead = CAN_SUFFOCATE_UNDEAD;
@@ -121,13 +122,14 @@ public class Suffocate {
 			particleScale = 2;
 		
 		if(AvatarState.isAvatarState(player)) {
-			for(Entity ent : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range))
-				if(ent instanceof LivingEntity && !ent.equals(player))
-					targets.add((LivingEntity) ent);
-		}
+            targets.addAll(GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range).stream()
+                    .filter(ent -> ent instanceof LivingEntity && !ent.equals(player))
+                    .map(ent -> (LivingEntity) ent)
+                    .collect(Collectors.toList()));
+        }
 		else {
-			Entity ent = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-			if(ent != null && ent instanceof LivingEntity)
+            Entity ent = GeneralMethods.getTargetedEntity(player, range, new ArrayList<>());
+            if(ent != null && ent instanceof LivingEntity)
 				targets.add((LivingEntity) ent);
 		}
 		
@@ -246,9 +248,8 @@ public class Suffocate {
 		animate();
 		if(!player.isSneaking()) {
 			remove();
-			return;
-		}
-	}
+        }
+    }
 	
 	/** 
 	 * Animates this instance of the Suffocate ability.
@@ -265,31 +266,30 @@ public class Suffocate {
 		long t3 = (long) (5000 * speedFactor);
 		long t4 = (long) (6000 * speedFactor);
 		for(LivingEntity lent : targets) {
-			final LivingEntity target = lent;
-			if(dt < t1) {
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double)dt / (double)t1), 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double)dt / (double)t1), 0, SpiralType.HORIZONTAL2);
-			}
+            if (dt < t1) {
+                new SuffocateSpiral(lent, steps, radius, delay, 0, 0.25 - (0.25 * (double) dt / (double) t1), 0, SpiralType.HORIZONTAL1);
+                new SuffocateSpiral(lent, steps, radius, delay, 0, 0.25 - (0.25 * (double) dt / (double) t1), 0, SpiralType.HORIZONTAL2);
+            }
 			else if(dt < t2) {
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps * 2, radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps * 2, radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
-			}
+                new SuffocateSpiral(lent, steps, radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+                new SuffocateSpiral(lent, steps * 2, radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
+                new SuffocateSpiral(lent, steps * 2, radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
+            }
 			else if(dt < t3) {
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
-			}
+                new SuffocateSpiral(lent, steps, radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+                new SuffocateSpiral(lent, steps, radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
+                new SuffocateSpiral(lent, steps, radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
+            }
 			else if(dt < t4) {
-				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double)(dt - t3) / (double)(t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double)(dt - t3) / (double)(t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double)(dt - t3) / (double)(t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
-			}
+                new SuffocateSpiral(lent, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+                new SuffocateSpiral(lent, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
+                new SuffocateSpiral(lent, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
+            }
 			else {
-				new SuffocateSpiral(target, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL2);
-			}
+                new SuffocateSpiral(lent, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+                new SuffocateSpiral(lent, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL1);
+                new SuffocateSpiral(lent, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL2);
+            }
 		}
 	}
 	
@@ -413,9 +413,8 @@ public class Suffocate {
 	
 	/** Progresses every instance of Suffocate by 1 tick **/
 	public static void progressAll() {
-		for(Suffocate suff : instances.values())
-			suff.progress();
-	}
+        instances.values().forEach(Suffocate::progress);
+    }
 	
 	/** Removes this instance of the ability **/
 	public void remove() {
@@ -465,11 +464,10 @@ public class Suffocate {
 	
 	/** Determines if a player is Suffocating entities **/
 	public static boolean isChannelingSphere(Player player){
-		if(instances.containsKey(player)) return true;
-		return false;
-	}
-	
-	/** Stops an entity from being suffocated **/
+        return instances.containsKey(player);
+    }
+
+    /** Stops an entity from being suffocated **/
 	public void breakSuffocateLocal(Entity entity) {
 		if (targets.contains(entity))
 			targets.remove(entity);
@@ -477,12 +475,10 @@ public class Suffocate {
 	
 	/** Stops an entity from being suffocated **/
 	public static void breakSuffocate(Entity entity) {
-		for (Player player : instances.keySet()) {
-			if (instances.get(player).targets.contains(entity)) {
-				instances.get(player).breakSuffocateLocal(entity);
-			}
-		}
-	}
+        instances.keySet().stream()
+                .filter(player -> instances.get(player).targets.contains(entity))
+                .forEach(player -> instances.get(player).breakSuffocateLocal(entity));
+    }
 	
 	/** Checks if an entity is being suffocated **/
 	public static boolean isBreathbent(Entity entity) {
