@@ -1,15 +1,15 @@
 package com.projectkorra.ProjectKorra.Utilities.logging;
 
+import com.projectkorra.ProjectKorra.ProjectKorra;
+
+import org.bukkit.Bukkit;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Filter;
 import java.util.logging.LogRecord;
-
-import org.bukkit.Bukkit;
-
-import com.projectkorra.ProjectKorra.ProjectKorra;
 
 /**
  * This class should only be used to set 
@@ -43,16 +43,14 @@ public class LogFilter implements Filter {
 			} 
 			recordString = buildString(record);
 		} else {
-			if (record.getThrown() != null) {
-				if (record.getThrown().getMessage() == null) {
-					return false;
-				}
-				if (!record.getThrown().getMessage().contains("ProjectKorra")) {
-					return false;
-				}
-				// record message null but throwable has ProjectKorra
-				recordString = buildString(record);
+			if (record.getThrown().getMessage() == null) {
+				return false;
 			}
+			if (!record.getThrown().getMessage().contains("ProjectKorra")) {
+				return false;
+			}
+			// record message null but throwable has ProjectKorra
+			recordString = buildString(record);
 		}
 		
 		if (loggedRecords.contains(recordString)) {
@@ -61,11 +59,7 @@ public class LogFilter implements Filter {
 		}
 		
 		final String toRecord = recordString;
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
-			public void run() {
-				loggedRecords.add(toRecord);
-			}
-		}, 10);
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, () -> loggedRecords.add(toRecord), 10);
 		return true;
 	}
 	

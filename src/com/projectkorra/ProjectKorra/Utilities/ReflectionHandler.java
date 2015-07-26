@@ -1,13 +1,13 @@
 package com.projectkorra.ProjectKorra.Utilities;
 
+import org.bukkit.Bukkit;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.bukkit.Bukkit;
 
 /**
  * <b>ReflectionUtils</b>
@@ -40,8 +40,9 @@ public final class ReflectionHandler {
 	 * @see DataType#getPrimitive(Class[])
 	 * @see DataType#compare(Class[], Class[])
 	 */
-	public static Constructor<?> getConstructor(Class<?> clazz, Class<?>... parameterTypes) throws NoSuchMethodException {
-		Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
+    public static Constructor<?> getConstructor(Class<?> clazz, Class<?>... parameterTypes)
+            throws NoSuchMethodException {
+        Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
 		for (Constructor<?> constructor : clazz.getConstructors()) {
 			if (!DataType.compare(DataType.getPrimitive(constructor.getParameterTypes()), primitiveTypes)) {
 				continue;
@@ -63,8 +64,9 @@ public final class ReflectionHandler {
 	 * @see #getClass(String, PackageType)
 	 * @see #getConstructor(Class, Class...)
 	 */
-	public static Constructor<?> getConstructor(String className, PackageType packageType, Class<?>... parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
-		return getConstructor(packageType.getClass(className), parameterTypes);
+    public static Constructor<?> getConstructor(String className, PackageType packageType, Class<?>... parameterTypes)
+            throws NoSuchMethodException, ClassNotFoundException {
+        return getConstructor(packageType.getClass(className), parameterTypes);
 	}
 
 	/**
@@ -79,8 +81,9 @@ public final class ReflectionHandler {
 	 * @throws InvocationTargetException If the desired constructor cannot be invoked
 	 * @throws NoSuchMethodException If the desired constructor with the specified arguments cannot be found
 	 */
-	public static Object instantiateObject(Class<?> clazz, Object... arguments) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-		return getConstructor(clazz, DataType.getPrimitive(arguments)).newInstance(arguments);
+    public static Object instantiateObject(Class<?> clazz, Object... arguments)
+            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+        return getConstructor(clazz, DataType.getPrimitive(arguments)).newInstance(arguments);
 	}
 
 	/**
@@ -99,8 +102,9 @@ public final class ReflectionHandler {
 	 * @see #getClass(String, PackageType)
 	 * @see #instantiateObject(Class, Object...)
 	 */
-	public static Object instantiateObject(String className, PackageType packageType, Object... arguments) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
-		return instantiateObject(packageType.getClass(className), arguments);
+    public static Object instantiateObject(String className, PackageType packageType, Object... arguments)
+            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+        return instantiateObject(packageType.getClass(className), arguments);
 	}
 
 	/**
@@ -114,8 +118,9 @@ public final class ReflectionHandler {
 	 * @see DataType#getPrimitive(Class[])
 	 * @see DataType#compare(Class[], Class[])
 	 */
-	public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
-		Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
+    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes)
+            throws NoSuchMethodException {
+        Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
 		for (Method method : clazz.getMethods()) {
 			if (!method.getName().equals(methodName) || !DataType.compare(DataType.getPrimitive(method.getParameterTypes()), primitiveTypes)) {
 				continue;
@@ -138,8 +143,9 @@ public final class ReflectionHandler {
 	 * @see #getClass(String, PackageType)
 	 * @see #getMethod(Class, String, Class...)
 	 */
-	public static Method getMethod(String className, PackageType packageType, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
-		return getMethod(packageType.getClass(className), methodName, parameterTypes);
+    public static Method getMethod(String className, PackageType packageType, String methodName, Class<?>... parameterTypes)
+            throws NoSuchMethodException, ClassNotFoundException {
+        return getMethod(packageType.getClass(className), methodName, parameterTypes);
 	}
 
 	/**
@@ -156,8 +162,9 @@ public final class ReflectionHandler {
 	 * @see #getMethod(Class, String, Class...)
 	 * @see DataType#getPrimitive(Object[])
 	 */
-	public static Object invokeMethod(Object instance, String methodName, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-		return getMethod(instance.getClass(), methodName, DataType.getPrimitive(arguments)).invoke(instance, arguments);
+    public static Object invokeMethod(Object instance, String methodName, Object... arguments)
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+        return getMethod(instance.getClass(), methodName, DataType.getPrimitive(arguments)).invoke(instance, arguments);
 	}
 
 	/**
@@ -175,8 +182,9 @@ public final class ReflectionHandler {
 	 * @see #getMethod(Class, String, Class...)
 	 * @see DataType#getPrimitive(Object[])
 	 */
-	public static Object invokeMethod(Object instance, Class<?> clazz, String methodName, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-		return getMethod(clazz, methodName, DataType.getPrimitive(arguments)).invoke(instance, arguments);
+    public static Object invokeMethod(Object instance, Class<?> clazz, String methodName, Object... arguments)
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+        return getMethod(clazz, methodName, DataType.getPrimitive(arguments)).invoke(instance, arguments);
 	}
 
 	/**
@@ -196,8 +204,9 @@ public final class ReflectionHandler {
 	 * @see #getClass(String, PackageType)
 	 * @see #invokeMethod(Object, Class, String, Object...)
 	 */
-	public static Object invokeMethod(Object instance, String className, PackageType packageType, String methodName, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
-		return invokeMethod(instance, packageType.getClass(className), methodName, arguments);
+    public static Object invokeMethod(Object instance, String className, PackageType packageType, String methodName, Object... arguments)
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+        return invokeMethod(instance, packageType.getClass(className), methodName, arguments);
 	}
 
 	/**
@@ -210,8 +219,9 @@ public final class ReflectionHandler {
 	 * @throws NoSuchFieldException If the desired field of the given class cannot be found
 	 * @throws SecurityException If the desired field cannot be made accessible
 	 */
-	public static Field getField(Class<?> clazz, boolean declared, String fieldName) throws NoSuchFieldException, SecurityException {
-		Field field = declared ? clazz.getDeclaredField(fieldName) : clazz.getField(fieldName);
+    public static Field getField(Class<?> clazz, boolean declared, String fieldName)
+            throws NoSuchFieldException, SecurityException {
+        Field field = declared ? clazz.getDeclaredField(fieldName) : clazz.getField(fieldName);
 		field.setAccessible(true);
 		return field;
 	}
@@ -229,8 +239,9 @@ public final class ReflectionHandler {
 	 * @throws ClassNotFoundException If the desired target class with the specified name and package cannot be found
 	 * @see #getField(Class, boolean, String)
 	 */
-	public static Field getField(String className, PackageType packageType, boolean declared, String fieldName) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
-		return getField(packageType.getClass(className), declared, fieldName);
+    public static Field getField(String className, PackageType packageType, boolean declared, String fieldName)
+            throws NoSuchFieldException, SecurityException, ClassNotFoundException {
+        return getField(packageType.getClass(className), declared, fieldName);
 	}
 
 	/**
@@ -247,8 +258,9 @@ public final class ReflectionHandler {
 	 * @throws SecurityException If the desired field cannot be made accessible
 	 * @see #getField(Class, boolean, String)
 	 */
-	public static Object getValue(Object instance, Class<?> clazz, boolean declared, String fieldName) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		return getField(clazz, declared, fieldName).get(instance);
+    public static Object getValue(Object instance, Class<?> clazz, boolean declared, String fieldName)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        return getField(clazz, declared, fieldName).get(instance);
 	}
 
 	/**
@@ -267,8 +279,9 @@ public final class ReflectionHandler {
 	 * @throws ClassNotFoundException If the desired target class with the specified name and package cannot be found
 	 * @see #getValue(Object, Class, boolean, String)
 	 */
-	public static Object getValue(Object instance, String className, PackageType packageType, boolean declared, String fieldName) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, ClassNotFoundException {
-		return getValue(instance, packageType.getClass(className), declared, fieldName);
+    public static Object getValue(Object instance, String className, PackageType packageType, boolean declared, String fieldName)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, ClassNotFoundException {
+        return getValue(instance, packageType.getClass(className), declared, fieldName);
 	}
 
 	/**
@@ -284,8 +297,9 @@ public final class ReflectionHandler {
 	 * @throws SecurityException If the desired field cannot be made accessible
 	 * @see #getValue(Object, Class, boolean, String)
 	 */
-	public static Object getValue(Object instance, boolean declared, String fieldName) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		return getValue(instance, instance.getClass(), declared, fieldName);
+    public static Object getValue(Object instance, boolean declared, String fieldName)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        return getValue(instance, instance.getClass(), declared, fieldName);
 	}
 
 	/**
@@ -302,8 +316,9 @@ public final class ReflectionHandler {
 	 * @throws SecurityException If the desired field cannot be made accessible
 	 * @see #getField(Class, boolean, String)
 	 */
-	public static void setValue(Object instance, Class<?> clazz, boolean declared, String fieldName, Object value) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		getField(clazz, declared, fieldName).set(instance, value);
+    public static void setValue(Object instance, Class<?> clazz, boolean declared, String fieldName, Object value)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        getField(clazz, declared, fieldName).set(instance, value);
 	}
 
 	/**
@@ -322,8 +337,9 @@ public final class ReflectionHandler {
 	 * @throws ClassNotFoundException If the desired target class with the specified name and package cannot be found
 	 * @see #setValue(Object, Class, boolean, String, Object)
 	 */
-	public static void setValue(Object instance, String className, PackageType packageType, boolean declared, String fieldName, Object value) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, ClassNotFoundException {
-		setValue(instance, packageType.getClass(className), declared, fieldName, value);
+    public static void setValue(Object instance, String className, PackageType packageType, boolean declared, String fieldName, Object value)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, ClassNotFoundException {
+        setValue(instance, packageType.getClass(className), declared, fieldName, value);
 	}
 
 	/**
@@ -339,8 +355,9 @@ public final class ReflectionHandler {
 	 * @throws SecurityException If the desired field cannot be made accessible
 	 * @see #setValue(Object, Class, boolean, String, Object)
 	 */
-	public static void setValue(Object instance, boolean declared, String fieldName, Object value) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		setValue(instance, instance.getClass(), declared, fieldName, value);
+    public static void setValue(Object instance, boolean declared, String fieldName, Object value)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        setValue(instance, instance.getClass(), declared, fieldName, value);
 	}
 
 	/**
@@ -380,8 +397,8 @@ public final class ReflectionHandler {
 		 * 
 		 * @param path Path of the package
 		 */
-		private PackageType(String path) {
-			this.path = path;
+        PackageType(String path) {
+            this.path = path;
 		}
 
 		/**
@@ -390,8 +407,8 @@ public final class ReflectionHandler {
 		 * @param parent Parent package of the package
 		 * @param path Path of the package
 		 */
-		private PackageType(PackageType parent, String path) {
-			this(parent + "." + path);
+        PackageType(PackageType parent, String path) {
+            this(parent + "." + path);
 		}
 
 		/**
@@ -448,8 +465,8 @@ public final class ReflectionHandler {
 		DOUBLE(double.class, Double.class),
 		BOOLEAN(boolean.class, Boolean.class);
 
-		private static final Map<Class<?>, DataType> CLASS_MAP = new HashMap<Class<?>, DataType>();
-		private final Class<?> primitive;
+        private static final Map<Class<?>, DataType> CLASS_MAP = new HashMap<>();
+        private final Class<?> primitive;
 		private final Class<?> reference;
 
 		// Initialize map for quick class lookup
@@ -466,8 +483,8 @@ public final class ReflectionHandler {
 		 * @param primitive Primitive class of this data type
 		 * @param reference Reference class of this data type
 		 */
-		private DataType(Class<?> primitive, Class<?> reference) {
-			this.primitive = primitive;
+        DataType(Class<?> primitive, Class<?> reference) {
+            this.primitive = primitive;
 			this.reference = reference;
 		}
 
@@ -553,9 +570,9 @@ public final class ReflectionHandler {
 
 		/**
 		 * Returns the primitive class array of the given object array
-		 * 
-		 * @param object Given object array
-		 * @return The primitive class array
+		 *
+         * @param objects Given object array
+         * @return The primitive class array
 		 */
 		public static Class<?>[] getPrimitive(Object[] objects) {
 			int length = objects == null ? 0 : objects.length;
@@ -568,9 +585,9 @@ public final class ReflectionHandler {
 
 		/**
 		 * Returns the reference class array of the given object array
-		 * 
-		 * @param object Given object array
-		 * @return The reference class array
+		 *
+         * @param objects Given object array
+         * @return The reference class array
 		 */
 		public static Class<?>[] getReference(Object[] objects) {
 			int length = objects == null ? 0 : objects.length;

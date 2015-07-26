@@ -1,12 +1,6 @@
 package com.projectkorra.ProjectKorra.Utilities;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import com.projectkorra.ProjectKorra.Utilities.ReflectionHandler.PackageType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,7 +8,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Utilities.ReflectionHandler.PackageType;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * <b>ParticleEffect Library</b>
@@ -395,9 +395,9 @@ public enum ParticleEffect {
 	 */
 	MOB_APPEARANCE("mobappearance", 41, 8);
 
-	private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<String, ParticleEffect>();
-	private static final Map<Integer, ParticleEffect> ID_MAP = new HashMap<Integer, ParticleEffect>();
-	// If range is less than 257 it automatically reverts back to 16 blocks for some reason.
+    private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<>();
+    private static final Map<Integer, ParticleEffect> ID_MAP = new HashMap<>();
+    // If range is less than 257 it automatically reverts back to 16 blocks for some reason.
 	private static final int RANGE = 257;
 	private final String name;
 	private final int id;
@@ -422,8 +422,8 @@ public enum ParticleEffect {
 	 * @param requiresData Indicates whether additional data is required for this particle effect
 	 * @param requiresWater Indicates whether water is required for this particle effect to display properly
 	 */
-	private ParticleEffect(String name, int id, int requiredVersion, boolean requiresData, boolean requiresWater) {
-		this.name = name;
+    ParticleEffect(String name, int id, int requiredVersion, boolean requiresData, boolean requiresWater) {
+        this.name = name;
 		this.id = id;
 		this.requiredVersion = requiredVersion;
 		this.requiresData = requiresData;
@@ -439,8 +439,8 @@ public enum ParticleEffect {
 	 * @param requiresData Indicates whether additional data is required for this particle effect
 	 * @see #ParticleEffect(String, int, boolean, boolean)
 	 */
-	private ParticleEffect(String name, int id, int requiredVersion, boolean requiresData) {
-		this(name, id, requiredVersion, requiresData, false);
+    ParticleEffect(String name, int id, int requiredVersion, boolean requiresData) {
+        this(name, id, requiredVersion, requiresData, false);
 	}
 
 	/**
@@ -449,11 +449,10 @@ public enum ParticleEffect {
 	 * @param name Name of this particle effect
 	 * @param id Id of this particle effect
 	 * @param requiredVersion Version which is required (1.x)
-	 * @param requiresData Indicates whether additional data is required for this particle effect
 	 * @see #ParticleEffect(String, int, boolean)
 	 */
-	private ParticleEffect(String name, int id, int requiredVersion) {
-		this(name, id, requiredVersion, false);
+    ParticleEffect(String name, int id, int requiredVersion) {
+        this(name, id, requiredVersion, false);
 	}
 
 	/**
@@ -507,11 +506,9 @@ public enum ParticleEffect {
 	 * @return Whether the particle effect is supported or not
 	 */
 	public boolean isSupported() {
-		if (requiredVersion == -1) {
-			return true;
-		}
-		return ParticlePacket.getVersion() >= requiredVersion;
-	}
+        return requiredVersion == -1
+                || ParticlePacket.getVersion() >= requiredVersion;
+    }
 
 	/**
 	 * Returns the particle effect with the given name
@@ -610,7 +607,6 @@ public enum ParticleEffect {
 	 * @param speed Display speed of the particles
 	 * @param amount Amount of particles
 	 * @param center Center location of the effect
-	 * @param range Range of the visibility
 	 * @throws ParticleVersionException If the particle effect is not supported by the server version
 	 * @throws ParticleDataException If the particle effect requires additional data
 	 * @throws IllegalArgumentException If the particle effect requires water and none is at the center location
@@ -924,7 +920,6 @@ public enum ParticleEffect {
 		 * Construct a new particle data exception
 		 * 
 		 * @param message Message that will be logged
-		 * @param cause Cause of the exception
 		 */
 		public ParticleDataException(String message) {
 			super(message);
@@ -1096,8 +1091,8 @@ public enum ParticleEffect {
 					if (version < 8) {
 						id = effect.getName();
 						if (data != null) {
-							id += data.getPacketDataString();
-						}
+                            id = id + data.getPacketDataString();
+                        }
 					} else {
 						id = enumParticle.getEnumConstants()[effect.getId()];
 					}

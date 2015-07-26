@@ -1,5 +1,11 @@
 package com.projectkorra.ProjectKorra.Utilities;
 
+import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable.LoadResult;
+import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable.LoadResult.Result;
+
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -8,17 +14,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-
-import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable.LoadResult;
-import com.projectkorra.ProjectKorra.Utilities.AbilityLoadable.LoadResult.Result;
 
 
 public class AbilityLoader <T extends AbilityLoadable> implements Listener {
@@ -37,21 +38,19 @@ public class AbilityLoader <T extends AbilityLoadable> implements Listener {
 		this.plugin = plugin;
 		this.dir = dir;
 		this.paramTypes = paramTypes;
-		this.files = new ArrayList<File>();
-		this.loadables = new ArrayList<T>(0);
-		
-		for (File f: dir.listFiles(new FileExtensionFilter(".jar"))) {
-			files.add(f);
-		}
-		
-		List<Class<?>> constructorParams = new ArrayList<Class<?>>();
+		this.files = new ArrayList<>();
+		this.loadables = new ArrayList<>(0);
+
+		Collections.addAll(files, dir.listFiles(new FileExtensionFilter(".jar")));
+
+		List<Class<?>> constructorParams = new ArrayList<>();
 		
 		for (Object paramType : paramTypes)
 			constructorParams.add(paramType.getClass());
 		
 		this.ctorParams = constructorParams.toArray(new Class<?>[0]);
-		
-		List<URL> urls = new ArrayList<URL>();
+
+		List<URL> urls = new ArrayList<>();
 		
 		for (File file: files) {
 			try {
@@ -130,8 +129,8 @@ public class AbilityLoader <T extends AbilityLoadable> implements Listener {
 	
 	public List<T> reload(Class<? extends AbilityLoadable> classType) {
 		unload();
-		
-		List<URL> urls = new ArrayList<URL>();
+
+		List<URL> urls = new ArrayList<>();
 		files.clear();
 		for (String loadableFile: dir.list()) {
 			if (loadableFile.endsWith(".jar")) {
