@@ -1,6 +1,9 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -8,14 +11,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FreezeMelt {
 
-	public static ConcurrentHashMap<Block, Byte> frozenblocks = new ConcurrentHashMap<Block, Byte>();
+    public static ConcurrentHashMap<Block, Byte> frozenblocks = new ConcurrentHashMap<>();
 
 	public static final int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Range");
 	public static final int defaultradius = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Radius");
@@ -37,11 +37,8 @@ public class FreezeMelt {
 		}
 
 		Location location = GeneralMethods.getTargetedLocation(player, range);
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
-			if (isFreezable(player, block)) {
-				freeze(player, block);
-			}
-		}
+        GeneralMethods.getBlocksAroundPoint(location, radius).stream()
+                .filter(block -> isFreezable(player, block)).forEach(block -> freeze(player, block));
 
 	}
 
@@ -81,9 +78,9 @@ public class FreezeMelt {
 		overloadCounter++;
 		overloadCounter %= 10;
 		if (overloadCounter == 0)
-			overloading = size > OVERLOADING_LIMIT ? true : false;
-		
-		// We only want to run this method once every 10 ticks if we are overloading.
+            overloading = size > OVERLOADING_LIMIT;
+
+        // We only want to run this method once every 10 ticks if we are overloading.
 		if (overloading && overloadCounter != 0)
 			return;
 			
@@ -101,11 +98,10 @@ public class FreezeMelt {
 			}
 		}
 		else {
-			for (Block block : frozenblocks.keySet()) {
-				if (canThaw(block))
-					thaw(block);
-			}
-		}
+            frozenblocks.keySet().stream()
+                    .filter(FreezeMelt::canThaw)
+                    .forEach(FreezeMelt::thaw);
+        }
 	}
 
 	public static boolean canThaw(Block block) {
@@ -128,22 +124,20 @@ public class FreezeMelt {
 				}
 			}
 		}
-		if (!WaterManipulation.canPhysicsChange(block))
-			return false;
-		return true;
-	}
+        return WaterManipulation.canPhysicsChange(block);
+    }
 
 	@SuppressWarnings("deprecation")
 	private static void thawAll() {
-		for (Block block : frozenblocks.keySet()) {
-			if (block.getType() == Material.ICE) {
-				byte data = frozenblocks.get(block);
-				block.setType(Material.WATER);
-				block.setData(data);
-				frozenblocks.remove(block);
-			}
-		}
-	}
+        frozenblocks.keySet().stream()
+                .filter(block -> block.getType() == Material.ICE)
+                .forEach(block -> {
+                    byte data = frozenblocks.get(block);
+                    block.setType(Material.WATER);
+                    block.setData(data);
+                    frozenblocks.remove(block);
+                });
+    }
 
 	public static void removeAll() {
 		thawAll();

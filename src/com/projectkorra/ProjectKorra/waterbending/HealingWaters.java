@@ -1,6 +1,10 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.chiblocking.Smokescreen;
 
 import org.bukkit.Server;
 import org.bukkit.block.Block;
@@ -10,11 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.chiblocking.Smokescreen;
+import java.util.ArrayList;
 
 public class HealingWaters {
 
@@ -27,21 +27,19 @@ public class HealingWaters {
 	public static void heal(Server server) {
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
-			for (Player player : server.getOnlinePlayers()) {
-				if (GeneralMethods.getBoundAbility(player) != null) {
-					if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HealingWaters") && GeneralMethods.canBend(player.getName(),"HealingWaters")) {
-						heal(player);
-					}
-				}
-			}
-		}
+            server.getOnlinePlayers().stream()
+                    .filter(player -> GeneralMethods.getBoundAbility(player) != null)
+                    .filter(player -> GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HealingWaters")
+                            && GeneralMethods.canBend(player.getName(), "HealingWaters"))
+                    .forEach(com.projectkorra.ProjectKorra.waterbending.HealingWaters::heal);
+        }
 	}
 
 	private static void heal(Player player) {
 		if (inWater(player)) {
 			if (player.isSneaking()) {
-				Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-				if (entity instanceof LivingEntity && inWater(entity)) {
+                Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<>());
+                if (entity instanceof LivingEntity && inWater(entity)) {
 					giveHPToEntity((LivingEntity) entity);
 				}
 			} else {
@@ -54,12 +52,10 @@ public class HealingWaters {
 		if (!le.isDead() && le.getHealth() < le.getMaxHealth()) {
 			applyHealingToEntity(le);
 		}
-		for(PotionEffect effect : le.getActivePotionEffects()) {
-			if(WaterMethods.isNegativeEffect(effect.getType())) {
-				le.removePotionEffect(effect.getType());
-			}
-		}
-	}
+        le.getActivePotionEffects().stream()
+                .filter(effect -> WaterMethods.isNegativeEffect(effect.getType()))
+                .forEach(effect -> le.removePotionEffect(effect.getType()));
+    }
 
 	private static void giveHP(Player player) {
 		if (!player.isDead() && player.getHealth() < 20) {
@@ -79,10 +75,8 @@ public class HealingWaters {
 
 	private static boolean inWater(Entity entity) {
 		Block block = entity.getLocation().getBlock();
-		if (WaterMethods.isWater(block) && !TempBlock.isTempBlock(block))
-			return true;
-		return false;
-	}
+        return WaterMethods.isWater(block) && !TempBlock.isTempBlock(block);
+    }
 
 	private static void applyHealing(Player player) {
 		if (!GeneralMethods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation()))

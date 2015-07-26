@@ -1,7 +1,13 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,18 +18,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OctopusForm {
 
-	public static ConcurrentHashMap<Player, OctopusForm> instances = new ConcurrentHashMap<Player, OctopusForm>();
+    public static ConcurrentHashMap<Player, OctopusForm> instances = new ConcurrentHashMap<>();
 
 	private static int RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Range");
 	private static double ATTACK_RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.AttackRange");
@@ -43,9 +43,9 @@ public class OctopusForm {
 	private double y = 0;
 	private double dta = 45;
 	private int animstep = 1, step = 1, inc = 3;
-	private ArrayList<TempBlock> blocks = new ArrayList<TempBlock>();
-	private ArrayList<TempBlock> newblocks = new ArrayList<TempBlock>();
-	// private static ArrayList<TempBlock> water = new ArrayList<TempBlock>();
+    private ArrayList<TempBlock> blocks = new ArrayList<>();
+    private ArrayList<TempBlock> newblocks = new ArrayList<>();
+    // private static ArrayList<TempBlock> water = new ArrayList<TempBlock>();
 	private boolean sourceselected = false;
 	private boolean settingup = false;
 	private boolean forming = false;
@@ -173,9 +173,10 @@ public class OctopusForm {
 			returnWater();
 			return;
 		}
-		
-		if ((!player.isSneaking() && !sourceselected) || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("OctopusForm")) {
-			remove();
+
+        if ((!player.isSneaking() && !sourceselected)
+                || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("OctopusForm")) {
+            remove();
 			returnWater();
 			return;
 		}
@@ -277,7 +278,7 @@ public class OctopusForm {
 		Location location = player.getLocation();
 		newblocks.clear();
 
-		ArrayList<Block> doneblocks = new ArrayList<Block>();
+        ArrayList<Block> doneblocks = new ArrayList<>();
 
 		for (double theta = startangle; theta < startangle + angle; theta += 10) {
 			double rtheta = Math.toRadians(theta);
@@ -300,10 +301,9 @@ public class OctopusForm {
 			tentacle(location.clone().add(new Vector(radius * Math.cos(phi), 0, radius * Math.sin(phi))), astep);
 		}
 
-		for (TempBlock block : blocks) {
-			if (!newblocks.contains(block))
-				block.revertBlock();
-		}
+        blocks.stream()
+                .filter(block -> !newblocks.contains(block))
+                .forEach(TempBlock::revertBlock);
 
 		blocks.clear();
 
@@ -430,9 +430,8 @@ public class OctopusForm {
 	private void remove() {
 		if (source != null)
 			source.revertBlock();
-		for (TempBlock block : blocks)
-			block.revertBlock();
-		instances.remove(player);
+        blocks.forEach(TempBlock::revertBlock);
+        instances.remove(player);
 	}
 
 	private void returnWater() {

@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,14 +13,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TorrentBurst {
 
-	public static ConcurrentHashMap<Integer, TorrentBurst> instances = new ConcurrentHashMap<Integer, TorrentBurst>();
+    public static ConcurrentHashMap<Integer, TorrentBurst> instances = new ConcurrentHashMap<>();
 
 	private static int ID = Integer.MIN_VALUE;
 	private static double defaultmaxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Torrent.Wave.Radius");
@@ -38,9 +38,9 @@ public class TorrentBurst {
 	private double maxheight = MAX_HEIGHT;
 	private Location origin;
 	private Player player;
-	private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Double>> heights = new ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Double>>();
-	private ArrayList<TempBlock> blocks = new ArrayList<TempBlock>();
-	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Double>> heights = new ConcurrentHashMap<>();
+    private ArrayList<TempBlock> blocks = new ArrayList<>();
+    private ArrayList<Entity> affectedentities = new ArrayList<>();
 
 	public TorrentBurst(Player player) {
 		this(player, player.getEyeLocation(), dr);
@@ -72,8 +72,8 @@ public class TorrentBurst {
 
 	private void initializeHeightsMap() {
 		for (int i = -1; i <= maxheight; i++) {
-			ConcurrentHashMap<Integer, Double> angles = new ConcurrentHashMap<Integer, Double>();
-			double dtheta = Math.toDegrees(1 / (maxradius + 2));
+            ConcurrentHashMap<Integer, Double> angles = new ConcurrentHashMap<>();
+            double dtheta = Math.toDegrees(1 / (maxradius + 2));
 			int j = 0;
 			for (double theta = 0; theta < 360; theta += dtheta) {
 				angles.put(j, theta);
@@ -111,18 +111,16 @@ public class TorrentBurst {
 	}
 
 	private void formBurst() {
-		for (TempBlock tempBlock : blocks) {
-			tempBlock.revertBlock();
-		}
+        blocks.forEach(TempBlock::revertBlock);
 
 		blocks.clear();
 
 		affectedentities.clear();
 
-		ArrayList<Entity> indexlist = new ArrayList<Entity>();
-		indexlist.addAll(GeneralMethods.getEntitiesAroundPoint(origin, radius + 2));
+        ArrayList<Entity> indexlist = new ArrayList<>();
+        indexlist.addAll(GeneralMethods.getEntitiesAroundPoint(origin, radius + 2));
 
-		ArrayList<Block> torrentblocks = new ArrayList<Block>();
+        ArrayList<Block> torrentblocks = new ArrayList<>();
 
 		if (indexlist.contains(player))
 			indexlist.remove(player);
@@ -147,21 +145,17 @@ public class TorrentBurst {
 					angles.remove(index);
 					continue;
 				}
-				for (Entity entity : indexlist) {
-					if (!affectedentities.contains(entity)) {
-						if (entity.getLocation().distance(location) <= 2) {
-							affectedentities.add(entity);
+                indexlist.stream()
+                        .filter(entity -> !affectedentities.contains(entity))
+                        .filter(entity -> entity.getLocation().distance(location) <= 2)
+                        .forEach(entity -> {
+                            affectedentities.add(entity);
 							affect(entity);
-						}
-					}
-				}
-				
-				for(Block sound : torrentblocks) {
-					if (GeneralMethods.rand.nextInt(50) == 0) {
-						WaterMethods.playWaterbendingSound(sound.getLocation());
-					}		
-				}
-			}
+                        });
+
+                torrentblocks.stream().filter(sound -> GeneralMethods.rand.nextInt(50) == 0)
+                        .forEach(sound -> WaterMethods.playWaterbendingSound(sound.getLocation()));
+            }
 			if (angles.isEmpty())
 				heights.remove(id);
 		}
@@ -177,10 +171,8 @@ public class TorrentBurst {
 	}
 
 	private void remove() {
-		for (TempBlock block : blocks) {
-			block.revertBlock();
-		}
-		instances.remove(id);
+        blocks.forEach(TempBlock::revertBlock);
+        instances.remove(id);
 	}
 
 	private void returnWater() {

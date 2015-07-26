@@ -1,8 +1,7 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,15 +9,16 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.TempBlock;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSourceGrabber {
 	/*
 	 * Using an initial WaterSource block, this class animates the block up to a
 	 * specific height and then toward the players location.
 	 */
-	public static enum AnimationState {
+	public enum AnimationState {
 		RISING, TOWARD, FINISHED, FAILED
 	}
 
@@ -29,7 +29,7 @@ public class WaterSourceGrabber {
 	private double animSpeed;
 	private Material mat;
 	private Byte data;
-	private ConcurrentHashMap<Block, TempBlock> affectedBlocks = new ConcurrentHashMap<Block, TempBlock>();
+	private ConcurrentHashMap<Block, TempBlock> affectedBlocks = new ConcurrentHashMap<>();
 
 	public WaterSourceGrabber(Player player, Location origin, double animSpeed) {
 		this.player = player;

@@ -1,7 +1,8 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,21 +12,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterReturn {
 
-	private static ConcurrentHashMap<Player, WaterReturn> instances = new ConcurrentHashMap<Player, WaterReturn>();
-	// private static int ID = Integer.MIN_VALUE;
+	private static ConcurrentHashMap<Player, WaterReturn> instances = new ConcurrentHashMap<>();
 	private static long interval = 50;
 	private static double range = 30;
 
 	private static final byte full = 0x0;
 
 	private Player player;
-	// private int id;
 	private Location location;
 	private TempBlock block;
 	private long time;
@@ -42,10 +40,6 @@ public class WaterReturn {
 					this.block = new TempBlock(block, Material.WATER, full);
 			}
 		}
-		// if (ID >= Integer.MAX_VALUE) {
-		// ID = Integer.MIN_VALUE;
-		// }
-		// id = ID++;
 		instances.put(player, this);
 	}
 
@@ -102,7 +96,6 @@ public class WaterReturn {
 			block = new TempBlock(newblock, Material.WATER, full);
 		} else {
 			remove();
-			return;
 		}
 
 	}
@@ -117,10 +110,7 @@ public class WaterReturn {
 
 	private boolean hasEmptyWaterBottle() {
 		PlayerInventory inventory = player.getInventory();
-		if (inventory.contains(Material.GLASS_BOTTLE)) {
-			return true;
-		}
-		return false;
+		return inventory.contains(Material.GLASS_BOTTLE);
 	}
 
 	private void fillBottle() {
@@ -162,10 +152,8 @@ public class WaterReturn {
 				return true;
 		}
 
-		if (IceSpike2.isBending(player))
-			return true;
+		return IceSpike2.isBending(player);
 
-		return false;
 	}
 
 	public static boolean hasWaterBottle(Player player) {

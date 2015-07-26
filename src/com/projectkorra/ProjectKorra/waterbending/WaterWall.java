@@ -1,10 +1,15 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,38 +17,28 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.firebending.FireBlast;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterWall {
 
-	public static ConcurrentHashMap<Integer, WaterWall> instances = new ConcurrentHashMap<Integer, WaterWall>();
-	public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
-	public static ConcurrentHashMap<Block, Player> wallblocks = new ConcurrentHashMap<Block, Player>();
+    public static ConcurrentHashMap<Integer, WaterWall> instances = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Block, Player> wallblocks = new ConcurrentHashMap<>();
 
 	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
-	// private static double speed = 1.5;
 	private static final long interval = 30;
 	private static final byte full = 0x0;
-	// private static final byte half = 0x4;
 
 	Player player;
 	private Location location = null;
 	private Block sourceblock = null;
-	// private Block oldwater = null;
 	private Location firstdestination = null;
 	private Location targetdestination = null;
 	private Vector firstdirection = null;
 	private Vector targetdirection = null;
-	// private boolean falling = false;
 	private boolean progressing = false;
 	private boolean settingup = false;
 	private boolean forming = false;
@@ -74,7 +69,6 @@ public class WaterWall {
 				if (instances.containsKey(player.getEntityId())) {
 					instances.get(player.getEntityId()).cancel();
 				}
-				// Methods.verbose("New water wall prepared");
 				instances.put(player.getEntityId(), this);
 				time = System.currentTimeMillis();
 
@@ -131,28 +125,25 @@ public class WaterWall {
 
 	private void freeze() {
 		frozen = true;
-		for (Block block : wallblocks.keySet()) {
-			if (wallblocks.get(block) == player) {
-				new TempBlock(block, Material.ICE, (byte) 0);
-				WaterMethods.playIcebendingSound(block.getLocation());
-			}
-		}
-	}
+        wallblocks.keySet().stream()
+                .filter(block -> wallblocks.get(block) == player)
+                .forEach(block -> {
+                    new TempBlock(block, Material.ICE, (byte) 0);
+                    WaterMethods.playIcebendingSound(block.getLocation());
+                });
+    }
 
 	private void thaw() {
 		frozen = false;
-		for (Block block : wallblocks.keySet()) {
-			if (wallblocks.get(block) == player) {
-				new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
-			}
-		}
-	}
+        wallblocks.keySet().stream()
+                .filter(block -> wallblocks.get(block) == player)
+                .forEach(block -> new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
+    }
 
 	public boolean prepare() {
 		cancelPrevious();
-		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, 
-				true, true, WaterMethods.canPlantbend(player));
+        Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK,
+                true, true, WaterMethods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -240,12 +231,9 @@ public class WaterWall {
 	private boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			breakBlock();
-			// instances.remove(player.getEntityId());
 			return false;
 		}
 		if (!GeneralMethods.canBend(player.getName(), "Surge")) {
-			//if (!forming)
-				// removeWater(oldwater);
 			breakBlock();
 			returnWater(location);
 			unfocusBlock();
@@ -254,10 +242,6 @@ public class WaterWall {
 		
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
-
-			if (!forming) {
-				// removeWater(oldwater);
-			}
 
 			if (GeneralMethods.getBoundAbility(player) == null) {
 				unfocusBlock();
@@ -284,16 +268,15 @@ public class WaterWall {
 			if (forming) {
 				if (GeneralMethods.rand.nextInt(7) == 0) {
 					WaterMethods.playWaterbendingSound(location);
-				}	
-				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) range,	8, 9, 79);
+				}
+                ArrayList<Block> blocks = new ArrayList<>();
+                Location loc = GeneralMethods.getTargetedLocation(player, (int) range,	8, 9, 79);
 				location = loc.clone();
 				Vector dir = player.getEyeLocation().getDirection();
 				Vector vec;
 				Block block;
 				for (double i = 0; i <= WaterMethods.waterbendingNightAugment(radius, player.getWorld()); i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
-						// loc.getBlock().setType(Material.GLOWSTONE);
 						vec = GeneralMethods.getOrthogonalVector(dir.clone(), angle, i);
 						block = loc.clone().add(vec).getBlock();
 						if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge", block.getLocation()))
@@ -306,25 +289,15 @@ public class WaterWall {
 								|| WaterMethods.isWaterbendable(block, player))) {
 							wallblocks.put(block, player);
 							addWallBlock(block);
-							// if (frozen) {
-							// block.setType(Material.ICE);
-							// } else {
-							// block.setType(Material.WATER);
-							// block.setData(full);
-							// }
-							// block.setType(Material.GLASS);
 							blocks.add(block);
 							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
-							// Methods.verbose(wallblocks.size());
 						}
 					}
 				}
 
-				for (Block blocki : wallblocks.keySet()) {
-					if (wallblocks.get(blocki) == player && !blocks.contains(blocki)) {
-						finalRemoveWater(blocki);
-					}
-				}
+                wallblocks.keySet().stream()
+                        .filter(blocki -> wallblocks.get(blocki) == player && !blocks.contains(blocki))
+                        .forEach(com.projectkorra.ProjectKorra.waterbending.WaterWall::finalRemoveWater);
 
 				return true;
 			}
@@ -386,12 +359,10 @@ public class WaterWall {
 
 	private void breakBlock() {
 		finalRemoveWater(sourceblock);
-		for (Block block : wallblocks.keySet()) {
-			if (wallblocks.get(block) == player) {
-				finalRemoveWater(block);
-			}
-		}
-		instances.remove(player.getEntityId());
+        wallblocks.keySet().stream()
+                .filter(block -> wallblocks.get(block) == player)
+                .forEach(WaterWall::finalRemoveWater);
+        instances.remove(player.getEntityId());
 	}
 
 	// private void reduceWater(Block block) {
@@ -517,10 +488,8 @@ public class WaterWall {
 	}
 
 	public static boolean canThaw(Block block) {
-		if (wallblocks.keySet().contains(block))
-			return false;
-		return true;
-	}
+        return !wallblocks.keySet().contains(block);
+    }
 
 	public static void thaw(Block block) {
 		finalRemoveWater(block);

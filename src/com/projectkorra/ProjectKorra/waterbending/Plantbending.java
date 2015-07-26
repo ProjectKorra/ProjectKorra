@@ -1,16 +1,16 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Plantbending {
 
-	private static ConcurrentHashMap<Integer, Plantbending> instances = new ConcurrentHashMap<Integer, Plantbending>();
+	private static ConcurrentHashMap<Integer, Plantbending> instances = new ConcurrentHashMap<>();
 
 	private static final long regrowtime = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.Plantbending.RegrowTime");
 	private static int ID = Integer.MIN_VALUE;

@@ -1,10 +1,14 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -15,20 +19,15 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Torrent {
 
-	public static ConcurrentHashMap<Player, Torrent> instances = new ConcurrentHashMap<Player, Torrent>();
-	private static ConcurrentHashMap<TempBlock, Player> frozenblocks = new ConcurrentHashMap<TempBlock, Player>();
+    public static ConcurrentHashMap<Player, Torrent> instances = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<TempBlock, Player> frozenblocks = new ConcurrentHashMap<>();
 
 	static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	static long interval = 30;
@@ -63,9 +62,9 @@ public class Torrent {
 	private int damage = DAMAGE;
 	private int deflectdamage = DEFLECT_DAMAGE;
 
-	private ArrayList<TempBlock> blocks = new ArrayList<TempBlock>();
-	public ArrayList<TempBlock> launchblocks = new ArrayList<TempBlock>();
-	private ArrayList<Entity> hurtentities = new ArrayList<Entity>();
+    private ArrayList<TempBlock> blocks = new ArrayList<>();
+    public ArrayList<TempBlock> launchblocks = new ArrayList<>();
+    private ArrayList<Entity> hurtentities = new ArrayList<>();
 
 	public Torrent(Player player) {
 		if (instances.containsKey(player)) {
@@ -91,14 +90,15 @@ public class Torrent {
 		if (!GeneralMethods.canBend(player.getName(), "PhaseChange"))
 			return;
 		List<Block> ice = GeneralMethods.getBlocksAroundPoint(location, layer);
-		for (Block block : ice) {
-			if (EarthMethods.isTransparentToEarthbending(player, block) && block.getType() != Material.ICE) {
-				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
-				frozenblocks.put(tblock, player);
-				WaterMethods.playIcebendingSound(block.getLocation());
-			}
-		}
-	}
+        ice.stream()
+                .filter(block -> EarthMethods.isTransparentToEarthbending(player, block)
+                        && block.getType() != Material.ICE)
+                .forEach(block -> {
+                    TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
+                    frozenblocks.put(tblock, player);
+                    WaterMethods.playIcebendingSound(block.getLocation());
+                });
+    }
 
 	private void progress() {
 		if (player.isDead() || !player.isOnline()) {
@@ -255,8 +255,7 @@ public class Torrent {
 				if (!launch()) {
 					remove();
 					returnWater(location);
-					return;
-				}
+                }
 
 			}
 		}
@@ -274,8 +273,8 @@ public class Torrent {
 			// double startangle = Math.toDegrees(player.getEyeLocation()
 			// .getDirection().angle(new Vector(1, 0, 0)));
 			Location loc = player.getEyeLocation();
-			ArrayList<Block> doneblocks = new ArrayList<Block>();
-			for (double theta = startangle; theta < angle + startangle; theta += 20) {
+            ArrayList<Block> doneblocks = new ArrayList<>();
+            for (double theta = startangle; theta < angle + startangle; theta += 20) {
 				double phi = Math.toRadians(theta);
 				double dx = Math.cos(phi) * radius;
 				double dy = 0;
@@ -292,12 +291,8 @@ public class Torrent {
 						break;
 				}
 			}
-			if (launchblocks.isEmpty()) {
-				return false;
-			} else {
-				return true;
-			}
-		}
+            return !launchblocks.isEmpty();
+        }
 
 		Entity target = GeneralMethods.getTargetedEntity(player, range, hurtentities);
 		Location targetloc = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) range).getLocation();
@@ -307,10 +302,10 @@ public class Torrent {
 			targetloc = target.getLocation();
 		}
 
-		ArrayList<TempBlock> newblocks = new ArrayList<TempBlock>();
+        ArrayList<TempBlock> newblocks = new ArrayList<>();
 
 		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range + 5);
-		List<Entity> affectedentities = new ArrayList<Entity>();
+        List<Entity> affectedentities = new ArrayList<>();
 
 		Block realblock = launchblocks.get(0).getBlock();
 
@@ -397,11 +392,9 @@ public class Torrent {
 		launchblocks.clear();
 		launchblocks.addAll(newblocks);
 
-		if (launchblocks.isEmpty())
-			return false;
+        return !launchblocks.isEmpty();
 
-		return true;
-	}
+    }
 
 	private void formRing() {
 		clearRing();
@@ -409,10 +402,10 @@ public class Torrent {
 		// .getDirection().angle(new Vector(1, 0, 0)));
 		startangle += 30;
 		Location loc = player.getEyeLocation();
-		ArrayList<Block> doneblocks = new ArrayList<Block>();
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(loc, radius + 2);
-		List<Entity> affectedentities = new ArrayList<Entity>();
-		for (double theta = startangle; theta < angle + startangle; theta += 20) {
+        ArrayList<Block> doneblocks = new ArrayList<>();
+        List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(loc, radius + 2);
+        List<Entity> affectedentities = new ArrayList<>();
+        for (double theta = startangle; theta < angle + startangle; theta += 20) {
 			double phi = Math.toRadians(theta);
 			double dx = Math.cos(phi) * radius;
 			double dy = 0;
@@ -436,17 +429,14 @@ public class Torrent {
 	}
 
 	private void clearRing() {
-		for (TempBlock block : blocks) {
-			block.revertBlock();
-		}
-		blocks.clear();
+        blocks.forEach(TempBlock::revertBlock);
+        blocks.clear();
 	}
 
 	public void remove() {
 		clearRing();
-		for (TempBlock block : launchblocks)
-			block.revertBlock();
-		launchblocks.clear();
+        launchblocks.forEach(TempBlock::revertBlock);
+        launchblocks.clear();
 		if (source != null)
 			source.revertBlock();
 		instances.remove(player);
@@ -597,8 +587,7 @@ public class Torrent {
 		for (Player player : instances.keySet())
 			instances.get(player).remove();
 
-		for (TempBlock block : frozenblocks.keySet())
-			thaw(block);
+        frozenblocks.keySet().forEach(Torrent::thaw);
 
 	}
 

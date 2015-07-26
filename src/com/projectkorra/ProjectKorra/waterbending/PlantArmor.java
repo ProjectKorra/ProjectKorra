@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -13,13 +15,11 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlantArmor {
-	
-	public static ConcurrentHashMap<Player, PlantArmor> instances = new ConcurrentHashMap<Player, PlantArmor>();
+
+	public static ConcurrentHashMap<Player, PlantArmor> instances = new ConcurrentHashMap<>();
 
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.Cooldown");
 	private static long DURATION = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.Duration");
@@ -103,8 +103,7 @@ public class PlantArmor {
 	}
 
 	private boolean inPosition() {
-		if(location.distance(player.getEyeLocation()) <= 1.5) return true;
-		return false;
+		return location.distance(player.getEyeLocation()) <= 1.5;
 	}
 
 	private void formArmor() {
@@ -129,9 +128,7 @@ public class PlantArmor {
 	}
 
 	public static void progressAll() {
-		for (Player player : instances.keySet()) {
-			progress(player);
-		}
+		instances.keySet().forEach(PlantArmor::progress);
 	}
 	
 	public static void progress(Player player) {
@@ -150,7 +147,6 @@ public class PlantArmor {
 				plantarmor.removeEffect();
 				plantarmor.cancel();
 				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("PlantArmor", cooldown);
-				return;
 			}
 		} else {
 			if (!plantarmor.canUse())

@@ -1,9 +1,10 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempPotionEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,18 +17,17 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempPotionEffect;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class IceSpike {
 
-	public static ConcurrentHashMap<Integer, IceSpike> instances = new ConcurrentHashMap<Integer, IceSpike>();
-	public ConcurrentHashMap<Player, Long> removeTimers = new ConcurrentHashMap<Player, Long>();
-	private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<Block, Block>();
-	private static ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
+    public static ConcurrentHashMap<Integer, IceSpike> instances = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Player, Long> removeTimers = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<>();
 
 	public static long removeTimer = 500;
 	public static long COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
@@ -54,8 +54,8 @@ public class IceSpike {
 	int id;
 	int height = 2;
 	private Vector thrown = new Vector(0, ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceSpike.ThrowingMult"), 0);
-	private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
-	private List<LivingEntity> damaged = new ArrayList<LivingEntity>();
+    private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<>();
+    private List<LivingEntity> damaged = new ArrayList<>();
 
 	public IceSpike(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
@@ -77,10 +77,9 @@ public class IceSpike {
 				}
 			}
 			if (closestentity != null) {
-				Block temptestingblock = closestentity.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
 				// if (temptestingblock.getType() == Material.ICE){
-				this.block = temptestingblock;
-				// }
+                this.block = closestentity.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
+                // }
 			} else {
 				this.block = player.getTargetBlock((HashSet<Material>) null, (int) range);
 			}
@@ -141,11 +140,8 @@ public class IceSpike {
 	}
 
 	private boolean blockInAffectedBlocks(Block block) {
-		if (affectedblocks.containsKey(block)) {
-			return true;
-		}
-		return false;
-	}
+        return affectedblocks.containsKey(block);
+    }
 
 	public static boolean blockInAllAffectedBlocks(Block block) {
 		for (int ID : instances.keySet()) {
@@ -156,12 +152,10 @@ public class IceSpike {
 	}
 
 	public static void revertBlock(Block block) {
-		for (int ID : instances.keySet()) {
-			if (instances.get(ID).blockInAffectedBlocks(block)) {
-				instances.get(ID).affectedblocks.remove(block);
-			}
-		}
-	}
+        instances.keySet().stream()
+                .filter(ID -> instances.get(ID).blockInAffectedBlocks(block))
+                .forEach(ID -> instances.get(ID).affectedblocks.remove(block));
+    }
 
 	private boolean canInstantiate() {
 		if (block.getType() != Material.ICE)
@@ -212,26 +206,19 @@ public class IceSpike {
 		location = location.add(direction);
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike", location))
 			return false;
-		for (Entity en : GeneralMethods.getEntitiesAroundPoint(location, 1.4)) {
-			if (en instanceof LivingEntity && en != player && !damaged.contains(((LivingEntity) en))) {
-				LivingEntity le = (LivingEntity) en;
-				affect(le);
-				// le.setVelocity(thrown);
-				// le.damage(damage);
-				// damaged.add(le);
-				// Methods.verbose(damage + " Hp:" + le.getHealth());
-			}
-		}
-		affectedblock.setType(Material.ICE);
+        GeneralMethods.getEntitiesAroundPoint(location, 1.4).stream()
+                .filter(en -> en instanceof LivingEntity && en != player && !damaged.contains(en))
+                .forEach(en -> {
+                    LivingEntity le = (LivingEntity) en;
+                    affect(le);
+                });
+        affectedblock.setType(Material.ICE);
 		WaterMethods.playIcebendingSound(block.getLocation());	
 		loadAffectedBlocks();
 
-		if (location.distance(origin) >= height) {
-			return false;
-		}
+        return location.distance(origin) < height;
 
-		return true;
-	}
+    }
 
 	private void affect(LivingEntity entity) {
 		entity.setVelocity(thrown);
@@ -255,11 +242,8 @@ public class IceSpike {
 	}
 
 	public static boolean blockIsBase(Block block) {
-		if (baseblocks.containsKey(block)) {
-			return true;
-		}
-		return false;
-	}
+        return baseblocks.containsKey(block);
+    }
 
 	public static void removeBlockBase(Block block) {
 		if (baseblocks.containsKey(block)) {
@@ -269,19 +253,15 @@ public class IceSpike {
 	}
 
 	public static void removeAll() {
-		for (int ID : instances.keySet()) {
-			instances.remove(ID);
-		}
-	}
+        instances.keySet().forEach(instances::remove);
+    }
 
 	public boolean revertblocks() {
 		Vector direction = new Vector(0, -1, 0);
 		location.getBlock().setType(Material.AIR);// .clone().add(direction).getBlock().setType(Material.AIR);
 		location.add(direction);
-		if (blockIsBase(location.getBlock()))
-			return false;
-		return true;
-	}
+        return !blockIsBase(location.getBlock());
+    }
 
 	public Player getPlayer() {
 		return player;

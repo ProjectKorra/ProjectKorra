@@ -1,7 +1,14 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.TempPotionEffect;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,19 +20,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.TempPotionEffect;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class IceSpike2 {
 
-	public static ConcurrentHashMap<Integer, IceSpike2> instances = new ConcurrentHashMap<Integer, IceSpike2>();
+    public static ConcurrentHashMap<Integer, IceSpike2> instances = new ConcurrentHashMap<>();
 
 	private static double RANGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
 	private static double DAMAGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Damage");
@@ -75,12 +75,10 @@ public class IceSpike2 {
 	}
 
 	private void prepare(Block block) {
-		for (IceSpike2 ice : getInstances(player)) {
-			if (ice.prepared) {
-				ice.cancel();
-			}
-		}
-		sourceblock = block;
+        getInstances(player).stream()
+                .filter(ice -> ice.prepared)
+                .forEach(IceSpike2::cancel);
+        sourceblock = block;
 		location = sourceblock.getLocation();
 		prepared = true;
 		createInstance();
@@ -95,8 +93,8 @@ public class IceSpike2 {
 	}
 
 	private static ArrayList<IceSpike2> getInstances(Player player) {
-		ArrayList<IceSpike2> list = new ArrayList<IceSpike2>();
-		for (int id : instances.keySet()) {
+        ArrayList<IceSpike2> list = new ArrayList<>();
+        for (int id : instances.keySet()) {
 			IceSpike2 ice = instances.get(id);
 			if (ice.player.equals(player)) {
 				list.add(ice);
@@ -137,8 +135,8 @@ public class IceSpike2 {
 			if (EarthMethods.isTransparentToEarthbending(player, block)
 					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
-				LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, RANGE, new ArrayList<Entity>());
-				Location destination;
+                LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, RANGE, new ArrayList<>());
+                Location destination;
 				if (target == null) {
 					destination = GeneralMethods.getTargetedLocation(player, RANGE, EarthMethods.transparentToEarthbending);
 				} else {
@@ -166,8 +164,8 @@ public class IceSpike2 {
 	private void throwIce() {
 		if (!prepared)
 			return;
-		LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-		if (target == null) {
+        LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range, new ArrayList<>());
+        if (target == null) {
 			destination = GeneralMethods.getTargetedLocation(player, range, EarthMethods.transparentToEarthbending);
 		} else {
 			destination = target.getEyeLocation();
@@ -224,8 +222,10 @@ public class IceSpike2 {
 			return;
 		}
 
-		if ((GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("IceSpike")) && prepared) {
-			cancel();
+        if ((GeneralMethods.getBoundAbility(player) == null
+                || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("IceSpike"))
+                && prepared) {
+            cancel();
 			return;
 		}
 
@@ -277,15 +277,15 @@ public class IceSpike2 {
 				return;
 			}
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, affectingradius)) {
-				if (entity.getEntityId() != player.getEntityId() && entity instanceof LivingEntity) {
-					affect((LivingEntity) entity);
-					progressing = false;
-					returnWater();
-				}
-			}
-			
-			if (GeneralMethods.rand.nextInt(4) == 0) {
+            GeneralMethods.getEntitiesAroundPoint(location, affectingradius).stream()
+                    .filter(entity -> entity.getEntityId() != player.getEntityId() && entity instanceof LivingEntity)
+                    .forEach(entity -> {
+                        affect((LivingEntity) entity);
+                        progressing = false;
+                        returnWater();
+                    });
+
+            if (GeneralMethods.rand.nextInt(4) == 0) {
 				WaterMethods.playIcebendingSound(location);
 			}		
 
@@ -335,8 +335,8 @@ public class IceSpike2 {
 
 			if (ice.player.equals(player)) {
 				Location location;
-				Entity target = GeneralMethods.getTargetedEntity(player, ice.defaultrange, new ArrayList<Entity>());
-				if (target == null) {
+                Entity target = GeneralMethods.getTargetedEntity(player, ice.defaultrange, new ArrayList<>());
+                if (target == null) {
 					location = GeneralMethods.getTargetedLocation(player, ice.defaultrange);
 				} else {
 					location = ((LivingEntity) target).getEyeLocation();
@@ -355,8 +355,8 @@ public class IceSpike2 {
 					&& mloc.distance(location.clone().add(vector)) < 
 					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				Location loc;
-				Entity target = GeneralMethods.getTargetedEntity(player, ice.defaultrange, new ArrayList<Entity>());
-				if (target == null) {
+                Entity target = GeneralMethods.getTargetedEntity(player, ice.defaultrange, new ArrayList<>());
+                if (target == null) {
 					loc = GeneralMethods.getTargetedLocation(player, ice.defaultrange);
 				} else {
 					loc = ((LivingEntity) target).getEyeLocation();

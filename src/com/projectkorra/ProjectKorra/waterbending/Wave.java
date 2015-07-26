@@ -1,9 +1,16 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,20 +20,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.firebending.FireBlast;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Wave {
 
-	public static ConcurrentHashMap<Integer, Wave> instances = new ConcurrentHashMap<Integer, Wave>();
+    public static ConcurrentHashMap<Integer, Wave> instances = new ConcurrentHashMap<>();
 
 	private static final double defaultmaxradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.Radius");
 	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.HorizontalPush");
@@ -43,9 +42,9 @@ public class Wave {
 	private Block sourceblock = null;
 	private Location targetdestination = null;
 	private Vector targetdirection = null;
-	private ConcurrentHashMap<Block, Block> wave = new ConcurrentHashMap<Block, Block>();
-	private ConcurrentHashMap<Block, Block> frozenblocks = new ConcurrentHashMap<Block, Block>();
-	private long time;
+    private ConcurrentHashMap<Block, Block> wave = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Block, Block> frozenblocks = new ConcurrentHashMap<>();
+    private long time;
 	private double radius = 1;
 	private double maxradius = defaultmaxradius;
 	private double factor = defaultfactor;
@@ -133,8 +132,8 @@ public class Wave {
 			range = WaterMethods.waterbendingNightAugment(range, player.getWorld());
 			if (AvatarState.isAvatarState(player))
 				factor = AvatarState.getValue(factor);
-			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-			if (target == null) {
+            Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<>());
+            if (target == null) {
 				targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) range).getLocation();
 			} else {
 				targetdestination = ((LivingEntity) target).getEyeLocation();
@@ -194,9 +193,8 @@ public class Wave {
 				unfocusBlock();
 				return false;
 			}
-			if (!progressing
-					&& !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge")) {
-				unfocusBlock();
+            if (!progressing && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge")) {
+                unfocusBlock();
 				return false;
 			}
 
@@ -240,7 +238,7 @@ public class Wave {
 				location = location.clone().add(direction);
 				Block blockl = location.getBlock();
 
-				ArrayList<Block> blocks = new ArrayList<Block>();
+                ArrayList<Block> blocks = new ArrayList<>();
 
 				if (!GeneralMethods.isRegionProtectedFromBuild(player, "Surge", location) && (((blockl.getType() == Material.AIR
 						|| blockl.getType() == Material.FIRE
@@ -262,28 +260,18 @@ public class Wave {
 							if (GeneralMethods.rand.nextInt(15) == 0) {
 								WaterMethods.playWaterbendingSound(location);
 							}
-							// if (!blocks.contains(block)
-							// && (Methods.isPlant(block) && block.getType() !=
-							// Material.LEAVES)) {
-							// blocks.add(block);
-							// block.breakNaturally();
-							// }
 						}
 					}
 				}
 
-				for (Block block : wave.keySet()) {
-					if (!blocks.contains(block))
-						finalRemoveWater(block);
-				}
+                wave.keySet().stream()
+                        .filter(block -> !blocks.contains(block)).forEach(this::finalRemoveWater);
 
-				for (Block block : blocks) {
-					if (!wave.containsKey(block))
-						addWater(block);
-				}
+                blocks.stream()
+                        .filter(block -> !wave.containsKey(block))
+                        .forEach(this::addWater);
 
 				if (wave.isEmpty()) {
-					// blockl.setType(Material.GLOWSTONE);
 					breakBlock();
 					returnWater(location.subtract(direction));
 					progressing = false;
@@ -345,19 +333,12 @@ public class Wave {
 	}
 
 	private void breakBlock() {
-		for (Block block : wave.keySet()) {
-			finalRemoveWater(block);
-		}
-		instances.remove(player.getEntityId());
+        wave.keySet().forEach(this::finalRemoveWater);
+        instances.remove(player.getEntityId());
 	}
 
 	private void finalRemoveWater(Block block) {
 		if (wave.containsKey(block)) {
-			// block.setType(Material.WATER);
-			// block.setData(half);
-			// if (!Methods.adjacentToThreeOrMoreSources(block) || radius > 1) {
-			// block.setType(Material.AIR);
-			// }
 			TempBlock.revertBlock(block, Material.AIR);
 			wave.remove(block);
 		}
@@ -368,12 +349,8 @@ public class Wave {
 			return;
 		if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
-			// new TempBlock(block, Material.ICE, (byte) 0);
 			wave.put(block, block);
 		}
-		// block.setType(Material.WATER);
-		// block.setData(full);
-		// wave.put(block, block);
 	}
 
 	private void clearWave() {
@@ -439,7 +416,6 @@ public class Wave {
 				continue;
 			if (block.getType() == Material.AIR
 					|| block.getType() == Material.SNOW) {
-				// block.setType(Material.ICE);
 				new TempBlock(block, Material.ICE, (byte) 0);
 				frozenblocks.put(block, block);
 			}
@@ -448,43 +424,30 @@ public class Wave {
 			}
 			if (WaterMethods.isPlant(block) && block.getType() != Material.LEAVES) {
 				block.breakNaturally();
-				// block.setType(Material.ICE);
 				new TempBlock(block, Material.ICE, (byte) 0);
 				frozenblocks.put(block, block);
 			}
-			for(Block sound : frozenblocks.keySet()) {
-				if (GeneralMethods.rand.nextInt(4) == 0) {
-					WaterMethods.playWaterbendingSound(sound.getLocation());
-				}		
-			}
-		}
+            frozenblocks.keySet().stream()
+                    .filter(sound -> GeneralMethods.rand.nextInt(4) == 0)
+                    .forEach(sound -> WaterMethods.playWaterbendingSound(sound.getLocation()));
+        }
 	}
 
 	private void thaw() {
 		for (Block block : frozenblocks.keySet()) {
-			// if (block.getType() == Material.ICE) {
-			// // block.setType(Material.WATER);
-			// // block.setData((byte) 0x7);
-			// block.setType(Material.AIR);
-			// }
 			TempBlock.revertBlock(block, Material.AIR);
 			frozenblocks.remove(block);
 		}
 	}
 
 	public static void thaw(Block block) {
-		for (int id : instances.keySet()) {
-			if (instances.get(id).frozenblocks.containsKey(block)) {
-				// if (block.getType() == Material.ICE) {
-				// // block.setType(Material.WATER);
-				// // block.setData((byte) 0x7);
-				// block.setType(Material.AIR);
-				// }
-				TempBlock.revertBlock(block, Material.AIR);
-				instances.get(id).frozenblocks.remove(block);
-			}
-		}
-	}
+        instances.keySet().stream()
+                .filter(id -> instances.get(id).frozenblocks.containsKey(block))
+                .forEach(id -> {
+                    TempBlock.revertBlock(block, Material.AIR);
+                    instances.get(id).frozenblocks.remove(block);
+                });
+    }
 
 	public static boolean canThaw(Block block) {
 		for (int id : instances.keySet()) {
