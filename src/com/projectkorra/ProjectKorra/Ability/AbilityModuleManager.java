@@ -1,15 +1,15 @@
 package com.projectkorra.ProjectKorra.Ability;
 
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.AbilityLoader;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Utilities.AbilityLoader;
 
 
 public class AbilityModuleManager {
@@ -53,35 +53,35 @@ public class AbilityModuleManager {
 		if (!path.exists()) {
 			path.mkdir();
 		}
-		loader = new AbilityLoader<AbilityModule>(plugin, path, new Object[] {});
-		abilities = new HashSet<String>();
-		waterbendingabilities = new ArrayList<String>();
-		airbendingabilities = new ArrayList<String>();
-		earthbendingabilities = new ArrayList<String>();
-		firebendingabilities = new ArrayList<String>();
-		chiabilities = new ArrayList<String>();
-		shiftabilities = new HashSet<String>();
-		descriptions = new HashMap<String, String>();
-		authors = new HashMap<String, String>();
-		harmlessabilities = new HashSet<String>();
-		explodeabilities = new HashSet<String>();
-		igniteabilities = new HashSet<String>();
-		metalbendingabilities = new HashSet<String>();
-		earthsubabilities = new HashSet<String>();
-		subabilities = new HashSet<String>();
+		loader = new AbilityLoader<>(plugin, path, new Object[]{});
+		abilities = new HashSet<>();
+		waterbendingabilities = new ArrayList<>();
+		airbendingabilities = new ArrayList<>();
+		earthbendingabilities = new ArrayList<>();
+		firebendingabilities = new ArrayList<>();
+		chiabilities = new ArrayList<>();
+		shiftabilities = new HashSet<>();
+		descriptions = new HashMap<>();
+		authors = new HashMap<>();
+		harmlessabilities = new HashSet<>();
+		explodeabilities = new HashSet<>();
+		igniteabilities = new HashSet<>();
+		metalbendingabilities = new HashSet<>();
+		earthsubabilities = new HashSet<>();
+		subabilities = new HashSet<>();
 		ability = loader.load(AbilityModule.class);
-		disabledStockAbilities = new HashSet<String>();
-		lightningabilities = new HashSet<String>();
-		combustionabilities = new HashSet<String>();
-		flightabilities = new HashSet<String>();
-		spiritualprojectionabilities = new HashSet<String>();
-		metalabilities = new HashSet<String>();
-		sandabilities = new HashSet<String>();
-		lavaabilities = new HashSet<String>();
-		healingabilities = new HashSet<String>();
-		plantabilities = new HashSet<String>();
-		iceabilities = new HashSet<String>();
-		bloodabilities = new HashSet<String>();
+		disabledStockAbilities = new HashSet<>();
+		lightningabilities = new HashSet<>();
+		combustionabilities = new HashSet<>();
+		flightabilities = new HashSet<>();
+		spiritualprojectionabilities = new HashSet<>();
+		metalabilities = new HashSet<>();
+		sandabilities = new HashSet<>();
+		lavaabilities = new HashSet<>();
+		healingabilities = new HashSet<>();
+		plantabilities = new HashSet<>();
+		iceabilities = new HashSet<>();
+		bloodabilities = new HashSet<>();
 		fill();
 	}
 
@@ -289,12 +289,7 @@ public class AbilityModuleManager {
 				abilities.remove(ab.getName());
 				final AbilityModule skill = ab;
 				//Bellow to avoid ConcurrentModificationException
-				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-					public void run() {
-						ability.remove(skill);
-					}
-				}, 10);
-				continue;
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> ability.remove(skill), 10);
 			}
 		}
 		

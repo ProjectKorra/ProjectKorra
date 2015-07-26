@@ -1,24 +1,25 @@
 package com.projectkorra.ProjectKorra.Ability;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Flight;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class AvatarState {
 
-	public static ConcurrentHashMap<Player, AvatarState> instances = new ConcurrentHashMap<Player, AvatarState>();
+	public static ConcurrentHashMap<Player, AvatarState> instances = new ConcurrentHashMap<>();
 	//public static Map<String, Long> cooldowns = new HashMap<String, Long>();
-	public static Map<String, Long> startTimes = new HashMap<String, Long>();
+	public static Map<String, Long> startTimes = new HashMap<>();
 
 	public static FileConfiguration config = ProjectKorra.plugin.getConfig();
 	private static final long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.AvatarState.Cooldown");
@@ -64,9 +65,7 @@ public class AvatarState {
 	}
 
 	public static void manageAvatarStates() {
-		for (Player player : instances.keySet()) {
-			progress(player);
-		}
+		instances.keySet().forEach(AvatarState::progress);
 	}
 
 	public static boolean progress(Player player) {
@@ -119,9 +118,7 @@ public class AvatarState {
 	}
 
 	public static boolean isAvatarState(Player player) {
-		if (instances.containsKey(player))
-			return true;
-		return false;
+		return instances.containsKey(player);
 	}
 
 	public static double getValue(double value) {
@@ -132,11 +129,7 @@ public class AvatarState {
 		return (int) factor * value;
 	}
 
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (Player player : instances.keySet()) {
-			players.add(player);
-		}
-		return players;
+	public static List<Player> getPlayers() {
+		return instances.keySet().stream().collect(Collectors.toList());
 	}
 }
