@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -10,16 +12,14 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Tremorsense {
 
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
-	public static ConcurrentHashMap<Player, Tremorsense> instances = new ConcurrentHashMap<Player, Tremorsense>();
-	public static ConcurrentHashMap<Block, Player> blocks = new ConcurrentHashMap<Block, Player>();
+
+	public static ConcurrentHashMap<Player, Tremorsense> instances = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Block, Player> blocks = new ConcurrentHashMap<>();
 
 	private static final int maxdepth = config.getInt("Abilities.Earth.Tremorsense.MaxDepth");
 	private static final int radius = config.getInt("Abilities.Earth.Tremorsense.Radius");

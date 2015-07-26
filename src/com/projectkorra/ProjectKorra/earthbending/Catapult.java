@@ -1,8 +1,9 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Flight;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -10,14 +11,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Catapult {
 
-	public static ConcurrentHashMap<Integer, Catapult> instances = new ConcurrentHashMap<Integer, Catapult>();
+	public static ConcurrentHashMap<Integer, Catapult> instances = new ConcurrentHashMap<>();
 
 	private static int LENGTH = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Catapult.Length");
 	private static double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Speed");
@@ -207,7 +207,7 @@ public class Catapult {
 	}
 
 	public static List<Player> getPlayers() {
-		List<Player> players = new ArrayList<Player>();
+		List<Player> players = new ArrayList<>();
 		for (int id : instances.keySet()) {
 			Player player = instances.get(id).player;
 			if (!players.contains(player))
@@ -217,9 +217,7 @@ public class Catapult {
 	}
 
 	public static void removeAll() {
-		for (int id : instances.keySet()) {
-			instances.remove(id);
-		}
+		instances.keySet().forEach(instances::remove);
 	}
 
 	public static String getDescription() {

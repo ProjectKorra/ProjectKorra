@@ -1,6 +1,10 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.TempPotionEffect;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,15 +16,11 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.TempPotionEffect;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthArmor {
-	
-	public static ConcurrentHashMap<Player, EarthArmor> instances = new ConcurrentHashMap<Player, EarthArmor>();
+
+	public static ConcurrentHashMap<Player, EarthArmor> instances = new ConcurrentHashMap<>();
 
 	private static long interval = 2000;
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
@@ -160,11 +160,8 @@ public class EarthArmor {
 	}
 
 	private boolean inPosition() {
-		if (headblock.equals(player.getEyeLocation().getBlock())
-				&& legsblock.equals(player.getLocation().getBlock())) {
-			return true;
-		}
-		return false;
+		return headblock.equals(player.getEyeLocation().getBlock())
+				&& legsblock.equals(player.getLocation().getBlock());
 	}
 
 	private void formArmor() {
@@ -191,9 +188,7 @@ public class EarthArmor {
 	}
 
 	public static void moveArmorAll() {
-		for (Player player : instances.keySet()) {
-			moveArmor(player);
-		}
+		instances.keySet().forEach(EarthArmor::moveArmor);
 	}
 	
 	public static void moveArmor(Player player) {
@@ -213,7 +208,6 @@ public class EarthArmor {
 				eartharmor.removeEffect();
 				eartharmor.cancel();
 				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("EarthArmor", cooldown);
-				return;
 			}
 		} else if (System.currentTimeMillis() > eartharmor.time + interval) {
 			if (!eartharmor.moveBlocks())

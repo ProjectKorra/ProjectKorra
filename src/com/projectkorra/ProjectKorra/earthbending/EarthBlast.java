@@ -1,17 +1,5 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -23,9 +11,20 @@ import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class EarthBlast {
 
-	public static ConcurrentHashMap<Integer, EarthBlast> instances = new ConcurrentHashMap<Integer, EarthBlast>();
+	public static ConcurrentHashMap<Integer, EarthBlast> instances = new ConcurrentHashMap<>();
 
 	private static boolean hitself = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
 	private static double preparerange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.PrepareRange");
@@ -83,7 +82,7 @@ public class EarthBlast {
 	}
 
 	private static Location getTargetLocation(Player player) {
-		Entity target = GeneralMethods.getTargetedEntity(player, RANGE, new ArrayList<Entity>());
+		Entity target = GeneralMethods.getTargetedEntity(player, RANGE, new ArrayList<>());
 		Location location;
 		if (target == null) {
 			location = GeneralMethods.getTargetedLocation(player, RANGE);
@@ -309,7 +308,6 @@ public class EarthBlast {
 					Block block2 = location.getBlock();
 					if (block2.getLocation().equals(sourceblock.getLocation())) {
 						location = location.clone().add(direction);
-						block2 = location.getBlock();
 					}
 
 					if (EarthMethods.isTransparentToEarthbending(player, block)
@@ -408,7 +406,7 @@ public class EarthBlast {
 	}
 
 	public static void throwEarth(Player player) {
-		ArrayList<EarthBlast> ignore = new ArrayList<EarthBlast>();
+		ArrayList<EarthBlast> ignore = new ArrayList<>();
 
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("EarthBlast")) return;
@@ -532,7 +530,7 @@ public class EarthBlast {
 		}
 	}
 	public static ArrayList<EarthBlast> getAroundPoint(Location location, double radius) {
-		ArrayList<EarthBlast> list = new ArrayList<EarthBlast>();
+		ArrayList<EarthBlast> list = new ArrayList<>();
 		for (int id : instances.keySet()) {
 			EarthBlast blast = instances.get(id);
 			if (blast.location.getWorld().equals(location.getWorld()))

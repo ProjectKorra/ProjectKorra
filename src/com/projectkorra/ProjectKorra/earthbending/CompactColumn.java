@@ -1,22 +1,22 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.BlockSource;
 import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.concurrent.ConcurrentHashMap;
+
 public class CompactColumn {
 
-	public static ConcurrentHashMap<Integer, CompactColumn> instances = new ConcurrentHashMap<Integer, CompactColumn>();
-	private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<Block, Block>();
+    public static ConcurrentHashMap<Integer, CompactColumn> instances = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<>();
 
 	private static int ID = Integer.MIN_VALUE;
 	private static int height = EarthColumn.standardheight;
@@ -32,7 +32,7 @@ public class CompactColumn {
 	private int distance;
 	private int id;
 	private long time;
-	private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
+    private ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<>();
 
 	public CompactColumn(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
@@ -78,10 +78,8 @@ public class CompactColumn {
 
 		if (distance != 0) {
 			if (canInstantiate()) {
-				for (Block blocki : affectedblocks.keySet()) {
-					EarthColumn.resetBlock(blocki);
-				}
-				id = ID;
+                affectedblocks.keySet().forEach(EarthColumn::resetBlock);
+                id = ID;
 				instances.put(id, this);
 				if (ID >= Integer.MAX_VALUE) {
 					ID = Integer.MIN_VALUE;
@@ -105,11 +103,8 @@ public class CompactColumn {
 	}
 
 	private boolean blockInAffectedBlocks(Block block) {
-		if (affectedblocks.containsKey(block)) {
-			return true;
-		}
-		return false;
-	}
+        return affectedblocks.containsKey(block);
+    }
 
 	public static boolean blockInAllAffectedBlocks(Block block) {
 		for (int ID : instances.keySet()) {
@@ -120,12 +115,10 @@ public class CompactColumn {
 	}
 
 	public static void revertBlock(Block block) {
-		for (int ID : instances.keySet()) {
-			if (instances.get(ID).blockInAffectedBlocks(block)) {
-				instances.get(ID).affectedblocks.remove(block);
-			}
-		}
-	}
+        instances.keySet().stream()
+                .filter(ID -> instances.get(ID).blockInAffectedBlocks(block))
+                .forEach(ID -> instances.get(ID).affectedblocks.remove(block));
+    }
 
 	private boolean canInstantiate() {
 		for (Block block : affectedblocks.keySet()) {
@@ -147,10 +140,8 @@ public class CompactColumn {
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			if (!moveEarth()) {
-				for (Block blocki : affectedblocks.keySet()) {
-					EarthColumn.resetBlock(blocki);
-				}
-				instances.remove(id);
+                affectedblocks.keySet().forEach(EarthColumn::resetBlock);
+                instances.remove(id);
 				// for (Block block : affectedblocks.keySet()) {
 				// alreadydoneblocks.put(block, block);
 				// }
@@ -169,16 +160,11 @@ public class CompactColumn {
 		EarthMethods.moveEarth(player, block, direction, distance);
 		loadAffectedBlocks();
 
-		if (location.distance(origin) >= distance) {
-			return false;
-		}
+        return location.distance(origin) < distance;
 
-		return true;
 	}
 
 	public static void removeAll() {
-		for (int id : instances.keySet()) {
-			instances.remove(id);
-		}
-	}
+        instances.keySet().forEach(instances::remove);
+    }
 }

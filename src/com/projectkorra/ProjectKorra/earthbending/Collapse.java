@@ -1,18 +1,18 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Collapse {
 	
@@ -20,9 +20,9 @@ public class Collapse {
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Collapse.Radius");
 	private static final int height = EarthColumn.standardheight;
 
-	private ConcurrentHashMap<Block, Block> blocks = new ConcurrentHashMap<Block, Block>();
-	private ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
-	private double radius = defaultradius;
+    private ConcurrentHashMap<Block, Block> blocks = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<>();
+    private double radius = defaultradius;
 	private Player player;
 
 	@SuppressWarnings("deprecation")
@@ -39,13 +39,10 @@ public class Collapse {
 		} else {
 			location = sblock.getLocation();
 		}
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
-			if (EarthMethods.isEarthbendable(player, block)
-					&& !blocks.containsKey(block)
-					&& block.getY() >= location.getBlockY()) {
-				getAffectedBlocks(block);
-			}
-		}
+        GeneralMethods.getBlocksAroundPoint(location, radius).stream()
+                .filter(block -> EarthMethods.isEarthbendable(player, block)
+                        && !blocks.containsKey(block) && block.getY() >= location.getBlockY())
+                .forEach(this::getAffectedBlocks);
 
 		if (!baseblocks.isEmpty()) {
 			bPlayer.addCooldown("Collapse", GeneralMethods.getGlobalCooldown());
@@ -59,8 +56,8 @@ public class Collapse {
 	private void getAffectedBlocks(Block block) {
 		Block baseblock = block;
 		int tall = 0;
-		ArrayList<Block> bendableblocks = new ArrayList<Block>();
-		bendableblocks.add(block);
+        ArrayList<Block> bendableblocks = new ArrayList<>();
+        bendableblocks.add(block);
 		for (int i = 1; i <= height; i++) {
 			Block blocki = block.getRelative(BlockFace.DOWN, i);
 			if (EarthMethods.isEarthbendable(player, blocki)) {

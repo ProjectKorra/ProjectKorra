@@ -1,19 +1,19 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Shockwave {
 
-	public static ConcurrentHashMap<Player, Shockwave> instances = new ConcurrentHashMap<Player, Shockwave>();
+    public static ConcurrentHashMap<Player, Shockwave> instances = new ConcurrentHashMap<>();
 
 	private static final double angle = Math.toRadians(40);
 	private static final long defaultchargetime = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Shockwave.ChargeTime");
@@ -39,12 +39,14 @@ public class Shockwave {
 		if (!GeneralMethods.canBend(player.getName(), "Shockwave")) {
 			return;
 		}
-		if (GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Shockwave")) {
-			return;
+        if (GeneralMethods.getBoundAbility(player) == null
+                || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Shockwave")) {
+            return;
 		}
-		
-		if (instances.containsKey(player) || player.getFallDistance() < threshold || !EarthMethods.isEarthbendable(player, player.getLocation().add(0, -1, 0).getBlock())) {
-			return;
+
+        if (instances.containsKey(player) || player.getFallDistance() < threshold
+                || !EarthMethods.isEarthbendable(player, player.getLocation().add(0, -1, 0).getBlock())) {
+            return;
 		}
 
 		areaShockwave(player);
@@ -55,8 +57,9 @@ public class Shockwave {
 			instances.remove(player);
 			return;
 		}
-		if (!GeneralMethods.canBend(player.getName(), "Shockwave") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Shockwave")) {
-			instances.remove(player);
+        if (!GeneralMethods.canBend(player.getName(), "Shockwave")
+                || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Shockwave")) {
+            instances.remove(player);
 			return;
 		}
 
