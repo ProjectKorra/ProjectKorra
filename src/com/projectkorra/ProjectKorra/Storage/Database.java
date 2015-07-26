@@ -1,15 +1,15 @@
 package com.projectkorra.ProjectKorra.Storage;
 
+import com.projectkorra.ProjectKorra.ProjectKorra;
+
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
-
-import org.bukkit.scheduler.BukkitRunnable;
-
-import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public abstract class Database {
 
@@ -105,9 +105,8 @@ public abstract class Database {
     public ResultSet readQuery(String query) {
         try {
             Statement stmt = this.connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
 
-            return rs;
+            return stmt.executeQuery(query);
         } catch(SQLException e) {
             e.printStackTrace();
             return null;
@@ -125,8 +124,7 @@ public abstract class Database {
             DatabaseMetaData dmd = this.connection.getMetaData();
             ResultSet rs = dmd.getTables(null, null, table, null);
 
-            if(rs.next()) return true;
-            else return false;
+            return rs.next();
         } catch(Exception e) {
             e.printStackTrace();
             return false;
