@@ -3,6 +3,7 @@ package com.projectkorra.ProjectKorra.firebending;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -104,8 +105,9 @@ public class FireBlast extends CoreAbility {
 
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
 		boolean broke = false;
-		for (Integer id : getInstances(FireBlast.class).keySet()) {
-			FireBlast blast = (FireBlast) getInstances(FireBlast.class).get(id);
+		ConcurrentHashMap<Integer, CoreAbility> instances = getInstances(FireBlast.class);
+		for (Integer id : instances.keySet()) {
+			FireBlast blast = (FireBlast) instances.get(id);
 			Location fireblastlocation = blast.location;
 			if (location.getWorld() == fireblastlocation.getWorld()	&& !blast.player.equals(source)) {
 				if (location.distance(fireblastlocation) <= radius) {
@@ -121,8 +123,9 @@ public class FireBlast extends CoreAbility {
 
 	public static ArrayList<FireBlast> getAroundPoint(Location location, double radius) {
 		ArrayList<FireBlast> list = new ArrayList<FireBlast>();
-		for (Integer id : getInstances(StockAbilities.FireBlast).keySet()) {
-			FireBlast fireBlast = (FireBlast) getInstances(StockAbilities.FireBlast).get(id);
+		ConcurrentHashMap<Integer, CoreAbility> instances = getInstances(FireBlast.class);
+		for (Integer id : instances.keySet()) {
+			FireBlast fireBlast = (FireBlast) instances.get(id);
 			Location fireblastlocation = fireBlast.location;
 			if (location.getWorld() == fireblastlocation.getWorld()) {
 				if (location.distance(fireblastlocation) <= radius)
@@ -144,8 +147,9 @@ public class FireBlast extends CoreAbility {
 	}
 	
 	public static void removeFireBlastsAroundPoint(Location location, double radius) {
-		for (Integer id : getInstances(StockAbilities.FireBlast).keySet()) {
-			FireBlast fireBlast = (FireBlast) getInstances(StockAbilities.FireBlast).get(id);
+		ConcurrentHashMap<Integer, CoreAbility> instances = getInstances(FireBlast.class);
+		for (Integer id : instances.keySet()) {
+			FireBlast fireBlast = (FireBlast) instances.get(id);
 			Location fireblastlocation = fireBlast.location;
 			if (location.getWorld() == fireblastlocation.getWorld()) {
 				if (location.distance(fireblastlocation) <= radius)
@@ -237,7 +241,6 @@ public class FireBlast extends CoreAbility {
 
 	@Override
 	public boolean progress() {
-		ProjectKorra.log.info("FireBlast id: " + getID());
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return false;
