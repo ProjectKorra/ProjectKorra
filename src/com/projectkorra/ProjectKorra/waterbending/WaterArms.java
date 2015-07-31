@@ -377,8 +377,8 @@ public class WaterArms {
 	}
 
 	private void checkIfZapped() {
-		for (int i = 0; i < Lightning.instances.size(); i++) {
-			Lightning l = Lightning.instances.get(i);
+		for (Integer id : Lightning.getInstances(Lightning.class).keySet()) {
+			Lightning l = (Lightning) Lightning.getInstances(Lightning.class).get(id);
 			for (Lightning.Arc arc : l.getArcs()) {
 				for (Block arm : revert.keySet()) {
 					for (Location loc : arc.getPoints()) {
@@ -388,11 +388,9 @@ public class WaterArms {
 									arm.getLocation(), 1.25))
 								FireMethods.playLightningbendingParticle(l1);
 							if (lightningKill)
-								GeneralMethods.damageEntity(Lightning.instances
-										.get(i).getPlayer(), player, 60D);
+								GeneralMethods.damageEntity(l.getPlayer(), player, 60D);
 							else
-								GeneralMethods.damageEntity(Lightning.instances
-										.get(i).getPlayer(), player,
+								GeneralMethods.damageEntity(l.getPlayer(), player,
 										lightningDamage);
 						}
 					}

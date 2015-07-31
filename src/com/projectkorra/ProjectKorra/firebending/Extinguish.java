@@ -10,23 +10,28 @@ import org.bukkit.entity.Player;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
+import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
-public class Extinguish {
+/**
+ * Used in {@link Cook HeatControl}.
+ */
+public class Extinguish implements ConfigLoadable {
 
-	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.HeatControl.Extinguish.Range");
-	private static double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.HeatControl.Extinguish.Radius");
+	private static double defaultrange = config.get().getDouble("Abilities.Fire.HeatControl.Extinguish.Range");
+	private static double defaultradius = config.get().getDouble("Abilities.Fire.HeatControl.Extinguish.Radius");
 
 	@SuppressWarnings("unused")
 	private static byte full = AirBlast.full;
 
 	public Extinguish(Player player) {
+		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-
 		if (bPlayer.isOnCooldown("HeatControl")) return;
-
+		/* End Initial Checks */
+		reloadVariables();
+		
 		double range = FireMethods.getFirebendingDayAugment(defaultrange, player.getWorld());
 		if (WaterMethods.isMeltable(player.getTargetBlock((HashSet<Material>) null, (int) range))) {
 			new HeatMelt(player);
@@ -37,12 +42,11 @@ public class Extinguish {
 				player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation(), radius)) {
 			
 			Material mat = block.getType();
-			if(mat != Material.FIRE 
+			if (mat != Material.FIRE 
 					/*&& mat != Material.STATIONARY_LAVA
 					&& mat != Material.LAVA*/)
 				continue;
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze",
-					block.getLocation()))
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze", block.getLocation()))
 				continue;
 			if (block.getType() == Material.FIRE) {
 				block.setType(Material.AIR);
@@ -87,5 +91,11 @@ public class Extinguish {
 				+ "extinguished, although it will leave any creature burning engulfed in flames. "
 				+ "This ability can also cool lava. If this ability is used while targetting ice or snow, it"
 				+ " will instead melt blocks in that area. Finally, sneaking with this ability will cook any food in your hand.";
+	}
+
+	@Override
+	public void reloadVariables() {
+		defaultrange = config.get().getDouble("Abilities.Fire.HeatControl.Extinguish.Range");
+		defaultradius = config.get().getDouble("Abilities.Fire.HeatControl.Extinguish.Radius");
 	}
 }

@@ -6,17 +6,19 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 
-public class RingOfFire {
+public class RingOfFire implements ConfigLoadable {
 
-	static final int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.RingOfFire.Range");
+	static int defaultrange = config.get().getInt("Abilities.Fire.Blaze.RingOfFire.Range");
 
 	public RingOfFire(Player player) {
+		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("Blaze")) return;
-
+		/* End Initial Checks */
+		reloadVariables();
 		Location location = player.getLocation();
 
 		for (double degrees = 0; degrees < 360; degrees += 10) {
@@ -47,6 +49,11 @@ public class RingOfFire {
 		return "To use, simply left-click. "
 				+ "A circle of fire will emanate from you, "
 				+ "engulfing everything around you. Use with extreme caution.";
+	}
+
+	@Override
+	public void reloadVariables() {
+		defaultrange = config.get().getInt("Abilities.Fire.Blaze.RingOfFire.Range");
 	}
 
 }

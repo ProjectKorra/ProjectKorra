@@ -20,7 +20,7 @@ import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
@@ -29,7 +29,7 @@ import com.projectkorra.ProjectKorra.firebending.Illumination;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
-public class AirSwipe extends BaseAbility {
+public class AirSwipe extends CoreAbility {
 
 	private static int stepsize = 4;	
 
@@ -97,15 +97,15 @@ public class AirSwipe extends BaseAbility {
 
 	public static boolean removeSwipesAroundPoint(Location loc, double radius) {
 		boolean removed = false;
-		for (Object id : getInstance(StockAbilities.AirSwipe).keySet()) {
-			AirSwipe aswipe = (AirSwipe) getInstance(StockAbilities.AirSwipe).get(id);
+		for (Integer id : getInstances(StockAbilities.AirSwipe).keySet()) {
+			AirSwipe aswipe = (AirSwipe) getInstances(StockAbilities.AirSwipe).get(id);
 			
 			for (Vector vec : aswipe.elements.keySet()) {
 				Location vectorLoc = aswipe.elements.get(vec);
 				if (vectorLoc != null && vectorLoc.getWorld().equals(loc.getWorld())) {
 					if (vectorLoc.distance(loc) <= radius) {
 						//instances.remove(aswipe.uuid);
-						getInstance(StockAbilities.AirSwipe).remove(id); //TODO: Check if this works
+						aswipe.remove();
 						removed = true;
 					}
 				}

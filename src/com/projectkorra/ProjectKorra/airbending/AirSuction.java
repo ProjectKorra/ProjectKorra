@@ -15,18 +15,17 @@ import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
-public class AirSuction extends BaseAbility {
+public class AirSuction extends CoreAbility {
 	
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
-	static final double maxspeed = AirBlast.maxspeed;
-	
-	private static final int maxticks = AirBlast.maxticks;
+	private static final double maxspeed = AirBlast.maxspeed;
+	private static final int maxticks = 10000;
 
 	//private static long soonesttime = config.get().getLong("Properties.GlobalCooldown");
 	private static double SPEED = config.get().getDouble("Abilities.Air.AirSuction.Speed");
@@ -131,7 +130,7 @@ public class AirSuction extends BaseAbility {
 	}
 
 	public static void progressAll() {
-		BaseAbility.progressAll(StockAbilities.AirSuction);
+		CoreAbility.progressAll(StockAbilities.AirSuction);
 		for (Player player : origins.keySet()) {
 			playOriginEffect(player);
 		}
