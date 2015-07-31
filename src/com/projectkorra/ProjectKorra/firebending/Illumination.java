@@ -3,21 +3,20 @@ package com.projectkorra.ProjectKorra.firebending;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
-public class Illumination {
+public class Illumination extends CoreAbility {
 
-	public static ConcurrentHashMap<Player, Illumination> instances = new ConcurrentHashMap<Player, Illumination>();
 	public static ConcurrentHashMap<Block, Player> blocks = new ConcurrentHashMap<Block, Player>();
 
-	private static final int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Illumination.Range");
+	private static int range = config.get().getInt("Abilities.Fire.Illumination.Range");
 
 	private Player player;
 	private Block block;
@@ -25,21 +24,97 @@ public class Illumination {
 	private byte normaldata;
 
 	public Illumination(Player player) {
+		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-
 		if (bPlayer.isOnCooldown("Illumination")) return;
-
-		if (instances.containsKey(player)) {
-			instances.get(player).revert();
-			instances.remove(player);
+		/* End Initial Checks */
+		
+		if (containsPlayer(player, Illumination.class)) {
+			revert();
+			remove();
 		} else {
+			reloadVariables();
 			this.player = player;
 			set();
-			instances.put(player, this);
+			//instances.put(player, this);
+			putInstance(player, this);
 			bPlayer.addCooldown("Illumination", GeneralMethods.getGlobalCooldown());
 		}
 	}
 
+	public static String getDescription() {
+		return "This ability gives firebenders a means of illuminating the area. It is a toggle - clicking "
+				+ "will create a torch that follows you around. The torch will only appear on objects that are "
+				+ "ignitable and can hold a torch (e.g. not leaves or ice). If you get too far away from the torch, "
+				+ "it will disappear, but will reappear when you get on another ignitable block. Clicking again "
+				+ "dismisses this torch.";
+	}
+
+	public static void revert(Block block) {
+		Player player = blocks.get(block);
+		((Illumination) getAbilityFromPlayer(player, Illumination.class)).revert();
+	}
+
+	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.Illumination;
+	}
+
+//	public static void manage(Server server) {
+//		for (Player player : server.getOnlinePlayers()) {
+//			if (instances.containsKey(player)) {
+//				if (!GeneralMethods.canBend(player.getName(), "Illumination")) {
+//					instances.get(player).revert();
+//					instances.remove(player);
+//				} else {
+//					instances.get(player).set();
+//				}
+//			}
+//		}
+//
+//		for (Player player : instances.keySet()) {
+//			if (!player.isOnline() || player.isDead()) {
+//				instances.get(player).revert();
+//				instances.remove(player);
+//			}
+//		}
+//	}
+
+	@Override
+	public boolean progress() {
+		if (!player.isOnline() || player.isDead()) {
+			remove();
+			return false;
+		}
+		if (!GeneralMethods.canBend(player.getName(), "Illumination")) {
+			remove();
+			return false;
+		} else {
+			set();
+		}
+		return true;
+	}
+
+	@Override
+	public void reloadVariables() {
+		range = config.get().getInt("Abilities.Fire.Illumination.Range");
+	}
+
+	@Override
+	public void remove() {
+		revert();
+		super.remove();
+	}
+
+	@SuppressWarnings("deprecation")
+	private void revert() {
+		if (block != null) {
+			blocks.remove(block);
+			block.setType(normaltype);
+			block.setData(normaldata);
+		}
+	}
+	
 	@SuppressWarnings("deprecation")
 	private void set() {
 		Block standingblock = player.getLocation().getBlock();
@@ -73,56 +148,6 @@ public class Illumination {
 				.getFirebendingDayAugment(range, player.getWorld())) {
 			revert();
 		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private void revert() {
-		if (block != null) {
-			blocks.remove(block);
-			block.setType(normaltype);
-			block.setData(normaldata);
-		}
-	}
-
-	public static void revert(Block block) {
-		Player player = blocks.get(block);
-		instances.get(player).revert();
-	}
-
-	public static void manage(Server server) {
-		for (Player player : server.getOnlinePlayers()) {
-			if (instances.containsKey(player)) {
-				if (!GeneralMethods.canBend(player.getName(), "Illumination")) {
-					instances.get(player).revert();
-					instances.remove(player);
-				} else {
-					instances.get(player).set();
-				}
-			}
-		}
-
-		for (Player player : instances.keySet()) {
-			if (!player.isOnline() || player.isDead()) {
-				instances.get(player).revert();
-				instances.remove(player);
-			}
-		}
-	}
-
-	public static void removeAll() {
-		for (Player player : instances.keySet()) {
-			instances.get(player).revert();
-			instances.remove(player);
-		}
-
-	}
-
-	public static String getDescription() {
-		return "This ability gives firebenders a means of illuminating the area. It is a toggle - clicking "
-				+ "will create a torch that follows you around. The torch will only appear on objects that are "
-				+ "ignitable and can hold a torch (e.g. not leaves or ice). If you get too far away from the torch, "
-				+ "it will disappear, but will reappear when you get on another ignitable block. Clicking again "
-				+ "dismisses this torch.";
 	}
 
 }

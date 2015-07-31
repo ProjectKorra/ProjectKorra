@@ -2,18 +2,19 @@ package com.projectkorra.ProjectKorra.firebending;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.AddonAbility;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
-public class Cook {
-
-	public static ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<Player, Cook>();
+/**
+ * Used in {@link HeatControl}.
+ */
+public class Cook extends AddonAbility {
 
 	private static final long COOK_TIME = 2000;
 	private static final Material[] cookables = { Material.RAW_BEEF,
@@ -26,27 +27,30 @@ public class Cook {
 	private long cooktime = COOK_TIME;
 
 	public Cook(Player player) {
+		reloadVariables();
 		this.player = player;
 		items = player.getItemInHand();
 		time = System.currentTimeMillis();
 		if (isCookable(items.getType())) {
-			instances.put(player, this);
+			//instances.put(player, this);
+			putInstance(player, this);
 		}
 	}
 
-	private void progress() {
+	@Override
+	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
-			cancel();
-			return;
+			remove();
+			return false;
 		}
 
 		if (GeneralMethods.getBoundAbility(player) == null) {
-			cancel();
-			return;
+			remove();
+			return false;
 		}
 		if (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
-			cancel();
-			return;
+			remove();
+			return false;
 		}
 
 		if (!items.equals(player.getItemInHand())) {
@@ -55,8 +59,8 @@ public class Cook {
 		}
 
 		if (!isCookable(items.getType())) {
-			cancel();
-			return;
+			remove();
+			return false;
 		}
 
 		if (System.currentTimeMillis() > time + cooktime) {
@@ -65,10 +69,7 @@ public class Cook {
 		}
 		ParticleEffect.FLAME.display(player.getEyeLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
 		ParticleEffect.SMOKE.display(player.getEyeLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
-	}
-
-	private void cancel() {
-		instances.remove(player);
+		return true;
 	}
 
 	private static boolean isCookable(Material material) {
@@ -99,9 +100,9 @@ public class Cook {
 			break;
 		case RAW_FISH:
 			ItemStack salmon = new ItemStack(Material.RAW_FISH, 1, (short) 1);
-			if(is.getDurability() == salmon.getDurability()) {
+			if (is.getDurability() == salmon.getDurability()) {
 				cooked = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
-			}else{
+			} else {
 				cooked = new ItemStack(Material.COOKED_FISH, 1);
 			}
 			break;
@@ -126,16 +127,6 @@ public class Cook {
 		return cooked;
 	}
 
-	public static void progressAll() {
-		for (Player player : instances.keySet()) {
-			instances.get(player).progress();
-		}
-	}
-
-	public static void removeAll() {
-		instances.clear();
-	}
-
 	public Player getPlayer() {
 		return player;
 	}
@@ -155,5 +146,8 @@ public class Cook {
 	public void setCooktime(long cooktime) {
 		this.cooktime = cooktime;
 	}
+
+	@Override
+	public void reloadVariables() {}
 
 }

@@ -11,14 +11,14 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
-public class AirShield extends BaseAbility {
+public class AirShield extends CoreAbility {
 
 	private static double MAX_RADIUS = config.get().getDouble("Abilities.Air.AirShield.Radius");
 	private static boolean isToggle = config.get().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
@@ -33,8 +33,7 @@ public class AirShield extends BaseAbility {
 
 	public AirShield(Player player) {
 		/* Initial Check */
-		if (AvatarState.isAvatarState(player)
-				&& getInstance(StockAbilities.AirShield).containsKey(player.getUniqueId()) && isToggle) {
+		if (AvatarState.isAvatarState(player) && containsPlayer(player, AirShield.class) && isToggle) {
 			//instances.remove(player.getUniqueId());
 			super.remove();
 			return;
@@ -65,8 +64,8 @@ public class AirShield extends BaseAbility {
 	}
 	
 	public static boolean isWithinShield(Location loc){
-		for (Object uuid : getInstance(StockAbilities.AirShield).keySet()) {
-			AirShield ashield = (AirShield) getInstance(StockAbilities.AirShield).get(uuid);
+		for (Integer id : getInstances(StockAbilities.AirShield).keySet()) {
+			AirShield ashield = (AirShield) getInstances(StockAbilities.AirShield).get(id);
 			if (ashield.player.getLocation().getWorld() != loc.getWorld()) 
 				return false;
 			if(ashield.player.getLocation().distance(loc) <= ashield.radius)

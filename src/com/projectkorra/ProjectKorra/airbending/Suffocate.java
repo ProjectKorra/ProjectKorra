@@ -17,7 +17,7 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
 /**
@@ -30,7 +30,7 @@ import com.projectkorra.ProjectKorra.Ability.StockAbilities;
  * be used on multiple entities within a large radius.
  * If the user is damaged while performing this ability then the ability is removed.
  */
-public class Suffocate extends BaseAbility {
+public class Suffocate extends CoreAbility {
 	private static boolean CAN_SUFFOCATE_UNDEAD = config.get().getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
 	private static boolean REQUIRE_CONSTANT_AIM = config.get().getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
 	private static double ANIM_RADIUS = config.get().getDouble("Abilities.Air.Suffocate.AnimationRadius");
@@ -96,7 +96,7 @@ public class Suffocate extends BaseAbility {
 		blindDelay = BLIND_DELAY; 
 		blindRepeat = BLIND_INTERVAL;
 		
-		if (getInstances().containsKey(player.getUniqueId()))
+		if (containsPlayer(player, Suffocate.class))
 			return;
 		
 		if (AvatarState.isAvatarState(player)) {
@@ -146,22 +146,22 @@ public class Suffocate extends BaseAbility {
 	
 	/** Stops an entity from being suffocated **/
 	public static void breakSuffocate(Entity entity) {
-		for (Object uuid : getInstances().keySet()) {
-			Suffocate suffocate = (Suffocate) getInstances().get(uuid);
+		for (Integer id : getInstances().keySet()) {
+			Suffocate suffocate = (Suffocate) getInstances().get(id);
 			if (suffocate.targets.contains(entity)) {
 				suffocate.breakSuffocateLocal(entity);
 			}
 		}
 	}
 	
-	public static ConcurrentHashMap<Object, ? extends BaseAbility> getInstances() {
-		return getInstance(StockAbilities.Suffocate);
+	public static ConcurrentHashMap<Integer, CoreAbility> getInstances() {
+		return getInstances(StockAbilities.Suffocate);
 	}
 	
 	/** Checks if an entity is being suffocated **/
 	public static boolean isBreathbent(Entity entity) {
-		for (Object uuid : getInstances().keySet()) {
-			Suffocate suffocate = (Suffocate) getInstances().get(uuid);
+		for (Integer id : getInstances().keySet()) {
+			Suffocate suffocate = (Suffocate) getInstances().get(id);
 			if (suffocate.targets.contains(entity)) {
 				return suffocate.started;
 			}
@@ -171,14 +171,14 @@ public class Suffocate extends BaseAbility {
 	
 	/** Determines if a player is Suffocating entities **/
 	public static boolean isChannelingSphere(Player player) {
-		if (getInstances().containsKey(player.getUniqueId())) return true;
+		if (containsPlayer(player, Suffocate.class)) return true;
 		return false;
 	}
 	
 	/** Removes an instance of Suffocate if player is the one suffocating entities **/
 	public static void remove(Player player) {
-		if (getInstances().containsKey(player.getUniqueId()))
-			getInstances().get(player.getUniqueId()).remove();
+		if (containsPlayer(player, Suffocate.class))
+			getAbilityFromPlayer(player, Suffocate.class).remove();
 	}
 	
 	/** Removes all instances of Suffocate at loc within the radius threshold.
@@ -187,9 +187,9 @@ public class Suffocate extends BaseAbility {
 	 * @param causer: the player causing this instance to be removed
 	 * **/
 	public static boolean removeAtLocation(Player causer, Location loc, double radius) {
-		Iterator<Object> it = getInstances().keySet().iterator();
+		Iterator<Integer> it = getInstances().keySet().iterator();
 		while (it.hasNext()) {
-		    Object key = it.next();
+		    Integer key = it.next();
 		    Suffocate val = (Suffocate) getInstances().get(key);
 		    
 		    if (causer == null || !key.equals(causer)) {

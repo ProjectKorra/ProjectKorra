@@ -25,11 +25,11 @@ import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 
-public class AirBlast extends BaseAbility {
+public class AirBlast extends CoreAbility {
 
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
@@ -38,8 +38,8 @@ public class AirBlast extends BaseAbility {
 	public static double affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
 	public static double defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push");
 	private static double originselectrange = 10;
+	private static final int maxticks = 10000;
 	/* Package visible variables */
-	static final int maxticks = 10000;
 	static double maxspeed = 1. / defaultpushfactor;
 	/* End Package visible variables */
 	
@@ -144,7 +144,7 @@ public class AirBlast extends BaseAbility {
 	}
 	
 	public static void progressAll() {
-		BaseAbility.progressAll(StockAbilities.AirBlast);
+		CoreAbility.progressAll(StockAbilities.AirBlast);
 		for (Player player : origins.keySet()) {
 			playOriginEffect(player);
 		}
@@ -259,6 +259,7 @@ public class AirBlast extends BaseAbility {
 
 	@SuppressWarnings("deprecation")
 	public boolean progress() {
+		//ProjectKorra.log.info("FireBlast id: " + getID());
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return false;

@@ -6,19 +6,25 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 
-public class ArcOfFire {
+/**
+ * Used for the ability Blaze.
+ */
+public class ArcOfFire implements ConfigLoadable {
 
-	private static int defaultarc = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.ArcOfFire.Arc");
-	private static int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.ArcOfFire.Range");
+	private static int defaultarc = config.get().getInt("Abilities.Fire.Blaze.ArcOfFire.Arc");
+	private static int defaultrange = config.get().getInt("Abilities.Fire.Blaze.ArcOfFire.Range");
 	private static int stepsize = 2;
 	
 	public ArcOfFire(Player player) {
+		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
 		if (bPlayer.isOnCooldown("Blaze")) return;
+		/* End Initial Checks */
+		reloadVariables();
+		
 		Location location = player.getLocation();
 
 		int arc = (int) FireMethods.getFirebendingDayAugment(defaultarc,
@@ -54,6 +60,12 @@ public class ArcOfFire {
 				+ "igniting anything in its path."
 				+ " Additionally, tap sneak to engulf the area around you "
 				+ "in roaring flames.";
+	}
+
+	@Override
+	public void reloadVariables() {
+		defaultarc = config.get().getInt("Abilities.Fire.Blaze.ArcOfFire.Arc");
+		defaultrange = config.get().getInt("Abilities.Fire.Blaze.ArcOfFire.Range");
 	}
 
 }
