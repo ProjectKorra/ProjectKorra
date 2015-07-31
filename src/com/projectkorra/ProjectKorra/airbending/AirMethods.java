@@ -16,6 +16,7 @@ import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 public class AirMethods {
@@ -160,18 +161,18 @@ public class AirMethods {
 	 * Stops all airbending systems. SHOULD ONLY BE USED ON PLUGIN DISABLING!
 	*/
 	public static void stopBending() {
-		AirBlast.removeAll();
-		AirBubble.removeAll();
-		AirShield.instances.clear();
-		AirSuction.instances.clear();
-		AirScooter.removeAll();
-		AirSpout.removeAll();
-		AirSwipe.instances.clear();
-		Tornado.instances.clear();
-		AirBurst.removeAll();
-		Suffocate.removeAll();
+		AirBlast.removeAll(StockAbilities.AirBlast);
+		AirBubble.removeAll(StockAbilities.AirBubble);
+		AirShield.removeAll(StockAbilities.AirShield);
+		AirSuction.removeAll(StockAbilities.AirSuction);
+		AirScooter.removeAll(StockAbilities.AirScooter);
+		AirSpout.removeAll(StockAbilities.AirSpout);
+		AirSwipe.removeAll(StockAbilities.AirSwipe);
+		Tornado.removeAll(StockAbilities.Tornado);;
+		AirBurst.removeAll(StockAbilities.AirBurst);
+		Suffocate.removeAll(StockAbilities.Suffocate);
 		AirCombo.removeAll();
-		com.projectkorra.ProjectKorra.airbending.FlightAbility.removeAll();
+		FlightAbility.removeAll();
 	}
 	
 	/**

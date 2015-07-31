@@ -38,6 +38,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -264,7 +265,7 @@ public class GeneralMethods {
 		if (bPlayer == null) return false;
 		if (plugin.getConfig().getStringList("Properties.DisabledWorlds") != null && plugin.getConfig().getStringList("Properties.DisabledWorlds").contains(p.getWorld().getName())) return false;
 		if (Commands.isToggledForAll) return false;
-		if (!bPlayer.isToggled) return false;
+		if (!bPlayer.isToggled()) return false;
 		if (p == null) return false;
 		if (cooldowns.containsKey(p.getName())) {
 			if (cooldowns.get(p.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
@@ -272,7 +273,7 @@ public class GeneralMethods {
 			}
 			cooldowns.remove(p.getName());
 		}
-		if (bPlayer.blockedChi) return false;
+		if (bPlayer.isChiBlocked()) return false;
 		if (!p.hasPermission("bending.ability." + ability)) return false;
 		if (AirMethods.isAirAbility(ability) && !isBender(player, Element.Air)) return false;
 		if (WaterMethods.isWaterAbility(ability) && !isBender(player, Element.Water)) return false;
@@ -294,10 +295,10 @@ public class GeneralMethods {
 		if (bPlayer == null) return false;
 		if (p == null) return false;
 		if (!p.hasPermission("bending." + element.toString().toLowerCase() + ".passive")) return false;
-		if (!bPlayer.isToggled) return false;
+		if (!bPlayer.isToggled()) return false;
 		if (!bPlayer.hasElement(element)) return false;
 		if (isRegionProtectedFromBuild(p, null, p.getLocation())) return false;
-		if (bPlayer.blockedChi) return false;
+		if (bPlayer.isChiBlocked()) return false;
 		return true;
 	}
 
@@ -654,12 +655,29 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Gets a {@link BendingPlayer} from specified player name.
+	 * Attempts to get a {@link BendingPlayer} from specified player name.
+	 * this method tries to get a {@link Player} object and gets the uuid
+	 * and then calls {@link #getBendingPlayer(UUID)}
+	 * 
 	 * @param player The name of the Player
 	 * @return The BendingPlayer object if {@link BendingPlayer#players} contains the player name
+	 * 
+	 * @see #getBendingPlayer(UUID)
 	 */
-	public static BendingPlayer getBendingPlayer(String player) {
-		return BendingPlayer.players.get(player);
+	public static BendingPlayer getBendingPlayer(String playerName) {
+		OfflinePlayer player = Bukkit.getPlayer(playerName);
+		if (player == null) {
+			player = Bukkit.getOfflinePlayer(playerName);
+		}
+		return getBendingPlayer(player.getUniqueId());
+	}
+	
+	public static BendingPlayer getBendingPlayer(UUID uuid) {
+		return BendingPlayer.getPlayers().get(uuid);
+	}
+	
+	public static BendingPlayer getBendingPlayer(Player player) {
+		return getBendingPlayer(player.getUniqueId());
 	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
@@ -1447,8 +1465,9 @@ public class GeneralMethods {
 			DBConnection.sql.close();
 		}
 		GeneralMethods.stopBending();
-		ConfigManager.defaultConfig.reloadConfig();
-		ConfigManager.deathMsgConfig.reloadConfig();
+		ConfigManager.defaultConfig.reload();
+		ConfigManager.deathMsgConfig.reload();
+		BendingManager.getInstance().reloadVariables();
 		new AbilityModuleManager(plugin);
 		new MultiAbilityModuleManager();
 		new CraftingRecipes(plugin);
@@ -1607,10 +1626,10 @@ public class GeneralMethods {
 
 	public static void saveAbility(BendingPlayer bPlayer, int slot, String ability) {
 		if (bPlayer == null) return;
-		String uuid = bPlayer.uuid.toString();
+		String uuid = bPlayer.getUUIDString();
 
 		//Temp code to block modifications of binds, Should be replaced when bind event is added.
-		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.uuid)))
+		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getUUID())))
 			return;
 		HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
@@ -1619,7 +1638,7 @@ public class GeneralMethods {
 
 	public static void saveElements(BendingPlayer bPlayer) {
 		if (bPlayer == null) return;
-		String uuid = bPlayer.uuid.toString();
+		String uuid = bPlayer.getUUIDString();
 
 		StringBuilder elements = new StringBuilder();
 		if (bPlayer.hasElement(Element.Air)) elements.append("a");
@@ -1633,8 +1652,8 @@ public class GeneralMethods {
 
 	public static void savePermaRemoved(BendingPlayer bPlayer) {
 		if (bPlayer == null) return;
-		String uuid = bPlayer.uuid.toString();
-		boolean permaRemoved = bPlayer.permaRemoved;
+		String uuid = bPlayer.getUUIDString();
+		boolean permaRemoved = bPlayer.isPermaRemoved();
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET permaremoved = '" + (permaRemoved ? "true" : "false") + "' WHERE uuid = '" + uuid + "'");
 	}
 

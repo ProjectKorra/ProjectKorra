@@ -166,14 +166,14 @@ public class PKListener implements Listener {
 		}
 
 		if (GeneralMethods.toggedOut.contains(player.getUniqueId())) {
-			GeneralMethods.getBendingPlayer(player.getName()).isToggled = false;
+			GeneralMethods.getBendingPlayer(player.getName()).toggleBending();
 			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
 		}
 
 		Preset.loadPresets(player);
 		String append = "";
 		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
-		if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).elements.size() > 1) && chatEnabled) {
+		if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).getElements().size() > 1) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
 		} else if (GeneralMethods.isBender(player.getName(), Element.Air) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Air");
@@ -562,7 +562,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerBendingDeath(PlayerBendingDeathEvent event) {
-		if (ConfigManager.deathMsgConfig.getConfig().getBoolean("Properties.Enabled")) {
+		if (ConfigManager.deathMsgConfig.get().getBoolean("Properties.Enabled")) {
 			bendingDeathPlayer.put(event.getVictim(), event.getAbility());
 			final Player player = event.getVictim();
 
@@ -586,7 +586,7 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		ChatColor color = ChatColor.WHITE;
 
-		if (player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).elements.size() > 1) {
+		if (player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).getElements().size() > 1) {
 			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
 		} else if (GeneralMethods.isBender(player.getName(), Element.Air)) {
 			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Air"));
@@ -825,7 +825,7 @@ public class PKListener implements Listener {
 
 		}
 		if (bendingDeathPlayer.containsKey(event.getEntity())) {
-			String message = ConfigManager.deathMsgConfig.getConfig().getString("Properties.Default");
+			String message = ConfigManager.deathMsgConfig.get().getString("Properties.Default");
 			String ability = bendingDeathPlayer.get(event.getEntity());
 			String element = null;
 			Player killer = event.getEntity().getKiller();
@@ -845,8 +845,8 @@ public class PKListener implements Listener {
 					return;
 				}
 			}
-			if (ConfigManager.deathMsgConfig.getConfig().contains(element + "." + ability)) {
-				message = ConfigManager.deathMsgConfig.getConfig().getString(element + "." + ability);
+			if (ConfigManager.deathMsgConfig.get().contains(element + "." + ability)) {
+				message = ConfigManager.deathMsgConfig.get().getString(element + "." + ability);
 			}
 			message = message.replace("{victim}", event.getEntity().getName())
 					.replace("{attacker}", event.getEntity().getKiller().getName())
@@ -1003,7 +1003,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		if(FlightAbility.instances.containsKey(event.getPlayer().getName())) {
+		if(FlightAbility.contains(event.getPlayer())) {
 			if(FlightAbility.isHovering(event.getPlayer())) {
 				Location loc = event.getFrom();
 				Location toLoc = player.getLocation();
@@ -1031,7 +1031,7 @@ public class PKListener implements Listener {
 			Commands.invincible.remove(event.getPlayer().getName());
 		}
 		Preset.unloadPreset(player);
-		BendingPlayer.players.remove(event.getPlayer().getName());
+		BendingPlayer.getPlayers().remove(event.getPlayer().getUniqueId());
 		if (EarthArmor.instances.containsKey(event.getPlayer())) {
 			EarthArmor.removeEffect(event.getPlayer());
 			event.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
@@ -1184,7 +1184,7 @@ public class PKListener implements Listener {
 					new EarthTunnel(player);
 				}
 				if (abil.equalsIgnoreCase("Tremorsense")) {
-					GeneralMethods.getBendingPlayer(player.getName()).toggleTremorsense();
+					GeneralMethods.getBendingPlayer(player.getName()).toggleTremorSense();
 				}
 				if (abil.equalsIgnoreCase("Extraction")) {
 					new Extraction(player);
@@ -1298,7 +1298,7 @@ public class PKListener implements Listener {
 					if (!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")
 							|| !AirMethods.canAirFlight(player)) return;
 
-					if (FlightAbility.instances.containsKey(event.getPlayer().getName())) {
+					if (FlightAbility.contains(event.getPlayer())) {
 						if (FlightAbility.isHovering(event.getPlayer())) {
 							FlightAbility.setHovering(event.getPlayer(), false);
 						} else {

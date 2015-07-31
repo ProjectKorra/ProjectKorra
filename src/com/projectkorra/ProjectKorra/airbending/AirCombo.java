@@ -18,72 +18,49 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
-import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
+import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.firebending.FireCombo;
 import com.projectkorra.ProjectKorra.firebending.FireCombo.FireComboStream;
 import com.projectkorra.ProjectKorra.firebending.FireMethods;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
 
-public class AirCombo {
+public class AirCombo implements ConfigLoadable {
 	public static enum AbilityState {
 		TWISTER_MOVING, TWISTER_STATIONARY
 	}
-
-	public static double TWISTER_SPEED = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.Speed");
-	public static double TWISTER_RANGE = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.Range");
-	public static double TWISTER_HEIGHT = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.Height");
-	public static double TWISTER_RADIUS = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.Radius");
-	public static double TWISTER_DEGREE_PER_PARTICLE = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
-	public static double TWISTER_HEIGHT_PER_PARTICLE = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
-	public static long TWISTER_REMOVE_DELAY = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");
-	public static long TWISTER_COOLDOWN = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Air.AirCombo.Twister.Cooldown");
-
-	public static double AIR_STREAM_SPEED = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirStream.Speed");
-	public static double AIR_STREAM_RANGE = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirStream.Range");
-	public static double AIR_STREAM_ENTITY_HEIGHT = ProjectKorra.plugin
-			.getConfig().getDouble(
-					"Abilities.Air.AirCombo.AirStream.EntityHeight");
-	public static long AIR_STREAM_ENTITY_DURATION = ProjectKorra.plugin
-			.getConfig().getLong(
-					"Abilities.Air.AirCombo.AirStream.EntityDuration");
-	public static long AIR_STREAM_COOLDOWN = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
-
-	public static double AIR_SLICE_SPEED = 0.7;
-	public static double AIR_SLICE_RANGE = 10;
-	public static double AIR_SLICE_DAMAGE = 3;
-	public static long AIR_SLICE_COOLDOWN = 500;
-
-	public static double AIR_SWEEP_SPEED = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirSweep.Speed");
-	public static double AIR_SWEEP_RANGE = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirSweep.Range");
-	public static double AIR_SWEEP_DAMAGE = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
-	public static double AIR_SWEEP_KNOCKBACK = ProjectKorra.plugin.getConfig()
-			.getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
-	public static long AIR_SWEEP_COOLDOWN = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
-
-	private static boolean enabled = ProjectKorra.plugin.getConfig()
-			.getBoolean("Abilities.Air.AirCombo.Enabled");
-
+	
 	public static ArrayList<AirCombo> instances = new ArrayList<AirCombo>();
 
+	public static double twisterSpeed = config.get().getDouble("Abilities.Air.AirCombo.Twister.Speed");
+	public static double twisterRange = config.get().getDouble("Abilities.Air.AirCombo.Twister.Range");
+	public static double twisterHeight = config.get().getDouble("Abilities.Air.AirCombo.Twister.Height");
+	public static double twisterRadius = config.get().getDouble("Abilities.Air.AirCombo.Twister.Radius");
+	public static double twisterDegreePerParticle = config.get().getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
+	public static double twisterHeightPerParticle = config.get().getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
+	public static long twisterRemoveDelay = config.get().getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");
+	public static long twisterCooldown = config.get().getLong("Abilities.Air.AirCombo.Twister.Cooldown");
+
+	public static double airStreamSpeed = config.get().getDouble("Abilities.Air.AirCombo.AirStream.Speed");
+	public static double airStreamRange = config.get().getDouble("Abilities.Air.AirCombo.AirStream.Range");
+	public static double airStreamEntityHeight = config.get().getDouble("Abilities.Air.AirCombo.AirStream.EntityHeight");
+	public static long airStreamEntityDuration = config.get().getLong("Abilities.Air.AirCombo.AirStream.EntityDuration");
+	public static long airStreamCooldown = config.get().getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
+
+	public static double airSweepSpeed = config.get().getDouble("Abilities.Air.AirCombo.AirSweep.Speed");
+	public static double airSweepRange = config.get().getDouble("Abilities.Air.AirCombo.AirSweep.Range");
+	public static double airSweepDamage = config.get().getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
+	public static double airSweepKnockback = config.get().getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
+	public static long airSweepCooldown = config.get().getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
+
+	private static boolean enabled = config.get().getBoolean("Abilities.Air.AirCombo.Enabled");
+	
+	public double airSliceSpeed = 0.7;
+	public double airSliceRange = 10;
+	public double airSliceDamage = 3;
+	public long airSliceCooldown = 500;
+
 	private Player player;
-	private BendingPlayer bplayer;
+	private BendingPlayer bPlayer;
 	private ClickType type;
 	private String ability;
 
@@ -101,47 +78,49 @@ public class AirCombo {
 	private ArrayList<Flight> flights = new ArrayList<Flight>();
 
 	public AirCombo(Player player, String ability) {
+		/* Initial Checks */
 		if (!enabled)
-			return;
-		if(!GeneralMethods.getBendingPlayer(player.getName()).hasElement(Element.Air))
 			return;
 		if (Commands.isToggledForAll) 
 			return;
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast",
-				player.getLocation()))
+		this.bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (!bPlayer.isToggled()) 
 			return;
-		if (!GeneralMethods.getBendingPlayer(player.getName()).isToggled()) 
+		if(!bPlayer.hasElement(Element.Air))
 			return;
-		time = System.currentTimeMillis();
-		this.player = player;
-		this.ability = ability;
-		this.bplayer = GeneralMethods.getBendingPlayer(player.getName());
-
 		if (GeneralMethods.canBend(player.getDisplayName(), ability)) {
 			return;
 		}
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast",
+				player.getLocation()))
+			return;
+		/* End Initial Checks */
+		reloadVariables();
+		time = System.currentTimeMillis();
+		this.player = player;
+		this.ability = ability;
 
 		if (ability.equalsIgnoreCase("Twister")) {
 			damage = 0;
-			range = TWISTER_RANGE;
-			speed = TWISTER_SPEED;
-			cooldown = TWISTER_COOLDOWN;
+			range = twisterRange;
+			speed = twisterSpeed;
+			cooldown = twisterCooldown;
 		} else if (ability.equalsIgnoreCase("AirStream")) {
 			damage = 0;
-			range = AIR_STREAM_RANGE;
-			speed = AIR_STREAM_SPEED;
-			cooldown = AIR_STREAM_COOLDOWN;
+			range = airStreamRange;
+			speed = airStreamSpeed;
+			cooldown = airStreamCooldown;
 		} else if (ability.equalsIgnoreCase("AirSlice")) {
-			damage = AIR_SLICE_DAMAGE;
-			range = AIR_SLICE_RANGE;
-			speed = AIR_SLICE_SPEED;
-			cooldown = AIR_SLICE_COOLDOWN;
+			damage = airSliceDamage;
+			range = airSliceRange;
+			speed = airSliceSpeed;
+			cooldown = airSliceCooldown;
 		} else if (ability.equalsIgnoreCase("AirSweep")) {
-			damage = AIR_SWEEP_DAMAGE;
-			range = AIR_SWEEP_RANGE;
-			speed = AIR_SWEEP_SPEED;
-			knockback = AIR_SWEEP_KNOCKBACK;
-			cooldown = AIR_SWEEP_COOLDOWN;
+			damage = airSweepDamage;
+			range = airSweepRange;
+			speed = airSweepSpeed;
+			knockback = airSweepKnockback;
+			cooldown = airSweepCooldown;
 		}
 		if (AvatarState.isAvatarState(player)) {
 			cooldown = 0;
@@ -161,12 +140,12 @@ public class AirCombo {
 
 		if (ability.equalsIgnoreCase("Twister")) {
 			if (destination == null) {
-				if (bplayer.isOnCooldown("Twister")
+				if (bPlayer.isOnCooldown("Twister")
 						&& !AvatarState.isAvatarState(player)) {
 					remove();
 					return;
 				}
-				bplayer.addCooldown("Twister", cooldown);
+				bPlayer.addCooldown("Twister", cooldown);
 				state = AbilityState.TWISTER_MOVING;
 				direction = player.getEyeLocation().getDirection().clone()
 						.normalize();
@@ -183,7 +162,7 @@ public class AirCombo {
 			else if (state == AbilityState.TWISTER_MOVING) {
 				state = AbilityState.TWISTER_STATIONARY;
 				time = System.currentTimeMillis();
-			} else if (System.currentTimeMillis() - time >= TWISTER_REMOVE_DELAY) {
+			} else if (System.currentTimeMillis() - time >= twisterRemoveDelay) {
 				remove();
 				return;
 			} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast",
@@ -199,11 +178,11 @@ public class AirCombo {
 			}
 			currentLoc.setY(topBlock.getLocation().getY());
 			
-			double height = TWISTER_HEIGHT;
-			double radius = TWISTER_RADIUS;
-			for (double y = 0; y < height; y += TWISTER_HEIGHT_PER_PARTICLE) {
+			double height = twisterHeight;
+			double radius = twisterRadius;
+			for (double y = 0; y < height; y += twisterHeightPerParticle) {
 				double animRadius = ((radius / height) * y);
-				for (double i = -180; i <= 180; i += TWISTER_DEGREE_PER_PARTICLE) {
+				for (double i = -180; i <= 180; i += twisterDegreePerParticle) {
 					Vector animDir = GeneralMethods.rotateXZ(new Vector(1, 0, 1), i);
 					Location animLoc = currentLoc.clone().add(
 							animDir.multiply(animRadius));
@@ -229,12 +208,12 @@ public class AirCombo {
 
 		else if (ability.equalsIgnoreCase("AirStream")) {
 			if (destination == null) {
-				if (bplayer.isOnCooldown("AirStream")
+				if (bPlayer.isOnCooldown("AirStream")
 						&& !AvatarState.isAvatarState(player)) {
 					remove();
 					return;
 				}
-				bplayer.addCooldown("AirStream", cooldown);
+				bPlayer.addCooldown("AirStream", cooldown);
 				origin = player.getEyeLocation();
 				currentLoc = origin.clone();
 			}
@@ -257,7 +236,7 @@ public class AirCombo {
 				remove();
 				return;
 			} else if (affectedEntities.size() > 0
-					&& System.currentTimeMillis() - time >= AIR_STREAM_ENTITY_DURATION) {
+					&& System.currentTimeMillis() - time >= airStreamEntityDuration) {
 				remove();
 				return;
 			} else if (!player.isSneaking()) {
@@ -267,7 +246,7 @@ public class AirCombo {
 					currentLoc.getBlock())) {
 				remove();
 				return;
-			} else if (currentLoc.getY() - origin.getY() > AIR_STREAM_ENTITY_HEIGHT) {
+			} else if (currentLoc.getY() - origin.getY() > airStreamEntityHeight) {
 				remove();
 				return;
 			} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast",
@@ -325,12 +304,12 @@ public class AirCombo {
 
 		else if (ability.equalsIgnoreCase("AirSlice")) {
 			if (origin == null) {
-				if (bplayer.isOnCooldown("AirSlice")
+				if (bPlayer.isOnCooldown("AirSlice")
 						&& !AvatarState.isAvatarState(player)) {
 					remove();
 					return;
 				}
-				bplayer.addCooldown("AirSlice", cooldown);
+				bPlayer.addCooldown("AirSlice", cooldown);
 				origin = player.getLocation();
 				currentLoc = origin.clone();
 				direction = player.getEyeLocation().getDirection();
@@ -358,12 +337,12 @@ public class AirCombo {
 
 		else if (ability.equalsIgnoreCase("AirSweep")) {
 			if (origin == null) {
-				if (bplayer.isOnCooldown("AirSweep")
+				if (bPlayer.isOnCooldown("AirSweep")
 						&& !AvatarState.isAvatarState(player)) {
 					remove();
 					return;
 				}
-				bplayer.addCooldown("AirSweep", cooldown);
+				bPlayer.addCooldown("AirSweep", cooldown);
 				direction = player.getEyeLocation().getDirection().normalize();
 				origin = player.getLocation().add(
 						direction.clone().multiply(10));
@@ -536,5 +515,31 @@ public class AirCombo {
 			}
 		}
 		return removed;
+	}
+
+	@Override
+	public void reloadVariables() {
+		twisterSpeed = config.get().getDouble("Abilities.Air.AirCombo.Twister.Speed");
+		twisterRange = config.get().getDouble("Abilities.Air.AirCombo.Twister.Range");
+		twisterHeight = config.get().getDouble("Abilities.Air.AirCombo.Twister.Height");
+		twisterRadius = config.get().getDouble("Abilities.Air.AirCombo.Twister.Radius");
+		twisterDegreePerParticle = config.get().getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
+		twisterHeightPerParticle = config.get().getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
+		twisterRemoveDelay = config.get().getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");
+		twisterCooldown = config.get().getLong("Abilities.Air.AirCombo.Twister.Cooldown");
+
+		airStreamSpeed = config.get().getDouble("Abilities.Air.AirCombo.AirStream.Speed");
+		airStreamRange = config.get().getDouble("Abilities.Air.AirCombo.AirStream.Range");
+		airStreamEntityHeight = config.get().getDouble("Abilities.Air.AirCombo.AirStream.EntityHeight");
+		airStreamEntityDuration = config.get().getLong("Abilities.Air.AirCombo.AirStream.EntityDuration");
+		airStreamCooldown = config.get().getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
+		
+		airSweepSpeed = config.get().getDouble("Abilities.Air.AirCombo.AirSweep.Speed");
+		airSweepRange = config.get().getDouble("Abilities.Air.AirCombo.AirSweep.Range");
+		airSweepDamage = config.get().getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
+		airSweepKnockback = config.get().getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
+		airSweepCooldown = config.get().getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
+
+		enabled = config.get().getBoolean("Abilities.Air.AirCombo.Enabled");
 	}
 }

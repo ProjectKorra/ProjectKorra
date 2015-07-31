@@ -1,8 +1,9 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -12,26 +13,24 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.BaseAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
-public class AirScooter {
+public class AirScooter extends BaseAbility {
 
-	public static ConcurrentHashMap<Player, AirScooter> instances = new ConcurrentHashMap<Player, AirScooter>();
-
-	private static final double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.AirScooter.Speed");
+	private static double speed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
 	private static final long interval = 100;
 	private static final double scooterradius = 1;
 
 	private Player player;
 	private Block floorblock;
 	private long time;
-	private double speed = SPEED;
 	private ArrayList<Double> angles = new ArrayList<Double>();
 
 	public AirScooter(Player player) {
-
-		if (instances.containsKey(player)) {
-			instances.get(player).remove();
+		/* Initial Check */
+		if (getInstance(StockAbilities.AirScooter).containsKey(player.getUniqueId())) {
+			getInstance(StockAbilities.AirScooter).get(player.getUniqueId()).remove();
 			return;
 		}
 		if (!player.isSprinting()
@@ -40,6 +39,8 @@ public class AirScooter {
 			return;
 		if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
 			return;
+		/* End Initial Check */
+		reloadVariables();
 		this.player = player;
 		// wasflying = player.isFlying();
 		// canfly = player.getAllowFlight();
@@ -51,30 +52,70 @@ public class AirScooter {
 		for (int i = 0; i < 5; i++) {
 			angles.add((double) (60 * i));
 		}
-		instances.put(player, this);
+		//instances.put(uuid, this);
+		putInstance(player, this);
 		progress();
 	}
 
-	private void progress() {
+	public static void check(Player player) {
+		if (getInstance(StockAbilities.AirScooter).containsKey(player.getUniqueId())) {
+			getInstance(StockAbilities.AirScooter).get(player.getUniqueId()).remove();
+		}
+	}
+
+	public static ArrayList<Player> getPlayers() {
+		ArrayList<Player> players = new ArrayList<Player>();
+		for (Object uuid : getInstance(StockAbilities.AirScooter).keySet()) {
+			players.add(Bukkit.getPlayer((UUID) uuid));
+		}
+		return players;
+	}
+
+	private void getFloor() {
+		floorblock = null;
+		for (int i = 0; i <= 7; i++) {
+			Block block = player.getEyeLocation().getBlock().getRelative(BlockFace.DOWN, i);
+			if (GeneralMethods.isSolid(block) || block.isLiquid()) {
+				floorblock = block;
+				return;
+			}
+		}
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+	
+	public double getSpeed() {
+		return speed;
+	}
+
+	@Override
+	public StockAbilities getStockAbility() {
+		return StockAbilities.AirScooter;
+	}
+
+	@Override
+	public boolean progress() {
 		getFloor();
 		// Methods.verbose(player);
 		if (floorblock == null) {
 			remove();
-			return;
+			return false;
 		}
 		if (!GeneralMethods.canBend(player.getName(), "AirScooter")) {
 			remove();
-			return;
+			return false;
 		}
 		if (!player.isOnline() || player.isDead() || !player.isFlying()) {
 			remove();
-			return;
+			return false;
 		}
 
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirScooter",
 				player.getLocation())) {
 			remove();
-			return;
+			return false;
 		}
 		
 		// if (Methods
@@ -96,12 +137,11 @@ public class AirScooter {
 			time = System.currentTimeMillis();
 			if (player.getVelocity().length() < speed * .5) {
 				remove();
-				return;
+				return false;
 			}
 			spinScooter();
 		}
-		double distance = player.getLocation().getY()
-				- (double) floorblock.getY();
+		double distance = player.getLocation().getY() - (double) floorblock.getY();
 		double dx = Math.abs(distance - 2.4);
 		if (distance > 2.75) {
 			velocity.setY(-.25 * dx * dx);
@@ -120,6 +160,21 @@ public class AirScooter {
 		if (GeneralMethods.rand.nextInt(4) == 0) {
 			AirMethods.playAirbendingSound(player.getLocation());
 		}
+		return true;
+	}
+
+	@Override
+	public void reloadVariables() {
+		speed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
+	}
+
+	@Override
+	public void remove() {
+		//instances.remove(uuid);
+		super.remove();
+		player.setFlying(false);
+		player.setAllowFlight(false);
+		player.setSprinting(false);
 	}
 
 	private void spinScooter() {
@@ -138,60 +193,4 @@ public class AirScooter {
 		}
 	}
 
-	private void getFloor() {
-		floorblock = null;
-		for (int i = 0; i <= 7; i++) {
-			Block block = player.getEyeLocation().getBlock()
-					.getRelative(BlockFace.DOWN, i);
-			if (GeneralMethods.isSolid(block) || block.isLiquid()) {
-				floorblock = block;
-				return;
-			}
-		}
-	}
-
-	private void remove() {
-		instances.remove(player);
-		player.setFlying(false);
-		player.setAllowFlight(false);
-		player.setSprinting(false);
-	}
-
-	public static void check(Player player) {
-		if (instances.containsKey(player)) {
-			instances.get(player).remove();
-		}
-	}
-
-	public static void progressAll() {
-		for (Player player : instances.keySet()) {
-			instances.get(player).progress();
-		}
-	}
-
-	public static void removeAll() {
-		for (Player player : instances.keySet()) {
-			instances.get(player).remove();
-		}
-	}
-
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (Player player : instances.keySet()) {
-			players.add(player);
-		}
-		return players;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public double getSpeed() {
-		return speed;
-	}
-
-	public void setSpeed(double speed) {
-		this.speed = speed;
-	}
 }

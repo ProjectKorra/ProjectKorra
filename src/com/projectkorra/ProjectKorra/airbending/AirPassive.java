@@ -10,15 +10,15 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 
-public class AirPassive {
+public class AirPassive implements ConfigLoadable {
 	
 	private static ConcurrentHashMap<Player, Float> food = new ConcurrentHashMap<Player, Float>();
-	private static float factor = (float) ProjectKorra.plugin.getConfig().getDouble("Abilities.Air.Passive.Factor");
+	private static float factor = (float) config.get().getDouble("Abilities.Air.Passive.Factor");
 	
-	private static int speedPower = ProjectKorra.plugin.getConfig().getInt("Abilities.Air.Passive.Speed");
-	private static int jumpPower = ProjectKorra.plugin.getConfig().getInt("Abilities.Air.Passive.Jump");
+	private static int speedPower = config.get().getInt("Abilities.Air.Passive.Speed");
+	private static int jumpPower = config.get().getInt("Abilities.Air.Passive.Jump");
 	
 	public static float getExhaustion(Player player, float level) {
 		if (!food.keySet().contains(player)) {
@@ -29,6 +29,7 @@ public class AirPassive {
 			if (level < oldlevel) {
 				level = 0;
 			} else {
+				factor = (float) config.get().getDouble("Abilities.Air.Passive.Factor");
 				level = (level - oldlevel) * factor + oldlevel;
 			}
 			food.replace(player, level);
@@ -44,15 +45,25 @@ public class AirPassive {
 					player.setExhaustion(getExhaustion(player, player.getExhaustion())); // Handles Food Passive
 					if (player.isSprinting()) {
 						if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
+							speedPower = config.get().getInt("Abilities.Air.Passive.Speed");
 							player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speedPower - 1)); // Handles Speed Passive
 						}
 						if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
+							jumpPower = config.get().getInt("Abilities.Air.Passive.Jump");
 							player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jumpPower - 1)); // Handles jump passive.
 						}
 					}
 				}
 			}
 		}
+	}
+
+	@Override
+	public void reloadVariables() {
+		factor = (float) config.get().getDouble("Abilities.Air.Passive.Factor");
+		
+		speedPower = config.get().getInt("Abilities.Air.Passive.Speed");
+		jumpPower = config.get().getInt("Abilities.Air.Passive.Jump");
 	}
 
 }
