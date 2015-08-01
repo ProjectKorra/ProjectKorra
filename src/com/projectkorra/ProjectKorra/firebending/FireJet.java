@@ -12,7 +12,7 @@ import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
@@ -98,8 +98,8 @@ public class FireJet extends CoreAbility {
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (Integer id : getInstances(StockAbilities.FireJet).keySet()) {
-			players.add(getInstances(StockAbilities.FireJet).get(id).getPlayer());
+		for (Integer id : getInstances(StockAbility.FireJet).keySet()) {
+			players.add(getInstances(StockAbility.FireJet).get(id).getPlayer());
 		}
 		return players;
 	}
@@ -132,8 +132,8 @@ public class FireJet extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.FireJet;
+	public StockAbility getStockAbility() {
+		return StockAbility.FireJet;
 	}
 
 }

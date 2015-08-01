@@ -26,7 +26,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 
 public class AirBlast extends CoreAbility {
@@ -144,7 +144,7 @@ public class AirBlast extends CoreAbility {
 	}
 	
 	public static void progressAll() {
-		CoreAbility.progressAll(StockAbilities.AirBlast);
+		CoreAbility.progressAll(StockAbility.AirBlast);
 		for (Player player : origins.keySet()) {
 			playOriginEffect(player);
 		}
@@ -253,8 +253,8 @@ public class AirBlast extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirBlast;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirBlast;
 	}
 
 	@SuppressWarnings("deprecation")

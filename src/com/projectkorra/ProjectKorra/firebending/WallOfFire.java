@@ -15,7 +15,7 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
@@ -277,7 +277,7 @@ public class WallOfFire extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.WallOfFire;
+	public StockAbility getStockAbility() {
+		return StockAbility.WallOfFire;
 	}
 }

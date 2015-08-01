@@ -18,7 +18,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
 /**
  * Suffocate
@@ -155,7 +155,7 @@ public class Suffocate extends CoreAbility {
 	}
 	
 	public static ConcurrentHashMap<Integer, CoreAbility> getInstances() {
-		return getInstances(StockAbilities.Suffocate);
+		return getInstances(StockAbility.Suffocate);
 	}
 	
 	/** Checks if an entity is being suffocated **/
@@ -317,8 +317,8 @@ public class Suffocate extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.Suffocate;
+	public StockAbility getStockAbility() {
+		return StockAbility.Suffocate;
 	}
 
 	public ArrayList<LivingEntity> getTargets() {

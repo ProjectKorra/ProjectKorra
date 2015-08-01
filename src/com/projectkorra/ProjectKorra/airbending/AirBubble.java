@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
@@ -36,8 +36,8 @@ public class AirBubble extends CoreAbility {
 	}
 
 	public static boolean canFlowTo(Block block) {
-		for (Integer id : getInstances(StockAbilities.AirBubble).keySet()) {
-			if (((AirBubble) getInstances(StockAbilities.AirBubble).get(id)).blockInBubble(block)) {
+		for (Integer id : getInstances(StockAbility.AirBubble).keySet()) {
+			if (((AirBubble) getInstances(StockAbility.AirBubble).get(id)).blockInBubble(block)) {
 				return false;
 			}
 		}
@@ -61,7 +61,7 @@ public class AirBubble extends CoreAbility {
 			}
 		}
 
-		CoreAbility.progressAll(StockAbilities.AirBubble);
+		CoreAbility.progressAll(StockAbility.AirBubble);
 	}
 
 	public boolean blockInBubble(Block block) {
@@ -91,8 +91,8 @@ public class AirBubble extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirBubble;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirBubble;
 	}
 
 	@Override

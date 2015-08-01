@@ -19,7 +19,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 public class Lightning extends CoreAbility {
@@ -98,8 +98,8 @@ public class Lightning extends CoreAbility {
 
 	public static ArrayList<Arc> getAllArcs() {
 		ArrayList<Arc> a = new ArrayList<Arc>();
-		for (Integer id : getInstances(StockAbilities.Lightning).keySet()) {
-			Lightning light = (Lightning) getInstances(StockAbilities.Lightning).get(id);
+		for (Integer id : getInstances(StockAbility.Lightning).keySet()) {
+			Lightning light = (Lightning) getInstances(StockAbility.Lightning).get(id);
 			for (Arc arcs : light.getArcs()) {
 				a.add(arcs);
 			}
@@ -113,8 +113,8 @@ public class Lightning extends CoreAbility {
 	 * @return the ability
 	 */
 	public static Lightning getLightning(Player player) {
-		for (Integer id : getInstances(StockAbilities.Lightning).keySet()) {
-			Lightning light = (Lightning) getInstances(StockAbilities.Lightning).get(id);
+		for (Integer id : getInstances(StockAbility.Lightning).keySet()) {
+			Lightning light = (Lightning) getInstances(StockAbility.Lightning).get(id);
 			if (light.player == player)
 				return light;
 		}
@@ -221,8 +221,8 @@ public class Lightning extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.Lightning;
+	public StockAbility getStockAbility() {
+		return StockAbility.Lightning;
 	}
 
 	public double getStunChance() {

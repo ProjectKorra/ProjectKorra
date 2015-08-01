@@ -16,7 +16,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
 public class FireBurst extends CoreAbility {
 	private static double PARTICLES_PERCENTAGE = 5;
@@ -114,8 +114,8 @@ public class FireBurst extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.FireBurst;
+	public StockAbility getStockAbility() {
+		return StockAbility.FireBurst;
 	}
 
 	/**

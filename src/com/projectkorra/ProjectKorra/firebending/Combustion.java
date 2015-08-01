@@ -13,7 +13,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
@@ -86,8 +86,8 @@ public class Combustion extends CoreAbility {
 	}
 
 	public static boolean removeAroundPoint(Location loc, double radius) {
-		for (Integer id: getInstances(StockAbilities.Combustion).keySet()) {
-			Combustion combustion = (Combustion) getInstances(StockAbilities.Combustion).get(id);
+		for (Integer id: getInstances(StockAbility.Combustion).keySet()) {
+			Combustion combustion = (Combustion) getInstances(StockAbility.Combustion).get(id);
 			if (combustion.location.getWorld() == loc.getWorld()) {
 				if (combustion.location.distance(loc) <= radius) {
 					explode(combustion.getPlayer());
@@ -123,8 +123,8 @@ public class Combustion extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.Combustion;
+	public StockAbility getStockAbility() {
+		return StockAbility.Combustion;
 	}
 
 	@Override

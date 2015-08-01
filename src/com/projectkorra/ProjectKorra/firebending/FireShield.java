@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
@@ -70,8 +70,8 @@ public class FireShield extends CoreAbility {
 	}
 
 	public static boolean isWithinShield(Location loc) {
-		for (Integer id : getInstances(StockAbilities.FireShield).keySet()){
-			FireShield fshield = (FireShield) getInstances(StockAbilities.FireShield).get(id);
+		for (Integer id : getInstances(StockAbility.FireShield).keySet()){
+			FireShield fshield = (FireShield) getInstances(StockAbility.FireShield).get(id);
 			Location playerLoc = fshield.player.getLocation();
 
 			if(fshield.shield) {
@@ -111,8 +111,8 @@ public class FireShield extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.FireShield;
+	public StockAbility getStockAbility() {
+		return StockAbility.FireShield;
 	}
 
 	public boolean isShield() {

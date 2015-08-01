@@ -8,28 +8,26 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
-
 /**
- * Represents an {@link ConfigLoadable} Ability.
+ * Represents an the core of all ProjectKorra abilities and 
+ * implements the {@link Ability} interface.
  */
 public abstract class CoreAbility implements Ability {
 
 	/**
 	 * ConcurrentHashMap that stores all Ability instances under UUID key.
 	 * To access this hashmap use either {@link #getInstance()} from the
-	 * ability instance or {@link #getInstance(StockAbilities)} from the
+	 * ability instance or {@link #getInstance(StockAbility)} from the
 	 * outside.
 	 */
-	//private static ConcurrentHashMap<StockAbilities, ConcurrentHashMap<UUID, CoreAbility>> instances = new ConcurrentHashMap<>();
+	//private static ConcurrentHashMap<StockAbility, ConcurrentHashMap<UUID, CoreAbility>> instances = new ConcurrentHashMap<>();
 	//private static ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>> instances = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Integer, CoreAbility> instances = new ConcurrentHashMap<>();
 	//protected static AbilityMap<Ability> instances = new AbilityMap<>();
-	private static ConcurrentHashMap<StockAbilities, ArrayList<Integer>> abilityMap = new ConcurrentHashMap<>(); 
+	private static ConcurrentHashMap<StockAbility, ArrayList<Integer>> abilityMap = new ConcurrentHashMap<>(); 
 	
 	private static int ID = Integer.MIN_VALUE;
-	private final StockAbilities stockAbility = getStockAbility();
-	private final InstanceType type = getInstanceType();
+	private final StockAbility stockAbility = getStockAbility();
 	private Player player;
 	private UUID uniqueId;
 	private Integer id;
@@ -88,21 +86,13 @@ public abstract class CoreAbility implements Ability {
 	}
 	
 	/**
-	 * Gets the map with all the instances of CoreAbiliy's.
-	 *  
-	 * @return a map of core abilities
-	 */
-	public static ConcurrentHashMap<Integer, CoreAbility> getInstances() {
-		return instances;
-	}
-	
-	/**
-	 * An access method to get an the instances of a {@link StockAbilities StockAbility}.
+	 * An access method to get an the instances of a {@link StockAbility}.
 	 * 
 	 * @param ability The instances map to get
-	 * @return a map of instances from the specified {@link StockAbilities StockAbility}
+	 * @return a map of instances from the specified {@link StockAbility}
+	 * @see #getInstances(StockAbility)
 	 */
-	public final static ConcurrentHashMap<Integer, CoreAbility> getInstances(StockAbilities ability) {
+	public final static ConcurrentHashMap<Integer, CoreAbility> getInstances(StockAbility ability) {
 		ConcurrentHashMap<Integer, CoreAbility> instanceMap = new ConcurrentHashMap<>();
 		if (abilityMap.containsKey(ability)) {
 			for (Integer id : abilityMap.get(ability)) {
@@ -112,6 +102,13 @@ public abstract class CoreAbility implements Ability {
 		return instanceMap;
 	}
 	
+	/**
+	 * An access method to get an the instances of a {@link CoreAbility} by its class.
+	 * 
+	 * @param ability The instances map to get
+	 * @return a map of instances from the specified class
+	 * @see #getInstances(StockAbility)
+	 */
 	public final static ConcurrentHashMap<Integer, CoreAbility> getInstances(Class<? extends CoreAbility> ability) {
 		ConcurrentHashMap<Integer, CoreAbility> instanceMap = new ConcurrentHashMap<>();
 		for (Integer id : instances.keySet()) {
@@ -122,24 +119,24 @@ public abstract class CoreAbility implements Ability {
 		return instanceMap;
 	}
 	
-	/**
-	 * Convenience method that calls {@link #progress()} for all instances.
-	 * 
-	 * @see #progressAll(Class)
-	 * @see #progressAll(StockAbilities)
-	 */
-	public static void progressAll() {
-		for (Integer id : instances.keySet()) {
-			instances.get(id).progress();
-		}
-	}
+	//TODO: Update bending managers to use bellow method
+//	/**
+//	 * Convenience method that calls {@link #progress()} for all instances.
+//	 * 
+//	 * @see #progressAll(Class)
+//	 * @see #progressAll(StockAbility)
+//	 */
+//	public static void progressAll() {
+//		for (Integer id : instances.keySet()) {
+//			instances.get(id).progress();
+//		}
+//	}
 	
 	/**
 	 * Convenience method that calls {@link #progress()} for all instances
 	 * of a specified ability.
 	 * 
-	 * @see #progressAll()
-	 * @see #progressAll(StockAbilities)
+	 * @see #progressAll(StockAbility)
 	 */
 	public static void progressAll(Class<? extends CoreAbility> ability) {
 		for (Integer id : instances.keySet()) {
@@ -152,34 +149,33 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * Convenience method that calls {@link #progress()} for all instances
 	 * of a specified stock ability.
-	 * 
-	 * @see #progressAll()
+	 *
 	 * @see #progressAll(Class) 
 	 */
-	public static void progressAll(StockAbilities ability) {
+	public static void progressAll(StockAbility ability) {
 		for (Integer id : getInstances(ability).keySet()) {
 			getInstances(ability).get(id).progress();
 		}
 	}
 	
-	/**
-	 * Convenience method that calls {@link #remove()} for all instances.
-	 * 
-	 * @see #removeAll(StockAbilities)
-	 * @see #removeAll(Class)
-	 */
-	public static void removeAll() {
-		for (Integer id : instances.keySet()) {
-			instances.get(id).remove();
-		}
-	}
+	//TODO: Update bending managers to use bellow method
+//	/**
+//	 * Convenience method that calls {@link #remove()} for all instances.
+//	 * 
+//	 * @see #removeAll(StockAbility)
+//	 * @see #removeAll(Class)
+//	 */
+//	public static void removeAll() {
+//		for (Integer id : instances.keySet()) {
+//			instances.get(id).remove();
+//		}
+//	}
 	
 	/**
 	 * Convenience method that calls {@link #remove()} for all instances
 	 * of a specified stock ability.
 	 * 
-	 * @see #removeAll()
-	 * @see #removeAll(StockAbilities)
+	 * @see #removeAll(StockAbility)
 	 */
 	public static void removeAll(Class<? extends CoreAbility> ability) {
 		for (Integer id : instances.keySet()) {
@@ -192,14 +188,25 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * Convenience method that calls {@link #remove()} for all instances
 	 * of a specified ability.
-	 * 
-	 * @see #removeAll()
+	 *
 	 * @see #removeAll(Class)
 	 */
-	public static void removeAll(StockAbilities ability) {
+	public static void removeAll(StockAbility ability) {
 		for (Integer id : getInstances(ability).keySet()) {
 			getInstances(ability).get(id).remove();
 		}
+	}
+	
+	/**
+	 * Checks if ability is a {@link StockAbility} or not.
+	 * 
+	 * @return true if ability is a stock ability
+	 */
+	public boolean isStockAbility() {
+		if (getStockAbility() == null) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -214,37 +221,43 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * Convenience method to get instance for current ability class.
 	 *  
-	 * @return {@link #getInstance(StockAbilities)} for the current ability
+	 * @return {@link #getInstance(StockAbility)} for the current ability
 	 */
 	public CoreAbility getInstance() {
 		return instances.get(id);
 	}
 	
+	/**
+	 * Gets the {@link InstanceType} of the ability.
+	 * 
+	 * @return single by default
+	 */
 	public InstanceType getInstanceType() {
 		return InstanceType.SINGLE;
 	}
 	
+	/**
+	 * Gets the player that invoked the ability.
+	 * 
+	 * @return player
+	 */
 	public Player getPlayer() {
 		return player;
 	}
 	
 	/**
-	 * Gets the {@link StockAbilities StockAbility} that created this instance.
+	 * Gets the {@link StockAbility} that created this instance.
 	 * This method will return null for abilities that are not stock abilities
 	 * 
-	 * @return stockabilities enum or null
+	 * @return StockAbility enum or null
 	 */
-	public abstract StockAbilities getStockAbility();
+	public abstract StockAbility getStockAbility();
 
 	/**
-	 * Gets the {@link InstanceType} of the ability.
+	 * Gets the {@link UUID} of the player that invoked this ability.
 	 * 
-	 * @return instance type
+	 * @return the uuid of the player
 	 */
-	public InstanceType getType() {
-		return type;
-	}
-	
 	public UUID getUniqueId() {
 		return uniqueId;
 	}
@@ -267,21 +280,6 @@ public abstract class CoreAbility implements Ability {
 				abilityMap.put(stockAbility, new ArrayList<Integer>(Arrays.asList(id)));
 			}
 		}
-//		if (instances.containsKey(stockAbility)) {
-//			if (type == InstanceType.MULTIPLE) {
-//				instances.get(stockAbility).put(id, ability);
-//			} else {
-//				instances.get(stockAbility).put(uniqueId, ability);
-//			}
-//		} else {
-//			ConcurrentHashMap<Object, CoreAbility> map = new ConcurrentHashMap<>();
-//			if (type == InstanceType.MULTIPLE) {
-//				map.put(id, ability);
-//			} else {
-//				map.put(uniqueId, ability);
-//			}
-//			instances.put(stockAbility, map);
-//		}
 		if (ID == Integer.MAX_VALUE)
 			ID = Integer.MIN_VALUE;
 		ID++;
@@ -291,7 +289,7 @@ public abstract class CoreAbility implements Ability {
 	 * Calls {@link #removeInstance()}, Developers can override this
 	 * method to do other things when remove is called but they 
 	 * <strong>MUST</strong> remember to call {@code super.remove()}
-	 * for the UUID to be properly removed from the {@link #instances}.
+	 * for the ability to be properly removed from the {@link #instances}.
 	 */
 	@Override
 	public void remove() {
@@ -299,18 +297,9 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
-	 * Removes the UUID from the instances map
+	 * Removes the ability instance from the instances map.
 	 */
 	private final void removeInstance() {
-//		if (instances.containsKey(stockAbility)) {
-//			if (instances.get(stockAbility) != null) {
-//				if (type == InstanceType.MULTIPLE) {
-//					instances.get(getStockAbility()).remove(id);
-//				} else {
-//					instances.get(getStockAbility()).remove(uniqueId);
-//				}
-//			}
-//		}
 		if (instances.containsKey(id)) {
 			instances.remove(id);
 		}

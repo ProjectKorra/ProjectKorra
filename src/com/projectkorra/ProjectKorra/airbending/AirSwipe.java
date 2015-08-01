@@ -21,7 +21,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
@@ -97,8 +97,8 @@ public class AirSwipe extends CoreAbility {
 
 	public static boolean removeSwipesAroundPoint(Location loc, double radius) {
 		boolean removed = false;
-		for (Integer id : getInstances(StockAbilities.AirSwipe).keySet()) {
-			AirSwipe aswipe = (AirSwipe) getInstances(StockAbilities.AirSwipe).get(id);
+		for (Integer id : getInstances(StockAbility.AirSwipe).keySet()) {
+			AirSwipe aswipe = (AirSwipe) getInstances(StockAbility.AirSwipe).get(id);
 			
 			for (Vector vec : aswipe.elements.keySet()) {
 				Location vectorLoc = aswipe.elements.get(vec);
@@ -264,8 +264,8 @@ public class AirSwipe extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirSwipe;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirSwipe;
 	}
 
 	@SuppressWarnings("deprecation")

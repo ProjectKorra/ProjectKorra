@@ -7,7 +7,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
 public class FlightAbility extends CoreAbility {
 	
@@ -53,7 +53,7 @@ public class FlightAbility extends CoreAbility {
 	}
 	
 	public static void removeAll() {
-		CoreAbility.removeAll(StockAbilities.Flight);
+		CoreAbility.removeAll(StockAbility.Flight);
 		hits.clear();
 		hovering.clear();
 	}
@@ -74,8 +74,8 @@ public class FlightAbility extends CoreAbility {
 	}
 	
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.Flight;
+	public StockAbility getStockAbility() {
+		return StockAbility.Flight;
 	}
 	
 	@Override

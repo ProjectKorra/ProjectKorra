@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
 public class Illumination extends CoreAbility {
 
@@ -56,8 +56,8 @@ public class Illumination extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.Illumination;
+	public StockAbility getStockAbility() {
+		return StockAbility.Illumination;
 	}
 
 //	public static void manage(Server server) {

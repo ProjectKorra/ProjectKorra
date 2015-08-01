@@ -10,14 +10,11 @@ import java.util.List;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoader;
-import com.projectkorra.ProjectKorra.airbending.AirBlast;
-
 
 public class AbilityModuleManager {
 
 	static ProjectKorra plugin;
 	public static List<AbilityModule> ability;
-//	public static List<Ability> defaultAbilities;
 	private final AbilityLoader<AbilityModule> loader;
 
 	public static HashSet<String> abilities;
@@ -84,142 +81,127 @@ public class AbilityModuleManager {
 		plantabilities = new HashSet<String>();
 		iceabilities = new HashSet<String>();
 		bloodabilities = new HashSet<String>();
-//		loadDefaultAbilities();
 		fill();
 	}
 	
-//	private void loadDefaultAbilities() {
-//		defaultAbilities = new ArrayList<Ability>();
-//		defaultAbilities.add(new AirBlast()));
-//		defaultAbilities.add(new AirBubble());
-//		defaultAbilities.add(new AirBurst());
-//		defaultAbilities.add(new AirBlast());
-//		defaultAbilities.add(new AirBlast());
-//		defaultAbilities.add(new AirBlast());
-//		defaultAbilities.add(new AirBlast());
-//		defaultAbilities.add(new AirBlast());
-//		defaultAbilities.add(new AirBlast());
-//		defaultAbilities.add(new AirBlast());
-//	}
-	
 	private void fill() {
 
-		for (StockAbilities a: StockAbilities.values()) {
-			if (StockAbilities.isAirbending(a)) {
+		for (StockAbility a: StockAbility.values()) {
+			if (StockAbility.isAirbending(a)) {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air." + a.name() + ".Enabled")) {
 					abilities.add(a.name());
 					airbendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Air." + a.name() + ".Description"));
-					if (a == StockAbilities.AirScooter) harmlessabilities.add(a.name());
-					if (a == StockAbilities.AirSpout) harmlessabilities.add(a.name());
-					if (a == StockAbilities.Tornado) shiftabilities.add(a.name());
-					if (a == StockAbilities.AirSuction) shiftabilities.add(a.name());
-					if (a == StockAbilities.AirSwipe) shiftabilities.add(a.name());
-					if (a == StockAbilities.AirBlast) shiftabilities.add(a.name());
-					if (a == StockAbilities.AirBurst) shiftabilities.add(a.name());
-					if (a == StockAbilities.AirShield) shiftabilities.add(a.name());
-					if (a == StockAbilities.Flight) shiftabilities.add(a.name());
+					if (a == StockAbility.AirScooter) harmlessabilities.add(a.name());
+					if (a == StockAbility.AirSpout) harmlessabilities.add(a.name());
+					if (a == StockAbility.Tornado) shiftabilities.add(a.name());
+					if (a == StockAbility.AirSuction) shiftabilities.add(a.name());
+					if (a == StockAbility.AirSwipe) shiftabilities.add(a.name());
+					if (a == StockAbility.AirBlast) shiftabilities.add(a.name());
+					if (a == StockAbility.AirBurst) shiftabilities.add(a.name());
+					if (a == StockAbility.AirShield) shiftabilities.add(a.name());
+					if (a == StockAbility.Flight) shiftabilities.add(a.name());
 					
 					// Air Sub Abilities
-					if (a == StockAbilities.Flight) subabilities.add(a.name());
-					if (a == StockAbilities.Flight) flightabilities.add(a.name());
+					if (a == StockAbility.Flight) subabilities.add(a.name());
+					if (a == StockAbility.Flight) flightabilities.add(a.name());
 				}
 			}
-			else if (StockAbilities.isWaterbending(a)) {
+			else if (StockAbility.isWaterbending(a)) {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water." + a.name() + ".Enabled")) {
 					abilities.add(a.name());
 					waterbendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Water." + a.name() + ".Description"));
-					if (a == StockAbilities.WaterSpout) harmlessabilities.add(a.name());
-					if (a == StockAbilities.HealingWaters) harmlessabilities.add(a.name());
-					if (a == StockAbilities.Surge) shiftabilities.add(a.name());
-					if (a == StockAbilities.Bloodbending) shiftabilities.add(a.name());
-					if (a == StockAbilities.PhaseChange) shiftabilities.add(a.name());
-					if (a == StockAbilities.HealingWaters) shiftabilities.add(a.name());
-					if (a == StockAbilities.OctopusForm) shiftabilities.add(a.name());
-					if (a == StockAbilities.Torrent) shiftabilities.add(a.name());
-					if (a == StockAbilities.WaterManipulation) shiftabilities.add(a.name());
-					if (a == StockAbilities.IceSpike) shiftabilities.add(a.name());
-					if (a == StockAbilities.IceBlast) shiftabilities.add(a.name());
-					if (a == StockAbilities.WaterArms) shiftabilities.add(a.name());
+					if (a == StockAbility.WaterSpout) harmlessabilities.add(a.name());
+					if (a == StockAbility.HealingWaters) harmlessabilities.add(a.name());
+					if (a == StockAbility.Surge) shiftabilities.add(a.name());
+					if (a == StockAbility.Bloodbending) shiftabilities.add(a.name());
+					if (a == StockAbility.PhaseChange) shiftabilities.add(a.name());
+					if (a == StockAbility.HealingWaters) shiftabilities.add(a.name());
+					if (a == StockAbility.OctopusForm) shiftabilities.add(a.name());
+					if (a == StockAbility.Torrent) shiftabilities.add(a.name());
+					if (a == StockAbility.WaterManipulation) shiftabilities.add(a.name());
+					if (a == StockAbility.IceSpike) shiftabilities.add(a.name());
+					if (a == StockAbility.IceBlast) shiftabilities.add(a.name());
+					if (a == StockAbility.WaterArms) shiftabilities.add(a.name());
 					
 					// Water Sub Abilities
-					if (a == StockAbilities.HealingWaters) subabilities.add(a.name());
-					if (a == StockAbilities.Bloodbending) subabilities.add(a.name());
-					if (a == StockAbilities.PhaseChange) subabilities.add(a.name());
-					if (a == StockAbilities.IceSpike) subabilities.add(a.name());
-					if (a == StockAbilities.IceBlast) subabilities.add(a.name());
-					if (a == StockAbilities.PlantArmor) subabilities.add(a.name());
+					if (a == StockAbility.HealingWaters) subabilities.add(a.name());
+					if (a == StockAbility.Bloodbending) subabilities.add(a.name());
+					if (a == StockAbility.PhaseChange) subabilities.add(a.name());
+					if (a == StockAbility.IceSpike) subabilities.add(a.name());
+					if (a == StockAbility.IceBlast) subabilities.add(a.name());
+					if (a == StockAbility.PlantArmor) subabilities.add(a.name());
 					
-					if (a == StockAbilities.HealingWaters) healingabilities.add(a.name());
-					if (a == StockAbilities.Bloodbending) bloodabilities.add(a.name());
-					if (a == StockAbilities.PhaseChange) iceabilities.add(a.name());
-					if (a == StockAbilities.IceSpike) iceabilities.add(a.name());
-					if (a == StockAbilities.IceBlast) iceabilities.add(a.name());
-					if (a == StockAbilities.PlantArmor) plantabilities.add(a.name());
+					if (a == StockAbility.HealingWaters) healingabilities.add(a.name());
+					if (a == StockAbility.Bloodbending) bloodabilities.add(a.name());
+					if (a == StockAbility.PhaseChange) iceabilities.add(a.name());
+					if (a == StockAbility.IceSpike) iceabilities.add(a.name());
+					if (a == StockAbility.IceBlast) iceabilities.add(a.name());
+					if (a == StockAbility.PlantArmor) plantabilities.add(a.name());
 				}
 			}
-			else if (StockAbilities.isEarthbending(a)) {
+			else if (StockAbility.isEarthbending(a)) {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth." + a.name() + ".Enabled")) {
 					abilities.add(a.name());
 					earthbendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Earth." + a.name() + ".Description"));
-					if (a == StockAbilities.Tremorsense) harmlessabilities.add(a.name());
-					if (a == StockAbilities.RaiseEarth) shiftabilities.add(a.name());
-					if (a == StockAbilities.Collapse) shiftabilities.add(a.name());
-					if (a == StockAbilities.EarthBlast) shiftabilities.add(a.name());
-					if (a == StockAbilities.Shockwave) shiftabilities.add(a.name());
-					if (a == StockAbilities.EarthTunnel) shiftabilities.add(a.name());
-					if (a == StockAbilities.EarthGrab) shiftabilities.add(a.name());
-					if (a == StockAbilities.LavaFlow) shiftabilities.add(a.name());
-					if (a == StockAbilities.MetalClips) shiftabilities.add(a.name());
-					if (a == StockAbilities.EarthSmash) shiftabilities.add(a.name());
-					if (a == StockAbilities.SandSpout) shiftabilities.add(a.name());
+					if (a == StockAbility.Tremorsense) harmlessabilities.add(a.name());
+					if (a == StockAbility.RaiseEarth) shiftabilities.add(a.name());
+					if (a == StockAbility.Collapse) shiftabilities.add(a.name());
+					if (a == StockAbility.EarthBlast) shiftabilities.add(a.name());
+					if (a == StockAbility.Shockwave) shiftabilities.add(a.name());
+					if (a == StockAbility.EarthTunnel) shiftabilities.add(a.name());
+					if (a == StockAbility.EarthGrab) shiftabilities.add(a.name());
+					if (a == StockAbility.LavaFlow) shiftabilities.add(a.name());
+					if (a == StockAbility.MetalClips) shiftabilities.add(a.name());
+					if (a == StockAbility.EarthSmash) shiftabilities.add(a.name());
+					if (a == StockAbility.SandSpout) shiftabilities.add(a.name());
 					
 					// Earth Sub Abilities
-					if (a == StockAbilities.MetalClips) subabilities.add(a.name());
-					if (a == StockAbilities.Extraction) subabilities.add(a.name());
-					if (a == StockAbilities.LavaFlow) subabilities.add(a.name());
-					if (a == StockAbilities.SandSpout) subabilities.add(a.name());
+					if (a == StockAbility.MetalClips) subabilities.add(a.name());
+					if (a == StockAbility.Extraction) subabilities.add(a.name());
+					if (a == StockAbility.LavaFlow) subabilities.add(a.name());
+					if (a == StockAbility.SandSpout) subabilities.add(a.name());
 					
-					if (a == StockAbilities.MetalClips) metalabilities.add(a.name());
-					if (a == StockAbilities.Extraction) metalabilities.add(a.name());
-					if (a == StockAbilities.LavaFlow) lavaabilities.add(a.name());
-					if (a == StockAbilities.SandSpout) sandabilities.add(a.name());
-//					if (a == StockAbilities.LavaSurge) earthsubabilities.add(a.name());
+					if (a == StockAbility.MetalClips) metalabilities.add(a.name());
+					if (a == StockAbility.Extraction) metalabilities.add(a.name());
+					if (a == StockAbility.LavaFlow) lavaabilities.add(a.name());
+					if (a == StockAbility.SandSpout) sandabilities.add(a.name());
+//					if (a == StockAbility.LavaSurge) earthsubabilities.add(a.name());
 					
 				}
 			}
-			else if (StockAbilities.isFirebending(a)) {
+			else if (StockAbility.isFirebending(a)) {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire." + a.name() + ".Enabled")) {
 					abilities.add(a.name());
 					firebendingabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Fire." + a.name() + ".Description"));
-					if (a == StockAbilities.Illumination) harmlessabilities.add(a.name());
-					if (a == StockAbilities.Blaze) igniteabilities.add(a.name());
-					if (a == StockAbilities.FireBlast) explodeabilities.add(a.name());
-					if (a == StockAbilities.Lightning) explodeabilities.add(a.name());
-					if (a == StockAbilities.Combustion) explodeabilities.add(a.name());
-					if (a == StockAbilities.HeatControl) shiftabilities.add(a.name());
-					if (a == StockAbilities.Lightning) shiftabilities.add(a.name());
-					if (a == StockAbilities.FireBlast) shiftabilities.add(a.name());
-					if (a == StockAbilities.Blaze) shiftabilities.add(a.name());
-					if (a == StockAbilities.FireBurst) shiftabilities.add(a.name());
+					if (a == StockAbility.Illumination) harmlessabilities.add(a.name());
+					if (a == StockAbility.Blaze) igniteabilities.add(a.name());
+					if (a == StockAbility.FireBlast) explodeabilities.add(a.name());
+					if (a == StockAbility.Lightning) explodeabilities.add(a.name());
+					if (a == StockAbility.Combustion) explodeabilities.add(a.name());
+					if (a == StockAbility.HeatControl) shiftabilities.add(a.name());
+					if (a == StockAbility.Lightning) shiftabilities.add(a.name());
+					if (a == StockAbility.FireBlast) shiftabilities.add(a.name());
+					if (a == StockAbility.Blaze) shiftabilities.add(a.name());
+					if (a == StockAbility.FireBurst) shiftabilities.add(a.name());
 					
 					// Fire Sub Abilities
-					if (a == StockAbilities.Lightning) subabilities.add(a.name());
-					if (a == StockAbilities.Combustion) subabilities.add(a.name());
+					if (a == StockAbility.Lightning) subabilities.add(a.name());
+					if (a == StockAbility.Combustion) subabilities.add(a.name());
 					
-					if (a == StockAbilities.Lightning) lightningabilities.add(a.name());
-					if (a == StockAbilities.Combustion) combustionabilities.add(a.name());
+					if (a == StockAbility.Lightning) lightningabilities.add(a.name());
+					if (a == StockAbility.Combustion) combustionabilities.add(a.name());
 				}
 			}
-			else if (StockAbilities.isChiBlocking(a)) {
+			else if (StockAbility.isChiBlocking(a)) {
 				if (ProjectKorra.plugin.getConfig().getBoolean("Abilities.Chi." + a.name() + ".Enabled")) {
 					abilities.add(a.name());
 					chiabilities.add(a.name());
 					descriptions.put(a.name(), ProjectKorra.plugin.getConfig().getString("Abilities.Chi." + a.name() + ".Description"));
-					if (a == StockAbilities.HighJump) harmlessabilities.add(a.name());
+					if (a == StockAbility.HighJump) harmlessabilities.add(a.name());
 				}
 			}
 			else {
@@ -242,7 +224,7 @@ public class AbilityModuleManager {
 					continue;
 				ab.onThisLoad();
 				abilities.add(ab.getName());
-				for (StockAbilities a: StockAbilities.values()) {
+				for (StockAbility a: StockAbility.values()) {
 					if (a.name().equalsIgnoreCase(ab.getName())){
 						disabledStockAbilities.add(a.name());
 					}

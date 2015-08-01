@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Ability.AddonAbility;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
@@ -124,10 +125,10 @@ public class FireStream extends AddonAbility {
 		}
 	}
 	
-	public static void removeAll() {
+	public static void removeAll(Class<? extends CoreAbility> abilityClass) {
 		for (Block block : ignitedblocks.keySet())
 			remove(block);
-		AddonAbility.removeAll();
+		AddonAbility.removeAll(abilityClass);
 	}
 
 	public static void removeAroundPoint(Location location, double radius) {

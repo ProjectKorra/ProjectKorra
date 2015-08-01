@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
 public class AirScooter extends CoreAbility {
 
@@ -71,8 +71,8 @@ public class AirScooter extends CoreAbility {
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (Integer id : getInstances(StockAbilities.AirScooter).keySet()) {
-			players.add(getInstances(StockAbilities.AirScooter).get(id).getPlayer());
+		for (Integer id : getInstances(StockAbility.AirScooter).keySet()) {
+			players.add(getInstances(StockAbility.AirScooter).get(id).getPlayer());
 		}
 		return players;
 	}
@@ -97,8 +97,8 @@ public class AirScooter extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirScooter;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirScooter;
 	}
 
 	@Override

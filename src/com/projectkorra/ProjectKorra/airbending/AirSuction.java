@@ -16,7 +16,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 import com.projectkorra.ProjectKorra.waterbending.WaterSpout;
 
@@ -130,7 +130,7 @@ public class AirSuction extends CoreAbility {
 	}
 
 	public static void progressAll() {
-		CoreAbility.progressAll(StockAbilities.AirSuction);
+		CoreAbility.progressAll(StockAbility.AirSuction);
 		for (Player player : origins.keySet()) {
 			playOriginEffect(player);
 		}
@@ -196,8 +196,8 @@ public class AirSuction extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirSuction;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirSuction;
 	}
 
 	@Override

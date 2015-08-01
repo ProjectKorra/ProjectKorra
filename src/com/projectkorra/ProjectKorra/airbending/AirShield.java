@@ -12,7 +12,7 @@ import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
@@ -64,8 +64,8 @@ public class AirShield extends CoreAbility {
 	}
 	
 	public static boolean isWithinShield(Location loc){
-		for (Integer id : getInstances(StockAbilities.AirShield).keySet()) {
-			AirShield ashield = (AirShield) getInstances(StockAbilities.AirShield).get(id);
+		for (Integer id : getInstances(StockAbility.AirShield).keySet()) {
+			AirShield ashield = (AirShield) getInstances(StockAbility.AirShield).get(id);
 			if (ashield.player.getLocation().getWorld() != loc.getWorld()) 
 				return false;
 			if(ashield.player.getLocation().distance(loc) <= ashield.radius)
@@ -83,8 +83,8 @@ public class AirShield extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirShield;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirShield;
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
 public class AirBurst extends CoreAbility {
 	
@@ -127,8 +127,8 @@ public class AirBurst extends CoreAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirBurst;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirBurst;
 	}
 
 	public void handleSmoothParticles() {
