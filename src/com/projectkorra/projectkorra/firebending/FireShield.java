@@ -152,8 +152,8 @@ public class FireShield extends CoreAbility {
 
 				for (Block block : blocks) {
 					if (!GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
-						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
-						ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
+						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 2);
+						ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 						if (GeneralMethods.rand.nextInt(7) == 0) {
 							FireMethods.playFirebendingSound(block.getLocation());
 						}
@@ -194,7 +194,8 @@ public class FireShield extends CoreAbility {
 
 				for (Block block : blocks) {
 					if (!GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
-						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
+						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
+						ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 						if (GeneralMethods.rand.nextInt(4) == 0) {
 							FireMethods.playFirebendingSound(block.getLocation());
 						}

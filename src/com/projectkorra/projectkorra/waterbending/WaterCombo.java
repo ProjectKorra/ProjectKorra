@@ -98,7 +98,7 @@ public class WaterCombo {
 		this.ability = ability;
 		this.bplayer = GeneralMethods.getBendingPlayer(player.getName());
 
-		if (GeneralMethods.canBend(player.getDisplayName(), ability)) {
+		if (!GeneralMethods.canBend(player.getName(), ability)) {
 			return;
 		}
 

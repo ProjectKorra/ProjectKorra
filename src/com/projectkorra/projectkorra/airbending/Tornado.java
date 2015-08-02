@@ -234,7 +234,7 @@ public class Tornado extends CoreAbility {
 
 				Location effect = new Location(origin.getWorld(), x, y, z);
 				if (!GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", effect)) {
-					AirMethods.playAirbendingParticles(effect, 20);
+					AirMethods.playAirbendingParticles(effect, 4);
 					if (GeneralMethods.rand.nextInt(20) == 0) {
 						AirMethods.playAirbendingSound(effect);
 					}

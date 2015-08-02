@@ -127,8 +127,8 @@ public class WallOfFire extends CoreAbility {
 
 	private void display() {
 		for (Block block : blocks) {
-			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
-			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
+			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 3);
+			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 
 			if (GeneralMethods.rand.nextInt(7) == 0) {
 				FireMethods.playFirebendingSound(block.getLocation());

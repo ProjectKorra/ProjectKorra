@@ -82,7 +82,7 @@ public class ChiComboManager {
 				//ProjectKorra.log.info("Combo Matched for player "+player.getName());
 
 				if (combo.size() == 4 && combo.get(0) == ChiCombo.QuickStrike && combo.get(1) == ChiCombo.SwiftKick && combo.get(2) == ChiCombo.QuickStrike && combo.get(3) == ChiCombo.QuickStrike) {
-					if (!GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("Immobilize") && GeneralMethods.canBend(player.getDisplayName(), "Immobilize")) {
+					if (!GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("Immobilize") && GeneralMethods.canBend(player.getName(), "Immobilize")) {
 						GeneralMethods.getBendingPlayer(player.getName()).addCooldown("Immobilize", cooldown);
 						paralyzeTarget(player, paralysisDuration);
 					}

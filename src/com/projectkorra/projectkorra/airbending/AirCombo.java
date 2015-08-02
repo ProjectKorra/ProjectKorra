@@ -88,7 +88,7 @@ public class AirCombo implements ConfigLoadable {
 			return;
 		if (!bPlayer.hasElement(Element.Air))
 			return;
-		if (GeneralMethods.canBend(player.getDisplayName(), ability)) {
+		if (!GeneralMethods.canBend(player.getName(), ability)) {
 			return;
 		}
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", player.getLocation()))

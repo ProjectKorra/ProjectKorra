@@ -172,7 +172,7 @@ public class AirSpout extends CoreAbility {
 
 				Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
 
-				AirMethods.playAirbendingParticles(effectloc2, 15);
+				AirMethods.playAirbendingParticles(effectloc2, 6);
 				//				location.getWorld().playEffect(effectloc2, Effect.SMOKE,
 				//						(int) directions[index], (int) height + 5);
 

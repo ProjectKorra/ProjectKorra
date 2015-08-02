@@ -98,7 +98,7 @@ public class FireCombo implements ConfigLoadable {
 			return;
 		if (!GeneralMethods.getBendingPlayer(player.getName()).isToggled())
 			return;
-		if (GeneralMethods.canBend(player.getDisplayName(), ability)) {
+		if (!GeneralMethods.canBend(player.getName(), ability)) {
 			return;
 		}
 		/* End Initial Checks */

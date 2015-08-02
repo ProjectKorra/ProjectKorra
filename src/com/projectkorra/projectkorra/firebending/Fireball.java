@@ -190,8 +190,8 @@ public class Fireball extends AddonAbility {
 
 	private void fireball() {
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
-			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 17);
-			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 17);
+			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 5);
+			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 2);
 			if (GeneralMethods.rand.nextInt(4) == 0) {
 				FireMethods.playFirebendingSound(location);
 			}

@@ -162,7 +162,7 @@ public class AirSwipe extends CoreAbility {
 							}
 						}
 					} else {
-						AirMethods.playAirbendingParticles(location, 10);
+						AirMethods.playAirbendingParticles(location, 3);
 						if (GeneralMethods.rand.nextInt(4) == 0) {
 							AirMethods.playAirbendingSound(location);
 						}
@@ -334,7 +334,7 @@ public class AirSwipe extends CoreAbility {
 				pushfactor *= factor;
 				return true;
 			} else if (System.currentTimeMillis() >= time + maxchargetime) {
-				AirMethods.playAirbendingParticles(player.getEyeLocation(), 10);
+				AirMethods.playAirbendingParticles(player.getEyeLocation(), 3);
 			}
 		}
 		return true;

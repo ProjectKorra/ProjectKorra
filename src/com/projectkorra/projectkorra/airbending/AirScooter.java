@@ -186,7 +186,7 @@ public class AirScooter extends CoreAbility {
 			double x = Math.cos(Math.toRadians(angles.get(i))) * scooterradius;
 			double y = ((double) i) / 2 * scooterradius - scooterradius;
 			double z = Math.sin(Math.toRadians(angles.get(i))) * scooterradius;
-			AirMethods.playAirbendingParticles(origin.clone().add(x, y, z), 10);
+			AirMethods.playAirbendingParticles(origin.clone().add(x, y, z), 7);
 			//			player.getWorld().playEffect(origin.clone().add(x, y, z),
 			//					Effect.SMOKE, 4, (int) AirBlast.defaultrange);
 		}

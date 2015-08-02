@@ -156,8 +156,8 @@ public class FireBlast extends CoreAbility {
 	private void advanceLocation() {
 		if (showParticles) {
 			//ParticleEffect.RED_DUST.display((float) 16, (float) 111, (float) 227, 0.01F, 0, location, 256D);
-			ParticleEffect.FLAME.display(location, 0.6F, 0.6F, 0.6F, 0, 20);
-			ParticleEffect.SMOKE.display(location, 0.6F, 0.6F, 0.6F, 0, 20);
+			ParticleEffect.FLAME.display(location, 0.6F, 0.6F, 0.6F, 0, 12);
+			ParticleEffect.SMOKE.display(location, 0.6F, 0.6F, 0.6F, 0, 5);
 		}
 		location = location.add(direction.clone().multiply(speedfactor));
 		if (rand.nextInt(4) == 0) {

@@ -117,7 +117,7 @@ public class AirSuction extends CoreAbility {
 			return;
 		}
 
-		AirMethods.playAirbendingParticles(origin, 10);
+		AirMethods.playAirbendingParticles(origin, 6);
 		//
 		//		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
 		//				(int) originselectrange);
@@ -146,7 +146,7 @@ public class AirSuction extends CoreAbility {
 	}
 
 	private void advanceLocation() {
-		AirMethods.playAirbendingParticles(location, 10);
+		AirMethods.playAirbendingParticles(location, 6);
 		if (GeneralMethods.rand.nextInt(4) == 0) {
 			AirMethods.playAirbendingSound(location);
 		}

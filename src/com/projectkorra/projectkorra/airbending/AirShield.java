@@ -197,7 +197,7 @@ public class AirShield extends CoreAbility {
 
 			Location effect = new Location(origin.getWorld(), x, y, z);
 			if (!GeneralMethods.isRegionProtectedFromBuild(player, "AirShield", effect)) {
-				AirMethods.playAirbendingParticles(effect, 10);
+				AirMethods.playAirbendingParticles(effect, 5);
 				if (GeneralMethods.rand.nextInt(4) == 0) {
 					AirMethods.playAirbendingSound(effect);
 				}

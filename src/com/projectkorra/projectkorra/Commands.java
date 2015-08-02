@@ -1555,7 +1555,7 @@ public class Commands {
 								}
 							}
 						}
-
+						
 						if (GeneralMethods.hasRPG()) {
 							if (RPGMethods.isCurrentAvatar(p.getUniqueId())) {
 								s.sendMessage(GeneralMethods.getAvatarColor() + "Current Avatar");
@@ -1563,44 +1563,56 @@ public class Commands {
 								s.sendMessage(GeneralMethods.getAvatarColor() + "Former Avatar");
 							}
 						}
-
+						
+						//Administrators
 						if (uuid2.toString().equals("8621211e-283b-46f5-87bc-95a66d68880e")) {
 							s.sendMessage(ChatColor.RED + "ProjectKorra Founder"); // MistPhizzle
 						}
 
+						//Lead Developer
 						if (uuid2.toString().equals("a197291a-cd78-43bb-aa38-52b7c82bc68c")) {
 							s.sendMessage(ChatColor.DARK_PURPLE + "ProjectKorra Lead Developer"); // OmniCypher
 						}
 
-						if (uuid2.toString().equals("929b14fc-aaf1-4f0f-84c2-f20c55493f53")) { // vidcom
-							s.sendMessage(ChatColor.GREEN + "ProjectKorra Concept Designer");
-							s.sendMessage(ChatColor.GOLD + "ProjectKorra Head Moderator");
+						//Head Concept Designer
+						if (uuid2.toString().equals("929b14fc-aaf1-4f0f-84c2-f20c55493f53")) { // Vidcom
+							s.sendMessage(ChatColor.GREEN + "ProjectKorra Head Concept Designer");
 						}
-
+						
+						//Head Community Moderator
+						if (uuid2.toString().equals("")) {
+							s.sendMessage(ChatColor.GOLD + "ProjectKorra Head Community Moderator");
+						}
+						
+						//Digital Director
+						if (uuid2.toString().equals("15d1a5a7-76ef-49c3-b193-039b27c47e30")) { // Kiam
+							s.sendMessage(ChatColor.GREEN + "ProjectKorra Digital Director");
+						}
+						
+						//Developers
 						if (uuid2.toString().equals("833a7132-a9ec-4f0a-ad9c-c3d6b8a1c7eb") // Jacklin213
 								|| uuid2.toString().equals("96f40c81-dd5d-46b6-9afe-365114d4a082") // Coolade
-								|| uuid2.toString().equals("81adae76-d647-4b41-bfb0-8166516fa189") // AlexTheCoder
-								|| uuid2.toString().equals("7bb267eb-cf0b-4fb9-a697-27c2a913ed92")) { // Finn
+								|| uuid2.toString().equals("81adae76-d647-4b41-bfb0-8166516fa189")) { // AlexTheCoder
 							s.sendMessage(ChatColor.DARK_PURPLE + "ProjectKorra Developer");
 						}
 
-						if (uuid2.toString().equals("9c18ff57-04b3-4841-9726-9d64373d0d65")) { // coastyo
-							s.sendMessage(ChatColor.GREEN + "ProjectKorra Concept Designer");
-							s.sendMessage(ChatColor.BLUE + "ProjectKorra Graphic Artist");
-						}
-
-						if (uuid2.toString().equals("b2d82a84-ce22-4518-a8fc-1b28aeda0c0b") // Shunky
-								|| uuid2.toString().equals("623df34e-9cd4-438d-b07c-1905e1fc46b6") // Loony
+						//Concept Designers
+						if (uuid2.toString().equals("623df34e-9cd4-438d-b07c-1905e1fc46b6") // Loony
 								|| uuid2.toString().equals("80f9072f-e37e-4adc-8675-1ba6af87d63b") // Cross
-								|| uuid2.toString().equals("38217173-8a32-4ba7-9fe1-dd4fed031a74") // Fly
-								|| uuid2.toString().equals("15d1a5a7-76ef-49c3-b193-039b27c47e30")) { // Kiam
+								|| uuid2.toString().equals("38217173-8a32-4ba7-9fe1-dd4fed031a74")) { // Fly
 							s.sendMessage(ChatColor.GREEN + "ProjectKorra Concept Designer");
 						}
 
-						if (uuid2.toString().equals("0fd77ff6-07fb-4a7d-ba87-ae6f802ed1f9")) { // Hit_Manx
-							s.sendMessage(ChatColor.GREEN + "ProjectKorra Concept Designer");
-							s.sendMessage(ChatColor.GOLD + "ProjectKorra Wiki Contributor");
+						//Community Moderators
+						if (uuid2.toString().equals("")) {
+							s.sendMessage(ChatColor.GOLD + "ProjectKorra Community Moderator");
 						}
+						
+						//Digital Team
+						if (uuid2.toString().equals("")) {
+							s.sendMessage(ChatColor.BLUE + "ProjectKorra Digital Team");
+						}
+						
 						return true;
 					}
 					if (args.length == 1) {
