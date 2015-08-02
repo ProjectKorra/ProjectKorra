@@ -31,8 +31,7 @@ public class Illumination extends CoreAbility {
 		/* End Initial Checks */
 
 		if (containsPlayer(player, Illumination.class)) {
-			revert();
-			remove();
+			getAbilityFromPlayer(player, Illumination.class).remove();
 		} else {
 			reloadVariables();
 			this.player = player;
