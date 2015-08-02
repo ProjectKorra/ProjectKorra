@@ -35,7 +35,7 @@ public class AirShield extends CoreAbility {
 		/* Initial Check */
 		if (AvatarState.isAvatarState(player) && containsPlayer(player, AirShield.class) && isToggle) {
 			//instances.remove(player.getUniqueId());
-			super.remove();
+			getAbilityFromPlayer(player, AirShield.class).remove();
 			return;
 		}
 		/* End Initial Check */

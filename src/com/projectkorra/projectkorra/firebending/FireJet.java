@@ -30,7 +30,7 @@ public class FireJet extends CoreAbility {
 	public FireJet(Player player) {
 		/* Initial Checks */
 		if (containsPlayer(player, FireJet.class)) {
-			remove();
+			getAbilityFromPlayer(player, FireJet.class).remove();
 			return;
 		}
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
