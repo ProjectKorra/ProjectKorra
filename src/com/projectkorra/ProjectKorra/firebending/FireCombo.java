@@ -24,12 +24,10 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
-import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
-import com.projectkorra.ProjectKorra.waterbending.Bloodbending;
+import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
-public class FireCombo {
+public class FireCombo implements ConfigLoadable {
 	public static final List<String> abilitiesToBlock = new ArrayList<String>() {
 		private static final long serialVersionUID = 5395690551860441647L;
 		{
@@ -45,46 +43,46 @@ public class FireCombo {
 			add("AirSweep");
 		}
 	};
-	private static boolean enabled = ProjectKorra.plugin.getConfig()
+	private static boolean enabled = config.get()
 			.getBoolean("Abilities.Fire.FireCombo.Enabled");
 	private static final double FIRE_WHEEL_STARTING_HEIGHT = 2;
 	private static final double FIRE_WHEEL_RADIUS = 1;
-	public static double fireticksFireWheel = ProjectKorra.plugin.getConfig()
+	public static double fireticksFireWheel = config.get()
 			.getDouble("Abilities.Fire.FireCombo.FireWheel.FireTicks");
-	public static double fireticksJetBlaze = ProjectKorra.plugin.getConfig()
+	public static double fireticksJetBlaze = config.get()
 			.getDouble("Abilities.Fire.FireCombo.JetBlaze.FireTicks");
-	public static double FIRE_KICK_RANGE = ProjectKorra.plugin.getConfig()
+	public static double FIRE_KICK_RANGE = config.get()
 			.getDouble("Abilities.Fire.FireCombo.FireKick.Range");
-	public static double FIRE_KICK_DAMAGE = ProjectKorra.plugin.getConfig()
+	public static double FIRE_KICK_DAMAGE = config.get()
 			.getDouble("Abilities.Fire.FireCombo.FireKick.Damage");
-	public static double FIRE_SPIN_RANGE = ProjectKorra.plugin.getConfig()
+	public static double FIRE_SPIN_RANGE = config.get()
 			.getDouble("Abilities.Fire.FireCombo.FireSpin.Range");
-	public static double FIRE_SPIN_DAMAGE = ProjectKorra.plugin.getConfig()
+	public static double FIRE_SPIN_DAMAGE = config.get()
 			.getDouble("Abilities.Fire.FireCombo.FireSpin.Damage");
-	public static double FIRE_SPIN_KNOCKBACK = ProjectKorra.plugin.getConfig()
+	public static double FIRE_SPIN_KNOCKBACK = config.get()
 			.getDouble("Abilities.Fire.FireCombo.FireSpin.Knockback");
-	public static double FIRE_WHEEL_DAMAGE = ProjectKorra.plugin.getConfig()
+	public static double FIRE_WHEEL_DAMAGE = config.get()
 			.getDouble("Abilities.Fire.FireCombo.FireWheel.Damage");
-	public static double FIRE_WHEEL_RANGE = ProjectKorra.plugin.getConfig()
+	public static double FIRE_WHEEL_RANGE = config.get()
 			.getDouble("Abilities.Fire.FireCombo.FireWheel.Range");
-	public static double FIRE_WHEEL_SPEED = ProjectKorra.plugin.getConfig()
+	public static double FIRE_WHEEL_SPEED = config.get()
 			.getDouble("Abilities.Fire.FireCombo.FireWheel.Speed");
-	public static double JET_BLAST_SPEED = ProjectKorra.plugin.getConfig()
+	public static double JET_BLAST_SPEED = config.get()
 			.getDouble("Abilities.Fire.FireCombo.JetBlast.Speed");
-	public static double JET_BLAZE_SPEED = ProjectKorra.plugin.getConfig()
+	public static double JET_BLAZE_SPEED = config.get()
 			.getDouble("Abilities.Fire.FireCombo.JetBlaze.Speed");
-	public static double JET_BLAZE_DAMAGE = ProjectKorra.plugin.getConfig()
+	public static double JET_BLAZE_DAMAGE = config.get()
 			.getDouble("Abilities.Fire.FireCombo.JetBlaze.Damage");
 
-	public static long FIRE_KICK_COOLDOWN = ProjectKorra.plugin.getConfig()
+	public static long FIRE_KICK_COOLDOWN = config.get()
 			.getLong("Abilities.Fire.FireCombo.FireKick.Cooldown");
-	public static long FIRE_SPIN_COOLDOWN = ProjectKorra.plugin.getConfig()
+	public static long FIRE_SPIN_COOLDOWN = config.get()
 			.getLong("Abilities.Fire.FireCombo.FireSpin.Cooldown");
-	public static long FIRE_WHEEL_COOLDOWN = ProjectKorra.plugin.getConfig()
+	public static long FIRE_WHEEL_COOLDOWN = config.get()
 			.getLong("Abilities.Fire.FireCombo.FireWheel.Cooldown");
-	public static long JET_BLAST_COOLDOWN = ProjectKorra.plugin.getConfig()
+	public static long JET_BLAST_COOLDOWN = config.get()
 			.getLong("Abilities.Fire.FireCombo.JetBlast.Cooldown");
-	public static long JET_BLAZE_COOLDOWN = ProjectKorra.plugin.getConfig()
+	public static long JET_BLAZE_COOLDOWN = config.get()
 			.getLong("Abilities.Fire.FireCombo.JetBlaze.Cooldown");
 
 	public static ArrayList<FireCombo> instances = new ArrayList<FireCombo>();
@@ -108,6 +106,7 @@ public class FireCombo {
 
 	public FireCombo(Player player, String ability) {
 		// Dont' call Methods.canBind directly, it doesn't let you combo as fast
+		/* Initial Checks */
 		if (!enabled)
 			return;
 		if(!GeneralMethods.getBendingPlayer(player.getName()).hasElement(Element.Fire))
@@ -119,14 +118,15 @@ public class FireCombo {
 			return;
 		if (!GeneralMethods.getBendingPlayer(player.getName()).isToggled()) 
 			return;
+		if (GeneralMethods.canBend(player.getDisplayName(), ability)) {
+			return;
+		}
+		/* End Initial Checks */
+		reloadVariables();
 		time = System.currentTimeMillis();
 		this.player = player;
 		this.ability = ability;
 		this.bplayer = GeneralMethods.getBendingPlayer(player.getName());
-
-		if (GeneralMethods.canBend(player.getDisplayName(), ability)) {
-			return;
-		}
 
 		if (ability.equalsIgnoreCase("FireKick")) {
 			damage = FIRE_KICK_DAMAGE;
@@ -157,6 +157,131 @@ public class FireCombo {
 			range = AvatarState.getValue(range);
 		}
 		instances.add(this);
+	}
+
+	/**
+	 * Returns all the FireCombos created by a specific player.
+	 */
+	public static ArrayList<FireCombo> getFireCombo(Player player) {
+		ArrayList<FireCombo> list = new ArrayList<FireCombo>();
+		for (FireCombo lf : instances)
+			if (lf.player != null && lf.player == player)
+				list.add(lf);
+		return list;
+	}
+
+	/**
+	 * Returns all of the FireCombos created by a specific player but
+	 * filters the abilities based on shift or click.
+	 */
+	public static ArrayList<FireCombo> getFireCombo(Player player,
+			ClickType type) {
+		ArrayList<FireCombo> list = new ArrayList<FireCombo>();
+		for (FireCombo lf : instances)
+			if (lf.player != null && lf.player == player && lf.type != null
+					&& lf.type == type)
+				list.add(lf);
+		return list;
+	}
+
+	public static void progressAll() {
+		for (int i = instances.size() - 1; i >= 0; i--)
+			instances.get(i).progress();
+	}
+
+	public static void removeAll() {
+		for (int i = instances.size() - 1; i >= 0; i--) {
+			instances.get(i).remove();
+		}
+	}
+
+	public static boolean removeAroundPoint(Player player, String ability,
+			Location loc, double radius) {
+		boolean removed = false;
+		for (int i = 0; i < instances.size(); i++) {
+			FireCombo combo = instances.get(i);
+			if (combo.getPlayer().equals(player))
+				continue;
+
+			if (ability.equalsIgnoreCase("FireKick")
+					&& combo.ability.equalsIgnoreCase("FireKick")) {
+				for (FireComboStream fs : combo.tasks) {
+					if (fs.getLocation() != null && fs.getLocation().getWorld() == loc.getWorld()
+							&& Math.abs(fs.getLocation().distance(loc)) <= radius) {
+						fs.remove();
+						removed = true;
+					}
+				}
+			}
+
+			else if (ability.equalsIgnoreCase("FireSpin")
+					&& combo.ability.equalsIgnoreCase("FireSpin")) {
+				for (FireComboStream fs : combo.tasks) {
+					if (fs.getLocation() != null
+							&& fs.getLocation().getWorld().equals(loc.getWorld())) {
+						if (Math.abs(fs.getLocation().distance(loc)) <= radius) {
+							fs.remove();
+							removed = true;
+						}
+					}
+				}
+			}
+
+			else if (ability.equalsIgnoreCase("FireWheel")
+					&& combo.ability.equalsIgnoreCase("FireWheel")) {
+				if (combo.currentLoc != null
+						&& Math.abs(combo.currentLoc.distance(loc)) <= radius) {
+					instances.remove(combo);
+					removed = true;
+				}
+			}
+		}
+		return removed;
+	}
+
+	public void checkSafeZone() {
+		if (currentLoc != null
+				&& GeneralMethods.isRegionProtectedFromBuild(player, "Blaze",
+						currentLoc))
+			remove();
+	}
+
+	public void collision(LivingEntity entity, Vector direction,
+			FireComboStream fstream) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze",
+				entity.getLocation()))
+			return;
+		entity.getLocation()
+				.getWorld()
+				.playSound(entity.getLocation(), Sound.VILLAGER_HIT, 0.3f, 0.3f);
+
+		if (ability.equalsIgnoreCase("FireKick")) {
+			GeneralMethods.damageEntity(player, entity, damage);
+			fstream.remove();
+		} else if (ability.equalsIgnoreCase("FireSpin")) {
+			double knockback = AvatarState.isAvatarState(player) ? FIRE_SPIN_KNOCKBACK + 0.5
+					: FIRE_SPIN_KNOCKBACK;
+			GeneralMethods.damageEntity(player, entity, damage);
+			entity.setVelocity(direction.normalize().multiply(knockback));
+			fstream.remove();
+		} else if (ability.equalsIgnoreCase("JetBlaze")) {
+			if (!affectedEntities.contains(entity)) {
+				affectedEntities.add(entity);
+				GeneralMethods.damageEntity(player, entity, damage);
+				entity.setFireTicks((int) (fireticksJetBlaze * 20));
+			}
+		} else if (ability.equalsIgnoreCase("FireWheel")) {
+			if (!affectedEntities.contains(entity)) {
+				affectedEntities.add(entity);
+				GeneralMethods.damageEntity(player, entity, damage);
+				entity.setFireTicks((int) (fireticksFireWheel * 20));
+				this.remove();
+			}
+		}
+	}
+
+	public Player getPlayer() {
+		return player;
 	}
 
 	public void progress() {
@@ -259,7 +384,7 @@ public class FireCombo {
 			if (System.currentTimeMillis() - time > 5000) {
 				remove();
 				return;
-			} else if (FireJet.instances.containsKey(player)) {
+			} else if (FireJet.checkTemporaryImmunity(player)) {
 				if (firstTime) {
 					if (bplayer.isOnCooldown("JetBlast")
 							&& !AvatarState.isAvatarState(player)) {
@@ -301,7 +426,7 @@ public class FireCombo {
 			} else if (System.currentTimeMillis() - time > 5000) {
 				remove();
 				return;
-			} else if (FireJet.instances.containsKey(player)) {
+			} else if (FireJet.checkTemporaryImmunity(player)) {
 				direction = player.getVelocity().clone().multiply(-1);
 				player.setVelocity(player.getVelocity().normalize()
 						.multiply(speed));
@@ -389,139 +514,57 @@ public class FireCombo {
 			checkSafeZone();
 	}
 
-	public void checkSafeZone() {
-		if (currentLoc != null
-				&& GeneralMethods.isRegionProtectedFromBuild(player, "Blaze",
-						currentLoc))
-			remove();
+	@Override
+	public void reloadVariables() {
+		enabled = config.get()
+				.getBoolean("Abilities.Fire.FireCombo.Enabled");
+		fireticksFireWheel = config.get()
+				.getDouble("Abilities.Fire.FireCombo.FireWheel.FireTicks");
+		fireticksJetBlaze = config.get()
+				.getDouble("Abilities.Fire.FireCombo.JetBlaze.FireTicks");
+		FIRE_KICK_RANGE = config.get()
+				.getDouble("Abilities.Fire.FireCombo.FireKick.Range");
+		FIRE_KICK_DAMAGE = config.get()
+				.getDouble("Abilities.Fire.FireCombo.FireKick.Damage");
+		FIRE_SPIN_RANGE = config.get()
+				.getDouble("Abilities.Fire.FireCombo.FireSpin.Range");
+		FIRE_SPIN_DAMAGE = config.get()
+				.getDouble("Abilities.Fire.FireCombo.FireSpin.Damage");
+		FIRE_SPIN_KNOCKBACK = config.get()
+				.getDouble("Abilities.Fire.FireCombo.FireSpin.Knockback");
+		FIRE_WHEEL_DAMAGE = config.get()
+				.getDouble("Abilities.Fire.FireCombo.FireWheel.Damage");
+		FIRE_WHEEL_RANGE = config.get()
+				.getDouble("Abilities.Fire.FireCombo.FireWheel.Range");
+		FIRE_WHEEL_SPEED = config.get()
+				.getDouble("Abilities.Fire.FireCombo.FireWheel.Speed");
+		JET_BLAST_SPEED = config.get()
+				.getDouble("Abilities.Fire.FireCombo.JetBlast.Speed");
+		JET_BLAZE_SPEED = config.get()
+				.getDouble("Abilities.Fire.FireCombo.JetBlaze.Speed");
+		JET_BLAZE_DAMAGE = config.get()
+				.getDouble("Abilities.Fire.FireCombo.JetBlaze.Damage");
+
+		FIRE_KICK_COOLDOWN = config.get()
+				.getLong("Abilities.Fire.FireCombo.FireKick.Cooldown");
+		FIRE_SPIN_COOLDOWN = config.get()
+				.getLong("Abilities.Fire.FireCombo.FireSpin.Cooldown");
+		FIRE_WHEEL_COOLDOWN = config.get()
+				.getLong("Abilities.Fire.FireCombo.FireWheel.Cooldown");
+		JET_BLAST_COOLDOWN = config.get()
+				.getLong("Abilities.Fire.FireCombo.JetBlast.Cooldown");
+		JET_BLAZE_COOLDOWN = config.get()
+				.getLong("Abilities.Fire.FireCombo.JetBlaze.Cooldown");
 	}
 
-	public void collision(LivingEntity entity, Vector direction,
-			FireComboStream fstream) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze",
-				entity.getLocation()))
-			return;
-		entity.getLocation()
-				.getWorld()
-				.playSound(entity.getLocation(), Sound.VILLAGER_HIT, 0.3f, 0.3f);
-
-		if (ability.equalsIgnoreCase("FireKick")) {
-			GeneralMethods.damageEntity(player, entity, damage);
-			fstream.remove();
-		} else if (ability.equalsIgnoreCase("FireSpin")) {
-			double knockback = AvatarState.isAvatarState(player) ? FIRE_SPIN_KNOCKBACK + 0.5
-					: FIRE_SPIN_KNOCKBACK;
-			GeneralMethods.damageEntity(player, entity, damage);
-			entity.setVelocity(direction.normalize().multiply(knockback));
-			fstream.remove();
-		} else if (ability.equalsIgnoreCase("JetBlaze")) {
-			if (!affectedEntities.contains(entity)) {
-				affectedEntities.add(entity);
-				GeneralMethods.damageEntity(player, entity, damage);
-				entity.setFireTicks((int) (fireticksJetBlaze * 20));
-			}
-		} else if (ability.equalsIgnoreCase("FireWheel")) {
-			if (!affectedEntities.contains(entity)) {
-				affectedEntities.add(entity);
-				GeneralMethods.damageEntity(player, entity, damage);
-				entity.setFireTicks((int) (fireticksFireWheel * 20));
-				this.remove();
-			}
-		}
-	}
-
+	/**
+	 * Removes this instance of FireCombo, cleans up any blocks that are
+	 * remaining in totalBlocks, and cancels any remaining tasks.
+	 */
 	public void remove() {
-		/**
-		 * Removes this instance of FireCombo, cleans up any blocks that are
-		 * remaining in totalBlocks, and cancels any remaining tasks.
-		 */
 		instances.remove(this);
 		for (BukkitRunnable task : tasks)
 			task.cancel();
-	}
-
-	public static void progressAll() {
-		for (int i = instances.size() - 1; i >= 0; i--)
-			instances.get(i).progress();
-	}
-
-	public static void removeAll() {
-		for (int i = instances.size() - 1; i >= 0; i--) {
-			instances.get(i).remove();
-		}
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public static ArrayList<FireCombo> getFireCombo(Player player) {
-		/**
-		 * Returns all the FireCombos created by a specific player.
-		 */
-		ArrayList<FireCombo> list = new ArrayList<FireCombo>();
-		for (FireCombo lf : instances)
-			if (lf.player != null && lf.player == player)
-				list.add(lf);
-		return list;
-	}
-
-	public static ArrayList<FireCombo> getFireCombo(Player player,
-			ClickType type) {
-		/**
-		 * Returns all of the FireCombos created by a specific player but
-		 * filters the abilities based on shift or click.
-		 */
-		ArrayList<FireCombo> list = new ArrayList<FireCombo>();
-		for (FireCombo lf : instances)
-			if (lf.player != null && lf.player == player && lf.type != null
-					&& lf.type == type)
-				list.add(lf);
-		return list;
-	}
-
-	public static boolean removeAroundPoint(Player player, String ability,
-			Location loc, double radius) {
-		boolean removed = false;
-		for (int i = 0; i < instances.size(); i++) {
-			FireCombo combo = instances.get(i);
-			if (combo.getPlayer().equals(player))
-				continue;
-
-			if (ability.equalsIgnoreCase("FireKick")
-					&& combo.ability.equalsIgnoreCase("FireKick")) {
-				for (FireComboStream fs : combo.tasks) {
-					if (fs.getLocation() != null && fs.getLocation().getWorld() == loc.getWorld()
-							&& Math.abs(fs.getLocation().distance(loc)) <= radius) {
-						fs.remove();
-						removed = true;
-					}
-				}
-			}
-
-			else if (ability.equalsIgnoreCase("FireSpin")
-					&& combo.ability.equalsIgnoreCase("FireSpin")) {
-				for (FireComboStream fs : combo.tasks) {
-					if (fs.getLocation() != null
-							&& fs.getLocation().getWorld().equals(loc.getWorld())) {
-						if (Math.abs(fs.getLocation().distance(loc)) <= radius) {
-							fs.remove();
-							removed = true;
-						}
-					}
-				}
-			}
-
-			else if (ability.equalsIgnoreCase("FireWheel")
-					&& combo.ability.equalsIgnoreCase("FireWheel")) {
-				if (combo.currentLoc != null
-						&& Math.abs(combo.currentLoc.distance(loc)) <= radius) {
-					instances.remove(combo);
-					removed = true;
-				}
-			}
-		}
-		return removed;
 	}
 
 	public static class FireComboStream extends BukkitRunnable {
@@ -550,6 +593,27 @@ public class FireCombo {
 			this.initialLoc = loc.clone();
 			this.currentLoc = loc.clone();
 			this.distance = distance;
+		}
+
+		public void cancel() {
+			remove();
+		}
+
+		public Vector getDirection() {
+			return this.direction.clone();
+		}
+
+		public Location getLocation() {
+			return this.currentLoc;
+		}
+
+		public boolean isCancelled() {
+			return cancelled;
+		}
+
+		public void remove() {
+			super.cancel();
+			this.cancelled = true;
 		}
 
 		public void run() {
@@ -587,41 +651,8 @@ public class FireCombo {
 				remove();
 		}
 
-		public void cancel() {
-			remove();
-		}
-
-		public void remove() {
-			super.cancel();
-			this.cancelled = true;
-		}
-
-		public Location getLocation() {
-			return this.currentLoc;
-		}
-
-		public Vector getDirection() {
-			return this.direction.clone();
-		}
-
-		public void setSpread(float spread) {
-			this.spread = spread;
-		}
-
-		public void setUseNewParticles(boolean b) {
-			useNewParticles = b;
-		}
-
-		public void setDensity(int density) {
-			this.density = density;
-		}
-
-		public boolean isCancelled() {
-			return cancelled;
-		}
-
-		public void setParticleEffect(ParticleEffect effect) {
-			this.particleEffect = effect;
+		public void setCheckCollisionDelay(int delay) {
+			this.checkCollisionDelay = delay;
 		}
 
 		public void setCollides(boolean b) {
@@ -632,12 +663,24 @@ public class FireCombo {
 			this.collisionRadius = radius;
 		}
 
+		public void setDensity(int density) {
+			this.density = density;
+		}
+
+		public void setParticleEffect(ParticleEffect effect) {
+			this.particleEffect = effect;
+		}
+
 		public void setSinglePoint(boolean b) {
 			this.singlePoint = b;
 		}
 
-		public void setCheckCollisionDelay(int delay) {
-			this.checkCollisionDelay = delay;
+		public void setSpread(float spread) {
+			this.spread = spread;
+		}
+
+		public void setUseNewParticles(boolean b) {
+			useNewParticles = b;
 		}
 	}
 

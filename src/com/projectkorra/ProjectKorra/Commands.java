@@ -27,7 +27,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
 import com.projectkorra.ProjectKorra.CustomEvents.PlayerChangeElementEvent;
@@ -1032,8 +1032,8 @@ public class Commands {
 
 						int slot = 1;
 						for (int i : oa) {
-							if (StockAbilities.getAbility(i) != null) {
-								abilities.put(slot, StockAbilities.getAbility(i).toString());
+							if (StockAbility.getAbility(i) != null) {
+								abilities.put(slot, StockAbility.getAbility(i).toString());
 								slot++;
 							} else {
 								abilities.put(slot, null);

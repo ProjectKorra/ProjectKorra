@@ -77,7 +77,7 @@ public class AvatarState {
 		if (player.isDead() || !player.isOnline()) {
 			instances.remove(player);
 		}
-		if (!GeneralMethods.canBend(player.getName(), StockAbilities.AvatarState.name())) {
+		if (!GeneralMethods.canBend(player.getName(), StockAbility.AvatarState.name())) {
 			instances.remove(player);
 			if(player != null){
 				if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {

@@ -11,12 +11,12 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
-public class AirBubble extends BaseAbility {
+public class AirBubble extends CoreAbility {
 
 	private static double DEFAULT_AIR_RADIUS = config.get().getDouble("Abilities.Air.AirBubble.Radius");
 	private static double DEFAULT_WATER_RADIUS = config.get().getDouble("Abilities.Water.WaterBubble.Radius");
@@ -36,8 +36,8 @@ public class AirBubble extends BaseAbility {
 	}
 
 	public static boolean canFlowTo(Block block) {
-		for (Object uuid : getInstance(StockAbilities.AirBubble).keySet()) {
-			if (((AirBubble) getInstance(StockAbilities.AirBubble).get(uuid)).blockInBubble(block)) {
+		for (Integer id : getInstances(StockAbility.AirBubble).keySet()) {
+			if (((AirBubble) getInstances(StockAbility.AirBubble).get(id)).blockInBubble(block)) {
 				return false;
 			}
 		}
@@ -54,14 +54,14 @@ public class AirBubble extends BaseAbility {
 		for (Player player : server.getOnlinePlayers()) {
 			if (GeneralMethods.getBoundAbility(player) != null) {
 				if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble") || GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble")) {
-					if (!getInstance(StockAbilities.AirBubble).containsKey(player.getUniqueId()) && player.isSneaking()) {
+					if (!containsPlayer(player, AirBubble.class) && player.isSneaking()) {
 						new AirBubble(player);
 					}
 				}
 			}
 		}
 
-		BaseAbility.progressAll(StockAbilities.AirBubble);
+		CoreAbility.progressAll(StockAbility.AirBubble);
 	}
 
 	public boolean blockInBubble(Block block) {
@@ -91,8 +91,8 @@ public class AirBubble extends BaseAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirBubble;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirBubble;
 	}
 
 	@Override

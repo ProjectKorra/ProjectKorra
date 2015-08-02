@@ -2,6 +2,9 @@ package com.projectkorra.ProjectKorra.Ability;
 
 import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 
+/**
+ * An interface representing an ability that 
+ */
 public interface Ability extends ConfigLoadable {
 	
 	/**

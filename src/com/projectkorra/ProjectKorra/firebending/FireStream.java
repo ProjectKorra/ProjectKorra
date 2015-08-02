@@ -11,23 +11,22 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AddonAbility;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
 import com.projectkorra.ProjectKorra.waterbending.Plantbending;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
-public class FireStream {
+public class FireStream extends AddonAbility {
 
-	public static ConcurrentHashMap<Integer, FireStream> instances = new ConcurrentHashMap<Integer, FireStream>();
 	public static ConcurrentHashMap<Block, Player> ignitedblocks = new ConcurrentHashMap<Block, Player>();
 	public static ConcurrentHashMap<Block, Long> ignitedtimes = new ConcurrentHashMap<Block, Long>();
 	public static ConcurrentHashMap<LivingEntity, Player> ignitedentities = new ConcurrentHashMap<LivingEntity, Player>();
 
-	static final long soonesttime = ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown");
+	static long soonesttime = config.get().getLong("Properties.GlobalCooldown");
 
 	public static int firedamage = 3;
 	public static int tickdamage = 2;
 
-	private static int ID = Integer.MIN_VALUE;
 	private static double speed = 15;
 	private static long interval = (long) (1000. / speed);
 	private static long dissipateAfter = 400;
@@ -36,7 +35,6 @@ public class FireStream {
 	private Location origin;
 	private Location location;
 	private Vector direction;
-	private int id;
 	private long time;
 	private double range;
 
@@ -49,58 +47,28 @@ public class FireStream {
 		this.direction.setY(0);
 		this.direction = this.direction.clone().normalize();
 		this.location = this.location.clone().add(this.direction);
-		id = ID;
-		if (ID >= Integer.MAX_VALUE) {
-			ID = Integer.MIN_VALUE;
-		}
-		ID++;
 		time = System.currentTimeMillis();
-		instances.put(id, this);
+		//instances.put(id, this);
+		putInstance(player, this);
 	}
 
-	public static void progressAll() {
-		for (int ID : instances.keySet()) {
-			instances.get(ID).progress();
-		}
-	}
-	
-	private boolean progress() {
-		if (System.currentTimeMillis() - time >= interval) {
-			location = location.clone().add(direction);
-			time = System.currentTimeMillis();
-			if (location.distance(origin) > range) {
-				remove();
-				return false;
+	public static void dissipateAll() {
+		if (dissipateAfter != 0)
+			for (Block block : ignitedtimes.keySet()) {
+				if (block.getType() != Material.FIRE) {
+					remove(block);
+				} else {
+					long time = ignitedtimes.get(block);
+					if (System.currentTimeMillis() > time + dissipateAfter) {
+						block.setType(Material.AIR);
+						remove(block);
+					}
+				}
 			}
-			Block block = location.getBlock();
-			if (isIgnitable(player, block)) {
-				ignite(block);
-				return true;
-			} else if (isIgnitable(player, block.getRelative(BlockFace.DOWN))) {
-				ignite(block.getRelative(BlockFace.DOWN));
-				location = block.getRelative(BlockFace.DOWN).getLocation();
-				return true;
-			} else if (isIgnitable(player, block.getRelative(BlockFace.UP))) {
-				ignite(block.getRelative(BlockFace.UP));
-				location = block.getRelative(BlockFace.UP).getLocation();
-				return true;
-			} else {
-				remove();
-				return false;
-			}
-
-		}
-		return false;
 	}
 
-	private void ignite(Block block) {
-		if (WaterMethods.isPlant(block)) {
-			new Plantbending(block);
-		}
-
-		block.setType(Material.FIRE);
-		ignitedblocks.put(block, this.player);
-		ignitedtimes.put(block, System.currentTimeMillis());
+	public static String getDescription() {
+		return "This ability no longer exists.";
 	}
 
 	public static boolean isIgnitable(Player player, Block block) {
@@ -148,38 +116,6 @@ public class FireStream {
 		return false;
 	}
 
-	private void remove() {
-		instances.remove(id);
-	}
-
-	public static void removeAll() {
-		for (Block block : ignitedblocks.keySet())
-			remove(block);
-	}
-
-	public static void dissipateAll() {
-		if (dissipateAfter != 0)
-			for (Block block : ignitedtimes.keySet()) {
-				if (block.getType() != Material.FIRE) {
-					remove(block);
-				} else {
-					long time = ignitedtimes.get(block);
-					if (System.currentTimeMillis() > time + dissipateAfter) {
-						block.setType(Material.AIR);
-						remove(block);
-					}
-				}
-			}
-	}
-
-	public static boolean progress(int ID) {
-		return instances.get(ID).progress();
-	}
-
-	public static String getDescription() {
-		return "This ability no longer exists.";
-	}
-
 	public static void remove(Block block) {
 		if (ignitedblocks.containsKey(block)) {
 			ignitedblocks.remove(block);
@@ -187,18 +123,27 @@ public class FireStream {
 		if (ignitedtimes.containsKey(block)) {
 			ignitedtimes.remove(block);
 		}
-
+	}
+	
+	public static void removeAll(Class<? extends CoreAbility> abilityClass) {
+		for (Block block : ignitedblocks.keySet())
+			remove(block);
+		AddonAbility.removeAll(abilityClass);
 	}
 
 	public static void removeAroundPoint(Location location, double radius) {
-
-		for (int id : instances.keySet()) {
-			FireStream stream = instances.get(id);
+		for (int id : getInstances(FireStream.class).keySet()) {
+			FireStream stream = (FireStream) getInstances(FireStream.class).get(id);
 			if (stream.location.getWorld().equals(location.getWorld()))
 				if (stream.location.distance(location) <= radius)
-					instances.remove(id);
+					stream.remove();
 		}
 
+	}
+
+	@Override
+	public InstanceType getInstanceType() {
+		return InstanceType.MULTIPLE;
 	}
 
 	public Player getPlayer() {
@@ -209,6 +154,51 @@ public class FireStream {
 		return range;
 	}
 
+	private void ignite(Block block) {
+		if (WaterMethods.isPlant(block)) {
+			new Plantbending(block);
+		}
+
+		block.setType(Material.FIRE);
+		ignitedblocks.put(block, this.player);
+		ignitedtimes.put(block, System.currentTimeMillis());
+	}
+
+	@Override
+	public boolean progress() {
+		if (System.currentTimeMillis() - time >= interval) {
+			location = location.clone().add(direction);
+			time = System.currentTimeMillis();
+			if (location.distance(origin) > range) {
+				remove();
+				return false;
+			}
+			Block block = location.getBlock();
+			if (isIgnitable(player, block)) {
+				ignite(block);
+				return true;
+			} else if (isIgnitable(player, block.getRelative(BlockFace.DOWN))) {
+				ignite(block.getRelative(BlockFace.DOWN));
+				location = block.getRelative(BlockFace.DOWN).getLocation();
+				return true;
+			} else if (isIgnitable(player, block.getRelative(BlockFace.UP))) {
+				ignite(block.getRelative(BlockFace.UP));
+				location = block.getRelative(BlockFace.UP).getLocation();
+				return true;
+			} else {
+				remove();
+				return false;
+			}
+
+		}
+		return false;
+	}
+
+	@Override
+	public void reloadVariables() {
+		soonesttime = config.get().getLong("Properties.GlobalCooldown");
+	}
+	
 	public void setRange(double range) {
 		this.range = range;
 	}

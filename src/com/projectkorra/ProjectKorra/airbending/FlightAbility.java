@@ -6,10 +6,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
-public class FlightAbility extends BaseAbility {
+public class FlightAbility extends CoreAbility {
 	
 	private static ConcurrentHashMap<String, Integer> hits = new ConcurrentHashMap<String, Integer>();
 	private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<String, Boolean>();
@@ -40,7 +40,7 @@ public class FlightAbility extends BaseAbility {
 	}
 	
 	public static boolean contains(Player player) {
-		return getInstance(StockAbilities.Flight).containsKey(player.getUniqueId());
+		return containsPlayer(player, FlightAbility.class);
 	}
 	
 	public static boolean isHovering(Player player) {
@@ -49,11 +49,11 @@ public class FlightAbility extends BaseAbility {
 
 	public static void remove(Player player) {
 		if (contains(player))
-			getInstance(StockAbilities.Flight).get(player.getUniqueId()).remove();
+			getAbilityFromPlayer(player, FlightAbility.class).remove();
 	}
 	
 	public static void removeAll() {
-		BaseAbility.removeAll(StockAbilities.Flight);
+		CoreAbility.removeAll(StockAbility.Flight);
 		hits.clear();
 		hovering.clear();
 	}
@@ -74,8 +74,8 @@ public class FlightAbility extends BaseAbility {
 	}
 	
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.Flight;
+	public StockAbility getStockAbility() {
+		return StockAbility.Flight;
 	}
 	
 	@Override

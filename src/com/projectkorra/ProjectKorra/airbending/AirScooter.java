@@ -1,9 +1,7 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -13,10 +11,10 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
-public class AirScooter extends BaseAbility {
+public class AirScooter extends CoreAbility {
 
 	private static double speed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
 	private static final long interval = 100;
@@ -29,8 +27,7 @@ public class AirScooter extends BaseAbility {
 
 	public AirScooter(Player player) {
 		/* Initial Check */
-		if (getInstance(StockAbilities.AirScooter).containsKey(player.getUniqueId())) {
-			getInstance(StockAbilities.AirScooter).get(player.getUniqueId()).remove();
+		if (check(player)) {
 			return;
 		}
 		if (!player.isSprinting()
@@ -57,16 +54,25 @@ public class AirScooter extends BaseAbility {
 		progress();
 	}
 
-	public static void check(Player player) {
-		if (getInstance(StockAbilities.AirScooter).containsKey(player.getUniqueId())) {
-			getInstance(StockAbilities.AirScooter).get(player.getUniqueId()).remove();
+	/**
+	 * Checks if player has an instance already and removes
+	 * if they do.
+	 * 
+	 * @param player The player to check
+	 * @return false If player doesn't have an instance
+	 */
+	public static boolean check(Player player) {
+		if (containsPlayer(player, AirScooter.class)) {
+			getAbilityFromPlayer(player, AirScooter.class).remove();
+			return true;
 		}
+		return false;
 	}
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (Object uuid : getInstance(StockAbilities.AirScooter).keySet()) {
-			players.add(Bukkit.getPlayer((UUID) uuid));
+		for (Integer id : getInstances(StockAbility.AirScooter).keySet()) {
+			players.add(getInstances(StockAbility.AirScooter).get(id).getPlayer());
 		}
 		return players;
 	}
@@ -91,8 +97,8 @@ public class AirScooter extends BaseAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirScooter;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirScooter;
 	}
 
 	@Override

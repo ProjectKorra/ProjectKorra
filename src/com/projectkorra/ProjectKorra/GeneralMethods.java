@@ -81,7 +81,7 @@ import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
 import com.projectkorra.ProjectKorra.ComboManager.AbilityInformation;
 import com.projectkorra.ProjectKorra.Ability.AbilityModule;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
 import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleManager;
@@ -1566,7 +1566,7 @@ public class GeneralMethods {
 		writeToDebug("Ability Information");
 		writeToDebug("====================");
 		for (String ability: AbilityModuleManager.abilities) {
-			if (StockAbilities.isStockAbility(ability) && !GeneralMethods.isDisabledStockAbility(ability)) {
+			if (StockAbility.isStockAbility(ability) && !GeneralMethods.isDisabledStockAbility(ability)) {
 				writeToDebug(ability + " - STOCK ABILITY");
 			} else {
 				writeToDebug(ability + " - UNOFFICIAL ABILITY");

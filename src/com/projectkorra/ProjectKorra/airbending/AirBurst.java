@@ -12,10 +12,10 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
-public class AirBurst extends BaseAbility {
+public class AirBurst extends CoreAbility {
 	
 	private static double PARTICLES_PERCENTAGE = 50;
 	
@@ -29,7 +29,7 @@ public class AirBurst extends BaseAbility {
 	private long starttime;
 	private long chargetime = config.get().getLong("Abilities.Air.AirBurst.ChargeTime");
 	private boolean charged = false;
-	public ArrayList<AirBlast> blasts = new ArrayList<AirBlast>();
+	private ArrayList<AirBlast> blasts = new ArrayList<AirBlast>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 	
 	public AirBurst() {
@@ -41,7 +41,7 @@ public class AirBurst extends BaseAbility {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("AirBurst")) 
 			return;
-		if (getInstance(StockAbilities.AirBurst).containsKey(player.getUniqueId()))
+		if (containsPlayer(player, AirBurst.class))
 			return;
 		/* End Initial Checks */
 		reloadVariables();
@@ -54,8 +54,9 @@ public class AirBurst extends BaseAbility {
 	}
 
 	public static void coneBurst(Player player) {
-		if (getInstance(StockAbilities.AirBurst).containsKey(player.getUniqueId()))
-			((AirBurst) getInstance(StockAbilities.AirBurst).get(player.getUniqueId())).coneBurst();
+		if (containsPlayer(player, AirBurst.class)) {
+			((AirBurst) getAbilityFromPlayer(player, AirBurst.class)).coneBurst();;
+		}
 	}
 
 	public static void fallBurst(Player player) {
@@ -68,7 +69,7 @@ public class AirBurst extends BaseAbility {
 		if (GeneralMethods.getBoundAbility(player) == null) {
 			return;
 		}
-		if (getInstance(StockAbilities.AirBurst).containsKey(player.getUniqueId())) {
+		if (containsPlayer(player, AirBurst.class)) {
 			return;
 		}
 		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBurst")) {
@@ -126,8 +127,8 @@ public class AirBurst extends BaseAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirBurst;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirBurst;
 	}
 
 	public void handleSmoothParticles() {

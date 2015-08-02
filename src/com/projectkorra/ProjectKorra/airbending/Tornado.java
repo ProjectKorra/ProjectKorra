@@ -2,10 +2,8 @@ package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -15,10 +13,10 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
-public class Tornado extends BaseAbility {
+public class Tornado extends CoreAbility {
 	
 	private static double MAX_HEIGHT = config.get().getDouble("Abilities.Air.Tornado.Height");
 	private static double PLAYER_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
@@ -67,18 +65,12 @@ public class Tornado extends BaseAbility {
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (Object uuid : getInstance(StockAbilities.Tornado).keySet()) {
-			players.add(Bukkit.getPlayer((UUID) uuid));
+		for (Integer id : getInstances(StockAbility.Tornado).keySet()) {
+			players.add(getInstances(StockAbility.Tornado).get(id).getPlayer());
 		}
 		return players;
 	}
 	
-	public static void progressAll() {
-		for (Object uuid : getInstance(StockAbilities.Tornado).keySet()) {
-			((Tornado) getInstance(StockAbilities.Tornado).get(uuid)).progress();
-		}
-	}
-
 	public double getMaxheight() {
 		return maxheight;
 	}
@@ -104,8 +96,8 @@ public class Tornado extends BaseAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.Tornado;
+	public StockAbility getStockAbility() {
+		return StockAbility.Tornado;
 	}
 
 	@Override

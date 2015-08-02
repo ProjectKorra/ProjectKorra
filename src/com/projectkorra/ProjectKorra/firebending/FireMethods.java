@@ -134,16 +134,16 @@ public class FireMethods {
 	}
 	
 	public static void stopBending() {
-		FireStream.removeAll();
-		Fireball.removeAll();
-		WallOfFire.instances.clear();
-		Lightning.instances.clear();
-		FireShield.removeAll();
-		FireBlast.removeAll();
-		FireBurst.removeAll();
-		FireJet.instances.clear();
-		Cook.removeAll();
-		Illumination.removeAll();
+		FireStream.removeAll(FireStream.class);
+		Fireball.removeAll(Fireball.class);
+		WallOfFire.removeAll(WallOfFire.class);
+		Lightning.removeAll(Lightning.class);
+		FireShield.removeAll(FireShield.class);
+		FireBlast.removeAll(FireBlast.class);
+		FireBurst.removeAll(FireBurst.class);
+		FireJet.removeAll(FireJet.class);
+		Cook.removeAll(Cook.class);
+		Illumination.removeAll(Illumination.class);
 		FireCombo.removeAll();
 	}
 }

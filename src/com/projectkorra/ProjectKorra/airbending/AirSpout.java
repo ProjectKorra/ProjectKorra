@@ -1,9 +1,7 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -11,10 +9,10 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.BaseAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
-public class AirSpout extends BaseAbility {
+public class AirSpout extends CoreAbility {
 
 	private static double HEIGHT = config.get().getDouble("Abilities.Air.AirSpout.Height");
 	private static final long interval = 100;
@@ -26,8 +24,8 @@ public class AirSpout extends BaseAbility {
 
 	public AirSpout(Player player) {
 		/* Initial Check */
-		if (getInstance(StockAbilities.AirSpout).containsKey(player.getUniqueId())) {
-			getInstance(StockAbilities.AirSpout).get(player.getUniqueId()).remove();
+		if (containsPlayer(player, AirSpout.class)) {
+			getAbilityFromPlayer(player, AirSpout.class).remove();
 			return;
 		}
 		/* End Initial Check */
@@ -42,8 +40,8 @@ public class AirSpout extends BaseAbility {
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (Object uuid: getInstance(StockAbilities.AirSpout).keySet()) {
-			players.add(Bukkit.getPlayer((UUID) uuid));
+		for (Integer id: getInstances(StockAbility.AirSpout).keySet()) {
+			players.add(getInstances(StockAbility.AirSpout).get(id).getPlayer());
 		}
 		return players;
 	}
@@ -51,8 +49,8 @@ public class AirSpout extends BaseAbility {
 	public static boolean removeSpouts(Location loc0, double radius,
 			Player sourceplayer) {
 		boolean removed = false;
-		for (Object uuid : getInstance(StockAbilities.AirSpout).keySet()) {
-			Player player = Bukkit.getPlayer((UUID) uuid);
+		for (Integer id : getInstances(StockAbility.AirSpout).keySet()) {
+			Player player = getInstances(StockAbility.AirSpout).get(id).getPlayer();
 			if (!player.equals(sourceplayer)) {
 				Location loc1 = player.getLocation().getBlock().getLocation();
 				loc0 = loc0.getBlock().getLocation();
@@ -63,7 +61,7 @@ public class AirSpout extends BaseAbility {
 				double distance = Math.sqrt(dx * dx + dz * dz);
 
 				if (distance <= radius && dy > 0 && dy < HEIGHT){
-					getInstance(StockAbilities.AirSpout).get(uuid).remove();
+					getInstances(StockAbility.AirSpout).get(id).remove();
 					removed = true;
 				}
 			}
@@ -97,8 +95,8 @@ public class AirSpout extends BaseAbility {
 	}
 
 	@Override
-	public StockAbilities getStockAbility() {
-		return StockAbilities.AirSpout;
+	public StockAbility getStockAbility() {
+		return StockAbility.AirSpout;
 	}
 
 	@Override

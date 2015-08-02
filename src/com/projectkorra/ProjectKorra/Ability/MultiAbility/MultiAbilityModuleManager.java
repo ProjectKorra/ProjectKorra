@@ -8,7 +8,7 @@ import com.projectkorra.ProjectKorra.MultiAbilityManager;
 import com.projectkorra.ProjectKorra.MultiAbilityManager.MultiAbility;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Utilities.AbilityLoader;
 
 public class MultiAbilityModuleManager 
@@ -36,7 +36,7 @@ public class MultiAbilityModuleManager
 		{
 			mam.onThisLoad();
 			AbilityModuleManager.abilities.add(mam.getName());
-			for (StockAbilities a: StockAbilities.values()) {
+			for (StockAbility a: StockAbility.values()) {
 				if (a.name().equalsIgnoreCase(mam.getName())){
 					AbilityModuleManager.disabledStockAbilities.add(a.name());
 				}

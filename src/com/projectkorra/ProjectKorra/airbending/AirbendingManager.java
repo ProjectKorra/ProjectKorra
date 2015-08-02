@@ -3,7 +3,6 @@ package com.projectkorra.ProjectKorra.airbending;
 import org.bukkit.Bukkit;
 
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.StockAbilities;
 
 public class AirbendingManager implements Runnable {
 
@@ -15,19 +14,19 @@ public class AirbendingManager implements Runnable {
 	
 	@Override
 	public void run() {
-		AirBlast.progressAll();
+		AirBlast.progressAll(AirBlast.class);
 		AirPassive.handlePassive(Bukkit.getServer());
-		AirBurst.progressAll(StockAbilities.AirBurst);
-		AirScooter.progressAll(StockAbilities.AirScooter);
-		Suffocate.progressAll(StockAbilities.Suffocate);
-		AirSpout.progressAll(StockAbilities.AirSpout);
+		AirBurst.progressAll(AirBurst.class);
+		AirScooter.progressAll(AirScooter.class);
+		Suffocate.progressAll(Suffocate.class);
+		AirSpout.progressAll(AirSpout.class);
 		AirBubble.handleBubbles(Bukkit.getServer());
-		AirSuction.progressAll();
-		AirSwipe.progressAll(StockAbilities.AirSwipe);
-		Tornado.progressAll();
-		AirShield.progressAll(StockAbilities.AirShield);
+		AirSuction.progressAll(AirSuction.class);
+		AirSwipe.progressAll(AirSwipe.class);
+		Tornado.progressAll(Tornado.class);
+		AirShield.progressAll(AirShield.class);
 		AirCombo.progressAll();
-		FlightAbility.progressAll(StockAbilities.Flight);
+		FlightAbility.progressAll(FlightAbility.class);
 	}
 
 }
