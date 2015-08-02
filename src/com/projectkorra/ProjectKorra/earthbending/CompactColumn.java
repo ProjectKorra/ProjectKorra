@@ -39,13 +39,11 @@ public class CompactColumn {
 		if (bPlayer.isOnCooldown("Collapse")) return;
 
 		block = BlockSource.getEarthSourceBlock(player, range, ClickType.LEFT_CLICK);
-		if (block == null)
-			return;
+		if (block == null) return;
 		origin = block.getLocation();
 		location = origin.clone();
 		this.player = player;
-		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction
-				.clone().multiply(-1), height);
+		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
 
 		loadAffectedBlocks();
 
@@ -71,8 +69,7 @@ public class CompactColumn {
 		// Methods.verbose(block);
 		// Methods.verbose(origin);
 		location = origin.clone();
-		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction
-				.clone().multiply(-1), height);
+		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
 
 		loadAffectedBlocks();
 
@@ -96,11 +93,9 @@ public class CompactColumn {
 		affectedblocks.clear();
 		Block thisblock;
 		for (int i = 0; i <= distance; i++) {
-			thisblock = block.getWorld().getBlockAt(
-					location.clone().add(direction.clone().multiply(-i)));
+			thisblock = block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(-i)));
 			affectedblocks.put(thisblock, thisblock);
-			if (EarthColumn.blockInAllAffectedBlocks(thisblock))
-				EarthColumn.revertBlock(thisblock);
+			if (EarthColumn.blockInAllAffectedBlocks(thisblock)) EarthColumn.revertBlock(thisblock);
 		}
 	}
 
@@ -113,8 +108,7 @@ public class CompactColumn {
 
 	public static boolean blockInAllAffectedBlocks(Block block) {
 		for (int ID : instances.keySet()) {
-			if (instances.get(ID).blockInAffectedBlocks(block))
-				return true;
+			if (instances.get(ID).blockInAffectedBlocks(block)) return true;
 		}
 		return false;
 	}
@@ -129,8 +123,7 @@ public class CompactColumn {
 
 	private boolean canInstantiate() {
 		for (Block block : affectedblocks.keySet()) {
-			if (blockInAllAffectedBlocks(block)
-					|| alreadydoneblocks.containsKey(block)) {
+			if (blockInAllAffectedBlocks(block) || alreadydoneblocks.containsKey(block)) {
 				return false;
 			}
 		}
@@ -142,7 +135,7 @@ public class CompactColumn {
 			instances.get(ID).progress();
 		}
 	}
-	
+
 	private boolean progress() {
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();

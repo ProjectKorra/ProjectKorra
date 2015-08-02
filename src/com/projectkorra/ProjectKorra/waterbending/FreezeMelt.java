@@ -19,16 +19,14 @@ public class FreezeMelt {
 
 	public static final int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Range");
 	public static final int defaultradius = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Radius");
-	
+
 	public static final int OVERLOADING_LIMIT = 200;
 	public static boolean overloading = false;
 	public static int overloadCounter = 0;
-	
 
 	public FreezeMelt(Player player) {
-		if(!WaterMethods.canIcebend(player))
-			return;
-		
+		if (!WaterMethods.canIcebend(player)) return;
+
 		int range = (int) WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		int radius = (int) WaterMethods.waterbendingNightAugment(defaultradius, player.getWorld());
 		if (AvatarState.isAvatarState(player)) {
@@ -46,20 +44,15 @@ public class FreezeMelt {
 	}
 
 	private static boolean isFreezable(Player player, Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
-			return false;
-		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER)
-			if (WaterManipulation.canPhysicsChange(block) && !TempBlock.isTempBlock(block))
-				return true;
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) return false;
+		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) if (WaterManipulation.canPhysicsChange(block) && !TempBlock.isTempBlock(block)) return true;
 		return false;
 	}
 
 	@SuppressWarnings("deprecation")
 	static void freeze(Player player, Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
-			return;
-		if (TempBlock.isTempBlock(block))
-			return;
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) return;
+		if (TempBlock.isTempBlock(block)) return;
 		byte data = block.getData();
 		block.setType(Material.ICE);
 		WaterMethods.playIcebendingSound(block.getLocation());
@@ -80,30 +73,25 @@ public class FreezeMelt {
 		int size = frozenblocks.keySet().size();
 		overloadCounter++;
 		overloadCounter %= 10;
-		if (overloadCounter == 0)
-			overloading = size > OVERLOADING_LIMIT ? true : false;
-		
+		if (overloadCounter == 0) overloading = size > OVERLOADING_LIMIT ? true : false;
+
 		// We only want to run this method once every 10 ticks if we are overloading.
-		if (overloading && overloadCounter != 0)
-			return;
-			
+		if (overloading && overloadCounter != 0) return;
+
 		if (overloading) {
 			int i = 0;
 			for (Block block : frozenblocks.keySet()) {
 				final Block fblock = block;
 				new BukkitRunnable() {
 					public void run() {
-						if (canThaw(fblock))
-							thaw(fblock);
+						if (canThaw(fblock)) thaw(fblock);
 					}
 				}.runTaskLater(ProjectKorra.plugin, i % 10);
 				i++;
 			}
-		}
-		else {
+		} else {
 			for (Block block : frozenblocks.keySet()) {
-				if (canThaw(block))
-					thaw(block);
+				if (canThaw(block)) thaw(block);
 			}
 		}
 	}
@@ -115,21 +103,18 @@ public class FreezeMelt {
 					return true;
 				}
 				if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("OctopusForm")) {
-					if (block.getLocation().distance(player.getLocation()) <= OctopusForm.RADIUS + 2)
-						return false;
+					if (block.getLocation().distance(player.getLocation()) <= OctopusForm.RADIUS + 2) return false;
 				}
 				if (GeneralMethods.canBend(player.getName(), "PhaseChange")) {
 					double range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 					if (AvatarState.isAvatarState(player)) {
 						range = AvatarState.getValue(range);
 					}
-					if (block.getLocation().distance(player.getLocation()) <= range)
-						return false;
+					if (block.getLocation().distance(player.getLocation()) <= range) return false;
 				}
 			}
 		}
-		if (!WaterManipulation.canPhysicsChange(block))
-			return false;
+		if (!WaterManipulation.canPhysicsChange(block)) return false;
 		return true;
 	}
 
@@ -150,15 +135,7 @@ public class FreezeMelt {
 	}
 
 	public static String getDescription() {
-		return "To use, simply left-click. "
-				+ "Any water you are looking at within range will instantly freeze over into solid ice. "
-				+ "Provided you stay within range of the ice and do not unbind PhaseChange, "
-				+ "that ice will not thaw. If, however, you do either of those the ice will instantly thaw. "
-				+ "If you sneak (default: shift), anything around where you are looking at will instantly melt. "
-				+ "Since this is a more favorable state for these things, they will never re-freeze unless they "
-				+ "would otherwise by nature or some other bending ability. Additionally, if you tap sneak while "
-				+ "targetting water with PhaseChange, it will evaporate water around that block that is above "
-				+ "sea level. ";
+		return "To use, simply left-click. " + "Any water you are looking at within range will instantly freeze over into solid ice. " + "Provided you stay within range of the ice and do not unbind PhaseChange, " + "that ice will not thaw. If, however, you do either of those the ice will instantly thaw. " + "If you sneak (default: shift), anything around where you are looking at will instantly melt. " + "Since this is a more favorable state for these things, they will never re-freeze unless they " + "would otherwise by nature or some other bending ability. Additionally, if you tap sneak while " + "targetting water with PhaseChange, it will evaporate water around that block that is above " + "sea level. ";
 	}
 
 }

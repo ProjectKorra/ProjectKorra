@@ -16,8 +16,7 @@ public class Enflamed {
 	private static final long buffer = 30;
 
 	public Enflamed(Entity entity, Player source) {
-		if (entity.getEntityId() == source.getEntityId())
-			return;
+		if (entity.getEntityId() == source.getEntityId()) return;
 		if (instances.containsKey(entity)) {
 			instances.replace(entity, source);
 		} else {
@@ -51,8 +50,7 @@ public class Enflamed {
 			LivingEntity Lentity = (LivingEntity) entity;
 			Player source = instances.get(entity);
 			Lentity.damage(damage, source);
-			if (entity.getFireTicks() > max)
-				entity.setFireTicks(max);
+			if (entity.getFireTicks() > max) entity.setFireTicks(max);
 		}
 	}
 

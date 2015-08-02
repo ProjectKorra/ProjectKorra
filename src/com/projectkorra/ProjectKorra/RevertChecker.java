@@ -17,7 +17,7 @@ import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 public class RevertChecker implements Runnable {
 
 	private ProjectKorra plugin;
-	
+
 	private static final boolean safeRevert = ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.SafeRevert");
 	public static ConcurrentHashMap<Block, Block> earthRevertQueue = new ConcurrentHashMap<Block, Block>();
 	static ConcurrentHashMap<Integer, Integer> airRevertQueue = new ConcurrentHashMap<Integer, Integer>();
@@ -25,13 +25,12 @@ public class RevertChecker implements Runnable {
 	// static ConcurrentHashMap<Block, Material> movedEarthQueue = new
 	// ConcurrentHashMap<Block, Material>();
 
-
 	private long time;
-	
+
 	public RevertChecker(ProjectKorra bending) {
 		plugin = bending;
 	}
-	
+
 	public static void revertAirBlocks() {
 		for (int ID : airRevertQueue.keySet()) {
 			EarthMethods.revertAirBlock(ID);
@@ -47,6 +46,7 @@ public class RevertChecker implements Runnable {
 	}
 
 	private Future<ArrayList<Chunk>> returnFuture;
+
 	// void addToMovedEarthQueue(Block block, Material type) {
 	// if (!movedEarthQueue.containsKey(block))
 	// movedEarthQueue.put(block, type);
@@ -54,14 +54,12 @@ public class RevertChecker implements Runnable {
 	// }
 
 	private void addToAirRevertQueue(int i) {
-		if (!airRevertQueue.containsKey(i))
-			airRevertQueue.put(i, i);
+		if (!airRevertQueue.containsKey(i)) airRevertQueue.put(i, i);
 
 	}
 
 	private void addToRevertQueue(Block block) {
-		if (!earthRevertQueue.containsKey(block))
-			earthRevertQueue.put(block, block);
+		if (!earthRevertQueue.containsKey(block)) earthRevertQueue.put(block, block);
 	}
 
 	public void run() {
@@ -70,23 +68,17 @@ public class RevertChecker implements Runnable {
 		if (plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
 
 			try {
-				returnFuture = plugin
-						.getServer()
-						.getScheduler()
-						.callSyncMethod(plugin,
-								new getOccupiedChunks(plugin.getServer()));
+				returnFuture = plugin.getServer().getScheduler().callSyncMethod(plugin, new getOccupiedChunks(plugin.getServer()));
 				ArrayList<Chunk> chunks = returnFuture.get();
 
 				Map<Block, Information> earth = new HashMap<Block, Information>();
 				earth.putAll(EarthMethods.movedearth);
 
 				for (Block block : earth.keySet()) {
-					if (earthRevertQueue.containsKey(block))
-						continue;
+					if (earthRevertQueue.containsKey(block)) continue;
 					boolean remove = true;
 					Information info = earth.get(block);
-					if (time < info.getTime() + ProjectKorra.plugin.getConfig().getLong("Properties.Earth.RevertCheckTime")
-							|| (chunks.contains(block.getChunk()) && safeRevert)) {
+					if (time < info.getTime() + ProjectKorra.plugin.getConfig().getLong("Properties.Earth.RevertCheckTime") || (chunks.contains(block.getChunk()) && safeRevert)) {
 						remove = false;
 					}
 					if (remove) {
@@ -98,25 +90,24 @@ public class RevertChecker implements Runnable {
 				air.putAll(EarthMethods.tempair);
 
 				for (Integer i : air.keySet()) {
-					if (airRevertQueue.containsKey(i))
-						continue;
+					if (airRevertQueue.containsKey(i)) continue;
 					boolean remove = true;
 					Information info = air.get(i);
 					Block block = info.getBlock();
-					if (time < info.getTime() + ProjectKorra.plugin.getConfig().getLong("Properties.Earth.RevertCheckTime")
-							|| (chunks.contains(block.getChunk()) && safeRevert)) {
+					if (time < info.getTime() + ProjectKorra.plugin.getConfig().getLong("Properties.Earth.RevertCheckTime") || (chunks.contains(block.getChunk()) && safeRevert)) {
 						remove = false;
 					}
 					if (remove) {
 						addToAirRevertQueue(i);
 					}
 				}
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	private class getOccupiedChunks implements Callable<ArrayList<Chunk>> {
 		private Server server;
 
@@ -131,8 +122,7 @@ public class RevertChecker implements Runnable {
 
 			for (Player player : server.getOnlinePlayers()) {
 				Chunk chunk = player.getLocation().getChunk();
-				if (!chunks.contains(chunk))
-					chunks.add(chunk);
+				if (!chunks.contains(chunk)) chunks.add(chunk);
 			}
 			return chunks;
 

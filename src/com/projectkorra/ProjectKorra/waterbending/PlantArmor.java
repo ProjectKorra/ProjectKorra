@@ -18,7 +18,7 @@ import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class PlantArmor {
-	
+
 	public static ConcurrentHashMap<Player, PlantArmor> instances = new ConcurrentHashMap<Player, PlantArmor>();
 
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.Cooldown");
@@ -43,9 +43,9 @@ public class PlantArmor {
 		if (instances.containsKey(player)) {
 			return;
 		}
-		
+
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
+
 		if (bPlayer.isOnCooldown("PlantArmor")) return;
 
 		this.player = player;
@@ -53,12 +53,12 @@ public class PlantArmor {
 		Double d = WaterMethods.getWaterbendingNightAugment(player.getWorld()) * duration;
 		duration = d.longValue();
 		block = WaterMethods.getPlantSourceBlock(player, range, true);
-		if(block == null) {
+		if (block == null) {
 			return;
 		}
 		location = block.getLocation();
 		hadEffect = player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-		if(!canUse()) return;
+		if (!canUse()) return;
 		plantbending = new Plantbending(block);
 		blocktype = block.getType();
 		block.setType(Material.AIR);
@@ -71,21 +71,21 @@ public class PlantArmor {
 			return false;
 		}
 
-		if(location.distance(player.getEyeLocation()) > range) {
+		if (location.distance(player.getEyeLocation()) > range) {
 			cancel();
 			return false;
 		}
-		
-		if(!WaterMethods.canPlantbend(player)) {
+
+		if (!WaterMethods.canPlantbend(player)) {
 			cancel();
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	private void playEffect() {
-		if(!formed) {
+		if (!formed) {
 			if (GeneralMethods.rand.nextInt(4) == 0) {
 				WaterMethods.playPlantbendingSound(location);
 			}
@@ -96,14 +96,12 @@ public class PlantArmor {
 	}
 
 	private void cancel() {
-		if(plantbending != null)
-			plantbending.revert();
-		if (instances.containsKey(player))
-			instances.remove(player);
+		if (plantbending != null) plantbending.revert();
+		if (instances.containsKey(player)) instances.remove(player);
 	}
 
 	private boolean inPosition() {
-		if(location.distance(player.getEyeLocation()) <= 1.5) return true;
+		if (location.distance(player.getEyeLocation()) <= 1.5) return true;
 		return false;
 	}
 
@@ -111,7 +109,7 @@ public class PlantArmor {
 		oldarmor = player.getInventory().getArmorContents();
 		ItemStack helmet = new ItemStack(blocktype);
 		ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
-		LeatherArmorMeta im = (LeatherArmorMeta)chestplate.getItemMeta();
+		LeatherArmorMeta im = (LeatherArmorMeta) chestplate.getItemMeta();
 		im.setColor(Color.GREEN);
 		chestplate.setItemMeta(im);
 		ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS);
@@ -122,8 +120,7 @@ public class PlantArmor {
 		player.getInventory().setChestplate(chestplate);
 		player.getInventory().setLeggings(leggings);
 		player.getInventory().setBoots(boots);
-		if(!hadEffect)
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, resistance - 1));
+		if (!hadEffect) player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, resistance - 1));
 		formed = true;
 		starttime = System.currentTimeMillis();
 	}
@@ -133,10 +130,9 @@ public class PlantArmor {
 			progress(player);
 		}
 	}
-	
+
 	public static void progress(Player player) {
-		if (!instances.containsKey(player))
-			return;
+		if (!instances.containsKey(player)) return;
 		PlantArmor plantarmor = instances.get(player);
 
 		if (player.isDead() || !player.isOnline()) {
@@ -153,9 +149,8 @@ public class PlantArmor {
 				return;
 			}
 		} else {
-			if (!plantarmor.canUse())
-				return;
-			
+			if (!plantarmor.canUse()) return;
+
 			plantarmor.playEffect();
 
 			if (plantarmor.inPosition()) {
@@ -167,13 +162,11 @@ public class PlantArmor {
 
 	private void removeEffect() {
 		player.getInventory().setArmorContents(oldarmor);
-		if(!hadEffect)
-			player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+		if (!hadEffect) player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 	}
 
 	public static void removeEffect(Player player) {
-		if (!instances.containsKey(player))
-			return;
+		if (!instances.containsKey(player)) return;
 		instances.get(player).removeEffect();
 	}
 
@@ -188,8 +181,7 @@ public class PlantArmor {
 	public static boolean canRemoveArmor(Player player) {
 		if (instances.containsKey(player)) {
 			PlantArmor plantarmor = instances.get(player);
-			if (System.currentTimeMillis() < plantarmor.starttime + plantarmor.duration)
-				return false;
+			if (System.currentTimeMillis() < plantarmor.starttime + plantarmor.duration) return false;
 		}
 		return true;
 	}
@@ -204,7 +196,7 @@ public class PlantArmor {
 
 	public void setResistance(int resistance) {
 		this.resistance = resistance;
-		if(!hadEffect) {
+		if (!hadEffect) {
 			player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, resistance - 1));
 		}

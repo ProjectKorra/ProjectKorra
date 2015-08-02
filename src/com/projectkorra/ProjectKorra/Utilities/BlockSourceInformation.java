@@ -11,7 +11,7 @@ public class BlockSourceInformation {
 	private BlockSourceType sourceType;
 	private ClickType clickType;
 	private long creationTime;
-	
+
 	public BlockSourceInformation(Player player, Block block, BlockSourceType sourceType, ClickType clickType) {
 		this.player = player;
 		this.block = block;

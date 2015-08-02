@@ -1,29 +1,30 @@
 /*
  * Copyright 2011-2013 Tyler Blair. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification, are
- * permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice, this list of
- * conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice, this list
- * of conditions and the following disclaimer in the documentation and/or other materials
- * provided with the distribution.
- *
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * The views and conclusions contained in the software and documentation are those of the
- * authors and contributors and should not be interpreted as representing official policies,
- * either expressed or implied, of anybody else.
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and contributors and should not be interpreted as
+ * representing official policies, either expressed or implied, of anybody else.
  */
 
 package com.projectkorra.ProjectKorra;
@@ -150,7 +151,8 @@ public class MetricsLite {
 				Double.parseDouble(value);
 				isValueNumeric = true;
 			}
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			isValueNumeric = false;
 		}
 
@@ -182,31 +184,31 @@ public class MetricsLite {
 			char chr = text.charAt(index);
 
 			switch (chr) {
-			case '"':
-			case '\\':
-				builder.append('\\');
-				builder.append(chr);
-				break;
-			case '\b':
-				builder.append("\\b");
-				break;
-			case '\t':
-				builder.append("\\t");
-				break;
-			case '\n':
-				builder.append("\\n");
-				break;
-			case '\r':
-				builder.append("\\r");
-				break;
-			default:
-				if (chr < ' ') {
-					String t = "000" + Integer.toHexString(chr);
-					builder.append("\\u" + t.substring(t.length() - 4));
-				} else {
+				case '"':
+				case '\\':
+					builder.append('\\');
 					builder.append(chr);
-				}
-				break;
+					break;
+				case '\b':
+					builder.append("\\b");
+					break;
+				case '\t':
+					builder.append("\\t");
+					break;
+				case '\n':
+					builder.append("\\n");
+					break;
+				case '\r':
+					builder.append("\\r");
+					break;
+				default:
+					if (chr < ' ') {
+						String t = "000" + Integer.toHexString(chr);
+						builder.append("\\u" + t.substring(t.length() - 4));
+					} else {
+						builder.append(chr);
+					}
+					break;
 			}
 		}
 		builder.append('"');
@@ -227,12 +229,15 @@ public class MetricsLite {
 		try {
 			gzos = new GZIPOutputStream(baos);
 			gzos.write(input.getBytes("UTF-8"));
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (gzos != null) try {
 				gzos.close();
-			} catch (IOException ignore) {
+			}
+			catch (IOException ignore) {
 			}
 		}
 
@@ -242,7 +247,8 @@ public class MetricsLite {
 	/**
 	 * Encode text as UTF-8
 	 *
-	 * @param text the text to encode
+	 * @param text
+	 *            the text to encode
 	 * @return the encoded text, as UTF-8
 	 */
 	private static String urlEncode(final String text) throws UnsupportedEncodingException {
@@ -250,7 +256,8 @@ public class MetricsLite {
 	}
 
 	/**
-	 * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
+	 * Disables metrics for the server by setting "opt-out" to true in the
+	 * config file and canceling the metrics task.
 	 *
 	 * @throws java.io.IOException
 	 */
@@ -272,7 +279,8 @@ public class MetricsLite {
 	}
 
 	/**
-	 * Enables metrics for the server by setting "opt-out" to false in the config file and starting the metrics task.
+	 * Enables metrics for the server by setting "opt-out" to false in the
+	 * config file and starting the metrics task.
 	 *
 	 * @throws java.io.IOException
 	 */
@@ -293,7 +301,8 @@ public class MetricsLite {
 	}
 
 	/**
-	 * Gets the File object of the config file that should be used to store data such as the GUID and opt-out status
+	 * Gets the File object of the config file that should be used to store data
+	 * such as the GUID and opt-out status
 	 *
 	 * @return the File object for the config file
 	 */
@@ -310,7 +319,8 @@ public class MetricsLite {
 	}
 
 	/**
-	 * Check if mineshafter is present. If it is, we need to bypass it to send POST requests
+	 * Check if mineshafter is present. If it is, we need to bypass it to send
+	 * POST requests
 	 *
 	 * @return true if mineshafter is installed on the server
 	 */
@@ -318,7 +328,8 @@ public class MetricsLite {
 		try {
 			Class.forName("mineshafter.MineServer");
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return false;
 		}
 	}
@@ -333,12 +344,14 @@ public class MetricsLite {
 			try {
 				// Reload the metrics file
 				configuration.load(getConfigFile());
-			} catch (IOException ex) {
+			}
+			catch (IOException ex) {
 				if (debug) {
 					Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
 				}
 				return true;
-			} catch (InvalidConfigurationException ex) {
+			}
+			catch (InvalidConfigurationException ex) {
 				if (debug) {
 					Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
 				}
@@ -413,7 +426,6 @@ public class MetricsLite {
 			connection = url.openConnection();
 		}
 
-
 		byte[] uncompressed = json.toString().getBytes();
 		byte[] compressed = gzip(json.toString());
 
@@ -456,9 +468,10 @@ public class MetricsLite {
 	}
 
 	/**
-	 * Start measuring statistics. This will immediately create an async repeating task as the plugin and send
-	 * the initial data to the metrics backend, and then after that it will post in increments of
-	 * PING_INTERVAL * 1200 ticks.
+	 * Start measuring statistics. This will immediately create an async
+	 * repeating task as the plugin and send the initial data to the metrics
+	 * backend, and then after that it will post in increments of PING_INTERVAL
+	 * * 1200 ticks.
 	 *
 	 * @return True if statistics measuring is running, otherwise false.
 	 */
@@ -498,10 +511,11 @@ public class MetricsLite {
 						// After the first post we set firstPost to false
 						// Each post thereafter will be a ping
 						firstPost = false;
-					} catch (IOException e) {
+					}
+					catch (IOException e) {
 						if (debug) {
 							Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
-						} 
+						}
 					}
 				}
 			}, 0, PING_INTERVAL * 1200);

@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerGrappleEvent extends Event implements Cancellable {
 
-
 	public static final HandlerList handlers = new HandlerList();
 	private Player player;
 	private Entity entity;

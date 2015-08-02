@@ -16,66 +16,66 @@ public class AcrobatStance {
 	public static double CHI_BLOCK_BOOST = ProjectKorra.plugin.getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 	public static double PARA_DODGE_BOOST = ProjectKorra.plugin.getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
 	public static ConcurrentHashMap<Player, AcrobatStance> instances = new ConcurrentHashMap<Player, AcrobatStance>();
-	
+
 	private Player player;
 	public double chiBlockBost = CHI_BLOCK_BOOST;
 	public double paralyzeDodgeBoost = PARA_DODGE_BOOST;
 	public int speed = ChiPassive.speedPower + 1;
 	public int jump = ChiPassive.jumpPower + 1;
-	
+
 	public AcrobatStance(Player player) {
 		this.player = player;
 		if (instances.containsKey(player)) {
 			instances.remove(player);
 			return;
 		}
-		
+
 		if (WarriorStance.isInWarriorStance(player)) {
 			WarriorStance.remove(player);
 		}
-		
+
 		instances.put(player, this);
 	}
-	
+
 	public void progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
 		}
-		
+
 		if (!GeneralMethods.canBend(player.getName(), "AcrobatStance")) {
 			remove();
 			return;
 		}
-		
+
 		if (MetalClips.isControlled(player) || Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			remove();
 			return;
 		}
-		
+
 		if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speed));
 		}
-		
+
 		if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jump));
 		}
 	}
-	
+
 	public static void progressAll() {
-		for (Player player: instances.keySet()) {
+		for (Player player : instances.keySet()) {
 			instances.get(player).progress();
 		}
 	}
-	
+
 	private void remove() {
 		instances.remove(player);
 	}
-	
+
 	public static void remove(Player player) {
 		instances.remove(player);
 	}
-	
+
 	public static boolean isInAcrobatStance(Player player) {
 		return instances.containsKey(player);
 	}

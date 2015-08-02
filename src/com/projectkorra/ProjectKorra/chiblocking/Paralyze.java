@@ -23,12 +23,9 @@ public class Paralyze {
 
 	public Paralyze(Player sourceplayer, Entity targetentity) {
 		if (GeneralMethods.getBoundAbility(sourceplayer) == null) return;
-		if (GeneralMethods.isBender(sourceplayer.getName(), Element.Chi)
-				&& GeneralMethods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze")
-				&& GeneralMethods.canBend(sourceplayer.getName(), "Paralyze")) {
+		if (GeneralMethods.isBender(sourceplayer.getName(), Element.Chi) && GeneralMethods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze") && GeneralMethods.canBend(sourceplayer.getName(), "Paralyze")) {
 			if (cooldowns.containsKey(targetentity)) {
-				if (System.currentTimeMillis() < cooldowns.get(targetentity)
-						+ cooldown) {
+				if (System.currentTimeMillis() < cooldowns.get(targetentity) + cooldown) {
 					return;
 				} else {
 					cooldowns.remove(targetentity);
@@ -49,7 +46,7 @@ public class Paralyze {
 		}
 
 		if (entity instanceof Player) {
-			if(Suffocate.isChannelingSphere((Player) entity)) {
+			if (Suffocate.isChannelingSphere((Player) entity)) {
 				Suffocate.remove((Player) entity);
 			}
 		}
@@ -57,8 +54,7 @@ public class Paralyze {
 
 	public static boolean isParalyzed(Entity entity) {
 		if (entity instanceof Player) {
-			if (AvatarState.isAvatarState((Player) entity))
-				return false;
+			if (AvatarState.isAvatarState((Player) entity)) return false;
 		}
 		if (entities.containsKey(entity)) {
 			if (System.currentTimeMillis() < entities.get(entity) + duration) {

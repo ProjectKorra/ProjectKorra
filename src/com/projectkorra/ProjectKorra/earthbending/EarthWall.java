@@ -26,7 +26,7 @@ public class EarthWall {
 	@SuppressWarnings("deprecation")
 	public EarthWall(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
+
 		if (bPlayer.isOnCooldown("RaiseEarth")) return;
 
 		if (AvatarState.isAvatarState(player)) {
@@ -47,8 +47,7 @@ public class EarthWall {
 		Block sblock = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
 		Location origin;
 		if (sblock == null) {
-			origin = player.getTargetBlock(EarthMethods.getTransparentEarthbending(),
-					range).getLocation();
+			origin = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), range).getLocation();
 		} else {
 			origin = sblock.getLocation();
 		}
@@ -57,8 +56,7 @@ public class EarthWall {
 		boolean cooldown = false;
 
 		for (int i = -halfwidth; i <= halfwidth; i++) {
-			Block block = world.getBlockAt(origin.clone().add(
-					orth.clone().multiply((double) i)));
+			Block block = world.getBlockAt(origin.clone().add(orth.clone().multiply((double) i)));
 			// if (block.getType() == Material.AIR || block.isLiquid()) {
 			if (EarthMethods.isTransparentToEarthbending(player, block)) {
 				for (int j = 1; j < height; j++) {
@@ -68,21 +66,18 @@ public class EarthWall {
 						new EarthColumn(player, block.getLocation(), height);
 						// } else if (block.getType() != Material.AIR
 						// && !block.isLiquid()) {
-					} else if (!EarthMethods
-							.isTransparentToEarthbending(player, block)) {
+					} else if (!EarthMethods.isTransparentToEarthbending(player, block)) {
 						break;
 					}
 				}
-			} else if (EarthMethods.isEarthbendable(player,
-					block.getRelative(BlockFace.UP))) {
+			} else if (EarthMethods.isEarthbendable(player, block.getRelative(BlockFace.UP))) {
 				for (int j = 1; j < height; j++) {
 					block = block.getRelative(BlockFace.UP);
 					// if (block.getType() == Material.AIR || block.isLiquid())
 					// {
 					if (EarthMethods.isTransparentToEarthbending(player, block)) {
 						cooldown = true;
-						new EarthColumn(player, block.getRelative(
-								BlockFace.DOWN).getLocation(), height);
+						new EarthColumn(player, block.getRelative(BlockFace.DOWN).getLocation(), height);
 					} else if (!EarthMethods.isEarthbendable(player, block)) {
 						break;
 					}
@@ -93,8 +88,7 @@ public class EarthWall {
 			}
 		}
 
-		if (cooldown)
-			bPlayer.addCooldown("RaiseEarth", GeneralMethods.getGlobalCooldown());
+		if (cooldown) bPlayer.addCooldown("RaiseEarth", GeneralMethods.getGlobalCooldown());
 
 	}
 

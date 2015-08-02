@@ -10,21 +10,21 @@ import java.util.ArrayList;
 /**
  * Created by Carbogen on 2/7/2015.
  */
-public abstract class ComboAbilityModule extends AbilityLoadable implements Cloneable
-{
+public abstract class ComboAbilityModule extends AbilityLoadable implements Cloneable {
 	/**
 	 * AbilityModule Constructor.
 	 *
-	 * @param name The name of the ability.
+	 * @param name
+	 *            The name of the ability.
 	 */
-	public ComboAbilityModule(final String name)
-	{
+	public ComboAbilityModule(final String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * Called when the ability is loaded by PK. This is where the developer registers Listeners and Permissions.
+	 * Called when the ability is loaded by PK. This is where the developer
+	 * registers Listeners and Permissions.
 	 */
 	public abstract void onThisLoad();
 
@@ -38,9 +38,10 @@ public abstract class ComboAbilityModule extends AbilityLoadable implements Clon
 	public abstract String getVersion();
 
 	/**
-	 * Accessor Method to get the Element of the ability.
-	 * It is recommended to use the Element ENUM to get the returned String.
-	 * This can be an empty String, in which case the ability will not belong to any element (such as AvatarState).
+	 * Accessor Method to get the Element of the ability. It is recommended to
+	 * use the Element ENUM to get the returned String. This can be an empty
+	 * String, in which case the ability will not belong to any element (such as
+	 * AvatarState).
 	 *
 	 * @return The Element the ability belongs to.
 	 */
@@ -54,8 +55,8 @@ public abstract class ComboAbilityModule extends AbilityLoadable implements Clon
 	public abstract String getAuthor();
 
 	/**
-	 * Accessor Method to get the description of the ability.
-	 * This String is sent to any player who runs /pk display ability.
+	 * Accessor Method to get the description of the ability. This String is
+	 * sent to any player who runs /pk display ability.
 	 *
 	 * @return The Description of the ability.
 	 */
@@ -70,10 +71,12 @@ public abstract class ComboAbilityModule extends AbilityLoadable implements Clon
 
 	/**
 	 * Creates a new instance of the combo from a specific player.
-	 * ProjectKorra's ComboModuleManager will use this method once the combo steps have been used by the player.
+	 * ProjectKorra's ComboModuleManager will use this method once the combo
+	 * steps have been used by the player.
 	 *
 	 * @return A new instance of the ability.
-	 * @param player The player using the combo.
+	 * @param player
+	 *            The player using the combo.
 	 */
 	public abstract Object createNewComboInstance(Player player);
 
@@ -85,43 +88,32 @@ public abstract class ComboAbilityModule extends AbilityLoadable implements Clon
 	public abstract ArrayList<ComboManager.AbilityInformation> getCombination();
 
 	/**
-	 *  Void Method called whenever ProjectKorra stops and the ability is unloaded.
+	 * Void Method called whenever ProjectKorra stops and the ability is
+	 * unloaded.
 	 *
 	 */
-	public void stop()
-	{
+	public void stop() {
 
 	}
 
 	/**
-	 * Accessor Method to get which SubElement the ability belongs to.
-	 * If isSubAbility() returns true, the developer absolutely must implement this as well.
+	 * Accessor Method to get which SubElement the ability belongs to. If
+	 * isSubAbility() returns true, the developer absolutely must implement this
+	 * as well.
 	 *
 	 * List of sub-elements:
 	 *
-	 * 		Water:
-	 * 			Icebending.
-	 * 			Bloodbending.
-	 * 			Plantbending.
-	 * 			Healing.
+	 * Water: Icebending. Bloodbending. Plantbending. Healing.
 	 *
-	 * 		Earth:
-	 * 			Sandbending.
-	 * 			Metalbending.
-	 * 			Lavabending.
+	 * Earth: Sandbending. Metalbending. Lavabending.
 	 *
-	 * 		Fire:
-	 * 			Combustion.
-	 * 			Lightning.
+	 * Fire: Combustion. Lightning.
 	 *
-	 * 		Air:
-	 * 			Flight.
-	 * 			SpiritualProjection.
+	 * Air: Flight. SpiritualProjection.
 	 *
 	 * @return The SubElement the ability belongs to.
 	 */
-	public SubElement getSubElement()
-	{
+	public SubElement getSubElement() {
 		return null;
 	}
 }

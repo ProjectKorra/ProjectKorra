@@ -81,8 +81,7 @@ public class WaterManipulation {
 			id = ID;
 			instances.put(id, this);
 			prepared.put(player, id);
-			if (ID == Integer.MAX_VALUE)
-				ID = Integer.MIN_VALUE;
+			if (ID == Integer.MAX_VALUE) ID = Integer.MIN_VALUE;
 			ID++;
 			time = System.currentTimeMillis();
 		}
@@ -90,8 +89,7 @@ public class WaterManipulation {
 
 	public boolean prepare() {
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, range, 
-				ClickType.SHIFT_DOWN, true, true, WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, WaterMethods.canPlantbend(player));
 		// if (prepared.containsKey(player)
 		// && !Methods.isWaterbendable(block, player)) {
 		// instances.get(prepared.get(player)).displacing = true;
@@ -147,8 +145,7 @@ public class WaterManipulation {
 					targetdestination = GeneralMethods.getPointOnLine(firstdestination, targetdestination, range);
 					targetdirection = GeneralMethods.getDirection(firstdestination, targetdestination).normalize();
 
-					if (WaterMethods.isPlant(sourceblock))
-						new Plantbending(sourceblock);
+					if (WaterMethods.isPlant(sourceblock)) new Plantbending(sourceblock);
 					addWater(sourceblock);
 				}
 
@@ -157,7 +154,7 @@ public class WaterManipulation {
 			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", GeneralMethods.getGlobalCooldown());
 		}
 	}
-	
+
 	private static Location getTargetLocation(Player player) {
 		return getTargetLocation(player, RANGE);
 	}
@@ -189,16 +186,14 @@ public class WaterManipulation {
 	private static void remove(int id) {
 		Player player = instances.get(id).player;
 		if (prepared.containsKey(player)) {
-			if (prepared.get(player) == id)
-				prepared.remove(player);
+			if (prepared.get(player) == id) prepared.remove(player);
 		}
 		instances.remove(id);
 	}
 
 	private void redirect(Player player, Location targetlocation) {
 		if (progressing && !settingup) {
-			if (location.distance(player.getLocation()) <= range)
-				targetdirection = GeneralMethods.getDirection(location, targetlocation).normalize();
+			if (location.distance(player.getLocation()) <= range) targetdirection = GeneralMethods.getDirection(location, targetlocation).normalize();
 			targetdestination = targetlocation;
 			this.player = player;
 		}
@@ -215,8 +210,7 @@ public class WaterManipulation {
 	}
 
 	private boolean progress() {
-		if (player.isDead() || !player.isOnline()
-				|| !GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
+		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
 			breakBlock();
 			return false;
 		}
@@ -310,7 +304,7 @@ public class WaterManipulation {
 						location = location.clone().add(direction);
 
 						block = location.getBlock();
-						if (block.getLocation().equals(	sourceblock.getLocation())) {
+						if (block.getLocation().equals(sourceblock.getLocation())) {
 							location = location.clone().add(direction);
 							block = location.getBlock();
 						}
@@ -319,17 +313,15 @@ public class WaterManipulation {
 				} else {
 					WaterMethods.removeWaterSpouts(location, player);
 					AirMethods.removeAirSpouts(location, player);
-					
+
 					if (GeneralMethods.rand.nextInt(4) == 0) {
 						WaterMethods.playWaterbendingSound(location);
-					}		
+					}
 
 					double radius = FireBlast.AFFECTING_RADIUS;
 					Player source = player;
-					if(!(location == null)) {
-						if (EarthBlast.annihilateBlasts(location, radius, source)
-								|| WaterManipulation.annihilateBlasts(location,	radius, source)
-								|| FireBlast.annihilateBlasts(location, radius,	source)) {
+					if (!(location == null)) {
+						if (EarthBlast.annihilateBlasts(location, radius, source) || WaterManipulation.annihilateBlasts(location, radius, source) || FireBlast.annihilateBlasts(location, radius, source)) {
 							breakBlock();
 							new WaterReturn(player, sourceblock);
 							return false;
@@ -389,8 +381,7 @@ public class WaterManipulation {
 							entity.setVelocity(vector.normalize().multiply(pushfactor));
 							// entity.setVelocity(entity.getVelocity().clone()
 							// .add(direction));
-							if (AvatarState.isAvatarState(player))
-								damage = AvatarState.getValue(damage);
+							if (AvatarState.isAvatarState(player)) damage = AvatarState.getValue(damage);
 							GeneralMethods.damageEntity(player, entity, (int) WaterMethods.waterbendingNightAugment(damage, player.getWorld()));
 							AirMethods.breakBreathbendingHold(entity);
 							progressing = false;
@@ -502,8 +493,7 @@ public class WaterManipulation {
 		if (!affectedblocks.containsKey(block)) {
 			affectedblocks.put(block, block);
 		}
-		if (FreezeMelt.frozenblocks.containsKey(block))
-			FreezeMelt.frozenblocks.remove(block);
+		if (FreezeMelt.frozenblocks.containsKey(block)) FreezeMelt.frozenblocks.remove(block);
 		block.setType(Material.STATIONARY_WATER);
 		block.setData(full);
 	}
@@ -522,8 +512,7 @@ public class WaterManipulation {
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-			if (EarthMethods.isTransparentToEarthbending(player, block)
-					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+			if (EarthMethods.isTransparentToEarthbending(player, block) && EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
 				if (getTargetLocation(player).distance(block.getLocation()) > 1) {
 					block.setType(Material.WATER);
@@ -546,25 +535,18 @@ public class WaterManipulation {
 		for (int id : instances.keySet()) {
 			WaterManipulation manip = instances.get(id);
 
-			if (!manip.progressing)
-				continue;
+			if (!manip.progressing) continue;
 
-			if (!manip.location.getWorld().equals(player.getWorld()))
-				continue;
+			if (!manip.location.getWorld().equals(player.getWorld())) continue;
 
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", manip.location))
-				continue;
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", manip.location)) continue;
 
-			if (manip.player.equals(player))
-				manip.redirect(player, getTargetLocation(player));
+			if (manip.player.equals(player)) manip.redirect(player, getTargetLocation(player));
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
-			if (mloc.distance(location) <= manip.range
-					&& GeneralMethods.getDistanceFromLine(vector, location, manip.location) < deflectrange
-					&& mloc.distance(location.clone().add(vector)) < 
-					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
+			if (mloc.distance(location) <= manip.range && GeneralMethods.getDistanceFromLine(vector, location, manip.location) < deflectrange && mloc.distance(location.clone().add(vector)) < mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.redirect(player, getTargetLocation(player));
 			}
 
@@ -575,25 +557,18 @@ public class WaterManipulation {
 		for (int id : instances.keySet()) {
 			WaterManipulation manip = instances.get(id);
 
-			if (manip.player.equals(player))
-				continue;
+			if (manip.player.equals(player)) continue;
 
-			if (!manip.location.getWorld().equals(player.getWorld()))
-				continue;
+			if (!manip.location.getWorld().equals(player.getWorld())) continue;
 
-			if (!manip.progressing)
-				continue;
+			if (!manip.progressing) continue;
 
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", manip.location))
-				continue;
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", manip.location)) continue;
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
-			if (mloc.distance(location) <= manip.range
-					&& GeneralMethods.getDistanceFromLine(vector, location, manip.location) < deflectrange
-					&& mloc.distance(location.clone().add(vector)) < 
-					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
+			if (mloc.distance(location) <= manip.range && GeneralMethods.getDistanceFromLine(vector, location, manip.location) < deflectrange && mloc.distance(location.clone().add(vector)) < mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.breakBlock();
 			}
 
@@ -601,8 +576,7 @@ public class WaterManipulation {
 	}
 
 	public static boolean progress(int ID) {
-		if (instances.containsKey(ID))
-			return instances.get(ID).progress();
+		if (instances.containsKey(ID)) return instances.get(ID).progress();
 		return false;
 	}
 
@@ -613,18 +587,15 @@ public class WaterManipulation {
 			// Methods.verbose("affectedblocks");
 			return false;
 		}
-		if (WaterSpout.affectedblocks.containsKey(to)
-				|| WaterSpout.affectedblocks.containsKey(from)) {
+		if (WaterSpout.affectedblocks.containsKey(to) || WaterSpout.affectedblocks.containsKey(from)) {
 			// Methods.verbose("waterspout");
 			return false;
 		}
-		if (WaterWall.affectedblocks.containsKey(to)
-				|| WaterWall.affectedblocks.containsKey(from)) {
+		if (WaterWall.affectedblocks.containsKey(to) || WaterWall.affectedblocks.containsKey(from)) {
 			// Methods.verbose("waterwallaffectedblocks");
 			return false;
 		}
-		if (WaterWall.wallblocks.containsKey(to)
-				|| WaterWall.wallblocks.containsKey(from)) {
+		if (WaterWall.wallblocks.containsKey(to) || WaterWall.wallblocks.containsKey(from)) {
 			// Methods.verbose("waterwallwall");
 			return false;
 		}
@@ -636,8 +607,7 @@ public class WaterManipulation {
 			// Methods.verbose("tempblock");
 			return false;
 		}
-		if (WaterMethods.isAdjacentToFrozenBlock(to)
-				|| WaterMethods.isAdjacentToFrozenBlock(from)) {
+		if (WaterMethods.isAdjacentToFrozenBlock(to) || WaterMethods.isAdjacentToFrozenBlock(from)) {
 			// Methods.verbose("frozen");
 			return false;
 		}
@@ -646,20 +616,13 @@ public class WaterManipulation {
 	}
 
 	public static boolean canPhysicsChange(Block block) {
-		if (affectedblocks.containsKey(block))
-			return false;
-		if (WaterSpout.affectedblocks.containsKey(block))
-			return false;
-		if (WaterWall.affectedblocks.containsKey(block))
-			return false;
-		if (WaterWall.wallblocks.containsKey(block))
-			return false;
-		if (Wave.isBlockWave(block))
-			return false;
-		if (TempBlock.isTempBlock(block))
-			return false;
-		if (TempBlock.isTouchingTempBlock(block))
-			return false;
+		if (affectedblocks.containsKey(block)) return false;
+		if (WaterSpout.affectedblocks.containsKey(block)) return false;
+		if (WaterWall.affectedblocks.containsKey(block)) return false;
+		if (WaterWall.wallblocks.containsKey(block)) return false;
+		if (Wave.isBlockWave(block)) return false;
+		if (TempBlock.isTempBlock(block)) return false;
+		if (TempBlock.isTouchingTempBlock(block)) return false;
 		return true;
 	}
 
@@ -676,19 +639,15 @@ public class WaterManipulation {
 	public static void removeAroundPoint(Location location, double radius) {
 		for (int id : instances.keySet()) {
 			WaterManipulation manip = instances.get(id);
-			if (manip.location.getWorld().equals(location.getWorld()))
-				if (manip.location.distance(location) <= radius)
-					manip.breakBlock();
+			if (manip.location.getWorld().equals(location.getWorld())) if (manip.location.distance(location) <= radius) manip.breakBlock();
 		}
 	}
-	
+
 	public static ArrayList<WaterManipulation> getAroundPoint(Location location, double radius) {
 		ArrayList<WaterManipulation> list = new ArrayList<WaterManipulation>();
 		for (int id : instances.keySet()) {
 			WaterManipulation manip = instances.get(id);
-			if (manip.location.getWorld().equals(location.getWorld()))
-				if (manip.location.distance(location) <= radius)
-					list.add(manip);
+			if (manip.location.getWorld().equals(location.getWorld())) if (manip.location.distance(location) <= radius) list.add(manip);
 		}
 		return list;
 	}
@@ -697,11 +656,10 @@ public class WaterManipulation {
 		boolean broke = false;
 		for (int id : instances.keySet()) {
 			WaterManipulation manip = instances.get(id);
-			if (manip.location.getWorld().equals(location.getWorld()) && !source.equals(manip.player))
-				if (manip.location.distance(location) <= radius) {
-					manip.breakBlock();
-					broke = true;
-				}
+			if (manip.location.getWorld().equals(location.getWorld()) && !source.equals(manip.player)) if (manip.location.distance(location) <= radius) {
+				manip.breakBlock();
+				broke = true;
+			}
 		}
 		return broke;
 	}
@@ -740,8 +698,7 @@ public class WaterManipulation {
 
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
-		if(player != null)
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", cooldown);
+		if (player != null) GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", cooldown);
 
 	}
 

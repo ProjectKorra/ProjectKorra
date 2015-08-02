@@ -18,8 +18,7 @@ import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 /**
  * Created by Carbogen on 2/2/2015.
  */
-public class HorizontalVelocityTracker
-{
+public class HorizontalVelocityTracker {
 	public static ConcurrentHashMap<Entity, HorizontalVelocityTracker> instances = new ConcurrentHashMap<Entity, HorizontalVelocityTracker>();
 
 	private long delay;
@@ -31,8 +30,7 @@ public class HorizontalVelocityTracker
 	private Location launchLocation;
 	private Location impactLocation;
 
-	public HorizontalVelocityTracker(Entity e, Player instigator, long delay)
-	{
+	public HorizontalVelocityTracker(Entity e, Player instigator, long delay) {
 		remove(e);
 		entity = e;
 		this.instigator = instigator;
@@ -46,10 +44,8 @@ public class HorizontalVelocityTracker
 		instances.put(entity, this);
 	}
 
-	public void update()
-	{
-		if(System.currentTimeMillis() < fireTime + delay)
-			return;
+	public void update() {
+		if (System.currentTimeMillis() < fireTime + delay) return;
 
 		lastVelocity = thisVelocity.clone();
 		thisVelocity = entity.getVelocity().clone();
@@ -58,31 +54,23 @@ public class HorizontalVelocityTracker
 
 		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(entity.getLocation(), 1.5);
 
-		if(entity.isOnGround())
-		{
+		if (entity.isOnGround()) {
 			remove();
 			return;
 		}
 
-		for(Block b : blocks)
-		{
-			if(WaterMethods.isWater(b))
-			{
+		for (Block b : blocks) {
+			if (WaterMethods.isWater(b)) {
 				remove();
 				return;
 			}
 		}
 
-		if(thisVelocity.length() < lastVelocity.length())
-		{
-			if((diff.getX() > 1 || diff.getX() < -1)
-					|| (diff.getZ() > 1 || diff.getZ() < -1))
-			{
+		if (thisVelocity.length() < lastVelocity.length()) {
+			if ((diff.getX() > 1 || diff.getX() < -1) || (diff.getZ() > 1 || diff.getZ() < -1)) {
 				impactLocation = entity.getLocation();
-				for (Block b : blocks)
-				{
-					if (!EarthMethods.isTransparentToEarthbending(instigator, b))
-					{
+				for (Block b : blocks) {
+					if (!EarthMethods.isTransparentToEarthbending(instigator, b)) {
 						ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation));
 						remove();
 						return;
@@ -92,20 +80,16 @@ public class HorizontalVelocityTracker
 		}
 	}
 
-	public static void updateAll()
-	{
-		for(Entity e : instances.keySet())
+	public static void updateAll() {
+		for (Entity e : instances.keySet())
 			instances.get(e).update();
 	}
 
-	public void remove()
-	{
+	public void remove() {
 		instances.remove(entity);
 	}
 
-	public static void remove(Entity e)
-	{
-		if(instances.containsKey(e))
-			instances.remove(e);
+	public static void remove(Entity e) {
+		if (instances.containsKey(e)) instances.remove(e);
 	}
 }

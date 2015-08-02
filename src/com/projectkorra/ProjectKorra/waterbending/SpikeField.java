@@ -38,14 +38,10 @@ public class SpikeField {
 		for (int x = -(radius - 1); x <= (radius - 1); x++) {
 			for (int z = -(radius - 1); z <= (radius - 1); z++) {
 				for (int y = -1; y <= 1; y++) {
-					Block testblock = p.getWorld().getBlockAt(locX + x,	locY + y, locZ + z);
-					if (testblock.getType() == Material.ICE
-							&& testblock.getRelative(BlockFace.UP).getType() == Material.AIR
-							&& !(testblock.getX() == p.getEyeLocation()
-							.getBlock().getX() && testblock.getZ() == p
-							.getEyeLocation().getBlock().getZ())) {
+					Block testblock = p.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
+					if (testblock.getType() == Material.ICE && testblock.getRelative(BlockFace.UP).getType() == Material.AIR && !(testblock.getX() == p.getEyeLocation().getBlock().getX() && testblock.getZ() == p.getEyeLocation().getBlock().getZ())) {
 						iceblocks.add(testblock);
-						for(Block iceblockforsound : iceblocks) {
+						for (Block iceblockforsound : iceblocks) {
 							WaterMethods.playIcebendingSound(iceblockforsound.getLocation());
 						}
 					}
@@ -53,11 +49,10 @@ public class SpikeField {
 			}
 		}
 
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(p.getLocation(),	radius);
+		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(p.getLocation(), radius);
 
 		for (int i = 0; i < numofspikes; i++) {
-			if (iceblocks.isEmpty())
-				return;
+			if (iceblocks.isEmpty()) return;
 
 			Entity target = null;
 			Block targetblock = null;

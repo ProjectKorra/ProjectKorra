@@ -20,7 +20,7 @@ public class Flight {
 
 	private static ConcurrentHashMap<Player, Flight> instances = new ConcurrentHashMap<Player, Flight>();
 	private static long duration = 5000;
-	
+
 	private Player player = null, source = null;
 
 	private boolean couldFly = false, wasFlying = false;
@@ -45,17 +45,16 @@ public class Flight {
 		time = System.currentTimeMillis();
 		instances.put(player, this);
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof Flight )) {
+		if (!(object instanceof Flight)) {
 			return false;
 		}
 		Flight flight = (Flight) object;
-		return flight.player == this.player && flight.source == this.source && 
-				flight.couldFly == this.couldFly && flight.wasFlying == this.wasFlying;
+		return flight.player == this.player && flight.source == this.source && flight.couldFly == this.couldFly && flight.wasFlying == this.wasFlying;
 	}
-	
+
 	public static Player getLaunchedBy(Player player) {
 		if (instances.containsKey(player)) {
 			return instances.get(player).source;
@@ -63,7 +62,7 @@ public class Flight {
 
 		return null;
 	}
-	
+
 	public static void handle() {
 		ArrayList<Player> players = new ArrayList<Player>();
 		ArrayList<Player> newflyingplayers = new ArrayList<Player>();
@@ -74,7 +73,7 @@ public class Flight {
 		ArrayList<Player> sandspoutplayers = new ArrayList<Player>();
 
 		players.addAll(Tornado.getPlayers());
-//		players.addAll(Speed.getPlayers());
+		//		players.addAll(Speed.getPlayers());
 		players.addAll(FireJet.getPlayers());
 		players.addAll(Catapult.getPlayers());
 		avatarstateplayers = AvatarState.getPlayers();
@@ -85,11 +84,7 @@ public class Flight {
 
 		for (Player player : instances.keySet()) {
 			Flight flight = instances.get(player);
-			if (avatarstateplayers.contains(player)
-					|| airscooterplayers.contains(player)
-					|| waterspoutplayers.contains(player)
-					|| airspoutplayers.contains(player) 
-					|| sandspoutplayers.contains(player)) {
+			if (avatarstateplayers.contains(player) || airscooterplayers.contains(player) || waterspoutplayers.contains(player) || airspoutplayers.contains(player) || sandspoutplayers.contains(player)) {
 				continue;
 			}
 			if (Bloodbending.isBloodbended(player)) {
@@ -101,8 +96,7 @@ public class Flight {
 			if (players.contains(player)) {
 				flight.refresh(null);
 				player.setAllowFlight(true);
-				if (player.getGameMode() != GameMode.CREATIVE)
-					player.setFlying(false);
+				if (player.getGameMode() != GameMode.CREATIVE) player.setFlying(false);
 				newflyingplayers.add(player);
 				continue;
 			}
@@ -117,6 +111,7 @@ public class Flight {
 			}
 		}
 	}
+
 	public static void removeAll() {
 		for (Player player : instances.keySet()) {
 			Flight flight = instances.get(player);

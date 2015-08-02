@@ -44,26 +44,21 @@ public class WaterSourceGrabber {
 	public WaterSourceGrabber(Player player, Location origin) {
 		this(player, origin, 1);
 	}
-	
 
 	public void progress() {
-		if (state == AnimationState.FAILED || state == AnimationState.FINISHED)
-			return;
+		if (state == AnimationState.FAILED || state == AnimationState.FINISHED) return;
 
 		if (state == AnimationState.RISING) {
 			revertBlocks();
 			double locDiff = player.getEyeLocation().getY() - currentLoc.getY();
 			currentLoc.add(0, animSpeed * Math.signum(locDiff), 0);
 			Block block = currentLoc.getBlock();
-			if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR)
-					|| GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout",
-							block.getLocation())) {
+			if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
 				remove();
 				return;
 			}
 			createBlock(block, mat, data);
-			if (Math.abs(locDiff) < 1)
-				state = AnimationState.TOWARD;
+			if (Math.abs(locDiff) < 1) state = AnimationState.TOWARD;
 		} else {
 			revertBlocks();
 			Location eyeLoc = player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
@@ -72,9 +67,7 @@ public class WaterSourceGrabber {
 			currentLoc.add(vec.normalize().multiply(animSpeed));
 
 			Block block = currentLoc.getBlock();
-			if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR)
-					|| GeneralMethods.isRegionProtectedFromBuild(player,
-							"WaterManipulation", block.getLocation())) {
+			if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
 				remove();
 				return;
 			}

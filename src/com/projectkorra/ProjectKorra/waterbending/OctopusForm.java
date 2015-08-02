@@ -68,8 +68,7 @@ public class OctopusForm {
 		}
 		this.player = player;
 		time = System.currentTimeMillis();
-		sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, 
-				true, true, WaterMethods.canPlantbend(player));
+		sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
 		if (sourceblock != null) {
 			sourcelocation = sourceblock.getLocation();
 			sourceselected = true;
@@ -97,8 +96,7 @@ public class OctopusForm {
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-			if (EarthMethods.isTransparentToEarthbending(player, block)
-					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+			if (EarthMethods.isTransparentToEarthbending(player, block) && EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData(full);
 				OctopusForm form = new OctopusForm(player);
@@ -124,33 +122,27 @@ public class OctopusForm {
 	}
 
 	private void attack() {
-		if (!formed)
-			return;
+		if (!formed) return;
 		double tentacleangle = (new Vector(1, 0, 0)).angle(player.getEyeLocation().getDirection()) + dta / 2;
 
 		for (double tangle = tentacleangle; tangle < tentacleangle + 360; tangle += dta) {
 			double phi = Math.toRadians(tangle);
-			affect(player.getLocation().clone().add(
-					new Vector(radius * Math.cos(phi), 1, radius * Math.sin(phi))));
+			affect(player.getLocation().clone().add(new Vector(radius * Math.cos(phi), 1, radius * Math.sin(phi))));
 		}
 	}
 
 	private void affect(Location location) {
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, attackRange)) {
-			if (entity.getEntityId() == player.getEntityId())
-				continue;
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "OctopusForm", entity.getLocation()))
-				continue;
+			if (entity.getEntityId() == player.getEntityId()) continue;
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "OctopusForm", entity.getLocation())) continue;
 			// if (Torrent.canThaw(entity.getLocation().getBlock())
 			// || Wave.canThaw(entity.getLocation().getBlock()))
 			// continue;
-			if (GeneralMethods.isObstructed(location, entity.getLocation()))
-				continue;
+			if (GeneralMethods.isObstructed(location, entity.getLocation())) continue;
 			double knock = AvatarState.isAvatarState(player) ? AvatarState.getValue(knockback) : knockback;
 			entity.setVelocity(GeneralMethods.getDirection(player.getLocation(), location).normalize().multiply(knock));
-			if (entity instanceof LivingEntity)
-				GeneralMethods.damageEntity(player, entity, damage);
-				AirMethods.breakBreathbendingHold(entity);
+			if (entity instanceof LivingEntity) GeneralMethods.damageEntity(player, entity, damage);
+			AirMethods.breakBreathbendingHold(entity);
 		}
 	}
 
@@ -167,13 +159,13 @@ public class OctopusForm {
 			returnWater();
 			return;
 		}
-		
+
 		if (GeneralMethods.getBoundAbility(player) == null) {
 			remove();
 			returnWater();
 			return;
 		}
-		
+
 		if ((!player.isSneaking() && !sourceselected) || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("OctopusForm")) {
 			remove();
 			returnWater();
@@ -240,7 +232,7 @@ public class OctopusForm {
 					if (source != null) source.revertBlock();
 					source = null;
 					Vector vector = new Vector(1, 0, 0);
-					startangle = vector.angle(GeneralMethods.getDirection(	sourceblock.getLocation(), location));
+					startangle = vector.angle(GeneralMethods.getDirection(sourceblock.getLocation(), location));
 					angle = startangle;
 				}
 			} else if (forming) {
@@ -252,7 +244,7 @@ public class OctopusForm {
 				}
 				if (GeneralMethods.rand.nextInt(4) == 0) {
 					WaterMethods.playWaterbendingSound(player.getLocation());
-				}		
+				}
 				formOctopus();
 				if (y == 2) {
 					incrementStep();
@@ -260,12 +252,10 @@ public class OctopusForm {
 			} else if (formed) {
 				if (GeneralMethods.rand.nextInt(7) == 0) {
 					WaterMethods.playWaterbendingSound(player.getLocation());
-				}		
+				}
 				step += 1;
-				if (step % inc == 0)
-					animstep += 1;
-				if (animstep > 8)
-					animstep = 1;
+				if (step % inc == 0) animstep += 1;
+				if (animstep > 8) animstep = 1;
 				formOctopus();
 			} else {
 				remove();
@@ -281,8 +271,7 @@ public class OctopusForm {
 
 		for (double theta = startangle; theta < startangle + angle; theta += 10) {
 			double rtheta = Math.toRadians(theta);
-			Block block = location.clone().add(
-					new Vector(radius * Math.cos(rtheta), 0, radius	* Math.sin(rtheta))).getBlock();
+			Block block = location.clone().add(new Vector(radius * Math.cos(rtheta), 0, radius * Math.sin(rtheta))).getBlock();
 			if (!doneblocks.contains(block)) {
 				addWater(block);
 				doneblocks.add(block);
@@ -301,23 +290,19 @@ public class OctopusForm {
 		}
 
 		for (TempBlock block : blocks) {
-			if (!newblocks.contains(block))
-				block.revertBlock();
+			if (!newblocks.contains(block)) block.revertBlock();
 		}
 
 		blocks.clear();
 
 		blocks.addAll(newblocks);
 
-		if (blocks.isEmpty())
-			remove();
+		if (blocks.isEmpty()) remove();
 	}
 
 	private void tentacle(Location base, int animationstep) {
-		if (!TempBlock.isTempBlock(base.getBlock()))
-			return;
-		if (!blocks.contains(TempBlock.get(base.getBlock())))
-			return;
+		if (!TempBlock.isTempBlock(base.getBlock())) return;
+		if (!blocks.contains(TempBlock.get(base.getBlock()))) return;
 
 		Vector direction = GeneralMethods.getDirection(player.getLocation(), base);
 		direction.setY(0);
@@ -347,7 +332,7 @@ public class OctopusForm {
 
 			if (animationstep == 1) {
 				addWater(base.clone().add(-direction.getX(), 2, -direction.getZ()).getBlock());
-			} else if (animationstep == 3 || animationstep == 7	|| animationstep == 2 || animationstep == 8) {
+			} else if (animationstep == 3 || animationstep == 7 || animationstep == 2 || animationstep == 8) {
 				addWater(baseblock);
 			} else if (animationstep == 4 || animationstep == 6) {
 				addWater(base.clone().add(direction.getX(), 2, direction.getZ()).getBlock());
@@ -360,13 +345,11 @@ public class OctopusForm {
 
 	private void addWater(Block block) {
 		clearNearbyWater(block);
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "OctopusForm", block.getLocation()))
-			return;
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "OctopusForm", block.getLocation())) return;
 		if (TempBlock.isTempBlock(block)) {
 			TempBlock tblock = TempBlock.get(block);
 			if (!newblocks.contains(tblock)) {
-				if (!blocks.contains(tblock))
-					tblock.setType(Material.WATER, full);
+				if (!blocks.contains(tblock)) tblock.setType(Material.WATER, full);
 				newblocks.add(tblock);
 			}
 		} else if (WaterMethods.isWaterbendable(block, player) || block.getType() == Material.FIRE || block.getType() == Material.AIR) {
@@ -395,7 +378,7 @@ public class OctopusForm {
 	// }
 
 	private void clearNearbyWater(Block block) {
-		BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,	BlockFace.WEST, BlockFace.DOWN };
+		BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.DOWN };
 		for (BlockFace face : faces) {
 			Block rel = block.getRelative(face);
 			if (WaterMethods.isWater(rel) && !TempBlock.isTempBlock(rel)) {
@@ -419,17 +402,14 @@ public class OctopusForm {
 	public static boolean wasBrokenFor(Player player, Block block) {
 		if (instances.containsKey(player)) {
 			OctopusForm form = instances.get(player);
-			if (form.sourceblock == null)
-				return false;
-			if (form.sourceblock.equals(block))
-				return true;
+			if (form.sourceblock == null) return false;
+			if (form.sourceblock.equals(block)) return true;
 		}
 		return false;
 	}
 
 	private void remove() {
-		if (source != null)
-			source.revertBlock();
+		if (source != null) source.revertBlock();
 		for (TempBlock block : blocks)
 			block.revertBlock();
 		instances.remove(player);
@@ -458,11 +438,7 @@ public class OctopusForm {
 	}
 
 	public static String getDescription() {
-		return "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. "
-				+ "To use, click to select a water source. Then, hold sneak to channel this ability. "
-				+ "While channeling, the water will form itself around you and has a chance to block incoming attacks. "
-				+ "Additionally, you can click while channeling to attack things near you, dealing damage and knocking them back. "
-				+ "Releasing shift at any time will dissipate the form.";
+		return "This ability allows the waterbender to manipulate a large quantity of water into a form resembling that of an octopus. " + "To use, click to select a water source. Then, hold sneak to channel this ability. " + "While channeling, the water will form itself around you and has a chance to block incoming attacks. " + "Additionally, you can click while channeling to attack things near you, dealing damage and knocking them back. " + "Releasing shift at any time will dissipate the form.";
 	}
 
 	public Player getPlayer() {
@@ -516,7 +492,5 @@ public class OctopusForm {
 	public void setAttackRange(double attackRange) {
 		this.attackRange = attackRange;
 	}
-	
-	
 
 }

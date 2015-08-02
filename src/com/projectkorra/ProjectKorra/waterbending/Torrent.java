@@ -24,7 +24,6 @@ import com.projectkorra.ProjectKorra.Utilities.ClickType;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
 import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
-
 public class Torrent {
 
 	public static ConcurrentHashMap<Player, Torrent> instances = new ConcurrentHashMap<Player, Torrent>();
@@ -77,8 +76,7 @@ public class Torrent {
 		}
 		this.player = player;
 		time = System.currentTimeMillis();
-		sourceblock = BlockSource.getWaterSourceBlock(player, selectrange, ClickType.LEFT_CLICK, 
-				true, true, WaterMethods.canPlantbend(player));
+		sourceblock = BlockSource.getWaterSourceBlock(player, selectrange, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
 		if (sourceblock != null) {
 			sourceselected = true;
 			instances.put(player, this);
@@ -86,10 +84,8 @@ public class Torrent {
 	}
 
 	private void freeze() {
-		if (layer == 0)
-			return;
-		if (!GeneralMethods.canBend(player.getName(), "PhaseChange"))
-			return;
+		if (layer == 0) return;
+		if (!GeneralMethods.canBend(player.getName(), "PhaseChange")) return;
 		List<Block> ice = GeneralMethods.getBlocksAroundPoint(location, layer);
 		for (Block block : ice) {
 			if (EarthMethods.isTransparentToEarthbending(player, block) && block.getType() != Material.ICE) {
@@ -113,16 +109,14 @@ public class Torrent {
 
 		if (GeneralMethods.getBoundAbility(player) == null) {
 			remove();
-			if (location != null)
-				returnWater(location);
+			if (location != null) returnWater(location);
 			return;
 		}
 		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Torrent")) {
 			remove();
-			if (location != null)
-				returnWater(location);
+			if (location != null) returnWater(location);
 			return;
-		}	
+		}
 
 		if (System.currentTimeMillis() > time + interval) {
 			time = System.currentTimeMillis();
@@ -202,7 +196,7 @@ public class Torrent {
 							remove();
 							return;
 						}
-						source = new TempBlock(location.getBlock(),	Material.STATIONARY_WATER, (byte) 8);
+						source = new TempBlock(location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 					}
 				}
 			}
@@ -216,7 +210,7 @@ public class Torrent {
 			if (forming || formed) {
 				if (GeneralMethods.rand.nextInt(4) == 0) {
 					WaterMethods.playWaterbendingSound(location);
-				}	
+				}
 				if (angle < 220) {
 					angle += 20;
 				} else {
@@ -281,15 +275,13 @@ public class Torrent {
 				double dy = 0;
 				double dz = Math.sin(phi) * radius;
 				Location blockloc = loc.clone().add(dx, dy, dz);
-				if (Math.abs(theta - startangle) < 10)
-					location = blockloc.clone();
+				if (Math.abs(theta - startangle) < 10) location = blockloc.clone();
 				Block block = blockloc.getBlock();
 				if (!doneblocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(player, "Torrent", blockloc)) {
 					if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid()) {
 						launchblocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 						doneblocks.add(block);
-					} else if (!EarthMethods.isTransparentToEarthbending(player, block))
-						break;
+					} else if (!EarthMethods.isTransparentToEarthbending(player, block)) break;
 				}
 			}
 			if (launchblocks.isEmpty()) {
@@ -321,17 +313,14 @@ public class Torrent {
 		}
 
 		// Methods.verbose(layer);
-		if (layer == 0)
-			location = location.clone().add(dir);
+		if (layer == 0) location = location.clone().add(dir);
 
 		Block b = location.getBlock();
 
 		// player.sendBlockChange(location, 20, (byte) 0);
 
 		if (location.distance(player.getLocation()) > range || GeneralMethods.isRegionProtectedFromBuild(player, "Torrent", location)) {
-			if (layer < maxlayer)
-				if (freeze || layer < 1)
-					layer++;
+			if (layer < maxlayer) if (freeze || layer < 1) layer++;
 			if (launchblocks.size() == 1) {
 				remove();
 				returnWater(location);
@@ -341,10 +330,8 @@ public class Torrent {
 			// b.setType(Material.GLASS);
 			if (layer < maxlayer) {
 				// Methods.verbose(layer);
-				if (layer == 0)
-					hurtentities.clear();
-				if (freeze || layer < 1)
-					layer++;
+				if (layer == 0) hurtentities.clear();
+				if (freeze || layer < 1) layer++;
 			}
 			if (freeze) {
 				freeze();
@@ -362,10 +349,8 @@ public class Torrent {
 				newblocks.add(new TempBlock(b, Material.STATIONARY_WATER, (byte) 8));
 			} else {
 				if (layer < maxlayer) {
-					if (layer == 0)
-						hurtentities.clear();
-					if (freeze || layer < 1)
-						layer++;
+					if (layer == 0) hurtentities.clear();
+					if (freeze || layer < 1) layer++;
 				}
 				if (freeze) {
 					freeze();
@@ -380,8 +365,7 @@ public class Torrent {
 			} else {
 				newblocks.add(block);
 				for (Entity entity : entities) {
-					if (entity.getWorld() != block.getBlock().getWorld())
-						continue;
+					if (entity.getWorld() != block.getBlock().getWorld()) continue;
 					if (entity.getLocation().distance(block.getLocation()) <= 1.5 && !affectedentities.contains(entity)) {
 						if (i == 0) {
 							affect(entity, dir);
@@ -397,8 +381,7 @@ public class Torrent {
 		launchblocks.clear();
 		launchblocks.addAll(newblocks);
 
-		if (launchblocks.isEmpty())
-			return false;
+		if (launchblocks.isEmpty()) return false;
 
 		return true;
 	}
@@ -424,8 +407,7 @@ public class Torrent {
 					blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 					doneblocks.add(block);
 					for (Entity entity : entities) {
-						if (entity.getWorld() != blockloc.getWorld())
-							continue;
+						if (entity.getWorld() != blockloc.getWorld()) continue;
 						if (!affectedentities.contains(entity) && entity.getLocation().distance(blockloc) <= 1.5) {
 							deflect(entity);
 						}
@@ -447,8 +429,7 @@ public class Torrent {
 		for (TempBlock block : launchblocks)
 			block.revertBlock();
 		launchblocks.clear();
-		if (source != null)
-			source.revertBlock();
+		if (source != null) source.revertBlock();
 		instances.remove(player);
 	}
 
@@ -464,8 +445,7 @@ public class Torrent {
 
 	@SuppressWarnings("deprecation")
 	public static void create(Player player) {
-		if (instances.containsKey(player))
-			return;
+		if (instances.containsKey(player)) return;
 		if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
@@ -484,13 +464,11 @@ public class Torrent {
 
 	private void use() {
 		launch = true;
-		if (launching)
-			freeze = true;
+		if (launching) freeze = true;
 	}
 
 	private void deflect(Entity entity) {
-		if (entity.getEntityId() == player.getEntityId())
-			return;
+		if (entity.getEntityId() == player.getEntityId()) return;
 		double x, z, vx, vz, mag;
 		double angle = 50;
 		angle = Math.toRadians(angle);
@@ -528,13 +506,11 @@ public class Torrent {
 	}
 
 	private void affect(Entity entity, Vector direction) {
-		if (entity.getEntityId() == player.getEntityId())
-			return;
+		if (entity.getEntityId() == player.getEntityId()) return;
 		if (direction.getY() > ylimit) {
 			direction.setY(ylimit);
 		}
-		if (!freeze)
-			entity.setVelocity(direction.multiply(factor));
+		if (!freeze) entity.setVelocity(direction.multiply(factor));
 		if (entity instanceof LivingEntity && !hurtentities.contains(entity)) {
 			World world = player.getWorld();
 			int damagedealt = damage;
@@ -575,8 +551,7 @@ public class Torrent {
 	public static void thaw(Block block) {
 		if (TempBlock.isTempBlock(block)) {
 			TempBlock tblock = TempBlock.get(block);
-			if (frozenblocks.containsKey(tblock))
-				thaw(tblock);
+			if (frozenblocks.containsKey(tblock)) thaw(tblock);
 		}
 	}
 
@@ -605,10 +580,8 @@ public class Torrent {
 	public static boolean wasBrokenFor(Player player, Block block) {
 		if (instances.containsKey(player)) {
 			Torrent torrent = instances.get(player);
-			if (torrent.sourceblock == null)
-				return false;
-			if (torrent.sourceblock.equals(block))
-				return true;
+			if (torrent.sourceblock == null) return false;
+			if (torrent.sourceblock.equals(block)) return true;
 		}
 		return false;
 	}

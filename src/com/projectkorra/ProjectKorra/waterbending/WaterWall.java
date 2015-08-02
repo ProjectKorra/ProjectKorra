@@ -95,8 +95,7 @@ public class WaterWall {
 
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-			if (EarthMethods.isTransparentToEarthbending(player, block)
-					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+			if (EarthMethods.isTransparentToEarthbending(player, block) && EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData(full);
 				Wave wave = new Wave(player);
@@ -119,9 +118,8 @@ public class WaterWall {
 	}
 
 	private void freezeThaw() {
-		if(!WaterMethods.canIcebend(player))
-			return;
-		
+		if (!WaterMethods.canIcebend(player)) return;
+
 		if (frozen) {
 			thaw();
 		} else {
@@ -151,8 +149,7 @@ public class WaterWall {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, 
-				true, true, WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -198,8 +195,7 @@ public class WaterWall {
 				firstdestination = getToEyeLevel();
 				firstdirection = getDirection(sourceblock.getLocation(), firstdestination);
 				targetdirection = getDirection(firstdestination, targetdestination);
-				if (WaterMethods.isPlant(sourceblock))
-					new Plantbending(sourceblock);
+				if (WaterMethods.isPlant(sourceblock)) new Plantbending(sourceblock);
 				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceblock)) {
 					sourceblock.setType(Material.AIR);
 				}
@@ -245,13 +241,13 @@ public class WaterWall {
 		}
 		if (!GeneralMethods.canBend(player.getName(), "Surge")) {
 			//if (!forming)
-				// removeWater(oldwater);
+			// removeWater(oldwater);
 			breakBlock();
 			returnWater(location);
 			unfocusBlock();
 			return false;
-		}	
-		
+		}
+
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 
@@ -263,14 +259,12 @@ public class WaterWall {
 				unfocusBlock();
 				return false;
 			}
-			if (!progressing
-					&& !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge")) {
+			if (!progressing && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge")) {
 				unfocusBlock();
 				return false;
 			}
 
-			if (progressing
-					&& (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge"))) {
+			if (progressing && (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge"))) {
 				breakBlock();
 				returnWater(location);
 				return false;
@@ -284,9 +278,9 @@ public class WaterWall {
 			if (forming) {
 				if (GeneralMethods.rand.nextInt(7) == 0) {
 					WaterMethods.playWaterbendingSound(location);
-				}	
+				}
 				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) range,	8, 9, 79);
+				Location loc = GeneralMethods.getTargetedLocation(player, (int) range, 8, 9, 79);
 				location = loc.clone();
 				Vector dir = player.getEyeLocation().getDirection();
 				Vector vec;
@@ -296,14 +290,10 @@ public class WaterWall {
 						// loc.getBlock().setType(Material.GLOWSTONE);
 						vec = GeneralMethods.getOrthogonalVector(dir.clone(), angle, i);
 						block = loc.clone().add(vec).getBlock();
-						if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge", block.getLocation()))
-							continue;
+						if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge", block.getLocation())) continue;
 						if (wallblocks.containsKey(block)) {
 							blocks.add(block);
-						} else if (!blocks.contains(block)
-								&& (block.getType() == Material.AIR
-								|| block.getType() == Material.FIRE 
-								|| WaterMethods.isWaterbendable(block, player))) {
+						} else if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE || WaterMethods.isWaterbendable(block, player))) {
 							wallblocks.put(block, player);
 							addWallBlock(block);
 							// if (frozen) {
@@ -441,8 +431,7 @@ public class WaterWall {
 
 	private void addWater(Block block) {
 
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge", block.getLocation()))
-			return;
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge", block.getLocation())) return;
 
 		if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
@@ -465,18 +454,14 @@ public class WaterWall {
 	public static void form(Player player) {
 
 		if (!instances.containsKey(player.getEntityId())) {
-			if (!Wave.instances.containsKey(player.getEntityId())
-					&& BlockSource.getWaterSourceBlock(player, (int) Wave.defaultrange, ClickType.LEFT_CLICK,
-							true, true, WaterMethods.canPlantbend(player)) == null
-					&& WaterReturn.hasWaterBottle(player)) {
+			if (!Wave.instances.containsKey(player.getEntityId()) && BlockSource.getWaterSourceBlock(player, (int) Wave.defaultrange, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player)) == null && WaterReturn.hasWaterBottle(player)) {
 				BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 				if (bPlayer.isOnCooldown("Surge")) return;
 
 				Location eyeloc = player.getEyeLocation();
 				Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-				if (EarthMethods.isTransparentToEarthbending(player, block)
-						&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+				if (EarthMethods.isTransparentToEarthbending(player, block) && EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 					block.setType(Material.WATER);
 					block.setData(full);
 					WaterWall wall = new WaterWall(player);
@@ -517,8 +502,7 @@ public class WaterWall {
 	}
 
 	public static boolean canThaw(Block block) {
-		if (wallblocks.keySet().contains(block))
-			return false;
+		if (wallblocks.keySet().contains(block)) return false;
 		return true;
 	}
 
@@ -529,10 +513,8 @@ public class WaterWall {
 	public static boolean wasBrokenFor(Player player, Block block) {
 		if (instances.containsKey(player.getEntityId())) {
 			WaterWall wall = instances.get(player.getEntityId());
-			if (wall.sourceblock == null)
-				return false;
-			if (wall.sourceblock.equals(block))
-				return true;
+			if (wall.sourceblock == null) return false;
+			if (wall.sourceblock.equals(block)) return true;
 		}
 		return false;
 	}
@@ -544,12 +526,7 @@ public class WaterWall {
 	}
 
 	public static String getDescription() {
-		return "This ability has two distinct features. If you sneak to select a source block, "
-				+ "you can then click in a direction and a large wave will be launched in that direction. "
-				+ "If you sneak again while the wave is en route, the wave will freeze the next target it hits. "
-				+ "If, instead, you click to select a source block, you can hold sneak to form a wall of water at "
-				+ "your cursor location. Click to shift between a water wall and an ice wall. "
-				+ "Release sneak to dissipate it.";
+		return "This ability has two distinct features. If you sneak to select a source block, " + "you can then click in a direction and a large wave will be launched in that direction. " + "If you sneak again while the wave is en route, the wave will freeze the next target it hits. " + "If, instead, you click to select a source block, you can hold sneak to form a wall of water at " + "your cursor location. Click to shift between a water wall and an ice wall. " + "Release sneak to dissipate it.";
 	}
 
 	public Player getPlayer() {

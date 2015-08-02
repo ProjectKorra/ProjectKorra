@@ -6,29 +6,22 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 
-/**
- * Used for the ability Blaze.
- */
-public class ArcOfFire implements ConfigLoadable {
+public class ArcOfFire {
 
-	private static int defaultarc = config.get().getInt("Abilities.Fire.Blaze.ArcOfFire.Arc");
-	private static int defaultrange = config.get().getInt("Abilities.Fire.Blaze.ArcOfFire.Range");
+	private static int defaultarc = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.ArcOfFire.Arc");
+	private static int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Fire.Blaze.ArcOfFire.Range");
 	private static int stepsize = 2;
-	
+
 	public ArcOfFire(Player player) {
-		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+
 		if (bPlayer.isOnCooldown("Blaze")) return;
-		/* End Initial Checks */
-		reloadVariables();
-		
 		Location location = player.getLocation();
 
-		int arc = (int) FireMethods.getFirebendingDayAugment(defaultarc,
-				player.getWorld());
+		int arc = (int) FireMethods.getFirebendingDayAugment(defaultarc, player.getWorld());
 
 		for (int i = -arc; i <= arc; i += stepsize) {
 			double angle = Math.toRadians((double) i);
@@ -45,8 +38,7 @@ public class ArcOfFire implements ConfigLoadable {
 			direction.setZ(vz);
 
 			int range = defaultrange;
-			if (AvatarState.isAvatarState(player))
-				range = AvatarState.getValue(range);
+			if (AvatarState.isAvatarState(player)) range = AvatarState.getValue(range);
 
 			new FireStream(location, direction, player, range);
 		}
@@ -55,17 +47,7 @@ public class ArcOfFire implements ConfigLoadable {
 	}
 
 	public static String getDescription() {
-		return "To use, simply left-click in any direction. "
-				+ "An arc of fire will flow from your location, "
-				+ "igniting anything in its path."
-				+ " Additionally, tap sneak to engulf the area around you "
-				+ "in roaring flames.";
-	}
-
-	@Override
-	public void reloadVariables() {
-		defaultarc = config.get().getInt("Abilities.Fire.Blaze.ArcOfFire.Arc");
-		defaultrange = config.get().getInt("Abilities.Fire.Blaze.ArcOfFire.Range");
+		return "To use, simply left-click in any direction. " + "An arc of fire will flow from your location, " + "igniting anything in its path." + " Additionally, tap sneak to engulf the area around you " + "in roaring flames.";
 	}
 
 }

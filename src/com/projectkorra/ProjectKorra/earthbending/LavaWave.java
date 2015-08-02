@@ -46,7 +46,7 @@ public class LavaWave {
 	double range = defaultrange;
 	boolean progressing = false;
 	boolean canhitself = true;
-	
+
 	public LavaWave(Player player) {
 		this.player = player;
 
@@ -61,7 +61,7 @@ public class LavaWave {
 			time = System.currentTimeMillis();
 		}
 	}
-	
+
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
@@ -73,7 +73,7 @@ public class LavaWave {
 		}
 		return false;
 	}
-	
+
 	private void cancelPrevious() {
 		if (instances.containsKey(player.getEntityId())) {
 			LavaWave old = instances.get(player.getEntityId());
@@ -84,31 +84,30 @@ public class LavaWave {
 			}
 		}
 	}
-	
+
 	public void cancel() {
 		unfocusBlock();
 	}
-	
+
 	private void focusBlock() {
 		location = sourceblock.getLocation();
 	}
-	
+
 	private void unfocusBlock() {
 		instances.remove(player.getEntityId());
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public void moveLava() {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("LavaSurge")) return;
-		
+
 		bPlayer.addCooldown("LavaSurge", GeneralMethods.getGlobalCooldown());
 		if (sourceblock != null) {
 			if (!sourceblock.getWorld().equals(player.getWorld())) {
 				return;
 			}
-			if (AvatarState.isAvatarState(player))
-				factor = AvatarState.getValue(factor);
+			if (AvatarState.isAvatarState(player)) factor = AvatarState.getValue(factor);
 			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 			if (target == null) {
 				targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) range).getLocation();
@@ -129,7 +128,7 @@ public class LavaWave {
 			}
 		}
 	}
-	
+
 	private Vector getDirection(Location location, Location destination) {
 		double x1, y1, z1;
 		double x0, y0, z0;
@@ -141,13 +140,13 @@ public class LavaWave {
 		z0 = location.getZ();
 		return new Vector(x1 - x0, y1 - y0, z1 - z0);
 	}
-	
+
 	public static void progressAll() {
 		for (int ID : instances.keySet()) {
 			instances.get(ID).progress();
 		}
 	}
-	
+
 	private boolean progress() {
 		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "LavaSurge")) {
 			breakBlock();
@@ -159,8 +158,7 @@ public class LavaWave {
 				unfocusBlock();
 				return false;
 			}
-			if (!progressing
-					&& !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge")) {
+			if (!progressing && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge")) {
 				unfocusBlock();
 				return false;
 			}
@@ -176,18 +174,12 @@ public class LavaWave {
 			location = location.clone().add(direction);
 			Block blockl = location.getBlock();
 			ArrayList<Block> blocks = new ArrayList<Block>();
-			if (!GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", location) && (((blockl.getType() == Material.AIR
-					|| blockl.getType() == Material.FIRE
-					|| WaterMethods.isPlant(blockl)
-					|| EarthMethods.isLava(blockl)
-					|| EarthMethods.isLavabendable(blockl, player))) && blockl.getType() != Material.LEAVES)) {
+			if (!GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", location) && (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || WaterMethods.isPlant(blockl) || EarthMethods.isLava(blockl) || EarthMethods.isLavabendable(blockl, player))) && blockl.getType() != Material.LEAVES)) {
 				for (double i = 0; i <= radius; i += .5) {
 					for (double angle = 0; angle < 360; angle += 10) {
 						Vector vec = GeneralMethods.getOrthogonalVector(targetdirection, angle, i);
 						Block block = location.clone().add(vec).getBlock();
-						if (!blocks.contains(block)	&& (block.getType() == Material.AIR
-								|| block.getType() == Material.FIRE)
-								|| EarthMethods.isLavabendable(block, player)) {
+						if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || EarthMethods.isLavabendable(block, player)) {
 							blocks.add(block);
 							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 						}
@@ -196,12 +188,10 @@ public class LavaWave {
 				}
 			}
 			for (Block block : wave.keySet()) {
-				if (!blocks.contains(block))
-					finalRemoveLava(block);
+				if (!blocks.contains(block)) finalRemoveLava(block);
 			}
 			for (Block block : blocks) {
-				if (!wave.containsKey(block))
-					addLava(block);
+				if (!wave.containsKey(block)) addLava(block);
 			}
 			if (wave.isEmpty()) {
 				breakBlock();
@@ -212,18 +202,15 @@ public class LavaWave {
 				boolean knockback = false;
 				for (Block block : wave.keySet()) {
 					if (entity.getLocation().distance(block.getLocation()) <= 2) {
-						if (entity.getEntityId() != player.getEntityId() || canhitself)
-							knockback = true;
+						if (entity.getEntityId() != player.getEntityId() || canhitself) knockback = true;
 					}
 				}
 				if (knockback) {
 					Vector dir = direction.clone();
 					dir.setY(dir.getY() * upfactor);
-					entity.setVelocity(entity.getVelocity().clone()
-							.add(dir.clone().multiply(factor)));
+					entity.setVelocity(entity.getVelocity().clone().add(dir.clone().multiply(factor)));
 					entity.setFallDistance(0);
-					if (entity.getFireTicks() > 0)
-						entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
+					if (entity.getFireTicks() > 0) entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
 					entity.setFireTicks(0);
 				}
 			}
@@ -236,37 +223,35 @@ public class LavaWave {
 				breakBlock();
 				return false;
 			}
-			if (radius < maxradius)
-				radius += .5;
+			if (radius < maxradius) radius += .5;
 			return true;
 		}
 
 		return false;
 	}
-	
+
 	private void breakBlock() {
 		for (Block block : wave.keySet()) {
 			finalRemoveLava(block);
 		}
 		instances.remove(player.getEntityId());
 	}
-	
+
 	private void finalRemoveLava(Block block) {
 		if (wave.containsKey(block)) {
 			TempBlock.revertBlock(block, Material.AIR);
 			wave.remove(block);
 		}
 	}
-	
+
 	private void addLava(Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge",	block.getLocation()))
-			return;
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", block.getLocation())) return;
 		if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);
 			wave.put(block, block);
 		}
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void clearWave() {
 		for (Block block : wave.keySet()) {
@@ -274,15 +259,15 @@ public class LavaWave {
 		}
 		wave.clear();
 	}
-	
+
 	public static void moveLava(Player player) {
 		if (instances.containsKey(player.getEntityId())) {
 			instances.get(player.getEntityId()).moveLava();
 		}
 	}
-	
+
 	public static boolean isBlockInWave(Block block) {
-		for (int ID: instances.keySet()) {
+		for (int ID : instances.keySet()) {
 			if (block.getLocation().distance(instances.get(ID).location) <= 2 * instances.get(ID).radius) {
 				return true;
 			}
@@ -290,19 +275,18 @@ public class LavaWave {
 		}
 		return false;
 	}
-	
+
 	public static boolean isBlockWave(Block block) {
 		for (int ID : instances.keySet()) {
-			if (instances.get(ID).wave.containsKey(block))
-				return true;
+			if (instances.get(ID).wave.containsKey(block)) return true;
 		}
 		return false;
 	}
-	
+
 	public static void launch(Player player) {
 		moveLava(player);
 	}
-	
+
 	public static void removeAll() {
 		for (int id : instances.keySet()) {
 			for (Block block : instances.get(id).wave.keySet()) {

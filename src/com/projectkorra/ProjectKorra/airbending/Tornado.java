@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -13,16 +14,19 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
-public class Tornado extends CoreAbility {
-	
-	private static double MAX_HEIGHT = config.get().getDouble("Abilities.Air.Tornado.Height");
-	private static double PLAYER_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
-	private static double MAX_RADIUS = config.get().getDouble("Abilities.Air.Tornado.Radius");
-	private static double RANGE = config.get().getDouble("Abilities.Air.Tornado.Range");
-	private static double NPC_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.MobPushFactor");
+public class Tornado {
+
+	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+
+	public static ConcurrentHashMap<Integer, Tornado> instances = new ConcurrentHashMap<Integer, Tornado>();
+
+	private static double MAX_HEIGHT = config.getDouble("Abilities.Air.Tornado.Height");
+	private static double PLAYER_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.PlayerPushFactor");
+	private static double MAX_RADIUS = config.getDouble("Abilities.Air.Tornado.Radius");
+	private static double RANGE = config.getDouble("Abilities.Air.Tornado.Range");
+	private static double NPC_PUSH_FACTOR = config.getDouble("Abilities.Air.Tornado.MobPushFactor");
 	private static int numberOfStreams = (int) (.3 * (double) MAX_HEIGHT);
 	// private static double speed = .75;
 	// private static double speedfactor = 1000 * speed
@@ -39,10 +43,10 @@ public class Tornado extends CoreAbility {
 	private double NPCpushfactor = NPC_PUSH_FACTOR;
 	private double height = 2;
 	private double radius = height / maxheight * maxradius;
+
 	// private boolean canfly;
 
 	public Tornado(Player player) {
-		reloadVariables();
 		this.player = player;
 		// canfly = player.getAllowFlight();
 		// player.setAllowFlight(true);
@@ -53,96 +57,46 @@ public class Tornado extends CoreAbility {
 		for (int i = 0; i <= maxheight; i += (int) maxheight / numberOfStreams) {
 			angles.put(i, angle);
 			angle += 90;
-			if (angle == 360)
-				angle = 0;
+			if (angle == 360) angle = 0;
 		}
 
 		new Flight(player);
 		player.setAllowFlight(true);
-		//instances.put(player.getEntityId(), this);
-		putInstance(player, this);
+		instances.put(player.getEntityId(), this);
+
 	}
 
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (Integer id : getInstances(StockAbility.Tornado).keySet()) {
-			players.add(getInstances(StockAbility.Tornado).get(id).getPlayer());
+	public static void progressAll() {
+		for (int ID : instances.keySet()) {
+			instances.get(ID).progress();
 		}
-		return players;
-	}
-	
-	public double getMaxheight() {
-		return maxheight;
 	}
 
-	public double getMaxradius() {
-		return maxradius;
-	}
-
-	public double getNPCpushfactor() {
-		return NPCpushfactor;
-	}
-
-	public double getPCpushfactor() {
-		return PCpushfactor;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public double getRange() {
-		return range;
-	}
-
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.Tornado;
-	}
-
-	@Override
-	public boolean progress() {
+	private boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
-			remove();
+			instances.remove(player.getEntityId());
 			return false;
 		}
 		if (!GeneralMethods.canBend(player.getName(), "Tornado") || player.getEyeLocation().getBlock().isLiquid()) {
-			remove();
+			instances.remove(player.getEntityId());
 			return false;
 		}
 		String abil = GeneralMethods.getBoundAbility(player);
 		if (abil == null) {
-			remove();
+			instances.remove(player.getEntityId());
 			return false;
 		}
 		if (!abil.equalsIgnoreCase("Tornado") || !player.isSneaking()) {
-			remove();
+			instances.remove(player.getEntityId());
 			return false;
 		}
 
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", origin)) {
-			remove();
+			instances.remove(player.getEntityId());
 			return false;
 		}
 		rotateTornado();
 		return true;
-	}
-
-	@Override
-	public void reloadVariables() {
-		MAX_HEIGHT = config.get().getDouble("Abilities.Air.Tornado.Height");
-		PLAYER_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
-		MAX_RADIUS = config.get().getDouble("Abilities.Air.Tornado.Radius");
-		RANGE = config.get().getDouble("Abilities.Air.Tornado.Range");
-		NPC_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.MobPushFactor");
-		numberOfStreams = (int) (.3 * (double) MAX_HEIGHT);
-		
-		maxheight = MAX_HEIGHT;
-		PCpushfactor = PLAYER_PUSH_FACTOR;
-		maxradius = MAX_RADIUS;
-		range = RANGE;
-		NPCpushfactor = NPC_PUSH_FACTOR;
-		radius = height / maxheight * maxradius;
 	}
 
 	private void rotateTornado() {
@@ -155,14 +109,13 @@ public class Tornado extends CoreAbility {
 			origin.setY(origin.getY() - 1. / 10. * height);
 
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, height)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", entity.getLocation()))
-					continue;
+				if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", entity.getLocation())) continue;
 				double y = entity.getLocation().getY();
 				double factor;
 				if (y > origin.getY() && y < origin.getY() + height) {
 					factor = (y - origin.getY()) / height;
 					Location testloc = new Location(origin.getWorld(), origin.getX(), y, origin.getZ());
-					if (testloc.distance(entity.getLocation()) < radius	* factor) {
+					if (testloc.distance(entity.getLocation()) < radius * factor) {
 						double x, z, vx, vz, mag;
 						double angle = 100;
 						double vy = 0.7 * NPCpushfactor;
@@ -196,7 +149,7 @@ public class Tornado extends CoreAbility {
 								vy = .6;
 							}
 						}
-						
+
 						if (entity instanceof Player) {
 							if (Commands.invincible.contains(((Player) entity).getName())) continue;
 						}
@@ -208,7 +161,7 @@ public class Tornado extends CoreAbility {
 						velocity.multiply(timefactor);
 						GeneralMethods.setVelocity(entity, velocity);
 						entity.setFallDistance(0);
-						
+
 						AirMethods.breakBreathbendingHold(entity);
 
 						if (entity instanceof Player) {
@@ -232,12 +185,12 @@ public class Tornado extends CoreAbility {
 
 				Location effect = new Location(origin.getWorld(), x, y, z);
 				if (!GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", effect)) {
-					AirMethods.playAirbendingParticles(effect, 20);
+					AirMethods.playAirbendingParticles(effect, 3);
 					if (GeneralMethods.rand.nextInt(20) == 0) {
 						AirMethods.playAirbendingSound(effect);
-					}		
+					}
 				}
-//					origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int) AirBlast.defaultrange);
+				//					origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int) AirBlast.defaultrange);
 
 				angles.put(i, angles.get(i) + 25 * (int) speedfactor);
 			}
@@ -253,24 +206,56 @@ public class Tornado extends CoreAbility {
 
 	}
 
+	public static ArrayList<Player> getPlayers() {
+		ArrayList<Player> players = new ArrayList<Player>();
+		for (int id : instances.keySet()) {
+			players.add(instances.get(id).player);
+		}
+		return players;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getMaxheight() {
+		return maxheight;
+	}
+
 	public void setMaxheight(double maxheight) {
 		this.maxheight = maxheight;
 	}
 
-	public void setMaxradius(double maxradius) {
-		this.maxradius = maxradius;
-	}
-
-	public void setNPCpushfactor(double nPCpushfactor) {
-		NPCpushfactor = nPCpushfactor;
+	public double getPCpushfactor() {
+		return PCpushfactor;
 	}
 
 	public void setPCpushfactor(double pCpushfactor) {
 		PCpushfactor = pCpushfactor;
 	}
 
+	public double getMaxradius() {
+		return maxradius;
+	}
+
+	public void setMaxradius(double maxradius) {
+		this.maxradius = maxradius;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
 	public void setRange(double range) {
 		this.range = range;
+	}
+
+	public double getNPCpushfactor() {
+		return NPCpushfactor;
+	}
+
+	public void setNPCpushfactor(double nPCpushfactor) {
+		NPCpushfactor = nPCpushfactor;
 	}
 
 }

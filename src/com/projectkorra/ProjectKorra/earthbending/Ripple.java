@@ -46,8 +46,7 @@ public class Ripple {
 
 	public Ripple(Player player, Location origin, Vector direction) {
 		this.player = player;
-		if (origin == null)
-			return;
+		if (origin == null) return;
 		this.direction = direction.clone().normalize();
 		this.origin = origin.clone();
 		this.location = origin.clone();
@@ -57,8 +56,7 @@ public class Ripple {
 
 		if (EarthMethods.isEarthbendable(player, origin.getBlock())) {
 			id = ID++;
-			if (ID >= Integer.MAX_VALUE)
-				ID = Integer.MIN_VALUE;
+			if (ID >= Integer.MAX_VALUE) ID = Integer.MIN_VALUE;
 			instances.put(id, this);
 		}
 
@@ -77,8 +75,7 @@ public class Ripple {
 			loc = location.clone().add(0, i, 0);
 			Block topblock = loc.getBlock();
 			Block botblock = loc.clone().add(0, -1, 0).getBlock();
-			if (EarthMethods.isTransparentToEarthbending(player, topblock)
-					&& EarthMethods.isEarthbendable(player, botblock)) {
+			if (EarthMethods.isTransparentToEarthbending(player, topblock) && EarthMethods.isEarthbendable(player, botblock)) {
 				location = loc.clone().add(0, -1, 0);
 				return location;
 			}
@@ -105,77 +102,57 @@ public class Ripple {
 				block3 = block4;
 				block4 = newlocation.getBlock();
 
-				if (block1 != null)
-					if (hasAnyMoved(block1)) {
-						block1 = null;
-					}
-				if (block2 != null)
-					if (hasAnyMoved(block2)) {
-						block2 = null;
-					}
-				if (block3 != null)
-					if (hasAnyMoved(block3)) {
-						block3 = null;
-					}
-				if (block4 != null)
-					if (hasAnyMoved(block4)) {
-						block4 = null;
-					}
+				if (block1 != null) if (hasAnyMoved(block1)) {
+					block1 = null;
+				}
+				if (block2 != null) if (hasAnyMoved(block2)) {
+					block2 = null;
+				}
+				if (block3 != null) if (hasAnyMoved(block3)) {
+					block3 = null;
+				}
+				if (block4 != null) if (hasAnyMoved(block4)) {
+					block4 = null;
+				}
 
 				if (step == 0) {
 
-					if (increase(block4))
-						block4 = block4.getRelative(BlockFace.UP);
+					if (increase(block4)) block4 = block4.getRelative(BlockFace.UP);
 
 				} else if (step == 1) {
 
-					if (increase(block3))
-						block3 = block3.getRelative(BlockFace.UP);
-					if (increase(block4))
-						block4 = block4.getRelative(BlockFace.UP);
+					if (increase(block3)) block3 = block3.getRelative(BlockFace.UP);
+					if (increase(block4)) block4 = block4.getRelative(BlockFace.UP);
 
 				} else if (step == 2) {
 
-					if (decrease(block2))
-						block2 = block2.getRelative(BlockFace.DOWN);
-					if (increase(block3))
-						block3 = block3.getRelative(BlockFace.UP);
-					if (increase(block4))
-						block4 = block4.getRelative(BlockFace.UP);
+					if (decrease(block2)) block2 = block2.getRelative(BlockFace.DOWN);
+					if (increase(block3)) block3 = block3.getRelative(BlockFace.UP);
+					if (increase(block4)) block4 = block4.getRelative(BlockFace.UP);
 
 				} else {
 
-					if (decrease(block1))
-						block1 = block1.getRelative(BlockFace.DOWN);
-					if (decrease(block2))
-						block2 = block2.getRelative(BlockFace.DOWN);
-					if (increase(block3))
-						block3 = block3.getRelative(BlockFace.UP);
-					if (increase(block4))
-						block4 = block4.getRelative(BlockFace.UP);
+					if (decrease(block1)) block1 = block1.getRelative(BlockFace.DOWN);
+					if (decrease(block2)) block2 = block2.getRelative(BlockFace.DOWN);
+					if (increase(block3)) block3 = block3.getRelative(BlockFace.UP);
+					if (increase(block4)) block4 = block4.getRelative(BlockFace.UP);
 
 				}
 			}
 		} else if (step == maxstep) {
 
-			if (decrease(block2))
-				block2 = block2.getRelative(BlockFace.DOWN);
-			if (decrease(block3))
-				block3 = block3.getRelative(BlockFace.DOWN);
-			if (increase(block4))
-				block4 = block4.getRelative(BlockFace.UP);
+			if (decrease(block2)) block2 = block2.getRelative(BlockFace.DOWN);
+			if (decrease(block3)) block3 = block3.getRelative(BlockFace.DOWN);
+			if (increase(block4)) block4 = block4.getRelative(BlockFace.UP);
 
 		} else if (step == maxstep + 1) {
 
-			if (decrease(block3))
-				block3 = block3.getRelative(BlockFace.DOWN);
-			if (decrease(block4))
-				block4 = block4.getRelative(BlockFace.DOWN);
+			if (decrease(block3)) block3 = block3.getRelative(BlockFace.DOWN);
+			if (decrease(block4)) block4 = block4.getRelative(BlockFace.DOWN);
 
 		} else if (step == maxstep + 2) {
 
-			if (decrease(block4))
-				block4 = block4.getRelative(BlockFace.DOWN);
+			if (decrease(block4)) block4 = block4.getRelative(BlockFace.DOWN);
 			remove();
 
 		}
@@ -203,9 +180,7 @@ public class Ripple {
 				loc = location.clone().add(0, i, 0);
 				Block topblock = loc.getBlock();
 				Block botblock = loc.clone().add(0, -1, 0).getBlock();
-				if (EarthMethods.isTransparentToEarthbending(player, topblock)
-						&& !topblock.isLiquid()
-						&& EarthMethods.isEarthbendable(player, botblock)) {
+				if (EarthMethods.isTransparentToEarthbending(player, topblock) && !topblock.isLiquid() && EarthMethods.isEarthbendable(player, botblock)) {
 					location = loc.clone().add(0, -1, 0);
 					locations.add(location);
 					break;
@@ -217,10 +192,8 @@ public class Ripple {
 	}
 
 	private boolean decrease(Block block) {
-		if (block == null)
-			return false;
-		if (hasAnyMoved(block))
-			return false;
+		if (block == null) return false;
+		if (hasAnyMoved(block)) return false;
 		setMoved(block);
 		Block botblock = block.getRelative(BlockFace.DOWN);
 		int length = 1;
@@ -228,15 +201,12 @@ public class Ripple {
 			length = 2;
 			block = botblock;
 		}
-		return EarthMethods.moveEarth(player, block, new Vector(0, -1, 0), length,
-				false);
+		return EarthMethods.moveEarth(player, block, new Vector(0, -1, 0), length, false);
 	}
 
 	private boolean increase(Block block) {
-		if (block == null)
-			return false;
-		if (hasAnyMoved(block))
-			return false;
+		if (block == null) return false;
+		if (hasAnyMoved(block)) return false;
 		setMoved(block);
 		Block botblock = block.getRelative(BlockFace.DOWN);
 		int length = 1;
@@ -244,12 +214,9 @@ public class Ripple {
 			length = 2;
 		}
 		if (EarthMethods.moveEarth(player, block, new Vector(0, 1, 0), length, false)) {
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(block
-					.getLocation().clone().add(0, 1, 0), 2)) {
-				if (entity.getEntityId() != player.getEntityId()
-						&& !entities.contains(entity)) {
-					if (!(entity instanceof FallingBlock))
-						entities.add(entity);
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(block.getLocation().clone().add(0, 1, 0), 2)) {
+				if (entity.getEntityId() != player.getEntityId() && !entities.contains(entity)) {
+					if (!(entity instanceof FallingBlock)) entities.add(entity);
 				}
 			}
 			return true;
@@ -267,7 +234,7 @@ public class Ripple {
 		vector.setY(.5);
 		double knock = AvatarState.isAvatarState(player) ? AvatarState.getValue(knockback) : knockback;
 		entity.setVelocity(vector.clone().normalize().multiply(knock));
-		
+
 		AirMethods.breakBreathbendingHold(entity);
 
 	}
@@ -283,8 +250,7 @@ public class Ripple {
 		int x = block.getX();
 		int z = block.getZ();
 		Integer[] pair = new Integer[] { x, z };
-		if (blocks.containsKey(pair))
-			return true;
+		if (blocks.containsKey(pair)) return true;
 		return false;
 	}
 

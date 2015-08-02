@@ -15,22 +15,22 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 
 public class ChiPassive {
-	
+
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
+
 	public static double FallReductionFactor = config.getDouble("Abilities.Chi.Passive.FallReductionFactor");
 	public static int jumpPower = config.getInt("Abilities.Chi.Passive.Jump");
 	public static int speedPower = config.getInt("Abilities.Chi.Passive.Speed");
 	public static double dodgeChance = config.getDouble("Abilities.Chi.Passive.BlockChi.DodgeChance");
 	public static int duration = config.getInt("Abilities.Chi.Passive.BlockChi.Duration");
-	
+
 	static long ticks = (duration / 1000) * 20;
-	
+
 	public static boolean willChiBlock(Player attacker, Player player) {
 		if (AcrobatStance.isInAcrobatStance(attacker)) {
 			dodgeChance = dodgeChance - AcrobatStance.CHI_BLOCK_BOOST;
 		}
-		
+
 		Random rand = new Random();
 		if (rand.nextInt(99) + 1 < dodgeChance) {
 			return false;
@@ -40,24 +40,24 @@ public class ChiPassive {
 		}
 		return true;
 	}
-	
+
 	public static void blockChi(final Player player) {
-		if(Suffocate.isChannelingSphere(player)) {
+		if (Suffocate.isChannelingSphere(player)) {
 			Suffocate.remove(player);
 		}
 		final BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer == null) return;
 		bPlayer.blockChi();
-		
+
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new Runnable() {
 			public void run() {
 				bPlayer.unblockChi();
 			}
 		}, ticks);
 	}
-	
+
 	public static void handlePassive() {
-		for (Player player: Bukkit.getOnlinePlayers()) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (GeneralMethods.canBendPassive(player.getName(), Element.Chi) && !GeneralMethods.canBendPassive(player.getName(), Element.Air)) { // If they're an airbender and gets the boosts we want to give them that instead of the Chi.
 				if (player.isSprinting()) {
 					if (!player.hasPotionEffect(PotionEffectType.JUMP) && !AcrobatStance.isInAcrobatStance(player)) {

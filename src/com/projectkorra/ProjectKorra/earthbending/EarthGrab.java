@@ -15,12 +15,11 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class EarthGrab {
 
-	
 	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthGrab.Range");
 
 	public EarthGrab(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
+
 		if (bPlayer.isOnCooldown("EarthGrab")) return;
 
 		Location origin = player.getEyeLocation();
@@ -28,9 +27,7 @@ public class EarthGrab {
 		double lowestdistance = range + 1;
 		Entity closestentity = null;
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, range)) {
-			if (GeneralMethods.getDistanceFromLine(direction, origin, entity.getLocation()) <= 3
-					&& (entity instanceof LivingEntity)
-					&& (entity.getEntityId() != player.getEntityId())) {
+			if (GeneralMethods.getDistanceFromLine(direction, origin, entity.getLocation()) <= 3 && (entity instanceof LivingEntity) && (entity.getEntityId() != player.getEntityId())) {
 				double distance = origin.distance(entity.getLocation());
 				if (distance < lowestdistance) {
 					closestentity = entity;
@@ -51,12 +48,8 @@ public class EarthGrab {
 			int height1 = 3;
 			int height2 = 2;
 			for (double angle = 0; angle <= 360; angle += 20) {
-				testloc = loc1.clone().add(
-						factor * Math.cos(Math.toRadians(angle)), 1,
-						factor * Math.sin(Math.toRadians(angle)));
-				testloc2 = loc2.clone().add(
-						factor2 * Math.cos(Math.toRadians(angle)), 1,
-						factor2 * Math.sin(Math.toRadians(angle)));
+				testloc = loc1.clone().add(factor * Math.cos(Math.toRadians(angle)), 1, factor * Math.sin(Math.toRadians(angle)));
+				testloc2 = loc2.clone().add(factor2 * Math.cos(Math.toRadians(angle)), 1, factor2 * Math.sin(Math.toRadians(angle)));
 				for (int y = 0; y < EarthColumn.standardheight - height1; y++) {
 					testloc = testloc.clone().add(0, -1, 0);
 					if (EarthMethods.isEarthbendable(player, testloc.getBlock())) {
@@ -79,14 +72,13 @@ public class EarthGrab {
 				}
 			}
 
-			if (!blocks.isEmpty())
-				bPlayer.addCooldown("EarthGrab", GeneralMethods.getGlobalCooldown());
+			if (!blocks.isEmpty()) bPlayer.addCooldown("EarthGrab", GeneralMethods.getGlobalCooldown());
 		}
 	}
 
 	public static void EarthGrabSelf(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
+
 		if (bPlayer.isOnCooldown("EarthGrab")) return;
 
 		Entity closestentity = player;
@@ -103,12 +95,8 @@ public class EarthGrab {
 			int height1 = 3;
 			int height2 = 2;
 			for (double angle = 0; angle <= 360; angle += 20) {
-				testloc = loc1.clone().add(
-						factor * Math.cos(Math.toRadians(angle)), 1,
-						factor * Math.sin(Math.toRadians(angle)));
-				testloc2 = loc2.clone().add(
-						factor2 * Math.cos(Math.toRadians(angle)), 1,
-						factor2 * Math.sin(Math.toRadians(angle)));
+				testloc = loc1.clone().add(factor * Math.cos(Math.toRadians(angle)), 1, factor * Math.sin(Math.toRadians(angle)));
+				testloc2 = loc2.clone().add(factor2 * Math.cos(Math.toRadians(angle)), 1, factor2 * Math.sin(Math.toRadians(angle)));
 				for (int y = 0; y < EarthColumn.standardheight - height1; y++) {
 					testloc = testloc.clone().add(0, -1, 0);
 					if (EarthMethods.isEarthbendable(player, testloc.getBlock())) {
@@ -131,8 +119,7 @@ public class EarthGrab {
 				}
 			}
 
-			if (!blocks.isEmpty())
-				bPlayer.addCooldown("EarthGrab", GeneralMethods.getGlobalCooldown());
+			if (!blocks.isEmpty()) bPlayer.addCooldown("EarthGrab", GeneralMethods.getGlobalCooldown());
 		}
 	}
 }

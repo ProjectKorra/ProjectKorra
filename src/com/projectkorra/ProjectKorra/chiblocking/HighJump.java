@@ -16,7 +16,7 @@ public class HighJump {
 
 	public HighJump(Player p) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(p.getName());
-		
+
 		if (bPlayer.isOnCooldown("HighJump")) return;
 		if (WaterArmsWhip.grabbedEntities.containsKey(p)) {
 			WaterArmsWhip waw = WaterArmsWhip.instances.get(WaterArmsWhip.grabbedEntities.get(p));
@@ -26,13 +26,11 @@ public class HighJump {
 		}
 		jump(p);
 		bPlayer.addCooldown("HighJump", cooldown);
-		
+
 	}
 
 	private void jump(Player p) {
-		if (!GeneralMethods.isSolid(p.getLocation().getBlock()
-				.getRelative(BlockFace.DOWN)))
-			return;
+		if (!GeneralMethods.isSolid(p.getLocation().getBlock().getRelative(BlockFace.DOWN))) return;
 		Vector vec = p.getVelocity();
 		vec.setY(jumpheight);
 		p.setVelocity(vec);

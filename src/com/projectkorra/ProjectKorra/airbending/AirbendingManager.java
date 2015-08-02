@@ -7,26 +7,26 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 public class AirbendingManager implements Runnable {
 
 	public ProjectKorra plugin;
-	
+
 	public AirbendingManager(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@Override
 	public void run() {
-		AirBlast.progressAll(AirBlast.class);
+		AirBlast.progressAll();
 		AirPassive.handlePassive(Bukkit.getServer());
-		AirBurst.progressAll(AirBurst.class);
-		AirScooter.progressAll(AirScooter.class);
-		Suffocate.progressAll(Suffocate.class);
-		AirSpout.progressAll(AirSpout.class);
+		AirBurst.progressAll();
+		AirScooter.progressAll();
+		Suffocate.progressAll();
+		AirSpout.spoutAll();
 		AirBubble.handleBubbles(Bukkit.getServer());
-		AirSuction.progressAll(AirSuction.class);
-		AirSwipe.progressAll(AirSwipe.class);
-		Tornado.progressAll(Tornado.class);
-		AirShield.progressAll(AirShield.class);
+		AirSuction.progressAll();
+		AirSwipe.progressAll();
+		Tornado.progressAll();
+		AirShield.progressAll();
 		AirCombo.progressAll();
-		FlightAbility.progressAll(FlightAbility.class);
+		FlightAbility.progressAll();
 	}
 
 }

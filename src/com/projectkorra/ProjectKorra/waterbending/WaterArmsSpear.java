@@ -36,36 +36,22 @@ public class WaterArmsSpear {
 
 	private List<Location> spearLocations = new ArrayList<>();
 
-	private int spearRange = config
-			.getInt("Abilities.Water.WaterArms.Spear.Range");
-	private double spearDamage = config
-			.getDouble("Abilities.Water.WaterArms.Spear.Damage");
-	private boolean spearDamageEnabled = config
-			.getBoolean("Abilities.Water.WaterArms.Spear.DamageEnabled");
-	private int spearSphere = config
-			.getInt("Abilities.Water.WaterArms.Spear.Sphere");
-	private long spearDuration = config
-			.getLong("Abilities.Water.WaterArms.Spear.Duration");
-	private int spearLength = config
-			.getInt("Abilities.Water.WaterArms.Spear.Length");
+	private int spearRange = config.getInt("Abilities.Water.WaterArms.Spear.Range");
+	private double spearDamage = config.getDouble("Abilities.Water.WaterArms.Spear.Damage");
+	private boolean spearDamageEnabled = config.getBoolean("Abilities.Water.WaterArms.Spear.DamageEnabled");
+	private int spearSphere = config.getInt("Abilities.Water.WaterArms.Spear.Sphere");
+	private long spearDuration = config.getLong("Abilities.Water.WaterArms.Spear.Duration");
+	private int spearLength = config.getInt("Abilities.Water.WaterArms.Spear.Length");
 
-	private int spearRangeNight = config
-			.getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.Normal");
-	private int spearRangeFullMoon = config
-			.getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.FullMoon");
-	private int spearSphereNight = config
-			.getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.Normal");
-	private int spearSphereFullMoon = config
-			.getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.FullMoon");
-	private long spearDurationNight = config
-			.getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal");
-	private long spearDurationFullMoon = config
-			.getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon");
+	private int spearRangeNight = config.getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.Normal");
+	private int spearRangeFullMoon = config.getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.FullMoon");
+	private int spearSphereNight = config.getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.Normal");
+	private int spearSphereFullMoon = config.getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.FullMoon");
+	private long spearDurationNight = config.getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal");
+	private long spearDurationFullMoon = config.getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon");
 
-	private boolean usageCooldownEnabled = config
-			.getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
-	private long usageCooldown = config
-			.getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
+	private boolean usageCooldownEnabled = config.getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
+	private long usageCooldown = config.getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
 
 	private Location location;
 	private Location initLocation;
@@ -91,13 +77,11 @@ public class WaterArmsSpear {
 		World world = player.getWorld();
 		if (WaterMethods.isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(
-						WorldEvents.LunarEclipse.toString())) {
+				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
 					spearRange = spearRangeFullMoon;
 					spearSphere = spearSphereFullMoon;
 					spearDuration = spearDurationFullMoon;
-				} else if (BendingManager.events.get(world).equalsIgnoreCase(
-						"FullMoon")) {
+				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
 					spearRange = spearRangeFullMoon;
 					spearSphere = spearSphereFullMoon;
 					spearDuration = spearDurationFullMoon;
@@ -125,12 +109,9 @@ public class WaterArmsSpear {
 			waterArms = WaterArms.instances.get(player);
 			waterArms.switchPreferredArm();
 			arm = waterArms.getActiveArm();
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player
-					.getName());
+			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 			if (arm.equals(Arm.Left)) {
-				if (waterArms.isLeftArmCooldown()
-						|| bPlayer.isOnCooldown("WaterArms_LEFT")
-						|| !waterArms.displayLeftArm()) {
+				if (waterArms.isLeftArmCooldown() || bPlayer.isOnCooldown("WaterArms_LEFT") || !waterArms.displayLeftArm()) {
 					return;
 				} else {
 					if (usageCooldownEnabled) {
@@ -141,9 +122,7 @@ public class WaterArmsSpear {
 				}
 			}
 			if (arm.equals(Arm.Right)) {
-				if (waterArms.isRightArmCooldown()
-						|| bPlayer.isOnCooldown("WaterArms_RIGHT")
-						|| !waterArms.displayRightArm()) {
+				if (waterArms.isRightArmCooldown() || bPlayer.isOnCooldown("WaterArms_RIGHT") || !waterArms.displayRightArm()) {
 					return;
 				} else {
 					if (usageCooldownEnabled) {
@@ -154,16 +133,14 @@ public class WaterArmsSpear {
 				}
 			}
 			Vector dir = player.getLocation().getDirection();
-			location = waterArms.getActiveArmEnd().add(
-					dir.normalize().multiply(1));
+			location = waterArms.getActiveArmEnd().add(dir.normalize().multiply(1));
 			initLocation = location.clone();
 		} else {
 			return;
 		}
 		id = ID;
 		instances.put(id, this);
-		if (ID == Integer.MAX_VALUE)
-			ID = Integer.MIN_VALUE;
+		if (ID == Integer.MAX_VALUE) ID = Integer.MIN_VALUE;
 		ID++;
 	}
 
@@ -196,30 +173,21 @@ public class WaterArmsSpear {
 
 	private void progressSpear() {
 		for (int i = 0; i < 2; i++) {
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(
-					location, 2)) {
-				if (entity instanceof LivingEntity
-						&& entity.getEntityId() != player.getEntityId()
-						&& !(entity instanceof ArmorStand)) {
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
+				if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !(entity instanceof ArmorStand)) {
 					hitEntity = true;
 					location = entity.getLocation();
 
 					if (spearDamageEnabled) {
-						GeneralMethods
-								.damageEntity(player, entity, spearDamage);
+						GeneralMethods.damageEntity(player, entity, spearDamage);
 					}
 
 					return;
 				}
 			}
-			new TempBlock(location.getBlock(), Material.STATIONARY_WATER,
-					(byte) 8);
-			WaterArms.revert.put(location.getBlock(),
-					System.currentTimeMillis() + 600L);
-			Vector direction = GeneralMethods.getDirection(
-					initLocation,
-					GeneralMethods.getTargetedLocation(player, spearRange,
-							new Integer[] { 8, 9, 79, 174 })).normalize();
+			new TempBlock(location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
+			WaterArms.revert.put(location.getBlock(), System.currentTimeMillis() + 600L);
+			Vector direction = GeneralMethods.getDirection(initLocation, GeneralMethods.getTargetedLocation(player, spearRange, new Integer[] { 8, 9, 79, 174 })).normalize();
 			location = location.add(direction.clone().multiply(1));
 			spearLocations.add(location.clone());
 			if (!canPlaceBlock(location.getBlock())) {
@@ -230,8 +198,7 @@ public class WaterArmsSpear {
 	}
 
 	private void createSpear() {
-		for (int i = spearLocations.size() - spearLength; i < spearLocations
-				.size(); i++) {
+		for (int i = spearLocations.size() - spearLength; i < spearLocations.size(); i++) {
 			if (i >= 0) {
 				Block block = spearLocations.get(i).getBlock();
 				if (canPlaceBlock(block)) {
@@ -240,8 +207,7 @@ public class WaterArmsSpear {
 						WaterArms.revert.remove(block);
 					}
 					new TempBlock(block, Material.ICE, (byte) 0);
-					WaterArms.revert.put(block, System.currentTimeMillis()
-							+ spearDuration + (long) (Math.random() * 500));
+					WaterArms.revert.put(block, System.currentTimeMillis() + spearDuration + (long) (Math.random() * 500));
 				}
 			}
 		}
@@ -250,26 +216,19 @@ public class WaterArmsSpear {
 	private void createIceBall() {
 		layer++;
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, layer)) {
-			if (EarthMethods.isTransparentToEarthbending(player, block)
-					&& block.getType() != Material.ICE
-					&& !WaterArms.isUnbreakable(block)) {
+			if (EarthMethods.isTransparentToEarthbending(player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
 				WaterMethods.playIcebendingSound(block.getLocation());
 				new TempBlock(block, Material.ICE, (byte) 0);
-				WaterArms.revert.put(block, System.currentTimeMillis()
-						+ spearDuration + (long) (Math.random() * 500));
+				WaterArms.revert.put(block, System.currentTimeMillis() + spearDuration + (long) (Math.random() * 500));
 			}
 		}
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!EarthMethods.isTransparentToEarthbending(player, block)
-				&& !((WaterMethods.isWater(block) || WaterMethods
-						.isIcebendable(block)) && (TempBlock.isTempBlock(block) && !WaterArms.revert
-						.containsKey(block)))) {
+		if (!EarthMethods.isTransparentToEarthbending(player, block) && !((WaterMethods.isWater(block) || WaterMethods.isIcebendable(block)) && (TempBlock.isTempBlock(block) && !WaterArms.revert.containsKey(block)))) {
 			return false;
 		}
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms",
-				block.getLocation())) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", block.getLocation())) {
 			return false;
 		}
 		if (WaterArms.isUnbreakable(block) && !WaterMethods.isWater(block)) {

@@ -45,13 +45,13 @@ public class AvatarState {
 			return;
 		}
 		//if (cooldowns.containsKey(player.getName())) {
-			//if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
-				//return;
-			//} else {
-				//cooldowns.remove(player.getName());
-			//}
+		//if (cooldowns.get(player.getName()) + cooldown >= System.currentTimeMillis()) {
+		//return;
+		//} else {
+		//cooldowns.remove(player.getName());
 		//}
-		if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
+		//}
+		if (GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
 			return;
 		}
 		new Flight(player);
@@ -77,23 +77,23 @@ public class AvatarState {
 		if (player.isDead() || !player.isOnline()) {
 			instances.remove(player);
 		}
-		if (!GeneralMethods.canBend(player.getName(), StockAbility.AvatarState.name())) {
+		if (!GeneralMethods.canBend(player.getName(), StockAbilities.AvatarState.name())) {
 			instances.remove(player);
-			if(player != null){
-				if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
+			if (player != null) {
+				if (GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("AvatarState")) {
 					GeneralMethods.getBendingPlayer(player.getName()).removeCooldown("AvatarState");
 				}
-			return false;
+				return false;
 			}
 		}
-		
+
 		if (startTimes.containsKey(player.getName())) {
 			if (startTimes.get(player.getName()) + duration < System.currentTimeMillis()) {
 				startTimes.remove(player.getName());
 				instances.remove(player);
 			}
 		}
-		
+
 		addPotionEffects();
 		return true;
 	}
@@ -101,26 +101,21 @@ public class AvatarState {
 	private void addPotionEffects() {
 		int duration = 70;
 		if (regenEnabled) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,
-					duration, regenPower));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, regenPower));
 		}
 		if (speedEnabled) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,
-					duration, speedPower));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, speedPower));
 		}
 		if (resistanceEnabled) {
-			player.addPotionEffect(new PotionEffect(
-					PotionEffectType.DAMAGE_RESISTANCE, duration, resistancePower));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, duration, resistancePower));
 		}
 		if (fireResistanceEnabled) {
-			player.addPotionEffect(new PotionEffect(
-					PotionEffectType.FIRE_RESISTANCE, duration, fireResistancePower));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, duration, fireResistancePower));
 		}
 	}
 
 	public static boolean isAvatarState(Player player) {
-		if (instances.containsKey(player))
-			return true;
+		if (instances.containsKey(player)) return true;
 		return false;
 	}
 

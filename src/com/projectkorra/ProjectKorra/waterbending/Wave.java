@@ -62,7 +62,7 @@ public class Wave {
 		this.player = player;
 
 		if (instances.containsKey(player.getEntityId())) {
-			if (instances.get(player.getEntityId()).progressing	&& !instances.get(player.getEntityId()).freeze) {
+			if (instances.get(player.getEntityId()).progressing && !instances.get(player.getEntityId()).freeze) {
 				instances.get(player.getEntityId()).freeze = true;
 				return;
 			}
@@ -85,8 +85,7 @@ public class Wave {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, 
-				true, true, WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, WaterMethods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -131,8 +130,7 @@ public class Wave {
 				return;
 			}
 			range = WaterMethods.waterbendingNightAugment(range, player.getWorld());
-			if (AvatarState.isAvatarState(player))
-				factor = AvatarState.getValue(factor);
+			if (AvatarState.isAvatarState(player)) factor = AvatarState.getValue(factor);
 			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 			if (target == null) {
 				targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) range).getLocation();
@@ -146,8 +144,7 @@ public class Wave {
 				progressing = true;
 				targetdirection = getDirection(sourceblock.getLocation(), targetdestination).normalize();
 				targetdestination = location.clone().add(targetdirection.clone().multiply(range));
-				if (WaterMethods.isPlant(sourceblock))
-					new Plantbending(sourceblock);
+				if (WaterMethods.isPlant(sourceblock)) new Plantbending(sourceblock);
 				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceblock)) {
 					sourceblock.setType(Material.AIR);
 				}
@@ -194,8 +191,7 @@ public class Wave {
 				unfocusBlock();
 				return false;
 			}
-			if (!progressing
-					&& !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge")) {
+			if (!progressing && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge")) {
 				unfocusBlock();
 				return false;
 			}
@@ -242,23 +238,17 @@ public class Wave {
 
 				ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(player, "Surge", location) && (((blockl.getType() == Material.AIR
-						|| blockl.getType() == Material.FIRE
-						|| WaterMethods.isPlant(blockl)
-						|| WaterMethods.isWater(blockl) 
-						|| WaterMethods.isWaterbendable(blockl, player))) && blockl.getType() != Material.LEAVES)) {
+				if (!GeneralMethods.isRegionProtectedFromBuild(player, "Surge", location) && (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || WaterMethods.isPlant(blockl) || WaterMethods.isWater(blockl) || WaterMethods.isWaterbendable(blockl, player))) && blockl.getType() != Material.LEAVES)) {
 
 					for (double i = 0; i <= radius; i += .5) {
 						for (double angle = 0; angle < 360; angle += 10) {
 							Vector vec = GeneralMethods.getOrthogonalVector(targetdirection, angle, i);
 							Block block = location.clone().add(vec).getBlock();
-							if (!blocks.contains(block)	&& (block.getType() == Material.AIR 
-									|| block.getType() == Material.FIRE)
-									|| WaterMethods.isWaterbendable(block, player)) {
+							if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || WaterMethods.isWaterbendable(block, player)) {
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 							}
-							
+
 							if (GeneralMethods.rand.nextInt(15) == 0) {
 								WaterMethods.playWaterbendingSound(location);
 							}
@@ -273,13 +263,11 @@ public class Wave {
 				}
 
 				for (Block block : wave.keySet()) {
-					if (!blocks.contains(block))
-						finalRemoveWater(block);
+					if (!blocks.contains(block)) finalRemoveWater(block);
 				}
 
 				for (Block block : blocks) {
-					if (!wave.containsKey(block))
-						addWater(block);
+					if (!wave.containsKey(block)) addWater(block);
 				}
 
 				if (wave.isEmpty()) {
@@ -295,26 +283,21 @@ public class Wave {
 					boolean knockback = false;
 					for (Block block : wave.keySet()) {
 						if (entity.getLocation().distance(block.getLocation()) <= 2) {
-							if (entity instanceof LivingEntity
-									&& freeze
-									&& entity.getEntityId() != player.getEntityId()) {
+							if (entity instanceof LivingEntity && freeze && entity.getEntityId() != player.getEntityId()) {
 								activatefreeze = true;
 								frozenlocation = entity.getLocation();
 								freeze();
 								break;
 							}
-							if (entity.getEntityId() != player.getEntityId() || canhitself)
-								knockback = true;
+							if (entity.getEntityId() != player.getEntityId() || canhitself) knockback = true;
 						}
 					}
 					if (knockback) {
 						Vector dir = direction.clone();
 						dir.setY(dir.getY() * upfactor);
-						GeneralMethods.setVelocity(entity, entity.getVelocity().clone()
-								.add(dir.clone().multiply(WaterMethods.waterbendingNightAugment(factor, player.getWorld()))));
+						GeneralMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(WaterMethods.waterbendingNightAugment(factor, player.getWorld()))));
 						entity.setFallDistance(0);
-						if (entity.getFireTicks() > 0)
-							entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
+						if (entity.getFireTicks() > 0) entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
 						entity.setFireTicks(0);
 						AirMethods.breakBreathbendingHold(entity);
 					}
@@ -333,8 +316,7 @@ public class Wave {
 					return false;
 				}
 
-				if (radius < maxradius)
-					radius += .5;
+				if (radius < maxradius) radius += .5;
 
 				return true;
 			}
@@ -364,8 +346,7 @@ public class Wave {
 	}
 
 	private void addWater(Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge",	block.getLocation()))
-			return;
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge", block.getLocation())) return;
 		if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 			// new TempBlock(block, Material.ICE, (byte) 0);
@@ -395,8 +376,7 @@ public class Wave {
 
 	public static boolean isBlockWave(Block block) {
 		for (int ID : instances.keySet()) {
-			if (instances.get(ID).wave.containsKey(block))
-				return true;
+			if (instances.get(ID).wave.containsKey(block)) return true;
 		}
 		return false;
 	}
@@ -419,26 +399,20 @@ public class Wave {
 	}
 
 	private void freeze() {
-		
-		
+
 		clearWave();
 
-		if(!WaterMethods.canIcebend(player))
-			return;
-		
+		if (!WaterMethods.canIcebend(player)) return;
+
 		double freezeradius = radius;
 		if (freezeradius > maxfreezeradius) {
 			freezeradius = maxfreezeradius;
 		}
 
-		for (Block block : GeneralMethods.getBlocksAroundPoint(frozenlocation,	freezeradius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge",	block.getLocation())
-					|| GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
-				continue;
-			if (TempBlock.isTempBlock(block))
-				continue;
-			if (block.getType() == Material.AIR
-					|| block.getType() == Material.SNOW) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(frozenlocation, freezeradius)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "Surge", block.getLocation()) || GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) continue;
+			if (TempBlock.isTempBlock(block)) continue;
+			if (block.getType() == Material.AIR || block.getType() == Material.SNOW) {
 				// block.setType(Material.ICE);
 				new TempBlock(block, Material.ICE, (byte) 0);
 				frozenblocks.put(block, block);
@@ -452,10 +426,10 @@ public class Wave {
 				new TempBlock(block, Material.ICE, (byte) 0);
 				frozenblocks.put(block, block);
 			}
-			for(Block sound : frozenblocks.keySet()) {
+			for (Block sound : frozenblocks.keySet()) {
 				if (GeneralMethods.rand.nextInt(4) == 0) {
 					WaterMethods.playWaterbendingSound(sound.getLocation());
-				}		
+				}
 			}
 		}
 	}
@@ -502,15 +476,7 @@ public class Wave {
 	}
 
 	public static String getDescription() {
-		return "To use, place your cursor over a waterbendable object "
-				+ "(water, ice, plants if you have plantbending) and tap sneak "
-				+ "(default: shift). Smoke will appear where you've selected, "
-				+ "indicating the origin of your ability. After you have selected an origin, "
-				+ "simply left-click in any direction and you will see your water spout off in that "
-				+ "direction and form a large wave, knocking back all within its path. "
-				+ "If you look towards a creature when you use this ability, it will target that creature. "
-				+ "Additionally, tapping sneak while the wave is en route will cause that wave to encase the "
-				+ "first target it hits in ice.";
+		return "To use, place your cursor over a waterbendable object " + "(water, ice, plants if you have plantbending) and tap sneak " + "(default: shift). Smoke will appear where you've selected, " + "indicating the origin of your ability. After you have selected an origin, " + "simply left-click in any direction and you will see your water spout off in that " + "direction and form a large wave, knocking back all within its path. " + "If you look towards a creature when you use this ability, it will target that creature. " + "Additionally, tapping sneak while the wave is en route will cause that wave to encase the " + "first target it hits in ice.";
 	}
 
 	public Player getPlayer() {

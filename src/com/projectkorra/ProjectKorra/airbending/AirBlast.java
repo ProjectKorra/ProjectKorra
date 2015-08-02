@@ -11,6 +11,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -25,71 +26,55 @@ import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
 
-public class AirBlast extends CoreAbility {
+public class AirBlast {
 
+	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+
+	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<Integer, AirBlast>();
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
-	public static double speed = config.get().getDouble("Abilities.Air.AirBlast.Speed");
-	public static double defaultrange = config.get().getDouble("Abilities.Air.AirBlast.Range");
-	public static double affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
-	public static double defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push");
+	private static int ID = Integer.MIN_VALUE;
+	static final int maxticks = 10000;
+
+	public static double speed = config.getDouble("Abilities.Air.AirBlast.Speed");
+	public static double defaultrange = config.getDouble("Abilities.Air.AirBlast.Range");
+	public static double affectingradius = config.getDouble("Abilities.Air.AirBlast.Radius");
+	public static double defaultpushfactor = config.getDouble("Abilities.Air.AirBlast.Push");
 	private static double originselectrange = 10;
-	private static final int maxticks = 10000;
-	/* Package visible variables */
-	static double maxspeed = 1. / defaultpushfactor;
-	/* End Package visible variables */
-	
+	static final double maxspeed = 1. / defaultpushfactor;
 	// public static long interval = 2000;
 	public static byte full = 0x0;
-	
-	private Location location;
+
+	public Location location;
 	private Location origin;
 	private Vector direction;
 	private Player player;
+	private int id;
 	private double speedfactor;
 	private double range = defaultrange;
 	private double pushfactor = defaultpushfactor;
 	private double damage = 0;
-
 	private boolean otherorigin = false;
-	private boolean showParticles = true;
 	private int ticks = 0;
+	private boolean showParticles = true;
 
 	private ArrayList<Block> affectedlevers = new ArrayList<Block>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
 	@SuppressWarnings("unused")
 	private AirBurst source = null;
-	
-	public AirBlast(Location location, Vector direction, Player player, double factorpush, AirBurst burst) {
-		if (location.getBlock().isLiquid()) {
-			return;
-		}
-		reloadVariables();
-		source = burst;
 
-		this.player = player;
-		origin = location.clone();
-		this.direction = direction.clone();
-		this.location = location.clone();
-		pushfactor *= factorpush;
-		//instances.put(uuid, this);
-		putInstance(player, this);
-	}
-	
 	public AirBlast(Player player) {
-		/* Initial Checks */
+
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+
 		if (bPlayer.isOnCooldown("AirBlast")) return;
+
 		if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
 		}
-		/* End Initial Checks */
-		reloadVariables();
 		this.player = player;
 		if (origins.containsKey(player)) {
 			otherorigin = true;
@@ -106,57 +91,39 @@ public class AirBlast extends CoreAbility {
 			direction = player.getEyeLocation().getDirection().normalize();
 		}
 		location = origin.clone();
-		putInstance(player, this);
-		//instances.put(uuid, this);
+		id = ID;
+		instances.put(id, this);
 		bPlayer.addCooldown("AirBlast", GeneralMethods.getGlobalCooldown());
 
+		if (ID == Integer.MAX_VALUE) ID = Integer.MIN_VALUE;
+		ID++;
 		// time = System.currentTimeMillis();
 		// timers.put(player, System.currentTimeMillis());
 	}
-	
-	private static void playOriginEffect(Player player) {
-		if (!origins.containsKey(player))
-			return;
-		Location origin = origins.get(player);
-		if (!origin.getWorld().equals(player.getWorld())) {
-			origins.remove(player);
+
+	public AirBlast(Location location, Vector direction, Player player, double factorpush, AirBurst burst) {
+		if (location.getBlock().isLiquid()) {
 			return;
 		}
 
-		if (GeneralMethods.getBoundAbility(player) == null) {
-			origins.remove(player);
-			return;
-		}
+		source = burst;
 
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBlast") || !GeneralMethods.canBend(player.getName(), "AirBlast")) {
-			origins.remove(player);
-			return;
-		}
-
-		if (origin.distance(player.getEyeLocation()) > originselectrange) {
-			origins.remove(player);
-			return;
-		}
-
-		AirMethods.playAirbendingParticles(origin, 10);
-		//		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
-		//				(int) originselectrange);
+		this.player = player;
+		origin = location.clone();
+		this.direction = direction.clone();
+		this.location = location.clone();
+		id = ID;
+		pushfactor *= factorpush;
+		instances.put(id, this);
+		if (ID == Integer.MAX_VALUE) ID = Integer.MIN_VALUE;
+		ID++;
 	}
-	
-	public static void progressAll() {
-		CoreAbility.progressAll(StockAbility.AirBlast);
-		for (Player player : origins.keySet()) {
-			playOriginEffect(player);
-		}
-	}
-	
+
 	public static void setOrigin(Player player) {
 		Location location = GeneralMethods.getTargetedLocation(player, originselectrange, GeneralMethods.nonOpaque);
-		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock()))
-			return;
+		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) return;
 
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", location))
-			return;
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", location)) return;
 
 		if (origins.containsKey(player)) {
 			origins.replace(player, location);
@@ -165,108 +132,15 @@ public class AirBlast extends CoreAbility {
 		}
 	}
 
-	private void advanceLocation() {
-		if (showParticles)
-			AirMethods.playAirbendingParticles(location, 10);
-		if (GeneralMethods.rand.nextInt(4) == 0) {
-			AirMethods.playAirbendingSound(location);
-		}
-		location = location.add(direction.clone().multiply(speedfactor));
-	}
-
-	private void affect(Entity entity) {
-		boolean isUser = entity.getUniqueId() == player.getUniqueId();
-
-		if (!isUser || otherorigin) {
-			Vector velocity = entity.getVelocity();
-			// double mag = Math.abs(velocity.getY());
-			double max = maxspeed;
-			double factor = pushfactor;
-			if (AvatarState.isAvatarState(player)) {
-				max = AvatarState.getValue(maxspeed);
-				factor = AvatarState.getValue(factor);
-			}
-
-			Vector push = direction.clone();
-			if (Math.abs(push.getY()) > max && !isUser) {
-				if (push.getY() < 0)
-					push.setY(-max);
-				else
-					push.setY(max);
-			}
-
-			factor *= 1 - location.distance(origin) / (2 * range);
-
-			if (isUser && GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
-				factor *= .5;
-			}
-
-			double comp = velocity.dot(push.clone().normalize());
-			if (comp > factor) {
-				velocity.multiply(.5);
-				velocity.add(push.clone().normalize().multiply(velocity.clone().dot(push.clone().normalize())));
-			} else if (comp + factor * .5 > factor) {
-				velocity.add(push.clone().multiply(factor - comp));
-			} else {
-				velocity.add(push.clone().multiply(factor * .5));
-			}
-
-			if (entity instanceof Player) {
-				if (Commands.invincible.contains(((Player) entity).getName())) return;
-			}
-
-			if(Double.isNaN(velocity.length()))
-				return;
-
-			GeneralMethods.setVelocity(entity, velocity);
-			new HorizontalVelocityTracker(entity, player, 200l);
-			entity.setFallDistance(0);
-			if (!isUser && entity instanceof Player) {
-				new Flight((Player) entity, player);
-			}
-			if (entity.getFireTicks() > 0)
-				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
-			entity.setFireTicks(0);
-			AirMethods.breakBreathbendingHold(entity);
-
-			if (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedentities.contains(entity)) {
-				GeneralMethods.damageEntity(player, entity, damage);
-				affectedentities.add(entity);
-			}
-		}
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public double getPushfactor() {
-		return pushfactor;
-	}
-
-	public double getRange() {
-		return range;
-	}
-
-	public boolean getShowParticles() {
-		return this.showParticles;
-	}
-
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.AirBlast;
-	}
-
 	@SuppressWarnings("deprecation")
 	public boolean progress() {
-		//ProjectKorra.log.info("FireBlast id: " + getID());
 		if (player.isDead() || !player.isOnline()) {
-			remove();
+			instances.remove(id);
 			return false;
 		}
 
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", location)) {
-			remove();
+			instances.remove(id);
 			return false;
 		}
 
@@ -275,7 +149,7 @@ public class AirBlast extends CoreAbility {
 		ticks++;
 
 		if (ticks > maxticks) {
-			remove();
+			instances.remove(id);
 			return false;
 		}
 		Block block = location.getBlock();
@@ -285,8 +159,7 @@ public class AirBlast extends CoreAbility {
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
 
-			Material doorTypes[] = {Material.WOODEN_DOOR, Material.SPRUCE_DOOR, 
-					Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR};
+			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR };
 			if (Arrays.asList(doorTypes).contains(block.getType())) {
 				if (block.getData() >= 8) {
 					block = block.getRelative(BlockFace.DOWN);
@@ -300,8 +173,7 @@ public class AirBlast extends CoreAbility {
 					block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
 				}
 			}
-			if ((block.getType() == Material.LEVER)
-					&& !affectedlevers.contains(block)) {
+			if ((block.getType() == Material.LEVER) && !affectedlevers.contains(block)) {
 				// BlockState state = block.getState();
 				// Lever lever = (Lever) (state.getData());
 				// lever.setPowered(!lever.isPowered());
@@ -331,8 +203,7 @@ public class AirBlast extends CoreAbility {
 
 				affectedlevers.add(block);
 
-			} else if ((block.getType() == Material.STONE_BUTTON) 
-					&& !affectedlevers.contains(block)) {
+			} else if ((block.getType() == Material.STONE_BUTTON) && !affectedlevers.contains(block)) {
 
 				final Button button = new Button(Material.STONE_BUTTON, block.getData());
 				button.setPowered(!button.isPowered());
@@ -346,14 +217,14 @@ public class AirBlast extends CoreAbility {
 					supportState.update(true, false);
 					initialSupportState.update(true);
 				}
-				
+
 				final Block btBlock = block;
 
 				new BukkitRunnable() {
 					public void run() {
 						button.setPowered(!button.isPowered());
 						btBlock.setData(button.getData());
-						
+
 						Block supportBlock = btBlock.getRelative(button.getAttachedFace());
 						if (supportBlock != null && supportBlock.getType() != Material.AIR) {
 							BlockState initialSupportState = supportBlock.getState();
@@ -366,8 +237,7 @@ public class AirBlast extends CoreAbility {
 				}.runTaskLater(ProjectKorra.plugin, 10);
 
 				affectedlevers.add(block);
-			} else if ((block.getType() == Material.WOOD_BUTTON) 
-					&& !affectedlevers.contains(block)) {
+			} else if ((block.getType() == Material.WOOD_BUTTON) && !affectedlevers.contains(block)) {
 
 				final Button button = new Button(Material.WOOD_BUTTON, block.getData());
 				button.setPowered(!button.isPowered());
@@ -381,14 +251,14 @@ public class AirBlast extends CoreAbility {
 					supportState.update(true, false);
 					initialSupportState.update(true);
 				}
-				
+
 				final Block btBlock = block;
 
 				new BukkitRunnable() {
 					public void run() {
 						button.setPowered(!button.isPowered());
 						btBlock.setData(button.getData());
-						
+
 						Block supportBlock = btBlock.getRelative(button.getAttachedFace());
 						if (supportBlock != null && supportBlock.getType() != Material.AIR) {
 							BlockState initialSupportState = supportBlock.getState();
@@ -411,19 +281,19 @@ public class AirBlast extends CoreAbility {
 					block.setType(Material.COBBLESTONE);
 				}
 			}
-			remove();
+			instances.remove(id);
 			return false;
 		}
 
 		/*
-		 *	If a player presses shift and AirBlasts straight down then
-		 *	the AirBlast's location gets messed up and reading the distance
-		 *	returns Double.NaN. If we don't remove this instance then
-		 *	the AirBlast will never be removed. 
+		 * If a player presses shift and AirBlasts straight down then the
+		 * AirBlast's location gets messed up and reading the distance returns
+		 * Double.NaN. If we don't remove this instance then the AirBlast will
+		 * never be removed.
 		 */
 		double dist = location.distance(origin);
 		if (Double.isNaN(dist) || dist > range) {
-			remove();
+			instances.remove(id);
 			return false;
 		}
 
@@ -432,39 +302,148 @@ public class AirBlast extends CoreAbility {
 		}
 
 		advanceLocation();
+
 		return true;
 	}
 
-	@Override
-	public void reloadVariables() {
-		speed = config.get().getDouble("Abilities.Air.AirBlast.Speed");
-		defaultrange = config.get().getDouble("Abilities.Air.AirBlast.Range");
-		affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
-		defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push");
-		maxspeed = 1. / defaultpushfactor;
-		range = defaultrange;
-		pushfactor = defaultpushfactor;
+	private void advanceLocation() {
+		if (showParticles) AirMethods.playAirbendingParticles(location, 7);
+		if (GeneralMethods.rand.nextInt(4) == 0) {
+			AirMethods.playAirbendingSound(location);
+		}
+		location = location.add(direction.clone().multiply(speedfactor));
+	}
+
+	private void affect(Entity entity) {
+		boolean isUser = entity.getEntityId() == player.getEntityId();
+
+		if (!isUser || otherorigin) {
+			Vector velocity = entity.getVelocity();
+			// double mag = Math.abs(velocity.getY());
+			double max = maxspeed;
+			double factor = pushfactor;
+			if (AvatarState.isAvatarState(player)) {
+				max = AvatarState.getValue(maxspeed);
+				factor = AvatarState.getValue(factor);
+			}
+
+			Vector push = direction.clone();
+			if (Math.abs(push.getY()) > max && !isUser) {
+				if (push.getY() < 0) push.setY(-max);
+				else push.setY(max);
+			}
+
+			factor *= 1 - location.distance(origin) / (2 * range);
+
+			if (isUser && GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
+				factor *= .5;
+			}
+
+			double comp = velocity.dot(push.clone().normalize());
+			if (comp > factor) {
+				velocity.multiply(.5);
+				velocity.add(push.clone().normalize().multiply(velocity.clone().dot(push.clone().normalize())));
+			} else if (comp + factor * .5 > factor) {
+				velocity.add(push.clone().multiply(factor - comp));
+			} else {
+				velocity.add(push.clone().multiply(factor * .5));
+			}
+
+			if (entity instanceof Player) {
+				if (Commands.invincible.contains(((Player) entity).getName())) return;
+			}
+
+			if (Double.isNaN(velocity.length())) return;
+
+			GeneralMethods.setVelocity(entity, velocity);
+			new HorizontalVelocityTracker(entity, player, 200l);
+			entity.setFallDistance(0);
+			if (!isUser && entity instanceof Player) {
+				new Flight((Player) entity, player);
+			}
+			if (entity.getFireTicks() > 0) entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
+			entity.setFireTicks(0);
+			AirMethods.breakBreathbendingHold(entity);
+
+			if (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedentities.contains(entity)) {
+				GeneralMethods.damageEntity(player, entity, damage);
+				affectedentities.add(entity);
+			}
+		}
 	}
 
 	public void setDamage(double dmg) {
 		this.damage = dmg;
 	}
-	
-	public void setPushfactor(double pushfactor) {
-		this.pushfactor = pushfactor;
+
+	public void setShowParticles(boolean show) {
+		this.showParticles = show;
+	}
+
+	public boolean getShowParticles() {
+		return this.showParticles;
+	}
+
+	public static void progressAll() {
+		for (int id : instances.keySet())
+			instances.get(id).progress();
+		for (Player player : origins.keySet()) {
+			playOriginEffect(player);
+		}
+	}
+
+	private static void playOriginEffect(Player player) {
+		if (!origins.containsKey(player)) return;
+		Location origin = origins.get(player);
+		if (!origin.getWorld().equals(player.getWorld())) {
+			origins.remove(player);
+			return;
+		}
+
+		if (GeneralMethods.getBoundAbility(player) == null) {
+			origins.remove(player);
+			return;
+		}
+
+		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBlast") || !GeneralMethods.canBend(player.getName(), "AirBlast")) {
+			origins.remove(player);
+			return;
+		}
+
+		if (origin.distance(player.getEyeLocation()) > originselectrange) {
+			origins.remove(player);
+			return;
+		}
+
+		AirMethods.playAirbendingParticles(origin, 5);
+		//		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
+		//				(int) originselectrange);
+	}
+
+	public static void removeAll() {
+		for (int id : instances.keySet()) {
+			instances.remove(id);
+		}
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public double getRange() {
+		return range;
 	}
 
 	public void setRange(double range) {
 		this.range = range;
 	}
 
-	public void setShowParticles(boolean show) {
-		this.showParticles = show;
+	public double getPushfactor() {
+		return pushfactor;
 	}
-	
-	@Override
-	public InstanceType getInstanceType() {
-		return InstanceType.MULTIPLE;
+
+	public void setPushfactor(double pushfactor) {
+		this.pushfactor = pushfactor;
 	}
 
 }

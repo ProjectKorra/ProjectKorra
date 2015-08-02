@@ -8,11 +8,11 @@ import com.projectkorra.ProjectKorra.ProjectKorra;
 public class ChiblockingManager implements Runnable {
 
 	public ProjectKorra plugin;
-	
+
 	public ChiblockingManager(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@Override
 	public void run() {
 		ChiPassive.handlePassive();

@@ -55,8 +55,7 @@ public class Catapult {
 			location = origin.clone().add(neg.clone().multiply((double) i));
 			block = location.getBlock();
 			if (EarthMethods.isEarthbendable(player, block)) {
-				distance = EarthMethods.getEarthbendableBlocksLength(player, block,
-						neg, length - i);
+				distance = EarthMethods.getEarthbendableBlocksLength(player, block, neg, length - i);
 				break;
 			} else if (!EarthMethods.isTransparentToEarthbending(player, block)) {
 				break;
@@ -90,7 +89,7 @@ public class Catapult {
 		EarthMethods.playEarthbendingSound(player.getLocation());
 		fly();
 	}
-	
+
 	public static void progressAll() {
 		for (int ID : instances.keySet()) {
 			instances.get(ID).progress();
@@ -105,17 +104,14 @@ public class Catapult {
 
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
-			if (moving)
-				if (!moveEarth()) {
-					moving = false;
-				}
+			if (moving) if (!moveEarth()) {
+				moving = false;
+			}
 		}
 
-		if (flying)
-			fly();
+		if (flying) fly();
 
-		if (!flying && !moving && System.currentTimeMillis() > starttime + 1000)
-			remove();
+		if (!flying && !moving && System.currentTimeMillis() > starttime + 1000) remove();
 		return true;
 	}
 
@@ -132,13 +128,11 @@ public class Catapult {
 		}
 
 		if (player.getLocation().distance(location) < 3) {
-			if (!moving && System.currentTimeMillis() > starttime + 1000)
-				flying = false;
+			if (!moving && System.currentTimeMillis() > starttime + 1000) flying = false;
 			return;
 		}
 
-		for (Block block : GeneralMethods
-				.getBlocksAroundPoint(player.getLocation(), 1.5)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(player.getLocation(), 1.5)) {
 			if ((GeneralMethods.isSolid(block) || block.isLiquid())) {
 				// Methods.verbose("Catapulting stopped");
 				flying = false;
@@ -174,8 +168,7 @@ public class Catapult {
 				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, 2)) {
 					if (entity instanceof Player) {
 						Player target = (Player) entity;
-						boolean equal = target.getEntityId() == player
-								.getEntityId();
+						boolean equal = target.getEntityId() == player.getEntityId();
 						if (equal) {
 							remove();
 							remove = true;
@@ -186,8 +179,7 @@ public class Catapult {
 							new Catapult(target, this);
 						}
 					}
-					entity.setVelocity(direction.clone().multiply(
-							push * distance / length));
+					entity.setVelocity(direction.clone().multiply(push * distance / length));
 
 				}
 				return remove;
@@ -195,14 +187,12 @@ public class Catapult {
 		} else {
 			if (location.distance(origin) <= length - distance) {
 				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
-					entity.setVelocity(direction.clone().multiply(
-							push * distance / length));
+					entity.setVelocity(direction.clone().multiply(push * distance / length));
 				}
 				return false;
 			}
 		}
-		EarthMethods.moveEarth(player, location.clone().subtract(direction),
-				direction, distance, false);
+		EarthMethods.moveEarth(player, location.clone().subtract(direction), direction, distance, false);
 		return true;
 	}
 
@@ -210,8 +200,7 @@ public class Catapult {
 		List<Player> players = new ArrayList<Player>();
 		for (int id : instances.keySet()) {
 			Player player = instances.get(id).player;
-			if (!players.contains(player))
-				players.add(player);
+			if (!players.contains(player)) players.add(player);
 		}
 		return players;
 	}
@@ -223,12 +212,7 @@ public class Catapult {
 	}
 
 	public static String getDescription() {
-		return "To use, left-click while looking in the direction you want to be launched. "
-				+ "A pillar of earth will jut up from under you and launch you in that direction - "
-				+ "if and only if there is enough earth behind where you're looking to launch you. "
-				+ "Skillful use of this ability takes much time and work, and it does result in the "
-				+ "death of certain gung-ho earthbenders. If you plan to use this ability, be sure "
-				+ "you've read about your passive ability you innately have as an earthbender.";
+		return "To use, left-click while looking in the direction you want to be launched. " + "A pillar of earth will jut up from under you and launch you in that direction - " + "if and only if there is enough earth behind where you're looking to launch you. " + "Skillful use of this ability takes much time and work, and it does result in the " + "death of certain gung-ho earthbenders. If you plan to use this ability, be sure " + "you've read about your passive ability you innately have as an earthbender.";
 	}
 
 	public Player getPlayer() {

@@ -1,33 +1,49 @@
 package com.projectkorra.ProjectKorra.airbending;
 
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
-public class FlightAbility extends CoreAbility {
-	
+public class FlightAbility {
+
+	public static ConcurrentHashMap<String, FlightAbility> instances = new ConcurrentHashMap<String, FlightAbility>();
 	private static ConcurrentHashMap<String, Integer> hits = new ConcurrentHashMap<String, Integer>();
 	private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<String, Boolean>();
-	private Player player;
+	private Player p;
 	private Flight flight;
-	
-	public FlightAbility(Player player) {		
-		if (!AirMethods.canFly(player, true, false)) 
-			return;
+
+	public FlightAbility(Player player) {
+		if (!AirMethods.canFly(player, true, false)) return;
 		player.setAllowFlight(true);
 		player.setVelocity(player.getEyeLocation().getDirection().normalize());
-		this.player = player;
-		//instances.put(player.getUniqueId(), this);
-		putInstance(player, this);
+		instances.put(player.getName(), this);
+		p = player;
 	}
-	
+
+	private void progress() {
+		if (!AirMethods.canFly(p, false, isHovering(p))) {
+			remove(p);
+			return;
+		}
+
+		if (flight == null) flight = new Flight(p);
+
+		if (isHovering(p)) {
+			Vector vec = p.getVelocity().clone();
+			vec.setY(0);
+			p.setVelocity(vec);
+		} else {
+			p.setVelocity(p.getEyeLocation().getDirection().normalize());
+		}
+
+	}
+
 	public static void addHit(Player player) {
-		if (contains(player)) {
+		if (instances.containsKey(player)) {
 			if (hits.containsKey(player.getName())) {
 				if (hits.get(player.getName()) >= 4) {
 					hits.remove(player.getName());
@@ -38,29 +54,14 @@ public class FlightAbility extends CoreAbility {
 			}
 		}
 	}
-	
-	public static boolean contains(Player player) {
-		return containsPlayer(player, FlightAbility.class);
-	}
-	
+
 	public static boolean isHovering(Player player) {
 		return hovering.containsKey(player.getName());
 	}
 
-	public static void remove(Player player) {
-		if (contains(player))
-			getAbilityFromPlayer(player, FlightAbility.class).remove();
-	}
-	
-	public static void removeAll() {
-		CoreAbility.removeAll(StockAbility.Flight);
-		hits.clear();
-		hovering.clear();
-	}
-	
 	public static void setHovering(Player player, boolean bool) {
 		String playername = player.getName();
-		
+
 		if (bool) {
 			if (!hovering.containsKey(playername)) {
 				hovering.put(playername, true);
@@ -72,43 +73,33 @@ public class FlightAbility extends CoreAbility {
 			}
 		}
 	}
-	
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.Flight;
-	}
-	
-	@Override
-	public boolean progress() {
-		if (!AirMethods.canFly(player, false, isHovering(player))) {
-			remove(player);
-			return false;
+
+	public static void progressAll() {
+		for (String names : instances.keySet()) {
+			instances.get(names).progress();
 		}
-		
-		if (flight == null)
-			flight = new Flight(player);
-		
-		if (isHovering(player)) {
-			Vector vec = player.getVelocity().clone();
-			vec.setY(0);
-			player.setVelocity(vec);
-		} else {
-			player.setVelocity(player.getEyeLocation().getDirection().normalize());
-		}
-		return true;
 	}
 
-	@Override
-	public void reloadVariables() {}
-
-	@Override
 	public void remove() {
-		String name = player.getName();
-		//instances.remove(uuid);
-		super.remove();
+		String name = p.getName();
+		instances.remove(name);
 		hits.remove(name);
 		hovering.remove(name);
 		if (flight != null) flight.revert();
 	}
-	
+
+	public static void remove(Player player) {
+		if (instances.containsKey(player.getName())) instances.get(player.getName()).remove();
+	}
+
+	public static void removeAll() {
+		Iterator<String> it = instances.keySet().iterator();
+		while (it.hasNext()) {
+			instances.get(it.next()).remove();
+		}
+		instances.clear();
+		hits.clear();
+		hovering.clear();
+	}
+
 }

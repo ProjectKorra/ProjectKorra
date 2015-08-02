@@ -34,7 +34,7 @@ public class IceSpike {
 	public static final int HEIGHT = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Height");
 	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceSpike.Range");
 	private static double DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceSpike.Damage");
-	
+
 	private static int ID = Integer.MIN_VALUE;
 	private static double speed = 25;
 	private static long interval = (long) (1000. / speed);
@@ -66,9 +66,7 @@ public class IceSpike {
 			double lowestdistance = range + 1;
 			Entity closestentity = null;
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
-				if (GeneralMethods.getDistanceFromLine(player.getLocation().getDirection(), player.getLocation(), entity.getLocation()) <= 2
-						&& (entity instanceof LivingEntity)
-						&& (entity.getEntityId() != player.getEntityId())) {
+				if (GeneralMethods.getDistanceFromLine(player.getLocation().getDirection(), player.getLocation(), entity.getLocation()) <= 2 && (entity instanceof LivingEntity) && (entity.getEntityId() != player.getEntityId())) {
 					double distance = player.getLocation().distance(entity.getLocation());
 					if (distance < lowestdistance) {
 						closestentity = entity;
@@ -87,7 +85,8 @@ public class IceSpike {
 			origin = block.getLocation();
 			location = origin.clone();
 
-		} catch (IllegalStateException e) {
+		}
+		catch (IllegalStateException e) {
 			return;
 		}
 
@@ -107,7 +106,7 @@ public class IceSpike {
 		}
 	}
 
-	public IceSpike(Player player, Location origin, int damage,	Vector throwing, long aoecooldown) {
+	public IceSpike(Player player, Location origin, int damage, Vector throwing, long aoecooldown) {
 		cooldown = aoecooldown;
 		this.player = player;
 		this.origin = origin;
@@ -149,8 +148,7 @@ public class IceSpike {
 
 	public static boolean blockInAllAffectedBlocks(Block block) {
 		for (int ID : instances.keySet()) {
-			if (instances.get(ID).blockInAffectedBlocks(block))
-				return true;
+			if (instances.get(ID).blockInAffectedBlocks(block)) return true;
 		}
 		return false;
 	}
@@ -164,15 +162,9 @@ public class IceSpike {
 	}
 
 	private boolean canInstantiate() {
-		if (block.getType() != Material.ICE)
-			return false;
+		if (block.getType() != Material.ICE) return false;
 		for (Block block : affectedblocks.keySet()) {
-			if (blockInAllAffectedBlocks(block)
-					|| alreadydoneblocks.containsKey(block)
-					|| block.getType() != Material.AIR
-					|| (block.getX() == player.getEyeLocation().getBlock()
-					.getX() && block.getZ() == player.getEyeLocation()
-					.getBlock().getZ())) {
+			if (blockInAllAffectedBlocks(block) || alreadydoneblocks.containsKey(block) || block.getType() != Material.AIR || (block.getX() == player.getEyeLocation().getBlock().getX() && block.getZ() == player.getEyeLocation().getBlock().getZ())) {
 				return false;
 			}
 		}
@@ -194,7 +186,7 @@ public class IceSpike {
 			} else {
 				if (removeTimers.containsKey(player)) {
 					if (removeTimers.get(player) + removeTimer <= System.currentTimeMillis()) {
-						baseblocks.put(location.clone().add(direction.clone().multiply(-1 * (height))).getBlock(),(height - 1));
+						baseblocks.put(location.clone().add(direction.clone().multiply(-1 * (height))).getBlock(), (height - 1));
 						if (!revertblocks()) {
 							instances.remove(id);
 						}
@@ -210,8 +202,7 @@ public class IceSpike {
 		progress++;
 		Block affectedblock = location.clone().add(direction).getBlock();
 		location = location.add(direction);
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike", location))
-			return false;
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike", location)) return false;
 		for (Entity en : GeneralMethods.getEntitiesAroundPoint(location, 1.4)) {
 			if (en instanceof LivingEntity && en != player && !damaged.contains(((LivingEntity) en))) {
 				LivingEntity le = (LivingEntity) en;
@@ -223,7 +214,7 @@ public class IceSpike {
 			}
 		}
 		affectedblock.setType(Material.ICE);
-		WaterMethods.playIcebendingSound(block.getLocation());	
+		WaterMethods.playIcebendingSound(block.getLocation());
 		loadAffectedBlocks();
 
 		if (location.distance(origin) >= height) {
@@ -278,8 +269,7 @@ public class IceSpike {
 		Vector direction = new Vector(0, -1, 0);
 		location.getBlock().setType(Material.AIR);// .clone().add(direction).getBlock().setType(Material.AIR);
 		location.add(direction);
-		if (blockIsBase(location.getBlock()))
-			return false;
+		if (blockIsBase(location.getBlock())) return false;
 		return true;
 	}
 
@@ -309,17 +299,11 @@ public class IceSpike {
 
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
-		if(player != null)
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("IceSpike", cooldown);
+		if (player != null) GeneralMethods.getBendingPlayer(player.getName()).addCooldown("IceSpike", cooldown);
 	}
 
 	public static String getDescription() {
-		return "This ability has many functions. Clicking while targetting ice, or an entity over some ice, "
-				+ "will raise a spike of ice up, damaging and slowing the target. Tapping sneak (shift) while"
-				+ " selecting a water source will select that source that can then be fired with a click. Firing"
-				+ " this will launch a spike of ice at your target, dealing a bit of damage and slowing the target. "
-				+ "If you sneak (shift) while not selecting a source, many ice spikes will erupt from around you, "
-				+ "damaging and slowing those targets.";
+		return "This ability has many functions. Clicking while targetting ice, or an entity over some ice, " + "will raise a spike of ice up, damaging and slowing the target. Tapping sneak (shift) while" + " selecting a water source will select that source that can then be fired with a click. Firing" + " this will launch a spike of ice at your target, dealing a bit of damage and slowing the target. " + "If you sneak (shift) while not selecting a source, many ice spikes will erupt from around you, " + "damaging and slowing those targets.";
 	}
 
 }

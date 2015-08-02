@@ -124,8 +124,7 @@ public class TorrentBurst {
 
 		ArrayList<Block> torrentblocks = new ArrayList<Block>();
 
-		if (indexlist.contains(player))
-			indexlist.remove(player);
+		if (indexlist.contains(player)) indexlist.remove(player);
 
 		for (int id : heights.keySet()) {
 			ConcurrentHashMap<Integer, Double> angles = heights.get(id);
@@ -137,9 +136,8 @@ public class TorrentBurst {
 				double dz = Math.sin(theta) * radius;
 				Location location = origin.clone().add(dx, dy, dz);
 				Block block = location.getBlock();
-				if (torrentblocks.contains(block))
-					continue;
-				if (EarthMethods.isTransparentToEarthbending(player,	block)) {
+				if (torrentblocks.contains(block)) continue;
+				if (EarthMethods.isTransparentToEarthbending(player, block)) {
 					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 					blocks.add(tempBlock);
 					torrentblocks.add(block);
@@ -155,18 +153,16 @@ public class TorrentBurst {
 						}
 					}
 				}
-				
-				for(Block sound : torrentblocks) {
+
+				for (Block sound : torrentblocks) {
 					if (GeneralMethods.rand.nextInt(50) == 0) {
 						WaterMethods.playWaterbendingSound(sound.getLocation());
-					}		
+					}
 				}
 			}
-			if (angles.isEmpty())
-				heights.remove(id);
+			if (angles.isEmpty()) heights.remove(id);
 		}
-		if (heights.isEmpty())
-			remove();
+		if (heights.isEmpty()) remove();
 	}
 
 	private void affect(Entity entity) {
@@ -185,10 +181,8 @@ public class TorrentBurst {
 
 	private void returnWater() {
 		Location location = new Location(origin.getWorld(), origin.getX() + radius, origin.getY(), origin.getZ());
-		if (!location.getWorld().equals(player.getWorld()))
-			return;
-		if (location.distance(player.getLocation()) > maxradius + 5)
-			return;
+		if (!location.getWorld().equals(player.getWorld())) return;
+		if (location.distance(player.getLocation()) > maxradius + 5) return;
 		new WaterReturn(player, location.getBlock());
 	}
 

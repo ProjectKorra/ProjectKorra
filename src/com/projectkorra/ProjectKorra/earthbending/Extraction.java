@@ -29,47 +29,48 @@ public class Extraction {
 		if (!GeneralMethods.isRegionProtectedFromBuild(player, "Extraction", block.getLocation())) {
 			if (EarthMethods.canMetalbend(player) && GeneralMethods.canBend(player.getName(), "Extraction")) {
 				Material type = null;
-				
-				switch(block.getType()) {
-				case IRON_ORE:
-					block.setType(Material.STONE);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, getAmount()));
-					type = Material.STONE;
-					break;
-				case GOLD_ORE:
-					block.setType(Material.STONE);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, getAmount()));
-					type = Material.STONE;
-					break;
-				case QUARTZ_ORE:
-					block.setType(Material.NETHERRACK);
-					player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, getAmount()));
-					type = Material.NETHERRACK;
-					break;
-				default:
-					break; // shouldn't happen.
+
+				switch (block.getType()) {
+					case IRON_ORE:
+						block.setType(Material.STONE);
+						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.IRON_INGOT, getAmount()));
+						type = Material.STONE;
+						break;
+					case GOLD_ORE:
+						block.setType(Material.STONE);
+						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.GOLD_INGOT, getAmount()));
+						type = Material.STONE;
+						break;
+					case QUARTZ_ORE:
+						block.setType(Material.NETHERRACK);
+						player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.QUARTZ, getAmount()));
+						type = Material.NETHERRACK;
+						break;
+					default:
+						break; // shouldn't happen.
 				}
-				
-				if(type != null) {
-					/* Update the block from Methods.movedearth to Stone otherwise
-					 * players can use RaiseEarth > Extraction > Collapse
-					 * to dupe the material from the block.
-					 * */
-					if(EarthMethods.movedearth.containsKey(block)) {
+
+				if (type != null) {
+					/*
+					 * Update the block from Methods.movedearth to Stone
+					 * otherwise players can use RaiseEarth > Extraction >
+					 * Collapse to dupe the material from the block.
+					 */
+					if (EarthMethods.movedearth.containsKey(block)) {
 						EarthMethods.movedearth.remove(block);
 					}
 				}
-				
+
 				EarthMethods.playMetalbendingSound(block.getLocation());
 				bPlayer.addCooldown("Extraction", cooldown);
 			}
 		}
 
 	}
-	
+
 	private int getAmount() {
 		Random rand = new Random();
-		return rand.nextInt(99) + 1 <= triplechance ? 3 : rand.nextInt(99) + 1 <= doublechance ? 2: 1;
+		return rand.nextInt(99) + 1 <= triplechance ? 3 : rand.nextInt(99) + 1 <= doublechance ? 2 : 1;
 	}
 
 }

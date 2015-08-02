@@ -30,19 +30,20 @@ public class ProjectKorra extends JavaPlugin {
 	public static PKLogHandler handler;
 	public static long time_step = 1;
 	public Updater updater;
-	
+
 	@Override
 	public void onEnable() {
 		plugin = this;
 		ProjectKorra.log = this.getLogger();
 		try {
-		    File logFolder = new File(getDataFolder(), "Logs");
-		    if (!logFolder.exists()) {
-		        logFolder.mkdirs();
-		    }
-		    handler = new PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
+			File logFolder = new File(getDataFolder(), "Logs");
+			if (!logFolder.exists()) {
+				logFolder.mkdirs();
+			}
+			handler = new PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
 			log.getParent().addHandler(handler);
-		} catch (SecurityException | IOException e) {
+		}
+		catch (SecurityException | IOException e) {
 			e.printStackTrace();
 		}
 		new ConfigManager(this);
@@ -69,15 +70,15 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		getServer().getPluginManager().registerEvents(new PKListener(this), this);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(), 0, 1);
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new BendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new AirbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new WaterbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
-		
-		for (Player player: Bukkit.getOnlinePlayers()) {
+
+		for (Player player : Bukkit.getOnlinePlayers()) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			Preset.loadPresets(player);
 		}
@@ -85,7 +86,8 @@ public class ProjectKorra extends JavaPlugin {
 		try {
 			MetricsLite metrics = new MetricsLite(this);
 			metrics.start();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 
@@ -102,5 +104,5 @@ public class ProjectKorra extends JavaPlugin {
 		}
 		handler.close();
 	}
-	
+
 }

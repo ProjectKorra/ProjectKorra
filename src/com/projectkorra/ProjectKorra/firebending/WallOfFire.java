@@ -2,10 +2,12 @@ package com.projectkorra.ProjectKorra.firebending;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -13,27 +15,28 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
-public class WallOfFire extends CoreAbility {
+public class WallOfFire {
 
 	private Player player;
 
 	private static double maxangle = 50;
 
-	private static int RANGE = config.get().getInt("Abilities.Fire.WallOfFire.Range");
-	private static int HEIGHT = config.get().getInt("Abilities.Fire.WallOfFire.Height");
-	private static int WIDTH = config.get().getInt("Abilities.Fire.WallOfFire.Width");
-	private static long DURATION = config.get().getLong("Abilities.Fire.WallOfFire.Duration");
-	private static int DAMAGE = config.get().getInt("Abilities.Fire.WallOfFire.Damage");
+	public static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	private static int RANGE = config.getInt("Abilities.Fire.WallOfFire.Range");
+	private int HEIGHT = config.getInt("Abilities.Fire.WallOfFire.Height");
+	private int WIDTH = config.getInt("Abilities.Fire.WallOfFire.Width");
+	private long DURATION = config.getLong("Abilities.Fire.WallOfFire.Duration");
+	private int DAMAGE = config.getInt("Abilities.Fire.WallOfFire.Damage");
 	private static long interval = 250;
-	private static long COOLDOWN = config.get().getLong("Abilities.Fire.WallOfFire.Cooldown");
-	private static long DAMAGE_INTERVAL = config.get().getLong("Abilities.Fire.WallOfFire.Interval");
-	private static double FIRETICKS = config.get().getDouble("Abilities.Fire.WallOfFire.FireTicks");
+	private static long COOLDOWN = config.getLong("Abilities.Fire.WallOfFire.Cooldown");
+	public static ConcurrentHashMap<Player, WallOfFire> instances = new ConcurrentHashMap<Player, WallOfFire>();
+	private static long DAMAGE_INTERVAL = config.getLong("Abilities.Fire.WallOfFire.Interval");
+	private static double fireticks = config.getDouble("Abilities.Fire.WallOfFire.FireTicks");
 
 	private Location origin;
 	private long time, starttime;
@@ -49,13 +52,13 @@ public class WallOfFire extends CoreAbility {
 	private List<Block> blocks = new ArrayList<Block>();
 
 	public WallOfFire(Player player) {
-		/* Initial Checks */
-		if (containsPlayer(player, WallOfFire.class) && !AvatarState.isAvatarState(player)) {
+		if (instances.containsKey(player) && !AvatarState.isAvatarState(player)) {
 			return;
 		}
+
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+
 		if (bPlayer.isOnCooldown("WallOfFire")) return;
-		/* End Initial Checks */
 
 		this.player = player;
 
@@ -66,8 +69,7 @@ public class WallOfFire extends CoreAbility {
 		if (FireMethods.isDay(player.getWorld())) {
 			width = (int) FireMethods.getFirebendingDayAugment((double) width, world);
 			height = (int) FireMethods.getFirebendingDayAugment((double) height, world);
-			duration = (long) FireMethods.getFirebendingDayAugment((double) duration,
-					world);
+			duration = (long) FireMethods.getFirebendingDayAugment((double) duration, world);
 			damage = (int) FireMethods.getFirebendingDayAugment((double) damage, world);
 		}
 
@@ -90,26 +92,23 @@ public class WallOfFire extends CoreAbility {
 
 		initializeBlocks();
 
-		//instances.put(player, this);
-		putInstance(player, this);
+		instances.put(player, this);
 		bPlayer.addCooldown("WallOfFire", cooldown);
 	}
 
-	@Override
-	public boolean progress() {
+	private void progress() {
 		time = System.currentTimeMillis();
 
 		if (time - starttime > cooldown) {
-			remove();
-			return false;
+			instances.remove(player);
+			return;
 		}
 
-		if (!active)
-			return false;
+		if (!active) return;
 
 		if (time - starttime > duration) {
 			active = false;
-			return false;
+			return;
 		}
 
 		if (time - starttime > intervaltick * interval) {
@@ -121,7 +120,7 @@ public class WallOfFire extends CoreAbility {
 			damagetick++;
 			damage();
 		}
-		return true;
+
 	}
 
 	private void initializeBlocks() {
@@ -139,15 +138,11 @@ public class WallOfFire extends CoreAbility {
 
 		for (double i = -w; i <= w; i++) {
 			for (double j = -h; j <= h; j++) {
-				Location location = origin.clone().add(
-						orthoud.clone().multiply(j));
+				Location location = origin.clone().add(orthoud.clone().multiply(j));
 				location = location.add(ortholr.clone().multiply(i));
-				if (GeneralMethods.isRegionProtectedFromBuild(player,
-						"WallOfFire", location))
-					continue;
+				if (GeneralMethods.isRegionProtectedFromBuild(player, "WallOfFire", location)) continue;
 				Block block = location.getBlock();
-				if (!blocks.contains(block))
-					blocks.add(block);
+				if (!blocks.contains(block)) blocks.add(block);
 			}
 		}
 
@@ -155,9 +150,9 @@ public class WallOfFire extends CoreAbility {
 
 	private void display() {
 		for (Block block : blocks) {
-			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
-			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
-			
+			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 3);
+			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 2);
+
 			if (GeneralMethods.rand.nextInt(7) == 0) {
 				FireMethods.playFirebendingSound(block.getLocation());
 			}
@@ -166,16 +161,12 @@ public class WallOfFire extends CoreAbility {
 
 	private void damage() {
 		double radius = height;
-		if (radius < width)
-			radius = width;
+		if (radius < width) radius = width;
 		radius = radius + 1;
 		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(origin, radius);
-		if (entities.contains(player))
-			entities.remove(player);
+		if (entities.contains(player)) entities.remove(player);
 		for (Entity entity : entities) {
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "WallOfFire",
-					entity.getLocation()))
-				continue;
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "WallOfFire", entity.getLocation())) continue;
 			for (Block block : blocks) {
 				if (entity.getLocation().distance(block.getLocation()) <= 1.5) {
 					affect(entity);
@@ -186,12 +177,18 @@ public class WallOfFire extends CoreAbility {
 	}
 
 	private void affect(Entity entity) {
-		entity.setFireTicks((int) (FIRETICKS * 20));
+		entity.setFireTicks((int) (fireticks * 20));
 		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
 		if (entity instanceof LivingEntity) {
 			GeneralMethods.damageEntity(player, entity, damage);
 			new Enflamed(entity, player);
 			AirMethods.breakBreathbendingHold(entity);
+		}
+	}
+
+	public static void manage() {
+		for (Player player : instances.keySet()) {
+			instances.get(player).progress();
 		}
 	}
 
@@ -245,8 +242,7 @@ public class WallOfFire extends CoreAbility {
 
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
-		if (player != null)
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WallOfFire", cooldown);
+		if (player != null) GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WallOfFire", cooldown);
 	}
 
 	public long getDamageinterval() {
@@ -255,29 +251,5 @@ public class WallOfFire extends CoreAbility {
 
 	public void setDamageinterval(long damageinterval) {
 		this.damageinterval = damageinterval;
-	}
-
-	@Override
-	public void reloadVariables() {
-		RANGE = config.get().getInt("Abilities.Fire.WallOfFire.Range");
-		HEIGHT = config.get().getInt("Abilities.Fire.WallOfFire.Height");
-		WIDTH = config.get().getInt("Abilities.Fire.WallOfFire.Width");
-		DURATION = config.get().getLong("Abilities.Fire.WallOfFire.Duration");
-		DAMAGE = config.get().getInt("Abilities.Fire.WallOfFire.Damage");
-		COOLDOWN = config.get().getLong("Abilities.Fire.WallOfFire.Cooldown");
-		DAMAGE_INTERVAL = config.get().getLong("Abilities.Fire.WallOfFire.Interval");
-		FIRETICKS = config.get().getDouble("Abilities.Fire.WallOfFire.FireTicks");
-	    range = RANGE;
-		height = HEIGHT;
-		width = WIDTH;
-		duration = DURATION;
-		damage = DAMAGE;
-		cooldown = COOLDOWN;
-		damageinterval = DAMAGE_INTERVAL;
-	}
-
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.WallOfFire;
 	}
 }

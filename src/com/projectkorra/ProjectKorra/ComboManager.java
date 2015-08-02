@@ -21,7 +21,7 @@ public class ComboManager {
 	public static HashMap<String, String> authors = new HashMap<String, String>();
 	public static HashMap<String, String> descriptions = new HashMap<String, String>();
 	public static HashMap<String, String> instructions = new HashMap<String, String>();
-	
+
 	public ComboManager() {
 		ArrayList<AbilityInformation> fireKick = new ArrayList<AbilityInformation>();
 		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
@@ -79,10 +79,13 @@ public class ComboManager {
 		comboAbilityList.add(new ComboAbility("AirStream", airStream, AirCombo.class));
 
 		/*
-		 * ArrayList<AbilityInformation> airSlice = new ArrayList<AbilityInformation>();
-		 * airSlice.add(new AbilityInformation("AirBlast",ClickType.LEFTCLICK)); airSlice.add(new
-		 * AbilityInformation("AirScooter",ClickType.SHIFTDOWN)); airSlice.add(new
-		 * AbilityInformation("AirScooter",ClickType.LEFTCLICK)); comboAbilityList.add(new
+		 * ArrayList<AbilityInformation> airSlice = new
+		 * ArrayList<AbilityInformation>(); airSlice.add(new
+		 * AbilityInformation("AirBlast",ClickType.LEFTCLICK)); airSlice.add(new
+		 * AbilityInformation("AirScooter",ClickType.SHIFTDOWN));
+		 * airSlice.add(new
+		 * AbilityInformation("AirScooter",ClickType.LEFTCLICK));
+		 * comboAbilityList.add(new
 		 * ComboAbility("AirSlice",airSlice,AirCombo.class));
 		 */
 
@@ -123,8 +126,7 @@ public class ComboManager {
 
 	public static void addComboAbility(Player player, ClickType type) {
 		String abilityName = GeneralMethods.getBoundAbility(player);
-		if (abilityName == null)
-			return;
+		if (abilityName == null) return;
 
 		AbilityInformation info = new AbilityInformation(abilityName, type, System.currentTimeMillis());
 		addRecentAbility(player, info);
@@ -136,12 +138,9 @@ public class ComboManager {
 			return;
 		}
 
-		if (comboAbil.getComboType().equals(FireCombo.class))
-			new FireCombo(player, comboAbil.getName());
-		else if (comboAbil.getComboType().equals(AirCombo.class))
-			new AirCombo(player, comboAbil.getName());
-		else if (comboAbil.getComboType().equals(WaterCombo.class))
-			new WaterCombo(player, comboAbil.getName());
+		if (comboAbil.getComboType().equals(FireCombo.class)) new FireCombo(player, comboAbil.getName());
+		else if (comboAbil.getComboType().equals(AirCombo.class)) new AirCombo(player, comboAbil.getName());
+		else if (comboAbil.getComboType().equals(WaterCombo.class)) new WaterCombo(player, comboAbil.getName());
 		else {
 			for (ComboAbility ca : comboAbilityList) {
 				if (comboAbil.getName().equals(ca.getName())) {
@@ -160,8 +159,7 @@ public class ComboManager {
 		if (recentlyUsedAbilities.containsKey(name)) {
 			list = recentlyUsedAbilities.get(name);
 			recentlyUsedAbilities.remove(player);
-		} else
-			list = new ArrayList<AbilityInformation>();
+		} else list = new ArrayList<AbilityInformation>();
 		list.add(info);
 		recentlyUsedAbilities.put(name, list);
 	}
@@ -172,8 +170,7 @@ public class ComboManager {
 			ArrayList<AbilityInformation> abilityCombo = customAbility.getAbilities();
 			int size = abilityCombo.size();
 
-			if (playerCombo.size() < size)
-				continue;
+			if (playerCombo.size() < size) continue;
 
 			boolean isValid = true;
 			for (int i = 1; i <= size; i++) {
@@ -182,8 +179,7 @@ public class ComboManager {
 					break;
 				}
 			}
-			if (isValid)
-				return customAbility;
+			if (isValid) return customAbility;
 		}
 		return null;
 	}
@@ -202,19 +198,16 @@ public class ComboManager {
 				}
 			}
 
-			if (combos.size() > 0)
-				recentlyUsedAbilities.put(name, combos);
+			if (combos.size() > 0) recentlyUsedAbilities.put(name, combos);
 		}
 	}
 
 	public static ArrayList<AbilityInformation> getRecentlyUsedAbilities(Player player, int amount) {
 		String name = player.getName();
-		if (!recentlyUsedAbilities.containsKey(name))
-			return new ArrayList<AbilityInformation>();
+		if (!recentlyUsedAbilities.containsKey(name)) return new ArrayList<AbilityInformation>();
 
 		ArrayList<AbilityInformation> list = recentlyUsedAbilities.get(name);
-		if (list.size() < amount)
-			return new ArrayList<AbilityInformation>(list);
+		if (list.size() < amount) return new ArrayList<AbilityInformation>(list);
 
 		ArrayList<AbilityInformation> tempList = new ArrayList<AbilityInformation>();
 		for (int i = 0; i < amount; i++)
@@ -277,7 +270,7 @@ public class ComboManager {
 			return abilityName + " " + clickType + " " + time;
 		}
 	}
-	
+
 	public static class ComboAbility {
 		private String name;
 		private ArrayList<AbilityInformation> abilities;

@@ -30,10 +30,8 @@ public class MultiAbilityManager {
 		waterArms.add(new MultiAbilitySub("Punch", Element.Water, null));
 		waterArms.add(new MultiAbilitySub("Grapple", Element.Water, null));
 		waterArms.add(new MultiAbilitySub("Grab", Element.Water, null));
-		waterArms.add(new MultiAbilitySub("Freeze", Element.Water,
-				SubElement.Icebending));
-		waterArms.add(new MultiAbilitySub("Spear", Element.Water,
-				SubElement.Icebending));
+		waterArms.add(new MultiAbilitySub("Freeze", Element.Water, SubElement.Icebending));
+		waterArms.add(new MultiAbilitySub("Spear", Element.Water, SubElement.Icebending));
 		multiAbilityList.add(new MultiAbility("WaterArms", waterArms));
 		manage();
 	}
@@ -45,36 +43,24 @@ public class MultiAbilityManager {
 	 * @param multiAbility
 	 */
 	public static void bindMultiAbility(Player player, String multiAbility) {
-		if (playerAbilities.containsKey(player))
-			unbindMultiAbility(player);
+		if (playerAbilities.containsKey(player)) unbindMultiAbility(player);
 		playerSlot.put(player, player.getInventory().getHeldItemSlot());
 		playerBoundAbility.put(player, multiAbility);
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player
-				.getName());
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		HashMap<Integer, String> currAbilities = new HashMap<Integer, String>();
 		for (int i : bPlayer.getAbilities().keySet()) {
 			currAbilities.put(i, bPlayer.getAbilities().get(i));
 		}
 		playerAbilities.put(player, currAbilities);
 
-		List<MultiAbilitySub> modes = getMultiAbility(multiAbility)
-				.getAbilities();
+		List<MultiAbilitySub> modes = getMultiAbility(multiAbility).getAbilities();
 
 		bPlayer.getAbilities().clear();
 		for (int i = 0; i < modes.size(); i++) {
-			if (!player.hasPermission("bending.ability." + multiAbility + "."
-					+ modes.get(i).getName())) {
-				bPlayer.getAbilities().put(
-						i + 1,
-						new StringBuilder()
-								.append(modes.get(i).getAbilityColor())
-								.append(ChatColor.STRIKETHROUGH)
-								.append(modes.get(i).getName()).toString());
+			if (!player.hasPermission("bending.ability." + multiAbility + "." + modes.get(i).getName())) {
+				bPlayer.getAbilities().put(i + 1, new StringBuilder().append(modes.get(i).getAbilityColor()).append(ChatColor.STRIKETHROUGH).append(modes.get(i).getName()).toString());
 			} else {
-				bPlayer.getAbilities()
-						.put(i + 1,
-								modes.get(i).getAbilityColor()
-										+ modes.get(i).getName());
+				bPlayer.getAbilities().put(i + 1, modes.get(i).getAbilityColor() + modes.get(i).getName());
 			}
 		}
 
@@ -93,8 +79,7 @@ public class MultiAbilityManager {
 	 * @return
 	 */
 	public static String getBoundMultiAbility(Player player) {
-		if (playerBoundAbility.containsKey(player))
-			return playerBoundAbility.get(player);
+		if (playerBoundAbility.containsKey(player)) return playerBoundAbility.get(player);
 		return null;
 	}
 
@@ -106,8 +91,7 @@ public class MultiAbilityManager {
 	 */
 	public static MultiAbility getMultiAbility(String multiAbility) {
 		for (MultiAbility ma : multiAbilityList) {
-			if (ma.getName().equalsIgnoreCase(multiAbility))
-				return ma;
+			if (ma.getName().equalsIgnoreCase(multiAbility)) return ma;
 		}
 		return null;
 	}
@@ -119,8 +103,7 @@ public class MultiAbilityManager {
 	 * @return
 	 */
 	public static boolean hasMultiAbilityBound(Player player) {
-		if (playerAbilities.containsKey(player))
-			return true;
+		if (playerAbilities.containsKey(player)) return true;
 		return false;
 	}
 
@@ -132,12 +115,9 @@ public class MultiAbilityManager {
 	 * @param multiAbility
 	 * @return
 	 */
-	public static boolean hasMultiAbilityBound(Player player,
-			String multiAbility) {
+	public static boolean hasMultiAbilityBound(Player player, String multiAbility) {
 		if (playerAbilities.containsKey(player)) {
-			if (!playerBoundAbility.get(player).equals(multiAbility)
-					&& GeneralMethods.getBoundAbility(player) != null)
-				return false;
+			if (!playerBoundAbility.get(player).equals(multiAbility) && GeneralMethods.getBoundAbility(player) != null) return false;
 			return true;
 		}
 		return false;
@@ -183,16 +163,9 @@ public class MultiAbilityManager {
 			for (Player player : playerAbilities.keySet()) {
 				if (playerBoundAbility.containsKey(player)) {
 					if (GeneralMethods.getBoundAbility(player) == null) {
-						if (multiAbilityList
-								.contains(getMultiAbility(playerBoundAbility
-										.get(player)))) {
-							if (player.getInventory().getHeldItemSlot() > getMultiAbility(
-									playerBoundAbility.get(player))
-									.getAbilities().size()) {
-								player.getInventory().setHeldItemSlot(
-										getMultiAbility(
-												playerBoundAbility.get(player))
-												.getAbilities().size() - 1);
+						if (multiAbilityList.contains(getMultiAbility(playerBoundAbility.get(player)))) {
+							if (player.getInventory().getHeldItemSlot() > getMultiAbility(playerBoundAbility.get(player)).getAbilities().size()) {
+								player.getInventory().setHeldItemSlot(getMultiAbility(playerBoundAbility.get(player)).getAbilities().size() - 1);
 							} else {
 								player.getInventory().setHeldItemSlot(0);
 							}
@@ -212,35 +185,27 @@ public class MultiAbilityManager {
 	public static void unbindMultiAbility(Player player) {
 		if (playerAbilities.containsKey(player)) {
 			HashMap<Integer, String> prevBinds = playerAbilities.get(player);
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player
-					.getName());
+			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 			int lastNonNull = -1;
 			for (int i = 1; i < 10; i++) {
-				if (prevBinds.get(i) != null)
-					lastNonNull = i;
+				if (prevBinds.get(i) != null) lastNonNull = i;
 				bPlayer.getAbilities().put(i, prevBinds.get(i));
 			}
-			if (lastNonNull > -1)
-				GeneralMethods.saveAbility(bPlayer, lastNonNull,
-						prevBinds.get(lastNonNull));
+			if (lastNonNull > -1) GeneralMethods.saveAbility(bPlayer, lastNonNull, prevBinds.get(lastNonNull));
 
-			if (player.isOnline())
-				bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending
+			if (player.isOnline()) bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending
 			// scoreboards.
 			playerAbilities.remove(player);
 		}
 
 		if (playerSlot.containsKey(player)) {
-			if (player.isOnline())
-				player.getInventory().setHeldItemSlot(playerSlot.get(player));
+			if (player.isOnline()) player.getInventory().setHeldItemSlot(playerSlot.get(player));
 			playerSlot.remove(player);
 		} else {
-			if (player.isOnline())
-				player.getInventory().setHeldItemSlot(0);
+			if (player.isOnline()) player.getInventory().setHeldItemSlot(0);
 		}
 
-		if (playerBoundAbility.containsKey(player))
-			playerBoundAbility.remove(player);
+		if (playerBoundAbility.containsKey(player)) playerBoundAbility.remove(player);
 	}
 
 	/**
@@ -311,18 +276,18 @@ public class MultiAbilityManager {
 		public ChatColor getAbilityColor() {
 			if (sub == null) {
 				switch (element) {
-				case Air:
-					return AirMethods.getAirColor();
-				case Water:
-					return WaterMethods.getWaterColor();
-				case Fire:
-					return FireMethods.getFireColor();
-				case Earth:
-					return EarthMethods.getEarthColor();
-				case Chi:
-					return ChiMethods.getChiColor();
-				default:
-					return GeneralMethods.getAvatarColor();
+					case Air:
+						return AirMethods.getAirColor();
+					case Water:
+						return WaterMethods.getWaterColor();
+					case Fire:
+						return FireMethods.getFireColor();
+					case Earth:
+						return EarthMethods.getEarthColor();
+					case Chi:
+						return ChiMethods.getChiColor();
+					default:
+						return GeneralMethods.getAvatarColor();
 				}
 			} else {
 				return GeneralMethods.getSubBendingColor(element);

@@ -1,6 +1,7 @@
 package com.projectkorra.ProjectKorra.firebending;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -10,17 +11,18 @@ import org.bukkit.util.Vector;
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
-public class FireJet extends CoreAbility {
+public class FireJet {
 
-	private static double defaultfactor = config.get().getDouble("Abilities.Fire.FireJet.Speed");
-	private static long defaultduration = config.get().getLong("Abilities.Fire.FireJet.Duration");
-	private static boolean isToggle = config.get().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
+	public static ConcurrentHashMap<Player, FireJet> instances = new ConcurrentHashMap<Player, FireJet>();
+
+	private static final double defaultfactor = ProjectKorra.plugin.getConfig().getDouble("Abilities.Fire.FireJet.Speed");
+	private static final long defaultduration = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireJet.Duration");
+	private static boolean isToggle = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
 
 	private Player player;
 	private long time;
@@ -28,16 +30,14 @@ public class FireJet extends CoreAbility {
 	private double factor = defaultfactor;
 
 	public FireJet(Player player) {
-		/* Initial Checks */
-		if (containsPlayer(player, FireJet.class)) {
-			remove();
+		if (instances.containsKey(player)) {
+			instances.remove(player);
 			return;
 		}
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+
 		if (bPlayer.isOnCooldown("FireJet")) return;
-		/* End Initial Checks */
-		reloadVariables();
-		
+
 		factor = FireMethods.getFirebendingDayAugment(defaultfactor, player.getWorld());
 		Block block = player.getLocation().getBlock();
 		if (FireStream.isIgnitable(player, block) || block.getType() == Material.AIR || AvatarState.isAvatarState(player)) {
@@ -49,37 +49,34 @@ public class FireJet extends CoreAbility {
 			player.setAllowFlight(true);
 			time = System.currentTimeMillis();
 			// timers.put(player, time);
-			//instances.put(player, this);
-			putInstance(player, this);
-			bPlayer.addCooldown("FireJet", config.get().getLong("Abilities.Fire.FireJet.Cooldown"));
+			instances.put(player, this);
+			bPlayer.addCooldown("FireJet", ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.FireJet.Cooldown"));
 		}
 
 	}
 
 	public static boolean checkTemporaryImmunity(Player player) {
-		if (containsPlayer(player, FireJet.class)) {
+		if (instances.containsKey(player)) {
 			return true;
 		}
 		return false;
 	}
 
-	@Override
-	public boolean progress() {
+	public void progress() {
 		if (player.isDead() || !player.isOnline()) {
 			// player.setAllowFlight(canfly);
-			remove();
-			return false;
+			instances.remove(player);
+			return;
 		}
-		if ((WaterMethods.isWater(player.getLocation().getBlock()) || System.currentTimeMillis() > time + duration)
-				&& (!AvatarState.isAvatarState(player) || !isToggle)) {
+		if ((WaterMethods.isWater(player.getLocation().getBlock()) || System.currentTimeMillis() > time + duration) && (!AvatarState.isAvatarState(player) || !isToggle)) {
 			// player.setAllowFlight(canfly);
-			remove();
+			instances.remove(player);
 		} else {
 			if (GeneralMethods.rand.nextInt(2) == 0) {
 				FireMethods.playFirebendingSound(player.getLocation());
 			}
-			ParticleEffect.FLAME.display(player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
-			ParticleEffect.SMOKE.display(player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 20);
+			ParticleEffect.FLAME.display(player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
+			ParticleEffect.SMOKE.display(player.getLocation(), 0.6F, 0.6F, 0.6F, 0, 5);
 			double timefactor;
 			if (AvatarState.isAvatarState(player) && isToggle) {
 				timefactor = 1;
@@ -93,13 +90,18 @@ public class FireJet extends CoreAbility {
 			player.setVelocity(velocity);
 			player.setFallDistance(0);
 		}
-		return true;
+	}
+
+	public static void progressAll() {
+		for (Player player : instances.keySet()) {
+			instances.get(player).progress();
+		}
 	}
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (Integer id : getInstances(StockAbility.FireJet).keySet()) {
-			players.add(getInstances(StockAbility.FireJet).get(id).getPlayer());
+		for (Player player : instances.keySet()) {
+			players.add(player);
 		}
 		return players;
 	}
@@ -122,18 +124,6 @@ public class FireJet extends CoreAbility {
 
 	public void setFactor(double factor) {
 		this.factor = factor;
-	}
-
-	@Override
-	public void reloadVariables() {
-		defaultfactor = config.get().getDouble("Abilities.Fire.FireJet.Speed");
-		defaultduration = config.get().getLong("Abilities.Fire.FireJet.Duration");
-		isToggle = config.get().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
-	}
-
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.FireJet;
 	}
 
 }

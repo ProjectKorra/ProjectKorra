@@ -31,15 +31,12 @@ public class WaterReturn {
 	private long time;
 
 	public WaterReturn(Player player, Block block) {
-		if (instances.containsKey(player))
-			return;
+		if (instances.containsKey(player)) return;
 		this.player = player;
 		location = block.getLocation();
 		if (GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
-			if (!GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)
-					&& GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
-				if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid() && hasEmptyWaterBottle())
-					this.block = new TempBlock(block, Material.WATER, full);
+			if (!GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location) && GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
+				if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid() && hasEmptyWaterBottle()) this.block = new TempBlock(block, Material.WATER, full);
 			}
 		}
 		// if (ID >= Integer.MAX_VALUE) {
@@ -65,8 +62,7 @@ public class WaterReturn {
 			return;
 		}
 
-		if (System.currentTimeMillis() < time + interval)
-			return;
+		if (System.currentTimeMillis() < time + interval) return;
 
 		time = System.currentTimeMillis();
 
@@ -78,8 +74,7 @@ public class WaterReturn {
 			return;
 		}
 
-		if (location.getBlock().equals(block.getLocation().getBlock()))
-			return;
+		if (location.getBlock().equals(block.getLocation().getBlock())) return;
 
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 			remove();
@@ -145,34 +140,27 @@ public class WaterReturn {
 
 	private static boolean isBending(Player player) {
 		for (int id : WaterManipulation.instances.keySet()) {
-			if (WaterManipulation.instances.get(id).player.equals(player))
-				return true;
+			if (WaterManipulation.instances.get(id).player.equals(player)) return true;
 		}
 
-		if (OctopusForm.instances.containsKey(player))
-			return true;
+		if (OctopusForm.instances.containsKey(player)) return true;
 
 		for (int id : Wave.instances.keySet()) {
-			if (Wave.instances.get(id).player.equals(player))
-				return true;
+			if (Wave.instances.get(id).player.equals(player)) return true;
 		}
 
 		for (int id : WaterWall.instances.keySet()) {
-			if (WaterWall.instances.get(id).player.equals(player))
-				return true;
+			if (WaterWall.instances.get(id).player.equals(player)) return true;
 		}
 
-		if (IceSpike2.isBending(player))
-			return true;
+		if (IceSpike2.isBending(player)) return true;
 
 		return false;
 	}
 
 	public static boolean hasWaterBottle(Player player) {
-		if (instances.containsKey(player))
-			return false;
-		if (isBending(player))
-			return false;
+		if (instances.containsKey(player)) return false;
+		if (isBending(player)) return false;
 		PlayerInventory inventory = player.getInventory();
 		return (inventory.contains(new ItemStack(Material.POTION), 1));
 	}
@@ -204,8 +192,7 @@ public class WaterReturn {
 	public static void removeAll() {
 		for (Player player : instances.keySet()) {
 			WaterReturn wr = instances.get(player);
-			if (wr.block != null)
-				wr.block.revertBlock();
+			if (wr.block != null) wr.block.revertBlock();
 		}
 		instances.clear();
 	}

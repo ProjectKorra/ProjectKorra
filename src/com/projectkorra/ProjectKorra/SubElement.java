@@ -5,29 +5,36 @@ import java.util.Arrays;
 public enum SubElement {
 
 	//Air
-	Flight, SpiritualProjection,
-	
+	Flight,
+	SpiritualProjection,
+
 	//Water
-	Bloodbending, Healing, Icebending, Plantbending,
-	
+	Bloodbending,
+	Healing,
+	Icebending,
+	Plantbending,
+
 	// Earth
-	Metalbending, Sandbending, Lavabending,
-	
+	Metalbending,
+	Sandbending,
+	Lavabending,
+
 	// Fire
-	Combustion, Lightning;
-	
+	Combustion,
+	Lightning;
+
 	public static SubElement getType(String string) {
-		for (SubElement se: SubElement.values()) {
+		for (SubElement se : SubElement.values()) {
 			if (se.toString().equalsIgnoreCase(string)) {
 				return se;
 			}
 		}
 		return null;
 	}
-	
+
 	public static SubElement getType(int index) {
 		if (index == -1) return null;
-		return (SubElement)Arrays.asList(values()).get(index);
+		return (SubElement) Arrays.asList(values()).get(index);
 	}
-	
+
 }

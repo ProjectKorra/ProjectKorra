@@ -55,16 +55,13 @@ public class IceSpike2 {
 	private double defaultdamage = DAMAGE;
 
 	public IceSpike2(Player player) {
-		if(!WaterMethods.canIcebend(player))
-			return;
-		
+		if (!WaterMethods.canIcebend(player)) return;
+
 		block(player);
-		if (WaterMethods.canPlantbend(player))
-			plantbending = true;
+		if (WaterMethods.canPlantbend(player)) plantbending = true;
 		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, 
-				true, true, plantbending);
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, plantbending);
 
 		if (sourceblock == null) {
 			new SpikeField(player);
@@ -134,8 +131,7 @@ public class IceSpike2 {
 		if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-			if (EarthMethods.isTransparentToEarthbending(player, block)
-					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+			if (EarthMethods.isTransparentToEarthbending(player, block) && EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
 				LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, RANGE, new ArrayList<Entity>());
 				Location destination;
@@ -145,8 +141,7 @@ public class IceSpike2 {
 					destination = GeneralMethods.getPointOnLine(player.getEyeLocation(), target.getEyeLocation(), RANGE);
 				}
 
-				if (destination.distance(block.getLocation()) < 1)
-					return;
+				if (destination.distance(block.getLocation()) < 1) return;
 
 				block.setType(Material.WATER);
 				block.setData((byte) 0x0);
@@ -164,8 +159,7 @@ public class IceSpike2 {
 	}
 
 	private void throwIce() {
-		if (!prepared)
-			return;
+		if (!prepared) return;
 		LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		if (target == null) {
 			destination = GeneralMethods.getTargetedLocation(player, range, EarthMethods.transparentToEarthbending);
@@ -174,8 +168,7 @@ public class IceSpike2 {
 		}
 
 		location = sourceblock.getLocation();
-		if (destination.distance(location) < 1)
-			return;
+		if (destination.distance(location) < 1) return;
 		firstdestination = location.clone();
 		if (destination.getY() - location.getY() > 2) {
 			firstdestination.setY(destination.getY() - 1);
@@ -229,8 +222,7 @@ public class IceSpike2 {
 			return;
 		}
 
-		if (System.currentTimeMillis() < time + interval)
-			return;
+		if (System.currentTimeMillis() < time + interval) return;
 
 		time = System.currentTimeMillis();
 
@@ -238,8 +230,7 @@ public class IceSpike2 {
 
 			Vector direction;
 
-			if (location.getBlockY() == firstdestination.getBlockY())
-				settingup = false;
+			if (location.getBlockY() == firstdestination.getBlockY()) settingup = false;
 
 			if (location.distance(destination) <= 2) {
 				cancel();
@@ -257,8 +248,7 @@ public class IceSpike2 {
 
 			Block block = location.getBlock();
 
-			if (block.equals(sourceblock))
-				return;
+			if (block.equals(sourceblock)) return;
 
 			source.revertBlock();
 			source = null;
@@ -284,10 +274,10 @@ public class IceSpike2 {
 					returnWater();
 				}
 			}
-			
+
 			if (GeneralMethods.rand.nextInt(4) == 0) {
 				WaterMethods.playIcebendingSound(location);
-			}		
+			}
 
 			if (!progressing) {
 				cancel();
@@ -327,11 +317,9 @@ public class IceSpike2 {
 		for (int id : instances.keySet()) {
 			IceSpike2 ice = instances.get(id);
 
-			if (!ice.progressing)
-				continue;
+			if (!ice.progressing) continue;
 
-			if (!ice.location.getWorld().equals(player.getWorld()))
-				continue;
+			if (!ice.location.getWorld().equals(player.getWorld())) continue;
 
 			if (ice.player.equals(player)) {
 				Location location;
@@ -348,12 +336,8 @@ public class IceSpike2 {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = ice.location;
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike", mloc))
-				continue;
-			if (mloc.distance(location) <= ice.defaultrange
-					&& GeneralMethods.getDistanceFromLine(vector, location, ice.location) < deflectrange
-					&& mloc.distance(location.clone().add(vector)) < 
-					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike", mloc)) continue;
+			if (mloc.distance(location) <= ice.defaultrange && GeneralMethods.getDistanceFromLine(vector, location, ice.location) < deflectrange && mloc.distance(location.clone().add(vector)) < mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				Location loc;
 				Entity target = GeneralMethods.getTargetedEntity(player, ice.defaultrange, new ArrayList<Entity>());
 				if (target == null) {
@@ -372,26 +356,18 @@ public class IceSpike2 {
 		for (int id : instances.keySet()) {
 			IceSpike2 ice = instances.get(id);
 
-			if (ice.player.equals(player))
-				continue;
+			if (ice.player.equals(player)) continue;
 
-			if (!ice.location.getWorld().equals(player.getWorld()))
-				continue;
+			if (!ice.location.getWorld().equals(player.getWorld())) continue;
 
-			if (!ice.progressing)
-				continue;
+			if (!ice.progressing) continue;
 
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike",
-					ice.location))
-				continue;
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike", ice.location)) continue;
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = ice.location;
-			if (mloc.distance(location) <= ice.defaultrange
-					&& GeneralMethods.getDistanceFromLine(vector, location, ice.location) < deflectrange
-					&& mloc.distance(location.clone().add(vector)) < 
-					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
+			if (mloc.distance(location) <= ice.defaultrange && GeneralMethods.getDistanceFromLine(vector, location, ice.location) < deflectrange && mloc.distance(location.clone().add(vector)) < mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				ice.cancel();
 			}
 
@@ -405,8 +381,7 @@ public class IceSpike2 {
 
 	private void cancel() {
 		if (progressing) {
-			if (source != null)
-				source.revertBlock();
+			if (source != null) source.revertBlock();
 			progressing = false;
 		}
 
@@ -427,8 +402,7 @@ public class IceSpike2 {
 
 	public static boolean isBending(Player player) {
 		for (int id : instances.keySet()) {
-			if (instances.get(id).player.equals(player))
-				return true;
+			if (instances.get(id).player.equals(player)) return true;
 		}
 		return false;
 	}

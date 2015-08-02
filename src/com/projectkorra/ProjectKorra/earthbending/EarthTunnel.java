@@ -41,8 +41,7 @@ public class EarthTunnel {
 		block = origin.getBlock();
 		direction = location.getDirection().clone().normalize();
 		depth = origin.distance(location) - 1;
-		if (depth < 0)
-			depth = 0;
+		if (depth < 0) depth = 0;
 		angle = 0;
 		radius = radiusinc;
 		time = System.currentTimeMillis();
@@ -57,9 +56,7 @@ public class EarthTunnel {
 		}
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
-			if (Math.abs(Math.toDegrees(player.getEyeLocation().getDirection()
-					.angle(direction))) > 20
-					|| !player.isSneaking()) {
+			if (Math.abs(Math.toDegrees(player.getEyeLocation().getDirection().angle(direction))) > 20 || !player.isSneaking()) {
 				instances.remove(player);
 				return false;
 			} else {
@@ -84,11 +81,8 @@ public class EarthTunnel {
 					} else {
 						angle += 20;
 					}
-					Vector vec = GeneralMethods.getOrthogonalVector(direction, angle,
-							radius);
-					block = location.clone()
-							.add(direction.clone().normalize().multiply(depth))
-							.add(vec).getBlock();
+					Vector vec = GeneralMethods.getOrthogonalVector(direction, angle, radius);
+					block = location.clone().add(direction.clone().normalize().multiply(depth)).add(vec).getBlock();
 				}
 
 				if (revert) {
@@ -103,7 +97,7 @@ public class EarthTunnel {
 			return false;
 		}
 	}
-	
+
 	public static void progressAll() {
 		for (Player player : instances.keySet()) {
 			instances.get(player).progress();
@@ -111,11 +105,7 @@ public class EarthTunnel {
 	}
 
 	public static String getDescription() {
-		return "Earth Tunnel is a completely utility ability for earthbenders. "
-				+ "To use, simply sneak (default: shift) in the direction you want to tunnel. "
-				+ "You will slowly begin tunneling in the direction you're facing for as long as you "
-				+ "sneak or if the tunnel has been dug long enough. This ability will be interupted "
-				+ "if it hits a block that cannot be earthbent.";
+		return "Earth Tunnel is a completely utility ability for earthbenders. " + "To use, simply sneak (default: shift) in the direction you want to tunnel. " + "You will slowly begin tunneling in the direction you're facing for as long as you " + "sneak or if the tunnel has been dug long enough. This ability will be interupted " + "if it hits a block that cannot be earthbent.";
 	}
 
 	public Player getPlayer() {

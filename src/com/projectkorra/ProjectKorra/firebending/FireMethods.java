@@ -20,33 +20,38 @@ import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 
 public class FireMethods {
-	
+
 	static ProjectKorra plugin;
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
+
 	public FireMethods(ProjectKorra plugin) {
 		FireMethods.plugin = plugin;
 	}
-	
-	public static boolean canCombustionbend(Player player){
-		if(player.hasPermission("bending.fire.combustionbending")) return true;
+
+	public static boolean canCombustionbend(Player player) {
+		if (player.hasPermission("bending.fire.combustionbending")) return true;
 		return false;
 	}
-	
-	public static boolean canLightningbend(Player player){
-		if(player.hasPermission("bending.fire.lightningbending")) return true;
+
+	public static boolean canLightningbend(Player player) {
+		if (player.hasPermission("bending.fire.lightningbending")) return true;
 		return false;
 	}
-	
+
 	/**
-	 * Gets the firebending dayfactor from the config multiplied by a specific value if it is day.
-	 * @param value The value 
-	 * @param world The world to pass into {@link #isDay(World)}
-	 * <p>
-	 * @return value DayFactor multiplied by specified value when {@link #isDay(World)} is true 
-	 * <br /> else <br /> 
-	 * value The specified value in the parameters 
-	 * </p>
+	 * Gets the firebending dayfactor from the config multiplied by a specific
+	 * value if it is day.
+	 * 
+	 * @param value
+	 *            The value
+	 * @param world
+	 *            The world to pass into {@link #isDay(World)}
+	 *            <p>
+	 * @return value DayFactor multiplied by specified value when
+	 *         {@link #isDay(World)} is true <br />
+	 *         else <br />
+	 *         value The specified value in the parameters
+	 *         </p>
 	 * @see {@link #getFirebendingDayAugment(World)}
 	 */
 	public static double getFirebendingDayAugment(double value, World world) {
@@ -65,23 +70,24 @@ public class FireMethods {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * Gets the FireColor from the config.
+	 * 
 	 * @return Config specified ChatColor
 	 */
 	public static ChatColor getFireColor() {
 		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Fire"));
 	}
-	
-	public static boolean isCombustionbendingAbility(String ability){
+
+	public static boolean isCombustionbendingAbility(String ability) {
 		return AbilityModuleManager.combustionabilities.contains(ability);
 	}
-	
-	public static boolean isLightningbendingAbility(String ability){
+
+	public static boolean isLightningbendingAbility(String ability) {
 		return AbilityModuleManager.lightningabilities.contains(ability);
 	}
-	
+
 	public static boolean isDay(World world) {
 		long time = world.getTime();
 		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) return true;
@@ -94,18 +100,18 @@ public class FireMethods {
 	public static boolean isFireAbility(String ability) {
 		return AbilityModuleManager.firebendingabilities.contains(ability);
 	}
-	
+
 	public static void playLightningbendingParticle(Location loc) {
-		playLightningbendingParticle(loc,(float) Math.random(), (float) Math.random(), (float) Math.random());
+		playLightningbendingParticle(loc, (float) Math.random(), (float) Math.random(), (float) Math.random());
 	}
 
 	public static void playLightningbendingParticle(Location loc, float xOffset, float yOffset, float zOffset) {
-		loc.setX(loc.getX() + Math.random() * (xOffset/2 - -(xOffset/2)));
-		loc.setY(loc.getY() + Math.random() * (yOffset/2 - -(yOffset/2)));
-		loc.setZ(loc.getZ() + Math.random() * (zOffset/2 - -(zOffset/2)));
+		loc.setX(loc.getX() + Math.random() * (xOffset / 2 - -(xOffset / 2)));
+		loc.setY(loc.getY() + Math.random() * (yOffset / 2 - -(yOffset / 2)));
+		loc.setZ(loc.getZ() + Math.random() * (zOffset / 2 - -(zOffset / 2)));
 		GeneralMethods.displayColoredParticle(loc, "#01E1FF");
 	}
-	
+
 	public static void playFirebendingParticles(Location loc) {
 		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0, 15);
 	}
@@ -121,10 +127,12 @@ public class FireMethods {
 			loc.getWorld().playSound(loc, Sound.FIREWORK_BLAST, 1, -1);
 		}
 	}
-	
+
 	/**
 	 * Checks whether a location is within a FireShield.
-	 * @param loc The location to check
+	 * 
+	 * @param loc
+	 *            The location to check
 	 * @return true If the location is inside a FireShield.
 	 */
 	public static boolean isWithinFireShield(Location loc) {
@@ -132,18 +140,18 @@ public class FireMethods {
 		list.add("FireShield");
 		return GeneralMethods.blockAbilities(null, list, loc, 0);
 	}
-	
+
 	public static void stopBending() {
-		FireStream.removeAll(FireStream.class);
-		Fireball.removeAll(Fireball.class);
-		WallOfFire.removeAll(WallOfFire.class);
-		Lightning.removeAll(Lightning.class);
-		FireShield.removeAll(FireShield.class);
-		FireBlast.removeAll(FireBlast.class);
-		FireBurst.removeAll(FireBurst.class);
-		FireJet.removeAll(FireJet.class);
-		Cook.removeAll(Cook.class);
-		Illumination.removeAll(Illumination.class);
+		FireStream.removeAll();
+		Fireball.removeAll();
+		WallOfFire.instances.clear();
+		Lightning.instances.clear();
+		FireShield.removeAll();
+		FireBlast.removeAll();
+		FireBurst.removeAll();
+		FireJet.instances.clear();
+		Cook.removeAll();
+		Illumination.removeAll();
 		FireCombo.removeAll();
 	}
 }

@@ -1,8 +1,11 @@
 package com.projectkorra.ProjectKorra.airbending;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -12,51 +15,101 @@ import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
-public class AirBurst extends CoreAbility {
-	
-	private static double PARTICLES_PERCENTAGE = 50;
-	
-	private static double threshold = config.get().getDouble("Abilities.Air.AirBurst.FallThreshold");
-	private static double pushfactor = config.get().getDouble("Abilities.Air.AirBurst.PushFactor");
-	private static double damage = config.get().getDouble("Abilities.Air.AirBurst.Damage");
+public class AirBurst {
+
+	private static ConcurrentHashMap<Player, AirBurst> instances = new ConcurrentHashMap<Player, AirBurst>();
+	private static double PARTICLES_PERCENTAGE = 25;
+
+	static FileConfiguration config = ProjectKorra.plugin.getConfig();
+
+	private static double threshold = config.getDouble("Abilities.Air.AirBurst.FallThreshold");
+	private static double pushfactor = config.getDouble("Abilities.Air.AirBurst.PushFactor");
+	private static double damage = config.getDouble("Abilities.Air.AirBurst.Damage");
 	private static double deltheta = 10;
 	private static double delphi = 10;
 
 	private Player player;
 	private long starttime;
-	private long chargetime = config.get().getLong("Abilities.Air.AirBurst.ChargeTime");
+	private long chargetime = config.getLong("Abilities.Air.AirBurst.ChargeTime");
 	private boolean charged = false;
-	private ArrayList<AirBlast> blasts = new ArrayList<AirBlast>();
+	public ArrayList<AirBlast> blasts = new ArrayList<AirBlast>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
-	
-	public AirBurst() {
-		reloadVariables();
-	}
 
 	public AirBurst(Player player) {
-		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("AirBurst")) 
-			return;
-		if (containsPlayer(player, AirBurst.class))
-			return;
-		/* End Initial Checks */
-		reloadVariables();
+		if (bPlayer.isOnCooldown("AirBurst")) return;
+		if (instances.containsKey(player)) return;
 		starttime = System.currentTimeMillis();
-		if (AvatarState.isAvatarState(player))
-			chargetime = 0;
+		if (AvatarState.isAvatarState(player)) chargetime = 0;
 		this.player = player;
-		//instances.put(player.getUniqueId(), this);
-		putInstance(player, this);
+		instances.put(player, this);
+	}
+
+	public AirBurst() {
+
 	}
 
 	public static void coneBurst(Player player) {
-		if (containsPlayer(player, AirBurst.class)) {
-			((AirBurst) getAbilityFromPlayer(player, AirBurst.class)).coneBurst();;
+		if (instances.containsKey(player)) instances.get(player).coneBurst();
+	}
+
+	private void coneBurst() {
+		if (charged) {
+			Location location = player.getEyeLocation();
+			Vector vector = location.getDirection();
+			double angle = Math.toRadians(20);
+			double x, y, z;
+			double r = 1;
+			for (double theta = 0; theta <= 180; theta += deltheta) {
+				double dphi = delphi / Math.sin(Math.toRadians(theta));
+				double rand = 0;
+				for (double phi = 0; phi < 360; phi += dphi) {
+					rand = Math.random();
+					double rphi = Math.toRadians(phi);
+					double rtheta = Math.toRadians(theta);
+					x = r * Math.cos(rphi) * Math.sin(rtheta);
+					y = r * Math.sin(rphi) * Math.sin(rtheta);
+					z = r * Math.cos(rtheta);
+					Vector direction = new Vector(x, z, y);
+					if (direction.angle(vector) <= angle && rand >= .2) {
+						AirBlast blast = new AirBlast(location, direction.normalize(), player, pushfactor, this);
+						blast.setDamage(damage);
+					}
+				}
+			}
 		}
+		instances.remove(player);
+	}
+
+	private void sphereBurst() {
+		if (charged) {
+			Location location = player.getEyeLocation();
+			double x, y, z;
+			double r = 1;
+			for (double theta = 0; theta <= 180; theta += deltheta) {
+				double dphi = delphi / Math.sin(Math.toRadians(theta));
+				double rand = 0;
+				for (double phi = 0; phi < 360; phi += dphi) {
+					rand = Math.random();
+					double rphi = Math.toRadians(phi);
+					double rtheta = Math.toRadians(theta);
+					x = r * Math.cos(rphi) * Math.sin(rtheta);
+					y = r * Math.sin(rphi) * Math.sin(rtheta);
+					z = r * Math.cos(rtheta);
+					Vector direction = new Vector(x, z, y);
+					if (rand <= .1) {
+						AirBlast blast = new AirBlast(location, direction.normalize(), player, pushfactor, this);
+						blast.setDamage(damage);
+						blast.setShowParticles(false);
+						blasts.add(blast);
+					}
+				}
+			}
+		}
+		// Methods.verbose("--" + AirBlast.instances.size() + "--");
+		instances.remove(player);
+		handleSmoothParticles();
 	}
 
 	public static void fallBurst(Player player) {
@@ -69,7 +122,7 @@ public class AirBurst extends CoreAbility {
 		if (GeneralMethods.getBoundAbility(player) == null) {
 			return;
 		}
-		if (containsPlayer(player, AirBurst.class)) {
+		if (instances.containsKey(player)) {
 			return;
 		}
 		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBurst")) {
@@ -88,8 +141,7 @@ public class AirBurst extends CoreAbility {
 				y = r * Math.sin(rphi) * Math.sin(rtheta);
 				z = r * Math.cos(rtheta);
 				Vector direction = new Vector(x, z, y);
-				AirBlast blast = new AirBlast(location, direction.normalize(), player,
-						pushfactor, new AirBurst());
+				AirBlast blast = new AirBlast(location, direction.normalize(), player, pushfactor, new AirBurst());
 				blast.setDamage(damage);
 			}
 		}
@@ -99,70 +151,23 @@ public class AirBurst extends CoreAbility {
 		affectedentities.add(entity);
 	}
 
-	private void coneBurst() {
-		if (charged) {
-			Location location = player.getEyeLocation();
-			Vector vector = location.getDirection();
-			double angle = Math.toRadians(30);
-			double x, y, z;
-			double r = 1;
-			for (double theta = 0; theta <= 180; theta += deltheta) {
-				double dphi = delphi / Math.sin(Math.toRadians(theta));
-				for (double phi = 0; phi < 360; phi += dphi) {
-					double rphi = Math.toRadians(phi);
-					double rtheta = Math.toRadians(theta);
-					x = r * Math.cos(rphi) * Math.sin(rtheta);
-					y = r * Math.sin(rphi) * Math.sin(rtheta);
-					z = r * Math.cos(rtheta);
-					Vector direction = new Vector(x, z, y);
-					if (direction.angle(vector) <= angle) {
-						AirBlast blast = new AirBlast(location, direction.normalize(), player,
-								pushfactor, this);
-						blast.setDamage(damage);
-					}
-				}
-			}
-		}
-		remove();
-	}
-
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.AirBurst;
-	}
-
-	public void handleSmoothParticles() {
-		for (int i = 0; i < blasts.size(); i++) {
-			final AirBlast blast = blasts.get(i);
-			int toggleTime = 0;
-			if (i % 4 != 0)
-				toggleTime = (int) (i % (100 / PARTICLES_PERCENTAGE)) + 3;
-			new BukkitRunnable() {
-				public void run() {
-					blast.setShowParticles(true);
-				}
-			}.runTaskLater(ProjectKorra.plugin, toggleTime);
-		}
-	}
-
 	boolean isAffectedEntity(Entity entity) {
 		return affectedentities.contains(entity);
 	}
 
-	@Override
-	public boolean progress() {
+	private void progress() {
 		if (!GeneralMethods.canBend(player.getName(), "AirBurst")) {
-			remove();
-			return false;
+			instances.remove(player);
+			return;
 		}
 		if (GeneralMethods.getBoundAbility(player) == null) {
-			remove();
-			return false;
+			instances.remove(player);
+			return;
 		}
-		
+
 		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBurst")) {
-			remove();
-			return false;
+			instances.remove(player);
+			return;
 		}
 
 		if (System.currentTimeMillis() > starttime + chargetime && !charged) {
@@ -173,54 +178,40 @@ public class AirBurst extends CoreAbility {
 			if (charged) {
 				sphereBurst();
 			} else {
-				remove();
-				return false;
+				instances.remove(player);
 			}
 		} else if (charged) {
 			Location location = player.getEyeLocation();
 			// location = location.add(location.getDirection().normalize());
-			AirMethods.playAirbendingParticles(location, 10);
-//			location.getWorld().playEffect(
-//					location,
-//					Effect.SMOKE,
-//					Methods.getIntCardinalDirection(player.getEyeLocation()
-//							.getDirection()), 3);
+			AirMethods.playAirbendingParticles(location, 5);
+			//			location.getWorld().playEffect(
+			//					location,
+			//					Effect.SMOKE,
+			//					Methods.getIntCardinalDirection(player.getEyeLocation()
+			//							.getDirection()), 3);
 		}
-		return true;
 	}
 
-	@Override
-	public void reloadVariables() {
-		threshold = config.get().getDouble("Abilities.Air.AirBurst.FallThreshold");
-		pushfactor = config.get().getDouble("Abilities.Air.AirBurst.PushFactor");
-		damage = config.get().getDouble("Abilities.Air.AirBurst.Damage");
-		chargetime = config.get().getLong("Abilities.Air.AirBurst.ChargeTime");
-	}
-
-	private void sphereBurst() {
-		if (charged) {
-			Location location = player.getEyeLocation();
-			double x, y, z;
-			double r = 1;
-			for (double theta = 0; theta <= 180; theta += deltheta) {
-				double dphi = delphi / Math.sin(Math.toRadians(theta));
-				for (double phi = 0; phi < 360; phi += dphi) {
-					double rphi = Math.toRadians(phi);
-					double rtheta = Math.toRadians(theta);
-					x = r * Math.cos(rphi) * Math.sin(rtheta);
-					y = r * Math.sin(rphi) * Math.sin(rtheta);
-					z = r * Math.cos(rtheta);
-					Vector direction = new Vector(x, z, y);
-					AirBlast blast = new AirBlast(location, direction.normalize(), player,
-							pushfactor, this);
-					blast.setDamage(damage);
-					blast.setShowParticles(false);
-					blasts.add(blast);
+	public void handleSmoothParticles() {
+		for (int i = 0; i < blasts.size(); i++) {
+			final AirBlast blast = blasts.get(i);
+			int toggleTime = 0;
+			if (i % 4 != 0) toggleTime = (int) (i % (100 / PARTICLES_PERCENTAGE)) + 3;
+			new BukkitRunnable() {
+				public void run() {
+					blast.setShowParticles(true);
 				}
-			}
+			}.runTaskLater(ProjectKorra.plugin, toggleTime);
 		}
-		// Methods.verbose("--" + AirBlast.instances.size() + "--");
-		remove();
-		handleSmoothParticles();
+	}
+
+	public static void progressAll() {
+		for (Player player : instances.keySet())
+			instances.get(player).progress();
+	}
+
+	public static void removeAll() {
+		instances.clear();
+
 	}
 }

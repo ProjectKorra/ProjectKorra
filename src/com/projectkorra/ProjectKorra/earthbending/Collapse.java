@@ -15,7 +15,7 @@ import com.projectkorra.ProjectKorra.Utilities.BlockSource;
 import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
 public class Collapse {
-	
+
 	public static final int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Collapse.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Collapse.Radius");
 	private static final int height = EarthColumn.standardheight;
@@ -34,15 +34,12 @@ public class Collapse {
 		Block sblock = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
 		Location location;
 		if (sblock == null) {
-			location = player.getTargetBlock(
-					EarthMethods.getTransparentEarthbending(), range).getLocation();
+			location = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), range).getLocation();
 		} else {
 			location = sblock.getLocation();
 		}
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
-			if (EarthMethods.isEarthbendable(player, block)
-					&& !blocks.containsKey(block)
-					&& block.getY() >= location.getBlockY()) {
+			if (EarthMethods.isEarthbendable(player, block) && !blocks.containsKey(block) && block.getY() >= location.getBlockY()) {
 				getAffectedBlocks(block);
 			}
 		}
@@ -79,14 +76,6 @@ public class Collapse {
 	}
 
 	public static String getDescription() {
-		return " To use, simply left-click on an earthbendable block. "
-				+ "That block and the earthbendable blocks above it will be shoved "
-				+ "back into the earth below them, if they can. "
-				+ "This ability does have the capacity to trap something inside of it, "
-				+ "although it is incredibly difficult to do so. "
-				+ "Additionally, press sneak with this ability to affect an area around your targetted location - "
-				+ "all earth that can be moved downwards will be moved downwards. "
-				+ "This ability is especially risky or deadly in caves, depending on the "
-				+ "earthbender's goal and technique.";
+		return " To use, simply left-click on an earthbendable block. " + "That block and the earthbendable blocks above it will be shoved " + "back into the earth below them, if they can. " + "This ability does have the capacity to trap something inside of it, " + "although it is incredibly difficult to do so. " + "Additionally, press sneak with this ability to affect an area around your targetted location - " + "all earth that can be moved downwards will be moved downwards. " + "This ability is especially risky or deadly in caves, depending on the " + "earthbender's goal and technique.";
 	}
 }
