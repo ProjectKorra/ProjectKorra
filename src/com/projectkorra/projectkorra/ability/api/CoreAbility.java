@@ -44,6 +44,11 @@ public abstract class CoreAbility implements Ability {
 	 * @return true if instances contains the player
 	 */
 	public static final boolean containsPlayer(Player player, Class<? extends CoreAbility> ability) {
+		CoreAbility coreAbility = getAbilityFromPlayer(player, ability);
+		if (coreAbility != null) {
+			return true;
+		}
+		/*
 		List<CoreAbility> abilities = getAbilitiesFromPlayer(player);
 		for (CoreAbility coreAbility : abilities) {
 			if (ability.isInstance(coreAbility)) {
@@ -52,6 +57,7 @@ public abstract class CoreAbility implements Ability {
 				}
 			}
 		}
+		*/
 		return false;
 	}
 
