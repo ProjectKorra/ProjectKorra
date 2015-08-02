@@ -1,17 +1,17 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CompactColumn {
 
@@ -36,7 +36,8 @@ public class CompactColumn {
 
 	public CompactColumn(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("Collapse")) return;
+		if (bPlayer.isOnCooldown("Collapse"))
+			return;
 
 		block = BlockSource.getEarthSourceBlock(player, range, ClickType.LEFT_CLICK);
 		if (block == null)
@@ -44,8 +45,7 @@ public class CompactColumn {
 		origin = block.getLocation();
 		location = origin.clone();
 		this.player = player;
-		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction
-				.clone().multiply(-1), height);
+		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
 
 		loadAffectedBlocks();
 
@@ -71,8 +71,7 @@ public class CompactColumn {
 		// Methods.verbose(block);
 		// Methods.verbose(origin);
 		location = origin.clone();
-		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction
-				.clone().multiply(-1), height);
+		distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
 
 		loadAffectedBlocks();
 
@@ -96,8 +95,7 @@ public class CompactColumn {
 		affectedblocks.clear();
 		Block thisblock;
 		for (int i = 0; i <= distance; i++) {
-			thisblock = block.getWorld().getBlockAt(
-					location.clone().add(direction.clone().multiply(-i)));
+			thisblock = block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(-i)));
 			affectedblocks.put(thisblock, thisblock);
 			if (EarthColumn.blockInAllAffectedBlocks(thisblock))
 				EarthColumn.revertBlock(thisblock);
@@ -129,8 +127,7 @@ public class CompactColumn {
 
 	private boolean canInstantiate() {
 		for (Block block : affectedblocks.keySet()) {
-			if (blockInAllAffectedBlocks(block)
-					|| alreadydoneblocks.containsKey(block)) {
+			if (blockInAllAffectedBlocks(block) || alreadydoneblocks.containsKey(block)) {
 				return false;
 			}
 		}
@@ -142,7 +139,7 @@ public class CompactColumn {
 			instances.get(ID).progress();
 		}
 	}
-	
+
 	private boolean progress() {
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();

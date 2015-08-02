@@ -1,40 +1,42 @@
 package com.projectkorra.ProjectKorra.Ability;
 
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.entity.Player;
-
 /**
- * Represents an the core of all ProjectKorra abilities and 
- * implements the {@link Ability} interface.
+ * Represents an the core of all ProjectKorra abilities and implements the
+ * {@link Ability} interface.
+ * 
+ * @author jacklin213
+ * @version 1.0.0
  */
 public abstract class CoreAbility implements Ability {
 
 	/**
-	 * ConcurrentHashMap that stores all Ability instances under UUID key.
-	 * To access this hashmap use either {@link #getInstance()} from the
-	 * ability instance or {@link #getInstance(StockAbility)} from the
-	 * outside.
+	 * ConcurrentHashMap that stores all Ability instances under UUID key. To
+	 * access this hashmap use either {@link #getInstance()} from the ability
+	 * instance or {@link #getInstance(StockAbility)} from the outside.
 	 */
 	//private static ConcurrentHashMap<StockAbility, ConcurrentHashMap<UUID, CoreAbility>> instances = new ConcurrentHashMap<>();
 	//private static ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>> instances = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Integer, CoreAbility> instances = new ConcurrentHashMap<>();
 	//protected static AbilityMap<Ability> instances = new AbilityMap<>();
-	private static ConcurrentHashMap<StockAbility, ArrayList<Integer>> abilityMap = new ConcurrentHashMap<>(); 
-	
+	private static ConcurrentHashMap<StockAbility, ArrayList<Integer>> abilityMap = new ConcurrentHashMap<>();
+
 	private static int ID = Integer.MIN_VALUE;
 	private final StockAbility stockAbility = getStockAbility();
 	private Player player;
 	private UUID uniqueId;
 	private Integer id;
-	
+
 	/**
-	 * Convenience method to check if a player already has an
-	 * instance of this ability.
+	 * Convenience method to check if a player already has an instance of this
+	 * ability.
 	 * 
 	 * @param player The player to check
 	 * @return true if instances contains the player
@@ -50,7 +52,7 @@ public abstract class CoreAbility implements Ability {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Gets the list of ability instances that the player has created.
 	 * 
@@ -66,7 +68,7 @@ public abstract class CoreAbility implements Ability {
 		}
 		return abilities;
 	}
-	
+
 	/**
 	 * Gets the ability instance of the player.
 	 * 
@@ -84,7 +86,7 @@ public abstract class CoreAbility implements Ability {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * An access method to get an the instances of a {@link StockAbility}.
 	 * 
@@ -101,9 +103,10 @@ public abstract class CoreAbility implements Ability {
 		}
 		return instanceMap;
 	}
-	
+
 	/**
-	 * An access method to get an the instances of a {@link CoreAbility} by its class.
+	 * An access method to get an the instances of a {@link CoreAbility} by its
+	 * class.
 	 * 
 	 * @param ability The instances map to get
 	 * @return a map of instances from the specified class
@@ -118,23 +121,23 @@ public abstract class CoreAbility implements Ability {
 		}
 		return instanceMap;
 	}
-	
+
 	//TODO: Update bending managers to use bellow method
-//	/**
-//	 * Convenience method that calls {@link #progress()} for all instances.
-//	 * 
-//	 * @see #progressAll(Class)
-//	 * @see #progressAll(StockAbility)
-//	 */
-//	public static void progressAll() {
-//		for (Integer id : instances.keySet()) {
-//			instances.get(id).progress();
-//		}
-//	}
-	
+	//	/**
+	//	 * Convenience method that calls {@link #progress()} for all instances.
+	//	 * 
+	//	 * @see #progressAll(Class)
+	//	 * @see #progressAll(StockAbility)
+	//	 */
+	//	public static void progressAll() {
+	//		for (Integer id : instances.keySet()) {
+	//			instances.get(id).progress();
+	//		}
+	//	}
+
 	/**
-	 * Convenience method that calls {@link #progress()} for all instances
-	 * of a specified ability.
+	 * Convenience method that calls {@link #progress()} for all instances of a
+	 * specified ability.
 	 * 
 	 * @see #progressAll(StockAbility)
 	 */
@@ -145,35 +148,35 @@ public abstract class CoreAbility implements Ability {
 			}
 		}
 	}
-	
+
 	/**
-	 * Convenience method that calls {@link #progress()} for all instances
-	 * of a specified stock ability.
+	 * Convenience method that calls {@link #progress()} for all instances of a
+	 * specified stock ability.
 	 *
-	 * @see #progressAll(Class) 
+	 * @see #progressAll(Class)
 	 */
 	public static void progressAll(StockAbility ability) {
 		for (Integer id : getInstances(ability).keySet()) {
 			getInstances(ability).get(id).progress();
 		}
 	}
-	
+
 	//TODO: Update bending managers to use bellow method
-//	/**
-//	 * Convenience method that calls {@link #remove()} for all instances.
-//	 * 
-//	 * @see #removeAll(StockAbility)
-//	 * @see #removeAll(Class)
-//	 */
-//	public static void removeAll() {
-//		for (Integer id : instances.keySet()) {
-//			instances.get(id).remove();
-//		}
-//	}
-	
+	//	/**
+	//	 * Convenience method that calls {@link #remove()} for all instances.
+	//	 * 
+	//	 * @see #removeAll(StockAbility)
+	//	 * @see #removeAll(Class)
+	//	 */
+	//	public static void removeAll() {
+	//		for (Integer id : instances.keySet()) {
+	//			instances.get(id).remove();
+	//		}
+	//	}
+
 	/**
-	 * Convenience method that calls {@link #remove()} for all instances
-	 * of a specified stock ability.
+	 * Convenience method that calls {@link #remove()} for all instances of a
+	 * specified stock ability.
 	 * 
 	 * @see #removeAll(StockAbility)
 	 */
@@ -186,8 +189,8 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	/**
-	 * Convenience method that calls {@link #remove()} for all instances
-	 * of a specified ability.
+	 * Convenience method that calls {@link #remove()} for all instances of a
+	 * specified ability.
 	 *
 	 * @see #removeAll(Class)
 	 */
@@ -196,7 +199,7 @@ public abstract class CoreAbility implements Ability {
 			getInstances(ability).get(id).remove();
 		}
 	}
-	
+
 	/**
 	 * Checks if ability is a {@link StockAbility} or not.
 	 * 
@@ -208,7 +211,7 @@ public abstract class CoreAbility implements Ability {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Gets the id of the ability instance.
 	 * 
@@ -217,16 +220,16 @@ public abstract class CoreAbility implements Ability {
 	public int getID() {
 		return id;
 	}
-	
+
 	/**
 	 * Convenience method to get instance for current ability class.
-	 *  
+	 * 
 	 * @return {@link #getInstance(StockAbility)} for the current ability
 	 */
 	public CoreAbility getInstance() {
 		return instances.get(id);
 	}
-	
+
 	/**
 	 * Gets the {@link InstanceType} of the ability.
 	 * 
@@ -235,7 +238,7 @@ public abstract class CoreAbility implements Ability {
 	public InstanceType getInstanceType() {
 		return InstanceType.SINGLE;
 	}
-	
+
 	/**
 	 * Gets the player that invoked the ability.
 	 * 
@@ -244,10 +247,10 @@ public abstract class CoreAbility implements Ability {
 	public Player getPlayer() {
 		return player;
 	}
-	
+
 	/**
-	 * Gets the {@link StockAbility} that created this instance.
-	 * This method will return null for abilities that are not stock abilities
+	 * Gets the {@link StockAbility} that created this instance. This method
+	 * will return null for abilities that are not stock abilities
 	 * 
 	 * @return StockAbility enum or null
 	 */
@@ -261,7 +264,7 @@ public abstract class CoreAbility implements Ability {
 	public UUID getUniqueId() {
 		return uniqueId;
 	}
-	
+
 	/**
 	 * Put the instance of the ability into the instances map.
 	 * 
@@ -284,12 +287,12 @@ public abstract class CoreAbility implements Ability {
 			ID = Integer.MIN_VALUE;
 		ID++;
 	}
-	
+
 	/**
-	 * Calls {@link #removeInstance()}, Developers can override this
-	 * method to do other things when remove is called but they 
-	 * <strong>MUST</strong> remember to call {@code super.remove()}
-	 * for the ability to be properly removed from the {@link #instances}.
+	 * Calls {@link #removeInstance()}, Developers can override this method to
+	 * do other things when remove is called but they <strong>MUST</strong>
+	 * remember to call {@code super.remove()} for the ability to be properly
+	 * removed from the {@link #instances}.
 	 */
 	@Override
 	public void remove() {

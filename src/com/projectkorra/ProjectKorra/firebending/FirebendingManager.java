@@ -1,18 +1,18 @@
 package com.projectkorra.ProjectKorra.firebending;
 
+import com.projectkorra.ProjectKorra.ProjectKorra;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-
-import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class FirebendingManager implements Runnable {
 
 	public ProjectKorra plugin;
-	
+
 	public FirebendingManager(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	public void run() {
 		FirePassive.handlePassive();
 		FireJet.progressAll(FireJet.class);

@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -12,10 +14,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Ripple {
 
@@ -77,8 +77,7 @@ public class Ripple {
 			loc = location.clone().add(0, i, 0);
 			Block topblock = loc.getBlock();
 			Block botblock = loc.clone().add(0, -1, 0).getBlock();
-			if (EarthMethods.isTransparentToEarthbending(player, topblock)
-					&& EarthMethods.isEarthbendable(player, botblock)) {
+			if (EarthMethods.isTransparentToEarthbending(player, topblock) && EarthMethods.isEarthbendable(player, botblock)) {
 				location = loc.clone().add(0, -1, 0);
 				return location;
 			}
@@ -203,9 +202,7 @@ public class Ripple {
 				loc = location.clone().add(0, i, 0);
 				Block topblock = loc.getBlock();
 				Block botblock = loc.clone().add(0, -1, 0).getBlock();
-				if (EarthMethods.isTransparentToEarthbending(player, topblock)
-						&& !topblock.isLiquid()
-						&& EarthMethods.isEarthbendable(player, botblock)) {
+				if (EarthMethods.isTransparentToEarthbending(player, topblock) && !topblock.isLiquid() && EarthMethods.isEarthbendable(player, botblock)) {
 					location = loc.clone().add(0, -1, 0);
 					locations.add(location);
 					break;
@@ -228,8 +225,7 @@ public class Ripple {
 			length = 2;
 			block = botblock;
 		}
-		return EarthMethods.moveEarth(player, block, new Vector(0, -1, 0), length,
-				false);
+		return EarthMethods.moveEarth(player, block, new Vector(0, -1, 0), length, false);
 	}
 
 	private boolean increase(Block block) {
@@ -244,10 +240,8 @@ public class Ripple {
 			length = 2;
 		}
 		if (EarthMethods.moveEarth(player, block, new Vector(0, 1, 0), length, false)) {
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(block
-					.getLocation().clone().add(0, 1, 0), 2)) {
-				if (entity.getEntityId() != player.getEntityId()
-						&& !entities.contains(entity)) {
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(block.getLocation().clone().add(0, 1, 0), 2)) {
+				if (entity.getEntityId() != player.getEntityId() && !entities.contains(entity)) {
 					if (!(entity instanceof FallingBlock))
 						entities.add(entity);
 				}
@@ -267,7 +261,7 @@ public class Ripple {
 		vector.setY(.5);
 		double knock = AvatarState.isAvatarState(player) ? AvatarState.getValue(knockback) : knockback;
 		entity.setVelocity(vector.clone().normalize().multiply(knock));
-		
+
 		AirMethods.breakBreathbendingHold(entity);
 
 	}

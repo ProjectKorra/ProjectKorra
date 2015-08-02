@@ -1,13 +1,5 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.HashMap;
-import java.util.Set;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.Commands;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
@@ -17,6 +9,14 @@ import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
 import com.projectkorra.ProjectKorra.firebending.Combustion;
 import com.projectkorra.ProjectKorra.firebending.FireBlast;
 import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.HashMap;
+import java.util.Set;
 
 public class AirShield extends CoreAbility {
 
@@ -55,29 +55,24 @@ public class AirShield extends CoreAbility {
 	}
 
 	public static String getDescription() {
-		return "Air Shield is one of the most powerful defensive techniques in existence. "
-				+ "To use, simply sneak (default: shift). "
-				+ "This will create a whirlwind of air around the user, "
-				+ "with a small pocket of safe space in the center. "
-				+ "This wind will deflect all projectiles and will prevent any creature from "
-				+ "entering it for as long as its maintained. ";
+		return "Air Shield is one of the most powerful defensive techniques in existence. " + "To use, simply sneak (default: shift). " + "This will create a whirlwind of air around the user, " + "with a small pocket of safe space in the center. " + "This wind will deflect all projectiles and will prevent any creature from " + "entering it for as long as its maintained. ";
 	}
-	
-	public static boolean isWithinShield(Location loc){
+
+	public static boolean isWithinShield(Location loc) {
 		for (Integer id : getInstances(StockAbility.AirShield).keySet()) {
 			AirShield ashield = (AirShield) getInstances(StockAbility.AirShield).get(id);
-			if (ashield.player.getLocation().getWorld() != loc.getWorld()) 
+			if (ashield.player.getLocation().getWorld() != loc.getWorld())
 				return false;
-			if(ashield.player.getLocation().distance(loc) <= ashield.radius)
+			if (ashield.player.getLocation().distance(loc) <= ashield.radius)
 				return true;
 		}
 		return false;
 	}
-	
+
 	public double getMaxradius() {
 		return maxradius;
 	}
-	
+
 	public Player getPlayer() {
 		return player;
 	}
@@ -93,14 +88,12 @@ public class AirShield extends CoreAbility {
 			remove();
 			return false;
 		}
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirShield",
-				player.getLocation())) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirShield", player.getLocation())) {
 			remove();
 			return false;
 		}
 		speedfactor = 1;
-		if (!GeneralMethods.canBend(player.getName(), "AirShield")
-				|| player.getEyeLocation().getBlock().isLiquid()) {
+		if (!GeneralMethods.canBend(player.getName(), "AirShield") || player.getEyeLocation().getBlock().isLiquid()) {
 			remove();
 			return false;
 		}
@@ -111,14 +104,12 @@ public class AirShield extends CoreAbility {
 		}
 
 		if (isToggle) {
-			if (((!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player
-					.isSneaking())) && !AvatarState.isAvatarState(player)) {
+			if (((!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player.isSneaking())) && !AvatarState.isAvatarState(player)) {
 				remove();
 				return false;
 			}
 		} else {
-			if (((!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player
-					.isSneaking()))) {
+			if (((!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player.isSneaking()))) {
 				remove();
 				return false;
 			}
@@ -152,8 +143,7 @@ public class AirShield extends CoreAbility {
 		EarthBlast.removeAroundPoint(origin, radius);
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, radius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "AirShield",
-					entity.getLocation()))
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "AirShield", entity.getLocation()))
 				continue;
 			if (origin.distance(entity.getLocation()) > 2) {
 				double x, z, vx, vz, mag;
@@ -176,7 +166,7 @@ public class AirShield extends CoreAbility {
 					velocity.setX(vx);
 					velocity.setZ(vz);
 				}
-				
+
 				if (entity instanceof Player) {
 					if (Commands.invincible.contains(((Player) entity).getName())) {
 						continue;
@@ -200,23 +190,21 @@ public class AirShield extends CoreAbility {
 			y = origin.getY() + factor * (double) i;
 
 			//double theta = Math.asin(y/radius);
-			double f = Math.sqrt(1 - factor * factor * ((double) i / radius)
-					* ((double) i / radius));
+			double f = Math.sqrt(1 - factor * factor * ((double) i / radius) * ((double) i / radius));
 
 			x = origin.getX() + radius * Math.cos(angle) * f;
 			z = origin.getZ() + radius * Math.sin(angle) * f;
 
 			Location effect = new Location(origin.getWorld(), x, y, z);
-			if (!GeneralMethods.isRegionProtectedFromBuild(player, "AirShield",
-					effect)) {
+			if (!GeneralMethods.isRegionProtectedFromBuild(player, "AirShield", effect)) {
 				AirMethods.playAirbendingParticles(effect, 10);
 				if (GeneralMethods.rand.nextInt(4) == 0) {
 					AirMethods.playAirbendingSound(effect);
-				}		
+				}
 			}
-			
-//				origin.getWorld().playEffect(effect, Effect.SMOKE, 4,
-//						(int) AirBlast.defaultrange);
+
+			//				origin.getWorld().playEffect(effect, Effect.SMOKE, 4,
+			//						(int) AirBlast.defaultrange);
 
 			angles.put(i, angles.get(i) + (int) (10 * speedfactor));
 		}

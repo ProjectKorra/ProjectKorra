@@ -1,10 +1,14 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -15,15 +19,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Torrent {
 
@@ -77,8 +75,7 @@ public class Torrent {
 		}
 		this.player = player;
 		time = System.currentTimeMillis();
-		sourceblock = BlockSource.getWaterSourceBlock(player, selectrange, ClickType.LEFT_CLICK, 
-				true, true, WaterMethods.canPlantbend(player));
+		sourceblock = BlockSource.getWaterSourceBlock(player, selectrange, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
 		if (sourceblock != null) {
 			sourceselected = true;
 			instances.put(player, this);
@@ -122,7 +119,7 @@ public class Torrent {
 			if (location != null)
 				returnWater(location);
 			return;
-		}	
+		}
 
 		if (System.currentTimeMillis() > time + interval) {
 			time = System.currentTimeMillis();
@@ -202,7 +199,7 @@ public class Torrent {
 							remove();
 							return;
 						}
-						source = new TempBlock(location.getBlock(),	Material.STATIONARY_WATER, (byte) 8);
+						source = new TempBlock(location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 					}
 				}
 			}
@@ -216,7 +213,7 @@ public class Torrent {
 			if (forming || formed) {
 				if (GeneralMethods.rand.nextInt(4) == 0) {
 					WaterMethods.playWaterbendingSound(location);
-				}	
+				}
 				if (angle < 220) {
 					angle += 20;
 				} else {

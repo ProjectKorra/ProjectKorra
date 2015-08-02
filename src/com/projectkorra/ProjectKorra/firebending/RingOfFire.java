@@ -1,13 +1,13 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class RingOfFire implements ConfigLoadable {
 
@@ -16,7 +16,8 @@ public class RingOfFire implements ConfigLoadable {
 	public RingOfFire(Player player) {
 		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("Blaze")) return;
+		if (bPlayer.isOnCooldown("Blaze"))
+			return;
 		/* End Initial Checks */
 		reloadVariables();
 		Location location = player.getLocation();

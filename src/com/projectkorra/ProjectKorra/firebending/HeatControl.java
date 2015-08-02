@@ -1,24 +1,23 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by Carbogen on 11/02/15.
- * Ability HeatControl
+ * Created by Carbogen on 11/02/15. Ability HeatControl
  */
 public class HeatControl extends CoreAbility {
 	public static double RANGE = config.get().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
@@ -46,7 +45,7 @@ public class HeatControl extends CoreAbility {
 			new Cook(player);
 			return;
 		}
-		
+
 		/* End Initial Checks */
 
 		this.player = player;
@@ -63,14 +62,14 @@ public class HeatControl extends CoreAbility {
 
 		List<Block> lava = new ArrayList<Block>();
 
-		for(Location l : area)
-			if(EarthMethods.isLava(l.getBlock()))
+		for (Location l : area)
+			if (EarthMethods.isLava(l.getBlock()))
 				lava.add(l.getBlock());
 
 		lastBlockTime = System.currentTimeMillis();
 
-		if(lava.size() == 0) {
-			currentRadius ++;
+		if (lava.size() == 0) {
+			currentRadius++;
 			return;
 		}
 
@@ -83,7 +82,8 @@ public class HeatControl extends CoreAbility {
 			tb.setType(Material.STONE);
 		}
 
-		else tb = new TempBlock(b, Material.STONE, b.getData());
+		else
+			tb = new TempBlock(b, Material.STONE, b.getData());
 
 		if (!tblocks.contains(tb))
 			tblocks.add(tb);
@@ -143,7 +143,7 @@ public class HeatControl extends CoreAbility {
 			return false;
 		}
 
-		if(currentRadius >= getRadius()) {
+		if (currentRadius >= getRadius()) {
 			remove();
 			return false;
 		}
@@ -164,7 +164,7 @@ public class HeatControl extends CoreAbility {
 		RANGE = config.get().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
 		RADIUS = config.get().getInt("Abilities.Fire.HeatControl.Solidify.Radius");
 		REVERT_TIME = config.get().getInt("Abilities.Fire.HeatControl.Solidify.RevertTime");
-	    range = RANGE;
+		range = RANGE;
 		radius = RADIUS;
 		revertTime = REVERT_TIME;
 	}
@@ -181,12 +181,12 @@ public class HeatControl extends CoreAbility {
 	}
 
 	public void resetLocation(Location loc) {
-		if(center == null) {
+		if (center == null) {
 			center = loc;
 			return;
 		}
 
-		if(!loc.equals(center)) {
+		if (!loc.equals(center)) {
 			currentRadius = 1;
 			center = loc;
 		}

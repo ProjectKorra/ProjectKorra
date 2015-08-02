@@ -1,8 +1,10 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.Utilities.Flight;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,14 +12,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Tornado extends CoreAbility {
-	
+
 	private static double MAX_HEIGHT = config.get().getDouble("Abilities.Air.Tornado.Height");
 	private static double PLAYER_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
 	private static double MAX_RADIUS = config.get().getDouble("Abilities.Air.Tornado.Radius");
@@ -39,6 +39,7 @@ public class Tornado extends CoreAbility {
 	private double NPCpushfactor = NPC_PUSH_FACTOR;
 	private double height = 2;
 	private double radius = height / maxheight * maxradius;
+
 	// private boolean canfly;
 
 	public Tornado(Player player) {
@@ -70,7 +71,7 @@ public class Tornado extends CoreAbility {
 		}
 		return players;
 	}
-	
+
 	public double getMaxheight() {
 		return maxheight;
 	}
@@ -136,7 +137,7 @@ public class Tornado extends CoreAbility {
 		RANGE = config.get().getDouble("Abilities.Air.Tornado.Range");
 		NPC_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.MobPushFactor");
 		numberOfStreams = (int) (.3 * (double) MAX_HEIGHT);
-		
+
 		maxheight = MAX_HEIGHT;
 		PCpushfactor = PLAYER_PUSH_FACTOR;
 		maxradius = MAX_RADIUS;
@@ -162,7 +163,7 @@ public class Tornado extends CoreAbility {
 				if (y > origin.getY() && y < origin.getY() + height) {
 					factor = (y - origin.getY()) / height;
 					Location testloc = new Location(origin.getWorld(), origin.getX(), y, origin.getZ());
-					if (testloc.distance(entity.getLocation()) < radius	* factor) {
+					if (testloc.distance(entity.getLocation()) < radius * factor) {
 						double x, z, vx, vz, mag;
 						double angle = 100;
 						double vy = 0.7 * NPCpushfactor;
@@ -196,9 +197,10 @@ public class Tornado extends CoreAbility {
 								vy = .6;
 							}
 						}
-						
+
 						if (entity instanceof Player) {
-							if (Commands.invincible.contains(((Player) entity).getName())) continue;
+							if (Commands.invincible.contains(((Player) entity).getName()))
+								continue;
 						}
 
 						Vector velocity = entity.getVelocity();
@@ -208,7 +210,7 @@ public class Tornado extends CoreAbility {
 						velocity.multiply(timefactor);
 						GeneralMethods.setVelocity(entity, velocity);
 						entity.setFallDistance(0);
-						
+
 						AirMethods.breakBreathbendingHold(entity);
 
 						if (entity instanceof Player) {
@@ -235,9 +237,9 @@ public class Tornado extends CoreAbility {
 					AirMethods.playAirbendingParticles(effect, 20);
 					if (GeneralMethods.rand.nextInt(20) == 0) {
 						AirMethods.playAirbendingSound(effect);
-					}		
+					}
 				}
-//					origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int) AirBlast.defaultrange);
+				//					origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int) AirBlast.defaultrange);
 
 				angles.put(i, angles.get(i) + 25 * (int) speedfactor);
 			}

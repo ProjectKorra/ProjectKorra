@@ -1,18 +1,15 @@
 package com.projectkorra.ProjectKorra;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.projectkorra.ProjectKorra.Ability.AbilityModuleManager;
+import com.projectkorra.ProjectKorra.Ability.Combo.ComboManager;
 import com.projectkorra.ProjectKorra.Ability.Combo.ComboModuleManager;
+import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityManager;
 import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityModuleManager;
 import com.projectkorra.ProjectKorra.Objects.Preset;
+import com.projectkorra.ProjectKorra.Storage.DBConnection;
 import com.projectkorra.ProjectKorra.Utilities.CraftingRecipes;
+import com.projectkorra.ProjectKorra.Utilities.MetricsLite;
+import com.projectkorra.ProjectKorra.Utilities.RevertChecker;
 import com.projectkorra.ProjectKorra.Utilities.Updater;
 import com.projectkorra.ProjectKorra.Utilities.logging.PKLogHandler;
 import com.projectkorra.ProjectKorra.airbending.AirbendingManager;
@@ -23,6 +20,14 @@ import com.projectkorra.ProjectKorra.earthbending.EarthbendingManager;
 import com.projectkorra.ProjectKorra.firebending.FirebendingManager;
 import com.projectkorra.ProjectKorra.waterbending.WaterbendingManager;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
+
 public class ProjectKorra extends JavaPlugin {
 
 	public static ProjectKorra plugin;
@@ -30,19 +35,20 @@ public class ProjectKorra extends JavaPlugin {
 	public static PKLogHandler handler;
 	public static long time_step = 1;
 	public Updater updater;
-	
+
 	@Override
 	public void onEnable() {
 		plugin = this;
 		ProjectKorra.log = this.getLogger();
 		try {
-		    File logFolder = new File(getDataFolder(), "Logs");
-		    if (!logFolder.exists()) {
-		        logFolder.mkdirs();
-		    }
-		    handler = new PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
+			File logFolder = new File(getDataFolder(), "Logs");
+			if (!logFolder.exists()) {
+				logFolder.mkdirs();
+			}
+			handler = new PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
 			log.getParent().addHandler(handler);
-		} catch (SecurityException | IOException e) {
+		}
+		catch (SecurityException | IOException e) {
 			e.printStackTrace();
 		}
 		new ConfigManager(this);
@@ -76,8 +82,8 @@ public class ProjectKorra extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
-		
-		for (Player player: Bukkit.getOnlinePlayers()) {
+
+		for (Player player : Bukkit.getOnlinePlayers()) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			Preset.loadPresets(player);
 		}
@@ -85,7 +91,8 @@ public class ProjectKorra extends JavaPlugin {
 		try {
 			MetricsLite metrics = new MetricsLite(this);
 			metrics.start();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 
@@ -102,5 +109,5 @@ public class ProjectKorra extends JavaPlugin {
 		}
 		handler.close();
 	}
-	
+
 }

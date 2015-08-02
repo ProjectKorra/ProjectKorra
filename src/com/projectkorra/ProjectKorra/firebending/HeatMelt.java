@@ -1,14 +1,14 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 import com.projectkorra.ProjectKorra.waterbending.Melt;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class HeatMelt implements ConfigLoadable {
 
@@ -17,10 +17,8 @@ public class HeatMelt implements ConfigLoadable {
 
 	public HeatMelt(Player player) {
 		reloadVariables();
-		Location location = GeneralMethods.getTargetedLocation(player,
-				(int) FireMethods.getFirebendingDayAugment(range, player.getWorld()));
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location,
-				(int) FireMethods.getFirebendingDayAugment(radius, player.getWorld()))) {
+		Location location = GeneralMethods.getTargetedLocation(player, (int) FireMethods.getFirebendingDayAugment(range, player.getWorld()));
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, (int) FireMethods.getFirebendingDayAugment(radius, player.getWorld()))) {
 			if (WaterMethods.isMeltable(block)) {
 				Melt.melt(player, block);
 			} else if (isHeatable(block)) {

@@ -1,10 +1,10 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Enflamed {
 

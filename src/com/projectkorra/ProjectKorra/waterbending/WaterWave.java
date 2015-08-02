@@ -1,9 +1,12 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,13 +18,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterWave {
 	public static enum AbilityType {
@@ -36,21 +36,14 @@ public class WaterWave {
 	public static ConcurrentHashMap<Block, TempBlock> frozenBlocks = new ConcurrentHashMap<Block, TempBlock>();
 
 	public static boolean ICE_ONLY = false;
-	public static boolean ENABLED = ProjectKorra.plugin.getConfig().getBoolean(
-			"Abilities.Water.WaterSpout.Wave.Enabled");
-	public static double RANGE = ProjectKorra.plugin.getConfig().getDouble(
-			"Abilities.Water.WaterSpout.Wave.Range");
-	public static double MAX_SPEED = ProjectKorra.plugin.getConfig().getDouble(
-			"Abilities.Water.WaterSpout.Wave.Speed");
-	public static long CHARGE_TIME = ProjectKorra.plugin.getConfig().getLong(
-			"Abilities.Water.WaterSpout.Wave.ChargeTime");
-	public static long FLIGHT_TIME = ProjectKorra.plugin.getConfig().getLong(
-			"Abilities.Water.WaterSpout.Wave.FlightTime");
-	public static long COOLDOWN = ProjectKorra.plugin.getConfig().getLong(
-			"Abilities.Water.WaterSpout.Wave.Cooldown");
+	public static boolean ENABLED = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.Enabled");
+	public static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Range");
+	public static double MAX_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Speed");
+	public static long CHARGE_TIME = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterSpout.Wave.ChargeTime");
+	public static long FLIGHT_TIME = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterSpout.Wave.FlightTime");
+	public static long COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown");
 	public static double WAVE_RADIUS = 1.5;
-	public static double ICE_WAVE_DAMAGE = ProjectKorra.plugin.getConfig().getDouble(
-			"Abilities.Water.WaterCombo.IceWave.Damage");
+	public static double ICE_WAVE_DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterCombo.IceWave.Damage");
 
 	private Player player;
 	private long time;
@@ -93,8 +86,7 @@ public class WaterWave {
 			return;
 		}
 		if (type != AbilityType.RELEASE) {
-			if (!GeneralMethods.canBend(player.getName(), "WaterSpout")
-					|| !player.hasPermission("bending.ability.WaterSpout.Wave")) {
+			if (!GeneralMethods.canBend(player.getName(), "WaterSpout") || !player.hasPermission("bending.ability.WaterSpout.Wave")) {
 				remove();
 				return;
 			}
@@ -110,30 +102,23 @@ public class WaterWave {
 				removeType(player, AbilityType.CLICK);
 				instances.add(this);
 
-				Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, 
-						true, true, WaterMethods.canPlantbend(player));
+				Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
 				if (block == null) {
 					remove();
 					return;
 				}
 				Block blockAbove = block.getRelative(BlockFace.UP);
-				if (blockAbove.getType() != Material.AIR
-						&& !WaterMethods.isWaterbendable(blockAbove, player)) {
+				if (blockAbove.getType() != Material.AIR && !WaterMethods.isWaterbendable(blockAbove, player)) {
 					remove();
 					return;
 				}
 				origin = block.getLocation();
 
-				if (!WaterMethods.isWaterbendable(block, player)
-						|| GeneralMethods.isRegionProtectedFromBuild(player,
-								"WaterSpout", origin)) {
+				if (!WaterMethods.isWaterbendable(block, player) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", origin)) {
 					remove();
 					return;
 				}
-				if (ICE_ONLY
-						&& !(block.getType() == Material.ICE
-								|| block.getType() == Material.SNOW || block
-								.getType() == Material.PACKED_ICE)) {
+				if (ICE_ONLY && !(block.getType() == Material.ICE || block.getType() == Material.SNOW || block.getType() == Material.PACKED_ICE)) {
 					remove();
 					return;
 				}
@@ -159,8 +144,7 @@ public class WaterWave {
 				charging = true;
 				anim = AnimateState.RISE;
 
-				WaterWave clickSpear = getType(player, AbilityType.CLICK)
-						.get(0);
+				WaterWave clickSpear = getType(player, AbilityType.CLICK).get(0);
 				origin = clickSpear.origin.clone();
 				currentLoc = origin.clone();
 				if (WaterMethods.isPlant(origin.getBlock()))
@@ -184,9 +168,7 @@ public class WaterWave {
 				revertBlocks();
 				currentLoc.add(0, animSpeed, 0);
 				Block block = currentLoc.getBlock();
-				if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR)
-						|| GeneralMethods.isRegionProtectedFromBuild(player,
-								"WaterSpout", block.getLocation())) {
+				if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
 					remove();
 					return;
 				}
@@ -201,9 +183,7 @@ public class WaterWave {
 				currentLoc.add(vec.normalize().multiply(animSpeed));
 
 				Block block = currentLoc.getBlock();
-				if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR)
-						|| GeneralMethods.isRegionProtectedFromBuild(player,
-								"WaterSpout", block.getLocation())) {
+				if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
 					remove();
 					return;
 				}
@@ -229,50 +209,33 @@ public class WaterWave {
 					anim = null;
 				}
 			} else {
-				if ((System.currentTimeMillis() - time > flightTime && !AvatarState
-						.isAvatarState(player)) || player.isSneaking()) {
+				if ((System.currentTimeMillis() - time > flightTime && !AvatarState.isAvatarState(player)) || player.isSneaking()) {
 					remove();
 					return;
 				}
 				player.setFallDistance(0f);
-				double currentSpeed = speed
-						- (speed
-								* (double) (System.currentTimeMillis() - time) / (double) flightTime);
-				double nightSpeed = WaterMethods.waterbendingNightAugment(
-						currentSpeed * 0.9, player.getWorld());
-				currentSpeed = nightSpeed > currentSpeed ? nightSpeed
-						: currentSpeed;
+				double currentSpeed = speed - (speed * (double) (System.currentTimeMillis() - time) / (double) flightTime);
+				double nightSpeed = WaterMethods.waterbendingNightAugment(currentSpeed * 0.9, player.getWorld());
+				currentSpeed = nightSpeed > currentSpeed ? nightSpeed : currentSpeed;
 				if (AvatarState.isAvatarState(player))
-					currentSpeed = WaterMethods.waterbendingNightAugment(speed,
-							player.getWorld());
+					currentSpeed = WaterMethods.waterbendingNightAugment(speed, player.getWorld());
 
-				player.setVelocity(player.getEyeLocation().getDirection()
-						.normalize().multiply(currentSpeed));
-				for (Block block : GeneralMethods.getBlocksAroundPoint(player
-						.getLocation().add(0, -1, 0), waveRadius))
-					if (block.getType() == Material.AIR
-							&& !GeneralMethods.isRegionProtectedFromBuild(player,
-									"WaterSpout", block.getLocation())) {
+				player.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
+				for (Block block : GeneralMethods.getBlocksAroundPoint(player.getLocation().add(0, -1, 0), waveRadius))
+					if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
 						if (iceWave)
 							createBlockDelay(block, Material.ICE, (byte) 0, 2L);
 						else
-							createBlock(block, Material.STATIONARY_WATER,
-									(byte) 0);
+							createBlock(block, Material.STATIONARY_WATER, (byte) 0);
 					}
 				revertBlocksDelay(20L);
 
 				if (iceWave && progressCounter % 3 == 0) {
-					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player
-							.getLocation().add(0, -1, 0), waveRadius * 1.5)) {
-						if (entity != this.player
-								&& entity instanceof LivingEntity
-								&& !affectedEntities.contains(entity)) {
+					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation().add(0, -1, 0), waveRadius * 1.5)) {
+						if (entity != this.player && entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 							affectedEntities.add(entity);
-							final double aug = WaterMethods
-									.getWaterbendingNightAugment(player
-											.getWorld());
-							GeneralMethods.damageEntity(player, entity, aug
-									* damage);
+							final double aug = WaterMethods.getWaterbendingNightAugment(player.getWorld());
+							GeneralMethods.damageEntity(player, entity, aug * damage);
 							final Player fplayer = this.player;
 							final Entity fent = entity;
 							new BukkitRunnable() {
@@ -292,14 +255,11 @@ public class WaterWave {
 		revertBlocks();
 		direction = GeneralMethods.rotateXZ(direction, rotateSpeed);
 		for (double i = 0; i < theta; i += increment) {
-			Vector dir = GeneralMethods.rotateXZ(direction, i - theta / 2).normalize()
-					.multiply(radius);
+			Vector dir = GeneralMethods.rotateXZ(direction, i - theta / 2).normalize().multiply(radius);
 			dir.setY(0);
 			Block block = player.getEyeLocation().add(dir).getBlock();
 			currentLoc = block.getLocation();
-			if (block.getType() == Material.AIR
-					&& !GeneralMethods.isRegionProtectedFromBuild(player,
-							"WaterSpout", block.getLocation()))
+			if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation()))
 				createBlock(block, Material.STATIONARY_WATER, (byte) 8);
 		}
 	}
@@ -308,15 +268,14 @@ public class WaterWave {
 		instances.remove(this);
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer != null) {
-		    bPlayer.addCooldown("WaterWave", cooldown);
+			bPlayer.addCooldown("WaterWave", cooldown);
 		}
 		revertBlocks();
 		for (BukkitRunnable task : tasks)
 			task.cancel();
 	}
 
-	public void createBlockDelay(final Block block, final Material mat,
-			final byte data, long delay) {
+	public void createBlockDelay(final Block block, final Material mat, final byte data, long delay) {
 		BukkitRunnable br = new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -363,19 +322,14 @@ public class WaterWave {
 		for (double x = -radius; x <= radius; x += 0.5)
 			for (double y = -radius; y <= radius; y += 0.5)
 				for (double z = -radius; z <= radius; z += 0.5) {
-					Block block = entity.getLocation().getBlock().getLocation()
-							.add(x, y, z).getBlock();
-					if (block.getLocation().distance(
-							entity.getLocation().getBlock().getLocation()) > radius)
+					Block block = entity.getLocation().getBlock().getLocation().add(x, y, z).getBlock();
+					if (block.getLocation().distance(entity.getLocation().getBlock().getLocation()) > radius)
 						continue;
 
-					if (block.getType() == Material.AIR
-							|| block.getType() == Material.ICE
-							|| WaterMethods.isWaterbendable(block, player)) {
+					if (block.getType() == Material.AIR || block.getType() == Material.ICE || WaterMethods.isWaterbendable(block, player)) {
 
 						if (!frozenBlocks.containsKey(block)) {
-							TempBlock tblock = new TempBlock(block,
-									Material.ICE, (byte) 1);
+							TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 1);
 							frozenBlocks.put(block, tblock);
 						}
 					}
@@ -503,12 +457,11 @@ public class WaterWave {
 	public void setDamage(double damage) {
 		this.damage = damage;
 	}
-	
 
 	public void setIceWave(boolean b) {
 		this.iceWave = b;
 	}
-	
+
 	public boolean isIceWave() {
 		return this.iceWave;
 	}

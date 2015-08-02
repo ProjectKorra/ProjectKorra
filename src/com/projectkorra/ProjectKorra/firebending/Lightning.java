@@ -1,7 +1,13 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.projectkorra.ProjectKorra.BendingManager;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,14 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingManager;
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Lightning extends CoreAbility {
 	public static boolean SELF_HIT_WATER = config.get().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
@@ -40,12 +40,13 @@ public class Lightning extends CoreAbility {
 	public static long CHARGETIME = (long) config.get().getDouble("Abilities.Fire.Lightning.ChargeTime");
 	public static long COOLDOWN = (long) config.get().getDouble("Abilities.Fire.Lightning.Cooldown");
 	private static final int POINT_GENERATION = 5;
-	
-	private Player player; 
+
+	private Player player;
 
 	private BendingPlayer bplayer;
 	private Location origin, destination;
-	private double range, chargeTime, cooldown, subArcChance, damage, chainArcs, chainRange, waterRange;
+	private double range, chargeTime, cooldown, subArcChance, damage, chainArcs, chainRange,
+			waterRange;
 	private double chainArcChance, stunChance, stunDuration;
 	private long time;
 	private boolean charged, hitWater, hitIce;
@@ -55,7 +56,7 @@ public class Lightning extends CoreAbility {
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
 	private double i = 0.0D;
 	private double newY;
-	
+
 	public Lightning(Player player) {
 		reloadVariables();
 		this.player = player;
@@ -75,10 +76,11 @@ public class Lightning extends CoreAbility {
 		stunDuration = FireMethods.getFirebendingDayAugment(STUN_DURATION, player.getWorld());
 		chargeTime = CHARGETIME;
 		cooldown = COOLDOWN;
-		
-		if(AvatarState.isAvatarState(player)) {
-			/* Some variables aren't considered here because it makes AS too overpowered
-			 * and causes crashing.
+
+		if (AvatarState.isAvatarState(player)) {
+			/*
+			 * Some variables aren't considered here because it makes AS too
+			 * overpowered and causes crashing.
 			 */
 			chargeTime = 0;
 			cooldown = 0;
@@ -87,8 +89,7 @@ public class Lightning extends CoreAbility {
 			chainArcChance = AvatarState.getValue(chainArcChance);
 			chainRange = AvatarState.getValue(chainRange);
 			stunChance = AvatarState.getValue(stunChance);
-		}
-		else if(BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) {
+		} else if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) {
 			chargeTime = 0;
 			cooldown = 0;
 		}
@@ -106,9 +107,10 @@ public class Lightning extends CoreAbility {
 		}
 		return a;
 	}
-	
+
 	/**
-	 * Returns an instance of this ability if it was initialized by player 
+	 * Returns an instance of this ability if it was initialized by player
+	 * 
 	 * @param player that created the instance
 	 * @return the ability
 	 */
@@ -120,9 +122,10 @@ public class Lightning extends CoreAbility {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Checks if a location contains an ice block
+	 * 
 	 * @param loc the location to check
 	 * @return true if it is ice
 	 */
@@ -130,9 +133,10 @@ public class Lightning extends CoreAbility {
 		Material mat = loc.getBlock().getType();
 		return mat == Material.ICE || mat == Material.PACKED_ICE;
 	}
-	
+
 	/**
 	 * Checks if a location contains a water block
+	 * 
 	 * @param loc the location to check
 	 * @return true if it is water
 	 */
@@ -143,32 +147,35 @@ public class Lightning extends CoreAbility {
 
 	/**
 	 * Checks if a location is ice or water
+	 * 
 	 * @param loc the location to check
 	 * @return true if it is water or ice
 	 */
 	public static boolean isWaterOrIce(Location loc) {
 		return isIce(loc) || isWater(loc);
 	}
-	
+
 	/**
 	 * Damages an entity, and may cause paralysis depending on the config.
+	 * 
 	 * @param lent: the LivingEntity that is being damaged
 	 */
 	public void electrocute(LivingEntity lent) {
 		lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
 		player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
 		GeneralMethods.damageEntity(player, lent, damage);
-		if(Math.random() < stunChance) {
+		if (Math.random() < stunChance) {
 			final Location lentLoc = lent.getLocation();
 			final LivingEntity flent = lent;
 			new BukkitRunnable() {
 				int count = 0;
+
 				public void run() {
-					if(flent.isDead() || (flent instanceof Player && !((Player) flent).isOnline())) {
+					if (flent.isDead() || (flent instanceof Player && !((Player) flent).isOnline())) {
 						cancel();
 						return;
 					}
-						
+
 					Location tempLoc = lentLoc.clone();
 					Vector tempVel = flent.getVelocity();
 					tempVel.setY(Math.min(0, tempVel.getY()));
@@ -176,17 +183,17 @@ public class Lightning extends CoreAbility {
 					flent.teleport(tempLoc);
 					flent.setVelocity(tempVel);
 					count++;
-					if(count > stunDuration)
+					if (count > stunDuration)
 						cancel();
 				}
 			}.runTaskTimer(ProjectKorra.plugin, 0, 1);
 		}
 	}
-	
+
 	public ArrayList<Arc> getArcs() {
 		return this.arcs;
 	}
-	
+
 	public double getChainArcChance() {
 		return chainArcChance;
 	}
@@ -194,19 +201,19 @@ public class Lightning extends CoreAbility {
 	public double getChainArcs() {
 		return chainArcs;
 	}
-	
+
 	public double getChainRange() {
 		return chainRange;
 	}
-	
+
 	public double getChargeTime() {
 		return chargeTime;
 	}
-	
+
 	public double getCooldown() {
 		return cooldown;
-	}		
-	
+	}
+
 	public double getDamage() {
 		return damage;
 	}
@@ -253,8 +260,10 @@ public class Lightning extends CoreAbility {
 		return hitWater;
 	}
 
-	/** 
-	 * Checks if a block is transparent, also considers the ARC_ON_ICE config option.
+	/**
+	 * Checks if a block is transparent, also considers the ARC_ON_ICE config
+	 * option.
+	 * 
 	 * @param player the player that is viewing the block
 	 * @param block the block
 	 * @return true if the block is transparent
@@ -262,61 +271,57 @@ public class Lightning extends CoreAbility {
 	@SuppressWarnings("deprecation")
 	public boolean isTransparent(Player player, Block block) {
 		if (Arrays.asList(EarthMethods.transparentToEarthbending).contains(block.getTypeId())) {
-			if(GeneralMethods.isRegionProtectedFromBuild(player, "Lightning", block.getLocation()))
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "Lightning", block.getLocation()))
 				return false;
-			else if(isIce(block.getLocation()))
+			else if (isIce(block.getLocation()))
 				return ARC_ON_ICE;
 			else
 				return true;
 		}
-		return false;		
+		return false;
 	}
 
-	/** Progresses the instance of this ability by 1 tick.
-	 * This is the heart of the ability, it checks if it needs to
-	 * remove itself, and handles the initial Lightning Arc generation.
+	/**
+	 * Progresses the instance of this ability by 1 tick. This is the heart of
+	 * the ability, it checks if it needs to remove itself, and handles the
+	 * initial Lightning Arc generation.
 	 * 
-	 * Once all of the arcs have been created then this ability instance
-	 * gets removed, but the BukkitRunnables continue until they remove
-	 * themselves. **/
+	 * Once all of the arcs have been created then this ability instance gets
+	 * removed, but the BukkitRunnables continue until they remove themselves.
+	 **/
 	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			removeWithTasks();
 			return false;
-		}
-		else if (GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Lightning")) {
+		} else if (GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Lightning")) {
 			remove();
 			return false;
 		}
-		if(state == State.START) {
-			if(bplayer.isOnCooldown("Lightning")) {
+		if (state == State.START) {
+			if (bplayer.isOnCooldown("Lightning")) {
 				remove();
 				return false;
 			}
 			if (System.currentTimeMillis() - time > chargeTime)
 				charged = true;
-			if(charged) {
-				if(player.isSneaking()) {
-					Location loc = player.getEyeLocation().add(player.getEyeLocation()
-							.getDirection().normalize().multiply(1.2));
+			if (charged) {
+				if (player.isSneaking()) {
+					Location loc = player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(1.2));
 					loc.add(0, 0.3, 0);
 					FireMethods.playLightningbendingParticle(loc, 0.2F, 0.2F, 0.2F);
-				}
-				else {
+				} else {
 					state = State.MAINBOLT;
 					bplayer.addCooldown("Lightning", (long) cooldown);
 					Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 					origin = player.getEyeLocation();
-					if(target != null)
+					if (target != null)
 						destination = target.getLocation();
 					else
-						destination = player.getEyeLocation().add(
-								player.getEyeLocation().getDirection().normalize().multiply(range));
+						destination = player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(range));
 				}
-			}
-			else{
-				if(!player.isSneaking()) {
+			} else {
+				if (!player.isSneaking()) {
 					remove();
 					return false;
 				}
@@ -331,47 +336,42 @@ public class Lightning extends CoreAbility {
 				double d7 = localLocation1.getX() + d4 * Math.cos(d5);
 				double d8 = localLocation1.getZ() + d4 * Math.sin(d5);
 				Location localLocation2 = new Location(player.getWorld(), d7, newY, d8);
-				
+
 				FireMethods.playLightningbendingParticle(localLocation2);
-				
+
 				i += 1.0D / d3;
 			}
-			
-		}
-		else if(state == State.MAINBOLT) {
+
+		} else if (state == State.MAINBOLT) {
 			Arc mainArc = new Arc(origin, destination);
 			mainArc.generatePoints(POINT_GENERATION);
 			arcs.add(mainArc);
 			ArrayList<Arc> subArcs = mainArc.generateArcs(subArcChance, range / 2.0);
 			arcs.addAll(subArcs);
 			state = State.STRIKE;
-		}
-		else if(state == State.STRIKE) {			
-			for(int i = 0; i < arcs.size(); i++) {
+		} else if (state == State.STRIKE) {
+			for (int i = 0; i < arcs.size(); i++) {
 				Arc arc = arcs.get(i);
-				for(int j = 0; j < arc.getAnimLocs().size() - 1; j++) {
+				for (int j = 0; j < arc.getAnimLocs().size() - 1; j++) {
 					final Location iterLoc = arc.getAnimLocs().get(j).getLoc().clone();
 					final Location dest = arc.getAnimLocs().get(j + 1).getLoc().clone();
-					if(SELF_HIT_CLOSE 
-							&& player.getLocation().distance(iterLoc) < 3  
-							&& !isTransparent(player, iterLoc.getBlock())
-							&& !affectedEntities.contains(player)) {
-								affectedEntities.add(player);
-								electrocute(player);
-						}
-					
-					while(iterLoc.distance(dest) > 0.15) {
+					if (SELF_HIT_CLOSE && player.getLocation().distance(iterLoc) < 3 && !isTransparent(player, iterLoc.getBlock()) && !affectedEntities.contains(player)) {
+						affectedEntities.add(player);
+						electrocute(player);
+					}
+
+					while (iterLoc.distance(dest) > 0.15) {
 						BukkitRunnable task = new LightningParticle(arc, iterLoc.clone());
 						double timer = arc.getAnimLocs().get(j).getAnimCounter() / 2;
 						task.runTaskTimer(ProjectKorra.plugin, (long) timer, 1);
-						tasks.add(task);						
+						tasks.add(task);
 						iterLoc.add(GeneralMethods.getDirection(iterLoc, dest).normalize().multiply(0.15));
 					}
 				}
 				arcs.remove(i);
 				i--;
 			}
-			if(tasks.size() == 0) {
+			if (tasks.size() == 0) {
 				remove();
 				return false;
 			}
@@ -399,11 +399,11 @@ public class Lightning extends CoreAbility {
 		COOLDOWN = (long) config.get().getDouble("Abilities.Fire.Lightning.Cooldown");
 	}
 
-	/** 
-	 * Removes the instance of this ability and cancels any current runnables 
+	/**
+	 * Removes the instance of this ability and cancels any current runnables
 	 */
 	public void removeWithTasks() {
-		for(int i = 0; i < tasks.size(); i++) {
+		for (int i = 0; i < tasks.size(); i++) {
 			tasks.get(i).cancel();
 			i--;
 		}
@@ -432,7 +432,7 @@ public class Lightning extends CoreAbility {
 
 	public void setCooldown(double cooldown) {
 		this.cooldown = cooldown;
-		if(player != null)
+		if (player != null)
 			bplayer.addCooldown("Lightning", (long) cooldown);
 	}
 
@@ -471,15 +471,16 @@ public class Lightning extends CoreAbility {
 	public void setWaterRange(double waterRange) {
 		this.waterRange = waterRange;
 	}
-	
-	/** Represents a Lightning Arc Point particle animation.
-	 * 	This basically just holds a location and counts the
-	 * 	amount of times that a particle has been animated. 
+
+	/**
+	 * Represents a Lightning Arc Point particle animation. This basically just
+	 * holds a location and counts the amount of times that a particle has been
+	 * animated.
 	 * **/
 	public class AnimLocation {
 		private Location loc;
 		private int animCounter;
-		
+
 		public AnimLocation(Location loc, int animCounter) {
 			this.loc = loc;
 			this.animCounter = animCounter;
@@ -501,11 +502,12 @@ public class Lightning extends CoreAbility {
 			this.loc = loc;
 		}
 	}
-	
-	/** An Arc represents a Lightning arc for the specific ability.
-	 * These Arcs contain a list of Particles that are used to display
-	 * the entire arc. Arcs can also generate a list of subarcs that
-	 * chain off of their own instance.**/
+
+	/**
+	 * An Arc represents a Lightning arc for the specific ability. These Arcs
+	 * contain a list of Particles that are used to display the entire arc. Arcs
+	 * can also generate a list of subarcs that chain off of their own instance.
+	 **/
 	public class Arc {
 		private ArrayList<Location> points;
 		private ArrayList<AnimLocation> animLocs;
@@ -513,7 +515,7 @@ public class Lightning extends CoreAbility {
 		private ArrayList<Arc> subArcs;
 		private Vector direction;
 		private int animCounter;
-		
+
 		public Arc(Location startPoint, Location endPoint) {
 			points = new ArrayList<Location>();
 			points.add(startPoint.clone());
@@ -524,30 +526,32 @@ public class Lightning extends CoreAbility {
 			animLocs = new ArrayList<AnimLocation>();
 			animCounter = 0;
 		}
-		
-		/** 
+
+		/**
 		 * Stops this Arc from further animating or doing damage.
 		 */
 		public void cancel() {
-			for(int i = 0; i < particles.size(); i++) {
+			for (int i = 0; i < particles.size(); i++) {
 				particles.get(i).cancel();
 			}
-			
-			for(Arc subArc : subArcs) {
+
+			for (Arc subArc : subArcs) {
 				subArc.cancel();
 			}
 		}
-		
-		/** Randomly generates subarcs off of this arc.
-		 * 	@param chance - The chance that an arc will be generated
-		 * 	for each specific point in the arc.
-		 * 	Note: if you generate a lot of points then chance will need to be lowered.
-		 *  @param range: The length of each subarc.
-		 *  **/
+
+		/**
+		 * Randomly generates subarcs off of this arc.
+		 * 
+		 * @param chance - The chance that an arc will be generated for each
+		 *            specific point in the arc. Note: if you generate a lot of
+		 *            points then chance will need to be lowered.
+		 * @param range: The length of each subarc.
+		 * **/
 		public ArrayList<Arc> generateArcs(double chance, double range) {
 			ArrayList<Arc> arcs = new ArrayList<Arc>();
-			for(int i = 0; i < animLocs.size(); i++) {
-				if(Math.random() < chance) {
+			for (int i = 0; i < animLocs.size(); i++) {
+				if (Math.random() < chance) {
 					Location loc = animLocs.get(i).getLoc();
 					double angle = (Math.random() - 0.5) * MAX_ARC_ANGLE * 2;
 					Vector dir = GeneralMethods.rotateXZ(direction.clone(), angle);
@@ -563,20 +567,21 @@ public class Lightning extends CoreAbility {
 			}
 			return arcs;
 		}
-		
-		/** Runs an arc generation algorithm by first creating two points, 
-		 * the starting point and the ending point. Next, it creates a point
-		 * in the middle that has an offset relative to the beginning and
-		 * end points. Now that the arc is split into 3 points, we continue this
-		 * processes by generating middle points in the two halfs of this arc.
-		 * This process continues based on @times
+
+		/**
+		 * Runs an arc generation algorithm by first creating two points, the
+		 * starting point and the ending point. Next, it creates a point in the
+		 * middle that has an offset relative to the beginning and end points.
+		 * Now that the arc is split into 3 points, we continue this processes
+		 * by generating middle points in the two halfs of this arc. This
+		 * process continues based on @times
 		 * 
 		 * @param times: The amount of times that the arc will be split in half
 		 * @param times causes O(n^2) complexity
 		 * **/
 		public void generatePoints(int times) {
-			for(int i = 0; i < times; i++) {
-				for(int j = 0; j < points.size() - 1; j += 2) {
+			for (int i = 0; i < times; i++) {
+				for (int j = 0; j < points.size() - 1; j += 2) {
 					Location loc1 = points.get(j);
 					Location loc2 = points.get(j + 1);
 					double adjac = loc1.distance(loc2) / 2;
@@ -590,16 +595,16 @@ public class Lightning extends CoreAbility {
 					points.add(j + 1, newLoc);
 				}
 			}
-			for(int i = 0; i < points.size(); i++) {
+			for (int i = 0; i < points.size(); i++) {
 				animLocs.add(new AnimLocation(points.get(i), animCounter));
 				animCounter++;
 			}
 		}
-		
+
 		public int getAnimCounter() {
 			return animCounter;
 		}
-		
+
 		public ArrayList<AnimLocation> getAnimLocs() {
 			return animLocs;
 		}
@@ -635,96 +640,94 @@ public class Lightning extends CoreAbility {
 		public void setPoints(ArrayList<Location> points) {
 			this.points = points;
 		}
-		
+
 	}
 
-	/** A Runnable Particle that continuously displays itself
-	 * until it reaches a certain time limit.
+	/**
+	 * A Runnable Particle that continuously displays itself until it reaches a
+	 * certain time limit.
 	 * 
-	 * These LightningParticles do the actual checking for player collision
-	 * and handle damaging any entities. These Runnables also
-	 * check to see if they reach water, in which case they will generate
-	 * subarcs to branch out.
+	 * These LightningParticles do the actual checking for player collision and
+	 * handle damaging any entities. These Runnables also check to see if they
+	 * reach water, in which case they will generate subarcs to branch out.
 	 * **/
 	public class LightningParticle extends BukkitRunnable {
 		private Arc arc;
 		private Location loc;
 		private int count = 0;
-		
+
 		public LightningParticle(Arc arc, Location loc) {
 			this.arc = arc;
 			this.loc = loc;
 			arc.particles.add(this);
 		}
-		
-		/** Cancels this Runnable**/
+
+		/** Cancels this Runnable **/
 		public void cancel() {
 			super.cancel();
 			tasks.remove(this);
 		}
-		
-		/** 
-		 * Animates the Location, checks for water/player collision
-		 * and also deals with any chain subarcs.
+
+		/**
+		 * Animates the Location, checks for water/player collision and also
+		 * deals with any chain subarcs.
 		 */
 		public void run() {
 			FireMethods.playLightningbendingParticle(loc, 0F, 0F, 0F);
 			count++;
-			if(count > 5)
+			if (count > 5)
 				this.cancel();
-			else if(count == 1) {
-				if(!isTransparent(player, loc.getBlock())) {
+			else if (count == 1) {
+				if (!isTransparent(player, loc.getBlock())) {
 					arc.cancel();
 					return;
 				}
-					
+
 				// Handle Water electrocution
-				if(!hitWater && (isWater(loc) || (ARC_ON_ICE && isIce(loc)))) {
+				if (!hitWater && (isWater(loc) || (ARC_ON_ICE && isIce(loc)))) {
 					hitWater = true;
-					if(isIce(loc))
+					if (isIce(loc))
 						hitIce = true;
-					for(int i = 0; i < WATER_ARCS; i++) {
+					for (int i = 0; i < WATER_ARCS; i++) {
 						Location origin = loc.clone();
 						origin.add(new Vector((Math.random() - 0.5) * 2, 0, (Math.random() - 0.5) * 2));
-						destination = origin.clone().add(
-								new Vector((Math.random() - 0.5) * waterRange, Math.random() - 0.7, (Math.random() - 0.5) * waterRange));
+						destination = origin.clone().add(new Vector((Math.random() - 0.5) * waterRange, Math.random() - 0.7, (Math.random() - 0.5) * waterRange));
 						Arc newArc = new Arc(origin, destination);
 						newArc.generatePoints(POINT_GENERATION);
 						arcs.add(newArc);
 					}
 				}
-				
-				for(Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
+
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
 					/*
-					 * If the player is in water we will electrocute them only if they are standing in water.
-					 * If the lightning hit ice we can electrocute them all the time.
+					 * If the player is in water we will electrocute them only
+					 * if they are standing in water. If the lightning hit ice
+					 * we can electrocute them all the time.
 					 */
-					if(entity.equals(player) 
-							&& !(SELF_HIT_WATER && hitWater && isWater(player.getLocation()))
-							&& !(SELF_HIT_WATER && hitIce))
+					if (entity.equals(player) && !(SELF_HIT_WATER && hitWater && isWater(player.getLocation())) && !(SELF_HIT_WATER && hitIce))
 						continue;
-					
-					if(entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
+
+					if (entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 						affectedEntities.add(entity);
-						LivingEntity lent = (LivingEntity) entity;				
-						if(lent instanceof Player) {
+						LivingEntity lent = (LivingEntity) entity;
+						if (lent instanceof Player) {
 							lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
 							player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
 							Player p = (Player) lent;
 							Lightning light = getLightning(p);
-							if(light != null && light.state == State.START) {
+							if (light != null && light.state == State.START) {
 								light.charged = true;
 								remove();
 								return;
 							}
 						}
 						electrocute(lent);
-						
+
 						// Handle Chain Lightning
-						if(chainArcs >= 1 && Math.random() <= chainArcChance) {
+						if (chainArcs >= 1 && Math.random() <= chainArcChance) {
 							chainArcs--;
-							for(Entity ent : GeneralMethods.getEntitiesAroundPoint(lent.getLocation(), chainRange)) {
-								if(!ent.equals(player) && !ent.equals(lent) && ent instanceof LivingEntity && !affectedEntities.contains(ent)) {
+							for (Entity ent : GeneralMethods.getEntitiesAroundPoint(lent.getLocation(), chainRange)) {
+								if (!ent.equals(player) && !ent.equals(lent) && ent instanceof LivingEntity && !affectedEntities.contains(ent)) {
 									origin = lent.getLocation().add(0, 1, 0);
 									destination = ent.getLocation().add(0, 1, 0);
 									Arc newArc = new Arc(origin, destination);

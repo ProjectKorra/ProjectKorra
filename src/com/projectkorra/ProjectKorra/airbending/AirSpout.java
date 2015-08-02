@@ -1,16 +1,16 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.Utilities.Flight;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import java.util.ArrayList;
 
 public class AirSpout extends CoreAbility {
 
@@ -40,14 +40,13 @@ public class AirSpout extends CoreAbility {
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (Integer id: getInstances(StockAbility.AirSpout).keySet()) {
+		for (Integer id : getInstances(StockAbility.AirSpout).keySet()) {
 			players.add(getInstances(StockAbility.AirSpout).get(id).getPlayer());
 		}
 		return players;
 	}
 
-	public static boolean removeSpouts(Location loc0, double radius,
-			Player sourceplayer) {
+	public static boolean removeSpouts(Location loc0, double radius, Player sourceplayer) {
 		boolean removed = false;
 		for (Integer id : getInstances(StockAbility.AirSpout).keySet()) {
 			Player player = getInstances(StockAbility.AirSpout).get(id).getPlayer();
@@ -60,7 +59,7 @@ public class AirSpout extends CoreAbility {
 
 				double distance = Math.sqrt(dx * dx + dz * dz);
 
-				if (distance <= radius && dy > 0 && dy < HEIGHT){
+				if (distance <= radius && dy > 0 && dy < HEIGHT) {
 					getInstances(StockAbility.AirSpout).get(id).remove();
 					removed = true;
 				}
@@ -102,10 +101,8 @@ public class AirSpout extends CoreAbility {
 	@Override
 	public boolean progress() {
 		if (!GeneralMethods.canBend(player.getName(), "AirSpout")
-//				|| !Methods.hasAbility(player, Abilities.AirSpout)
-				|| player.getEyeLocation().getBlock().isLiquid()
-				|| GeneralMethods.isSolid(player.getEyeLocation().getBlock())
-				|| player.isDead() || !player.isOnline()) {
+		//				|| !Methods.hasAbility(player, Abilities.AirSpout)
+		|| player.getEyeLocation().getBlock().isLiquid() || GeneralMethods.isSolid(player.getEyeLocation().getBlock()) || player.isDead() || !player.isOnline()) {
 			remove();
 			return false;
 		}
@@ -156,8 +153,7 @@ public class AirSpout extends CoreAbility {
 
 			Location location = block.getLocation();
 			Location playerloc = player.getLocation();
-			location = new Location(location.getWorld(), playerloc.getX(),
-					location.getY(), playerloc.getZ());
+			location = new Location(location.getWorld(), playerloc.getX(), location.getY(), playerloc.getZ());
 
 			double dy = playerloc.getY() - block.getY();
 			if (dy > height)
@@ -174,12 +170,11 @@ public class AirSpout extends CoreAbility {
 				if (index >= directions.length)
 					index = 0;
 
-				Location effectloc2 = new Location(location.getWorld(),
-						location.getX(), block.getY() + i, location.getZ());
+				Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
 
 				AirMethods.playAirbendingParticles(effectloc2, 15);
-//				location.getWorld().playEffect(effectloc2, Effect.SMOKE,
-//						(int) directions[index], (int) height + 5);
+				//				location.getWorld().playEffect(effectloc2, Effect.SMOKE,
+				//						(int) directions[index], (int) height + 5);
 
 				// Methods.verbose(directions[index]);
 

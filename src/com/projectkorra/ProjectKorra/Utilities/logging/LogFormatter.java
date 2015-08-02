@@ -14,29 +14,29 @@ import java.util.logging.LogRecord;
  */
 public class LogFormatter extends Formatter {
 
-private final SimpleDateFormat date = new SimpleDateFormat("MMM-dd|HH:mm:ss");
-	
+	private final SimpleDateFormat date = new SimpleDateFormat("MMM-dd|HH:mm:ss");
+
 	@Override
 	public String format(LogRecord record) {
 		StringBuilder builder = new StringBuilder();
-        Throwable ex = record.getThrown();
+		Throwable ex = record.getThrown();
 
-        builder.append("(");
-        builder.append(date.format(record.getMillis()));
-        builder.append(")");
-        builder.append(" [");
-        builder.append(record.getLevel().getLocalizedName().toUpperCase());
-        builder.append("] ");
-        builder.append(formatMessage(record));
-        builder.append('\n');
+		builder.append("(");
+		builder.append(date.format(record.getMillis()));
+		builder.append(")");
+		builder.append(" [");
+		builder.append(record.getLevel().getLocalizedName().toUpperCase());
+		builder.append("] ");
+		builder.append(formatMessage(record));
+		builder.append('\n');
 
-        if (ex != null) {
-            StringWriter writer = new StringWriter();
-            ex.printStackTrace(new PrintWriter(writer));
-            builder.append(writer);
-        }
+		if (ex != null) {
+			StringWriter writer = new StringWriter();
+			ex.printStackTrace(new PrintWriter(writer));
+			builder.append(writer);
+		}
 
-        return builder.toString();
+		return builder.toString();
 	}
 
 }

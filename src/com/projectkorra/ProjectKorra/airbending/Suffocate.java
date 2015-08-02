@@ -1,9 +1,11 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -13,29 +15,27 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Suffocate
  * 
- * Suffocate is an air ability that causes entities to be surrounded by
- * a sphere air that causes constant damage after a configurable delay.
- * Suffocate also causes Blinding and Slowing affects to entities depending
- * on how the ability is configured. While in AvatarState this ability can
- * be used on multiple entities within a large radius.
- * If the user is damaged while performing this ability then the ability is removed.
+ * Suffocate is an air ability that causes entities to be surrounded by a sphere
+ * air that causes constant damage after a configurable delay. Suffocate also
+ * causes Blinding and Slowing affects to entities depending on how the ability
+ * is configured. While in AvatarState this ability can be used on multiple
+ * entities within a large radius. If the user is damaged while performing this
+ * ability then the ability is removed.
  */
 public class Suffocate extends CoreAbility {
 	private static boolean CAN_SUFFOCATE_UNDEAD = config.get().getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
 	private static boolean REQUIRE_CONSTANT_AIM = config.get().getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
 	private static double ANIM_RADIUS = config.get().getDouble("Abilities.Air.Suffocate.AnimationRadius");
 	private static int ANIM_PARTICLE_AMOUNT = config.get().getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
-	
+
 	private static double ANIM_SPEED = config.get().getDouble("Abilities.Air.Suffocate.AnimationSpeed");
 	private static long CHARGE_TIME = config.get().getLong("Abilities.Air.Suffocate.ChargeTime");
 	private static long COOLDOWN = config.get().getLong("Abilities.Air.Suffocate.Cooldown");
@@ -49,7 +49,7 @@ public class Suffocate extends CoreAbility {
 	private static double SLOW_DELAY = config.get().getDouble("Abilities.Air.Suffocate.SlowDelay");
 	private static int BLIND = config.get().getInt("Abilities.Air.Suffocate.BlindPotentcy");
 	private static double BLIND_DELAY = config.get().getDouble("Abilities.Air.Suffocate.BlindDelay");
-	
+
 	private static double BLIND_INTERVAL = config.get().getDouble("Abilities.Air.Suffocate.BlindInterval");
 	private Player player;
 	private BendingPlayer bplayer;
@@ -66,39 +66,39 @@ public class Suffocate extends CoreAbility {
 	private double aimRadius;
 	private double damage, damageDelay, damageRepeat;
 	private double slow, slowRepeat, slowDelay;
-	
+
 	private double blind, blindDelay, blindRepeat;
-	
+
 	public Suffocate(Player player) {
 		this.player = player;
 		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		targets = new ArrayList<LivingEntity>();
 		tasks = new ArrayList<BukkitRunnable>();
 		time = System.currentTimeMillis();
-		
+
 		reloadVariables();
 		reqConstantAim = REQUIRE_CONSTANT_AIM;
 		canSuffUndead = CAN_SUFFOCATE_UNDEAD;
-		chargeTime = CHARGE_TIME; 
+		chargeTime = CHARGE_TIME;
 		cooldown = COOLDOWN;
 		particleScale = ANIM_PARTICLE_AMOUNT;
-		range = RANGE; 
+		range = RANGE;
 		radius = ANIM_RADIUS;
 		speedFactor = ANIM_SPEED;
 		aimRadius = AIM_RADIUS;
-		damage = DAMAGE; 
-		damageDelay = DAMAGE_INITIAL_DELAY; 
+		damage = DAMAGE;
+		damageDelay = DAMAGE_INITIAL_DELAY;
 		damageRepeat = DAMAGE_INTERVAL;
 		slow = SLOW;
-		slowRepeat = SLOW_INTERVAL; 
+		slowRepeat = SLOW_INTERVAL;
 		slowDelay = SLOW_DELAY;
-		blind = BLIND; 
-		blindDelay = BLIND_DELAY; 
+		blind = BLIND;
+		blindDelay = BLIND_DELAY;
 		blindRepeat = BLIND_INTERVAL;
-		
+
 		if (containsPlayer(player, Suffocate.class))
 			return;
-		
+
 		if (AvatarState.isAvatarState(player)) {
 			cooldown = 0;
 			chargeTime = 0;
@@ -110,11 +110,11 @@ public class Suffocate extends CoreAbility {
 			blind = AvatarState.getValue(blind);
 			blindRepeat = AvatarState.getValue(blindRepeat);
 		}
-		if (particleScale < 1) 
+		if (particleScale < 1)
 			particleScale = 1;
-		else if (particleScale > 2) 
+		else if (particleScale > 2)
 			particleScale = 2;
-		
+
 		if (AvatarState.isAvatarState(player)) {
 			for (Entity ent : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range))
 				if (ent instanceof LivingEntity && !ent.equals(player))
@@ -124,7 +124,7 @@ public class Suffocate extends CoreAbility {
 			if (ent != null && ent instanceof LivingEntity)
 				targets.add((LivingEntity) ent);
 		}
-		
+
 		if (!canSuffUndead) {
 			for (int i = 0; i < targets.size(); i++) {
 				LivingEntity target = targets.get(i);
@@ -134,7 +134,7 @@ public class Suffocate extends CoreAbility {
 				}
 			}
 		}
-		
+
 		if (targets.size() == 0)
 			return;
 		else if (bplayer.isOnCooldown("suffocate"))
@@ -143,7 +143,7 @@ public class Suffocate extends CoreAbility {
 		//instances.put(player,this);
 		putInstance(player, this);
 	}
-	
+
 	/** Stops an entity from being suffocated **/
 	public static void breakSuffocate(Entity entity) {
 		for (Integer id : getInstances().keySet()) {
@@ -153,11 +153,11 @@ public class Suffocate extends CoreAbility {
 			}
 		}
 	}
-	
+
 	public static ConcurrentHashMap<Integer, CoreAbility> getInstances() {
 		return getInstances(StockAbility.Suffocate);
 	}
-	
+
 	/** Checks if an entity is being suffocated **/
 	public static boolean isBreathbent(Entity entity) {
 		for (Integer id : getInstances().keySet()) {
@@ -168,45 +168,51 @@ public class Suffocate extends CoreAbility {
 		}
 		return false;
 	}
-	
+
 	/** Determines if a player is Suffocating entities **/
 	public static boolean isChannelingSphere(Player player) {
-		if (containsPlayer(player, Suffocate.class)) return true;
+		if (containsPlayer(player, Suffocate.class))
+			return true;
 		return false;
 	}
-	
-	/** Removes an instance of Suffocate if player is the one suffocating entities **/
+
+	/**
+	 * Removes an instance of Suffocate if player is the one suffocating
+	 * entities
+	 **/
 	public static void remove(Player player) {
 		if (containsPlayer(player, Suffocate.class))
 			getAbilityFromPlayer(player, Suffocate.class).remove();
 	}
-	
-	/** Removes all instances of Suffocate at loc within the radius threshold.
-	 * The location of a Suffocate is defined at the benders location, not
-	 * the location of the entities being suffocated.
+
+	/**
+	 * Removes all instances of Suffocate at loc within the radius threshold.
+	 * The location of a Suffocate is defined at the benders location, not the
+	 * location of the entities being suffocated.
+	 * 
 	 * @param causer: the player causing this instance to be removed
 	 * **/
 	public static boolean removeAtLocation(Player causer, Location loc, double radius) {
 		Iterator<Integer> it = getInstances().keySet().iterator();
 		while (it.hasNext()) {
-		    Integer key = it.next();
-		    Suffocate val = (Suffocate) getInstances().get(key);
-		    
-		    if (causer == null || !key.equals(causer)) {
-		    	Location playerLoc = val.getPlayer().getLocation();
-		    	if (playerLoc.getWorld().equals(loc.getWorld()) && playerLoc.distance(loc) <= radius) {
-		    		it.remove();
-		    		return true;
-		    	}
-		    }
+			Integer key = it.next();
+			Suffocate val = (Suffocate) getInstances().get(key);
+
+			if (causer == null || !key.equals(causer)) {
+				Location playerLoc = val.getPlayer().getLocation();
+				if (playerLoc.getWorld().equals(loc.getWorld()) && playerLoc.distance(loc) <= radius) {
+					it.remove();
+					return true;
+				}
+			}
 		}
 		return false;
 	}
-	
-	/** 
-	 * Animates this instance of the Suffocate ability.
-	 * Depending on the specific time (dt) the ability will create
-	 * a different set of SuffocationSpirals.
+
+	/**
+	 * Animates this instance of the Suffocate ability. Depending on the
+	 * specific time (dt) the ability will create a different set of
+	 * SuffocationSpirals.
 	 */
 	public void animate() {
 		long curTime = System.currentTimeMillis();
@@ -220,8 +226,8 @@ public class Suffocate extends CoreAbility {
 		for (LivingEntity lent : targets) {
 			final LivingEntity target = lent;
 			if (dt < t1) {
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double)dt / (double)t1), 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double)dt / (double)t1), 0, SpiralType.HORIZONTAL2);
+				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double) dt / (double) t1), 0, SpiralType.HORIZONTAL1);
+				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double) dt / (double) t1), 0, SpiralType.HORIZONTAL2);
 			} else if (dt < t2) {
 				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
 				new SuffocateSpiral(target, steps * 2, radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
@@ -231,9 +237,9 @@ public class Suffocate extends CoreAbility {
 				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
 				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
 			} else if (dt < t4) {
-				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double)(dt - t3) / (double)(t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double)(dt - t3) / (double)(t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double)(dt - t3) / (double)(t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
+				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
+				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
 			} else {
 				new SuffocateSpiral(target, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
 				new SuffocateSpiral(target, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL1);
@@ -241,13 +247,13 @@ public class Suffocate extends CoreAbility {
 			}
 		}
 	}
-	
+
 	/** Stops an entity from being suffocated **/
 	public void breakSuffocateLocal(Entity entity) {
 		if (targets.contains(entity))
 			targets.remove(entity);
 	}
-	
+
 	public double getAimRadius() {
 		return aimRadius;
 	}
@@ -346,7 +352,7 @@ public class Suffocate extends CoreAbility {
 	}
 
 	/**
-	 * Progresses this instance of Suffocate by 1 tick. 
+	 * Progresses this instance of Suffocate by 1 tick.
 	 * 
 	 * @return true If progress does not stop, progresses succesfully
 	 */
@@ -360,22 +366,18 @@ public class Suffocate extends CoreAbility {
 			return false;
 		}
 		String ability = GeneralMethods.getBoundAbility(player);
-		if (ability == null 
-				|| !ability.equalsIgnoreCase("Suffocate") 
-				|| !GeneralMethods.canBend(player.getName(), "Suffocate")) {
+		if (ability == null || !ability.equalsIgnoreCase("Suffocate") || !GeneralMethods.canBend(player.getName(), "Suffocate")) {
 			remove();
 			return false;
 		}
-		
+
 		for (int i = 0; i < targets.size(); i++) {
 			LivingEntity target = targets.get(i);
-			if (target.isDead() 
-					|| !target.getWorld().equals(player.getWorld())
-					|| target.getLocation().distance(player.getEyeLocation()) > range) {
+			if (target.isDead() || !target.getWorld().equals(player.getWorld()) || target.getLocation().distance(player.getEyeLocation()) > range) {
 				breakSuffocateLocal(target);
 				i--;
 			} else if (target instanceof Player) {
-				Player targPlayer = (Player)target;
+				Player targPlayer = (Player) target;
 				if (!targPlayer.isOnline()) {
 					breakSuffocateLocal(target);
 					i--;
@@ -386,13 +388,12 @@ public class Suffocate extends CoreAbility {
 			remove();
 			return false;
 		}
-		
+
 		if (reqConstantAim) {
 			double dist = player.getEyeLocation().distance(targets.get(0).getEyeLocation());
-			Location targetLoc = player.getEyeLocation().clone().add
-					(player.getEyeLocation().getDirection().normalize().multiply(dist));
+			Location targetLoc = player.getEyeLocation().clone().add(player.getEyeLocation().getDirection().normalize().multiply(dist));
 			List<Entity> ents = GeneralMethods.getEntitiesAroundPoint(targetLoc, aimRadius);
-			
+
 			for (int i = 0; i < targets.size(); i++) {
 				LivingEntity target = targets.get(i);
 				if (!ents.contains(target)) {
@@ -405,7 +406,7 @@ public class Suffocate extends CoreAbility {
 				return false;
 			}
 		}
-		
+
 		if (System.currentTimeMillis() - time < chargeTime) {
 			return false;
 		} else if (!started) {
@@ -431,7 +432,7 @@ public class Suffocate extends CoreAbility {
 						target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) (blindRepeat * 20), (int) blind));
 					}
 				};
-				
+
 				tasks.add(br1);
 				tasks.add(br2);
 				tasks.add(br3);
@@ -456,7 +457,7 @@ public class Suffocate extends CoreAbility {
 		ANIM_RADIUS = config.get().getDouble("Abilities.Air.Suffocate.AnimationRadius");
 		ANIM_PARTICLE_AMOUNT = config.get().getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
 		ANIM_SPEED = config.get().getDouble("Abilities.Air.Suffocate.AnimationSpeed");
-		
+
 		CHARGE_TIME = config.get().getLong("Abilities.Air.Suffocate.ChargeTime");
 		COOLDOWN = config.get().getLong("Abilities.Air.Suffocate.Cooldown");
 		RANGE = config.get().getDouble("Abilities.Air.Suffocate.Range");
@@ -570,15 +571,15 @@ public class Suffocate extends CoreAbility {
 	public void setTime(long time) {
 		this.time = time;
 	}
-	
+
 	public static enum SpiralType {
 		HORIZONTAL1, HORIZONTAL2, VERTICAL1, VERTICAL2, DIAGONAL1, DIAGONAL2
 	};
-	
-	/** **
-	 * Animates a Spiral of air particles around a location or a targetted entity.
-	 * The direction of the spiral is determined by SpiralType, and each type
-	 * is calculated independently from one another.
+
+	/**
+	 * ** Animates a Spiral of air particles around a location or a targetted
+	 * entity. The direction of the spiral is determined by SpiralType, and each
+	 * type is calculated independently from one another.
 	 */
 	public class SuffocateSpiral extends BukkitRunnable {
 		private Location startLoc;
@@ -589,7 +590,7 @@ public class Suffocate extends CoreAbility {
 		private double dx, dy, dz;
 		private SpiralType type;
 		private int i;
-		
+
 		/**
 		 * @param lent: the entity to animate the spiral around
 		 * @param totalSteps: amount of times it will be animated
@@ -600,8 +601,7 @@ public class Suffocate extends CoreAbility {
 		 * @param dz: z offset
 		 * @param type: spiral animation direction
 		 */
-		public SuffocateSpiral(LivingEntity lent, int totalSteps, double radius,
-				long interval, double dx, double dy, double dz, SpiralType type) {
+		public SuffocateSpiral(LivingEntity lent, int totalSteps, double radius, long interval, double dx, double dy, double dz, SpiralType type) {
 			this.target = lent;
 			this.totalSteps = totalSteps;
 			this.radius = radius;
@@ -609,13 +609,13 @@ public class Suffocate extends CoreAbility {
 			this.dy = dy;
 			this.dz = dz;
 			this.type = type;
-			
+
 			loc = target.getEyeLocation();
 			i = 0;
 			this.runTaskTimer(ProjectKorra.plugin, 0L, interval);
 			tasks.add(this);
 		}
-		
+
 		/**
 		 * @param startLoc: initial location
 		 * @param totalSteps: amount of times it will be animated
@@ -626,8 +626,7 @@ public class Suffocate extends CoreAbility {
 		 * @param dz: z offset
 		 * @param type: spiral animation direction
 		 */
-		public SuffocateSpiral(Location startLoc, int totalSteps, double radius,
-				long interval, double dx, double dy, double dz, SpiralType type) {
+		public SuffocateSpiral(Location startLoc, int totalSteps, double radius, long interval, double dx, double dy, double dz, SpiralType type) {
 			this.startLoc = startLoc;
 			this.totalSteps = totalSteps;
 			this.radius = radius;
@@ -635,16 +634,15 @@ public class Suffocate extends CoreAbility {
 			this.dy = dy;
 			this.dz = dz;
 			this.type = type;
-			
+
 			loc = startLoc.clone();
 			i = 0;
 			this.runTaskTimer(ProjectKorra.plugin, 0L, interval);
 			tasks.add(this);
 		}
-		
+
 		/**
-		 * Starts the initial animation, and removes
-		 * itself when it is finished.
+		 * Starts the initial animation, and removes itself when it is finished.
 		 */
 		public void run() {
 			Location tempLoc;
@@ -654,34 +652,34 @@ public class Suffocate extends CoreAbility {
 			} else {
 				tempLoc = startLoc.clone();
 			}
-			
+
 			if (type == SpiralType.HORIZONTAL1) {
-				loc.setX(tempLoc.getX() + radius * Math.cos(Math.toRadians((double)i / (double)totalSteps * 360)));
+				loc.setX(tempLoc.getX() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
 				loc.setY(tempLoc.getY() + dy * i);
-				loc.setZ(tempLoc.getZ() + radius * Math.sin(Math.toRadians((double)i / (double)totalSteps * 360)));
+				loc.setZ(tempLoc.getZ() + radius * Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
 			} else if (type == SpiralType.HORIZONTAL2) {
-				loc.setX(tempLoc.getX() + radius * -Math.cos(Math.toRadians((double)i / (double)totalSteps * 360)));
+				loc.setX(tempLoc.getX() + radius * -Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
 				loc.setY(tempLoc.getY() + dy * i);
-				loc.setZ(tempLoc.getZ() + radius * -Math.sin(Math.toRadians((double)i / (double)totalSteps * 360)));
+				loc.setZ(tempLoc.getZ() + radius * -Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
 			} else if (type == SpiralType.VERTICAL1) {
-				loc.setX(tempLoc.getX() + radius * Math.sin(Math.toRadians((double)i / (double)totalSteps * 360)));
-				loc.setY(tempLoc.getY() + radius * Math.cos(Math.toRadians((double)i / (double)totalSteps * 360)));
+				loc.setX(tempLoc.getX() + radius * Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
+				loc.setY(tempLoc.getY() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
 				loc.setZ(tempLoc.getZ() + dz * i);
 			} else if (type == SpiralType.VERTICAL2) {
 				loc.setX(tempLoc.getX() + dx * i);
-				loc.setY(tempLoc.getY() + radius * Math.sin(Math.toRadians((double)i / (double)totalSteps * 360)));
-				loc.setZ(tempLoc.getZ() + radius * Math.cos(Math.toRadians((double)i / (double)totalSteps * 360)));
+				loc.setY(tempLoc.getY() + radius * Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
+				loc.setZ(tempLoc.getZ() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
 			} else if (type == SpiralType.DIAGONAL1) {
-				loc.setX(tempLoc.getX() + radius * Math.cos(Math.toRadians((double)i / (double)totalSteps * 360)));
-				loc.setY(tempLoc.getY() + radius * Math.sin(Math.toRadians((double)i / (double)totalSteps * 360)));
-				loc.setZ(tempLoc.getZ() + radius * -Math.cos(Math.toRadians((double)i / (double)totalSteps * 360)));
+				loc.setX(tempLoc.getX() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
+				loc.setY(tempLoc.getY() + radius * Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
+				loc.setZ(tempLoc.getZ() + radius * -Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
 			} else if (type == SpiralType.DIAGONAL2) {
-				loc.setX(tempLoc.getX() + radius * Math.cos(Math.toRadians((double)i / (double)totalSteps * 360)));
-				loc.setY(tempLoc.getY() + radius * Math.sin(Math.toRadians((double)i / (double)totalSteps * 360)));
-				loc.setZ(tempLoc.getZ() + radius * Math.cos(Math.toRadians((double)i / (double)totalSteps * 360)));
+				loc.setX(tempLoc.getX() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
+				loc.setY(tempLoc.getY() + radius * Math.sin(Math.toRadians((double) i / (double) totalSteps * 360)));
+				loc.setZ(tempLoc.getZ() + radius * Math.cos(Math.toRadians((double) i / (double) totalSteps * 360)));
 			}
 
-			AirMethods.getAirbendingParticles().display(loc, (float) 0, (float) 0, (float) 0, 0, 1); 		
+			AirMethods.getAirbendingParticles().display(loc, (float) 0, (float) 0, (float) 0, 0, 1);
 			if (i == totalSteps + 1)
 				this.cancel();
 			i++;

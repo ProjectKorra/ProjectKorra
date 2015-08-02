@@ -1,7 +1,14 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.TempPotionEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,15 +20,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.TempPotionEffect;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class IceSpike2 {
 
@@ -55,16 +55,15 @@ public class IceSpike2 {
 	private double defaultdamage = DAMAGE;
 
 	public IceSpike2(Player player) {
-		if(!WaterMethods.canIcebend(player))
+		if (!WaterMethods.canIcebend(player))
 			return;
-		
+
 		block(player);
 		if (WaterMethods.canPlantbend(player))
 			plantbending = true;
 		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, 
-				true, true, plantbending);
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, plantbending);
 
 		if (sourceblock == null) {
 			new SpikeField(player);
@@ -112,7 +111,8 @@ public class IceSpike2 {
 
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
-		if (bPlayer.isOnCooldown("IceSpike")) return;
+		if (bPlayer.isOnCooldown("IceSpike"))
+			return;
 
 		for (IceSpike2 ice : getInstances(player)) {
 			if (ice.prepared) {
@@ -134,8 +134,7 @@ public class IceSpike2 {
 		if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-			if (EarthMethods.isTransparentToEarthbending(player, block)
-					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+			if (EarthMethods.isTransparentToEarthbending(player, block) && EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
 				LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, RANGE, new ArrayList<Entity>());
 				Location destination;
@@ -284,10 +283,10 @@ public class IceSpike2 {
 					returnWater();
 				}
 			}
-			
+
 			if (GeneralMethods.rand.nextInt(4) == 0) {
 				WaterMethods.playIcebendingSound(location);
-			}		
+			}
 
 			if (!progressing) {
 				cancel();
@@ -350,10 +349,7 @@ public class IceSpike2 {
 			Location mloc = ice.location;
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike", mloc))
 				continue;
-			if (mloc.distance(location) <= ice.defaultrange
-					&& GeneralMethods.getDistanceFromLine(vector, location, ice.location) < deflectrange
-					&& mloc.distance(location.clone().add(vector)) < 
-					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
+			if (mloc.distance(location) <= ice.defaultrange && GeneralMethods.getDistanceFromLine(vector, location, ice.location) < deflectrange && mloc.distance(location.clone().add(vector)) < mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				Location loc;
 				Entity target = GeneralMethods.getTargetedEntity(player, ice.defaultrange, new ArrayList<Entity>());
 				if (target == null) {
@@ -381,17 +377,13 @@ public class IceSpike2 {
 			if (!ice.progressing)
 				continue;
 
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike",
-					ice.location))
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceSpike", ice.location))
 				continue;
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = ice.location;
-			if (mloc.distance(location) <= ice.defaultrange
-					&& GeneralMethods.getDistanceFromLine(vector, location, ice.location) < deflectrange
-					&& mloc.distance(location.clone().add(vector)) < 
-					mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
+			if (mloc.distance(location) <= ice.defaultrange && GeneralMethods.getDistanceFromLine(vector, location, ice.location) < deflectrange && mloc.distance(location.clone().add(vector)) < mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				ice.cancel();
 			}
 

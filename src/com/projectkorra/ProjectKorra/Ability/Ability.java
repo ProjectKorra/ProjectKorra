@@ -3,7 +3,10 @@ package com.projectkorra.ProjectKorra.Ability;
 import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 
 /**
- * An interface representing an ability that 
+ * An interface representing an ability that extends {@link ConfigLoadable}.
+ * 
+ * @author jacklin213
+ * @version 1.0.0
  */
 public interface Ability extends ConfigLoadable {
 	
@@ -25,8 +28,8 @@ public interface Ability extends ConfigLoadable {
 	public InstanceType getInstanceType();
 	
 	/**
-	 * Used to signify whether an ability can have multiple instances
-	 * per player or only a single instance.
+	 * Used to signify whether an ability can have multiple instances per player
+	 * or only a single instance.
 	 */
 	public enum InstanceType {
 		SINGLE, MULTIPLE;

@@ -1,7 +1,12 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,21 +16,15 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WallOfFire extends CoreAbility {
-
-	private Player player;
 
 	private static double maxangle = 50;
 
 	private static int RANGE = config.get().getInt("Abilities.Fire.WallOfFire.Range");
+
 	private static int HEIGHT = config.get().getInt("Abilities.Fire.WallOfFire.Height");
 	private static int WIDTH = config.get().getInt("Abilities.Fire.WallOfFire.Width");
 	private static long DURATION = config.get().getLong("Abilities.Fire.WallOfFire.Duration");
@@ -34,6 +33,7 @@ public class WallOfFire extends CoreAbility {
 	private static long COOLDOWN = config.get().getLong("Abilities.Fire.WallOfFire.Cooldown");
 	private static long DAMAGE_INTERVAL = config.get().getLong("Abilities.Fire.WallOfFire.Interval");
 	private static double FIRETICKS = config.get().getDouble("Abilities.Fire.WallOfFire.FireTicks");
+	private Player player;
 
 	private Location origin;
 	private long time, starttime;
@@ -54,7 +54,8 @@ public class WallOfFire extends CoreAbility {
 			return;
 		}
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("WallOfFire")) return;
+		if (bPlayer.isOnCooldown("WallOfFire"))
+			return;
 		/* End Initial Checks */
 
 		this.player = player;
@@ -66,8 +67,7 @@ public class WallOfFire extends CoreAbility {
 		if (FireMethods.isDay(player.getWorld())) {
 			width = (int) FireMethods.getFirebendingDayAugment((double) width, world);
 			height = (int) FireMethods.getFirebendingDayAugment((double) height, world);
-			duration = (long) FireMethods.getFirebendingDayAugment((double) duration,
-					world);
+			duration = (long) FireMethods.getFirebendingDayAugment((double) duration, world);
 			damage = (int) FireMethods.getFirebendingDayAugment((double) damage, world);
 		}
 
@@ -93,6 +93,111 @@ public class WallOfFire extends CoreAbility {
 		//instances.put(player, this);
 		putInstance(player, this);
 		bPlayer.addCooldown("WallOfFire", cooldown);
+	}
+
+	private void affect(Entity entity) {
+		entity.setFireTicks((int) (FIRETICKS * 20));
+		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
+		if (entity instanceof LivingEntity) {
+			GeneralMethods.damageEntity(player, entity, damage);
+			new Enflamed(entity, player);
+			AirMethods.breakBreathbendingHold(entity);
+		}
+	}
+
+	private void damage() {
+		double radius = height;
+		if (radius < width)
+			radius = width;
+		radius = radius + 1;
+		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(origin, radius);
+		if (entities.contains(player))
+			entities.remove(player);
+		for (Entity entity : entities) {
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "WallOfFire", entity.getLocation()))
+				continue;
+			for (Block block : blocks) {
+				if (entity.getLocation().distance(block.getLocation()) <= 1.5) {
+					affect(entity);
+					break;
+				}
+			}
+		}
+	}
+
+	private void display() {
+		for (Block block : blocks) {
+			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
+			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
+
+			if (GeneralMethods.rand.nextInt(7) == 0) {
+				FireMethods.playFirebendingSound(block.getLocation());
+			}
+		}
+	}
+
+	public long getCooldown() {
+		return cooldown;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public long getDamageinterval() {
+		return damageinterval;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public int getRange() {
+		return range;
+	}
+
+	@Override
+	public StockAbility getStockAbility() {
+		return StockAbility.WallOfFire;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	private void initializeBlocks() {
+		Vector direction = player.getEyeLocation().getDirection();
+		direction = direction.normalize();
+
+		Vector ortholr = GeneralMethods.getOrthogonalVector(direction, 0, 1);
+		ortholr = ortholr.normalize();
+
+		Vector orthoud = GeneralMethods.getOrthogonalVector(direction, 90, 1);
+		orthoud = orthoud.normalize();
+
+		double w = (double) width;
+		double h = (double) height;
+
+		for (double i = -w; i <= w; i++) {
+			for (double j = -h; j <= h; j++) {
+				Location location = origin.clone().add(orthoud.clone().multiply(j));
+				location = location.add(ortholr.clone().multiply(i));
+				if (GeneralMethods.isRegionProtectedFromBuild(player, "WallOfFire", location))
+					continue;
+				Block block = location.getBlock();
+				if (!blocks.contains(block))
+					blocks.add(block);
+			}
+		}
+
 	}
 
 	@Override
@@ -124,139 +229,6 @@ public class WallOfFire extends CoreAbility {
 		return true;
 	}
 
-	private void initializeBlocks() {
-		Vector direction = player.getEyeLocation().getDirection();
-		direction = direction.normalize();
-
-		Vector ortholr = GeneralMethods.getOrthogonalVector(direction, 0, 1);
-		ortholr = ortholr.normalize();
-
-		Vector orthoud = GeneralMethods.getOrthogonalVector(direction, 90, 1);
-		orthoud = orthoud.normalize();
-
-		double w = (double) width;
-		double h = (double) height;
-
-		for (double i = -w; i <= w; i++) {
-			for (double j = -h; j <= h; j++) {
-				Location location = origin.clone().add(
-						orthoud.clone().multiply(j));
-				location = location.add(ortholr.clone().multiply(i));
-				if (GeneralMethods.isRegionProtectedFromBuild(player,
-						"WallOfFire", location))
-					continue;
-				Block block = location.getBlock();
-				if (!blocks.contains(block))
-					blocks.add(block);
-			}
-		}
-
-	}
-
-	private void display() {
-		for (Block block : blocks) {
-			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
-			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
-			
-			if (GeneralMethods.rand.nextInt(7) == 0) {
-				FireMethods.playFirebendingSound(block.getLocation());
-			}
-		}
-	}
-
-	private void damage() {
-		double radius = height;
-		if (radius < width)
-			radius = width;
-		radius = radius + 1;
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(origin, radius);
-		if (entities.contains(player))
-			entities.remove(player);
-		for (Entity entity : entities) {
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "WallOfFire",
-					entity.getLocation()))
-				continue;
-			for (Block block : blocks) {
-				if (entity.getLocation().distance(block.getLocation()) <= 1.5) {
-					affect(entity);
-					break;
-				}
-			}
-		}
-	}
-
-	private void affect(Entity entity) {
-		entity.setFireTicks((int) (FIRETICKS * 20));
-		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
-		if (entity instanceof LivingEntity) {
-			GeneralMethods.damageEntity(player, entity, damage);
-			new Enflamed(entity, player);
-			AirMethods.breakBreathbendingHold(entity);
-		}
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public int getRange() {
-		return range;
-	}
-
-	public void setRange(int range) {
-		this.range = range;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public long getDuration() {
-		return duration;
-	}
-
-	public void setDuration(long duration) {
-		this.duration = duration;
-	}
-
-	public int getDamage() {
-		return damage;
-	}
-
-	public void setDamage(int damage) {
-		this.damage = damage;
-	}
-
-	public long getCooldown() {
-		return cooldown;
-	}
-
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
-		if (player != null)
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WallOfFire", cooldown);
-	}
-
-	public long getDamageinterval() {
-		return damageinterval;
-	}
-
-	public void setDamageinterval(long damageinterval) {
-		this.damageinterval = damageinterval;
-	}
-
 	@Override
 	public void reloadVariables() {
 		RANGE = config.get().getInt("Abilities.Fire.WallOfFire.Range");
@@ -267,7 +239,7 @@ public class WallOfFire extends CoreAbility {
 		COOLDOWN = config.get().getLong("Abilities.Fire.WallOfFire.Cooldown");
 		DAMAGE_INTERVAL = config.get().getLong("Abilities.Fire.WallOfFire.Interval");
 		FIRETICKS = config.get().getDouble("Abilities.Fire.WallOfFire.FireTicks");
-	    range = RANGE;
+		range = RANGE;
 		height = HEIGHT;
 		width = WIDTH;
 		duration = DURATION;
@@ -276,8 +248,33 @@ public class WallOfFire extends CoreAbility {
 		damageinterval = DAMAGE_INTERVAL;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.WallOfFire;
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+		if (player != null)
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WallOfFire", cooldown);
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public void setDamageinterval(long damageinterval) {
+		this.damageinterval = damageinterval;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public void setRange(int range) {
+		this.range = range;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
 	}
 }

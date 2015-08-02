@@ -1,6 +1,12 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
+import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -10,13 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.earthbending.EarthBlast;
-import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import java.util.ArrayList;
 
 public class FireShield extends CoreAbility {
 
@@ -44,7 +44,8 @@ public class FireShield extends CoreAbility {
 		if (containsPlayer(player, FireShield.class))
 			return;
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("FireShield")) return;
+		if (bPlayer.isOnCooldown("FireShield"))
+			return;
 		/* End Initial Checks */
 		reloadVariables();
 		this.player = player;
@@ -61,29 +62,24 @@ public class FireShield extends CoreAbility {
 	}
 
 	public static String getDescription() {
-		return "FireShield is a basic defensive ability. "
-				+ "Clicking with this ability selected will create a "
-				+ "small disc of fire in front of you, which will block most "
-				+ "attacks and bending. Alternatively, pressing and holding "
-				+ "sneak creates a very small shield of fire, blocking most attacks. "
-				+ "Creatures that contact this fire are ignited.";
+		return "FireShield is a basic defensive ability. " + "Clicking with this ability selected will create a " + "small disc of fire in front of you, which will block most " + "attacks and bending. Alternatively, pressing and holding " + "sneak creates a very small shield of fire, blocking most attacks. " + "Creatures that contact this fire are ignited.";
 	}
 
 	public static boolean isWithinShield(Location loc) {
-		for (Integer id : getInstances(StockAbility.FireShield).keySet()){
+		for (Integer id : getInstances(StockAbility.FireShield).keySet()) {
 			FireShield fshield = (FireShield) getInstances(StockAbility.FireShield).get(id);
 			Location playerLoc = fshield.player.getLocation();
 
-			if(fshield.shield) {
+			if (fshield.shield) {
 				if (!playerLoc.getWorld().equals(loc.getWorld()))
 					return false;
-				if(playerLoc.distance(loc) <= fshield.radius)
+				if (playerLoc.distance(loc) <= fshield.radius)
 					return true;
 			} else {
 				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(fshield.discradius));
-				if (!tempLoc.getWorld().equals(loc.getWorld())) 
+				if (!tempLoc.getWorld().equals(loc.getWorld()))
 					return false;
-				if(tempLoc.distance(loc) <= fshield.discradius)
+				if (tempLoc.distance(loc) <= fshield.discradius)
 					return true;
 			}
 		}
@@ -148,17 +144,14 @@ public class FireShield extends CoreAbility {
 					for (double phi = 0; phi < 360; phi += 20) {
 						double rphi = Math.toRadians(phi);
 						double rtheta = Math.toRadians(theta);
-						Block block = location.clone().add(
-								radius * Math.cos(rphi) * Math.sin(rtheta),
-								radius * Math.cos(rtheta),
-								radius * Math.sin(rphi)	* Math.sin(rtheta)).getBlock();
+						Block block = location.clone().add(radius * Math.cos(rphi) * Math.sin(rtheta), radius * Math.cos(rtheta), radius * Math.sin(rphi) * Math.sin(rtheta)).getBlock();
 						if (!blocks.contains(block) && !GeneralMethods.isSolid(block) && !block.isLiquid())
 							blocks.add(block);
 					}
 				}
 
 				for (Block block : blocks) {
-					if (!GeneralMethods.isRegionProtectedFromBuild(player,	"FireShield", block.getLocation())) {
+					if (!GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
 						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
 						ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 10);
 						if (GeneralMethods.rand.nextInt(7) == 0) {
@@ -224,7 +217,7 @@ public class FireShield extends CoreAbility {
 				EarthBlast.removeAroundPoint(location, discradius);
 				FireStream.removeAroundPoint(location, discradius);
 				Combustion.removeAroundPoint(location, discradius);
-				for (Entity entity: GeneralMethods.getEntitiesAroundPoint(location, discradius)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, discradius)) {
 					if (entity instanceof Projectile) {
 						entity.remove();
 					}

@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.AddonAbility;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.waterbending.Plantbending;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,10 +13,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Ability.AddonAbility;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.waterbending.Plantbending;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FireStream extends AddonAbility {
 
@@ -22,10 +22,12 @@ public class FireStream extends AddonAbility {
 	public static ConcurrentHashMap<Block, Long> ignitedtimes = new ConcurrentHashMap<Block, Long>();
 	public static ConcurrentHashMap<LivingEntity, Player> ignitedentities = new ConcurrentHashMap<LivingEntity, Player>();
 
-	static long soonesttime = config.get().getLong("Properties.GlobalCooldown");
-
-	public static int firedamage = 3;
-	public static int tickdamage = 2;
+	@SuppressWarnings("unused")
+	private static long soonesttime = config.get().getLong("Properties.GlobalCooldown");
+	@SuppressWarnings("unused")
+	private static int firedamage = 3;
+	@SuppressWarnings("unused")
+	private static int tickdamage = 2;
 
 	private static double speed = 15;
 	private static long interval = (long) (1000. / speed);
@@ -73,10 +75,7 @@ public class FireStream extends AddonAbility {
 
 	public static boolean isIgnitable(Player player, Block block) {
 
-		Material[] overwriteable = { Material.SAPLING, Material.LONG_GRASS, Material.THIN_GLASS,
-				Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE,
-				Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.FIRE,
-				Material.SNOW, Material.TORCH };
+		Material[] overwriteable = { Material.SAPLING, Material.LONG_GRASS, Material.THIN_GLASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.FIRE, Material.SNOW, Material.TORCH };
 
 		if (Arrays.asList(overwriteable).contains(block.getType())) {
 			return true;
@@ -84,29 +83,8 @@ public class FireStream extends AddonAbility {
 			return false;
 		}
 
-		Material[] ignitable = { 
-				Material.BEDROCK, Material.BOOKSHELF,
-				Material.BRICK, Material.CLAY, Material.CLAY_BRICK,
-				Material.COAL_ORE, Material.COBBLESTONE, Material.DIAMOND_ORE,
-				Material.DIAMOND_BLOCK, Material.DIRT, Material.ENDER_STONE,
-				Material.GLOWING_REDSTONE_ORE, Material.GOLD_BLOCK,
-				Material.GRAVEL, Material.GRASS, Material.HUGE_MUSHROOM_1,
-				Material.HUGE_MUSHROOM_2, Material.LAPIS_BLOCK,
-				Material.LAPIS_ORE, Material.LOG, Material.MOSSY_COBBLESTONE,
-				Material.MYCEL, Material.NETHER_BRICK, Material.NETHERRACK,
-				Material.OBSIDIAN, Material.REDSTONE_ORE, Material.SAND,
-				Material.SANDSTONE, Material.SMOOTH_BRICK, Material.STONE,
-				Material.SOUL_SAND, Material.WOOD, // Material.SNOW_BLOCK, 
-				Material.WOOL, Material.LEAVES, Material.LEAVES_2, Material.MELON_BLOCK,
-				Material.PUMPKIN, Material.JACK_O_LANTERN, Material.NOTE_BLOCK,
-				Material.GLOWSTONE, Material.IRON_BLOCK, Material.DISPENSER,
-				Material.SPONGE, Material.IRON_ORE, Material.GOLD_ORE,
-				Material.COAL_BLOCK, Material.WORKBENCH, Material.HAY_BLOCK,
-				Material.REDSTONE_LAMP_OFF, Material.REDSTONE_LAMP_ON,
-				Material.EMERALD_ORE, Material.EMERALD_BLOCK, Material.REDSTONE_BLOCK,
-				Material.QUARTZ_BLOCK, Material.QUARTZ_ORE, Material.STAINED_CLAY,
-				Material.HARD_CLAY
-		};
+		Material[] ignitable = { Material.BEDROCK, Material.BOOKSHELF, Material.BRICK, Material.CLAY, Material.CLAY_BRICK, Material.COAL_ORE, Material.COBBLESTONE, Material.DIAMOND_ORE, Material.DIAMOND_BLOCK, Material.DIRT, Material.ENDER_STONE, Material.GLOWING_REDSTONE_ORE, Material.GOLD_BLOCK, Material.GRAVEL, Material.GRASS, Material.HUGE_MUSHROOM_1, Material.HUGE_MUSHROOM_2, Material.LAPIS_BLOCK, Material.LAPIS_ORE, Material.LOG, Material.MOSSY_COBBLESTONE, Material.MYCEL, Material.NETHER_BRICK, Material.NETHERRACK, Material.OBSIDIAN, Material.REDSTONE_ORE, Material.SAND, Material.SANDSTONE, Material.SMOOTH_BRICK, Material.STONE, Material.SOUL_SAND, Material.WOOD, // Material.SNOW_BLOCK, 
+		Material.WOOL, Material.LEAVES, Material.LEAVES_2, Material.MELON_BLOCK, Material.PUMPKIN, Material.JACK_O_LANTERN, Material.NOTE_BLOCK, Material.GLOWSTONE, Material.IRON_BLOCK, Material.DISPENSER, Material.SPONGE, Material.IRON_ORE, Material.GOLD_ORE, Material.COAL_BLOCK, Material.WORKBENCH, Material.HAY_BLOCK, Material.REDSTONE_LAMP_OFF, Material.REDSTONE_LAMP_ON, Material.EMERALD_ORE, Material.EMERALD_BLOCK, Material.REDSTONE_BLOCK, Material.QUARTZ_BLOCK, Material.QUARTZ_ORE, Material.STAINED_CLAY, Material.HARD_CLAY };
 
 		Block belowblock = block.getRelative(BlockFace.DOWN);
 		if (Arrays.asList(ignitable).contains(belowblock.getType())) {
@@ -124,7 +102,7 @@ public class FireStream extends AddonAbility {
 			ignitedtimes.remove(block);
 		}
 	}
-	
+
 	public static void removeAll(Class<? extends CoreAbility> abilityClass) {
 		for (Block block : ignitedblocks.keySet())
 			remove(block);
@@ -198,7 +176,7 @@ public class FireStream extends AddonAbility {
 	public void reloadVariables() {
 		soonesttime = config.get().getLong("Properties.GlobalCooldown");
 	}
-	
+
 	public void setRange(double range) {
 		this.range = range;
 	}

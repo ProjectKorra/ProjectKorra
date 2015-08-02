@@ -1,20 +1,20 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.Utilities.Flight;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.ArrayList;
 
 public class FireJet extends CoreAbility {
 
@@ -34,10 +34,11 @@ public class FireJet extends CoreAbility {
 			return;
 		}
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("FireJet")) return;
+		if (bPlayer.isOnCooldown("FireJet"))
+			return;
 		/* End Initial Checks */
 		reloadVariables();
-		
+
 		factor = FireMethods.getFirebendingDayAugment(defaultfactor, player.getWorld());
 		Block block = player.getLocation().getBlock();
 		if (FireStream.isIgnitable(player, block) || block.getType() == Material.AIR || AvatarState.isAvatarState(player)) {
@@ -63,6 +64,31 @@ public class FireJet extends CoreAbility {
 		return false;
 	}
 
+	public static ArrayList<Player> getPlayers() {
+		ArrayList<Player> players = new ArrayList<Player>();
+		for (Integer id : getInstances(StockAbility.FireJet).keySet()) {
+			players.add(getInstances(StockAbility.FireJet).get(id).getPlayer());
+		}
+		return players;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public double getFactor() {
+		return factor;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	@Override
+	public StockAbility getStockAbility() {
+		return StockAbility.FireJet;
+	}
+
 	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
@@ -70,8 +96,7 @@ public class FireJet extends CoreAbility {
 			remove();
 			return false;
 		}
-		if ((WaterMethods.isWater(player.getLocation().getBlock()) || System.currentTimeMillis() > time + duration)
-				&& (!AvatarState.isAvatarState(player) || !isToggle)) {
+		if ((WaterMethods.isWater(player.getLocation().getBlock()) || System.currentTimeMillis() > time + duration) && (!AvatarState.isAvatarState(player) || !isToggle)) {
 			// player.setAllowFlight(canfly);
 			remove();
 		} else {
@@ -96,34 +121,6 @@ public class FireJet extends CoreAbility {
 		return true;
 	}
 
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (Integer id : getInstances(StockAbility.FireJet).keySet()) {
-			players.add(getInstances(StockAbility.FireJet).get(id).getPlayer());
-		}
-		return players;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public long getDuration() {
-		return duration;
-	}
-
-	public void setDuration(long duration) {
-		this.duration = duration;
-	}
-
-	public double getFactor() {
-		return factor;
-	}
-
-	public void setFactor(double factor) {
-		this.factor = factor;
-	}
-
 	@Override
 	public void reloadVariables() {
 		defaultfactor = config.get().getDouble("Abilities.Fire.FireJet.Speed");
@@ -131,9 +128,12 @@ public class FireJet extends CoreAbility {
 		isToggle = config.get().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.FireJet;
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public void setFactor(double factor) {
+		this.factor = factor;
 	}
 
 }

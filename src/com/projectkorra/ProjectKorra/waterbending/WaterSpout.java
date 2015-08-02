@@ -1,10 +1,10 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import com.projectkorra.ProjectKorra.Flight;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.Flight;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
 import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
 
 import org.bukkit.Location;
@@ -24,7 +24,7 @@ public class WaterSpout {
 	public static ConcurrentHashMap<Block, Block> newaffectedblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Block, Block> baseblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Block, Long> revert = new ConcurrentHashMap<Block, Long>();
-	
+
 	private static final int HEIGHT = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Height");
 	private static final boolean PARTICLES = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
 	private static final boolean BLOCKS = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
@@ -41,7 +41,7 @@ public class WaterSpout {
 	private long interval = 50;
 	private int angle = 0;
 	private double rotation;
-	
+
 	public WaterSpout(Player player) {
 		//		if (BendingPlayer.getBendingPlayer(player).isOnCooldown(
 		//				Abilities.WaterSpout))
@@ -52,20 +52,18 @@ public class WaterSpout {
 			return;
 		}
 		this.player = player;
-		
+
 		WaterWave wwave = new WaterWave(player, WaterWave.AbilityType.CLICK);
-		if(WaterWave.instances.contains(wwave))
+		if (WaterWave.instances.contains(wwave))
 			return;
-		
+
 		Block topBlock = GeneralMethods.getTopBlock(player.getLocation(), 0, -50);
-		if(topBlock == null)
+		if (topBlock == null)
 			topBlock = player.getLocation().getBlock();
 		Material mat = topBlock.getType();
-		if(mat != Material.WATER && mat != Material.STATIONARY_WATER
-				&& mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW 
-				&& mat != Material.SNOW_BLOCK)
+		if (mat != Material.WATER && mat != Material.STATIONARY_WATER && mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW && mat != Material.SNOW_BLOCK)
 			return;
-		
+
 		new Flight(player);
 		player.setAllowFlight(true);
 		instances.put(player, this);
@@ -76,12 +74,12 @@ public class WaterSpout {
 		revertBaseBlock(player);
 		instances.remove(player);
 	}
-	
-	private static void progressRevert(boolean ignoreTime){
-		for(Block block : revert.keySet()){
+
+	private static void progressRevert(boolean ignoreTime) {
+		for (Block block : revert.keySet()) {
 			long time = revert.get(block);
-			if(System.currentTimeMillis() > time || ignoreTime){
-				if(TempBlock.isTempBlock(block))
+			if (System.currentTimeMillis() > time || ignoreTime) {
+				if (TempBlock.isTempBlock(block))
 					TempBlock.revertBlock(block, Material.AIR);
 				revert.remove(block);
 			}
@@ -92,7 +90,7 @@ public class WaterSpout {
 		// affectedblocks.clear();
 		newaffectedblocks.clear();
 		progressRevert(false);
-		
+
 		for (Player player : instances.keySet()) {
 			if (!player.isOnline() || player.isDead()) {
 				instances.get(player).remove();
@@ -146,7 +144,7 @@ public class WaterSpout {
 			player.setSprinting(false);
 			if (GeneralMethods.rand.nextInt(4) == 0) {
 				WaterMethods.playWaterbendingSound(player.getLocation());
-			}		
+			}
 			// if (player.getVelocity().length() > threshold) {
 			// // Methods.verbose("Too fast!");
 			// player.setVelocity(player.getVelocity().clone().normalize()
@@ -174,7 +172,7 @@ public class WaterSpout {
 					instances.get(player).rotateParticles(block);
 					newaffectedblocks.put(block, block);
 				}
-				instances.get(player).displayWaterSpiral(location.clone().add(.5,0,.5));
+				instances.get(player).displayWaterSpiral(location.clone().add(.5, 0, .5));
 				if (player.getLocation().getBlockY() > block.getY()) {
 					player.setFlying(false);
 				} else {
@@ -187,14 +185,12 @@ public class WaterSpout {
 			}
 		}
 	}
-	
-	public void rotateParticles(Block block)
-	{
-		if(!PARTICLES)
+
+	public void rotateParticles(Block block) {
+		if (!PARTICLES)
 			return;
-		
-		if (System.currentTimeMillis() >= time + interval)
-		{
+
+		if (System.currentTimeMillis() >= time + interval) {
 			time = System.currentTimeMillis();
 
 			Location location = block.getLocation();
@@ -210,18 +206,15 @@ public class WaterSpout {
 			angle++;
 			if (angle >= directions.length)
 				angle = 0;
-			for (int i = 1; i <= dy; i++)
-			{
+			for (int i = 1; i <= dy; i++) {
 
 				index += 1;
 				if (index >= directions.length)
 					index = 0;
 
-				Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i,
-						location.getZ());
+				Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
 
-				ParticleEffect.WATER_SPLASH.display(effectloc2, directions[index], directions[index],
-						directions[index], 5, HEIGHT + 5);
+				ParticleEffect.WATER_SPLASH.display(effectloc2, directions[index], directions[index], directions[index], 5, HEIGHT + 5);
 			}
 		}
 	}
@@ -250,7 +243,7 @@ public class WaterSpout {
 				if (blocki.getType() == Material.ICE || blocki.getType() == Material.SNOW || blocki.getType() == Material.SNOW_BLOCK) {
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock(player);
-						instances.get(player).baseblock = new TempBlock(blocki,	Material.STATIONARY_WATER, (byte) 8);
+						instances.get(player).baseblock = new TempBlock(blocki, Material.STATIONARY_WATER, (byte) 8);
 					}
 					// blocki.setType(Material.WATER);
 					// blocki.setData(full);
@@ -268,7 +261,7 @@ public class WaterSpout {
 		revertBaseBlock(player);
 		return -1;
 	}
-	
+
 	private void displayWaterSpiral(Location location) {
 
 		if (!BLOCKS) {
@@ -285,13 +278,11 @@ public class WaterSpout {
 			double angle = (i * Math.PI / 180);
 			double x = 1 * Math.cos(angle + rotation);
 			double z = 1 * Math.sin(angle + rotation);
-			Location loc = location.clone().getBlock().getLocation()
-					.add(.5, .5, .5);
+			Location loc = location.clone().getBlock().getLocation().add(.5, .5, .5);
 			loc.add(x, height, z);
 
 			Block block = loc.getBlock();
-			if (block.getType().equals(Material.AIR)
-					|| !GeneralMethods.isSolid(block)) {
+			if (block.getType().equals(Material.AIR) || !GeneralMethods.isSolid(block)) {
 				revert.put(block, 0L);
 				new TempBlock(block, Material.STATIONARY_WATER, (byte) 1);
 			}
@@ -310,7 +301,7 @@ public class WaterSpout {
 	public static void removeAll() {
 		progressRevert(true);
 		revert.clear();
-		
+
 		for (Player player : instances.keySet()) {
 			instances.get(player).remove();
 		}
@@ -340,7 +331,7 @@ public class WaterSpout {
 
 				double distance = Math.sqrt(dx * dx + dz * dz);
 
-				if (distance <= radius && dy > 0 && dy < instances.get(player).defaultheight){
+				if (distance <= radius && dy > 0 && dy < instances.get(player).defaultheight) {
 					removed = true;
 					instances.get(player).remove();
 				}
@@ -350,11 +341,7 @@ public class WaterSpout {
 	}
 
 	public static String getDescription() {
-		return "To use this ability, click while over or in water. "
-				+ "You will spout water up from beneath you to experience controlled levitation. "
-				+ "This ability is a toggle, so you can activate it then use other abilities and it "
-				+ "will remain on. If you try to spout over an area with no water, snow or ice, "
-				+ "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.";
+		return "To use this ability, click while over or in water. " + "You will spout water up from beneath you to experience controlled levitation. " + "This ability is a toggle, so you can activate it then use other abilities and it " + "will remain on. If you try to spout over an area with no water, snow or ice, " + "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.";
 	}
 
 	public Player getPlayer() {

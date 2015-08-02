@@ -1,18 +1,19 @@
-package com.projectkorra.ProjectKorra;
+package com.projectkorra.ProjectKorra.Ability.Combo;
+
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.airbending.AirCombo;
+import com.projectkorra.ProjectKorra.firebending.FireCombo;
+import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
+
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import com.projectkorra.ProjectKorra.Ability.Combo.ComboAbilityModule;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.airbending.AirCombo;
-import com.projectkorra.ProjectKorra.firebending.FireCombo;
-import com.projectkorra.ProjectKorra.waterbending.WaterCombo;
 
 public class ComboManager {
 	private static final long CLEANUP_DELAY = 10000;
@@ -21,7 +22,7 @@ public class ComboManager {
 	public static HashMap<String, String> authors = new HashMap<String, String>();
 	public static HashMap<String, String> descriptions = new HashMap<String, String>();
 	public static HashMap<String, String> instructions = new HashMap<String, String>();
-	
+
 	public ComboManager() {
 		ArrayList<AbilityInformation> fireKick = new ArrayList<AbilityInformation>();
 		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
@@ -79,10 +80,13 @@ public class ComboManager {
 		comboAbilityList.add(new ComboAbility("AirStream", airStream, AirCombo.class));
 
 		/*
-		 * ArrayList<AbilityInformation> airSlice = new ArrayList<AbilityInformation>();
-		 * airSlice.add(new AbilityInformation("AirBlast",ClickType.LEFTCLICK)); airSlice.add(new
-		 * AbilityInformation("AirScooter",ClickType.SHIFTDOWN)); airSlice.add(new
-		 * AbilityInformation("AirScooter",ClickType.LEFTCLICK)); comboAbilityList.add(new
+		 * ArrayList<AbilityInformation> airSlice = new
+		 * ArrayList<AbilityInformation>(); airSlice.add(new
+		 * AbilityInformation("AirBlast",ClickType.LEFTCLICK)); airSlice.add(new
+		 * AbilityInformation("AirScooter",ClickType.SHIFTDOWN));
+		 * airSlice.add(new
+		 * AbilityInformation("AirScooter",ClickType.LEFTCLICK));
+		 * comboAbilityList.add(new
 		 * ComboAbility("AirSlice",airSlice,AirCombo.class));
 		 */
 
@@ -277,7 +281,7 @@ public class ComboManager {
 			return abilityName + " " + clickType + " " + time;
 		}
 	}
-	
+
 	public static class ComboAbility {
 		private String name;
 		private ArrayList<AbilityInformation> abilities;

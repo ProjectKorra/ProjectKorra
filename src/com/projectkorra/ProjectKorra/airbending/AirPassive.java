@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -8,18 +10,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirPassive implements ConfigLoadable {
-	
+
 	private static ConcurrentHashMap<Player, Float> food = new ConcurrentHashMap<Player, Float>();
 	private static float factor = (float) config.get().getDouble("Abilities.Air.Passive.Factor");
-	
+
 	private static int speedPower = config.get().getInt("Abilities.Air.Passive.Speed");
 	private static int jumpPower = config.get().getInt("Abilities.Air.Passive.Jump");
-	
+
 	public static float getExhaustion(Player player, float level) {
 		if (!food.keySet().contains(player)) {
 			food.put(player, level);
@@ -36,11 +36,12 @@ public class AirPassive implements ConfigLoadable {
 			return level;
 		}
 	}
-	
+
 	public static void handlePassive(Server server) {
-		for (World world: server.getWorlds()) {
-			for (Player player: world.getPlayers()) {
-				if (!player.isOnline()) return;
+		for (World world : server.getWorlds()) {
+			for (Player player : world.getPlayers()) {
+				if (!player.isOnline())
+					return;
 				if (GeneralMethods.canBendPassive(player.getName(), Element.Air)) {
 					player.setExhaustion(getExhaustion(player, player.getExhaustion())); // Handles Food Passive
 					if (player.isSprinting()) {
@@ -61,7 +62,7 @@ public class AirPassive implements ConfigLoadable {
 	@Override
 	public void reloadVariables() {
 		factor = (float) config.get().getDouble("Abilities.Air.Passive.Factor");
-		
+
 		speedPower = config.get().getInt("Abilities.Air.Passive.Speed");
 		jumpPower = config.get().getInt("Abilities.Air.Passive.Jump");
 	}

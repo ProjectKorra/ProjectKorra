@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,16 +14,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthPassive {
-	
+
 	public static ConcurrentHashMap<Block, Long> sandblocks = new ConcurrentHashMap<Block, Long>();
 	public static ConcurrentHashMap<Block, Material> sandidentities = new ConcurrentHashMap<Block, Material>();
-	
+
 	private static final long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Passive.Duration");
 	private static int sandspeed = ProjectKorra.plugin.getConfig().getInt("Properties.Earth.Passive.SandRunPower");
 
@@ -47,8 +47,8 @@ public class EarthPassive {
 					}
 				}
 			}
-			
-			for (Block affectedBlock: GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
+
+			for (Block affectedBlock : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
 				if (EarthMethods.isEarthbendable(player, affectedBlock)) {
 					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
 						Material type = affectedBlock.getType();
@@ -68,17 +68,17 @@ public class EarthPassive {
 			}
 			return true;
 		}
-		
+
 		if (EarthMethods.isEarthbendable(player, block) || EarthMethods.isTransparentToEarthbending(player, block)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public static boolean isPassiveSand(Block block) {
 		return (sandblocks.containsKey(block));
 	}
-	
+
 	public static void revertSand(Block block) {
 		Material type = sandidentities.get(block);
 		sandidentities.remove(block);
@@ -91,33 +91,32 @@ public class EarthPassive {
 			}
 		}
 	}
-	
+
 	public static void sandSpeed() {
-		for(Player p : Bukkit.getOnlinePlayers()){
-			if(p != null && GeneralMethods.getBendingPlayer(p.getName()) != null){
-				if(EarthMethods.canSandbend(p) && GeneralMethods.getBendingPlayer(p.getName()).hasElement(Element.Earth) && !GeneralMethods.canBendPassive(p.getName(), Element.Air) && !GeneralMethods.canBendPassive(p.getName(), Element.Chi)){
-					if(p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SAND || 
-							p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SANDSTONE ||
-							p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.RED_SANDSTONE){
-				   	   		p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, sandspeed - 1));
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			if (p != null && GeneralMethods.getBendingPlayer(p.getName()) != null) {
+				if (EarthMethods.canSandbend(p) && GeneralMethods.getBendingPlayer(p.getName()).hasElement(Element.Earth) && !GeneralMethods.canBendPassive(p.getName(), Element.Air) && !GeneralMethods.canBendPassive(p.getName(), Element.Chi)) {
+					if (p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SAND || p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SANDSTONE || p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.RED_SANDSTONE) {
+						p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, sandspeed - 1));
 					}
 				}
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public static void handleMetalPassives() {
-		for (Player player: Bukkit.getOnlinePlayers()) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (GeneralMethods.canBendPassive(player.getName(), Element.Earth) && EarthMethods.canMetalbend(player)) {
 				if (player.isSneaking() && !GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("MetalPassive")) {
 					Block block = player.getTargetBlock((HashSet<Material>) null, 5);
-					if (block == null) continue;
+					if (block == null)
+						continue;
 					if (block.getType() == Material.IRON_DOOR_BLOCK && !GeneralMethods.isRegionProtectedFromBuild(player, null, block.getLocation())) {
 						if (block.getData() >= 8) {
 							block = block.getRelative(BlockFace.DOWN);
 						}
-						
+
 						if (block.getData() < 4) {
 							block.setData((byte) (block.getData() + 4));
 							block.getWorld().playSound(block.getLocation(), Sound.DOOR_CLOSE, 10, 1);
@@ -125,42 +124,42 @@ public class EarthPassive {
 							block.setData((byte) (block.getData() - 4));
 							block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
 						}
-						
+
 						GeneralMethods.getBendingPlayer(player.getName()).addCooldown("MetalPassive", 200);
-						
-//						Door door = (Door) block.getState().getData();
-//						if (door.isTopHalf()) {
-//							block = block.getRelative(BlockFace.DOWN);
-//							if (door.isOpen()) {
-//								door.setOpen(false);
-//							} else {
-//								door.setOpen(true);
-//							}
-//						}
+
+						//						Door door = (Door) block.getState().getData();
+						//						if (door.isTopHalf()) {
+						//							block = block.getRelative(BlockFace.DOWN);
+						//							if (door.isOpen()) {
+						//								door.setOpen(false);
+						//							} else {
+						//								door.setOpen(true);
+						//							}
+						//						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	public static void revertSands() {
-		for (Block block: sandblocks.keySet()) {
+		for (Block block : sandblocks.keySet()) {
 			if (System.currentTimeMillis() >= sandblocks.get(block) + duration) {
 				revertSand(block);
 			}
 		}
 	}
-	
+
 	public static void revertAllSand() {
-		for (Block block: sandblocks.keySet()) {
+		for (Block block : sandblocks.keySet()) {
 			revertSand(block);
 		}
 	}
-	
+
 	public static void removeAll() {
 		revertAllSand();
 	}
-	
+
 	public static boolean canPhysicsChange(Block block) {
 		if (LavaWall.affectedblocks.containsKey(block))
 			return false;
@@ -174,17 +173,15 @@ public class EarthPassive {
 			return false;
 		return true;
 	}
-	
+
 	public static boolean canFlowFromTo(Block from, Block to) {
 		// if (to.getType() == Material.TORCH)
 		// return true;
-		if (LavaWall.affectedblocks.containsKey(to)
-				|| LavaWall.affectedblocks.containsKey(from)) {
+		if (LavaWall.affectedblocks.containsKey(to) || LavaWall.affectedblocks.containsKey(from)) {
 			// Methods.verbose("waterwallaffectedblocks");
 			return false;
 		}
-		if (LavaWall.wallblocks.containsKey(to)
-				|| LavaWall.wallblocks.containsKey(from)) {
+		if (LavaWall.wallblocks.containsKey(to) || LavaWall.wallblocks.containsKey(from)) {
 			// Methods.verbose("waterwallwall");
 			return false;
 		}
@@ -196,11 +193,11 @@ public class EarthPassive {
 			// Methods.verbose("tempblock");
 			return false;
 		}
-//		if (Methods.isAdjacentToFrozenBlock(to)
-//				|| Methods.isAdjacentToFrozenBlock(from)) {
-//			// Methods.verbose("frozen");
-//			return false;
-//		}
+		//		if (Methods.isAdjacentToFrozenBlock(to)
+		//				|| Methods.isAdjacentToFrozenBlock(from)) {
+		//			// Methods.verbose("frozen");
+		//			return false;
+		//		}
 
 		return true;
 	}

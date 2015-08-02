@@ -1,7 +1,7 @@
 package com.projectkorra.ProjectKorra.Utilities;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.ProjectKorra.PKListener;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,8 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.PKListener;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GrapplingHookAPI {
 
@@ -46,13 +46,13 @@ public class GrapplingHookAPI {
 
 		if (isInteger(uses)) {
 			return Integer.parseInt(uses);
-		}
-		else
+		} else
 			return 0;
 	}
 
 	public static boolean playerOnCooldown(Player player) {
-		if (PKListener.noGrapplePlayers.containsKey(player.getName())) return true;
+		if (PKListener.noGrapplePlayers.containsKey(player.getName()))
+			return true;
 		return false;
 	}
 
@@ -61,6 +61,7 @@ public class GrapplingHookAPI {
 			PKListener.noGrapplePlayers.remove(player.getName());
 		}
 	}
+
 	public static void addPlayerCooldown(final Player player, int seconds) {
 		if (PKListener.noGrapplePlayers.containsKey(player.getName())) {
 			Bukkit.getServer().getScheduler().cancelTask(PKListener.noGrapplePlayers.get(player.getName()));
@@ -79,17 +80,18 @@ public class GrapplingHookAPI {
 		ItemMeta im = is.getItemMeta();
 		List<String> lore = new ArrayList<String>();
 
-		lore.add(ChatColor.GRAY+"Uses Left: " + ChatColor.GREEN + uses);
+		lore.add(ChatColor.GRAY + "Uses Left: " + ChatColor.GREEN + uses);
 		im.setLore(lore);
 		is.setItemMeta(im);
 	}
 
 	public static boolean addUse(Player player, ItemStack hook) {
-		if (player.getGameMode() == GameMode.CREATIVE) return true;
+		if (player.getGameMode() == GameMode.CREATIVE)
+			return true;
 
 		ItemMeta im = hook.getItemMeta();
 		String usesLine = im.getLore().get(0);
-		String uses = usesLine.substring(usesLine.indexOf("a")+1, usesLine.length());
+		String uses = usesLine.substring(usesLine.indexOf("a") + 1, usesLine.length());
 
 		if (isInteger(uses) == false) {
 			player.setItemInHand(new ItemStack(Material.AIR));
@@ -120,7 +122,8 @@ public class GrapplingHookAPI {
 	private static boolean isInteger(String s) {
 		try {
 			Integer.parseInt(s);
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			return false;
 		}
 		return true;
@@ -147,9 +150,9 @@ public class GrapplingHookAPI {
 		double g = -0.08;
 		double d = loc.distance(entityLoc);
 		double t = d;
-		double v_x = (1.0+0.07*t) * (loc.getX()-entityLoc.getX())/t;
-		double v_y = (1.0+0.03*t) * (loc.getY()-entityLoc.getY())/t -0.5*g*t;
-		double v_z = (1.0+0.07*t) * (loc.getZ()-entityLoc.getZ())/t;
+		double v_x = (1.0 + 0.07 * t) * (loc.getX() - entityLoc.getX()) / t;
+		double v_y = (1.0 + 0.03 * t) * (loc.getY() - entityLoc.getY()) / t - 0.5 * g * t;
+		double v_z = (1.0 + 0.07 * t) * (loc.getZ() - entityLoc.getZ()) / t;
 
 		Vector v = e.getVelocity();
 		v.setX(v_x);
@@ -157,6 +160,5 @@ public class GrapplingHookAPI {
 		v.setZ(v_z);
 		e.setVelocity(v);
 	}
-
 
 }

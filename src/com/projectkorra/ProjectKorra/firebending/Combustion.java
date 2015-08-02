@@ -1,13 +1,5 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -16,6 +8,14 @@ import com.projectkorra.ProjectKorra.Ability.CoreAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbility;
 import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 import com.projectkorra.ProjectKorra.airbending.AirMethods;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class Combustion extends CoreAbility {
 
@@ -28,7 +28,7 @@ public class Combustion extends CoreAbility {
 	public static boolean breakblocks = config.get().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
 	public static double radius = config.get().getDouble("Abilities.Fire.Combustion.Radius");
 	public static double defaultdamage = config.get().getDouble("Abilities.Fire.Combustion.Damage");
-	
+
 	private static final int maxticks = 10000;
 
 	private Location location;
@@ -48,8 +48,10 @@ public class Combustion extends CoreAbility {
 	public Combustion(Player player) {
 		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (containsPlayer(player, Combustion.class)) return;
-		if (bPlayer.isOnCooldown("Combustion")) return;
+		if (containsPlayer(player, Combustion.class))
+			return;
+		if (bPlayer.isOnCooldown("Combustion"))
+			return;
 		/* End Initial Checks */
 		reloadVariables();
 		this.player = player;
@@ -86,7 +88,7 @@ public class Combustion extends CoreAbility {
 	}
 
 	public static boolean removeAroundPoint(Location loc, double radius) {
-		for (Integer id: getInstances(StockAbility.Combustion).keySet()) {
+		for (Integer id : getInstances(StockAbility.Combustion).keySet()) {
 			Combustion combustion = (Combustion) getInstances(StockAbility.Combustion).get(id);
 			if (combustion.location.getWorld() == loc.getWorld()) {
 				if (combustion.location.distance(loc) <= radius) {
@@ -103,14 +105,14 @@ public class Combustion extends CoreAbility {
 		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 5);
 		ParticleEffect.FLAME.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
 		//if (Methods.rand.nextInt(4) == 0) {
-			FireMethods.playCombustionSound(location);
+		FireMethods.playCombustionSound(location);
 		//}
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
 
 	private void createExplosion(Location block, float power, boolean breakblocks) {
 		block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), (float) defaultpower, true, breakblocks);
-		for (Entity entity: block.getWorld().getEntities()) {
+		for (Entity entity : block.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
 				if (entity.getLocation().distance(block) < radius) { // They are close enough to the explosion.
 					GeneralMethods.damageEntity(player, entity, damage);
@@ -172,7 +174,7 @@ public class Combustion extends CoreAbility {
 			}
 		}
 
-		for (Entity entity: location.getWorld().getEntities()) {
+		for (Entity entity : location.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
 				if (entity.getLocation().distance(location) <= 1) {
 					createExplosion(location, power, breakblocks);

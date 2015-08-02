@@ -1,15 +1,15 @@
 package com.projectkorra.ProjectKorra.configuration;
 
-import java.io.File;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.io.File;
 
 /**
- * A config utility class for Project Korra. To get the config itself
- * use {@link #get()}
+ * A config utility class for Project Korra. To get the config itself use
+ * {@link #get()}.
  */
 public class Config {
 
@@ -31,16 +31,17 @@ public class Config {
 	}
 
 	/**
-	 * Creates a file for the {@link FileConfiguration} object.
-	 * If there are missing folders, this method will try to create them
-	 * before create a file for the config.
+	 * Creates a file for the {@link FileConfiguration} object. If there are
+	 * missing folders, this method will try to create them before create a file
+	 * for the config.
 	 */
 	public void create() {
 		if (!file.getParentFile().exists()) {
 			try {
 				file.getParentFile().mkdir();
 				plugin.getLogger().info("Generating new directory for " + file.getName() + "!");
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				plugin.getLogger().info("Failed to generate directory!");
 				e.printStackTrace();
 			}
@@ -50,7 +51,8 @@ public class Config {
 			try {
 				file.createNewFile();
 				plugin.getLogger().info("Generating new " + file.getName() + "!");
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				plugin.getLogger().info("Failed to generate " + file.getName() + "!");
 				e.printStackTrace();
 			}
@@ -65,31 +67,32 @@ public class Config {
 	public FileConfiguration get() {
 		return config;
 	}
-	
+
 	/**
-	 * Reloads the {@link FileConfiguration} object.
-	 * If the config object does not exist it will run
-	 * {@link #create()} first before loading the config.
+	 * Reloads the {@link FileConfiguration} object. If the config object does
+	 * not exist it will run {@link #create()} first before loading the config.
 	 */
 	public void reload() {
 		create();
 		try {
 			config.load(file);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
 	 * Saves the {@link FileConfiguration} object.
-	 * {@code config.options().copyDefaults(true)} is called
-	 * before saving the config.
+	 * {@code config.options().copyDefaults(true)} is called before saving the
+	 * config.
 	 */
 	public void save() {
 		try {
 			config.options().copyDefaults(true);
 			config.save(file);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

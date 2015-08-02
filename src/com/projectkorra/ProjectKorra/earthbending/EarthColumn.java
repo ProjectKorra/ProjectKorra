@@ -1,24 +1,24 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Utilities.BlockSource;
 import com.projectkorra.ProjectKorra.Utilities.ClickType;
 
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.concurrent.ConcurrentHashMap;
+
 public class EarthColumn {
 
 	public static ConcurrentHashMap<Integer, EarthColumn> instances = new ConcurrentHashMap<Integer, EarthColumn>();
 	private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<Block, Block>();
 	private static ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
-	
+
 	public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
 	private static int ID = Integer.MIN_VALUE;
 
@@ -39,8 +39,9 @@ public class EarthColumn {
 
 	public EarthColumn(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
-		if (bPlayer.isOnCooldown("RaiseEarth")) return;
+
+		if (bPlayer.isOnCooldown("RaiseEarth"))
+			return;
 
 		try {
 			block = BlockSource.getEarthSourceBlock(player, range, ClickType.LEFT_CLICK);
@@ -49,7 +50,8 @@ public class EarthColumn {
 			origin = block.getLocation();
 			location = origin.clone();
 			distance = EarthMethods.getEarthbendableBlocksLength(player, block, direction.clone().multiply(-1), height);
-		} catch (IllegalStateException e) {
+		}
+		catch (IllegalStateException e) {
 			return;
 		}
 
@@ -152,13 +154,13 @@ public class EarthColumn {
 
 	private boolean canInstantiate() {
 		for (Block block : affectedblocks.keySet()) {
-			if (blockInAllAffectedBlocks(block)	|| alreadydoneblocks.containsKey(block)) {
+			if (blockInAllAffectedBlocks(block) || alreadydoneblocks.containsKey(block)) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (int ID : instances.keySet()) {
 			instances.get(ID).progress();
@@ -173,8 +175,7 @@ public class EarthColumn {
 				for (Block block : affectedblocks.keySet()) {
 					alreadydoneblocks.put(block, block);
 				}
-				baseblocks.put(location.clone().add(direction.clone().multiply(-1 * (distance - 1)))
-						.getBlock(), (distance - 1));
+				baseblocks.put(location.clone().add(direction.clone().multiply(-1 * (distance - 1))).getBlock(), (distance - 1));
 
 				return false;
 			}
@@ -224,13 +225,7 @@ public class EarthColumn {
 	}
 
 	public static String getDescription() {
-		return "To use, simply left-click on an earthbendable block. "
-				+ "A column of earth will shoot upwards from that location. "
-				+ "Anything in the way of the column will be brought up with it, "
-				+ "leaving talented benders the ability to trap brainless entities up there. "
-				+ "Additionally, simply sneak (default shift) looking at an earthbendable block. "
-				+ "A wall of earth will shoot upwards from that location. "
-				+ "Anything in the way of the wall will be brought up with it. ";
+		return "To use, simply left-click on an earthbendable block. " + "A column of earth will shoot upwards from that location. " + "Anything in the way of the column will be brought up with it, " + "leaving talented benders the ability to trap brainless entities up there. " + "Additionally, simply sneak (default shift) looking at an earthbendable block. " + "A wall of earth will shoot upwards from that location. " + "Anything in the way of the wall will be brought up with it. ";
 	}
 
 }

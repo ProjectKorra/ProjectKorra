@@ -1,5 +1,9 @@
 package com.projectkorra.ProjectKorra.Storage;
 
+import com.projectkorra.ProjectKorra.ProjectKorra;
+
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -7,20 +11,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
-import org.bukkit.scheduler.BukkitRunnable;
-
-import com.projectkorra.ProjectKorra.ProjectKorra;
-
 public abstract class Database {
 
-    protected final Logger log;
-    protected final String prefix;
-    protected final String dbprefix;
-    protected Connection connection = null;
+	protected final Logger log;
+	protected final String prefix;
+	protected final String dbprefix;
+	protected Connection connection = null;
 
-    public Database(Logger log, String prefix, String dbprefix) {
-        this.log = log;
-        this.prefix = prefix;
+	public Database(Logger log, String prefix, String dbprefix) {
+		this.log = log;
+		this.prefix = prefix;
         this.dbprefix = dbprefix;
     }
 

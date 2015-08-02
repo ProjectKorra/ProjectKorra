@@ -1,9 +1,9 @@
 package com.projectkorra.ProjectKorra.Utilities;
 
+import com.projectkorra.ProjectKorra.Utilities.BlockSource.BlockSourceType;
+
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
-import com.projectkorra.ProjectKorra.Utilities.BlockSource.BlockSourceType;
 
 public class BlockSourceInformation {
 	private Player player;
@@ -11,7 +11,7 @@ public class BlockSourceInformation {
 	private BlockSourceType sourceType;
 	private ClickType clickType;
 	private long creationTime;
-	
+
 	public BlockSourceInformation(Player player, Block block, BlockSourceType sourceType, ClickType clickType) {
 		this.player = player;
 		this.block = block;

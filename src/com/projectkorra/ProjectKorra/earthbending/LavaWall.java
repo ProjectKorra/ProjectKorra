@@ -1,8 +1,14 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource.BlockSourceType;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.firebending.FireBlast;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -11,15 +17,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource.BlockSourceType;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.firebending.FireBlast;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LavaWall {
 	public static ConcurrentHashMap<Integer, LavaWall> instances = new ConcurrentHashMap<Integer, LavaWall>();
@@ -45,7 +45,7 @@ public class LavaWall {
 
 	public LavaWall(Player player) {
 		this.player = player;
-		
+
 		if (LavaWave.instances.containsKey(player.getEntityId())) {
 			LavaWave wave = LavaWave.instances.get(player.getEntityId());
 			if (!wave.progressing) {
@@ -53,13 +53,14 @@ public class LavaWall {
 				return;
 			}
 		}
-		
+
 		if (AvatarState.isAvatarState(player)) {
 			radius = AvatarState.getValue(radius);
 		}
-		
+
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("LavaSurge")) return;
+		if (bPlayer.isOnCooldown("LavaSurge"))
+			return;
 
 	}
 
@@ -73,7 +74,7 @@ public class LavaWall {
 		}
 		return false;
 	}
-	
+
 	private void cancelPrevious() {
 		if (instances.containsKey(player.getEntityId())) {
 			LavaWall old = instances.get(player.getEntityId());
@@ -84,19 +85,19 @@ public class LavaWall {
 			}
 		}
 	}
-	
+
 	public void cancel() {
 		unfocusBlock();
 	}
-	
+
 	private void focusBlock() {
 		location = sourceblock.getLocation();
 	}
-	
+
 	private void unfocusBlock() {
 		instances.remove(player.getEntityId());
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public void moveLava() {
 		if (sourceblock != null) {
@@ -118,13 +119,13 @@ public class LavaWall {
 			}
 		}
 	}
-	
+
 	private Location getToEyeLevel() {
 		Location loc = sourceblock.getLocation().clone();
 		loc.setY(targetdestination.getY());
 		return loc;
 	}
-	
+
 	private Vector getDirection(Location location, Location destination) {
 		double x1, y1, z1;
 		double x0, y0, z0;
@@ -136,13 +137,13 @@ public class LavaWall {
 		z0 = location.getZ();
 		return new Vector(x1 - x0, y1 - y0, z1 - z0);
 	}
-	
+
 	public static void progressAll() {
 		for (int ID : instances.keySet()) {
 			instances.get(ID).progress();
 		}
 	}
-	
+
 	private boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			breakBlock();
@@ -163,13 +164,11 @@ public class LavaWall {
 				unfocusBlock();
 				return false;
 			}
-			if (!progressing
-					&& !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge")) {
+			if (!progressing && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge")) {
 				unfocusBlock();
 				return false;
 			}
-			if (progressing
-					&& (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge"))) {
+			if (progressing && (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge"))) {
 				breakBlock();
 				return false;
 			}
@@ -179,7 +178,7 @@ public class LavaWall {
 			}
 			if (forming) {
 				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) range,	8, 9, 79);
+				Location loc = GeneralMethods.getTargetedLocation(player, (int) range, 8, 9, 79);
 				location = loc.clone();
 				Vector dir = player.getEyeLocation().getDirection();
 				Vector vec;
@@ -192,10 +191,7 @@ public class LavaWall {
 							continue;
 						if (wallblocks.containsKey(block)) {
 							blocks.add(block);
-						} else if (!blocks.contains(block)
-								&& (block.getType() == Material.AIR
-								|| block.getType() == Material.FIRE
-								|| EarthMethods.isLavabendable(block, player))) {
+						} else if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE || EarthMethods.isLavabendable(block, player))) {
 							wallblocks.put(block, player);
 							addWallBlock(block);
 							blocks.add(block);
@@ -244,11 +240,11 @@ public class LavaWall {
 		}
 		return false;
 	}
-	
+
 	private void addWallBlock(Block block) {
 		new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);
 	}
-	
+
 	private void breakBlock() {
 		finalRemoveLava(sourceblock);
 		for (Block block : wallblocks.keySet()) {
@@ -258,7 +254,7 @@ public class LavaWall {
 		}
 		instances.remove(player.getEntityId());
 	}
-	
+
 	private void removeLava(Block block) {
 		if (block != null) {
 			if (affectedblocks.containsKey(block)) {
@@ -269,7 +265,7 @@ public class LavaWall {
 			}
 		}
 	}
-	
+
 	private static void finalRemoveLava(Block block) {
 		if (affectedblocks.containsKey(block)) {
 			TempBlock.revertBlock(block, Material.AIR);
@@ -280,7 +276,7 @@ public class LavaWall {
 			wallblocks.remove(block);
 		}
 	}
-	
+
 	private void addLava(Block block) {
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", block.getLocation()))
 			return;
@@ -289,13 +285,13 @@ public class LavaWall {
 			affectedblocks.put(block, block);
 		}
 	}
-	
+
 	public static void moveLava(Player player) {
 		if (instances.containsKey(player.getEntityId())) {
 			instances.get(player.getEntityId()).moveLava();
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
 		if (!instances.containsKey(player.getEntityId())) {
@@ -309,7 +305,7 @@ public class LavaWall {
 		}
 		moveLava(player);
 	}
-	
+
 	public static void removeAll() {
 		for (Block block : affectedblocks.keySet()) {
 			TempBlock.revertBlock(block, Material.AIR);
@@ -322,7 +318,7 @@ public class LavaWall {
 			wallblocks.remove(block);
 		}
 	}
-	
+
 	public static boolean wasBrokenFor(Player player, Block block) {
 		if (instances.containsKey(player.getEntityId())) {
 			LavaWall wall = instances.get(player.getEntityId());

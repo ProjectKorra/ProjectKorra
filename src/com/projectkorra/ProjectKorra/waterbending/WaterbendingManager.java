@@ -1,17 +1,17 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import org.bukkit.Bukkit;
-
 import com.projectkorra.ProjectKorra.ProjectKorra;
+
+import org.bukkit.Bukkit;
 
 public class WaterbendingManager implements Runnable {
 
 	public ProjectKorra plugin;
-	
+
 	public WaterbendingManager(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@Override
 	public void run() {
 		WaterPassive.handlePassive();
