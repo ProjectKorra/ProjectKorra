@@ -1276,7 +1276,6 @@ public class Commands {
 						s.sendMessage(ChatColor.GREEN + "Created preset with the name: " + ChatColor.YELLOW + name);
 						return true;
 					}
-
 				}
 
 				if (Arrays.asList(reloadaliases).contains(args[0])) {
