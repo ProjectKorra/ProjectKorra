@@ -1,8 +1,7 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,8 +9,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.TempBlock;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSourceGrabber {
 	/*
@@ -44,7 +44,6 @@ public class WaterSourceGrabber {
 	public WaterSourceGrabber(Player player, Location origin) {
 		this(player, origin, 1);
 	}
-	
 
 	public void progress() {
 		if (state == AnimationState.FAILED || state == AnimationState.FINISHED)
@@ -55,9 +54,7 @@ public class WaterSourceGrabber {
 			double locDiff = player.getEyeLocation().getY() - currentLoc.getY();
 			currentLoc.add(0, animSpeed * Math.signum(locDiff), 0);
 			Block block = currentLoc.getBlock();
-			if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR)
-					|| GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout",
-							block.getLocation())) {
+			if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
 				remove();
 				return;
 			}
@@ -72,9 +69,7 @@ public class WaterSourceGrabber {
 			currentLoc.add(vec.normalize().multiply(animSpeed));
 
 			Block block = currentLoc.getBlock();
-			if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR)
-					|| GeneralMethods.isRegionProtectedFromBuild(player,
-							"WaterManipulation", block.getLocation())) {
+			if (!(WaterMethods.isWaterbendable(block, player) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
 				remove();
 				return;
 			}

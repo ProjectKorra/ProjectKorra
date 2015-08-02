@@ -1,7 +1,8 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,9 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterReturn {
 
@@ -36,8 +36,7 @@ public class WaterReturn {
 		this.player = player;
 		location = block.getLocation();
 		if (GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
-			if (!GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)
-					&& GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
+			if (!GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location) && GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
 				if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid() && hasEmptyWaterBottle())
 					this.block = new TempBlock(block, Material.WATER, full);
 			}

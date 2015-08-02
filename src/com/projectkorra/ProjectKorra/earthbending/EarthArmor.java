@@ -1,6 +1,10 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
+import com.projectkorra.ProjectKorra.Utilities.TempPotionEffect;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,14 +16,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.TempPotionEffect;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthArmor {
-	
+
 	public static ConcurrentHashMap<Player, EarthArmor> instances = new ConcurrentHashMap<Player, EarthArmor>();
 
 	private static long interval = 2000;
@@ -44,15 +44,15 @@ public class EarthArmor {
 		if (instances.containsKey(player)) {
 			return;
 		}
-		
+
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
-		if (bPlayer.isOnCooldown("EarthArmor")) return;
+
+		if (bPlayer.isOnCooldown("EarthArmor"))
+			return;
 
 		this.player = player;
-		headblock = player.getTargetBlock(EarthMethods.getTransparentEarthbending(),
-				range);
-		if (EarthMethods.getEarthbendableBlocksLength(player, headblock, new Vector(0,-1, 0), 2) >= 2) {
+		headblock = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), range);
+		if (EarthMethods.getEarthbendableBlocksLength(player, headblock, new Vector(0, -1, 0), 2) >= 2) {
 			legsblock = headblock.getRelative(BlockFace.DOWN);
 			headtype = headblock.getType();
 			legstype = legsblock.getType();
@@ -84,12 +84,8 @@ public class EarthArmor {
 
 		Location headlocation = player.getEyeLocation();
 		Location legslocation = player.getLocation();
-		Vector headdirection = headlocation.toVector()
-				.subtract(headblocklocation.toVector()).normalize()
-				.multiply(.5);
-		Vector legsdirection = legslocation.toVector()
-				.subtract(legsblocklocation.toVector()).normalize()
-				.multiply(.5);
+		Vector headdirection = headlocation.toVector().subtract(headblocklocation.toVector()).normalize().multiply(.5);
+		Vector legsdirection = legslocation.toVector().subtract(legsblocklocation.toVector()).normalize().multiply(.5);
 
 		Block newheadblock = headblock;
 		Block newlegsblock = legsblock;
@@ -105,24 +101,19 @@ public class EarthArmor {
 
 		if (EarthMethods.isTransparentToEarthbending(player, newheadblock) && !newheadblock.isLiquid()) {
 			GeneralMethods.breakBlock(newheadblock);
-		} else if (!EarthMethods.isEarthbendable(player, newheadblock)
-				&& !newheadblock.isLiquid()
-				&& newheadblock.getType() != Material.AIR) {
+		} else if (!EarthMethods.isEarthbendable(player, newheadblock) && !newheadblock.isLiquid() && newheadblock.getType() != Material.AIR) {
 			cancel();
 			return false;
 		}
 
 		if (EarthMethods.isTransparentToEarthbending(player, newlegsblock) && !newlegsblock.isLiquid()) {
 			GeneralMethods.breakBlock(newlegsblock);
-		} else if (!EarthMethods.isEarthbendable(player, newlegsblock)
-				&& !newlegsblock.isLiquid()
-				&& newlegsblock.getType() != Material.AIR) {
+		} else if (!EarthMethods.isEarthbendable(player, newlegsblock) && !newlegsblock.isLiquid() && newlegsblock.getType() != Material.AIR) {
 			cancel();
 			return false;
 		}
 
-		if (headblock.getLocation().distance(player.getEyeLocation()) > range
-				|| legsblock.getLocation().distance(player.getLocation()) > range) {
+		if (headblock.getLocation().distance(player.getEyeLocation()) > range || legsblock.getLocation().distance(player.getLocation()) > range) {
 			cancel();
 			return false;
 		}
@@ -160,8 +151,7 @@ public class EarthArmor {
 	}
 
 	private boolean inPosition() {
-		if (headblock.equals(player.getEyeLocation().getBlock())
-				&& legsblock.equals(player.getLocation().getBlock())) {
+		if (headblock.equals(player.getEyeLocation().getBlock()) && legsblock.equals(player.getLocation().getBlock())) {
 			return true;
 		}
 		return false;
@@ -174,14 +164,9 @@ public class EarthArmor {
 			TempBlock.revertBlock(legsblock, Material.AIR);
 
 		oldarmor = player.getInventory().getArmorContents();
-		ItemStack armors[] = { new ItemStack(Material.LEATHER_BOOTS, 1),
-				new ItemStack(Material.LEATHER_LEGGINGS, 1),
-				new ItemStack(Material.LEATHER_CHESTPLATE, 1),
-				new ItemStack(Material.LEATHER_HELMET, 1) };
+		ItemStack armors[] = { new ItemStack(Material.LEATHER_BOOTS, 1), new ItemStack(Material.LEATHER_LEGGINGS, 1), new ItemStack(Material.LEATHER_CHESTPLATE, 1), new ItemStack(Material.LEATHER_HELMET, 1) };
 		player.getInventory().setArmorContents(armors);
-		PotionEffect resistance = new PotionEffect(
-				PotionEffectType.DAMAGE_RESISTANCE, (int) duration / 50,
-				strength - 1);
+		PotionEffect resistance = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, (int) duration / 50, strength - 1);
 		new TempPotionEffect(player, resistance);
 		// player.addPotionEffect(new PotionEffect(
 		// PotionEffectType.DAMAGE_RESISTANCE, (int) duration / 50,
@@ -195,7 +180,7 @@ public class EarthArmor {
 			moveArmor(player);
 		}
 	}
-	
+
 	public static void moveArmor(Player player) {
 		if (!instances.containsKey(player))
 			return;
@@ -247,8 +232,7 @@ public class EarthArmor {
 	}
 
 	public static String getDescription() {
-		return "This ability encases the earthbender in temporary armor. To use, click on a block that is earthbendable. If there is another block under"
-				+ " it that is earthbendable, the block will fly to you and grant you temporary armor and damage reduction. This ability has a long cooldown.";
+		return "This ability encases the earthbender in temporary armor. To use, click on a block that is earthbendable. If there is another block under" + " it that is earthbendable, the block will fly to you and grant you temporary armor and damage reduction. This ability has a long cooldown.";
 	}
 
 	public static boolean canRemoveArmor(Player player) {

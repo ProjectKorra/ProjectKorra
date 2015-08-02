@@ -1,4 +1,4 @@
-package com.projectkorra.ProjectKorra;
+package com.projectkorra.ProjectKorra.Utilities;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +15,7 @@ public class Information {
 	private long time;
 	private double value;
 	private byte data;
-	
+
 	private Block block;
 	private BlockState state;
 	private Location location;

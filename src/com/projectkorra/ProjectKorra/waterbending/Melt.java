@@ -1,6 +1,9 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.HashSet;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -8,15 +11,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.HashSet;
 
 public class Melt {
 
 	private static final int seaLevel = ProjectKorra.plugin.getConfig().getInt("Properties.SeaLevel");
-	
+
 	private static final int defaultrange = FreezeMelt.defaultrange;
 	private static final int defaultradius = FreezeMelt.defaultradius;
 	private static final int defaultevaporateradius = 3;
@@ -24,9 +24,9 @@ public class Melt {
 	private static final byte full = 0x0;
 
 	public Melt(Player player) {
-		if(!WaterMethods.canIcebend(player))
+		if (!WaterMethods.canIcebend(player))
 			return;
-		
+
 		int range = (int) WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		int radius = (int) WaterMethods.waterbendingNightAugment(defaultradius, player.getWorld());
 
@@ -36,7 +36,7 @@ public class Melt {
 		}
 		boolean evaporate = false;
 		Location location = GeneralMethods.getTargetedLocation(player, range);
-		if (WaterMethods.isWater(player.getTargetBlock((HashSet<Material>) null, range))	&& !(player.getEyeLocation().getBlockY() <= 62)) {
+		if (WaterMethods.isWater(player.getTargetBlock((HashSet<Material>) null, range)) && !(player.getEyeLocation().getBlockY() <= 62)) {
 			evaporate = true;
 			radius = (int) WaterMethods.waterbendingNightAugment(defaultevaporateradius, player.getWorld());
 		}
@@ -82,7 +82,7 @@ public class Melt {
 	public static void evaporate(Player player, Block block) {
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
 			return;
-		if (WaterMethods.isWater(block) && !TempBlock.isTempBlock(block)	&& WaterManipulation.canPhysicsChange(block)) {
+		if (WaterMethods.isWater(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
 			block.setType(Material.AIR);
 			block.getWorld().playEffect(block.getLocation(), Effect.SMOKE, 1);
 		}

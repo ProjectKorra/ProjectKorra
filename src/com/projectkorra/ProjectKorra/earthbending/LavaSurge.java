@@ -1,10 +1,12 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,16 +18,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class LavaSurge 
-{
+public class LavaSurge {
 	public static ConcurrentHashMap<Player, LavaSurge> instances = new ConcurrentHashMap<Player, LavaSurge>();
 	public static int impactDamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.Damage");
 	public static int cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.Cooldown");

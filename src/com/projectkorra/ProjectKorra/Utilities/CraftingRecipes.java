@@ -1,10 +1,10 @@
 package com.projectkorra.ProjectKorra.Utilities;
 
+import com.projectkorra.ProjectKorra.ProjectKorra;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ShapedRecipe;
-
-import com.projectkorra.ProjectKorra.ProjectKorra;
 
 public class CraftingRecipes {
 
@@ -24,14 +24,8 @@ public class CraftingRecipes {
 		}
 	}
 
-	static ShapedRecipe ironHookRecipe = new ShapedRecipe(GrapplingHookAPI.createHook(config.getInt("Properties.CustomItems.GrapplingHook.IronUses")))
-	.shape(" **", " &*", "   ")
-	.setIngredient('*', Material.IRON_INGOT)
-	.setIngredient('&', Material.FISHING_ROD);
+	static ShapedRecipe ironHookRecipe = new ShapedRecipe(GrapplingHookAPI.createHook(config.getInt("Properties.CustomItems.GrapplingHook.IronUses"))).shape(" **", " &*", "   ").setIngredient('*', Material.IRON_INGOT).setIngredient('&', Material.FISHING_ROD);
 
-	static ShapedRecipe goldHookRecipe = new ShapedRecipe(GrapplingHookAPI.createHook(config.getInt("Properties.CustomItems.GrapplingHook.GoldUses")))
-	.shape(" **", " &*", "   ")
-	.setIngredient('*', Material.GOLD_INGOT)
-	.setIngredient('&', Material.FISHING_ROD);
+	static ShapedRecipe goldHookRecipe = new ShapedRecipe(GrapplingHookAPI.createHook(config.getInt("Properties.CustomItems.GrapplingHook.GoldUses"))).shape(" **", " &*", "   ").setIngredient('*', Material.GOLD_INGOT).setIngredient('&', Material.FISHING_ROD);
 
 }

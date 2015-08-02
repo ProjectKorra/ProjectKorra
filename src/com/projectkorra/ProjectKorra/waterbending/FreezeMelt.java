@@ -1,6 +1,9 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -8,10 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FreezeMelt {
 
@@ -19,16 +19,15 @@ public class FreezeMelt {
 
 	public static final int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Range");
 	public static final int defaultradius = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Radius");
-	
+
 	public static final int OVERLOADING_LIMIT = 200;
 	public static boolean overloading = false;
 	public static int overloadCounter = 0;
-	
 
 	public FreezeMelt(Player player) {
-		if(!WaterMethods.canIcebend(player))
+		if (!WaterMethods.canIcebend(player))
 			return;
-		
+
 		int range = (int) WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		int radius = (int) WaterMethods.waterbendingNightAugment(defaultradius, player.getWorld());
 		if (AvatarState.isAvatarState(player)) {
@@ -82,11 +81,11 @@ public class FreezeMelt {
 		overloadCounter %= 10;
 		if (overloadCounter == 0)
 			overloading = size > OVERLOADING_LIMIT ? true : false;
-		
+
 		// We only want to run this method once every 10 ticks if we are overloading.
 		if (overloading && overloadCounter != 0)
 			return;
-			
+
 		if (overloading) {
 			int i = 0;
 			for (Block block : frozenblocks.keySet()) {
@@ -99,8 +98,7 @@ public class FreezeMelt {
 				}.runTaskLater(ProjectKorra.plugin, i % 10);
 				i++;
 			}
-		}
-		else {
+		} else {
 			for (Block block : frozenblocks.keySet()) {
 				if (canThaw(block))
 					thaw(block);
@@ -150,15 +148,7 @@ public class FreezeMelt {
 	}
 
 	public static String getDescription() {
-		return "To use, simply left-click. "
-				+ "Any water you are looking at within range will instantly freeze over into solid ice. "
-				+ "Provided you stay within range of the ice and do not unbind PhaseChange, "
-				+ "that ice will not thaw. If, however, you do either of those the ice will instantly thaw. "
-				+ "If you sneak (default: shift), anything around where you are looking at will instantly melt. "
-				+ "Since this is a more favorable state for these things, they will never re-freeze unless they "
-				+ "would otherwise by nature or some other bending ability. Additionally, if you tap sneak while "
-				+ "targetting water with PhaseChange, it will evaporate water around that block that is above "
-				+ "sea level. ";
+		return "To use, simply left-click. " + "Any water you are looking at within range will instantly freeze over into solid ice. " + "Provided you stay within range of the ice and do not unbind PhaseChange, " + "that ice will not thaw. If, however, you do either of those the ice will instantly thaw. " + "If you sneak (default: shift), anything around where you are looking at will instantly melt. " + "Since this is a more favorable state for these things, they will never re-freeze unless they " + "would otherwise by nature or some other bending ability. Additionally, if you tap sneak while " + "targetting water with PhaseChange, it will evaporate water around that block that is above " + "sea level. ";
 	}
 
 }

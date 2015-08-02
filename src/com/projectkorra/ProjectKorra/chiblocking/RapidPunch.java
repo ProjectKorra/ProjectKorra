@@ -1,53 +1,55 @@
 package com.projectkorra.ProjectKorra.chiblocking;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.airbending.Suffocate;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class RapidPunch {
 
 	public static ConcurrentHashMap<Player, RapidPunch> instances = new ConcurrentHashMap<Player, RapidPunch>();
 	public static List<Player> punching = new ArrayList<Player>();
-	
+
 	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
 	private int punches = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
 	private int distance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Distance");
 	private long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
-	
+
 	private int numpunches;
 	// private long timers;
 	private Entity target;
 	private Player player;
 
-	public RapidPunch(Player p) {// , Entity t) {
-		player = p;
+	public RapidPunch(Player p) {
+		this.player = p;
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(p.getName());
 		if (instances.containsKey(p))
 			return;
-		if (bPlayer.isOnCooldown("RapidPunch")) return;
+		if (bPlayer.isOnCooldown("RapidPunch"))
+			return;
 
 		Entity t = GeneralMethods.getTargetedEntity(p, distance, new ArrayList<Entity>());
 
 		if (t == null)
 			return;
 
-		target = t;
-		numpunches = 0;
+		this.target = t;
+		this.numpunches = 0;
 		instances.put(p, this);
 	}
-	
+
 	public static void startPunchAll() {
 		for (Player player : instances.keySet()) {
-			if (player != null) instances.get(player).startPunch(player);
+			if (player != null)
+				instances.get(player).startPunch(player);
 		}
 	}
 
@@ -61,7 +63,7 @@ public class RapidPunch {
 				if (ChiPassive.willChiBlock(p, (Player) target)) {
 					ChiPassive.blockChi((Player) target);
 				}
-				if(Suffocate.isChannelingSphere((Player) target)) {
+				if (Suffocate.isChannelingSphere((Player) target)) {
 					Suffocate.remove((Player) target);
 				}
 			}
@@ -76,8 +78,7 @@ public class RapidPunch {
 	}
 
 	public static String getDescription() {
-		return "This ability allows the chiblocker to punch rapidly in a short period. To use, simply punch."
-				+ " This has a short cooldown.";
+		return "This ability allows the chiblocker to punch rapidly in a short period. To use, simply punch." + " This has a short cooldown.";
 	}
 
 	public int getDamage() {
@@ -102,7 +103,7 @@ public class RapidPunch {
 
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
-		if(player != null)
+		if (player != null)
 			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("RapidPunch", cooldown);
 	}
 

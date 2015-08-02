@@ -1,15 +1,15 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Shockwave {
 
@@ -42,7 +42,7 @@ public class Shockwave {
 		if (GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Shockwave")) {
 			return;
 		}
-		
+
 		if (instances.containsKey(player) || player.getFallDistance() < threshold || !EarthMethods.isEarthbendable(player, player.getLocation().add(0, -1, 0).getBlock())) {
 			return;
 		}
@@ -74,11 +74,7 @@ public class Shockwave {
 		} else if (charged) {
 			Location location = player.getEyeLocation();
 			// location = location.add(location.getDirection().normalize());
-			location.getWorld().playEffect(
-					location,
-					Effect.SMOKE,
-					GeneralMethods.getIntCardinalDirection(player.getEyeLocation()
-							.getDirection()), 3);
+			location.getWorld().playEffect(location, Effect.SMOKE, GeneralMethods.getIntCardinalDirection(player.getEyeLocation().getDirection()), 3);
 		}
 	}
 
@@ -103,8 +99,7 @@ public class Shockwave {
 				double dtheta = 360. / (2 * Math.PI * Ripple.RADIUS) - 1;
 				for (double theta = 0; theta < 360; theta += dtheta) {
 					double rtheta = Math.toRadians(theta);
-					Vector vector = new Vector(Math.cos(rtheta), 0,
-							Math.sin(rtheta));
+					Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
 					if (vector.angle(player.getEyeLocation().getDirection()) < angle)
 						new Ripple(player, vector.normalize());
 				}
@@ -114,13 +109,7 @@ public class Shockwave {
 	}
 
 	public static String getDescription() {
-		return "This is one of the most powerful moves in the earthbender's arsenal. "
-				+ "To use, you must first charge it by holding sneak (default: shift). "
-				+ "Once charged, you can release sneak to create an enormous shockwave of earth, "
-				+ "disturbing all earth around you and expanding radially outwards. "
-				+ "Anything caught in the shockwave will be blasted back and dealt damage. "
-				+ "If you instead click while charged, the disruption is focused in a cone in front of you. "
-				+ "Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave.";
+		return "This is one of the most powerful moves in the earthbender's arsenal. " + "To use, you must first charge it by holding sneak (default: shift). " + "Once charged, you can release sneak to create an enormous shockwave of earth, " + "disturbing all earth around you and expanding radially outwards. " + "Anything caught in the shockwave will be blasted back and dealt damage. " + "If you instead click while charged, the disruption is focused in a cone in front of you. " + "Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave.";
 	}
 
 	public static void removeAll() {

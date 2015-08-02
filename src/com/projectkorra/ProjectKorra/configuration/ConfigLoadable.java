@@ -2,16 +2,17 @@ package com.projectkorra.ProjectKorra.configuration;
 
 /**
  * Represents something that loads values from configs.
+ * 
+ * @author Jacklin213
+ * @version 1.0.0
  */
 public interface ConfigLoadable {
-	
+
 	Config config = ConfigManager.defaultConfig;
 
-//	public FileConfiguration getConfig();
-	
 	/**
 	 * Reload/Loads variables from the configuration.
 	 */
 	public void reloadVariables();
-	
+
 }

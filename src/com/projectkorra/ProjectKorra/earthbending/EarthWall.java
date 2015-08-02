@@ -1,18 +1,18 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Utilities.BlockSource;
 import com.projectkorra.ProjectKorra.Utilities.ClickType;
+
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class EarthWall {
 
@@ -26,8 +26,9 @@ public class EarthWall {
 	@SuppressWarnings("deprecation")
 	public EarthWall(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
-		if (bPlayer.isOnCooldown("RaiseEarth")) return;
+
+		if (bPlayer.isOnCooldown("RaiseEarth"))
+			return;
 
 		if (AvatarState.isAvatarState(player)) {
 			height = (int) (2. / 5. * (double) AvatarState.getValue(height));
@@ -47,8 +48,7 @@ public class EarthWall {
 		Block sblock = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
 		Location origin;
 		if (sblock == null) {
-			origin = player.getTargetBlock(EarthMethods.getTransparentEarthbending(),
-					range).getLocation();
+			origin = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), range).getLocation();
 		} else {
 			origin = sblock.getLocation();
 		}
@@ -57,8 +57,7 @@ public class EarthWall {
 		boolean cooldown = false;
 
 		for (int i = -halfwidth; i <= halfwidth; i++) {
-			Block block = world.getBlockAt(origin.clone().add(
-					orth.clone().multiply((double) i)));
+			Block block = world.getBlockAt(origin.clone().add(orth.clone().multiply((double) i)));
 			// if (block.getType() == Material.AIR || block.isLiquid()) {
 			if (EarthMethods.isTransparentToEarthbending(player, block)) {
 				for (int j = 1; j < height; j++) {
@@ -68,21 +67,18 @@ public class EarthWall {
 						new EarthColumn(player, block.getLocation(), height);
 						// } else if (block.getType() != Material.AIR
 						// && !block.isLiquid()) {
-					} else if (!EarthMethods
-							.isTransparentToEarthbending(player, block)) {
+					} else if (!EarthMethods.isTransparentToEarthbending(player, block)) {
 						break;
 					}
 				}
-			} else if (EarthMethods.isEarthbendable(player,
-					block.getRelative(BlockFace.UP))) {
+			} else if (EarthMethods.isEarthbendable(player, block.getRelative(BlockFace.UP))) {
 				for (int j = 1; j < height; j++) {
 					block = block.getRelative(BlockFace.UP);
 					// if (block.getType() == Material.AIR || block.isLiquid())
 					// {
 					if (EarthMethods.isTransparentToEarthbending(player, block)) {
 						cooldown = true;
-						new EarthColumn(player, block.getRelative(
-								BlockFace.DOWN).getLocation(), height);
+						new EarthColumn(player, block.getRelative(BlockFace.DOWN).getLocation(), height);
 					} else if (!EarthMethods.isEarthbendable(player, block)) {
 						break;
 					}

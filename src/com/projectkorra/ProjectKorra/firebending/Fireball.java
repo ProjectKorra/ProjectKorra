@@ -1,6 +1,10 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.AddonAbility;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -12,11 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.AddonAbility;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Ability charged FireBlast
@@ -28,7 +28,7 @@ public class Fireball extends AddonAbility {
 	private static long defaultchargetime = config.get().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
 	private static long interval = 25;
 	private static double radius = 1.5;
-	
+
 	private static double MAX_DAMAGE = config.get().getDouble("Abilities.Fire.FireBlast.Charged.Damage");
 	private static double DAMAGE_RADIUS = config.get().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
 	private static double RANGE = config.get().getDouble("Abilities.Fire.FireBlast.Charged.Range");
@@ -77,8 +77,7 @@ public class Fireball extends AddonAbility {
 			if (!fireball.launched)
 				continue;
 			Location fireblastlocation = fireball.location;
-			if (location.getWorld() == fireblastlocation.getWorld()
-					&& !source.equals(fireball.player)) {
+			if (location.getWorld() == fireblastlocation.getWorld() && !source.equals(fireball.player)) {
 				if (location.distance(fireblastlocation) <= radius) {
 					fireball.explode();
 					broke = true;
@@ -147,7 +146,7 @@ public class Fireball extends AddonAbility {
 		// Methods.verbose("Fireball Explode!");
 		boolean explode = true;
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, 3)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "FireBlast",	block.getLocation())) {
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "FireBlast", block.getLocation())) {
 				explode = false;
 				break;
 			}
@@ -164,22 +163,22 @@ public class Fireball extends AddonAbility {
 				}
 			} else {
 				yield *= AvatarState.factor;
-//				yield = AvatarState.getValue(yield);
+				//				yield = AvatarState.getValue(yield);
 			}
-//			switch (player.getWorld().getDifficulty()) {
-//			case PEACEFUL:
-//				yield *= 2.;
-//				break;
-//			case EASY:
-//				yield *= 2.;
-//				break;
-//			case NORMAL:
-//				yield *= 1.;
-//				break;
-//			case HARD:
-//				yield *= 3. / 4.;
-//				break;
-//			}
+			//			switch (player.getWorld().getDifficulty()) {
+			//			case PEACEFUL:
+			//				yield *= 2.;
+			//				break;
+			//			case EASY:
+			//				yield *= 2.;
+			//				break;
+			//			case NORMAL:
+			//				yield *= 1.;
+			//				break;
+			//			case HARD:
+			//				yield *= 3. / 4.;
+			//				break;
+			//			}
 			explosion.setYield(yield);
 			explosions.put(explosion, this);
 		}
@@ -196,7 +195,7 @@ public class Fireball extends AddonAbility {
 			if (GeneralMethods.rand.nextInt(4) == 0) {
 				FireMethods.playFirebendingSound(location);
 			}
-			
+
 		}
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * radius)) {
@@ -262,12 +261,12 @@ public class Fireball extends AddonAbility {
 			remove();
 			return false;
 		}
-		
+
 		if (!GeneralMethods.canBend(player.getName(), "FireBlast") && !launched) {
 			remove();
 			return false;
 		}
-		
+
 		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast") && !launched) {
 			remove();
 			return false;
@@ -292,7 +291,7 @@ public class Fireball extends AddonAbility {
 
 		if (System.currentTimeMillis() > time + interval) {
 			if (launched) {
-				if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze",	location)) {
+				if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze", location)) {
 					remove();
 					return false;
 				}
@@ -331,7 +330,7 @@ public class Fireball extends AddonAbility {
 		defaultchargetime = config.get().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
 		interval = 25;
 		radius = 1.5;
-		
+
 		MAX_DAMAGE = config.get().getDouble("Abilities.Fire.FireBlast.Charged.Damage");
 		DAMAGE_RADIUS = config.get().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
 		RANGE = config.get().getDouble("Abilities.Fire.FireBlast.Charged.Range");
@@ -356,7 +355,7 @@ public class Fireball extends AddonAbility {
 	public void setInnerradius(double innerradius) {
 		this.innerradius = innerradius;
 	}
-	
+
 	public void setMaxdamage(double maxdamage) {
 		this.maxdamage = maxdamage;
 	}

@@ -1,17 +1,17 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import org.bukkit.Bukkit;
-
 import com.projectkorra.ProjectKorra.ProjectKorra;
+
+import org.bukkit.Bukkit;
 
 public class AirbendingManager implements Runnable {
 
 	public ProjectKorra plugin;
-	
+
 	public AirbendingManager(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@Override
 	public void run() {
 		AirBlast.progressAll(AirBlast.class);

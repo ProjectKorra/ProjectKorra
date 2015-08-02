@@ -1,13 +1,5 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.ProjectKorra;
@@ -15,10 +7,18 @@ import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Ability.CoreAbility;
 import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+
 public class AirBurst extends CoreAbility {
-	
+
 	private static double PARTICLES_PERCENTAGE = 50;
-	
+
 	private static double threshold = config.get().getDouble("Abilities.Air.AirBurst.FallThreshold");
 	private static double pushfactor = config.get().getDouble("Abilities.Air.AirBurst.PushFactor");
 	private static double damage = config.get().getDouble("Abilities.Air.AirBurst.Damage");
@@ -31,7 +31,7 @@ public class AirBurst extends CoreAbility {
 	private boolean charged = false;
 	private ArrayList<AirBlast> blasts = new ArrayList<AirBlast>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
-	
+
 	public AirBurst() {
 		reloadVariables();
 	}
@@ -39,7 +39,7 @@ public class AirBurst extends CoreAbility {
 	public AirBurst(Player player) {
 		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("AirBurst")) 
+		if (bPlayer.isOnCooldown("AirBurst"))
 			return;
 		if (containsPlayer(player, AirBurst.class))
 			return;
@@ -55,7 +55,8 @@ public class AirBurst extends CoreAbility {
 
 	public static void coneBurst(Player player) {
 		if (containsPlayer(player, AirBurst.class)) {
-			((AirBurst) getAbilityFromPlayer(player, AirBurst.class)).coneBurst();;
+			((AirBurst) getAbilityFromPlayer(player, AirBurst.class)).coneBurst();
+			;
 		}
 	}
 
@@ -88,8 +89,7 @@ public class AirBurst extends CoreAbility {
 				y = r * Math.sin(rphi) * Math.sin(rtheta);
 				z = r * Math.cos(rtheta);
 				Vector direction = new Vector(x, z, y);
-				AirBlast blast = new AirBlast(location, direction.normalize(), player,
-						pushfactor, new AirBurst());
+				AirBlast blast = new AirBlast(location, direction.normalize(), player, pushfactor, new AirBurst());
 				blast.setDamage(damage);
 			}
 		}
@@ -116,8 +116,7 @@ public class AirBurst extends CoreAbility {
 					z = r * Math.cos(rtheta);
 					Vector direction = new Vector(x, z, y);
 					if (direction.angle(vector) <= angle) {
-						AirBlast blast = new AirBlast(location, direction.normalize(), player,
-								pushfactor, this);
+						AirBlast blast = new AirBlast(location, direction.normalize(), player, pushfactor, this);
 						blast.setDamage(damage);
 					}
 				}
@@ -159,7 +158,7 @@ public class AirBurst extends CoreAbility {
 			remove();
 			return false;
 		}
-		
+
 		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBurst")) {
 			remove();
 			return false;
@@ -180,11 +179,11 @@ public class AirBurst extends CoreAbility {
 			Location location = player.getEyeLocation();
 			// location = location.add(location.getDirection().normalize());
 			AirMethods.playAirbendingParticles(location, 10);
-//			location.getWorld().playEffect(
-//					location,
-//					Effect.SMOKE,
-//					Methods.getIntCardinalDirection(player.getEyeLocation()
-//							.getDirection()), 3);
+			//			location.getWorld().playEffect(
+			//					location,
+			//					Effect.SMOKE,
+			//					Methods.getIntCardinalDirection(player.getEyeLocation()
+			//							.getDirection()), 3);
 		}
 		return true;
 	}
@@ -211,8 +210,7 @@ public class AirBurst extends CoreAbility {
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
 					Vector direction = new Vector(x, z, y);
-					AirBlast blast = new AirBlast(location, direction.normalize(), player,
-							pushfactor, this);
+					AirBlast blast = new AirBlast(location, direction.normalize(), player, pushfactor, this);
 					blast.setDamage(damage);
 					blast.setShowParticles(false);
 					blasts.add(blast);

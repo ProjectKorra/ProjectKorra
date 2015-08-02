@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerGrappleEvent extends Event implements Cancellable {
 
-
 	public static final HandlerList handlers = new HandlerList();
 	private Player player;
 	private Entity entity;
@@ -18,11 +17,11 @@ public class PlayerGrappleEvent extends Event implements Cancellable {
 	private ItemStack hookItem;
 	private boolean cancelled = false;
 
-	public PlayerGrappleEvent(Player p, Entity e, Location l) {
-		player = p;
-		entity = e;
-		pullLocation = l;
-		hookItem = p.getItemInHand();
+	public PlayerGrappleEvent(Player player, Entity entity, Location location) {
+		this.player = player;
+		this.entity = entity;
+		this.pullLocation = location;
+		this.hookItem = player.getItemInHand();
 	}
 
 	public Player getPlayer() {
@@ -56,7 +55,7 @@ public class PlayerGrappleEvent extends Event implements Cancellable {
 
 	@Override
 	public void setCancelled(boolean set) {
-		cancelled = set;
+		this.cancelled = set;
 	}
 
 }

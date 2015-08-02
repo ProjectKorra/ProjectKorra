@@ -1,16 +1,16 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Illumination extends CoreAbility {
 
@@ -26,9 +26,10 @@ public class Illumination extends CoreAbility {
 	public Illumination(Player player) {
 		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("Illumination")) return;
+		if (bPlayer.isOnCooldown("Illumination"))
+			return;
 		/* End Initial Checks */
-		
+
 		if (containsPlayer(player, Illumination.class)) {
 			revert();
 			remove();
@@ -43,11 +44,7 @@ public class Illumination extends CoreAbility {
 	}
 
 	public static String getDescription() {
-		return "This ability gives firebenders a means of illuminating the area. It is a toggle - clicking "
-				+ "will create a torch that follows you around. The torch will only appear on objects that are "
-				+ "ignitable and can hold a torch (e.g. not leaves or ice). If you get too far away from the torch, "
-				+ "it will disappear, but will reappear when you get on another ignitable block. Clicking again "
-				+ "dismisses this torch.";
+		return "This ability gives firebenders a means of illuminating the area. It is a toggle - clicking " + "will create a torch that follows you around. The torch will only appear on objects that are " + "ignitable and can hold a torch (e.g. not leaves or ice). If you get too far away from the torch, " + "it will disappear, but will reappear when you get on another ignitable block. Clicking again " + "dismisses this torch.";
 	}
 
 	public static void revert(Block block) {
@@ -60,25 +57,25 @@ public class Illumination extends CoreAbility {
 		return StockAbility.Illumination;
 	}
 
-//	public static void manage(Server server) {
-//		for (Player player : server.getOnlinePlayers()) {
-//			if (instances.containsKey(player)) {
-//				if (!GeneralMethods.canBend(player.getName(), "Illumination")) {
-//					instances.get(player).revert();
-//					instances.remove(player);
-//				} else {
-//					instances.get(player).set();
-//				}
-//			}
-//		}
-//
-//		for (Player player : instances.keySet()) {
-//			if (!player.isOnline() || player.isDead()) {
-//				instances.get(player).revert();
-//				instances.remove(player);
-//			}
-//		}
-//	}
+	//	public static void manage(Server server) {
+	//		for (Player player : server.getOnlinePlayers()) {
+	//			if (instances.containsKey(player)) {
+	//				if (!GeneralMethods.canBend(player.getName(), "Illumination")) {
+	//					instances.get(player).revert();
+	//					instances.remove(player);
+	//				} else {
+	//					instances.get(player).set();
+	//				}
+	//			}
+	//		}
+	//
+	//		for (Player player : instances.keySet()) {
+	//			if (!player.isOnline() || player.isDead()) {
+	//				instances.get(player).revert();
+	//				instances.remove(player);
+	//			}
+	//		}
+	//	}
 
 	@Override
 	public boolean progress() {
@@ -114,26 +111,20 @@ public class Illumination extends CoreAbility {
 			block.setData(normaldata);
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	private void set() {
 		Block standingblock = player.getLocation().getBlock();
 		Block standblock = standingblock.getRelative(BlockFace.DOWN);
 		if (standblock.getType() == Material.GLOWSTONE) {
 			revert();
-		} else if ((FireStream.isIgnitable(player, standingblock) && standblock
-				.getType() != Material.LEAVES && standblock.getType() != Material.LEAVES_2)
-				&& block == null
-				&& !blocks.containsKey(standblock)) {
+		} else if ((FireStream.isIgnitable(player, standingblock) && standblock.getType() != Material.LEAVES && standblock.getType() != Material.LEAVES_2) && block == null && !blocks.containsKey(standblock)) {
 			block = standingblock;
 			normaltype = block.getType();
 			normaldata = block.getData();
 			block.setType(Material.TORCH);
 			blocks.put(block, player);
-		} else if ((FireStream.isIgnitable(player, standingblock) && standblock
-				.getType() != Material.LEAVES && standblock.getType() != Material.LEAVES_2)
-				&& !block.equals(standblock)
-				&& !blocks.containsKey(standblock) && GeneralMethods.isSolid(standblock)) {
+		} else if ((FireStream.isIgnitable(player, standingblock) && standblock.getType() != Material.LEAVES && standblock.getType() != Material.LEAVES_2) && !block.equals(standblock) && !blocks.containsKey(standblock) && GeneralMethods.isSolid(standblock)) {
 			revert();
 			block = standingblock;
 			normaltype = block.getType();
@@ -144,8 +135,7 @@ public class Illumination extends CoreAbility {
 			return;
 		} else if (!player.getWorld().equals(block.getWorld())) {
 			revert();
-		} else if (player.getLocation().distance(block.getLocation()) > FireMethods
-				.getFirebendingDayAugment(range, player.getWorld())) {
+		} else if (player.getLocation().distance(block.getLocation()) > FireMethods.getFirebendingDayAugment(range, player.getWorld())) {
 			revert();
 		}
 	}

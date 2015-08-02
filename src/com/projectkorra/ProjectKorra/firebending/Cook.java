@@ -1,15 +1,15 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.AddonAbility;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.AddonAbility;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Used in {@link HeatControl}.
@@ -35,41 +35,6 @@ public class Cook extends AddonAbility {
 			//instances.put(player, this);
 			putInstance(player, this);
 		}
-	}
-
-	@Override
-	public boolean progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
-			return false;
-		}
-
-		if (GeneralMethods.getBoundAbility(player) == null) {
-			remove();
-			return false;
-		}
-		if (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
-			remove();
-			return false;
-		}
-
-		if (!items.equals(player.getItemInHand())) {
-			time = System.currentTimeMillis();
-			items = player.getItemInHand();
-		}
-
-		if (!isCookable(items.getType())) {
-			remove();
-			return false;
-		}
-
-		if (System.currentTimeMillis() > time + cooktime) {
-			cook();
-			time = System.currentTimeMillis();
-		}
-		ParticleEffect.FLAME.display(player.getEyeLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
-		ParticleEffect.SMOKE.display(player.getEyeLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
-		return true;
 	}
 
 	private static boolean isCookable(Material material) {
@@ -127,6 +92,10 @@ public class Cook extends AddonAbility {
 		return cooked;
 	}
 
+	public long getCooktime() {
+		return cooktime;
+	}
+
 	public Player getPlayer() {
 		return player;
 	}
@@ -135,19 +104,50 @@ public class Cook extends AddonAbility {
 		return time;
 	}
 
-	public void setTime(long time) {
-		this.time = time;
+	@Override
+	public boolean progress() {
+		if (player.isDead() || !player.isOnline()) {
+			remove();
+			return false;
+		}
+
+		if (GeneralMethods.getBoundAbility(player) == null) {
+			remove();
+			return false;
+		}
+		if (!player.isSneaking() || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
+			remove();
+			return false;
+		}
+
+		if (!items.equals(player.getItemInHand())) {
+			time = System.currentTimeMillis();
+			items = player.getItemInHand();
+		}
+
+		if (!isCookable(items.getType())) {
+			remove();
+			return false;
+		}
+
+		if (System.currentTimeMillis() > time + cooktime) {
+			cook();
+			time = System.currentTimeMillis();
+		}
+		ParticleEffect.FLAME.display(player.getEyeLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
+		ParticleEffect.SMOKE.display(player.getEyeLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
+		return true;
 	}
 
-	public long getCooktime() {
-		return cooktime;
-	}
+	@Override
+	public void reloadVariables() {}
 
 	public void setCooktime(long cooktime) {
 		this.cooktime = cooktime;
 	}
 
-	@Override
-	public void reloadVariables() {}
+	public void setTime(long time) {
+		this.time = time;
+	}
 
 }

@@ -1,6 +1,8 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -9,19 +11,17 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.ArrayList;
 
 public class EarthGrab {
 
-	
 	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthGrab.Range");
 
 	public EarthGrab(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
-		if (bPlayer.isOnCooldown("EarthGrab")) return;
+
+		if (bPlayer.isOnCooldown("EarthGrab"))
+			return;
 
 		Location origin = player.getEyeLocation();
 		Vector direction = origin.getDirection();

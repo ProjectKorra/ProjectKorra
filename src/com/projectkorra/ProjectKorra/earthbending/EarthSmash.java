@@ -1,8 +1,14 @@
 package com.projectkorra.ProjectKorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
+import com.projectkorra.ProjectKorra.airbending.AirMethods;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -13,21 +19,15 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.airbending.AirMethods;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class EarthSmash {
 	public static enum State {
 		START, LIFTING, LIFTED, GRABBED, SHOT, FLYING, REMOVED
 	}
-	
+
 	public static ArrayList<EarthSmash> instances = new ArrayList<EarthSmash>();
 	public static boolean ALLOW_GRAB = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowGrab");
 	public static boolean ALLOW_SHOOTING = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowShooting");

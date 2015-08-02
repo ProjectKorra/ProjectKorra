@@ -1,18 +1,18 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.HashSet;
-
-import org.bukkit.Effect;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.BendingPlayer;
 import com.projectkorra.ProjectKorra.Element;
 import com.projectkorra.ProjectKorra.GeneralMethods;
 import com.projectkorra.ProjectKorra.airbending.AirBlast;
 import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
 import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+
+import org.bukkit.Effect;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
+import java.util.HashSet;
 
 /**
  * Used in {@link Cook HeatControl}.
@@ -28,40 +28,41 @@ public class Extinguish implements ConfigLoadable {
 	public Extinguish(Player player) {
 		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("HeatControl")) return;
+		if (bPlayer.isOnCooldown("HeatControl"))
+			return;
 		/* End Initial Checks */
 		reloadVariables();
-		
+
 		double range = FireMethods.getFirebendingDayAugment(defaultrange, player.getWorld());
 		if (WaterMethods.isMeltable(player.getTargetBlock((HashSet<Material>) null, (int) range))) {
 			new HeatMelt(player);
 			return;
 		}
 		double radius = FireMethods.getFirebendingDayAugment(defaultradius, player.getWorld());
-		for (Block block : GeneralMethods.getBlocksAroundPoint(
-				player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation(), radius)) {
-			
+		for (Block block : GeneralMethods.getBlocksAroundPoint(player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation(), radius)) {
+
 			Material mat = block.getType();
-			if (mat != Material.FIRE 
-					/*&& mat != Material.STATIONARY_LAVA
-					&& mat != Material.LAVA*/)
+			if (mat != Material.FIRE
+			/*
+			 * && mat != Material.STATIONARY_LAVA && mat != Material.LAVA
+			 */)
 				continue;
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze", block.getLocation()))
 				continue;
 			if (block.getType() == Material.FIRE) {
 				block.setType(Material.AIR);
 				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
-			} /*else if (block.getType() == Material.STATIONARY_LAVA) {
-				block.setType(Material.OBSIDIAN);
-				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
-			} else if (block.getType() == Material.LAVA) {
-				if (block.getData() == full) {
-					block.setType(Material.OBSIDIAN);
-				} else {
-					block.setType(Material.COBBLESTONE);
-				}
-				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
-			}*/
+			} /*
+			 * else if (block.getType() == Material.STATIONARY_LAVA) {
+			 * block.setType(Material.OBSIDIAN);
+			 * block.getWorld().playEffect(block.getLocation(),
+			 * Effect.EXTINGUISH, 0); } else if (block.getType() ==
+			 * Material.LAVA) { if (block.getData() == full) {
+			 * block.setType(Material.OBSIDIAN); } else {
+			 * block.setType(Material.COBBLESTONE); }
+			 * block.getWorld().playEffect(block.getLocation(),
+			 * Effect.EXTINGUISH, 0); }
+			 */
 		}
 
 		bPlayer.addCooldown("HeatControl", GeneralMethods.getGlobalCooldown());
@@ -85,12 +86,7 @@ public class Extinguish implements ConfigLoadable {
 	}
 
 	public static String getDescription() {
-		return "While this ability is selected, the firebender becomes impervious "
-				+ "to fire damage and cannot be ignited. "
-				+ "If the user left-clicks with this ability, the targeted area will be "
-				+ "extinguished, although it will leave any creature burning engulfed in flames. "
-				+ "This ability can also cool lava. If this ability is used while targetting ice or snow, it"
-				+ " will instead melt blocks in that area. Finally, sneaking with this ability will cook any food in your hand.";
+		return "While this ability is selected, the firebender becomes impervious " + "to fire damage and cannot be ignited. " + "If the user left-clicks with this ability, the targeted area will be " + "extinguished, although it will leave any creature burning engulfed in flames. " + "This ability can also cool lava. If this ability is used while targetting ice or snow, it" + " will instead melt blocks in that area. Finally, sneaking with this ability will cook any food in your hand.";
 	}
 
 	@Override

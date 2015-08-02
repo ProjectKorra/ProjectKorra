@@ -1,14 +1,10 @@
 package com.projectkorra.ProjectKorra;
 
-import java.util.HashMap;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.ProjectKorra.Ability.AvatarState;
 import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+import com.projectkorra.ProjectKorra.Utilities.Flight;
+import com.projectkorra.ProjectKorra.Utilities.RevertChecker;
+import com.projectkorra.ProjectKorra.Utilities.TempPotionEffect;
 import com.projectkorra.ProjectKorra.chiblocking.ChiComboManager;
 import com.projectkorra.ProjectKorra.chiblocking.RapidPunch;
 import com.projectkorra.ProjectKorra.configuration.ConfigLoadable;
@@ -17,10 +13,17 @@ import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.UUID;
+
 public class BendingManager implements Runnable, ConfigLoadable {
 
 	private static BendingManager instance;
-	
+
 	public static HashMap<World, String> events = new HashMap<World, String>(); // holds any current event.
 
 	private static String sozinsCometMessage = config.get().getString("Properties.Fire.CometMessage");
@@ -33,7 +36,7 @@ public class BendingManager implements Runnable, ConfigLoadable {
 	private static String fullMoonriseMessage = config.get().getString("Properties.Water.FullMoonMessage");
 	private static String lunarEclipseMessage = config.get().getString("Properties.Water.LunarEclipsetMessage");
 	private static String moonsetMessage = config.get().getString("Properties.Water.DayMessage");
-	
+
 	long time;
 	long interval;
 	private final HashMap<World, Boolean> times = new HashMap<World, Boolean>(); // true if day time
@@ -42,15 +45,15 @@ public class BendingManager implements Runnable, ConfigLoadable {
 		instance = this;
 		time = System.currentTimeMillis();
 	}
-	
+
 	public static BendingManager getInstance() {
 		return instance;
 	}
 
 	public void handleCooldowns() {
-		for (UUID uuid: BendingPlayer.getPlayers().keySet()) {
+		for (UUID uuid : BendingPlayer.getPlayers().keySet()) {
 			BendingPlayer bPlayer = BendingPlayer.getPlayers().get(uuid);
-			for (String abil: bPlayer.getCooldowns().keySet()) {
+			for (String abil : bPlayer.getCooldowns().keySet()) {
 				if (System.currentTimeMillis() >= bPlayer.getCooldown(abil)) {
 					bPlayer.removeCooldown(abil);
 				}
@@ -59,12 +62,12 @@ public class BendingManager implements Runnable, ConfigLoadable {
 	}
 
 	public void handleDayNight() {
-		for (World world: Bukkit.getServer().getWorlds()) {
+		for (World world : Bukkit.getServer().getWorlds()) {
 			if (!events.containsKey(world)) {
 				events.put(world, "");
 			}
 		}
-		for (World world: Bukkit.getServer().getWorlds()) {
+		for (World world : Bukkit.getServer().getWorlds()) {
 			if (!times.containsKey(world)) {
 				if (FireMethods.isDay(world)) {
 					times.put(world, true);
@@ -90,10 +93,11 @@ public class BendingManager implements Runnable, ConfigLoadable {
 							events.put(world, "");
 						}
 					}
-					for (Player player: world.getPlayers()) {
-						
-						if(!player.hasPermission("bending.message.nightmessage")) return;
-						
+					for (Player player : world.getPlayers()) {
+
+						if (!player.hasPermission("bending.message.nightmessage"))
+							return;
+
 						if (GeneralMethods.isBender(player.getName(), Element.Water)) {
 							if (GeneralMethods.hasRPG()) {
 								if (RPGMethods.isLunarEclipse(world)) {
@@ -112,7 +116,8 @@ public class BendingManager implements Runnable, ConfigLoadable {
 							}
 						}
 						if (GeneralMethods.isBender(player.getName(), Element.Fire)) {
-							if(player.hasPermission("bending.message.daymessage")) return;
+							if (player.hasPermission("bending.message.daymessage"))
+								return;
 							player.sendMessage(FireMethods.getFireColor() + sunsetMessage);
 						}
 					}
@@ -132,7 +137,7 @@ public class BendingManager implements Runnable, ConfigLoadable {
 					} else {
 						events.put(world, "");
 					}
-					for (Player player: world.getPlayers()) {
+					for (Player player : world.getPlayers()) {
 						if (GeneralMethods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
 							player.sendMessage(WaterMethods.getWaterColor() + moonsetMessage);
 						}
@@ -170,7 +175,8 @@ public class BendingManager implements Runnable, ConfigLoadable {
 			ChiComboManager.handleParalysis();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			GeneralMethods.stopBending();
 			e.printStackTrace();
 		}
@@ -189,5 +195,5 @@ public class BendingManager implements Runnable, ConfigLoadable {
 		lunarEclipseMessage = config.get().getString("Properties.Water.LunarEclipsetMessage");
 		moonsetMessage = config.get().getString("Properties.Water.DayMessage");
 	}
-	
+
 }

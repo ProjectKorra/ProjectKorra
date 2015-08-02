@@ -1,7 +1,9 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,10 +13,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TorrentBurst {
 
@@ -139,7 +139,7 @@ public class TorrentBurst {
 				Block block = location.getBlock();
 				if (torrentblocks.contains(block))
 					continue;
-				if (EarthMethods.isTransparentToEarthbending(player,	block)) {
+				if (EarthMethods.isTransparentToEarthbending(player, block)) {
 					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 					blocks.add(tempBlock);
 					torrentblocks.add(block);
@@ -155,11 +155,11 @@ public class TorrentBurst {
 						}
 					}
 				}
-				
-				for(Block sound : torrentblocks) {
+
+				for (Block sound : torrentblocks) {
 					if (GeneralMethods.rand.nextInt(50) == 0) {
 						WaterMethods.playWaterbendingSound(sound.getLocation());
-					}		
+					}
 				}
 			}
 			if (angles.isEmpty())

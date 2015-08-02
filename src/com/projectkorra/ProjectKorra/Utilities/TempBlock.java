@@ -1,12 +1,14 @@
-package com.projectkorra.ProjectKorra;
+package com.projectkorra.ProjectKorra.Utilities;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TempBlock {
 
@@ -43,26 +45,28 @@ public class TempBlock {
 		if (state.getType() == Material.FIRE)
 			state.setType(Material.AIR);
 	}
-	
+
 	public static TempBlock get(Block block) {
 		if (isTempBlock(block))
 			return instances.get(block);
 		return null;
 	}
+
 	public static boolean isTempBlock(Block block) {
 		if (instances.containsKey(block))
 			return true;
 		return false;
 	}
+
 	public static boolean isTouchingTempBlock(Block block) {
-		BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
-				BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
+		BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
 		for (BlockFace face : faces) {
 			if (instances.containsKey(block.getRelative(face)))
 				return true;
 		}
 		return false;
 	}
+
 	public static void removeAll() {
 		for (Block block : instances.keySet()) {
 			revertBlock(block, Material.AIR);
@@ -81,15 +85,10 @@ public class TempBlock {
 		if (instances.containsKey(block)) {
 			instances.get(block).revertBlock();
 		} else {
-			if ((defaulttype == Material.LAVA
-					|| defaulttype == Material.STATIONARY_LAVA)
-					&& GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+			if ((defaulttype == Material.LAVA || defaulttype == Material.STATIONARY_LAVA) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.LAVA);
 				block.setData((byte) 0x0);
-			}
-			else if ((defaulttype == Material.WATER
-					|| defaulttype == Material.STATIONARY_WATER )
-					&& GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+			} else if ((defaulttype == Material.WATER || defaulttype == Material.STATIONARY_WATER) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.WATER);
 				block.setData((byte) 0x0);
 			} else {
@@ -106,11 +105,11 @@ public class TempBlock {
 	public Location getLocation() {
 		return block.getLocation();
 	}
-	
+
 	public BlockState getState() {
 		return state;
 	}
-	
+
 	public void revertBlock() {
 		state.update(true);
 		instances.remove(block);

@@ -1,12 +1,12 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Plantbending {
 

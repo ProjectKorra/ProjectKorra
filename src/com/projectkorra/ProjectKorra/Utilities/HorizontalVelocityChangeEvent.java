@@ -11,8 +11,7 @@ import org.bukkit.util.Vector;
 /**
  * Created by Carbogen on 2/2/2015.
  */
-public class HorizontalVelocityChangeEvent extends Event implements Cancellable
-{
+public class HorizontalVelocityChangeEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean isCancelled;
@@ -26,8 +25,7 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable
 	private Location end;
 
 	@Deprecated
-	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference)
-	{
+	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference) {
 		this.entity = entity;
 		this.instigator = instigator;
 		this.from = from;
@@ -35,8 +33,7 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable
 		this.difference = difference;
 	}
 
-	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference, Location start, Location end)
-	{
+	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference, Location start, Location end) {
 		this.entity = entity;
 		this.instigator = instigator;
 		this.from = from;
@@ -46,66 +43,54 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable
 		this.end = end;
 	}
 
-	public Entity getEntity()
-	{
+	public Entity getEntity() {
 		return entity;
 	}
 
-	public Player getInstigator()
-	{
+	public Player getInstigator() {
 		return instigator;
 	}
 
-	public Vector getFrom()
-	{
+	public Vector getFrom() {
 		return from;
 	}
 
-	public Vector getTo()
-	{
+	public Vector getTo() {
 		return to;
 	}
 
-	public Location getStartPoint()
-	{
+	public Location getStartPoint() {
 		return start;
 	}
 
-	public Location getEndPoint()
-	{
+	public Location getEndPoint() {
 		return end;
 	}
 
-	public double getDistanceTraveled()
-	{
+	public double getDistanceTraveled() {
 		return start.distance(end);
 	}
 
-	public Vector getDifference()
-	{
+	public Vector getDifference() {
 		return difference;
 	}
 
 	@Override
-	public HandlerList getHandlers()
-	{
+	public HandlerList getHandlers() {
 		return handlers;
 	}
 
-	public static HandlerList getHandlerList()
-	{
+	public static HandlerList getHandlerList() {
 		return handlers;
 	}
 
 	@Override
-	public boolean isCancelled()
-	{
+	public boolean isCancelled() {
 		return isCancelled;
 	}
 
 	@Override
-	public void setCancelled(boolean value)
-	{
+	public void setCancelled(boolean value) {
 		this.isCancelled = value;
 	}
 }

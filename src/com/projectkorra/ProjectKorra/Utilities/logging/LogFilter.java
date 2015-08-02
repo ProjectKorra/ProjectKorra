@@ -1,5 +1,9 @@
 package com.projectkorra.ProjectKorra.Utilities.logging;
 
+import com.projectkorra.ProjectKorra.ProjectKorra;
+
+import org.bukkit.Bukkit;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -7,13 +11,8 @@ import java.util.List;
 import java.util.logging.Filter;
 import java.util.logging.LogRecord;
 
-import org.bukkit.Bukkit;
-
-import com.projectkorra.ProjectKorra.ProjectKorra;
-
 /**
- * This class should only be used to set 
- * {@link PKLogHandler}'s filter.
+ * This class should only be used to set {@link PKLogHandler}'s filter.
  * 
  * @author Jacklin213
  * @version 2.1.0
@@ -40,7 +39,7 @@ public class LogFilter implements Filter {
 					return false;
 				}
 				// record message doesnt have ProjectKorra but throwable does
-			} 
+			}
 			recordString = buildString(record);
 		} else {
 			if (record.getThrown() != null) {
@@ -54,12 +53,12 @@ public class LogFilter implements Filter {
 				recordString = buildString(record);
 			}
 		}
-		
+
 		if (loggedRecords.contains(recordString)) {
 			// Logged records contains record 
 			return false;
 		}
-		
+
 		final String toRecord = recordString;
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
 			public void run() {
@@ -68,7 +67,7 @@ public class LogFilter implements Filter {
 		}, 10);
 		return true;
 	}
-	
+
 	private String buildString(LogRecord record) {
 		StringBuilder builder = new StringBuilder();
 		if (record.getMessage() != null) {
@@ -79,7 +78,7 @@ public class LogFilter implements Filter {
 			record.getThrown().printStackTrace(new PrintWriter(writer));
 			builder.append(writer);
 		}
-		
+
 		return builder.toString();
 	}
 }

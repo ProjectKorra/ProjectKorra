@@ -1,23 +1,23 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.Utilities.Flight;
 
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FlightAbility extends CoreAbility {
-	
+
 	private static ConcurrentHashMap<String, Integer> hits = new ConcurrentHashMap<String, Integer>();
 	private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<String, Boolean>();
 	private Player player;
 	private Flight flight;
-	
-	public FlightAbility(Player player) {		
-		if (!AirMethods.canFly(player, true, false)) 
+
+	public FlightAbility(Player player) {
+		if (!AirMethods.canFly(player, true, false))
 			return;
 		player.setAllowFlight(true);
 		player.setVelocity(player.getEyeLocation().getDirection().normalize());
@@ -25,7 +25,7 @@ public class FlightAbility extends CoreAbility {
 		//instances.put(player.getUniqueId(), this);
 		putInstance(player, this);
 	}
-	
+
 	public static void addHit(Player player) {
 		if (contains(player)) {
 			if (hits.containsKey(player.getName())) {
@@ -38,11 +38,11 @@ public class FlightAbility extends CoreAbility {
 			}
 		}
 	}
-	
+
 	public static boolean contains(Player player) {
 		return containsPlayer(player, FlightAbility.class);
 	}
-	
+
 	public static boolean isHovering(Player player) {
 		return hovering.containsKey(player.getName());
 	}
@@ -51,16 +51,16 @@ public class FlightAbility extends CoreAbility {
 		if (contains(player))
 			getAbilityFromPlayer(player, FlightAbility.class).remove();
 	}
-	
+
 	public static void removeAll() {
 		CoreAbility.removeAll(StockAbility.Flight);
 		hits.clear();
 		hovering.clear();
 	}
-	
+
 	public static void setHovering(Player player, boolean bool) {
 		String playername = player.getName();
-		
+
 		if (bool) {
 			if (!hovering.containsKey(playername)) {
 				hovering.put(playername, true);
@@ -72,22 +72,22 @@ public class FlightAbility extends CoreAbility {
 			}
 		}
 	}
-	
+
 	@Override
 	public StockAbility getStockAbility() {
 		return StockAbility.Flight;
 	}
-	
+
 	@Override
 	public boolean progress() {
 		if (!AirMethods.canFly(player, false, isHovering(player))) {
 			remove(player);
 			return false;
 		}
-		
+
 		if (flight == null)
 			flight = new Flight(player);
-		
+
 		if (isHovering(player)) {
 			Vector vec = player.getVelocity().clone();
 			vec.setY(0);
@@ -99,7 +99,8 @@ public class FlightAbility extends CoreAbility {
 	}
 
 	@Override
-	public void reloadVariables() {}
+	public void reloadVariables() {
+	}
 
 	@Override
 	public void remove() {
@@ -108,7 +109,8 @@ public class FlightAbility extends CoreAbility {
 		super.remove();
 		hits.remove(name);
 		hovering.remove(name);
-		if (flight != null) flight.revert();
+		if (flight != null)
+			flight.revert();
 	}
-	
+
 }

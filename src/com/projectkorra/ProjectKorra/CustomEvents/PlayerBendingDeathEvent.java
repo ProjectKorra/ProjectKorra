@@ -4,8 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class PlayerBendingDeathEvent extends Event{
-
+public class PlayerBendingDeathEvent extends Event {
 
 	public static final HandlerList handlers = new HandlerList();
 	private Player victim;
@@ -31,7 +30,7 @@ public class PlayerBendingDeathEvent extends Event{
 	public String getAbility() {
 		return ability;
 	}
-	
+
 	public double getDamage() {
 		return damage;
 	}

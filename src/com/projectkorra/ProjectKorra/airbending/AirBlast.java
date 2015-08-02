@@ -1,8 +1,14 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+import com.projectkorra.ProjectKorra.Utilities.Flight;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -19,15 +25,9 @@ import org.bukkit.material.Lever;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
-import com.projectkorra.ProjectKorra.Objects.HorizontalVelocityTracker;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirBlast extends CoreAbility {
 
@@ -42,10 +42,10 @@ public class AirBlast extends CoreAbility {
 	/* Package visible variables */
 	static double maxspeed = 1. / defaultpushfactor;
 	/* End Package visible variables */
-	
+
 	// public static long interval = 2000;
 	public static byte full = 0x0;
-	
+
 	private Location location;
 	private Location origin;
 	private Vector direction;
@@ -64,7 +64,7 @@ public class AirBlast extends CoreAbility {
 
 	@SuppressWarnings("unused")
 	private AirBurst source = null;
-	
+
 	public AirBlast(Location location, Vector direction, Player player, double factorpush, AirBurst burst) {
 		if (location.getBlock().isLiquid()) {
 			return;
@@ -80,11 +80,12 @@ public class AirBlast extends CoreAbility {
 		//instances.put(uuid, this);
 		putInstance(player, this);
 	}
-	
+
 	public AirBlast(Player player) {
 		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("AirBlast")) return;
+		if (bPlayer.isOnCooldown("AirBlast"))
+			return;
 		if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
 		}
@@ -113,7 +114,7 @@ public class AirBlast extends CoreAbility {
 		// time = System.currentTimeMillis();
 		// timers.put(player, System.currentTimeMillis());
 	}
-	
+
 	private static void playOriginEffect(Player player) {
 		if (!origins.containsKey(player))
 			return;
@@ -142,14 +143,14 @@ public class AirBlast extends CoreAbility {
 		//		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
 		//				(int) originselectrange);
 	}
-	
+
 	public static void progressAll() {
 		CoreAbility.progressAll(StockAbility.AirBlast);
 		for (Player player : origins.keySet()) {
 			playOriginEffect(player);
 		}
 	}
-	
+
 	public static void setOrigin(Player player) {
 		Location location = GeneralMethods.getTargetedLocation(player, originselectrange, GeneralMethods.nonOpaque);
 		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock()))
@@ -212,10 +213,11 @@ public class AirBlast extends CoreAbility {
 			}
 
 			if (entity instanceof Player) {
-				if (Commands.invincible.contains(((Player) entity).getName())) return;
+				if (Commands.invincible.contains(((Player) entity).getName()))
+					return;
 			}
 
-			if(Double.isNaN(velocity.length()))
+			if (Double.isNaN(velocity.length()))
 				return;
 
 			GeneralMethods.setVelocity(entity, velocity);
@@ -285,8 +287,7 @@ public class AirBlast extends CoreAbility {
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
 
-			Material doorTypes[] = {Material.WOODEN_DOOR, Material.SPRUCE_DOOR, 
-					Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR};
+			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR };
 			if (Arrays.asList(doorTypes).contains(block.getType())) {
 				if (block.getData() >= 8) {
 					block = block.getRelative(BlockFace.DOWN);
@@ -300,8 +301,7 @@ public class AirBlast extends CoreAbility {
 					block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
 				}
 			}
-			if ((block.getType() == Material.LEVER)
-					&& !affectedlevers.contains(block)) {
+			if ((block.getType() == Material.LEVER) && !affectedlevers.contains(block)) {
 				// BlockState state = block.getState();
 				// Lever lever = (Lever) (state.getData());
 				// lever.setPowered(!lever.isPowered());
@@ -331,8 +331,7 @@ public class AirBlast extends CoreAbility {
 
 				affectedlevers.add(block);
 
-			} else if ((block.getType() == Material.STONE_BUTTON) 
-					&& !affectedlevers.contains(block)) {
+			} else if ((block.getType() == Material.STONE_BUTTON) && !affectedlevers.contains(block)) {
 
 				final Button button = new Button(Material.STONE_BUTTON, block.getData());
 				button.setPowered(!button.isPowered());
@@ -346,14 +345,14 @@ public class AirBlast extends CoreAbility {
 					supportState.update(true, false);
 					initialSupportState.update(true);
 				}
-				
+
 				final Block btBlock = block;
 
 				new BukkitRunnable() {
 					public void run() {
 						button.setPowered(!button.isPowered());
 						btBlock.setData(button.getData());
-						
+
 						Block supportBlock = btBlock.getRelative(button.getAttachedFace());
 						if (supportBlock != null && supportBlock.getType() != Material.AIR) {
 							BlockState initialSupportState = supportBlock.getState();
@@ -366,8 +365,7 @@ public class AirBlast extends CoreAbility {
 				}.runTaskLater(ProjectKorra.plugin, 10);
 
 				affectedlevers.add(block);
-			} else if ((block.getType() == Material.WOOD_BUTTON) 
-					&& !affectedlevers.contains(block)) {
+			} else if ((block.getType() == Material.WOOD_BUTTON) && !affectedlevers.contains(block)) {
 
 				final Button button = new Button(Material.WOOD_BUTTON, block.getData());
 				button.setPowered(!button.isPowered());
@@ -381,14 +379,14 @@ public class AirBlast extends CoreAbility {
 					supportState.update(true, false);
 					initialSupportState.update(true);
 				}
-				
+
 				final Block btBlock = block;
 
 				new BukkitRunnable() {
 					public void run() {
 						button.setPowered(!button.isPowered());
 						btBlock.setData(button.getData());
-						
+
 						Block supportBlock = btBlock.getRelative(button.getAttachedFace());
 						if (supportBlock != null && supportBlock.getType() != Material.AIR) {
 							BlockState initialSupportState = supportBlock.getState();
@@ -416,10 +414,10 @@ public class AirBlast extends CoreAbility {
 		}
 
 		/*
-		 *	If a player presses shift and AirBlasts straight down then
-		 *	the AirBlast's location gets messed up and reading the distance
-		 *	returns Double.NaN. If we don't remove this instance then
-		 *	the AirBlast will never be removed. 
+		 * If a player presses shift and AirBlasts straight down then the
+		 * AirBlast's location gets messed up and reading the distance returns
+		 * Double.NaN. If we don't remove this instance then the AirBlast will
+		 * never be removed.
 		 */
 		double dist = location.distance(origin);
 		if (Double.isNaN(dist) || dist > range) {
@@ -449,7 +447,7 @@ public class AirBlast extends CoreAbility {
 	public void setDamage(double dmg) {
 		this.damage = dmg;
 	}
-	
+
 	public void setPushfactor(double pushfactor) {
 		this.pushfactor = pushfactor;
 	}
@@ -461,7 +459,7 @@ public class AirBlast extends CoreAbility {
 	public void setShowParticles(boolean show) {
 		this.showParticles = show;
 	}
-	
+
 	@Override
 	public InstanceType getInstanceType() {
 		return InstanceType.MULTIPLE;

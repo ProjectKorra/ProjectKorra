@@ -1,6 +1,11 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
+import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,12 +14,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
-import com.projectkorra.ProjectKorra.waterbending.WaterManipulation;
-import com.projectkorra.ProjectKorra.waterbending.WaterMethods;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirBubble extends CoreAbility {
 
@@ -45,9 +45,7 @@ public class AirBubble extends CoreAbility {
 	}
 
 	public static String getDescription() {
-		return "To use, the bender must merely have the ability selected."
-				+ " All water around the user in a small bubble will vanish,"
-				+ " replacing itself once the user either gets too far away or selects a different ability.";
+		return "To use, the bender must merely have the ability selected." + " All water around the user in a small bubble will vanish," + " replacing itself once the user either gets too far away or selects a different ability.";
 	}
 
 	public static void handleBubbles(Server server) {
@@ -101,7 +99,7 @@ public class AirBubble extends CoreAbility {
 			remove();
 			return false;
 		}
-		
+
 		if (!player.isSneaking()) {
 			remove();
 			return false;
@@ -127,13 +125,10 @@ public class AirBubble extends CoreAbility {
 		} else {
 			radius = defaultWaterRadius;
 		}
-		if (GeneralMethods.isBender(player.getName(), Element.Water)
-				&& WaterMethods.isNight(player.getWorld())) {
-			radius = WaterMethods.waterbendingNightAugment(defaultWaterRadius,
-					player.getWorld());
+		if (GeneralMethods.isBender(player.getName(), Element.Water) && WaterMethods.isNight(player.getWorld())) {
+			radius = WaterMethods.waterbendingNightAugment(defaultWaterRadius, player.getWorld());
 		}
-		if (defaultAirRadius > radius
-				&& GeneralMethods.isBender(player.getName(), Element.Air))
+		if (defaultAirRadius > radius && GeneralMethods.isBender(player.getName(), Element.Air))
 			radius = defaultAirRadius;
 		Location location = player.getLocation();
 
@@ -154,11 +149,9 @@ public class AirBubble extends CoreAbility {
 				continue;
 			if (!WaterMethods.isWater(block))
 				continue;
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBubble",
-					block.getLocation()))
+			if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBubble", block.getLocation()))
 				continue;
-			if (block.getType() == Material.STATIONARY_WATER
-					|| block.getType() == Material.WATER) {
+			if (block.getType() == Material.STATIONARY_WATER || block.getType() == Material.WATER) {
 				if (WaterManipulation.canBubbleWater(block)) {
 					waterorigins.put(block, block.getState());
 					block.setType(Material.AIR);

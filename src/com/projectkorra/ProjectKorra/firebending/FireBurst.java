@@ -1,7 +1,12 @@
 package com.projectkorra.ProjectKorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.ProjectKorra.BendingManager;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -10,13 +15,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingManager;
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FireBurst extends CoreAbility {
 	private static double PARTICLES_PERCENTAGE = 5;
@@ -34,12 +34,13 @@ public class FireBurst extends CoreAbility {
 	public FireBurst(Player player) {
 		/* Initial Checks */
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("FireBurst")) return;
+		if (bPlayer.isOnCooldown("FireBurst"))
+			return;
 		if (containsPlayer(player, FireBurst.class))
 			return;
 		/* End Initial Checks */
 		reloadVariables();
-		
+
 		starttime = System.currentTimeMillis();
 		if (FireMethods.isDay(player.getWorld())) {
 			chargetime /= config.get().getDouble("Properties.Fire.DayFactor");
@@ -47,7 +48,8 @@ public class FireBurst extends CoreAbility {
 		if (AvatarState.isAvatarState(player))
 			chargetime = 0;
 		if (BendingManager.events.containsKey(player.getWorld())) {
-			if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) chargetime = 0;
+			if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet"))
+				chargetime = 0;
 		}
 		this.player = player;
 		//instances.put(player, this);
@@ -60,17 +62,13 @@ public class FireBurst extends CoreAbility {
 	}
 
 	public static String getDescription() {
-		return "FireBurst is a very powerful firebending ability. "
-				+ "To use, press and hold sneak to charge your burst. "
-				+ "Once charged, you can either release sneak to launch a cone-shaped burst "
-				+ "of flames in front of you, or click to release the burst in a sphere around you. ";
+		return "FireBurst is a very powerful firebending ability. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to launch a cone-shaped burst " + "of flames in front of you, or click to release the burst in a sphere around you. ";
 	}
 
 	private void coneBurst() {
 		if (charged) {
 			Location location = player.getEyeLocation();
-			List<Block> safeblocks = GeneralMethods.getBlocksAroundPoint(
-					player.getLocation(), 2);
+			List<Block> safeblocks = GeneralMethods.getBlocksAroundPoint(player.getLocation(), 2);
 			Vector vector = location.getDirection();
 			double angle = Math.toRadians(30);
 			double x, y, z;
@@ -100,7 +98,7 @@ public class FireBurst extends CoreAbility {
 	public long getChargetime() {
 		return chargetime;
 	}
-	
+
 	public int getDamage() {
 		return damage;
 	}
@@ -120,8 +118,8 @@ public class FireBurst extends CoreAbility {
 
 	/**
 	 * To combat the sphere FireBurst lag we are only going to show a certain
-	 * percentage of FireBurst particles at a time per tick. As the bursts spread out
-	 * then we can show more at a time.
+	 * percentage of FireBurst particles at a time per tick. As the bursts
+	 * spread out then we can show more at a time.
 	 */
 	public void handleSmoothParticles() {
 		for (int i = 0; i < blasts.size(); i++) {

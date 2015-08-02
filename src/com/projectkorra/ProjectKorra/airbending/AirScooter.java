@@ -1,6 +1,9 @@
 package com.projectkorra.ProjectKorra.airbending;
 
-import java.util.ArrayList;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.Ability.CoreAbility;
+import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import com.projectkorra.ProjectKorra.Utilities.Flight;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -9,10 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.Flight;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.Ability.CoreAbility;
-import com.projectkorra.ProjectKorra.Ability.StockAbility;
+import java.util.ArrayList;
 
 public class AirScooter extends CoreAbility {
 
@@ -30,9 +30,7 @@ public class AirScooter extends CoreAbility {
 		if (check(player)) {
 			return;
 		}
-		if (!player.isSprinting()
-				|| GeneralMethods.isSolid(player.getEyeLocation().getBlock())
-				|| player.getEyeLocation().getBlock().isLiquid())
+		if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock()) || player.getEyeLocation().getBlock().isLiquid())
 			return;
 		if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
 			return;
@@ -55,8 +53,7 @@ public class AirScooter extends CoreAbility {
 	}
 
 	/**
-	 * Checks if player has an instance already and removes
-	 * if they do.
+	 * Checks if player has an instance already and removes if they do.
 	 * 
 	 * @param player The player to check
 	 * @return false If player doesn't have an instance
@@ -91,7 +88,7 @@ public class AirScooter extends CoreAbility {
 	public Player getPlayer() {
 		return player;
 	}
-	
+
 	public double getSpeed() {
 		return speed;
 	}
@@ -118,12 +115,11 @@ public class AirScooter extends CoreAbility {
 			return false;
 		}
 
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirScooter",
-				player.getLocation())) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirScooter", player.getLocation())) {
 			remove();
 			return false;
 		}
-		
+
 		// if (Methods
 		// .isSolid(player
 		// .getEyeLocation()
@@ -191,8 +187,8 @@ public class AirScooter extends CoreAbility {
 			double y = ((double) i) / 2 * scooterradius - scooterradius;
 			double z = Math.sin(Math.toRadians(angles.get(i))) * scooterradius;
 			AirMethods.playAirbendingParticles(origin.clone().add(x, y, z), 10);
-//			player.getWorld().playEffect(origin.clone().add(x, y, z),
-//					Effect.SMOKE, 4, (int) AirBlast.defaultrange);
+			//			player.getWorld().playEffect(origin.clone().add(x, y, z),
+			//					Effect.SMOKE, 4, (int) AirBlast.defaultrange);
 		}
 		for (int i = 0; i < 5; i++) {
 			angles.set(i, angles.get(i) + 10);

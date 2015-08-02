@@ -1,9 +1,14 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.MultiAbility.MultiAbilityManager;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.firebending.FireMethods;
+import com.projectkorra.ProjectKorra.firebending.Lightning;
+import com.projectkorra.ProjectKorra.waterbending.WaterArmsWhip.Whip;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -13,15 +18,10 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.MultiAbilityManager;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.firebending.FireMethods;
-import com.projectkorra.ProjectKorra.firebending.Lightning;
-import com.projectkorra.ProjectKorra.waterbending.WaterArmsWhip.Whip;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterArms {
 
@@ -37,8 +37,7 @@ public class WaterArms {
 	public static ConcurrentHashMap<Player, WaterArms> instances = new ConcurrentHashMap<Player, WaterArms>();
 	public static ConcurrentHashMap<Block, Long> revert = new ConcurrentHashMap<Block, Long>();
 
-	private static Integer[] unbreakable = { 7, 8, 9, 10, 11, 49, 54, 90, 119,
-			120, 130, 146 };
+	private static Integer[] unbreakable = { 7, 8, 9, 10, 11, 49, 54, 90, 119, 120, 130, 146 };
 
 	private Player player;
 	private World world;
@@ -79,44 +78,42 @@ public class WaterArms {
 				instances.get(player).prepareCancel();
 			} else {
 				switch (player.getInventory().getHeldItemSlot()) {
-				case 0:
-					if (player.hasPermission("bending.ability.WaterArms.Pull")) {
-						new WaterArmsWhip(player, Whip.Pull);
-					}
-					break;
-				case 1:
-					if (player.hasPermission("bending.ability.WaterArms.Punch")) {
-						new WaterArmsWhip(player, Whip.Punch);
-					}
-					break;
-				case 2:
-					if (player
-							.hasPermission("bending.ability.WaterArms.Grapple")) {
-						new WaterArmsWhip(player, Whip.Grapple);
-					}
-					break;
-				case 3:
-					if (player.hasPermission("bending.ability.WaterArms.Grab")) {
-						new WaterArmsWhip(player, Whip.Grab);
-					}
-					break;
-				case 4:
-					if (player.hasPermission("bending.ability.WaterArms.Freeze")
-							&& WaterMethods.canIcebend(player)) {
-						new WaterArmsFreeze(player);
-					}
-					break;
-				case 5:
-					if (player.hasPermission("bending.ability.WaterArms.Spear")) {
-						if (WaterMethods.canIcebend(player)) {
-							new WaterArmsSpear(player, true);
-						} else {
-							new WaterArmsSpear(player, false);
+					case 0:
+						if (player.hasPermission("bending.ability.WaterArms.Pull")) {
+							new WaterArmsWhip(player, Whip.Pull);
 						}
-					}
-					break;
-				default:
-					break;
+						break;
+					case 1:
+						if (player.hasPermission("bending.ability.WaterArms.Punch")) {
+							new WaterArmsWhip(player, Whip.Punch);
+						}
+						break;
+					case 2:
+						if (player.hasPermission("bending.ability.WaterArms.Grapple")) {
+							new WaterArmsWhip(player, Whip.Grapple);
+						}
+						break;
+					case 3:
+						if (player.hasPermission("bending.ability.WaterArms.Grab")) {
+							new WaterArmsWhip(player, Whip.Grab);
+						}
+						break;
+					case 4:
+						if (player.hasPermission("bending.ability.WaterArms.Freeze") && WaterMethods.canIcebend(player)) {
+							new WaterArmsFreeze(player);
+						}
+						break;
+					case 5:
+						if (player.hasPermission("bending.ability.WaterArms.Spear")) {
+							if (WaterMethods.canIcebend(player)) {
+								new WaterArmsSpear(player, true);
+							} else {
+								new WaterArmsSpear(player, false);
+							}
+						}
+						break;
+					default:
+						break;
 				}
 			}
 			return;
@@ -130,8 +127,7 @@ public class WaterArms {
 				remove();
 				return;
 			}
-			player.sendMessage(WaterMethods.getWaterColor() + sneakMsg + " "
-					+ GeneralMethods.getBoundAbility(player));
+			player.sendMessage(WaterMethods.getWaterColor() + sneakMsg + " " + GeneralMethods.getBoundAbility(player));
 		}
 	}
 
@@ -155,9 +151,7 @@ public class WaterArms {
 			if (WaterMethods.isPlant(sourceblock)) {
 				fullSource = false;
 			}
-			ParticleEffect.LARGE_SMOKE.display(
-					WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource)
-									.getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
+			ParticleEffect.LARGE_SMOKE.display(WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource).getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			WaterReturn.emptyWaterBottle(player);
@@ -183,8 +177,7 @@ public class WaterArms {
 			remove();
 			return;
 		}
-		if (maxPunches == 0 || maxUses == 0 || maxIceBlasts == 0
-				|| (leftArmConsumed && rightArmConsumed)) {
+		if (maxPunches == 0 || maxUses == 0 || maxIceBlasts == 0 || (leftArmConsumed && rightArmConsumed)) {
 			remove();
 			return;
 		}
@@ -198,9 +191,7 @@ public class WaterArms {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!EarthMethods.isTransparentToEarthbending(player, block)
-				&& !(WaterMethods.isWater(block) && TempBlock
-						.isTempBlock(block)))
+		if (!EarthMethods.isTransparentToEarthbending(player, block) && !(WaterMethods.isWater(block) && TempBlock.isTempBlock(block)))
 			return false;
 		return true;
 	}
@@ -215,19 +206,16 @@ public class WaterArms {
 		if (rightArmConsumed)
 			return false;
 
-		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 1).add(
-				0, 1.5, 0);
+		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 1).add(0, 1.5, 0);
 		if (!canPlaceBlock(r1.getBlock()))
 			return false;
 
-		if (!(getRightHandPos().getBlock().getLocation().equals(r1.getBlock()
-				.getLocation()))) {
+		if (!(getRightHandPos().getBlock().getLocation().equals(r1.getBlock().getLocation()))) {
 			new TempBlock(r1.getBlock(), Material.STATIONARY_WATER, (byte) 5);
 			revert.put(r1.getBlock(), 0L);
 		}
 
-		Location r2 = GeneralMethods.getRightSide(player.getLocation(), 2).add(
-				0, 1.5, 0);
+		Location r2 = GeneralMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
 		if (!canPlaceBlock(r2.getBlock()))
 			return false;
 
@@ -235,25 +223,18 @@ public class WaterArms {
 		revert.put(r2.getBlock(), 0L);
 
 		for (int j = 0; j <= initLength; j++) {
-			Location r3 = r2
-					.clone()
-					.toVector()
-					.add(player.getLocation().clone().getDirection()
-							.multiply(j)).toLocation(player.getWorld());
+			Location r3 = r2.clone().toVector().add(player.getLocation().clone().getDirection().multiply(j)).toLocation(player.getWorld());
 			if (!canPlaceBlock(r3.getBlock())) {
-				if (selectedSlot == freezeSlot
-						&& r3.getBlock().getType().equals(Material.ICE))
+				if (selectedSlot == freezeSlot && r3.getBlock().getType().equals(Material.ICE))
 					continue;
 				return false;
 			}
 
-			if (j >= 1 && selectedSlot == freezeSlot
-					&& WaterMethods.canIcebend(player)) {
+			if (j >= 1 && selectedSlot == freezeSlot && WaterMethods.canIcebend(player)) {
 				new TempBlock(r3.getBlock(), Material.ICE, (byte) 0);
 				revert.put(r3.getBlock(), 0L);
 			} else {
-				new TempBlock(r3.getBlock(), Material.STATIONARY_WATER,
-						(byte) 8);
+				new TempBlock(r3.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 				revert.put(r3.getBlock(), 0L);
 			}
 		}
@@ -271,19 +252,16 @@ public class WaterArms {
 		if (leftArmConsumed)
 			return false;
 
-		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 1).add(
-				0, 1.5, 0);
+		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 1).add(0, 1.5, 0);
 		if (!canPlaceBlock(l1.getBlock()))
 			return false;
 
-		if (!(getLeftHandPos().getBlock().getLocation().equals(l1.getBlock()
-				.getLocation()))) {
+		if (!(getLeftHandPos().getBlock().getLocation().equals(l1.getBlock().getLocation()))) {
 			new TempBlock(l1.getBlock(), Material.STATIONARY_WATER, (byte) 5);
 			revert.put(l1.getBlock(), 0L);
 		}
 
-		Location l2 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(
-				0, 1.5, 0);
+		Location l2 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
 		if (!canPlaceBlock(l2.getBlock()))
 			return false;
 
@@ -291,25 +269,18 @@ public class WaterArms {
 		revert.put(l2.getBlock(), 0L);
 
 		for (int j = 0; j <= initLength; j++) {
-			Location l3 = l2
-					.clone()
-					.toVector()
-					.add(player.getLocation().clone().getDirection()
-							.multiply(j)).toLocation(player.getWorld());
+			Location l3 = l2.clone().toVector().add(player.getLocation().clone().getDirection().multiply(j)).toLocation(player.getWorld());
 			if (!canPlaceBlock(l3.getBlock())) {
-				if (selectedSlot == freezeSlot
-						&& l3.getBlock().getType().equals(Material.ICE))
+				if (selectedSlot == freezeSlot && l3.getBlock().getType().equals(Material.ICE))
 					continue;
 				return false;
 			}
 
-			if (j >= 1 && selectedSlot == freezeSlot
-					&& WaterMethods.canIcebend(player)) {
+			if (j >= 1 && selectedSlot == freezeSlot && WaterMethods.canIcebend(player)) {
 				new TempBlock(l3.getBlock(), Material.ICE, (byte) 0);
 				revert.put(l3.getBlock(), 0L);
 			} else {
-				new TempBlock(l3.getBlock(), Material.STATIONARY_WATER,
-						(byte) 8);
+				new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 				revert.put(l3.getBlock(), 0L);
 			}
 		}
@@ -323,8 +294,7 @@ public class WaterArms {
 	 * @return
 	 */
 	private Location getRightHandPos() {
-		return GeneralMethods.getRightSide(player.getLocation(), .34).add(0,
-				1.5, 0);
+		return GeneralMethods.getRightSide(player.getLocation(), .34).add(0, 1.5, 0);
 	}
 
 	/**
@@ -333,8 +303,7 @@ public class WaterArms {
 	 * @return
 	 */
 	private Location getLeftHandPos() {
-		return GeneralMethods.getLeftSide(player.getLocation(), .34).add(0,
-				1.5, 0);
+		return GeneralMethods.getLeftSide(player.getLocation(), .34).add(0, 1.5, 0);
 	}
 
 	/**
@@ -344,11 +313,8 @@ public class WaterArms {
 	 * @return
 	 */
 	public Location getRightArmEnd() {
-		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 2).add(
-				0, 1.5, 0);
-		return r1.clone().add(
-				player.getLocation().getDirection().normalize()
-						.multiply(initLength));
+		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
+		return r1.clone().add(player.getLocation().getDirection().normalize().multiply(initLength));
 	}
 
 	/**
@@ -358,11 +324,8 @@ public class WaterArms {
 	 * @return
 	 */
 	public Location getLeftArmEnd() {
-		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(
-				0, 1.5, 0);
-		return l1.clone().add(
-				player.getLocation().getDirection().normalize()
-						.multiply(initLength));
+		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
+		return l1.clone().add(player.getLocation().getDirection().normalize().multiply(initLength));
 	}
 
 	private static void progressRevert(boolean ignoreTime) {
@@ -382,16 +345,13 @@ public class WaterArms {
 			for (Lightning.Arc arc : l.getArcs()) {
 				for (Block arm : revert.keySet()) {
 					for (Location loc : arc.getPoints()) {
-						if (arm.getLocation().getWorld() == loc.getWorld()
-								&& loc.distance(arm.getLocation()) <= 2.5) {
-							for (Location l1 : getOffsetLocations(4,
-									arm.getLocation(), 1.25))
+						if (arm.getLocation().getWorld() == loc.getWorld() && loc.distance(arm.getLocation()) <= 2.5) {
+							for (Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25))
 								FireMethods.playLightningbendingParticle(l1);
 							if (lightningKill)
 								GeneralMethods.damageEntity(l.getPlayer(), player, 60D);
 							else
-								GeneralMethods.damageEntity(l.getPlayer(), player,
-										lightningDamage);
+								GeneralMethods.damageEntity(l.getPlayer(), player, lightningDamage);
 						}
 					}
 				}
@@ -399,14 +359,10 @@ public class WaterArms {
 		}
 	}
 
-	private static List<Location> getOffsetLocations(int amount,
-			Location location, double offset) {
+	private static List<Location> getOffsetLocations(int amount, Location location, double offset) {
 		List<Location> locations = new ArrayList<Location>();
 		for (int i = 0; i < amount; i++)
-			locations.add(location.clone().add(
-					(float) (Math.random() * offset),
-					(float) (Math.random() * offset),
-					(float) (Math.random() * offset)));
+			locations.add(location.clone().add((float) (Math.random() * offset), (float) (Math.random() * offset), (float) (Math.random() * offset)));
 		return locations;
 	}
 
@@ -418,8 +374,7 @@ public class WaterArms {
 	public void remove() {
 		MultiAbilityManager.unbindMultiAbility(player);
 		if (player.isOnline())
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown(
-					"WaterArms", cooldown);
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterArms", cooldown);
 		instances.remove(player);
 	}
 
@@ -455,15 +410,13 @@ public class WaterArms {
 			return true;
 		return false;
 	}
-	
-	public static void displayBoundMsg(Player player){
-		player.sendMessage(WaterMethods.getWaterColor() + sneakMsg + " "
-				+ GeneralMethods.getBoundAbility(player));
+
+	public static void displayBoundMsg(Player player) {
+		player.sendMessage(WaterMethods.getWaterColor() + sneakMsg + " " + GeneralMethods.getBoundAbility(player));
 	}
-	
-	public void displayBoundMsg(){
-		player.sendMessage(WaterMethods.getWaterColor() + sneakMsg + " "
-				+ GeneralMethods.getBoundAbility(player));
+
+	public void displayBoundMsg() {
+		player.sendMessage(WaterMethods.getWaterColor() + sneakMsg + " " + GeneralMethods.getBoundAbility(player));
 	}
 
 	/**
@@ -507,23 +460,23 @@ public class WaterArms {
 
 	public boolean canDisplayActiveArm() {
 		switch (activeArm) {
-		case Left:
-			return displayLeftArm();
-		case Right:
-			return displayRightArm();
-		default:
-			return false;
+			case Left:
+				return displayLeftArm();
+			case Right:
+				return displayRightArm();
+			default:
+				return false;
 		}
 	}
 
 	public Location getActiveArmEnd() {
 		switch (activeArm) {
-		case Left:
-			return getLeftArmEnd();
-		case Right:
-			return getRightArmEnd();
-		default:
-			return null;
+			case Left:
+				return getLeftArmEnd();
+			case Right:
+				return getRightArmEnd();
+			default:
+				return null;
 		}
 	}
 
@@ -624,14 +577,14 @@ public class WaterArms {
 
 	public void setActiveArmCooldown(boolean cooldown) {
 		switch (activeArm) {
-		case Left:
-			setLeftArmCooldown(cooldown);
-			return;
-		case Right:
-			setRightArmCooldown(cooldown);
-			return;
-		default:
-			break;
+			case Left:
+				setLeftArmCooldown(cooldown);
+				return;
+			case Right:
+				setRightArmCooldown(cooldown);
+				return;
+			default:
+				break;
 		}
 	}
 

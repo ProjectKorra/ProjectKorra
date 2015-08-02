@@ -1,8 +1,18 @@
 package com.projectkorra.ProjectKorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.ProjectKorra.BendingPlayer;
+import com.projectkorra.ProjectKorra.Commands;
+import com.projectkorra.ProjectKorra.Element;
+import com.projectkorra.ProjectKorra.GeneralMethods;
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.Ability.AvatarState;
+import com.projectkorra.ProjectKorra.Utilities.BlockSource;
+import com.projectkorra.ProjectKorra.Utilities.ClickType;
+import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
+import com.projectkorra.ProjectKorra.Utilities.TempBlock;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+import com.projectkorra.ProjectKorra.firebending.FireCombo;
+import com.projectkorra.ProjectKorra.firebending.FireCombo.FireComboStream;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,31 +23,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.ProjectKorra.BendingPlayer;
-import com.projectkorra.ProjectKorra.Commands;
-import com.projectkorra.ProjectKorra.Element;
-import com.projectkorra.ProjectKorra.GeneralMethods;
-import com.projectkorra.ProjectKorra.ProjectKorra;
-import com.projectkorra.ProjectKorra.TempBlock;
-import com.projectkorra.ProjectKorra.Ability.AvatarState;
-import com.projectkorra.ProjectKorra.Utilities.BlockSource;
-import com.projectkorra.ProjectKorra.Utilities.ClickType;
-import com.projectkorra.ProjectKorra.Utilities.ParticleEffect;
-import com.projectkorra.ProjectKorra.chiblocking.ChiMethods;
-import com.projectkorra.ProjectKorra.chiblocking.Paralyze;
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-import com.projectkorra.ProjectKorra.firebending.FireCombo;
-import com.projectkorra.ProjectKorra.firebending.FireCombo.FireComboStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterCombo {
 	public static enum AbilityState {
 		ICE_PILLAR_RISING, ICE_BULLET_FORMING
 	}
 
-	private static boolean enabled = ProjectKorra.plugin.getConfig()
-	 .getBoolean("Abilities.Water.WaterCombo.Enabled");
-	public static long ICE_WAVE_COOLDOWN = ProjectKorra.plugin.getConfig().getLong(
-			"Abilities.Water.WaterCombo.IceWave.Cooldown");
+	private static boolean enabled = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterCombo.Enabled");
+	public static long ICE_WAVE_COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterCombo.IceWave.Cooldown");
 
 	public static double ICE_PILLAR_HEIGHT = 8;
 	public static double ICE_PILLAR_RADIUS = 1.5;

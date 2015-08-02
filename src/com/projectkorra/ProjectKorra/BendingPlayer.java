@@ -1,24 +1,26 @@
 package com.projectkorra.ProjectKorra;
 
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent;
+import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent.Result;
+import com.projectkorra.ProjectKorra.Storage.DBConnection;
+
+import org.bukkit.Bukkit;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
-
-import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent;
-import com.projectkorra.ProjectKorra.CustomEvents.PlayerCooldownChangeEvent.Result;
-
 /**
- * Class that presents a player and stores all bending information
- * about the player.
+ * Class that presents a player and stores all bending information about the
+ * player.
  */
 public class BendingPlayer {
 
 	/**
-	 * ConcurrentHashMap that contains all instances of BendingPlayer, with UUID key.
+	 * ConcurrentHashMap that contains all instances of BendingPlayer, with UUID
+	 * key.
 	 */
 	private static ConcurrentHashMap<UUID, BendingPlayer> players = new ConcurrentHashMap<>();
 	//	public static ConcurrentHashMap<String, Long> blockedChi = new ConcurrentHashMap<String, Long>();
@@ -112,15 +114,15 @@ public class BendingPlayer {
 	public HashMap<Integer, String> getAbilities() {
 		return this.abilities;
 	}
-	
+
 	/**
 	 * Gets the cooldown time of the ability.
 	 * 
 	 * @param ability The ability to check
-	 * @return the cooldown time 
-	 * <p>
-	 * or -1 if cooldown doesn't exist
-	 * </p>
+	 * @return the cooldown time
+	 *         <p>
+	 *         or -1 if cooldown doesn't exist
+	 *         </p>
 	 */
 	public long getCooldown(String ability) {
 		if (cooldowns.containsKey(ability)) {
@@ -155,7 +157,7 @@ public class BendingPlayer {
 	public String getName() {
 		return this.name;
 	}
-	
+
 	/**
 	 * Gets the unique identifier of the {@link BendingPlayer}.
 	 * 
@@ -182,7 +184,7 @@ public class BendingPlayer {
 	 */
 	public boolean hasElement(Element e) {
 		return this.elements.contains(e);
-	} 
+	}
 
 	/**
 	 * Checks to see if the {@link BendingPlayer} is chi blocked.
@@ -238,27 +240,27 @@ public class BendingPlayer {
 	public void removeCooldown(String ability) {
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
-		if(!event.isCancelled()) {
+		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
 		}
 	}
 
 	/**
-	 * Sets the {@link BendingPlayer}'s abilities. This method also
-	 * saves the abilities to the database.
+	 * Sets the {@link BendingPlayer}'s abilities. This method also saves the
+	 * abilities to the database.
 	 * 
 	 * @param abilities The abilities to set/save
 	 */
 	public void setAbilities(HashMap<Integer, String> abilities) {
 		this.abilities = abilities;
 		for (int i = 1; i <= 9; i++) {
-			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + (abilities.get(i) == null ? null: abilities.get(i)) + "' WHERE uuid = '" + uuid + "'");
+			DBConnection.sql.modifyQuery("UPDATE pk_players SET slot" + i + " = '" + (abilities.get(i) == null ? null : abilities.get(i)) + "' WHERE uuid = '" + uuid + "'");
 		}
 	}
-	
+
 	/**
-	 * Sets the {@link BendingPlayer}'s element.
-	 * If the player had elements before they will be overwritten.
+	 * Sets the {@link BendingPlayer}'s element. If the player had elements
+	 * before they will be overwritten.
 	 * 
 	 * @param e The element to set
 	 */
@@ -269,12 +271,13 @@ public class BendingPlayer {
 
 	/**
 	 * Sets the permanent removed state of the {@link BendingPlayer}.
+	 * 
 	 * @param permaRemoved
 	 */
 	public void setPermaRemoved(boolean permaRemoved) {
 		this.permaRemoved = permaRemoved;
 	}
-	
+
 	/**
 	 * Slow the {@link BendingPlayer} for a certain amount of time.
 	 * 
@@ -283,7 +286,7 @@ public class BendingPlayer {
 	public void slow(long cooldown) {
 		slowTime = System.currentTimeMillis() + cooldown;
 	}
-	
+
 	/**
 	 * Toggles the {@link BendingPlayer}'s bending.
 	 */
@@ -297,12 +300,12 @@ public class BendingPlayer {
 	public void toggleTremorSense() {
 		tremorSense = !tremorSense;
 	}
-	
+
 	/**
 	 * Sets the {@link BendingPlayer}'s chi blocked to false.
 	 */
 	public void unblockChi() {
 		chiBlocked = false;
 	}
-	
+
 }

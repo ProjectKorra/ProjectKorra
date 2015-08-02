@@ -1,4 +1,12 @@
-package com.projectkorra.ProjectKorra;
+package com.projectkorra.ProjectKorra.Utilities;
+
+import com.projectkorra.ProjectKorra.ProjectKorra;
+import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
+
+import org.bukkit.Chunk;
+import org.bukkit.Server;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,17 +15,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
-import org.bukkit.Chunk;
-import org.bukkit.Server;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
-import com.projectkorra.ProjectKorra.earthbending.EarthMethods;
-
 public class RevertChecker implements Runnable {
 
 	private ProjectKorra plugin;
-	
+
 	private static final boolean safeRevert = ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.SafeRevert");
 	public static ConcurrentHashMap<Block, Block> earthRevertQueue = new ConcurrentHashMap<Block, Block>();
 	static ConcurrentHashMap<Integer, Integer> airRevertQueue = new ConcurrentHashMap<Integer, Integer>();
@@ -25,13 +26,12 @@ public class RevertChecker implements Runnable {
 	// static ConcurrentHashMap<Block, Material> movedEarthQueue = new
 	// ConcurrentHashMap<Block, Material>();
 
-
 	private long time;
-	
+
 	public RevertChecker(ProjectKorra bending) {
 		plugin = bending;
 	}
-	
+
 	public static void revertAirBlocks() {
 		for (int ID : airRevertQueue.keySet()) {
 			EarthMethods.revertAirBlock(ID);
@@ -47,6 +47,7 @@ public class RevertChecker implements Runnable {
 	}
 
 	private Future<ArrayList<Chunk>> returnFuture;
+
 	// void addToMovedEarthQueue(Block block, Material type) {
 	// if (!movedEarthQueue.containsKey(block))
 	// movedEarthQueue.put(block, type);
@@ -70,11 +71,7 @@ public class RevertChecker implements Runnable {
 		if (plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
 
 			try {
-				returnFuture = plugin
-						.getServer()
-						.getScheduler()
-						.callSyncMethod(plugin,
-								new getOccupiedChunks(plugin.getServer()));
+				returnFuture = plugin.getServer().getScheduler().callSyncMethod(plugin, new getOccupiedChunks(plugin.getServer()));
 				ArrayList<Chunk> chunks = returnFuture.get();
 
 				Map<Block, Information> earth = new HashMap<Block, Information>();
@@ -85,8 +82,7 @@ public class RevertChecker implements Runnable {
 						continue;
 					boolean remove = true;
 					Information info = earth.get(block);
-					if (time < info.getTime() + ProjectKorra.plugin.getConfig().getLong("Properties.Earth.RevertCheckTime")
-							|| (chunks.contains(block.getChunk()) && safeRevert)) {
+					if (time < info.getTime() + ProjectKorra.plugin.getConfig().getLong("Properties.Earth.RevertCheckTime") || (chunks.contains(block.getChunk()) && safeRevert)) {
 						remove = false;
 					}
 					if (remove) {
@@ -103,20 +99,20 @@ public class RevertChecker implements Runnable {
 					boolean remove = true;
 					Information info = air.get(i);
 					Block block = info.getBlock();
-					if (time < info.getTime() + ProjectKorra.plugin.getConfig().getLong("Properties.Earth.RevertCheckTime")
-							|| (chunks.contains(block.getChunk()) && safeRevert)) {
+					if (time < info.getTime() + ProjectKorra.plugin.getConfig().getLong("Properties.Earth.RevertCheckTime") || (chunks.contains(block.getChunk()) && safeRevert)) {
 						remove = false;
 					}
 					if (remove) {
 						addToAirRevertQueue(i);
 					}
 				}
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	private class getOccupiedChunks implements Callable<ArrayList<Chunk>> {
 		private Server server;
 
