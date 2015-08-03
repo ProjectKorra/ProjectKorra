@@ -112,17 +112,16 @@ public abstract class MultiAbilityModule extends AbilityLoadable implements Clon
 	}
 
 	/**
-	 * Returns the sub abilities of a MultiAbility. e.g. new
-	 * MultiAbilitySub("SubAbility", Element.Fire, SubElement.Lightning);
+	 * Returns the sub abilities of a MultiAbility. e.g. {@code new
+	 * MultiAbilitySub("SubAbility", Element.Fire, SubElement.Lightning);}
 	 * 
-	 * @return
+	 * @return arraylist of multiabilitysub
 	 */
 	public abstract ArrayList<MultiAbilitySub> getAbilities();
 
 	/**
 	 * Void Method called whenever ProjectKorra stops and the ability is
 	 * unloaded.
-	 * 
 	 */
 	public void stop() {
 

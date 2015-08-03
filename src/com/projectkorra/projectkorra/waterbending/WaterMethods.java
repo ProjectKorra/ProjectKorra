@@ -41,7 +41,7 @@ public class WaterMethods {
 	 * Checks to see if a Player is effected by BloodBending.
 	 * 
 	 * @param player The player to check
-	 * @return true If {@link #isChiBlocked(String)} is true <br />
+	 * @return true If {@link ChiMethods#isChiBlocked(String)} is true <br />
 	 *         false If player is BloodBender and Bending is toggled on, or if
 	 *         player is in AvatarState
 	 */

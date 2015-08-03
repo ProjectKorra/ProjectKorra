@@ -190,8 +190,8 @@ public class Suffocate extends CoreAbility {
 	 * The location of a Suffocate is defined at the benders location, not the
 	 * location of the entities being suffocated.
 	 * 
-	 * @param causer: the player causing this instance to be removed
-	 * **/
+	 * @param causer The player causing this instance to be removed
+	 **/
 	public static boolean removeAtLocation(Player causer, Location loc, double radius) {
 		Iterator<Integer> it = getInstances().keySet().iterator();
 		while (it.hasNext()) {
@@ -592,14 +592,14 @@ public class Suffocate extends CoreAbility {
 		private int i;
 
 		/**
-		 * @param lent: the entity to animate the spiral around
-		 * @param totalSteps: amount of times it will be animated
-		 * @param radius: the radius of the spiral
-		 * @param interval: the speed of the animation
-		 * @param dx: x offset
-		 * @param dy: y offset
-		 * @param dz: z offset
-		 * @param type: spiral animation direction
+		 * @param lent The entity to animate the spiral around
+		 * @param totalSteps Amount of times it will be animated
+		 * @param radius The radius of the spiral
+		 * @param interval The speed of the animation
+		 * @param dx x offset
+		 * @param dy y offset
+		 * @param dz z offset
+		 * @param type Spiral animation direction
 		 */
 		public SuffocateSpiral(LivingEntity lent, int totalSteps, double radius, long interval, double dx, double dy, double dz, SpiralType type) {
 			this.target = lent;
@@ -617,14 +617,14 @@ public class Suffocate extends CoreAbility {
 		}
 
 		/**
-		 * @param startLoc: initial location
-		 * @param totalSteps: amount of times it will be animated
-		 * @param radius: the radius of the spiral
-		 * @param interval: the speed of the animation
-		 * @param dx: x offset
-		 * @param dy: y offset
-		 * @param dz: z offset
-		 * @param type: spiral animation direction
+		 * @param startLoc Initial location
+		 * @param totalSteps Amount of times it will be animated
+		 * @param radius The radius of the spiral
+		 * @param interval The speed of the animation
+		 * @param dx x offset
+		 * @param dy y offset
+		 * @param dz z offset
+		 * @param type Spiral animation direction
 		 */
 		public SuffocateSpiral(Location startLoc, int totalSteps, double radius, long interval, double dx, double dy, double dz, SpiralType type) {
 			this.startLoc = startLoc;

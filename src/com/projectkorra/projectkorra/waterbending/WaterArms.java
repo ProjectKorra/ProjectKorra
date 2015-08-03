@@ -200,7 +200,7 @@ public class WaterArms {
 	 * Displays the right arm. Returns false if the arm cannot be fully
 	 * displayed.
 	 * 
-	 * @return
+	 * @return false If arm cannot be fully displayed
 	 */
 	public boolean displayRightArm() {
 		if (rightArmConsumed)
@@ -246,7 +246,7 @@ public class WaterArms {
 	 * Displays the left arm. Returns false if the arm cannot be fully
 	 * displayed.
 	 * 
-	 * @return
+	 * @return false If the arm cannot be fully displayed.
 	 */
 	public boolean displayLeftArm() {
 		if (leftArmConsumed)
@@ -291,7 +291,7 @@ public class WaterArms {
 	/**
 	 * Calculate roughly where the player's right hand is.
 	 * 
-	 * @return
+	 * @return location of right hand
 	 */
 	private Location getRightHandPos() {
 		return GeneralMethods.getRightSide(player.getLocation(), .34).add(0, 1.5, 0);
@@ -300,7 +300,7 @@ public class WaterArms {
 	/**
 	 * Calculate roughly where the player's left hand is.
 	 * 
-	 * @return
+	 * @return location of left hand
 	 */
 	private Location getLeftHandPos() {
 		return GeneralMethods.getLeftSide(player.getLocation(), .34).add(0, 1.5, 0);
@@ -310,7 +310,7 @@ public class WaterArms {
 	 * Returns the location of the tip of the right arm, assuming it is fully
 	 * extended. Use the displayRightArm() check to see if it is fully extended.
 	 * 
-	 * @return
+	 * @return location of the tip of the right arm
 	 */
 	public Location getRightArmEnd() {
 		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
@@ -321,7 +321,7 @@ public class WaterArms {
 	 * Returns the location of the tip of the left arm assuming it is fully
 	 * extended. Use the displayLeftArm() check to see if it is fully extended.
 	 * 
-	 * @return
+	 * @return location of the tip of the left arm
 	 */
 	public Location getLeftArmEnd() {
 		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
@@ -422,7 +422,7 @@ public class WaterArms {
 	/**
 	 * Returns the active arm of the player.
 	 * 
-	 * @return
+	 * @return {@link Arm} of the player
 	 */
 	public Arm getActiveArm() {
 		return activeArm;
@@ -441,7 +441,7 @@ public class WaterArms {
 	/**
 	 * Switches to the most suitable arm for the player.
 	 * 
-	 * @return
+	 * @return the {@link Arm} that was swapped to
 	 */
 	public Arm switchPreferredArm() {
 		switchActiveArm();
