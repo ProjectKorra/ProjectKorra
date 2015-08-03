@@ -203,7 +203,7 @@ public class EarthMethods {
 	 */
 	@Deprecated
 	public static ChatColor getMetalbendingColor() {
-		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Metalbending"));
+		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.EarthSub"));
 	}
 
 	public static HashSet<Byte> getTransparentEarthbending() {
