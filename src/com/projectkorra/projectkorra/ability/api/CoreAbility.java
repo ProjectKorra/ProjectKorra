@@ -232,14 +232,14 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * Convenience method to get instance for current ability class.
 	 * 
-	 * @return {@link #getInstance(StockAbility)} for the current ability
+	 * @return instance of the current ability
 	 */
 	public CoreAbility getInstance() {
 		return instances.get(id);
 	}
 
 	/**
-	 * Gets the {@link InstanceType} of the ability.
+	 * Gets the {@link Ability.InstanceType} of the ability.
 	 * 
 	 * @return single by default
 	 */

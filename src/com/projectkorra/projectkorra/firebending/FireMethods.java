@@ -46,13 +46,10 @@ public class FireMethods {
 	 * 
 	 * @param value The value
 	 * @param world The world to pass into {@link #isDay(World)}
-	 *            <p>
 	 * @return value DayFactor multiplied by specified value when
 	 *         {@link #isDay(World)} is true <br />
 	 *         else <br />
 	 *         value The specified value in the parameters
-	 *         </p>
-	 * @see {@link #getFirebendingDayAugment(World)}
 	 */
 	public static double getFirebendingDayAugment(double value, World world) {
 		if (isDay(world)) {

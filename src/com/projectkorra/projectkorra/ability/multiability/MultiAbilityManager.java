@@ -79,8 +79,8 @@ public class MultiAbilityManager {
 	 * Returns the MultiAbility the player has bound. Returns null if no
 	 * multiability is bound and active.
 	 * 
-	 * @param player
-	 * @return
+	 * @param player The player to use
+	 * @return name of multi ability bounded
 	 */
 	public static String getBoundMultiAbility(Player player) {
 		if (playerBoundAbility.containsKey(player))
@@ -91,8 +91,8 @@ public class MultiAbilityManager {
 	/**
 	 * Returns a MultiAbility based on name.
 	 * 
-	 * @param multiAbility
-	 * @return
+	 * @param multiAbility Name of the multiability
+	 * @return the multiability object or null
 	 */
 	public static MultiAbility getMultiAbility(String multiAbility) {
 		for (MultiAbility ma : multiAbilityList) {
@@ -105,8 +105,8 @@ public class MultiAbilityManager {
 	/**
 	 * Returns a boolean based on whether a player has a MultiAbility active.
 	 * 
-	 * @param player
-	 * @return
+	 * @param player The player to check
+	 * @return true If player has a multiability active
 	 */
 	public static boolean hasMultiAbilityBound(Player player) {
 		if (playerAbilities.containsKey(player))
@@ -115,12 +115,12 @@ public class MultiAbilityManager {
 	}
 
 	/**
-	 * MultiAbility equivalent of GeneralMethods.getBoundAbility(). Returns a
+	 * MultiAbility equivalent of {@link GeneralMethods#getBoundAbility(Player)}. Returns a
 	 * boolean based on whether a player has a specific MultiAbility active.
 	 * 
-	 * @param player
-	 * @param multiAbility
-	 * @return
+	 * @param player The player to check
+	 * @param multiAbility The multiability name
+	 * @return true If player has the specified multiability active
 	 */
 	public static boolean hasMultiAbilityBound(Player player, String multiAbility) {
 		if (playerAbilities.containsKey(player)) {

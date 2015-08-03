@@ -510,8 +510,8 @@ public class LavaFlow {
 	 * isRegionProtected call since it isn't necessary in the case of just
 	 * checking a specific material.
 	 * 
-	 * @param mat the material to check
-	 * @param the player that is earthbending
+	 * @param mat The material to check
+	 * @param player The player that is earthbending
 	 * @return true if the material is earthbendable
 	 */
 	public static boolean isEarthbendableMaterial(Material mat, Player player) {
