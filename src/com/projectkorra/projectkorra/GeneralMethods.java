@@ -293,17 +293,9 @@ public class GeneralMethods {
 			return false;
 		if (!p.hasPermission("bending.ability." + ability))
 			return false;
-		if (AirMethods.isAirAbility(ability) && !isBender(player, Element.Air))
+		if (!canBind(player, ability))
 			return false;
-		if (WaterMethods.isWaterAbility(ability) && !isBender(player, Element.Water))
-			return false;
-		if (EarthMethods.isEarthAbility(ability) && !isBender(player, Element.Earth))
-			return false;
-		if (FireMethods.isFireAbility(ability) && !isBender(player, Element.Fire))
-			return false;
-		if (ChiMethods.isChiAbility(ability) && !isBender(player, Element.Chi))
-			return false;
-
+		
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation()))
 			return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p))
@@ -352,6 +344,29 @@ public class GeneralMethods {
 		if (FireMethods.isFireAbility(ability) && !isBender(player, Element.Fire))
 			return false;
 		if (ChiMethods.isChiAbility(ability) && !isBender(player, Element.Chi))
+			return false;
+		
+		if (!EarthMethods.canLavabend(p) && EarthMethods.isLavabendingAbility(ability)) 
+			return false;
+		else if (!EarthMethods.canMetalbend(p) && EarthMethods.isMetalbendingAbility(ability)) 
+			return false;
+		else if (!EarthMethods.canSandbend(p) && EarthMethods.isSandbendingAbility(ability)) 
+			return false;
+		else if (!AirMethods.canAirFlight(p) && AirMethods.isFlightAbility(ability)) 
+			return false;
+		else if (!AirMethods.canUseSpiritualProjection(p) && AirMethods.isSpiritualProjectionAbility(ability)) 
+			return false;
+		else if (!FireMethods.canCombustionbend(p) && FireMethods.isCombustionbendingAbility(ability)) 
+			return false;
+		else if (!FireMethods.canLightningbend(p) && FireMethods.isLightningbendingAbility(ability)) 
+			return false;
+		else if (!WaterMethods.canBloodbend(p) && WaterMethods.isBloodbendingAbility(ability)) 
+			return false;
+		else if (!WaterMethods.canIcebend(p) && WaterMethods.isIcebendingAbility(ability)) 
+			return false;
+		else if (!WaterMethods.canWaterHeal(p) && WaterMethods.isHealingAbility(ability)) 
+			return false;
+		else if (!WaterMethods.canPlantbend(p) && WaterMethods.isPlantbendingAbility(ability)) 
 			return false;
 		return true;
 	}
