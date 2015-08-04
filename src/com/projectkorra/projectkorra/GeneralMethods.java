@@ -372,16 +372,13 @@ public class GeneralMethods {
 	}
 
 	public static boolean canView(Player player, String ability) {
-		if (player.hasPermission("bending.ability." + ability))
-			return true;
-		return false;
+		return player.hasPermission("bending.ability." + ability);
 	}
 
 	public static boolean comboExists(String string) {
 		for (ComboAbilityModule c : ComboModuleManager.combo)
 			if (string.equalsIgnoreCase(c.getName()))
 				return true;
-
 		return false;
 	}
 
@@ -445,7 +442,7 @@ public class GeneralMethods {
 					}
 				}
 
-				p = (permaremoved == null ? false : (permaremoved.equals("true") ? true : (permaremoved.equals("false") ? false : p)));
+				p = (permaremoved != null && (permaremoved.equals("true")));
 
 				final boolean boolean_p = p;
 				new BukkitRunnable() {
@@ -485,7 +482,7 @@ public class GeneralMethods {
 	public static void damageEntity(Player player, Entity entity, double damage, String ability) {
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Player) {
-				if (Commands.invincible.contains(((Player) entity).getName()))
+				if (Commands.invincible.contains(entity.getName()))
 					return;
 			}
 			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
@@ -496,7 +493,7 @@ public class GeneralMethods {
 				Bukkit.getServer().getPluginManager().callEvent(event);
 			}
 			((LivingEntity) entity).damage(damage, player);
-			((LivingEntity) entity).setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
+			entity.setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
 			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
 				NCPExemptionManager.unexempt(player);
 			}
@@ -513,9 +510,13 @@ public class GeneralMethods {
 		File readFile = new File(".", "bendingPlayers.yml");
 		File writeFile = new File(".", "converted.yml");
 		if (readFile.exists()) {
-			try (DataInputStream input = new DataInputStream(new FileInputStream(readFile)); BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+			try (
+					DataInputStream input = new DataInputStream(new FileInputStream(readFile)); 
+					BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-			DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));) {
+					DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); 
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))
+				) {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
@@ -612,21 +613,21 @@ public class GeneralMethods {
 
 	public static void displayParticleVector(Location loc, ParticleEffect type, float xTrans, float yTrans, float zTrans) {
 		if (type == ParticleEffect.FIREWORKS_SPARK)
-			ParticleEffect.FIREWORKS_SPARK.display((float) xTrans, (float) yTrans, (float) zTrans, 0.09F, 0, loc, 257D);
+			ParticleEffect.FIREWORKS_SPARK.display(xTrans, yTrans, zTrans, 0.09F, 0, loc, 257D);
 		else if (type == ParticleEffect.SMOKE || type == ParticleEffect.SMOKE_NORMAL)
-			ParticleEffect.SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 257D);
+			ParticleEffect.SMOKE.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
 		else if (type == ParticleEffect.LARGE_SMOKE || type == ParticleEffect.SMOKE_LARGE)
-			ParticleEffect.LARGE_SMOKE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 257D);
+			ParticleEffect.LARGE_SMOKE.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
 		else if (type == ParticleEffect.ENCHANTMENT_TABLE)
-			ParticleEffect.ENCHANTMENT_TABLE.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 257D);
+			ParticleEffect.ENCHANTMENT_TABLE.display(xTrans, yTrans, zTrans, 0.5F, 0, loc, 257D);
 		else if (type == ParticleEffect.PORTAL)
-			ParticleEffect.PORTAL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.5F, 0, loc, 257D);
+			ParticleEffect.PORTAL.display(xTrans, yTrans, zTrans, 0.5F, 0, loc, 257D);
 		else if (type == ParticleEffect.FLAME)
-			ParticleEffect.FLAME.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 257D);
+			ParticleEffect.FLAME.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
 		else if (type == ParticleEffect.CLOUD)
-			ParticleEffect.CLOUD.display((float) xTrans, (float) yTrans, (float) zTrans, 0.04F, 0, loc, 257D);
+			ParticleEffect.CLOUD.display(xTrans, yTrans, zTrans, 0.04F, 0, loc, 257D);
 		else if (type == ParticleEffect.SNOW_SHOVEL)
-			ParticleEffect.SNOW_SHOVEL.display((float) xTrans, (float) yTrans, (float) zTrans, 0.2F, 0, loc, 257D);
+			ParticleEffect.SNOW_SHOVEL.display(xTrans, yTrans, zTrans, 0.2F, 0, loc, 257D);
 		else
 			ParticleEffect.RED_DUST.display((float) 0, (float) 0, (float) 0, 0.004F, 0, loc, 257D);
 	}
@@ -1186,8 +1187,7 @@ public class GeneralMethods {
 	 * of distance it will check upward. Similarly, negativeY is for downward.
 	 */
 	public static Block getTopBlock(Location loc, int positiveY, int negativeY) {
-		Block block = loc.getBlock();
-		Block blockHolder = block;
+		Block blockHolder = loc.getBlock();
 		int y = 0;
 		//Only one of these while statements will go
 		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY)) {
@@ -1208,30 +1208,20 @@ public class GeneralMethods {
 	}
 
 	public static boolean hasItems() {
-		if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null)
-			return true;
-		return false;
+		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null;
 	}
 
 	public static boolean hasPermission(Player player, String ability) {
-		if (player.hasPermission("bending.ability." + ability) && canBind(player.getName(), ability))
-			return true;
-		return false;
+		return player.hasPermission("bending.ability." + ability) && canBind(player.getName(), ability);
 	}
 
 	public static boolean hasRPG() {
-		if (Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") != null)
-			return true;
-		return false;
+		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") != null;
 	}
 
 	public static boolean isAbilityInstalled(String name, String author) {
 		String ability = getAbility(name);
-		if (ability == null)
-			return false;
-		if (AbilityModuleManager.authors.get(name).equalsIgnoreCase(author))
-			return true;
-		return false;
+		return ability != null && AbilityModuleManager.authors.get(name).equalsIgnoreCase(author);
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
@@ -1253,18 +1243,12 @@ public class GeneralMethods {
 				//sources++;
 			}
 		}
-		if (sources >= 2)
-			return true;
-		return false;
+		return sources >= 2;
 	}
 
 	public static boolean isBender(String player, Element element) {
 		BendingPlayer bPlayer = getBendingPlayer(player);
-		if (bPlayer == null)
-			return false;
-		if (bPlayer.hasElement(element))
-			return true;
-		return false;
+		return bPlayer != null && bPlayer.hasElement(element);
 	}
 
 	public static boolean isDisabledStockAbility(String string) {
@@ -1416,11 +1400,7 @@ public class GeneralMethods {
 			}
 
 			if (fcp != null && massivecore != null && respectFactions) {
-				if (!EngineMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
-					return true;
-				} else {
-					return false;
-				}
+				return !EngineMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false);
 			}
 
 			if (twnp != null && respectTowny) {
@@ -1492,39 +1472,46 @@ public class GeneralMethods {
 	}
 
 	public static boolean isSolid(Block block) {
-		if (Arrays.asList(nonOpaque).contains(block.getTypeId()))
-			return false;
-		return true;
+		return Arrays.asList(nonOpaque).contains(block.getTypeId());
 	}
 
 	public static boolean isSubAbility(String ability) {
-		if (AbilityModuleManager.subabilities.contains(ability))
-			return true;
-		return false;
+		return AbilityModuleManager.subabilities.contains(ability);
 	}
 
 	/** Checks if an entity is Undead **/
 	public static boolean isUndead(Entity entity) {
-		if (entity == null)
-			return false;
-		if (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.BLAZE || entity.getType() == EntityType.GIANT || entity.getType() == EntityType.IRON_GOLEM || entity.getType() == EntityType.MAGMA_CUBE || entity.getType() == EntityType.PIG_ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SLIME || entity.getType() == EntityType.SNOWMAN || entity.getType() == EntityType.ZOMBIE) {
-			return true;
-		}
-		return false;
+		return entity != null
+				&& (entity.getType() == EntityType.ZOMBIE
+				|| entity.getType() == EntityType.BLAZE
+				|| entity.getType() == EntityType.GIANT
+				|| entity.getType() == EntityType.IRON_GOLEM
+				|| entity.getType() == EntityType.MAGMA_CUBE
+				|| entity.getType() == EntityType.PIG_ZOMBIE
+				|| entity.getType() == EntityType.SKELETON
+				|| entity.getType() == EntityType.SLIME
+				|| entity.getType() == EntityType.SNOWMAN
+				|| entity.getType() == EntityType.ZOMBIE);
 	}
 
 	public static boolean isWeapon(Material mat) {
-		if (mat == null)
-			return false;
-		if (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD
-
-		|| mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE || mat == Material.STONE_SWORD
-
-		|| mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE
-
-		|| mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE)
-			return true;
-		return false;
+		return mat != null
+				&& (mat == Material.WOOD_AXE
+				|| mat == Material.WOOD_PICKAXE
+				|| mat == Material.WOOD_SPADE
+				|| mat == Material.WOOD_SWORD
+				|| mat == Material.STONE_AXE
+				|| mat == Material.STONE_PICKAXE
+				|| mat == Material.STONE_SPADE
+				|| mat == Material.STONE_SWORD
+				|| mat == Material.IRON_AXE
+				|| mat == Material.IRON_PICKAXE
+				|| mat == Material.IRON_SWORD
+				|| mat == Material.IRON_SPADE
+				|| mat == Material.DIAMOND_AXE
+				|| mat == Material.DIAMOND_PICKAXE
+				|| mat == Material.DIAMOND_SWORD
+				|| mat == Material.DIAMOND_SPADE);
 	}
 
 	public static void playAvatarSound(Location loc) {
@@ -1535,7 +1522,7 @@ public class GeneralMethods {
 		ProjectKorra.log.info("Reloading ProjectKorra and configuration");
 		BendingReloadEvent event = new BendingReloadEvent();
 		Bukkit.getServer().getPluginManager().callEvent(event);
-		if (DBConnection.isOpen != false) {
+		if (DBConnection.isOpen) {
 			DBConnection.sql.close();
 		}
 		GeneralMethods.stopBending();
@@ -1552,7 +1539,7 @@ public class GeneralMethods {
 		DBConnection.db = plugin.getConfig().getString("Storage.MySQL.db");
 		DBConnection.user = plugin.getConfig().getString("Storage.MySQL.user");
 		DBConnection.init();
-		if (DBConnection.isOpen() == false) {
+		if (!DBConnection.isOpen()) {
 			ProjectKorra.log.severe("Unable to enable ProjectKorra due to the database not being open");
 			stopPlugin();
 		}
