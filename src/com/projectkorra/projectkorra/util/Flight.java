@@ -84,29 +84,41 @@ public class Flight {
 
 		for (Player player : instances.keySet()) {
 			Flight flight = instances.get(player);
-			if (avatarstateplayers.contains(player) || airscooterplayers.contains(player) || waterspoutplayers.contains(player) || airspoutplayers.contains(player) || sandspoutplayers.contains(player)) {
-				continue;
-			}
-			if (Bloodbending.isBloodbended(player)) {
-				player.setAllowFlight(true);
-				player.setFlying(false);
-				continue;
-			}
-
-			if (players.contains(player)) {
-				flight.refresh(null);
-				player.setAllowFlight(true);
-				if (player.getGameMode() != GameMode.CREATIVE)
+			if (System.currentTimeMillis() <= flight.time + duration) {
+				if (airscooterplayers.contains(player) || waterspoutplayers.contains(player) || airspoutplayers.contains(player) || sandspoutplayers.contains(player)) {
+					continue;
+				}
+				if (Bloodbending.isBloodbended(player)) {
+					player.setAllowFlight(true);
 					player.setFlying(false);
-				newflyingplayers.add(player);
-				continue;
-			}
+					continue;
+				}
 
-			if (flight.source == null) {
-				flight.revert();
-				flight.remove();
+				if (players.contains(player)) {
+					flight.refresh(null);
+					player.setAllowFlight(true);
+					if (player.getGameMode() != GameMode.CREATIVE)
+						player.setFlying(false);
+					newflyingplayers.add(player);
+					continue;
+				}
+				if (flight.source == null) {
+					flight.revert();
+					flight.remove();
+				} else {
+					if (System.currentTimeMillis() >= flight.time + duration) {
+						flight.revert();
+						flight.remove();
+					}
+				}
 			} else {
+				if (flight.source == null) {
+					flight.revert();
+					flight.remove();
+					continue;
+				}
 				if (System.currentTimeMillis() > flight.time + duration) {
+					flight.revert();
 					flight.remove();
 				}
 			}
