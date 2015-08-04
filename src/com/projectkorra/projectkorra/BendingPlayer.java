@@ -58,7 +58,7 @@ public class BendingPlayer {
 	}
 
 	/**
-	 * Gets the map of {@link BendingPlayers}.
+	 * Gets the map of {@link BendingPlayer}s.
 	 * 
 	 * @return {@link #players}
 	 */

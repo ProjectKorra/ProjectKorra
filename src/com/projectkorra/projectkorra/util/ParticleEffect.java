@@ -650,7 +650,6 @@ public enum ParticleEffect {
 	 * @param speed Display speed of the particles
 	 * @param amount Amount of particles
 	 * @param center Center location of the effect
-	 * @param range Range of the visibility
 	 * @throws ParticleVersionException If the particle effect is not supported
 	 *             by the server version
 	 * @throws ParticleDataException If the particle effect requires additional
@@ -949,14 +948,14 @@ public enum ParticleEffect {
 	 * Represents the item data for the {@link ParticleEffect#ITEM_CRACK} effect
 	 * <p>
 	 * This class is part of the <b>ParticleEffect Library</b> and follows the
-	 * same usage conditions
+	 * same usage conditions.
 	 * 
 	 * @author DarkBlade12
 	 * @since 1.6
 	 */
 	public static final class ItemData extends ParticleData {
 		/**
-		 * Construct a new item data
+		 * Construct a new item data.
 		 * 
 		 * @param material Material of the item
 		 * @param data Data value of the item

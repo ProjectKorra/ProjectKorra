@@ -158,7 +158,7 @@ public class Lightning extends CoreAbility {
 	/**
 	 * Damages an entity, and may cause paralysis depending on the config.
 	 * 
-	 * @param lent: the LivingEntity that is being damaged
+	 * @param lent The LivingEntity that is being damaged
 	 */
 	public void electrocute(LivingEntity lent) {
 		lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
@@ -543,11 +543,12 @@ public class Lightning extends CoreAbility {
 		/**
 		 * Randomly generates subarcs off of this arc.
 		 * 
-		 * @param chance - The chance that an arc will be generated for each
+		 * @param chance The chance that an arc will be generated for each
 		 *            specific point in the arc. Note: if you generate a lot of
 		 *            points then chance will need to be lowered.
-		 * @param range: The length of each subarc.
-		 * **/
+		 * @param range The length of each subarc.
+		 * 
+		 **/
 		public ArrayList<Arc> generateArcs(double chance, double range) {
 			ArrayList<Arc> arcs = new ArrayList<Arc>();
 			for (int i = 0; i < animLocs.size(); i++) {
@@ -574,11 +575,11 @@ public class Lightning extends CoreAbility {
 		 * middle that has an offset relative to the beginning and end points.
 		 * Now that the arc is split into 3 points, we continue this processes
 		 * by generating middle points in the two halfs of this arc. This
-		 * process continues based on @times
+		 * process continues the amount of times specified.
 		 * 
-		 * @param times: The amount of times that the arc will be split in half
-		 * @param times causes O(n^2) complexity
-		 * **/
+		 * @param times The amount of times that the arc will be split in half
+		 *            causes O(n^2) complexity
+		 **/
 		public void generatePoints(int times) {
 			for (int i = 0; i < times; i++) {
 				for (int j = 0; j < points.size() - 1; j += 2) {

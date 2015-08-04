@@ -170,7 +170,7 @@ public class GeneralMethods {
 	 * 
 	 * @param player The player to bind to
 	 * @param ability The ability name to Bind
-	 * @see {@link #bindAbility(Player, String, int)}
+	 * @see #bindAbility(Player, String, int)
 	 */
 	public static void bindAbility(Player player, String ability) {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
@@ -183,7 +183,7 @@ public class GeneralMethods {
 	 * @param player The player to bind to
 	 * @param ability
 	 * @param slot
-	 * @see {@link #bindAbility(Player, String)}
+	 * @see #bindAbility(Player, String)
 	 */
 	public static void bindAbility(Player player, String ability, int slot) {
 		if (MultiAbilityManager.playerAbilities.containsKey(player)) {
@@ -663,14 +663,12 @@ public class GeneralMethods {
 	 * Gets the Element color from the Ability name specified.
 	 * 
 	 * @param ability The ability name
-	 *            <p>
-	 * @return {@link #getChiColor()} <br />
-	 *         {@link #getAirColor()} <br />
-	 *         {@link #getWaterColor()} <br />
-	 *         {@link #getEarthColor()} <br />
-	 *         {@link #getFireColor()} <br />
+	 * @return {@link ChiMethods#getChiColor()} <br />
+	 *         {@link AirMethods#getAirColor()} <br />
+	 *         {@link WaterMethods#getWaterColor()} <br />
+	 *         {@link EarthMethods#getEarthColor()} <br />
+	 *         {@link FireMethods#getFireColor()} <br />
 	 *         else {@link #getAvatarColor()}
-	 *         </p>
 	 */
 	public static ChatColor getAbilityColor(String ability) {
 		if (AbilityModuleManager.chiabilities.contains(ability))
@@ -704,7 +702,7 @@ public class GeneralMethods {
 	 * Returns the element an ability belongs to.
 	 * 
 	 * @param ability
-	 * @return
+	 * @return the element
 	 */
 	public static Element getAbilityElement(String ability) {
 		if (AbilityModuleManager.airbendingabilities.contains(ability))
@@ -734,7 +732,7 @@ public class GeneralMethods {
 	 * method tries to get a {@link Player} object and gets the uuid and then
 	 * calls {@link #getBendingPlayer(UUID)}
 	 * 
-	 * @param player The name of the Player
+	 * @param playerName The name of the Player
 	 * @return The BendingPlayer object if {@link BendingPlayer#players}
 	 *         contains the player name
 	 * 
@@ -1028,8 +1026,8 @@ public class GeneralMethods {
 	 * Returns the last ability used by a player. Also checks if a combo was
 	 * used.
 	 * 
-	 * @param player
-	 * @return
+	 * @param player The player to check
+	 * @return name of last ability used
 	 */
 	public static String getLastUsedAbility(Player player, boolean checkCombos) {
 		List<AbilityInformation> lastUsedAbility = ComboManager.getRecentlyUsedAbilities(player, 1);
@@ -1044,12 +1042,12 @@ public class GeneralMethods {
 	}
 
 	/**
-	 * Returns a location with a specified distance away from the left side of a
+	 * Gets a location with a specified distance away from the left side of a
 	 * location.
 	 * 
-	 * @param location
-	 * @param distance
-	 * @return
+	 * @param location The origin location
+	 * @param distance The distance to the left
+	 * @return the location of the distance to the left
 	 */
 	public static Location getLeftSide(Location location, double distance) {
 		float angle = location.getYaw() / 60;
@@ -1095,9 +1093,9 @@ public class GeneralMethods {
 	 * Returns a location with a specified distance away from the right side of
 	 * a location.
 	 * 
-	 * @param location
-	 * @param distance
-	 * @return
+	 * @param location The origin location
+	 * @param distance The distance to the right
+	 * @return the location of the distance to the right
 	 */
 	public static Location getRightSide(Location location, double distance) {
 		float angle = location.getYaw() / 60;

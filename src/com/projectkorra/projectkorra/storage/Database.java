@@ -25,7 +25,7 @@ public abstract class Database {
     }
 
     /**
-     * Print information to console
+     * Print information to console.
      *
      * @param message The string to print to console
      */
@@ -34,7 +34,7 @@ public abstract class Database {
     }
 
     /**
-     * Print error to console
+     * Print error to console.
      *
      * @param message The string to print to console
      * @param severe If {@param severe} is true print an error, else print a warning
@@ -45,7 +45,7 @@ public abstract class Database {
     }
 
     /**
-     * Returns the current Connection
+     * Returns the current Connection.
      *
      * @return Connection if exists, else null
      */
@@ -54,14 +54,14 @@ public abstract class Database {
     }
 
     /**
-     * Opens connection to Database
+     * Opens connection to Database.
      *
      * @return Connection if successful
      */
     abstract Connection open();
 
     /**
-     * Close connection to Database
+     * Close connection to Database.
      */
     public void close() {
         if (!(this.connection == null)) {
@@ -76,7 +76,7 @@ public abstract class Database {
     }
 
     /**
-     * Queries the Database, for queries which modify data
+     * Queries the Database, for queries which modify data.
      *
      * @param query Query to run
      */
@@ -97,7 +97,7 @@ public abstract class Database {
     }
 
     /**
-     * Queries the Database, for queries which return results
+     * Queries the Database, for queries which return results.
      *
      * @param query Query to run
      * @return Result set of ran query
@@ -115,10 +115,10 @@ public abstract class Database {
     }
 
     /**
-     * Check database to see if {@param table} exists
-     *
+     * Check database to see if a table exists.
+     * 
      * @param table Table name to check
-     * @return True if table exists, else false
+     * @return true if table exists, else false
      */
     public boolean tableExists(String table) {
         try {

@@ -174,7 +174,7 @@ public class MetricsLite {
 	 * Escape a string to create a valid JSON string
 	 *
 	 * @param text
-	 * @return
+	 * @return escape string for JSON
 	 */
 	private static String escapeJSON(String text) {
 		StringBuilder builder = new StringBuilder();
@@ -220,7 +220,7 @@ public class MetricsLite {
 	 * GZip compress a string of bytes
 	 *
 	 * @param input
-	 * @return
+	 * @return string of bytes
 	 */
 	public static byte[] gzip(String input) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -92,6 +92,10 @@ public class AirScooter extends CoreAbility {
 	public double getSpeed() {
 		return speed;
 	}
+	
+	public void setSpeed(double value) {
+		this.speed = value; // Used in PK Items
+	}
 
 	@Override
 	public StockAbility getStockAbility() {
