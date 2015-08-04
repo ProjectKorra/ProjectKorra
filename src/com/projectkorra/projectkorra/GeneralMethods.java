@@ -1543,6 +1543,7 @@ public class GeneralMethods {
 		ConfigManager.deathMsgConfig.reload();
 		BendingManager.getInstance().reloadVariables();
 		new AbilityModuleManager(plugin);
+		new ComboManager();
 		new MultiAbilityModuleManager();
 		new CraftingRecipes(plugin);
 		DBConnection.host = plugin.getConfig().getString("Storage.MySQL.host");
