@@ -74,6 +74,9 @@ public class EarthBlast {
 		Block block = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
 		block(player);
 		if (block != null) {
+			if (block.getLocation().distance(player.getLocation()) > preparerange) {
+				return false;
+			}
 			sourceblock = block;
 			focusBlock();
 			return true;
