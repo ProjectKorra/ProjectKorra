@@ -65,11 +65,11 @@ public class Bloodbending {
 
 		range = (int) WaterMethods.waterbendingNightAugment(range, player.getWorld());
 		if (AvatarState.isAvatarState(player)) {
-			range = AvatarState.getValue(range);
+			range += AvatarState.getValue(1.5);
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
 				if (entity instanceof LivingEntity) {
 					if (entity instanceof Player) {
-						if (GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation()) || (AvatarState.isAvatarState((Player) entity) || entity.getEntityId() != player.getEntityId() || GeneralMethods.canBend(((Player) entity).getName(), "Bloodbending")))
+						if (GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation()) || (AvatarState.isAvatarState((Player) entity) || entity.getEntityId() == player.getEntityId() || GeneralMethods.canBend(((Player) entity).getName(), "Bloodbending")))
 							continue;
 					}
 					GeneralMethods.damageEntity(player, entity, 0);
@@ -109,16 +109,10 @@ public class Bloodbending {
 			instances.get(player).launch();
 	}
 
-	@SuppressWarnings("unused")
 	private void launch() {
 		Location location = player.getLocation();
 		for (Entity entity : targetentities.keySet()) {
-			double dx, dy, dz;
 			Location target = entity.getLocation().clone();
-			//			dx = target.getX() - location.getX();
-			//			dy = target.getY() - location.getY();
-			//			dz = target.getZ() - location.getZ();
-			//			Vector vector = new Vector(dx, dy, dz);
 			Vector vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, location.distance(target)));
 			vector.normalize();
 			entity.setVelocity(vector.multiply(factor));
@@ -177,7 +171,7 @@ public class Bloodbending {
 				if (GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation()))
 					continue;
 				if (entity instanceof Player) {
-					if (!WaterMethods.canBeBloodbent((Player) entity))
+					if (!WaterMethods.canBeBloodbent((Player) entity) || entity.getEntityId() == player.getEntityId())
 						continue;
 				}
 				entities.add(entity);
@@ -186,7 +180,11 @@ public class Bloodbending {
 					targetentities.put(entity, entity.getLocation().clone());
 				}
 				if (entity instanceof LivingEntity) {
-					Location newlocation = entity.getLocation().clone();
+					Location newlocation = entity.getLocation();
+					if (player.getWorld() != newlocation.getWorld()) {
+						targetentities.remove(entity);
+						continue;
+					}
 					Location location = targetentities.get(entity);
 					double distance = location.distance(newlocation);
 					double dx, dy, dz;
@@ -224,26 +222,7 @@ public class Bloodbending {
 					targetentities.remove(entity);
 					continue;
 				}
-				Location location = GeneralMethods.getTargetedLocation(player, 6 /*
-																				 * (
-																				 * int
-																				 * )
-																				 * targetentities
-																				 * .
-																				 * get
-																				 * (
-																				 * entity
-																				 * )
-																				 * .
-																				 * distance
-																				 * (
-																				 * player
-																				 * .
-																				 * getLocation
-																				 * (
-																				 * )
-																				 * )
-																				 */);
+				Location location = GeneralMethods.getTargetedLocation(player, 6);
 				double distance = location.distance(newlocation);
 				double dx, dy, dz;
 				dx = location.getX() - newlocation.getX();
@@ -280,10 +259,6 @@ public class Bloodbending {
 	public static boolean isBloodbended(Entity entity) {
 		for (Player player : instances.keySet()) {
 			if (instances.get(player).targetentities.containsKey(entity)) {
-				// if (entity instanceof Player) {
-				// if (!Methods.canBeBloodbent((Player) entity))
-				// return false;
-				// }
 				return true;
 			}
 		}
