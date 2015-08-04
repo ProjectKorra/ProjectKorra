@@ -67,7 +67,7 @@ public class FireJet extends CoreAbility {
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
 		for (Integer id : getInstances(StockAbility.FireJet).keySet()) {
-			players.add(getInstances(StockAbility.FireJet).get(id).getPlayer());
+			players.add(getAbility(id).getPlayer());
 		}
 		return players;
 	}

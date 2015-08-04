@@ -41,7 +41,7 @@ public class AirSpout extends CoreAbility {
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
 		for (Integer id : getInstances(StockAbility.AirSpout).keySet()) {
-			players.add(getInstances(StockAbility.AirSpout).get(id).getPlayer());
+			players.add(getAbility(id).getPlayer());
 		}
 		return players;
 	}
@@ -49,7 +49,7 @@ public class AirSpout extends CoreAbility {
 	public static boolean removeSpouts(Location loc0, double radius, Player sourceplayer) {
 		boolean removed = false;
 		for (Integer id : getInstances(StockAbility.AirSpout).keySet()) {
-			Player player = getInstances(StockAbility.AirSpout).get(id).getPlayer();
+			Player player = getAbility(id).getPlayer();
 			if (!player.equals(sourceplayer)) {
 				Location loc1 = player.getLocation().getBlock().getLocation();
 				loc0 = loc0.getBlock().getLocation();
@@ -60,7 +60,7 @@ public class AirSpout extends CoreAbility {
 				double distance = Math.sqrt(dx * dx + dz * dz);
 
 				if (distance <= radius && dy > 0 && dy < HEIGHT) {
-					getInstances(StockAbility.AirSpout).get(id).remove();
+					getAbility(id).remove();
 					removed = true;
 				}
 			}

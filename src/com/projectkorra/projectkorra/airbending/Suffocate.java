@@ -147,7 +147,7 @@ public class Suffocate extends CoreAbility {
 	/** Stops an entity from being suffocated **/
 	public static void breakSuffocate(Entity entity) {
 		for (Integer id : getInstances().keySet()) {
-			Suffocate suffocate = (Suffocate) getInstances().get(id);
+			Suffocate suffocate = (Suffocate) getAbility(id);
 			if (suffocate.targets.contains(entity)) {
 				suffocate.breakSuffocateLocal(entity);
 			}
@@ -161,7 +161,7 @@ public class Suffocate extends CoreAbility {
 	/** Checks if an entity is being suffocated **/
 	public static boolean isBreathbent(Entity entity) {
 		for (Integer id : getInstances().keySet()) {
-			Suffocate suffocate = (Suffocate) getInstances().get(id);
+			Suffocate suffocate = (Suffocate) getAbility(id);
 			if (suffocate.targets.contains(entity)) {
 				return suffocate.started;
 			}
@@ -196,7 +196,7 @@ public class Suffocate extends CoreAbility {
 		Iterator<Integer> it = getInstances().keySet().iterator();
 		while (it.hasNext()) {
 			Integer key = it.next();
-			Suffocate val = (Suffocate) getInstances().get(key);
+			Suffocate val = (Suffocate) getAbility(key);
 
 			if (causer == null || !key.equals(causer)) {
 				Location playerLoc = val.getPlayer().getLocation();

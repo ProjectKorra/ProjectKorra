@@ -94,9 +94,22 @@ public abstract class CoreAbility implements Ability {
 		}
 		return null;
 	}
+	
+	/**
+	 * Gets the ability instance by its id.
+	 * 
+	 * @param id The ability id to get
+	 * @return the ability instance or null
+	 */
+	public static final CoreAbility getAbility(int id) {
+		return instances.get(id);
+	}
 
 	/**
 	 * An access method to get an the instances of a {@link StockAbility}.
+	 * <b>IMPORTANT: </b> If this is used in a for each loop use
+	 * {@link #getAbility(int)} to get the ability. Incorrect usage may
+	 * cause over looping and is capable of hanging the thead.
 	 * 
 	 * @param ability The instances map to get
 	 * @return a map of instances from the specified {@link StockAbility}
@@ -114,7 +127,9 @@ public abstract class CoreAbility implements Ability {
 
 	/**
 	 * An access method to get an the instances of a {@link CoreAbility} by its
-	 * class.
+	 * class. <b>IMPORTANT: </b> If this is used in a for each loop use
+	 * {@link #getAbility(int)} to get the ability. Incorrect usage may
+	 * cause over looping and is capable of hanging the thead.
 	 * 
 	 * @param ability The instances map to get
 	 * @return a map of instances from the specified class

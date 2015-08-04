@@ -67,7 +67,7 @@ public class FireShield extends CoreAbility {
 
 	public static boolean isWithinShield(Location loc) {
 		for (Integer id : getInstances(StockAbility.FireShield).keySet()) {
-			FireShield fshield = (FireShield) getInstances(StockAbility.FireShield).get(id);
+			FireShield fshield = (FireShield) getAbility(id);
 			Location playerLoc = fshield.player.getLocation();
 
 			if (fshield.shield) {

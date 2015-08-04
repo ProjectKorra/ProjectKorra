@@ -111,7 +111,7 @@ public class FireStream extends AddonAbility {
 
 	public static void removeAroundPoint(Location location, double radius) {
 		for (int id : getInstances(FireStream.class).keySet()) {
-			FireStream stream = (FireStream) getInstances(FireStream.class).get(id);
+			FireStream stream = (FireStream) getAbility(id);
 			if (stream.location.getWorld().equals(location.getWorld()))
 				if (stream.location.distance(location) <= radius)
 					stream.remove();
