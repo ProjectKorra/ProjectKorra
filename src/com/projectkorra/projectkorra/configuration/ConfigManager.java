@@ -491,7 +491,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.EarthBlast.Range", 20);
 				config.addDefault("Abilities.Earth.EarthBlast.Speed", 35);
 				config.addDefault("Abilities.Earth.EarthBlast.Revert", true);
-				config.addDefault("Abilities.Earth.Earthblast.Damage", 3);
+				config.addDefault("Abilities.Earth.EarthBlast.Damage", 3);
 				config.addDefault("Abilities.Earth.EarthBlast.Push", 0.3);
 
 				config.addDefault("Abilities.Earth.EarthGrab.Enabled", true);

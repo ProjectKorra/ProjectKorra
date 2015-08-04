@@ -19,6 +19,8 @@ public class FlightAbility extends CoreAbility {
 	public FlightAbility(Player player) {
 		if (!AirMethods.canFly(player, true, false))
 			return;
+		if (flight == null)
+			flight = new Flight(player);
 		player.setAllowFlight(true);
 		player.setVelocity(player.getEyeLocation().getDirection().normalize());
 		this.player = player;
