@@ -76,6 +76,15 @@ public class FireMethods {
 	public static ChatColor getFireColor() {
 		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Fire"));
 	}
+	
+	/**
+	 * Gets the FireSubColor from the config.
+	 * 
+	 * @return Config specified ChatColor
+	 */
+	public static ChatColor getFireSubColor() {
+		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.FireSub"));
+	}
 
 	public static boolean isCombustionbendingAbility(String ability) {
 		return AbilityModuleManager.combustionabilities.contains(ability);
