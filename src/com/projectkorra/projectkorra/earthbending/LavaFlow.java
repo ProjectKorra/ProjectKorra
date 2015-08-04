@@ -331,9 +331,8 @@ public class LavaFlow {
 	}
 
 	/**
-	 * Creates a LavaBlock and also accounts for melting over plants by creating
-	 * new Plantbending() objects. It also appends the TempBlock to our
-	 * arraylist called TEMP_LAVA_BLOCKS.
+	 * Creates a LavaBlock and appends the TempBlock to our arraylist called
+	 * TEMP_LAVA_BLOCKS.
 	 * 
 	 * If ALLOW_NATURAL_FLOW is turned on then this method will remove the block
 	 * from TempBlock.instances, which will allow the lava to flow naturally.
@@ -341,15 +340,7 @@ public class LavaFlow {
 	 * @param block the block that will be turned to lava
 	 */
 	public void createLava(Block block) {
-		boolean valid = false;
-		if (!isEarthbendableMaterial(block.getType(), player) && WaterMethods.isPlant(block)) {
-			new Plantbending(block);
-			block.setType(Material.AIR);
-			valid = true;
-		} else if (isEarthbendableMaterial(block.getType(), player))
-			valid = true;
-
-		if (valid) {
+		if (isEarthbendableMaterial(block.getType(), player)) {
 			TempBlock tblock = new TempBlock(block, Material.STATIONARY_LAVA, (byte) 0);
 			TEMP_LAVA_BLOCKS.add(tblock);
 			affectedBlocks.add(tblock);
