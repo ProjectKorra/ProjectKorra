@@ -16,13 +16,14 @@ import java.util.ArrayList;
 
 public class AirScooter extends CoreAbility {
 
-	private static double speed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
+	private static double configSpeed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
 	private static final long interval = 100;
 	private static final double scooterradius = 1;
 
 	private Player player;
 	private Block floorblock;
 	private long time;
+	private double speed;
 	private ArrayList<Double> angles = new ArrayList<Double>();
 
 	public AirScooter(Player player) {
@@ -171,7 +172,8 @@ public class AirScooter extends CoreAbility {
 
 	@Override
 	public void reloadVariables() {
-		speed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
+		configSpeed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
+		this.speed = configSpeed;
 	}
 
 	@Override
