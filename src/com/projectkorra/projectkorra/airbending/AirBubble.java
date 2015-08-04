@@ -37,7 +37,7 @@ public class AirBubble extends CoreAbility {
 
 	public static boolean canFlowTo(Block block) {
 		for (Integer id : getInstances(StockAbility.AirBubble).keySet()) {
-			if (((AirBubble) getInstances(StockAbility.AirBubble).get(id)).blockInBubble(block)) {
+			if (((AirBubble) getAbility(id)).blockInBubble(block)) {
 				return false;
 			}
 		}

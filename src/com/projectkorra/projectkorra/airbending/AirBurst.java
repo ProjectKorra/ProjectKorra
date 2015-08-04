@@ -56,7 +56,6 @@ public class AirBurst extends CoreAbility {
 	public static void coneBurst(Player player) {
 		if (containsPlayer(player, AirBurst.class)) {
 			((AirBurst) getAbilityFromPlayer(player, AirBurst.class)).coneBurst();
-			;
 		}
 	}
 

@@ -100,7 +100,7 @@ public class Lightning extends CoreAbility {
 	public static ArrayList<Arc> getAllArcs() {
 		ArrayList<Arc> a = new ArrayList<Arc>();
 		for (Integer id : getInstances(StockAbility.Lightning).keySet()) {
-			Lightning light = (Lightning) getInstances(StockAbility.Lightning).get(id);
+			Lightning light = (Lightning) getAbility(id);
 			for (Arc arcs : light.getArcs()) {
 				a.add(arcs);
 			}
@@ -116,7 +116,7 @@ public class Lightning extends CoreAbility {
 	 */
 	public static Lightning getLightning(Player player) {
 		for (Integer id : getInstances(StockAbility.Lightning).keySet()) {
-			Lightning light = (Lightning) getInstances(StockAbility.Lightning).get(id);
+			Lightning light = (Lightning) getAbility(id);
 			if (light.player == player)
 				return light;
 		}

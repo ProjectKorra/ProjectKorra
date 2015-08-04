@@ -67,7 +67,7 @@ public class Tornado extends CoreAbility {
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
 		for (Integer id : getInstances(StockAbility.Tornado).keySet()) {
-			players.add(getInstances(StockAbility.Tornado).get(id).getPlayer());
+			players.add(getAbility(id).getPlayer());
 		}
 		return players;
 	}

@@ -70,7 +70,7 @@ public class AirScooter extends CoreAbility {
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
 		for (Integer id : getInstances(StockAbility.AirScooter).keySet()) {
-			players.add(getInstances(StockAbility.AirScooter).get(id).getPlayer());
+			players.add(getAbility(id).getPlayer());
 		}
 		return players;
 	}

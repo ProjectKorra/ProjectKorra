@@ -98,7 +98,7 @@ public class AirSwipe extends CoreAbility {
 	public static boolean removeSwipesAroundPoint(Location loc, double radius) {
 		boolean removed = false;
 		for (Integer id : getInstances(StockAbility.AirSwipe).keySet()) {
-			AirSwipe aswipe = (AirSwipe) getInstances(StockAbility.AirSwipe).get(id);
+			AirSwipe aswipe = (AirSwipe) getAbility(id);
 
 			for (Vector vec : aswipe.elements.keySet()) {
 				Location vectorLoc = aswipe.elements.get(vec);

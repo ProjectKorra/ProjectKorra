@@ -89,7 +89,7 @@ public class Combustion extends CoreAbility {
 
 	public static boolean removeAroundPoint(Location loc, double radius) {
 		for (Integer id : getInstances(StockAbility.Combustion).keySet()) {
-			Combustion combustion = (Combustion) getInstances(StockAbility.Combustion).get(id);
+			Combustion combustion = (Combustion) getAbility(id);
 			if (combustion.location.getWorld() == loc.getWorld()) {
 				if (combustion.location.distance(loc) <= radius) {
 					explode(combustion.getPlayer());

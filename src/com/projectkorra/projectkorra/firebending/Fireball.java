@@ -73,7 +73,7 @@ public class Fireball extends AddonAbility {
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
 		boolean broke = false;
 		for (Integer id : getInstances(Fireball.class).keySet()) {
-			Fireball fireball = (Fireball) getInstances(Fireball.class).get(id);
+			Fireball fireball = (Fireball) getAbility(id);
 			if (!fireball.launched)
 				continue;
 			Location fireblastlocation = fireball.location;
@@ -97,7 +97,7 @@ public class Fireball extends AddonAbility {
 
 	public static boolean isCharging(Player player) {
 		for (Integer id : getInstances(Fireball.class).keySet()) {
-			Fireball fireball = (Fireball) getInstances(Fireball.class).get(id);
+			Fireball fireball = (Fireball) getAbility(id);
 			if (fireball.player == player && !fireball.launched)
 				return true;
 		}
@@ -106,7 +106,7 @@ public class Fireball extends AddonAbility {
 
 	public static void removeFireballsAroundPoint(Location location, double radius) {
 		for (Integer id : getInstances(Fireball.class).keySet()) {
-			Fireball fireball = (Fireball) getInstances(Fireball.class).get(id);
+			Fireball fireball = (Fireball) getAbility(id);
 			if (!fireball.launched)
 				continue;
 			Location fireblastlocation = fireball.location;

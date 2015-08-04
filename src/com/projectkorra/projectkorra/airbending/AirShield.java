@@ -60,7 +60,7 @@ public class AirShield extends CoreAbility {
 
 	public static boolean isWithinShield(Location loc) {
 		for (Integer id : getInstances(StockAbility.AirShield).keySet()) {
-			AirShield ashield = (AirShield) getInstances(StockAbility.AirShield).get(id);
+			AirShield ashield = (AirShield) getAbility(id);
 			if (ashield.player.getLocation().getWorld() != loc.getWorld())
 				return false;
 			if (ashield.player.getLocation().distance(loc) <= ashield.radius)
