@@ -732,14 +732,16 @@ public class PKListener implements Listener {
 				Player targetplayer = (Player) e.getEntity();
 				if (GeneralMethods.canBendPassive(sourceplayer.getName(), Element.Chi)) {
 					if (GeneralMethods.isBender(sourceplayer.getName(), Element.Chi) && e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
-						if (GeneralMethods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
-							return;
-						}
-						if (ChiPassive.willChiBlock(sourceplayer, targetplayer)) {
-							if (GeneralMethods.getBoundAbility(sourceplayer) != null && GeneralMethods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze")) {
-								new Paralyze(sourceplayer, targetplayer);
-							} else {
-								ChiPassive.blockChi(targetplayer);
+						if (ChiMethods.isChiAbility(GeneralMethods.getBoundAbility(sourceplayer)) {
+							if (GeneralMethods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
+								return;
+							}
+							if (ChiPassive.willChiBlock(sourceplayer, targetplayer)) {
+								if (GeneralMethods.getBoundAbility(sourceplayer) != null && GeneralMethods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze")) {
+									new Paralyze(sourceplayer, targetplayer);
+								} else {
+									ChiPassive.blockChi(targetplayer);
+								}
 							}
 						}
 						//						if (sourceplayer.getLocation().distance(targetplayer.getLocation()) <= plugin.getConfig().getDouble("Abilities.Chi.RapidPunch.Distance") && Methods.getBoundAbility(sourceplayer) == null) {
