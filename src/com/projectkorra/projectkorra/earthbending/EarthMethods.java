@@ -125,6 +125,15 @@ public class EarthMethods {
 	public static ChatColor getEarthColor() {
 		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Earth"));
 	}
+	
+	/**
+	 * Gets the EarthSubColor from the config.
+	 * 
+	 * @return Config specified ChatColor
+	 */
+	public static ChatColor getEarthSubColor() {
+		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.EarthSub"));
+	}
 
 	public static int getEarthbendableBlocksLength(Player player, Block block, Vector direction, int maxlength) {
 		Location location = block.getLocation();

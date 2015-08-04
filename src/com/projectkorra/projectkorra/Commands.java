@@ -1592,24 +1592,31 @@ public class Commands {
 						//Developers
 						if (uuid2.toString().equals("833a7132-a9ec-4f0a-ad9c-c3d6b8a1c7eb") // Jacklin213
 								|| uuid2.toString().equals("96f40c81-dd5d-46b6-9afe-365114d4a082") // Coolade
+								|| uuid2.toString().equals("4eb6315e-9dd1-49f7-b582-c1170e497ab0") // jedk1
+								|| uuid2.toString().equals("5031c4e3-8103-49ea-b531-0d6ae71bad69") // Simplicitee
+								|| uuid2.toString().equals("d7757be8-86de-4898-ab4f-2b1b2fbc3dfa") // StrangeOne101
 								|| uuid2.toString().equals("81adae76-d647-4b41-bfb0-8166516fa189")) { // AlexTheCoder
 							s.sendMessage(ChatColor.DARK_PURPLE + "ProjectKorra Developer");
 						}
-
+						
 						//Concept Designers
 						if (uuid2.toString().equals("623df34e-9cd4-438d-b07c-1905e1fc46b6") // Loony
 								|| uuid2.toString().equals("80f9072f-e37e-4adc-8675-1ba6af87d63b") // Cross
+								|| uuid2.toString().equals("ce889d32-c2a0-4765-969f-9ca54d0bd34a") // ashe36
+								|| uuid2.toString().equals("7daead36-d285-4640-848a-2f105334b792") // Fuzzy
 								|| uuid2.toString().equals("38217173-8a32-4ba7-9fe1-dd4fed031a74")) { // Fly
 							s.sendMessage(ChatColor.GREEN + "ProjectKorra Concept Designer");
 						}
-
+						
 						//Community Moderators
-						if (uuid2.toString().equals("")) {
+						if (uuid2.toString().equals("1553482a-5e86-4270-9262-b57c11151074") // Pickle9775
+								|| uuid2.toString().equals("3d5bc713-ab8b-4125-b5ba-a1c1c2400b2c")) { // Gold
 							s.sendMessage(ChatColor.GOLD + "ProjectKorra Community Moderator");
 						}
 						
 						//Digital Team
-						if (uuid2.toString().equals("")) {
+						if (uuid2.toString().equals("2ab334d1-9691-4994-a624-209c7b4f220b") // Austygen
+								) {
 							s.sendMessage(ChatColor.BLUE + "ProjectKorra Digital Team");
 						}
 						
@@ -1900,22 +1907,37 @@ public class Commands {
 					if (GeneralMethods.abilityExists(args[1])) {
 						String ability = GeneralMethods.getAbility(args[1]);
 						if (AirMethods.isAirAbility(ability)) {
-							s.sendMessage(AirMethods.getAirColor() + ability + " - ");
-							s.sendMessage(AirMethods.getAirColor() + AbilityModuleManager.descriptions.get(ability));
+							if(AirMethods.isSpiritualProjectionAbility(ability) || AirMethods.isFlightAbility(ability)) {
+								s.sendMessage(AirMethods.getAirSubColor() + ability + " - ");
+								s.sendMessage(AirMethods.getAirSubColor() + AbilityModuleManager.descriptions.get(ability));
+							} else {
+								s.sendMessage(AirMethods.getAirColor() + ability + " - ");
+								s.sendMessage(AirMethods.getAirColor() + AbilityModuleManager.descriptions.get(ability));
+							}
 						} else if (WaterMethods.isWaterAbility(ability)) {
-							s.sendMessage(WaterMethods.getWaterColor() + ability + " - ");
-							s.sendMessage(WaterMethods.getWaterColor() + AbilityModuleManager.descriptions.get(ability));
+							if(WaterMethods.isIcebendingAbility(ability) || WaterMethods.isBloodbendingAbility(ability) || WaterMethods.isHealingAbility(ability) || WaterMethods.isPlantbendingAbility(ability)) {
+								s.sendMessage(WaterMethods.getWaterSubColor() + ability + " - ");
+								s.sendMessage(WaterMethods.getWaterSubColor() + AbilityModuleManager.descriptions.get(ability));
+							} else {
+								s.sendMessage(WaterMethods.getWaterColor() + ability + " - ");
+								s.sendMessage(WaterMethods.getWaterColor() + AbilityModuleManager.descriptions.get(ability));
+							}
 						} else if (EarthMethods.isEarthAbility(ability)) {
-							if (EarthMethods.isMetalbendingAbility(ability)) {
-								s.sendMessage(EarthMethods.getMetalbendingColor() + ability + " - ");
-								s.sendMessage(EarthMethods.getMetalbendingColor() + AbilityModuleManager.descriptions.get(ability));
+							if (EarthMethods.isMetalbendingAbility(ability) || EarthMethods.isLavabendingAbility(ability) || EarthMethods.isSandbendingAbility(ability)) {
+								s.sendMessage(EarthMethods.getEarthSubColor() + ability + " - ");
+								s.sendMessage(EarthMethods.getEarthSubColor() + AbilityModuleManager.descriptions.get(ability));
 							} else {
 								s.sendMessage(EarthMethods.getEarthColor() + ability + " - ");
 								s.sendMessage(EarthMethods.getEarthColor() + AbilityModuleManager.descriptions.get(ability));
 							}
 						} else if (FireMethods.isFireAbility(ability)) {
-							s.sendMessage(FireMethods.getFireColor() + ability + " - ");
-							s.sendMessage(FireMethods.getFireColor() + AbilityModuleManager.descriptions.get(ability));
+							if(FireMethods.isCombustionbendingAbility(ability) || FireMethods.isLightningbendingAbility(ability)) {
+								s.sendMessage(FireMethods.getFireSubColor() + ability + " - ");
+								s.sendMessage(FireMethods.getFireSubColor() + AbilityModuleManager.descriptions.get(ability));
+							} else {
+								s.sendMessage(FireMethods.getFireColor() + ability + " - ");
+								s.sendMessage(FireMethods.getFireColor() + AbilityModuleManager.descriptions.get(ability));
+							}
 						} else if (ChiMethods.isChiAbility(ability)) {
 							s.sendMessage(ChiMethods.getChiColor() + ability + " - ");
 							s.sendMessage(ChiMethods.getChiColor() + AbilityModuleManager.descriptions.get(ability));

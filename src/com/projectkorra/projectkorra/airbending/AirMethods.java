@@ -61,6 +61,15 @@ public class AirMethods {
 	public static ChatColor getAirColor() {
 		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Air"));
 	}
+	
+	/**
+	 * Gets the AirSubColor from the config.
+	 * 
+	 * @return Config specified ChatColor
+	 */
+	public static ChatColor getAirSubColor() {
+		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.AirSub"));
+	}
 
 	/**
 	 * Checks whether an ability is an air ability.

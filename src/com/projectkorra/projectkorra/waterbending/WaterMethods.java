@@ -123,6 +123,15 @@ public class WaterMethods {
 	public static ChatColor getWaterColor() {
 		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Water"));
 	}
+	
+	/**
+	 * Gets the WaterSubColor from the config.
+	 * 
+	 * @return Config specified ChatColor
+	 */
+	public static ChatColor getWaterSubColor() {
+		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.WaterSub"));
+	}
 
 	/**
 	 * Finds a valid Water source for a Player. To use dynamic source selection,
