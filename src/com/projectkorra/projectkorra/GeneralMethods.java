@@ -1472,7 +1472,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isSolid(Block block) {
-		return Arrays.asList(nonOpaque).contains(block.getTypeId());
+		return !Arrays.asList(nonOpaque).contains(block.getTypeId());
 	}
 
 	public static boolean isSubAbility(String ability) {
