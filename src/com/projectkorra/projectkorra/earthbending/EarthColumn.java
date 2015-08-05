@@ -44,6 +44,9 @@ public class EarthColumn {
 			return;
 
 		try {
+			if (AvatarState.isAvatarState(player)) {
+				height = (int) (2. / 5. * (double) AvatarState.getValue(height));
+			}
 			block = BlockSource.getEarthSourceBlock(player, range, ClickType.LEFT_CLICK);
 			if (block == null)
 				return;
