@@ -1594,8 +1594,8 @@ public class Commands {
 								|| uuid2.toString().equals("96f40c81-dd5d-46b6-9afe-365114d4a082") // Coolade
 								|| uuid2.toString().equals("4eb6315e-9dd1-49f7-b582-c1170e497ab0") // jedk1
 								|| uuid2.toString().equals("5031c4e3-8103-49ea-b531-0d6ae71bad69") // Simplicitee
-								|| uuid2.toString().equals("d7757be8-86de-4898-ab4f-2b1b2fbc3dfa") // StrangeOne101
-								|| uuid2.toString().equals("81adae76-d647-4b41-bfb0-8166516fa189")) { // AlexTheCoder
+								|| uuid2.toString().equals("d7757be8-86de-4898-ab4f-2b1b2fbc3dfa")) { // StrangeOne101
+
 							s.sendMessage(ChatColor.DARK_PURPLE + "ProjectKorra Developer");
 						}
 						
@@ -1604,6 +1604,7 @@ public class Commands {
 								|| uuid2.toString().equals("80f9072f-e37e-4adc-8675-1ba6af87d63b") // Cross
 								|| uuid2.toString().equals("ce889d32-c2a0-4765-969f-9ca54d0bd34a") // ashe36
 								|| uuid2.toString().equals("7daead36-d285-4640-848a-2f105334b792") // Fuzzy
+								|| uuid2.toString().equals("f30c871e-cd60-446b-b219-e31e00e16857") // Gangksta
 								|| uuid2.toString().equals("38217173-8a32-4ba7-9fe1-dd4fed031a74")) { // Fly
 							s.sendMessage(ChatColor.GREEN + "ProjectKorra Concept Designer");
 						}
