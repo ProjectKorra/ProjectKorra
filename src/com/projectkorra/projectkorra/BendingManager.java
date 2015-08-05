@@ -116,7 +116,7 @@ public class BendingManager implements Runnable, ConfigLoadable {
 							}
 						}
 						if (GeneralMethods.isBender(player.getName(), Element.Fire)) {
-							if (player.hasPermission("bending.message.daymessage"))
+							if (!player.hasPermission("bending.message.daymessage"))
 								return;
 							player.sendMessage(FireMethods.getFireColor() + sunsetMessage);
 						}
