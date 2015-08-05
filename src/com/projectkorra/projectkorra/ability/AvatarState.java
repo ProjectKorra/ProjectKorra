@@ -76,6 +76,7 @@ public class AvatarState {
 	private boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			instances.remove(player);
+			return false;
 		}
 		if (!GeneralMethods.canBend(player.getName(), StockAbility.AvatarState.name())) {
 			instances.remove(player);
