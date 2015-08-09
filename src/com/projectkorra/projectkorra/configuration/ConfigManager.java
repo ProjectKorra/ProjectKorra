@@ -44,6 +44,7 @@ public class ConfigManager {
 				config.addDefault("Water.OctopusForm", "{victim} was slapped by {attacker}'s {ability}");
 				config.addDefault("Water.Bloodbending", "{victim} was destroyed by {attacker}'s {ability}");
 				config.addDefault("Water.WaterCombo", "{victim} was overwhelmed by {attacker}'s skill {ability}");
+				config.addDefault("Water.PlantWhip", "{victim} was smashed to death by {attacker} using {ability}!");
 
 				config.addDefault("Earth.Collapse", "{victim} was suffocated by {attacker}'s {ability}");
 				config.addDefault("Earth.EarthBlast", "{victim} was broken apart by {attacker}'s {ability}");
@@ -373,7 +374,20 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.Torrent.Wave.Height", 1);
 
 				config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
-
+				
+				config.addDefault("Abilities.Water.VineWhip.Enabled", true);
+				config.addDefault("Abilities.Water.VineWhip.Description", "This ability allows a plantbender to create a big whip of plants, "
+						+ "damaging and knocking back anything it hits. To do this, sneak (Default shift) while looking at a "
+						+ "plant. Smoke will appear, indicating you have succesfully selected a source. Then, you must left click in any direction "
+						+ "you want, to launch the whip in that direction. To redirect the whip, you must left click again, the whip's course will "
+						+ "change into the direction you clicked.");
+				config.addDefault("Abilities.Water.VineWhip.Range", 25);
+				config.addDefault("Abilities.Water.VineWhip.Damage", 4);
+				config.addDefault("Abilities.Water.VineWhip.SourceRange", 10);
+				config.addDefault("Abilities.Water.VineWhip.RevertTime", 3500);
+				config.addDefault("Abilities.Water.VineWhip.CoolDown", 3000);
+				config.addDefault("Abilities.Water.VineWhip.Speed", 0.8);
+				
 				config.addDefault("Abilities.Water.WaterArms.Enabled", true);
 				config.addDefault("Abilities.Water.WaterArms.Description", "One of the most diverse moves in a Waterbender's arsenal, this move creates tendrils " + "of water from the players arms to emulate their actual arms. Each water arms mode will be binded to a slot, switch slots to change mode. " + "To deactive the arms, hold Sneak and Double Left-Click." + "\nPull - Use your Arms to pull blocks, items, mobs or even players towards you!" + "\nPunch - An offensive attack, harming players or mobs!" + "\nGrapple - Scale walls and speed across battlefields, using your Arms as a grappling hook!" + "\nGrab - Grab an entity with your arm, and swing them about!" + "\nFreeze - Use your Arms to fire small blasts of ice in any direction!" + "\nSpear - Throw your Arms in any direction, freezing whatever it hits!");
 				config.addDefault("Abilities.Water.WaterArms.SneakMessage", "Active Ability:");

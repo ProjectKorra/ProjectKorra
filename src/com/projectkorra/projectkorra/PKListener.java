@@ -1,6 +1,67 @@
 package com.projectkorra.projectkorra;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.SlimeSplitEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.ability.api.CoreAbility;
 import com.projectkorra.projectkorra.ability.combo.ComboManager;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
 import com.projectkorra.projectkorra.airbending.AirBlast;
@@ -41,13 +102,13 @@ import com.projectkorra.projectkorra.earthbending.EarthTunnel;
 import com.projectkorra.projectkorra.earthbending.EarthWall;
 import com.projectkorra.projectkorra.earthbending.Extraction;
 import com.projectkorra.projectkorra.earthbending.LavaFlow;
+import com.projectkorra.projectkorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.projectkorra.earthbending.LavaSurge;
 import com.projectkorra.projectkorra.earthbending.LavaWave;
 import com.projectkorra.projectkorra.earthbending.MetalClips;
 import com.projectkorra.projectkorra.earthbending.SandSpout;
 import com.projectkorra.projectkorra.earthbending.Shockwave;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
-import com.projectkorra.projectkorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.projectkorra.event.PlayerBendingDeathEvent;
 import com.projectkorra.projectkorra.event.PlayerGrappleEvent;
 import com.projectkorra.projectkorra.firebending.ArcOfFire;
@@ -80,7 +141,9 @@ import com.projectkorra.projectkorra.waterbending.IceSpike2;
 import com.projectkorra.projectkorra.waterbending.Melt;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.PlantArmor;
+import com.projectkorra.projectkorra.waterbending.Plantbending;
 import com.projectkorra.projectkorra.waterbending.Torrent;
+import com.projectkorra.projectkorra.waterbending.VineWhip;
 import com.projectkorra.projectkorra.waterbending.WaterArms;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
@@ -89,65 +152,6 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.WaterWall;
 import com.projectkorra.projectkorra.waterbending.WaterWave;
 import com.projectkorra.projectkorra.waterbending.Wave;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityInteractEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.entity.SlimeSplitEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class PKListener implements Listener {
 
@@ -354,6 +358,8 @@ public class PKListener implements Listener {
 			return;
 
 		Entity entity = event.getEntity();
+		event.setCancelled(VineWhip.dontsolidify.contains(entity));
+		
 		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 
@@ -1163,6 +1169,9 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("WaterArms")) {
 					new WaterArms(player);
 				}
+				if (abil.equalsIgnoreCase("VineWhip")) {
+					new VineWhip(player);
+				}
 			}
 
 			if (EarthMethods.isEarthAbility(abil)) {
@@ -1347,6 +1356,17 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Torrent")) {
 					new Torrent(player);
 				}
+				if (abil.equalsIgnoreCase("VineWhip")) {
+					if(CoreAbility.containsPlayer(player, VineWhip.class)) {
+						VineWhip pw = (VineWhip) CoreAbility.getAbilityFromPlayer(player, VineWhip.class);
+						if(!pw.clicked) pw.clicked = true;
+						if(pw.targetLoc == null) {
+							new Plantbending(pw.source);
+							pw.source.setType(Material.AIR);
+						}
+						pw.targetLoc = VineWhip.getTargetLocation(player, ConfigManager.defaultConfig.get().getDouble("Abilities.Water.VineWhip.Range"));
+					}
+				}
 			}
 
 			if (EarthMethods.isEarthAbility(abil)) {
@@ -1488,7 +1508,15 @@ public class PKListener implements Listener {
 			event.setCancelled(p.getGameMode() != GameMode.CREATIVE);
 		}
 	}
-
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void leafDecay(LeavesDecayEvent e){
+		if(VineWhip.revert.contains(e.getBlock())){
+			e.setCancelled(true);
+			e.getBlock().getDrops().clear();
+		}
+	}
+	
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onProjectileHit(ProjectileHitEvent event) {
 		Integer id = event.getEntity().getEntityId();

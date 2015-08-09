@@ -21,14 +21,14 @@ public enum StockAbility {
 	AvatarState,
 
 	// Project Korra
-	Extraction, MetalClips, Smokescreen, Combustion, LavaFlow, Suffocate, IceBlast, WarriorStance, AcrobatStance, QuickStrike, SwiftKick, EarthSmash, Flight, WaterArms, SandSpout, PlantArmor;
+	Extraction, MetalClips, Smokescreen, Combustion, LavaFlow, Suffocate, IceBlast, WarriorStance, AcrobatStance, QuickStrike, SwiftKick, EarthSmash, Flight, WaterArms, SandSpout, PlantArmor, VineWhip;
 
 	public enum AirbendingAbilities {
 		AirBlast, AirBubble, AirShield, AirSuction, AirSwipe, Tornado, AirScooter, AirSpout, AirBurst, Suffocate, Flight;
 	}
 
 	public enum WaterbendingAbilities {
-		WaterBubble, PhaseChange, HealingWaters, WaterManipulation, Surge, Bloodbending, WaterSpout, IceSpike, IceBlast, OctopusForm, Torrent, WaterArms, PlantArmor;
+		WaterBubble, PhaseChange, HealingWaters, WaterManipulation, Surge, Bloodbending, WaterSpout, IceSpike, IceBlast, OctopusForm, Torrent, WaterArms, PlantArmor, VineWhip;
 
 	}
 
@@ -85,7 +85,7 @@ public enum StockAbility {
 	}
 
 	public enum PlantbendingAbilities {
-		PlantArmor;
+		PlantArmor, VineWhip;
 	}
 
 	public enum MultiAbilities {

@@ -34,6 +34,7 @@ public class WaterbendingManager implements Runnable {
 		WaterWave.progressAll();
 		WaterCombo.progressAll();
 		WaterArms.progressAll();
+		VineWhip.repeat();
 	}
 
 }
