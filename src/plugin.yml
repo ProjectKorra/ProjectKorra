@@ -95,6 +95,7 @@ permissions:
       bending.ability.WaterSpout.Wave: true
       bending.ability.WaterCombo: true
       bending.ability.PlantArmor: true
+      bending.ability.VineWhip: true
       bending.water.plantbending: true
       bending.message.nightmessage: true
       bending.water.passive: true

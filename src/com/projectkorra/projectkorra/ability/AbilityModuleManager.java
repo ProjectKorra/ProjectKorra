@@ -1,15 +1,15 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.util.AbilityLoader;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.util.AbilityLoader;
 
 public class AbilityModuleManager {
 
@@ -146,6 +146,8 @@ public class AbilityModuleManager {
 						shiftabilities.add(a.name());
 					if (a == StockAbility.WaterArms)
 						shiftabilities.add(a.name());
+					if (a == StockAbility.VineWhip)
+						shiftabilities.add(a.name());
 
 					// Water Sub Abilities
 					if (a == StockAbility.HealingWaters)
@@ -160,6 +162,8 @@ public class AbilityModuleManager {
 						subabilities.add(a.name());
 					if (a == StockAbility.PlantArmor)
 						subabilities.add(a.name());
+					if (a == StockAbility.VineWhip)
+						subabilities.add(a.name());
 
 					if (a == StockAbility.HealingWaters)
 						healingabilities.add(a.name());
@@ -172,6 +176,8 @@ public class AbilityModuleManager {
 					if (a == StockAbility.IceBlast)
 						iceabilities.add(a.name());
 					if (a == StockAbility.PlantArmor)
+						plantabilities.add(a.name());
+					if (a == StockAbility.VineWhip)
 						plantabilities.add(a.name());
 				}
 			} else if (StockAbility.isEarthbending(a)) {
