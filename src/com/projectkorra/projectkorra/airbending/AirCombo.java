@@ -366,6 +366,7 @@ public class AirCombo implements ConfigLoadable {
 
 			if (!EarthMethods.isTransparentToEarthbending(player, loc.clone().add(0, 0.2, 0).getBlock())) {
 				fstream.remove();
+				remove();
 				return;
 			}
 			if (i % 3 == 0) {
