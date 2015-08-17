@@ -80,6 +80,7 @@ import com.projectkorra.projectkorra.ability.StockAbility;
 import com.projectkorra.projectkorra.ability.combo.ComboAbilityModule;
 import com.projectkorra.projectkorra.ability.combo.ComboManager;
 import com.projectkorra.projectkorra.ability.combo.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.ability.combo.ComboManager.ComboAbility;
 import com.projectkorra.projectkorra.ability.combo.ComboModuleManager;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityModuleManager;
@@ -110,6 +111,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.FreezeMelt;
+import com.projectkorra.projectkorra.waterbending.WaterCombo;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
@@ -377,9 +379,12 @@ public class GeneralMethods {
 	}
 
 	public static boolean comboExists(String string) {
-		for (ComboAbilityModule c : ComboModuleManager.combo)
-			if (string.equalsIgnoreCase(c.getName()))
+		/*Previous method only returned non-stock combos. Reason we use descriptions is because that
+		 * contains all valid combos. Not technical ones like IceBulletLeftClick, etc.*/
+		for (String s : ComboManager.descriptions.keySet()) {
+			if (s.equalsIgnoreCase(string))
 				return true;
+		}
 		return false;
 	}
 
@@ -719,6 +724,28 @@ public class GeneralMethods {
 			return Element.Chi;
 		return null;
 	}
+	
+	
+	/**
+	 * Returns the subelement of the ability if applicable.
+	 * 
+	 * @param ability
+	 * @return SubElement
+	 * */
+	public static SubElement getAbilitySubElement(String ability) {
+		if (AbilityModuleManager.bloodabilities.contains(ability)) return SubElement.Bloodbending;
+		if (AbilityModuleManager.iceabilities.contains(ability)) return SubElement.Icebending;
+		if (AbilityModuleManager.plantabilities.contains(ability)) return SubElement.Plantbending;
+		if (AbilityModuleManager.healingabilities.contains(ability)) return SubElement.Healing;
+		if (AbilityModuleManager.sandabilities.contains(ability)) return SubElement.Sandbending;
+		if (AbilityModuleManager.metalabilities.contains(ability)) return SubElement.Metalbending;
+		if (AbilityModuleManager.lavaabilities.contains(ability)) return SubElement.Lavabending;
+		if (AbilityModuleManager.lightningabilities.contains(ability)) return SubElement.Lightning;
+		if (AbilityModuleManager.combustionabilities.contains(ability)) return SubElement.Combustion;
+		if (AbilityModuleManager.spiritualprojectionabilities.contains(ability)) return SubElement.SpiritualProjection;
+		if (AbilityModuleManager.flightabilities.contains(ability)) return SubElement.Flight;
+		return null;
+	}
 
 	/**
 	 * Gets the AvatarColor from the config.
@@ -906,6 +933,99 @@ public class GeneralMethods {
 			}
 		}
 		return circleblocks;
+	}
+	
+	/**Returns the ChatColor that should be associated with the combo name.
+	 * @param combo
+	 * @return The ChatColor to be used*/
+	public static ChatColor getComboColor(String combo) {
+		for (ComboAbility comboability : ComboManager.comboAbilityList) {
+			if (!comboability.getName().equalsIgnoreCase(combo)) {
+				continue;
+			}
+			
+			if (!ComboManager.descriptions.containsKey(comboability.getName())) {
+				return ChatColor.STRIKETHROUGH; //This is so we know it shouldn't be used. Should not come up anyway.
+			}
+			
+			if (comboability.getComboType() instanceof ComboAbilityModule){
+				ComboAbilityModule module = (ComboAbilityModule) comboability.getComboType();
+				if (module.getSubElement() != null) {
+					if (module.getSubElement() == SubElement.Bloodbending || module.getSubElement() == SubElement.Icebending || module.getSubElement() == SubElement.Plantbending || module.getSubElement() == SubElement.Healing) 
+						return WaterMethods.getWaterSubColor();
+					else if (module.getSubElement() == SubElement.Lightning || module.getSubElement() == SubElement.Combustion)
+						return FireMethods.getFireSubColor();
+					else if (module.getSubElement() == SubElement.Sandbending || module.getSubElement() == SubElement.Metalbending || module.getSubElement() == SubElement.Lavabending) 
+						return EarthMethods.getEarthSubColor();
+					else if (module.getSubElement() == SubElement.Flight || module.getSubElement() == SubElement.SpiritualProjection) 
+						return AirMethods.getAirSubColor();
+				}
+				if (module.getElement().equalsIgnoreCase(Element.Water.toString())) return WaterMethods.getWaterColor();
+				else if (module.getElement().equalsIgnoreCase(Element.Earth.toString())) return EarthMethods.getEarthColor();
+				else if (module.getElement().equalsIgnoreCase(Element.Fire.toString())) return FireMethods.getFireColor();
+				else if (module.getElement().equalsIgnoreCase(Element.Air.toString())) return AirMethods.getAirColor();
+				else if (module.getElement().equalsIgnoreCase(Element.Chi.toString())) return ChiMethods.getChiColor();
+				else return getAvatarColor();
+			}
+			else if (combo.equalsIgnoreCase("IceBullet") || combo.equalsIgnoreCase("IceWave")) {
+				return WaterMethods.getWaterSubColor();
+			}
+			else if (comboability.getComboType().equals(WaterCombo.class)){
+				return WaterMethods.getWaterColor();
+			}
+			else if (comboability.getComboType().equals(FireCombo.class)){
+				return FireMethods.getFireColor();
+			}
+			else if (comboability.getComboType().equals(AirCombo.class)){
+				return AirMethods.getAirColor();
+			}
+			else {
+				Element element = null;
+				for (AbilityInformation abilityinfo : comboability.getAbilities()) {
+					Element currElement = getAbilityElement(abilityinfo.getAbilityName());
+					if (currElement == null) return getAvatarColor();
+					else if (element == null) element = currElement;
+					if (getAbilitySubElement(abilityinfo.getAbilityName()) != null) {
+						SubElement sub = getAbilitySubElement(abilityinfo.getAbilityName());
+						if (sub == SubElement.Bloodbending || sub == SubElement.Icebending || sub == SubElement.Plantbending || sub == SubElement.Healing) 
+							return WaterMethods.getWaterSubColor();
+						else if (sub == SubElement.Lightning || sub == SubElement.Combustion)
+							return FireMethods.getFireSubColor();
+						else if (sub == SubElement.Sandbending || sub == SubElement.Metalbending || sub == SubElement.Lavabending) 
+							return EarthMethods.getEarthSubColor();
+						else if (sub == SubElement.Flight || sub == SubElement.SpiritualProjection) 
+							return AirMethods.getAirSubColor();
+					}
+				}
+				if (element == Element.Air) return AirMethods.getAirColor();
+				if (element == Element.Earth) return EarthMethods.getEarthColor();
+				if (element == Element.Fire) return FireMethods.getFireColor();
+				if (element == Element.Water) return WaterMethods.getWaterColor();
+				if (element == Element.Chi) return ChiMethods.getChiColor();
+				return getAvatarColor();
+			}
+		}
+		return getAvatarColor();
+	}
+	/**Returns the correct element for the combo*/
+	public static Element getComboElement(String combo) {
+		Iterator<ComboAbility> it = ComboManager.comboAbilityList.iterator();
+		Element element = null;
+		while (it.hasNext()) {
+			ComboAbility comboability = it.next();
+			if (!comboability.getName().equalsIgnoreCase(combo)) {
+				continue;
+			}
+			for (AbilityInformation abilityinfo : comboability.getAbilities())
+			{
+				Element abilityelement = getAbilityElement(abilityinfo.getAbilityName());
+				if (abilityelement == null) return null;
+				else if (element == null) element = abilityelement;
+				else if (element != abilityelement) return null;
+			}
+			return element;
+		}
+		return null;
 	}
 
 	public static String getCurrentDate() {
@@ -1795,7 +1915,7 @@ public class GeneralMethods {
 			ab.stop();
 		}
 
-		ArrayList<ComboManager.ComboAbility> combos = ComboManager.comboAbilityList;
+		HashSet<ComboManager.ComboAbility> combos = ComboManager.comboAbilityList;
 		for (ComboManager.ComboAbility c : combos)
 			if (c.getComboType() instanceof ComboAbilityModule)
 				((ComboAbilityModule) c.getComboType()).stop();
