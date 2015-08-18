@@ -314,7 +314,8 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.Bloodbending.HoldTime", 0);
 				config.addDefault("Abilities.Water.Bloodbending.Cooldown", 0);
 				config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon", false);
-
+				config.addDefault("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders", false);
+				
 				config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
 				config.addDefault("Abilities.Water.HealingWaters.Description", "To use, the bender must be at least partially submerged in water. " + "If the user is not sneaking, this ability will automatically begin " + "working provided the user has it selected. If the user is sneaking, " + "he/she is channeling the healing to their target in front of them. " + "In order for this channel to be successful, the user and the target must " + "be at least partially submerged in water.");
 				config.addDefault("Abilities.Water.HealingWaters.Radius", 5);

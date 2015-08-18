@@ -32,11 +32,12 @@ public class Bloodbending {
 	private static final boolean onlyUsableAtNight = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
 	private static boolean canBeUsedOnUndead = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
 	private static final boolean onlyUsableDuringMoon = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
-
+	private boolean canBloodbendBloodbenders = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders");
+	
 	private int RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Range");
 	private long HOLD_TIME = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.HoldTime");
 	private long COOLDOWN = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Cooldown");
-
+	
 	private Player player;
 	private long time;
 	private double factor = FACTOR;
@@ -84,7 +85,7 @@ public class Bloodbending {
 			if (!(target instanceof LivingEntity) || GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", target.getLocation()))
 				return;
 			if (target instanceof Player) {
-				if (GeneralMethods.canBend(((Player) target).getName(), "Bloodbending") || AvatarState.isAvatarState((Player) target))
+				if ((GeneralMethods.canBend(((Player) target).getName(), "Bloodbending") && !canBloodbendBloodbenders) || AvatarState.isAvatarState((Player) target))
 					if (!FireMethods.isDay(target.getWorld()) || WaterMethods.canBloodbendAtAnytime((Player) target))
 						return;
 			}
