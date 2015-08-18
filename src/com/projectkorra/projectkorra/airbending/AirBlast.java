@@ -37,6 +37,12 @@ public class AirBlast extends CoreAbility {
 	public static double defaultrange = config.get().getDouble("Abilities.Air.AirBlast.Range");
 	public static double affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
 	public static double defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push");
+	
+	public static boolean flickLevers = config.get().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
+	public static boolean openDoors = config.get().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
+	public static boolean pressButtons = config.get().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
+	public static boolean coolLava = config.get().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
+	
 	private static double originselectrange = 10;
 	private static final int maxticks = 10000;
 	/* Package visible variables */
@@ -287,8 +293,10 @@ public class AirBlast extends CoreAbility {
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
 
+			if (GeneralMethods.isRegionProtectedFromBuild(getPlayer(), "AirBlast", block.getLocation())) continue;
+			
 			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR };
-			if (Arrays.asList(doorTypes).contains(block.getType())) {
+			if (Arrays.asList(doorTypes).contains(block.getType()) && openDoors) {
 				if (block.getData() >= 8) {
 					block = block.getRelative(BlockFace.DOWN);
 				}
@@ -301,7 +309,7 @@ public class AirBlast extends CoreAbility {
 					block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
 				}
 			}
-			if ((block.getType() == Material.LEVER) && !affectedlevers.contains(block)) {
+			if ((block.getType() == Material.LEVER) && !affectedlevers.contains(block) && flickLevers) {
 				// BlockState state = block.getState();
 				// Lever lever = (Lever) (state.getData());
 				// lever.setPowered(!lever.isPowered());
@@ -331,7 +339,7 @@ public class AirBlast extends CoreAbility {
 
 				affectedlevers.add(block);
 
-			} else if ((block.getType() == Material.STONE_BUTTON) && !affectedlevers.contains(block)) {
+			} else if ((block.getType() == Material.STONE_BUTTON) && !affectedlevers.contains(block) && pressButtons) {
 
 				final Button button = new Button(Material.STONE_BUTTON, block.getData());
 				button.setPowered(!button.isPowered());
@@ -365,7 +373,7 @@ public class AirBlast extends CoreAbility {
 				}.runTaskLater(ProjectKorra.plugin, 10);
 
 				affectedlevers.add(block);
-			} else if ((block.getType() == Material.WOOD_BUTTON) && !affectedlevers.contains(block)) {
+			} else if ((block.getType() == Material.WOOD_BUTTON) && !affectedlevers.contains(block) && pressButtons) {
 
 				final Button button = new Button(Material.WOOD_BUTTON, block.getData());
 				button.setPowered(!button.isPowered());
@@ -401,7 +409,7 @@ public class AirBlast extends CoreAbility {
 				affectedlevers.add(block);
 			}
 		}
-		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !affectedlevers.contains(block)) {
+		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !affectedlevers.contains(block) && coolLava) {
 			if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
 				if (block.getData() == full) {
 					block.setType(Material.OBSIDIAN);
@@ -439,6 +447,11 @@ public class AirBlast extends CoreAbility {
 		defaultrange = config.get().getDouble("Abilities.Air.AirBlast.Range");
 		affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
 		defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push");
+		
+		flickLevers = config.get().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
+		openDoors = config.get().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
+		pressButtons = config.get().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
+		coolLava = config.get().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
 		maxspeed = 1. / defaultpushfactor;
 		range = defaultrange;
 		pushfactor = defaultpushfactor;
