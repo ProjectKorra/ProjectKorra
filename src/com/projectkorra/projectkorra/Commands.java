@@ -1803,7 +1803,11 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "This command will remove the element of the targeted [Player]. The player will be able to re-pick " + " their element after this command is run on them, assuming their Bending was not permaremoved.");
 						return true;
 					}
-
+					else if (Arrays.asList(avataraliases).contains(args[1])) {
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending avatar [Player]");
+						s.sendMessage(ChatColor.YELLOW + "This command will grant a player the Avatar status if the server has ProjectKorra (RPG) installed. This command is typically reserved for server Administrators.");
+						return true;
+					}
 					else if (Arrays.asList(togglealiases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending toggle <all>");
 						s.sendMessage(ChatColor.YELLOW + "This command will toggle a player's own Bending on or off. If toggled off, all abilities should stop" + " working until it is toggled back on. Logging off will automatically toggle your Bending back on. If you run the command /bending toggle all, Bending will be turned off for all players and cannot be turned back on until the command is run again.");
