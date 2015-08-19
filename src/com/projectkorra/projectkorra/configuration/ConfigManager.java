@@ -201,6 +201,10 @@ public class ConfigManager {
 				config.addDefault("Abilities.Air.AirBlast.Range", 20);
 				config.addDefault("Abilities.Air.AirBlast.Radius", 2);
 				config.addDefault("Abilities.Air.AirBlast.Push", 3.5);
+				config.addDefault("Abilities.Air.AirBlast.CanFlickLevers", true);
+				config.addDefault("Abilities.Air.AirBlast.CanOpenDoors", true);
+				config.addDefault("Abilities.Air.AirBlast.CanPressButtons", true);
+				config.addDefault("Abilities.Air.AirBlast.CanCoolLava", true);
 
 				config.addDefault("Abilities.Air.AirBubble.Enabled", true);
 				config.addDefault("Abilities.Air.AirBubble.Description", "To use, the bender must merely have the ability selected. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
@@ -310,7 +314,8 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.Bloodbending.HoldTime", 0);
 				config.addDefault("Abilities.Water.Bloodbending.Cooldown", 0);
 				config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon", false);
-
+				config.addDefault("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders", false);
+				
 				config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
 				config.addDefault("Abilities.Water.HealingWaters.Description", "To use, the bender must be at least partially submerged in water. " + "If the user is not sneaking, this ability will automatically begin " + "working provided the user has it selected. If the user is sneaking, " + "he/she is channeling the healing to their target in front of them. " + "In order for this channel to be successful, the user and the target must " + "be at least partially submerged in water.");
 				config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
