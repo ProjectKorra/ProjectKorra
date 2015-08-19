@@ -1,5 +1,30 @@
 package com.projectkorra.projectkorra;
 
+import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
 import com.projectkorra.projectkorra.ability.StockAbility;
 import com.projectkorra.projectkorra.ability.combo.ComboManager;
@@ -12,35 +37,8 @@ import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.firebending.FireMethods;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.GrapplingHookAPI;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 import com.projectkorra.rpg.RPGMethods;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
-
-import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public class Commands {
 
@@ -107,7 +105,6 @@ public class Commands {
 	String[] choosealiases = { "choose", "ch" };
 	String[] clearaliases = { "clear", "cl", "c" };
 	String[] displayaliases = { "display", "d" };
-	String[] givealiases = { "give", "g", "spawn" };
 	String[] helpaliases = { "help", "h" };
 	String[] importaliases = { "import", "i" };
 	String[] invinciblealiases = { "invincible", "inv" };
@@ -118,11 +115,6 @@ public class Commands {
 	String[] togglealiases = { "toggle", "t" };
 	String[] versionaliases = { "version", "v" };
 	String[] whoaliases = { "who", "w" };
-
-	/*
-	 * Item Aliases
-	 */
-	String[] grapplinghookaliases = { "grapplinghook", "grapplehook", "hook", "ghook" };
 
 	private void init() {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");
@@ -1048,55 +1040,6 @@ public class Commands {
 					}
 				}
 
-				else if (Arrays.asList(givealiases).contains(args[0])) {
-					if (!s.hasPermission("bending.command.give")) {
-						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
-						return true;
-					}
-
-					if (args.length < 3) {
-						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending give [Player] [Item] <Properties>");
-						return true;
-					}
-
-					Player player = Bukkit.getPlayer(args[1]);
-
-					if (player == null) {
-						s.sendMessage(ChatColor.RED + "That player is not online.");
-						return true;
-					}
-
-					if (Arrays.asList(grapplinghookaliases).contains(args[2])) {
-						/*
-						 * They are spawning in a grappling hook. bending give
-						 * [Player] grapplinghook [# of Uses]
-						 */
-
-						if (args.length != 4) {
-							s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending give [Player] GrapplingHook <#OfUses>");
-							return true;
-						}
-						int uses;
-						try {
-							uses = Integer.parseInt(args[3]);
-						}
-						catch (NumberFormatException e) {
-							s.sendMessage(ChatColor.RED + "You must specify a number of uses you want the grappling hook to have.");
-							s.sendMessage(ChatColor.GOLD + "Example: /bending give " + s.getName() + " grapplinghook 25");
-							return true;
-						}
-
-						ItemStack hook = GrapplingHookAPI.createHook(uses);
-						player.getInventory().addItem(hook);
-						s.sendMessage(ChatColor.GREEN + "A grappling hook with " + uses + " uses has been added to your inventory.");
-						return true;
-					} else {
-						s.sendMessage(ChatColor.RED + "That is not a valid Bending item.");
-						s.sendMessage(ChatColor.GOLD + "Acceptable Items: GrapplingHook");
-						return true;
-					}
-				}
-
 				else if (Arrays.asList(importaliases).contains(args[0])) {
 					if (!s.hasPermission("bending.command.import")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
@@ -1783,8 +1726,6 @@ public class Commands {
 							s.sendMessage(ChatColor.YELLOW + "/bending version");
 						if (s.hasPermission("bending.command.who"))
 							s.sendMessage(ChatColor.YELLOW + "/bending who");
-						if (s.hasPermission("bending.command.give"))
-							s.sendMessage(ChatColor.YELLOW + "/bending give [Player] [Item] <Properties>");
 						if (s.hasPermission("bending.command.invincible"))
 							s.sendMessage(ChatColor.YELLOW + "/bending invincible");
 						return true;
@@ -1831,12 +1772,7 @@ public class Commands {
 						s.sendMessage(ChatColor.YELLOW + "This command will show you all of the elements you have bound if you do not specify an element." + " If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available " + " abilities of that element installed on the server.");
 					}
 
-					else if (Arrays.asList(givealiases).contains(args[1])) {
-						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending give [Player] [Item] <Properties>");
-						s.sendMessage(ChatColor.YELLOW + "This command will give you an item that was created for the Bending plugin so you do not have to craft it." + " Each item may have its own properties involved, so the amount of arguments may change. However, the Player and Item will be " + " required each time you use this command.");
-						s.sendMessage(ChatColor.DARK_AQUA + "Items: GrapplingHook");
-					}
-
+					
 					else if (Arrays.asList(choosealiases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending choose <Player> [Element]");
 						s.sendMessage(ChatColor.GOLD + "Applicable Elements: " + ChatColor.DARK_AQUA + "Air, Water, Earth, Fire, Chi");

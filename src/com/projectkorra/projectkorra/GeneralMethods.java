@@ -105,7 +105,6 @@ import com.projectkorra.projectkorra.firebending.FireMethods;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.CraftingRecipes;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -1653,7 +1652,6 @@ public class GeneralMethods {
 		new AbilityModuleManager(plugin);
 		new ComboManager();
 		new MultiAbilityModuleManager();
-		new CraftingRecipes(plugin);
 		DBConnection.host = plugin.getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = plugin.getConfig().getInt("Storage.MySQL.port");
 		DBConnection.pass = plugin.getConfig().getString("Storage.MySQL.pass");

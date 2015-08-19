@@ -1,5 +1,62 @@
 package com.projectkorra.projectkorra;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.SlimeSplitEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.ability.combo.ComboManager;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
@@ -41,15 +98,14 @@ import com.projectkorra.projectkorra.earthbending.EarthTunnel;
 import com.projectkorra.projectkorra.earthbending.EarthWall;
 import com.projectkorra.projectkorra.earthbending.Extraction;
 import com.projectkorra.projectkorra.earthbending.LavaFlow;
+import com.projectkorra.projectkorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.projectkorra.earthbending.LavaSurge;
 import com.projectkorra.projectkorra.earthbending.LavaWave;
 import com.projectkorra.projectkorra.earthbending.MetalClips;
 import com.projectkorra.projectkorra.earthbending.SandSpout;
 import com.projectkorra.projectkorra.earthbending.Shockwave;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
-import com.projectkorra.projectkorra.earthbending.LavaFlow.AbilityType;
 import com.projectkorra.projectkorra.event.PlayerBendingDeathEvent;
-import com.projectkorra.projectkorra.event.PlayerGrappleEvent;
 import com.projectkorra.projectkorra.firebending.ArcOfFire;
 import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.Enflamed;
@@ -70,7 +126,6 @@ import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.util.GrapplingHookAPI;
 import com.projectkorra.projectkorra.util.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.Bloodbending;
@@ -90,71 +145,10 @@ import com.projectkorra.projectkorra.waterbending.WaterWall;
 import com.projectkorra.projectkorra.waterbending.WaterWave;
 import com.projectkorra.projectkorra.waterbending.Wave;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityInteractEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.entity.SlimeSplitEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 public class PKListener implements Listener {
 
 	ProjectKorra plugin;
 
-	public static HashMap<Integer, Integer> noFallEntities = new HashMap<Integer, Integer>(); // Grappling Hooks
-	public static HashMap<String, Integer> noGrapplePlayers = new HashMap<String, Integer>(); // Grappling Hooks
 	public static HashMap<Player, String> bendingDeathPlayer = new HashMap<Player, String>(); // Player killed by Bending
 
 	public PKListener(ProjectKorra plugin) {
@@ -850,73 +844,6 @@ public class PKListener implements Listener {
 			message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", event.getEntity().getKiller().getName()).replace("{ability}", GeneralMethods.getAbilityColor(killerAbility) + ability);
 			event.setDeathMessage(message);
 			bendingDeathPlayer.remove(event.getEntity());
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerFish(PlayerFishEvent event) {
-		if (event.isCancelled())
-			return;
-		Player player = event.getPlayer();
-		if (GrapplingHookAPI.isGrapplingHook(player.getItemInHand())) {
-			if (event.getState() == PlayerFishEvent.State.IN_GROUND) {
-				Location loc = event.getHook().getLocation();
-				for (Entity ent : event.getHook().getNearbyEntities(1.5, 1, 1.5)) {
-					if (ent instanceof Item) {
-						PlayerGrappleEvent e = new PlayerGrappleEvent(player, ent, player.getLocation());
-						plugin.getServer().getPluginManager().callEvent(e);
-						return;
-					}
-				}
-				PlayerGrappleEvent e = new PlayerGrappleEvent(player, player, loc);
-				plugin.getServer().getPluginManager().callEvent(e);
-			}
-		}
-	}
-
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onPlayerGrapple(PlayerGrappleEvent event) {
-		if (event.isCancelled())
-			return;
-		if (!plugin.getConfig().getBoolean("Properties.CustomItems.GrapplingHook.Enable"))
-			return;
-
-		Player player = event.getPlayer();
-		if (!GeneralMethods.isBender(player.getName(), Element.Chi) && (!GeneralMethods.isBender(player.getName(), Element.Earth) || !EarthMethods.canMetalbend(player))) {
-			event.setCancelled(true);
-			return;
-		}
-		if (GeneralMethods.isBender(player.getName(), Element.Chi) && !player.hasPermission("bending.chi.grapplinghook")) {
-			event.setCancelled(true);
-			return;
-		}
-		if (GeneralMethods.isBender(player.getName(), Element.Earth) && !player.hasPermission("bending.earth.grapplinghook")) {
-			event.setCancelled(true);
-			return;
-		}
-		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
-			event.setCancelled(true);
-		}
-
-		event.getHookItem().setDurability((short) -10);
-		if (noGrapplePlayers.containsKey(player.getName())) {
-			return;
-		}
-
-		Entity e = event.getPulledEntity();
-		Location loc = event.getPullLocation();
-
-		if (player.equals(e)) {
-			if (player.getLocation().distance(loc) < 3) { // Too close
-				GrapplingHookAPI.pullPlayerSlightly(player, loc);
-			} else {
-				GrapplingHookAPI.pullEntityToLocation(player, loc);
-			}
-
-			if (GrapplingHookAPI.addUse(player, event.getHookItem())) {
-				GrapplingHookAPI.playGrappleSound(player.getLocation());
-			}
-			GrapplingHookAPI.addPlayerCooldown(player, 100);
 		}
 	}
 

@@ -127,7 +127,6 @@ permissions:
       bending.earth.metalbending: true
       bending.earth.lavabending: true
       bending.earth.sandbending: true
-      bending.earth.grapplinghook: true
       bending.ability.LavaSurge: true
       bending.ability.LavaFlow: true
       bending.ability.EarthSmash: true
@@ -169,7 +168,6 @@ permissions:
       bending.ability.SwiftKick: true
       bending.ability.ChiCombo: true
       bending.chi.passive: true
-      bending.chi.grapplinghook: true
   bending.avatar:
     default: false
     description: Grants the Avatar Color.
