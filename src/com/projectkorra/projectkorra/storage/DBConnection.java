@@ -16,7 +16,7 @@ public class DBConnection {
 
 	public static void init() {
 		if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
-			sql = new MySQL(ProjectKorra.log, "[ProjectKorra] Establishing MySQL Connection...", host, port, user, pass, db);
+			sql = new MySQL(ProjectKorra.log, "Establishing MySQL Connection...", host, port, user, pass, db);
 			if (((MySQL) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");
 				GeneralMethods.stopPlugin();
@@ -24,7 +24,7 @@ public class DBConnection {
 			}
 
 			isOpen = true;
-			ProjectKorra.log.info("[ProjectKorra] Database connection established.");
+			ProjectKorra.log.info("Database connection established.");
 
 			if (!sql.tableExists("pk_players")) {
 				ProjectKorra.log.info("Creating pk_players table");
@@ -38,7 +38,7 @@ public class DBConnection {
 				sql.modifyQuery(query);
 			}
 		} else {
-			sql = new SQLite(ProjectKorra.log, "[ProjectKorra] Establishing SQLite Connection.", "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
+			sql = new SQLite(ProjectKorra.log, "", "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
 			if (((SQLite) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");
 				GeneralMethods.stopPlugin();

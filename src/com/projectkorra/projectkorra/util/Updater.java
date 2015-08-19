@@ -1,17 +1,18 @@
 package com.projectkorra.projectkorra.util;
 
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.UnknownHostException;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.bukkit.plugin.Plugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Updater class that takes an rss feed and checks for updates there
@@ -57,9 +58,11 @@ public class Updater {
 			urlc = url.openConnection();
 			urlc.setRequestProperty("User-Agent", ""); // Must be used or face 403
 			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(urlc.getInputStream());
+		} catch (UnknownHostException e) {
+			plugin.getLogger().info("Could not connect to ProjectKorra.com to check for updates");
 		} catch (IOException | SAXException | ParserConfigurationException e) {
 			e.printStackTrace();
-		}
+		} 
 		this.currentVersion = plugin.getDescription().getVersion();
 		this.pluginName = plugin.getDescription().getName();
 	}
@@ -70,7 +73,9 @@ public class Updater {
 	 * 
 	 */
 	public void checkUpdate() {
-		if (updateAvailable()) {
+		if (getUpdateVersion()==null)
+			return;
+		else if (updateAvailable()) {
 			plugin.getLogger().info("===================[Update Available]===================");
 			plugin.getLogger().info("You are running version " + getCurrentVersion());
 			plugin.getLogger().info("The latest version avaliable is " + getUpdateVersion());
@@ -82,14 +87,17 @@ public class Updater {
 	/**
 	 * Gets latest plugin version.
 	 * 
-	 * @return Latest plugin version
+	 * @return Latest plugin version, or null if it cannot connect
 	 */
 	public String getUpdateVersion() {
-		Node latestFile = document.getElementsByTagName("item").item(0);
-		NodeList children = latestFile.getChildNodes();
-		
-		String version = children.item(1).getTextContent();
-		return version;
+		if (document!=null) {
+			Node latestFile = document.getElementsByTagName("item").item(0);
+			NodeList children = latestFile.getChildNodes();
+			
+			String version = children.item(1).getTextContent();
+			return version;
+		}
+		return null;
 	}
 	
 	/**
@@ -98,7 +106,8 @@ public class Updater {
 	 * @return true If there is an update
 	 */
 	public boolean updateAvailable() {
-		if (currentVersion.equalsIgnoreCase(getUpdateVersion())) {
+		String updateVersion = getUpdateVersion();
+		if (updateVersion==null || currentVersion.equalsIgnoreCase(getUpdateVersion())) {
 			return false;
 		}
 		return true;
