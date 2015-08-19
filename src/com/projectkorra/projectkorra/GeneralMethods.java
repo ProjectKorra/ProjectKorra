@@ -1444,8 +1444,8 @@ public class GeneralMethods {
 		boolean respectGriefPrevention = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
 		boolean respectLWC = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectLWC");
 
-		Set<String> ignite = AbilityModuleManager.igniteabilities;
-		Set<String> explode = AbilityModuleManager.explodeabilities;
+		List<String> ignite = AbilityModuleManager.igniteabilities;
+		List<String> explode = AbilityModuleManager.explodeabilities;
 
 		if (ability == null && allowharmless)
 			return false;

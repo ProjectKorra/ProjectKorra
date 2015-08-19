@@ -1,15 +1,17 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.util.AbilityLoader;
-
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.util.AbilityLoader;
 
 public class AbilityModuleManager {
 
@@ -24,25 +26,25 @@ public class AbilityModuleManager {
 	public static List<String> earthbendingabilities;
 	public static List<String> firebendingabilities;
 	public static List<String> chiabilities;
-	public static HashSet<String> shiftabilities;
+	public static List<String> shiftabilities;
 	public static HashMap<String, String> authors;
-	public static HashSet<String> harmlessabilities;
-	public static HashSet<String> igniteabilities;
-	public static HashSet<String> explodeabilities;
-	public static HashSet<String> metalbendingabilities;
-	public static HashSet<String> earthsubabilities;
-	public static HashSet<String> subabilities;
-	public static HashSet<String> lightningabilities;
-	public static HashSet<String> combustionabilities;
-	public static HashSet<String> lavaabilities;
-	public static HashSet<String> sandabilities;
-	public static HashSet<String> metalabilities;
-	public static HashSet<String> flightabilities;
-	public static HashSet<String> spiritualprojectionabilities;
-	public static HashSet<String> iceabilities;
-	public static HashSet<String> healingabilities;
-	public static HashSet<String> plantabilities;
-	public static HashSet<String> bloodabilities;
+	public static List<String> harmlessabilities;
+	public static List<String> igniteabilities;
+	public static List<String> explodeabilities;
+	public static List<String> metalbendingabilities;
+	public static List<String> earthsubabilities;
+	public static List<String> subabilities;
+	public static List<String> lightningabilities;
+	public static List<String> combustionabilities;
+	public static List<String> lavaabilities;
+	public static List<String> sandabilities;
+	public static List<String> metalabilities;
+	public static List<String> flightabilities;
+	public static List<String> spiritualprojectionabilities;
+	public static List<String> iceabilities;
+	public static List<String> healingabilities;
+	public static List<String> plantabilities;
+	public static List<String> bloodabilities;
 
 	public static HashMap<String, String> descriptions;
 
@@ -59,28 +61,28 @@ public class AbilityModuleManager {
 		earthbendingabilities = new ArrayList<String>();
 		firebendingabilities = new ArrayList<String>();
 		chiabilities = new ArrayList<String>();
-		shiftabilities = new HashSet<String>();
+		shiftabilities = new ArrayList<String>();
 		descriptions = new HashMap<String, String>();
 		authors = new HashMap<String, String>();
-		harmlessabilities = new HashSet<String>();
-		explodeabilities = new HashSet<String>();
-		igniteabilities = new HashSet<String>();
-		metalbendingabilities = new HashSet<String>();
-		earthsubabilities = new HashSet<String>();
-		subabilities = new HashSet<String>();
+		harmlessabilities = new ArrayList<String>();
+		explodeabilities = new ArrayList<String>();
+		igniteabilities = new ArrayList<String>();
+		metalbendingabilities = new ArrayList<String>();
+		earthsubabilities = new ArrayList<String>();
+		subabilities = new ArrayList<String>();
 		ability = loader.load(AbilityModule.class);
 		disabledStockAbilities = new HashSet<String>();
-		lightningabilities = new HashSet<String>();
-		combustionabilities = new HashSet<String>();
-		flightabilities = new HashSet<String>();
-		spiritualprojectionabilities = new HashSet<String>();
-		metalabilities = new HashSet<String>();
-		sandabilities = new HashSet<String>();
-		lavaabilities = new HashSet<String>();
-		healingabilities = new HashSet<String>();
-		plantabilities = new HashSet<String>();
-		iceabilities = new HashSet<String>();
-		bloodabilities = new HashSet<String>();
+		lightningabilities = new ArrayList<String>();
+		combustionabilities = new ArrayList<String>();
+		flightabilities = new ArrayList<String>();
+		spiritualprojectionabilities = new ArrayList<String>();
+		metalabilities = new ArrayList<String>();
+		sandabilities = new ArrayList<String>();
+		lavaabilities = new ArrayList<String>();
+		healingabilities = new ArrayList<String>();
+		plantabilities = new ArrayList<String>();
+		iceabilities = new ArrayList<String>();
+		bloodabilities = new ArrayList<String>();
 		fill();
 	}
 
@@ -372,11 +374,16 @@ public class AbilityModuleManager {
 			}
 		}
 
-		Collections.sort(airbendingabilities);
-		Collections.sort(waterbendingabilities);
-		Collections.sort(earthbendingabilities);
-		Collections.sort(firebendingabilities);
-		Collections.sort(chiabilities);
+
+		for (Field field : this.getClass().getDeclaredFields()) {
+			if (List.class.isAssignableFrom(field.getType())) {
+				try {
+					Collections.sort((List) field.get(this));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 }
