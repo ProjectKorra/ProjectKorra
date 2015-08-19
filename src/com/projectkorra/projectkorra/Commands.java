@@ -2,8 +2,7 @@ package com.projectkorra.projectkorra;
 
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
 import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.combo.ComboAbilityModule;
-import com.projectkorra.projectkorra.ability.combo.ComboModuleManager;
+import com.projectkorra.projectkorra.ability.combo.ComboManager;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
 import com.projectkorra.projectkorra.airbending.AirMethods;
 import com.projectkorra.projectkorra.chiblocking.ChiMethods;
@@ -67,6 +66,15 @@ public class Commands {
 	String[] earthaliases = { "earth", "e", "earthbending", "earthbender" };
 	String[] firealiases = { "fire", "f", "firebending", "firebender" };
 	String[] wateraliases = { "water", "w", "waterbending", "waterbender" };
+	
+	/*
+	 * Combo Aliases
+	 */
+	String[] aircomboaliases = { "aircombo", "ac", "aircombos", "airbendingcombos"};
+	String[] chicomboaliases = { "chicombo", "cc", "chicombos", "chiblockingcombos", "chiblockercombos"};
+	String[] earthcomboaliases = { "earthcombo", "ec", "earthcombos", "earthbendingcombos" };
+	String[] firecomboaliases = { "firecombo", "fc", "firecombos", "firebendingcombos" };
+	String[] watercomboaliases = { "watercombo", "wc", "watercombos", "waterbendingcombos" };
 
 	/*
 	 * Subelement Aliases
@@ -932,7 +940,87 @@ public class Commands {
 								}
 							}
 							return true;
-						} else {
+						} 
+						
+						if (Arrays.asList(aircomboaliases).contains(args[1]))
+						{
+							ArrayList<String> aircombos = ComboManager.getCombosForElement(Element.Air);
+							if (aircombos.isEmpty()) {
+								s.sendMessage(AirMethods.getAirColor() + "There are no airbending combos avaliable.");
+								return true;
+							}
+							for (String combomove : aircombos) {
+								if (!s.hasPermission("bending.ability." + combomove)) continue;
+								ChatColor color = GeneralMethods.getComboColor(combomove);
+								s.sendMessage(color + combomove);
+							}	
+							return true;
+						}
+						
+						if (Arrays.asList(firecomboaliases).contains(args[1]))
+						{
+							ArrayList<String> firecombos = ComboManager.getCombosForElement(Element.Fire);
+							if (firecombos.isEmpty()) {
+								s.sendMessage(FireMethods.getFireColor() + "There are no firebending combos avaliable.");
+								return true;
+							}
+							
+							for (String combomove : firecombos) {
+								if (!s.hasPermission("bending.ability." + combomove)) continue;
+								ChatColor color = GeneralMethods.getComboColor(combomove);
+								s.sendMessage(color + combomove);
+							}	
+							return true;
+						}
+						
+						if (Arrays.asList(earthcomboaliases).contains(args[1]))
+						{
+							ArrayList<String> earthcombos = ComboManager.getCombosForElement(Element.Earth);
+							if (earthcombos.isEmpty()) {
+								s.sendMessage(EarthMethods.getEarthColor() + "There are no earthbending combos avaliable.");
+								return true;
+							}
+							
+							for (String combomove : earthcombos) {
+								if (!s.hasPermission("bending.ability." + combomove)) continue;
+								ChatColor color = GeneralMethods.getComboColor(combomove);
+								s.sendMessage(color + combomove);
+							}	
+							return true;
+						}
+						
+						if (Arrays.asList(watercomboaliases).contains(args[1]))
+						{
+							ArrayList<String> watercombos = ComboManager.getCombosForElement(Element.Water);
+							if (watercombos.isEmpty()) {
+								s.sendMessage(WaterMethods.getWaterColor() + "There are no waterbending combos avaliable.");
+								return true;
+							}
+							
+							for (String combomove : watercombos) {
+								if (!s.hasPermission("bending.ability." + combomove)) continue;
+								ChatColor color = GeneralMethods.getComboColor(combomove);
+								s.sendMessage(color + combomove);
+							}	
+							return true;
+						}
+						
+						if (Arrays.asList(chicomboaliases).contains(args[1]))
+						{
+							ArrayList<String> chicombos = ComboManager.getCombosForElement(Element.Chi);
+							if (chicombos.isEmpty()) {
+								s.sendMessage(WaterMethods.getWaterColor() + "There are no chiblocking combos avaliable.");
+								return true;
+							}
+							
+							for (String combomove : chicombos) {
+								if (!s.hasPermission("bending.ability." + combomove)) continue;
+								s.sendMessage(ChiMethods.getChiColor() + combomove);
+							}	
+							return true;
+						}
+						
+						else {
 							s.sendMessage(ChatColor.RED + "Not a valid Element." + ChatColor.WHITE + " Elements: " + AirMethods.getAirColor() + "Air" + ChatColor.WHITE + " | " + WaterMethods.getWaterColor() + "Water" + ChatColor.WHITE + " | " + EarthMethods.getEarthColor() + "Earth" + ChatColor.WHITE + " | " + FireMethods.getFireColor() + "Fire" + ChatColor.WHITE + " | " + ChiMethods.getChiColor() + "Chi");
 						}
 					}
@@ -1809,101 +1897,19 @@ public class Commands {
 					}
 
 					if (args[1].equalsIgnoreCase("FireCombo")) {
-						s.sendMessage(ChatColor.GOLD + "Fire Combos:");
-						s.sendMessage(FireMethods.getFireColor() + "FireKick" + ChatColor.WHITE + ": A short ranged arc of fire launches from the player's feet dealing moderate damage to enemies.");
-						s.sendMessage(ChatColor.GOLD + "FireBlast > FireBlast > (Hold Shift) > FireBlast. ");
-						s.sendMessage(FireMethods.getFireColor() + "FireSpin" + ChatColor.WHITE + ": A circular array of fire that causes damage and massive knockback to nearby enemies.");
-						s.sendMessage(ChatColor.GOLD + "FireBlast > FireBlast > FireShield > (Tap Shift). ");
-						s.sendMessage(FireMethods.getFireColor() + "FireWheel" + ChatColor.WHITE + ": A high-speed wheel of fire that travels along the ground for long distances dealing high damage.");
-						s.sendMessage(ChatColor.GOLD + "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift. ");
-						s.sendMessage(FireMethods.getFireColor() + "JetBlast" + ChatColor.WHITE + ": Create an explosive blast that propels your FireJet at higher speeds.");
-						s.sendMessage(ChatColor.GOLD + "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet. ");
-						s.sendMessage(FireMethods.getFireColor() + "JetBlaze" + ChatColor.WHITE + ": Damages and burns all enemies in the proximity of your FireJet.");
-						s.sendMessage(ChatColor.GOLD + "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet. ");
-						for (ComboAbilityModule cam : ComboModuleManager.combo) {
-							if (cam.getElement().equals(Element.Fire.toString())) {
-								ChatColor color = GeneralMethods.getAvatarColor();
-								if (cam.getSubElement() == null) {
-									color = FireMethods.getFireColor();
-								} else {
-									color = GeneralMethods.getSubBendingColor(Element.Fire);
-								}
-								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
-								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
-							}
-						}
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.RED + "/bending display FireCombos" + ChatColor.GOLD + " or " + ChatColor.RED + "/bending help <comboname>");
 					}
 					if (args[1].equalsIgnoreCase("AirCombo")) {
-						s.sendMessage(ChatColor.GOLD + "AirCombo:");
-						s.sendMessage(AirMethods.getAirColor() + "Twister" + ChatColor.WHITE + ": Create a cyclone of air that travels along the ground grabbing nearby entities.");
-						s.sendMessage(ChatColor.GOLD + "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
-						s.sendMessage(AirMethods.getAirColor() + "AirStream" + ChatColor.WHITE + ": Control a large stream of air that grabs onto enemies allowing you to direct them temporarily.");
-						s.sendMessage(ChatColor.GOLD + "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
-						s.sendMessage(AirMethods.getAirColor() + "AirSweep" + ChatColor.WHITE + ": Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst");
-						s.sendMessage(ChatColor.GOLD + "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
-						for (ComboAbilityModule cam : ComboModuleManager.combo) {
-							if (cam.getElement().equals(Element.Air.toString())) {
-								ChatColor color = GeneralMethods.getAvatarColor();
-								if (cam.getSubElement() == null) {
-									color = AirMethods.getAirColor();
-								} else {
-									color = GeneralMethods.getSubBendingColor(Element.valueOf(cam.getElement()));
-								}
-								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
-								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
-							}
-						}
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.RED + "/bending display AirCombos" + ChatColor.GOLD + " or " + ChatColor.RED + "/bending help <comboname>");
 					}
 					if (args[1].equalsIgnoreCase("WaterCombo")) {
-						s.sendMessage(ChatColor.GOLD + "WaterCombos:");
-						s.sendMessage(WaterMethods.getWaterColor() + "IceWave" + ChatColor.WHITE + ": PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
-						s.sendMessage(ChatColor.GOLD + "Create a WaterSpout Wave > PhaseChange (Left Click)");
-						s.sendMessage(WaterMethods.getWaterColor() + "IceBullet" + ChatColor.WHITE + ": Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
-						s.sendMessage(ChatColor.GOLD + "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > IceBlast (Left Click) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
-						for (ComboAbilityModule cam : ComboModuleManager.combo) {
-							if (cam.getElement().equals(Element.Water.toString())) {
-								ChatColor color = GeneralMethods.getAvatarColor();
-								if (cam.getSubElement() == null) {
-									color = WaterMethods.getWaterColor();
-								} else {
-									color = GeneralMethods.getSubBendingColor(Element.valueOf(cam.getElement()));
-								}
-								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
-								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
-							}
-						}
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.RED + "/bending display WaterCombos" + ChatColor.GOLD + " or " + ChatColor.RED + "/bending help <comboname>");
 					}
 					if (args[1].equalsIgnoreCase("EarthCombo")) {
-						s.sendMessage(ChatColor.GOLD + "EarthCombos:");
-						for (ComboAbilityModule cam : ComboModuleManager.combo) {
-							if (cam.getElement().equals(Element.Earth.toString())) {
-								ChatColor color = GeneralMethods.getAvatarColor();
-								if (cam.getSubElement() == null) {
-									color = EarthMethods.getEarthColor();
-								} else {
-									color = GeneralMethods.getSubBendingColor(Element.valueOf(cam.getElement()));
-								}
-								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
-								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
-							}
-						}
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.RED + "/bending display EarthCombos" + ChatColor.GOLD + " or " + ChatColor.RED + "/bending help <comboname>");
 					}
 					if (args[1].equalsIgnoreCase("ChiCombo")) {
-						s.sendMessage(ChatColor.GOLD + "ChiCombos:");
-						s.sendMessage(ChiMethods.getChiColor() + "Immobilize" + ChatColor.WHITE + ": Deliver a series of strikes to an enemy to temporarely immobilize them.");
-						s.sendMessage(ChatColor.GOLD + "QuickStrike > SwiftKick > QuickStrike > QuickStrike");
-						for (ComboAbilityModule cam : ComboModuleManager.combo) {
-							if (cam.getElement().equals(Element.Chi.toString())) {
-								ChatColor color = GeneralMethods.getAvatarColor();
-								if (cam.getSubElement() == null) {
-									color = ChiMethods.getChiColor();
-								} else {
-									color = GeneralMethods.getSubBendingColor(Element.valueOf(cam.getElement()));
-								}
-								s.sendMessage(color + cam.getName() + ChatColor.WHITE + ": " + cam.getDescription());
-								s.sendMessage(ChatColor.GOLD + cam.getInstructions());
-							}
-						}
+						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.RED + "/bending display ChiCombos" + ChatColor.GOLD + " or " + ChatColor.RED + "/bending help <comboname>");
 					}
 					if (GeneralMethods.abilityExists(args[1])) {
 						String ability = GeneralMethods.getAbility(args[1]);
@@ -1945,6 +1951,16 @@ public class Commands {
 						} else {
 							s.sendMessage(GeneralMethods.getAvatarColor() + ability + " - ");
 							s.sendMessage(GeneralMethods.getAvatarColor() + AbilityModuleManager.descriptions.get(ability));
+						}
+					}
+					
+					//Combos
+					for (String combo : ComboManager.descriptions.keySet()) {
+						if (combo.equalsIgnoreCase(args[1])) {
+							ChatColor cc = GeneralMethods.getComboColor(combo);
+							s.sendMessage(cc + combo + " (Combo) - ");
+							s.sendMessage(cc + ComboManager.descriptions.get(combo));
+							s.sendMessage(ChatColor.GOLD + "Usage: " + ComboManager.instructions.get(combo));
 						}
 					}
 				}
