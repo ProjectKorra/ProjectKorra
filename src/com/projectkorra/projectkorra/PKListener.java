@@ -854,9 +854,10 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			GeneralMethods.cooldowns.put(player.getName(), System.currentTimeMillis());
-			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
 			String ability = GeneralMethods.getBoundAbility(player);
+			if (!ability.equalsIgnoreCase("airspout")) //prevents airspout from cancelling due to right click
+				GeneralMethods.cooldowns.put(player.getName(), System.currentTimeMillis());
+			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
 			if (ability != null && ability.equalsIgnoreCase("EarthSmash"))
 				new EarthSmash(player, ClickType.RIGHT_CLICK);
 		}
