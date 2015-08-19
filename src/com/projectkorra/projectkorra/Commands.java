@@ -143,7 +143,7 @@ public class Commands {
 					return true;
 				}
 
-				if (Arrays.asList(addaliases).contains(args[0])) {
+				else if (Arrays.asList(addaliases).contains(args[0])) {
 					//bending add [Player] [Element]
 					if (args.length > 3) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending add [Player] [Element]");
@@ -287,7 +287,7 @@ public class Commands {
 					}
 				}
 
-				if (Arrays.asList(avataraliases).contains(args[0])) {
+				else if (Arrays.asList(avataraliases).contains(args[0])) {
 					if (!GeneralMethods.hasRPG()) {
 						s.sendMessage(ChatColor.RED + "This command cannot be used unless you have ProjectKorra (RPG) installed.");
 						return true;
@@ -322,7 +322,7 @@ public class Commands {
 					return true;
 				}
 
-				if (Arrays.asList(bindaliases).contains(args[0])) {
+				else if (Arrays.asList(bindaliases).contains(args[0])) {
 					if (args.length > 3 || args.length == 1) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending bind [Ability] <#>");
 						return true;
@@ -432,7 +432,7 @@ public class Commands {
 					}
 				}
 
-				if (Arrays.asList(checkaliases).contains(args[0])) {
+				else if (Arrays.asList(checkaliases).contains(args[0])) {
 					if (!s.hasPermission("bending.command.check")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
@@ -451,7 +451,7 @@ public class Commands {
 					}
 				}
 
-				if (Arrays.asList(choosealiases).contains(args[0])) {
+				else if (Arrays.asList(choosealiases).contains(args[0])) {
 					// /bending choose [Player] [Element]
 					if (args.length > 3) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending choose [Player] [Element]");
@@ -595,7 +595,7 @@ public class Commands {
 					}
 				}
 
-				if (Arrays.asList(clearaliases).contains(args[0])) {
+				else if (Arrays.asList(clearaliases).contains(args[0])) {
 					if (args.length > 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending clear <#>");
 						return true;
@@ -645,7 +645,7 @@ public class Commands {
 					}
 				}
 
-				if (args[0].equalsIgnoreCase("debug")) {
+				else if (args[0].equalsIgnoreCase("debug")) {
 					if (args.length != 1) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending debug");
 						return true;
@@ -662,7 +662,7 @@ public class Commands {
 					return true;
 				}
 
-				if (Arrays.asList(displayaliases).contains(args[0])) {
+				else if (Arrays.asList(displayaliases).contains(args[0])) {
 					if (args.length > 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending display <Element>");
 						return true;
@@ -1048,7 +1048,7 @@ public class Commands {
 					}
 				}
 
-				if (Arrays.asList(givealiases).contains(args[0])) {
+				else if (Arrays.asList(givealiases).contains(args[0])) {
 					if (!s.hasPermission("bending.command.give")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
@@ -1097,7 +1097,7 @@ public class Commands {
 					}
 				}
 
-				if (Arrays.asList(importaliases).contains(args[0])) {
+				else if (Arrays.asList(importaliases).contains(args[0])) {
 					if (!s.hasPermission("bending.command.import")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
@@ -1214,7 +1214,7 @@ public class Commands {
 					return true;
 				}
 
-				if (Arrays.asList(invinciblealiases).contains(args[0].toLowerCase())) {
+				else if (Arrays.asList(invinciblealiases).contains(args[0].toLowerCase())) {
 					if (!s.hasPermission("bending.command.invincible")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
@@ -1243,7 +1243,7 @@ public class Commands {
 					}
 				}
 
-				if (Arrays.asList(permaremovealiases).contains(args[0])) {
+				else if (Arrays.asList(permaremovealiases).contains(args[0])) {
 					//bending permaremove [Player]
 					if (args.length != 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending permaremove [Player]");
@@ -1282,7 +1282,7 @@ public class Commands {
 					return true;
 				}
 
-				if (Arrays.asList(presetaliases).contains(args[0])) {
+				else if (Arrays.asList(presetaliases).contains(args[0])) {
 					if (!(s instanceof Player)) {
 						s.sendMessage(ChatColor.RED + "This command is only usable by players.");
 						return true;
@@ -1386,7 +1386,7 @@ public class Commands {
 
 				}
 
-				if (Arrays.asList(reloadaliases).contains(args[0])) {
+				else if (Arrays.asList(reloadaliases).contains(args[0])) {
 					if (args.length != 1) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending reload");
 						return true;
@@ -1402,7 +1402,7 @@ public class Commands {
 					return true;
 				}
 
-				if (Arrays.asList(removealiases).contains(args[0])) {
+				else if (Arrays.asList(removealiases).contains(args[0])) {
 					//bending remove [Player]
 					if (args.length != 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending remove [Player]");
@@ -1431,7 +1431,7 @@ public class Commands {
 					return true;
 				}
 
-				if (Arrays.asList(versionaliases).contains(args[0])) {
+				else if (Arrays.asList(versionaliases).contains(args[0])) {
 					if (args.length != 1) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending version");
 						return true;
@@ -1453,7 +1453,7 @@ public class Commands {
 					return true;
 				}
 
-				if (Arrays.asList(togglealiases).contains(args[0])) {
+				else if (Arrays.asList(togglealiases).contains(args[0])) {
 					if (args.length > 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending toggle <all>");
 						return true;
@@ -1506,7 +1506,7 @@ public class Commands {
 					}
 				}
 
-				if (Arrays.asList(whoaliases).contains(args[0])) {
+				else if (Arrays.asList(whoaliases).contains(args[0])) {
 					if (args.length > 2) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: /bending who <Player>");
 						return true;
@@ -1753,7 +1753,7 @@ public class Commands {
 					}
 				}
 
-				if (Arrays.asList(helpaliases).contains(args[0])) {
+				else if (Arrays.asList(helpaliases).contains(args[0])) {
 					if (!s.hasPermission("bending.command.help")) {
 						s.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 						return true;
@@ -1790,108 +1790,108 @@ public class Commands {
 						return true;
 					}
 
-					if (Arrays.asList(airaliases).contains(args[1])) {
+					else if (Arrays.asList(airaliases).contains(args[1])) {
 						s.sendMessage(AirMethods.getAirColor() + "Air is the element of freedom. Airbenders are natural pacifists and " + "great explorers. There is nothing stopping them from scaling the tallest of mountains and walls easily. They specialize in redirection, " + "from blasting things away with gusts of winds, to forming a shield around them to prevent damage. Easy to get across flat terrains, " + "such as oceans, there is practically no terrain off limits to Airbenders. They lack much raw damage output, but make up for it with " + "with their ridiculous amounts of utility and speed.");
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qffg9m3");
 					}
 
-					if (Arrays.asList(wateraliases).contains(args[1])) {
+					else if (Arrays.asList(wateraliases).contains(args[1])) {
 						s.sendMessage(WaterMethods.getWaterColor() + "Water is the element of change. Waterbending focuses on using your " + "opponents own force against them. Using redirection and various dodging tactics, you can be made " + "practically untouchable by an opponent. Waterbending provides agility, along with strong offensive " + "skills while in or near water.");
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/lod3plv");
 					}
 
-					if (Arrays.asList(earthaliases).contains(args[1])) {
+					else if (Arrays.asList(earthaliases).contains(args[1])) {
 						s.sendMessage(EarthMethods.getEarthColor() + "Earth is the element of substance. Earthbenders share many of the " + "same fundamental techniques as Waterbenders, but their domain is quite different and more readily " + "accessible. Earthbenders dominate the ground and subterranean, having abilities to pull columns " + "of rock straight up from the earth or drill their way through the mountain. They can also launch " + "themselves through the air using pillars of rock, and will not hurt themselves assuming they land " + "on something they can bend. The more skilled Earthbenders can even bend metal.");
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qaudl42");
 					}
 
-					if (Arrays.asList(firealiases).contains(args[1])) {
+					else if (Arrays.asList(firealiases).contains(args[1])) {
 						s.sendMessage(FireMethods.getFireColor() + "Fire is the element of power. Firebenders focus on destruction and " + "incineration. Their abilities are pretty straight forward: set things on fire. They do have a bit " + "of utility however, being able to make themselves un-ignitable, extinguish large areas, cook food " + "in their hands, extinguish large areas, small bursts of flight, and then comes the abilities to shoot " + "fire from your hands.");
 						s.sendMessage(ChatColor.YELLOW + "Firebenders can chain their abilities into combos, type " + FireMethods.getFireColor() + "/b help FireCombo" + ChatColor.YELLOW + " for more information.");
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/k4fkjhb");
 					}
 
-					if (Arrays.asList(chialiases).contains(args[1])) {
+					else if (Arrays.asList(chialiases).contains(args[1])) {
 						s.sendMessage(ChiMethods.getChiColor() + "Chiblockers focus on bare handed combat, utilizing their agility and " + "speed to stop any bender right in their path. Although they lack the ability to bend any of the " + "other elements, they are great in combat, and a serious threat to any bender. Chiblocking was " + "first shown to be used by Ty Lee in Avatar: The Last Airbender, then later by members of the " + "Equalists in The Legend of Korra.");
 						s.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/mkp9n6y");
 					}
 
-					if (Arrays.asList(invinciblealiases).contains(args[1])) {
+					else if (Arrays.asList(invinciblealiases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending invincible");
 						s.sendMessage(ChatColor.YELLOW + "This command will make you impervious to all Bending damage. Once you " + "use this command, you will stay invincible until you either log off, or use this command again.");
 					}
 
-					if (Arrays.asList(importaliases).contains(args[1])) {
+					else if (Arrays.asList(importaliases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending import");
 						s.sendMessage(ChatColor.YELLOW + "This command will import your old bendingPlayers.yml from the Bending plugin." + " It will generate a convert.yml file to convert the data to be used with this plugin." + " You can delete the file once the complete message is displayed" + " This command should only be used ONCE.");
 					}
 
-					if (Arrays.asList(displayaliases).contains(args[1])) {
+					else if (Arrays.asList(displayaliases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending display <Element>");
 						s.sendMessage(ChatColor.YELLOW + "This command will show you all of the elements you have bound if you do not specify an element." + " If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available " + " abilities of that element installed on the server.");
 					}
 
-					if (Arrays.asList(givealiases).contains(args[1])) {
+					else if (Arrays.asList(givealiases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending give [Player] [Item] <Properties>");
 						s.sendMessage(ChatColor.YELLOW + "This command will give you an item that was created for the Bending plugin so you do not have to craft it." + " Each item may have its own properties involved, so the amount of arguments may change. However, the Player and Item will be " + " required each time you use this command.");
 						s.sendMessage(ChatColor.DARK_AQUA + "Items: GrapplingHook");
 					}
 
-					if (Arrays.asList(choosealiases).contains(args[1])) {
+					else if (Arrays.asList(choosealiases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending choose <Player> [Element]");
 						s.sendMessage(ChatColor.GOLD + "Applicable Elements: " + ChatColor.DARK_AQUA + "Air, Water, Earth, Fire, Chi");
 						s.sendMessage(ChatColor.YELLOW + "This command will allow the user to choose a player either for himself or <Player> if specified. " + " This command can only be used once per player unless they have permission to rechoose their element.");
 						return true;
 					}
 
-					if (args[1].equalsIgnoreCase("add")) {
+					else if (args[1].equalsIgnoreCase("add")) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending add <Player> [Element]");
 						s.sendMessage(ChatColor.GOLD + "Applicable Elements: " + ChatColor.DARK_AQUA + "Air, Water, Earth, Fire, Chi");
 						s.sendMessage(ChatColor.YELLOW + "This command will allow the user to add an element to the targeted <Player>, or themselves if the target" + " is not specified. This command is typically reserved for server administrators.");
 						return true;
 					}
 
-					if (Arrays.asList(permaremovealiases).contains(args[1])) {
+					else if (Arrays.asList(permaremovealiases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending permaremove <Player>");
 						s.sendMessage(ChatColor.YELLOW + "This command will permanently remove the Bending of the targeted <Player>. Once removed, a player" + " may only receive Bending again if this command is run on them again. This command is typically reserved for" + " administrators.");
 						return true;
 					}
-					if (Arrays.asList(versionaliases).contains(args[1])) {
+					else if (Arrays.asList(versionaliases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending version");
 						s.sendMessage(ChatColor.YELLOW + "This command will print out the version of ProjectKorra this server is running.");
 						return true;
 					}
 
-					if (Arrays.asList(removealiases).contains(args[1])) {
+					else if (Arrays.asList(removealiases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending remove [Player]");
 						s.sendMessage(ChatColor.YELLOW + "This command will remove the element of the targeted [Player]. The player will be able to re-pick " + " their element after this command is run on them, assuming their Bending was not permaremoved.");
 						return true;
 					}
 
-					if (Arrays.asList(togglealiases).contains(args[1])) {
+					else if (Arrays.asList(togglealiases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending toggle <all>");
 						s.sendMessage(ChatColor.YELLOW + "This command will toggle a player's own Bending on or off. If toggled off, all abilities should stop" + " working until it is toggled back on. Logging off will automatically toggle your Bending back on. If you run the command /bending toggle all, Bending will be turned off for all players and cannot be turned back on until the command is run again.");
 						return true;
 					}
 
-					if (args[1].equalsIgnoreCase("who")) {
+					else if (args[1].equalsIgnoreCase("who")) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending who <Player>");
 						s.sendMessage(ChatColor.YELLOW + "This command will tell you what element all players that are online are (If you don't specify a player)" + " or give you information about the player that you specify.");
 						return true;
 					}
 
-					if (Arrays.asList(clearaliases).contains(args[1])) {
+					else if (Arrays.asList(clearaliases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending clear <slot>");
 						s.sendMessage(ChatColor.YELLOW + "This command will clear the bound ability from the slot you specify (if you specify one." + " If you choose not to specify a slot, all of your abilities will be cleared.");
 					}
 
-					if (Arrays.asList(reloadaliases).contains(args[1])) {
+					else if (Arrays.asList(reloadaliases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending reload");
 						s.sendMessage(ChatColor.YELLOW + "This command will reload the Bending config file.");
 						return true;
 					}
 
-					if (Arrays.asList(bindaliases).contains(args[1])) {
+					else if (Arrays.asList(bindaliases).contains(args[1])) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + "/bending bind [Ability] <Slot>");
 						s.sendMessage(ChatColor.YELLOW + "This command will bind an ability to the slot you specify (if you specify one), or the slot currently" + " selected in your hotbar (If you do not specify a Slot #).");
 					}
@@ -1911,7 +1911,7 @@ public class Commands {
 					if (args[1].equalsIgnoreCase("ChiCombo")) {
 						s.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.RED + "/bending display ChiCombos" + ChatColor.GOLD + " or " + ChatColor.RED + "/bending help <comboname>");
 					}
-					if (GeneralMethods.abilityExists(args[1])) {
+					else if (GeneralMethods.abilityExists(args[1])) {
 						String ability = GeneralMethods.getAbility(args[1]);
 						if (AirMethods.isAirAbility(ability)) {
 							if(AirMethods.isSpiritualProjectionAbility(ability) || AirMethods.isFlightAbility(ability)) {
@@ -1952,8 +1952,7 @@ public class Commands {
 							s.sendMessage(GeneralMethods.getAvatarColor() + ability + " - ");
 							s.sendMessage(GeneralMethods.getAvatarColor() + AbilityModuleManager.descriptions.get(ability));
 						}
-					}
-					
+					}	
 					//Combos
 					for (String combo : ComboManager.descriptions.keySet()) {
 						if (combo.equalsIgnoreCase(args[1])) {
@@ -1964,6 +1963,8 @@ public class Commands {
 						}
 					}
 				}
+				else
+					s.sendMessage(ChatColor.RED + "That isn't a valid command. Use /bending help for more information.");
 				//End of commands
 				return true;
 			}
