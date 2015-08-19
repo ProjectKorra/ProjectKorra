@@ -1,5 +1,13 @@
 package com.projectkorra.projectkorra;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
 import com.projectkorra.projectkorra.ability.combo.ComboManager;
 import com.projectkorra.projectkorra.ability.combo.ComboModuleManager;
@@ -13,20 +21,11 @@ import com.projectkorra.projectkorra.earthbending.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.FirebendingManager;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.CraftingRecipes;
 import com.projectkorra.projectkorra.util.MetricsLite;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.Updater;
 import com.projectkorra.projectkorra.util.logging.PKLogHandler;
 import com.projectkorra.projectkorra.waterbending.WaterbendingManager;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Logger;
 
 public class ProjectKorra extends JavaPlugin {
 
@@ -61,7 +60,6 @@ public class ProjectKorra extends JavaPlugin {
 		new ComboModuleManager();
 		new ComboManager();
 		new ChiComboManager();
-		new CraftingRecipes(this);
 
 		DBConnection.host = getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = getConfig().getInt("Storage.MySQL.port");
