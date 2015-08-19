@@ -38,7 +38,7 @@ public class DBConnection {
 				sql.modifyQuery(query);
 			}
 		} else {
-			sql = new SQLite(ProjectKorra.log, "", "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
+			sql = new SQLite(ProjectKorra.log, "Establishing SQLite Connection.", "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
 			if (((SQLite) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");
 				GeneralMethods.stopPlugin();
