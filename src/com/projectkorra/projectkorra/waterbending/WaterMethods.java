@@ -307,6 +307,10 @@ public class WaterMethods {
 			return true;
 		return false;
 	}
+	
+	public static boolean isPlantbendable(Block block) {
+		return WaterMethods.isPlantbendable(block, false);
+	}
 
 	public static void playFocusWaterEffect(Block block) {
 		block.getWorld().playEffect(block.getLocation(), Effect.SMOKE, 4, 20);
