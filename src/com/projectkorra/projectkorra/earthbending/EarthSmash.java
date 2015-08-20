@@ -85,7 +85,7 @@ public class EarthSmash {
 			shootRange = TRAVEL_RANGE;
 			if (AvatarState.isAvatarState(player)) {
 				grabRange = AvatarState.getValue(grabRange);
-				chargeTime = AvatarState.getValue(chargeTime);
+				chargeTime = 0;
 				cooldown = 0;
 				damage = AvatarState.getValue(damage);
 				knockback = AvatarState.getValue(knockback);
