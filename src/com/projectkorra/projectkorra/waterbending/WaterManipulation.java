@@ -228,7 +228,7 @@ public class WaterManipulation {
 			time = System.currentTimeMillis();
 
 			if (GeneralMethods.getBoundAbility(player) == null) {
-				unfocusBlock();
+				breakBlock();
 				return false;
 			}
 			if (!progressing && !falling && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
