@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Represents an the core of all ProjectKorra abilities and implements the
+ * Represents the core of all ProjectKorra abilities and implements the
  * {@link Ability} interface.
  * 
  * @author jacklin213
