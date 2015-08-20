@@ -22,7 +22,7 @@ permissions:
       bending.admin.choose: true
       bending.ability.AvatarState: true
       bending.ability.Bloodbending: true
-      bending.ability.Bloodbending.anytime: true
+      bending.water.Bloodbending.anytime: true
       bending.ability.Flight: true
       bending.ability.MetalClips.loot: true
       bending.ability.MetalClips.4clips: true
