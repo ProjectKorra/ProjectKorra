@@ -22,6 +22,11 @@ import java.util.HashMap;
  * shift and another involving left clicks.
  */
 public class BlockSource {
+	/**
+	 * An enum representation of the source types available for bending abilities.
+	 * @author kingbirdy
+	 *
+	 */
 	public static enum BlockSourceType {
 		WATER, ICE, PLANT, EARTH, METAL, LAVA
 	}
@@ -35,7 +40,7 @@ public class BlockSource {
 	 * Updates all of the player's sources.
 	 * 
 	 * @param player the player performing the bending.
-	 * @param clickType either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK
+	 * @param clickType either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK
 	 */
 	public static void update(Player player, ClickType clickType) {
 		String boundAbil = GeneralMethods.getBoundAbility(player);
@@ -94,7 +99,7 @@ public class BlockSource {
 	}
 
 	/**
-	 * Access a block source information depending on a source and click type.
+	 * Access a block's source information, depending on a {@link BlockSourceType} and {@link ClickType}.
 	 * 
 	 * @param player the player that is trying to bend.
 	 * @param clickType the action that was performed to access the source,
@@ -113,8 +118,7 @@ public class BlockSource {
 	}
 
 	/**
-	 * Access a block source information depending on a range, source, and click
-	 * type.
+	 * Access a block source information depending on a range, {@link BlockSourceType}, and {@link ClickType}.
 	 * 
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
@@ -129,8 +133,7 @@ public class BlockSource {
 	}
 
 	/**
-	 * Access a specific type of source block depending on a range and click
-	 * type.
+	 * Access a specific type of source block depending on a range and {@link ClickType}.
 	 * 
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
@@ -163,7 +166,7 @@ public class BlockSource {
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
 	 * @param clickType the action that was performed to access the source,
-	 *            either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
+	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @return a valid Water bendable block, or null if none was found.
 	 */
 	public static Block getWaterSourceBlock(Player player, double range, ClickType clickType) {
@@ -192,7 +195,7 @@ public class BlockSource {
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
 	 * @param clickType the action that was performed to access the source,
-	 *            either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
+	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @param allowWater true if water blocks are allowed.
 	 * @param allowIce true if ice blocks are allowed.
 	 * @param allowPlant true if plant blocks are allowed.
@@ -209,7 +212,7 @@ public class BlockSource {
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
 	 * @param clickType the action that was performed to access the source,
-	 *            either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
+	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @param allowWater true if water blocks are allowed.
 	 * @param allowIce true if ice blocks are allowed.
 	 * @param allowPlant true if plant blocks are allowed.
@@ -246,7 +249,7 @@ public class BlockSource {
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
 	 * @param clickType the action that was performed to access the source,
-	 *            either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
+	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @return a valid Earth bendable block, or null if none was found.
 	 */
 	public static Block getEarthSourceBlock(Player player, double range, ClickType clickType) {
@@ -260,7 +263,7 @@ public class BlockSource {
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
 	 * @param clickType the action that was performed to access the source,
-	 *            either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
+	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @param allowNearbySubstitute if a valid earth source could not be found
 	 *            then this method will attempt to find a nearby valid earth
 	 *            block.
@@ -295,7 +298,7 @@ public class BlockSource {
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
 	 * @param clickType the action that was performed to access the source,
-	 *            either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
+	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @return a valid Lava bendable block, or null if none was found.
 	 */
 	public static Block getLavaSourceBlock(Player player, double range, ClickType clickType) {
@@ -309,7 +312,7 @@ public class BlockSource {
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
 	 * @param clickType the action that was performed to access the source,
-	 *            either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
+	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @return a valid Earth or Lava bendable block, or null if none was found.
 	 */
 	public static Block getEarthOrLavaSourceBlock(Player player, double range, ClickType clickType) {
