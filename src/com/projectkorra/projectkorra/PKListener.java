@@ -336,7 +336,6 @@ public class PKListener implements Listener {
 		if (event.isCancelled())
 			return;
 		Player player = event.getPlayer();
-		GeneralMethods.cooldowns.put(player.getName(), System.currentTimeMillis());
 		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
