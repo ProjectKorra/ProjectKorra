@@ -223,7 +223,9 @@ public class FireBlast extends CoreAbility {
 	private void ignite(Location location) {
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, affectingradius)) {
 			if (FireStream.isIgnitable(player, block) && !safe.contains(block)) {
-				new Plantbending(block);
+				if (WaterMethods.isPlantbendable(block)) {
+					new Plantbending(block);
+				}
 				block.setType(Material.FIRE);
 				if (dissipate) {
 					FireStream.ignitedblocks.put(block, player);

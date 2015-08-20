@@ -21,16 +21,15 @@ public abstract class CoreAbility implements Ability {
 
 	/**
 	 * ConcurrentHashMap that stores all Ability instances under UUID key. To
-	 * access this hashmap use either {@link #getInstance()} from the ability
+	 * access this HashMap use either {@link #getInstance()} from the ability
 	 * instance or {@link #getInstance(StockAbility)} from the outside.
 	 */
-	//private static ConcurrentHashMap<StockAbility, ConcurrentHashMap<UUID, CoreAbility>> instances = new ConcurrentHashMap<>();
-	//private static ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>> instances = new ConcurrentHashMap<>();
-	private static ConcurrentHashMap<Integer, CoreAbility> instances = new ConcurrentHashMap<>();
-	//protected static AbilityMap<Ability> instances = new AbilityMap<>();
-	private static ConcurrentHashMap<StockAbility, ArrayList<Integer>> abilityMap = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Integer, CoreAbility> instances = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<StockAbility, ArrayList<Integer>> abilityMap = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Class<? extends CoreAbility>, ConcurrentHashMap<Integer, CoreAbility>> classAbilityMap = new ConcurrentHashMap<>();
 
 	private static int ID = Integer.MIN_VALUE;
+
 	private final StockAbility stockAbility = getStockAbility();
 	private Player player;
 	private UUID uniqueId;
@@ -45,20 +44,7 @@ public abstract class CoreAbility implements Ability {
 	 */
 	public static final boolean containsPlayer(Player player, Class<? extends CoreAbility> ability) {
 		CoreAbility coreAbility = getAbilityFromPlayer(player, ability);
-		if (coreAbility != null) {
-			return true;
-		}
-		/*
-		List<CoreAbility> abilities = getAbilitiesFromPlayer(player);
-		for (CoreAbility coreAbility : abilities) {
-			if (ability.isInstance(coreAbility)) {
-				if (coreAbility.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-					return true;
-				}
-			}
-		}
-		*/
-		return false;
+		return coreAbility != null ? true : false;
 	}
 
 	/**
@@ -94,7 +80,7 @@ public abstract class CoreAbility implements Ability {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets the ability instance by its id.
 	 * 
@@ -108,8 +94,8 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * An access method to get an the instances of a {@link StockAbility}.
 	 * <b>IMPORTANT: </b> If this is used in a for each loop use
-	 * {@link #getAbility(int)} to get the ability. Incorrect usage may
-	 * cause over looping and is capable of hanging the thead.
+	 * {@link #getAbility(int)} to get the ability. Incorrect usage may cause
+	 * over looping and is capable of hanging the thead.
 	 * 
 	 * @param ability The instances map to get
 	 * @return a map of instances from the specified {@link StockAbility}
@@ -128,21 +114,16 @@ public abstract class CoreAbility implements Ability {
 	/**
 	 * An access method to get an the instances of a {@link CoreAbility} by its
 	 * class. <b>IMPORTANT: </b> If this is used in a for each loop use
-	 * {@link #getAbility(int)} to get the ability. Incorrect usage may
-	 * cause over looping and is capable of hanging the thead.
+	 * {@link #getAbility(int)} to get the ability. Incorrect usage may cause
+	 * over looping and is capable of hanging the thead.
 	 * 
 	 * @param ability The instances map to get
 	 * @return a map of instances from the specified class
 	 * @see #getInstances(StockAbility)
 	 */
 	public final static ConcurrentHashMap<Integer, CoreAbility> getInstances(Class<? extends CoreAbility> ability) {
-		ConcurrentHashMap<Integer, CoreAbility> instanceMap = new ConcurrentHashMap<>();
-		for (Integer id : instances.keySet()) {
-			if (ability.isInstance(instances.get(id))) {
-				instanceMap.put(id, instances.get(id));
-			}
-		}
-		return instanceMap;
+		ConcurrentHashMap<Integer, CoreAbility> instanceMap = classAbilityMap.get(ability.getClass());
+		return instanceMap != null ? instanceMap : new ConcurrentHashMap<Integer, CoreAbility>();
 	}
 
 	//TODO: Update bending managers to use bellow method
@@ -165,9 +146,10 @@ public abstract class CoreAbility implements Ability {
 	 * @see #progressAll(StockAbility)
 	 */
 	public static void progressAll(Class<? extends CoreAbility> ability) {
-		for (Integer id : instances.keySet()) {
-			if (ability.isInstance(instances.get(id))) {
-				instances.get(id).progress();
+		ConcurrentHashMap<Integer, CoreAbility> classAbilities = classAbilityMap.get(ability);
+		if (classAbilities != null) {
+			for (Integer id : classAbilities.keySet()) {
+				classAbilities.get(id).progress();
 			}
 		}
 	}
@@ -229,10 +211,7 @@ public abstract class CoreAbility implements Ability {
 	 * @return true if ability is a stock ability
 	 */
 	public boolean isStockAbility() {
-		if (getStockAbility() == null) {
-			return false;
-		}
-		return true;
+		return getStockAbility() != null ? true : false;
 	}
 
 	/**
@@ -298,7 +277,14 @@ public abstract class CoreAbility implements Ability {
 		this.id = ID;
 		this.uniqueId = player.getUniqueId();
 		this.player = player;
+		Class<? extends CoreAbility> classKey = ability.getClass();
+
+		if (!classAbilityMap.containsKey(classKey)) {
+			classAbilityMap.put(classKey, new ConcurrentHashMap<Integer, CoreAbility>());
+		}
+		classAbilityMap.get(classKey).put(id, ability);
 		instances.put(id, ability);
+
 		if (stockAbility != null) {
 			if (abilityMap.containsKey(stockAbility)) {
 				abilityMap.get(stockAbility).add(id);
@@ -306,6 +292,7 @@ public abstract class CoreAbility implements Ability {
 				abilityMap.put(stockAbility, new ArrayList<Integer>(Arrays.asList(id)));
 			}
 		}
+
 		if (ID == Integer.MAX_VALUE)
 			ID = Integer.MIN_VALUE;
 		ID++;
@@ -329,6 +316,11 @@ public abstract class CoreAbility implements Ability {
 		if (instances.containsKey(id)) {
 			instances.remove(id);
 		}
+
+		if (classAbilityMap.containsKey(this.getClass())) {
+			classAbilityMap.get(this.getClass()).remove(id);
+		}
+
 		if (stockAbility != null) {
 			if (abilityMap.containsKey(stockAbility)) {
 				abilityMap.get(stockAbility).remove(id);
