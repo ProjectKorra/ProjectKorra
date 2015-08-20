@@ -21,17 +21,15 @@ public abstract class CoreAbility implements Ability {
 
 	/**
 	 * ConcurrentHashMap that stores all Ability instances under UUID key. To
-	 * access this hashmap use either {@link #getInstance()} from the ability
+	 * access this HashMap use either {@link #getInstance()} from the ability
 	 * instance or {@link #getInstance(StockAbility)} from the outside.
 	 */
-	//private static ConcurrentHashMap<StockAbility, ConcurrentHashMap<UUID, CoreAbility>> instances = new ConcurrentHashMap<>();
-	//private static ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>> instances = new ConcurrentHashMap<>();
-	private static ConcurrentHashMap<Integer, CoreAbility> instances = new ConcurrentHashMap<>();
-	//protected static AbilityMap<Ability> instances = new AbilityMap<>();
-	private static ConcurrentHashMap<StockAbility, ArrayList<Integer>> abilityMap = new ConcurrentHashMap<>();
-	private static ConcurrentHashMap<Class<? extends CoreAbility>, ConcurrentHashMap<Integer, CoreAbility>> classAbilityMap = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Integer, CoreAbility> instances = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<StockAbility, ArrayList<Integer>> abilityMap = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Class<? extends CoreAbility>, ConcurrentHashMap<Integer, CoreAbility>> classAbilityMap = new ConcurrentHashMap<>();
 
 	private static int ID = Integer.MIN_VALUE;
+
 	private final StockAbility stockAbility = getStockAbility();
 	private Player player;
 	private UUID uniqueId;
@@ -46,17 +44,7 @@ public abstract class CoreAbility implements Ability {
 	 */
 	public static final boolean containsPlayer(Player player, Class<? extends CoreAbility> ability) {
 		CoreAbility coreAbility = getAbilityFromPlayer(player, ability);
-		if (coreAbility != null) {
-			return true;
-		}
-		/*
-		 * List<CoreAbility> abilities = getAbilitiesFromPlayer(player); for
-		 * (CoreAbility coreAbility : abilities) { if
-		 * (ability.isInstance(coreAbility)) { if
-		 * (coreAbility.getPlayer().getUniqueId().equals(player.getUniqueId()))
-		 * { return true; } } }
-		 */
-		return false;
+		return coreAbility != null ? true : false;
 	}
 
 	/**
@@ -158,9 +146,10 @@ public abstract class CoreAbility implements Ability {
 	 * @see #progressAll(StockAbility)
 	 */
 	public static void progressAll(Class<? extends CoreAbility> ability) {
-		for (Integer id : instances.keySet()) {
-			if (ability.isInstance(instances.get(id))) {
-				instances.get(id).progress();
+		ConcurrentHashMap<Integer, CoreAbility> classAbilities = classAbilityMap.get(ability);
+		if (classAbilities != null) {
+			for (Integer id : classAbilities.keySet()) {
+				classAbilities.get(id).progress();
 			}
 		}
 	}
@@ -222,10 +211,7 @@ public abstract class CoreAbility implements Ability {
 	 * @return true if ability is a stock ability
 	 */
 	public boolean isStockAbility() {
-		if (getStockAbility() == null) {
-			return false;
-		}
-		return true;
+		return getStockAbility() != null ? true : false;
 	}
 
 	/**
