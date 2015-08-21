@@ -729,8 +729,9 @@ public class ConfigManager {
 				config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 1500);
 				config.addDefault("Abilities.Chi.Passive.DodgeChange", 25);
 
-				config.addDefault("Abilities.Chi.ChiCombo.ParalyzeDuration", 4000);
-				config.addDefault("Abilities.Chi.ChiCombo.Cooldown", 15000);
+				config.addDefault("Abilities.Chi.ChiCombo.Enabled", true);
+				config.addDefault("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration", 4000);
+				config.addDefault("Abilities.Chi.ChiCombo.Immobilize.Cooldown", 15000);
 
 				config.addDefault("Abilities.Chi.AcrobatStance.Enabled", true);
 				config.addDefault("Abilities.Chi.AcrobatStance.Description", "AcrobatStance gives a Chiblocker a higher probability of blocking a Bender's Chi while granting them a Speed and Jump Boost. It also increases the rate at which the hunger bar depletes. To use, simply left click. Left clicking again will de-activate the stance.");
