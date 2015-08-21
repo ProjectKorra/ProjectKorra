@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -284,6 +285,8 @@ public class GeneralMethods {
 		if (!bPlayer.isToggled())
 			return false;
 		if (p == null)
+			return false;
+		if (p.getGameMode() == GameMode.SPECTATOR) 
 			return false;
 		if (cooldowns.containsKey(p.getName())) {
 			if (cooldowns.get(p.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
