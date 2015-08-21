@@ -57,7 +57,7 @@ public class ChiCombo {
 	 * @param duration The time in milliseconds the target will be paralyzed
 	 */
 	private static void paralyze(Entity target, Long duration) {
-		paralyzedEntities.put(target, Long.sum(System.currentTimeMillis(), duration));
+		paralyzedEntities.put(target, (System.currentTimeMillis() + duration));
 	}
 
 	/**
