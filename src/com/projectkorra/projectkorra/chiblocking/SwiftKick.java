@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.chiblocking;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.chiblocking.ChiComboManager.ChiCombo;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -29,7 +28,6 @@ public class SwiftKick {
 		}
 
 		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("SwiftKick", 4000);
-		ChiComboManager.addCombo(player, ChiCombo.SwiftKick);
 	}
 
 	@SuppressWarnings("deprecation")

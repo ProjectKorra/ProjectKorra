@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.chiblocking;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.chiblocking.ChiComboManager.ChiCombo;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -27,8 +26,6 @@ public class QuickStrike {
 		if (GeneralMethods.rand.nextInt(100) < blockChance && e instanceof Player) {
 			ChiPassive.blockChi((Player) e);
 		}
-
-		ChiComboManager.addCombo(player, ChiCombo.QuickStrike);
 	}
 
 	public boolean isEligible(Player player) {

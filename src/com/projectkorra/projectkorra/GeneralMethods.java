@@ -713,15 +713,16 @@ public class GeneralMethods {
 	public static Element getAbilityElement(String ability) {
 		if (AbilityModuleManager.airbendingabilities.contains(ability))
 			return Element.Air;
-		if (AbilityModuleManager.earthbendingabilities.contains(ability))
+		else if (AbilityModuleManager.earthbendingabilities.contains(ability))
 			return Element.Earth;
-		if (AbilityModuleManager.firebendingabilities.contains(ability))
+		else if (AbilityModuleManager.firebendingabilities.contains(ability))
 			return Element.Fire;
-		if (AbilityModuleManager.waterbendingabilities.contains(ability))
+		else if (AbilityModuleManager.waterbendingabilities.contains(ability))
 			return Element.Water;
-		if (AbilityModuleManager.chiabilities.contains(ability))
+		else if (AbilityModuleManager.chiabilities.contains(ability))
 			return Element.Chi;
-		return null;
+		else
+			return null;
 	}
 	
 	
@@ -1005,26 +1006,6 @@ public class GeneralMethods {
 			}
 		}
 		return getAvatarColor();
-	}
-	/**Returns the correct element for the combo*/
-	public static Element getComboElement(String combo) {
-		Iterator<ComboAbility> it = ComboManager.comboAbilityList.iterator();
-		Element element = null;
-		while (it.hasNext()) {
-			ComboAbility comboability = it.next();
-			if (!comboability.getName().equalsIgnoreCase(combo)) {
-				continue;
-			}
-			for (AbilityInformation abilityinfo : comboability.getAbilities())
-			{
-				Element abilityelement = getAbilityElement(abilityinfo.getAbilityName());
-				if (abilityelement == null) return null;
-				else if (element == null) element = abilityelement;
-				else if (element != abilityelement) return null;
-			}
-			return element;
-		}
-		return null;
 	}
 
 	public static String getCurrentDate() {

@@ -1001,7 +1001,7 @@ public class Commands {
 						{
 							ArrayList<String> chicombos = ComboManager.getCombosForElement(Element.Chi);
 							if (chicombos.isEmpty()) {
-								s.sendMessage(WaterMethods.getWaterColor() + "There are no chiblocking combos avaliable.");
+								s.sendMessage(ChiMethods.getChiColor() + "There are no chiblocking combos avaliable.");
 								return true;
 							}
 							

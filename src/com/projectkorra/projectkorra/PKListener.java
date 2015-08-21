@@ -1,62 +1,5 @@
 package com.projectkorra.projectkorra;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityInteractEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.entity.SlimeSplitEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.ability.combo.ComboManager;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
@@ -73,7 +16,7 @@ import com.projectkorra.projectkorra.airbending.FlightAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
-import com.projectkorra.projectkorra.chiblocking.ChiComboManager;
+import com.projectkorra.projectkorra.chiblocking.ChiCombo;
 import com.projectkorra.projectkorra.chiblocking.ChiMethods;
 import com.projectkorra.projectkorra.chiblocking.ChiPassive;
 import com.projectkorra.projectkorra.chiblocking.HighJump;
@@ -144,6 +87,63 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.WaterWall;
 import com.projectkorra.projectkorra.waterbending.WaterWave;
 import com.projectkorra.projectkorra.waterbending.Wave;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.SlimeSplitEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class PKListener implements Listener {
 
@@ -336,7 +336,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled())
 			return;
 		Player player = event.getPlayer();
-		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
 	}
@@ -347,7 +347,7 @@ public class PKListener implements Listener {
 			return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 
 		if (event.getEntityType() == EntityType.FALLING_BLOCK) {
@@ -450,7 +450,7 @@ public class PKListener implements Listener {
 
 		Entity entity = event.getEntity();
 		if (entity != null)
-			if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+			if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 				event.setCancelled(true);
 	}
 
@@ -460,7 +460,7 @@ public class PKListener implements Listener {
 			return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -470,7 +470,7 @@ public class PKListener implements Listener {
 			return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -480,7 +480,7 @@ public class PKListener implements Listener {
 			return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -490,7 +490,7 @@ public class PKListener implements Listener {
 			return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -512,7 +512,7 @@ public class PKListener implements Listener {
 			return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
+		if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
 			event.setCancelled(true);
 		}
 	}
@@ -523,7 +523,7 @@ public class PKListener implements Listener {
 			return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
+		if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbended(entity)) {
 			event.setCancelled(true);
 		}
 	}
@@ -534,7 +534,7 @@ public class PKListener implements Listener {
 			return;
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || ChiComboManager.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
+		if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbended(entity) || Suffocate.isBreathbent(entity))
 			event.setCancelled(true);
 	}
 
@@ -708,7 +708,7 @@ public class PKListener implements Listener {
 		//			e.setCancelled(true);
 		//		}
 
-		if (Paralyze.isParalyzed(e.getDamager()) || ChiComboManager.isParalyzed(e.getDamager())) {
+		if (Paralyze.isParalyzed(e.getDamager()) || ChiCombo.isParalyzed(e.getDamager())) {
 			e.setCancelled(true);
 			return;
 		}
@@ -858,7 +858,7 @@ public class PKListener implements Listener {
 			if (ability != null && ability.equalsIgnoreCase("EarthSmash"))
 				new EarthSmash(player, ClickType.RIGHT_CLICK);
 		}
-		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
 	}
@@ -887,7 +887,7 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (ChiComboManager.isParalyzed(player)) {
+		if (ChiCombo.isParalyzed(player)) {
 			event.setTo(event.getFrom());
 			return;
 		}
@@ -996,7 +996,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		if (Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
+		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -1181,7 +1181,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player) || ChiComboManager.isParalyzed(player)) {
+		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player)) {
 			event.setCancelled(true);
 			return;
 		}

@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.airbending.AirCombo;
+import com.projectkorra.projectkorra.chiblocking.ChiCombo;
 import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.waterbending.WaterCombo;
@@ -150,6 +151,15 @@ public class ComboManager {
 		iceBulletRight.add(new AbilityInformation("IceBlast", ClickType.RIGHT_CLICK));
 		comboAbilityList.add(new ComboAbility("IceBulletRightClick", iceBulletRight, WaterCombo.class));
 
+		ArrayList<AbilityInformation> immobilize = new ArrayList<AbilityInformation>();
+		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
+		immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK));
+		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
+		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
+		comboAbilityList.add(new ComboAbility("Immobilize", immobilize, ChiCombo.class));
+		descriptions.put("Immobilize", "Does stuff to people.");
+		instructions.put("Immobilize", "QuickStrike (Left Click) > SwiftKick (Left Click) > QuickStrike (Left Click) > QuickStrike (Left Click)");
+		
 		startCleanupTask();
 	}
 
@@ -157,7 +167,6 @@ public class ComboManager {
 		String abilityName = GeneralMethods.getBoundAbility(player);
 		if (abilityName == null)
 			return;
-
 		AbilityInformation info = new AbilityInformation(abilityName, type, System.currentTimeMillis());
 		addRecentAbility(player, info);
 
@@ -174,6 +183,8 @@ public class ComboManager {
 			new AirCombo(player, comboAbil.getName());
 		else if (comboAbil.getComboType().equals(WaterCombo.class))
 			new WaterCombo(player, comboAbil.getName());
+		else if (comboAbil.getComboType().equals(ChiCombo.class))
+			new ChiCombo(player, comboAbil.getName());
 		else {
 			for (ComboAbility ca : comboAbilityList) {
 				if (comboAbil.getName().equals(ca.getName())) {
@@ -186,18 +197,31 @@ public class ComboManager {
 		}
 	}
 
+	/**
+	 * Adds an {@link AbilityInformation} to the player's 
+	 * {@link ComboManager#recentlyUsedAbilities recentlyUsedAbilities}.
+	 * 
+	 * @param player The player to add the AbilityInformation for
+	 * @param info The AbilityInformation to add
+	 */
 	public static void addRecentAbility(Player player, AbilityInformation info) {
 		ArrayList<AbilityInformation> list;
 		String name = player.getName();
-		if (recentlyUsedAbilities.containsKey(name)) {
+		if (recentlyUsedAbilities.containsKey(name))
 			list = recentlyUsedAbilities.get(name);
-			recentlyUsedAbilities.remove(player);
-		} else
+		else
 			list = new ArrayList<AbilityInformation>();
 		list.add(info);
 		recentlyUsedAbilities.put(name, list);
 	}
 
+	/**
+	 * Checks if a Player's {@link ComboManager#recentlyUsedAbilities recentlyUsedAbilities}
+	 * contains a valid set of moves to perform any combos. If it does, it
+	 * returns the valid combo.
+	 * @param player The player for whom to check if a valid combo has been performed
+	 * @return The ComboAbility of the combo that has been performed, or null if no valid combo was found
+	 */
 	public static ComboAbility checkForValidCombo(Player player) {
 		ArrayList<AbilityInformation> playerCombo = getRecentlyUsedAbilities(player, 8);
 		for (ComboAbility customAbility : comboAbilityList) {
@@ -239,6 +263,12 @@ public class ComboManager {
 		}
 	}
 
+	/**
+	 * Gets the player's most recently used abilities, up to a maximum of 10.
+	 * @param player The player to get recent abilities for
+	 * @param amount The amount of recent abilities to get, starting from most recent and getting older
+	 * @return An ArrayList<{@link AbilityInformation}> of the player's recently used abilities
+	 */
 	public static ArrayList<AbilityInformation> getRecentlyUsedAbilities(Player player, int amount) {
 		String name = player.getName();
 		if (!recentlyUsedAbilities.containsKey(name))
@@ -254,10 +284,15 @@ public class ComboManager {
 		return tempList;
 	}
 
+	/**
+	 * Gets all of the combos for a given element.
+	 * @param element The element to get combos for
+	 * @return An ArrayList of the combos for that element
+	 */
 	public static ArrayList<String> getCombosForElement(Element element) {
 		ArrayList<String> list = new ArrayList<String>();
 		for (ComboAbility comboab : comboAbilityList) {
-			if (GeneralMethods.getComboElement(comboab.getName()) == element && descriptions.containsKey(comboab.getName()))
+			if(GeneralMethods.getAbilityElement(comboab.getAbilities().get(0).getAbilityName())==element)
 				list.add(comboab.getName());
 		}
 		Collections.sort(list);
@@ -272,6 +307,11 @@ public class ComboManager {
 		}.runTaskTimer(ProjectKorra.plugin, 0, CLEANUP_DELAY / 1000 * 20);
 	}
 
+	/**
+	 * Contains information on an ability used in a combo.
+	 * @author kingbirdy
+	 *
+	 */
 	public static class AbilityInformation {
 		private String abilityName;
 		private ClickType clickType;
@@ -287,14 +327,27 @@ public class ComboManager {
 			this.time = time;
 		}
 
+		/**
+		 * Compares if two {@link AbilityInformation}'s are equal without respect to {@link AbilityInformation#time time}.
+		 * @param info The AbilityInformation to compare against
+		 * @return True if they are equal without respect to time
+		 */
 		public boolean equalsWithoutTime(AbilityInformation info) {
 			return this.getAbilityName().equals(info.getAbilityName()) && this.getClickType().equals(info.getClickType());
 		}
 
+		/**
+		 * Gets the name of the ability.
+		 * @return The name of the ability.
+		 */
 		public String getAbilityName() {
 			return abilityName;
 		}
 
+		/**
+		 * Gets the {@link ClickType} of the {@link AbilityInformation}.
+		 * @return The ClickType
+		 */
 		public ClickType getClickType() {
 			return clickType;
 		}

@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra;
 
 import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.chiblocking.ChiComboManager;
+import com.projectkorra.projectkorra.chiblocking.ChiCombo;
 import com.projectkorra.projectkorra.chiblocking.RapidPunch;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 import com.projectkorra.projectkorra.firebending.FireMethods;
@@ -172,7 +172,7 @@ public class BendingManager implements Runnable, ConfigLoadable {
 			Flight.handle();
 			RapidPunch.startPunchAll();
 			RevertChecker.revertAirBlocks();
-			ChiComboManager.handleParalysis();
+			ChiCombo.handleParalysis();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
 		}
