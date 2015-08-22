@@ -138,8 +138,6 @@ public class ConfigManager {
 				config.addDefault("Properties.RegionProtection.RespectLWC", true);
 				config.addDefault("Properties.RegionProtection.CacheBlockTime", 5000);
 
-				config.addDefault("Properties.TagAPI.Enabled", true);
-
 				config.addDefault("Properties.Air.CanBendWithWeapons", false);
 				config.addDefault("Properties.Air.Particles", "cloud");
 				config.addDefault("Properties.Air.PlaySound", true);
