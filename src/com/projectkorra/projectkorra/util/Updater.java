@@ -1,5 +1,11 @@
 package com.projectkorra.projectkorra.util;
 
+import org.bukkit.plugin.Plugin;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -7,12 +13,6 @@ import java.net.UnknownHostException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.bukkit.plugin.Plugin;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Updater class that takes an rss feed and checks for updates there
@@ -73,9 +73,9 @@ public class Updater {
 	 * 
 	 */
 	public void checkUpdate() {
-		if (getUpdateVersion()==null)
+		if (getUpdateVersion() == null) {
 			return;
-		else if (updateAvailable()) {
+		} else if (updateAvailable()) {
 			plugin.getLogger().info("===================[Update Available]===================");
 			plugin.getLogger().info("You are running version " + getCurrentVersion());
 			plugin.getLogger().info("The latest version avaliable is " + getUpdateVersion());
@@ -90,7 +90,7 @@ public class Updater {
 	 * @return Latest plugin version, or null if it cannot connect
 	 */
 	public String getUpdateVersion() {
-		if (document!=null) {
+		if (document != null) {
 			Node latestFile = document.getElementsByTagName("item").item(0);
 			NodeList children = latestFile.getChildNodes();
 			
@@ -107,7 +107,22 @@ public class Updater {
 	 */
 	public boolean updateAvailable() {
 		String updateVersion = getUpdateVersion();
-		if (updateVersion==null || currentVersion.equalsIgnoreCase(getUpdateVersion())) {
+		if (updateVersion == null) {
+			return false;
+		}
+		int currentNumber = Integer.parseInt(currentVersion.substring(0, 5).replaceAll("\\.", ""));
+		int updateNumber = Integer.parseInt(updateVersion.substring(0, 5).replaceAll("\\.", ""));
+		if (updateNumber == currentNumber) {
+			if (currentVersion.contains("BETA") && updateVersion.contains("BETA")) {
+				int currentBeta = Integer.parseInt(currentVersion.substring(currentVersion.lastIndexOf(" ") + 1));
+				int updateBeta = Integer.parseInt(updateVersion.substring(updateVersion.lastIndexOf(" ") + 1));
+				if (currentBeta == updateBeta || currentBeta > updateBeta) {
+					return false;
+				}
+			} else if (!currentVersion.contains("BETA") && updateVersion.contains("BETA")) {
+				return false;
+			}
+		} else if (currentVersion.equalsIgnoreCase(updateVersion) || currentNumber > updateNumber) {
 			return false;
 		}
 		return true;
