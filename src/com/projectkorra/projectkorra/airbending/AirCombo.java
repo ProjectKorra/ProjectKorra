@@ -364,10 +364,11 @@ public class AirCombo implements ConfigLoadable {
 			FireComboStream fstream = (FireComboStream) tasks.get(i);
 			Location loc = fstream.getLocation();
 
-			if (!EarthMethods.isTransparentToEarthbending(player, loc.clone().add(0, 0.2, 0).getBlock())) {
-				fstream.remove();
-				remove();
-				return;
+			if (!EarthMethods.isTransparentToEarthbending(player, loc.getBlock())) {
+				if (!EarthMethods.isTransparentToEarthbending(player, loc.clone().add(0, 0.2, 0).getBlock())) {
+					fstream.remove();
+					return;
+				}
 			}
 			if (i % 3 == 0) {
 				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
