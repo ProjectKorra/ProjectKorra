@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ComboManager {
-	private static final long CLEANUP_DELAY = 10000;
+	private static final long CLEANUP_DELAY = 20 * 60 * 60;
 	public static ConcurrentHashMap<String, ArrayList<AbilityInformation>> recentlyUsedAbilities = new ConcurrentHashMap<String, ArrayList<AbilityInformation>>();
 	public static HashSet<ComboAbility> comboAbilityList = new HashSet<ComboAbility>();
 	public static HashMap<String, String> authors = new HashMap<String, String>();
@@ -159,7 +159,7 @@ public class ComboManager {
 		comboAbilityList.add(new ComboAbility("Immobilize", immobilize, ChiCombo.class));
 		descriptions.put("Immobilize", "Does stuff to people.");
 		instructions.put("Immobilize", "QuickStrike (Left Click) > SwiftKick (Left Click) > QuickStrike (Left Click) > QuickStrike (Left Click)");
-		
+
 		startCleanupTask();
 	}
 
@@ -198,7 +198,7 @@ public class ComboManager {
 	}
 
 	/**
-	 * Adds an {@link AbilityInformation} to the player's 
+	 * Adds an {@link AbilityInformation} to the player's
 	 * {@link ComboManager#recentlyUsedAbilities recentlyUsedAbilities}.
 	 * 
 	 * @param player The player to add the AbilityInformation for
@@ -216,11 +216,14 @@ public class ComboManager {
 	}
 
 	/**
-	 * Checks if a Player's {@link ComboManager#recentlyUsedAbilities recentlyUsedAbilities}
-	 * contains a valid set of moves to perform any combos. If it does, it
-	 * returns the valid combo.
-	 * @param player The player for whom to check if a valid combo has been performed
-	 * @return The ComboAbility of the combo that has been performed, or null if no valid combo was found
+	 * Checks if a Player's {@link ComboManager#recentlyUsedAbilities
+	 * recentlyUsedAbilities} contains a valid set of moves to perform any
+	 * combos. If it does, it returns the valid combo.
+	 * 
+	 * @param player The player for whom to check if a valid combo has been
+	 *            performed
+	 * @return The ComboAbility of the combo that has been performed, or null if
+	 *         no valid combo was found
 	 */
 	public static ComboAbility checkForValidCombo(Player player) {
 		ArrayList<AbilityInformation> playerCombo = getRecentlyUsedAbilities(player, 8);
@@ -249,25 +252,18 @@ public class ComboManager {
 		while (keys.hasMoreElements()) {
 			String name = keys.nextElement();
 			ArrayList<AbilityInformation> usedAbilities = recentlyUsedAbilities.get(name);
-			ArrayList<AbilityInformation> stillValidAbilities = new ArrayList<AbilityInformation>();
-			recentlyUsedAbilities.remove(name);
-
-			for (AbilityInformation info : usedAbilities) {
-				if (System.currentTimeMillis() - info.getTime() <= CLEANUP_DELAY) {
-					stillValidAbilities.add(info);
-				}
-			}
-
-			if (stillValidAbilities.size() > 0)
-				recentlyUsedAbilities.put(name, stillValidAbilities);
+			usedAbilities.clear();
 		}
 	}
 
 	/**
 	 * Gets the player's most recently used abilities, up to a maximum of 10.
+	 * 
 	 * @param player The player to get recent abilities for
-	 * @param amount The amount of recent abilities to get, starting from most recent and getting older
-	 * @return An ArrayList<{@link AbilityInformation}> of the player's recently used abilities
+	 * @param amount The amount of recent abilities to get, starting from most
+	 *            recent and getting older
+	 * @return An ArrayList<{@link AbilityInformation}> of the player's recently
+	 *         used abilities
 	 */
 	public static ArrayList<AbilityInformation> getRecentlyUsedAbilities(Player player, int amount) {
 		String name = player.getName();
@@ -286,13 +282,14 @@ public class ComboManager {
 
 	/**
 	 * Gets all of the combos for a given element.
+	 * 
 	 * @param element The element to get combos for
 	 * @return An ArrayList of the combos for that element
 	 */
 	public static ArrayList<String> getCombosForElement(Element element) {
 		ArrayList<String> list = new ArrayList<String>();
 		for (ComboAbility comboab : comboAbilityList) {
-			if(GeneralMethods.getAbilityElement(comboab.getAbilities().get(0).getAbilityName())==element)
+			if (GeneralMethods.getAbilityElement(comboab.getAbilities().get(0).getAbilityName()) == element)
 				list.add(comboab.getName());
 		}
 		Collections.sort(list);
@@ -304,11 +301,12 @@ public class ComboManager {
 			public void run() {
 				cleanupOldCombos();
 			}
-		}.runTaskTimer(ProjectKorra.plugin, 0, CLEANUP_DELAY / 1000 * 20);
+		}.runTaskTimer(ProjectKorra.plugin, 0, CLEANUP_DELAY);
 	}
 
 	/**
 	 * Contains information on an ability used in a combo.
+	 * 
 	 * @author kingbirdy
 	 *
 	 */
@@ -328,7 +326,9 @@ public class ComboManager {
 		}
 
 		/**
-		 * Compares if two {@link AbilityInformation}'s are equal without respect to {@link AbilityInformation#time time}.
+		 * Compares if two {@link AbilityInformation}'s are equal without
+		 * respect to {@link AbilityInformation#time time}.
+		 * 
 		 * @param info The AbilityInformation to compare against
 		 * @return True if they are equal without respect to time
 		 */
@@ -338,6 +338,7 @@ public class ComboManager {
 
 		/**
 		 * Gets the name of the ability.
+		 * 
 		 * @return The name of the ability.
 		 */
 		public String getAbilityName() {
@@ -346,6 +347,7 @@ public class ComboManager {
 
 		/**
 		 * Gets the {@link ClickType} of the {@link AbilityInformation}.
+		 * 
 		 * @return The ClickType
 		 */
 		public ClickType getClickType() {
