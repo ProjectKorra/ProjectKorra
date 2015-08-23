@@ -155,6 +155,10 @@ public class Commands {
 						}
 
 						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+						if (bPlayer == null) {
+							GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+							bPlayer = GeneralMethods.getBendingPlayer(player);
+						}
 						if (Arrays.asList(airaliases).contains(args[2])) {
 							bPlayer.addElement(Element.Air);
 							GeneralMethods.saveElements(bPlayer);
@@ -216,7 +220,11 @@ public class Commands {
 						}
 
 						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
-
+						if (bPlayer == null) {
+							GeneralMethods.createBendingPlayer(((Player) s).getUniqueId(), s.getName());
+							bPlayer = GeneralMethods.getBendingPlayer(s.getName());
+						}
+						
 						if (Arrays.asList(airaliases).contains(args[1])) {
 							if (!s.hasPermission("bending.command.add.air")) {
 								s.sendMessage(ChatColor.RED + "You don't have permsision to add " + AirMethods.getAirColor() + "Airbending");
@@ -463,7 +471,10 @@ public class Commands {
 						}
 
 						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
-
+						if (bPlayer == null) {
+							GeneralMethods.createBendingPlayer(((Player) s).getUniqueId(), s.getName());
+							bPlayer = GeneralMethods.getBendingPlayer(s.getName());
+						}
 						if (bPlayer.isPermaRemoved()) {
 							s.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
 							return true;
@@ -555,6 +566,11 @@ public class Commands {
 							return true;
 						}
 						BendingPlayer bTarget = GeneralMethods.getBendingPlayer(target.getName());
+						
+						if (bTarget == null) {
+							GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
+							bTarget = GeneralMethods.getBendingPlayer(target);
+						}
 
 						//						if (bTarget.isPermaRemoved()) {
 						//							s.sendMessage(ChatColor.RED + "That player's bending was permanently removed.");
@@ -608,6 +624,10 @@ public class Commands {
 					}
 
 					BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
+					if (bPlayer == null) {
+						GeneralMethods.createBendingPlayer(((Player) s).getUniqueId(), s.getName());
+						bPlayer = GeneralMethods.getBendingPlayer(s.getName());
+					}
 					if (args.length == 1) {
 						bPlayer.getAbilities().clear();
 						for (int i = 1; i <= 9; i++) {
@@ -1023,6 +1043,10 @@ public class Commands {
 							return true;
 						}
 						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
+						if (bPlayer == null) {
+							GeneralMethods.createBendingPlayer(((Player) s).getUniqueId(), s.getName());
+							bPlayer = GeneralMethods.getBendingPlayer(s.getName());
+						}
 						HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
 						if (abilities.isEmpty()) {
@@ -1206,6 +1230,10 @@ public class Commands {
 					}
 
 					BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+					if (bPlayer == null) {
+						GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+						bPlayer = GeneralMethods.getBendingPlayer(player);
+					}
 
 					if (bPlayer.isPermaRemoved()) {
 						bPlayer.setPermaRemoved(false);
@@ -1365,6 +1393,10 @@ public class Commands {
 					}
 
 					BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+					if (bPlayer == null) {
+						GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+						bPlayer = GeneralMethods.getBendingPlayer(player);
+					}
 					GeneralMethods.removeUnusableAbilities(player.getName());
 					bPlayer.getElements().clear();
 					GeneralMethods.saveElements(bPlayer);
@@ -1414,7 +1446,10 @@ public class Commands {
 						}
 
 						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(s.getName());
-
+						if (bPlayer == null) {
+							GeneralMethods.createBendingPlayer(((Player) s).getUniqueId(), s.getName());
+							bPlayer = GeneralMethods.getBendingPlayer(s.getName());
+						}
 						if (bPlayer.isToggled()) {
 							s.sendMessage(ChatColor.RED + "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
 							bPlayer.toggleBending();
@@ -1574,7 +1609,7 @@ public class Commands {
 							s.sendMessage(ChiMethods.getChiColor() + "- ChiBlocker");
 						}
 						BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(un);
-						UUID uuid2 = bPlayer.getUUID();
+						UUID uuid2 = p.getUniqueId();
 						if (bPlayer != null) {
 							s.sendMessage("Abilities: ");
 							for (int i = 1; i <= 9; i++) {
@@ -1660,6 +1695,10 @@ public class Commands {
 							String un = player.getName();
 
 							BendingPlayer bp = GeneralMethods.getBendingPlayer(un);
+							if (bp == null) {
+								GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+								bp = GeneralMethods.getBendingPlayer(player);
+							}
 							if (bp.getElements().size() > 1) {
 								players.add(GeneralMethods.getAvatarColor() + un);
 								continue;
