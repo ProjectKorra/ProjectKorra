@@ -756,7 +756,9 @@ public class PKListener implements Listener {
 					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
 						if (GeneralMethods.getBoundAbility(sourceplayer) != null && GeneralMethods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze") && e.getDamage() == 1) {
 							if (ChiPassive.willChiBlock(sourceplayer, targetplayer)) {
-								new Paralyze(sourceplayer, targetplayer);
+								if (CoreAbility.getAbilitiesFromPlayer(sourceplayer).isEmpty()) {
+									new Paralyze(sourceplayer, targetplayer);
+								}
 							}
 						}
 					}
