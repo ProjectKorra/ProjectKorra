@@ -830,7 +830,7 @@ public class PKListener implements Listener {
 						element = GeneralMethods.getAbilityElement(killerAbility).name();
 						ability = element + "Combo";
 					}
-				} else if (GeneralMethods.abilityExists(ability)) {
+				} else if (ability != null && GeneralMethods.abilityExists(ability)) {
 					element = GeneralMethods.getAbilityElement(ability).name();
 				} else {
 					bendingDeathPlayer.remove(event.getEntity());
