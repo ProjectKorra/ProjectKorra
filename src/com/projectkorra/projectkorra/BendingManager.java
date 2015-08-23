@@ -34,7 +34,7 @@ public class BendingManager implements Runnable, ConfigLoadable {
 
 	private static String moonriseMessage = config.get().getString("Properties.Water.NightMessage");
 	private static String fullMoonriseMessage = config.get().getString("Properties.Water.FullMoonMessage");
-	private static String lunarEclipseMessage = config.get().getString("Properties.Water.LunarEclipsetMessage");
+	private static String lunarEclipseMessage = config.get().getString("Properties.Water.LunarEclipseMessage");
 	private static String moonsetMessage = config.get().getString("Properties.Water.DayMessage");
 
 	long time;
