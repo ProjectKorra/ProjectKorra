@@ -602,6 +602,8 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.Tremorsense.LightThreshold", 7);
 				config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
 
+				config.addDefault("Abilities.Earth.EarthCombo.Enabled", true);
+				
 				config.addDefault("Abilities.Fire.Blaze.Enabled", true);
 				config.addDefault("Abilities.Fire.Blaze.Description", "To use, simply left-click in any direction. An arc of fire will flow from your location, igniting anything in its path. Additionally, tap sneak to engulf the area around you in roaring flames.");
 				config.addDefault("Abilities.Fire.Blaze.ArcOfFire.Arc", 16);

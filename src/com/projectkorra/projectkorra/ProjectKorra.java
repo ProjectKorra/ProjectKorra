@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityModuleManager;
 import com.projectkorra.projectkorra.airbending.AirbendingManager;
 import com.projectkorra.projectkorra.chiblocking.ChiblockingManager;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.FirebendingManager;
@@ -33,7 +34,7 @@ public class ProjectKorra extends JavaPlugin {
 	public static PKLogHandler handler;
 	public static long time_step = 1;
 	public Updater updater;
-
+	public AbilityModuleManager abManager;
 	@Override
 	public void onEnable() {
 		plugin = this;
@@ -53,7 +54,7 @@ public class ProjectKorra extends JavaPlugin {
 		new GeneralMethods(this);
 		updater = new Updater(this, "http://projectkorra.com/forum/forums/dev-builds.16/index.rss");
 		new Commands(this);
-		new AbilityModuleManager(this);
+		abManager = new AbilityModuleManager(this);
 		new MultiAbilityModuleManager();
 		new MultiAbilityManager();
 		new ComboModuleManager();

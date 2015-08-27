@@ -27,6 +27,7 @@ import com.projectkorra.projectkorra.chiblocking.RapidPunch;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
 import com.projectkorra.projectkorra.chiblocking.SwiftKick;
 import com.projectkorra.projectkorra.chiblocking.WarriorStance;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.Catapult;
 import com.projectkorra.projectkorra.earthbending.Collapse;

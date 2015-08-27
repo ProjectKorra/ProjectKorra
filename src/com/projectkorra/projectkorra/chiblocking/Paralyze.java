@@ -1,11 +1,11 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.Commands;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.airbending.Suffocate;
+import com.projectkorra.projectkorra.command.Commands;
 
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
