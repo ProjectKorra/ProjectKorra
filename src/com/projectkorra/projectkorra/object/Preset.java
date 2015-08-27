@@ -18,13 +18,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A savable association of abilities and hotbar slots, stored per player.
+ * 
  * @author kingbirdy
  *
  */
 public class Preset {
 
 	/**
-	 * ConcurrentHashMap that stores a list of every Player's {@link Preset presets}, keyed to their UUID
+	 * ConcurrentHashMap that stores a list of every Player's {@link Preset
+	 * presets}, keyed to their UUID
 	 */
 	public static ConcurrentHashMap<UUID, List<Preset>> presets = new ConcurrentHashMap<UUID, List<Preset>>();
 
@@ -37,7 +39,8 @@ public class Preset {
 	 * 
 	 * @param uuid The UUID of the Player who the Preset belongs to
 	 * @param name The name of the Preset
-	 * @param abilities A HashMap of the abilities to be saved in the Preset, keyed to the slot they're bound to
+	 * @param abilities A HashMap of the abilities to be saved in the Preset,
+	 *            keyed to the slot they're bound to
 	 */
 	public Preset(UUID uuid, String name, HashMap<Integer, String> abilities) {
 		this.uuid = uuid;
@@ -118,6 +121,7 @@ public class Preset {
 
 	/**
 	 * Checks if a Preset with a certain name exists for a given Player.
+	 * 
 	 * @param player The player who's Presets should be checked
 	 * @param name The name of the Preset to look for
 	 * @return true if the Preset exists, false otherwise
@@ -135,6 +139,7 @@ public class Preset {
 
 	/**
 	 * Gets a Preset for the specified Player.
+	 * 
 	 * @param Player The Player who's Preset should be gotten
 	 * @param name The name of the Preset to get
 	 * @return The Preset, if it exists, or null otherwise
@@ -151,9 +156,11 @@ public class Preset {
 
 	/**
 	 * Gets the contents of a Preset for the specified Player.
+	 * 
 	 * @param player The Player who's Preset should be gotten
 	 * @param name The name of the Preset who's contents should be gotten
-	 * @return HashMap of ability names keyed to hotbar slots, if the Preset exists, or null otherwise
+	 * @return HashMap of ability names keyed to hotbar slots, if the Preset
+	 *         exists, or null otherwise
 	 */
 	public static HashMap<Integer, String> getPresetContents(Player player, String name) {
 		if (!presets.containsKey(player.getUniqueId()))
@@ -176,6 +183,7 @@ public class Preset {
 
 	/**
 	 * Gets the name of the preset.
+	 * 
 	 * @return The name of the preset
 	 */
 	public String getName() {
@@ -198,9 +206,14 @@ public class Preset {
 		 * Now we know the preset exists in the SQL table, so we can manipulate
 		 * it normally.
 		 */
-		for (int i = 1; i <= 9; i++) {
-			DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot" + i + " = '" + (abilities.get(i) == null ? null : abilities.get(i)) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
-		}
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				for (Integer i : abilities.keySet()) {
+					DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
+				}
+			}
+		}.runTaskAsynchronously(ProjectKorra.plugin);
 	}
 
 }
