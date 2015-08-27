@@ -1,17 +1,18 @@
 package com.projectkorra.projectkorra.ability;
 
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.AbilityLoader;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.util.AbilityLoader;
 
 public class AbilityModuleManager {
 
@@ -353,12 +354,14 @@ public class AbilityModuleManager {
 				descriptions.put(ab.getName(), ab.getDescription());
 				authors.put(ab.getName(), ab.getAuthor());
 			}
-			catch (AbstractMethodError /* pre 1.6 BETA 8 */| NoSuchMethodError /*
+			catch (AbstractMethodError /* pre 1.6 BETA 8 */ | NoSuchMethodError /*
 																				 * pre
-																				 * 1.7
+																				 * 1
+																				 * .
+																				 * 7
 																				 * BETA
 																				 * 2
-																				 */e) { //If triggered means ability was made before commented versions
+																				 */ e) { //If triggered means ability was made before commented versions
 				ProjectKorra.log.warning("The ability " + ab.getName() + " is either broken or outdated. Please remove it!");
 				e.printStackTrace();
 				ab.stop();
@@ -374,16 +377,52 @@ public class AbilityModuleManager {
 			}
 		}
 
-
 		for (Field field : this.getClass().getDeclaredFields()) {
 			if (List.class.isAssignableFrom(field.getType())) {
 				try {
 					Collections.sort((List) field.get(this));
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
 	}
 
+	public List<String> getAbilities(String element) {
+		element = element.toLowerCase();
+		if (Arrays.asList(Commands.wateraliases).contains(element))
+			return waterbendingabilities;
+		else if (Arrays.asList(Commands.icealiases).contains(element))
+			return iceabilities;
+		else if (Arrays.asList(Commands.plantaliases).contains(element))
+			return plantabilities;
+		else if (Arrays.asList(Commands.healingaliases).contains(element))
+			return healingabilities;
+		else if (Arrays.asList(Commands.bloodaliases).contains(element))
+			return bloodabilities;
+		else if (Arrays.asList(Commands.airaliases).contains(element))
+			return airbendingabilities;
+		else if (Arrays.asList(Commands.flightaliases).contains(element))
+			return flightabilities;
+		else if (Arrays.asList(Commands.spiritualprojectionaliases).contains(element))
+			return spiritualprojectionabilities;
+		else if (Arrays.asList(Commands.earthaliases).contains(element))
+			return earthbendingabilities;
+		else if (Arrays.asList(Commands.lavabendingaliases).contains(element))
+			return lavaabilities;
+		else if (Arrays.asList(Commands.metalbendingaliases).contains(element))
+			return metalabilities;
+		else if (Arrays.asList(Commands.sandbendingaliases).contains(element))
+			return sandabilities;
+		else if (Arrays.asList(Commands.firealiases).contains(element))
+			return firebendingabilities;
+		else if (Arrays.asList(Commands.combustionaliases).contains(element))
+			return combustionabilities;
+		else if (Arrays.asList(Commands.lightningaliases).contains(element))
+			return lightningabilities;
+		else if (Arrays.asList(Commands.chialiases).contains(element))
+			return chiabilities;
+		return null;
+	}
 }

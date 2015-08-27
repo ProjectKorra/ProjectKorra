@@ -1,61 +1,11 @@
 package com.projectkorra.projectkorra;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.FallingSand;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
+import fr.neatmonster.nocheatplus.checks.CheckType;
+import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
@@ -92,6 +42,7 @@ import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.chiblocking.ChiMethods;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
@@ -118,12 +69,61 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
-import fr.neatmonster.nocheatplus.checks.CheckType;
-import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.FallingSand;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("deprecation")
 public class GeneralMethods {
@@ -286,7 +286,7 @@ public class GeneralMethods {
 			return false;
 		if (p == null)
 			return false;
-		if (p.getGameMode() == GameMode.SPECTATOR) 
+		if (p.getGameMode() == GameMode.SPECTATOR)
 			return false;
 		if (cooldowns.containsKey(p.getName())) {
 			if (cooldowns.get(p.getName()) + ProjectKorra.plugin.getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
@@ -300,7 +300,7 @@ public class GeneralMethods {
 			return false;
 		if (!canBind(player, ability))
 			return false;
-		
+
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation()))
 			return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p))
@@ -350,28 +350,28 @@ public class GeneralMethods {
 			return false;
 		if (ChiMethods.isChiAbility(ability) && !isBender(player, Element.Chi))
 			return false;
-		
-		if (!EarthMethods.canLavabend(p) && EarthMethods.isLavabendingAbility(ability)) 
+
+		if (!EarthMethods.canLavabend(p) && EarthMethods.isLavabendingAbility(ability))
 			return false;
-		else if (!EarthMethods.canMetalbend(p) && EarthMethods.isMetalbendingAbility(ability)) 
+		else if (!EarthMethods.canMetalbend(p) && EarthMethods.isMetalbendingAbility(ability))
 			return false;
-		else if (!EarthMethods.canSandbend(p) && EarthMethods.isSandbendingAbility(ability)) 
+		else if (!EarthMethods.canSandbend(p) && EarthMethods.isSandbendingAbility(ability))
 			return false;
-		else if (!AirMethods.canAirFlight(p) && AirMethods.isFlightAbility(ability)) 
+		else if (!AirMethods.canAirFlight(p) && AirMethods.isFlightAbility(ability))
 			return false;
-		else if (!AirMethods.canUseSpiritualProjection(p) && AirMethods.isSpiritualProjectionAbility(ability)) 
+		else if (!AirMethods.canUseSpiritualProjection(p) && AirMethods.isSpiritualProjectionAbility(ability))
 			return false;
-		else if (!FireMethods.canCombustionbend(p) && FireMethods.isCombustionbendingAbility(ability)) 
+		else if (!FireMethods.canCombustionbend(p) && FireMethods.isCombustionbendingAbility(ability))
 			return false;
-		else if (!FireMethods.canLightningbend(p) && FireMethods.isLightningbendingAbility(ability)) 
+		else if (!FireMethods.canLightningbend(p) && FireMethods.isLightningbendingAbility(ability))
 			return false;
-		else if (!WaterMethods.canBloodbend(p) && WaterMethods.isBloodbendingAbility(ability)) 
+		else if (!WaterMethods.canBloodbend(p) && WaterMethods.isBloodbendingAbility(ability))
 			return false;
-		else if (!WaterMethods.canIcebend(p) && WaterMethods.isIcebendingAbility(ability)) 
+		else if (!WaterMethods.canIcebend(p) && WaterMethods.isIcebendingAbility(ability))
 			return false;
-		else if (!WaterMethods.canWaterHeal(p) && WaterMethods.isHealingAbility(ability)) 
+		else if (!WaterMethods.canWaterHeal(p) && WaterMethods.isHealingAbility(ability))
 			return false;
-		else if (!WaterMethods.canPlantbend(p) && WaterMethods.isPlantbendingAbility(ability)) 
+		else if (!WaterMethods.canPlantbend(p) && WaterMethods.isPlantbendingAbility(ability))
 			return false;
 		return true;
 	}
@@ -381,8 +381,11 @@ public class GeneralMethods {
 	}
 
 	public static boolean comboExists(String string) {
-		/*Previous method only returned non-stock combos. Reason we use descriptions is because that
-		 * contains all valid combos. Not technical ones like IceBulletLeftClick, etc.*/
+		/*
+		 * Previous method only returned non-stock combos. Reason we use
+		 * descriptions is because that contains all valid combos. Not technical
+		 * ones like IceBulletLeftClick, etc.
+		 */
 		for (String s : ComboManager.descriptions.keySet()) {
 			if (s.equalsIgnoreCase(string))
 				return true;
@@ -518,13 +521,9 @@ public class GeneralMethods {
 		File readFile = new File(".", "bendingPlayers.yml");
 		File writeFile = new File(".", "converted.yml");
 		if (readFile.exists()) {
-			try (
-					DataInputStream input = new DataInputStream(new FileInputStream(readFile)); 
-					BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+			try (DataInputStream input = new DataInputStream(new FileInputStream(readFile)); BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-					DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); 
-					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))
-				) {
+			DataOutputStream output = new DataOutputStream(new FileOutputStream(writeFile)); BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output))) {
 
 				String line;
 				while ((line = reader.readLine()) != null) {
@@ -727,26 +726,36 @@ public class GeneralMethods {
 		else
 			return null;
 	}
-	
-	
+
 	/**
 	 * Returns the subelement of the ability if applicable.
 	 * 
 	 * @param ability
 	 * @return SubElement
-	 * */
+	 */
 	public static SubElement getAbilitySubElement(String ability) {
-		if (AbilityModuleManager.bloodabilities.contains(ability)) return SubElement.Bloodbending;
-		if (AbilityModuleManager.iceabilities.contains(ability)) return SubElement.Icebending;
-		if (AbilityModuleManager.plantabilities.contains(ability)) return SubElement.Plantbending;
-		if (AbilityModuleManager.healingabilities.contains(ability)) return SubElement.Healing;
-		if (AbilityModuleManager.sandabilities.contains(ability)) return SubElement.Sandbending;
-		if (AbilityModuleManager.metalabilities.contains(ability)) return SubElement.Metalbending;
-		if (AbilityModuleManager.lavaabilities.contains(ability)) return SubElement.Lavabending;
-		if (AbilityModuleManager.lightningabilities.contains(ability)) return SubElement.Lightning;
-		if (AbilityModuleManager.combustionabilities.contains(ability)) return SubElement.Combustion;
-		if (AbilityModuleManager.spiritualprojectionabilities.contains(ability)) return SubElement.SpiritualProjection;
-		if (AbilityModuleManager.flightabilities.contains(ability)) return SubElement.Flight;
+		if (AbilityModuleManager.bloodabilities.contains(ability))
+			return SubElement.Bloodbending;
+		if (AbilityModuleManager.iceabilities.contains(ability))
+			return SubElement.Icebending;
+		if (AbilityModuleManager.plantabilities.contains(ability))
+			return SubElement.Plantbending;
+		if (AbilityModuleManager.healingabilities.contains(ability))
+			return SubElement.Healing;
+		if (AbilityModuleManager.sandabilities.contains(ability))
+			return SubElement.Sandbending;
+		if (AbilityModuleManager.metalabilities.contains(ability))
+			return SubElement.Metalbending;
+		if (AbilityModuleManager.lavaabilities.contains(ability))
+			return SubElement.Lavabending;
+		if (AbilityModuleManager.lightningabilities.contains(ability))
+			return SubElement.Lightning;
+		if (AbilityModuleManager.combustionabilities.contains(ability))
+			return SubElement.Combustion;
+		if (AbilityModuleManager.spiritualprojectionabilities.contains(ability))
+			return SubElement.SpiritualProjection;
+		if (AbilityModuleManager.flightabilities.contains(ability))
+			return SubElement.Flight;
 		return null;
 	}
 
@@ -937,74 +946,85 @@ public class GeneralMethods {
 		}
 		return circleblocks;
 	}
-	
-	/**Returns the ChatColor that should be associated with the combo name.
+
+	/**
+	 * Returns the ChatColor that should be associated with the combo name.
+	 * 
 	 * @param combo
-	 * @return The ChatColor to be used*/
+	 * @return The ChatColor to be used
+	 */
 	public static ChatColor getComboColor(String combo) {
 		for (ComboAbility comboability : ComboManager.comboAbilityList) {
 			if (!comboability.getName().equalsIgnoreCase(combo)) {
 				continue;
 			}
-			
+
 			if (!ComboManager.descriptions.containsKey(comboability.getName())) {
 				return ChatColor.STRIKETHROUGH; //This is so we know it shouldn't be used. Should not come up anyway.
 			}
-			
-			if (comboability.getComboType() instanceof ComboAbilityModule){
+
+			if (comboability.getComboType() instanceof ComboAbilityModule) {
 				ComboAbilityModule module = (ComboAbilityModule) comboability.getComboType();
 				if (module.getSubElement() != null) {
-					if (module.getSubElement() == SubElement.Bloodbending || module.getSubElement() == SubElement.Icebending || module.getSubElement() == SubElement.Plantbending || module.getSubElement() == SubElement.Healing) 
+					if (module.getSubElement() == SubElement.Bloodbending || module.getSubElement() == SubElement.Icebending || module.getSubElement() == SubElement.Plantbending || module.getSubElement() == SubElement.Healing)
 						return WaterMethods.getWaterSubColor();
 					else if (module.getSubElement() == SubElement.Lightning || module.getSubElement() == SubElement.Combustion)
 						return FireMethods.getFireSubColor();
-					else if (module.getSubElement() == SubElement.Sandbending || module.getSubElement() == SubElement.Metalbending || module.getSubElement() == SubElement.Lavabending) 
+					else if (module.getSubElement() == SubElement.Sandbending || module.getSubElement() == SubElement.Metalbending || module.getSubElement() == SubElement.Lavabending)
 						return EarthMethods.getEarthSubColor();
-					else if (module.getSubElement() == SubElement.Flight || module.getSubElement() == SubElement.SpiritualProjection) 
+					else if (module.getSubElement() == SubElement.Flight || module.getSubElement() == SubElement.SpiritualProjection)
 						return AirMethods.getAirSubColor();
 				}
-				if (module.getElement().equalsIgnoreCase(Element.Water.toString())) return WaterMethods.getWaterColor();
-				else if (module.getElement().equalsIgnoreCase(Element.Earth.toString())) return EarthMethods.getEarthColor();
-				else if (module.getElement().equalsIgnoreCase(Element.Fire.toString())) return FireMethods.getFireColor();
-				else if (module.getElement().equalsIgnoreCase(Element.Air.toString())) return AirMethods.getAirColor();
-				else if (module.getElement().equalsIgnoreCase(Element.Chi.toString())) return ChiMethods.getChiColor();
-				else return getAvatarColor();
-			}
-			else if (combo.equalsIgnoreCase("IceBullet") || combo.equalsIgnoreCase("IceWave")) {
+				if (module.getElement().equalsIgnoreCase(Element.Water.toString()))
+					return WaterMethods.getWaterColor();
+				else if (module.getElement().equalsIgnoreCase(Element.Earth.toString()))
+					return EarthMethods.getEarthColor();
+				else if (module.getElement().equalsIgnoreCase(Element.Fire.toString()))
+					return FireMethods.getFireColor();
+				else if (module.getElement().equalsIgnoreCase(Element.Air.toString()))
+					return AirMethods.getAirColor();
+				else if (module.getElement().equalsIgnoreCase(Element.Chi.toString()))
+					return ChiMethods.getChiColor();
+				else
+					return getAvatarColor();
+			} else if (combo.equalsIgnoreCase("IceBullet") || combo.equalsIgnoreCase("IceWave")) {
 				return WaterMethods.getWaterSubColor();
-			}
-			else if (comboability.getComboType().equals(WaterCombo.class)){
+			} else if (comboability.getComboType().equals(WaterCombo.class)) {
 				return WaterMethods.getWaterColor();
-			}
-			else if (comboability.getComboType().equals(FireCombo.class)){
+			} else if (comboability.getComboType().equals(FireCombo.class)) {
 				return FireMethods.getFireColor();
-			}
-			else if (comboability.getComboType().equals(AirCombo.class)){
+			} else if (comboability.getComboType().equals(AirCombo.class)) {
 				return AirMethods.getAirColor();
-			}
-			else {
+			} else {
 				Element element = null;
 				for (AbilityInformation abilityinfo : comboability.getAbilities()) {
 					Element currElement = getAbilityElement(abilityinfo.getAbilityName());
-					if (currElement == null) return getAvatarColor();
-					else if (element == null) element = currElement;
+					if (currElement == null)
+						return getAvatarColor();
+					else if (element == null)
+						element = currElement;
 					if (getAbilitySubElement(abilityinfo.getAbilityName()) != null) {
 						SubElement sub = getAbilitySubElement(abilityinfo.getAbilityName());
-						if (sub == SubElement.Bloodbending || sub == SubElement.Icebending || sub == SubElement.Plantbending || sub == SubElement.Healing) 
+						if (sub == SubElement.Bloodbending || sub == SubElement.Icebending || sub == SubElement.Plantbending || sub == SubElement.Healing)
 							return WaterMethods.getWaterSubColor();
 						else if (sub == SubElement.Lightning || sub == SubElement.Combustion)
 							return FireMethods.getFireSubColor();
-						else if (sub == SubElement.Sandbending || sub == SubElement.Metalbending || sub == SubElement.Lavabending) 
+						else if (sub == SubElement.Sandbending || sub == SubElement.Metalbending || sub == SubElement.Lavabending)
 							return EarthMethods.getEarthSubColor();
-						else if (sub == SubElement.Flight || sub == SubElement.SpiritualProjection) 
+						else if (sub == SubElement.Flight || sub == SubElement.SpiritualProjection)
 							return AirMethods.getAirSubColor();
 					}
 				}
-				if (element == Element.Air) return AirMethods.getAirColor();
-				if (element == Element.Earth) return EarthMethods.getEarthColor();
-				if (element == Element.Fire) return FireMethods.getFireColor();
-				if (element == Element.Water) return WaterMethods.getWaterColor();
-				if (element == Element.Chi) return ChiMethods.getChiColor();
+				if (element == Element.Air)
+					return AirMethods.getAirColor();
+				if (element == Element.Earth)
+					return EarthMethods.getEarthColor();
+				if (element == Element.Fire)
+					return FireMethods.getFireColor();
+				if (element == Element.Water)
+					return WaterMethods.getWaterColor();
+				if (element == Element.Chi)
+					return ChiMethods.getChiColor();
 				return getAvatarColor();
 			}
 		}
@@ -1585,37 +1605,11 @@ public class GeneralMethods {
 
 	/** Checks if an entity is Undead **/
 	public static boolean isUndead(Entity entity) {
-		return entity != null
-				&& (entity.getType() == EntityType.ZOMBIE
-				|| entity.getType() == EntityType.BLAZE
-				|| entity.getType() == EntityType.GIANT
-				|| entity.getType() == EntityType.IRON_GOLEM
-				|| entity.getType() == EntityType.MAGMA_CUBE
-				|| entity.getType() == EntityType.PIG_ZOMBIE
-				|| entity.getType() == EntityType.SKELETON
-				|| entity.getType() == EntityType.SLIME
-				|| entity.getType() == EntityType.SNOWMAN
-				|| entity.getType() == EntityType.ZOMBIE);
+		return entity != null && (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.BLAZE || entity.getType() == EntityType.GIANT || entity.getType() == EntityType.IRON_GOLEM || entity.getType() == EntityType.MAGMA_CUBE || entity.getType() == EntityType.PIG_ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SLIME || entity.getType() == EntityType.SNOWMAN || entity.getType() == EntityType.ZOMBIE);
 	}
 
 	public static boolean isWeapon(Material mat) {
-		return mat != null
-				&& (mat == Material.WOOD_AXE
-				|| mat == Material.WOOD_PICKAXE
-				|| mat == Material.WOOD_SPADE
-				|| mat == Material.WOOD_SWORD
-				|| mat == Material.STONE_AXE
-				|| mat == Material.STONE_PICKAXE
-				|| mat == Material.STONE_SPADE
-				|| mat == Material.STONE_SWORD
-				|| mat == Material.IRON_AXE
-				|| mat == Material.IRON_PICKAXE
-				|| mat == Material.IRON_SWORD
-				|| mat == Material.IRON_SPADE
-				|| mat == Material.DIAMOND_AXE
-				|| mat == Material.DIAMOND_PICKAXE
-				|| mat == Material.DIAMOND_SWORD
-				|| mat == Material.DIAMOND_SPADE);
+		return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE);
 	}
 
 	public static void playAvatarSound(Location loc) {
@@ -1741,13 +1735,13 @@ public class GeneralMethods {
 		}
 		if (!stockAbils.isEmpty()) {
 			Collections.sort(stockAbils);
-			for(String ability : stockAbils) {
+			for (String ability : stockAbils) {
 				writeToDebug(ability + " - STOCK");
 			}
 		}
 		if (!unofficialAbils.isEmpty()) {
 			Collections.sort(unofficialAbils);
-			for(String ability : unofficialAbils) {
+			for (String ability : unofficialAbils) {
 				writeToDebug(ability + " - UNOFFICAL");
 			}
 		}
@@ -2003,5 +1997,21 @@ public class GeneralMethods {
 			this.time = time;
 		}
 
+	}
+
+	public static ChatColor getElementColor(Element element) {
+		switch (element) {
+			case Air:
+				return AirMethods.getAirColor();
+			case Fire:
+				return FireMethods.getFireColor();
+			case Earth:
+				return EarthMethods.getEarthColor();
+			case Water:
+				return WaterMethods.getWaterColor();
+			case Chi:
+				return ChiMethods.getChiColor();
+		}
+		return null;
 	}
 }
