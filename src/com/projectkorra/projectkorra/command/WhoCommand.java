@@ -217,17 +217,20 @@ public class WhoCommand extends PKCommand {
 							String element = rs2.getString("element");
 
 							messages.add(playerName + " - ");
-							if (element.contains("a"))
-								messages.add(AirMethods.getAirColor() + "- Airbender");
-							if (element.contains("w"))
-								messages.add(WaterMethods.getWaterColor() + "- Waterbender");
-							if (element.contains("e"))
-								messages.add(EarthMethods.getEarthColor() + "- Earthbender");
-							if (element.contains("f"))
-								messages.add(FireMethods.getFireColor() + "- Firebender");
-							if (element.contains("c"))
-								messages.add(ChiMethods.getChiColor() + "- Chiblocker");
-
+							if (element == null) {
+								messages.add(" - Nonbender");
+							} else {
+								if (element.contains("a"))
+									messages.add(AirMethods.getAirColor() + "- Airbender");
+								if (element.contains("w"))
+									messages.add(WaterMethods.getWaterColor() + "- Waterbender");
+								if (element.contains("e"))
+									messages.add(EarthMethods.getEarthColor() + "- Earthbender");
+								if (element.contains("f"))
+									messages.add(FireMethods.getFireColor() + "- Firebender");
+								if (element.contains("c"))
+									messages.add(ChiMethods.getChiColor() + "- Chiblocker");
+							}
 							if (GeneralMethods.hasRPG()) {
 								if (RPGMethods.isCurrentAvatar(uuid)) {
 									messages.add(GeneralMethods.getAvatarColor() + "Current Avatar");

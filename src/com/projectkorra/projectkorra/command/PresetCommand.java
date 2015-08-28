@@ -78,9 +78,11 @@ public class PresetCommand extends PKCommand {
 				sender.sendMessage(ChatColor.RED + "You don't have a preset with that name.");
 				return;
 			}
-
-			Preset.bindPreset(player, name);
+			boolean boundAll = Preset.bindPreset(player, name);
 			sender.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
+			if (!boundAll) {
+				sender.sendMessage(ChatColor.RED + "Some abilities were not bound because you cannot bend the required element.");
+			}
 			return;
 		} else if (Arrays.asList(createaliases).contains(args.get(0)) && hasPermission(sender, "create")) { //bending preset create name
 			int limit = GeneralMethods.getMaxPresets(player);

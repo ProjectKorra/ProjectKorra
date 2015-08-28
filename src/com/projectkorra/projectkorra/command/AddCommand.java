@@ -78,6 +78,7 @@ public class AddCommand extends PKCommand {
 					sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is also an " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
 				}
 			}
+			GeneralMethods.saveElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, type, Result.ADD));
 			return;
 		} else {
