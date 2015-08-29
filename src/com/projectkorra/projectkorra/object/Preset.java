@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.storage.DBConnection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,6 +30,12 @@ public class Preset {
 	 * presets}, keyed to their UUID
 	 */
 	public static ConcurrentHashMap<UUID, List<Preset>> presets = new ConcurrentHashMap<UUID, List<Preset>>();
+	static String loadQuery = "SELECT * FROM pk_presets WHERE uuid = ?";
+	static String loadNameQuery = "SELECT * FROM pk_presets WHERE uuid = ? AND name = ?";
+	static String deleteQuery = "DELETE FROM pk_presets WHERE uuid = ? AND name = ?";
+	static String insertQuery = "INSERT INTO pk_presets (uuid, name) VALUES (?, ?)";
+	static String updateQuery1 = "UPDATE pk_presets SET slot";
+	static String updateQuery2 = " = ? WHERE uuid = ? AND name = ?";
 
 	UUID uuid;
 	HashMap<Integer, String> abilities;
@@ -74,21 +81,23 @@ public class Preset {
 				UUID uuid = player.getUniqueId();
 				if (uuid == null)
 					return;
-				ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_presets WHERE uuid = '" + uuid.toString() + "'");
 				try {
-					if (rs2.next()) { // Presets exist.
+					PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadQuery);
+					ps.setString(1, uuid.toString());
+					ResultSet rs = ps.executeQuery();
+					if (rs.next()) { // Presets exist.
 						int i = 0;
 						do {
 							HashMap<Integer, String> moves = new HashMap<Integer, String>();
 							for (int total = 1; total <= 9; total++) {
-								String slot = rs2.getString("slot" + total);
+								String slot = rs.getString("slot" + total);
 								if (slot != null)
 									moves.put(total, slot);
 							}
-							new Preset(uuid, rs2.getString("name"), moves);
+							new Preset(uuid, rs.getString("name"), moves);
 							i++;
 						}
-						while (rs2.next());
+						while (rs.next());
 						ProjectKorra.log.info("Loaded " + i + " presets for " + player.getName());
 					}
 				}
@@ -104,19 +113,33 @@ public class Preset {
 	 * 
 	 * @param player The Player the Preset should be bound for
 	 * @param name The name of the Preset that should be bound
+	 * @return True if all abilities were successfully bound, or false otherwise
 	 */
 	@SuppressWarnings("unchecked")
-	public static void bindPreset(Player player, String name) {
+	public static boolean bindPreset(Player player, String name) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer == null)
-			return;
+			return false;
 		if (!presets.containsKey(player.getUniqueId()))
-			return;
+			return false;
+		HashMap<Integer, String> abilities = null;
 		for (Preset preset : presets.get(player.getUniqueId())) {
 			if (preset.name.equalsIgnoreCase(name)) { // We found it
-				bPlayer.setAbilities((HashMap<Integer, String>) preset.abilities.clone());
+				abilities = (HashMap<Integer, String>) preset.abilities.clone();
 			}
 		}
+		if (abilities == null) {
+
+		}
+		boolean boundAll = true;
+		for (int i = 1; i <= 9; i++) {
+			if (!GeneralMethods.canBend(player.getName(), abilities.get(i))) {
+				abilities.remove(i);
+				boundAll = false;
+			}
+		}
+		bPlayer.setAbilities(abilities);
+		return boundAll;
 	}
 
 	/**
@@ -177,8 +200,16 @@ public class Preset {
 	 * Deletes the Preset from the database.
 	 */
 	public void delete() {
-		DBConnection.sql.modifyQuery("DELETE FROM pk_presets WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
-		presets.get(uuid).remove(this);
+		try {
+			PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(deleteQuery);
+			ps.setString(1, uuid.toString());
+			ps.setString(2, name);
+			ps.execute();
+			presets.get(uuid).remove(this);
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -194,26 +225,39 @@ public class Preset {
 	 * Saves the Preset to the database.
 	 */
 	public void save() {
-		if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
-			DBConnection.sql.modifyQuery("INSERT INTO pk_presets (uuid, name) VALUES ('" + uuid.toString() + "', '" + name + "') " + "ON DUPLICATE KEY UPDATE name=VALUES(name)");
-		} else {
-			//    		DBConnection.sql.modifyQuery("INSERT OR IGNORE INTO pk_presets (uuid, name) VALUES ('" + uuid.toString() + "', '" + name + "')");
-			//    		DBConnection.sql.modifyQuery("UPDATE pk_presets SET uuid = '" + uuid.toString() + "', name = '" + name + "'");
-			DBConnection.sql.modifyQuery("INSERT OR REPLACE INTO pk_presets (uuid, name) VALUES ('" + uuid.toString() + "', '" + name + "')");
-		}
-
-		/*
-		 * Now we know the preset exists in the SQL table, so we can manipulate
-		 * it normally.
-		 */
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				for (Integer i : abilities.keySet()) {
-					DBConnection.sql.modifyQuery("UPDATE pk_presets SET slot" + i + " = '" + abilities.get(i) + "' WHERE uuid = '" + uuid.toString() + "' AND name = '" + name + "'");
-				}
+		try {
+			PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadNameQuery);
+			ps.setString(1, uuid.toString());
+			ps.setString(2, name);
+			ResultSet rs = ps.executeQuery();
+			if (!rs.next()) { //if the preset doesn't exist in the DB, create it
+				ps = DBConnection.sql.getConnection().prepareStatement(insertQuery);
+				ps.setString(1, uuid.toString());
+				ps.setString(2, name);
+				ps.execute();
 			}
-		}.runTaskAsynchronously(ProjectKorra.plugin);
-	}
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		for (Integer i : abilities.keySet()) {
+			new BukkitRunnable() {
+				PreparedStatement ps;
 
+				@Override
+				public void run() {
+					try {
+						ps = DBConnection.sql.getConnection().prepareStatement(updateQuery1 + i + updateQuery2);
+						ps.setString(1, abilities.get(i));
+						ps.setString(2, uuid.toString());
+						ps.setString(3, name);
+						ps.execute();
+					}
+					catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}.runTaskAsynchronously(ProjectKorra.plugin);
+		}
+	}
 }
