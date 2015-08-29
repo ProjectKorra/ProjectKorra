@@ -214,3 +214,16 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+##########
+## test
+##########
+
+#everything but the plugin, spigot, and a pre-accepted eula
+test/server/crash-reports/
+test/server/logs/
+test/server/world*/
+test/server/*.json
+test/server/*.yml
+test/server/*.properties
+test/server/plugins/*/

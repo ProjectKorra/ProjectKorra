@@ -5,7 +5,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.airbending.AirCombo;
 import com.projectkorra.projectkorra.chiblocking.ChiCombo;
-import com.projectkorra.projectkorra.earthbending.EarthCombo;
 import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.waterbending.WaterCombo;
@@ -160,13 +159,6 @@ public class ComboManager {
 		comboAbilityList.add(new ComboAbility("Immobilize", immobilize, ChiCombo.class));
 		descriptions.put("Immobilize", "Immobilizes the opponent for several seconds.");
 		instructions.put("Immobilize", "QuickStrike (Left Click) > SwiftKick (Left Click) > QuickStrike (Left Click) > QuickStrike (Left Click)");
-
-		ArrayList<AbilityInformation> earthBurrow = new ArrayList<AbilityInformation>();
-		earthBurrow.add(new AbilityInformation("EarthTunnel", ClickType.LEFT_CLICK));
-		earthBurrow.add(new AbilityInformation("Collapse", ClickType.SHIFT_DOWN));
-		comboAbilityList.add(new ComboAbility("EarthBurrow", earthBurrow, EarthCombo.class));
-		descriptions.put("EarthBurrow", "Sink into the ground to avoid attacks and confuse foes.");
-		instructions.put("EarthBurrow", "EarthTunnel (Left Click) > Collapse (Shift)");
 		
 		startCleanupTask();
 	}
@@ -193,8 +185,6 @@ public class ComboManager {
 			new WaterCombo(player, comboAbil.getName());
 		else if (comboAbil.getComboType().equals(ChiCombo.class))
 			new ChiCombo(player, comboAbil.getName());
-		else if (comboAbil.getComboType().equals(EarthCombo.class))
-			new EarthCombo(player, comboAbil.getName());
 		else {
 			for (ComboAbility ca : comboAbilityList) {
 				if (comboAbil.getName().equals(ca.getName())) {
