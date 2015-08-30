@@ -240,7 +240,7 @@ public class Preset {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-		for (Integer i : abilities.keySet()) {
+		for (final Integer i : abilities.keySet()) {
 			new BukkitRunnable() {
 				PreparedStatement ps;
 

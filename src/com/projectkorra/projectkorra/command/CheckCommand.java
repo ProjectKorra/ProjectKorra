@@ -27,7 +27,7 @@ public class CheckCommand extends PKCommand {
 		if (ProjectKorra.plugin.updater.updateAvailable()) {
 			sender.sendMessage(ChatColor.GREEN + "There is a new version of " + ChatColor.GOLD + "ProjectKorra" + ChatColor.GREEN + " available!");
 			sender.sendMessage(ChatColor.YELLOW + "Current version: " + ChatColor.RED + ProjectKorra.plugin.updater.getCurrentVersion());
-			sender.sendMessage(ChatColor.YELLOW + "Latest version: " + ChatColor.GOLD + ProjectKorra.plugin.updater.getCurrentVersion());
+			sender.sendMessage(ChatColor.YELLOW + "Latest version: " + ChatColor.GOLD + ProjectKorra.plugin.updater.getUpdateVersion());
 		} else {
 			sender.sendMessage(ChatColor.YELLOW + "You have the latest version of " + ChatColor.GOLD + "ProjectKorra");
 		}

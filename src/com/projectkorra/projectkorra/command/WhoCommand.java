@@ -122,7 +122,7 @@ public class WhoCommand extends PKCommand {
 	 * @param sender The CommandSender to display the information to
 	 * @param playerName The Player to look up
 	 */
-	private void whoPlayer(CommandSender sender, String playerName) {
+	private void whoPlayer(final CommandSender sender, final String playerName) {
 		Player player = Bukkit.getPlayer(playerName);
 		if (player != null) {
 			sender.sendMessage(playerName + " - ");

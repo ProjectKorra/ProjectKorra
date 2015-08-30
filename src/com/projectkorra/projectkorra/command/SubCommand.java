@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Interface representation of a command executor.
  */
-public interface PKCommandInterface {
+public interface SubCommand {
 	/**
 	 * Gets the name of the command.
 	 * 

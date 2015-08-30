@@ -82,6 +82,7 @@ public class ImportCommand extends PKCommand {
 			bPlayers.add(bPlayer);
 		}
 
+		final CommandSender s = sender;
 		final int total = bPlayers.size();
 		sender.sendMessage(ChatColor.GREEN + "Import of data started. Do NOT stop / reload your server.");
 		if (debugEnabled) {
@@ -91,13 +92,13 @@ public class ImportCommand extends PKCommand {
 			public void run() {
 				int i = 0;
 				if (i >= 10) {
-					sender.sendMessage(ChatColor.GREEN + "10 / " + total + " players converted thus far!");
+					s.sendMessage(ChatColor.GREEN + "10 / " + total + " players converted thus far!");
 					return;
 				}
 
 				while (i < 10) {
 					if (bPlayers.isEmpty()) {
-						sender.sendMessage(ChatColor.GREEN + "All data has been queued up, please allow up to 5 minutes for the data to complete, then reboot your server.");
+						s.sendMessage(ChatColor.GREEN + "All data has been queued up, please allow up to 5 minutes for the data to complete, then reboot your server.");
 						Bukkit.getServer().getScheduler().cancelTask(importTask.getTaskId());
 						ProjectKorra.plugin.getConfig().set("Properties.ImportEnabled", false);
 						ProjectKorra.plugin.saveConfig();
