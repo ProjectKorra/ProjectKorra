@@ -6,17 +6,16 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Abstract representation of a command executor. Implements
- * {@link PKCommandInterface}.
+ * {@link SubCommand}.
  * 
  * @author kingbirdy
  *
  */
-public abstract class PKCommand implements PKCommandInterface {
+public abstract class PKCommand implements SubCommand {
 	/**
 	 * The full name of the command.
 	 */
@@ -65,8 +64,9 @@ public abstract class PKCommand implements PKCommandInterface {
 
 	public void help(CommandSender sender, boolean description) {
 		sender.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.DARK_AQUA + properUse);
-		if (description)
+		if (description) {
 			sender.sendMessage(ChatColor.YELLOW + this.description);
+		}
 	}
 
 	/**
@@ -78,9 +78,9 @@ public abstract class PKCommand implements PKCommandInterface {
 	 * @return True if they have permission, false otherwise
 	 */
 	protected boolean hasPermission(CommandSender sender) {
-		if (sender.hasPermission("bending.command." + name))
+		if (sender.hasPermission("bending.command." + name)) {
 			return true;
-		else {
+		} else {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 			return false;
 		}
@@ -96,9 +96,9 @@ public abstract class PKCommand implements PKCommandInterface {
 	 * @return True if they have permission, false otherwise
 	 */
 	protected boolean hasPermission(CommandSender sender, String extra) {
-		if (sender.hasPermission("bending.command." + name + "." + extra))
+		if (sender.hasPermission("bending.command." + name + "." + extra)) {
 			return true;
-		else {
+		} else {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 			return false;
 		}
@@ -118,8 +118,9 @@ public abstract class PKCommand implements PKCommandInterface {
 		if (size < min || size > max) {
 			help(sender, false);
 			return false;
-		} else
+		} else {
 			return true;
+		}
 	}
 
 	/**
@@ -130,9 +131,9 @@ public abstract class PKCommand implements PKCommandInterface {
 	 * @return True if sender instanceof Player, false otherwise
 	 */
 	protected boolean isPlayer(CommandSender sender) {
-		if (sender instanceof Player)
+		if (sender instanceof Player) {
 			return true;
-		else {
+		} else {
 			sender.sendMessage(ChatColor.RED + "You must be a player to use that command.");
 			return false;
 		}
