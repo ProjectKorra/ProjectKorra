@@ -55,7 +55,6 @@ import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireMethods;
 import com.projectkorra.projectkorra.firebending.FireShield;
-import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -448,7 +447,7 @@ public class GeneralMethods {
 				for (int i = 1; i <= 9; i++) {
 					String slot = rs2.getString("slot" + i);
 
-					if (slot != null) {
+					if (slot != null && !slot.equalsIgnoreCase("null")) {
 						abilities.put(i, slot);
 					}
 				}
@@ -1642,7 +1641,6 @@ public class GeneralMethods {
 		}
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			Preset.loadPresets(player);
 		}
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");

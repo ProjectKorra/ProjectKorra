@@ -11,7 +11,6 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.FirebendingManager;
-import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.MetricsLite;
 import com.projectkorra.projectkorra.util.RevertChecker;
@@ -82,7 +81,6 @@ public class ProjectKorra extends JavaPlugin {
 
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			Preset.loadPresets(player);
 		}
 
 		try {
