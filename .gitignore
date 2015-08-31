@@ -20,7 +20,8 @@ local.properties
 .externalToolBuilders/
 
 # Locally stored "Eclipse launch configurations"
-*.launch
+# We want this so we can have synchronized testing environment
+#*.launch
 
 # CDT-specific
 .cproject
