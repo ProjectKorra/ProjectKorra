@@ -11,10 +11,8 @@ public class ConfigManager {
 
 	public static Config deathMsgConfig;
 	public static Config defaultConfig;
-	static ProjectKorra plugin;
 
-	public ConfigManager(ProjectKorra plugin) {
-		ConfigManager.plugin = plugin;
+	public ConfigManager() {
 		deathMsgConfig = new Config(new File("deathmessages.yml"));
 		defaultConfig = new Config(new File("config.yml"));
 		configCheck(ConfigType.DEFAULT);

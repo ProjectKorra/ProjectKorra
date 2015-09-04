@@ -49,7 +49,7 @@ public class ProjectKorra extends JavaPlugin {
 		catch (SecurityException | IOException e) {
 			e.printStackTrace();
 		}
-		new ConfigManager(this);
+		new ConfigManager();
 		new GeneralMethods(this);
 		updater = new Updater(this, "http://projectkorra.com/forum/forums/dev-builds.16/index.rss");
 		new Commands(this);
