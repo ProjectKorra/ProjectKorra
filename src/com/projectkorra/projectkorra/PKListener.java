@@ -1528,7 +1528,7 @@ public class PKListener implements Listener {
 				return;
 			}
 			Player player = (Player) entity;
-			if (EarthMethods.isEarthbendable(player, entity.getLocation().clone().add(0, -1, 0).getBlock())) {
+			if (EarthMethods.isEarthbendable(player, entity.getLocation().clone().subtract(0, 1, 0).getBlock())) {
 
 			}
 			if (entity.getLastDamageCause().getCause() == DamageCause.FALL) {
