@@ -896,16 +896,6 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (Suffocate.isBreathbent(player)) {
-			Location loc = event.getFrom();
-			Location toLoc = player.getLocation();
-
-			if (loc.getX() != toLoc.getX() || loc.getY() != toLoc.getY() || loc.getZ() != toLoc.getZ()) {
-				event.setCancelled(true);
-				return;
-			}
-		}
-
 		if (WaterSpout.instances.containsKey(event.getPlayer()) || AirSpout.getPlayers().contains(event.getPlayer()) || SandSpout.getPlayers().contains(event.getPlayer())) {
 			Vector vel = new Vector();
 			vel.setX(event.getTo().getX() - event.getFrom().getX());
