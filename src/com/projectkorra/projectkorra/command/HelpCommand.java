@@ -41,9 +41,10 @@ public class HelpCommand extends PKCommand {
 		} else if (Arrays.asList(Commands.comboaliases).contains(arg)) { //bending help elementcombo
 			sender.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.RED + "/bending display " + arg + ChatColor.GOLD + " or " + ChatColor.RED + "/bending help <comboname>");
 		} else if (GeneralMethods.abilityExists(arg)) { //bending help ability
-			ChatColor color = GeneralMethods.getAbilityColor(arg);
-			sender.sendMessage(color + arg + " - ");
-			sender.sendMessage(AbilityModuleManager.descriptions.get(GeneralMethods.getAbility(arg)));
+			String ability = GeneralMethods.getAbility(arg);
+			ChatColor color = GeneralMethods.getAbilityColor(ability);
+			sender.sendMessage(color + ability + " - ");
+			sender.sendMessage(color + AbilityModuleManager.descriptions.get(GeneralMethods.getAbility(ability)));
 		} else if (Arrays.asList(Commands.airaliases).contains(args.get(0))) {
 			sender.sendMessage(AirMethods.getAirColor() + "Air is the element of freedom. Airbenders are natural pacifists and " + "great explorers. There is nothing stopping them from scaling the tallest of mountains and walls easily. They specialize in redirection, " + "from blasting things away with gusts of winds, to forming a shield around them to prevent damage. Easy to get across flat terrains, " + "such as oceans, there is practically no terrain off limits to Airbenders. They lack much raw damage output, but make up for it with " + "with their ridiculous amounts of utility and speed.");
 			sender.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qffg9m3");

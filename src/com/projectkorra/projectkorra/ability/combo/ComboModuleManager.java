@@ -26,7 +26,7 @@ public class ComboModuleManager {
 	private void loadComboModules() {
 		for (ComboAbilityModule cm : combo) {
 			cm.onThisLoad();
-			ComboManager.comboAbilityList.add(new ComboManager.ComboAbility(cm.getName(), cm.getCombination(), cm));
+			ComboManager.comboAbilityList.put(cm.getName(), new ComboManager.ComboAbility(cm.getName(), cm.getCombination(), cm));
 			ComboManager.descriptions.put(cm.getName(), cm.getDescription());
 			ComboManager.instructions.put(cm.getName(), cm.getInstructions());
 			ComboManager.authors.put(cm.getName(), cm.getAuthor());
