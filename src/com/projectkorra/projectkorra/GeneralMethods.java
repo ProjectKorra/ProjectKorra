@@ -953,7 +953,8 @@ public class GeneralMethods {
 	 * @return The ChatColor to be used
 	 */
 	public static ChatColor getComboColor(String combo) {
-		for (ComboAbility comboability : ComboManager.comboAbilityList) {
+		for (String ability : ComboManager.comboAbilityList.keySet()) {
+			ComboAbility comboability = ComboManager.comboAbilityList.get(ability);
 			if (!comboability.getName().equalsIgnoreCase(combo)) {
 				continue;
 			}
@@ -1889,11 +1890,12 @@ public class GeneralMethods {
 			ab.stop();
 		}
 
-		HashSet<ComboManager.ComboAbility> combos = ComboManager.comboAbilityList;
-		for (ComboManager.ComboAbility c : combos)
+		HashMap<String, ComboManager.ComboAbility> combos = ComboManager.comboAbilityList;
+		for (String combo : combos.keySet()) {
+			ComboManager.ComboAbility c = combos.get(combo);
 			if (c.getComboType() instanceof ComboAbilityModule)
 				((ComboAbilityModule) c.getComboType()).stop();
-
+		}
 		AirMethods.stopBending();
 		EarthMethods.stopBending();
 		WaterMethods.stopBending();
