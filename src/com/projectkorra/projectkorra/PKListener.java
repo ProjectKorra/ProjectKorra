@@ -1439,5 +1439,17 @@ public class PKListener implements Listener {
 		////			}
 		//		}
 	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onFallDamage(EntityDamageEvent event) {
+		Entity entity = event.getEntity();
+		if (Catapult.instances.containsKey(entity)) {
+			if (entity.getLastDamageCause().getCause() == DamageCause.FALL) {
+				event.setCancelled(true);
+				return;
+			}
+			return;
+		}
+	}
 
 }

@@ -1,24 +1,23 @@
 package com.projectkorra.projectkorra.ability.combo;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.airbending.AirCombo;
-import com.projectkorra.projectkorra.chiblocking.ChiCombo;
-import com.projectkorra.projectkorra.earthbending.EarthCombo;
-import com.projectkorra.projectkorra.firebending.FireCombo;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.waterbending.WaterCombo;
-
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.airbending.AirCombo;
+import com.projectkorra.projectkorra.chiblocking.ChiCombo;
+import com.projectkorra.projectkorra.firebending.FireCombo;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.waterbending.WaterCombo;
 
 public class ComboManager {
 	private static final long CLEANUP_DELAY = 20 * 60 * 60;
@@ -164,7 +163,6 @@ public class ComboManager {
 		ArrayList<AbilityInformation> earthBurrow = new ArrayList<AbilityInformation>();
 		earthBurrow.add(new AbilityInformation("EarthTunnel", ClickType.LEFT_CLICK));
 		earthBurrow.add(new AbilityInformation("Collapse", ClickType.SHIFT_DOWN));
-		comboAbilityList.add(new ComboAbility("EarthBurrow", earthBurrow, EarthCombo.class));
 		descriptions.put("EarthBurrow", "Sink into the ground to avoid attacks and confuse foes.");
 		instructions.put("EarthBurrow", "EarthTunnel (Left Click) > Collapse (Shift)");
 		
@@ -193,8 +191,6 @@ public class ComboManager {
 			new WaterCombo(player, comboAbil.getName());
 		else if (comboAbil.getComboType().equals(ChiCombo.class))
 			new ChiCombo(player, comboAbil.getName());
-		else if (comboAbil.getComboType().equals(EarthCombo.class))
-			new EarthCombo(player, comboAbil.getName());
 		else {
 			for (ComboAbility ca : comboAbilityList) {
 				if (comboAbil.getName().equals(ca.getName())) {
