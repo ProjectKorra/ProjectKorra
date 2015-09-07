@@ -11,6 +11,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EarthPassive {
 
 	public static ConcurrentHashMap<Block, Long> sandblocks = new ConcurrentHashMap<Block, Long>();
-	public static ConcurrentHashMap<Block, Material> sandidentities = new ConcurrentHashMap<Block, Material>();
+	public static ConcurrentHashMap<Block, MaterialData> sandidentities = new ConcurrentHashMap<Block, MaterialData>();
 
 	private static final long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Passive.Duration");
 	private static int sandspeed = ProjectKorra.plugin.getConfig().getInt("Properties.Earth.Passive.SandRunPower");
@@ -32,9 +33,9 @@ public class EarthPassive {
 		}
 		if (EarthMethods.isEarthbendable(player, block) || EarthMethods.isTransparentToEarthbending(player, block)) {
 			if (!EarthMethods.isTransparentToEarthbending(player, block)) {
-				Material type = block.getType();
+				MaterialData type = block.getState().getData();
 				if (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
-					if (type == Material.RED_SANDSTONE) {
+					if (type.getItemType() == Material.RED_SANDSTONE) {
 						byte data = (byte) 0x1;
 						block.setType(Material.SAND);
 						block.setData(data);
@@ -51,8 +52,8 @@ public class EarthPassive {
 			for (Block affectedBlock : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
 				if (EarthMethods.isEarthbendable(player, affectedBlock)) {
 					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
-						Material type = affectedBlock.getType();
-						if (type == Material.RED_SANDSTONE) {
+						MaterialData type = affectedBlock.getState().getData();
+						if (type.getItemType() == Material.RED_SANDSTONE) {
 							byte data = (byte) 0x1;
 							affectedBlock.setType(Material.SAND);
 							affectedBlock.setData(data);
@@ -80,15 +81,12 @@ public class EarthPassive {
 	}
 
 	public static void revertSand(Block block) {
-		Material type = sandidentities.get(block);
+		MaterialData materialdata = sandidentities.get(block);
 		sandidentities.remove(block);
 		sandblocks.remove(block);
 		if (block.getType() == Material.SAND) {
-			if (block.getData() == (byte) 0x1) {
-				block.setType(type);
-			} else {
-				block.setType(type);
-			}
+			block.setType(materialdata.getItemType());
+			block.setData(materialdata.getData());
 		}
 	}
 
