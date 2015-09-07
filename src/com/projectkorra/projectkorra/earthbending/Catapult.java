@@ -152,7 +152,7 @@ public class Catapult {
 		
 	}
 
-	private void remove() {
+	public void remove() {
 		instances.remove(player.getEntityId());
 	}
 

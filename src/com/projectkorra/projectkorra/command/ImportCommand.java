@@ -37,7 +37,7 @@ public class ImportCommand extends PKCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, List<String> args) {
+	public void execute(final CommandSender sender, List<String> args) {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 0)) {
 			return;
 		} else if (!GeneralMethods.isImportEnabled()) {
