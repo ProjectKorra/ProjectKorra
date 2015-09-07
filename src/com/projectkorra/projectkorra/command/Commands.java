@@ -102,7 +102,7 @@ public class Commands {
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
 				for (int i = 0; i < args.length; i++) {
-					args[i] = args[i].toLowerCase();
+					args[i] = args[i];
 				}
 
 				if (args.length == 0) {
