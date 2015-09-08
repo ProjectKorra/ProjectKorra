@@ -64,7 +64,7 @@ public class ChooseCommand extends PKCommand {
 				return;
 			}
 			Player target = ProjectKorra.plugin.getServer().getPlayer(args.get(1));
-			if (!target.isOnline()) {
+			if (target == null || !target.isOnline()) {
 				sender.sendMessage(ChatColor.RED + "That player is not online.");
 				return;
 			}
@@ -103,7 +103,7 @@ public class ChooseCommand extends PKCommand {
 				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now an " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
 			}
 		}
-		GeneralMethods.removeUnusableAbilities(sender.getName());
+		GeneralMethods.removeUnusableAbilities(target.getName());
 		GeneralMethods.saveElements(bPlayer);
 		Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.CHOOSE));
 	}
