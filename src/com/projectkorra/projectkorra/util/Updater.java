@@ -95,7 +95,7 @@ public class Updater {
 			NodeList children = latestFile.getChildNodes();
 			
 			String version = children.item(1).getTextContent();
-			return version;
+			return version.toUpperCase();
 		}
 		return null;
 	}
