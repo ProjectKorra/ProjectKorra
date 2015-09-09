@@ -354,15 +354,9 @@ public class AbilityModuleManager {
 				descriptions.put(ab.getName(), ab.getDescription());
 				authors.put(ab.getName(), ab.getAuthor());
 			}
-			catch (AbstractMethodError /* pre 1.6 BETA 8 */ | NoSuchMethodError /*
-																				 * pre
-																				 * 1
-																				 * .
-																				 * 7
-																				 * BETA
-																				 * 2
-																				 */ e) { //If triggered means ability was made before commented versions
-				ProjectKorra.log.warning("The ability " + ab.getName() + " is either broken or outdated. Please remove it!");
+			catch (Exception e) { //If triggered means ability was made before specific version .
+				ProjectKorra.log.warning("The ability " + ab.getName() + " was not able to load, if this message shows again please remove it!");
+				//ProjectKorra.log.warning("The ability " + ab.getName() + " is either broken or outdated. Please remove it!");
 				e.printStackTrace();
 				ab.stop();
 				abilities.remove(ab.getName());
