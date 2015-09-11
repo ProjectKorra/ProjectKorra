@@ -1,7 +1,5 @@
 package com.projectkorra.projectkorra.configuration;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
@@ -166,6 +164,8 @@ public class ConfigManager {
 				config.addDefault("Properties.Fire.DayMessage", "You feel the strength of the rising sun empowering your firebending.");
 				config.addDefault("Properties.Fire.SolarEclipseMessage", "A solar eclipse is out! Firebenders are temporarily powerless.");
 				config.addDefault("Properties.Fire.CometMessage", "Sozin's Comet is passing overhead! Firebending is now at its most powerful.");
+				config.addDefault("Properties.Fire.FireGriefing", false);
+				config.addDefault("Properties.Fire.RevertTicks", 12000L);
 
 				config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 

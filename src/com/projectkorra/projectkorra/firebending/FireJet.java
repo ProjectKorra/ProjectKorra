@@ -43,7 +43,10 @@ public class FireJet extends CoreAbility {
 		Block block = player.getLocation().getBlock();
 		if (FireStream.isIgnitable(player, block) || block.getType() == Material.AIR || AvatarState.isAvatarState(player)) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(factor));
-			block.setType(Material.FIRE);
+			if (FireMethods.canFireGrief()) {
+				FireMethods.createTempFire(block.getLocation());
+			}
+			else block.setType(Material.FIRE);
 			this.player = player;
 			// canfly = player.getAllowFlight();
 			new Flight(player);

@@ -30,6 +30,7 @@ public class FirebendingManager implements Runnable {
 				FireStream.ignitedblocks.remove(block);
 			}
 		}
+		FireMethods.removeFire();
 		HeatControl.progressAll(HeatControl.class);
 		FireStream.dissipateAll();
 		FireStream.progressAll(FireStream.class);

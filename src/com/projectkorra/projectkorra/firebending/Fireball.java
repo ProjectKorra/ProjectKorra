@@ -257,6 +257,9 @@ public class Fireball extends AddonAbility {
 	private void ignite(Location location) {
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, FireBlast.AFFECTING_RADIUS)) {
 			if (FireStream.isIgnitable(player, block)) {
+				if (block.getType() != Material.FIRE) {
+					FireStream.replacedBlocks.put(block.getLocation(), block.getState().getData());
+				}
 				block.setType(Material.FIRE);
 				if (FireBlast.dissipate) {
 					FireStream.ignitedblocks.put(block, player);
