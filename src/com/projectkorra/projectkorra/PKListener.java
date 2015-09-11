@@ -254,6 +254,8 @@ public class PKListener implements Listener {
 			EarthMethods.removeRevertIndex(block);
 		} else if (TempBlock.isTempBlock(block)) {
 			TempBlock.revertBlock(block, Material.AIR);
+		} else if (FireMethods.tempFire.keySet().contains(block.getLocation())) {
+			FireMethods.revertTempFire(block.getLocation());
 		}
 	}
 

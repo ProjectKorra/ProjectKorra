@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
@@ -20,6 +21,7 @@ public class FireStream extends AddonAbility {
 
 	public static ConcurrentHashMap<Block, Player> ignitedblocks = new ConcurrentHashMap<Block, Player>();
 	public static ConcurrentHashMap<Block, Long> ignitedtimes = new ConcurrentHashMap<Block, Long>();
+	public static ConcurrentHashMap<Location, MaterialData> replacedBlocks = new ConcurrentHashMap<Location, MaterialData>();
 	public static ConcurrentHashMap<LivingEntity, Player> ignitedentities = new ConcurrentHashMap<LivingEntity, Player>();
 
 	@SuppressWarnings("unused")
@@ -94,12 +96,18 @@ public class FireStream extends AddonAbility {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void remove(Block block) {
 		if (ignitedblocks.containsKey(block)) {
 			ignitedblocks.remove(block);
 		}
 		if (ignitedtimes.containsKey(block)) {
 			ignitedtimes.remove(block);
+		}
+		if (replacedBlocks.containsKey(block.getLocation())) {
+			block.setType(replacedBlocks.get(block.getLocation()).getItemType());
+			block.setData(replacedBlocks.get(block.getLocation()).getData());
+			replacedBlocks.remove(block.getLocation());
 		}
 	}
 
@@ -133,11 +141,15 @@ public class FireStream extends AddonAbility {
 	}
 
 	private void ignite(Block block) {
-		if (WaterMethods.isPlant(block)) {
-			new Plantbending(block);
+		if (block.getType() != Material.AIR) {
+			if (FireMethods.canFireGrief()) {
+				if (WaterMethods.isPlant(block)) new Plantbending(block);
+			} else if (block.getType() != Material.FIRE){
+				replacedBlocks.put(block.getLocation(), block.getState().getData());
+			}
 		}
-
 		block.setType(Material.FIRE);
+
 		ignitedblocks.put(block, this.player);
 		ignitedtimes.put(block, System.currentTimeMillis());
 	}

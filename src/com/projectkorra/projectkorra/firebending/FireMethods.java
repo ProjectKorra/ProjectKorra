@@ -4,25 +4,32 @@ import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
+import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FireMethods {
 
 	static ProjectKorra plugin;
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	
+	public static ConcurrentHashMap<Location, Information> tempFire = new ConcurrentHashMap<Location, Information>();
 
 	public FireMethods(ProjectKorra plugin) {
 		FireMethods.plugin = plugin;
@@ -38,6 +45,33 @@ public class FireMethods {
 		if (player.hasPermission("bending.fire.lightningbending"))
 			return true;
 		return false;
+	}
+	
+	/**Returns if fire is allowed to completely replace blocks or if it should place a temp fire block.*/
+	public static boolean canFireGrief() {
+		return config.getBoolean("Properties.Fire.FireGriefing");
+	}
+	
+	/**Creates a fire block meant to replace other blocks but reverts when the fire dissipates or is destroyed.*/
+	public static void createTempFire(Location loc) {
+		if (loc.getBlock().getType() == Material.AIR) {
+			loc.getBlock().setType(Material.FIRE);
+			return;
+		}
+		Information info = new Information();
+		long time = config.getLong("Properties.Fire.RevertTicks") + (long)(GeneralMethods.rand.nextDouble() * config.getLong("Properties.Fire.RevertTicks")); //Generate a long between the config time and config time x 2. Just so it appears random
+		System.out.println(time);
+		if (tempFire.containsKey(loc)) {
+			info = tempFire.get(loc);
+		}
+		else {
+			info.setBlock(loc.getBlock());
+			info.setLocation(loc);
+			info.setState(loc.getBlock().getState());
+		}
+		info.setTime(time + System.currentTimeMillis());
+		loc.getBlock().setType(Material.FIRE);
+		tempFire.put(loc, info);
 	}
 
 	/**
@@ -146,6 +180,42 @@ public class FireMethods {
 		list.add("FireShield");
 		return GeneralMethods.blockAbilities(null, list, loc, 0);
 	}
+	
+	/**Removes all temp fire that no longer needs to be there*/
+	public static void removeFire() {
+		Iterator<Location> it = tempFire.keySet().iterator();
+		while(it.hasNext()) {
+			Location loc = it.next();
+			Information info = tempFire.get(loc);
+			if (info.getLocation().getBlock().getType() != Material.FIRE && info.getLocation().getBlock().getType() != Material.AIR) {
+				revertTempFire(loc);
+			}
+			else if (info.getBlock().getType() == Material.AIR || System.currentTimeMillis() > info.getTime()) {
+				revertTempFire(loc);
+			}
+		}
+	}
+	
+	/**
+	 * Revert the temp fire at the location if any is there.
+	 * 
+	 * @param location The Location
+	 * */
+	@SuppressWarnings("deprecation")
+	public static void revertTempFire(Location location) {
+		if (!tempFire.containsKey(location)) return;
+		Information info = tempFire.get(location);
+		if (info.getLocation().getBlock().getType() != Material.FIRE && info.getLocation().getBlock().getType() != Material.AIR) {
+			if (info.getState().getType() == Material.RED_ROSE || info.getState().getType() == Material.YELLOW_FLOWER) {
+				info.getState().getBlock().getWorld().dropItemNaturally(info.getLocation(), new ItemStack(info.getState().getData().getItemType(), 1, info.getState().getRawData()));
+			}
+		}
+		else {
+			info.getBlock().setType(info.getState().getType());
+			info.getBlock().setData(info.getState().getRawData());
+		}
+		tempFire.remove(location);
+	}
 
 	public static void stopBending() {
 		FireStream.removeAll(FireStream.class);
@@ -159,5 +229,8 @@ public class FireMethods {
 		Cook.removeAll(Cook.class);
 		Illumination.removeAll(Illumination.class);
 		FireCombo.removeAll();
+		for (Location loc : tempFire.keySet()){
+			revertTempFire(loc);
+		}
 	}
 }
