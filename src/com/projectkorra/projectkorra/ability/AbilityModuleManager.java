@@ -354,7 +354,7 @@ public class AbilityModuleManager {
 				descriptions.put(ab.getName(), ab.getDescription());
 				authors.put(ab.getName(), ab.getAuthor());
 			}
-			catch (Exception e) { //If triggered means ability was made before specific version .
+			catch (Exception | Error e) { //If triggered means ability was made before specific version .
 				ProjectKorra.log.warning("The ability " + ab.getName() + " was not able to load, if this message shows again please remove it!");
 				//ProjectKorra.log.warning("The ability " + ab.getName() + " is either broken or outdated. Please remove it!");
 				e.printStackTrace();
