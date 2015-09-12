@@ -38,8 +38,9 @@ public class FireJet extends CoreAbility {
 			return;
 		/* End Initial Checks */
 		reloadVariables();
-
+		
 		factor = FireMethods.getFirebendingDayAugment(defaultfactor, player.getWorld());
+		GeneralMethods.invincible.add(this);
 		Block block = player.getLocation().getBlock();
 		if (FireStream.isIgnitable(player, block) || block.getType() == Material.AIR || AvatarState.isAvatarState(player)) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(factor));
@@ -52,6 +53,7 @@ public class FireJet extends CoreAbility {
 			// timers.put(player, time);
 			//instances.put(player, this);
 			putInstance(player, this);
+			GeneralMethods.invincible.add(this);
 			bPlayer.addCooldown("FireJet", config.get().getLong("Abilities.Fire.FireJet.Cooldown"));
 		}
 

@@ -1511,21 +1511,18 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onLand(EntityDamageEvent event) {
-		DamageCause cause = event.getCause();
-		if (!(event.getEntity() instanceof Player)) {
-			return;
+	public void onFall(EntityDamageEvent event) {
+		if (event.getEntity() instanceof Player) {
+			Player player = (Player) event.getEntity();
+			if (event.getCause() == DamageCause.FALL) {
+				if (CoreAbility.getInstances(FireJet.class).containsKey(player.getEntityId())) {
+					event.setDamage(0);
+				}
+				else if (CoreAbility.getInstances(Catapult.class).containsKey(player.getEntityId())) {
+					event.setDamage(0);
+				}
+			}
 		}
-		
-		Player player = (Player) event.getEntity();
-		if (cause == DamageCause.FALL && Catapult.instances.containsKey(player.getEntityId())
-				&& EarthMethods.isEarthbendable(player, player.getLocation().clone().subtract(0, 1, 0).getBlock())) {
-			
-			Catapult.instances.remove(player.getEntityId());
-			event.setCancelled(true);
-			return;
-		}
-		return;
 	}
 
 }
