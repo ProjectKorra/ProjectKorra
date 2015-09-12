@@ -3,8 +3,9 @@
     <property name="dir.build"   value="build"/>
     <property name="dir.classes" value="${dir.build}/classes"/>
     <property name="dir.jar"     value="${dir.build}/jar"/>
+	<property name="dir.lib"     value="lib"/>
 
-    <property name="main-class"  value="cc.engeld.HelloWorld"/>
+    <property name="main-class"  value="com.projectkorra.projectkorra.ProjectKorra"/>
 
     <target name="clean">
         <delete dir="${dir.build}"/>
@@ -12,7 +13,13 @@
 
     <target name="compile">
         <mkdir dir="${dir.classes}"/>
-        <javac srcdir="${dir.src}" destdir="${dir.classes}"/>
+        <javac srcdir="${dir.src}" destdir="${dir.classes}">
+    		<classpath>
+    			<fileset dir="${dir.lib}">
+    				<include name="*.jar"/>
+    			</fileset>
+    		</classpath>
+        </javac>
     </target>
 
     <target name="jar" depends="compile">
