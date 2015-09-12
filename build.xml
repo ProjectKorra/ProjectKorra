@@ -1,0 +1,33 @@
+<project name="ProjectKorra" basedir="." default="main">
+    <property name="dir.src"     value="src"/>
+    <property name="dir.build"   value="build"/>
+    <property name="dir.classes" value="${dir.build}/classes"/>
+    <property name="dir.jar"     value="${dir.build}/jar"/>
+
+    <property name="main-class"  value="cc.engeld.HelloWorld"/>
+
+    <target name="clean">
+        <delete dir="${dir.build}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${dir.classes}"/>
+        <javac srcdir="${dir.src}" destdir="${dir.classes}"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${dir.jar}"/>
+        <jar destfile="${dir.jar}/${ant.project.name}.jar" basedir="${dir.classes}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="${dir.jar}/${ant.project.name}.jar" fork="true"/>
+    </target>
+
+    <target name="clean-build" depends="clean,jar"/>
+    <target name="main" depends="clean,run"/>
+</project>
