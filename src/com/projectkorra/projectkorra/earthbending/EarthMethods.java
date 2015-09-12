@@ -636,7 +636,7 @@ public class EarthMethods {
 	}
 
 	public static void stopBending() {
-		Catapult.removeAll();
+		Catapult.removeAll(Catapult.class);
 		CompactColumn.removeAll();
 		EarthBlast.removeAll();
 		EarthColumn.removeAll();
