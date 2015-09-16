@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MetalClips {
 	public static ConcurrentHashMap<Player, MetalClips> instances = new ConcurrentHashMap<Player, MetalClips>();
+	public static ConcurrentHashMap<Entity, Integer> clipped = new ConcurrentHashMap<Entity, Integer>();
 	public static int armorTime = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.Duration");
 	public static int crushInterval = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.DamageInterval");;
 	public static int cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.Cooldown");
@@ -34,8 +35,8 @@ public class MetalClips {
 		Material.IRON_SWORD, Material.IRON_HOE, Material.IRON_SPADE, Material.IRON_DOOR 
 	};
 
-	private Player player;
-	private LivingEntity target;
+	private static Player player;
+	private static LivingEntity targetent;
 	private boolean isBeingWorn = false;
 	private boolean isControlling = false;
 	private boolean canThrow = false;
@@ -46,14 +47,14 @@ public class MetalClips {
 	private long time;
 	private double lastDistanceCheck;
 
-	private ItemStack[] oldarmor;
+	private static ItemStack[] oldarmor;
 	private List<Item> trackedIngots = new ArrayList<Item>();
 
-	public MetalClips(Player player, int var) {
-		if (instances.containsKey(player))
+	public MetalClips(Player p, int var) {
+		if (instances.containsKey(p))
 			return;
 
-		this.player = player;
+		player = p;
 		this.var = var;
 
 		if (!isEligible())
@@ -64,7 +65,35 @@ public class MetalClips {
 		else if (var == 1)
 			magnet();
 
-		instances.put(player, this);
+		instances.put(p, this);
+	}
+	
+	public static ItemStack getOriginalHelmet(LivingEntity ent) {
+		if (clipped.containsKey(ent)) {
+			return oldarmor[3];
+		}
+		return null;
+	}
+
+	public static ItemStack getOriginalChestplate(LivingEntity ent) {
+		if (clipped.containsKey(ent)) {
+			return oldarmor[2];
+		}
+		return null;
+	}
+	
+	public static ItemStack getOriginalLeggings(LivingEntity ent) {
+		if (clipped.containsKey(ent)) {
+			return oldarmor[1];
+		}
+		return null;
+	}
+	
+	public static ItemStack getOriginalBoots(LivingEntity ent) {
+		if (clipped.containsKey(ent)) {
+			return oldarmor[0];
+		}
+		return null;
 	}
 
 	public boolean isEligible() {
@@ -120,7 +149,7 @@ public class MetalClips {
 		trackedIngots.add(ii);
 		player.getInventory().removeItem(is);
 
-		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("MetalManipulation", cooldown);
+		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("MetalClips", cooldown);
 	}
 
 	public void formArmor() {
@@ -132,8 +161,8 @@ public class MetalClips {
 
 		metalclips = (metalclips < 4) ? metalclips + 1 : 4;
 
-		if (target instanceof Player) {
-			Player target = (Player) this.target;
+		if (targetent instanceof Player) {
+			Player target = (Player) targetent;
 			if (oldarmor == null)
 				oldarmor = target.getInventory().getArmorContents();
 
@@ -143,13 +172,13 @@ public class MetalClips {
 			metalarmor[0] = (metalclips >= 2) ? new ItemStack(Material.IRON_BOOTS, 1) : oldarmor[0];
 			metalarmor[1] = (metalclips >= 3) ? new ItemStack(Material.IRON_LEGGINGS, 1) : oldarmor[1];
 			metalarmor[3] = (metalclips >= 4) ? new ItemStack(Material.IRON_HELMET, 1) : oldarmor[3];
-
+			clipped.put(target, metalclips);
 			target.getInventory().setArmorContents(metalarmor);
 		}
 
 		else {
 			if (oldarmor == null)
-				oldarmor = target.getEquipment().getArmorContents();
+				oldarmor = targetent.getEquipment().getArmorContents();
 
 			ItemStack[] metalarmor = new ItemStack[4];
 
@@ -157,28 +186,28 @@ public class MetalClips {
 			metalarmor[0] = (metalclips >= 2) ? new ItemStack(Material.IRON_BOOTS, 1) : oldarmor[0];
 			metalarmor[1] = (metalclips >= 3) ? new ItemStack(Material.IRON_LEGGINGS, 1) : oldarmor[1];
 			metalarmor[3] = (metalclips >= 4) ? new ItemStack(Material.IRON_HELMET, 1) : oldarmor[3];
-
-			target.getEquipment().setArmorContents(metalarmor);
+			clipped.put(targetent, metalclips);
+			targetent.getEquipment().setArmorContents(metalarmor);
 		}
 
 		if (metalclips == 4) {
 			time = System.currentTimeMillis();
-			lastDistanceCheck = player.getLocation().distance(target.getLocation());
+			lastDistanceCheck = player.getLocation().distance(targetent.getLocation());
 		}
 		startTime = System.currentTimeMillis();
 		isBeingWorn = true;
 	}
 
 	public void resetArmor() {
-		if (target == null || oldarmor == null)
+		if (targetent == null || oldarmor == null || targetent.isDead())
 			return;
 
-		if (target instanceof Player)
-			((Player) target).getInventory().setArmorContents(oldarmor);
+		if (targetent instanceof Player)
+			((Player) targetent).getInventory().setArmorContents(oldarmor);
 		else
-			target.getEquipment().setArmorContents(oldarmor);
+			targetent.getEquipment().setArmorContents(oldarmor);
 
-		player.getWorld().dropItem(target.getLocation(), new ItemStack(Material.IRON_INGOT, metalclips));
+		player.getWorld().dropItem(targetent.getLocation(), new ItemStack(Material.IRON_INGOT, metalclips));
 
 		isBeingWorn = false;
 	}
@@ -201,13 +230,13 @@ public class MetalClips {
 
 		Location location = player.getLocation();
 		double dx, dy, dz;
-		Location target = this.target.getLocation().clone();
+		Location target = targetent.getLocation().clone();
 		dx = target.getX() - location.getX();
 		dy = target.getY() - location.getY();
 		dz = target.getZ() - location.getZ();
 		Vector vector = new Vector(dx, dy, dz);
 		vector.normalize();
-		this.target.setVelocity(vector.multiply(2));
+		targetent.setVelocity(vector.multiply(2));
 		remove();
 	}
 
@@ -222,8 +251,8 @@ public class MetalClips {
 			return;
 		}
 
-		if (target != null) {
-			if ((target instanceof Player && !((Player) target).isOnline()) || target.isDead()) {
+		if (targetent != null) {
+			if ((targetent instanceof Player && !((Player) targetent).isOnline()) || targetent.isDead()) {
 				remove();
 				return;
 			}
@@ -319,53 +348,53 @@ public class MetalClips {
 
 		if (isControlling && player.isSneaking()) {
 			if (metalclips == 1) {
-				Location oldLocation = target.getLocation();
+				Location oldLocation = targetent.getLocation();
 				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
 
-				Vector v = GeneralMethods.getDirection(target.getLocation(), player.getLocation());
+				Vector v = GeneralMethods.getDirection(targetent.getLocation(), player.getLocation());
 
 				if (distance > .5)
-					target.setVelocity(v.normalize().multiply(0.2));
+					targetent.setVelocity(v.normalize().multiply(0.2));
 
 			}
 
 			if (metalclips == 2) {
-				Location oldLocation = target.getLocation();
+				Location oldLocation = targetent.getLocation();
 				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
 
-				Vector v = GeneralMethods.getDirection(target.getLocation(), GeneralMethods.getTargetedLocation(player, 10));
+				Vector v = GeneralMethods.getDirection(targetent.getLocation(), GeneralMethods.getTargetedLocation(player, 10));
 
 				if (distance > 1.2)
-					target.setVelocity(v.normalize().multiply(0.2));
+					targetent.setVelocity(v.normalize().multiply(0.2));
 
 			}
 
 			if (metalclips >= 3) {
-				Location oldLocation = target.getLocation();
+				Location oldLocation = targetent.getLocation();
 				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
 
 				Vector v = GeneralMethods.getDirection(oldLocation, GeneralMethods.getTargetedLocation(player, 10));
 				if (distance > 1.2)
-					target.setVelocity(v.normalize().multiply(.5));
+					targetent.setVelocity(v.normalize().multiply(.5));
 				else
-					target.setVelocity(new Vector(0, 0, 0));
+					targetent.setVelocity(new Vector(0, 0, 0));
 
-				target.setFallDistance(0);
+				targetent.setFallDistance(0);
 			}
 
 			if (metalclips == 4 && player.hasPermission("bending.ability.MetalClips.4clips")) {
-				double distance = player.getLocation().distance(target.getLocation());
+				double distance = player.getLocation().distance(targetent.getLocation());
 				if (distance < lastDistanceCheck - 0.3) {
-					double height = target.getLocation().getY();
+					double height = targetent.getLocation().getY();
 					if (height > player.getEyeLocation().getY()) {
 						lastDistanceCheck = distance;
 
 						if (System.currentTimeMillis() > time + crushInterval) {
 							time = System.currentTimeMillis();
-							GeneralMethods.damageEntity(player, target, (crushDamage + (crushDamage * 1.2)));
+							GeneralMethods.damageEntity(player, targetent, (crushDamage + (crushDamage * 1.2)));
 						}
 					}
 				}
@@ -388,8 +417,8 @@ public class MetalClips {
 				for (Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2)) {
 					if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId()) {
 						if (e instanceof Player || e instanceof Zombie || e instanceof Skeleton) {
-							if (target == null)
-								target = (LivingEntity) e;
+							if (targetent == null)
+								targetent = (LivingEntity) e;
 
 							formArmor();
 						}
@@ -419,7 +448,7 @@ public class MetalClips {
 	}
 
 	public LivingEntity getTarget() {
-		return target;
+		return targetent;
 	}
 
 	public void remove() {
@@ -434,6 +463,9 @@ public class MetalClips {
 	public static void removeAll() {
 		for (Player p : instances.keySet()) {
 			instances.get(p).remove();
+		}
+		for (Entity ent : clipped.keySet()) {
+			clipped.remove(ent);
 		}
 	}
 
