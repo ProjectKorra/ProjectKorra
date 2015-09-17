@@ -136,7 +136,7 @@ public class MetalClips {
 			return;
 		}
 
-		Item ii = player.getWorld().dropItemNaturally(player.getLocation(), is);
+		Item ii = player.getWorld().dropItemNaturally(player.getLocation().add(0, 1, 0), is);
 
 		Vector v;
 
@@ -145,7 +145,7 @@ public class MetalClips {
 		else
 			v = GeneralMethods.getDirection(player.getLocation(), GeneralMethods.getTargetedLocation(player, 10));
 
-		ii.setVelocity(v.normalize().add(new Vector(0, 0.2, 0).multiply(1.2)));
+		ii.setVelocity(v.normalize().add(new Vector(0, 0.1, 0).multiply(1.2)));
 		trackedIngots.add(ii);
 		player.getInventory().removeItem(is);
 
