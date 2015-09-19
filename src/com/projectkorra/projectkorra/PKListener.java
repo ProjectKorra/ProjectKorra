@@ -46,6 +46,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -964,6 +965,20 @@ public class PKListener implements Listener {
 				}
 			}
 		}
+	}
+	
+	@EventHandler
+	public void onPlayerGamemodeChange(PlayerGameModeChangeEvent event) {
+		Player player = event.getPlayer();
+		if (event.getNewGameMode() == GameMode.SPECTATOR) {
+			if (!Commands.invincible.contains(player.getName())) {
+				Commands.invincible.add(player.getName());
+			}
+		}
+		else if (!(event.getNewGameMode() == GameMode.SPECTATOR) && Commands.invincible.contains(player.getName())) {
+			Commands.invincible.remove(player.getName());
+		}
+		
 	}
 
 	@EventHandler

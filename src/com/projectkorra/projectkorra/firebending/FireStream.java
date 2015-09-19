@@ -77,7 +77,7 @@ public class FireStream extends AddonAbility {
 
 	public static boolean isIgnitable(Player player, Block block) {
 
-		Material[] overwriteable = { Material.SAPLING, Material.LONG_GRASS, Material.THIN_GLASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.FIRE, Material.SNOW, Material.TORCH };
+		Material[] overwriteable = { Material.SAPLING, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.FIRE, Material.SNOW, Material.TORCH };
 
 		if (Arrays.asList(overwriteable).contains(block.getType())) {
 			return true;

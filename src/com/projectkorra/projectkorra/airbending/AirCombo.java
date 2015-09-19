@@ -191,6 +191,12 @@ public class AirCombo implements ConfigLoadable {
 
 			for (Entity entity : affectedEntities) {
 				Vector forceDir = GeneralMethods.getDirection(entity.getLocation(), currentLoc.clone().add(0, height, 0));
+				
+				if (entity instanceof Player) {
+					if (Commands.invincible.contains(((Player) entity).getName()))
+						break;
+				}
+				
 				entity.setVelocity(forceDir.clone().normalize().multiply(0.3));
 			}
 		}
@@ -206,6 +212,12 @@ public class AirCombo implements ConfigLoadable {
 				currentLoc = origin.clone();
 			}
 			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+			
+			if (target instanceof Player) {
+				if (Commands.invincible.contains(((Player) target).getName()))
+					return;
+			}
+			
 			if (target != null && target.getLocation().distance(currentLoc) > 7)
 				destination = target.getLocation();
 			else
