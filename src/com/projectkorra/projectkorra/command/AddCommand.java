@@ -61,8 +61,8 @@ public class AddCommand extends PKCommand {
 			sender.sendMessage(ChatColor.RED + "That player's bending was permanently removed.");
 			return;
 		}
-		if (Arrays.asList(Commands.elementaliases).contains(element)) {
-			element = getElement(element);
+		if (Arrays.asList(Commands.elementaliases).contains(element.toLowerCase())) {
+			element = getElement(element.toLowerCase());
 			Element type = Element.getType(element);
 			bPlayer.addElement(type);
 			ChatColor color = GeneralMethods.getElementColor(type);

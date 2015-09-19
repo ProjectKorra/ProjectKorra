@@ -224,6 +224,10 @@ public class FireCombo implements ConfigLoadable {
 			GeneralMethods.damageEntity(player, entity, damage);
 			fstream.remove();
 		} else if (ability.equalsIgnoreCase("FireSpin")) {
+			if (entity instanceof Player) {
+				if (Commands.invincible.contains(((Player) entity).getName()))
+					return;
+			}
 			double knockback = AvatarState.isAvatarState(player) ? FIRE_SPIN_KNOCKBACK + 0.5 : FIRE_SPIN_KNOCKBACK;
 			GeneralMethods.damageEntity(player, entity, damage);
 			entity.setVelocity(direction.normalize().multiply(knockback));
