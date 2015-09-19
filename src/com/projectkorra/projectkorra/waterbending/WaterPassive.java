@@ -19,6 +19,8 @@ public class WaterPassive {
 	public static boolean applyNoFall(Player player) {
 		Block block = player.getLocation().getBlock();
 		Block fallblock = block.getRelative(BlockFace.DOWN);
+		if (TempBlock.isTempBlock(block) && (block.getType().equals(Material.ICE)))
+			return true;
 		if (WaterMethods.isWaterbendable(block, player) && !WaterMethods.isPlant(block))
 			return true;
 		if (fallblock.getType() == Material.AIR)
