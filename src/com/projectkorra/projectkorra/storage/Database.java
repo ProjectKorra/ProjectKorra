@@ -8,11 +8,11 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.logging.Logger;
 
 public abstract class Database {
-
+	
 	protected final Logger log;
 	protected final String prefix;
 	protected final String dbprefix;
@@ -50,7 +50,7 @@ public abstract class Database {
      * @return Connection if exists, else null
      */
     public Connection getConnection() {
-        return this.connection;
+        return connection;
     }
 
     /**
@@ -64,9 +64,9 @@ public abstract class Database {
      * Close connection to Database.
      */
     public void close() {
-        if (!(this.connection == null)) {
+        if (connection != null) {
             try {
-                this.connection.close();
+                connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -85,9 +85,8 @@ public abstract class Database {
     		@Override
     		public void run() {
     			try {
-    				Statement stmt = connection.createStatement();
-    				stmt.execute(query);
-    				
+    				PreparedStatement stmt = connection.prepareStatement(query);
+    				stmt.execute();
     				stmt.close();
     			} catch (SQLException e) {
     				e.printStackTrace();
@@ -104,8 +103,8 @@ public abstract class Database {
      */
     public ResultSet readQuery(String query) {
         try {
-            Statement stmt = this.connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
 
             return rs;
         } catch(SQLException e) {
@@ -122,15 +121,13 @@ public abstract class Database {
      */
     public boolean tableExists(String table) {
         try {
-            DatabaseMetaData dmd = this.connection.getMetaData();
+            DatabaseMetaData dmd = connection.getMetaData();
             ResultSet rs = dmd.getTables(null, null, table, null);
-
-            if(rs.next()) return true;
-            else return false;
+            
+            return rs.next();
         } catch(Exception e) {
             e.printStackTrace();
             return false;
         }
     }
-
 }
