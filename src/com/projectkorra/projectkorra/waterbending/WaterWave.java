@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -100,13 +101,15 @@ public class WaterWave {
 		if (type == AbilityType.CLICK) {
 			if (origin == null) {
 				removeType(player, AbilityType.CLICK);
-				instances.add(this);
 
 				Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
 				if (block == null) {
-					remove();
+					if(instances.contains(this)) {
+						remove();
+					}
 					return;
 				}
+				instances.add(this);
 				Block blockAbove = block.getRelative(BlockFace.UP);
 				if (blockAbove.getType() != Material.AIR && !WaterMethods.isWaterbendable(blockAbove, player)) {
 					remove();
@@ -136,19 +139,22 @@ public class WaterWave {
 				direction = player.getEyeLocation().getDirection();
 			}
 			if (!charging) {
-				if (!containsType(player, AbilityType.CLICK)) {
+				if (!containsType(player, AbilityType.SHIFT)) {
 					removeType(player, AbilityType.CLICK);
 					remove();
 					return;
 				}
+				//removeType(player, AbilityType.CLICK);
 				charging = true;
 				anim = AnimateState.RISE;
-
+				if(!getType(player, AbilityType.CLICK).isEmpty()) {
 				WaterWave clickSpear = getType(player, AbilityType.CLICK).get(0);
 				origin = clickSpear.origin.clone();
 				currentLoc = origin.clone();
+				
 				if (WaterMethods.isPlant(origin.getBlock()))
 					new Plantbending(origin.getBlock());
+				}
 
 			}
 
@@ -164,7 +170,7 @@ public class WaterWave {
 			}
 
 			double animSpeed = 1.2;
-			if (anim == AnimateState.RISE) {
+			if (anim == AnimateState.RISE && currentLoc != null) {
 				revertBlocks();
 				currentLoc.add(0, animSpeed, 0);
 				Block block = currentLoc.getBlock();
