@@ -272,6 +272,20 @@ public class AirSuction extends CoreAbility {
 		advanceLocation();
 		return true;
 	}
+	
+	public static boolean removeAirSuctionsAroundPoint(Location location, double radius) {
+		boolean removed = false;
+		for (Integer id : getInstances(StockAbility.AirSuction).keySet()) {
+			AirSuction airSuction = ((AirSuction)getAbility(id));
+		Location airSuctionlocation = airSuction.location;
+		if (location.getWorld() == airSuctionlocation.getWorld()) {
+			if (location.distance(airSuctionlocation) <= radius)
+				airSuction.remove();
+				removed = true;
+			}
+		}
+		return removed;
+	}
 
 	@Override
 	public void reloadVariables() {

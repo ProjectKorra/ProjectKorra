@@ -85,10 +85,12 @@ import com.projectkorra.projectkorra.ability.combo.ComboManager.ComboAbility;
 import com.projectkorra.projectkorra.ability.combo.ComboModuleManager;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityModuleManager;
+import com.projectkorra.projectkorra.airbending.AirBlast;
 import com.projectkorra.projectkorra.airbending.AirCombo;
 import com.projectkorra.projectkorra.airbending.AirMethods;
 import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.chiblocking.ChiMethods;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
@@ -230,6 +232,10 @@ public class GeneralMethods {
 				hasBlocked = WaterManipulation.annihilateBlasts(loc, radius, player) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("AirSwipe")) {
 				hasBlocked = AirSwipe.removeSwipesAroundPoint(loc, radius) || hasBlocked;
+			} else if (ability.equalsIgnoreCase("AirBlast")) {
+				hasBlocked = AirBlast.removeAirBlastsAroundPoint(loc, radius) || hasBlocked;	
+			} else if (ability.equalsIgnoreCase("AirSuction")) {
+				hasBlocked = AirSuction.removeAirSuctionsAroundPoint(loc, radius) || hasBlocked;	
 			} else if (ability.equalsIgnoreCase("Combustion")) {
 				hasBlocked = Combustion.removeAroundPoint(loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("FireShield")) {

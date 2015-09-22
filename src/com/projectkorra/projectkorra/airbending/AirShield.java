@@ -5,12 +5,14 @@ import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.ability.StockAbility;
 import com.projectkorra.projectkorra.ability.api.CoreAbility;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import com.projectkorra.projectkorra.firebending.FireStream;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -25,7 +27,7 @@ public class AirShield extends CoreAbility {
 	private static int numberOfStreams = (int) (.75 * (double) MAX_RADIUS);
 
 	private double maxradius = MAX_RADIUS;
-	private double radius = 2;
+	private double radius = MAX_RADIUS;
 	private double speedfactor;
 
 	private Player player;
@@ -139,8 +141,9 @@ public class AirShield extends CoreAbility {
 
 		FireBlast.removeFireBlastsAroundPoint(origin, radius);
 		Combustion.removeAroundPoint(origin, radius);
-		WaterManipulation.removeAroundPoint(origin, radius);
-		EarthBlast.removeAroundPoint(origin, radius);
+		FireStream.removeAroundPoint(origin, radius);
+		AirBlast.removeAirBlastsAroundPoint(origin, radius);
+		AirSuction.removeAirSuctionsAroundPoint(origin, radius);
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, radius)) {
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "AirShield", entity.getLocation()))
@@ -176,6 +179,13 @@ public class AirShield extends CoreAbility {
 				velocity.multiply(radius / maxradius);
 				GeneralMethods.setVelocity(entity, velocity);
 				entity.setFallDistance(0);
+			}
+		}
+		
+		for (Block testblock : GeneralMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
+			if (testblock.getType() == Material.FIRE) {
+				testblock.setType(Material.AIR);
+				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
 		}
 

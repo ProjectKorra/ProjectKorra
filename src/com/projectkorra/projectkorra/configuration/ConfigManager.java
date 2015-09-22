@@ -80,6 +80,7 @@ public class ConfigManager {
 				earthbendable.add("IRON_ORE");
 				earthbendable.add("LAPIS_ORE");
 				earthbendable.add("NETHERRACK");
+				earthbendable.add("QUARTZ_ORE");
 				earthbendable.add("REDSTONE_ORE");
 				earthbendable.add("SAND");
 				earthbendable.add("SANDSTONE");
@@ -120,6 +121,7 @@ public class ConfigManager {
 
 				config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
 				config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance", 5.0);
+				config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageCap", 4.0);
 
 				config.addDefault("Properties.CustomItems.GrapplingHook.Enable", true);
 				config.addDefault("Properties.CustomItems.GrapplingHook.IronUses", 25);
@@ -158,7 +160,7 @@ public class ConfigManager {
 				config.addDefault("Properties.Earth.PlaySound", true);
 
 				config.addDefault("Properties.Fire.CanBendWithWeapons", true);
-				config.addDefault("Properties.Fire.DayFactor", 1.5);
+				config.addDefault("Properties.Fire.DayFactor", 1.0);
 				config.addDefault("Properties.Fire.PlaySound", true);
 				config.addDefault("Properties.Fire.NightMessage", "You feel the empowering of your firebending subside as the sun sets.");
 				config.addDefault("Properties.Fire.DayMessage", "You feel the strength of the rising sun empowering your firebending.");
@@ -193,10 +195,10 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Air.AirBlast.Enabled", true);
 				config.addDefault("Abilities.Air.AirBlast.Description", "AirBlast is the most fundamental bending technique of an airbender." + " To use, simply left-click in a direction. A gust of wind will be" + " created at your fingertips, launching anything in its path harmlessly back." + " A gust of air can extinguish fires on the ground or on a player, can cool lava, and " + "can flip levers and activate buttons. Additionally, tapping sneak will change the " + "origin of your next AirBlast to your targeted location.");
-				config.addDefault("Abilities.Air.AirBlast.Speed", 25);
+				config.addDefault("Abilities.Air.AirBlast.Speed", 20);
 				config.addDefault("Abilities.Air.AirBlast.Range", 20);
 				config.addDefault("Abilities.Air.AirBlast.Radius", 2);
-				config.addDefault("Abilities.Air.AirBlast.Push", 3.5);
+				config.addDefault("Abilities.Air.AirBlast.Push", 2.5);
 				config.addDefault("Abilities.Air.AirBlast.CanFlickLevers", true);
 				config.addDefault("Abilities.Air.AirBlast.CanOpenDoors", true);
 				config.addDefault("Abilities.Air.AirBlast.CanPressButtons", true);
@@ -231,17 +233,17 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Air.AirSuction.Enabled", true);
 				config.addDefault("Abilities.Air.AirSuction.Description", "To use, simply left-click in a direction. A gust of wind will originate as far as it can in that direction and flow towards you, sucking anything in its path harmlessly with it. Skilled benders can use this technique to pull items from precarious locations. Additionally, tapping sneak will change the origin of your next AirSuction to your targeted location.");
-				config.addDefault("Abilities.Air.AirSuction.Speed", 25);
+				config.addDefault("Abilities.Air.AirSuction.Speed", 20);
 				config.addDefault("Abilities.Air.AirSuction.Range", 20);
 				config.addDefault("Abilities.Air.AirSuction.Radius", 2);
-				config.addDefault("Abilities.Air.AirSuction.Push", 3.5);
+				config.addDefault("Abilities.Air.AirSuction.Push", 2.5);
 
 				config.addDefault("Abilities.Air.AirSwipe.Enabled", true);
 				config.addDefault("Abilities.Air.AirSwipe.Description", "To use, simply left-click in a direction. An arc of air will flow from you towards that direction, cutting and pushing back anything in its path. Its damage is minimal, but it still sends the message. This ability will extinguish fires, cool lava, and cut things like grass, mushrooms, and flowers. Additionally, you can charge it by holding sneak. Charging before attacking will increase damage and knockback, up to a maximum.");
 				config.addDefault("Abilities.Air.AirSwipe.Damage", 2);
 				config.addDefault("Abilities.Air.AirSwipe.Range", 16);
 				config.addDefault("Abilities.Air.AirSwipe.Radius", 2);
-				config.addDefault("Abilities.Air.AirSwipe.Push", 1);
+				config.addDefault("Abilities.Air.AirSwipe.Push", 0.5);
 				config.addDefault("Abilities.Air.AirSwipe.Arc", 20);
 				config.addDefault("Abilities.Air.AirSwipe.Speed", 25);
 				config.addDefault("Abilities.Air.AirSwipe.Cooldown", 1500);
@@ -270,7 +272,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Air.Suffocate.RequireConstantAim", true);
 				config.addDefault("Abilities.Air.Suffocate.RequireConstantAimRadius", 5);
 				config.addDefault("Abilities.Air.Suffocate.AnimationRadius", 2.0);
-				config.addDefault("Abilities.Air.Suffocate.AnimationParticleAmount", 2);
+				config.addDefault("Abilities.Air.Suffocate.AnimationParticleAmount", 1);
 				config.addDefault("Abilities.Air.Suffocate.AnimationSpeed", 1.0);
 
 				config.addDefault("Abilities.Air.Tornado.Radius", 10);
@@ -295,7 +297,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Air.AirCombo.AirStream.Cooldown", 7000);
 				config.addDefault("Abilities.Air.AirCombo.AirSweep.Speed", 1.4);
 				config.addDefault("Abilities.Air.AirCombo.AirSweep.Range", 14);
-				config.addDefault("Abilities.Air.AirCombo.AirSweep.Damage", 4);
+				config.addDefault("Abilities.Air.AirCombo.AirSweep.Damage", 3);
 				config.addDefault("Abilities.Air.AirCombo.AirSweep.Knockback", 3.5);
 				config.addDefault("Abilities.Air.AirCombo.AirSweep.Cooldown", 6000);
 
@@ -309,7 +311,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.Bloodbending.Range", 10);
 				config.addDefault("Abilities.Water.Bloodbending.HoldTime", 0);
 				config.addDefault("Abilities.Water.Bloodbending.Cooldown", 0);
-				config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon", false);
+				config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon", true);
 				config.addDefault("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders", false);
 				
 				config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
@@ -350,9 +352,9 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Water.PlantArmor.Enabled", true);
 				config.addDefault("Abilities.Water.PlantArmor.Description", "PlantArmor is a defensive ability in the arsenal of the plantbender. Clicking on leaves with this ability will temporarily clad you in strong armor made out of plants! You can use this defensively, but you can also use the armor as a source for other plantbending skills.");
-				config.addDefault("Abilities.Water.PlantArmor.Duration", 10000);
+				config.addDefault("Abilities.Water.PlantArmor.Duration", 7500);
 				config.addDefault("Abilities.Water.PlantArmor.Resistance", 1);
-				config.addDefault("Abilities.Water.PlantArmor.Cooldown", 17500);
+				config.addDefault("Abilities.Water.PlantArmor.Cooldown", 10000);
 				config.addDefault("Abilities.Water.PlantArmor.Range", 10);
 
 				config.addDefault("Abilities.Water.Surge.Enabled", true);
@@ -368,7 +370,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.Torrent.Description", "Torrent is one of the strongest moves in a waterbender's arsenal. To use, first click a source block to select it; then hold shift to begin streaming the water around you. Water flowing around you this way will damage and knock back nearby enemies and projectiles. If you release shift during this, you will create a large wave that expands outwards from you, launching anything in its path back. Instead, if you click you release the water and channel it to flow towards your cursor. Anything caught in the blast will be tossed about violently and take damage. Finally, if you click again when the water is torrenting, it will freeze the area around it when it is obstructed.");
 				config.addDefault("Abilities.Water.Torrent.Range", 25);
 				config.addDefault("Abilities.Water.Torrent.DeflectDamage", 1);
-				config.addDefault("Abilities.Water.Torrent.Damage", 2);
+				config.addDefault("Abilities.Water.Torrent.Damage", 3);
 				config.addDefault("Abilities.Water.Torrent.Wave.Radius", 15);
 				config.addDefault("Abilities.Water.Torrent.Wave.Knockback", 1.5);
 				config.addDefault("Abilities.Water.Torrent.Wave.Height", 1);
@@ -434,8 +436,8 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Water.WaterManipulation.Enabled", true);
 				config.addDefault("Abilities.Water.WaterManipulation.Description", "To use, place your cursor over a waterbendable object and tap sneak (default: shift). Smoke will appear where you've selected, indicating the origin of your ability. After you have selected an origin, simply left-click in any direction and you will see your water spout off in that direction, slicing any creature in its path. If you look towards a creature when you use this ability, it will target that creature. A collision from Water Manipulation both knocks the target back and deals some damage. Alternatively, if you have the source selected and tap shift again, you will be able to control the water more directly.");
-				config.addDefault("Abilities.Water.WaterManipulation.Damage", 2.0);
-				config.addDefault("Abilities.Water.WaterManipulation.Range", 20);
+				config.addDefault("Abilities.Water.WaterManipulation.Damage", 3.0);
+				config.addDefault("Abilities.Water.WaterManipulation.Range", 30);
 				config.addDefault("Abilities.Water.WaterManipulation.Speed", 35);
 				config.addDefault("Abilities.Water.WaterManipulation.Push", 0.3);
 				config.addDefault("Abilities.Water.WaterManipulation.Cooldown", 1000);
@@ -443,7 +445,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
 				config.addDefault("Abilities.Water.WaterSpout.Description", "This ability provides a Waterbender with a means of transportation. To use, simply left click while in or over water to spout water up beneath you, experiencing controlled levitation. Left clicking again while the spout is active will cause it to disappear. Alternatively, tapping a Waterbendable block while not in Water will select a water block as a source, from there, you can tap sneak (Default:Shift) to channel the Water around you. Releasing the sneak will create a wave allowing you a quick burst of controlled transportation. While riding the wave you may press sneak to cause the wave to disappear.");
 				config.addDefault("Abilities.Water.WaterSpout.Height", 20);
-				config.addDefault("Abilities.Water.WaterSpout.BlockSpiral", true);
+				config.addDefault("Abilities.Water.WaterSpout.BlockSpiral", false);
 				config.addDefault("Abilities.Water.WaterSpout.Particles", false);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.Particles", false);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.Enabled", true);
@@ -454,7 +456,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterSpout.Wave.Cooldown", 4500);
 
 				config.addDefault("Abilities.Water.WaterCombo.Enabled", true);
-				config.addDefault("Abilities.Water.WaterCombo.IceWave.Damage", 2);
+				config.addDefault("Abilities.Water.WaterCombo.IceWave.Damage", 4);
 				config.addDefault("Abilities.Water.WaterCombo.IceWave.Cooldown", 6000);
 				config.addDefault("Abilities.Water.WaterCombo.IceBullet.Damage", 2);
 				config.addDefault("Abilities.Water.WaterCombo.IceBullet.Radius", 2.5);
@@ -488,8 +490,8 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.EarthBlast.Enabled", true);
 				config.addDefault("Abilities.Earth.EarthBlast.Description", "To use, place your cursor over an earthbendable object (dirt, rock, ores, etc) " + "and tap sneak (default: shift). The object will temporarily turn to stone, " + "indicating that you have it focused as the source for your ability. " + "After you have selected an origin (you no longer need to be sneaking), " + "simply left-click in any direction and you will see your object launch " + "off in that direction, smashing into any creature in its path. If you look " + "towards a creature when you use this ability, it will target that creature. " + "A collision from Earth Blast both knocks the target back and deals some damage. " + "You cannot have multiple of these abilities flying at the same time.");
 				config.addDefault("Abilities.Earth.EarthBlast.CanHitSelf", false);
-				config.addDefault("Abilities.Earth.EarthBlast.PrepareRange", 7);
-				config.addDefault("Abilities.Earth.EarthBlast.Range", 20);
+				config.addDefault("Abilities.Earth.EarthBlast.PrepareRange", 10);
+				config.addDefault("Abilities.Earth.EarthBlast.Range", 30);
 				config.addDefault("Abilities.Earth.EarthBlast.Speed", 35);
 				config.addDefault("Abilities.Earth.EarthBlast.Revert", true);
 				config.addDefault("Abilities.Earth.EarthBlast.Damage", 3);
@@ -497,7 +499,7 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Earth.EarthGrab.Enabled", true);
 				config.addDefault("Abilities.Earth.EarthGrab.Description", "To use, simply left-click while targeting a creature within range. " + "This ability will erect a circle of earth to trap the creature in.");
-				config.addDefault("Abilities.Earth.EarthGrab.Range", 15);
+				config.addDefault("Abilities.Earth.EarthGrab.Range", 8);
 
 				config.addDefault("Abilities.Earth.EarthTunnel.Enabled", true);
 				config.addDefault("Abilities.Earth.EarthTunnel.Description", "Earth Tunnel is a completely utility ability for earthbenders. To use, simply sneak (default: shift) in the direction you want to tunnel. You will slowly begin tunneling in the direction you're facing for as long as you sneak or if the tunnel has been dug long enough. This ability will be interrupted if it hits a block that cannot be earthbent.");
@@ -515,26 +517,26 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Earth.LavaFlow.Enabled", true);
 				config.addDefault("Abilities.Earth.LavaFlow.Description", "This ability allows an Earthbender to create lava using the Earth around them. To use, simply hold sneak (Default: Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an Earthbendable block to create a pool of lava after a small delay. Additionally, you can left click at any time to turn lava back into its original state -- Earth.");
-				config.addDefault("Abilities.Earth.LavaFlow.ShiftCooldown", 16000);
+				config.addDefault("Abilities.Earth.LavaFlow.ShiftCooldown", 20000);
 				config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCooldown", 10000);
 				config.addDefault("Abilities.Earth.LavaFlow.ClickLandCooldown", 500);
 				config.addDefault("Abilities.Earth.LavaFlow.ShiftCleanupDelay", 10000);
 				config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCleanupDelay", 7000);
 				config.addDefault("Abilities.Earth.LavaFlow.ClickLandCleanupDelay", 20000);
 				config.addDefault("Abilities.Earth.LavaFlow.ClickRange", 10.0);
-				config.addDefault("Abilities.Earth.LavaFlow.ShiftRadius", 6.0);
+				config.addDefault("Abilities.Earth.LavaFlow.ShiftRadius", 7.0);
 				config.addDefault("Abilities.Earth.LavaFlow.ShiftPlatformRadius", 1.5);
 				config.addDefault("Abilities.Earth.LavaFlow.ClickRadius", 5.0);
-				config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCreateSpeed", 0.05);
+				config.addDefault("Abilities.Earth.LavaFlow.ClickLavaCreateSpeed", 0.045);
 				config.addDefault("Abilities.Earth.LavaFlow.ClickLandCreateSpeed", 0.10);
-				config.addDefault("Abilities.Earth.LavaFlow.ShiftFlowSpeed", 0.1);
+				config.addDefault("Abilities.Earth.LavaFlow.ShiftFlowSpeed", 0.01);
 				config.addDefault("Abilities.Earth.LavaFlow.ShiftRemoveSpeed", 3.0);
 				config.addDefault("Abilities.Earth.LavaFlow.ClickLavaStartDelay", 1500);
 				config.addDefault("Abilities.Earth.LavaFlow.ClickLandStartDelay", 0);
 				config.addDefault("Abilities.Earth.LavaFlow.UpwardFlow", 2);
 				config.addDefault("Abilities.Earth.LavaFlow.DownwardFlow", 4);
 				config.addDefault("Abilities.Earth.LavaFlow.AllowNaturalFlow", false);
-				config.addDefault("Abilities.Earth.LavaFlow.ParticleDensity", 0.33);
+				config.addDefault("Abilities.Earth.LavaFlow.ParticleDensity", 0.11);
 
 				config.addDefault("Abilities.Earth.EarthSmash.Enabled", true);
 				config.addDefault("Abilities.Earth.EarthSmash.Description", "To raise an EarthSmash hold sneak (default: shift) for approximately 1.5 seconds, " + "then release while aiming at dirt. To grab the EarthSmash aim at the center and hold sneak, " + "the EarthSmash will follow your mouse. You can shoot the EarthSmash by grabbing onto it and left clicking. " + "To ride the EarthSmash simply hop ontop of it and hold sneak while aiming in the direction that you wish to go. " + "Another way to ride an EarthSmash is to grab it with sneak and then right click it. " + "Use EarthSmash as a defensive shield, a powerful attack, or an advanced means of transportation.");
@@ -542,10 +544,10 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.EarthSmash.AllowShooting", true);
 				config.addDefault("Abilities.Earth.EarthSmash.AllowFlight", true);
 				config.addDefault("Abilities.Earth.EarthSmash.GrabRange", 10);
-				config.addDefault("Abilities.Earth.EarthSmash.ChargeTime", 2000);
+				config.addDefault("Abilities.Earth.EarthSmash.ChargeTime", 1500);
 				config.addDefault("Abilities.Earth.EarthSmash.Cooldown", 2500);
 				config.addDefault("Abilities.Earth.EarthSmash.ShotRange", 30);
-				config.addDefault("Abilities.Earth.EarthSmash.Damage", 4);
+				config.addDefault("Abilities.Earth.EarthSmash.Damage", 6);
 				config.addDefault("Abilities.Earth.EarthSmash.Knockback", 3.5);
 				config.addDefault("Abilities.Earth.EarthSmash.Knockup", 0.15);
 				config.addDefault("Abilities.Earth.EarthSmash.FlightSpeed", 0.72);
@@ -591,7 +593,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.SandSpout.Height", 9);
 				config.addDefault("Abilities.Earth.SandSpout.BlindnessTime", 10);
 				config.addDefault("Abilities.Earth.SandSpout.SpoutDamage", 1);
-				config.addDefault("Abilities.Earth.SandSpout.Spiral", true);
+				config.addDefault("Abilities.Earth.SandSpout.Spiral", false);
 
 				config.addDefault("Abilities.Earth.Tremorsense.Enabled", true);
 				config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
@@ -610,28 +612,28 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Fire.Combustion.Enabled", true);
 				config.addDefault("Abilities.Fire.Combustion.Description", "Combustion is a powerful ability only known by a few skilled Firebenders. It allows the bender to Firebend with their mind, concentrating energy to create a powerful blast. To use, simply tap sneak (Default: Shift) to launch the blast. This technique is highly destructive and very effective, it also comes with a long cooldown.");
-				config.addDefault("Abilities.Fire.Combustion.Cooldown", 15000);
+				config.addDefault("Abilities.Fire.Combustion.Cooldown", 10000);
 				//		config.addDefault("Abilities.Fire.Combustion.ChargeTime", 5000);
 				config.addDefault("Abilities.Fire.Combustion.BreakBlocks", false);
 				config.addDefault("Abilities.Fire.Combustion.Power", 1.0);
 				config.addDefault("Abilities.Fire.Combustion.Damage", 4);
 				config.addDefault("Abilities.Fire.Combustion.Radius", 4);
-				config.addDefault("Abilities.Fire.Combustion.Range", 20);
+				config.addDefault("Abilities.Fire.Combustion.Range", 35);
 				config.addDefault("Abilities.Fire.Combustion.Speed", 25);
 
 				config.addDefault("Abilities.Fire.FireBlast.Enabled", true);
 				config.addDefault("Abilities.Fire.FireBlast.Description", "FireBlast is the most fundamental bending technique of a firebender. " + "To use, simply left-click in a direction. A blast of fire will be created at your fingertips. " + "If this blast contacts an enemy, it will dissipate and engulf them in flames, " + "doing additional damage and knocking them back slightly. " + "If the blast hits terrain, it will ignite the nearby area. " + "Additionally, if you hold sneak, you will charge up the fireblast. " + "If you release it when it's charged, it will instead launch a powerful " + "fireball that explodes on contact.");
-				config.addDefault("Abilities.Fire.FireBlast.Speed", 15);
-				config.addDefault("Abilities.Fire.FireBlast.Range", 15);
+				config.addDefault("Abilities.Fire.FireBlast.Speed", 20);
+				config.addDefault("Abilities.Fire.FireBlast.Range", 20);
 				config.addDefault("Abilities.Fire.FireBlast.Radius", 2);
 				config.addDefault("Abilities.Fire.FireBlast.Push", 0.3);
-				config.addDefault("Abilities.Fire.FireBlast.Damage", 2);
+				config.addDefault("Abilities.Fire.FireBlast.Damage", 3);
 				config.addDefault("Abilities.Fire.FireBlast.Cooldown", 1500);
 				config.addDefault("Abilities.Fire.FireBlast.Dissipate", false);
 				config.addDefault("Abilities.Fire.FireBlast.FireTicks", 2);
 				config.addDefault("Abilities.Fire.FireBlast.Charged.ChargeTime", 3000);
 				config.addDefault("Abilities.Fire.FireBlast.Charged.Damage", 4);
-				config.addDefault("Abilities.Fire.FireBlast.Charged.DamageRadius", 6);
+				config.addDefault("Abilities.Fire.FireBlast.Charged.DamageRadius", 4);
 				config.addDefault("Abilities.Fire.FireBlast.Charged.DamageBlocks", true);
 				config.addDefault("Abilities.Fire.FireBlast.Charged.ExplosionRadius", 1);
 				config.addDefault("Abilities.Fire.FireBlast.Charged.Range", 20);
@@ -655,7 +657,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Fire.FireShield.Radius", 3);
 				config.addDefault("Abilities.Fire.FireShield.DiscRadius", 1.5);
 				config.addDefault("Abilities.Fire.FireShield.Duration", 1000);
-				config.addDefault("Abilities.Fire.FireShield.FireTicks", 6);
+				config.addDefault("Abilities.Fire.FireShield.FireTicks", 4);
 
 				config.addDefault("Abilities.Fire.HeatControl.Enabled", true);
 				config.addDefault("Abilities.Fire.HeatControl.Description", "While this ability is selected, the firebender becomes impervious " + "to fire damage and cannot be ignited. " + "If the user left-clicks with this ability, the targeted area will be " + "extinguished, although it will leave any creature burning engulfed in flames. " + "This ability can also cool lava. If this ability is used while targetting ice or snow, it" + " will instead melt blocks in that area. Finally, sneaking with this ability will cook any food in your hand.");
@@ -674,20 +676,20 @@ public class ConfigManager {
 				config.addDefault("Abilities.Fire.Lightning.Enabled", true);
 				config.addDefault("Abilities.Fire.Lightning.Description", "Hold sneak while selecting this ability to charge up a lightning strike. Once charged, release sneak to discharge the lightning to the targeted location.");
 				config.addDefault("Abilities.Fire.Lightning.Damage", 6.0);
-				config.addDefault("Abilities.Fire.Lightning.Range", 13.0);
+				config.addDefault("Abilities.Fire.Lightning.Range", 20.0);
 				config.addDefault("Abilities.Fire.Lightning.ChargeTime", 4000);
 				config.addDefault("Abilities.Fire.Lightning.Cooldown", 500);
 				config.addDefault("Abilities.Fire.Lightning.StunChance", 0.20);
 				config.addDefault("Abilities.Fire.Lightning.StunDuration", 30.0);
-				config.addDefault("Abilities.Fire.Lightning.MaxArcAngle", 30);
+				config.addDefault("Abilities.Fire.Lightning.MaxArcAngle", 10);
 				config.addDefault("Abilities.Fire.Lightning.SubArcChance", 0.025);
 				config.addDefault("Abilities.Fire.Lightning.ChainArcRange", 6.0);
 				config.addDefault("Abilities.Fire.Lightning.ChainArcChance", 0.50);
 				config.addDefault("Abilities.Fire.Lightning.MaxChainArcs", 2);
 				config.addDefault("Abilities.Fire.Lightning.WaterArcs", 4);
-				config.addDefault("Abilities.Fire.Lightning.WaterArcRange", 12.0);
+				config.addDefault("Abilities.Fire.Lightning.WaterArcRange", 20.0);
 				config.addDefault("Abilities.Fire.Lightning.SelfHitWater", true);
-				config.addDefault("Abilities.Fire.Lightning.SelfHitClose", true);
+				config.addDefault("Abilities.Fire.Lightning.SelfHitClose", false);
 				config.addDefault("Abilities.Fire.Lightning.ArcOnIce", false);
 
 				config.addDefault("Abilities.Fire.WallOfFire.Enabled", true);
@@ -696,7 +698,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Fire.WallOfFire.Height", 4);
 				config.addDefault("Abilities.Fire.WallOfFire.Width", 4);
 				config.addDefault("Abilities.Fire.WallOfFire.Duration", 5000);
-				config.addDefault("Abilities.Fire.WallOfFire.Damage", 2);
+				config.addDefault("Abilities.Fire.WallOfFire.Damage", 1);
 				config.addDefault("Abilities.Fire.WallOfFire.Cooldown", 11000);
 				config.addDefault("Abilities.Fire.WallOfFire.Interval", 500);
 				config.addDefault("Abilities.Fire.WallOfFire.FireTicks", 2);
@@ -707,7 +709,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Fire.FireCombo.FireKick.Cooldown", 5500);
 				config.addDefault("Abilities.Fire.FireCombo.FireSpin.Range", 7);
 				config.addDefault("Abilities.Fire.FireCombo.FireSpin.Damage", 3.0);
-				config.addDefault("Abilities.Fire.FireCombo.FireSpin.Knockback", 3.2);
+				config.addDefault("Abilities.Fire.FireCombo.FireSpin.Knockback", 3.0);
 				config.addDefault("Abilities.Fire.FireCombo.FireSpin.Cooldown", 4500);
 				config.addDefault("Abilities.Fire.FireCombo.FireWheel.Range", 20.0);
 				config.addDefault("Abilities.Fire.FireCombo.FireWheel.Damage", 4.0);
@@ -717,14 +719,14 @@ public class ConfigManager {
 				config.addDefault("Abilities.Fire.FireCombo.JetBlast.Speed", 1.2);
 				config.addDefault("Abilities.Fire.FireCombo.JetBlast.Cooldown", 6000);
 				config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Speed", 1.1);
-				config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Damage", 2);
+				config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Damage", 4);
 				config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Cooldown", 6000);
 				config.addDefault("Abilities.Fire.FireCombo.JetBlaze.FireTicks", 2.5);
 
 				config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 				config.addDefault("Abilities.Chi.Passive.Speed", 1);
-				config.addDefault("Abilities.Chi.Passive.Jump", 2);
-				config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 1500);
+				config.addDefault("Abilities.Chi.Passive.Jump", 1);
+				config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 1000);
 				config.addDefault("Abilities.Chi.Passive.DodgeChange", 25);
 
 				config.addDefault("Abilities.Chi.ChiCombo.Enabled", true);
@@ -738,7 +740,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Chi.HighJump.Enabled", true);
 				config.addDefault("Abilities.Chi.HighJump.Description", "To use this ability, simply click. You will jump quite high. This ability has a short cooldown.");
 				config.addDefault("Abilities.Chi.HighJump.Height", 1);
-				config.addDefault("Abilities.Chi.HighJump.Cooldown", 6000);
+				config.addDefault("Abilities.Chi.HighJump.Cooldown", 3000);
 
 				config.addDefault("Abilities.Chi.Paralyze.Enabled", true);
 				config.addDefault("Abilities.Chi.Paralyze.Description", "Paralyzes the target, making them unable to do anything for a short " + "period of time. This ability has a long cooldown.");
@@ -749,7 +751,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Chi.RapidPunch.Description", "This ability allows the chiblocker to punch rapidly in a short period. To use, simply punch. This has a short cooldown.");
 				config.addDefault("Abilities.Chi.RapidPunch.Damage", 1);
 				config.addDefault("Abilities.Chi.RapidPunch.Distance", 4);
-				config.addDefault("Abilities.Chi.RapidPunch.Cooldown", 12000);
+				config.addDefault("Abilities.Chi.RapidPunch.Cooldown", 6000);
 				config.addDefault("Abilities.Chi.RapidPunch.Punches", 4);
 
 				config.addDefault("Abilities.Chi.Smokescreen.Enabled", true);
@@ -765,8 +767,8 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Chi.QuickStrike.Enabled", true);
 				config.addDefault("Abilities.Chi.QuickStrike.Description", "QuickStrike enables a chiblocker to quickly strike an enemy, potentially blocking their chi.");
-				config.addDefault("Abilities.Chi.QuickStrike.Damage", 2);
-				config.addDefault("Abilities.Chi.QuickStrike.ChiBlockChance", 20);
+				config.addDefault("Abilities.Chi.QuickStrike.Damage", 1);
+				config.addDefault("Abilities.Chi.QuickStrike.ChiBlockChance", 15);
 
 				config.addDefault("Abilities.Chi.SwiftKick.Enabled", true);
 				config.addDefault("Abilities.Chi.SwiftKick.Description", "SwiftKick allows a chiblocker to swiftly kick an enemy, potentially blocking their chi. The chiblocker must be in the air to use this ability.");

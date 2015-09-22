@@ -52,7 +52,7 @@ public class AirBlast extends CoreAbility {
 	// public static long interval = 2000;
 	public static byte full = 0x0;
 
-	private Location location;
+	Location location;
 	private Location origin;
 	private Vector direction;
 	private Player player;
@@ -439,6 +439,20 @@ public class AirBlast extends CoreAbility {
 
 		advanceLocation();
 		return true;
+	}
+	
+	public static boolean removeAirBlastsAroundPoint(Location location, double radius) {
+		boolean removed = false;
+		for (Integer id : getInstances(StockAbility.AirBlast).keySet()) {
+			AirBlast airBlast = ((AirBlast)getAbility(id));
+		Location airBlastlocation = airBlast.location;
+		if (location.getWorld() == airBlastlocation.getWorld()) {
+			if (location.distance(airBlastlocation) <= radius)
+				airBlast.remove();
+			removed = true;
+			}
+		}
+		return removed;
 	}
 
 	@Override

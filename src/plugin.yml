@@ -21,7 +21,6 @@ permissions:
       bending.command.rechoose: true
       bending.admin.choose: true
       bending.ability.AvatarState: true
-      bending.ability.Bloodbending: true
       bending.water.Bloodbending.anytime: true
       bending.ability.Flight: true
       bending.ability.MetalClips.loot: true
@@ -33,9 +32,6 @@ permissions:
       bending.command.check: true
       bending.admin.debug: true
       bending.admin.remove: true
-      bending.ability.WaterArms.Grab: true
-      bending.ability.WaterArms.Freeze: true
-      bending.ability.WaterArms.Spear: true
   bending.player:
     default: true
     description: Grants access to most abilities and basic commands.
@@ -83,6 +79,7 @@ permissions:
     children:
       bending.command.add.water: true
       bending.command.choose.water: true
+      bending.ability.Bloodbending: true
       bending.ability.HealingWaters: true
       bending.ability.IceBlast: true
       bending.ability.IceSpike: true
@@ -105,6 +102,9 @@ permissions:
       bending.ability.WaterArms.Pull: true
       bending.ability.WaterArms.Punch: true
       bending.ability.WaterArms.Grapple: true
+      bending.ability.WaterArms.Grab: true
+      bending.ability.WaterArms.Freeze: true
+      bending.ability.WaterArms.Spear: true
   bending.earth:
     default: true
     description: Grants access to all Earthbending abilities.

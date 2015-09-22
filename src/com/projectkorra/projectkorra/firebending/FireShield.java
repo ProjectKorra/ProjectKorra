@@ -8,7 +8,9 @@ import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -152,11 +154,20 @@ public class FireShield extends CoreAbility {
 
 				for (Block block : blocks) {
 					if (!GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
-						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 2);
-						ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
+						if (GeneralMethods.rand.nextInt(3) == 0) {
+							ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
+						}
+						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 						if (GeneralMethods.rand.nextInt(7) == 0) {
 							FireMethods.playFirebendingSound(block.getLocation());
 						}
+					}
+				}
+				
+				for (Block testblock : GeneralMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
+					if (testblock.getType() == Material.FIRE) {
+						testblock.setType(Material.AIR);
+						testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 					}
 				}
 
@@ -169,10 +180,9 @@ public class FireShield extends CoreAbility {
 					}
 				}
 
-				FireBlast.removeFireBlastsAroundPoint(location, radius);
-				// WaterManipulation.removeAroundPoint(location, radius);
-				// EarthBlast.removeAroundPoint(location, radius);
-				// FireStream.removeAroundPoint(location, radius);
+				FireBlast.removeFireBlastsAroundPoint(location, radius+1);
+				FireStream.removeAroundPoint(location, radius+1);
+				Combustion.removeAroundPoint(location, radius+1);
 
 			} else {
 				ArrayList<Block> blocks = new ArrayList<Block>();
@@ -194,8 +204,10 @@ public class FireShield extends CoreAbility {
 
 				for (Block block : blocks) {
 					if (!GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
-						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 6);
+						if (GeneralMethods.rand.nextInt(1) == 0) {
 						ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
+						}
+						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 3);
 						if (GeneralMethods.rand.nextInt(4) == 0) {
 							FireMethods.playFirebendingSound(block.getLocation());
 						}
