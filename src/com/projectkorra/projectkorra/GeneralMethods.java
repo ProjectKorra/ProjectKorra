@@ -798,7 +798,7 @@ public class GeneralMethods {
 		return BendingPlayer.getPlayers().get(uuid);
 	}
 
-	public static BendingPlayer getBendingPlayer(Player player) {
+	public static BendingPlayer getBendingPlayer(OfflinePlayer player) {
 		return getBendingPlayer(player.getUniqueId());
 	}
 

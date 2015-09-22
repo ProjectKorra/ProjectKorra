@@ -8,18 +8,16 @@ import com.projectkorra.projectkorra.airbending.AirMethods;
 import com.projectkorra.projectkorra.chiblocking.ChiMethods;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.firebending.FireMethods;
-import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 import com.projectkorra.rpg.RPGMethods;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -123,144 +121,121 @@ public class WhoCommand extends PKCommand {
 	 * @param playerName The Player to look up
 	 */
 	private void whoPlayer(final CommandSender sender, final String playerName) {
-		Player player = Bukkit.getPlayer(playerName);
-		if (player != null) {
-			sender.sendMessage(playerName + " - ");
-			if (GeneralMethods.isBender(playerName, Element.Air)) {
-				sender.sendMessage(AirMethods.getAirColor() + "- Airbender");
-				if (AirMethods.canAirFlight(player)) {
-					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Air) + "    Can Fly");
-				}
-				if (AirMethods.canUseSpiritualProjection(player)) {
-					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Air) + "    Can use Spiritual Projection");
-				}
-			}
-			if (GeneralMethods.isBender(playerName, Element.Water)) {
-				sender.sendMessage(WaterMethods.getWaterColor() + "- Waterbender");
-				if (WaterMethods.canPlantbend(player)) {
-					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Plantbend");
-				}
-				if (WaterMethods.canBloodbend(player)) {
-					if (WaterMethods.canBloodbendAtAnytime(player)) {
-						sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Bloodbend anytime, on any day");
-					} else {
-						sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Bloodbend");
-					}
-				}
-				if (WaterMethods.canIcebend(player)) {
-					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Icebend");
-				}
-				if (WaterMethods.canWaterHeal(player)) {
-					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Heal");
-				}
-			}
-			if (GeneralMethods.isBender(playerName, Element.Earth)) {
-				sender.sendMessage(EarthMethods.getEarthColor() + "- Earthbender");
-				if (EarthMethods.canMetalbend(player)) {
-					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + "    Can Metalbend");
-				}
-				if (EarthMethods.canLavabend(player)) {
-					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + "    Can Lavabend");
-				}
-				if (EarthMethods.canSandbend(player)) {
-					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + "    Can Sandbend");
-				}
-			}
-			if (GeneralMethods.isBender(playerName, Element.Fire)) {
-				sender.sendMessage(FireMethods.getFireColor() + "- Firebender");
-				if (FireMethods.canCombustionbend(player)) {
-					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Fire) + "    Can Combustionbend");
-				}
-				if (FireMethods.canLightningbend(player)) {
-					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Fire) + "    Can Lightningbend");
-				}
-			}
-			if (GeneralMethods.isBender(playerName, Element.Chi)) {
-				sender.sendMessage(ChiMethods.getChiColor() + "- ChiBlocker");
-			}
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(playerName);
-			UUID uuid = player.getUniqueId();
-			if (bPlayer != null) {
-				sender.sendMessage("Abilities: ");
-				for (int i = 1; i <= 9; i++) {
-					String ability = bPlayer.getAbilities().get(i);
-					if (ability == null || ability.equalsIgnoreCase("null")) {
-						continue;
-					} else {
-						sender.sendMessage(i + " - " + GeneralMethods.getAbilityColor(ability) + ability);
-					}
-				}
-			}
-
-			if (GeneralMethods.hasRPG()) {
-				if (RPGMethods.isCurrentAvatar(player.getUniqueId())) {
-					sender.sendMessage(GeneralMethods.getAvatarColor() + "Current Avatar");
-				} else if (RPGMethods.hasBeenAvatar(player.getUniqueId())) {
-					sender.sendMessage(GeneralMethods.getAvatarColor() + "Former Avatar");
-				}
-			}
-
-			if (staff.containsKey(uuid.toString())) {
-				sender.sendMessage(staff.get(uuid.toString()));
-			}
-		} else {
-			sender.sendMessage(ChatColor.GREEN + "You are running a lookup of an offline player, this may take a second.");
-
-			new BukkitRunnable() {
+		//Player player = Bukkit.getPlayer(playerName);
+		@SuppressWarnings("deprecation")
+		final OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+		if (player == null || !player.hasPlayedBefore()) {
+			sender.sendMessage(ChatColor.RED + "Player not found!");
+			return;
+		}
+		if (!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
+			sender.sendMessage(player.getName() + ChatColor.GRAY + " is currently offline. A lookup is currently being done (this might take a few seconds).");
+		}
+		Player player_ = (Player) (player.isOnline() ? player : null);
+		sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : "") + " - ");
+		if (!BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
+			GeneralMethods.createBendingPlayer(player.getUniqueId(), playerName);
+			BukkitRunnable runnable = new BukkitRunnable() {
 				@Override
 				public void run() {
-					ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE player = '" + playerName + "'");
-					try {
-						final List<String> messages = new ArrayList<String>();
-
-						if (rs2.next()) {
-							UUID uuid = UUID.fromString(rs2.getString("uuid"));
-							String element = rs2.getString("element");
-
-							messages.add(playerName + " - ");
-							if (element == null) {
-								messages.add(" - Nonbender");
-							} else {
-								if (element.contains("a"))
-									messages.add(AirMethods.getAirColor() + "- Airbender");
-								if (element.contains("w"))
-									messages.add(WaterMethods.getWaterColor() + "- Waterbender");
-								if (element.contains("e"))
-									messages.add(EarthMethods.getEarthColor() + "- Earthbender");
-								if (element.contains("f"))
-									messages.add(FireMethods.getFireColor() + "- Firebender");
-								if (element.contains("c"))
-									messages.add(ChiMethods.getChiColor() + "- Chiblocker");
-							}
-							if (GeneralMethods.hasRPG()) {
-								if (RPGMethods.isCurrentAvatar(uuid)) {
-									messages.add(GeneralMethods.getAvatarColor() + "Current Avatar");
-								} else if (RPGMethods.hasBeenAvatar(uuid)) {
-									messages.add(GeneralMethods.getAvatarColor() + "Former Avatar");
-								}
-							}
-
-							if (staff.containsKey(uuid)) {
-								messages.add(staff.get(uuid));
-							}
-						} else {
-							messages.add(ChatColor.RED + "We could not find any player in your database with that username. Are you sure it is typed correctly?");
+					int count = 0;
+					final long delay = 200L;
+					while (!BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
+						if (count > 5 * (1000 / delay)) { //After 5 seconds of waiting, tell the user the database is busy and to try again in a few seconds.
+							sender.sendMessage(ChatColor.DARK_RED + "The database appears to busy at the moment. Please wait a few seconds and try again.");
+							break;
 						}
-
-						new BukkitRunnable() {
-							@Override
-							public void run() {
-								for (String message : messages) {
-									sender.sendMessage(message);
-								}
-							}
-						}.runTask(ProjectKorra.plugin);
+						count++;
+						try {
+							Thread.sleep(delay);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							sender.sendMessage(ChatColor.DARK_RED + "The database appears to busy at the moment. Please wait a few seconds and try again.");
+							break;
+						}
 					}
-					catch (SQLException e) {
-						e.printStackTrace();
-					}
+					whoPlayer(sender, playerName);
 				}
-			}.runTaskAsynchronously(ProjectKorra.plugin);
+			};
+			runnable.runTaskAsynchronously(ProjectKorra.plugin);
+			return;
 		}
+		if (GeneralMethods.isBender(playerName, Element.Air)) {
+			sender.sendMessage(AirMethods.getAirColor() + "- Airbender");
+			if (player_ != null && AirMethods.canAirFlight((Player) player)) {
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Air) + "    Can Fly");
+			}
+			if (player_ != null && AirMethods.canUseSpiritualProjection((Player) player)) {
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Air) + "    Can use Spiritual Projection");
+			}
+		}
+		if (GeneralMethods.isBender(playerName, Element.Water)) {
+			sender.sendMessage(WaterMethods.getWaterColor() + "- Waterbender");
+			if (player_ != null && WaterMethods.canPlantbend((Player) player)) {
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Plantbend");
+			}
+			if (player_ != null && WaterMethods.canBloodbend((Player) player)) {
+				if (WaterMethods.canBloodbendAtAnytime((Player) player)) {
+					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Bloodbend anytime, on any day");
+				} else {
+					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Bloodbend");
+				}
+			}
+			if (player_ != null && WaterMethods.canIcebend((Player) player)) {
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Icebend");
+			}
+			if (player_ != null && WaterMethods.canWaterHeal((Player) player)) {
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Heal");
+			}
+		}
+		if (GeneralMethods.isBender(playerName, Element.Earth)) {
+			sender.sendMessage(EarthMethods.getEarthColor() + "- Earthbender");
+			if (player_ != null && EarthMethods.canMetalbend((Player) player)) {
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + "    Can Metalbend");
+			}
+			if (player_ != null && EarthMethods.canLavabend((Player) player)) {
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + "    Can Lavabend");
+			}
+			if (player_ != null && EarthMethods.canSandbend((Player) player)) {
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + "    Can Sandbend");
+			}
+		}
+		if (GeneralMethods.isBender(playerName, Element.Fire)) {
+			sender.sendMessage(FireMethods.getFireColor() + "- Firebender");
+			if (player_ != null && FireMethods.canCombustionbend((Player) player)) {
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Fire) + "    Can Combustionbend");
+			}
+			if (player_ != null && FireMethods.canLightningbend((Player) player)) {
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Fire) + "    Can Lightningbend");
+			}
+		}
+		if (GeneralMethods.isBender(playerName, Element.Chi)) {
+			sender.sendMessage(ChiMethods.getChiColor() + "- ChiBlocker");
+		}
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(playerName);
+		UUID uuid = player.getUniqueId();
+		if (bPlayer != null) {
+			sender.sendMessage("Abilities: ");
+			for (int i = 1; i <= 9; i++) {
+				String ability = bPlayer.getAbilities().get(i);
+				if (ability == null || ability.equalsIgnoreCase("null")) {
+					continue;
+				} else {
+					sender.sendMessage(i + " - " + GeneralMethods.getAbilityColor(ability) + ability);
+				}
+			}
+		}
+
+		if (GeneralMethods.hasRPG()) {
+			if (RPGMethods.isCurrentAvatar(player.getUniqueId())) {
+				sender.sendMessage(GeneralMethods.getAvatarColor() + "Current Avatar");
+			} else if (RPGMethods.hasBeenAvatar(player.getUniqueId())) {
+				sender.sendMessage(GeneralMethods.getAvatarColor() + "Former Avatar");
+			}
+		}
+
+		if (staff.containsKey(uuid.toString())) {
+			sender.sendMessage(staff.get(uuid.toString()));
+		} 
 	}
 }
