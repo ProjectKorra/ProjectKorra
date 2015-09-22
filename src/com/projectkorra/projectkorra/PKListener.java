@@ -572,9 +572,15 @@ public class PKListener implements Listener {
 		if (e.getEntity() instanceof LivingEntity) {
 			if (e.getEntity().getEntityId() != e.getInstigator().getEntityId()) {
 				double minimumDistance = plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance");
+				double maxDamage = plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageCap");
 				double damage = ((e.getDistanceTraveled() - minimumDistance) < 0 ? 0 : e.getDistanceTraveled() - minimumDistance) / (e.getDifference().length());
-				if (damage > 0)
-					GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), damage);
+				if (damage > 0) {
+					if(damage <= maxDamage) {
+						GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), damage);
+					} else {
+						GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), maxDamage);
+					}
+				}
 			}
 		}
 	}

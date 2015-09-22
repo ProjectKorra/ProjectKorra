@@ -8,8 +8,6 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.Plantbending;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -76,6 +74,7 @@ public class LavaFlow {
 	private long clickLavaCleanupDelay, clickLandCleanupDelay;
 	private double lavaCreateSpeed, landCreateSpeed;
 	private int upwardFlow, downwardFlow;
+	private boolean shiftIsFinished;
 	private boolean allowNaturalFlow;
 	private AbilityType type;
 	private Location origin;
@@ -253,14 +252,24 @@ public class LavaFlow {
 							if (dSquared < shiftPlatformRadius * 4 || getAdjacentLavaBlocks(block.getLocation()).size() > 0)
 								createLava(block);
 						} else if (Math.random() < particleDensity && dSquared < Math.pow(currentRadius + particleDensity, 2) && currentRadius + particleDensity < shiftMaxRadius) {
-							ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+							if (GeneralMethods.rand.nextInt(3) == 0) {
+								ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+							}
 						}
 					}
 				}
-
+				
+				if(!shiftIsFinished) {
+					if (GeneralMethods.rand.nextInt(10) == 0) {
+						ParticleEffect.LAVA.display(player.getLocation(), (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+					}
+				}
+				
 				currentRadius += shiftFlowSpeed;
-				if (currentRadius > shiftMaxRadius)
+				if (currentRadius > shiftMaxRadius) {
 					currentRadius = shiftMaxRadius;
+					shiftIsFinished = true;
+				}
 			}
 		}
 
@@ -288,8 +297,11 @@ public class LavaFlow {
 					for (double z = -clickLavaRadius; z <= clickLavaRadius; z++) {
 						Location loc = origin.clone().add(x, 0, z);
 						Block tempBlock = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
-						if (tempBlock != null && !isLava(tempBlock) && Math.random() < PARTICLE_DENSITY && tempBlock.getLocation().distanceSquared(origin) <= Math.pow(clickLavaRadius, 2))
-							ParticleEffect.LAVA.display(loc, 0, 0, 0, 0, 1);
+						if (tempBlock != null && !isLava(tempBlock) && Math.random() < PARTICLE_DENSITY && tempBlock.getLocation().distanceSquared(origin) <= Math.pow(clickLavaRadius, 2)) {
+							if (GeneralMethods.rand.nextInt(3) == 0) {
+								ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+							}
+						}
 					}
 				return;
 			}
@@ -315,8 +327,11 @@ public class LavaFlow {
 								clickIsFinished = false;
 								if (Math.random() < lavaCreateSpeed)
 									createLava(tempBlock);
-								else
-									ParticleEffect.LAVA.display(loc, 0, 0, 0, 0, 1);
+								else {
+									if (GeneralMethods.rand.nextInt(4) == 0) {
+										ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
+									}
+								}
 							} else if (!makeLava && isLava(tempBlock)) {
 								clickIsFinished = false;
 								if (Math.random() < landCreateSpeed)

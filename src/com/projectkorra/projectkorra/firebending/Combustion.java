@@ -102,8 +102,8 @@ public class Combustion extends CoreAbility {
 	}
 
 	private void advanceLocation() {
-		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 5);
-		ParticleEffect.FLAME.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
+		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random()/2, (float) Math.random()/2, (float) Math.random()/2, 0, 5);
+		ParticleEffect.FLAME.display(location, (float) Math.random()/2, (float) Math.random()/2, (float) Math.random()/2, 0, 2);
 		//if (Methods.rand.nextInt(4) == 0) {
 		FireMethods.playCombustionSound(location);
 		//}
@@ -176,7 +176,7 @@ public class Combustion extends CoreAbility {
 
 		for (Entity entity : location.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distance(location) <= 1) {
+				if (entity.getLocation().distance(location) <= 2 && !entity.equals(player)) {
 					createExplosion(location, power, breakblocks);
 				}
 			}
