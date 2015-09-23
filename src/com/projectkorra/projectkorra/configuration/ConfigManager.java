@@ -121,7 +121,7 @@ public class ConfigManager {
 
 				config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
 				config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance", 5.0);
-				config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageCap", 4.0);
+				config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageCap", 6.0);
 
 				config.addDefault("Properties.CustomItems.GrapplingHook.Enable", true);
 				config.addDefault("Properties.CustomItems.GrapplingHook.IronUses", 25);
@@ -160,7 +160,7 @@ public class ConfigManager {
 				config.addDefault("Properties.Earth.PlaySound", true);
 
 				config.addDefault("Properties.Fire.CanBendWithWeapons", true);
-				config.addDefault("Properties.Fire.DayFactor", 1.0);
+				config.addDefault("Properties.Fire.DayFactor", 1.25);
 				config.addDefault("Properties.Fire.PlaySound", true);
 				config.addDefault("Properties.Fire.NightMessage", "You feel the empowering of your firebending subside as the sun sets.");
 				config.addDefault("Properties.Fire.DayMessage", "You feel the strength of the rising sun empowering your firebending.");
@@ -195,7 +195,7 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Air.AirBlast.Enabled", true);
 				config.addDefault("Abilities.Air.AirBlast.Description", "AirBlast is the most fundamental bending technique of an airbender." + " To use, simply left-click in a direction. A gust of wind will be" + " created at your fingertips, launching anything in its path harmlessly back." + " A gust of air can extinguish fires on the ground or on a player, can cool lava, and " + "can flip levers and activate buttons. Additionally, tapping sneak will change the " + "origin of your next AirBlast to your targeted location.");
-				config.addDefault("Abilities.Air.AirBlast.Speed", 20);
+				config.addDefault("Abilities.Air.AirBlast.Speed", 25);
 				config.addDefault("Abilities.Air.AirBlast.Range", 20);
 				config.addDefault("Abilities.Air.AirBlast.Radius", 2);
 				config.addDefault("Abilities.Air.AirBlast.Push", 2.5);
@@ -233,7 +233,7 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Air.AirSuction.Enabled", true);
 				config.addDefault("Abilities.Air.AirSuction.Description", "To use, simply left-click in a direction. A gust of wind will originate as far as it can in that direction and flow towards you, sucking anything in its path harmlessly with it. Skilled benders can use this technique to pull items from precarious locations. Additionally, tapping sneak will change the origin of your next AirSuction to your targeted location.");
-				config.addDefault("Abilities.Air.AirSuction.Speed", 20);
+				config.addDefault("Abilities.Air.AirSuction.Speed", 25);
 				config.addDefault("Abilities.Air.AirSuction.Range", 20);
 				config.addDefault("Abilities.Air.AirSuction.Radius", 2);
 				config.addDefault("Abilities.Air.AirSuction.Push", 2.5);
@@ -396,16 +396,16 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled", false);
 				config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown", 200);
 
-				config.addDefault("Abilities.Water.WaterArms.Whip.MaxLength", 16);
-				config.addDefault("Abilities.Water.WaterArms.Whip.MaxLengthWeak", 12);
+				config.addDefault("Abilities.Water.WaterArms.Whip.MaxLength", 12);
+				config.addDefault("Abilities.Water.WaterArms.Whip.MaxLengthWeak", 8);
 
-				config.addDefault("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.Normal", 20);
-				config.addDefault("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.FullMoon", 24);
+				config.addDefault("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.Normal", 16);
+				config.addDefault("Abilities.Water.WaterArms.Whip.NightAugments.MaxLength.FullMoon", 20);
 
 				config.addDefault("Abilities.Water.WaterArms.Whip.Pull.Multiplier", 0.15);
 
 				config.addDefault("Abilities.Water.WaterArms.Whip.Punch.PunchDamage", 0.5);
-				config.addDefault("Abilities.Water.WaterArms.Whip.Punch.MaxLength", 10);
+				config.addDefault("Abilities.Water.WaterArms.Whip.Punch.MaxLength", 6);
 				config.addDefault("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.Normal", 11);
 				config.addDefault("Abilities.Water.WaterArms.Whip.Punch.NightAugments.MaxLength.FullMoon", 13);
 
@@ -616,7 +616,7 @@ public class ConfigManager {
 				//		config.addDefault("Abilities.Fire.Combustion.ChargeTime", 5000);
 				config.addDefault("Abilities.Fire.Combustion.BreakBlocks", false);
 				config.addDefault("Abilities.Fire.Combustion.Power", 1.0);
-				config.addDefault("Abilities.Fire.Combustion.Damage", 4);
+				config.addDefault("Abilities.Fire.Combustion.Damage", 5);
 				config.addDefault("Abilities.Fire.Combustion.Radius", 4);
 				config.addDefault("Abilities.Fire.Combustion.Range", 35);
 				config.addDefault("Abilities.Fire.Combustion.Speed", 25);
@@ -677,12 +677,12 @@ public class ConfigManager {
 				config.addDefault("Abilities.Fire.Lightning.Description", "Hold sneak while selecting this ability to charge up a lightning strike. Once charged, release sneak to discharge the lightning to the targeted location.");
 				config.addDefault("Abilities.Fire.Lightning.Damage", 6.0);
 				config.addDefault("Abilities.Fire.Lightning.Range", 20.0);
-				config.addDefault("Abilities.Fire.Lightning.ChargeTime", 4000);
+				config.addDefault("Abilities.Fire.Lightning.ChargeTime", 2500);
 				config.addDefault("Abilities.Fire.Lightning.Cooldown", 500);
 				config.addDefault("Abilities.Fire.Lightning.StunChance", 0.20);
 				config.addDefault("Abilities.Fire.Lightning.StunDuration", 30.0);
-				config.addDefault("Abilities.Fire.Lightning.MaxArcAngle", 10);
-				config.addDefault("Abilities.Fire.Lightning.SubArcChance", 0.025);
+				config.addDefault("Abilities.Fire.Lightning.MaxArcAngle", 5);
+				config.addDefault("Abilities.Fire.Lightning.SubArcChance", 0.00125);
 				config.addDefault("Abilities.Fire.Lightning.ChainArcRange", 6.0);
 				config.addDefault("Abilities.Fire.Lightning.ChainArcChance", 0.50);
 				config.addDefault("Abilities.Fire.Lightning.MaxChainArcs", 2);
