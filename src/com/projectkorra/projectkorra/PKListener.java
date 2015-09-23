@@ -1002,7 +1002,7 @@ public class PKListener implements Listener {
 			Commands.invincible.remove(event.getPlayer().getName());
 		}
 		Preset.unloadPreset(player);
-		BendingPlayer.getPlayers().remove(event.getPlayer().getUniqueId());
+		//BendingPlayer.getPlayers().remove(event.getPlayer().getUniqueId());
 		if (EarthArmor.instances.containsKey(event.getPlayer())) {
 			EarthArmor.removeEffect(event.getPlayer());
 			event.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
