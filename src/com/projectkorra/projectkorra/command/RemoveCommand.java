@@ -55,9 +55,9 @@ public class RemoveCommand extends PKCommand {
 	@Override
 	public boolean hasPermission(CommandSender sender) {
 		if (sender.hasPermission("bending.admin." + getName())) {
-			sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
 			return true;
 		}
+		sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
 		return false;
 	}
 }
