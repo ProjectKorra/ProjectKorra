@@ -303,7 +303,7 @@ public class AirCombo implements ConfigLoadable {
 				direction = player.getEyeLocation().getDirection();
 
 				for (double i = -5; i < 10; i += 1) {
-					FireComboStream fs = new FireComboStream(null, direction.clone().add(new Vector(0, 0.03 * i, 0)), player.getLocation(), range, speed);
+					FireComboStream fs = new FireComboStream(null, direction.clone().add(new Vector(0, 0.03 * i, 0)), player.getLocation(), range, speed, "AirSlice");
 					fs.setDensity(1);
 					fs.setSpread(0F);
 					fs.setUseNewParticles(true);
@@ -347,7 +347,7 @@ public class AirCombo implements ConfigLoadable {
 				for (double i = 0; i < 30; i++) {
 					Vector vec = GeneralMethods.getDirection(player.getLocation(), origin.clone().add(origToDest.clone().multiply(i / 30)));
 
-					FireComboStream fs = new FireComboStream(null, vec, player.getLocation(), range, speed);
+					FireComboStream fs = new FireComboStream(null, vec, player.getLocation(), range, speed, "AirSweep");
 					fs.setDensity(1);
 					fs.setSpread(0F);
 					fs.setUseNewParticles(true);
@@ -396,7 +396,11 @@ public class AirCombo implements ConfigLoadable {
 						}
 						if (damage != 0)
 							if (entity instanceof LivingEntity)
-								GeneralMethods.damageEntity(player, entity, damage, "AirCombo");
+								if (fstream.getAbility().equalsIgnoreCase("AirSweep")) {
+									GeneralMethods.damageEntity(player, entity, damage, Element.Air, "AirSweep");
+								} else {
+									GeneralMethods.damageEntity(player, entity, damage, Element.Air, "AirCombo");
+								}
 					}
 				}
 
