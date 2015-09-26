@@ -36,7 +36,8 @@ public class AirBlast extends CoreAbility {
 	public static double speed = config.get().getDouble("Abilities.Air.AirBlast.Speed");
 	public static double defaultrange = config.get().getDouble("Abilities.Air.AirBlast.Range");
 	public static double affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
-	public static double defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push");
+	public static double defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push.Entities");
+	public static double otherpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push.Self");
 	
 	public static boolean flickLevers = config.get().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
 	public static boolean openDoors = config.get().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
@@ -185,6 +186,7 @@ public class AirBlast extends CoreAbility {
 		boolean isUser = entity.getUniqueId() == player.getUniqueId();
 
 		if (!isUser || otherorigin) {
+			pushfactor = otherpushfactor;
 			Vector velocity = entity.getVelocity();
 			// double mag = Math.abs(velocity.getY());
 			double max = maxspeed;

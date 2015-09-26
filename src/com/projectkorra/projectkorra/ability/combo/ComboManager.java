@@ -136,10 +136,9 @@ public class ComboManager {
 		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_DOWN));
 		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_UP));
 		iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFT_DOWN));
-		iceBullet.add(new AbilityInformation("IceBlast", ClickType.LEFT_CLICK));
 		comboAbilityList.put("IceBullet", new ComboAbility("IceBullet", iceBullet, WaterCombo.class));
 		descriptions.put("IceBullet", "Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
-		instructions.put("IceBullet", "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > IceBlast (Left Click) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
+		instructions.put("IceBullet", "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
 
 		ArrayList<AbilityInformation> iceBulletLeft = new ArrayList<AbilityInformation>();
 		iceBulletLeft.add(new AbilityInformation("IceBlast", ClickType.LEFT_CLICK));
