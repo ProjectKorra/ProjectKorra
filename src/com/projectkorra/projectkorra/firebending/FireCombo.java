@@ -283,7 +283,7 @@ public class FireCombo implements ConfigLoadable {
 					Vector vec = GeneralMethods.getDirection(player.getLocation(), destination.clone());
 					vec = GeneralMethods.rotateXZ(vec, i);
 
-					FireComboStream fs = new FireComboStream(this, vec, player.getLocation(), range, speed);
+					FireComboStream fs = new FireComboStream(this, vec, player.getLocation(), range, speed, "FireKick");
 					fs.setSpread(0.2F);
 					fs.setDensity(5);
 					fs.setUseNewParticles(true);
@@ -316,7 +316,7 @@ public class FireCombo implements ConfigLoadable {
 					vec = GeneralMethods.rotateXZ(vec, i - 180);
 					vec.setY(0);
 
-					FireComboStream fs = new FireComboStream(this, vec, player.getLocation().clone().add(0, 1, 0), range, speed);
+					FireComboStream fs = new FireComboStream(this, vec, player.getLocation().clone().add(0, 1, 0), range, speed, "FireSpin");
 					fs.setSpread(0.0F);
 					fs.setDensity(1);
 					fs.setUseNewParticles(true);
@@ -354,7 +354,7 @@ public class FireCombo implements ConfigLoadable {
 				}
 				player.setVelocity(player.getVelocity().normalize().multiply(speed));
 
-				FireComboStream fs = new FireComboStream(this, player.getVelocity().clone().multiply(-1), player.getLocation(), 3, 0.5);
+				FireComboStream fs = new FireComboStream(this, player.getVelocity().clone().multiply(-1), player.getLocation(), 3, 0.5, "JetBlast");
 				fs.setDensity(1);
 				fs.setSpread(0.9F);
 				fs.setUseNewParticles(true);
@@ -379,7 +379,7 @@ public class FireCombo implements ConfigLoadable {
 				direction = player.getVelocity().clone().multiply(-1);
 				player.setVelocity(player.getVelocity().normalize().multiply(speed));
 
-				FireComboStream fs = new FireComboStream(this, direction, player.getLocation(), 5, 1);
+				FireComboStream fs = new FireComboStream(this, direction, player.getLocation(), 5, 1, "JetBlaze");
 				fs.setDensity(8);
 				fs.setSpread(1.0F);
 				fs.setUseNewParticles(true);
@@ -423,7 +423,7 @@ public class FireCombo implements ConfigLoadable {
 				topBlock = topBlock.getLocation().add(0, -1, 0).getBlock();
 			currentLoc.setY(topBlock.getY() + FIRE_WHEEL_STARTING_HEIGHT);
 
-			FireComboStream fs = new FireComboStream(this, direction, currentLoc.clone().add(0, -1, 0), 5, 1);
+			FireComboStream fs = new FireComboStream(this, direction, currentLoc.clone().add(0, -1, 0), 5, 1, "FireWheel");
 			fs.setDensity(0);
 			fs.setSinglePoint(true);
 			fs.setCollisionRadius(1.5);
@@ -491,6 +491,7 @@ public class FireCombo implements ConfigLoadable {
 		private double speed;
 		private Location initialLoc, currentLoc;
 		private double distance;
+		private String ability;
 
 		ParticleEffect particleEffect = ParticleEffect.FLAME;
 		private FireCombo fireCombo;
@@ -504,13 +505,14 @@ public class FireCombo implements ConfigLoadable {
 		private int checkCollisionDelay = 1;
 		private int checkCollisionCounter = 0;
 
-		public FireComboStream(FireCombo fireCombo, Vector direction, Location loc, double distance, double speed) {
+		public FireComboStream(FireCombo fireCombo, Vector direction, Location loc, double distance, double speed, String ability) {
 			this.fireCombo = fireCombo;
 			this.direction = direction;
 			this.speed = speed;
 			this.initialLoc = loc.clone();
 			this.currentLoc = loc.clone();
 			this.distance = distance;
+			this.ability = ability;
 		}
 
 		public void cancel() {
@@ -525,6 +527,10 @@ public class FireCombo implements ConfigLoadable {
 			return this.currentLoc;
 		}
 
+		public String getAbility() {
+			return this.ability;
+		}
+		
 		public boolean isCancelled() {
 			return cancelled;
 		}

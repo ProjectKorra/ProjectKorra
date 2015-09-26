@@ -892,12 +892,12 @@ public class PKListener implements Listener {
 			}
 			*/
 			if (element != null) {
-				if (ConfigManager.deathMsgConfig.get().contains(element.toString() + "." + ability)) {
-					message = ConfigManager.deathMsgConfig.get().getString(element + "." + ability);
+				if (ConfigManager.deathMsgConfig.get().contains(element.toString() + "." + tempAbility)) {
+					message = ConfigManager.deathMsgConfig.get().getString(element + "." + tempAbility);
 				}
 			} else {
-				if (ConfigManager.deathMsgConfig.get().contains("Combo." + ability)) {
-					message = ConfigManager.deathMsgConfig.get().getString("Combo." + ability);
+				if (ConfigManager.deathMsgConfig.get().contains("Combo." + tempAbility)) {
+					message = ConfigManager.deathMsgConfig.get().getString("Combo." + tempAbility);
 				}
 			}
 			message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", event.getEntity().getKiller().getName()).replace("{ability}", ability);
