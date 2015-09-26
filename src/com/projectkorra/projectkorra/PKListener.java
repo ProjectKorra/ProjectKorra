@@ -110,6 +110,7 @@ import com.projectkorra.projectkorra.earthbending.SandSpout;
 import com.projectkorra.projectkorra.earthbending.Shockwave;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import com.projectkorra.projectkorra.event.PlayerBendingDeathEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.firebending.ArcOfFire;
 import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.Enflamed;
@@ -174,23 +175,31 @@ public class PKListener implements Listener {
 
 		Preset.loadPresets(player);
 		String append = "";
+		ChatColor color = null;
 		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
 		if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).getElements().size() > 1) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
+			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
 		} else if (GeneralMethods.isBender(player.getName(), Element.Air) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Air");
+			color = AirMethods.getAirColor();
 		} else if (GeneralMethods.isBender(player.getName(), Element.Water) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Water");
+			color = WaterMethods.getWaterColor();
 		} else if (GeneralMethods.isBender(player.getName(), Element.Earth) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Earth");
+			color = EarthMethods.getEarthColor();
 		} else if (GeneralMethods.isBender(player.getName(), Element.Fire) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Fire");
+			color = FireMethods.getFireColor();
 		} else if (GeneralMethods.isBender(player.getName(), Element.Chi) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
+			color = ChiMethods.getChiColor();
 		}
-
+		
 		if (chatEnabled) {
-			player.setDisplayName(append + player.getDisplayName());
+			player.setDisplayName(player.getName());
+			player.setDisplayName(color + append + ChatColor.RESET + player.getDisplayName());
 		}
 
 		// Handle the AirSpout/WaterSpout login glitches
@@ -342,6 +351,39 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onElementChange(PlayerChangeElementEvent event) {
+		Player player = event.getTarget();
+		Element e = event.getElement();
+		String append = "";
+		ChatColor color = null;
+		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
+		if (GeneralMethods.getBendingPlayer(player).getElements().size() > 1) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
+			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
+		} else if (e == Element.Air && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Air");
+			color = AirMethods.getAirColor();
+		} else if (e == Element.Water && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Water");
+			color = WaterMethods.getWaterColor();
+		} else if (e == Element.Earth && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Earth");
+			color = EarthMethods.getEarthColor();
+		} else if (e == Element.Fire && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Fire");
+			color = FireMethods.getFireColor();
+		} else if (e == Element.Chi && chatEnabled) {
+			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
+			color = ChiMethods.getChiColor();
+		}
+		
+		if (chatEnabled) {
+			player.setDisplayName(player.getName());
+			player.setDisplayName(color + append + ChatColor.RESET + player.getDisplayName());
 		}
 	}
 
