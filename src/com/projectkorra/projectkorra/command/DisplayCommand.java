@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.ability.combo.ComboManager;
 import com.projectkorra.projectkorra.airbending.AirMethods;
 import com.projectkorra.projectkorra.chiblocking.ChiMethods;
@@ -37,7 +38,7 @@ public class DisplayCommand extends PKCommand {
 
 		//bending display [Element]
 		if (args.size() == 1) {
-			String element = args.get(0);
+			String element = args.get(0).toLowerCase();
 			//combos
 			if (Arrays.asList(Commands.comboaliases).contains(element)) {
 				element = getElement(element);
@@ -68,7 +69,19 @@ public class DisplayCommand extends PKCommand {
 			}
 
 			else {
-				sender.sendMessage(ChatColor.RED + "Not a valid Element." + ChatColor.WHITE + " Elements: " + AirMethods.getAirColor() + "Air" + ChatColor.WHITE + " | " + WaterMethods.getWaterColor() + "Water" + ChatColor.WHITE + " | " + EarthMethods.getEarthColor() + "Earth" + ChatColor.WHITE + " | " + FireMethods.getFireColor() + "Fire" + ChatColor.WHITE + " | " + ChiMethods.getChiColor() + "Chi");
+				ChatColor w = ChatColor.WHITE;
+				sender.sendMessage(ChatColor.RED + "Not a valid argument." + ChatColor.WHITE + "\nElements: " + AirMethods.getAirColor() + "Air" + ChatColor.WHITE + " | " + WaterMethods.getWaterColor() + "Water" + ChatColor.WHITE + " | " + EarthMethods.getEarthColor() + "Earth" + ChatColor.WHITE + " | " + FireMethods.getFireColor() + "Fire" + ChatColor.WHITE + " | " + ChiMethods.getChiColor() + "Chi");
+				sender.sendMessage(w + "SubElements: "
+						+ w + "\n-" + GeneralMethods.getSubBendingColor(Element.Air) + " Flight"
+						+ w + "\n-" + GeneralMethods.getSubBendingColor(Element.Earth) + " Lavabending"
+						+ w + "\n-" + GeneralMethods.getSubBendingColor(Element.Earth) + " Metalbending"
+						+ w + "\n-" + GeneralMethods.getSubBendingColor(Element.Earth) + " Sandbending"
+						+ w + "\n-" + GeneralMethods.getSubBendingColor(Element.Fire) + " Combustion"
+						+ w + "\n-" + GeneralMethods.getSubBendingColor(Element.Fire) + " Lightning"
+						+ w + "\n-" + GeneralMethods.getSubBendingColor(Element.Water) + " Bloodbending"
+						+ w + "\n-" + GeneralMethods.getSubBendingColor(Element.Water) + " Healing"
+						+ w + "\n-" + GeneralMethods.getSubBendingColor(Element.Water) + " Icebending"
+						+ w + "\n-" + GeneralMethods.getSubBendingColor(Element.Water) + " Plantbending");
 			}
 		}
 		if (args.size() == 0) {
@@ -93,7 +106,7 @@ public class DisplayCommand extends PKCommand {
 			sender.sendMessage(ChatColor.RED + "You must select a valid element.");
 			return;
 		} else if (abilities.isEmpty()) {
-			sender.sendMessage(ChatColor.RED + "There are no " + element + " abilities enabled on the server.");
+			sender.sendMessage(ChatColor.YELLOW + "There are no " + GeneralMethods.getElementColor(Element.valueOf(element)) + element + ChatColor.YELLOW + " abilities enabled on the server.");
 		}
 		for (String ability : abilities) {
 			if (GeneralMethods.isSubAbility(ability))
@@ -101,6 +114,54 @@ public class DisplayCommand extends PKCommand {
 			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability)) {
 				sender.sendMessage(GeneralMethods.getElementColor(Element.getType(element)) + ability);
 			}
+		}
+		if (element.equalsIgnoreCase("earth")) {
+			sender.sendMessage(ChatColor.DARK_GREEN + "Combos:" + ChatColor.GREEN + "/bending display earthcombo");
+			if (sender.hasPermission("bending.earth.lavabending")) {
+				sender.sendMessage(ChatColor.DARK_GREEN + "Lavabending abilities: " + ChatColor.GREEN + "/bending display lavabending");
+			}
+			if (sender.hasPermission("bending.earth.metalbending")) {
+				sender.sendMessage(ChatColor.DARK_GREEN + "Metalbending abilities: " + ChatColor.GREEN + "/bending display metalbending");
+			}
+			if (sender.hasPermission("bending.earth.sandbending")) {
+				sender.sendMessage(ChatColor.DARK_GREEN + "Sandbending abilities: " + ChatColor.GREEN + "/bending display sandbending");
+			}
+		}
+		if (element.equalsIgnoreCase("air")) {
+			sender.sendMessage(ChatColor.DARK_GRAY + "Combos:" + ChatColor.GRAY + "/bending display aircombo");
+			if (sender.hasPermission("bending.air.flight")) {
+				sender.sendMessage(ChatColor.DARK_GRAY + "Flight abilities: " + ChatColor.GRAY + "/bending display flight");
+			}
+			//if (sender.hasPermission("bending.air.spiritualprojection")) {
+			//	sender.sendMessage(ChatColor.DARK_GRAY + "SpiritualProjection abilities: " + ChatColor.GRAY + "/bending display spiritualprojection");
+			//}
+		}
+		if (element.equalsIgnoreCase("fire")) {
+			sender.sendMessage(ChatColor.DARK_RED + "Combos:" + ChatColor.RED + "/bending display firecombo");
+			if (sender.hasPermission("bending.fire.lightningbending")) {
+				sender.sendMessage(ChatColor.DARK_RED + "Lightning abilities: " + ChatColor.RED + "/bending display lightning");
+			}
+			if (sender.hasPermission("bending.fire.combustionbending")) {
+				sender.sendMessage(ChatColor.DARK_RED + "Combustion abilities: " + ChatColor.RED + "/bending display combustion");
+			}
+		}
+		if (element.equalsIgnoreCase("water")) {
+			sender.sendMessage(ChatColor.DARK_AQUA + "Combos:" + ChatColor.AQUA + "/bending display watercombo");
+			if (sender.hasPermission("bending.water.bloodbending")) {
+				sender.sendMessage(ChatColor.DARK_AQUA + "Bloodbending abilities: " + ChatColor.AQUA + "/bending display bloodbending");
+			}
+			if (sender.hasPermission("bending.water.healing")) {
+				sender.sendMessage(ChatColor.DARK_AQUA + "Healing abilities: " + ChatColor.AQUA + "/bending display healing");
+			}
+			if (sender.hasPermission("bending.water.icebending")) {
+				sender.sendMessage(ChatColor.DARK_AQUA + "Icebending abilities: " + ChatColor.AQUA + "/bending display icebending");
+			}
+			if (sender.hasPermission("bending.water.plantbending")) {
+				sender.sendMessage(ChatColor.DARK_AQUA + "Plantbending abilities: " + ChatColor.AQUA + "/bending display plantbending");
+			}
+		}
+		if (element.equalsIgnoreCase("chi")) {
+			sender.sendMessage(ChatColor.GOLD + "Combos: " + ChatColor.YELLOW + "/bending display chicombo");
 		}
 	}
 
@@ -112,9 +173,15 @@ public class DisplayCommand extends PKCommand {
 	 */
 	private void displaySubElement(CommandSender sender, String element) {
 		List<String> abilities = ProjectKorra.plugin.abManager.getAbilities(element);
+		if (abilities.isEmpty()) {
+			Element e = SubElement.getType(element.toLowerCase()).getMainElement();
+			ChatColor color = GeneralMethods.getSubBendingColor(e);
+			sender.sendMessage(ChatColor.YELLOW + "There are no " + color + element + ChatColor.YELLOW + " abilities installed!");
+			return;
+		}
 		for (String ability : abilities) {
 			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability)) {
-				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.getType(getElement(getElement(element)))) + ability);
+				sender.sendMessage(GeneralMethods.getSubBendingColor(Element.getType(getElement(element))) + ability);
 			}
 		}
 	}

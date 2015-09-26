@@ -38,9 +38,9 @@ public class RemoveCommand extends PKCommand {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			bPlayer = GeneralMethods.getBendingPlayer(player);
 		}
-		GeneralMethods.removeUnusableAbilities(player.getName());
 		bPlayer.getElements().clear();
 		GeneralMethods.saveElements(bPlayer);
+		GeneralMethods.removeUnusableAbilities(player.getName());
 		sender.sendMessage(ChatColor.GREEN + "You have removed the bending of " + ChatColor.DARK_AQUA + player.getName());
 		player.sendMessage(ChatColor.GREEN + "Your bending has been removed by " + ChatColor.DARK_AQUA + sender.getName());
 		Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.REMOVE));

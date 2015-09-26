@@ -47,7 +47,7 @@ public class ChooseCommand extends PKCommand {
 				sender.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 				return;
 			}
-			String element = args.get(0);
+			String element = args.get(0).toLowerCase();
 			if (Arrays.asList(Commands.elementaliases).contains(element)) {
 				if (!hasPermission(sender, element)) {
 					return;
@@ -68,7 +68,7 @@ public class ChooseCommand extends PKCommand {
 				sender.sendMessage(ChatColor.RED + "That player is not online.");
 				return;
 			}
-			String element = args.get(0);
+			String element = args.get(0).toLowerCase();
 			if (Arrays.asList(Commands.elementaliases).contains(element)) {
 				add(sender, target, element);
 				return;
@@ -91,16 +91,20 @@ public class ChooseCommand extends PKCommand {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(target);
 		bPlayer.setElement(e);
 		ChatColor color = GeneralMethods.getElementColor(e);
-		if (element.charAt(0) == 'w' || element.charAt(0) == 'f' || element.charAt(0) == 'c') {
+		if (element.charAt(0) == 'w' || element.charAt(0) == 'f') {
 			target.sendMessage(color + "You are now a " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
 		} else if (element.charAt(0) == 'e' || element.charAt(0) == 'a') {
 			target.sendMessage(color + "You are now an " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
+		} else if (element.equalsIgnoreCase("chi")) {
+			target.sendMessage(color + "You are now a Chiblocker.");
 		}
 		if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-			if (element.charAt(0) == 'w' || element.charAt(0) == 'f' || element.charAt(0) == 'c') {
+			if (element.charAt(0) == 'w' || element.charAt(0) == 'f') {
 				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
 			} else if (element.charAt(0) == 'e' || element.charAt(0) == 'a') {
 				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now an " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
+			} else if (element.equalsIgnoreCase("chi")) {
+				target.sendMessage(color + "You are now a Chiblocker.");
 			}
 		}
 		GeneralMethods.removeUnusableAbilities(target.getName());

@@ -36,7 +36,7 @@ public class HelpCommand extends PKCommand {
 
 		String arg = args.get(0);
 
-		if (instances.keySet().contains(arg)) {//bending help command
+		if (instances.keySet().contains(arg.toLowerCase())) {//bending help command
 			instances.get(arg).help(sender, true);
 		} else if (Arrays.asList(Commands.comboaliases).contains(arg)) { //bending help elementcombo
 			sender.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.RED + "/bending display " + arg + ChatColor.GOLD + " or " + ChatColor.RED + "/bending help <comboname>");

@@ -60,10 +60,10 @@ public class PermaremoveCommand extends PKCommand {
 				sender.sendMessage(ChatColor.GREEN + "You have restored the bending of: " + ChatColor.DARK_AQUA + player.getName());
 		} else {
 			bPlayer.getElements().clear();
-			GeneralMethods.removeUnusableAbilities(player.getName());
 			GeneralMethods.saveElements(bPlayer);
 			bPlayer.setPermaRemoved(true);
 			GeneralMethods.savePermaRemoved(bPlayer);
+			GeneralMethods.removeUnusableAbilities(player.getName());
 			player.sendMessage(ChatColor.RED + "Your bending has been permanently removed.");
 			if (!(sender instanceof Player) || sender.getName().equals(target))
 				sender.sendMessage(ChatColor.RED + "You have permenantly removed the bending of: " + ChatColor.DARK_AQUA + player.getName());
