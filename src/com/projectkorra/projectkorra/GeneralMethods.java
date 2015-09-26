@@ -285,7 +285,9 @@ public class GeneralMethods {
 		Player p = Bukkit.getPlayer(player);
 		if (bPlayer == null)
 			return false;
-		if (plugin.getConfig().getStringList("Properties.DisabledWorlds") != null && plugin.getConfig().getStringList("Properties.DisabledWorlds").contains(p.getWorld().getName()))
+		if (p == null)
+			return false;
+		if (plugin.getConfig().getStringList("Properties.DisabledWorlds") != null && p.getWorld() != null && plugin.getConfig().getStringList("Properties.DisabledWorlds").contains(p.getWorld().getName()))
 			return false;
 		if (Commands.isToggledForAll)
 			return false;
