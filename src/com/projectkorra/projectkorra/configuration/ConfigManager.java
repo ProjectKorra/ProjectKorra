@@ -30,16 +30,16 @@ public class ConfigManager {
 				config.addDefault("Air.AirBurst", "{victim} was thrown down by {attacker}'s {ability}");
 				config.addDefault("Air.AirSwipe", "{victim} was struck by {attacker}'s {ability}");
 				config.addDefault("Air.Suffocate", "{victim} was asphyxiated by {attacker}'s {ability}");
-				config.addDefault("Air.AirCombo", "{victim} was overwhelmed by {attacker}'s skill {ability}");
 
 				config.addDefault("Water.IceBlast", "{victim} was shattered by {attacker}'s {ability}");
 				config.addDefault("Water.Torrent", "{victim} was taken down by {attacker}'s {ability}");
 				config.addDefault("Water.IceSpike", "{victim} was impaled by {attacker}'s {ability}");
 				config.addDefault("Water.WaterManipulation", "{victim} was taken down by {attacker}'s {ability}");
-				config.addDefault("Water.WaterArms", "{victim} was too slow for {attacker}'s {ability}");
+				config.addDefault("Water.WaterArmsPunch", "{victim} was too slow for {attacker}'s {ability}");
+				config.addDefault("Water.WaterArmsFreeze", "{victim} was frozen by {attacker}'s {ability}");
+				config.addDefault("Water.WaterArmsSpear", "{victim} was speared to death by {attacker}'s {ability}");
 				config.addDefault("Water.OctopusForm", "{victim} was slapped by {attacker}'s {ability}");
 				config.addDefault("Water.Bloodbending", "{victim} was destroyed by {attacker}'s {ability}");
-				config.addDefault("Water.WaterCombo", "{victim} was overwhelmed by {attacker}'s skill {ability}");
 
 				config.addDefault("Earth.Collapse", "{victim} was suffocated by {attacker}'s {ability}");
 				config.addDefault("Earth.EarthBlast", "{victim} was broken apart by {attacker}'s {ability}");
@@ -47,7 +47,6 @@ public class ConfigManager {
 				config.addDefault("Earth.LavaFlow", "{victim} was caught in by {attacker}'s {ability}");
 				config.addDefault("Earth.MetalClips", "{victim} was too slow for {attacker}'s {ability}");
 				config.addDefault("Earth.Shockwave", "{victim} was blown away by {attacker}'s {ability}");
-				config.addDefault("Earth.EarthCombo", "{victim} was overwhelmed by {attacker}'s skill {ability}");
 
 				config.addDefault("Fire.FireBlast", "{victim} was burnt by {attacker}'s {ability}");
 				config.addDefault("Fire.Blaze", "{victim} was burned alive by {attacker}'s {ability}");
@@ -56,12 +55,17 @@ public class ConfigManager {
 				config.addDefault("Fire.Combustion", "{victim} was shot down by {attacker}'s {ability}");
 				config.addDefault("Fire.FireBurst", "{victim} was blown apart by {attacker}'s {ability}");
 				config.addDefault("Fire.FireShield", "{victim} scorched theirself on {attacker}'s {ability}");
-				config.addDefault("Fire.FireCombo", "{victim} was overwhelmed by {attacker}'s skill {ability}");
 
 				config.addDefault("Chi.QuickStrike", "{victim} was struck down by {attacker}'s {ability}");
 				config.addDefault("Chi.SwiftKick", "{victim} was kicked to the floor by {attacker}'s {ability}");
 				config.addDefault("Chi.RapidPunch", "{victim} took all the hits against {attacker}'s {ability}");
-				config.addDefault("Chi.ChiCombo", "{victim} was overwhelmed by {attacker}'s skill {ability}");
+				
+				config.addDefault("Combo.AirCombo", "{victim} was overwhelmed by {attacker}'s skill {ability}");
+				config.addDefault("Combo.FireKick", "{victim} was kicked to the floor with flames by {attacker}'s {ability}");
+				config.addDefault("Combo.FireSpin", "{victim} was caught in {attacker}'s {ability} inferno");
+				config.addDefault("Combo.JetBlaze", "{victim} was blasted away by {attacker}'s {ability}");
+				config.addDefault("Combo.FireWheel", "{victim} was incinerated by {attacker}'s {ability}");
+				config.addDefault("Combo.IceBullet", "{victim}'s heart was frozen by {attacker}'s {ability}");
 
 				deathMsgConfig.save();
 				break;

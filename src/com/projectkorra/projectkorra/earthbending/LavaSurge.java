@@ -308,7 +308,7 @@ public class LavaSurge {
 					{
 						if(e.getEntityId() != player.getEntityId())
 						{
-							GeneralMethods.damageEntity(player, e, impactDamage);
+							GeneralMethods.damageEntity(player, e, impactDamage, "LavaSurge");
 							e.setFireTicks(100);
 							GeneralMethods.setVelocity(e, direction.clone());
 						}

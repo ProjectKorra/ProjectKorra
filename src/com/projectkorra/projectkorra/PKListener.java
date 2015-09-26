@@ -576,9 +576,9 @@ public class PKListener implements Listener {
 				double damage = ((e.getDistanceTraveled() - minimumDistance) < 0 ? 0 : e.getDistanceTraveled() - minimumDistance) / (e.getDifference().length());
 				if (damage > 0) {
 					if(damage <= maxDamage) {
-						GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), damage);
+						GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), damage, null);
 					} else {
-						GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), maxDamage);
+						GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), maxDamage, null);
 					}
 				}
 			}
@@ -605,15 +605,24 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerBendingDeath(PlayerBendingDeathEvent event) {
 		if (ConfigManager.deathMsgConfig.get().getBoolean("Properties.Enabled")) {
-			bendingDeathPlayer.put(event.getVictim(), event.getAbility());
-			final Player player = event.getVictim();
-
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					bendingDeathPlayer.remove(player);
+			if (event.getAbility() != null) {
+				StringBuilder sb = new StringBuilder();
+				if (event.getSubElement() != null) {
+					sb.append(event.getSubElement().getChatColor());
+				} else if (event.getElement() != null) {
+					sb.append(event.getElement().getChatColor());
 				}
-			}.runTaskLater(ProjectKorra.plugin, 20);
+				sb.append(event.getAbility());
+				bendingDeathPlayer.put(event.getVictim(), sb.toString());
+				final Player player = event.getVictim();
+
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						bendingDeathPlayer.remove(player);
+					}
+				}.runTaskLater(ProjectKorra.plugin, 20);
+			}
 		}
 	}
 
@@ -706,7 +715,7 @@ public class PKListener implements Listener {
 				Player source = Flight.getLaunchedBy(player);
 				if (source != null) {
 					event.setCancelled(true);
-					GeneralMethods.damageEntity(source, player, event.getDamage());
+					GeneralMethods.damageEntity(source, player, event.getDamage(), null);
 				}
 			}
 
@@ -858,7 +867,12 @@ public class PKListener implements Listener {
 		if (bendingDeathPlayer.containsKey(event.getEntity())) {
 			String message = ConfigManager.deathMsgConfig.get().getString("Properties.Default");
 			String ability = bendingDeathPlayer.get(event.getEntity());
-			String element = null;
+			String tempAbility = ChatColor.stripColor(ability);
+			Element element = null;
+			if (GeneralMethods.abilityExists(tempAbility)) {
+				element = GeneralMethods.getAbilityElement(tempAbility);
+			}
+			/*
 			Player killer = event.getEntity().getKiller();
 			String killerAbility = GeneralMethods.getLastUsedAbility(killer, false);
 			if (ability == null) {
@@ -876,10 +890,17 @@ public class PKListener implements Listener {
 					return;
 				}
 			}
-			if (ConfigManager.deathMsgConfig.get().contains(element + "." + ability)) {
-				message = ConfigManager.deathMsgConfig.get().getString(element + "." + ability);
+			*/
+			if (element != null) {
+				if (ConfigManager.deathMsgConfig.get().contains(element.toString() + "." + ability)) {
+					message = ConfigManager.deathMsgConfig.get().getString(element + "." + ability);
+				}
+			} else {
+				if (ConfigManager.deathMsgConfig.get().contains("Combo." + ability)) {
+					message = ConfigManager.deathMsgConfig.get().getString("Combo." + ability);
+				}
 			}
-			message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", event.getEntity().getKiller().getName()).replace("{ability}", GeneralMethods.getAbilityColor(killerAbility) + ability);
+			message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", event.getEntity().getKiller().getName()).replace("{ability}", ability);
 			event.setDeathMessage(message);
 			bendingDeathPlayer.remove(event.getEntity());
 		}

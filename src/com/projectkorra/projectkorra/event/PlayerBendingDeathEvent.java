@@ -1,6 +1,8 @@
 package com.projectkorra.projectkorra.event;
 
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.SubElement;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -19,19 +21,25 @@ public class PlayerBendingDeathEvent extends Event {
 	private Player attacker;
 	private String ability;
 	private double damage;
+	private Element element;
+	private SubElement sub;
 
 	/**
 	 * 
 	 * @param victim the player who died
 	 * @param attacker the player who killed the victim
-	 * @param ability the ability used to kill the victim
 	 * @param damage the amount of damage done in the attack that killed the victim
+	 * @param element the element of the ability
+	 * @param sub the subelement of the ability
+	 * @param ability the ability used to kill the victim
 	 */
-	public PlayerBendingDeathEvent(Player victim, Player attacker, String ability, double damage) {
+	public PlayerBendingDeathEvent(Player victim, Player attacker, double damage, Element element, SubElement sub, String ability) {
 		this.victim = victim;
 		this.attacker = attacker;
 		this.ability = ability;
 		this.damage = damage;
+		this.element = element;
+		this.sub = sub;
 	}
 
 	/**
@@ -66,6 +74,22 @@ public class PlayerBendingDeathEvent extends Event {
 		return damage;
 	}
 
+	/**
+	 * 
+	 * @return the element of the ability used
+	 */
+	public Element getElement() {
+		return element;
+	}
+	
+	/**
+	 * 
+	 * @return the subelement of the ability used
+	 */
+	public SubElement getSubElement() {
+		return sub;
+	}
+	
 	public HandlerList getHandlers() {
 		return handlers;
 	}

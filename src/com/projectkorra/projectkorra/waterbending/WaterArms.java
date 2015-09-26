@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
@@ -349,9 +350,9 @@ public class WaterArms {
 							for (Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25))
 								FireMethods.playLightningbendingParticle(l1);
 							if (lightningKill)
-								GeneralMethods.damageEntity(l.getPlayer(), player, 60D);
+								GeneralMethods.damageEntity(l.getPlayer(), player, 60D, Element.Water, "Electrocution");
 							else
-								GeneralMethods.damageEntity(l.getPlayer(), player, lightningDamage);
+								GeneralMethods.damageEntity(l.getPlayer(), player, lightningDamage, Element.Water, "Electrocution");
 						}
 					}
 				}

@@ -163,7 +163,7 @@ public class Lightning extends CoreAbility {
 	public void electrocute(LivingEntity lent) {
 		lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
 		player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
-		GeneralMethods.damageEntity(player, lent, damage);
+		GeneralMethods.damageEntity(player, lent, damage, "Lightning");
 		if (Math.random() < stunChance) {
 			final Location lentLoc = lent.getLocation();
 			final LivingEntity flent = lent;

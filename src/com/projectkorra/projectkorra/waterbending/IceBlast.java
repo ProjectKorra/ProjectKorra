@@ -182,12 +182,14 @@ public class IceBlast {
 				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
 				new TempPotionEffect(entity, effect);
 				bPlayer.slow(10);
-				entity.damage(damage, player);
+				//entity.damage(damage, player);
+				GeneralMethods.damageEntity(player, entity, damage, "IceBlast");
 			}
 		} else {
 			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
 			new TempPotionEffect(entity, effect);
-			entity.damage(damage, player);
+			//entity.damage(damage, player);
+			GeneralMethods.damageEntity(player, entity, damage, "IceBlast");
 		}
 		AirMethods.breakBreathbendingHold(entity);
 

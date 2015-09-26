@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AvatarState;
@@ -241,7 +242,7 @@ public class WaterWave {
 						if (entity != this.player && entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 							affectedEntities.add(entity);
 							final double aug = WaterMethods.getWaterbendingNightAugment(player.getWorld());
-							GeneralMethods.damageEntity(player, entity, aug * damage);
+							GeneralMethods.damageEntity(player, entity, aug * damage, Element.Water, "WaterWave");
 							final Player fplayer = this.player;
 							final Entity fent = entity;
 							new BukkitRunnable() {

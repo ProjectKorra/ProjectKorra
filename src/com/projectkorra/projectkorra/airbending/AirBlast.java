@@ -238,7 +238,7 @@ public class AirBlast extends CoreAbility {
 			AirMethods.breakBreathbendingHold(entity);
 
 			if (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedentities.contains(entity)) {
-				GeneralMethods.damageEntity(player, entity, damage);
+				GeneralMethods.damageEntity(player, entity, damage, "AirBlast");
 				affectedentities.add(entity);
 			}
 		}

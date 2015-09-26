@@ -173,7 +173,7 @@ public class FireBlast extends CoreAbility {
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks((int) (fireticks * 20));
-				GeneralMethods.damageEntity(player, entity, (int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()));
+				GeneralMethods.damageEntity(player, entity, (int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()), "FireBlast");
 				AirMethods.breakBreathbendingHold(entity);
 				new Enflamed(entity, player);
 				remove();

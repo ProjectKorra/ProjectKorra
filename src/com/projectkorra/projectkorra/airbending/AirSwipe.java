@@ -207,7 +207,7 @@ public class AirSwipe extends CoreAbility {
 						}
 						if (entity instanceof LivingEntity && !affectedentities.contains(entity)) {
 							if (damage != 0)
-								GeneralMethods.damageEntity(player, entity, damage);
+								GeneralMethods.damageEntity(player, entity, damage, "AirSwipe");
 							affectedentities.add(entity);
 						}
 						if (entity instanceof Player) {

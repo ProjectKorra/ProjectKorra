@@ -154,7 +154,7 @@ public class SandSpout {
 					for (Player sPlayer : players) {
 						if (!sPlayer.equals(player)) {
 							sPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, bTime * 20, 1));
-							GeneralMethods.damageEntity(player, sPlayer, spoutDamage);
+							GeneralMethods.damageEntity(player, sPlayer, spoutDamage, "SandSpout");
 						}
 					}
 			}

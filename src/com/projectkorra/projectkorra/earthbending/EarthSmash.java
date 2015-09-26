@@ -505,7 +505,7 @@ public class EarthSmash {
 			if (entity instanceof LivingEntity && entity != player && !affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
 				double damage = currentBlocks.size() / 13 * this.damage;
-				GeneralMethods.damageEntity(player, entity, damage);
+				GeneralMethods.damageEntity(player, entity, damage, "EarthSmash");
 				Vector travelVec = GeneralMethods.getDirection(loc, entity.getLocation());
 				entity.setVelocity(travelVec.setY(knockup).normalize().multiply(knockback));
 			}

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
@@ -180,7 +181,7 @@ public class WaterArmsSpear {
 					location = entity.getLocation();
 
 					if (spearDamageEnabled) {
-						GeneralMethods.damageEntity(player, entity, spearDamage);
+						GeneralMethods.damageEntity(player, entity, spearDamage, Element.Water, "WaterArms Spear");
 					}
 
 					return;

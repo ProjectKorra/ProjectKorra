@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
@@ -299,7 +300,7 @@ public class WaterArmsWhip {
 					if (entity instanceof LivingEntity) {
 						if (entity.getEntityId() != player.getEntityId()) {
 							hasDamaged = true;
-							GeneralMethods.damageEntity(player, entity, punchDamage, WaterMethods.getWaterColor() + "WaterArms Punch");
+							GeneralMethods.damageEntity(player, entity, punchDamage, Element.Water, "WaterArms Punch");
 						}
 					}
 				}

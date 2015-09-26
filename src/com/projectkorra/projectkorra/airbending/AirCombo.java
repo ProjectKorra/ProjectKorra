@@ -396,7 +396,7 @@ public class AirCombo implements ConfigLoadable {
 						}
 						if (damage != 0)
 							if (entity instanceof LivingEntity)
-								GeneralMethods.damageEntity(player, entity, damage);
+								GeneralMethods.damageEntity(player, entity, damage, "AirCombo");
 					}
 				}
 

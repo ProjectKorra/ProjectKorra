@@ -98,16 +98,13 @@ public class ComboManager {
 		instructions.put("AirStream", "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
 
 		/*
-		 * ArrayList<AbilityInformation> airSlice = new
-		 * ArrayList<AbilityInformation>(); airSlice.add(new
-		 * AbilityInformation("AirBlast",ClickType.LEFTCLICK)); airSlice.add(new
-		 * AbilityInformation("AirScooter",ClickType.SHIFTDOWN));
-		 * airSlice.add(new
-		 * AbilityInformation("AirScooter",ClickType.LEFTCLICK));
-		 * comboAbilityList.put(new
-		 * ComboAbility("AirSlice",airSlice,AirCombo.class));
-		 */
-
+		ArrayList<AbilityInformation> airSlice = new ArrayList<AbilityInformation>(); 
+		airSlice.add(new AbilityInformation("AirBlast",ClickType.LEFT_CLICK)); 
+		airSlice.add(new AbilityInformation("AirScooter",ClickType.SHIFT_DOWN));
+		airSlice.add(new AbilityInformation("AirScooter",ClickType.LEFT_CLICK));
+	    comboAbilityList.put("AirSlice", new ComboAbility("AirSlice",airSlice,AirCombo.class));
+		*/
+		
 		ArrayList<AbilityInformation> airSweep = new ArrayList<AbilityInformation>();
 		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
 		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
