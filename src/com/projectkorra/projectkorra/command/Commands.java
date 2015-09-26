@@ -71,6 +71,9 @@ public class Commands {
 	//Firebending
 	public static String[] combustionaliases = { "combustionbending", "combustion", "cb" };
 	public static String[] lightningaliases = { "lightningbending", "lightning" };
+	
+	//Miscellaneous
+	public static String[] commandaliases = { "b", "pk", "bending", "mtla", "tla", "korra", "bend" };
 
 	private void init() {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");
@@ -105,7 +108,7 @@ public class Commands {
 					args[i] = args[i];
 				}
 
-				if (args.length == 0) {
+				if (args.length == 0 && Arrays.asList(commandaliases).contains(label.toLowerCase())) {
 					s.sendMessage(ChatColor.RED + "/bending help [Ability/Command] " + ChatColor.YELLOW + "Display help.");
 					s.sendMessage(ChatColor.RED + "/bending choose [Element] " + ChatColor.YELLOW + "Choose an element.");
 					s.sendMessage(ChatColor.RED + "/bending bind [Ability] # " + ChatColor.YELLOW + "Bind an ability.");
@@ -114,7 +117,7 @@ public class Commands {
 
 				List<String> sendingArgs = Arrays.asList(args).subList(1, args.length);
 				for (PKCommand command : PKCommand.instances.values()) {
-					if (Arrays.asList(command.getAliases()).contains(args[0])) {
+					if (Arrays.asList(command.getAliases()).contains(args[0].toLowerCase())) {
 						command.execute(s, sendingArgs);
 						return true;
 					}

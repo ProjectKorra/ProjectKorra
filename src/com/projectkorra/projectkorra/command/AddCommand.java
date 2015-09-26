@@ -30,7 +30,7 @@ public class AddCommand extends PKCommand {
 			if (!hasPermission(sender) || !isPlayer(sender)) {
 				return;
 			}
-			add(sender, (Player) sender, args.get(0));
+			add(sender, (Player) sender, args.get(0).toLowerCase());
 		} else if (args.size() == 2) { //bending add element combo
 			if (!hasPermission(sender, "others")) {
 				return;
@@ -40,7 +40,7 @@ public class AddCommand extends PKCommand {
 				sender.sendMessage(ChatColor.RED + "That player is not online.");
 				return;
 			}
-			add(sender, player, args.get(1));
+			add(sender, player, args.get(1).toLowerCase());
 		}
 	}
 
@@ -66,16 +66,20 @@ public class AddCommand extends PKCommand {
 			Element type = Element.getType(element);
 			bPlayer.addElement(type);
 			ChatColor color = GeneralMethods.getElementColor(type);
-			if (element.charAt(0) == 'w' || element.charAt(0) == 'f' || element.charAt(0) == 'c') {
+			if (element.charAt(0) == 'w' || element.charAt(0) == 'f') {
 				target.sendMessage(color + "You are also a " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
 			} else if (element.charAt(0) == 'e' || element.charAt(0) == 'a') {
 				target.sendMessage(color + "You are also an " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
+			} else if (element.equalsIgnoreCase("chi")) {
+				target.sendMessage(color + "You are now a Chiblocker.");
 			}
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				if (element.charAt(0) == 'w' || element.charAt(0) == 'f' || element.charAt(0) == 'c') {
+				if (element.charAt(0) == 'w' || element.charAt(0) == 'f') {
 					sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is also a " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
 				} else if (element.charAt(0) == 'e' || element.charAt(0) == 'a') {
 					sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is also an " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
+				} else if (element.equalsIgnoreCase("chi")) {
+					target.sendMessage(color + "You are now a Chiblocker.");
 				}
 			}
 			GeneralMethods.saveElements(bPlayer);
