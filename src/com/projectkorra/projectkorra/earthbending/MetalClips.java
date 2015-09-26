@@ -394,7 +394,7 @@ public class MetalClips {
 
 						if (System.currentTimeMillis() > time + crushInterval) {
 							time = System.currentTimeMillis();
-							GeneralMethods.damageEntity(player, targetent, (crushDamage + (crushDamage * 1.2)));
+							GeneralMethods.damageEntity(player, targetent, (crushDamage + (crushDamage * 1.2)), "MetalClips");
 						}
 					}
 				}
@@ -424,7 +424,7 @@ public class MetalClips {
 						}
 
 						else {
-							GeneralMethods.damageEntity(player, e, 5);
+							GeneralMethods.damageEntity(player, e, 5, "MetalClips");
 							ii.getWorld().dropItem(ii.getLocation(), ii.getItemStack());
 							remove();
 						}

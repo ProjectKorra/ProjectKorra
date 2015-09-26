@@ -133,13 +133,13 @@ public class Fireball extends AddonAbility {
 		if (distance > damageradius)
 			return;
 		if (distance < innerradius) {
-			GeneralMethods.damageEntity(player, entity, maxdamage);
+			GeneralMethods.damageEntity(player, entity, maxdamage, "FireBlast");
 			return;
 		}
 		double slope = -(maxdamage * .5) / (damageradius - innerradius);
 		double damage = slope * (distance - innerradius) + maxdamage;
 		// Methods.verbose(damage);
-		GeneralMethods.damageEntity(player, entity, damage);
+		GeneralMethods.damageEntity(player, entity, damage, "FireBlast");
 		AirMethods.breakBreathbendingHold(entity);
 	}
 
@@ -180,7 +180,7 @@ public class Fireball extends AddonAbility {
 					{
 						double slope = -(maxdamage * .5) / (damageradius - innerradius);
 						double damage = slope * (e.getLocation().distance(location) - innerradius) + maxdamage;
-						GeneralMethods.damageEntity(getPlayer(), e, damage);
+						GeneralMethods.damageEntity(getPlayer(), e, damage, "FireBlast");
 					}
 				}
 				location.getWorld().playSound(location, Sound.EXPLODE, 5, 1);

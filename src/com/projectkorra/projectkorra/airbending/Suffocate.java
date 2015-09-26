@@ -417,7 +417,7 @@ public class Suffocate extends CoreAbility {
 				BukkitRunnable br1 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						GeneralMethods.damageEntity(fplayer, target, damage);
+						GeneralMethods.damageEntity(fplayer, target, damage, "Suffocate");
 					}
 				};
 				BukkitRunnable br2 = new BukkitRunnable() {

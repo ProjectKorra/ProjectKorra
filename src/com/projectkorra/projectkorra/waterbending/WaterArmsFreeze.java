@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -136,7 +137,7 @@ public class WaterArmsFreeze {
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2.5)) {
 			if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !(entity instanceof ArmorStand)) {
-				GeneralMethods.damageEntity(player, entity, iceDamage);
+				GeneralMethods.damageEntity(player, entity, iceDamage, SubElement.Icebending, "WaterArms Freeze");
 				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 40, 2);
 				new TempPotionEffect((LivingEntity) entity, effect);
 				remove();

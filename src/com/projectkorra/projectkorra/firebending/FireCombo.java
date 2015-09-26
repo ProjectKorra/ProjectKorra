@@ -221,7 +221,7 @@ public class FireCombo implements ConfigLoadable {
 		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.VILLAGER_HIT, 0.3f, 0.3f);
 
 		if (ability.equalsIgnoreCase("FireKick")) {
-			GeneralMethods.damageEntity(player, entity, damage);
+			GeneralMethods.damageEntity(player, entity, damage, "FireKick");
 			fstream.remove();
 		} else if (ability.equalsIgnoreCase("FireSpin")) {
 			if (entity instanceof Player) {
@@ -229,19 +229,19 @@ public class FireCombo implements ConfigLoadable {
 					return;
 			}
 			double knockback = AvatarState.isAvatarState(player) ? FIRE_SPIN_KNOCKBACK + 0.5 : FIRE_SPIN_KNOCKBACK;
-			GeneralMethods.damageEntity(player, entity, damage);
+			GeneralMethods.damageEntity(player, entity, damage, "FireSpin");
 			entity.setVelocity(direction.normalize().multiply(knockback));
 			fstream.remove();
 		} else if (ability.equalsIgnoreCase("JetBlaze")) {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
-				GeneralMethods.damageEntity(player, entity, damage);
+				GeneralMethods.damageEntity(player, entity, damage, "JetBlaze");
 				entity.setFireTicks((int) (fireticksJetBlaze * 20));
 			}
 		} else if (ability.equalsIgnoreCase("FireWheel")) {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
-				GeneralMethods.damageEntity(player, entity, damage);
+				GeneralMethods.damageEntity(player, entity, damage, "FireWheel");
 				entity.setFireTicks((int) (fireticksFireWheel * 20));
 				this.remove();
 			}

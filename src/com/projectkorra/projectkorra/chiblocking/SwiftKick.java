@@ -21,7 +21,7 @@ public class SwiftKick {
 		if (e == null)
 			return;
 
-		GeneralMethods.damageEntity(player, e, damage);
+		GeneralMethods.damageEntity(player, e, damage, "SwiftKick");
 
 		if (GeneralMethods.rand.nextInt(100) < blockChance && e instanceof Player) {
 			ChiPassive.blockChi((Player) e);

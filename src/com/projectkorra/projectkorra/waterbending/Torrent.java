@@ -519,7 +519,7 @@ public class Torrent {
 			if (WaterMethods.isNight(world)) {
 				damagedealt = (int) (WaterMethods.getWaterbendingNightAugment(world) * (double) deflectdamage);
 			}
-			GeneralMethods.damageEntity(player, entity, damagedealt);
+			GeneralMethods.damageEntity(player, entity, damagedealt, "Torrent");
 			AirMethods.breakBreathbendingHold(entity);
 		}
 	}
@@ -539,7 +539,7 @@ public class Torrent {
 				damagedealt = (int) (WaterMethods.getWaterbendingNightAugment(world) * (double) damage);
 			}
 			// if (((LivingEntity) entity).getNoDamageTicks() == 0) {
-			GeneralMethods.damageEntity(player, entity, damagedealt);
+			GeneralMethods.damageEntity(player, entity, damagedealt, "Torrent");
 			AirMethods.breakBreathbendingHold(entity);
 			// Methods.verbose("Hit! Health at "
 			// + ((LivingEntity) entity).getHealth());

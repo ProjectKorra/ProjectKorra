@@ -340,7 +340,7 @@ public class EarthBlast {
 						if (EarthMethods.isMetal(sourceblock) && EarthMethods.canMetalbend(player)) {
 							damage = EarthMethods.getMetalAugment(this.damage);
 						}
-						GeneralMethods.damageEntity(player, entity, damage);
+						GeneralMethods.damageEntity(player, entity, damage, "EarthBlast");
 						progressing = false;
 					}
 				}

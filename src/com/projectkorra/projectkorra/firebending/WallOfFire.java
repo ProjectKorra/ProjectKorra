@@ -99,7 +99,7 @@ public class WallOfFire extends CoreAbility {
 		entity.setFireTicks((int) (FIRETICKS * 20));
 		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
 		if (entity instanceof LivingEntity) {
-			GeneralMethods.damageEntity(player, entity, damage);
+			GeneralMethods.damageEntity(player, entity, damage, "WallOfFire");
 			new Enflamed(entity, player);
 			AirMethods.breakBreathbendingHold(entity);
 		}

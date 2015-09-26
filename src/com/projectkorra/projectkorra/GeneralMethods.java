@@ -481,13 +481,46 @@ public class GeneralMethods {
 	 * {@link EntityDamageByEntityEvent}.
 	 * 
 	 * @param player The player dealing the damage
-	 * @param entity The entity that is receiving the damage
+	 * @param entity The entity receiving the damage
 	 * @param damage The amount of damage to deal
+	 * @param ability The ability that is used to damage the entity
 	 */
-	public static void damageEntity(Player player, Entity entity, double damage) {
-		damageEntity(player, entity, damage, null);
+	public static void damageEntity(Player player, Entity entity, double damage, String ability) {
+		if (abilityExists(ability)) {
+			damageEntity(player, entity, damage, getAbilityElement(ability), getAbilitySubElement(ability), ability);
+		} else {
+			damageEntity(player, entity, damage, null, null, ability);
+		}
 	}
-
+	
+	/**
+	 * Damages an Entity by amount of damage specified. Starts a
+	 * {@link EntityDamageByEntityEvent}.
+	 * 
+	 * @param player The player dealing the damage
+	 * @param entity The entity receiving the damage
+	 * @param damage The amount of damage to deal
+	 * @param element The element of the ability
+	 * @param ability The ability that is used to damage the entity
+	 */
+	public static void damageEntity(Player player, Entity entity, double damage, Element element, String ability) {
+		damageEntity(player, entity, damage, element, null, ability);
+	}
+	
+	/**
+	 * Damages an Entity by amount of damage specified. Starts a
+	 * {@link EntityDamageByEntityEvent}.
+	 * 
+	 * @param player The player dealing the damage
+	 * @param entity The entity receiving the damage
+	 * @param damage The amount of damage to deal
+	 * @param sub The subelement of the ability
+	 * @param ability The ability that is used to damage the entity
+	 */
+	public static void damageEntity(Player player, Entity entity, double damage, SubElement sub, String ability) {
+		damageEntity(player, entity, damage, null, sub, ability);
+	}
+	
 	/**
 	 * Damages an Entity by amount of damage specified. Starts a
 	 * {@link EntityDamageByEntityEvent}.
@@ -495,9 +528,11 @@ public class GeneralMethods {
 	 * @param player The player dealing the damage
 	 * @param entity The entity that is receiving the damage
 	 * @param damage The amount of damage to deal
+	 * @param element The element of the ability
+	 * @param sub The sub element of the ability
 	 * @param ability The ability that is used to damage the entity
 	 */
-	public static void damageEntity(Player player, Entity entity, double damage, String ability) {
+	public static void damageEntity(Player player, Entity entity, double damage, Element element, SubElement sub, String ability) {
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Player) {
 				if (Commands.invincible.contains(entity.getName()))
@@ -507,7 +542,7 @@ public class GeneralMethods {
 				NCPExemptionManager.exemptPermanently(player, CheckType.FIGHT_REACH);
 			}
 			if (((LivingEntity) entity).getHealth() - damage <= 0 && entity instanceof Player && !entity.isDead()) {
-				PlayerBendingDeathEvent event = new PlayerBendingDeathEvent((Player) entity, player, ability, damage);
+				PlayerBendingDeathEvent event = new PlayerBendingDeathEvent((Player) entity, player, damage, element, sub, ability);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 			}
 			((LivingEntity) entity).damage(damage, player);

@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AvatarState;
@@ -387,7 +388,7 @@ public class WaterManipulation {
 							// .add(direction));
 							if (AvatarState.isAvatarState(player))
 								damage = AvatarState.getValue(damage);
-							GeneralMethods.damageEntity(player, entity, (int) WaterMethods.waterbendingNightAugment(damage, player.getWorld()));
+							GeneralMethods.damageEntity(player, entity, (int) WaterMethods.waterbendingNightAugment(damage, player.getWorld()), "WaterManipulation");
 							AirMethods.breakBreathbendingHold(entity);
 							progressing = false;
 							// }

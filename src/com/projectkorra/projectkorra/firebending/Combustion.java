@@ -115,7 +115,7 @@ public class Combustion extends CoreAbility {
 		for (Entity entity : block.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
 				if (entity.getLocation().distance(block) < radius) { // They are close enough to the explosion.
-					GeneralMethods.damageEntity(player, entity, damage);
+					GeneralMethods.damageEntity(player, entity, damage, "Combustion");
 					AirMethods.breakBreathbendingHold(entity);
 				}
 			}

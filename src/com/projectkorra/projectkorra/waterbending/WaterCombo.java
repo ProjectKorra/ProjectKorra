@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
@@ -369,7 +370,7 @@ public class WaterCombo {
 						}
 						if (damage != 0)
 							if (entity instanceof LivingEntity)
-								GeneralMethods.damageEntity(player, entity, damage);
+								GeneralMethods.damageEntity(player, entity, damage, SubElement.Icebending, "IceBullets");
 					}
 				}
 

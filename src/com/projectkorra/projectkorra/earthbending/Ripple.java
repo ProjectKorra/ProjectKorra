@@ -254,7 +254,7 @@ public class Ripple {
 	private void affect(Entity entity) {
 
 		if (entity instanceof LivingEntity) {
-			GeneralMethods.damageEntity(player, entity, damage);
+			GeneralMethods.damageEntity(player, entity, damage, "Shockwave");
 		}
 
 		Vector vector = direction.clone();

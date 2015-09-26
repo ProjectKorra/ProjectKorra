@@ -73,7 +73,7 @@ public class Bloodbending {
 						if (GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation()) || (AvatarState.isAvatarState((Player) entity) || entity.getEntityId() == player.getEntityId() || GeneralMethods.canBend(((Player) entity).getName(), "Bloodbending")))
 							continue;
 					}
-					GeneralMethods.damageEntity(player, entity, 0);
+					GeneralMethods.damageEntity(player, entity, 0, "Bloodbending");
 					AirMethods.breakBreathbendingHold(entity);
 					targetentities.put(entity, entity.getLocation().clone());
 				}
@@ -92,7 +92,7 @@ public class Bloodbending {
 			if (!canBeUsedOnUndead && isUndead(target)) {
 				return;
 			}
-			GeneralMethods.damageEntity(player, target, 0);
+			GeneralMethods.damageEntity(player, target, 0, "Bloodbending");
 			HorizontalVelocityTracker.remove(target);
 			AirMethods.breakBreathbendingHold(target);
 			targetentities.put(target, target.getLocation().clone());
@@ -177,7 +177,7 @@ public class Bloodbending {
 				}
 				entities.add(entity);
 				if (!targetentities.containsKey(entity) && entity instanceof LivingEntity) {
-					GeneralMethods.damageEntity(player, entity, 0);
+					GeneralMethods.damageEntity(player, entity, 0, "Bloodbending");
 					targetentities.put(entity, entity.getLocation().clone());
 				}
 				if (entity instanceof LivingEntity) {
