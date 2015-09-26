@@ -116,52 +116,52 @@ public class DisplayCommand extends PKCommand {
 			}
 		}
 		if (element.equalsIgnoreCase("earth")) {
-			sender.sendMessage(ChatColor.DARK_GREEN + "Combos:" + ChatColor.GREEN + "/bending display earthcombo");
+			//sender.sendMessage(ChatColor.DARK_GREEN + "Combos: " + ChatColor.GREEN + "/bending display EarthCombos");
 			if (sender.hasPermission("bending.earth.lavabending")) {
-				sender.sendMessage(ChatColor.DARK_GREEN + "Lavabending abilities: " + ChatColor.GREEN + "/bending display lavabending");
+				sender.sendMessage(ChatColor.DARK_GREEN + "Lavabending abilities: " + ChatColor.GREEN + "/bending display Lavabending");
 			}
 			if (sender.hasPermission("bending.earth.metalbending")) {
-				sender.sendMessage(ChatColor.DARK_GREEN + "Metalbending abilities: " + ChatColor.GREEN + "/bending display metalbending");
+				sender.sendMessage(ChatColor.DARK_GREEN + "Metalbending abilities: " + ChatColor.GREEN + "/bending display Metalbending");
 			}
 			if (sender.hasPermission("bending.earth.sandbending")) {
-				sender.sendMessage(ChatColor.DARK_GREEN + "Sandbending abilities: " + ChatColor.GREEN + "/bending display sandbending");
+				sender.sendMessage(ChatColor.DARK_GREEN + "Sandbending abilities: " + ChatColor.GREEN + "/bending display Sandbending");
 			}
 		}
 		if (element.equalsIgnoreCase("air")) {
-			sender.sendMessage(ChatColor.DARK_GRAY + "Combos:" + ChatColor.GRAY + "/bending display aircombo");
+			sender.sendMessage(ChatColor.DARK_GRAY + "Combos: " + ChatColor.GRAY + "/bending display AirCombos");
 			if (sender.hasPermission("bending.air.flight")) {
-				sender.sendMessage(ChatColor.DARK_GRAY + "Flight abilities: " + ChatColor.GRAY + "/bending display flight");
+				sender.sendMessage(ChatColor.DARK_GRAY + "Flight abilities: " + ChatColor.GRAY + "/bending display Flight");
 			}
 			//if (sender.hasPermission("bending.air.spiritualprojection")) {
 			//	sender.sendMessage(ChatColor.DARK_GRAY + "SpiritualProjection abilities: " + ChatColor.GRAY + "/bending display spiritualprojection");
 			//}
 		}
 		if (element.equalsIgnoreCase("fire")) {
-			sender.sendMessage(ChatColor.DARK_RED + "Combos:" + ChatColor.RED + "/bending display firecombo");
+			sender.sendMessage(ChatColor.DARK_RED + "Combos: " + ChatColor.RED + "/bending display FireCombos");
 			if (sender.hasPermission("bending.fire.lightningbending")) {
-				sender.sendMessage(ChatColor.DARK_RED + "Lightning abilities: " + ChatColor.RED + "/bending display lightning");
+				sender.sendMessage(ChatColor.DARK_RED + "Lightning abilities: " + ChatColor.RED + "/bending display Lightning");
 			}
 			if (sender.hasPermission("bending.fire.combustionbending")) {
-				sender.sendMessage(ChatColor.DARK_RED + "Combustion abilities: " + ChatColor.RED + "/bending display combustion");
+				sender.sendMessage(ChatColor.DARK_RED + "Combustion abilities: " + ChatColor.RED + "/bending display Combustion");
 			}
 		}
 		if (element.equalsIgnoreCase("water")) {
-			sender.sendMessage(ChatColor.DARK_AQUA + "Combos:" + ChatColor.AQUA + "/bending display watercombo");
+			sender.sendMessage(ChatColor.DARK_AQUA + "Combos: " + ChatColor.AQUA + "/bending display WaterCombos");
 			if (sender.hasPermission("bending.water.bloodbending")) {
-				sender.sendMessage(ChatColor.DARK_AQUA + "Bloodbending abilities: " + ChatColor.AQUA + "/bending display bloodbending");
+				sender.sendMessage(ChatColor.DARK_AQUA + "Bloodbending abilities: " + ChatColor.AQUA + "/bending display Bloodbending");
 			}
 			if (sender.hasPermission("bending.water.healing")) {
-				sender.sendMessage(ChatColor.DARK_AQUA + "Healing abilities: " + ChatColor.AQUA + "/bending display healing");
+				sender.sendMessage(ChatColor.DARK_AQUA + "Healing abilities: " + ChatColor.AQUA + "/bending display Healing");
 			}
 			if (sender.hasPermission("bending.water.icebending")) {
-				sender.sendMessage(ChatColor.DARK_AQUA + "Icebending abilities: " + ChatColor.AQUA + "/bending display icebending");
+				sender.sendMessage(ChatColor.DARK_AQUA + "Icebending abilities: " + ChatColor.AQUA + "/bending display Icebending");
 			}
 			if (sender.hasPermission("bending.water.plantbending")) {
-				sender.sendMessage(ChatColor.DARK_AQUA + "Plantbending abilities: " + ChatColor.AQUA + "/bending display plantbending");
+				sender.sendMessage(ChatColor.DARK_AQUA + "Plantbending abilities: " + ChatColor.AQUA + "/bending display Plantbending");
 			}
 		}
 		if (element.equalsIgnoreCase("chi")) {
-			sender.sendMessage(ChatColor.GOLD + "Combos: " + ChatColor.YELLOW + "/bending display chicombo");
+			sender.sendMessage(ChatColor.GOLD + "Combos: " + ChatColor.YELLOW + "/bending display ChiCombos");
 		}
 	}
 
