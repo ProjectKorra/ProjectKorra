@@ -60,12 +60,12 @@ public class ConfigManager {
 				config.addDefault("Chi.SwiftKick", "{victim} was kicked to the floor by {attacker}'s {ability}");
 				config.addDefault("Chi.RapidPunch", "{victim} took all the hits against {attacker}'s {ability}");
 				
-				config.addDefault("Combo.AirCombo", "{victim} was overwhelmed by {attacker}'s skill {ability}");
+				config.addDefault("Combo.AirSweep", "{victim} was swept away by {attacker}'s {ability}");
 				config.addDefault("Combo.FireKick", "{victim} was kicked to the floor with flames by {attacker}'s {ability}");
 				config.addDefault("Combo.FireSpin", "{victim} was caught in {attacker}'s {ability} inferno");
 				config.addDefault("Combo.JetBlaze", "{victim} was blasted away by {attacker}'s {ability}");
 				config.addDefault("Combo.FireWheel", "{victim} was incinerated by {attacker}'s {ability}");
-				config.addDefault("Combo.IceBullet", "{victim}'s heart was frozen by {attacker}'s {ability}");
+				config.addDefault("Combo.IceBullets", "{victim}'s heart was frozen by {attacker}'s {ability}");
 
 				deathMsgConfig.save();
 				break;

@@ -317,7 +317,7 @@ public class WaterCombo {
 							Vector vec = player.getEyeLocation().getDirection().normalize();
 							Location loc = player.getEyeLocation().add(vec.clone().multiply(radius + 1.3));
 							FireComboStream fs = new FireComboStream(null, vec,
-									loc, range, speed);
+									loc, range, speed, "IceBullet");
 							fs.setDensity(10);
 							fs.setSpread(0.1F);
 							fs.setUseNewParticles(true);
@@ -370,7 +370,11 @@ public class WaterCombo {
 						}
 						if (damage != 0)
 							if (entity instanceof LivingEntity)
-								GeneralMethods.damageEntity(player, entity, damage, SubElement.Icebending, "IceBullets");
+								if (fstream.getAbility().equalsIgnoreCase("IceBullet")) {
+									GeneralMethods.damageEntity(player, entity, damage, SubElement.Icebending, "IceBullets");
+								} else {
+									GeneralMethods.damageEntity(player, entity, damage, Element.Water, "WaterCombo");
+								}
 					}
 				}
 
