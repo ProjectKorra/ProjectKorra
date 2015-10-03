@@ -1,4 +1,4 @@
-package com.projectkorra.projectkorra.util;
+package com.projectkorra.projectkorra.event;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
