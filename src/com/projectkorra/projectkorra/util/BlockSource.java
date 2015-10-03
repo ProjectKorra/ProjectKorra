@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.util;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
@@ -24,15 +24,15 @@ import java.util.HashMap;
 public class BlockSource {
 	/**
 	 * An enum representation of the source types available for bending abilities.
+	 * 
 	 * @author kingbirdy
-	 *
 	 */
 	public static enum BlockSourceType {
 		WATER, ICE, PLANT, EARTH, METAL, LAVA
 	}
 
 	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>>();
-	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	private static FileConfiguration config = ConfigManager.defaultConfig.get();
 	// The player should never need to grab source blocks from farther than this.
 	private static double MAX_RANGE = config.getDouble("Abilities.Water.WaterManipulation.Range");
 
@@ -80,7 +80,7 @@ public class BlockSource {
 	}
 
 	/**
-	 * Helper method to create and update a specific source
+	 * Helper method to create and update a specific source.
 	 * 
 	 * @param player a player.
 	 * @param block the block that is considered a source.

@@ -15,6 +15,7 @@ public final class FileExtensionFilter implements FileFilter {
 
 	/**
 	 * Creates a new FileExtensionFilter.
+	 * 
 	 * @param extension the extension to filter for
 	 */
 	public FileExtensionFilter(String extension) {

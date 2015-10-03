@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 
 /**
  * The information for a bending source block.
+ * 
  * @author kingbirdy
- *
  */
 public class BlockSourceInformation {
 	private Player player;
@@ -19,6 +19,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Creates a new BlockSourceInformation.
+	 * 
 	 * @param player The player the source belongs to
 	 * @param block The source block
 	 * @param sourceType What {@link BlockSourceType source type} the block is
@@ -34,6 +35,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Gets the source block.
+	 * 
 	 * @return The source block
 	 */
 	public Block getBlock() {
@@ -42,6 +44,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Sets a new source block.
+	 * 
 	 * @param block The new source block.
 	 */
 	public void setBlock(Block block) {
@@ -50,6 +53,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Get what {@link BlockSourceType source type} the source is.
+	 * 
 	 * @return The block's source type
 	 */
 	public BlockSourceType getSourceType() {
@@ -58,6 +62,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Sets the source type.
+	 * 
 	 * @param sourceType The new source type.
 	 */
 	public void setSourceType(BlockSourceType sourceType) {
@@ -66,6 +71,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Gets when the source was created.
+	 * 
 	 * @return The source's creation time
 	 */
 	public long getCreationTime() {
@@ -74,6 +80,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Sets the source's creation time.
+	 * 
 	 * @param creationTime The new creation time
 	 */
 	public void setCreationTime(long creationTime) {
@@ -82,6 +89,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Get the player the source belongs to.
+	 * 
 	 * @return The player the source belongs to
 	 */
 	public Player getPlayer() {
@@ -90,6 +98,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Sets the player the source belongs to.
+	 * 
 	 * @param player The player the source will belong to
 	 */
 	public void setPlayer(Player player) {
@@ -98,6 +107,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Gets the {@link ClickType} used to select the source.
+	 * 
 	 * @return The ClickType used to select the source
 	 */
 	public ClickType getClickType() {
@@ -106,6 +116,7 @@ public class BlockSourceInformation {
 
 	/**
 	 * Sets the source's {@link ClickType}.
+	 * 
 	 * @param clickType The ClickType to set
 	 */
 	public void setClickType(ClickType clickType) {
