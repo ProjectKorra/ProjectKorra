@@ -14,10 +14,10 @@ public class TempBlock {
 
 	public static ConcurrentHashMap<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();
 
-	Block block;
-	Material newtype;
-	byte newdata;
-	BlockState state;
+	private Block block;
+	private Material newtype;
+	private byte newdata;
+	private BlockState state;
 
 	@SuppressWarnings("deprecation")
 	public TempBlock(Block block, Material newtype, byte newdata) {
@@ -53,9 +53,7 @@ public class TempBlock {
 	}
 
 	public static boolean isTempBlock(Block block) {
-		if (instances.containsKey(block))
-			return true;
-		return false;
+		return instances.containsKey(block);
 	}
 
 	public static boolean isTouchingTempBlock(Block block) {
@@ -71,13 +69,10 @@ public class TempBlock {
 		for (Block block : instances.keySet()) {
 			revertBlock(block, Material.AIR);
 		}
-
 	}
 
 	public static void removeBlock(Block block) {
-		if (instances.containsKey(block)) {
-			instances.remove(block);
-		}
+		instances.remove(block);
 	}
 
 	@SuppressWarnings("deprecation")
