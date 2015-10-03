@@ -75,4 +75,18 @@ public enum Element {
 			return null;
 		return Arrays.asList(values()).get(index);
 	}
+	
+	/**
+	 * Returns an element based on ChatColor.
+	 * @param color
+	 * @return
+	 */
+	public static Element getFromChatColor(ChatColor color) {
+		for (Element element : Element.values())  {
+			if (element.getChatColor().equals(color) || element.getSubColor().equals(color)) {
+				return element;
+			}
+		}
+		return null;
+	}
 }

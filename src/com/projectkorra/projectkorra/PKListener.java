@@ -909,10 +909,17 @@ public class PKListener implements Listener {
 		if (bendingDeathPlayer.containsKey(event.getEntity())) {
 			String message = ConfigManager.deathMsgConfig.get().getString("Properties.Default");
 			String ability = bendingDeathPlayer.get(event.getEntity());
-			String tempAbility = ChatColor.stripColor(ability);
+			String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
 			Element element = null;
+			boolean isAvatarAbility = false;
 			if (GeneralMethods.abilityExists(tempAbility)) {
 				element = GeneralMethods.getAbilityElement(tempAbility);
+				if (element == null) {
+					isAvatarAbility = true;
+					ability = GeneralMethods.getAvatarColor() + tempAbility;
+				}
+			} else if (ChatColor.getByChar(ability.substring(1, 2)) != null) {
+				element = Element.getFromChatColor(ChatColor.getByChar(ability.substring(1, 2)));
 			}
 			/*
 			Player killer = event.getEntity().getKiller();
@@ -936,9 +943,15 @@ public class PKListener implements Listener {
 			if (element != null) {
 				if (ConfigManager.deathMsgConfig.get().contains(element.toString() + "." + tempAbility)) {
 					message = ConfigManager.deathMsgConfig.get().getString(element + "." + tempAbility);
+				} else if (ConfigManager.deathMsgConfig.get().contains("Combo." + tempAbility)) {
+					message = ConfigManager.deathMsgConfig.get().getString("Combo." + tempAbility);
 				}
 			} else {
-				if (ConfigManager.deathMsgConfig.get().contains("Combo." + tempAbility)) {
+				if (isAvatarAbility) {
+					if (ConfigManager.deathMsgConfig.get().contains("Avatar." + tempAbility)) {
+						message = ConfigManager.deathMsgConfig.get().getString("Avatar." + tempAbility);
+					}
+				} else if (ConfigManager.deathMsgConfig.get().contains("Combo." + tempAbility)) {
 					message = ConfigManager.deathMsgConfig.get().getString("Combo." + tempAbility);
 				}
 			}
