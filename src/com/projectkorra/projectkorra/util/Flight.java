@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.Tornado;
@@ -21,10 +20,10 @@ public class Flight {
 	private static ConcurrentHashMap<Player, Flight> instances = new ConcurrentHashMap<Player, Flight>();
 	private static long duration = 5000;
 
-	private Player player = null, source = null;
-
-	private boolean couldFly = false, wasFlying = false;
-
+	private Player player;
+	private Player source;
+	private boolean couldFly = false;
+	private boolean wasFlying = false;
 	private long time;
 
 	public Flight(Player player) {
@@ -38,11 +37,11 @@ public class Flight {
 			instances.replace(player, flight);
 			return;
 		}
-		couldFly = player.getAllowFlight();
-		wasFlying = player.isFlying();
+		this.couldFly = player.getAllowFlight();
+		this.wasFlying = player.isFlying();
 		this.player = player;
 		this.source = source;
-		time = System.currentTimeMillis();
+		this.time = System.currentTimeMillis();
 		instances.put(player, this);
 	}
 
@@ -59,14 +58,13 @@ public class Flight {
 		if (instances.containsKey(player)) {
 			return instances.get(player).source;
 		}
-
 		return null;
 	}
 
 	public static void handle() {
 		ArrayList<Player> players = new ArrayList<Player>();
 		ArrayList<Player> newflyingplayers = new ArrayList<Player>();
-		ArrayList<Player> avatarstateplayers = new ArrayList<Player>();
+		//ArrayList<Player> avatarstateplayers = new ArrayList<Player>();
 		ArrayList<Player> airscooterplayers = new ArrayList<Player>();
 		ArrayList<Player> waterspoutplayers = new ArrayList<Player>();
 		ArrayList<Player> airspoutplayers = new ArrayList<Player>();
@@ -76,7 +74,7 @@ public class Flight {
 		//		players.addAll(Speed.getPlayers());
 		players.addAll(FireJet.getPlayers());
 		players.addAll(Catapult.getPlayers());
-		avatarstateplayers = AvatarState.getPlayers();
+		//avatarstateplayers = AvatarState.getPlayers();
 		airscooterplayers = AirScooter.getPlayers();
 		waterspoutplayers = WaterSpout.getPlayers();
 		airspoutplayers = AirSpout.getPlayers();
@@ -112,15 +110,8 @@ public class Flight {
 					}
 				}
 			} else {
-				if (flight.source == null) {
-					flight.revert();
-					flight.remove();
-					continue;
-				}
-				if (System.currentTimeMillis() > flight.time + duration) {
-					flight.revert();
-					flight.remove();
-				}
+				flight.revert();
+				flight.remove();
 			}
 		}
 	}
@@ -128,11 +119,10 @@ public class Flight {
 	public static void removeAll() {
 		for (Player player : instances.keySet()) {
 			Flight flight = instances.get(player);
-			if (player == null || flight == null) {
+			if (flight == null) {
 				instances.remove(player);
 				continue;
 			}
-			//if (flight.source != null)
 			flight.revert();
 			flight.remove();
 		}
@@ -145,21 +135,21 @@ public class Flight {
 	}
 
 	public void remove() {
-		if (player == null) {
-			for (Player player : instances.keySet()) {
-				if (instances.get(player).equals(this)) {
-					instances.remove(player);
-				}
-			}
-			return;
-		}
+//		if (player == null) {
+//			for (Player player : instances.keySet()) {
+//				if (instances.get(player).equals(this)) {
+//					instances.remove(player);
+//				}
+//			}
+//			return;
+//		}
 		instances.remove(player);
 	}
 
 	public void revert() {
-		if (player == null) {
-			return;
-		}
+//		if (player == null) {
+//			return;
+//		}
 		player.setAllowFlight(couldFly);
 		player.setFlying(wasFlying);
 	}
