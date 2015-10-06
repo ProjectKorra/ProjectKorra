@@ -12,10 +12,9 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 public class RevertChecker implements Runnable {
@@ -24,8 +23,8 @@ public class RevertChecker implements Runnable {
 
 	private static final FileConfiguration config = ConfigManager.defaultConfig.get();
 	private static final boolean safeRevert = config.getBoolean("Properties.Earth.SafeRevert");
-	public static Set<Block> earthRevertQueue = new HashSet<>();
-	static Set<Integer> airRevertQueue = new HashSet<>();
+	public static Map<Block, Block> earthRevertQueue = new ConcurrentHashMap<>();
+	static Map<Integer, Integer> airRevertQueue = new ConcurrentHashMap<>();
 	//static ConcurrentHashMap<Chunk, Chunk> chunks = new ConcurrentHashMap<Chunk, Chunk>();
 	// static ConcurrentHashMap<Block, Material> movedEarthQueue = new ConcurrentHashMap<Block, Material>();
 
@@ -36,14 +35,14 @@ public class RevertChecker implements Runnable {
 	}
 
 	public static void revertAirBlocks() {
-		for (int ID : airRevertQueue) {
+		for (int ID : airRevertQueue.keySet()) {
 			EarthMethods.revertAirBlock(ID);
 			RevertChecker.airRevertQueue.remove(ID);
 		}
 	}
 
 	public static void revertEarthBlocks() {
-		for (Block block : earthRevertQueue) {
+		for (Block block : earthRevertQueue.keySet()) {
 			EarthMethods.revertBlock(block);
 			earthRevertQueue.remove(block);
 		}
@@ -58,14 +57,14 @@ public class RevertChecker implements Runnable {
 	// }
 
 	private void addToAirRevertQueue(int i) {
-		if (!airRevertQueue.contains(i))
-			airRevertQueue.add(i);
+		if (!airRevertQueue.containsKey(i))
+			airRevertQueue.put(i, i);
 
 	}
 
 	private void addToRevertQueue(Block block) {
-		if (!earthRevertQueue.contains(block))
-			earthRevertQueue.add(block);
+		if (!earthRevertQueue.containsKey(block))
+			earthRevertQueue.put(block, block);
 	}
 
 	public void run() {
@@ -81,7 +80,7 @@ public class RevertChecker implements Runnable {
 				earth.putAll(EarthMethods.movedearth);
 
 				for (Block block : earth.keySet()) {
-					if (earthRevertQueue.contains(block))
+					if (earthRevertQueue.containsKey(block))
 						continue;
 					boolean remove = true;
 					Information info = earth.get(block);
@@ -97,7 +96,7 @@ public class RevertChecker implements Runnable {
 				air.putAll(EarthMethods.tempair);
 
 				for (Integer i : air.keySet()) {
-					if (airRevertQueue.contains(i))
+					if (airRevertQueue.containsKey(i))
 						continue;
 					boolean remove = true;
 					Information info = air.get(i);
