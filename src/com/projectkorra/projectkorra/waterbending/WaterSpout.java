@@ -240,7 +240,7 @@ public class WaterSpout {
 						return height;
 					return i;
 				}
-				if (blocki.getType() == Material.ICE || blocki.getType() == Material.SNOW || blocki.getType() == Material.SNOW_BLOCK) {
+				if (blocki.getType() == Material.ICE || blocki.getType() == Material.SNOW || blocki.getType() == Material.SNOW_BLOCK || blocki.getType() == Material.PACKED_ICE) {
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock(player);
 						instances.get(player).baseblock = new TempBlock(blocki, Material.STATIONARY_WATER, (byte) 8);
