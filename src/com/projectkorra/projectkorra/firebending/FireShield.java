@@ -49,7 +49,7 @@ public class FireShield extends CoreAbility {
 		if (bPlayer.isOnCooldown("FireShield"))
 			return;
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		this.shield = shield;
 

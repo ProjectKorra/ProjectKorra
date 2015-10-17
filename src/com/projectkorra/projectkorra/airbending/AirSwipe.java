@@ -76,7 +76,7 @@ public class AirSwipe extends CoreAbility {
 			return;
 		}
 		/* End Initial Check */
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		this.charging = charging;
 		origin = player.getEyeLocation();

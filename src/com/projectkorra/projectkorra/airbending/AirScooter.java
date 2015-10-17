@@ -36,7 +36,7 @@ public class AirScooter extends CoreAbility {
 		if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
 			return;
 		/* End Initial Check */
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		// wasflying = player.isFlying();
 		// canfly = player.getAllowFlight();
@@ -49,6 +49,7 @@ public class AirScooter extends CoreAbility {
 			angles.add((double) (60 * i));
 		}
 		//instances.put(uuid, this);
+		speed = configSpeed;
 		putInstance(player, this);
 		progress();
 	}

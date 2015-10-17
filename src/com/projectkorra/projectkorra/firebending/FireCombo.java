@@ -102,7 +102,7 @@ public class FireCombo implements ConfigLoadable {
 			return;
 		}
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 		time = System.currentTimeMillis();
 		this.player = player;
 		this.ability = ability;

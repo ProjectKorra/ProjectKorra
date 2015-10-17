@@ -16,7 +16,7 @@ public class HeatMelt implements ConfigLoadable {
 	private static int radius = config.get().getInt("Abilities.Fire.HeatControl.Melt.Radius");
 
 	public HeatMelt(Player player) {
-		reloadVariables();
+		//reloadVariables();
 		Location location = GeneralMethods.getTargetedLocation(player, (int) FireMethods.getFirebendingDayAugment(range, player.getWorld()));
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, (int) FireMethods.getFirebendingDayAugment(radius, player.getWorld()))) {
 			if (WaterMethods.isMeltable(block)) {

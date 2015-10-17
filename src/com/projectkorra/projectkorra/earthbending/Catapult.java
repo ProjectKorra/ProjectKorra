@@ -38,7 +38,7 @@ public class Catapult extends CoreAbility {
 		if (bplayer.isOnCooldown("Catapult"))
 			return;
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		origin = player.getEyeLocation().clone();
 		direction = origin.getDirection().clone().normalize();

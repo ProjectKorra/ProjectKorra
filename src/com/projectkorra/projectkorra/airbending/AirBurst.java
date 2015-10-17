@@ -33,7 +33,7 @@ public class AirBurst extends CoreAbility {
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
 	public AirBurst() {
-		reloadVariables();
+		//reloadVariables();
 	}
 
 	public AirBurst(Player player) {

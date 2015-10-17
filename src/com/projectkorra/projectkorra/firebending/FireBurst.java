@@ -39,7 +39,7 @@ public class FireBurst extends CoreAbility {
 		if (containsPlayer(player, FireBurst.class))
 			return;
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 
 		starttime = System.currentTimeMillis();
 		if (FireMethods.isDay(player.getWorld())) {

@@ -135,21 +135,21 @@ public class Flight {
 	}
 
 	public void remove() {
-//		if (player == null) {
-//			for (Player player : instances.keySet()) {
-//				if (instances.get(player).equals(this)) {
-//					instances.remove(player);
-//				}
-//			}
-//			return;
-//		}
+		if (player == null) {
+			for (Player player : instances.keySet()) {
+				if (instances.get(player).equals(this)) {
+					instances.remove(player);
+				}
+			}
+			return;
+		}
 		instances.remove(player);
 	}
 
 	public void revert() {
-//		if (player == null) {
-//			return;
-//		}
+		if (player == null) {
+			return;
+		}
 		player.setAllowFlight(couldFly);
 		player.setFlying(wasFlying);
 	}

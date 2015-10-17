@@ -58,7 +58,7 @@ public class Lightning extends CoreAbility {
 	private double newY;
 
 	public Lightning(Player player) {
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		charged = false;
