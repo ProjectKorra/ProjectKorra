@@ -54,6 +54,7 @@ public class ImportCommand extends PKCommand {
 			if (string.equalsIgnoreCase("version"))
 				continue;
 			String playername = string;
+			@SuppressWarnings("deprecation")
 			UUID uuid = ProjectKorra.plugin.getServer().getOfflinePlayer(playername).getUniqueId();
 			ArrayList<Element> element = new ArrayList<Element>();
 			List<Integer> oe = bendingPlayers.getIntegerList(string + ".BendingTypes");
