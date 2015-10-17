@@ -68,7 +68,7 @@ public class FireBlast extends CoreAbility {
 			return;
 		}
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 		safe = safeblocks;
 		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
 		// timers.put(player, System.currentTimeMillis());

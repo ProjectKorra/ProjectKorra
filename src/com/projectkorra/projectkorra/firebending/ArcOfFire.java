@@ -24,7 +24,7 @@ public class ArcOfFire implements ConfigLoadable {
 		if (bPlayer.isOnCooldown("Blaze"))
 			return;
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 
 		Location location = player.getLocation();
 

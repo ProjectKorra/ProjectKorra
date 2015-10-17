@@ -425,7 +425,7 @@ public class WaterMethods {
 
 	public static void playIcebendingSound(Location loc) {
 		if (plugin.getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.FIRE_IGNITE, 10, 4);
+			loc.getWorld().playSound(loc, Sound.FIRE_IGNITE, 2, 10);
 		}
 	}
 

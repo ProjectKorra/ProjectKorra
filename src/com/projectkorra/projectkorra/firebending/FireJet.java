@@ -37,7 +37,7 @@ public class FireJet extends CoreAbility {
 		if (bPlayer.isOnCooldown("FireJet"))
 			return;
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 		
 		factor = FireMethods.getFirebendingDayAugment(defaultfactor, player.getWorld());
 		GeneralMethods.invincible.add(this);

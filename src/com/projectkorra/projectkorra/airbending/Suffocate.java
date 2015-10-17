@@ -76,7 +76,7 @@ public class Suffocate extends CoreAbility {
 		tasks = new ArrayList<BukkitRunnable>();
 		time = System.currentTimeMillis();
 
-		reloadVariables();
+		//reloadVariables();
 		reqConstantAim = REQUIRE_CONSTANT_AIM;
 		canSuffUndead = CAN_SUFFOCATE_UNDEAD;
 		chargeTime = CHARGE_TIME;

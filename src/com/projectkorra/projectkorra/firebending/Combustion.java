@@ -53,7 +53,7 @@ public class Combustion extends CoreAbility {
 		if (bPlayer.isOnCooldown("Combustion"))
 			return;
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		starttime = System.currentTimeMillis();
 		origin = player.getEyeLocation();

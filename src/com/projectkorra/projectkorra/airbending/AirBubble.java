@@ -28,7 +28,7 @@ public class AirBubble extends CoreAbility {
 	private ConcurrentHashMap<Block, BlockState> waterorigins;
 
 	public AirBubble(Player player) {
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		waterorigins = new ConcurrentHashMap<Block, BlockState>();
 		//instances.put(uuid, this);

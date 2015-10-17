@@ -79,6 +79,7 @@ public class AirCombo implements ConfigLoadable {
 
 	public AirCombo(Player player, String ability) {
 		/* Initial Checks */
+		
 		if (!enabled)
 			return;
 		if (Commands.isToggledForAll)
@@ -94,7 +95,7 @@ public class AirCombo implements ConfigLoadable {
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", player.getLocation()))
 			return;
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 		time = System.currentTimeMillis();
 		this.player = player;
 		this.ability = ability;

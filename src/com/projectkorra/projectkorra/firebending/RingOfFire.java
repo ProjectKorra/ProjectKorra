@@ -19,7 +19,7 @@ public class RingOfFire implements ConfigLoadable {
 		if (bPlayer.isOnCooldown("Blaze"))
 			return;
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 		Location location = player.getLocation();
 
 		for (double degrees = 0; degrees < 360; degrees += 10) {

@@ -259,6 +259,8 @@ public class WaterWall {
 
 			if (GeneralMethods.getBoundAbility(player) == null) {
 				unfocusBlock();
+				breakBlock();
+				returnWater(location);
 				return false;
 			}
 			if (!progressing && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge")) {

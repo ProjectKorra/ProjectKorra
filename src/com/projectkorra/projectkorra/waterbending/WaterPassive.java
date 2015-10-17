@@ -44,15 +44,15 @@ public class WaterPassive {
 					}
 				}
 
-				if (player.getLocation().getBlock().isLiquid()) {
-					for (Block block : GeneralMethods.getBlocksAroundPoint(player.getLocation(), 2)) {
-						if (GeneralMethods.isAdjacentToThreeOrMoreSources(block) && WaterMethods.isWater(block)) {
-							byte full = 0x0;
-							block.setType(Material.WATER);
-							block.setData(full);
-						}
-					}
-				}
+//				if (player.getLocation().getBlock().isLiquid()) {
+//					for (Block block : GeneralMethods.getBlocksAroundPoint(player.getLocation(), 2)) {
+//						if (GeneralMethods.isAdjacentToThreeOrMoreSources(block) && WaterMethods.isWater(block)) {
+//							byte full = 0x0;
+//							block.setType(Material.WATER);
+//							block.setData(full);
+//						}
+//					}
+//				}
 			}
 		}
 	}

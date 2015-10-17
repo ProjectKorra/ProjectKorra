@@ -43,7 +43,7 @@ public class Tornado extends CoreAbility {
 	// private boolean canfly;
 
 	public Tornado(Player player) {
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		// canfly = player.getAllowFlight();
 		// player.setAllowFlight(true);

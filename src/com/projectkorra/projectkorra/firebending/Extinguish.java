@@ -31,7 +31,7 @@ public class Extinguish implements ConfigLoadable {
 		if (bPlayer.isOnCooldown("HeatControl"))
 			return;
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 
 		double range = FireMethods.getFirebendingDayAugment(defaultrange, player.getWorld());
 		if (WaterMethods.isMeltable(player.getTargetBlock((HashSet<Material>) null, (int) range))) {

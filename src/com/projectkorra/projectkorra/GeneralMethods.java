@@ -293,8 +293,6 @@ public class GeneralMethods {
 			return false;
 		if (!bPlayer.isToggled())
 			return false;
-		if (p == null)
-			return false;
 		if (p.getGameMode() == GameMode.SPECTATOR)
 			return false;
 		if (cooldowns.containsKey(p.getName())) {

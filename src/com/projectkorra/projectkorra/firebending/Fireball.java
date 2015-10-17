@@ -56,7 +56,7 @@ public class Fireball extends AddonAbility {
 	private boolean damage_blocks;
 
 	public Fireball(Player player) {
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		time = System.currentTimeMillis();
 		starttime = time;
