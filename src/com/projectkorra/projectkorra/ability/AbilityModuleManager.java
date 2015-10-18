@@ -87,6 +87,7 @@ public class AbilityModuleManager {
 		fill();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void fill() {
 
 		for (StockAbility a : StockAbility.values()) {

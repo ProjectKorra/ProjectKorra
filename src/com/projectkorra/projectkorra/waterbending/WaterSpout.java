@@ -41,6 +41,7 @@ public class WaterSpout {
 	private long interval = 50;
 	private int angle = 0;
 	private double rotation;
+	private boolean canBendOnPackedIce = false;
 
 	public WaterSpout(Player player) {
 		//		if (BendingPlayer.getBendingPlayer(player).isOnCooldown(
@@ -52,7 +53,8 @@ public class WaterSpout {
 			return;
 		}
 		this.player = player;
-
+		this.canBendOnPackedIce = ProjectKorra.plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce");
+		
 		WaterWave wwave = new WaterWave(player, WaterWave.AbilityType.CLICK);
 		if (WaterWave.instances.contains(wwave))
 			return;
@@ -63,11 +65,13 @@ public class WaterSpout {
 		Material mat = topBlock.getType();
 		if (mat != Material.WATER && mat != Material.STATIONARY_WATER && mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW && mat != Material.SNOW_BLOCK)
 			return;
-
+		if (mat == Material.PACKED_ICE && !canBendOnPackedIce)
+			return;
 		new Flight(player);
 		player.setAllowFlight(true);
 		instances.put(player, this);
 		spout(player);
+		
 	}
 
 	private void remove() {
@@ -240,7 +244,7 @@ public class WaterSpout {
 						return height;
 					return i;
 				}
-				if (blocki.getType() == Material.ICE || blocki.getType() == Material.SNOW || blocki.getType() == Material.SNOW_BLOCK) {
+				if (blocki.getType() == Material.ICE || blocki.getType() == Material.SNOW || blocki.getType() == Material.SNOW_BLOCK || (blocki.getType() == Material.PACKED_ICE && spout.canBendOnPackedIce)) {
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock(player);
 						instances.get(player).baseblock = new TempBlock(blocki, Material.STATIONARY_WATER, (byte) 8);

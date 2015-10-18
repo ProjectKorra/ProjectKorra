@@ -31,7 +31,7 @@ public class ChiCombo {
 	 */
 	public static Map<Entity, Long> paralyzedEntities = new HashMap<Entity, Long>();
 	
-	private Player player;
+	//private Player player;
 	private Entity target;
 	
 	public ChiCombo(Player player, String ability) {
@@ -41,7 +41,7 @@ public class ChiCombo {
 			if (!GeneralMethods.canBend(player.getName(), "Immobilize") || GeneralMethods.getBendingPlayer(player).isOnCooldown("Immobilize"))
 				return;
 			else {
-				this.player = player;
+				//this.player = player;
 				target = GeneralMethods.getTargetedEntity(player, 5, new ArrayList<Entity>());
 				paralyze(target, IMMOBILIZE_DURATION);
 				instances.add(this);
