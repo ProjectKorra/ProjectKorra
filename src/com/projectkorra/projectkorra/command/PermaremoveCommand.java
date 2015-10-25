@@ -49,7 +49,7 @@ public class PermaremoveCommand extends PKCommand {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			bPlayer = GeneralMethods.getBendingPlayer(player);
+			bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		}
 
 		if (bPlayer.isPermaRemoved()) {

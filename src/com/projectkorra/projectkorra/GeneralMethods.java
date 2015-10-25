@@ -826,15 +826,7 @@ public class GeneralMethods {
 		if (player == null) {
 			player = Bukkit.getOfflinePlayer(playerName);
 		}
-		return getBendingPlayer(player.getUniqueId());
-	}
-
-	public static BendingPlayer getBendingPlayer(UUID uuid) {
-		return BendingPlayer.getPlayers().get(uuid);
-	}
-
-	public static BendingPlayer getBendingPlayer(OfflinePlayer player) {
-		return getBendingPlayer(player.getUniqueId());
+		return BendingPlayer.getPlayers().get(player.getUniqueId());
 	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
