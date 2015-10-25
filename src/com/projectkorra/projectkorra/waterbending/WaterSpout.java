@@ -28,6 +28,7 @@ public class WaterSpout {
 	private static final int HEIGHT = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Height");
 	private static final boolean PARTICLES = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
 	private static final boolean BLOCKS = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
+	private static final boolean PACKEDICE = ProjectKorra.plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce");
 
 	// private static final double threshold = .05;
 	// private static final byte half = 0x4;
@@ -61,7 +62,7 @@ public class WaterSpout {
 		if (topBlock == null)
 			topBlock = player.getLocation().getBlock();
 		Material mat = topBlock.getType();
-		if (mat != Material.WATER && mat != Material.STATIONARY_WATER && mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW && mat != Material.SNOW_BLOCK)
+		if (mat != Material.WATER && mat != Material.STATIONARY_WATER && mat != Material.ICE && (PACKEDICE && mat != Material.PACKED_ICE) && mat != Material.SNOW && mat != Material.SNOW_BLOCK)
 			return;
 
 		new Flight(player);
@@ -240,7 +241,7 @@ public class WaterSpout {
 						return height;
 					return i;
 				}
-				if (blocki.getType() == Material.ICE || blocki.getType() == Material.SNOW || blocki.getType() == Material.SNOW_BLOCK) {
+				if (blocki.getType() == Material.ICE || blocki.getType() == Material.SNOW || blocki.getType() == Material.SNOW_BLOCK || (PACKEDICE && blocki.getType() == Material.PACKED_ICE)) {
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock(player);
 						instances.get(player).baseblock = new TempBlock(blocki, Material.STATIONARY_WATER, (byte) 8);

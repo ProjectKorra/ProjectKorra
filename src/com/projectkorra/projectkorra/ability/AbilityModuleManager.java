@@ -371,16 +371,22 @@ public class AbilityModuleManager {
 			}
 		}
 
-		for (Field field : this.getClass().getDeclaredFields()) {
-			if (List.class.isAssignableFrom(field.getType())) {
-				try {
-					Collections.sort((List) field.get(this));
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		Collections.sort(airbendingabilities);
+		Collections.sort(firebendingabilities);
+		Collections.sort(earthbendingabilities);
+		Collections.sort(waterbendingabilities);
+		Collections.sort(chiabilities);
+		Collections.sort(iceabilities);
+		Collections.sort(lavaabilities);
+		Collections.sort(bloodabilities);
+		Collections.sort(sandabilities);
+		Collections.sort(metalabilities);
+		Collections.sort(lightningabilities);
+		Collections.sort(combustionabilities);
+		Collections.sort(healingabilities);
+		Collections.sort(flightabilities);
+		Collections.sort(plantabilities);
+		Collections.sort(spiritualprojectionabilities);
 	}
 
 	public List<String> getAbilities(String element) {

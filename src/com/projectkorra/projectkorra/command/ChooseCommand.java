@@ -88,7 +88,7 @@ public class ChooseCommand extends PKCommand {
 	private void add(CommandSender sender, Player target, String element) {
 		element = getElement(element);
 		Element e = Element.getType(element);
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(target);
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(target.getName());
 		bPlayer.setElement(e);
 		ChatColor color = GeneralMethods.getElementColor(e);
 		if (element.charAt(0) == 'w' || element.charAt(0) == 'f') {

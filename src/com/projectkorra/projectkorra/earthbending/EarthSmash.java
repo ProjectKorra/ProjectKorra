@@ -483,8 +483,7 @@ public class EarthSmash {
 		 */
 		if (!ALLOW_GRAB)
 			return null;
-		@SuppressWarnings("deprecation")
-		List<Block> blocks = player.getLineOfSight(EarthMethods.getTransparentEarthbending(), (int) Math.round(grabRange));
+		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, grabRange, GeneralMethods.nonOpaque), 1);
 		for (EarthSmash smash : instances) {
 			if (reqState == null || smash.state == reqState)
 				for (Block block : blocks)

@@ -361,7 +361,7 @@ public class PKListener implements Listener {
 		String append = "";
 		ChatColor color = null;
 		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
-		if (GeneralMethods.getBendingPlayer(player).getElements().size() > 1) {
+		if (GeneralMethods.getBendingPlayer(player.getName()).getElements().size() > 1) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
 			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
 		} else if (e == Element.Air && chatEnabled) {
@@ -454,6 +454,8 @@ public class PKListener implements Listener {
 
 		if (entity instanceof Player) {
 			Player player = (Player) entity;
+			if (GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Fire))
+				return;
 			if (GeneralMethods.getBoundAbility(player) != null && GeneralMethods.getBoundAbility(player).equalsIgnoreCase("HeatControl")) {
 				if (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK) {
 					player.setFireTicks(0);
@@ -812,36 +814,26 @@ public class PKListener implements Listener {
 							if (GeneralMethods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 								return;
 							}
-							if (ChiPassive.willChiBlock(sourceplayer, targetplayer)) {
+							if (GeneralMethods.getBendingPlayer(sourceplayer.getName()).isElementToggled(Element.Chi) == true) {
 								if (GeneralMethods.getBoundAbility(sourceplayer) != null && GeneralMethods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze")) {
 									new Paralyze(sourceplayer, targetplayer);
 								} else {
-									ChiPassive.blockChi(targetplayer);
+									if (ChiPassive.willChiBlock(sourceplayer, targetplayer)) {
+										ChiPassive.blockChi(targetplayer);
+									}
 								}
 							}
 						}
-						//						if (sourceplayer.getLocation().distance(targetplayer.getLocation()) <= plugin.getConfig().getDouble("Abilities.Chi.RapidPunch.Distance") && Methods.getBoundAbility(sourceplayer) == null) {
-						//							if (Methods.isWeapon(sourceplayer.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
-						//								return;
-						//							} else {
-						//								if (ChiPassive.willChiBlock(targetplayer)) {
-						//									ChiPassive.blockChi(targetplayer);
-						//									
-						//								}
-						//							}
-						//						}
 					}
 				}
 				if (GeneralMethods.canBendPassive(sourceplayer.getName(), Element.Chi)) {
 					if (GeneralMethods.isWeapon(sourceplayer.getItemInHand().getType()) && !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 						return;
 					}
-					if (e.getCause() == DamageCause.ENTITY_ATTACK) {
+					if (e.getCause() == DamageCause.ENTITY_ATTACK && GeneralMethods.getBendingPlayer(sourceplayer.getName()).isElementToggled(Element.Chi) == true) {
 						if (GeneralMethods.getBoundAbility(sourceplayer) != null && GeneralMethods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze") && e.getDamage() == 1) {
-							if (ChiPassive.willChiBlock(sourceplayer, targetplayer)) {
-								if (CoreAbility.getAbilitiesFromPlayer(sourceplayer).isEmpty()) {
-									new Paralyze(sourceplayer, targetplayer);
-								}
+							if (CoreAbility.getAbilitiesFromPlayer(sourceplayer).isEmpty()) {
+								new Paralyze(sourceplayer, targetplayer);
 							}
 						}
 					}
@@ -990,7 +982,7 @@ public class PKListener implements Listener {
 		}
 
 		if (ChiCombo.isParalyzed(player)) {
-			event.setTo(event.getFrom());
+			event.setCancelled(true);
 			return;
 		}
 
@@ -1131,7 +1123,7 @@ public class PKListener implements Listener {
 		if (!player.isSneaking() && GeneralMethods.canBend(player.getName(), abil)) {
 			if (GeneralMethods.isDisabledStockAbility(abil))
 				return;
-			if (AirMethods.isAirAbility(abil)) {
+			if (AirMethods.isAirAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Air) == true) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
 				}
@@ -1163,7 +1155,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (WaterMethods.isWaterAbility(abil)) {
+			if (WaterMethods.isWaterAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Water) == true) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons")) {
 					return;
 				}
@@ -1196,7 +1188,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (EarthMethods.isEarthAbility(abil)) {
+			if (EarthMethods.isEarthAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Earth) == true) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
 					return;
 				}
@@ -1244,7 +1236,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (FireMethods.isFireAbility(abil)) {
+			if (FireMethods.isFireAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Fire) == true) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
 				}
@@ -1308,7 +1300,7 @@ public class PKListener implements Listener {
 			if (GeneralMethods.isDisabledStockAbility(abil))
 				return;
 
-			if (AirMethods.isAirAbility(abil)) {
+			if (AirMethods.isAirAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Air) == true) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
 				}
@@ -1344,7 +1336,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (WaterMethods.isWaterAbility(abil)) {
+			if (WaterMethods.isWaterAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Water) == true) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons")) {
 					return;
 				}
@@ -1380,7 +1372,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (EarthMethods.isEarthAbility(abil)) {
+			if (EarthMethods.isEarthAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Earth) == true) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
 					return;
 				}
@@ -1433,7 +1425,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (FireMethods.isFireAbility(abil)) {
+			if (FireMethods.isFireAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Fire) == true) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
 				}
@@ -1466,7 +1458,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (ChiMethods.isChiAbility(abil)) {
+			if (ChiMethods.isChiAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Chi) == true) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 					return;
 				}
@@ -1475,9 +1467,6 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("RapidPunch")) {
 					new RapidPunch(player);
-				}
-				if (abil.equalsIgnoreCase("Paralyze")) {
-					//
 				}
 				if (abil.equalsIgnoreCase("Smokescreen")) {
 					new Smokescreen(player);

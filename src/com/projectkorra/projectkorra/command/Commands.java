@@ -47,7 +47,7 @@ public class Commands {
 	public static String[] watercomboaliases = { "watercombo", "wc", "watercombos", "waterbendingcombos" };
 
 	public static String[] comboaliases = { "aircombo", "ac", "aircombos", "airbendingcombos", "chicombo", "cc", "chicombos", "chiblockingcombos", "chiblockercombos", "earthcombo", "ec", "earthcombos", "earthbendingcombos", "firecombo", "fc", "firecombos", "firebendingcombos", "watercombo", "wc", "watercombos", "waterbendingcombos" };
-
+	public static String[] multicomboaliases = { "multielementcombo", "mc", "multielementcombos", "mec", "multicombos" };
 	/*
 	 * Subelement Aliases
 	 */

@@ -1,15 +1,15 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * A representation of all chi combo moves.
@@ -18,36 +18,44 @@ import java.util.Map;
  */
 public class ChiCombo {
 	
-	private static boolean enabled = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Chi.ChiCombo.Enabled");
+	private static boolean enabled = ConfigManager.defaultConfig.get().getBoolean("Abilities.Chi.ChiCombo.Enabled");
 	
-	public static long IMMOBILIZE_DURATION = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration");
-	public static long IMMOBILIZE_COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.Cooldown");
+	public static long IMMOBILIZE_DURATION = ConfigManager.defaultConfig.get().getLong("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration");
+	public static long IMMOBILIZE_COOLDOWN = ConfigManager.defaultConfig.get().getLong("Abilities.Chi.ChiCombo.Immobilize.Cooldown");
 	/**
 	 * A List of every instance of an active {@link ChiCombo}.
 	 */
-	public static List<ChiCombo> instances = new ArrayList<ChiCombo>();
+	public static ConcurrentHashMap<Player, ChiCombo> instances = new ConcurrentHashMap<Player, ChiCombo>();
 	/**
-	 * a Map containing every entity which is paralyzed, and the time in milliseconds at which they will be unparalyzed.
+	 * A Map containing every entity which is paralyzed, and the time in milliseconds at which they will be unparalyzed.
 	 */
 	public static Map<Entity, Long> paralyzedEntities = new HashMap<Entity, Long>();
 	
-	private Player player;
+	private static Player p;
 	private Entity target;
 	
 	public ChiCombo(Player player, String ability) {
 		if (!enabled)
 			return;
 		if (ability.equalsIgnoreCase("Immobilize")) {
-			if (!GeneralMethods.canBend(player.getName(), "Immobilize") || GeneralMethods.getBendingPlayer(player).isOnCooldown("Immobilize"))
+			if (!GeneralMethods.canBend(player.getName(), "Immobilize") || GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("Immobilize"))
 				return;
 			else {
-				this.player = player;
+				p = player;
+				instances.put(player, this);
 				target = GeneralMethods.getTargetedEntity(player, 5, new ArrayList<Entity>());
 				paralyze(target, IMMOBILIZE_DURATION);
-				instances.add(this);
-				GeneralMethods.getBendingPlayer(player).addCooldown("Immobilize", IMMOBILIZE_COOLDOWN);
+				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("Immobilize", IMMOBILIZE_COOLDOWN);
 			}
 		}
+	}
+	
+	/**
+	 * Gets the player
+	 * @return player
+	 */
+	public Player getPlayer() {
+		return p;
 	}
 
 	/**
@@ -90,8 +98,8 @@ public class ChiCombo {
 		for (Entity e : paralyzedEntities.keySet()) {
 			if (paralyzedEntities.get(e) <= System.currentTimeMillis()) {
 				paralyzedEntities.remove(e);
-				for (ChiCombo c : instances) {
-					if (c.target.equals(e))
+				for (ChiCombo c : instances.values()) {
+					if (c.target.equals(e) && c.getPlayer() == p)
 						instances.remove(c);
 				}
 			}
