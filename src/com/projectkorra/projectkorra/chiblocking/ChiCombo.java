@@ -38,14 +38,14 @@ public class ChiCombo {
 		if (!enabled)
 			return;
 		if (ability.equalsIgnoreCase("Immobilize")) {
-			if (!GeneralMethods.canBend(player.getName(), "Immobilize") || GeneralMethods.getBendingPlayer(player).isOnCooldown("Immobilize"))
+			if (!GeneralMethods.canBend(player.getName(), "Immobilize") || GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("Immobilize"))
 				return;
 			else {
 				//this.player = player;
 				target = GeneralMethods.getTargetedEntity(player, 5, new ArrayList<Entity>());
 				paralyze(target, IMMOBILIZE_DURATION);
 				instances.add(this);
-				GeneralMethods.getBendingPlayer(player).addCooldown("Immobilize", IMMOBILIZE_COOLDOWN);
+				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("Immobilize", IMMOBILIZE_COOLDOWN);
 			}
 		}
 	}

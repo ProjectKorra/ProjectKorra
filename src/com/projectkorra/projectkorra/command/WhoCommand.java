@@ -42,7 +42,9 @@ public class WhoCommand extends PKCommand {
 
 		staff.put("929b14fc-aaf1-4f0f-84c2-f20c55493f53", ChatColor.GREEN + "ProjectKorra Head Concept Designer"); // Vidcom
 
-		staff.put("15d1a5a7-76ef-49c3-b193-039b27c47e30", ChatColor.GREEN + "ProjectKorra Digital Director"); // Kiam
+		staff.put("15d1a5a7-76ef-49c3-b193-039b27c47e30", ChatColor.BLUE + "ProjectKorra Digital Director"); // Kiam
+		
+		staff.put("1553482a-5e86-4270-9262-b57c11151074", ChatColor.GOLD + "ProjectKorra Head Community Moderator"); // Pickle9775
 
 		staff.put("96f40c81-dd5d-46b6-9afe-365114d4a082", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Coolade
 		staff.put("833a7132-a9ec-4f0a-ad9c-c3d6b8a1c7eb", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Jacklin213
@@ -59,7 +61,6 @@ public class WhoCommand extends PKCommand {
 		staff.put("f30c871e-cd60-446b-b219-e31e00e16857", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Gangksta
 		staff.put("38217173-8a32-4ba7-9fe1-dd4fed031a74", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Fly
 
-		staff.put("1553482a-5e86-4270-9262-b57c11151074", ChatColor.GOLD + "ProjectKorra Community Moderator"); // Pickle9775
 		staff.put("3d5bc713-ab8b-4125-b5ba-a1c1c2400b2c", ChatColor.GOLD + "ProjectKorra Community Moderator"); // Gold
 
 		staff.put("2ab334d1-9691-4994-a624-209c7b4f220b", ChatColor.BLUE + "ProjectKorra Digital Team"); // Austygen
@@ -79,7 +80,7 @@ public class WhoCommand extends PKCommand {
 				BendingPlayer bp = GeneralMethods.getBendingPlayer(playerName);
 				if (bp == null) {
 					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-					bp = GeneralMethods.getBendingPlayer(player);
+					bp = GeneralMethods.getBendingPlayer(player.getName());
 				}
 				if (bp.getElements().size() > 1) {
 					players.add(GeneralMethods.getAvatarColor() + playerName);

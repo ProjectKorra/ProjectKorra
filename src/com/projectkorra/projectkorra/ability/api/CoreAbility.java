@@ -126,7 +126,7 @@ public abstract class CoreAbility implements Ability {
 		return instanceMap != null ? instanceMap : new ConcurrentHashMap<Integer, CoreAbility>();
 	}
 
-	//TODO: Update bending managers to use bellow method
+	//TODO: Update bending managers to use below method
 	//	/**
 	//	 * Convenience method that calls {@link #progress()} for all instances.
 	//	 * 
@@ -166,7 +166,7 @@ public abstract class CoreAbility implements Ability {
 		}
 	}
 
-	//TODO: Update bending managers to use bellow method
+	//TODO: Update bending managers to use below method
 	//	/**
 	//	 * Convenience method that calls {@link #remove()} for all instances.
 	//	 * 

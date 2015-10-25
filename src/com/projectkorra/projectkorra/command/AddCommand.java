@@ -55,7 +55,7 @@ public class AddCommand extends PKCommand {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(target.getName());
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
-			bPlayer = GeneralMethods.getBendingPlayer(target);
+			bPlayer = GeneralMethods.getBendingPlayer(target.getName());
 		}
 		if (bPlayer.isPermaRemoved()) {
 			sender.sendMessage(ChatColor.RED + "That player's bending was permanently removed.");

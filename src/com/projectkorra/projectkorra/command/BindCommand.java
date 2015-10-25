@@ -28,6 +28,10 @@ public class BindCommand extends PKCommand {
 			return;
 		}
 		
+		if (GeneralMethods.getBendingPlayer(sender.getName()).isElementToggled(GeneralMethods.getAbilityElement(args.get(0)))) {
+			sender.sendMessage(ChatColor.RED + "You have that ability's element toggled off currently.");
+		}
+		
 		String ability = GeneralMethods.getAbility(args.get(0));
 		// bending bind [Ability]
 		if (args.size() == 1) {
