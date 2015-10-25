@@ -27,7 +27,7 @@ public class Cook extends AddonAbility {
 	private long cooktime = COOK_TIME;
 
 	public Cook(Player player) {
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		items = player.getItemInHand();
 		time = System.currentTimeMillis();

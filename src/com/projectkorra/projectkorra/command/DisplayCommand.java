@@ -173,7 +173,7 @@ public class DisplayCommand extends PKCommand {
 	 */
 	private void displaySubElement(CommandSender sender, String element) {
 		List<String> abilities = ProjectKorra.plugin.abManager.getAbilities(element);
-		if (abilities.isEmpty()) {
+		if (abilities.isEmpty() && element != null) {
 			Element e = SubElement.getType(element.toLowerCase()).getMainElement();
 			ChatColor color = GeneralMethods.getSubBendingColor(e);
 			sender.sendMessage(ChatColor.YELLOW + "There are no " + color + element + ChatColor.YELLOW + " abilities installed!");

@@ -62,7 +62,7 @@ public class AirSuction extends CoreAbility {
 		if (AirSpout.getPlayers().contains(player.getUniqueId()) || WaterSpout.getPlayers().contains(player)) //TODO: UPDATE THIS LINE
 			return;
 		/* End Initial Check */
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		if (origins.containsKey(player)) {
 			origin = origins.get(player);

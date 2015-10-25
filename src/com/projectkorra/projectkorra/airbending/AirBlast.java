@@ -76,7 +76,7 @@ public class AirBlast extends CoreAbility {
 		if (location.getBlock().isLiquid()) {
 			return;
 		}
-		reloadVariables();
+		//reloadVariables();
 		source = burst;
 
 		this.player = player;

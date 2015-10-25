@@ -9,7 +9,6 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -83,7 +82,7 @@ public class WaterWave {
 
 	public void progress() {
 		progressCounter++;
-		if (player.isDead() || !player.isOnline()) {
+		if (player.isDead() || !player.isOnline() || !origin.getWorld().equals(player.getWorld())) {
 			remove();
 			return;
 		}

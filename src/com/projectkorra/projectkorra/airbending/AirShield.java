@@ -41,7 +41,7 @@ public class AirShield extends CoreAbility {
 			return;
 		}
 		/* End Initial Check */
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		int angle = 0;
 		int di = (int) (maxradius * 2 / numberOfStreams);

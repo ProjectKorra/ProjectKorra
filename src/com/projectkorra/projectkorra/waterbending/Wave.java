@@ -191,6 +191,9 @@ public class Wave {
 
 			if (GeneralMethods.getBoundAbility(player) == null) {
 				unfocusBlock();
+				thaw();
+				breakBlock();
+				returnWater(location);
 				return false;
 			}
 			if (!progressing && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Surge")) {

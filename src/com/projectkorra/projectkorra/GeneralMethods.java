@@ -293,8 +293,6 @@ public class GeneralMethods {
 			return false;
 		if (!bPlayer.isToggled())
 			return false;
-		if (p == null)
-			return false;
 		if (p.getGameMode() == GameMode.SPECTATOR)
 			return false;
 		if (cooldowns.containsKey(p.getName())) {
@@ -488,7 +486,7 @@ public class GeneralMethods {
 	 * @param ability The ability that is used to damage the entity
 	 */
 	public static void damageEntity(Player player, Entity entity, double damage, String ability) {
-		if (abilityExists(ability)) {
+		if (ability != null && abilityExists(ability)) {
 			damageEntity(player, entity, damage, getAbilityElement(ability), getAbilitySubElement(ability), ability);
 		} else {
 			damageEntity(player, entity, damage, null, null, ability);

@@ -109,6 +109,7 @@ public class EarthBlast {
 		unfocusBlock();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void focusBlock() {
 		if (EarthPassive.isPassiveSand(sourceblock))
 			EarthPassive.revertSand(sourceblock);
@@ -130,6 +131,7 @@ public class EarthBlast {
 		location = sourceblock.getLocation();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void unfocusBlock() {
 		if(destination != null){
 			breakBlock();
@@ -204,6 +206,7 @@ public class EarthBlast {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private boolean progress() {
 		if (player.isDead() || !player.isOnline()
 				|| !GeneralMethods.canBend(player.getName(), "EarthBlast")) {

@@ -61,6 +61,7 @@ public class FreezeMelt {
 			return;
 		byte data = block.getData();
 		block.setType(Material.ICE);
+		if(frozenblocks.size() % 50 == 0)
 		WaterMethods.playIcebendingSound(block.getLocation());
 		frozenblocks.put(block, data);
 	}

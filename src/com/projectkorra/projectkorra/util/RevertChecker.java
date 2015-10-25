@@ -1,11 +1,13 @@
 package com.projectkorra.projectkorra.util;
 
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 
 import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -19,12 +21,12 @@ public class RevertChecker implements Runnable {
 
 	private ProjectKorra plugin;
 
-	private static final boolean safeRevert = ProjectKorra.plugin.getConfig().getBoolean("Properties.Earth.SafeRevert");
-	public static ConcurrentHashMap<Block, Block> earthRevertQueue = new ConcurrentHashMap<Block, Block>();
-	static ConcurrentHashMap<Integer, Integer> airRevertQueue = new ConcurrentHashMap<Integer, Integer>();
-	static ConcurrentHashMap<Chunk, Chunk> chunks = new ConcurrentHashMap<Chunk, Chunk>();
-	// static ConcurrentHashMap<Block, Material> movedEarthQueue = new
-	// ConcurrentHashMap<Block, Material>();
+	private static final FileConfiguration config = ConfigManager.defaultConfig.get();
+	private static final boolean safeRevert = config.getBoolean("Properties.Earth.SafeRevert");
+	public static Map<Block, Block> earthRevertQueue = new ConcurrentHashMap<>();
+	static Map<Integer, Integer> airRevertQueue = new ConcurrentHashMap<>();
+	//static ConcurrentHashMap<Chunk, Chunk> chunks = new ConcurrentHashMap<Chunk, Chunk>();
+	// static ConcurrentHashMap<Block, Material> movedEarthQueue = new ConcurrentHashMap<Block, Material>();
 
 	private long time;
 
@@ -68,7 +70,7 @@ public class RevertChecker implements Runnable {
 	public void run() {
 		time = System.currentTimeMillis();
 
-		if (plugin.getConfig().getBoolean("Properties.Earth.RevertEarthbending")) {
+		if (config.getBoolean("Properties.Earth.RevertEarthbending")) {
 
 			try {
 				returnFuture = plugin.getServer().getScheduler().callSyncMethod(plugin, new getOccupiedChunks(plugin.getServer()));
@@ -82,7 +84,7 @@ public class RevertChecker implements Runnable {
 						continue;
 					boolean remove = true;
 					Information info = earth.get(block);
-					if (time < info.getTime() + ProjectKorra.plugin.getConfig().getLong("Properties.Earth.RevertCheckTime") || (chunks.contains(block.getChunk()) && safeRevert)) {
+					if (time < info.getTime() + config.getLong("Properties.Earth.RevertCheckTime") || (chunks.contains(block.getChunk()) && safeRevert)) {
 						remove = false;
 					}
 					if (remove) {
@@ -99,7 +101,7 @@ public class RevertChecker implements Runnable {
 					boolean remove = true;
 					Information info = air.get(i);
 					Block block = info.getBlock();
-					if (time < info.getTime() + ProjectKorra.plugin.getConfig().getLong("Properties.Earth.RevertCheckTime") || (chunks.contains(block.getChunk()) && safeRevert)) {
+					if (time < info.getTime() + config.getLong("Properties.Earth.RevertCheckTime") || (chunks.contains(block.getChunk()) && safeRevert)) {
 						remove = false;
 					}
 					if (remove) {

@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.util;
 
+import com.projectkorra.projectkorra.event.AbilityLoadEvent;
 import com.projectkorra.projectkorra.util.AbilityLoadable.LoadResult;
 import com.projectkorra.projectkorra.util.AbilityLoadable.LoadResult.Result;
 

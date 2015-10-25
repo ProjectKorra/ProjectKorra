@@ -3,7 +3,7 @@ package com.projectkorra.projectkorra.object;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.util.HorizontalVelocityChangeEvent;
+import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;

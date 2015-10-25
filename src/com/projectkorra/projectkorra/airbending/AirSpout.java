@@ -29,7 +29,7 @@ public class AirSpout extends CoreAbility {
 			return;
 		}
 		/* End Initial Check */
-		reloadVariables();
+		//reloadVariables();
 		this.player = player;
 		time = System.currentTimeMillis();
 		new Flight(player);

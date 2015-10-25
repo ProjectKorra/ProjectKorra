@@ -1,8 +1,95 @@
 package com.projectkorra.projectkorra;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.ability.api.CoreAbility;
+import com.projectkorra.projectkorra.ability.combo.ComboManager;
+import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
+import com.projectkorra.projectkorra.airbending.AirBlast;
+import com.projectkorra.projectkorra.airbending.AirBubble;
+import com.projectkorra.projectkorra.airbending.AirBurst;
+import com.projectkorra.projectkorra.airbending.AirMethods;
+import com.projectkorra.projectkorra.airbending.AirScooter;
+import com.projectkorra.projectkorra.airbending.AirShield;
+import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.airbending.AirSuction;
+import com.projectkorra.projectkorra.airbending.AirSwipe;
+import com.projectkorra.projectkorra.airbending.FlightAbility;
+import com.projectkorra.projectkorra.airbending.Suffocate;
+import com.projectkorra.projectkorra.airbending.Tornado;
+import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
+import com.projectkorra.projectkorra.chiblocking.ChiCombo;
+import com.projectkorra.projectkorra.chiblocking.ChiMethods;
+import com.projectkorra.projectkorra.chiblocking.ChiPassive;
+import com.projectkorra.projectkorra.chiblocking.HighJump;
+import com.projectkorra.projectkorra.chiblocking.Paralyze;
+import com.projectkorra.projectkorra.chiblocking.QuickStrike;
+import com.projectkorra.projectkorra.chiblocking.RapidPunch;
+import com.projectkorra.projectkorra.chiblocking.Smokescreen;
+import com.projectkorra.projectkorra.chiblocking.SwiftKick;
+import com.projectkorra.projectkorra.chiblocking.WarriorStance;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.Catapult;
+import com.projectkorra.projectkorra.earthbending.Collapse;
+import com.projectkorra.projectkorra.earthbending.CompactColumn;
+import com.projectkorra.projectkorra.earthbending.EarthArmor;
+import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.earthbending.EarthColumn;
+import com.projectkorra.projectkorra.earthbending.EarthGrab;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.earthbending.EarthPassive;
+import com.projectkorra.projectkorra.earthbending.EarthSmash;
+import com.projectkorra.projectkorra.earthbending.EarthTunnel;
+import com.projectkorra.projectkorra.earthbending.EarthWall;
+import com.projectkorra.projectkorra.earthbending.Extraction;
+import com.projectkorra.projectkorra.earthbending.LavaFlow;
+import com.projectkorra.projectkorra.earthbending.LavaFlow.AbilityType;
+import com.projectkorra.projectkorra.earthbending.LavaSurge;
+import com.projectkorra.projectkorra.earthbending.LavaWave;
+import com.projectkorra.projectkorra.earthbending.MetalClips;
+import com.projectkorra.projectkorra.earthbending.SandSpout;
+import com.projectkorra.projectkorra.earthbending.Shockwave;
+import com.projectkorra.projectkorra.earthbending.Tremorsense;
+import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
+import com.projectkorra.projectkorra.event.PlayerBendingDeathEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
+import com.projectkorra.projectkorra.firebending.ArcOfFire;
+import com.projectkorra.projectkorra.firebending.Combustion;
+import com.projectkorra.projectkorra.firebending.Enflamed;
+import com.projectkorra.projectkorra.firebending.Extinguish;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.firebending.FireBurst;
+import com.projectkorra.projectkorra.firebending.FireJet;
+import com.projectkorra.projectkorra.firebending.FireMethods;
+import com.projectkorra.projectkorra.firebending.FireShield;
+import com.projectkorra.projectkorra.firebending.FireStream;
+import com.projectkorra.projectkorra.firebending.Fireball;
+import com.projectkorra.projectkorra.firebending.HeatControl;
+import com.projectkorra.projectkorra.firebending.Illumination;
+import com.projectkorra.projectkorra.firebending.Lightning;
+import com.projectkorra.projectkorra.firebending.RingOfFire;
+import com.projectkorra.projectkorra.firebending.WallOfFire;
+import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.Bloodbending;
+import com.projectkorra.projectkorra.waterbending.FreezeMelt;
+import com.projectkorra.projectkorra.waterbending.IceBlast;
+import com.projectkorra.projectkorra.waterbending.IceSpike2;
+import com.projectkorra.projectkorra.waterbending.Melt;
+import com.projectkorra.projectkorra.waterbending.OctopusForm;
+import com.projectkorra.projectkorra.waterbending.PlantArmor;
+import com.projectkorra.projectkorra.waterbending.Torrent;
+import com.projectkorra.projectkorra.waterbending.WaterArms;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import com.projectkorra.projectkorra.waterbending.WaterPassive;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import com.projectkorra.projectkorra.waterbending.WaterWall;
+import com.projectkorra.projectkorra.waterbending.WaterWave;
+import com.projectkorra.projectkorra.waterbending.Wave;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -59,96 +146,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.ability.combo.ComboManager;
-import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
-import com.projectkorra.projectkorra.airbending.AirBlast;
-import com.projectkorra.projectkorra.airbending.AirBubble;
-import com.projectkorra.projectkorra.airbending.AirBurst;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.airbending.AirScooter;
-import com.projectkorra.projectkorra.airbending.AirShield;
-import com.projectkorra.projectkorra.airbending.AirSpout;
-import com.projectkorra.projectkorra.airbending.AirSuction;
-import com.projectkorra.projectkorra.airbending.AirSwipe;
-import com.projectkorra.projectkorra.airbending.FlightAbility;
-import com.projectkorra.projectkorra.airbending.Suffocate;
-import com.projectkorra.projectkorra.airbending.Tornado;
-import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
-import com.projectkorra.projectkorra.chiblocking.ChiCombo;
-import com.projectkorra.projectkorra.chiblocking.ChiMethods;
-import com.projectkorra.projectkorra.chiblocking.ChiPassive;
-import com.projectkorra.projectkorra.chiblocking.HighJump;
-import com.projectkorra.projectkorra.chiblocking.Paralyze;
-import com.projectkorra.projectkorra.chiblocking.QuickStrike;
-import com.projectkorra.projectkorra.chiblocking.RapidPunch;
-import com.projectkorra.projectkorra.chiblocking.Smokescreen;
-import com.projectkorra.projectkorra.chiblocking.SwiftKick;
-import com.projectkorra.projectkorra.chiblocking.WarriorStance;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.Catapult;
-import com.projectkorra.projectkorra.earthbending.Collapse;
-import com.projectkorra.projectkorra.earthbending.CompactColumn;
-import com.projectkorra.projectkorra.earthbending.EarthArmor;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.earthbending.EarthColumn;
-import com.projectkorra.projectkorra.earthbending.EarthGrab;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.earthbending.EarthPassive;
-import com.projectkorra.projectkorra.earthbending.EarthSmash;
-import com.projectkorra.projectkorra.earthbending.EarthTunnel;
-import com.projectkorra.projectkorra.earthbending.EarthWall;
-import com.projectkorra.projectkorra.earthbending.Extraction;
-import com.projectkorra.projectkorra.earthbending.LavaFlow;
-import com.projectkorra.projectkorra.earthbending.LavaFlow.AbilityType;
-import com.projectkorra.projectkorra.earthbending.LavaSurge;
-import com.projectkorra.projectkorra.earthbending.LavaWave;
-import com.projectkorra.projectkorra.earthbending.MetalClips;
-import com.projectkorra.projectkorra.earthbending.SandSpout;
-import com.projectkorra.projectkorra.earthbending.Shockwave;
-import com.projectkorra.projectkorra.earthbending.Tremorsense;
-import com.projectkorra.projectkorra.event.PlayerBendingDeathEvent;
-import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
-import com.projectkorra.projectkorra.firebending.ArcOfFire;
-import com.projectkorra.projectkorra.firebending.Combustion;
-import com.projectkorra.projectkorra.firebending.Enflamed;
-import com.projectkorra.projectkorra.firebending.Extinguish;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.firebending.FireBurst;
-import com.projectkorra.projectkorra.firebending.FireJet;
-import com.projectkorra.projectkorra.firebending.FireMethods;
-import com.projectkorra.projectkorra.firebending.FireShield;
-import com.projectkorra.projectkorra.firebending.FireStream;
-import com.projectkorra.projectkorra.firebending.Fireball;
-import com.projectkorra.projectkorra.firebending.HeatControl;
-import com.projectkorra.projectkorra.firebending.Illumination;
-import com.projectkorra.projectkorra.firebending.Lightning;
-import com.projectkorra.projectkorra.firebending.RingOfFire;
-import com.projectkorra.projectkorra.firebending.WallOfFire;
-import com.projectkorra.projectkorra.object.Preset;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.util.HorizontalVelocityChangeEvent;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.Bloodbending;
-import com.projectkorra.projectkorra.waterbending.FreezeMelt;
-import com.projectkorra.projectkorra.waterbending.IceBlast;
-import com.projectkorra.projectkorra.waterbending.IceSpike2;
-import com.projectkorra.projectkorra.waterbending.Melt;
-import com.projectkorra.projectkorra.waterbending.OctopusForm;
-import com.projectkorra.projectkorra.waterbending.PlantArmor;
-import com.projectkorra.projectkorra.waterbending.Torrent;
-import com.projectkorra.projectkorra.waterbending.WaterArms;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
-import com.projectkorra.projectkorra.waterbending.WaterPassive;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import com.projectkorra.projectkorra.waterbending.WaterWall;
-import com.projectkorra.projectkorra.waterbending.WaterWave;
-import com.projectkorra.projectkorra.waterbending.Wave;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class PKListener implements Listener {
 
@@ -909,10 +909,17 @@ public class PKListener implements Listener {
 		if (bendingDeathPlayer.containsKey(event.getEntity())) {
 			String message = ConfigManager.deathMsgConfig.get().getString("Properties.Default");
 			String ability = bendingDeathPlayer.get(event.getEntity());
-			String tempAbility = ChatColor.stripColor(ability);
+			String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
 			Element element = null;
+			boolean isAvatarAbility = false;
 			if (GeneralMethods.abilityExists(tempAbility)) {
 				element = GeneralMethods.getAbilityElement(tempAbility);
+				if (element == null) {
+					isAvatarAbility = true;
+					ability = GeneralMethods.getAvatarColor() + tempAbility;
+				}
+			} else if (ChatColor.getByChar(ability.substring(1, 2)) != null) {
+				element = Element.getFromChatColor(ChatColor.getByChar(ability.substring(1, 2)));
 			}
 			/*
 			Player killer = event.getEntity().getKiller();
@@ -936,9 +943,15 @@ public class PKListener implements Listener {
 			if (element != null) {
 				if (ConfigManager.deathMsgConfig.get().contains(element.toString() + "." + tempAbility)) {
 					message = ConfigManager.deathMsgConfig.get().getString(element + "." + tempAbility);
+				} else if (ConfigManager.deathMsgConfig.get().contains("Combo." + tempAbility)) {
+					message = ConfigManager.deathMsgConfig.get().getString("Combo." + tempAbility);
 				}
 			} else {
-				if (ConfigManager.deathMsgConfig.get().contains("Combo." + tempAbility)) {
+				if (isAvatarAbility) {
+					if (ConfigManager.deathMsgConfig.get().contains("Avatar." + tempAbility)) {
+						message = ConfigManager.deathMsgConfig.get().getString("Avatar." + tempAbility);
+					}
+				} else if (ConfigManager.deathMsgConfig.get().contains("Combo." + tempAbility)) {
 					message = ConfigManager.deathMsgConfig.get().getString("Combo." + tempAbility);
 				}
 			}
@@ -1282,7 +1295,7 @@ public class PKListener implements Listener {
 		ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
 
 		if (Suffocate.isBreathbent(player)) {
-			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
+			if (GeneralMethods.getBoundAbility(player) != null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
 				event.setCancelled(true);
 			}
 		}
