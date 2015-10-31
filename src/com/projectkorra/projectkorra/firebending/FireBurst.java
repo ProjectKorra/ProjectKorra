@@ -1,12 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.BendingManager;
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -15,8 +10,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.ability.StockAbility;
+import com.projectkorra.projectkorra.ability.api.CoreAbility;
+import com.projectkorra.rpg.RPGMethods;
 
 public class FireBurst extends CoreAbility {
 	private static double PARTICLES_PERCENTAGE = 5;
@@ -39,20 +39,19 @@ public class FireBurst extends CoreAbility {
 		if (containsPlayer(player, FireBurst.class))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
 
 		starttime = System.currentTimeMillis();
+		if (AvatarState.isAvatarState(player))
+			chargetime = 0;
+		if (GeneralMethods.hasRPG()) {
+			if (RPGMethods.isSozinsComet(player.getWorld()))
+				chargetime = 0;
+		}
 		if (FireMethods.isDay(player.getWorld())) {
 			chargetime /= config.get().getDouble("Properties.Fire.DayFactor");
 		}
-		if (AvatarState.isAvatarState(player))
-			chargetime = 0;
-		if (BendingManager.events.containsKey(player.getWorld())) {
-			if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet"))
-				chargetime = 0;
-		}
+		
 		this.player = player;
-		//instances.put(player, this);
 		putInstance(player, this);
 	}
 
@@ -91,7 +90,6 @@ public class FireBurst extends CoreAbility {
 				}
 			}
 		}
-		// Methods.verbose("--" + AirBlast.instances.size() + "--");
 		remove();
 	}
 

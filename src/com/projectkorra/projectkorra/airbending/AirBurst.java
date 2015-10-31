@@ -44,7 +44,6 @@ public class AirBurst extends CoreAbility {
 		if (containsPlayer(player, AirBurst.class))
 			return;
 		/* End Initial Checks */
-		reloadVariables();
 		starttime = System.currentTimeMillis();
 		if (AvatarState.isAvatarState(player))
 			chargetime = 0;

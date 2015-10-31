@@ -31,6 +31,7 @@ public class EarthBlast {
 	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Range");
 	private static double DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Damage");
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Speed");
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthBlast.Cooldown");
 	private static final double deflectrange = 3;
 
 	private static boolean revert = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.Revert");
@@ -66,10 +67,13 @@ public class EarthBlast {
 			instances.put(id, this);
 			time = System.currentTimeMillis();
 		}
-
+		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("EarthBlast", cooldown);
 	}
 
 	public boolean prepare() {
+		if (GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("EarthBlast")) {
+			return false;
+		}
 		cancelPrevious();
 		Block block = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
 		block(player);

@@ -501,6 +501,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.EarthBlast.Revert", true);
 				config.addDefault("Abilities.Earth.EarthBlast.Damage", 3);
 				config.addDefault("Abilities.Earth.EarthBlast.Push", 0.3);
+				config.addDefault("Abilities.Earth.EarthBlast.Cooldown", 1000);
 
 				config.addDefault("Abilities.Earth.EarthGrab.Enabled", true);
 				config.addDefault("Abilities.Earth.EarthGrab.Description", "To use, simply left-click while targeting a creature within range. " + "This ability will erect a circle of earth to trap the creature in.");

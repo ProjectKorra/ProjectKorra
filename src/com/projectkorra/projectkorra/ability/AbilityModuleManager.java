@@ -6,7 +6,6 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.AbilityLoader;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -87,7 +86,6 @@ public class AbilityModuleManager {
 		fill();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void fill() {
 
 		for (StockAbility a : StockAbility.values()) {
