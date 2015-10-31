@@ -1,16 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingManager;
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.WaterArms.Arm;
-import com.projectkorra.rpg.WorldEvents;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,8 +14,16 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.WaterArms.Arm;
+import com.projectkorra.rpg.RPGMethods;
 
 public class WaterArmsWhip {
 
@@ -105,13 +104,7 @@ public class WaterArmsWhip {
 		World world = player.getWorld();
 		if (WaterMethods.isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
-					if (ability.equals(Whip.Punch)) {
-						whipLength = punchLengthFullMoon;
-					} else {
-						whipLength = whipLengthFullMoon;
-					}
-				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+				if (RPGMethods.isFullMoon(world)) {
 					if (ability.equals(Whip.Punch)) {
 						whipLength = punchLengthFullMoon;
 					} else {

@@ -1,14 +1,9 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingManager;
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.WaterArms.Arm;
-import com.projectkorra.rpg.WorldEvents;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,10 +16,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.WaterArms.Arm;
+import com.projectkorra.rpg.RPGMethods;
 
 public class WaterArmsSpear {
 
@@ -78,11 +77,7 @@ public class WaterArmsSpear {
 		World world = player.getWorld();
 		if (WaterMethods.isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
-					spearRange = spearRangeFullMoon;
-					spearSphere = spearSphereFullMoon;
-					spearDuration = spearDurationFullMoon;
-				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+				if (RPGMethods.isFullMoon(world)) {
 					spearRange = spearRangeFullMoon;
 					spearSphere = spearSphereFullMoon;
 					spearDuration = spearDurationFullMoon;
