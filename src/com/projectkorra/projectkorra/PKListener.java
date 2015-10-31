@@ -90,6 +90,7 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.WaterWall;
 import com.projectkorra.projectkorra.waterbending.WaterWave;
 import com.projectkorra.projectkorra.waterbending.Wave;
+import com.projectkorra.rpg.RPGMethods;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -1136,7 +1137,7 @@ public class PKListener implements Listener {
 		if (!player.isSneaking() && GeneralMethods.canBend(player.getName(), abil)) {
 			if (GeneralMethods.isDisabledStockAbility(abil))
 				return;
-			if (AirMethods.isAirAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Air) == true) {
+			if (AirMethods.isAirAbility(abil)) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
 				}
@@ -1168,7 +1169,11 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (WaterMethods.isWaterAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Water) == true) {
+			if (WaterMethods.isWaterAbility(abil)) {
+				if (GeneralMethods.hasRPG()) {
+					if (RPGMethods.isLunarEclipse(player.getWorld()))
+						return;
+				}
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons")) {
 					return;
 				}
@@ -1201,7 +1206,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (EarthMethods.isEarthAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Earth) == true) {
+			if (EarthMethods.isEarthAbility(abil)) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
 					return;
 				}
@@ -1249,7 +1254,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (FireMethods.isFireAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Fire) == true) {
+			if (FireMethods.isFireAbility(abil)) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
 				}
@@ -1313,7 +1318,7 @@ public class PKListener implements Listener {
 			if (GeneralMethods.isDisabledStockAbility(abil))
 				return;
 
-			if (AirMethods.isAirAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Air) == true) {
+			if (AirMethods.isAirAbility(abil)) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
 				}
@@ -1349,7 +1354,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (WaterMethods.isWaterAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Water) == true) {
+			if (WaterMethods.isWaterAbility(abil)) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons")) {
 					return;
 				}
@@ -1385,7 +1390,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (EarthMethods.isEarthAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Earth) == true) {
+			if (EarthMethods.isEarthAbility(abil)) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
 					return;
 				}
@@ -1438,7 +1443,11 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (FireMethods.isFireAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Fire) == true) {
+			if (FireMethods.isFireAbility(abil)) {
+				if (GeneralMethods.hasRPG()) {
+					if (RPGMethods.isSolarEclipse(player.getWorld()))
+						return;
+				}
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
 				}
@@ -1471,7 +1480,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (ChiMethods.isChiAbility(abil) && GeneralMethods.getBendingPlayer(player.getName()).isElementToggled(Element.Chi) == true) {
+			if (ChiMethods.isChiAbility(abil)) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 					return;
 				}

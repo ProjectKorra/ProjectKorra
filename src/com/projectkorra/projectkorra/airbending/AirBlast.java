@@ -97,7 +97,6 @@ public class AirBlast extends CoreAbility {
 			return;
 		}
 		/* End Initial Checks */
-		reloadVariables();
 		this.player = player;
 		if (origins.containsKey(player)) {
 			otherorigin = true;

@@ -75,7 +75,6 @@ public class Catapult extends CoreAbility {
 
 	public Catapult(Player player, Catapult source) {
 		this.player = player;
-		reloadVariables();
 		flying = true;
 		moving = false;
 

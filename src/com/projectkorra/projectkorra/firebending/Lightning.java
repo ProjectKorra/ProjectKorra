@@ -1,13 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.BendingManager;
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,8 +13,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.ability.StockAbility;
+import com.projectkorra.projectkorra.ability.api.CoreAbility;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.rpg.RPGMethods;
 
 public class Lightning extends CoreAbility {
 	public static boolean SELF_HIT_WATER = config.get().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
@@ -58,7 +58,6 @@ public class Lightning extends CoreAbility {
 	private double newY;
 
 	public Lightning(Player player) {
-		//reloadVariables();
 		this.player = player;
 		bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		charged = false;
@@ -89,9 +88,11 @@ public class Lightning extends CoreAbility {
 			chainArcChance = AvatarState.getValue(chainArcChance);
 			chainRange = AvatarState.getValue(chainRange);
 			stunChance = AvatarState.getValue(stunChance);
-		} else if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) {
-			chargeTime = 0;
-			cooldown = 0;
+		} else if (GeneralMethods.hasRPG()) {
+			if (RPGMethods.isSozinsComet(player.getWorld())) {
+				chargeTime = 0;
+				cooldown = 0;
+			}
 		}
 		//instances.add(this);
 		putInstance(player, this);

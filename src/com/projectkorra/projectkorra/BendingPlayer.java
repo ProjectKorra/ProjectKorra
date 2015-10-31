@@ -203,6 +203,9 @@ public class BendingPlayer {
 	}
 	
 	public boolean isElementToggled(Element e) {
+		if (e == null) {
+			return true;
+		}
 		return this.toggledElements.get(e);
 	}
 

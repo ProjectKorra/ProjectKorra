@@ -117,6 +117,7 @@ import com.projectkorra.projectkorra.waterbending.WaterCombo;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import com.projectkorra.rpg.RPGMethods;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
@@ -307,17 +308,20 @@ public class GeneralMethods {
 			return false;
 		if (!canBind(player, ability))
 			return false;
-
+		if (bPlayer.isElementToggled(GeneralMethods.getAbilityElement(ability)) == false)
+			return false;
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation()))
 			return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p))
 			return false;
 		if (MetalClips.isControlled(p))
 			return false;
-		if (BendingManager.events.get(p.getWorld()) != null && BendingManager.events.get(p.getWorld()).equalsIgnoreCase("SolarEclipse") && FireMethods.isFireAbility(ability))
-			return false;
-		if (BendingManager.events.get(p.getWorld()) != null && BendingManager.events.get(p.getWorld()).equalsIgnoreCase("LunarEclipse") && WaterMethods.isWaterAbility(ability))
-			return false;
+		if (GeneralMethods.hasRPG()) {
+			if (RPGMethods.isSolarEclipse(p.getWorld()) && FireMethods.isFireAbility(ability))
+				return false;
+			if (RPGMethods.isLunarEclipse(p.getWorld()) && WaterMethods.isWaterAbility(ability))
+				return false;
+		}
 		return true;
 	}
 
@@ -333,6 +337,8 @@ public class GeneralMethods {
 		if (!bPlayer.isToggled())
 			return false;
 		if (!bPlayer.hasElement(element))
+			return false;
+		if (bPlayer.isElementToggled(element) == false)
 			return false;
 		if (isRegionProtectedFromBuild(p, null, p.getLocation()))
 			return false;

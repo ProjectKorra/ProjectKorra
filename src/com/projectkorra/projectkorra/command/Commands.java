@@ -1,6 +1,9 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -8,10 +11,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.rpg.commands.AvatarCommand;
+import com.projectkorra.rpg.commands.EventCommand;
 
 public class Commands {
 
@@ -94,6 +97,10 @@ public class Commands {
 		new ToggleCommand();
 		new VersionCommand();
 		new WhoCommand();
+		if (GeneralMethods.hasRPG()) {
+			new AvatarCommand();
+			new EventCommand();
+		}
 
 		/**
 		 * Set of all of the Classes which extend Command

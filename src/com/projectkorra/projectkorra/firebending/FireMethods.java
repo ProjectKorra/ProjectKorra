@@ -1,12 +1,9 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.BendingManager;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AbilityModuleManager;
-import com.projectkorra.projectkorra.util.Information;
-import com.projectkorra.rpg.RPGMethods;
-import com.projectkorra.rpg.WorldEvents;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -19,10 +16,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AbilityModuleManager;
+import com.projectkorra.projectkorra.util.Information;
+import com.projectkorra.rpg.RPGMethods;
+import com.projectkorra.rpg.event.WorldEvent;
 
 public class FireMethods {
 
@@ -87,12 +86,10 @@ public class FireMethods {
 	public static double getFirebendingDayAugment(double value, World world) {
 		if (isDay(world)) {
 			if (GeneralMethods.hasRPG()) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.SozinsComet.toString())) {
-					return RPGMethods.getFactor(WorldEvents.SozinsComet) * value;
-				} else if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.SolarEclipse.toString())) {
-					return RPGMethods.getFactor(WorldEvents.SolarEclipse) * value;
-				} else {
-					return value * config.getDouble("Properties.Fire.DayFactor");
+				if (RPGMethods.isSozinsComet(world)) {
+					return RPGMethods.getFactor(WorldEvent.SozinsComet) * value;
+				} else if (RPGMethods.isSolarEclipse(world)) {
+					return RPGMethods.getFactor(WorldEvent.SolarEclipse) * value;
 				}
 			} else {
 				return value * config.getDouble("Properties.Fire.DayFactor");

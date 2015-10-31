@@ -1,15 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingManager;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AbilityModuleManager;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.chiblocking.ChiMethods;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.rpg.RPGMethods;
-import com.projectkorra.rpg.WorldEvents;
+import java.util.Arrays;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -25,7 +16,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AbilityModuleManager;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.chiblocking.ChiMethods;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.rpg.RPGMethods;
+import com.projectkorra.rpg.event.WorldEvent;
 
 public class WaterMethods {
 
@@ -97,9 +96,9 @@ public class WaterMethods {
 	public static double getWaterbendingNightAugment(World world) {
 		if (GeneralMethods.hasRPG()) {
 			if (isNight(world)) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
-					return RPGMethods.getFactor(WorldEvents.LunarEclipse);
-				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+				if (RPGMethods.isLunarEclipse(world)) {
+					return RPGMethods.getFactor(WorldEvent.LunarEclipse);
+				} else if (RPGMethods.isFullMoon(world)) {
 					return config.getDouble("Properties.Water.FullMoonFactor");
 				}
 				return config.getDouble("Properties.Water.NightFactor");
@@ -107,7 +106,7 @@ public class WaterMethods {
 				return 1;
 			}
 		} else {
-			if (isNight(world) && BendingManager.events.get(world).equalsIgnoreCase("FullMoon"))
+			if (isNight(world) && isFullMoon(world))
 				return config.getDouble("Properties.Water.FullMoonFactor");
 			if (isNight(world))
 				return config.getDouble("Properties.Water.NightFactor");
@@ -340,9 +339,9 @@ public class WaterMethods {
 	public static double waterbendingNightAugment(double value, World world) {
 		if (isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
-					return RPGMethods.getFactor(WorldEvents.LunarEclipse) * value;
-				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+				if (RPGMethods.isLunarEclipse(world)) {
+					return RPGMethods.getFactor(WorldEvent.LunarEclipse) * value;
+				} else if (isFullMoon(world)) {
 					return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
 				} else {
 					return value;
