@@ -71,10 +71,12 @@ public class HorizontalVelocityTracker {
 			if ((diff.getX() > 1 || diff.getX() < -1) || (diff.getZ() > 1 || diff.getZ() < -1)) {
 				impactLocation = entity.getLocation();
 				for (Block b : blocks) {
-					if (!EarthMethods.isTransparentToEarthbending(instigator, b)) {
-						ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation));
-						remove();
-						return;
+					if (GeneralMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST) == b || entity.getLocation().getBlock().getRelative(BlockFace.NORTH) == b || entity.getLocation().getBlock().getRelative(BlockFace.WEST) == b || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH) == b)) {
+						if (!EarthMethods.isTransparentToEarthbending(instigator, b)) {
+							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation));
+							remove();
+							return;
+						}
 					}
 				}
 			}
