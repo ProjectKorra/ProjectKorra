@@ -291,7 +291,6 @@ public class Fireball extends AddonAbility {
 		}
 
 		if (!player.isSneaking() && !charged) {
-			new FireBlast(player);
 			remove();
 			return false;
 		}
