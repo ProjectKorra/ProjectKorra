@@ -64,7 +64,7 @@ public class ToggleCommand extends PKCommand {
 			Element e = Element.getType(args.get(0));
 			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(sender.getName());
 			bPlayer.toggleElement(e);
-			if (bPlayer.isElementToggled(e) == true) {
+			if (bPlayer.isElementToggled(e) == false) {
 				if (e == Element.Chi) {
 					sender.sendMessage(GeneralMethods.getElementColor(e) + "You have toggled off your " + args.get(0).toLowerCase() + "blocking");
 				} else {
