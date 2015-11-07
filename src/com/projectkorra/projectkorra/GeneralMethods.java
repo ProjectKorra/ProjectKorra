@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -25,9 +26,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -56,6 +63,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.google.common.reflect.ClassPath;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
@@ -122,10 +130,6 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 import fr.neatmonster.nocheatplus.checks.CheckType;
 import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 @SuppressWarnings("deprecation")
 public class GeneralMethods {
@@ -1828,6 +1832,33 @@ public class GeneralMethods {
 			if (plugin.getDescription().getDepend() != null && plugin.getDescription().getDepend().contains("ProjectKorra")) {
 				writeToDebug(plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion());
 			}
+		}
+		
+		writeToDebug("");
+		writeToDebug("Collection Sizes");
+		writeToDebug("====================");
+		ClassLoader loader = ProjectKorra.class.getClassLoader();
+		try {
+			for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
+				if (info.getName().startsWith("com.projectkorra.")) {
+					final Class<?> clazz = info.load();				    
+				    for (Field field : clazz.getFields()) {
+				    	String simpleName = clazz.getSimpleName();
+				    	try {
+				    		Object obj = field.get(null);
+				    		if (obj instanceof Collection) {
+				    			writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Collection<?>) obj).size());
+				    		} else if (obj instanceof Map) {
+				    			writeToDebug(simpleName + ": " + field.getName() + " size=" + ((Map<?,?>) obj).size());
+				    		}
+				    	} catch (Exception e) {
+				    		
+				    	}
+				    }
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
