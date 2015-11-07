@@ -311,7 +311,8 @@ public class GeneralMethods {
 			return false;
 		if (!canBind(player, ability))
 			return false;
-
+		if (bPlayer.isElementToggled(GeneralMethods.getAbilityElement(ability)) == false)
+			return false;
 		if (isRegionProtectedFromBuild(p, ability, p.getLocation()))
 			return false;
 		if (Paralyze.isParalyzed(p) || Bloodbending.isBloodbended(p))
@@ -337,6 +338,8 @@ public class GeneralMethods {
 		if (!bPlayer.isToggled())
 			return false;
 		if (!bPlayer.hasElement(element))
+			return false;
+		if (bPlayer.isElementToggled(element) == false)
 			return false;
 		if (isRegionProtectedFromBuild(p, null, p.getLocation()))
 			return false;
