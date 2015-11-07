@@ -90,7 +90,7 @@ public class FireBlast extends CoreAbility {
 			return;
 		}
 		/* End Initial Checks */
-		reloadVariables();
+		//reloadVariables();
 		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
 		this.player = player;
 		location = player.getEyeLocation();
