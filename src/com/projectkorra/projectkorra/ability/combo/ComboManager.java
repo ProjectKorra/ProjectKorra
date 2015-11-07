@@ -14,12 +14,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ComboManager {
-	private static final long CLEANUP_DELAY = 20 * 30;
+	private static final long CLEANUP_DELAY = 20 * 600;
 	public static ConcurrentHashMap<String, ArrayList<AbilityInformation>> recentlyUsedAbilities = new ConcurrentHashMap<String, ArrayList<AbilityInformation>>();
 	public static HashMap<String, ComboAbility> comboAbilityList = new HashMap<String, ComboAbility>();
 	public static HashMap<String, String> authors = new HashMap<String, String>();
@@ -241,15 +240,7 @@ public class ComboManager {
 	}
 
 	public static void cleanupOldCombos() {
-		Enumeration<String> keys = recentlyUsedAbilities.keys();
-		while (keys.hasMoreElements()) {
-			String name = keys.nextElement();
-			//ArrayList<AbilityInformation> usedAbilities = recentlyUsedAbilities.get(name);
-			if(recentlyUsedAbilities.get(name).size() > 75) {
-				recentlyUsedAbilities.get(name).clear();
-				//Bukkit.broadcastMessage(name + " recentlyUsed Cleared");
-			}
-		}
+		recentlyUsedAbilities.clear();
 	}
 
 	/**
@@ -296,7 +287,6 @@ public class ComboManager {
 		new BukkitRunnable() {
 			public void run() {
 				cleanupOldCombos();
-				//Bukkit.broadcastMessage("Cleaned");
 			}
 		}.runTaskTimer(ProjectKorra.plugin, 0, CLEANUP_DELAY);
 	}
