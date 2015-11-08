@@ -38,10 +38,10 @@ public class DebugCommand extends PKCommand {
 	 */
 	@Override
 	public boolean hasPermission(CommandSender sender) {
-		if (sender.hasPermission("bending.admin." + getName())) {
+		if (!sender.hasPermission("bending.admin." + getName())) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
-			return true;
+			return false;
 		}
-		return false;
+		return true;
 	}
 }
