@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,7 +22,7 @@ public class ClearCommand extends PKCommand {
 
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
-		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 0) || !isPlayer(sender)) {
+		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1) || !isPlayer(sender)) {
 			return;
 		} else if (MultiAbilityManager.hasMultiAbilityBound((Player) sender)) {
 			sender.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
