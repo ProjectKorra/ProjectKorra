@@ -46,8 +46,9 @@ public class HorizontalVelocityTracker {
 	}
 
 	public void update() {
-		if (System.currentTimeMillis() < fireTime + delay)
+		if (System.currentTimeMillis() < fireTime + delay) {
 			return;
+		}
 
 		lastVelocity = thisVelocity.clone();
 		thisVelocity = entity.getVelocity().clone();
@@ -67,12 +68,11 @@ public class HorizontalVelocityTracker {
 				return;
 			}
 		}
-
 		if (thisVelocity.length() < lastVelocity.length()) {
 			if ((diff.getX() > 1 || diff.getX() < -1) || (diff.getZ() > 1 || diff.getZ() < -1)) {
 				impactLocation = entity.getLocation();
 				for (Block b : blocks) {
-					if (GeneralMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST) == b || entity.getLocation().getBlock().getRelative(BlockFace.NORTH) == b || entity.getLocation().getBlock().getRelative(BlockFace.WEST) == b || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH) == b)) {
+					if (GeneralMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
 						if (!EarthMethods.isTransparentToEarthbending(instigator, b)) {
 							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation));
 							remove();
