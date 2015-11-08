@@ -82,7 +82,7 @@ public class WaterWave {
 
 	public void progress() {
 		progressCounter++;
-		if (player.isDead() || !player.isOnline() || !origin.getWorld().equals(player.getWorld())) {
+		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
 		}
