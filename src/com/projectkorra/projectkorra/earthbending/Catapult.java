@@ -205,6 +205,12 @@ public class Catapult extends CoreAbility {
 		SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Speed");
 		PUSH = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Push");
 	}
+	
+	@Override
+	public void remove() {
+		super.remove();
+		GeneralMethods.invincible.remove(this);
+	}
 
 	public void setLength(int length) {
 		this.length = length;
