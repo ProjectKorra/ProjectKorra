@@ -56,7 +56,6 @@ public class FireJet extends CoreAbility {
 			// timers.put(player, time);
 			//instances.put(player, this);
 			putInstance(player, this);
-			GeneralMethods.invincible.add(this);
 			bPlayer.addCooldown("FireJet", config.get().getLong("Abilities.Fire.FireJet.Cooldown"));
 		}
 
@@ -131,6 +130,12 @@ public class FireJet extends CoreAbility {
 		defaultfactor = config.get().getDouble("Abilities.Fire.FireJet.Speed");
 		defaultduration = config.get().getLong("Abilities.Fire.FireJet.Duration");
 		isToggle = config.get().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
+	}
+	
+	@Override
+	public void remove() {
+		super.remove();
+		GeneralMethods.invincible.remove(this);
 	}
 
 	public void setDuration(long duration) {
