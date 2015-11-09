@@ -1080,7 +1080,7 @@ public class PKListener implements Listener {
 		}
 
 		for (Player p : MetalClips.instances.keySet()) {
-			if (MetalClips.instances.get(p).getTarget() != null && MetalClips.instances.get(p).getTarget().getEntityId() == event.getPlayer().getEntityId()) {
+			if (MetalClips.instances.get(p).getTarget() != null) {
 				MetalClips.instances.get(p).remove();
 			}
 		}
@@ -1419,8 +1419,10 @@ public class PKListener implements Listener {
 					} else if (MetalClips.instances.containsKey(player)) {
 						if (MetalClips.instances.get(player).metalclips < (player.hasPermission("bending.ability.MetalClips.4clips") ? 4 : 3))
 							MetalClips.instances.get(player).shootMetal();
-						else
-							MetalClips.instances.get(player).launch();
+						else {
+							if (MetalClips.isControllingEntity(player))
+								MetalClips.instances.get(player).launch();
+						}
 					}
 				}
 				if (abil.equalsIgnoreCase("LavaSurge")) {

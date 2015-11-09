@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MetalClips {
+	
 	public static ConcurrentHashMap<Player, MetalClips> instances = new ConcurrentHashMap<Player, MetalClips>();
 	public static ConcurrentHashMap<Entity, Integer> clipped = new ConcurrentHashMap<Entity, Integer>();
 	public static int armorTime = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.MetalClips.Duration");
@@ -55,6 +56,7 @@ public class MetalClips {
 			return;
 
 		player = p;
+		canThrow = ((ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.MetalClips.ThrowEnabled") && player.hasPermission("bending.ability.metalclips.throw")) ? true : false);
 		this.var = var;
 
 		if (!isEligible())
@@ -417,8 +419,7 @@ public class MetalClips {
 				for (Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2)) {
 					if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId()) {
 						if (e instanceof Player || e instanceof Zombie || e instanceof Skeleton) {
-							if (targetent == null)
-								targetent = (LivingEntity) e;
+							targetent = (LivingEntity) e;
 
 							formArmor();
 						}
@@ -458,15 +459,17 @@ public class MetalClips {
 		resetArmor();
 		trackedIngots.clear();
 		instances.remove(player);
+		metalclips = 0;
+		if (targetent != null)
+			clipped.remove(targetent);
 	}
 
 	public static void removeAll() {
 		for (Player p : instances.keySet()) {
 			instances.get(p).remove();
 		}
-		for (Entity ent : clipped.keySet()) {
-			clipped.remove(ent);
-		}
+		if (!clipped.isEmpty())
+			clipped.clear();
 	}
 
 	public static void progressAll() {
@@ -482,5 +485,9 @@ public class MetalClips {
 			}
 		}
 		return false;
+	}
+	
+	public static boolean isControllingEntity(Player player) {
+		return (instances.containsKey(player) && player.isSneaking() && targetent != null);
 	}
 }

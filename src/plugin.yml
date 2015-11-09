@@ -125,6 +125,7 @@ permissions:
       bending.ability.MetalClips: true
       bending.ability.MetalClips.loot: false
       bending.ability.MetalClips.4clips: false
+      bending.ability.MetalClips.throw: false
       bending.earth.passive: true
       bending.earth.metalbending: true
       bending.earth.lavabending: true
@@ -176,6 +177,9 @@ permissions:
   bending.ability.MetalClips.loot:
     default: false
     description: Lets a Metalbender loot a player's inventory of its iron.
+  bending.ability.MetalClips.throw:
+    default: false
+    description: Lets a Metalbending throw a controlled entity.
   bending.ability.AirCombo:
     default: false
     description: Grants access to all AirCombos.

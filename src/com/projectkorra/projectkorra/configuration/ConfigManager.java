@@ -570,13 +570,14 @@ public class ConfigManager {
 				//			config.addDefault("Abilities.Earth.LavaSurge.SourceCanBeEarth", true);
 
 				config.addDefault("Abilities.Earth.MetalClips.Enabled", true);
-				config.addDefault("Abilities.Earth.MetalClips.Description", "MetalClips has the potential to be both an offensive and a utility ability. To start, you must carry smelted Iron Ingots in your inventory. To apply the clips onto an entity, simply click at them. If the entity is a Zombie, a Skeleton, or a Player, the clips will form armor around the entity, giving you some control over them. Each additional clip will give you more control. If you have permission to do so, you may crush the entity against a wall with a 4th clip, hurting them. Without explicit permissions, you will only be able to strap three clips on your target. If the entity is not one of the above, the clip will simply do damage and fall to the ground, to be collected.");
+				config.addDefault("Abilities.Earth.MetalClips.Description", "MetalClips has the potential to be both an offensive and a utility ability. To start, you must carry smelted Iron Ingots in your inventory. To apply the clips onto an entity, simply click at them. If the entity is a Zombie, a Skeleton, or a Player, the clips will form armor around the entity, giving you some control over them. Each additional clip will give you more control. If you have permission to do so, you may crush the entity against a wall with a 4th clip, hurting them. Without explicit permissions, you will only be able to strap three clips on your target. If the entity is not one of the above, the clip will simply do damage and fall to the ground, to be collected. Another permission requiring action is throwing entities. To do so, click while controlling a metalclipped entity");
 				config.addDefault("Abilities.Earth.MetalClips.Damage", 2);
 				config.addDefault("Abilities.Earth.MetalClips.DamageInterval", 500);
 				config.addDefault("Abilities.Earth.MetalClips.MagnetRange", 20);
 				config.addDefault("Abilities.Earth.MetalClips.MagnetPower", 0.6);
 				config.addDefault("Abilities.Earth.MetalClips.Cooldown", 1000);
 				config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
+				config.addDefault("Abilities.Earth.MetalClips.ThrowEnabled", false);
 
 				config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 				config.addDefault("Abilities.Earth.RaiseEarth.Description", "To use, simply left-click on an earthbendable block. " + "A column of earth will shoot upwards from that location. " + "Anything in the way of the column will be brought up with it, " + "leaving talented benders the ability to trap brainless entities up there. " + "Additionally, simply sneak (default shift) looking at an earthbendable block. " + "A wall of earth will shoot upwards from that location. " + "Anything in the way of the wall will be brought up with it. ");
