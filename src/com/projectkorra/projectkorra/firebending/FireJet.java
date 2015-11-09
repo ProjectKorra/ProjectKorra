@@ -56,7 +56,6 @@ public class FireJet extends CoreAbility {
 			// timers.put(player, time);
 			//instances.put(player, this);
 			putInstance(player, this);
-			GeneralMethods.invincible.add(this);
 			bPlayer.addCooldown("FireJet", config.get().getLong("Abilities.Fire.FireJet.Cooldown"));
 		}
 
