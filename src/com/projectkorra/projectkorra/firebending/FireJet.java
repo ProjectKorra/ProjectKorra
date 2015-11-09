@@ -132,6 +132,12 @@ public class FireJet extends CoreAbility {
 		defaultduration = config.get().getLong("Abilities.Fire.FireJet.Duration");
 		isToggle = config.get().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
 	}
+	
+	@Override
+	public void remove() {
+		super.remove();
+		GeneralMethods.invincible.remove(this);
+	}
 
 	public void setDuration(long duration) {
 		this.duration = duration;
