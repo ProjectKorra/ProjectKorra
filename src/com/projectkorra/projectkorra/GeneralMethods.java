@@ -1974,6 +1974,8 @@ public class GeneralMethods {
 		Flight.removeAll();
 		TempBlock.removeAll();
 		MultiAbilityManager.removeAll();
+		if (!invincible.isEmpty())
+			invincible.clear();
 	}
 
 	public static void stopPlugin() {
