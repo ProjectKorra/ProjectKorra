@@ -95,6 +95,7 @@ permissions:
       bending.ability.PlantArmor: true
       bending.water.plantbending: true
       bending.message.nightmessage: true
+      bending.water.bloodbending: false
       bending.water.passive: true
       bending.water.icebending: true
       bending.water.healing: true
