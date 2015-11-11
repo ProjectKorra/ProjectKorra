@@ -147,10 +147,12 @@ public class AirSpout extends CoreAbility {
 	}
 
 	private void rotateAirColumn(Block block) {
+		if (player.getWorld() != block.getWorld())
+			return;
 
 		if (System.currentTimeMillis() >= time + interval) {
 			time = System.currentTimeMillis();
-
+			
 			Location location = block.getLocation();
 			Location playerloc = player.getLocation();
 			location = new Location(location.getWorld(), playerloc.getX(), location.getY(), playerloc.getZ());
@@ -172,7 +174,7 @@ public class AirSpout extends CoreAbility {
 
 				Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
 
-				AirMethods.playAirbendingParticles(effectloc2, 6);
+				AirMethods.playAirbendingParticles(effectloc2, 3, 0.4F, 0.4F, 0.4F);
 				//				location.getWorld().playEffect(effectloc2, Effect.SMOKE,
 				//						(int) directions[index], (int) height + 5);
 

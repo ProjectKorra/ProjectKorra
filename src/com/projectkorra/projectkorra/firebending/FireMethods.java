@@ -5,11 +5,11 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
 import com.projectkorra.projectkorra.util.Information;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.rpg.RPGMethods;
 import com.projectkorra.rpg.WorldEvents;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -152,8 +152,8 @@ public class FireMethods {
 		GeneralMethods.displayColoredParticle(loc, "#01E1FF");
 	}
 
-	public static void playFirebendingParticles(Location loc) {
-		loc.getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 0, 15);
+	public static void playFirebendingParticles(Location loc, int amount, float xOffset, float yOffset, float zOffset) {
+		ParticleEffect.FLAME.display(loc, xOffset, yOffset, zOffset, 0, amount);
 	}
 
 	public static void playFirebendingSound(Location loc) {

@@ -116,6 +116,8 @@ public class AirMethods {
 			return ParticleEffect.SMOKE;
 		else if (particle.equalsIgnoreCase("smoke"))
 			return ParticleEffect.CLOUD;
+		else if (particle.equalsIgnoreCase("smallsmoke"))
+			return ParticleEffect.SNOW_SHOVEL;
 		else
 			return ParticleEffect.CLOUD;
 	}
@@ -141,23 +143,7 @@ public class AirMethods {
 	 * @param zOffset The zOffset to use
 	 */
 	public static void playAirbendingParticles(Location loc, int amount, float xOffset, float yOffset, float zOffset) {
-		switch (getAirbendingParticles()) {
-			case SPELL:
-				for (int i = 0; i < amount; i++) {
-					ParticleEffect.SPELL.display(loc, xOffset, yOffset, zOffset, 0, 1);
-				}
-				break;
-			case SMOKE:
-				for (int i = 0; i < amount; i++) {
-					ParticleEffect.SMOKE.display(loc, xOffset, yOffset, zOffset, 0, 1);
-				}
-				break;
-			default:
-				for (int i = 0; i < amount; i++) {
-					ParticleEffect.CLOUD.display(loc, xOffset, yOffset, zOffset, 0, 1);
-				}
-				break;
-		}
+			getAirbendingParticles().display(loc, xOffset, yOffset, zOffset, 0, amount);
 	}
 
 	/**

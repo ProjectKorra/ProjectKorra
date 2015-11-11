@@ -57,17 +57,13 @@ public class HorizontalVelocityTracker {
 
 		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(entity.getLocation(), 1.5);
 
-		if (entity.isOnGround()) {
-			remove();
-			return;
-		}
-
 		for (Block b : blocks) {
 			if (WaterMethods.isWater(b)) {
 				remove();
 				return;
 			}
 		}
+		
 		if (thisVelocity.length() < lastVelocity.length()) {
 			if ((diff.getX() > 1 || diff.getX() < -1) || (diff.getZ() > 1 || diff.getZ() < -1)) {
 				impactLocation = entity.getLocation();
