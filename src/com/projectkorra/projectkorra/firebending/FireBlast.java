@@ -28,7 +28,6 @@ import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 public class FireBlast implements ConfigLoadable {
-	
 	public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<>();
 
 	private static double SPEED = config.get().getDouble("Abilities.Fire.FireBlast.Speed");
@@ -37,7 +36,7 @@ public class FireBlast implements ConfigLoadable {
 	private static int DAMAGE = config.get().getInt("Abilities.Fire.FireBlast.Damage");
 	private static double fireticks = config.get().getDouble("Abilities.Fire.FireBlast.FireTicks");
 	private static int idCounter = 0;
-	
+
 	/* Package visible variables */
 	static boolean dissipate = config.get().getBoolean("Abilities.Fire.FireBlast.Dissipate");
 	/* End Package visible variables */
@@ -72,7 +71,7 @@ public class FireBlast implements ConfigLoadable {
 			return;
 		}
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		safe = safeblocks;
 		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
 		// timers.put(player, System.currentTimeMillis());
@@ -95,7 +94,7 @@ public class FireBlast implements ConfigLoadable {
 			return;
 		}
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
 		this.player = player;
 		location = player.getEyeLocation();
@@ -139,7 +138,14 @@ public class FireBlast implements ConfigLoadable {
 	}
 
 	public static String getDescription() {
-		return "FireBlast is the most fundamental bending technique of a firebender. " + "To use, simply left-click in a direction. A blast of fire will be created at your fingertips. " + "If this blast contacts an enemy, it will dissipate and engulf them in flames, " + "doing additional damage and knocking them back slightly. " + "If the blast hits terrain, it will ignite the nearby area. " + "Additionally, if you hold sneak, you will charge up the fireblast. " + "If you release it when it's charged, it will instead launch a powerful " + "fireball that explodes on contact.";
+		return "FireBlast is the most fundamental bending technique of a firebender. "
+				+ "To use, simply left-click in a direction. A blast of fire will be created at your fingertips. "
+				+ "If this blast contacts an enemy, it will dissipate and engulf them in flames, "
+				+ "doing additional damage and knocking them back slightly. "
+				+ "If the blast hits terrain, it will ignite the nearby area. "
+				+ "Additionally, if you hold sneak, you will charge up the fireblast. "
+				+ "If you release it when it's charged, it will instead launch a powerful "
+				+ "fireball that explodes on contact.";
 	}
 
 	public static void removeFireBlastsAroundPoint(Location location, double radius) {
@@ -155,7 +161,8 @@ public class FireBlast implements ConfigLoadable {
 
 	private void advanceLocation() {
 		if (showParticles) {
-			//ParticleEffect.RED_DUST.display((float) 16, (float) 111, (float) 227, 0.01F, 0, location, 256D);
+			// ParticleEffect.RED_DUST.display((float) 16, (float) 111, (float) 227, 0.01F, 0,
+			// location, 256D);
 			ParticleEffect.FLAME.display(location, 0.275F, 0.275F, 0.275F, 0, 6);
 			ParticleEffect.SMOKE.display(location, 0.3F, 0.3F, 0.3F, 0, 3);
 		}
@@ -174,7 +181,8 @@ public class FireBlast implements ConfigLoadable {
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks((int) (fireticks * 20));
-				GeneralMethods.damageEntity(player, entity, (int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()), "FireBlast");
+				GeneralMethods.damageEntity(player, entity,
+						(int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()), "FireBlast");
 				AirMethods.breakBreathbendingHold(entity);
 				new Enflamed(entity, player);
 				remove();
@@ -213,15 +221,16 @@ public class FireBlast implements ConfigLoadable {
 	private void ignite(Location location) {
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, affectingradius)) {
 			if (FireStream.isIgnitable(player, block) && !safe.contains(block)) {
-				/*if (WaterMethods.isPlantbendable(block)) {
-					new Plantbending(block);
-				}*/
+				/*
+				 * if (WaterMethods.isPlantbendable(block)) { new Plantbending(block); }
+				 */
 				if (FireMethods.canFireGrief()) {
-					if (WaterMethods.isPlantbendable(block)) new Plantbending(block);
+					if (WaterMethods.isPlantbendable(block))
+						new Plantbending(block);
 					block.setType(Material.FIRE);
-				}
-				else FireMethods.createTempFire(block.getLocation());
-				//block.setType(Material.FIRE);
+				} else
+					FireMethods.createTempFire(block.getLocation());
+				// block.setType(Material.FIRE);
 				if (dissipate) {
 					FireStream.ignitedblocks.put(block, player);
 					FireStream.ignitedtimes.put(block, System.currentTimeMillis());
@@ -275,7 +284,8 @@ public class FireBlast implements ConfigLoadable {
 
 		double radius = affectingradius;
 		Player source = player;
-		if (EarthBlast.annihilateBlasts(location, radius, source) || WaterManipulation.annihilateBlasts(location, radius, source) || FireBlast.annihilateBlasts(location, radius, source)) {
+		if (EarthBlast.annihilateBlasts(location, radius, source) || WaterManipulation.annihilateBlasts(location, radius, source)
+				|| FireBlast.annihilateBlasts(location, radius, source)) {
 			remove();
 			return false;
 		}
@@ -301,7 +311,7 @@ public class FireBlast implements ConfigLoadable {
 
 		return true;
 	}
-	
+
 	public void remove() {
 		instances.remove(id);
 	}

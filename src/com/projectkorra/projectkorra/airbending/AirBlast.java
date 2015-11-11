@@ -1,14 +1,8 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -25,12 +19,17 @@ import org.bukkit.material.Lever;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.Flight;
 
-public class AirBlast extends CoreAbility {
-
+public class AirBlast implements ConfigLoadable {
+	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
 	public static double speed = config.get().getDouble("Abilities.Air.AirBlast.Speed");
@@ -38,13 +37,14 @@ public class AirBlast extends CoreAbility {
 	public static double affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
 	public static double defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push.Entities");
 	public static double otherpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push.Self");
-	
+
 	public static boolean flickLevers = config.get().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
 	public static boolean openDoors = config.get().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
 	public static boolean pressButtons = config.get().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
 	public static boolean coolLava = config.get().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
-	
+
 	private static double originselectrange = 10;
+	private static int idCounter = 0;
 	private static final int maxticks = 10000;
 	/* Package visible variables */
 	static double maxspeed = 1. / defaultpushfactor;
@@ -65,6 +65,7 @@ public class AirBlast extends CoreAbility {
 	private boolean otherorigin = false;
 	private boolean showParticles = true;
 	private int ticks = 0;
+	private int id = 0;
 
 	private ArrayList<Block> affectedlevers = new ArrayList<Block>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
@@ -76,8 +77,6 @@ public class AirBlast extends CoreAbility {
 		if (location.getBlock().isLiquid()) {
 			return;
 		}
-		
-		//reloadVariables();
 		source = burst;
 
 		this.player = player;
@@ -85,8 +84,9 @@ public class AirBlast extends CoreAbility {
 		this.direction = direction.clone();
 		this.location = location.clone();
 		pushfactor *= factorpush;
-		//instances.put(uuid, this);
-		putInstance(player, this);
+		instances.put(idCounter, this);
+		this.id = idCounter;
+		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
 	}
 
 	public AirBlast(Player player) {
@@ -98,7 +98,7 @@ public class AirBlast extends CoreAbility {
 			return;
 		}
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		if (origins.containsKey(player)) {
 			otherorigin = true;
@@ -115,8 +115,9 @@ public class AirBlast extends CoreAbility {
 			direction = player.getEyeLocation().getDirection().normalize();
 		}
 		location = origin.clone();
-		putInstance(player, this);
-		//instances.put(uuid, this);
+		instances.put(idCounter, this);
+		this.id = idCounter;
+		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
 		bPlayer.addCooldown("AirBlast", GeneralMethods.getGlobalCooldown());
 
 		// time = System.currentTimeMillis();
@@ -137,7 +138,8 @@ public class AirBlast extends CoreAbility {
 			return;
 		}
 
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBlast") || !GeneralMethods.canBend(player.getName(), "AirBlast")) {
+		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBlast")
+				|| !GeneralMethods.canBend(player.getName(), "AirBlast")) {
 			origins.remove(player);
 			return;
 		}
@@ -148,12 +150,14 @@ public class AirBlast extends CoreAbility {
 		}
 
 		AirMethods.playAirbendingParticles(origin, 4);
-		//		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
-		//				(int) originselectrange);
+		// origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
+		// (int) originselectrange);
 	}
 
 	public static void progressAll() {
-		CoreAbility.progressAll(StockAbility.AirBlast);
+		for (AirBlast blast : instances.values()) {
+			blast.progress();
+		}
 		for (Player player : origins.keySet()) {
 			playOriginEffect(player);
 		}
@@ -263,14 +267,9 @@ public class AirBlast extends CoreAbility {
 		return this.showParticles;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.AirBlast;
-	}
-
 	@SuppressWarnings("deprecation")
 	public boolean progress() {
-		//ProjectKorra.log.info("FireBlast id: " + getID());
+		// ProjectKorra.log.info("FireBlast id: " + getID());
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return false;
@@ -296,9 +295,11 @@ public class AirBlast extends CoreAbility {
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
 
-			if (GeneralMethods.isRegionProtectedFromBuild(getPlayer(), "AirBlast", block.getLocation())) continue;
-			
-			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR };
+			if (GeneralMethods.isRegionProtectedFromBuild(getPlayer(), "AirBlast", block.getLocation()))
+				continue;
+
+			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR,
+					Material.ACACIA_DOOR, Material.DARK_OAK_DOOR };
 			if (Arrays.asList(doorTypes).contains(block.getType()) && openDoors) {
 				if (block.getData() >= 8) {
 					block = block.getRelative(BlockFace.DOWN);
@@ -425,10 +426,9 @@ public class AirBlast extends CoreAbility {
 		}
 
 		/*
-		 * If a player presses shift and AirBlasts straight down then the
-		 * AirBlast's location gets messed up and reading the distance returns
-		 * Double.NaN. If we don't remove this instance then the AirBlast will
-		 * never be removed.
+		 * If a player presses shift and AirBlasts straight down then the AirBlast's location gets
+		 * messed up and reading the distance returns Double.NaN. If we don't remove this instance
+		 * then the AirBlast will never be removed.
 		 */
 		double dist = location.distance(origin);
 		if (Double.isNaN(dist) || dist > range) {
@@ -443,19 +443,22 @@ public class AirBlast extends CoreAbility {
 		advanceLocation();
 		return true;
 	}
-	
+
 	public static boolean removeAirBlastsAroundPoint(Location location, double radius) {
 		boolean removed = false;
-		for (Integer id : getInstances(StockAbility.AirBlast).keySet()) {
-			AirBlast airBlast = ((AirBlast)getAbility(id));
-		Location airBlastlocation = airBlast.location;
-		if (location.getWorld() == airBlastlocation.getWorld()) {
-			if (location.distance(airBlastlocation) <= radius)
-				airBlast.remove();
-			removed = true;
+		for (AirBlast airBlast : instances.values()) {
+			Location airBlastlocation = airBlast.location;
+			if (location.getWorld() == airBlastlocation.getWorld()) {
+				if (location.distance(airBlastlocation) <= radius)
+					airBlast.remove();
+				removed = true;
 			}
 		}
 		return removed;
+	}
+
+	public void remove() {
+		instances.remove(id);
 	}
 
 	@Override
@@ -464,7 +467,7 @@ public class AirBlast extends CoreAbility {
 		defaultrange = config.get().getDouble("Abilities.Air.AirBlast.Range");
 		affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
 		defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push");
-		
+
 		flickLevers = config.get().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
 		openDoors = config.get().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
 		pressButtons = config.get().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
@@ -488,11 +491,6 @@ public class AirBlast extends CoreAbility {
 
 	public void setShowParticles(boolean show) {
 		this.showParticles = show;
-	}
-
-	@Override
-	public InstanceType getInstanceType() {
-		return InstanceType.MULTIPLE;
 	}
 
 }

@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AirBubble extends CoreAbility {
+public class AirBubble implements ConfigLoadable {
 
 	private static double DEFAULT_AIR_RADIUS = config.get().getDouble("Abilities.Air.AirBubble.Radius");
 	private static double DEFAULT_WATER_RADIUS = config.get().getDouble("Abilities.Water.WaterBubble.Radius");
@@ -28,10 +28,10 @@ public class AirBubble extends CoreAbility {
 	private ConcurrentHashMap<Block, BlockState> waterorigins;
 
 	public AirBubble(Player player) {
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		waterorigins = new ConcurrentHashMap<Block, BlockState>();
-		//instances.put(uuid, this);
+		// instances.put(uuid, this);
 		putInstance(player, this);
 	}
 
@@ -45,13 +45,16 @@ public class AirBubble extends CoreAbility {
 	}
 
 	public static String getDescription() {
-		return "To use, the bender must merely have the ability selected." + " All water around the user in a small bubble will vanish," + " replacing itself once the user either gets too far away or selects a different ability.";
+		return "To use, the bender must merely have the ability selected."
+				+ " All water around the user in a small bubble will vanish,"
+				+ " replacing itself once the user either gets too far away or selects a different ability.";
 	}
 
 	public static void handleBubbles(Server server) {
 		for (Player player : server.getOnlinePlayers()) {
 			if (GeneralMethods.getBoundAbility(player) != null) {
-				if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble") || GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble")) {
+				if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble")
+						|| GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble")) {
 					if (!containsPlayer(player, AirBubble.class) && player.isSneaking()) {
 						new AirBubble(player);
 					}
@@ -88,12 +91,6 @@ public class AirBubble extends CoreAbility {
 		return radius;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.AirBubble;
-	}
-
-	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
@@ -105,11 +102,13 @@ public class AirBubble extends CoreAbility {
 			return false;
 		}
 		if (GeneralMethods.getBoundAbility(player) != null) {
-			if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble") && GeneralMethods.canBend(player.getName(), "AirBubble")) {
+			if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble")
+					&& GeneralMethods.canBend(player.getName(), "AirBubble")) {
 				pushWater();
 				return false;
 			}
-			if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble") && GeneralMethods.canBend(player.getName(), "WaterBubble")) {
+			if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble")
+					&& GeneralMethods.canBend(player.getName(), "WaterBubble")) {
 				pushWater();
 				return false;
 			}
@@ -182,7 +181,7 @@ public class AirBubble extends CoreAbility {
 			if (block.getType() == Material.AIR || block.isLiquid())
 				waterorigins.get(block).update(true);
 		}
-		//instances.remove(uuid);
+		// instances.remove(uuid);
 		super.remove();
 	}
 

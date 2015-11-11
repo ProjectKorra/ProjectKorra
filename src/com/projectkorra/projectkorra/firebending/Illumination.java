@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.StockAbility;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 
 public class Illumination implements ConfigLoadable {

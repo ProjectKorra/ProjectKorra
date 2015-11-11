@@ -1,12 +1,8 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -16,11 +12,16 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.airbending.AirMethods;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class WallOfFire extends CoreAbility {
-
+public class WallOfFire implements ConfigLoadable {
+	public static final ConcurrentHashMap<Player, WallOfFire> instances = new ConcurrentHashMap<>();
+	
 	private static double maxangle = 50;
 
 	private static int RANGE = config.get().getInt("Abilities.Fire.WallOfFire.Range");
@@ -50,7 +51,7 @@ public class WallOfFire extends CoreAbility {
 
 	public WallOfFire(Player player) {
 		/* Initial Checks */
-		if (containsPlayer(player, WallOfFire.class) && !AvatarState.isAvatarState(player)) {
+		if (instances.containsKey(player) && !AvatarState.isAvatarState(player)) {
 			return;
 		}
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
@@ -90,8 +91,7 @@ public class WallOfFire extends CoreAbility {
 
 		initializeBlocks();
 
-		//instances.put(player, this);
-		putInstance(player, this);
+		instances.put(player, this);
 		bPlayer.addCooldown("WallOfFire", cooldown);
 	}
 
@@ -164,11 +164,6 @@ public class WallOfFire extends CoreAbility {
 		return range;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.WallOfFire;
-	}
-
 	public int getWidth() {
 		return width;
 	}
@@ -200,7 +195,6 @@ public class WallOfFire extends CoreAbility {
 
 	}
 
-	@Override
 	public boolean progress() {
 		time = System.currentTimeMillis();
 
@@ -227,6 +221,10 @@ public class WallOfFire extends CoreAbility {
 			damage();
 		}
 		return true;
+	}
+	
+	public void remove() {
+		instances.remove(player);
 	}
 
 	@Override
