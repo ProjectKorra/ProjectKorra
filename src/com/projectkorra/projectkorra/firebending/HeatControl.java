@@ -1,25 +1,28 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 /**
  * Created by Carbogen on 11/02/15. Ability HeatControl
  */
-public class HeatControl extends CoreAbility {
+public class HeatControl implements ConfigLoadable {
+
+	public static ConcurrentHashMap<Player, HeatControl> instances = new ConcurrentHashMap<>();
+
 	public static double RANGE = config.get().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
 	public static int RADIUS = config.get().getInt("Abilities.Fire.HeatControl.Solidify.Radius");
 	public static int REVERT_TIME = config.get().getInt("Abilities.Fire.HeatControl.Solidify.RevertTime");
@@ -52,7 +55,7 @@ public class HeatControl extends CoreAbility {
 
 		lastBlockTime = System.currentTimeMillis();
 
-		putInstance(player, this);
+		instances.put(player, this);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -106,11 +109,6 @@ public class HeatControl extends CoreAbility {
 		return revertTime;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.HeatControl;
-	}
-
 	public boolean isEligible(Player player) {
 		if (!GeneralMethods.canBend(player.getName(), "HeatControl"))
 			return false;
@@ -136,7 +134,6 @@ public class HeatControl extends CoreAbility {
 		}
 	}
 
-	@Override
 	public boolean progress() {
 		if (!player.isOnline() || player.isDead() || !isEligible(player) || !player.isSneaking()) {
 			remove();
@@ -159,6 +156,12 @@ public class HeatControl extends CoreAbility {
 		return true;
 	}
 
+	public static void progressAll() {
+		for (HeatControl ability : instances.values()) {
+			ability.progress();
+		}
+	}
+
 	@Override
 	public void reloadVariables() {
 		RANGE = config.get().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
@@ -169,13 +172,12 @@ public class HeatControl extends CoreAbility {
 		revertTime = REVERT_TIME;
 	}
 
-	@Override
 	public void remove() {
 		final HeatControl ability = this;
 		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new Runnable() {
 			public void run() {
 				revertAll();
-				ability.remove();
+				instances.remove(ability);
 			}
 		}, getRevertTime());
 	}

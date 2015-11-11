@@ -1,10 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.api.AddonAbility;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -17,19 +14,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.util.Vector;
 
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.airbending.AirMethods;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 /**
  * Ability charged FireBlast
  */
-public class Fireball extends AddonAbility {
+public class Fireball implements ConfigLoadable {
+
+	public static ConcurrentHashMap<Integer, Fireball> instances = new ConcurrentHashMap<>();
 
 	private static ConcurrentHashMap<Entity, Fireball> explosions = new ConcurrentHashMap<Entity, Fireball>();
 
 	private static long defaultchargetime = config.get().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
 	private static long interval = 25;
 	private static double radius = 1.5;
+	private static int idCounter = 0;
 
 	private static double MAX_DAMAGE = config.get().getDouble("Abilities.Fire.FireBlast.Charged.Damage");
 	private static double DAMAGE_RADIUS = config.get().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
@@ -38,6 +41,7 @@ public class Fireball extends AddonAbility {
 	private static boolean DAMAGEBLOCKS = config.get().getBoolean("Abilities.Fire.FireBlast.Charged.DamageBlocks");
 	private static double fireticks = config.get().getDouble("Abilities.Fire.FireBlast.Charged.FireTicks");
 
+	private int id;
 	private double maxdamage = MAX_DAMAGE;
 	private double range = RANGE;
 	private double damageradius = DAMAGE_RADIUS;
@@ -56,7 +60,6 @@ public class Fireball extends AddonAbility {
 	private boolean damage_blocks;
 
 	public Fireball(Player player) {
-		//reloadVariables();
 		this.player = player;
 		time = System.currentTimeMillis();
 		starttime = time;
@@ -69,15 +72,15 @@ public class Fireball extends AddonAbility {
 		}
 		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
 		if (!player.getEyeLocation().getBlock().isLiquid()) {
-			//instances.put(id, this);
-			putInstance(player, this);
+			instances.put(idCounter, this);
+			this.id = idCounter;
+			idCounter = (idCounter + 1) % Integer.MAX_VALUE;
 		}
 	}
 
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
 		boolean broke = false;
-		for (Integer id : getInstances(Fireball.class).keySet()) {
-			Fireball fireball = (Fireball) getAbility(id);
+		for (Fireball fireball : instances.values()) {
 			if (!fireball.launched)
 				continue;
 			Location fireblastlocation = fireball.location;
@@ -100,8 +103,7 @@ public class Fireball extends AddonAbility {
 	}
 
 	public static boolean isCharging(Player player) {
-		for (Integer id : getInstances(Fireball.class).keySet()) {
-			Fireball fireball = (Fireball) getAbility(id);
+		for (Fireball fireball : instances.values()) {
 			if (fireball.player == player && !fireball.launched)
 				return true;
 		}
@@ -109,8 +111,7 @@ public class Fireball extends AddonAbility {
 	}
 
 	public static void removeFireballsAroundPoint(Location location, double radius) {
-		for (Integer id : getInstances(Fireball.class).keySet()) {
-			Fireball fireball = (Fireball) getAbility(id);
+		for (Fireball fireball : instances.values()) {
 			if (!fireball.launched)
 				continue;
 			Location fireblastlocation = fireball.location;
@@ -156,8 +157,7 @@ public class Fireball extends AddonAbility {
 			}
 		}
 		if (explode) {
-			if (damage_blocks && explosionradius > 0)
-			{
+			if (damage_blocks && explosionradius > 0) {
 				explosion = player.getWorld().spawn(location, TNTPrimed.class);
 				explosion.setFuseTicks(0);
 				float yield = (float) explosionradius;
@@ -170,14 +170,10 @@ public class Fireball extends AddonAbility {
 				}
 				explosion.setYield(yield);
 				explosions.put(explosion, this);
-			}
-			else
-			{
+			} else {
 				List<Entity> l = GeneralMethods.getEntitiesAroundPoint(location, damageradius);
-				for (Entity e : l)
-				{
-					if (e instanceof LivingEntity)
-					{
+				for (Entity e : l) {
+					if (e instanceof LivingEntity) {
 						double slope = -(maxdamage * .5) / (damageradius - innerradius);
 						double damage = slope * (e.getLocation().distance(location) - innerradius) + maxdamage;
 						GeneralMethods.damageEntity(getPlayer(), e, damage, "FireBlast");
@@ -187,7 +183,7 @@ public class Fireball extends AddonAbility {
 				ParticleEffect.EXPLOSION_HUGE.display(new Vector(0, 0, 0), 0, location, 256);
 			}
 		}
-		
+
 		ignite(location);
 		remove();
 	}
@@ -224,22 +220,17 @@ public class Fireball extends AddonAbility {
 	public double getDamageRadius() {
 		return damageradius;
 	}
-	
+
 	public double getExplosionRadius() {
 		return explosionradius;
 	}
-	
+
 	public boolean getDamageBlocks() {
 		return this.damage_blocks;
 	}
 
 	public double getInnerradius() {
 		return innerradius;
-	}
-
-	@Override
-	public InstanceType getInstanceType() {
-		return InstanceType.MULTIPLE;
 	}
 
 	public double getMaxdamage() {
@@ -269,7 +260,6 @@ public class Fireball extends AddonAbility {
 		}
 	}
 
-	@Override
 	public boolean progress() {
 		if (GeneralMethods.getBoundAbility(player) == null) {
 			remove();
@@ -338,6 +328,22 @@ public class Fireball extends AddonAbility {
 		return true;
 	}
 
+	public static void progressAll() {
+		for (Fireball ability : instances.values()) {
+			ability.progress();
+		}
+	}
+
+	public void remove() {
+		instances.remove(id);
+	}
+
+	public static void removeAll() {
+		for (Fireball ability : instances.values()) {
+			ability.remove();
+		}
+	}
+
 	@Override
 	public void reloadVariables() {
 		defaultchargetime = config.get().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
@@ -362,12 +368,12 @@ public class Fireball extends AddonAbility {
 	public void setChargetime(long chargetime) {
 		this.chargetime = chargetime;
 	}
-	
+
 	public void setDamageBlocks(boolean damageblocks) {
 		this.damage_blocks = damageblocks;
 	}
-	
-	public void setExplosionRadius (double radius) {
+
+	public void setExplosionRadius(double radius) {
 		this.explosionradius = radius;
 	}
 

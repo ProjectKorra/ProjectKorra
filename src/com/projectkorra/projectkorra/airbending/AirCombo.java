@@ -25,6 +25,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 
 public class AirCombo implements ConfigLoadable {
+
 	public static enum AbilityState {
 		TWISTER_MOVING, TWISTER_STATIONARY
 	}
@@ -79,7 +80,7 @@ public class AirCombo implements ConfigLoadable {
 
 	public AirCombo(Player player, String ability) {
 		/* Initial Checks */
-		
+
 		if (!enabled)
 			return;
 		if (Commands.isToggledForAll)
@@ -95,7 +96,7 @@ public class AirCombo implements ConfigLoadable {
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", player.getLocation()))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		time = System.currentTimeMillis();
 		this.player = player;
 		this.ability = ability;
@@ -192,12 +193,12 @@ public class AirCombo implements ConfigLoadable {
 
 			for (Entity entity : affectedEntities) {
 				Vector forceDir = GeneralMethods.getDirection(entity.getLocation(), currentLoc.clone().add(0, height, 0));
-				
+
 				if (entity instanceof Player) {
 					if (Commands.invincible.contains(((Player) entity).getName()))
 						break;
 				}
-				
+
 				entity.setVelocity(forceDir.clone().normalize().multiply(0.3));
 			}
 		}
@@ -213,12 +214,12 @@ public class AirCombo implements ConfigLoadable {
 				currentLoc = origin.clone();
 			}
 			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-			
+
 			if (target instanceof Player) {
 				if (Commands.invincible.contains(((Player) target).getName()))
 					return;
 			}
-			
+
 			if (target != null && target.getLocation().distance(currentLoc) > 7)
 				destination = target.getLocation();
 			else
@@ -304,7 +305,8 @@ public class AirCombo implements ConfigLoadable {
 				direction = player.getEyeLocation().getDirection();
 
 				for (double i = -5; i < 10; i += 1) {
-					FireComboStream fs = new FireComboStream(null, direction.clone().add(new Vector(0, 0.03 * i, 0)), player.getLocation(), range, speed, "AirSlice");
+					FireComboStream fs = new FireComboStream(null, direction.clone().add(new Vector(0, 0.03 * i, 0)),
+							player.getLocation(), range, speed, "AirSlice");
 					fs.setDensity(1);
 					fs.setSpread(0F);
 					fs.setUseNewParticles(true);
@@ -346,7 +348,8 @@ public class AirCombo implements ConfigLoadable {
 
 				Vector origToDest = GeneralMethods.getDirection(origin, destination);
 				for (double i = 0; i < 30; i++) {
-					Vector vec = GeneralMethods.getDirection(player.getLocation(), origin.clone().add(origToDest.clone().multiply(i / 30)));
+					Vector vec = GeneralMethods.getDirection(player.getLocation(),
+							origin.clone().add(origToDest.clone().multiply(i / 30)));
 
 					FireComboStream fs = new FireComboStream(null, vec, player.getLocation(), range, speed, "AirSweep");
 					fs.setDensity(1);
@@ -480,7 +483,8 @@ public class AirCombo implements ConfigLoadable {
 			else if (ability.equalsIgnoreCase("AirSweep") && combo.ability.equalsIgnoreCase("AirSweep")) {
 				for (int j = 0; j < combo.tasks.size(); j++) {
 					FireComboStream fs = (FireComboStream) combo.tasks.get(j);
-					if (fs.getLocation() != null && fs.getLocation().getWorld().equals(loc.getWorld()) && Math.abs(fs.getLocation().distance(loc)) <= radius) {
+					if (fs.getLocation() != null && fs.getLocation().getWorld().equals(loc.getWorld())
+							&& Math.abs(fs.getLocation().distance(loc)) <= radius) {
 						fs.remove();
 						removed = true;
 					}

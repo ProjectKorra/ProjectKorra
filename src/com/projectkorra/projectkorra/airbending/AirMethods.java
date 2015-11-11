@@ -5,7 +5,6 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
-import com.projectkorra.projectkorra.ability.StockAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 import org.bukkit.ChatColor;
@@ -44,8 +43,7 @@ public class AirMethods {
 	 * Checks to see if a player can use SpiritualProjection.
 	 * 
 	 * @param player The player to check
-	 * @return true If player has permission node
-	 *         "bending.air.spiritualprojection"
+	 * @return true If player has permission node "bending.air.spiritualprojection"
 	 */
 	public static boolean canUseSpiritualProjection(Player player) {
 		if (player.hasPermission("bending.air.spiritualprojection"))
@@ -61,7 +59,7 @@ public class AirMethods {
 	public static ChatColor getAirColor() {
 		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Air"));
 	}
-	
+
 	/**
 	 * Gets the AirSubColor from the config.
 	 * 
@@ -133,8 +131,8 @@ public class AirMethods {
 	}
 
 	/**
-	 * Plays an integer amount of air particles in a location with a given
-	 * xOffset, yOffset, and zOffset.
+	 * Plays an integer amount of air particles in a location with a given xOffset, yOffset, and
+	 * zOffset.
 	 * 
 	 * @param loc The location to use
 	 * @param amount The amount of particles
@@ -143,7 +141,7 @@ public class AirMethods {
 	 * @param zOffset The zOffset to use
 	 */
 	public static void playAirbendingParticles(Location loc, int amount, float xOffset, float yOffset, float zOffset) {
-			getAirbendingParticles().display(loc, xOffset, yOffset, zOffset, 0, amount);
+		getAirbendingParticles().display(loc, xOffset, yOffset, zOffset, 0, amount);
 	}
 
 	/**
@@ -171,24 +169,22 @@ public class AirMethods {
 	 * Stops all airbending systems. SHOULD ONLY BE USED ON PLUGIN DISABLING!
 	 */
 	public static void stopBending() {
-		AirBlast.removeAll(StockAbility.AirBlast);
-		AirBubble.removeAll(StockAbility.AirBubble);
-		AirShield.removeAll(StockAbility.AirShield);
-		AirSuction.removeAll(StockAbility.AirSuction);
-		AirScooter.removeAll(StockAbility.AirScooter);
-		AirSpout.removeAll(StockAbility.AirSpout);
-		AirSwipe.removeAll(StockAbility.AirSwipe);
-		Tornado.removeAll(StockAbility.Tornado);
-		;
-		AirBurst.removeAll(StockAbility.AirBurst);
-		Suffocate.removeAll(StockAbility.Suffocate);
+		AirBlast.removeAll();
+		AirBubble.removeAll();
+		AirShield.removeAll();
+		AirSuction.removeAll();
+		AirScooter.removeAll();
+		AirSpout.removeAll();
+		AirSwipe.removeAll();
+		Tornado.removeAll();
+		AirBurst.removeAll();
+		Suffocate.removeAll();
 		AirCombo.removeAll();
 		FlightAbility.removeAll();
 	}
 
 	/**
-	 * Breaks a breathbendng hold on an entity or one a player is inflicting on
-	 * an entity.
+	 * Breaks a breathbendng hold on an entity or one a player is inflicting on an entity.
 	 * 
 	 * @param entity The entity to be acted upon
 	 */

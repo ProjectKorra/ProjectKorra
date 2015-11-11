@@ -19,7 +19,7 @@ public class RingOfFire implements ConfigLoadable {
 		if (bPlayer.isOnCooldown("Blaze"))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		Location location = player.getLocation();
 
 		for (double degrees = 0; degrees < 360; degrees += 10) {
@@ -47,8 +47,7 @@ public class RingOfFire implements ConfigLoadable {
 	}
 
 	public static String getDescription() {
-		return "To use, simply left-click. "
-				+ "A circle of fire will emanate from you, "
+		return "To use, simply left-click. " + "A circle of fire will emanate from you, "
 				+ "engulfing everything around you. Use with extreme caution.";
 	}
 

@@ -28,7 +28,7 @@ public class FireMethods {
 
 	static ProjectKorra plugin;
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-	
+
 	public static ConcurrentHashMap<Location, Information> tempFire = new ConcurrentHashMap<Location, Information>();
 
 	public FireMethods(ProjectKorra plugin) {
@@ -46,24 +46,46 @@ public class FireMethods {
 			return true;
 		return false;
 	}
-	
-	/**Returns if fire is allowed to completely replace blocks or if it should place a temp fire block.*/
+
+	/**
+	 * Returns if fire is allowed to completely replace blocks or if it should place a temp fire
+	 * block.
+	 */
 	public static boolean canFireGrief() {
 		return config.getBoolean("Properties.Fire.FireGriefing");
 	}
-	
-	/**Creates a fire block meant to replace other blocks but reverts when the fire dissipates or is destroyed.*/
+
+	/**
+	 * Creates a fire block meant to replace other blocks but reverts when the fire dissipates or is
+	 * destroyed.
+	 */
 	public static void createTempFire(Location loc) {
 		if (loc.getBlock().getType() == Material.AIR) {
 			loc.getBlock().setType(Material.FIRE);
 			return;
 		}
 		Information info = new Information();
-		long time = config.getLong("Properties.Fire.RevertTicks") + (long)(GeneralMethods.rand.nextDouble() * config.getLong("Properties.Fire.RevertTicks")); //Generate a long between the config time and config time x 2. Just so it appears random
+		long time = config.getLong("Properties.Fire.RevertTicks")
+				+ (long) (GeneralMethods.rand.nextDouble() * config.getLong("Properties.Fire.RevertTicks")); // Generate
+																												// a
+																												// long
+																												// between
+																												// the
+																												// config
+																												// time
+																												// and
+																												// config
+																												// time
+																												// x
+																												// 2.
+																												// Just
+																												// so
+																												// it
+																												// appears
+																												// random
 		if (tempFire.containsKey(loc)) {
 			info = tempFire.get(loc);
-		}
-		else {
+		} else {
 			info.setBlock(loc.getBlock());
 			info.setLocation(loc);
 			info.setState(loc.getBlock().getState());
@@ -74,13 +96,11 @@ public class FireMethods {
 	}
 
 	/**
-	 * Gets the firebending dayfactor from the config multiplied by a specific
-	 * value if it is day.
+	 * Gets the firebending dayfactor from the config multiplied by a specific value if it is day.
 	 * 
 	 * @param value The value
 	 * @param world The world to pass into {@link #isDay(World)}
-	 * @return value DayFactor multiplied by specified value when
-	 *         {@link #isDay(World)} is true <br />
+	 * @return value DayFactor multiplied by specified value when {@link #isDay(World)} is true <br />
 	 *         else <br />
 	 *         value The specified value in the parameters
 	 */
@@ -109,7 +129,7 @@ public class FireMethods {
 	public static ChatColor getFireColor() {
 		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Fire"));
 	}
-	
+
 	/**
 	 * Gets the FireSubColor from the config.
 	 * 
@@ -179,22 +199,22 @@ public class FireMethods {
 		list.add("FireShield");
 		return GeneralMethods.blockAbilities(null, list, loc, 0);
 	}
-	
-	/**Removes all temp fire that no longer needs to be there*/
+
+	/** Removes all temp fire that no longer needs to be there */
 	public static void removeFire() {
 		Iterator<Location> it = tempFire.keySet().iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			Location loc = it.next();
 			Information info = tempFire.get(loc);
-			if (info.getLocation().getBlock().getType() != Material.FIRE && info.getLocation().getBlock().getType() != Material.AIR) {
+			if (info.getLocation().getBlock().getType() != Material.FIRE
+					&& info.getLocation().getBlock().getType() != Material.AIR) {
 				revertTempFire(loc);
-			}
-			else if (info.getBlock().getType() == Material.AIR || System.currentTimeMillis() > info.getTime()) {
+			} else if (info.getBlock().getType() == Material.AIR || System.currentTimeMillis() > info.getTime()) {
 				revertTempFire(loc);
 			}
 		}
 	}
-	
+
 	/**
 	 * Revert the temp fire at the location if any is there.
 	 * 
@@ -202,14 +222,18 @@ public class FireMethods {
 	 * */
 	@SuppressWarnings("deprecation")
 	public static void revertTempFire(Location location) {
-		if (!tempFire.containsKey(location)) return;
+		if (!tempFire.containsKey(location))
+			return;
 		Information info = tempFire.get(location);
 		if (info.getLocation().getBlock().getType() != Material.FIRE && info.getLocation().getBlock().getType() != Material.AIR) {
 			if (info.getState().getType() == Material.RED_ROSE || info.getState().getType() == Material.YELLOW_FLOWER) {
-				info.getState().getBlock().getWorld().dropItemNaturally(info.getLocation(), new ItemStack(info.getState().getData().getItemType(), 1, info.getState().getRawData()));
+				info.getState()
+						.getBlock()
+						.getWorld()
+						.dropItemNaturally(info.getLocation(),
+								new ItemStack(info.getState().getData().getItemType(), 1, info.getState().getRawData()));
 			}
-		}
-		else {
+		} else {
 			info.getBlock().setType(info.getState().getType());
 			info.getBlock().setData(info.getState().getRawData());
 		}
@@ -217,18 +241,18 @@ public class FireMethods {
 	}
 
 	public static void stopBending() {
-		FireStream.removeAll(FireStream.class);
-		Fireball.removeAll(Fireball.class);
-		WallOfFire.removeAll(WallOfFire.class);
-		Lightning.removeAll(Lightning.class);
-		FireShield.removeAll(FireShield.class);
-		FireBlast.removeAll(FireBlast.class);
-		FireBurst.removeAll(FireBurst.class);
-		FireJet.removeAll(FireJet.class);
-		Cook.removeAll(Cook.class);
-		Illumination.removeAll(Illumination.class);
+		FireStream.removeAll();
+		Fireball.removeAll();
+		WallOfFire.removeAll();
+		Lightning.removeAll();
+		FireShield.removeAll();
+		FireBlast.removeAll();
+		FireBurst.removeAll();
+		FireJet.removeAll();
+		Cook.removeAll();
+		Illumination.removeAll();
 		FireCombo.removeAll();
-		for (Location loc : tempFire.keySet()){
+		for (Location loc : tempFire.keySet()) {
 			revertTempFire(loc);
 		}
 	}
