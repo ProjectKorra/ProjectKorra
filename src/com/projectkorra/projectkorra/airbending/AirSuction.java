@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.ability.StockAbility;
 import com.projectkorra.projectkorra.ability.api.CoreAbility;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
@@ -59,7 +60,7 @@ public class AirSuction extends CoreAbility {
 		if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
 		}
-		if (AirSpout.getPlayers().contains(player.getUniqueId()) || WaterSpout.getPlayers().contains(player)) //TODO: UPDATE THIS LINE
+		if (AirSpout.getPlayers().contains(player) || WaterSpout.getPlayers().contains(player))
 			return;
 		/* End Initial Check */
 		//reloadVariables();
@@ -146,7 +147,7 @@ public class AirSuction extends CoreAbility {
 	}
 
 	private void advanceLocation() {
-		AirMethods.playAirbendingParticles(location, 6);
+		AirMethods.playAirbendingParticles(location, 6, 0.275F, 0.275F, 0.275F);
 		if (GeneralMethods.rand.nextInt(4) == 0) {
 			AirMethods.playAirbendingSound(location);
 		}
@@ -257,6 +258,7 @@ public class AirSuction extends CoreAbility {
 						continue;
 				}
 				GeneralMethods.setVelocity(entity, velocity);
+				new HorizontalVelocityTracker(entity, player, 200l);
 				entity.setFallDistance(0);
 				if (entity.getEntityId() != player.getEntityId() && entity instanceof Player) {
 					new Flight((Player) entity, player);

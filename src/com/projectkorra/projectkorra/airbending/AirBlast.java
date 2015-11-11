@@ -76,6 +76,7 @@ public class AirBlast extends CoreAbility {
 		if (location.getBlock().isLiquid()) {
 			return;
 		}
+		
 		//reloadVariables();
 		source = burst;
 
@@ -146,7 +147,7 @@ public class AirBlast extends CoreAbility {
 			return;
 		}
 
-		AirMethods.playAirbendingParticles(origin, 6);
+		AirMethods.playAirbendingParticles(origin, 4);
 		//		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
 		//				(int) originselectrange);
 	}
@@ -175,7 +176,7 @@ public class AirBlast extends CoreAbility {
 
 	private void advanceLocation() {
 		if (showParticles)
-			AirMethods.playAirbendingParticles(location, 6);
+			AirMethods.playAirbendingParticles(location, 6, 0.275F, 0.275F, 0.275F);
 		if (GeneralMethods.rand.nextInt(4) == 0) {
 			AirMethods.playAirbendingSound(location);
 		}

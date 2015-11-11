@@ -162,7 +162,7 @@ public class AirSwipe extends CoreAbility {
 							}
 						}
 					} else {
-						AirMethods.playAirbendingParticles(location, 3);
+						AirMethods.playAirbendingParticles(location, 3, 0.2F, 0.2F, 0);
 						if (GeneralMethods.rand.nextInt(4) == 0) {
 							AirMethods.playAirbendingSound(location);
 						}
