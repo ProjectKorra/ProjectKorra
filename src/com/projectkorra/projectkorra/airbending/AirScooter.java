@@ -1,9 +1,7 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -12,9 +10,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.util.Flight;
 
-public class AirScooter extends CoreAbility {
+public class AirScooter implements ConfigLoadable {
+
+	public static final ConcurrentHashMap<Player, AirScooter> instances = new ConcurrentHashMap<>();
 
 	private static double configSpeed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
 	private static final long interval = 100;
@@ -31,12 +33,13 @@ public class AirScooter extends CoreAbility {
 		if (check(player)) {
 			return;
 		}
-		if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock()) || player.getEyeLocation().getBlock().isLiquid())
+		if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())
+				|| player.getEyeLocation().getBlock().isLiquid())
 			return;
 		if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
 			return;
 		/* End Initial Check */
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		// wasflying = player.isFlying();
 		// canfly = player.getAllowFlight();
@@ -48,9 +51,8 @@ public class AirScooter extends CoreAbility {
 		for (int i = 0; i < 5; i++) {
 			angles.add((double) (60 * i));
 		}
-		//instances.put(uuid, this);
+		instances.put(player, this);
 		speed = configSpeed;
-		putInstance(player, this);
 		progress();
 	}
 
@@ -61,8 +63,8 @@ public class AirScooter extends CoreAbility {
 	 * @return false If player doesn't have an instance
 	 */
 	public static boolean check(Player player) {
-		if (containsPlayer(player, AirScooter.class)) {
-			getAbilityFromPlayer(player, AirScooter.class).remove();
+		if (instances.containsKey(player)) {
+			instances.get(player).remove();
 			return true;
 		}
 		return false;
@@ -70,8 +72,8 @@ public class AirScooter extends CoreAbility {
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (Integer id : getInstances(StockAbility.AirScooter).keySet()) {
-			players.add(getAbility(id).getPlayer());
+		for (AirScooter scooter : instances.values()) {
+			players.add(scooter.getPlayer());
 		}
 		return players;
 	}
@@ -94,17 +96,11 @@ public class AirScooter extends CoreAbility {
 	public double getSpeed() {
 		return speed;
 	}
-	
+
 	public void setSpeed(double value) {
 		this.speed = value; // Used in PK Items
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.AirScooter;
-	}
-
-	@Override
 	public boolean progress() {
 		getFloor();
 		// Methods.verbose(player);
@@ -170,6 +166,12 @@ public class AirScooter extends CoreAbility {
 		}
 		return true;
 	}
+	
+	public static void progressAll() {
+		for (AirScooter ability : instances.values()) {
+			ability.progress();
+		}
+	}
 
 	@Override
 	public void reloadVariables() {
@@ -177,13 +179,17 @@ public class AirScooter extends CoreAbility {
 		this.speed = configSpeed;
 	}
 
-	@Override
 	public void remove() {
-		//instances.remove(uuid);
-		super.remove();
+		instances.remove(player);
 		player.setFlying(false);
 		player.setAllowFlight(false);
 		player.setSprinting(false);
+	}
+	
+	public static void removeAll() {
+		for (AirScooter ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	private void spinScooter() {
@@ -194,8 +200,8 @@ public class AirScooter extends CoreAbility {
 			double y = ((double) i) / 2 * scooterradius - scooterradius;
 			double z = Math.sin(Math.toRadians(angles.get(i))) * scooterradius;
 			AirMethods.playAirbendingParticles(origin.clone().add(x, y, z), 7);
-			//			player.getWorld().playEffect(origin.clone().add(x, y, z),
-			//					Effect.SMOKE, 4, (int) AirBlast.defaultrange);
+			// player.getWorld().playEffect(origin.clone().add(x, y, z),
+			// Effect.SMOKE, 4, (int) AirBlast.defaultrange);
 		}
 		for (int i = 0; i < 5; i++) {
 			angles.set(i, angles.get(i) + 10);

@@ -311,9 +311,21 @@ public class FireBlast implements ConfigLoadable {
 
 		return true;
 	}
+	
+	public static void progressAll() {
+		for (FireBlast ability : instances.values()) {
+			ability.progress();
+		}
+	}
 
 	public void remove() {
 		instances.remove(id);
+	}
+	
+	public static void removeAll() {
+		for (FireBlast ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@Override

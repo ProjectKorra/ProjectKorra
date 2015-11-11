@@ -332,8 +332,20 @@ public class Fireball implements ConfigLoadable {
 		return true;
 	}
 	
+	public static void progressAll() {
+		for (Fireball ability : instances.values()) {
+			ability.progress();
+		}
+	}
+	
 	public void remove() {
-		instances.remove(this.id);
+		instances.remove(id);
+	}
+	
+	public static void removeAll() {
+		for (Fireball ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@Override

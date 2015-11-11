@@ -185,6 +185,12 @@ public class FireStream implements ConfigLoadable {
 		return false;
 	}
 	
+	public static void progressAll() {
+		for (FireStream ability : instances.values()) {
+			ability.progress();
+		}
+	}
+	
 	public void remove() {
 		instances.remove(id);
 	}

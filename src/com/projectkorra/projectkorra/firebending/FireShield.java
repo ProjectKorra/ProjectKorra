@@ -237,8 +237,20 @@ public class FireShield implements ConfigLoadable {
 		return true;
 	}
 	
+	public static void progressAll() {
+		for (FireShield ability : instances.values()) {
+			ability.progress();
+		}
+	}
+	
 	public void remove() {
 		instances.remove(player);
+	}
+	
+	public static void removeAll() {
+		for (FireShield ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@Override

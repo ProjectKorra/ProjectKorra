@@ -223,8 +223,20 @@ public class WallOfFire implements ConfigLoadable {
 		return true;
 	}
 	
+	public static void progressAll() {
+		for (WallOfFire ability : instances.values()) {
+			ability.progress();
+		}
+	}
+	
 	public void remove() {
 		instances.remove(player);
+	}
+	
+	public static void removeAll() {
+		for (WallOfFire ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@Override

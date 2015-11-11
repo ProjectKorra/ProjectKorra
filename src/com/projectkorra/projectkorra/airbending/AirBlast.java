@@ -29,6 +29,7 @@ import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.Flight;
 
 public class AirBlast implements ConfigLoadable {
+	
 	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
@@ -459,6 +460,12 @@ public class AirBlast implements ConfigLoadable {
 
 	public void remove() {
 		instances.remove(id);
+	}
+	
+	public static void removeAll() {
+		for (AirBlast ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@Override

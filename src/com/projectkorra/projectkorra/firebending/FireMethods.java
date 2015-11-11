@@ -217,16 +217,16 @@ public class FireMethods {
 	}
 
 	public static void stopBending() {
-		FireStream.removeAll(FireStream.class);
-		Fireball.removeAll(Fireball.class);
-		WallOfFire.removeAll(WallOfFire.class);
-		Lightning.removeAll(Lightning.class);
-		FireShield.removeAll(FireShield.class);
-		FireBlast.removeAll(FireBlast.class);
-		FireBurst.removeAll(FireBurst.class);
-		FireJet.removeAll(FireJet.class);
-		Cook.removeAll(Cook.class);
-		Illumination.removeAll(Illumination.class);
+		FireStream.removeAll();
+		Fireball.removeAll();
+		WallOfFire.removeAll();
+		Lightning.removeAll();
+		FireShield.removeAll();
+		FireBlast.removeAll();
+		FireBurst.removeAll();
+		FireJet.removeAll();
+		Cook.removeAll();
+		Illumination.removeAll();
 		FireCombo.removeAll();
 		for (Location loc : tempFire.keySet()){
 			revertTempFire(loc);

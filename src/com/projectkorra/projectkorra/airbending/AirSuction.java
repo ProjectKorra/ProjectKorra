@@ -1,16 +1,7 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -18,17 +9,26 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
-public class AirSuction extends CoreAbility {
+public class AirSuction implements ConfigLoadable {
 
+	public static final ConcurrentHashMap<Player, AirSuction> instances = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
 	private static final double maxspeed = AirBlast.maxspeed;
 	private static final int maxticks = 10000;
 
-	//private static long soonesttime = config.get().getLong("Properties.GlobalCooldown");
+	// private static long soonesttime = config.get().getLong("Properties.GlobalCooldown");
 	private static double SPEED = config.get().getDouble("Abilities.Air.AirSuction.Speed");
 	private static double RANGE = config.get().getDouble("Abilities.Air.AirSuction.Range");
 	private static double RADIUS = config.get().getDouble("Abilities.Air.AirSuction.Radius");
@@ -60,10 +60,11 @@ public class AirSuction extends CoreAbility {
 		if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
 		}
-		if (AirSpout.getPlayers().contains(player) || WaterSpout.getPlayers().contains(player))
+		if (AirSpout.getPlayers().contains(player) || WaterSpout.getPlayers().contains(player)) {
 			return;
+		}
 		/* End Initial Check */
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		if (origins.containsKey(player)) {
 			origin = origins.get(player);
@@ -83,15 +84,17 @@ public class AirSuction extends CoreAbility {
 		}
 		// }
 
-		//instances.put(uuid, this);
-		putInstance(player, this);
+		instances.put(player, this);
 		bPlayer.addCooldown("AirSuction", GeneralMethods.getGlobalCooldown());
 		// time = System.currentTimeMillis();
 		// timers.put(player, System.currentTimeMillis());
 	}
 
 	public static String getDescription() {
-		return "To use, simply left-click in a direction. " + "A gust of wind will originate as far as it can in that direction" + " and flow towards you, sucking anything in its path harmlessly with it." + " Skilled benders can use this technique to pull items from precarious locations. " + "Additionally, tapping sneak will change the origin of your next " + "AirSuction to your targeted location.";
+		return "To use, simply left-click in a direction. " + "A gust of wind will originate as far as it can in that direction"
+				+ " and flow towards you, sucking anything in its path harmlessly with it."
+				+ " Skilled benders can use this technique to pull items from precarious locations. "
+				+ "Additionally, tapping sneak will change the origin of your next " + "AirSuction to your targeted location.";
 	}
 
 	private static void playOriginEffect(Player player) {
@@ -108,7 +111,8 @@ public class AirSuction extends CoreAbility {
 			return;
 		}
 
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSuction") || !GeneralMethods.canBend(player.getName(), "AirSuction")) {
+		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSuction")
+				|| !GeneralMethods.canBend(player.getName(), "AirSuction")) {
 			origins.remove(player);
 			return;
 		}
@@ -120,12 +124,14 @@ public class AirSuction extends CoreAbility {
 
 		AirMethods.playAirbendingParticles(origin, 6);
 		//
-		//		origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
-		//				(int) originselectrange);
+		// origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
+		// (int) originselectrange);
 	}
 
 	public static void progressAll() {
-		CoreAbility.progressAll(StockAbility.AirSuction);
+		for (AirSuction ability : instances.values()) {
+			ability.progress();
+		}
 		for (Player player : origins.keySet()) {
 			playOriginEffect(player);
 		}
@@ -151,8 +157,8 @@ public class AirSuction extends CoreAbility {
 		if (GeneralMethods.rand.nextInt(4) == 0) {
 			AirMethods.playAirbendingSound(location);
 		}
-		//		location.getWorld().playEffect(location, Effect.SMOKE, 4,
-		//				(int) AirBlast.defaultrange);
+		// location.getWorld().playEffect(location, Effect.SMOKE, 4,
+		// (int) AirBlast.defaultrange);
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
 
@@ -164,7 +170,8 @@ public class AirSuction extends CoreAbility {
 		Location location = origin.clone();
 		for (double i = 1; i <= range; i++) {
 			location = origin.clone().add(direction.clone().multiply(i));
-			if (!EarthMethods.isTransparentToEarthbending(player, location.getBlock()) || GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
+			if (!EarthMethods.isTransparentToEarthbending(player, location.getBlock())
+					|| GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
 				return origin.clone().add(direction.clone().multiply(i - 1));
 			}
 		}
@@ -187,12 +194,6 @@ public class AirSuction extends CoreAbility {
 		return speed;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.AirSuction;
-	}
-
-	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
@@ -274,15 +275,24 @@ public class AirSuction extends CoreAbility {
 		advanceLocation();
 		return true;
 	}
-	
+
+	public void remove() {
+		instances.remove(player);
+	}
+
+	public static void removeAll() {
+		for (AirSuction ability : instances.values()) {
+			ability.remove();
+		}
+	}
+
 	public static boolean removeAirSuctionsAroundPoint(Location location, double radius) {
 		boolean removed = false;
-		for (Integer id : getInstances(StockAbility.AirSuction).keySet()) {
-			AirSuction airSuction = ((AirSuction)getAbility(id));
-		Location airSuctionlocation = airSuction.location;
-		if (location.getWorld() == airSuctionlocation.getWorld()) {
-			if (location.distance(airSuctionlocation) <= radius)
-				airSuction.remove();
+		for (AirSuction airSuction : instances.values()) {
+			Location airSuctionlocation = airSuction.location;
+			if (location.getWorld() == airSuctionlocation.getWorld()) {
+				if (location.distance(airSuctionlocation) <= radius)
+					airSuction.remove();
 				removed = true;
 			}
 		}
@@ -315,10 +325,5 @@ public class AirSuction extends CoreAbility {
 
 	public void setSpeed(double speed) {
 		this.speed = speed;
-	}
-
-	@Override
-	public InstanceType getInstanceType() {
-		return InstanceType.MULTIPLE;
 	}
 }

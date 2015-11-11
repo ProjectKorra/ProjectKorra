@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 
 public class FireBurst implements ConfigLoadable {
+	
 	public static final ConcurrentHashMap<Player, FireBurst> instances = new ConcurrentHashMap<>();
 	private static double PARTICLES_PERCENTAGE = 5;
 
@@ -115,6 +116,12 @@ public class FireBurst implements ConfigLoadable {
 	public void remove() {
 		instances.remove(player);
 	}
+	
+	public static void removeAll() {
+		for (FireBurst ability : instances.values()) {
+			ability.remove();
+		}
+	}
 
 	/**
 	 * To combat the sphere FireBurst lag we are only going to show a certain
@@ -164,6 +171,12 @@ public class FireBurst implements ConfigLoadable {
 			location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 4, 3);
 		}
 		return true;
+	}
+	
+	public static void progressAll() {
+		for (FireBurst ability : instances.values()) {
+			ability.progress();
+		}
 	}
 
 	@Override

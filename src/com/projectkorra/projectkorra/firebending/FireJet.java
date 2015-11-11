@@ -11,6 +11,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.airbending.AirBurst;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -116,6 +117,12 @@ public class FireJet implements ConfigLoadable {
 		}
 		return true;
 	}
+	
+	public static void progressAll() {
+		for (FireJet ability : instances.values()) {
+			ability.progress();
+		}
+	}
 
 	@Override
 	public void reloadVariables() {
@@ -126,6 +133,12 @@ public class FireJet implements ConfigLoadable {
 	
 	public void remove() {
 		instances.remove(player);
+	}
+	
+	public static void removeAll() {
+		for (FireJet ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	public void setDuration(long duration) {

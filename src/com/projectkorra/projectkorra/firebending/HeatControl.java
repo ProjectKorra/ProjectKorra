@@ -153,6 +153,12 @@ public class HeatControl implements ConfigLoadable {
 		freeze(area);
 		return true;
 	}
+	
+	public static void progressAll() {
+		for (HeatControl ability : instances.values()) {
+			ability.progress();
+		}
+	}
 
 	@Override
 	public void reloadVariables() {

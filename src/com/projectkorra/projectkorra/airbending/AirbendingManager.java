@@ -16,17 +16,17 @@ public class AirbendingManager implements Runnable {
 	public void run() {
 		AirBlast.progressAll();
 		AirPassive.handlePassive(Bukkit.getServer());
-		AirBurst.progressAll(AirBurst.class);
-		AirScooter.progressAll(AirScooter.class);
-		Suffocate.progressAll(Suffocate.class);
-		AirSpout.progressAll(AirSpout.class);
+		AirBurst.progressAll();
+		AirScooter.progressAll();
+		Suffocate.progressAll();
+		AirSpout.progressAll();
 		AirBubble.handleBubbles(Bukkit.getServer());
 		AirSuction.progressAll();
-		AirSwipe.progressAll(AirSwipe.class);
-		Tornado.progressAll(Tornado.class);
-		AirShield.progressAll(AirShield.class);
+		AirSwipe.progressAll();
+		Tornado.progressAll();
+		AirShield.progressAll();
 		AirCombo.progressAll();
-		FlightAbility.progressAll(FlightAbility.class);
+		FlightAbility.progressAll();
 	}
 
 }

@@ -82,6 +82,12 @@ public class Illumination implements ConfigLoadable {
 		}
 		return true;
 	}
+	
+	public static void progressAll() {
+		for (Illumination ability : instances.values()) {
+			ability.progress();
+		}
+	}
 
 	@Override
 	public void reloadVariables() {
@@ -91,6 +97,12 @@ public class Illumination implements ConfigLoadable {
 	public void remove() {
 		revert();
 		instances.remove(player);
+	}
+	
+	public static void removeAll() {
+		for (Illumination ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@SuppressWarnings("deprecation")

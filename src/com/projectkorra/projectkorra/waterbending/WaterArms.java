@@ -341,8 +341,7 @@ public class WaterArms {
 	}
 
 	private void checkIfZapped() {
-		for (Integer id : Lightning.getInstances(Lightning.class).keySet()) {
-			Lightning l = (Lightning) Lightning.getInstances(Lightning.class).get(id);
+		for (Lightning l : Lightning.instances.values()) {
 			for (Lightning.Arc arc : l.getArcs()) {
 				for (Block arm : revert.keySet()) {
 					for (Location loc : arc.getPoints()) {

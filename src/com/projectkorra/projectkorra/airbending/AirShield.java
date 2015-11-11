@@ -1,13 +1,8 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.firebending.Combustion;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.firebending.FireStream;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -17,11 +12,18 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.Set;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.firebending.Combustion;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.firebending.FireStream;
 
-public class AirShield extends CoreAbility {
+public class AirShield implements ConfigLoadable {
 
+	public static final ConcurrentHashMap<Player, AirShield> instances = new ConcurrentHashMap<>();
+	
 	private static double MAX_RADIUS = config.get().getDouble("Abilities.Air.AirShield.Radius");
 	private static boolean isToggle = config.get().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
 	private static int numberOfStreams = (int) (.75 * (double) MAX_RADIUS);
@@ -35,9 +37,9 @@ public class AirShield extends CoreAbility {
 
 	public AirShield(Player player) {
 		/* Initial Check */
-		if (AvatarState.isAvatarState(player) && containsPlayer(player, AirShield.class) && isToggle) {
+		if (AvatarState.isAvatarState(player) && instances.containsKey(player) && isToggle) {
 			//instances.remove(player.getUniqueId());
-			getAbilityFromPlayer(player, AirShield.class).remove();
+			instances.get(player).remove();
 			return;
 		}
 		/* End Initial Check */
@@ -52,8 +54,7 @@ public class AirShield extends CoreAbility {
 				angle = 0;
 		}
 
-		//instances.put(player.getUniqueId(), this);
-		putInstance(player, this);
+		instances.put(player, this);
 	}
 
 	public static String getDescription() {
@@ -61,8 +62,7 @@ public class AirShield extends CoreAbility {
 	}
 
 	public static boolean isWithinShield(Location loc) {
-		for (Integer id : getInstances(StockAbility.AirShield).keySet()) {
-			AirShield ashield = (AirShield) getAbility(id);
+		for (AirShield ashield : instances.values()) {
 			if (ashield.player.getLocation().getWorld() != loc.getWorld())
 				return false;
 			if (ashield.player.getLocation().distance(loc) <= ashield.radius)
@@ -79,12 +79,6 @@ public class AirShield extends CoreAbility {
 		return player;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.AirShield;
-	}
-
-	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
@@ -125,6 +119,22 @@ public class AirShield extends CoreAbility {
 		//		}
 		rotateShield();
 		return true;
+	}
+	
+	public static void progressAll() {
+		for (AirShield ability : instances.values()) {
+			ability.progress();
+		}
+	}
+	
+	public void remove() {
+		instances.remove(player);
+	}
+	
+	public static void removeAll() {
+		for (AirShield ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@Override

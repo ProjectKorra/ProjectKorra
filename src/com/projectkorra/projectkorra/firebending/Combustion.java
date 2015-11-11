@@ -180,6 +180,12 @@ public class Combustion implements ConfigLoadable {
 		advanceLocation();
 		return true;
 	}
+	
+	public static void progressAll() {
+		for (Combustion ability : instances.values()) {
+			ability.progress();
+		}
+	}
 
 	@Override
 	public void reloadVariables() {

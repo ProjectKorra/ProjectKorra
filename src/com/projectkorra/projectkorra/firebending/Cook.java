@@ -17,9 +17,8 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 public class Cook {
 	public static final ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<>();
 	private static final long COOK_TIME = 2000;
-	private static final Material[] cookables = { Material.RAW_BEEF,
-		Material.RAW_CHICKEN, Material.RAW_FISH, Material.PORK,
-		Material.POTATO_ITEM, Material.RABBIT, Material.MUTTON };
+	private static final Material[] cookables = { Material.RAW_BEEF, Material.RAW_CHICKEN, Material.RAW_FISH, Material.PORK,
+			Material.POTATO_ITEM, Material.RABBIT, Material.MUTTON };
 
 	private Player player;
 	private ItemStack items;
@@ -27,7 +26,7 @@ public class Cook {
 	private long cooktime = COOK_TIME;
 
 	public Cook(Player player) {
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		items = player.getItemInHand();
 		time = System.currentTimeMillis();
@@ -86,7 +85,7 @@ public class Cook {
 			cooked = new ItemStack(Material.COOKED_RABBIT);
 			break;
 		default:
-			break; //Shouldn't happen
+			break; // Shouldn't happen
 		}
 		return cooked;
 	}
@@ -137,6 +136,21 @@ public class Cook {
 		return true;
 	}
 
+	public static void progressAll() {
+		for (Cook ability : instances.values()) {
+			ability.progress();
+		}
+	}
+
+	public void remove() {
+		instances.remove(player);
+	}
+
+	public static void removeAll() {
+		for (Cook ability : instances.values()) {
+			ability.remove();
+		}
+	}
 
 	public void setCooktime(long cooktime) {
 		this.cooktime = cooktime;
@@ -144,10 +158,6 @@ public class Cook {
 
 	public void setTime(long time) {
 		this.time = time;
-	}
-	
-	public void remove() {
-		instances.remove(player);
 	}
 
 }
