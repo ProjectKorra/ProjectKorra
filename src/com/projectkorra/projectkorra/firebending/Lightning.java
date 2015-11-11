@@ -23,6 +23,7 @@ import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 
 public class Lightning implements ConfigLoadable {
+	
 	public static ConcurrentHashMap<Integer, Lightning> instances = new ConcurrentHashMap<>();
 
 	public static boolean SELF_HIT_WATER = config.get().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
@@ -375,17 +376,17 @@ public class Lightning implements ConfigLoadable {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (Lightning ability : instances.values()) {
 			ability.progress();
 		}
 	}
-	
+
 	public void remove() {
 		instances.remove(id);
 	}
-	
+
 	public static void removeAll() {
 		for (Lightning ability : instances.values()) {
 			ability.remove();

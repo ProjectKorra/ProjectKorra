@@ -31,7 +31,7 @@ public class Extinguish implements ConfigLoadable {
 		if (bPlayer.isOnCooldown("HeatControl"))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 
 		double range = FireMethods.getFirebendingDayAugment(defaultrange, player.getWorld());
 		if (WaterMethods.isMeltable(player.getTargetBlock((HashSet<Material>) null, (int) range))) {
@@ -39,7 +39,8 @@ public class Extinguish implements ConfigLoadable {
 			return;
 		}
 		double radius = FireMethods.getFirebendingDayAugment(defaultradius, player.getWorld());
-		for (Block block : GeneralMethods.getBlocksAroundPoint(player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation(), radius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(player.getTargetBlock((HashSet<Material>) null, (int) range)
+				.getLocation(), radius)) {
 
 			Material mat = block.getType();
 			if (mat != Material.FIRE
@@ -54,14 +55,11 @@ public class Extinguish implements ConfigLoadable {
 				block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
 			} /*
 			 * else if (block.getType() == Material.STATIONARY_LAVA) {
-			 * block.setType(Material.OBSIDIAN);
-			 * block.getWorld().playEffect(block.getLocation(),
-			 * Effect.EXTINGUISH, 0); } else if (block.getType() ==
-			 * Material.LAVA) { if (block.getData() == full) {
-			 * block.setType(Material.OBSIDIAN); } else {
+			 * block.setType(Material.OBSIDIAN); block.getWorld().playEffect(block.getLocation(),
+			 * Effect.EXTINGUISH, 0); } else if (block.getType() == Material.LAVA) { if
+			 * (block.getData() == full) { block.setType(Material.OBSIDIAN); } else {
 			 * block.setType(Material.COBBLESTONE); }
-			 * block.getWorld().playEffect(block.getLocation(),
-			 * Effect.EXTINGUISH, 0); }
+			 * block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0); }
 			 */
 		}
 
@@ -86,7 +84,11 @@ public class Extinguish implements ConfigLoadable {
 	}
 
 	public static String getDescription() {
-		return "While this ability is selected, the firebender becomes impervious " + "to fire damage and cannot be ignited. " + "If the user left-clicks with this ability, the targeted area will be " + "extinguished, although it will leave any creature burning engulfed in flames. " + "This ability can also cool lava. If this ability is used while targetting ice or snow, it" + " will instead melt blocks in that area. Finally, sneaking with this ability will cook any food in your hand.";
+		return "While this ability is selected, the firebender becomes impervious " + "to fire damage and cannot be ignited. "
+				+ "If the user left-clicks with this ability, the targeted area will be "
+				+ "extinguished, although it will leave any creature burning engulfed in flames. "
+				+ "This ability can also cool lava. If this ability is used while targetting ice or snow, it"
+				+ " will instead melt blocks in that area. Finally, sneaking with this ability will cook any food in your hand.";
 	}
 
 	@Override

@@ -22,7 +22,8 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class AirSuction implements ConfigLoadable {
 
-	public static final ConcurrentHashMap<Player, AirSuction> instances = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, AirSuction> instances = new ConcurrentHashMap<>();
+
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
 	private static final double maxspeed = AirBlast.maxspeed;

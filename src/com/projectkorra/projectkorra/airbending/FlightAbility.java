@@ -10,7 +10,7 @@ import com.projectkorra.projectkorra.util.Flight;
 
 public class FlightAbility implements ConfigLoadable {
 	
-	public static final ConcurrentHashMap<Player, FlightAbility> instances = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, FlightAbility> instances = new ConcurrentHashMap<>();
 	
 	private static ConcurrentHashMap<String, Integer> hits = new ConcurrentHashMap<String, Integer>();
 	private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<String, Boolean>();
@@ -95,7 +95,7 @@ public class FlightAbility implements ConfigLoadable {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (FlightAbility ability : instances.values()) {
 			ability.progress();

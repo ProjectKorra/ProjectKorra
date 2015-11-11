@@ -22,7 +22,9 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
 public class FireShield implements ConfigLoadable {
-	public static final ConcurrentHashMap<Player, FireShield> instances = new ConcurrentHashMap<>();
+	
+	public static ConcurrentHashMap<Player, FireShield> instances = new ConcurrentHashMap<>();
+	
 	private static long interval = 100;
 	private static long DURATION = config.get().getLong("Abilities.Fire.FireShield.Duration");
 	private static double RADIUS = config.get().getDouble("Abilities.Fire.FireShield.Radius");
@@ -50,7 +52,7 @@ public class FireShield implements ConfigLoadable {
 		if (bPlayer.isOnCooldown("FireShield"))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		this.shield = shield;
 
@@ -64,7 +66,11 @@ public class FireShield implements ConfigLoadable {
 	}
 
 	public static String getDescription() {
-		return "FireShield is a basic defensive ability. " + "Clicking with this ability selected will create a " + "small disc of fire in front of you, which will block most " + "attacks and bending. Alternatively, pressing and holding " + "sneak creates a very small shield of fire, blocking most attacks. " + "Creatures that contact this fire are ignited.";
+		return "FireShield is a basic defensive ability. " + "Clicking with this ability selected will create a "
+				+ "small disc of fire in front of you, which will block most "
+				+ "attacks and bending. Alternatively, pressing and holding "
+				+ "sneak creates a very small shield of fire, blocking most attacks. "
+				+ "Creatures that contact this fire are ignited.";
 	}
 
 	public static boolean isWithinShield(Location loc) {
@@ -143,7 +149,10 @@ public class FireShield implements ConfigLoadable {
 					for (double phi = 0; phi < 360; phi += 20) {
 						double rphi = Math.toRadians(phi);
 						double rtheta = Math.toRadians(theta);
-						Block block = location.clone().add(radius * Math.cos(rphi) * Math.sin(rtheta), radius * Math.cos(rtheta), radius * Math.sin(rphi) * Math.sin(rtheta)).getBlock();
+						Block block = location
+								.clone()
+								.add(radius * Math.cos(rphi) * Math.sin(rtheta), radius * Math.cos(rtheta),
+										radius * Math.sin(rphi) * Math.sin(rtheta)).getBlock();
 						if (!blocks.contains(block) && !GeneralMethods.isSolid(block) && !block.isLiquid())
 							blocks.add(block);
 					}
@@ -160,7 +169,7 @@ public class FireShield implements ConfigLoadable {
 						}
 					}
 				}
-				
+
 				for (Block testblock : GeneralMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
 					if (testblock.getType() == Material.FIRE) {
 						testblock.setType(Material.AIR);
@@ -177,9 +186,9 @@ public class FireShield implements ConfigLoadable {
 					}
 				}
 
-				FireBlast.removeFireBlastsAroundPoint(location, radius+1);
-				FireStream.removeAroundPoint(location, radius+1);
-				Combustion.removeAroundPoint(location, radius+1);
+				FireBlast.removeFireBlastsAroundPoint(location, radius + 1);
+				FireStream.removeAroundPoint(location, radius + 1);
+				Combustion.removeAroundPoint(location, radius + 1);
 
 			} else {
 				ArrayList<Block> blocks = new ArrayList<Block>();
@@ -202,7 +211,7 @@ public class FireShield implements ConfigLoadable {
 				for (Block block : blocks) {
 					if (!GeneralMethods.isRegionProtectedFromBuild(player, "FireShield", block.getLocation())) {
 						if (GeneralMethods.rand.nextInt(1) == 0) {
-						ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
+							ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 						}
 						ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 3);
 						if (GeneralMethods.rand.nextInt(4) == 0) {
@@ -236,17 +245,17 @@ public class FireShield implements ConfigLoadable {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (FireShield ability : instances.values()) {
 			ability.progress();
 		}
 	}
-	
+
 	public void remove() {
 		instances.remove(player);
 	}
-	
+
 	public static void removeAll() {
 		for (FireShield ability : instances.values()) {
 			ability.remove();

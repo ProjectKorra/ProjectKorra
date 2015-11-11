@@ -24,7 +24,7 @@ public class ArcOfFire implements ConfigLoadable {
 		if (bPlayer.isOnCooldown("Blaze"))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 
 		Location location = player.getLocation();
 
@@ -55,7 +55,9 @@ public class ArcOfFire implements ConfigLoadable {
 	}
 
 	public static String getDescription() {
-		return "To use, simply left-click in any direction. " + "An arc of fire will flow from your location, " + "igniting anything in its path." + " Additionally, tap sneak to engulf the area around you " + "in roaring flames.";
+		return "To use, simply left-click in any direction. " + "An arc of fire will flow from your location, "
+				+ "igniting anything in its path." + " Additionally, tap sneak to engulf the area around you "
+				+ "in roaring flames.";
 	}
 
 	@Override

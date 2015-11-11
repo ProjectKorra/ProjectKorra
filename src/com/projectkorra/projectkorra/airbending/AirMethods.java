@@ -43,8 +43,7 @@ public class AirMethods {
 	 * Checks to see if a player can use SpiritualProjection.
 	 * 
 	 * @param player The player to check
-	 * @return true If player has permission node
-	 *         "bending.air.spiritualprojection"
+	 * @return true If player has permission node "bending.air.spiritualprojection"
 	 */
 	public static boolean canUseSpiritualProjection(Player player) {
 		if (player.hasPermission("bending.air.spiritualprojection"))
@@ -60,7 +59,7 @@ public class AirMethods {
 	public static ChatColor getAirColor() {
 		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Air"));
 	}
-	
+
 	/**
 	 * Gets the AirSubColor from the config.
 	 * 
@@ -132,8 +131,8 @@ public class AirMethods {
 	}
 
 	/**
-	 * Plays an integer amount of air particles in a location with a given
-	 * xOffset, yOffset, and zOffset.
+	 * Plays an integer amount of air particles in a location with a given xOffset, yOffset, and
+	 * zOffset.
 	 * 
 	 * @param loc The location to use
 	 * @param amount The amount of particles
@@ -142,7 +141,7 @@ public class AirMethods {
 	 * @param zOffset The zOffset to use
 	 */
 	public static void playAirbendingParticles(Location loc, int amount, float xOffset, float yOffset, float zOffset) {
-			getAirbendingParticles().display(loc, xOffset, yOffset, zOffset, 0, amount);
+		getAirbendingParticles().display(loc, xOffset, yOffset, zOffset, 0, amount);
 	}
 
 	/**
@@ -185,8 +184,7 @@ public class AirMethods {
 	}
 
 	/**
-	 * Breaks a breathbendng hold on an entity or one a player is inflicting on
-	 * an entity.
+	 * Breaks a breathbendng hold on an entity or one a player is inflicting on an entity.
 	 * 
 	 * @param entity The entity to be acted upon
 	 */

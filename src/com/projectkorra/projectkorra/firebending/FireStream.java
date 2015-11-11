@@ -18,7 +18,8 @@ import com.projectkorra.projectkorra.waterbending.Plantbending;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 public class FireStream implements ConfigLoadable {
-	public static final ConcurrentHashMap<Integer, FireStream> instances = new ConcurrentHashMap<>();
+	
+	public static ConcurrentHashMap<Integer, FireStream> instances = new ConcurrentHashMap<>();
 	public static ConcurrentHashMap<Block, Player> ignitedblocks = new ConcurrentHashMap<Block, Player>();
 	public static ConcurrentHashMap<Block, Long> ignitedtimes = new ConcurrentHashMap<Block, Long>();
 	public static ConcurrentHashMap<Location, MaterialData> replacedBlocks = new ConcurrentHashMap<Location, MaterialData>();
@@ -30,7 +31,7 @@ public class FireStream implements ConfigLoadable {
 	private static int firedamage = 3;
 	@SuppressWarnings("unused")
 	private static int tickdamage = 2;
-	
+
 	private static int idCounter = 0;
 	private static double speed = 15;
 	private static long interval = (long) (1000. / speed);
@@ -80,7 +81,8 @@ public class FireStream implements ConfigLoadable {
 
 	public static boolean isIgnitable(Player player, Block block) {
 
-		Material[] overwriteable = { Material.SAPLING, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.FIRE, Material.SNOW, Material.TORCH };
+		Material[] overwriteable = { Material.SAPLING, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER,
+				Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.FIRE, Material.SNOW, Material.TORCH };
 
 		if (Arrays.asList(overwriteable).contains(block.getType())) {
 			return true;
@@ -88,8 +90,24 @@ public class FireStream implements ConfigLoadable {
 			return false;
 		}
 
-		Material[] ignitable = { Material.BEDROCK, Material.BOOKSHELF, Material.BRICK, Material.CLAY, Material.CLAY_BRICK, Material.COAL_ORE, Material.COBBLESTONE, Material.DIAMOND_ORE, Material.DIAMOND_BLOCK, Material.DIRT, Material.ENDER_STONE, Material.GLOWING_REDSTONE_ORE, Material.GOLD_BLOCK, Material.GRAVEL, Material.GRASS, Material.HUGE_MUSHROOM_1, Material.HUGE_MUSHROOM_2, Material.LAPIS_BLOCK, Material.LAPIS_ORE, Material.LOG, Material.MOSSY_COBBLESTONE, Material.MYCEL, Material.NETHER_BRICK, Material.NETHERRACK, Material.OBSIDIAN, Material.REDSTONE_ORE, Material.SAND, Material.SANDSTONE, Material.SMOOTH_BRICK, Material.STONE, Material.SOUL_SAND, Material.WOOD, // Material.SNOW_BLOCK, 
-		Material.WOOL, Material.LEAVES, Material.LEAVES_2, Material.MELON_BLOCK, Material.PUMPKIN, Material.JACK_O_LANTERN, Material.NOTE_BLOCK, Material.GLOWSTONE, Material.IRON_BLOCK, Material.DISPENSER, Material.SPONGE, Material.IRON_ORE, Material.GOLD_ORE, Material.COAL_BLOCK, Material.WORKBENCH, Material.HAY_BLOCK, Material.REDSTONE_LAMP_OFF, Material.REDSTONE_LAMP_ON, Material.EMERALD_ORE, Material.EMERALD_BLOCK, Material.REDSTONE_BLOCK, Material.QUARTZ_BLOCK, Material.QUARTZ_ORE, Material.STAINED_CLAY, Material.HARD_CLAY };
+		Material[] ignitable = { Material.BEDROCK, Material.BOOKSHELF, Material.BRICK, Material.CLAY, Material.CLAY_BRICK,
+				Material.COAL_ORE, Material.COBBLESTONE, Material.DIAMOND_ORE, Material.DIAMOND_BLOCK, Material.DIRT,
+				Material.ENDER_STONE, Material.GLOWING_REDSTONE_ORE, Material.GOLD_BLOCK, Material.GRAVEL, Material.GRASS,
+				Material.HUGE_MUSHROOM_1, Material.HUGE_MUSHROOM_2, Material.LAPIS_BLOCK, Material.LAPIS_ORE, Material.LOG,
+				Material.MOSSY_COBBLESTONE, Material.MYCEL, Material.NETHER_BRICK, Material.NETHERRACK, Material.OBSIDIAN,
+				Material.REDSTONE_ORE,
+				Material.SAND,
+				Material.SANDSTONE,
+				Material.SMOOTH_BRICK,
+				Material.STONE,
+				Material.SOUL_SAND,
+				Material.WOOD, // Material.SNOW_BLOCK,
+				Material.WOOL, Material.LEAVES, Material.LEAVES_2, Material.MELON_BLOCK, Material.PUMPKIN,
+				Material.JACK_O_LANTERN, Material.NOTE_BLOCK, Material.GLOWSTONE, Material.IRON_BLOCK, Material.DISPENSER,
+				Material.SPONGE, Material.IRON_ORE, Material.GOLD_ORE, Material.COAL_BLOCK, Material.WORKBENCH,
+				Material.HAY_BLOCK, Material.REDSTONE_LAMP_OFF, Material.REDSTONE_LAMP_ON, Material.EMERALD_ORE,
+				Material.EMERALD_BLOCK, Material.REDSTONE_BLOCK, Material.QUARTZ_BLOCK, Material.QUARTZ_ORE,
+				Material.STAINED_CLAY, Material.HARD_CLAY };
 
 		Block belowblock = block.getRelative(BlockFace.DOWN);
 		if (Arrays.asList(ignitable).contains(belowblock.getType())) {
@@ -117,7 +135,7 @@ public class FireStream implements ConfigLoadable {
 	public static void removeAll() {
 		for (Block block : ignitedblocks.keySet())
 			remove(block);
-		
+
 		Iterator<Integer> iter = instances.keySet().iterator();
 		while (iter.hasNext()) {
 			Integer key = iter.next();
@@ -145,8 +163,9 @@ public class FireStream implements ConfigLoadable {
 	private void ignite(Block block) {
 		if (block.getType() != Material.AIR) {
 			if (FireMethods.canFireGrief()) {
-				if (WaterMethods.isPlant(block)) new Plantbending(block);
-			} else if (block.getType() != Material.FIRE){
+				if (WaterMethods.isPlant(block))
+					new Plantbending(block);
+			} else if (block.getType() != Material.FIRE) {
 				replacedBlocks.put(block.getLocation(), block.getState().getData());
 			}
 		}
@@ -184,13 +203,13 @@ public class FireStream implements ConfigLoadable {
 		}
 		return false;
 	}
-	
+
 	public static void progressAll() {
 		for (FireStream ability : instances.values()) {
 			ability.progress();
 		}
 	}
-	
+
 	public void remove() {
 		instances.remove(id);
 	}

@@ -20,8 +20,9 @@ import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class WallOfFire implements ConfigLoadable {
-	public static final ConcurrentHashMap<Player, WallOfFire> instances = new ConcurrentHashMap<>();
-	
+
+	public static ConcurrentHashMap<Player, WallOfFire> instances = new ConcurrentHashMap<>();
+
 	private static double maxangle = 50;
 
 	private static int RANGE = config.get().getInt("Abilities.Fire.WallOfFire.Range");
@@ -222,17 +223,17 @@ public class WallOfFire implements ConfigLoadable {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (WallOfFire ability : instances.values()) {
 			ability.progress();
 		}
 	}
-	
+
 	public void remove() {
 		instances.remove(player);
 	}
-	
+
 	public static void removeAll() {
 		for (WallOfFire ability : instances.values()) {
 			ability.remove();

@@ -102,7 +102,7 @@ public class FireCombo implements ConfigLoadable {
 			return;
 		}
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		time = System.currentTimeMillis();
 		this.player = player;
 		this.ability = ability;
@@ -151,8 +151,8 @@ public class FireCombo implements ConfigLoadable {
 	}
 
 	/**
-	 * Returns all of the FireCombos created by a specific player but filters
-	 * the abilities based on shift or click.
+	 * Returns all of the FireCombos created by a specific player but filters the abilities based on
+	 * shift or click.
 	 */
 	public static ArrayList<FireCombo> getFireCombo(Player player, ClickType type) {
 		ArrayList<FireCombo> list = new ArrayList<FireCombo>();
@@ -182,7 +182,8 @@ public class FireCombo implements ConfigLoadable {
 
 			if (ability.equalsIgnoreCase("FireKick") && combo.ability.equalsIgnoreCase("FireKick")) {
 				for (FireComboStream fs : combo.tasks) {
-					if (fs.getLocation() != null && fs.getLocation().getWorld() == loc.getWorld() && Math.abs(fs.getLocation().distance(loc)) <= radius) {
+					if (fs.getLocation() != null && fs.getLocation().getWorld() == loc.getWorld()
+							&& Math.abs(fs.getLocation().distance(loc)) <= radius) {
 						fs.remove();
 						removed = true;
 					}
@@ -316,7 +317,8 @@ public class FireCombo implements ConfigLoadable {
 					vec = GeneralMethods.rotateXZ(vec, i - 180);
 					vec.setY(0);
 
-					FireComboStream fs = new FireComboStream(this, vec, player.getLocation().clone().add(0, 1, 0), range, speed, "FireSpin");
+					FireComboStream fs = new FireComboStream(this, vec, player.getLocation().clone().add(0, 1, 0), range, speed,
+							"FireSpin");
 					fs.setSpread(0.0F);
 					fs.setDensity(1);
 					fs.setUseNewParticles(true);
@@ -354,7 +356,8 @@ public class FireCombo implements ConfigLoadable {
 				}
 				player.setVelocity(player.getVelocity().normalize().multiply(speed));
 
-				FireComboStream fs = new FireComboStream(this, player.getVelocity().clone().multiply(-1), player.getLocation(), 3, 0.5, "JetBlast");
+				FireComboStream fs = new FireComboStream(this, player.getVelocity().clone().multiply(-1), player.getLocation(),
+						3, 0.5, "JetBlast");
 				fs.setDensity(1);
 				fs.setSpread(0.9F);
 				fs.setUseNewParticles(true);
@@ -477,8 +480,8 @@ public class FireCombo implements ConfigLoadable {
 	}
 
 	/**
-	 * Removes this instance of FireCombo, cleans up any blocks that are
-	 * remaining in totalBlocks, and cancels any remaining tasks.
+	 * Removes this instance of FireCombo, cleans up any blocks that are remaining in totalBlocks,
+	 * and cancels any remaining tasks.
 	 */
 	public void remove() {
 		instances.remove(this);
@@ -530,7 +533,7 @@ public class FireCombo implements ConfigLoadable {
 		public String getAbility() {
 			return this.ability;
 		}
-		
+
 		public boolean isCancelled() {
 			return cancelled;
 		}

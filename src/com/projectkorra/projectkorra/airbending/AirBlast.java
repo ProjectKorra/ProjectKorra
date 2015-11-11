@@ -31,6 +31,7 @@ import com.projectkorra.projectkorra.util.Flight;
 public class AirBlast implements ConfigLoadable {
 	
 	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<>();
+	
 	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
 
 	public static double speed = config.get().getDouble("Abilities.Air.AirBlast.Speed");

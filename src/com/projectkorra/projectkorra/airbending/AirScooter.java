@@ -16,7 +16,7 @@ import com.projectkorra.projectkorra.util.Flight;
 
 public class AirScooter implements ConfigLoadable {
 
-	public static final ConcurrentHashMap<Player, AirScooter> instances = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, AirScooter> instances = new ConcurrentHashMap<>();
 
 	private static double configSpeed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
 	private static final long interval = 100;
@@ -166,7 +166,7 @@ public class AirScooter implements ConfigLoadable {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (AirScooter ability : instances.values()) {
 			ability.progress();
@@ -185,7 +185,7 @@ public class AirScooter implements ConfigLoadable {
 		player.setAllowFlight(false);
 		player.setSprinting(false);
 	}
-	
+
 	public static void removeAll() {
 		for (AirScooter ability : instances.values()) {
 			ability.remove();

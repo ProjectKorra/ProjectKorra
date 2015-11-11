@@ -19,8 +19,9 @@ import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 
 public class FireBurst implements ConfigLoadable {
-	
+
 	public static final ConcurrentHashMap<Player, FireBurst> instances = new ConcurrentHashMap<>();
+	
 	private static double PARTICLES_PERCENTAGE = 5;
 
 	private Player player;
@@ -41,7 +42,7 @@ public class FireBurst implements ConfigLoadable {
 		if (instances.containsKey(player))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 
 		starttime = System.currentTimeMillis();
 		if (FireMethods.isDay(player.getWorld())) {
@@ -64,7 +65,9 @@ public class FireBurst implements ConfigLoadable {
 	}
 
 	public static String getDescription() {
-		return "FireBurst is a very powerful firebending ability. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to launch a cone-shaped burst " + "of flames in front of you, or click to release the burst in a sphere around you. ";
+		return "FireBurst is a very powerful firebending ability. " + "To use, press and hold sneak to charge your burst. "
+				+ "Once charged, you can either release sneak to launch a cone-shaped burst "
+				+ "of flames in front of you, or click to release the burst in a sphere around you. ";
 	}
 
 	private void coneBurst() {
@@ -116,7 +119,7 @@ public class FireBurst implements ConfigLoadable {
 	public void remove() {
 		instances.remove(player);
 	}
-	
+
 	public static void removeAll() {
 		for (FireBurst ability : instances.values()) {
 			ability.remove();
@@ -124,9 +127,9 @@ public class FireBurst implements ConfigLoadable {
 	}
 
 	/**
-	 * To combat the sphere FireBurst lag we are only going to show a certain
-	 * percentage of FireBurst particles at a time per tick. As the bursts
-	 * spread out then we can show more at a time.
+	 * To combat the sphere FireBurst lag we are only going to show a certain percentage of
+	 * FireBurst particles at a time per tick. As the bursts spread out then we can show more at a
+	 * time.
 	 */
 	public void handleSmoothParticles() {
 		for (int i = 0; i < blasts.size(); i++) {
@@ -172,7 +175,7 @@ public class FireBurst implements ConfigLoadable {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (FireBurst ability : instances.values()) {
 			ability.progress();
@@ -181,8 +184,8 @@ public class FireBurst implements ConfigLoadable {
 
 	@Override
 	public void reloadVariables() {
-		//No need for this because there are no static variables.
-		//All instance variables are gotten newly from config
+		// No need for this because there are no static variables.
+		// All instance variables are gotten newly from config
 	}
 
 	public void setChargetime(long chargetime) {

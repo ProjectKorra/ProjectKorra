@@ -16,8 +16,8 @@ import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 import com.projectkorra.projectkorra.util.Flight;
 
 public class Tornado implements ConfigLoadable {
-	
-	public static final ConcurrentHashMap<Player, Tornado> instances = new ConcurrentHashMap<>();
+
+	public static ConcurrentHashMap<Player, Tornado> instances = new ConcurrentHashMap<>();
 
 	private static double MAX_HEIGHT = config.get().getDouble("Abilities.Air.Tornado.Height");
 	private static double PLAYER_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
@@ -44,7 +44,7 @@ public class Tornado implements ConfigLoadable {
 	// private boolean canfly;
 
 	public Tornado(Player player) {
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		// canfly = player.getAllowFlight();
 		// player.setAllowFlight(true);
@@ -122,17 +122,17 @@ public class Tornado implements ConfigLoadable {
 		rotateTornado();
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (Tornado ability : instances.values()) {
 			ability.progress();
 		}
 	}
-	
+
 	public void remove() {
 		instances.remove(player);
 	}
-	
+
 	public static void removeAll() {
 		for (Tornado ability : instances.values()) {
 			ability.remove();
@@ -249,7 +249,8 @@ public class Tornado implements ConfigLoadable {
 						AirMethods.playAirbendingSound(effect);
 					}
 				}
-				//					origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int) AirBlast.defaultrange);
+				// origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int)
+				// AirBlast.defaultrange);
 
 				angles.put(i, angles.get(i) + 25 * (int) speedfactor);
 			}

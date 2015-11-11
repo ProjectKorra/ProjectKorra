@@ -16,7 +16,7 @@ import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 
 public class Catapult implements ConfigLoadable {
 
-	public static final ConcurrentHashMap<Player, Catapult> instances = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Player, Catapult> instances = new ConcurrentHashMap<>();
 
 	private static int LENGTH = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Catapult.Length");
 	private static double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Speed");
@@ -193,13 +193,13 @@ public class Catapult implements ConfigLoadable {
 			remove();
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (Catapult ability : instances.values()) {
 			ability.progress();
 		}
 	}
-	
+
 	public static void removeAll() {
 		for (Catapult ability : instances.values()) {
 			ability.remove();

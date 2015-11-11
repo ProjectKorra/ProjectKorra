@@ -25,9 +25,10 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
  */
 public class Fireball implements ConfigLoadable {
 
-	public static final ConcurrentHashMap<Integer, Fireball> instances = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<Integer, Fireball> instances = new ConcurrentHashMap<>();
+
 	private static ConcurrentHashMap<Entity, Fireball> explosions = new ConcurrentHashMap<Entity, Fireball>();
-	
+
 	private static long defaultchargetime = config.get().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
 	private static long interval = 25;
 	private static double radius = 1.5;
@@ -156,8 +157,7 @@ public class Fireball implements ConfigLoadable {
 			}
 		}
 		if (explode) {
-			if (damage_blocks && explosionradius > 0)
-			{
+			if (damage_blocks && explosionradius > 0) {
 				explosion = player.getWorld().spawn(location, TNTPrimed.class);
 				explosion.setFuseTicks(0);
 				float yield = (float) explosionradius;
@@ -170,14 +170,10 @@ public class Fireball implements ConfigLoadable {
 				}
 				explosion.setYield(yield);
 				explosions.put(explosion, this);
-			}
-			else
-			{
+			} else {
 				List<Entity> l = GeneralMethods.getEntitiesAroundPoint(location, damageradius);
-				for (Entity e : l)
-				{
-					if (e instanceof LivingEntity)
-					{
+				for (Entity e : l) {
+					if (e instanceof LivingEntity) {
 						double slope = -(maxdamage * .5) / (damageradius - innerradius);
 						double damage = slope * (e.getLocation().distance(location) - innerradius) + maxdamage;
 						GeneralMethods.damageEntity(getPlayer(), e, damage, "FireBlast");
@@ -187,7 +183,7 @@ public class Fireball implements ConfigLoadable {
 				ParticleEffect.EXPLOSION_HUGE.display(new Vector(0, 0, 0), 0, location, 256);
 			}
 		}
-		
+
 		ignite(location);
 		remove();
 	}
@@ -224,11 +220,11 @@ public class Fireball implements ConfigLoadable {
 	public double getDamageRadius() {
 		return damageradius;
 	}
-	
+
 	public double getExplosionRadius() {
 		return explosionradius;
 	}
-	
+
 	public boolean getDamageBlocks() {
 		return this.damage_blocks;
 	}
@@ -331,17 +327,17 @@ public class Fireball implements ConfigLoadable {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (Fireball ability : instances.values()) {
 			ability.progress();
 		}
 	}
-	
+
 	public void remove() {
 		instances.remove(id);
 	}
-	
+
 	public static void removeAll() {
 		for (Fireball ability : instances.values()) {
 			ability.remove();
@@ -372,12 +368,12 @@ public class Fireball implements ConfigLoadable {
 	public void setChargetime(long chargetime) {
 		this.chargetime = chargetime;
 	}
-	
+
 	public void setDamageBlocks(boolean damageblocks) {
 		this.damage_blocks = damageblocks;
 	}
-	
-	public void setExplosionRadius (double radius) {
+
+	public void setExplosionRadius(double radius) {
 		this.explosionradius = radius;
 	}
 

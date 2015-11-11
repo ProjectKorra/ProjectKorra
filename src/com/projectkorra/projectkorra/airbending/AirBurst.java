@@ -16,8 +16,9 @@ import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 
 public class AirBurst implements ConfigLoadable {
-	
-	public static final ConcurrentHashMap<Player, AirBurst> instances = new ConcurrentHashMap<>();
+
+	public static ConcurrentHashMap<Player, AirBurst> instances = new ConcurrentHashMap<>();
+
 	private static double PARTICLES_PERCENTAGE = 50;
 
 	private static double threshold = config.get().getDouble("Abilities.Air.AirBurst.FallThreshold");
@@ -34,7 +35,7 @@ public class AirBurst implements ConfigLoadable {
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
 	public AirBurst() {
-		//reloadVariables();
+		// reloadVariables();
 	}
 
 	public AirBurst(Player player) {
@@ -45,7 +46,7 @@ public class AirBurst implements ConfigLoadable {
 		if (instances.containsKey(player))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		starttime = System.currentTimeMillis();
 		if (AvatarState.isAvatarState(player))
 			chargetime = 0;
@@ -172,25 +173,25 @@ public class AirBurst implements ConfigLoadable {
 			Location location = player.getEyeLocation();
 			// location = location.add(location.getDirection().normalize());
 			AirMethods.playAirbendingParticles(location, 10);
-			//			location.getWorld().playEffect(
-			//					location,
-			//					Effect.SMOKE,
-			//					Methods.getIntCardinalDirection(player.getEyeLocation()
+			// location.getWorld().playEffect(
+			// location,
+			// Effect.SMOKE,
+			// Methods.getIntCardinalDirection(player.getEyeLocation()
 			// .getDirection()), 3);
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (AirBurst ability : instances.values()) {
 			ability.progress();
 		}
 	}
-	
+
 	public void remove() {
 		instances.remove(player);
 	}
-	
+
 	public static void removeAll() {
 		for (AirBurst ability : instances.values()) {
 			ability.remove();

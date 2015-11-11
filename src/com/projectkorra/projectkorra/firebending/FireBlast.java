@@ -28,6 +28,7 @@ import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 public class FireBlast implements ConfigLoadable {
+	
 	public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<>();
 
 	private static double SPEED = config.get().getDouble("Abilities.Fire.FireBlast.Speed");
@@ -311,7 +312,7 @@ public class FireBlast implements ConfigLoadable {
 
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (FireBlast ability : instances.values()) {
 			ability.progress();
@@ -321,7 +322,7 @@ public class FireBlast implements ConfigLoadable {
 	public void remove() {
 		instances.remove(id);
 	}
-	
+
 	public static void removeAll() {
 		for (FireBlast ability : instances.values()) {
 			ability.remove();

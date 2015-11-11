@@ -29,9 +29,9 @@ import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 public class AirSwipe implements ConfigLoadable {
-	
-	public static final ConcurrentHashMap<Player, AirSwipe> instances = new ConcurrentHashMap<>();
-	
+
+	public static ConcurrentHashMap<Player, AirSwipe> instances = new ConcurrentHashMap<>();
+
 	private static int stepsize = 4;
 
 	private static int ARC = config.get().getInt("Abilities.Air.AirSwipe.Arc");
@@ -77,7 +77,7 @@ public class AirSwipe implements ConfigLoadable {
 			return;
 		}
 		/* End Initial Check */
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		this.charging = charging;
 		origin = player.getEyeLocation();
@@ -102,7 +102,7 @@ public class AirSwipe implements ConfigLoadable {
 				Location vectorLoc = aswipe.elements.get(vec);
 				if (vectorLoc != null && vectorLoc.getWorld().equals(loc.getWorld())) {
 					if (vectorLoc.distance(loc) <= radius) {
-						//instances.remove(aswipe.uuid);
+						// instances.remove(aswipe.uuid);
 						aswipe.remove();
 						removed = true;
 					}
@@ -129,7 +129,10 @@ public class AirSwipe implements ConfigLoadable {
 
 					double radius = FireBlast.AFFECTING_RADIUS;
 					Player source = player;
-					if (EarthBlast.annihilateBlasts(location, radius, source) || WaterManipulation.annihilateBlasts(location, radius, source) || FireBlast.annihilateBlasts(location, radius, source) || Combustion.removeAroundPoint(location, radius)) {
+					if (EarthBlast.annihilateBlasts(location, radius, source)
+							|| WaterManipulation.annihilateBlasts(location, radius, source)
+							|| FireBlast.annihilateBlasts(location, radius, source)
+							|| Combustion.removeAroundPoint(location, radius)) {
 						elements.remove(direction);
 						damage = 0;
 						remove();
@@ -304,7 +307,8 @@ public class AirSwipe implements ConfigLoadable {
 				remove();
 				return false;
 			}
-			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.canBend(player.getName(), "AirSwipe")) {
+			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe")
+					|| !GeneralMethods.canBend(player.getName(), "AirSwipe")) {
 				remove();
 				return false;
 			}
@@ -331,13 +335,13 @@ public class AirSwipe implements ConfigLoadable {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (AirSwipe ability : instances.values()) {
 			ability.progress();
 		}
 	}
-	
+
 	public void remove() {
 		instances.remove(player);
 	}
@@ -347,7 +351,7 @@ public class AirSwipe implements ConfigLoadable {
 			ability.remove();
 		}
 	}
-	
+
 	@Override
 	public void reloadVariables() {
 		ARC = config.get().getInt("Abilities.Air.AirSwipe.Arc");

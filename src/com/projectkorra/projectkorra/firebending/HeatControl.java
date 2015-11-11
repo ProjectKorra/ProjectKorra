@@ -20,7 +20,9 @@ import com.projectkorra.projectkorra.util.TempBlock;
  * Created by Carbogen on 11/02/15. Ability HeatControl
  */
 public class HeatControl implements ConfigLoadable {
-	public static final ConcurrentHashMap<Player, HeatControl> instances = new ConcurrentHashMap<>();
+
+	public static ConcurrentHashMap<Player, HeatControl> instances = new ConcurrentHashMap<>();
+
 	public static double RANGE = config.get().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
 	public static int RADIUS = config.get().getInt("Abilities.Fire.HeatControl.Solidify.Radius");
 	public static int REVERT_TIME = config.get().getInt("Abilities.Fire.HeatControl.Solidify.RevertTime");
@@ -153,7 +155,7 @@ public class HeatControl implements ConfigLoadable {
 		freeze(area);
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (HeatControl ability : instances.values()) {
 			ability.progress();

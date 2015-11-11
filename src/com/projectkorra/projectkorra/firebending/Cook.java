@@ -15,7 +15,9 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
  * Used in {@link HeatControl}.
  */
 public class Cook {
-	public static final ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<>();
+	
+	public static ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<>();
+	
 	private static final long COOK_TIME = 2000;
 	private static final Material[] cookables = { Material.RAW_BEEF, Material.RAW_CHICKEN, Material.RAW_FISH, Material.PORK,
 			Material.POTATO_ITEM, Material.RABBIT, Material.MUTTON };

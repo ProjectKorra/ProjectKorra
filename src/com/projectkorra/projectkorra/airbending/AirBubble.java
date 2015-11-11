@@ -16,7 +16,9 @@ import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 public class AirBubble implements ConfigLoadable {
-	public static final ConcurrentHashMap<Player, AirBubble> instances = new ConcurrentHashMap<>();
+	
+	public static ConcurrentHashMap<Player, AirBubble> instances = new ConcurrentHashMap<>();
+	
 	private static double DEFAULT_AIR_RADIUS = config.get().getDouble("Abilities.Air.AirBubble.Radius");
 	private static double DEFAULT_WATER_RADIUS = config.get().getDouble("Abilities.Water.WaterBubble.Radius");
 
@@ -53,7 +55,7 @@ public class AirBubble implements ConfigLoadable {
 			if (GeneralMethods.getBoundAbility(player) != null) {
 				if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble")
 						|| GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble")) {
-					if (instances.containsKey(player) && player.isSneaking()) {
+					if (!instances.containsKey(player) && player.isSneaking()) {
 						new AirBubble(player);
 					}
 				}

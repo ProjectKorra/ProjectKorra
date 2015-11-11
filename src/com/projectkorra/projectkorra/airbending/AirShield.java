@@ -22,8 +22,8 @@ import com.projectkorra.projectkorra.firebending.FireStream;
 
 public class AirShield implements ConfigLoadable {
 
-	public static final ConcurrentHashMap<Player, AirShield> instances = new ConcurrentHashMap<>();
-	
+	public static ConcurrentHashMap<Player, AirShield> instances = new ConcurrentHashMap<>();
+
 	private static double MAX_RADIUS = config.get().getDouble("Abilities.Air.AirShield.Radius");
 	private static boolean isToggle = config.get().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
 	private static int numberOfStreams = (int) (.75 * (double) MAX_RADIUS);
@@ -38,12 +38,12 @@ public class AirShield implements ConfigLoadable {
 	public AirShield(Player player) {
 		/* Initial Check */
 		if (AvatarState.isAvatarState(player) && instances.containsKey(player) && isToggle) {
-			//instances.remove(player.getUniqueId());
+			// instances.remove(player.getUniqueId());
 			instances.get(player).remove();
 			return;
 		}
 		/* End Initial Check */
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		int angle = 0;
 		int di = (int) (maxradius * 2 / numberOfStreams);
@@ -58,7 +58,11 @@ public class AirShield implements ConfigLoadable {
 	}
 
 	public static String getDescription() {
-		return "Air Shield is one of the most powerful defensive techniques in existence. " + "To use, simply sneak (default: shift). " + "This will create a whirlwind of air around the user, " + "with a small pocket of safe space in the center. " + "This wind will deflect all projectiles and will prevent any creature from " + "entering it for as long as its maintained. ";
+		return "Air Shield is one of the most powerful defensive techniques in existence. "
+				+ "To use, simply sneak (default: shift). " + "This will create a whirlwind of air around the user, "
+				+ "with a small pocket of safe space in the center. "
+				+ "This wind will deflect all projectiles and will prevent any creature from "
+				+ "entering it for as long as its maintained. ";
 	}
 
 	public static boolean isWithinShield(Location loc) {
@@ -100,7 +104,8 @@ public class AirShield implements ConfigLoadable {
 		}
 
 		if (isToggle) {
-			if (((!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player.isSneaking())) && !AvatarState.isAvatarState(player)) {
+			if (((!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player.isSneaking()))
+					&& !AvatarState.isAvatarState(player)) {
 				remove();
 				return false;
 			}
@@ -112,25 +117,25 @@ public class AirShield implements ConfigLoadable {
 		}
 
 		//
-		//		if (((!Methods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player
-		//				.isSneaking()))) {
-		//			remove();
-		//			return false;
-		//		}
+		// if (((!Methods.getBoundAbility(player).equalsIgnoreCase("AirShield")) || (!player
+		// .isSneaking()))) {
+		// remove();
+		// return false;
+		// }
 		rotateShield();
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (AirShield ability : instances.values()) {
 			ability.progress();
 		}
 	}
-	
+
 	public void remove() {
 		instances.remove(player);
 	}
-	
+
 	public static void removeAll() {
 		for (AirShield ability : instances.values()) {
 			ability.remove();
@@ -191,7 +196,7 @@ public class AirShield implements ConfigLoadable {
 				entity.setFallDistance(0);
 			}
 		}
-		
+
 		for (Block testblock : GeneralMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
@@ -209,7 +214,7 @@ public class AirShield implements ConfigLoadable {
 
 			y = origin.getY() + factor * (double) i;
 
-			//double theta = Math.asin(y/radius);
+			// double theta = Math.asin(y/radius);
 			double f = Math.sqrt(1 - factor * factor * ((double) i / radius) * ((double) i / radius));
 
 			x = origin.getX() + radius * Math.cos(angle) * f;
@@ -223,8 +228,8 @@ public class AirShield implements ConfigLoadable {
 				}
 			}
 
-			//				origin.getWorld().playEffect(effect, Effect.SMOKE, 4,
-			//						(int) AirBlast.defaultrange);
+			// origin.getWorld().playEffect(effect, Effect.SMOKE, 4,
+			// (int) AirBlast.defaultrange);
 
 			angles.put(i, angles.get(i) + (int) (10 * speedfactor));
 		}

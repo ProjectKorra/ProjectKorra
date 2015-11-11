@@ -29,9 +29,9 @@ public class Combustion implements ConfigLoadable {
 	public static boolean breakblocks = config.get().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
 	public static double radius = config.get().getDouble("Abilities.Fire.Combustion.Radius");
 	public static double defaultdamage = config.get().getDouble("Abilities.Fire.Combustion.Damage");
-	
+
 	public static ConcurrentHashMap<Player, Combustion> instances = new ConcurrentHashMap<>();
-	
+
 	private static final int maxticks = 10000;
 
 	private Location location;
@@ -56,7 +56,7 @@ public class Combustion implements ConfigLoadable {
 		if (bPlayer.isOnCooldown("Combustion"))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		starttime = System.currentTimeMillis();
 		origin = player.getEyeLocation();
@@ -85,7 +85,8 @@ public class Combustion implements ConfigLoadable {
 		if (instances.containsKey(player)) {
 			Combustion combustion = instances.get(player);
 			combustion.createExplosion(combustion.location, combustion.power, breakblocks);
-			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 3);
+			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(),
+					(float) Math.random(), 0, 3);
 		}
 	}
 
@@ -103,11 +104,13 @@ public class Combustion implements ConfigLoadable {
 	}
 
 	private void advanceLocation() {
-		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random()/2, (float) Math.random()/2, (float) Math.random()/2, 0, 5);
-		ParticleEffect.FLAME.display(location, (float) Math.random()/2, (float) Math.random()/2, (float) Math.random()/2, 0, 2);
-		//if (Methods.rand.nextInt(4) == 0) {
+		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random() / 2, (float) Math.random() / 2,
+				(float) Math.random() / 2, 0, 5);
+		ParticleEffect.FLAME.display(location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2,
+				0, 2);
+		// if (Methods.rand.nextInt(4) == 0) {
 		FireMethods.playCombustionSound(location);
-		//}
+		// }
 		location = location.add(direction.clone().multiply(speedfactor));
 	}
 
@@ -115,7 +118,8 @@ public class Combustion implements ConfigLoadable {
 		block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), (float) defaultpower, true, breakblocks);
 		for (Entity entity : block.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distance(block) < radius) { // They are close enough to the explosion.
+				if (entity.getLocation().distance(block) < radius) { // They are close enough to the
+																		// explosion.
 					GeneralMethods.damageEntity(player, entity, damage, "Combustion");
 					AirMethods.breakBreathbendingHold(entity);
 				}
@@ -140,7 +144,8 @@ public class Combustion implements ConfigLoadable {
 			return false;
 		}
 
-		if (GeneralMethods.getBoundAbility(player) == null || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Combustion")) {
+		if (GeneralMethods.getBoundAbility(player) == null
+				|| !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Combustion")) {
 			remove();
 			return false;
 		}
@@ -164,7 +169,8 @@ public class Combustion implements ConfigLoadable {
 
 		Block block = location.getBlock();
 		if (block != null) {
-			if (block.getType() != Material.AIR && block.getType() != Material.WATER && block.getType() != Material.STATIONARY_WATER) {
+			if (block.getType() != Material.AIR && block.getType() != Material.WATER
+					&& block.getType() != Material.STATIONARY_WATER) {
 				createExplosion(block.getLocation(), power, breakblocks);
 			}
 		}
@@ -180,7 +186,7 @@ public class Combustion implements ConfigLoadable {
 		advanceLocation();
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (Combustion ability : instances.values()) {
 			ability.progress();

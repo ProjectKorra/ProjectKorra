@@ -14,8 +14,8 @@ import com.projectkorra.projectkorra.util.Flight;
 
 public class AirSpout implements ConfigLoadable {
 
-	public static final ConcurrentHashMap<Player, AirSpout> instances = new ConcurrentHashMap<>();
-	
+	public static ConcurrentHashMap<Player, AirSpout> instances = new ConcurrentHashMap<>();
+
 	private static double HEIGHT = config.get().getDouble("Abilities.Air.AirSpout.Height");
 	private static final long interval = 100;
 
@@ -31,7 +31,7 @@ public class AirSpout implements ConfigLoadable {
 			return;
 		}
 		/* End Initial Check */
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		time = System.currentTimeMillis();
 		new Flight(player);
@@ -95,8 +95,9 @@ public class AirSpout implements ConfigLoadable {
 
 	public boolean progress() {
 		if (!GeneralMethods.canBend(player.getName(), "AirSpout")
-		//				|| !Methods.hasAbility(player, Abilities.AirSpout)
-		|| player.getEyeLocation().getBlock().isLiquid() || GeneralMethods.isSolid(player.getEyeLocation().getBlock()) || player.isDead() || !player.isOnline()) {
+				// || !Methods.hasAbility(player, Abilities.AirSpout)
+				|| player.getEyeLocation().getBlock().isLiquid() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())
+				|| player.isDead() || !player.isOnline()) {
 			remove();
 			return false;
 		}
@@ -119,7 +120,7 @@ public class AirSpout implements ConfigLoadable {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (AirSpout ability : instances.values()) {
 			ability.progress();
@@ -136,7 +137,7 @@ public class AirSpout implements ConfigLoadable {
 		removeFlight();
 		instances.remove(player);
 	}
-	
+
 	public static void removeAll() {
 		for (AirSpout ability : instances.values()) {
 			ability.remove();
@@ -156,7 +157,7 @@ public class AirSpout implements ConfigLoadable {
 
 		if (System.currentTimeMillis() >= time + interval) {
 			time = System.currentTimeMillis();
-			
+
 			Location location = block.getLocation();
 			Location playerloc = player.getLocation();
 			location = new Location(location.getWorld(), playerloc.getX(), location.getY(), playerloc.getZ());
@@ -177,10 +178,7 @@ public class AirSpout implements ConfigLoadable {
 					index = 0;
 
 				Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
-
 				AirMethods.playAirbendingParticles(effectloc2, 3, 0.4F, 0.4F, 0.4F);
-				//				location.getWorld().playEffect(effectloc2, Effect.SMOKE,
-				//						(int) directions[index], (int) height + 5);
 
 				// Methods.verbose(directions[index]);
 

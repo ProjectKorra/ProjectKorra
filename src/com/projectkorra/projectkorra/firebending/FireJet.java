@@ -11,14 +11,15 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.airbending.AirBurst;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 public class FireJet implements ConfigLoadable {
-	public static final ConcurrentHashMap<Player, FireJet> instances = new ConcurrentHashMap<>();
+	
+	public static ConcurrentHashMap<Player, FireJet> instances = new ConcurrentHashMap<>();
+	
 	private static double defaultfactor = config.get().getDouble("Abilities.Fire.FireJet.Speed");
 	private static long defaultduration = config.get().getLong("Abilities.Fire.FireJet.Duration");
 	private static boolean isToggle = config.get().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
@@ -38,16 +39,16 @@ public class FireJet implements ConfigLoadable {
 		if (bPlayer.isOnCooldown("FireJet"))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
-		
+		// reloadVariables();
+
 		factor = FireMethods.getFirebendingDayAugment(defaultfactor, player.getWorld());
 		Block block = player.getLocation().getBlock();
 		if (FireStream.isIgnitable(player, block) || block.getType() == Material.AIR || AvatarState.isAvatarState(player)) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(factor));
 			if (FireMethods.canFireGrief()) {
 				FireMethods.createTempFire(block.getLocation());
-			}
-			else block.setType(Material.FIRE);
+			} else
+				block.setType(Material.FIRE);
 			this.player = player;
 			// canfly = player.getAllowFlight();
 			new Flight(player);
@@ -93,7 +94,8 @@ public class FireJet implements ConfigLoadable {
 			remove();
 			return false;
 		}
-		if ((WaterMethods.isWater(player.getLocation().getBlock()) || System.currentTimeMillis() > time + duration) && (!AvatarState.isAvatarState(player) || !isToggle)) {
+		if ((WaterMethods.isWater(player.getLocation().getBlock()) || System.currentTimeMillis() > time + duration)
+				&& (!AvatarState.isAvatarState(player) || !isToggle)) {
 			// player.setAllowFlight(canfly);
 			remove();
 		} else {
@@ -117,7 +119,7 @@ public class FireJet implements ConfigLoadable {
 		}
 		return true;
 	}
-	
+
 	public static void progressAll() {
 		for (FireJet ability : instances.values()) {
 			ability.progress();
@@ -130,11 +132,11 @@ public class FireJet implements ConfigLoadable {
 		defaultduration = config.get().getLong("Abilities.Fire.FireJet.Duration");
 		isToggle = config.get().getBoolean("Abilities.Fire.FireJet.IsAvatarStateToggle");
 	}
-	
+
 	public void remove() {
 		instances.remove(player);
 	}
-	
+
 	public static void removeAll() {
 		for (FireJet ability : instances.values()) {
 			ability.remove();
