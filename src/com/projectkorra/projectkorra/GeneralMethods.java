@@ -1851,8 +1851,9 @@ public class GeneralMethods {
 			for (final ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
 				if (info.getName().startsWith("com.projectkorra.")) {
 					final Class<?> clazz = info.load();				    
-				    for (Field field : clazz.getFields()) {
+				    for (Field field : clazz.getDeclaredFields()) {
 				    	String simpleName = clazz.getSimpleName();
+				    	field.setAccessible(true);
 				    	try {
 				    		Object obj = field.get(null);
 				    		if (obj instanceof Collection) {
