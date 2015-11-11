@@ -1,12 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -18,10 +13,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.StockAbility;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
-public class FireShield extends CoreAbility {
-
+public class FireShield implements ConfigLoadable {
+	public static final ConcurrentHashMap<Player, FireShield> instances = new ConcurrentHashMap<>();
 	private static long interval = 100;
 	private static long DURATION = config.get().getLong("Abilities.Fire.FireShield.Duration");
 	private static double RADIUS = config.get().getDouble("Abilities.Fire.FireShield.Radius");
@@ -43,7 +44,7 @@ public class FireShield extends CoreAbility {
 
 	public FireShield(Player player, boolean shield) {
 		/* Initial Checks */
-		if (containsPlayer(player, FireShield.class))
+		if (instances.containsKey(player))
 			return;
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("FireShield"))
@@ -56,8 +57,7 @@ public class FireShield extends CoreAbility {
 		if (!player.getEyeLocation().getBlock().isLiquid()) {
 			time = System.currentTimeMillis();
 			starttime = time;
-			//instances.put(player, this);
-			putInstance(player, this);
+			instances.put(player, this);
 			if (!shield)
 				bPlayer.addCooldown("FireShield", GeneralMethods.getGlobalCooldown());
 		}
@@ -68,8 +68,7 @@ public class FireShield extends CoreAbility {
 	}
 
 	public static boolean isWithinShield(Location loc) {
-		for (Integer id : getInstances(StockAbility.FireShield).keySet()) {
-			FireShield fshield = (FireShield) getAbility(id);
+		for (FireShield fshield : instances.values()) {
 			Location playerLoc = fshield.player.getLocation();
 
 			if (fshield.shield) {
@@ -108,7 +107,6 @@ public class FireShield extends CoreAbility {
 		return radius;
 	}
 
-	@Override
 	public StockAbility getStockAbility() {
 		return StockAbility.FireShield;
 	}
@@ -117,7 +115,6 @@ public class FireShield extends CoreAbility {
 		return shield;
 	}
 
-	@Override
 	public boolean progress() {
 		if (((!player.isSneaking()) && shield) || !GeneralMethods.canBend(player.getName(), "FireShield")) {
 			remove();
@@ -238,6 +235,10 @@ public class FireShield extends CoreAbility {
 			}
 		}
 		return true;
+	}
+	
+	public void remove() {
+		instances.remove(player);
 	}
 
 	@Override

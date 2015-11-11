@@ -1,21 +1,21 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.api.AddonAbility;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 /**
  * Used in {@link HeatControl}.
  */
-public class Cook extends AddonAbility {
-
+public class Cook {
+	public static final ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<>();
 	private static final long COOK_TIME = 2000;
 	private static final Material[] cookables = { Material.RAW_BEEF,
 		Material.RAW_CHICKEN, Material.RAW_FISH, Material.PORK,
@@ -32,8 +32,7 @@ public class Cook extends AddonAbility {
 		items = player.getItemInHand();
 		time = System.currentTimeMillis();
 		if (isCookable(items.getType())) {
-			//instances.put(player, this);
-			putInstance(player, this);
+			instances.put(player, this);
 		}
 	}
 
@@ -104,7 +103,6 @@ public class Cook extends AddonAbility {
 		return time;
 	}
 
-	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
@@ -139,8 +137,6 @@ public class Cook extends AddonAbility {
 		return true;
 	}
 
-	@Override
-	public void reloadVariables() {}
 
 	public void setCooktime(long cooktime) {
 		this.cooktime = cooktime;
@@ -148,6 +144,10 @@ public class Cook extends AddonAbility {
 
 	public void setTime(long time) {
 		this.time = time;
+	}
+	
+	public void remove() {
+		instances.remove(player);
 	}
 
 }

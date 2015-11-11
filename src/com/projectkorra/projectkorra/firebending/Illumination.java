@@ -1,19 +1,19 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.StockAbility;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 
-public class Illumination extends CoreAbility {
-
+public class Illumination implements ConfigLoadable {
+	public static final ConcurrentHashMap<Player, Illumination> instances = new ConcurrentHashMap<>();
 	public static ConcurrentHashMap<Block, Player> blocks = new ConcurrentHashMap<Block, Player>();
 
 	private static int range = config.get().getInt("Abilities.Fire.Illumination.Range");
@@ -30,14 +30,13 @@ public class Illumination extends CoreAbility {
 			return;
 		/* End Initial Checks */
 
-		if (containsPlayer(player, Illumination.class)) {
-			getAbilityFromPlayer(player, Illumination.class).remove();
+		if (instances.containsKey(player)) {
+			instances.get(player).remove();
 		} else {
 			//reloadVariables();
 			this.player = player;
 			set();
-			//instances.put(player, this);
-			putInstance(player, this);
+			instances.put(player, this);
 			bPlayer.addCooldown("Illumination", GeneralMethods.getGlobalCooldown());
 		}
 	}
@@ -48,12 +47,7 @@ public class Illumination extends CoreAbility {
 
 	public static void revert(Block block) {
 		Player player = blocks.get(block);
-		((Illumination) getAbilityFromPlayer(player, Illumination.class)).revert();
-	}
-
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.Illumination;
+		instances.get(player).revert();
 	}
 
 	//	public static void manage(Server server) {
@@ -76,7 +70,6 @@ public class Illumination extends CoreAbility {
 	//		}
 	//	}
 
-	@Override
 	public boolean progress() {
 		if (!player.isOnline() || player.isDead()) {
 			remove();
@@ -96,10 +89,9 @@ public class Illumination extends CoreAbility {
 		range = config.get().getInt("Abilities.Fire.Illumination.Range");
 	}
 
-	@Override
 	public void remove() {
 		revert();
-		super.remove();
+		instances.remove(player);
 	}
 
 	@SuppressWarnings("deprecation")

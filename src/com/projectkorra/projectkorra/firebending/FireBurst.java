@@ -1,12 +1,8 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.BendingManager;
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -15,10 +11,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.projectkorra.BendingManager;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 
-public class FireBurst extends CoreAbility {
+public class FireBurst implements ConfigLoadable {
+	public static final ConcurrentHashMap<Player, FireBurst> instances = new ConcurrentHashMap<>();
 	private static double PARTICLES_PERCENTAGE = 5;
 
 	private Player player;
@@ -36,7 +37,7 @@ public class FireBurst extends CoreAbility {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("FireBurst"))
 			return;
-		if (containsPlayer(player, FireBurst.class))
+		if (instances.containsKey(player))
 			return;
 		/* End Initial Checks */
 		//reloadVariables();
@@ -52,13 +53,13 @@ public class FireBurst extends CoreAbility {
 				chargetime = 0;
 		}
 		this.player = player;
-		//instances.put(player, this);
-		putInstance(player, this);
+		instances.put(player, this);
 	}
 
 	public static void coneBurst(Player player) {
-		if (containsPlayer(player, FireBurst.class))
-			((FireBurst) getAbilityFromPlayer(player, FireBurst.class)).coneBurst();
+		if (instances.containsKey(player)) {
+			((FireBurst) instances.get(player)).coneBurst();
+		}
 	}
 
 	public static String getDescription() {
@@ -111,9 +112,8 @@ public class FireBurst extends CoreAbility {
 		return range;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.FireBurst;
+	public void remove() {
+		instances.remove(player);
 	}
 
 	/**
@@ -133,7 +133,6 @@ public class FireBurst extends CoreAbility {
 		}
 	}
 
-	@Override
 	public boolean progress() {
 		if (!GeneralMethods.canBend(player.getName(), "FireBurst")) {
 			remove();

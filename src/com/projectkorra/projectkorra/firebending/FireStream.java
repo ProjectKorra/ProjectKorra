@@ -1,9 +1,8 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.ability.api.AddonAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.waterbending.Plantbending;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,11 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.waterbending.Plantbending;
+import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
-public class FireStream extends AddonAbility {
-
+public class FireStream implements ConfigLoadable {
+	public static final ConcurrentHashMap<Integer, FireStream> instances = new ConcurrentHashMap<>();
 	public static ConcurrentHashMap<Block, Player> ignitedblocks = new ConcurrentHashMap<Block, Player>();
 	public static ConcurrentHashMap<Block, Long> ignitedtimes = new ConcurrentHashMap<Block, Long>();
 	public static ConcurrentHashMap<Location, MaterialData> replacedBlocks = new ConcurrentHashMap<Location, MaterialData>();
@@ -30,7 +30,8 @@ public class FireStream extends AddonAbility {
 	private static int firedamage = 3;
 	@SuppressWarnings("unused")
 	private static int tickdamage = 2;
-
+	
+	private static int idCounter = 0;
 	private static double speed = 15;
 	private static long interval = (long) (1000. / speed);
 	private static long dissipateAfter = 400;
@@ -41,6 +42,7 @@ public class FireStream extends AddonAbility {
 	private Vector direction;
 	private long time;
 	private double range;
+	private int id;
 
 	public FireStream(Location location, Vector direction, Player player, int range) {
 		this.range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
@@ -52,8 +54,9 @@ public class FireStream extends AddonAbility {
 		this.direction = this.direction.clone().normalize();
 		this.location = this.location.clone().add(this.direction);
 		time = System.currentTimeMillis();
-		//instances.put(id, this);
-		putInstance(player, this);
+		instances.put(idCounter, this);
+		this.id = idCounter;
+		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
 	}
 
 	public static void dissipateAll() {
@@ -111,25 +114,24 @@ public class FireStream extends AddonAbility {
 		}
 	}
 
-	public static void removeAll(Class<? extends CoreAbility> abilityClass) {
+	public static void removeAll() {
 		for (Block block : ignitedblocks.keySet())
 			remove(block);
-		AddonAbility.removeAll(abilityClass);
+		
+		Iterator<Integer> iter = instances.keySet().iterator();
+		while (iter.hasNext()) {
+			Integer key = iter.next();
+			instances.get(key).remove();
+		}
 	}
 
 	public static void removeAroundPoint(Location location, double radius) {
-		for (int id : getInstances(FireStream.class).keySet()) {
-			FireStream stream = (FireStream) getAbility(id);
+		for (FireStream stream : instances.values()) {
 			if (stream.location.getWorld().equals(location.getWorld()))
 				if (stream.location.distance(location) <= radius)
 					stream.remove();
 		}
 
-	}
-
-	@Override
-	public InstanceType getInstanceType() {
-		return InstanceType.MULTIPLE;
 	}
 
 	public Player getPlayer() {
@@ -154,7 +156,6 @@ public class FireStream extends AddonAbility {
 		ignitedtimes.put(block, System.currentTimeMillis());
 	}
 
-	@Override
 	public boolean progress() {
 		if (System.currentTimeMillis() - time >= interval) {
 			location = location.clone().add(direction);
@@ -182,6 +183,10 @@ public class FireStream extends AddonAbility {
 
 		}
 		return false;
+	}
+	
+	public void remove() {
+		instances.remove(id);
 	}
 
 	@Override
