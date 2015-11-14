@@ -77,9 +77,6 @@ public class CompactColumn {
 
 		if (distance != 0) {
 			if (canInstantiate()) {
-				for (Block blocki : affectedblocks.keySet()) {
-					EarthColumn.resetBlock(blocki);
-				}
 				id = ID;
 				instances.put(id, this);
 				if (ID >= Integer.MAX_VALUE) {
@@ -144,9 +141,6 @@ public class CompactColumn {
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			if (!moveEarth()) {
-				for (Block blocki : affectedblocks.keySet()) {
-					EarthColumn.resetBlock(blocki);
-				}
 				instances.remove(id);
 				// for (Block block : affectedblocks.keySet()) {
 				// alreadydoneblocks.put(block, block);

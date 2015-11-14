@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -17,8 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EarthColumn {
 
 	public static ConcurrentHashMap<Integer, EarthColumn> instances = new ConcurrentHashMap<Integer, EarthColumn>();
-	private static ConcurrentHashMap<Block, Block> alreadydoneblocks = new ConcurrentHashMap<Block, Block>();
-	private static ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
 
 	public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
 	private static int ID = Integer.MIN_VALUE;
@@ -158,7 +157,7 @@ public class EarthColumn {
 
 	private boolean canInstantiate() {
 		for (Block block : affectedblocks.keySet()) {
-			if (blockInAllAffectedBlocks(block) || alreadydoneblocks.containsKey(block)) {
+			if (blockInAllAffectedBlocks(block) || block.getType()==Material.AIR) {
 				return false;
 			}
 		}
@@ -176,10 +175,6 @@ public class EarthColumn {
 			time = System.currentTimeMillis();
 			if (!moveEarth()) {
 				instances.remove(id);
-				for (Block block : affectedblocks.keySet()) {
-					alreadydoneblocks.put(block, block);
-				}
-				baseblocks.put(location.clone().add(direction.clone().multiply(-1 * (distance - 1))).getBlock(), (distance - 1));
 
 				return false;
 			}
@@ -200,32 +195,10 @@ public class EarthColumn {
 		return true;
 	}
 
-	public static boolean blockIsBase(Block block) {
-		if (baseblocks.containsKey(block)) {
-			return true;
-		}
-		return false;
-	}
-
-	public static void removeBlockBase(Block block) {
-		if (baseblocks.containsKey(block)) {
-			baseblocks.remove(block);
-		}
-
-	}
-
 	public static void removeAll() {
 		for (int id : instances.keySet()) {
 			instances.remove(id);
 		}
-	}
-
-	public static void resetBlock(Block block) {
-
-		if (alreadydoneblocks.containsKey(block)) {
-			alreadydoneblocks.remove(block);
-		}
-
 	}
 
 	public static String getDescription() {
