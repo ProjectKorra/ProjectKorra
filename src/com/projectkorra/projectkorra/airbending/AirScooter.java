@@ -1,7 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -10,9 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirScooter implements ConfigLoadable {
 
@@ -155,7 +156,10 @@ public class AirScooter implements ConfigLoadable {
 			velocity.setY(0);
 		}
 		Location loc = player.getLocation();
-		loc.setY((double) floorblock.getY() + 1.5);
+		if (!WaterMethods.isWater(player.getLocation().add(0, 2, 0).getBlock()))
+			loc.setY((double) floorblock.getY() + 1.5);
+		else
+			return false;
 		// player.setFlying(true);
 		// player.teleport(loc.add(velocity));
 		player.setSprinting(false);
