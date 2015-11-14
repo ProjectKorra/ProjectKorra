@@ -258,7 +258,7 @@ public class AirSuction extends CoreAbility {
 						continue;
 				}
 				GeneralMethods.setVelocity(entity, velocity);
-				new HorizontalVelocityTracker(entity, player, 200l);
+				new HorizontalVelocityTracker(entity, player, 200l, StockAbility.AirSuction);
 				entity.setFallDistance(0);
 				if (entity.getEntityId() != player.getEntityId() && entity instanceof Player) {
 					new Flight((Player) entity, player);

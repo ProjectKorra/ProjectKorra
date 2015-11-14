@@ -69,7 +69,6 @@ public class AirBlast extends CoreAbility {
 	private ArrayList<Block> affectedlevers = new ArrayList<Block>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
-	@SuppressWarnings("unused")
 	private AirBurst source = null;
 
 	public AirBlast(Location location, Vector direction, Player player, double factorpush, AirBurst burst) {
@@ -230,7 +229,10 @@ public class AirBlast extends CoreAbility {
 				return;
 
 			GeneralMethods.setVelocity(entity, velocity);
-			new HorizontalVelocityTracker(entity, player, 200l);
+			if (source != null)
+				new HorizontalVelocityTracker(entity, player, 200l, StockAbility.AirBurst);
+			else 
+				new HorizontalVelocityTracker(entity, player, 200l, StockAbility.AirBlast);
 			entity.setFallDistance(0);
 			if (!isUser && entity instanceof Player) {
 				new Flight((Player) entity, player);

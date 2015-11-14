@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.ability.StockAbility;
 import com.projectkorra.projectkorra.airbending.AirMethods;
 import com.projectkorra.projectkorra.firebending.FireMethods;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
@@ -117,7 +118,7 @@ public class Bloodbending {
 			Vector vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, location.distance(target)));
 			vector.normalize();
 			entity.setVelocity(vector.multiply(factor));
-			new HorizontalVelocityTracker(entity, player, 200);
+			new HorizontalVelocityTracker(entity, player, 200, StockAbility.Bloodbending);
 		}
 		remove(player);
 	}
