@@ -1,17 +1,9 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.waterbending.Plantbending;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,18 +15,29 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.airbending.AirMethods;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.waterbending.Plantbending;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
-public class FireBlast extends CoreAbility {
+public class FireBlast implements ConfigLoadable {
+	
+	public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<>();
 
 	private static double SPEED = config.get().getDouble("Abilities.Fire.FireBlast.Speed");
 	private static double PUSH_FACTOR = config.get().getDouble("Abilities.Fire.FireBlast.Push");
 	private static double RANGE = config.get().getDouble("Abilities.Fire.FireBlast.Range");
 	private static int DAMAGE = config.get().getInt("Abilities.Fire.FireBlast.Damage");
 	private static double fireticks = config.get().getDouble("Abilities.Fire.FireBlast.FireTicks");
+	private static int idCounter = 0;
+
 	/* Package visible variables */
 	static boolean dissipate = config.get().getBoolean("Abilities.Fire.FireBlast.Dissipate");
 	/* End Package visible variables */
@@ -54,6 +57,7 @@ public class FireBlast extends CoreAbility {
 	private Player player;
 	private double speedfactor;
 	private int ticks = 0;
+	private int id = 0;
 	private double range = RANGE;
 	private double damage = DAMAGE;
 	private double speed = SPEED;
@@ -68,7 +72,7 @@ public class FireBlast extends CoreAbility {
 			return;
 		}
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		safe = safeblocks;
 		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
 		// timers.put(player, System.currentTimeMillis());
@@ -77,8 +81,9 @@ public class FireBlast extends CoreAbility {
 		origin = location.clone();
 		this.direction = direction.clone().normalize();
 		this.damage *= 1.5;
-		//instances.put(id, this);
-		putInstance(player, this);
+		instances.put(idCounter, this);
+		this.id = idCounter;
+		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
 	}
 
 	public FireBlast(Player player) {
@@ -90,15 +95,16 @@ public class FireBlast extends CoreAbility {
 			return;
 		}
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
 		this.player = player;
 		location = player.getEyeLocation();
 		origin = player.getEyeLocation();
 		direction = player.getEyeLocation().getDirection().normalize();
 		location = location.add(direction.clone());
-		//instances.put(id, this);
-		putInstance(player, this);
+		instances.put(idCounter, this);
+		this.id = idCounter;
+		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
 		bPlayer.addCooldown("FireBlast", cooldown);
 		// time = System.currentTimeMillis();
 		// timers.put(player, System.currentTimeMillis());
@@ -106,9 +112,7 @@ public class FireBlast extends CoreAbility {
 
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
 		boolean broke = false;
-		ConcurrentHashMap<Integer, CoreAbility> instances = getInstances(FireBlast.class);
-		for (Integer id : instances.keySet()) {
-			FireBlast blast = (FireBlast) instances.get(id);
+		for (FireBlast blast : instances.values()) {
 			Location fireblastlocation = blast.location;
 			if (location.getWorld() == fireblastlocation.getWorld() && !blast.player.equals(source)) {
 				if (location.distance(fireblastlocation) <= radius) {
@@ -124,9 +128,7 @@ public class FireBlast extends CoreAbility {
 
 	public static ArrayList<FireBlast> getAroundPoint(Location location, double radius) {
 		ArrayList<FireBlast> list = new ArrayList<FireBlast>();
-		ConcurrentHashMap<Integer, CoreAbility> instances = getInstances(FireBlast.class);
-		for (Integer id : instances.keySet()) {
-			FireBlast fireBlast = (FireBlast) instances.get(id);
+		for (FireBlast fireBlast : instances.values()) {
 			Location fireblastlocation = fireBlast.location;
 			if (location.getWorld() == fireblastlocation.getWorld()) {
 				if (location.distance(fireblastlocation) <= radius)
@@ -137,12 +139,18 @@ public class FireBlast extends CoreAbility {
 	}
 
 	public static String getDescription() {
-		return "FireBlast is the most fundamental bending technique of a firebender. " + "To use, simply left-click in a direction. A blast of fire will be created at your fingertips. " + "If this blast contacts an enemy, it will dissipate and engulf them in flames, " + "doing additional damage and knocking them back slightly. " + "If the blast hits terrain, it will ignite the nearby area. " + "Additionally, if you hold sneak, you will charge up the fireblast. " + "If you release it when it's charged, it will instead launch a powerful " + "fireball that explodes on contact.";
+		return "FireBlast is the most fundamental bending technique of a firebender. "
+				+ "To use, simply left-click in a direction. A blast of fire will be created at your fingertips. "
+				+ "If this blast contacts an enemy, it will dissipate and engulf them in flames, "
+				+ "doing additional damage and knocking them back slightly. "
+				+ "If the blast hits terrain, it will ignite the nearby area. "
+				+ "Additionally, if you hold sneak, you will charge up the fireblast. "
+				+ "If you release it when it's charged, it will instead launch a powerful "
+				+ "fireball that explodes on contact.";
 	}
 
 	public static void removeFireBlastsAroundPoint(Location location, double radius) {
-			for (Integer id : getInstances(StockAbility.FireBlast).keySet()) {
-			FireBlast fireBlast = ((FireBlast)getAbility(id));
+		for (FireBlast fireBlast : instances.values()) {
 			Location fireblastlocation = fireBlast.location;
 			if (location.getWorld() == fireblastlocation.getWorld()) {
 				if (location.distance(fireblastlocation) <= radius)
@@ -154,7 +162,8 @@ public class FireBlast extends CoreAbility {
 
 	private void advanceLocation() {
 		if (showParticles) {
-			//ParticleEffect.RED_DUST.display((float) 16, (float) 111, (float) 227, 0.01F, 0, location, 256D);
+			// ParticleEffect.RED_DUST.display((float) 16, (float) 111, (float) 227, 0.01F, 0,
+			// location, 256D);
 			ParticleEffect.FLAME.display(location, 0.275F, 0.275F, 0.275F, 0, 6);
 			ParticleEffect.SMOKE.display(location, 0.3F, 0.3F, 0.3F, 0, 3);
 		}
@@ -173,7 +182,8 @@ public class FireBlast extends CoreAbility {
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks((int) (fireticks * 20));
-				GeneralMethods.damageEntity(player, entity, (int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()), "FireBlast");
+				GeneralMethods.damageEntity(player, entity,
+						(int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()), "FireBlast");
 				AirMethods.breakBreathbendingHold(entity);
 				new Enflamed(entity, player);
 				remove();
@@ -193,11 +203,6 @@ public class FireBlast extends CoreAbility {
 		return damage;
 	}
 
-	@Override
-	public InstanceType getInstanceType() {
-		return InstanceType.MULTIPLE;
-	}
-
 	public Player getPlayer() {
 		return player;
 	}
@@ -214,23 +219,19 @@ public class FireBlast extends CoreAbility {
 		return speed;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.FireBlast;
-	}
-
 	private void ignite(Location location) {
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, affectingradius)) {
 			if (FireStream.isIgnitable(player, block) && !safe.contains(block)) {
-				/*if (WaterMethods.isPlantbendable(block)) {
-					new Plantbending(block);
-				}*/
+				/*
+				 * if (WaterMethods.isPlantbendable(block)) { new Plantbending(block); }
+				 */
 				if (FireMethods.canFireGrief()) {
-					if (WaterMethods.isPlantbendable(block)) new Plantbending(block);
+					if (WaterMethods.isPlantbendable(block))
+						new Plantbending(block);
 					block.setType(Material.FIRE);
-				}
-				else FireMethods.createTempFire(block.getLocation());
-				//block.setType(Material.FIRE);
+				} else
+					FireMethods.createTempFire(block.getLocation());
+				// block.setType(Material.FIRE);
 				if (dissipate) {
 					FireStream.ignitedblocks.put(block, player);
 					FireStream.ignitedtimes.put(block, System.currentTimeMillis());
@@ -239,7 +240,6 @@ public class FireBlast extends CoreAbility {
 		}
 	}
 
-	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
@@ -285,7 +285,8 @@ public class FireBlast extends CoreAbility {
 
 		double radius = affectingradius;
 		Player source = player;
-		if (EarthBlast.annihilateBlasts(location, radius, source) || WaterManipulation.annihilateBlasts(location, radius, source) || FireBlast.annihilateBlasts(location, radius, source)) {
+		if (EarthBlast.annihilateBlasts(location, radius, source) || WaterManipulation.annihilateBlasts(location, radius, source)
+				|| FireBlast.annihilateBlasts(location, radius, source)) {
 			remove();
 			return false;
 		}
@@ -310,6 +311,22 @@ public class FireBlast extends CoreAbility {
 		advanceLocation();
 
 		return true;
+	}
+
+	public static void progressAll() {
+		for (FireBlast ability : instances.values()) {
+			ability.progress();
+		}
+	}
+
+	public void remove() {
+		instances.remove(id);
+	}
+
+	public static void removeAll() {
+		for (FireBlast ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@Override

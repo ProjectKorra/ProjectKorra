@@ -535,8 +535,6 @@ public class EarthMethods {
 			if (EarthColumn.blockInAllAffectedBlocks(block))
 				EarthColumn.revertBlock(block);
 
-			EarthColumn.resetBlock(block);
-
 			movedearth.remove(block);
 		}
 	}
@@ -587,8 +585,6 @@ public class EarthMethods {
 					EarthColumn.revertBlock(sourceblock);
 				if (EarthColumn.blockInAllAffectedBlocks(block))
 					EarthColumn.revertBlock(block);
-				EarthColumn.resetBlock(sourceblock);
-				EarthColumn.resetBlock(block);
 				movedearth.remove(block);
 				return true;
 			}
@@ -616,8 +612,6 @@ public class EarthMethods {
 				EarthColumn.revertBlock(sourceblock);
 			if (EarthColumn.blockInAllAffectedBlocks(block))
 				EarthColumn.revertBlock(block);
-			EarthColumn.resetBlock(sourceblock);
-			EarthColumn.resetBlock(block);
 			movedearth.remove(block);
 		}
 		return true;
@@ -636,7 +630,7 @@ public class EarthMethods {
 	}
 
 	public static void stopBending() {
-		Catapult.removeAll(Catapult.class);
+		Catapult.removeAll();
 		CompactColumn.removeAll();
 		EarthBlast.removeAll();
 		EarthColumn.removeAll();

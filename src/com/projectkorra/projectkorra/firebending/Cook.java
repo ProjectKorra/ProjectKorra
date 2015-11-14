@@ -1,25 +1,26 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.api.AddonAbility;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 /**
  * Used in {@link HeatControl}.
  */
-public class Cook extends AddonAbility {
-
+public class Cook {
+	
+	public static ConcurrentHashMap<Player, Cook> instances = new ConcurrentHashMap<>();
+	
 	private static final long COOK_TIME = 2000;
-	private static final Material[] cookables = { Material.RAW_BEEF,
-		Material.RAW_CHICKEN, Material.RAW_FISH, Material.PORK,
-		Material.POTATO_ITEM, Material.RABBIT, Material.MUTTON };
+	private static final Material[] cookables = { Material.RAW_BEEF, Material.RAW_CHICKEN, Material.RAW_FISH, Material.PORK,
+			Material.POTATO_ITEM, Material.RABBIT, Material.MUTTON };
 
 	private Player player;
 	private ItemStack items;
@@ -27,13 +28,12 @@ public class Cook extends AddonAbility {
 	private long cooktime = COOK_TIME;
 
 	public Cook(Player player) {
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		items = player.getItemInHand();
 		time = System.currentTimeMillis();
 		if (isCookable(items.getType())) {
-			//instances.put(player, this);
-			putInstance(player, this);
+			instances.put(player, this);
 		}
 	}
 
@@ -87,7 +87,7 @@ public class Cook extends AddonAbility {
 			cooked = new ItemStack(Material.COOKED_RABBIT);
 			break;
 		default:
-			break; //Shouldn't happen
+			break; // Shouldn't happen
 		}
 		return cooked;
 	}
@@ -104,7 +104,6 @@ public class Cook extends AddonAbility {
 		return time;
 	}
 
-	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
@@ -139,8 +138,21 @@ public class Cook extends AddonAbility {
 		return true;
 	}
 
-	@Override
-	public void reloadVariables() {}
+	public static void progressAll() {
+		for (Cook ability : instances.values()) {
+			ability.progress();
+		}
+	}
+
+	public void remove() {
+		instances.remove(player);
+	}
+
+	public static void removeAll() {
+		for (Cook ability : instances.values()) {
+			ability.remove();
+		}
+	}
 
 	public void setCooktime(long cooktime) {
 		this.cooktime = cooktime;

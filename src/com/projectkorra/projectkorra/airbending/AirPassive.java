@@ -43,15 +43,21 @@ public class AirPassive implements ConfigLoadable {
 				if (!player.isOnline())
 					return;
 				if (GeneralMethods.canBendPassive(player.getName(), Element.Air)) {
-					player.setExhaustion(getExhaustion(player, player.getExhaustion())); // Handles Food Passive
+					player.setExhaustion(getExhaustion(player, player.getExhaustion())); // Handles
+																							// Food
+																							// Passive
 					if (player.isSprinting()) {
 						if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
 							speedPower = config.get().getInt("Abilities.Air.Passive.Speed");
-							player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speedPower - 1)); // Handles Speed Passive
+							player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speedPower - 1)); // Handles
+																													// Speed
+																													// Passive
 						}
 						if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
 							jumpPower = config.get().getInt("Abilities.Air.Passive.Jump");
-							player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jumpPower - 1)); // Handles jump passive.
+							player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jumpPower - 1)); // Handles
+																												// jump
+																												// passive.
 						}
 					}
 				}

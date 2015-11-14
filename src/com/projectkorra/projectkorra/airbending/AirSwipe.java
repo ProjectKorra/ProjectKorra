@@ -1,19 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.firebending.Combustion;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.firebending.Illumination;
-import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,12 +14,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.firebending.Combustion;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.firebending.Illumination;
+import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
-public class AirSwipe extends CoreAbility {
+public class AirSwipe implements ConfigLoadable {
+
+	public static ConcurrentHashMap<Player, AirSwipe> instances = new ConcurrentHashMap<>();
 
 	private static int stepsize = 4;
 
@@ -76,14 +77,13 @@ public class AirSwipe extends CoreAbility {
 			return;
 		}
 		/* End Initial Check */
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		this.charging = charging;
 		origin = player.getEyeLocation();
 		time = System.currentTimeMillis();
 
-		//instances.put(uuid, this);
-		putInstance(player, this);
+		instances.put(player, this);
 
 		bPlayer.addCooldown("AirSwipe", ProjectKorra.plugin.getConfig().getLong("Abilities.Air.AirSwipe.Cooldown"));
 
@@ -97,14 +97,12 @@ public class AirSwipe extends CoreAbility {
 
 	public static boolean removeSwipesAroundPoint(Location loc, double radius) {
 		boolean removed = false;
-		for (Integer id : getInstances(StockAbility.AirSwipe).keySet()) {
-			AirSwipe aswipe = (AirSwipe) getAbility(id);
-
+		for (AirSwipe aswipe : instances.values()) {
 			for (Vector vec : aswipe.elements.keySet()) {
 				Location vectorLoc = aswipe.elements.get(vec);
 				if (vectorLoc != null && vectorLoc.getWorld().equals(loc.getWorld())) {
 					if (vectorLoc.distance(loc) <= radius) {
-						//instances.remove(aswipe.uuid);
+						// instances.remove(aswipe.uuid);
 						aswipe.remove();
 						removed = true;
 					}
@@ -131,7 +129,10 @@ public class AirSwipe extends CoreAbility {
 
 					double radius = FireBlast.AFFECTING_RADIUS;
 					Player source = player;
-					if (EarthBlast.annihilateBlasts(location, radius, source) || WaterManipulation.annihilateBlasts(location, radius, source) || FireBlast.annihilateBlasts(location, radius, source) || Combustion.removeAroundPoint(location, radius)) {
+					if (EarthBlast.annihilateBlasts(location, radius, source)
+							|| WaterManipulation.annihilateBlasts(location, radius, source)
+							|| FireBlast.annihilateBlasts(location, radius, source)
+							|| Combustion.removeAroundPoint(location, radius)) {
 						elements.remove(direction);
 						damage = 0;
 						remove();
@@ -259,11 +260,6 @@ public class AirSwipe extends CoreAbility {
 		return speed;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.AirSwipe;
-	}
-
 	@SuppressWarnings("deprecation")
 	private boolean isBlockBreakable(Block block) {
 		Integer id = block.getTypeId();
@@ -293,7 +289,6 @@ public class AirSwipe extends CoreAbility {
 		}
 	}
 
-	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
@@ -312,7 +307,8 @@ public class AirSwipe extends CoreAbility {
 				remove();
 				return false;
 			}
-			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.canBend(player.getName(), "AirSwipe")) {
+			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe")
+					|| !GeneralMethods.canBend(player.getName(), "AirSwipe")) {
 				remove();
 				return false;
 			}
@@ -338,6 +334,22 @@ public class AirSwipe extends CoreAbility {
 			}
 		}
 		return true;
+	}
+
+	public static void progressAll() {
+		for (AirSwipe ability : instances.values()) {
+			ability.progress();
+		}
+	}
+
+	public void remove() {
+		instances.remove(player);
+	}
+
+	public static void removeAll() {
+		for (AirSwipe ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@Override

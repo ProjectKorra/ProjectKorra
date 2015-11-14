@@ -1,10 +1,8 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,11 +10,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.util.Flight;
 
-public class Tornado extends CoreAbility {
+public class Tornado implements ConfigLoadable {
+
+	public static ConcurrentHashMap<Player, Tornado> instances = new ConcurrentHashMap<>();
 
 	private static double MAX_HEIGHT = config.get().getDouble("Abilities.Air.Tornado.Height");
 	private static double PLAYER_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
@@ -43,7 +44,7 @@ public class Tornado extends CoreAbility {
 	// private boolean canfly;
 
 	public Tornado(Player player) {
-		//reloadVariables();
+		// reloadVariables();
 		this.player = player;
 		// canfly = player.getAllowFlight();
 		// player.setAllowFlight(true);
@@ -60,14 +61,13 @@ public class Tornado extends CoreAbility {
 
 		new Flight(player);
 		player.setAllowFlight(true);
-		//instances.put(player.getEntityId(), this);
-		putInstance(player, this);
+		instances.put(player, this);
 	}
 
 	public static ArrayList<Player> getPlayers() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		for (Integer id : getInstances(StockAbility.Tornado).keySet()) {
-			players.add(getAbility(id).getPlayer());
+		for (Tornado tornado : instances.values()) {
+			players.add(tornado.getPlayer());
 		}
 		return players;
 	}
@@ -96,12 +96,6 @@ public class Tornado extends CoreAbility {
 		return range;
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.Tornado;
-	}
-
-	@Override
 	public boolean progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
@@ -127,6 +121,22 @@ public class Tornado extends CoreAbility {
 		}
 		rotateTornado();
 		return true;
+	}
+
+	public static void progressAll() {
+		for (Tornado ability : instances.values()) {
+			ability.progress();
+		}
+	}
+
+	public void remove() {
+		instances.remove(player);
+	}
+
+	public static void removeAll() {
+		for (Tornado ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@Override
@@ -239,7 +249,8 @@ public class Tornado extends CoreAbility {
 						AirMethods.playAirbendingSound(effect);
 					}
 				}
-				//					origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int) AirBlast.defaultrange);
+				// origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int)
+				// AirBlast.defaultrange);
 
 				angles.put(i, angles.get(i) + 25 * (int) speedfactor);
 			}

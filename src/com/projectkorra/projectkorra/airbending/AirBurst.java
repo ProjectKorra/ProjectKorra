@@ -1,11 +1,7 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.ability.api.CoreAbility;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -13,9 +9,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 
-public class AirBurst extends CoreAbility {
+public class AirBurst implements ConfigLoadable {
+
+	public static ConcurrentHashMap<Player, AirBurst> instances = new ConcurrentHashMap<>();
 
 	private static double PARTICLES_PERCENTAGE = 50;
 
@@ -33,7 +35,7 @@ public class AirBurst extends CoreAbility {
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
 	public AirBurst() {
-		//reloadVariables();
+		// reloadVariables();
 	}
 
 	public AirBurst(Player player) {
@@ -41,21 +43,20 @@ public class AirBurst extends CoreAbility {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("AirBurst"))
 			return;
-		if (containsPlayer(player, AirBurst.class))
+		if (instances.containsKey(player))
 			return;
 		/* End Initial Checks */
-		//reloadVariables();
+		// reloadVariables();
 		starttime = System.currentTimeMillis();
 		if (AvatarState.isAvatarState(player))
 			chargetime = 0;
 		this.player = player;
-		//instances.put(player.getUniqueId(), this);
-		putInstance(player, this);
+		instances.put(player, this);
 	}
 
 	public static void coneBurst(Player player) {
-		if (containsPlayer(player, AirBurst.class)) {
-			((AirBurst) getAbilityFromPlayer(player, AirBurst.class)).coneBurst();
+		if (instances.containsKey(player)) {
+			instances.get(player).coneBurst();
 		}
 	}
 
@@ -69,7 +70,7 @@ public class AirBurst extends CoreAbility {
 		if (GeneralMethods.getBoundAbility(player) == null) {
 			return;
 		}
-		if (containsPlayer(player, AirBurst.class)) {
+		if (instances.containsKey(player)) {
 			return;
 		}
 		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBurst")) {
@@ -124,11 +125,6 @@ public class AirBurst extends CoreAbility {
 		remove();
 	}
 
-	@Override
-	public StockAbility getStockAbility() {
-		return StockAbility.AirBurst;
-	}
-
 	public void handleSmoothParticles() {
 		for (int i = 0; i < blasts.size(); i++) {
 			final AirBlast blast = blasts.get(i);
@@ -147,7 +143,6 @@ public class AirBurst extends CoreAbility {
 		return affectedentities.contains(entity);
 	}
 
-	@Override
 	public boolean progress() {
 		if (!GeneralMethods.canBend(player.getName(), "AirBurst")) {
 			remove();
@@ -178,13 +173,29 @@ public class AirBurst extends CoreAbility {
 			Location location = player.getEyeLocation();
 			// location = location.add(location.getDirection().normalize());
 			AirMethods.playAirbendingParticles(location, 10);
-			//			location.getWorld().playEffect(
-			//					location,
-			//					Effect.SMOKE,
-			//					Methods.getIntCardinalDirection(player.getEyeLocation()
-			//							.getDirection()), 3);
+			// location.getWorld().playEffect(
+			// location,
+			// Effect.SMOKE,
+			// Methods.getIntCardinalDirection(player.getEyeLocation()
+			// .getDirection()), 3);
 		}
 		return true;
+	}
+
+	public static void progressAll() {
+		for (AirBurst ability : instances.values()) {
+			ability.progress();
+		}
+	}
+
+	public void remove() {
+		instances.remove(player);
+	}
+
+	public static void removeAll() {
+		for (AirBurst ability : instances.values()) {
+			ability.remove();
+		}
 	}
 
 	@Override
