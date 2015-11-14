@@ -66,6 +66,11 @@ public class ConfigManager {
 				config.addDefault("Combo.JetBlaze", "{victim} was blasted away by {attacker}'s {ability}");
 				config.addDefault("Combo.FireWheel", "{victim} was incinerated by {attacker}'s {ability}");
 				config.addDefault("Combo.IceBullets", "{victim}'s heart was frozen by {attacker}'s {ability}");
+				
+				config.addDefault("HorizontalVelocity.AirBlast","{victim} experienced kinetic damage by {attacker}'s {ability}");
+				config.addDefault("HorizontalVelocity.AirBurst","{victim} experienced kinetic damage by {attacker}'s {ability}");
+				config.addDefault("HorizontalVelocity.AirSuction","{victim} experienced kinetic damage by {attacker}'s {ability}");
+				config.addDefault("HorizontalVelocity.Bloodbending","{victim} experienced kinetic damage by {attacker}'s {ability}");
 
 				deathMsgConfig.save();
 				break;

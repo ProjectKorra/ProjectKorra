@@ -23,6 +23,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.ability.StockAbility;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
@@ -72,7 +73,6 @@ public class AirBlast implements ConfigLoadable {
 	private ArrayList<Block> affectedlevers = new ArrayList<Block>();
 	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
 
-	@SuppressWarnings("unused")
 	private AirBurst source = null;
 
 	public AirBlast(Location location, Vector direction, Player player, double factorpush, AirBurst burst) {
@@ -236,7 +236,10 @@ public class AirBlast implements ConfigLoadable {
 				return;
 
 			GeneralMethods.setVelocity(entity, velocity);
-			new HorizontalVelocityTracker(entity, player, 200l);
+			if (source != null)
+				new HorizontalVelocityTracker(entity, player, 200l, StockAbility.AirBurst);
+			else 
+				new HorizontalVelocityTracker(entity, player, 200l, StockAbility.AirBlast);
 			entity.setFallDistance(0);
 			if (!isUser && entity instanceof Player) {
 				new Flight((Player) entity, player);

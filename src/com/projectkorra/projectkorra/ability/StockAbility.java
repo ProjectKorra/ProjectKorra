@@ -91,6 +91,10 @@ public enum StockAbility {
 	public enum MultiAbilities {
 		WaterArms;
 	}
+	
+	public enum AvatarAbilities {
+		AvatarState;
+	}
 
 	public static boolean isFlightAbility(String ability) {
 		for (FlightAbilities a : FlightAbilities.values())

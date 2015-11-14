@@ -146,7 +146,7 @@ public class OctopusForm {
 			double knock = AvatarState.isAvatarState(player) ? AvatarState.getValue(knockback) : knockback;
 			entity.setVelocity(GeneralMethods.getDirection(player.getLocation(), location).normalize().multiply(knock));
 			if (entity instanceof LivingEntity)
-				GeneralMethods.damageEntity(player, entity, damage, "OctoposForm");
+				GeneralMethods.damageEntity(player, entity, damage, "OctopusForm");
 			AirMethods.breakBreathbendingHold(entity);
 		}
 	}

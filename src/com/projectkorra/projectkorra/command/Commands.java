@@ -36,7 +36,8 @@ public class Commands {
 	public static String[] firealiases = { "fire", "f", "firebending", "firebender" };
 	public static String[] wateraliases = { "water", "w", "waterbending", "waterbender" };
 	public static String[] elementaliases = { "air", "a", "airbending", "airbender", "chi", "c", "chiblocking", "chiblocker", "earth", "e", "earthbending", "earthbender", "fire", "f", "firebending", "firebender", "water", "w", "waterbending", "waterbender" };
-
+	public static String[] avataraliases = { "avatar", "av", "avy", "aang", "korra" };
+	
 	/*
 	 * Combo Aliases
 	 */

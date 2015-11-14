@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -128,6 +129,7 @@ import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.firebending.Lightning;
 import com.projectkorra.projectkorra.firebending.RingOfFire;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -932,7 +934,11 @@ public class PKListener implements Listener {
 				}
 			}
 			*/
-			if (element != null) {
+			if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(event.getEntity()) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
+				if (ConfigManager.deathMsgConfig.get().contains("HorizontalVelocity." + tempAbility)) {
+					message = ConfigManager.deathMsgConfig.get().getString("HorizontalVelocity." + tempAbility);
+				}
+			} else if (element != null) {
 				if (ConfigManager.deathMsgConfig.get().contains(element.toString() + "." + tempAbility)) {
 					message = ConfigManager.deathMsgConfig.get().getString(element + "." + tempAbility);
 				} else if (ConfigManager.deathMsgConfig.get().contains("Combo." + tempAbility)) {

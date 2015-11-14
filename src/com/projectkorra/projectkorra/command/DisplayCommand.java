@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.SubElement;
+import com.projectkorra.projectkorra.ability.AbilityModuleManager;
 import com.projectkorra.projectkorra.ability.combo.ComboManager;
 import com.projectkorra.projectkorra.airbending.AirMethods;
 import com.projectkorra.projectkorra.chiblocking.ChiMethods;
@@ -67,6 +68,11 @@ public class DisplayCommand extends PKCommand {
 			else if (Arrays.asList(Commands.subelementaliases).contains(element)) {
 				displaySubElement(sender, element);
 			}
+			
+			//avatar
+			else if (Arrays.asList(Commands.avataraliases).contains(element)) {
+				displayAvatar(sender);
+			}
 
 			else {
 				ChatColor w = ChatColor.WHITE;
@@ -91,6 +97,24 @@ public class DisplayCommand extends PKCommand {
 				return;
 			}
 			displayBinds(sender);
+		}
+	}
+	
+	private void displayAvatar(CommandSender sender) {
+		List<String> abilities = new ArrayList<>();
+		for (String ability : AbilityModuleManager.abilities) {
+			if (!AbilityModuleManager.airbendingabilities.contains(ability) && !AbilityModuleManager.earthbendingabilities.contains(ability) && !AbilityModuleManager.firebendingabilities.contains(ability) && !AbilityModuleManager.waterbendingabilities.contains(ability) && !AbilityModuleManager.chiabilities.contains(ability)) {
+				abilities.add(ability);
+			}
+		}
+		if (abilities.isEmpty()) {
+			sender.sendMessage(ChatColor.YELLOW + "There are no " + GeneralMethods.getAvatarColor() + "avatar" + ChatColor.YELLOW + " abilities on this server!");
+			return;
+		}
+		for (String ability : abilities) {
+			if (GeneralMethods.canView((Player) sender, ability)) {
+				sender.sendMessage(GeneralMethods.getAvatarColor() + ability);
+			}
 		}
 	}
 

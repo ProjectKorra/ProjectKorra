@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra.event;
 
+import com.projectkorra.projectkorra.ability.StockAbility;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -12,6 +14,7 @@ import org.bukkit.util.Vector;
  * Created by Carbogen on 2/2/2015.
  */
 public class HorizontalVelocityChangeEvent extends Event implements Cancellable {
+	
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean isCancelled;
@@ -23,6 +26,7 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 	private Vector difference;
 	private Location start;
 	private Location end;
+	private StockAbility abil;
 
 	@Deprecated
 	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference) {
@@ -33,7 +37,7 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 		this.difference = difference;
 	}
 
-	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference, Location start, Location end) {
+	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference, Location start, Location end, StockAbility ability	) {
 		this.entity = entity;
 		this.instigator = instigator;
 		this.from = from;
@@ -41,6 +45,7 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 		this.difference = difference;
 		this.start = start;
 		this.end = end;
+		abil = ability;
 	}
 
 	public Entity getEntity() {
@@ -73,6 +78,10 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 
 	public Vector getDifference() {
 		return difference;
+	}
+	
+	public StockAbility getAbility() {
+		return abil;
 	}
 
 	@Override
