@@ -12,8 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Random;
-
 public class ChiPassive {
 
 	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
@@ -21,18 +19,22 @@ public class ChiPassive {
 	public static double FallReductionFactor = config.getDouble("Abilities.Chi.Passive.FallReductionFactor");
 	public static int jumpPower = config.getInt("Abilities.Chi.Passive.Jump");
 	public static int speedPower = config.getInt("Abilities.Chi.Passive.Speed");
-	public static double dodgeChance = config.getDouble("Abilities.Chi.Passive.BlockChi.DodgeChance");
+	public static double chance = config.getDouble("Abilities.Chi.Passive.BlockChi.Chance");
 	public static int duration = config.getInt("Abilities.Chi.Passive.BlockChi.Duration");
 
 	static long ticks = (duration / 1000) * 20;
 
 	public static boolean willChiBlock(Player attacker, Player player) {
 		if (AcrobatStance.isInAcrobatStance(attacker)) {
-			dodgeChance = dodgeChance - AcrobatStance.CHI_BLOCK_BOOST;
+			chance = chance + AcrobatStance.CHI_BLOCK_BOOST;
 		}
-
-		Random rand = new Random();
-		if (rand.nextInt(99) + 1 < dodgeChance) {
+		if (GeneralMethods.getBoundAbility(player) == "QuickStrike") {
+			chance = chance + QuickStrike.blockChance;
+		}
+		if (GeneralMethods.getBoundAbility(player) == "SwiftKick") {
+			chance = chance + SwiftKick.blockChance;
+		}
+		if (Math.random() > chance/100) {
 			return false;
 		}
 		if (ChiMethods.isChiBlocked(player.getName())) {

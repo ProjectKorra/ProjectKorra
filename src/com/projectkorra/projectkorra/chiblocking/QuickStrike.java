@@ -23,7 +23,7 @@ public class QuickStrike {
 
 		GeneralMethods.damageEntity(player, e, damage, "QuickStrike");
 
-		if (GeneralMethods.rand.nextInt(100) < blockChance && e instanceof Player) {
+		if (e instanceof Player && ChiPassive.willChiBlock(player, (Player)e)) {
 			ChiPassive.blockChi((Player) e);
 		}
 	}
