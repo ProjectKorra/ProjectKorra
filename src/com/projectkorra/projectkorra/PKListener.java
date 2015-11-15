@@ -622,9 +622,9 @@ public class PKListener implements Listener {
 				double damage = ((e.getDistanceTraveled() - minimumDistance) < 0 ? 0 : e.getDistanceTraveled() - minimumDistance) / (e.getDifference().length());
 				if (damage > 0) {
 					if(damage <= maxDamage) {
-						GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), damage, null);
+						GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), damage, e.getAbility().toString());
 					} else {
-						GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), maxDamage, null);
+						GeneralMethods.damageEntity(e.getInstigator(), e.getEntity(), maxDamage, e.getAbility().toString());
 					}
 				}
 			}
