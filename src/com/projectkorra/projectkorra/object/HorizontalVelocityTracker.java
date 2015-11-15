@@ -7,7 +7,6 @@ import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
