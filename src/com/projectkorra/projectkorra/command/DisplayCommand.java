@@ -112,10 +112,14 @@ public class DisplayCommand extends PKCommand {
 			return;
 		}
 		for (String ability : abilities) {
-			if (GeneralMethods.canView((Player) sender, ability)) {
+			if (sender instanceof Player) {
+				if (GeneralMethods.canView((Player) sender, ability)) {
+					sender.sendMessage(GeneralMethods.getAvatarColor() + ability);
+				}
+			} else {
 				sender.sendMessage(GeneralMethods.getAvatarColor() + ability);
 			}
-		}
+		} 
 	}
 
 	/**
