@@ -737,8 +737,8 @@ public class ConfigManager {
 				config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 				config.addDefault("Abilities.Chi.Passive.Speed", 1);
 				config.addDefault("Abilities.Chi.Passive.Jump", 1);
+				config.addDefault("Abilities.Chi.Passive.BlockChi.Chance", 35);
 				config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 1000);
-				config.addDefault("Abilities.Chi.Passive.DodgeChange", 25);
 
 				config.addDefault("Abilities.Chi.ChiCombo.Enabled", true);
 				config.addDefault("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration", 4000);
@@ -746,7 +746,7 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Chi.AcrobatStance.Enabled", true);
 				config.addDefault("Abilities.Chi.AcrobatStance.Description", "AcrobatStance gives a Chiblocker a higher probability of blocking a Bender's Chi while granting them a Speed and Jump Boost. It also increases the rate at which the hunger bar depletes. To use, simply left click. Left clicking again will de-activate the stance.");
-				config.addDefault("Abilities.Chi.ChiBlockBoost", 0.1);
+				config.addDefault("Abilities.Chi.AcrobatStance.ChiBlockBoost", 5);
 
 				config.addDefault("Abilities.Chi.HighJump.Enabled", true);
 				config.addDefault("Abilities.Chi.HighJump.Description", "To use this ability, simply click. You will jump quite high. This ability has a short cooldown.");
@@ -761,9 +761,9 @@ public class ConfigManager {
 				config.addDefault("Abilities.Chi.RapidPunch.Enabled", true);
 				config.addDefault("Abilities.Chi.RapidPunch.Description", "This ability allows the chiblocker to punch rapidly in a short period. To use, simply punch. This has a short cooldown.");
 				config.addDefault("Abilities.Chi.RapidPunch.Damage", 1);
-				config.addDefault("Abilities.Chi.RapidPunch.Distance", 4);
+				config.addDefault("Abilities.Chi.RapidPunch.Distance", 3);
 				config.addDefault("Abilities.Chi.RapidPunch.Cooldown", 6000);
-				config.addDefault("Abilities.Chi.RapidPunch.Punches", 4);
+				config.addDefault("Abilities.Chi.RapidPunch.Punches", 3);
 
 				config.addDefault("Abilities.Chi.Smokescreen.Enabled", true);
 				config.addDefault("Abilities.Chi.Smokescreen.Description", "Smokescren, if used correctly, can serve as a defensive and offensive ability for Chiblockers. To use, simply left click and you will toss out a Smoke Bomb. When the bomb hits the ground, it will explode and give all players within a small radius of the explosion temporary blindness, allowing you to either get away, or move in for the kill. This ability has a long cooldown.");
@@ -779,12 +779,12 @@ public class ConfigManager {
 				config.addDefault("Abilities.Chi.QuickStrike.Enabled", true);
 				config.addDefault("Abilities.Chi.QuickStrike.Description", "QuickStrike enables a chiblocker to quickly strike an enemy, potentially blocking their chi.");
 				config.addDefault("Abilities.Chi.QuickStrike.Damage", 1);
-				config.addDefault("Abilities.Chi.QuickStrike.ChiBlockChance", 15);
+				config.addDefault("Abilities.Chi.QuickStrike.ChiBlockChance", 10);
 
 				config.addDefault("Abilities.Chi.SwiftKick.Enabled", true);
 				config.addDefault("Abilities.Chi.SwiftKick.Description", "SwiftKick allows a chiblocker to swiftly kick an enemy, potentially blocking their chi. The chiblocker must be in the air to use this ability.");
 				config.addDefault("Abilities.Chi.SwiftKick.Damage", 2);
-				config.addDefault("Abilities.Chi.SwiftKick.ChiBlockChance", 25);
+				config.addDefault("Abilities.Chi.SwiftKick.ChiBlockChance", 15);
 
 				config.addDefault("Storage.engine", "sqlite");
 
