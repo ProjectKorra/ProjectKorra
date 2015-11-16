@@ -1,6 +1,9 @@
 language: java
 script: ant main
 sudo: false
+jdk:
+  - oraclejdk7
+  - oraclejdk8
 notifications:
   slack:
     rooms:
