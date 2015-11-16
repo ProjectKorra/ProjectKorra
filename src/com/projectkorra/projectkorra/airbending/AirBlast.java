@@ -1,8 +1,14 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -19,15 +25,9 @@ import org.bukkit.material.Lever;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirBlast implements ConfigLoadable {
 	
@@ -237,9 +237,9 @@ public class AirBlast implements ConfigLoadable {
 
 			GeneralMethods.setVelocity(entity, velocity);
 			if (source != null)
-				new HorizontalVelocityTracker(entity, player, 200l, StockAbility.AirBurst);
+				new HorizontalVelocityTracker(entity, player, 200l, "AirBurst", Element.Air, null);
 			else 
-				new HorizontalVelocityTracker(entity, player, 200l, StockAbility.AirBlast);
+				new HorizontalVelocityTracker(entity, player, 200l, "AirBlast", Element.Air, null);
 			entity.setFallDistance(0);
 			if (!isUser && entity instanceof Player) {
 				new Flight((Player) entity, player);

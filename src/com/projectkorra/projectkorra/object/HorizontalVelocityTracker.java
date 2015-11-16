@@ -1,8 +1,9 @@
 package com.projectkorra.projectkorra.object;
 
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.StockAbility;
+import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
@@ -32,11 +33,13 @@ public class HorizontalVelocityTracker {
 	private Vector thisVelocity;
 	private Location launchLocation;
 	private Location impactLocation;
-	private StockAbility abil;
+	private String abil;
+	private Element e;
+	private SubElement sub;
 	
 	public static String[] abils = {"AirBlast", "AirBurst", "AirSuction", "Bloodbending"};
 
-	public HorizontalVelocityTracker(Entity e, Player instigator, long delay, StockAbility ability) {
+	public HorizontalVelocityTracker(Entity e, Player instigator, long delay, String ability, Element element, SubElement se) {
 		remove(e);
 		entity = e;
 		this.instigator = instigator;
@@ -47,6 +50,8 @@ public class HorizontalVelocityTracker {
 		impactLocation = launchLocation.clone();
 		this.delay = delay;
 		abil = ability;
+		this.e = element;
+		sub = se;
 		update();
 		instances.put(entity, this);
 	}
@@ -77,7 +82,7 @@ public class HorizontalVelocityTracker {
 					if (GeneralMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
 						if (!EarthMethods.isTransparentToEarthbending(instigator, b)) {
 							hasBeenDamaged = true;
-							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation, abil));
+							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation, abil, e, sub));
 							remove();
 							return;
 						}
