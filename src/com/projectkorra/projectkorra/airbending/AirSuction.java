@@ -1,10 +1,10 @@
 package com.projectkorra.projectkorra.airbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.ability.StockAbility;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
@@ -261,7 +261,7 @@ public class AirSuction implements ConfigLoadable {
 						continue;
 				}
 				GeneralMethods.setVelocity(entity, velocity);
-				new HorizontalVelocityTracker(entity, player, 200l, StockAbility.AirSuction);
+				new HorizontalVelocityTracker(entity, player, 200l, "AirSuction", Element.Air, null);
 				entity.setFallDistance(0);
 				if (entity.getEntityId() != player.getEntityId() && entity instanceof Player) {
 					new Flight((Player) entity, player);
