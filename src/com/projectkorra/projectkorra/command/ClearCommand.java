@@ -16,7 +16,7 @@ import java.util.List;
 public class ClearCommand extends PKCommand {
 
 	public ClearCommand() {
-		super("clear", "/bending clear", "This command will clear the bound ability from the slot you specify (if you specify one). If you choose not to specify a slot, all of your abilities will be cleared.", new String[] { "clear", "cl", "c" });
+		super("clear", "/bending clear [Slot]", "This command will clear the bound ability from the slot you specify (if you specify one). If you choose not to specify a slot, all of your abilities will be cleared.", new String[] { "clear", "cl", "c" });
 	}
 
 	@Override

@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
 import com.projectkorra.projectkorra.ability.combo.ComboAbilityModule;
 import com.projectkorra.projectkorra.ability.combo.ComboModuleManager;
@@ -85,11 +84,20 @@ public class BendingTabComplete implements TabCompleter
 			{
 				if (args.length > 3 || !sender.hasPermission("bending.command.add")) return new ArrayList<String>();
 				List<String> l = new ArrayList<String>();
-				l.add("Air");
-				l.add("Earth");
-				l.add("Fire");
-				l.add("Water");
-				l.add("Chi");
+				if (args.length == 2)
+				{
+					l.add("Air");
+					l.add("Earth");
+					l.add("Fire");
+					l.add("Water");
+					l.add("Chi");
+				}
+				else
+				{
+					for (Player p : Bukkit.getOnlinePlayers()) {
+						l.add(p.getName());
+					}
+				}
 				return getPossibleCompletionsForGivenArgs(args, l);
 			}
 			else if (args[0].equalsIgnoreCase("clear") || args[0].equalsIgnoreCase("cl") || args[0].equalsIgnoreCase("c"))
