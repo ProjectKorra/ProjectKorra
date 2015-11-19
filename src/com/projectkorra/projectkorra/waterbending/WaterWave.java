@@ -86,6 +86,10 @@ public class WaterWave {
 			remove();
 			return;
 		}
+		if (origin != null && !player.getWorld().equals(origin.getWorld())) {
+			remove();
+			return;
+		}
 		if (type != AbilityType.RELEASE) {
 			if (!GeneralMethods.canBend(player.getName(), "WaterSpout") || !player.hasPermission("bending.ability.WaterSpout.Wave")) {
 				remove();
