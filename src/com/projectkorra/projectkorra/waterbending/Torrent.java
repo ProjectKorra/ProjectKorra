@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.airbending.AirMethods;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
@@ -356,6 +357,9 @@ public class Torrent {
 				return true;
 			}
 			if (b.getLocation().distance(targetloc) > 1) {
+				if (WaterMethods.isWater(b)) {
+					ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, b.getLocation().clone().add(.5,.5,.5), 257D);
+				}
 				newblocks.add(new TempBlock(b, Material.STATIONARY_WATER, (byte) 8));
 			} else {
 				if (layer < maxlayer) {
