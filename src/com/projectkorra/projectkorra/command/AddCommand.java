@@ -20,7 +20,7 @@ import java.util.List;
 public class AddCommand extends PKCommand {
 
 	public AddCommand() {
-		super("add", "/bending add <Player> [Element]", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.", new String[] { "add", "a" });
+		super("add", "/bending add <Element> [Player]", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.", new String[] { "add", "a" });
 	}
 
 	public void execute(CommandSender sender, List<String> args) {
@@ -35,12 +35,12 @@ public class AddCommand extends PKCommand {
 			if (!hasPermission(sender, "others")) {
 				return;
 			}
-			Player player = Bukkit.getPlayer(args.get(0));
+			Player player = Bukkit.getPlayer(args.get(1));
 			if (player == null) {
 				sender.sendMessage(ChatColor.RED + "That player is not online.");
 				return;
 			}
-			add(sender, player, args.get(1).toLowerCase());
+			add(sender, player, args.get(0).toLowerCase());
 		}
 	}
 

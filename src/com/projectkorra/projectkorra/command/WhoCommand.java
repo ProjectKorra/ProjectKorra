@@ -34,7 +34,7 @@ public class WhoCommand extends PKCommand {
 	Map<String, String> staff = new HashMap<String, String>();
 
 	public WhoCommand() {
-		super("who", "/bending who <Player>", "This command will tell you what element all players that are online are (If you don't specify a player) or give you information about the player that you specify.", new String[] { "who", "w" });
+		super("who", "/bending who [Player]", "This command will tell you what element all players that are online are (If you don't specify a player) or give you information about the player that you specify.", new String[] { "who", "w" });
 
 		staff.put("8621211e-283b-46f5-87bc-95a66d68880e", ChatColor.RED + "ProjectKorra Founder"); // MistPhizzle
 
