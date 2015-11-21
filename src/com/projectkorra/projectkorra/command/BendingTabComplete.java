@@ -38,7 +38,7 @@ public class BendingTabComplete implements TabCompleter
 				if (args.length == 2)
 				{
 					for (String abil : AbilityModuleManager.abilities) {
-						if (GeneralMethods.canBend(sender.getName(), abil)) {
+						if (GeneralMethods.canBind(sender.getName(), abil)) {
 							abilities.add(abil);
 						}
 					}
