@@ -127,5 +127,6 @@ public class Commands {
 			}
 		};
 		projectkorra.setExecutor(exe);
+		projectkorra.setTabCompleter(new BendingTabComplete());
 	}
 }
