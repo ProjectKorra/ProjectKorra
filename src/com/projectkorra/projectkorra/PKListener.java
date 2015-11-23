@@ -354,6 +354,10 @@ public class PKListener implements Listener {
 		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbended(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
+		
+		/*dNiym - Hack to fix bending activating on right clicks */
+		BendingPlayer bp = GeneralMethods.getBendingPlayer(event.getPlayer().getName());
+		bp.addCooldown("RightClickFix", 40);
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -1290,6 +1294,11 @@ public class PKListener implements Listener {
 			return;
 
 		Player player = event.getPlayer();
+		
+		/*dNiym - Hack to fix bending activating on right clicks */
+		if(bp.isOnCooldown("RightClickFix"))
+			return;
+			
 		ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
 
 		if (Suffocate.isBreathbent(player)) {
