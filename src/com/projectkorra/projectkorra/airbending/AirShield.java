@@ -1,8 +1,16 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.earthbending.SandSpout;
+import com.projectkorra.projectkorra.firebending.Combustion;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.firebending.FireStream;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -12,13 +20,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.firebending.Combustion;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.firebending.FireStream;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirShield implements ConfigLoadable {
 
@@ -159,6 +163,10 @@ public class AirShield implements ConfigLoadable {
 		FireStream.removeAroundPoint(origin, radius);
 		AirBlast.removeAirBlastsAroundPoint(origin, radius);
 		AirSuction.removeAirSuctionsAroundPoint(origin, radius);
+		EarthBlast.removeAroundPoint(origin, radius);
+		SandSpout.removeSpouts(origin, radius, player);
+		WaterSpout.removeSpouts(origin, radius, player);
+		WaterManipulation.removeAroundPoint(origin, radius);
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, radius)) {
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "AirShield", entity.getLocation()))

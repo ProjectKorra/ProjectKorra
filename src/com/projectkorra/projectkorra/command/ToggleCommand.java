@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -60,8 +61,8 @@ public class ToggleCommand extends PKCommand {
 				if (!(sender instanceof Player))
 					sender.sendMessage(ChatColor.RED + "Bending has been toggled off for all players.");
 			}
-		} else if (sender instanceof Player && args.size() == 1 && Element.getType(args.get(0)) != null && sender.hasPermission("bending." + args.get(0).toLowerCase())) {
-			Element e = Element.getType(args.get(0));
+		} else if (sender instanceof Player && args.size() == 1 && Element.getType(args.get(0)) != null && sender.hasPermission("bending." + getElement(args.get(0)))) {
+			Element e = Element.getType(getElement(args.get(0)));
 			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(sender.getName());
 			bPlayer.toggleElement(e);
 			if (bPlayer.isElementToggled(e) == false) {
@@ -77,12 +78,13 @@ public class ToggleCommand extends PKCommand {
 					sender.sendMessage(GeneralMethods.getElementColor(e) + "You have toggled on your " + args.get(0).toLowerCase() + "bending");
 				}
 			}
-		} else if (sender instanceof Player && args.size() == 2 && Element.getType(args.get(0)) != null && sender.hasPermission("bending." + args.get(0).toLowerCase())) {
+		} else if (sender instanceof Player && args.size() == 2 && Element.getType(args.get(0)) != null && sender.hasPermission("bending." + getElement(args.get(0)))) {
 			Player target = Bukkit.getPlayer(args.get(1));
+			if (!hasAdminPermission(sender)) return;
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + "Target is not found.");
 			}
-			Element e = Element.getType(args.get(0));
+			Element e = Element.getType(getElement(args.get(0)));
 			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(target.getName());
 			if (bPlayer.isElementToggled(e) == true) {
 				if (e == Element.Chi) {
@@ -107,4 +109,20 @@ public class ToggleCommand extends PKCommand {
 		}
 	}
 
+	public String getElement(String string) {
+		if (Arrays.asList(Commands.airaliases).contains(string)) return "air";
+		if (Arrays.asList(Commands.chialiases).contains(string)) return "chi";
+		if (Arrays.asList(Commands.earthaliases).contains(string)) return "earth";
+		if (Arrays.asList(Commands.firealiases).contains(string)) return "fire";
+		if (Arrays.asList(Commands.wateraliases).contains(string)) return "water";
+		return null;
+	}
+
+	public boolean hasAdminPermission(CommandSender sender) {
+		if (!sender.hasPermission("bending.admin.toggle")) {
+			sender.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+			return false;
+		}
+		return true;
+	}
 }

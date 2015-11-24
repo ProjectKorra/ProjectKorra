@@ -829,12 +829,12 @@ public class GeneralMethods {
 	 * 
 	 * @see #getBendingPlayer(UUID)
 	 */
-	public static BendingPlayer getBendingPlayer(String playerName) {
-		OfflinePlayer player = Bukkit.getPlayer(playerName);
+	public static BendingPlayer getBendingPlayer(String player) {
+		OfflinePlayer oPlayer = Bukkit.getPlayer(player);
 		if (player == null) {
-			player = Bukkit.getOfflinePlayer(playerName);
+			oPlayer = Bukkit.getOfflinePlayer(oPlayer.getUniqueId());
 		}
-		return BendingPlayer.getPlayers().get(player.getUniqueId());
+		return BendingPlayer.getPlayers().get(oPlayer.getUniqueId());
 	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
