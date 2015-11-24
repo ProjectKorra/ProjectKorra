@@ -78,6 +78,14 @@ public class FireStream implements ConfigLoadable {
 	public static String getDescription() {
 		return "This ability no longer exists.";
 	}
+	
+	public static void handleDissipation() {
+		for (Block block : ignitedblocks.keySet()) {
+			if (block.getType() != Material.FIRE) {
+				ignitedblocks.remove(block);
+			}
+		}
+	}
 
 	public static boolean isIgnitable(Player player, Block block) {
 

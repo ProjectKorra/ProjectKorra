@@ -194,7 +194,7 @@ public class AirSwipe implements ConfigLoadable {
 				public void run() {
 					if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSwipe", entity.getLocation()))
 						return;
-					if (entity.getEntityId() != player.getEntityId()) {
+					if (entity.getEntityId() != player.getEntityId() && entity instanceof LivingEntity) {
 						if (entity instanceof Player) {
 							if (Commands.invincible.contains(((Player) entity).getName()))
 								return;
@@ -217,6 +217,12 @@ public class AirSwipe implements ConfigLoadable {
 						AirMethods.breakBreathbendingHold(entity);
 						if (elements.containsKey(fDirection)) {
 							elements.remove(fDirection);
+						}
+					} else if (entity.getEntityId() != player.getEntityId() && !(entity instanceof LivingEntity)) {
+						if (AvatarState.isAvatarState(player)) {
+							GeneralMethods.setVelocity(entity, fDirection.multiply(AvatarState.getValue(pushfactor)));
+						} else {
+							GeneralMethods.setVelocity(entity, fDirection.multiply(pushfactor));
 						}
 					}
 				}
