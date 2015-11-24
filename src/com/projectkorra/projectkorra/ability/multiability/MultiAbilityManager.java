@@ -288,6 +288,9 @@ public class MultiAbilityManager {
 		}
 
 		public ChatColor getAbilityColor() {
+			if (element == null) {
+				return GeneralMethods.getAvatarColor();
+			}
 			if (sub == null) {
 				switch (element) {
 					case Air:
