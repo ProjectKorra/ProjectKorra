@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -157,6 +158,7 @@ public class PKListener implements Listener {
 	ProjectKorra plugin;
 
 	public static HashMap<Player, String> bendingDeathPlayer = new HashMap<Player, String>(); // Player killed by Bending
+	public static List<UUID> interact = new ArrayList<UUID>(); // Player right click block
 
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
@@ -966,6 +968,15 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			final UUID uuid = player.getUniqueId();
+			interact.add(uuid);
+			
+			new BukkitRunnable() {
+				public void run() {
+					interact.remove(uuid);
+				}
+			}.runTaskLater(plugin, 5);
+			
 			String ability = GeneralMethods.getBoundAbility(player);
 			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
 			if (ability != null && ability.equalsIgnoreCase("EarthSmash"))
@@ -1290,6 +1301,9 @@ public class PKListener implements Listener {
 			return;
 
 		Player player = event.getPlayer();
+		
+		if (interact.contains(player.getUniqueId())) return;
+		
 		ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
 
 		if (Suffocate.isBreathbent(player)) {
