@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.earthbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -31,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EarthMethods {
 
 	static ProjectKorra plugin;
-	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
+	private static FileConfiguration config = ConfigManager.defaultConfig.get();
 
 	public static ConcurrentHashMap<Block, Information> movedearth = new ConcurrentHashMap<Block, Information>();
 	public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<Integer, Information>();
@@ -161,7 +162,7 @@ public class EarthMethods {
 	@SuppressWarnings("deprecation")
 	public static Block getEarthSourceBlock(Player player, double range) {
 		Block testblock = player.getTargetBlock(getTransparentEarthbending(), (int) range);
-		if (isEarthbendable(player, testblock))
+		if (isEarthbendable(player, testblock) || isMetalbendable(player, testblock.getType()))
 			return testblock;
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
@@ -305,15 +306,25 @@ public class EarthMethods {
 			valid = true;
 		}
 
-		if (!valid)
-			return false;
-
 		if (tempNoEarthbending.contains(block))
-			return false;
+			valid = false;
 
-		if (!GeneralMethods.isRegionProtectedFromBuild(player, ability, block.getLocation()))
-			return true;
-		return false;
+		if (GeneralMethods.isRegionProtectedFromBuild(player, ability, block.getLocation()))
+			valid = false;
+		return valid;
+	}
+	
+	public static boolean isMetalbendable(Player player, Material mat) {
+		boolean valid = false;
+		for (String s : config.getStringList("Properties.Earth.MetalBlocks")) {
+			if (mat == Material.getMaterial(s)) {
+				valid = true;
+				break;
+			}
+		}
+		if (!player.hasPermission("bending.earth.metalbending"))
+			valid = false;
+		return valid;
 	}
 
 	public static boolean isMetalBlock(Block block) {
