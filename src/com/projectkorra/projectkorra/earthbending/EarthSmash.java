@@ -301,7 +301,7 @@ public class EarthSmash {
 								remove();
 								return;
 							}
-							if (isEarthbendableMaterial(block.getType()))
+							if (EarthMethods.isEarthbendable(player, block))
 								totalBendableBlocks++;
 						}
 				if (totalBendableBlocks < REQUIRED_BENDABLE_BLOCKS) {
@@ -331,13 +331,13 @@ public class EarthSmash {
 					for (int z = -1; z <= 1; z++) {
 						if ((Math.abs(x) + Math.abs(z)) % 2 == 1) {
 							Block block = loc.clone().add(x, -2, z).getBlock();
-							if (isEarthbendableMaterial(block.getType()))
+							if (EarthMethods.isEarthbendable(player, block))
 								EarthMethods.addTempAirBlock(block);
 						}
 
 						//Remove the first level of dirt
 						Block block = loc.clone().add(x, -1, z).getBlock();
-						if (isEarthbendableMaterial(block.getType()))
+						if (EarthMethods.isEarthbendable(player, block))
 							EarthMethods.addTempAirBlock(block);
 
 					}
@@ -466,7 +466,7 @@ public class EarthSmash {
 	public Material selectMaterialForRepresenter(Material mat) {
 		Material tempMat = selectMaterial(mat);
 		Random rand = new Random();
-		if (!isEarthbendableMaterial(tempMat)) {
+		if (!EarthMethods.isEarthbendable(tempMat) || !EarthMethods.isMetalbendable(player, tempMat)) {
 			if (currentBlocks.size() < 1)
 				return Material.DIRT;
 			else
@@ -548,14 +548,6 @@ public class EarthSmash {
 			}
 		}
 		return null;
-	}
-
-	public static boolean isEarthbendableMaterial(Material mat) {
-		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks")) {
-			if (mat == Material.getMaterial(s))
-				return true;
-		}
-		return false;
 	}
 
 	public static void progressAll() {
