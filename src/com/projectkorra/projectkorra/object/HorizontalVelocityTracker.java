@@ -40,6 +40,9 @@ public class HorizontalVelocityTracker {
 	public static String[] abils = {"AirBlast", "AirBurst", "AirSuction", "Bloodbending"};
 
 	public HorizontalVelocityTracker(Entity e, Player instigator, long delay, String ability, Element element, SubElement se) {
+		if (!ProjectKorra.plugin.getConfig().getBoolean("Properties.HorizontalCollisionPhysics.Enabled"))
+			return;
+
 		remove(e);
 		entity = e;
 		this.instigator = instigator;
@@ -58,6 +61,11 @@ public class HorizontalVelocityTracker {
 
 	public void update() {
 		if (System.currentTimeMillis() < fireTime + delay) {
+			return;
+		}
+		
+		if (entity.isOnGround()) {
+			remove();
 			return;
 		}
 

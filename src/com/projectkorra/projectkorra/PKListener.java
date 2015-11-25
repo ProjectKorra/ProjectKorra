@@ -614,9 +614,6 @@ public class PKListener implements Listener {
 
 	@EventHandler
 	public void onHorizontalCollision(HorizontalVelocityChangeEvent e) {
-		if (!plugin.getConfig().getBoolean("Properties.HorizontalCollisionPhysics.Enabled"))
-			return;
-
 		if (e.getEntity() instanceof LivingEntity) {
 			if (e.getEntity().getEntityId() != e.getInstigator().getEntityId()) {
 				double minimumDistance = plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance");
