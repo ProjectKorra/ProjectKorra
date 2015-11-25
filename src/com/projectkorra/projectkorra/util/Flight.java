@@ -34,7 +34,6 @@ public class Flight {
 		if (instances.containsKey(player)) {
 			Flight flight = instances.get(player);
 			flight.refresh(source);
-			instances.replace(player, flight);
 			return;
 		}
 		this.couldFly = player.getAllowFlight();

@@ -130,6 +130,9 @@ public class AirBlast implements ConfigLoadable {
 		if (!origins.containsKey(player))
 			return;
 		Location origin = origins.get(player);
+		if (player.isDead() || !player.isOnline())
+			return;
+		
 		if (!origin.getWorld().equals(player.getWorld())) {
 			origins.remove(player);
 			return;
