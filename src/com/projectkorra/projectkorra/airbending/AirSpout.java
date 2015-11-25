@@ -94,10 +94,9 @@ public class AirSpout implements ConfigLoadable {
 	}
 
 	public boolean progress() {
-		if (!GeneralMethods.canBend(player.getName(), "AirSpout")
+		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "AirSpout")
 				// || !Methods.hasAbility(player, Abilities.AirSpout)
-				|| player.getEyeLocation().getBlock().isLiquid() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())
-				|| player.isDead() || !player.isOnline()) {
+				|| player.getEyeLocation().getBlock().isLiquid() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())) {
 			remove();
 			return false;
 		}
