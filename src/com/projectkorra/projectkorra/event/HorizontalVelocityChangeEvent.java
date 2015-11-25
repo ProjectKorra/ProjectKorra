@@ -76,6 +76,9 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 	}
 
 	public double getDistanceTraveled() {
+		if (start.getWorld() != end.getWorld()) {
+			return 0;
+		}
 		return start.distance(end);
 	}
 
