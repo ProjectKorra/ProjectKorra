@@ -654,8 +654,12 @@ public class PKListener implements Listener {
 				StringBuilder sb = new StringBuilder();
 				if (event.getSubElement() != null) {
 					sb.append(event.getSubElement().getChatColor());
-				} else if (event.getElement() != null) {
-					sb.append(event.getElement().getChatColor());
+				} else {
+					if (event.getElement() != null) {
+						sb.append(event.getElement().getChatColor());
+					} else {
+						sb.append(GeneralMethods.getAvatarColor());
+					}
 				}
 				sb.append(event.getAbility());
 				bendingDeathPlayer.put(event.getVictim(), sb.toString());
