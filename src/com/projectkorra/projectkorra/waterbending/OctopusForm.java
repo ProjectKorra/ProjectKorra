@@ -159,6 +159,11 @@ public class OctopusForm {
 	}
 
 	private void progress() {
+		if (player.isDead() || !player.isOnline()) {
+			remove();
+			return;
+		}
+		
 		if (!GeneralMethods.canBend(player.getName(), "OctopusForm")) {
 			remove();
 			returnWater();

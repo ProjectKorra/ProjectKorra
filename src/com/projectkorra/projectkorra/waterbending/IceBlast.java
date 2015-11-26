@@ -155,9 +155,11 @@ public class IceBlast {
 				source.revertBlock();
 			progressing = false;
 		}
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer != null) {
-			bPlayer.addCooldown("IceBlast", cooldown);
+		if (player.isOnline()) {
+			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+			if (bPlayer != null) {
+				bPlayer.addCooldown("IceBlast", cooldown);
+			}
 		}
 		instances.remove(id);
 	}
@@ -228,8 +230,12 @@ public class IceBlast {
 	}
 
 	private void progress() {
+		if (player.isDead() || !player.isOnline()) {
+			cancel();
+			return;
+		}
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "IceBlast") || bPlayer.isOnCooldown("IceBlast")) {
+		if (!GeneralMethods.canBend(player.getName(), "IceBlast") || bPlayer.isOnCooldown("IceBlast")) {
 			cancel();
 			return;
 		}

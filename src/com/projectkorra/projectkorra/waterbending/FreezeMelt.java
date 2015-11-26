@@ -110,6 +110,9 @@ public class FreezeMelt {
 	public static boolean canThaw(Block block) {
 		if (frozenblocks.containsKey(block)) {
 			for (Player player : block.getWorld().getPlayers()) {
+				if (!player.isOnline()) {
+					return true;
+				}
 				if (GeneralMethods.getBoundAbility(player) == null) {
 					return true;
 				}

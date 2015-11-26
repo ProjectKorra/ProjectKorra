@@ -563,6 +563,10 @@ public class Torrent {
 				frozenblocks.remove(block);
 				continue;
 			}
+			if (!player.isOnline()) {
+				thaw(block);
+				continue;
+			}
 			if (block.getBlock().getWorld() != player.getWorld()) {
 				thaw(block);
 				continue;
