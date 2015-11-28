@@ -20,6 +20,14 @@ public abstract class AirAbility extends CoreAbility {
 		return "Air";
 	}
 
+<<<<<<< HEAD
+=======
+	@Override
+	public final ChatColor getElementColor() {
+		return getAirColor();
+	}
+
+>>>>>>> Add new CoreAbility API, Add BendingPlayer methods
 	/**
 	 * Gets the AirColor from the config.
 	 * 

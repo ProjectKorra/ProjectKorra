@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.ability.api;
 
-import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
@@ -98,7 +97,6 @@ public abstract class CoreAbility implements Ability {
 		if (playerMap.size() == 0) {
 			classMap.remove(playerMap);
 		}
-
 		CoreAbility.instancesByClass.get(getClass()).remove(this);
 	}
 
