@@ -65,23 +65,7 @@ public class FireMethods {
 		}
 		Information info = new Information();
 		long time = config.getLong("Properties.Fire.RevertTicks")
-				+ (long) (GeneralMethods.rand.nextDouble() * config.getLong("Properties.Fire.RevertTicks")); // Generate
-																												// a
-																												// long
-																												// between
-																												// the
-																												// config
-																												// time
-																												// and
-																												// config
-																												// time
-																												// x
-																												// 2.
-																												// Just
-																												// so
-																												// it
-																												// appears
-																												// random
+				+ (long) (GeneralMethods.rand.nextDouble() * config.getLong("Properties.Fire.RevertTicks"));
 		if (tempFire.containsKey(loc)) {
 			info = tempFire.get(loc);
 		} else {

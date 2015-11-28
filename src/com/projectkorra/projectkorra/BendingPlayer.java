@@ -1,10 +1,26 @@
 package com.projectkorra.projectkorra;
 
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.ability.api.CoreAbility;
+import com.projectkorra.projectkorra.ability.api.FireAbility;
+import com.projectkorra.projectkorra.ability.api.SubAbility;
+import com.projectkorra.projectkorra.ability.api.WaterAbility;
+import com.projectkorra.projectkorra.airbending.AirMethods;
+import com.projectkorra.projectkorra.chiblocking.ChiMethods;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
+import com.projectkorra.projectkorra.firebending.FireMethods;
 import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,10 +39,11 @@ public class BendingPlayer {
 	 * key.
 	 */
 	private static ConcurrentHashMap<UUID, BendingPlayer> players = new ConcurrentHashMap<>();
-	//	public static ConcurrentHashMap<String, Long> blockedChi = new ConcurrentHashMap<String, Long>();
 
 	private UUID uuid;
 	private String name;
+	private Player player;
+	private FileConfiguration config;
 	private ArrayList<Element> elements;
 	private HashMap<Integer, String> abilities;
 	private ConcurrentHashMap<String, Long> cooldowns;
@@ -52,6 +69,8 @@ public class BendingPlayer {
 		this.elements = elements;
 		this.setAbilities(abilities);
 		this.permaRemoved = permaRemoved;
+		this.player = Bukkit.getPlayer(uuid);
+		this.config = ConfigManager.getConfig();
 		cooldowns = new ConcurrentHashMap<String, Long>();
 		toggledElements = new ConcurrentHashMap<Element, Boolean>();
 		toggledElements.put(Element.Air, true);
@@ -59,7 +78,7 @@ public class BendingPlayer {
 		toggledElements.put(Element.Fire, true);
 		toggledElements.put(Element.Water, true);
 		toggledElements.put(Element.Chi, true);
-		
+
 		players.put(uuid, this);
 		PKListener.login(this);
 	}
@@ -111,6 +130,115 @@ public class BendingPlayer {
 	 */
 	public boolean canBeSlowed() {
 		return (System.currentTimeMillis() > slowTime);
+	}
+
+	/**
+	 * Checks to see if a player can use Flight.
+	 * 
+	 * @return true If player has permission node "bending.air.flight"
+	 */
+	public boolean canAirFlight() {
+		return player.hasPermission("bending.air.flight");
+	}
+
+	/**
+	 * Checks to see if a player can use SpiritualProjection.
+	 * 
+	 * @param player The player to check
+	 * @return true If player has permission node
+	 *         "bending.air.spiritualprojection"
+	 */
+	public boolean canUseSpiritualProjection() {
+		return player.hasPermission("bending.air.spiritualprojection");
+	}
+
+	/**
+	 * Checks to see if a Player is effected by BloodBending.
+	 * 
+	 * @return true If {@link ChiMethods#isChiBlocked(String)} is true <br />
+	 *         false If player is BloodBender and Bending is toggled on, or if
+	 *         player is in AvatarState
+	 */
+	public boolean canBeBloodbent() {
+		if (AvatarState.isAvatarState(player)) {
+			if (ChiMethods.isChiBlocked(name)) {
+				return true;
+			}
+		}
+		if (GeneralMethods.canBend(name, "Bloodbending") && !isToggled()) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Checks to see if a player can BloodBend.
+	 * 
+	 * @return true If player has permission node "bending.earth.bloodbending"
+	 */
+	public boolean canBloodbend() {
+		return player.hasPermission("bending.water.bloodbending");
+	}
+
+	public boolean canBloodbendAtAnytime() {
+		return canBloodbend() && player.hasPermission("bending.water.bloodbending.anytime");
+	}
+
+	public boolean canIcebend() {
+		return player.hasPermission("bending.water.icebending");
+
+	}
+
+	/**
+	 * Checks to see if a player can PlantBend.
+	 * 
+	 * @param player The player to check
+	 * @return true If player has permission node "bending.ability.plantbending"
+	 */
+	public static boolean canPlantbend(Player player) {
+		return player.hasPermission("bending.water.plantbending");
+	}
+
+	public boolean canWaterHeal() {
+		return player.hasPermission("bending.water.healing");
+	}
+
+	/**
+	 * Checks to see if a player can SandBend.
+	 * 
+	 * @param player The player to check
+	 * @return true If player has permission node "bending.earth.sandbending"
+	 */
+	public boolean canSandbend() {
+		return player.hasPermission("bending.earth.sandbending");
+	}
+
+	/**
+	 * Checks to see if a player can MetalBend.
+	 * 
+	 * @param player The player to check
+	 * @return true If player has permission node "bending.earth.metalbending"
+	 */
+	public boolean canMetalbend() {
+		return player.hasPermission("bending.earth.metalbending");
+	}
+
+	/**
+	 * Checks to see if a player can LavaBend.
+	 * 
+	 * @param player The player to check
+	 * @return true If player has permission node "bending.earth.lavabending"
+	 */
+	public static boolean canLavabend(Player player) {
+		return player.hasPermission("bending.earth.lavabending");
+	}
+
+	public static boolean canCombustionbend(Player player) {
+		return player.hasPermission("bending.fire.combustionbending");
+	}
+
+	public static boolean canLightningbend(Player player) {
+		return player.hasPermission("bending.fire.lightningbending");
 	}
 
 	/**
@@ -193,6 +321,11 @@ public class BendingPlayer {
 		return this.elements.contains(e);
 	}
 
+	public boolean hasElement(String elementName) {
+		//TODO: Finish this
+		return true;
+	}
+	
 	/**
 	 * Checks to see if the {@link BendingPlayer} is chi blocked.
 	 * 
@@ -201,9 +334,9 @@ public class BendingPlayer {
 	public boolean isChiBlocked() {
 		return this.chiBlocked;
 	}
-	
+
 	public boolean isElementToggled(Element e) {
-		if(e != null)
+		if (e != null)
 			return this.toggledElements.get(e);
 		return true;
 	}
@@ -234,6 +367,11 @@ public class BendingPlayer {
 	 */
 	public boolean isToggled() {
 		return this.toggled;
+	}
+	
+	public boolean isElementToggled(String elementName) {
+		// TODO: Finish this
+		return true;
 	}
 
 	/**
@@ -306,7 +444,7 @@ public class BendingPlayer {
 	public void toggleBending() {
 		toggled = !toggled;
 	}
-	
+
 	public void toggleElement(Element e) {
 		toggledElements.put(e, !toggledElements.get(e));
 	}
@@ -323,6 +461,85 @@ public class BendingPlayer {
 	 */
 	public void unblockChi() {
 		chiBlocked = false;
+	}
+
+	public boolean canBend(CoreAbility ability) {
+		if (player == null) {
+			return false;
+		}
+		if (isOnCooldown(ability.getName())) {
+			return false;
+		}
+		List<String> disabledWorlds = config.getStringList("Properties.DisabledWorlds");
+		if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
+			return false;
+		}
+		if (Commands.isToggledForAll || !isToggled() || !isElementToggled(ability.getName())) {
+			return false;
+		}
+		if (player.getGameMode() == GameMode.SPECTATOR) {
+			return false;
+		}
+		if (cooldowns.containsKey(name)) {
+			if (cooldowns.get(name) + config.getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
+				return false;
+			}
+			cooldowns.remove(name);
+		}
+		if (isChiBlocked() || isParalyzed() || isBloodbended() || isControlledByMetalClips()) {
+			return false;
+		}
+		if (GeneralMethods.isRegionProtectedFromBuild(player, ability.getName(), player.getLocation())) {
+			return false;
+		}
+		if (ability instanceof FireAbility && BendingManager.events.get(player.getWorld()) != null && BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SolarEclipse")) {
+			return false;
+		}
+		if (ability instanceof WaterAbility && BendingManager.events.get(player.getWorld()) != null && BendingManager.events.get(player.getWorld()).equalsIgnoreCase("LunarEclipse")) {
+			return false;
+		}
+		if (!canBind(ability)) {
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean canBind(CoreAbility ability) {
+		if (player == null) {
+			return false;
+		}
+		if (!player.hasPermission("bending.ability." + ability)) {
+			return false;
+		}
+		if (!hasElement(ability.getElementName())) {
+			return false;
+		}
+		if (ability instanceof SubAbility) {
+			SubAbility subAbil = (SubAbility) ability;
+			if (!hasElement(subAbil.getSubElementName())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Attempts to get a {@link BendingPlayer} from specified player name. this
+	 * method tries to get a {@link Player} object and gets the uuid and then
+	 * calls {@link #getBendingPlayer(UUID)}
+	 * 
+	 * @param playerName The name of the Player
+	 * @return The BendingPlayer object if {@link BendingPlayer#players}
+	 *         contains the player name
+	 * 
+	 * @see #getBendingPlayer(UUID)
+	 */
+	public static BendingPlayer getBendingPlayer(String player) {
+		OfflinePlayer oPlayer = Bukkit.getPlayer(player);
+		if (player == null) {
+			oPlayer = Bukkit.getOfflinePlayer(oPlayer.getUniqueId());
+		}
+		return BendingPlayer.getPlayers().get(oPlayer.getUniqueId());
 	}
 
 }

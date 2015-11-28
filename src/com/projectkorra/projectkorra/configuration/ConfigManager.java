@@ -871,4 +871,8 @@ public class ConfigManager {
 				break;
 		}
 	}
+	
+	public static FileConfiguration getConfig() {
+		return ConfigManager.defaultConfig.get();
+	}
 }
