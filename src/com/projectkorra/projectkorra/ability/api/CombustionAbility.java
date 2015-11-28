@@ -15,5 +15,4 @@ public abstract class CombustionAbility extends FireAbility implements SubAbilit
 	public Class<? extends Ability> getParentAbility() {
 		return FireAbility.class;
 	}
-	
 }

@@ -16,5 +16,4 @@ public abstract class SandAbility extends EarthAbility implements SubAbility {
 	public Class<? extends Ability> getParentAbility() {
 		return EarthAbility.class;
 	}
-	
 }
