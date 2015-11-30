@@ -63,7 +63,7 @@ public class IceSpike2 {
 			plantbending = true;
 		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, plantbending);
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, plantbending, false);
 
 		if (sourceblock == null) {
 			new SpikeField(player);

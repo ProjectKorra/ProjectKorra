@@ -158,6 +158,7 @@ public class ConfigManager {
 				config.addDefault("Properties.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
 				config.addDefault("Properties.Water.LunarEclipseMessage", "A lunar eclipse is out! Waterbendings are temporarily powerless.");
 				config.addDefault("Properties.Water.FullMoonMessage", "A full moon is rising, empowering your waterbending like never before.");
+				config.addDefault("Properties.Water.AutoSourcing.Range", 4);
 
 				config.addDefault("Properties.Earth.RevertEarthbending", true);
 				config.addDefault("Properties.Earth.SafeRevert", true);
@@ -167,6 +168,7 @@ public class ConfigManager {
 				config.addDefault("Properties.Earth.MetalBlocks", metals);
 				config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 				config.addDefault("Properties.Earth.PlaySound", true);
+				config.addDefault("Properties.Earth.AutoSourcing.Range", 4);
 
 				config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 				config.addDefault("Properties.Fire.DayFactor", 1.25);
@@ -334,6 +336,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.IceBlast.Damage", 3);
 				config.addDefault("Abilities.Water.IceBlast.Range", 20);
 				config.addDefault("Abilities.Water.IceBlast.Cooldown", 1500);
+				config.addDefault("Abilities.Water.IceBlast.AutoSourcing.Enabled", true);
 				config.addDefault("Abilities.Water.IceBlast.Description", "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an explosive burst of ice at an opponent, spraying ice and snow around it. To use, simply tap sneak (Default: Shift) while targeting a block of ice to select it as a source. From there, you can just left click to send the blast off at your opponent.");
 
 				config.addDefault("Abilities.Water.IceSpike.Enabled", true);
@@ -450,6 +453,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterManipulation.Range", 30);
 				config.addDefault("Abilities.Water.WaterManipulation.Speed", 35);
 				config.addDefault("Abilities.Water.WaterManipulation.Push", 0.3);
+				config.addDefault("Abilities.Water.WaterManipulation.AutoSourcing.Enabled", true);
 				config.addDefault("Abilities.Water.WaterManipulation.Cooldown", 1000);
 
 				config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
@@ -506,6 +510,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.EarthBlast.Revert", true);
 				config.addDefault("Abilities.Earth.EarthBlast.Damage", 3);
 				config.addDefault("Abilities.Earth.EarthBlast.Push", 0.3);
+				config.addDefault("Abilities.Earth.EarthBlast.AutoSourcing.Enabled", true);
 
 				config.addDefault("Abilities.Earth.EarthGrab.Enabled", true);
 				config.addDefault("Abilities.Earth.EarthGrab.Description", "To use, simply left-click while targeting a creature within range. " + "This ability will erect a circle of earth to trap the creature in.");

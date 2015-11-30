@@ -27,6 +27,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthMethods {
@@ -160,8 +161,16 @@ public class EarthMethods {
 	 * @return a valid Earth source block, or null if one could not be found.
 	 */
 	@SuppressWarnings("deprecation")
-	public static Block getEarthSourceBlock(Player player, double range) {
-		Block testblock = player.getTargetBlock(getTransparentEarthbending(), (int) range);
+	public static Block getEarthSourceBlock(Player player, double range, boolean autosource) {
+		Block testblock = null;
+		if (!autosource) {
+			testblock = player.getTargetBlock(getTransparentEarthbending(), (int) range);
+		} else {
+			testblock = getRandomEarthBlock(player.getLocation(), config.getInt("Properties.Earth.AutoSourcing.Range"));
+			if (testblock == null) {
+				return null;
+			}
+		}
 		if (isEarthbendable(player, testblock) || isMetalbendable(player, testblock.getType()))
 			return testblock;
 		Location location = player.getEyeLocation();
@@ -175,6 +184,31 @@ public class EarthMethods {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns a random block within a radius of a location.
+	 * @param location
+	 * @param radius
+	 * @return random block
+	 */
+	public static Block getRandomEarthBlock(Location location, int radius) {
+	    List<Integer> checked = new ArrayList<Integer>();
+	    List<Block> blocks = GeneralMethods.getBlocksAroundPoint(location, radius);
+	    for (int i = 0; i < blocks.size(); i++) {
+	        int index = GeneralMethods.rand.nextInt(blocks.size());
+	        while (checked.contains(index)) {
+	            index = GeneralMethods.rand.nextInt(blocks.size());
+	        }
+	        Block block = blocks.get(index);
+	        if (block == null || block.getLocation().distance(location) < 2) {
+	        	continue;
+	        }
+	        if (isEarthbendable(block.getType()) && block.getRelative(BlockFace.UP).getType() == Material.AIR) {
+	            return block;
+	        }
+	    }
+	    return null;
 	}
 
 	/**

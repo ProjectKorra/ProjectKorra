@@ -41,6 +41,7 @@ public class WaterManipulation {
 	private static double defaultdamage = config.getDouble("Abilities.Water.WaterManipulation.Damage");
 	private static double speed = config.getDouble("Abilities.Water.WaterManipulation.Speed");
 	private static long COOLDOWN = config.getLong("Abilities.Water.WaterManipulation.Cooldown");
+	private static boolean autosource = config.getBoolean("Abilities.Water.WaterManipulation.AutoSourcing.Enabled");
 	private static long interval = (long) (1000. / speed);
 	private static final double deflectrange = 3;
 	// private static double speed = 1.5;
@@ -91,7 +92,7 @@ public class WaterManipulation {
 
 	public boolean prepare() {
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, WaterMethods.canPlantbend(player), autosource);
 		// if (prepared.containsKey(player)
 		// && !Methods.isWaterbendable(block, player)) {
 		// instances.get(prepared.get(player)).displacing = true;

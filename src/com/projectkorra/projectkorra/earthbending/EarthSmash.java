@@ -167,7 +167,7 @@ public class EarthSmash {
 		if (state == State.START && progressCounter > 1) {
 			if (!player.isSneaking()) {
 				if (System.currentTimeMillis() - time > chargeTime) {
-					origin = EarthMethods.getEarthSourceBlock(player, grabRange);
+					origin = EarthMethods.getEarthSourceBlock(player, grabRange, false);
 					if (origin == null) {
 						remove();
 						return;

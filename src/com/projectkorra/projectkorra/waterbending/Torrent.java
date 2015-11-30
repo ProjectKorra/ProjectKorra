@@ -76,7 +76,7 @@ public class Torrent {
 		}
 		this.player = player;
 		time = System.currentTimeMillis();
-		sourceblock = BlockSource.getWaterSourceBlock(player, selectrange, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
+		sourceblock = BlockSource.getWaterSourceBlock(player, selectrange, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player), false);
 		if (sourceblock != null) {
 			sourceselected = true;
 			instances.put(player, this);

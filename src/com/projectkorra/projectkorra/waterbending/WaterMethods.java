@@ -25,7 +25,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class WaterMethods {
 
@@ -145,11 +147,17 @@ public class WaterMethods {
 	 * @return a valid Water source block, or null if one could not be found.
 	 */
 	@SuppressWarnings("deprecation")
-	public static Block getWaterSourceBlock(Player player, double range, boolean plantbending) {
+	public static Block getWaterSourceBlock(Player player, double range, boolean plantbending, boolean autosource) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			if (i == range && autosource) {
+				block = getRandomWaterBlock(player, player.getLocation(), config.getInt("Properties.Water.AutoSourcing.Range"));
+				if (block == null) {
+					return null;
+				}
+			}
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location))
 				continue;
 			if (isWaterbendable(block, player) && (!isPlant(block) || plantbending)) {
@@ -164,6 +172,28 @@ public class WaterMethods {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns a random block within a radius of a location.
+	 * @param location
+	 * @param radius
+	 * @return random block
+	 */
+	public static Block getRandomWaterBlock(Player player, Location location, int radius) {
+	    List<Integer> checked = new ArrayList<Integer>();
+	    List<Block> blocks = GeneralMethods.getBlocksAroundPoint(location, radius);
+	    for (int i = 0; i < blocks.size(); i++) {
+	        int index = GeneralMethods.rand.nextInt(blocks.size());
+	        while (checked.contains(index)) {
+	            index = GeneralMethods.rand.nextInt(blocks.size());
+	        }
+	        Block block = blocks.get(index);
+	        if (isWaterbendable(block, player) && block.getRelative(BlockFace.UP).getType() == Material.AIR) {
+	            return block;
+	        }
+	    }
+	    return null;
 	}
 
 	public static Block getIceSourceBlock(Player player, double range) {

@@ -267,7 +267,7 @@ public class WaterCombo {
 					return;
 				}
 				Block waterBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, 
-						true, true, WaterMethods.canPlantbend(player));
+						true, true, WaterMethods.canPlantbend(player), false);
 				if (waterBlock == null) {
 					remove();
 					return;

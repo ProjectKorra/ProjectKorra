@@ -31,6 +31,7 @@ public class IceBlast {
 	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.Range");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
 	private static int COOLDOWN = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
+	private static boolean autosource = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceBlast.AutoSourcing.Enabled");
 	private static int ID = Integer.MIN_VALUE;
 
 	private static final long interval = 20;
@@ -64,7 +65,7 @@ public class IceBlast {
 		block(player);
 		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, false, true, false);
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, false, true, false, autosource);
 
 		if (sourceblock == null) {
 			return;

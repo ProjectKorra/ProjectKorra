@@ -165,7 +165,7 @@ public class LavaFlow {
 			}
 			instances.add(this);
 		} else if (type == AbilityType.CLICK) {
-			Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, clickRange, ClickType.LEFT_CLICK);
+			Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, clickRange, ClickType.LEFT_CLICK, false);
 			if (sourceBlock == null) {
 				remove();
 				return;
