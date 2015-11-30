@@ -188,6 +188,7 @@ public class WaterMethods {
 	        while (checked.contains(index)) {
 	            index = GeneralMethods.rand.nextInt(blocks.size());
 	        }
+	        checked.add(index);
 	        Block block = blocks.get(index);
 	        if (isWaterbendable(block, player) && block.getRelative(BlockFace.UP).getType() == Material.AIR) {
 	            return block;

@@ -200,6 +200,7 @@ public class EarthMethods {
 	        while (checked.contains(index)) {
 	            index = GeneralMethods.rand.nextInt(blocks.size());
 	        }
+	        checked.add(index);
 	        Block block = blocks.get(index);
 	        if (block == null || block.getLocation().distance(location) < 2) {
 	        	continue;
