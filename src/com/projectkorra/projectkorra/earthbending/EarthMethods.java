@@ -166,7 +166,7 @@ public class EarthMethods {
 		if (!autosource) {
 			testblock = player.getTargetBlock(getTransparentEarthbending(), (int) range);
 		} else {
-			testblock = getRandomEarthBlock(player.getLocation(), config.getInt("Properties.Earth.AutoSourcing.Range"));
+			testblock = getRandomEarthBlock(player, player.getLocation(), config.getInt("Properties.Earth.AutoSourcing.Range"));
 			if (testblock == null) {
 				return null;
 			}
@@ -192,7 +192,7 @@ public class EarthMethods {
 	 * @param radius
 	 * @return random block
 	 */
-	public static Block getRandomEarthBlock(Location location, int radius) {
+	public static Block getRandomEarthBlock(Player player, Location location, int radius) {
 	    List<Integer> checked = new ArrayList<Integer>();
 	    List<Block> blocks = GeneralMethods.getBlocksAroundPoint(location, radius);
 	    for (int i = 0; i < blocks.size(); i++) {
@@ -205,7 +205,7 @@ public class EarthMethods {
 	        if (block == null || block.getLocation().distance(location) < 2) {
 	        	continue;
 	        }
-	        if (isEarthbendable(block.getType()) && block.getRelative(BlockFace.UP).getType() == Material.AIR) {
+	        if (isEarthbendable(block.getType()) && isTransparentToEarthbending(player, block.getRelative(BlockFace.UP))) {
 	            return block;
 	        }
 	    }
