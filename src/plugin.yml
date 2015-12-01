@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.8.0 BETA 5
+version: 1.8.0 BETA 6
 main: com.projectkorra.projectkorra.ProjectKorra
 softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC]
 commands:
@@ -21,10 +21,12 @@ permissions:
       bending.command.rechoose: true
       bending.admin.choose: true
       bending.ability.AvatarState: true
-      bending.water.Bloodbending.anytime: true
+      bending.water.bloodbending.anytime: true
+      bending.water.bloodbending: true
       bending.ability.Flight: true
       bending.ability.MetalClips.loot: true
       bending.ability.MetalClips.4clips: true
+      bending.ability.MetalClips.throw: true
       bending.command.import: true
       bending.command.toggle.all: true
       bending.admin.toggle: true
@@ -96,7 +98,6 @@ permissions:
       bending.ability.PlantArmor: true
       bending.water.plantbending: true
       bending.message.nightmessage: true
-      bending.water.bloodbending: false
       bending.water.passive: true
       bending.water.icebending: true
       bending.water.healing: true
@@ -124,9 +125,6 @@ permissions:
       bending.ability.Tremorsense: true
       bending.ability.Extraction: true
       bending.ability.MetalClips: true
-      bending.ability.MetalClips.loot: false
-      bending.ability.MetalClips.4clips: false
-      bending.ability.MetalClips.throw: false
       bending.earth.passive: true
       bending.earth.metalbending: true
       bending.earth.lavabending: true

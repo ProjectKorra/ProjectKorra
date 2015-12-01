@@ -49,6 +49,8 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 		this.start = start;
 		this.end = end;
 		abil = ability;
+		this.element = element;
+		this.sub = sub;
 	}
 
 	public Entity getEntity() {
@@ -76,6 +78,9 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 	}
 
 	public double getDistanceTraveled() {
+		if (start.getWorld() != end.getWorld()) {
+			return 0;
+		}
 		return start.distance(end);
 	}
 

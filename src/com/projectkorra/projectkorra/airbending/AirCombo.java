@@ -229,6 +229,11 @@ public class AirCombo implements ConfigLoadable {
 			currentLoc.add(direction.clone().multiply(speed));
 			if (!EarthMethods.isTransparentToEarthbending(player, currentLoc.getBlock()))
 				currentLoc.subtract(direction.clone().multiply(speed));
+			
+			if (player.getWorld() != currentLoc.getWorld()) {
+				remove();
+				return;
+			}
 
 			if (Math.abs(player.getLocation().distance(currentLoc)) > range) {
 				remove();

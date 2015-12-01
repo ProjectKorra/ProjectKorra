@@ -13,8 +13,9 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
+import com.projectkorra.projectkorra.ability.combo.ComboAbilityModule;
+import com.projectkorra.projectkorra.ability.combo.ComboModuleManager;
 import com.projectkorra.projectkorra.object.Preset;
 
 /**
@@ -34,7 +35,7 @@ public class BendingTabComplete implements TabCompleter {
 				List<String> abilities = new ArrayList<String>();
 				if (args.length == 2) {
 					for (String abil : AbilityModuleManager.abilities) {
-						if (GeneralMethods.canBend(sender.getName(), abil)) {
+						if (GeneralMethods.canBind(sender.getName(), abil)) {
 							abilities.add(abil);
 						}
 					}
@@ -54,6 +55,17 @@ public class BendingTabComplete implements TabCompleter {
 				list.add("Fire");
 				list.add("Water");
 				list.add("Chi");
+				list.add("Bloodbending");
+				list.add("Combustion");
+				list.add("Flight");
+				list.add("Healing");
+				list.add("Ice");
+				list.add("Lava");
+				list.add("Lightning");
+				list.add("Metal");
+				list.add("Plantbending");
+				list.add("Sand");
+				list.add("SpiritualProjection");
 				list.add("AirCombos");
 				list.add("EarthCombos");
 				list.add("FireCombos");
@@ -65,11 +77,20 @@ public class BendingTabComplete implements TabCompleter {
 				if (args.length > 3 || !sender.hasPermission("bending.command.add"))
 					return new ArrayList<String>();
 				List<String> l = new ArrayList<String>();
-				l.add("Air");
-				l.add("Earth");
-				l.add("Fire");
-				l.add("Water");
-				l.add("Chi");
+				if (args.length == 2)
+				{
+					l.add("Air");
+					l.add("Earth");
+					l.add("Fire");
+					l.add("Water");
+					l.add("Chi");
+				}
+				else
+				{
+					for (Player p : Bukkit.getOnlinePlayers()) {
+						l.add(p.getName());
+					}
+				}
 				return getPossibleCompletionsForGivenArgs(args, l);
 			} else if (args[0].equalsIgnoreCase("clear") || args[0].equalsIgnoreCase("cl") || args[0].equalsIgnoreCase("c")) {
 				if (args.length > 2 || !sender.hasPermission("bending.command.clear"))
@@ -86,13 +107,15 @@ public class BendingTabComplete implements TabCompleter {
 				for (Element e : Element.values()) {
 					list.add(e.toString());
 				}
-				for (SubElement e : SubElement.values()) {
-					list.add(e.toString());
-				}
 				List<String> abils = new ArrayList<String>();
 				for (String abil : AbilityModuleManager.abilities) {
 					if (GeneralMethods.canBend(sender.getName(), abil)) {
 						abils.add(abil);
+					}
+				}
+				for (ComboAbilityModule abil : ComboModuleManager.combo) {
+					if (GeneralMethods.canBend(sender.getName(), abil.getName())) {
+						abils.add(abil.getName());
 					}
 				}
 				Collections.sort(abils);

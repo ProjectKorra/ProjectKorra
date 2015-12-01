@@ -21,7 +21,7 @@ import java.util.List;
 public class RemoveCommand extends PKCommand {
 
 	public RemoveCommand() {
-		super("remove", "/bending remove [Player] <element>", "This command will remove the element of the targeted [Player]. The player will be able to re-pick their element after this command is run on them, assuming their Bending was not permaremoved.", new String[] { "remove", "rm" });
+		super("remove", "/bending remove <Player> [Element]", "This command will remove the element of the targeted [Player]. The player will be able to re-pick their element after this command is run on them, assuming their Bending was not permaremoved.", new String[] { "remove", "rm" });
 	}
 
 	@Override

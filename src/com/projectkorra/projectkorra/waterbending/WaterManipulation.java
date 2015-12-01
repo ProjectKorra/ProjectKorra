@@ -11,6 +11,7 @@ import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Effect;
@@ -500,6 +501,9 @@ public class WaterManipulation {
 		}
 		if (FreezeMelt.frozenblocks.containsKey(block))
 			FreezeMelt.frozenblocks.remove(block);
+		if (WaterMethods.isWater(block)) {
+			ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(.5,.5,.5), 257D);
+		}
 		block.setType(Material.STATIONARY_WATER);
 		block.setData(full);
 	}
