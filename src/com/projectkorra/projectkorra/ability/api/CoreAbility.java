@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.ability.api;
 
+import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
