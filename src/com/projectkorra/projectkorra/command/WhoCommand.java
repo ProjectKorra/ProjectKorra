@@ -76,34 +76,51 @@ public class WhoCommand extends PKCommand {
 			List<String> players = new ArrayList<String>();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				String playerName = player.getName();
-
+				String result = "";
 				BendingPlayer bp = GeneralMethods.getBendingPlayer(playerName);
 				if (bp == null) {
 					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 					bp = GeneralMethods.getBendingPlayer(player.getName());
 				}
-				if (bp.getElements().size() > 1) {
-					players.add(GeneralMethods.getAvatarColor() + playerName);
-					continue;
-				} else if (bp.getElements().size() == 0) {
-					players.add(playerName);
-					continue;
-				} else if (GeneralMethods.isBender(playerName, Element.Air)) {
-					players.add(AirMethods.getAirColor() + playerName);
-					continue;
-				} else if (GeneralMethods.isBender(playerName, Element.Water)) {
-					players.add(WaterMethods.getWaterColor() + playerName);
-					continue;
-				} else if (GeneralMethods.isBender(playerName, Element.Earth)) {
-					players.add(EarthMethods.getEarthColor() + playerName);
-					continue;
-				} else if (GeneralMethods.isBender(playerName, Element.Chi)) {
-					players.add(ChiMethods.getChiColor() + playerName);
-					continue;
-				} else if (GeneralMethods.isBender(playerName, Element.Fire)) {
-					players.add(FireMethods.getFireColor() + playerName);
-					continue;
+				if (bp.hasElement(Element.Air)) {
+					result = ChatColor.WHITE + playerName + " - " + AirMethods.getAirColor() + "A";
 				}
+				if (bp.hasElement(Element.Earth)) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + " - " + EarthMethods.getEarthColor() + "E";
+					} else {
+						result = result + ChatColor.WHITE + " | " + EarthMethods.getEarthColor() + "E";
+					}
+				}
+				if (bp.hasElement(Element.Fire)) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + " - " + FireMethods.getFireColor() + "F";
+					} else {
+						result = result + ChatColor.WHITE + " | " + FireMethods.getFireColor() + "F";
+					}
+				}
+				if (bp.hasElement(Element.Water)) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + " - " + WaterMethods.getWaterColor() + "W";
+					} else {
+						result = result + ChatColor.WHITE + " | " + WaterMethods.getWaterColor() + "W";
+					}
+				}
+				if (bp.hasElement(Element.Chi)) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + " - " + ChiMethods.getChiColor() + "C";
+					} else {
+						result = result + ChatColor.WHITE + " | " + ChiMethods.getChiColor() + "C";
+					}
+				}
+				if (staff.containsKey(player.getUniqueId().toString())) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + staff.get(player.getUniqueId().toString());
+					} else {
+						result = result + ChatColor.WHITE + " | " + staff.get(player.getUniqueId().toString());
+					}
+				}
+				players.add(result);
 			}
 			if (players.isEmpty()) {
 				sender.sendMessage(ChatColor.RED + "There is no one online.");
