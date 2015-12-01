@@ -5,8 +5,11 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public abstract class EarthAbility extends CoreAbility {
-
+public abstract class EarthAbility extends CoreAbility implements SourceAbility {
+	private boolean canAutoSource;
+	private boolean canDynamicSource;
+	private boolean canSelfSource;
+	
 	public EarthAbility(Player player, boolean autoStart) {
 		super(player, autoStart);
 	}
@@ -20,11 +23,6 @@ public abstract class EarthAbility extends CoreAbility {
 		return "Earth";
 	}
 
-	@Override
-	public final ChatColor getElementColor() {
-		return getEarthColor();
-	}
-
 	/**
 	 * Gets the EarthColor from the config.
 	 * 
@@ -34,4 +32,15 @@ public abstract class EarthAbility extends CoreAbility {
 		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.Earth"));
 	}
 
+	public boolean canAutoSource() {
+		return canAutoSource;
+	}
+	
+	public boolean canDynamicSource() {
+		return canDynamicSource;
+	}
+	
+	public boolean canSelfSource() {
+		return canSelfSource;
+	}
 }

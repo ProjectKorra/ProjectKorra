@@ -5,8 +5,12 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public abstract class WaterAbility extends CoreAbility {
+public abstract class WaterAbility extends CoreAbility implements SourceAbility {
 
+	private boolean canAutoSource;
+	private boolean canDynamicSource;
+	private boolean canSelfSource;
+	
 	public WaterAbility(Player player, boolean autoStart) {
 		super(player, autoStart);
 	}
@@ -20,11 +24,6 @@ public abstract class WaterAbility extends CoreAbility {
 		return "Water";
 	}
 
-	@Override
-	public final ChatColor getElementColor() {
-		return getWaterColor();
-	}
-
 	/**
 	 * Gets the WaterColor from the config.
 	 * 
@@ -34,4 +33,15 @@ public abstract class WaterAbility extends CoreAbility {
 		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.Water"));
 	}
 
+	public boolean canAutoSource() {
+		return canAutoSource;
+	}
+	
+	public boolean canDynamicSource() {
+		return canDynamicSource;
+	}
+	
+	public boolean canSelfSource() {
+		return canSelfSource;
+	}
 }

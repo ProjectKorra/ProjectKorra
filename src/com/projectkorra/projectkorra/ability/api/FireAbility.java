@@ -37,11 +37,6 @@ public abstract class FireAbility extends CoreAbility {
 	public final String getElementName() {
 		return "Fire";
 	}
-
-	@Override
-	public final ChatColor getElementColor() {
-		return getFireColor();
-	}
 	
 	/**
 	 * Gets the FireColor from the config.

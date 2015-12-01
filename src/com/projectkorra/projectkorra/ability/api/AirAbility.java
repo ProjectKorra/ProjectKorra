@@ -20,11 +20,6 @@ public abstract class AirAbility extends CoreAbility {
 		return "Air";
 	}
 
-	@Override
-	public final ChatColor getElementColor() {
-		return getAirColor();
-	}
-
 	/**
 	 * Gets the AirColor from the config.
 	 * 

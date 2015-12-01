@@ -9,11 +9,12 @@ public abstract class SandAbility extends EarthAbility implements SubAbility {
 	}
 
 	public SandAbility(Player player) {
-		super(player);
+		super(player, false);
 	}
 
 	@Override
 	public Class<? extends Ability> getParentAbility() {
 		return EarthAbility.class;
 	}
+	
 }

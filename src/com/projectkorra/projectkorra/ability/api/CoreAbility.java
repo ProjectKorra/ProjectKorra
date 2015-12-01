@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.ability.api;
 
+import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
@@ -139,13 +140,16 @@ public abstract class CoreAbility implements Ability {
 		return CoreAbility.instances.get(clazz).get(player.getUniqueId()).values();
 	}
 
+	public ChatColor getElementColor() {
+		String element = (this instanceof SubAbility) ? getParentAbility().getElementName() + "Sub" : getElementName();
+		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors."+element));		
+	}
+	
 	public abstract String getName();
 
 	public abstract String getElementName();
 
 	public abstract Location getLocation();
-
-	public abstract ChatColor getElementColor();
 
 	public abstract long getCooldown();
 
