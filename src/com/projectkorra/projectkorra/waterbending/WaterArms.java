@@ -147,12 +147,12 @@ public class WaterArms {
 	}
 
 	private boolean prepare() {
-		Block sourceblock = WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource);
+		Block sourceblock = WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource, false);
 		if (sourceblock != null) {
 			if (WaterMethods.isPlant(sourceblock)) {
 				fullSource = false;
 			}
-			ParticleEffect.LARGE_SMOKE.display(WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource).getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
+			ParticleEffect.LARGE_SMOKE.display(WaterMethods.getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource, false).getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			WaterReturn.emptyWaterBottle(player);

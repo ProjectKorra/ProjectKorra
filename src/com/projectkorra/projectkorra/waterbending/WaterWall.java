@@ -150,7 +150,7 @@ public class WaterWall {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player), false);
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -460,7 +460,7 @@ public class WaterWall {
 	public static void form(Player player) {
 
 		if (!instances.containsKey(player.getEntityId())) {
-			if (!Wave.instances.containsKey(player.getEntityId()) && BlockSource.getWaterSourceBlock(player, (int) Wave.defaultrange, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player)) == null && WaterReturn.hasWaterBottle(player)) {
+			if (!Wave.instances.containsKey(player.getEntityId()) && BlockSource.getWaterSourceBlock(player, (int) Wave.defaultrange, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player), false) == null && WaterReturn.hasWaterBottle(player)) {
 				BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 				if (bPlayer.isOnCooldown("Surge"))

@@ -100,7 +100,7 @@ public class LavaSurge {
 	
 	public boolean prepare()
 	{
-		Block targetBlock = BlockSource.getEarthSourceBlock(player, prepareRange, ClickType.SHIFT_DOWN);
+		Block targetBlock = BlockSource.getEarthSourceBlock(player, prepareRange, ClickType.SHIFT_DOWN, false);
 		
 		if(targetBlock == null || 
 				!(targetBlock.getRelative(BlockFace.UP).getType() == Material.AIR) &&

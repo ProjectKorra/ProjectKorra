@@ -35,6 +35,8 @@ public class EarthBlast {
 
 	private static boolean revert = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.Revert");
 	private static double PUSH_FACTOR = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Push");
+	
+	private static boolean autosource = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.AutoSourcing.Enabled");
 
 	private static long interval = (long) (1000. / speed);
 
@@ -71,7 +73,7 @@ public class EarthBlast {
 
 	public boolean prepare() {
 		cancelPrevious();
-		Block block = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
+		Block block = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN, autosource);
 		block(player);
 		if (block != null) {
 			if (block.getLocation().distance(player.getLocation()) > preparerange) {

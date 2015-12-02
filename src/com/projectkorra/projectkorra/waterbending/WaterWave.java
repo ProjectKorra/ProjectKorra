@@ -106,7 +106,7 @@ public class WaterWave {
 			if (origin == null) {
 				removeType(player, AbilityType.CLICK);
 
-				Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
+				Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player), false);
 				if (block == null) {
 					if(instances.contains(this)) {
 						remove();
