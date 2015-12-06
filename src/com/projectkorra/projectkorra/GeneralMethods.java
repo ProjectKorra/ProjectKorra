@@ -1147,6 +1147,8 @@ public class GeneralMethods {
 		for (Entity entity : entities) {
 			if (entity.getWorld() != location.getWorld()) {
 				list.remove(entity);
+			} else if (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
+				list.remove(entity);
 			} else if (entity.getLocation().distance(location) > radius) {
 				list.remove(entity);
 			}
