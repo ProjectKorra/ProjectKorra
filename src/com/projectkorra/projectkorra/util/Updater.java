@@ -7,6 +7,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -57,8 +58,9 @@ public class Updater {
 			url = new URL(URL);
 			urlc = url.openConnection();
 			urlc.setRequestProperty("User-Agent", ""); // Must be used or face 403
+			urlc.setConnectTimeout(30000); // 30 second time out, throws SocketTimeoutException
 			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(urlc.getInputStream());
-		} catch (UnknownHostException e) {
+		} catch (UnknownHostException | SocketTimeoutException e) {
 			plugin.getLogger().info("Could not connect to ProjectKorra.com to check for updates");
 		} catch (IOException | SAXException | ParserConfigurationException e) {
 			e.printStackTrace();
