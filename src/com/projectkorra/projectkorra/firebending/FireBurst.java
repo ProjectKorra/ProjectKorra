@@ -144,6 +144,10 @@ public class FireBurst implements ConfigLoadable {
 	}
 
 	public boolean progress() {
+		if (player.isDead() || !player.isOnline()) {
+			remove();
+			return false;
+		}
 		if (!GeneralMethods.canBend(player.getName(), "FireBurst")) {
 			remove();
 			return false;
