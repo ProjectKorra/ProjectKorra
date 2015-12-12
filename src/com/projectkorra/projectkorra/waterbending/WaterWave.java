@@ -38,14 +38,20 @@ public class WaterWave {
 
 	public static boolean ICE_ONLY = false;
 	public static boolean ENABLED = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.Enabled");
-	public static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Range");
 	public static double MAX_SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Speed");
 	public static long CHARGE_TIME = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterSpout.Wave.ChargeTime");
 	public static long FLIGHT_TIME = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterSpout.Wave.FlightTime");
 	public static long COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown");
 	public static double WAVE_RADIUS = 1.5;
 	public static double ICE_WAVE_DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterCombo.IceWave.Damage");
-
+	
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Wave.SelectRange");
+	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Wave.AutoSourcing.SelectRange");
+	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AutoSourcing.Enabled");
+	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterSpout.Wave.AutoSourcing.Cooldown");
+	
+	private boolean isAuto;
+	
 	private Player player;
 	private long time;
 	private AbilityType type;
@@ -56,7 +62,6 @@ public class WaterWave {
 	private boolean iceWave = false;
 	private int progressCounter = 0;
 	private AnimateState anim;
-	private double range = RANGE;
 	private double speed = MAX_SPEED;
 	private double chargeTime = CHARGE_TIME;
 	private double flightTime = FLIGHT_TIME;
@@ -106,12 +111,17 @@ public class WaterWave {
 			if (origin == null) {
 				removeType(player, AbilityType.CLICK);
 
-				Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
+				Block block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 				if (block == null) {
 					if(instances.contains(this)) {
 						remove();
 					}
 					return;
+				}
+				if (BlockSource.isAuto(block)) {
+					isAuto = true;
+				} else {
+					isAuto = false;
 				}
 				instances.add(this);
 				Block blockAbove = block.getRelative(BlockFace.UP);
@@ -130,7 +140,7 @@ public class WaterWave {
 					return;
 				}
 			}
-			if (player.getLocation().distance(origin) > range) {
+			if (player.getLocation().distance(origin) > selectRange) {
 				remove();
 				return;
 			} else if (player.isSneaking()) {
@@ -278,7 +288,11 @@ public class WaterWave {
 		instances.remove(this);
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer != null) {
-			bPlayer.addCooldown("WaterWave", cooldown);
+			if (isAuto) {
+				bPlayer.addCooldown("WaterWave", autocooldown);
+			} else {
+				bPlayer.addCooldown("WaterWave", cooldown);
+			}
 		}
 		revertBlocks();
 		for (BukkitRunnable task : tasks)
@@ -418,14 +432,6 @@ public class WaterWave {
 
 	public void setRadius(double radius) {
 		this.radius = radius;
-	}
-
-	public double getRange() {
-		return range;
-	}
-
-	public void setRange(double range) {
-		this.range = range;
 	}
 
 	public double getSpeed() {

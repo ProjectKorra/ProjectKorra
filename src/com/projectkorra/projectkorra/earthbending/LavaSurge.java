@@ -33,6 +33,8 @@ public class LavaSurge {
 	public static int travelRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.TravelRange");
 	public static int maxBlocks = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.MaxLavaWaves");
 	public static boolean canSourceBeEarth = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.LavaSurge.SourceCanBeEarth");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.LavaSurge.DynamicSourcing.Enabled");
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.SelectRange");
 	public static List<FallingBlock> falling = new ArrayList<FallingBlock>();
 	public static int particleInterval = 100;
 	public static int fallingBlockInterval = 100;
@@ -100,7 +102,7 @@ public class LavaSurge {
 	
 	public boolean prepare()
 	{
-		Block targetBlock = BlockSource.getEarthSourceBlock(player, prepareRange, ClickType.SHIFT_DOWN);
+		Block targetBlock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, dynamic, false, true, EarthMethods.canSandbend(player), false);
 		
 		if(targetBlock == null || 
 				!(targetBlock.getRelative(BlockFace.UP).getType() == Material.AIR) &&

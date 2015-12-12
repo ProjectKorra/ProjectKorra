@@ -25,7 +25,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class WaterMethods {
 
@@ -145,14 +147,14 @@ public class WaterMethods {
 	 * @return a valid Water source block, or null if one could not be found.
 	 */
 	@SuppressWarnings("deprecation")
-	public static Block getWaterSourceBlock(Player player, double range, boolean plantbending) {
+	public static Block getWaterSourceBlock(Player player, double range, boolean water, boolean ice, boolean plant) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location))
 				continue;
-			if (isWaterbendable(block, player) && (!isPlant(block) || plantbending)) {
+			if (isWater(block) && water) {
 				if (TempBlock.isTempBlock(block)) {
 					TempBlock tb = TempBlock.get(block);
 					byte full = 0x0;
@@ -162,8 +164,48 @@ public class WaterMethods {
 				}
 				return block;
 			}
+			if (isIcebendable(block) && ice) {
+				return block;
+			}
+			if (isPlant(block) && plant) {
+				return block;
+			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns a random block within a radius of a location.
+	 * @param location
+	 * @param radius
+	 * @return random block
+	 */
+	public static Block getRandomWaterBlock(Player player, Location location, int radius, boolean water, boolean ice, boolean plant) {
+	    List<Integer> checked = new ArrayList<Integer>();
+	    List<Block> blocks = GeneralMethods.getBlocksAroundPoint(location, radius);
+	    for (int i = 0; i < blocks.size(); i++) {
+	        int index = GeneralMethods.rand.nextInt(blocks.size());
+	        while (checked.contains(index)) {
+	            index = GeneralMethods.rand.nextInt(blocks.size());
+	        }
+	        checked.add(index);
+	        Block block = blocks.get(index);
+	        if (block.getRelative(BlockFace.UP).getType() == Material.AIR) {
+	        	if (isWater(block) && water) {
+	        		BlockSource.randomBlocks.add(block);
+	        		return block;
+	        	}
+	        	if (isIcebendable(block) && ice) {
+	        		BlockSource.randomBlocks.add(block);
+	        		return block;
+	        	}
+	        	if (isPlant(block) && plant) {
+	        		BlockSource.randomBlocks.add(block);
+	        		return block;
+	        	}
+	        }
+	    }
+	    return null;
 	}
 
 	public static Block getIceSourceBlock(Player player, double range) {

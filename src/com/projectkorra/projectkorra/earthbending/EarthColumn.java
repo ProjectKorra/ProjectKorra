@@ -21,8 +21,9 @@ public class EarthColumn {
 
 	public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
 	private static int ID = Integer.MIN_VALUE;
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.RaiseEarth.DynamicSourcing.Enabled");
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.SelectRange");
 
-	private static double range = 20;
 	private static double speed = 8;
 	private static final Vector direction = new Vector(0, 1, 0);
 	private static long interval = (long) (1000. / speed);
@@ -47,7 +48,7 @@ public class EarthColumn {
 			if (AvatarState.isAvatarState(player)) {
 				height = (int) (2. / 5. * (double) AvatarState.getValue(height));
 			}
-			block = BlockSource.getEarthSourceBlock(player, range, ClickType.LEFT_CLICK);
+			block = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, dynamic, false, true, EarthMethods.canSandbend(player), false);
 			if (block == null)
 				return;
 			origin = block.getLocation();

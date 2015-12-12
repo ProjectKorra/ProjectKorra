@@ -27,14 +27,21 @@ public class EarthBlast {
 	public static ConcurrentHashMap<Integer, EarthBlast> instances = new ConcurrentHashMap<Integer, EarthBlast>();
 
 	private static boolean hitself = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
-	private static double preparerange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.PrepareRange");
-	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Range");
+	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Radius");
 	private static double DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Damage");
 	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Speed");
 	private static final double deflectrange = 3;
 
 	private static boolean revert = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.Revert");
 	private static double PUSH_FACTOR = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Push");
+	
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.DynamicSourcing.Enabled");
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthBlast.SelectRange");
+	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthBlast.AutoSourcing.SelectRange");
+	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.AutoSourcing.Enabled");
+	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthBlast.AutoSourcing.Cooldown");
+	
+	private static boolean isAuto;
 
 	private static long interval = (long) (1000. / speed);
 
@@ -71,10 +78,15 @@ public class EarthBlast {
 
 	public boolean prepare() {
 		cancelPrevious();
-		Block block = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
+		Block block = BlockSource.getEarthSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, dynamic, auto, true, true, false);
+		if (BlockSource.isAuto(block)) {
+			isAuto = true;
+		} else {
+			isAuto = false;
+		}
 		block(player);
 		if (block != null) {
-			if (block.getLocation().distance(player.getLocation()) > preparerange) {
+			if (block.getLocation().distance(player.getLocation()) > selectRange) {
 				return false;
 			}
 			sourceblock = block;
@@ -220,13 +232,6 @@ public class EarthBlast {
 				breakBlock();
 				return false;
 			}
-
-			if (!EarthMethods.isEarthbendable(player, sourceblock)
-					&& sourceblock.getType() != Material.COBBLESTONE) {
-				instances.remove(id);
-				return false;
-			}
-
 			if (!progressing && !falling) {
 
 				if (GeneralMethods.getBoundAbility(player) == null) {
@@ -247,7 +252,7 @@ public class EarthBlast {
 					unfocusBlock();
 					return false;
 				}
-				if (sourceblock.getLocation().distance(player.getLocation()) > preparerange) {
+				if (sourceblock.getLocation().distance(player.getLocation()) > selectRange) {
 					unfocusBlock();
 					return false;
 				}
@@ -429,7 +434,11 @@ public class EarthBlast {
 		}
 
 		if (cooldown)
-			bPlayer.addCooldown("EarthBlast", GeneralMethods.getGlobalCooldown());
+			if (isAuto) {
+				bPlayer.addCooldown("EarthBlast", autocooldown);
+			} else {
+				bPlayer.addCooldown("EarthBlast", GeneralMethods.getGlobalCooldown());
+			}
 
 		redirectTargettedBlasts(player, ignore);
 	}

@@ -32,7 +32,7 @@ public class EarthSmash {
 	public static boolean ALLOW_GRAB = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowGrab");
 	public static boolean ALLOW_SHOOTING = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowShooting");
 	public static boolean ALLOW_FLIGHT = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowFlight");
-	public static double GRAB_RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.GrabRange");
+	public static int GRAB_RANGE = ProjectKorra.plugin.getConfig().getInt("Properties.Earth.Range");
 	public static double TRAVEL_RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.ShotRange");
 	public static double SHOOTING_DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.Damage");
 
@@ -60,7 +60,8 @@ public class EarthSmash {
 	private int animCounter, progressCounter;
 	private long time, delay, cooldown, flightRemove, flightStart;
 	private double grabbedRange;
-	private double grabRange, chargeTime, damage, knockback, knockup, flySpeed, shootRange;
+	private double chargeTime, damage, knockback, knockup, flySpeed, shootRange;
+	private int grabRange;
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<BlockRepresenter> currentBlocks = new ArrayList<BlockRepresenter>();
 	private ArrayList<TempBlock> affectedBlocks = new ArrayList<TempBlock>();
@@ -167,7 +168,7 @@ public class EarthSmash {
 		if (state == State.START && progressCounter > 1) {
 			if (!player.isSneaking()) {
 				if (System.currentTimeMillis() - time > chargeTime) {
-					origin = EarthMethods.getEarthSourceBlock(player, grabRange);
+					origin = EarthMethods.getEarthSourceBlock(player, grabRange, true, EarthMethods.canSandbend(player), false);
 					if (origin == null) {
 						remove();
 						return;
@@ -672,11 +673,11 @@ public class EarthSmash {
 			bplayer.addCooldown("EarthSmash", cooldown);
 	}
 
-	public double getGrabRange() {
+	public int getGrabRange() {
 		return grabRange;
 	}
 
-	public void setGrabRange(double grabRange) {
+	public void setGrabRange(int grabRange) {
 		this.grabRange = grabRange;
 	}
 

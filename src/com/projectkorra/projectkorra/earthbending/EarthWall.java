@@ -19,7 +19,8 @@ public class EarthWall {
 	private static final int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Range");
 	private static final int defaultheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Height");
 	private static final int defaulthalfwidth = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Width") / 2;
-
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.SelectRange");
+	
 	private int height = defaultheight;
 	private int halfwidth = defaulthalfwidth;
 
@@ -45,7 +46,7 @@ public class EarthWall {
 		Vector orth = new Vector(ox, oy, oz);
 		orth = orth.normalize();
 
-		Block sblock = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
+		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, false, true, EarthMethods.canSandbend(player), false);
 		Location origin;
 		if (sblock == null) {
 			origin = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), range).getLocation();

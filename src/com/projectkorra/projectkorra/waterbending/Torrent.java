@@ -1,14 +1,8 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,9 +14,16 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.airbending.AirMethods;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class Torrent {
 
@@ -33,7 +34,6 @@ public class Torrent {
 	static long interval = 30;
 	static double RANGE = config.getInt("Abilities.Water.Torrent.Range");
 	private static int defaultrange = 20;
-	private static int selectrange = 10;
 	private static int DAMAGE = config.getInt("Abilities.Water.Torrent.Damage");
 	private static int DEFLECT_DAMAGE = config.getInt("Abilities.Water.Torrent.DeflectDamage");
 	private static int maxlayer = 3;
@@ -42,6 +42,14 @@ public class Torrent {
 	private static double ylimit = 0.2;
 
 	private static final byte full = 0x0;
+
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Torrent.SelectRange");
+	private static int autoSelectRange = ProjectKorra.plugin.getConfig()
+			.getInt("Abilities.Water.Torrent.AutoSourcing.SelectRange");
+	private static boolean auto = ProjectKorra.plugin.getConfig()
+			.getBoolean("Abilities.Water.Torrent.AutoSourcing.Enabled");
+	private static long autocooldown = ProjectKorra.plugin.getConfig()
+			.getLong("Abilities.Water.Torrent.AutoSourcing.Cooldown");
 
 	private Block sourceblock;
 	private TempBlock source;
@@ -62,6 +70,8 @@ public class Torrent {
 	private int damage = DAMAGE;
 	private int deflectdamage = DEFLECT_DAMAGE;
 
+	private boolean isAuto;
+
 	private ArrayList<TempBlock> blocks = new ArrayList<TempBlock>();
 	public ArrayList<TempBlock> launchblocks = new ArrayList<TempBlock>();
 	private ArrayList<Entity> hurtentities = new ArrayList<Entity>();
@@ -76,8 +86,14 @@ public class Torrent {
 		}
 		this.player = player;
 		time = System.currentTimeMillis();
-		sourceblock = BlockSource.getWaterSourceBlock(player, selectrange, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
+		sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, auto,
+				WaterReturn.hasWaterBottle(player), true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 		if (sourceblock != null) {
+			if (BlockSource.isAuto(sourceblock)) {
+				isAuto = true;
+			} else {
+				isAuto = false;
+			}
 			sourceselected = true;
 			instances.put(player, this);
 		}
@@ -131,7 +147,7 @@ public class Torrent {
 					return;
 				}
 
-				if (sourceblock.getLocation().distance(player.getLocation()) > selectrange) {
+				if (sourceblock.getLocation().distance(player.getLocation()) > selectRange) {
 					return;
 				}
 
@@ -326,7 +342,8 @@ public class Torrent {
 
 		// player.sendBlockChange(location, 20, (byte) 0);
 
-		if (location.distance(player.getLocation()) > range || GeneralMethods.isRegionProtectedFromBuild(player, "Torrent", location)) {
+		if (location.distance(player.getLocation()) > range
+				|| GeneralMethods.isRegionProtectedFromBuild(player, "Torrent", location)) {
 			if (layer < maxlayer)
 				if (freeze || layer < 1)
 					layer++;
@@ -358,7 +375,8 @@ public class Torrent {
 			}
 			if (b.getLocation().distance(targetloc) > 1) {
 				if (WaterMethods.isWater(b)) {
-					ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, b.getLocation().clone().add(.5,.5,.5), 257D);
+					ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f,
+							5, b.getLocation().clone().add(.5, .5, .5), 257D);
 				}
 				newblocks.add(new TempBlock(b, Material.STATIONARY_WATER, (byte) 8));
 			} else {
@@ -387,7 +405,8 @@ public class Torrent {
 						if (i == 0) {
 							affect(entity, dir);
 						} else {
-							affect(entity, GeneralMethods.getDirection(block.getLocation(), launchblocks.get(i - 1).getLocation()).normalize());
+							affect(entity, GeneralMethods.getDirection(block.getLocation(), launchblocks.get(i - 1).getLocation())
+									.normalize());
 						}
 						affectedentities.add(entity);
 					}
@@ -450,6 +469,12 @@ public class Torrent {
 		launchblocks.clear();
 		if (source != null)
 			source.revertBlock();
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (isAuto) {
+			bPlayer.addCooldown("Torrent", autocooldown);
+		} else {
+			bPlayer.addCooldown("Torrent", GeneralMethods.getGlobalCooldown());
+		}
 		instances.remove(player);
 	}
 
@@ -470,7 +495,8 @@ public class Torrent {
 		if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-			if (EarthMethods.isTransparentToEarthbending(player, block) && EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+			if (EarthMethods.isTransparentToEarthbending(player, block)
+					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData(full);
 				Torrent tor = new Torrent(player);
@@ -571,7 +597,8 @@ public class Torrent {
 				thaw(block);
 				continue;
 			}
-			if (block.getLocation().distance(player.getLocation()) > RANGE || !GeneralMethods.canBend(player.getName(), "Torrent")) {
+			if (block.getLocation().distance(player.getLocation()) > RANGE
+					|| !GeneralMethods.canBend(player.getName(), "Torrent")) {
 				thaw(block);
 			}
 		}

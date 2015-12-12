@@ -56,7 +56,13 @@ public class WaterCombo {
 			"Abilities.Water.WaterCombo.IceBullet.Cooldown");
 	public static long ICE_BULLET_SHOOT_TIME = ProjectKorra.plugin.getConfig().getLong(
 			"Abilities.Water.WaterCombo.IceBullet.ShootTime");
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterCombo.IceBullet.SelectRange");
+	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterCombo.IceBullet.AutoSourcing.SelectRange");
+	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterCombo.IceBullet.AutoSourcing.Enabled");
+	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterCombo.IceBullet.AutoSourcing.Cooldown");
 
+	private boolean IceBulletisAuto;
+	
 	public static ArrayList<WaterCombo> instances = new ArrayList<WaterCombo>();
 	public static ConcurrentHashMap<Block, TempBlock> frozenBlocks = new ConcurrentHashMap<Block, TempBlock>();
 
@@ -266,17 +272,25 @@ public class WaterCombo {
 					remove();
 					return;
 				}
-				Block waterBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, 
-						true, true, WaterMethods.canPlantbend(player));
+				Block waterBlock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, WaterReturn.hasWaterBottle(player), true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 				if (waterBlock == null) {
 					remove();
 					return;
+				}
+				if (BlockSource.isAuto(waterBlock)) {
+					IceBulletisAuto = true;
+				} else {
+					IceBulletisAuto = false;
 				}
 				this.time = 0;
 				origin = waterBlock.getLocation();
 				currentLoc = origin.clone();
 				state = AbilityState.ICE_BULLET_FORMING;
-				bplayer.addCooldown("IceBullet", cooldown);
+				if (IceBulletisAuto) {
+					bplayer.addCooldown("IceBullet", autocooldown);
+				} else {
+					bplayer.addCooldown("IceBullet", cooldown);
+				}
 				direction = new Vector(1, 0, 1);
 				waterGrabber = new WaterSourceGrabber(player, origin.clone());
 			} else if (waterGrabber.getState() == WaterSourceGrabber.AnimationState.FAILED) {

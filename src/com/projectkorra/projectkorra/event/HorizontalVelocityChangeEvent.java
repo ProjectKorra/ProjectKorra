@@ -49,6 +49,8 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 		this.start = start;
 		this.end = end;
 		abil = ability;
+		this.element = element;
+		this.sub = sub;
 	}
 
 	public Entity getEntity() {

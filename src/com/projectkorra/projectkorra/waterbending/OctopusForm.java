@@ -1,13 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,20 +12,32 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.airbending.AirMethods;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class OctopusForm {
 
 	public static ConcurrentHashMap<Player, OctopusForm> instances = new ConcurrentHashMap<Player, OctopusForm>();
 
-	private static int RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Range");
 	private static double ATTACK_RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.AttackRange");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.Damage");
 	private static long INTERVAL = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.FormDelay");
 	private static double KNOCKBACK = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
 	static double RADIUS = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.SelectRange");
+	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.OctopusForm.AutoSourcing.Enabled");
+	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.AutoSourcing.Cooldown");
+	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.AutoSourcing.SelectRange");
 	private static final byte full = 0x0;
+	
+	private boolean isAuto;
 
 	private Player player;
 	private Block sourceblock;
@@ -50,7 +56,6 @@ public class OctopusForm {
 	private boolean settingup = false;
 	private boolean forming = false;
 	private boolean formed = false;
-	private int range = RANGE;
 	private double attackRange = ATTACK_RANGE;
 	private int damage = DAMAGE;
 	private long interval = INTERVAL;
@@ -67,8 +72,15 @@ public class OctopusForm {
 			}
 		}
 		this.player = player;
+		if (GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("OctopusForm"))
+			return;
 		time = System.currentTimeMillis();
-		sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
+		sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+		if (BlockSource.isAuto(sourceblock)) {
+			isAuto = true;
+		} else {
+			isAuto = false;
+		}
 		if (sourceblock != null) {
 			sourcelocation = sourceblock.getLocation();
 			sourceselected = true;
@@ -187,7 +199,7 @@ public class OctopusForm {
 			return;
 		}
 
-		if (sourceblock.getLocation().distance(player.getLocation()) > range && sourceselected) {
+		if (sourceblock.getLocation().distance(player.getLocation()) > selectRange && sourceselected) {
 			remove();
 			return;
 		}
@@ -434,6 +446,12 @@ public class OctopusForm {
 			source.revertBlock();
 		for (TempBlock block : blocks)
 			block.revertBlock();
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (isAuto) {
+			bPlayer.addCooldown("OctopusForm", autocooldown);
+		} else {
+			bPlayer.addCooldown("OctopusForm", GeneralMethods.getGlobalCooldown());
+		}
 		instances.remove(player);
 	}
 
@@ -465,14 +483,6 @@ public class OctopusForm {
 
 	public Player getPlayer() {
 		return player;
-	}
-
-	public int getRange() {
-		return range;
-	}
-
-	public void setRange(int range) {
-		this.range = range;
 	}
 
 	public int getDamage() {

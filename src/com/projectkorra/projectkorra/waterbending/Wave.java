@@ -35,7 +35,7 @@ public class Wave {
 	private static final long interval = 30;
 	@SuppressWarnings("unused")
 	private static final byte full = 0x0;
-	static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
+	static int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Surge.Wave.SelectRange");
 
 	Player player;
 	private Location location = null;
@@ -53,7 +53,8 @@ public class Wave {
 	private boolean freeze = false;
 	private boolean activatefreeze = false;
 	private Location frozenlocation;
-	double range = defaultrange;
+	int range = defaultrange;
+	int maxrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Surge.Wave.Range");
 	boolean progressing = false;
 	boolean canhitself = true;
 
@@ -84,7 +85,7 @@ public class Wave {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, range, range, ClickType.SHIFT_DOWN, false, true, true, WaterMethods.canPlantbend(player), WaterMethods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -129,12 +130,11 @@ public class Wave {
 			if (!sourceblock.getWorld().equals(player.getWorld())) {
 				return;
 			}
-			range = WaterMethods.waterbendingNightAugment(range, player.getWorld());
 			if (AvatarState.isAvatarState(player))
 				factor = AvatarState.getValue(factor);
-			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+			Entity target = GeneralMethods.getTargetedEntity(player, maxrange, new ArrayList<Entity>());
 			if (target == null) {
-				targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) range).getLocation();
+				targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), maxrange).getLocation();
 			} else {
 				targetdestination = ((LivingEntity) target).getEyeLocation();
 			}
@@ -144,7 +144,7 @@ public class Wave {
 			} else {
 				progressing = true;
 				targetdirection = getDirection(sourceblock.getLocation(), targetdestination).normalize();
-				targetdestination = location.clone().add(targetdirection.clone().multiply(range));
+				targetdestination = location.clone().add(targetdirection.clone().multiply(maxrange));
 				if (WaterMethods.isPlant(sourceblock))
 					new Plantbending(sourceblock);
 				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceblock)) {
@@ -202,7 +202,7 @@ public class Wave {
 			}
 
 			if (!progressing) {
-				sourceblock.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
+				sourceblock.getWorld().playEffect(location, Effect.SMOKE, 4, range);
 				return false;
 			}
 
@@ -213,7 +213,7 @@ public class Wave {
 			}
 
 			if (activatefreeze) {
-				if (location.distance(player.getLocation()) > range) {
+				if (location.distance(player.getLocation()) > maxrange) {
 					progressing = false;
 					thaw();
 					breakBlock();
