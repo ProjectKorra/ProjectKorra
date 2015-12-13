@@ -57,8 +57,6 @@ public class LavaFlow {
 	public static final boolean ALLOW_NATURAL_FLOW = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.LavaFlow.AllowNaturalFlow");
 	public static final double PARTICLE_DENSITY = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.LavaFlow.ParticleDensity");
 	private static final double PARTICLE_OFFSET = 3;
-	
-	
 
 	private Player player;
 	private BendingPlayer bplayer;
@@ -170,7 +168,7 @@ public class LavaFlow {
 			}
 			instances.add(this);
 		} else if (type == AbilityType.CLICK) {
-			Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, clickRange, clickRange, ClickType.SHIFT_DOWN, dynamic, false, true, EarthMethods.canSandbend(player));
+			Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, clickRange, clickRange, ClickType.SHIFT_DOWN, false, false, dynamic, true, EarthMethods.canSandbend(player));
 			if (sourceBlock == null) {
 				remove();
 				return;

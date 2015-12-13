@@ -61,7 +61,7 @@ public class EarthArmor {
 			return;
 
 		this.player = player;
-		headblock = BlockSource.getEarthSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, false, auto, true, EarthMethods.canSandbend(player), false);
+		headblock = BlockSource.getEarthSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, false, auto, false, true, EarthMethods.canSandbend(player), false);
 		if (BlockSource.isAuto(headblock)) {
 			isAuto = true;
 		} else {

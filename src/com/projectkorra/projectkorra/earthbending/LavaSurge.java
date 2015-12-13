@@ -102,7 +102,7 @@ public class LavaSurge {
 	
 	public boolean prepare()
 	{
-		Block targetBlock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, dynamic, false, true, EarthMethods.canSandbend(player), false);
+		Block targetBlock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, false, dynamic, true, EarthMethods.canSandbend(player), false);
 		
 		if(targetBlock == null || 
 				!(targetBlock.getRelative(BlockFace.UP).getType() == Material.AIR) &&

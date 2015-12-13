@@ -26,7 +26,6 @@ public class PlantArmor {
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.Cooldown");
 	private static long DURATION = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.Duration");
 	private static int RESISTANCE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.Resistance");
-	private static int RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.Range");//7;
 	
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.SelectRange");
 	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.AutoSourcing.SelectRange");
@@ -44,7 +43,6 @@ public class PlantArmor {
 	private int resistance = RESISTANCE;
 	public ItemStack[] oldarmor;
 	public boolean hadEffect;
-	private double range = RANGE;
 	private long duration = DURATION;
 	private Material blocktype;
 
@@ -59,10 +57,9 @@ public class PlantArmor {
 			return;
 
 		this.player = player;
-		range = WaterMethods.getWaterbendingNightAugment(player.getWorld()) * range;
 		Double d = WaterMethods.getWaterbendingNightAugment(player.getWorld()) * duration;
 		duration = d.longValue();
-		block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, false, false, false, WaterMethods.canPlantbend(player));
+		block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, auto, false, false, false, false, WaterMethods.canPlantbend(player));
 		if (block == null) {
 			return;
 		}
@@ -87,7 +84,7 @@ public class PlantArmor {
 			return false;
 		}
 
-		if (location.distance(player.getEyeLocation()) > range) {
+		if (location.distance(player.getEyeLocation()) > selectRange) {
 			cancel();
 			return false;
 		}

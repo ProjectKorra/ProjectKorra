@@ -37,6 +37,7 @@ public class IceSpike2 {
 	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Projectile.AutoSourcing.SelectRange");
 	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceSpike.Projectile.AutoSourcing.Enabled");
 	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.AutoSourcing.Cooldown");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceSpike.Projectile.DynamicSourcing.Enabled");
 
 	private static final long interval = 20;
 	private static final byte data = 0;
@@ -66,7 +67,7 @@ public class IceSpike2 {
 
 		block(player);
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 		if (BlockSource.isAuto(sourceblock)) {
 			isAuto = true;
 		} else {

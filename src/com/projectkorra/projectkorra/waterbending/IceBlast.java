@@ -35,7 +35,8 @@ public class IceBlast {
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.SelectRange");
 	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceBlast.AutoSourcing.Enabled");
 	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceBlast.AutoSourcing.Cooldown");
-
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceBlast.DynamicSourcing.Enabled");
+	
 	private boolean isAuto;
 	private static int ID = Integer.MIN_VALUE;
 
@@ -70,7 +71,7 @@ public class IceBlast {
 		block(player);
 		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, false, false,
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, dynamic, false, false,
 				WaterMethods.canIcebend(player), false);
 		if (BlockSource.isAuto(sourceblock)) {
 			isAuto = true;

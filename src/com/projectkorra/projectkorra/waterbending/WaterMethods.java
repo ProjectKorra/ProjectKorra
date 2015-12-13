@@ -147,7 +147,7 @@ public class WaterMethods {
 	 * @return a valid Water source block, or null if one could not be found.
 	 */
 	@SuppressWarnings("deprecation")
-	public static Block getWaterSourceBlock(Player player, double range, boolean water, boolean ice, boolean plant) {
+	public static Block getWaterSourceBlock(Player player, int range, boolean water, boolean ice, boolean plant) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {

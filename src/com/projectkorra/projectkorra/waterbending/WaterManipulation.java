@@ -45,6 +45,7 @@ public class WaterManipulation {
 	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterManipulation.AutoSourcing.SelectRange");
 	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterManipulation.AutoSourcing.Enabled");
 	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterManipulation.AutoSourcing.Cooldown");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterManipulation.DynamicSourcing.Enabled");
 	private static long interval = (long) (1000. / speed);
 
 	private boolean isAuto;
@@ -98,7 +99,7 @@ public class WaterManipulation {
 
 	public boolean prepare() {
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, true, true,
+		Block block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, dynamic, true, true,
 				WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 		if (BlockSource.isAuto(block)) {
 			isAuto = true;
@@ -170,7 +171,7 @@ public class WaterManipulation {
 				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", autocooldown);
 			} else {
 				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation",
-						GeneralMethods.getGlobalCooldown());
+						cooldown);
 			}
 		}
 	}

@@ -37,6 +37,7 @@ public class Wave {
 	private static final byte full = 0x0;
 	static int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Surge.Wave.SelectRange");
 
+	public static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Surge.Wave.DynamicSourcing.Enabled");
 	Player player;
 	private Location location = null;
 	private Block sourceblock = null;
@@ -85,7 +86,7 @@ public class Wave {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, range, range, ClickType.SHIFT_DOWN, false, true, true, WaterMethods.canPlantbend(player), WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, range, range, ClickType.SHIFT_DOWN, false, dynamic, true, true, WaterMethods.canPlantbend(player), WaterMethods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();

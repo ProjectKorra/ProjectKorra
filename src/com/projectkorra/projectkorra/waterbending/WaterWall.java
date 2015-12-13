@@ -33,6 +33,8 @@ public class WaterWall {
 	private static final long interval = 30;
 	private static final byte full = 0x0;
 	// private static final byte half = 0x4;
+	
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Surge.Wall.DynamicSourcing.Enabled");
 
 	Player player;
 	private Location location = null;
@@ -150,7 +152,7 @@ public class WaterWall {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -460,7 +462,7 @@ public class WaterWall {
 	public static void form(Player player) {
 
 		if (!instances.containsKey(player.getEntityId())) {
-			if (!Wave.instances.containsKey(player.getEntityId()) && BlockSource.getWaterSourceBlock(player, Wave.defaultrange, Wave.defaultrange, ClickType.LEFT_CLICK, false, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player)) == null && WaterReturn.hasWaterBottle(player)) {
+			if (!Wave.instances.containsKey(player.getEntityId()) && BlockSource.getWaterSourceBlock(player, Wave.defaultrange, Wave.defaultrange, ClickType.LEFT_CLICK, false, Wave.dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player)) == null && WaterReturn.hasWaterBottle(player)) {
 				BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 				if (bPlayer.isOnCooldown("Surge"))

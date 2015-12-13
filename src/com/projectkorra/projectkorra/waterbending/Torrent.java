@@ -46,10 +46,10 @@ public class Torrent {
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Torrent.SelectRange");
 	private static int autoSelectRange = ProjectKorra.plugin.getConfig()
 			.getInt("Abilities.Water.Torrent.AutoSourcing.SelectRange");
-	private static boolean auto = ProjectKorra.plugin.getConfig()
-			.getBoolean("Abilities.Water.Torrent.AutoSourcing.Enabled");
-	private static long autocooldown = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Water.Torrent.AutoSourcing.Cooldown");
+	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Torrent.AutoSourcing.Enabled");
+	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.Torrent.AutoSourcing.Cooldown");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig()
+			.getBoolean("Abilities.Water.Torrent.DynamicSourcing.Enabled");
 
 	private Block sourceblock;
 	private TempBlock source;
@@ -86,8 +86,8 @@ public class Torrent {
 		}
 		this.player = player;
 		time = System.currentTimeMillis();
-		sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, auto,
-				WaterReturn.hasWaterBottle(player), true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+		sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, auto, dynamic,
+				true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 		if (sourceblock != null) {
 			if (BlockSource.isAuto(sourceblock)) {
 				isAuto = true;

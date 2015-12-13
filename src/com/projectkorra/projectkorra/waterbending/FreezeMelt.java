@@ -1,9 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,7 +8,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class FreezeMelt {
 
@@ -20,13 +21,18 @@ public class FreezeMelt {
 	public static final int defaultrange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Range");
 	public static final int defaultradius = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Radius");
 
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PhaseChange.Cooldown");
 	public static final int OVERLOADING_LIMIT = 200;
 	public static boolean overloading = false;
 	public static int overloadCounter = 0;
 
 	public FreezeMelt(Player player) {
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (!WaterMethods.canIcebend(player))
 			return;
+		if (bPlayer.isOnCooldown("PhaseChange"))
+			return;
+		bPlayer.addCooldown("PhaseChange", cooldown);
 
 		int range = (int) WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		int radius = (int) WaterMethods.waterbendingNightAugment(defaultradius, player.getWorld());

@@ -40,8 +40,7 @@ public class EarthBlast {
 	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthBlast.AutoSourcing.SelectRange");
 	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.AutoSourcing.Enabled");
 	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthBlast.AutoSourcing.Cooldown");
-	
-	private static boolean isAuto;
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthBlast.Cooldown");
 
 	private static long interval = (long) (1000. / speed);
 
@@ -77,17 +76,20 @@ public class EarthBlast {
 	}
 
 	public boolean prepare() {
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("EarthBlast"))
+			return false;
 		cancelPrevious();
-		Block block = BlockSource.getEarthSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, dynamic, auto, true, true, false);
-		if (BlockSource.isAuto(block)) {
-			isAuto = true;
-		} else {
-			isAuto = false;
-		}
+		Block block = BlockSource.getEarthSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, dynamic, auto, dynamic, true, EarthMethods.canSandbend(player), false);
 		block(player);
 		if (block != null) {
 			if (block.getLocation().distance(player.getLocation()) > selectRange) {
 				return false;
+			}
+			if (BlockSource.isAuto(block)) {
+				bPlayer.addCooldown("EarthBlast", autocooldown);
+			} else {
+				bPlayer.addCooldown("EarthBlast", cooldown);
 			}
 			sourceblock = block;
 			focusBlock();
@@ -423,23 +425,13 @@ public class EarthBlast {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer.isOnCooldown("EarthBlast")) return;
 
-		boolean cooldown = false;
 		for (int id : instances.keySet()) {
 			EarthBlast blast = instances.get(id);
 			if (blast.player == player && !blast.progressing) {
 				blast.throwEarth();
-				cooldown = true;
 				ignore.add(blast);
 			}
 		}
-
-		if (cooldown)
-			if (isAuto) {
-				bPlayer.addCooldown("EarthBlast", autocooldown);
-			} else {
-				bPlayer.addCooldown("EarthBlast", GeneralMethods.getGlobalCooldown());
-			}
-
 		redirectTargettedBlasts(player, ignore);
 	}
 

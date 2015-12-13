@@ -20,7 +20,9 @@ public class EarthWall {
 	private static final int defaultheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Height");
 	private static final int defaulthalfwidth = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Width") / 2;
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.SelectRange");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.RaiseEarth.DynamicSourcing.Enabled");
 	
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.RaiseEarth.Cooldown");
 	private int height = defaultheight;
 	private int halfwidth = defaulthalfwidth;
 
@@ -46,7 +48,7 @@ public class EarthWall {
 		Vector orth = new Vector(ox, oy, oz);
 		orth = orth.normalize();
 
-		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, false, true, EarthMethods.canSandbend(player), false);
+		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, false, dynamic, true, EarthMethods.canSandbend(player), false);
 		Location origin;
 		if (sblock == null) {
 			origin = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), range).getLocation();
@@ -55,7 +57,7 @@ public class EarthWall {
 		}
 		World world = origin.getWorld();
 
-		boolean cooldown = false;
+		boolean cd = false;
 
 		for (int i = -halfwidth; i <= halfwidth; i++) {
 			Block block = world.getBlockAt(origin.clone().add(orth.clone().multiply((double) i)));
@@ -64,7 +66,7 @@ public class EarthWall {
 				for (int j = 1; j < height; j++) {
 					block = block.getRelative(BlockFace.DOWN);
 					if (EarthMethods.isEarthbendable(player, block)) {
-						cooldown = true;
+						cd = true;
 						new EarthColumn(player, block.getLocation(), height);
 						// } else if (block.getType() != Material.AIR
 						// && !block.isLiquid()) {
@@ -78,20 +80,20 @@ public class EarthWall {
 					// if (block.getType() == Material.AIR || block.isLiquid())
 					// {
 					if (EarthMethods.isTransparentToEarthbending(player, block)) {
-						cooldown = true;
+						cd = true;
 						new EarthColumn(player, block.getRelative(BlockFace.DOWN).getLocation(), height);
 					} else if (!EarthMethods.isEarthbendable(player, block)) {
 						break;
 					}
 				}
 			} else if (EarthMethods.isEarthbendable(player, block)) {
-				cooldown = true;
+				cd = true;
 				new EarthColumn(player, block.getLocation(), height);
 			}
 		}
 
-		if (cooldown)
-			bPlayer.addCooldown("RaiseEarth", GeneralMethods.getGlobalCooldown());
+		if (cd)
+			bPlayer.addCooldown("RaiseEarth", cooldown);
 
 	}
 

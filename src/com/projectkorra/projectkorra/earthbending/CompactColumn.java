@@ -25,6 +25,7 @@ public class CompactColumn {
 	private static long interval = (long) (1000. / speed);
 	
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.Collapse.DynamicSourcing.Enabled");
 
 	private Location origin;
 	private Location location;
@@ -40,7 +41,7 @@ public class CompactColumn {
 		if (bPlayer.isOnCooldown("Collapse"))
 			return;
 
-		block = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, false, true, EarthMethods.canSandbend(player), false);
+		block = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, false, dynamic, true, EarthMethods.canSandbend(player), false);
 		if (block == null)
 			return;
 		origin = block.getLocation();

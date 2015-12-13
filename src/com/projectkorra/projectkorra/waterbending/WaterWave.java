@@ -49,6 +49,7 @@ public class WaterWave {
 	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Wave.AutoSourcing.SelectRange");
 	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AutoSourcing.Enabled");
 	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterSpout.Wave.AutoSourcing.Cooldown");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.DynamicSourcing.Enabled");
 	
 	private boolean isAuto;
 	
@@ -111,7 +112,7 @@ public class WaterWave {
 			if (origin == null) {
 				removeType(player, AbilityType.CLICK);
 
-				Block block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+				Block block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 				if (block == null) {
 					if(instances.contains(this)) {
 						remove();

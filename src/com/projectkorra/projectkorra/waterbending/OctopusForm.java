@@ -35,6 +35,10 @@ public class OctopusForm {
 	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.OctopusForm.AutoSourcing.Enabled");
 	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.AutoSourcing.Cooldown");
 	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.OctopusForm.AutoSourcing.SelectRange");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.OctopusForm.DynamicSourcing.Enabled");
+	
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.OctopusForm.Cooldown");
+	
 	private static final byte full = 0x0;
 	
 	private boolean isAuto;
@@ -75,7 +79,7 @@ public class OctopusForm {
 		if (GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("OctopusForm"))
 			return;
 		time = System.currentTimeMillis();
-		sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+		sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 		if (BlockSource.isAuto(sourceblock)) {
 			isAuto = true;
 		} else {
@@ -450,7 +454,7 @@ public class OctopusForm {
 		if (isAuto) {
 			bPlayer.addCooldown("OctopusForm", autocooldown);
 		} else {
-			bPlayer.addCooldown("OctopusForm", GeneralMethods.getGlobalCooldown());
+			bPlayer.addCooldown("OctopusForm", cooldown);
 		}
 		instances.remove(player);
 	}
