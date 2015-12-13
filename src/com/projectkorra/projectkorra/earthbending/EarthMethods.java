@@ -300,7 +300,7 @@ public class EarthMethods {
 	 * @return a valid Lava source block, or null if one could not be found.
 	 */
 	@SuppressWarnings("deprecation")
-	public static Block getLavaSourceBlock(Player player, double range) {
+	public static Block getLavaSourceBlock(Player player, int range) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {

@@ -23,7 +23,7 @@ public class HeatControl implements ConfigLoadable {
 
 	public static ConcurrentHashMap<Player, HeatControl> instances = new ConcurrentHashMap<>();
 
-	public static double RANGE = config.get().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
+	public static int RANGE = config.get().getInt("Abilities.Fire.HeatControl.Solidify.Range");
 	public static int RADIUS = config.get().getInt("Abilities.Fire.HeatControl.Solidify.Radius");
 	public static int REVERT_TIME = config.get().getInt("Abilities.Fire.HeatControl.Solidify.RevertTime");
 
@@ -35,7 +35,7 @@ public class HeatControl implements ConfigLoadable {
 	private Location center;
 	private List<TempBlock> tblocks = new ArrayList<TempBlock>();
 
-	public double range = RANGE;
+	public int range = RANGE;
 	public int radius = RADIUS;
 	public long revertTime = REVERT_TIME;
 
@@ -101,7 +101,7 @@ public class HeatControl implements ConfigLoadable {
 		return radius;
 	}
 
-	public double getRange() {
+	public int getRange() {
 		return range;
 	}
 
@@ -164,7 +164,7 @@ public class HeatControl implements ConfigLoadable {
 
 	@Override
 	public void reloadVariables() {
-		RANGE = config.get().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
+		RANGE = config.get().getInt("Abilities.Fire.HeatControl.Solidify.Range");
 		RADIUS = config.get().getInt("Abilities.Fire.HeatControl.Solidify.Radius");
 		REVERT_TIME = config.get().getInt("Abilities.Fire.HeatControl.Solidify.RevertTime");
 		range = RANGE;
@@ -205,7 +205,7 @@ public class HeatControl implements ConfigLoadable {
 		radius = value;
 	}
 
-	public void setRange(double value) {
+	public void setRange(int value) {
 		range = value;
 	}
 

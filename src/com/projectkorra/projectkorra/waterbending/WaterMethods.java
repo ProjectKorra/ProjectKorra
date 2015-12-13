@@ -208,38 +208,6 @@ public class WaterMethods {
 	    return null;
 	}
 
-	public static Block getIceSourceBlock(Player player, double range) {
-		Location location = player.getEyeLocation();
-		Vector vector = location.getDirection().clone().normalize();
-		for (double i = 0; i <= range; i++) {
-			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceBlast", location))
-				continue;
-			if (isIcebendable(block)) {
-				if (TempBlock.isTempBlock(block))
-					continue;
-				return block;
-			}
-		}
-		return null;
-	}
-
-	public static Block getPlantSourceBlock(Player player, double range, boolean onlyLeaves) {
-		Location location = player.getEyeLocation();
-		Vector vector = location.getDirection().clone().normalize();
-		for (double i = 0; i <= range; i++) {
-			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location))
-				continue;
-			if (isPlantbendable(block, onlyLeaves)) {
-				if (TempBlock.isTempBlock(block))
-					continue;
-				return block;
-			}
-		}
-		return null;
-	}
-
 	public static boolean isAdjacentToFrozenBlock(Block block) {
 		BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
 		boolean adjacent = false;
