@@ -109,12 +109,12 @@ public class BendingTabComplete implements TabCompleter {
 				}
 				List<String> abils = new ArrayList<String>();
 				for (String abil : AbilityModuleManager.abilities) {
-					if (GeneralMethods.canBend(sender.getName(), abil)) {
+					if (GeneralMethods.canBind(sender.getName(), abil)) {
 						abils.add(abil);
 					}
 				}
 				for (ComboAbilityModule abil : ComboModuleManager.combo) {
-					if (GeneralMethods.canBend(sender.getName(), abil.getName())) {
+					if (GeneralMethods.canBind(sender.getName(), abil.getName())) {
 						abils.add(abil.getName());
 					}
 				}

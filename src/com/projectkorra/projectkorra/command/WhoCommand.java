@@ -55,15 +55,15 @@ public class WhoCommand extends PKCommand {
 		staff.put("dedf335b-d282-47ab-8ffc-a80121661cd1", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // grasshopperMatt
 
 		staff.put("623df34e-9cd4-438d-b07c-1905e1fc46b6", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Loony
-		staff.put("80f9072f-e37e-4adc-8675-1ba6af87d63b", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Cross
-		staff.put("57205eec-96bd-4aa3-b73f-c6627429beb2", ChatColor.GREEN + "ProjectKorra Concept Designer"); // ashe36
-		staff.put("7daead36-d285-4640-848a-2f105334b792", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Fuzzy
-		staff.put("f30c871e-cd60-446b-b219-e31e00e16857", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Gangksta
-		staff.put("38217173-8a32-4ba7-9fe1-dd4fed031a74", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Fly
+		//staff.put("80f9072f-e37e-4adc-8675-1ba6af87d63b", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Cross
+		//staff.put("57205eec-96bd-4aa3-b73f-c6627429beb2", ChatColor.GREEN + "ProjectKorra Concept Designer"); // ashe36
+		//staff.put("7daead36-d285-4640-848a-2f105334b792", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Fuzzy
+		//staff.put("f30c871e-cd60-446b-b219-e31e00e16857", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Gangksta
+		staff.put("38217173-8a32-4ba7-9fe1-dd4fed031a74", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Easte
 
 		staff.put("3d5bc713-ab8b-4125-b5ba-a1c1c2400b2c", ChatColor.GOLD + "ProjectKorra Community Moderator"); // Gold
 
-		staff.put("2ab334d1-9691-4994-a624-209c7b4f220b", ChatColor.BLUE + "ProjectKorra Digital Team"); // Austygen
+		//staff.put("2ab334d1-9691-4994-a624-209c7b4f220b", ChatColor.BLUE + "ProjectKorra Digital Team"); // Austygen
 	}
 
 	@Override
@@ -76,34 +76,51 @@ public class WhoCommand extends PKCommand {
 			List<String> players = new ArrayList<String>();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				String playerName = player.getName();
-
+				String result = "";
 				BendingPlayer bp = GeneralMethods.getBendingPlayer(playerName);
 				if (bp == null) {
 					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 					bp = GeneralMethods.getBendingPlayer(player.getName());
 				}
-				if (bp.getElements().size() > 1) {
-					players.add(GeneralMethods.getAvatarColor() + playerName);
-					continue;
-				} else if (bp.getElements().size() == 0) {
-					players.add(playerName);
-					continue;
-				} else if (GeneralMethods.isBender(playerName, Element.Air)) {
-					players.add(AirMethods.getAirColor() + playerName);
-					continue;
-				} else if (GeneralMethods.isBender(playerName, Element.Water)) {
-					players.add(WaterMethods.getWaterColor() + playerName);
-					continue;
-				} else if (GeneralMethods.isBender(playerName, Element.Earth)) {
-					players.add(EarthMethods.getEarthColor() + playerName);
-					continue;
-				} else if (GeneralMethods.isBender(playerName, Element.Chi)) {
-					players.add(ChiMethods.getChiColor() + playerName);
-					continue;
-				} else if (GeneralMethods.isBender(playerName, Element.Fire)) {
-					players.add(FireMethods.getFireColor() + playerName);
-					continue;
+				if (bp.hasElement(Element.Air)) {
+					result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.Air) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&7&mA") : AirMethods.getAirColor() + "A");
 				}
+				if (bp.hasElement(Element.Earth)) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.Earth) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&a&mE") : EarthMethods.getEarthColor() + "E");
+					} else {
+						result = result + ChatColor.WHITE + " | " + ((!bp.isElementToggled(Element.Earth) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&a&mE") : EarthMethods.getEarthColor() + "E");
+					}
+				}
+				if (bp.hasElement(Element.Fire)) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.Fire) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&c&mF") : FireMethods.getFireColor() + "F");
+					} else {
+						result = result + ChatColor.WHITE + " | " + ((!bp.isElementToggled(Element.Fire) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&c&mF") : FireMethods.getFireColor() + "F");
+					}
+				}
+				if (bp.hasElement(Element.Water)) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.Water) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&b&mW") : WaterMethods.getWaterColor() + "W");
+					} else {
+						result = result + ChatColor.WHITE + " | " + ((!bp.isElementToggled(Element.Water) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&b&mW") : WaterMethods.getWaterColor() + "W");
+					}
+				}
+				if (bp.hasElement(Element.Chi)) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.Chi) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&6&mC") : ChiMethods.getChiColor() + "C");
+					} else {
+						result = result + ChatColor.WHITE + " | " + ((!bp.isElementToggled(Element.Chi) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&6&mC") : ChiMethods.getChiColor() + "C");
+					}
+				}
+				if (staff.containsKey(player.getUniqueId().toString())) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + staff.get(player.getUniqueId().toString());
+					} else {
+						result = result + ChatColor.WHITE + " | " + staff.get(player.getUniqueId().toString());
+					}
+				}
+				players.add(result);
 			}
 			if (players.isEmpty()) {
 				sender.sendMessage(ChatColor.RED + "There is no one online.");
