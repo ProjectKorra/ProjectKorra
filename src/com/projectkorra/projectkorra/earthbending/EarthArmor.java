@@ -33,8 +33,6 @@ public class EarthArmor {
 	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.AutoSourcing.Cooldown");
 	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthArmor.AutoSourcing.SelectRange");
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthArmor.SelectRange");
-	
-	private static boolean isAuto;
 
 	private Player player;
 	private static Block headblock;
@@ -63,9 +61,9 @@ public class EarthArmor {
 		this.player = player;
 		headblock = BlockSource.getEarthSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, false, auto, false, true, EarthMethods.canSandbend(player), false);
 		if (BlockSource.isAuto(headblock)) {
-			isAuto = true;
+			bPlayer.addCooldown("EarthArmor", autocooldown);
 		} else {
-			isAuto = false;
+			bPlayer.addCooldown("EarthArmor", cooldown);
 		}
 		if (EarthMethods.getEarthbendableBlocksLength(player, headblock, new Vector(0, -1, 0), 2) >= 2) {
 			legsblock = headblock.getRelative(BlockFace.DOWN);
@@ -212,11 +210,6 @@ public class EarthArmor {
 				eartharmor.complete = true;
 				eartharmor.removeEffect();
 				eartharmor.cancel();
-				if (isAuto == true) {
-					GeneralMethods.getBendingPlayer(player.getName()).addCooldown("EarthArmor", autocooldown);
-				} else {
-					GeneralMethods.getBendingPlayer(player.getName()).addCooldown("EarthArmor", cooldown);
-				}
 				return;
 			}
 		} else if (System.currentTimeMillis() > eartharmor.time + interval) {
