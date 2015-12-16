@@ -171,7 +171,7 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (GeneralMethods.toggedOut.contains(player.getUniqueId())) {
+		if (GeneralMethods.toggledOut.contains(player.getUniqueId())) {
 			GeneralMethods.getBendingPlayer(player.getName()).toggleBending();
 			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
 		}
@@ -1077,10 +1077,10 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer != null) {
-			if (GeneralMethods.toggedOut.contains(player.getUniqueId()) && bPlayer.isToggled())
-				GeneralMethods.toggedOut.remove(player.getUniqueId());
+			if (GeneralMethods.toggledOut.contains(player.getUniqueId()) && bPlayer.isToggled())
+				GeneralMethods.toggledOut.remove(player.getUniqueId());
 			if (!bPlayer.isToggled())
-				GeneralMethods.toggedOut.add(player.getUniqueId());
+				GeneralMethods.toggledOut.add(player.getUniqueId());
 		}
 
 		if (Commands.invincible.contains(event.getPlayer().getName())) {
