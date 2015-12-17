@@ -91,6 +91,10 @@ public class ChiCombo {
 			if (paralyzedEntities.get(e) <= System.currentTimeMillis()) {
 				paralyzedEntities.remove(e);
 				for (ChiCombo c : instances) {
+					if (e == null || c.target == null) {
+						instances.remove(c);
+						continue;
+					}
 					if (c.target.equals(e))
 						instances.remove(c);
 				}

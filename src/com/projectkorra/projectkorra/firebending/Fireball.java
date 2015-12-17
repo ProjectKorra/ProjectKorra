@@ -266,7 +266,7 @@ public class Fireball implements ConfigLoadable {
 			return false;
 		}
 		
-		if (!player.getWorld().equals(location.getWorld())) {
+		if (location != null && !player.getWorld().equals(location.getWorld())) {
 			remove();
 			return false;
 		}
