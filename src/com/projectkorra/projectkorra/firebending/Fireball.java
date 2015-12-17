@@ -266,6 +266,11 @@ public class Fireball implements ConfigLoadable {
 			return false;
 		}
 		
+		if(location == null){
+			remove();
+			return false;
+        	}
+		
 		if (!player.getWorld().equals(location.getWorld())) {
 			remove();
 			return false;
