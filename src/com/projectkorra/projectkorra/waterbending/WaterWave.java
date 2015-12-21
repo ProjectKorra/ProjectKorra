@@ -276,9 +276,11 @@ public class WaterWave {
 
 	public void remove() {
 		instances.remove(this);
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer != null) {
-			bPlayer.addCooldown("WaterWave", cooldown);
+		if (player != null && player.isOnline()) {
+			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+			if (bPlayer != null) {
+				bPlayer.addCooldown("WaterWave", cooldown);
+			}
 		}
 		revertBlocks();
 		for (BukkitRunnable task : tasks)
