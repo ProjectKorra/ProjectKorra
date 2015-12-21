@@ -203,7 +203,9 @@ public class PKListener implements Listener {
 		
 		if (chatEnabled) {
 			player.setDisplayName(player.getName());
-			player.setDisplayName(color + append + ChatColor.RESET + player.getDisplayName());
+			if(color != null){
+				player.setDisplayName(color + append + ChatColor.RESET + player.getDisplayName());
+			}
 		}
 
 		// Handle the AirSpout/WaterSpout login glitches
