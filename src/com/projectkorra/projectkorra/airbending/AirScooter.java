@@ -103,6 +103,10 @@ public class AirScooter implements ConfigLoadable {
 	}
 
 	public boolean progress() {
+		if (player.isDead() || !player.isOnline()) {
+			remove();
+			return false;
+		}
 		getFloor();
 		// Methods.verbose(player);
 		if (floorblock == null) {
