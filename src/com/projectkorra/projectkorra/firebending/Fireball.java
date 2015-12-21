@@ -261,6 +261,16 @@ public class Fireball implements ConfigLoadable {
 	}
 
 	public boolean progress() {
+		if (player.isDead() || !player.isOnline()) {
+			remove();
+			return false;
+		}
+		
+		if (location != null && !player.getWorld().equals(location.getWorld())) {
+			remove();
+			return false;
+		}
+		
 		if (GeneralMethods.getBoundAbility(player) == null) {
 			remove();
 			return false;
