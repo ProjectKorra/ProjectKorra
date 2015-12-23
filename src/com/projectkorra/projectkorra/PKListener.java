@@ -181,7 +181,7 @@ public class PKListener implements Listener {
 		String append = "";
 		ChatColor color = null;
 		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
-		if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).getElements().size() > 1) && chatEnabled) {
+		if (GeneralMethods.getBendingPlayer(player.getName()).getElements().size() > 1 && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
 			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
 		} else if (GeneralMethods.isBender(player.getName(), Element.Air) && chatEnabled) {
@@ -199,6 +199,9 @@ public class PKListener implements Listener {
 		} else if (GeneralMethods.isBender(player.getName(), Element.Chi) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
 			color = ChiMethods.getChiColor();
+		} else {
+			append = "[Nonbender]";
+			color = ChatColor.WHITE;
 		}
 		
 		if (chatEnabled) {
@@ -383,6 +386,9 @@ public class PKListener implements Listener {
 		} else if (e == Element.Chi && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
 			color = ChiMethods.getChiColor();
+		} else {
+			append = "[Nonbender]";
+			color = ChatColor.WHITE;
 		}
 		
 		if (chatEnabled) {
