@@ -27,12 +27,14 @@ public class WaterWall {
 	public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
 	public static ConcurrentHashMap<Block, Player> wallblocks = new ConcurrentHashMap<Block, Player>();
 
-	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
+	private static int selectRANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Surge.Wall.SelectRange");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 	// private static double speed = 1.5;
 	private static final long interval = 30;
 	private static final byte full = 0x0;
 	// private static final byte half = 0x4;
+	
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Surge.Wall.DynamicSourcing.Enabled");
 
 	Player player;
 	private Location location = null;
@@ -49,7 +51,7 @@ public class WaterWall {
 	private boolean frozen = false;
 	private long time;
 	private double radius = defaultradius;
-	private double range = RANGE;
+	private int selectRange = selectRANGE;
 
 	@SuppressWarnings("deprecation")
 	public WaterWall(Player player) {
@@ -150,7 +152,7 @@ public class WaterWall {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -185,7 +187,7 @@ public class WaterWall {
 	@SuppressWarnings("deprecation")
 	public void moveWater() {
 		if (sourceblock != null) {
-			targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) range).getLocation();
+			targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), selectRange).getLocation();
 
 			if (targetdestination.distance(location) <= 1) {
 				progressing = false;
@@ -275,7 +277,7 @@ public class WaterWall {
 			}
 
 			if (!progressing) {
-				sourceblock.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
+				sourceblock.getWorld().playEffect(location, Effect.SMOKE, 4, selectRange);
 				return false;
 			}
 
@@ -284,7 +286,7 @@ public class WaterWall {
 					WaterMethods.playWaterbendingSound(location);
 				}
 				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) range, 8, 9, 79);
+				Location loc = GeneralMethods.getTargetedLocation(player, selectRange, 8, 9, 79);
 				location = loc.clone();
 				Vector dir = player.getEyeLocation().getDirection();
 				Vector vec;
@@ -460,7 +462,7 @@ public class WaterWall {
 	public static void form(Player player) {
 
 		if (!instances.containsKey(player.getEntityId())) {
-			if (!Wave.instances.containsKey(player.getEntityId()) && BlockSource.getWaterSourceBlock(player, (int) Wave.defaultrange, ClickType.LEFT_CLICK, true, true, WaterMethods.canPlantbend(player)) == null && WaterReturn.hasWaterBottle(player)) {
+			if (!Wave.instances.containsKey(player.getEntityId()) && BlockSource.getWaterSourceBlock(player, Wave.defaultrange, Wave.defaultrange, ClickType.LEFT_CLICK, false, Wave.dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player)) == null && WaterReturn.hasWaterBottle(player)) {
 				BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 
 				if (bPlayer.isOnCooldown("Surge"))
@@ -552,11 +554,11 @@ public class WaterWall {
 	}
 
 	public double getRange() {
-		return range;
+		return selectRange;
 	}
 
-	public void setRange(double range) {
-		this.range = range;
+	public void setRange(int range) {
+		this.selectRange = range;
 	}
 
 }

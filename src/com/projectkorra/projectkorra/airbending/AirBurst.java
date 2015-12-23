@@ -26,7 +26,9 @@ public class AirBurst implements ConfigLoadable {
 	private static double damage = config.get().getDouble("Abilities.Air.AirBurst.Damage");
 	private static double deltheta = 10;
 	private static double delphi = 10;
-
+	
+	private static long cooldown = config.get().getLong("Abilities.Air.AirBurst.Cooldown");
+	
 	private Player player;
 	private long starttime;
 	private long chargetime = config.get().getLong("Abilities.Air.AirBurst.ChargeTime");
@@ -51,6 +53,7 @@ public class AirBurst implements ConfigLoadable {
 		if (AvatarState.isAvatarState(player))
 			chargetime = 0;
 		this.player = player;
+		bPlayer.addCooldown("AirBurst", cooldown);
 		instances.put(player, this);
 	}
 

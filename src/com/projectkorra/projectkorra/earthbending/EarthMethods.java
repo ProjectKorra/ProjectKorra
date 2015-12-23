@@ -27,6 +27,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthMethods {
@@ -37,7 +38,8 @@ public class EarthMethods {
 	public static ConcurrentHashMap<Block, Information> movedearth = new ConcurrentHashMap<Block, Information>();
 	public static ConcurrentHashMap<Integer, Information> tempair = new ConcurrentHashMap<Integer, Information>();
 	public static HashSet<Block> tempNoEarthbending = new HashSet<Block>();
-	public static Integer[] transparentToEarthbending = { 0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106, 175 };
+	public static Integer[] transparentToEarthbending = { 0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106,
+			175 };
 	private static final ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
 	public static ArrayList<Block> tempnophysics = new ArrayList<Block>();
 
@@ -102,17 +104,30 @@ public class EarthMethods {
 		return player.hasPermission("bending.earth.lavabending");
 	}
 
-	public static void displaySandParticle(Location loc, float xOffset, float yOffset, float zOffset, float amount, float speed, boolean red) {
+	public static void displaySandParticle(Location loc, float xOffset, float yOffset, float zOffset, float amount, float speed,
+			boolean red) {
 		if (amount <= 0)
 			return;
 
 		for (int x = 0; x < amount; x++) {
 			if (!red) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 0),
+						new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset),
+								((Math.random() - 0.5) * zOffset)),
+						speed, loc, 257.0D);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SANDSTONE, (byte) 0),
+						new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset),
+								((Math.random() - 0.5) * zOffset)),
+						speed, loc, 257.0D);
 			} else if (red) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 1), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.RED_SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 1),
+						new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset),
+								((Math.random() - 0.5) * zOffset)),
+						speed, loc, 257.0D);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.RED_SANDSTONE, (byte) 0),
+						new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset),
+								((Math.random() - 0.5) * zOffset)),
+						speed, loc, 257.0D);
 			}
 
 		}
@@ -126,7 +141,7 @@ public class EarthMethods {
 	public static ChatColor getEarthColor() {
 		return ChatColor.valueOf(config.getString("Properties.Chat.Colors.Earth"));
 	}
-	
+
 	/**
 	 * Gets the EarthSubColor from the config.
 	 * 
@@ -150,9 +165,9 @@ public class EarthMethods {
 	}
 
 	/**
-	 * Finds a valid Earth source for a Player. To use dynamic source selection,
-	 * use BlockSource.getEarthSourceBlock() instead of this method. Dynamic
-	 * source selection saves the user's previous source for future use.
+	 * Finds a valid Earth source for a Player. To use dynamic source selection, use
+	 * BlockSource.getEarthSourceBlock() instead of this method. Dynamic source selection saves the
+	 * user's previous source for future use.
 	 * {@link BlockSource#getEarthSourceBlock(Player, double, com.projectkorra.projectkorra.util.ClickType)}
 	 * 
 	 * @param player the player that is attempting to Earthbend.
@@ -160,9 +175,13 @@ public class EarthMethods {
 	 * @return a valid Earth source block, or null if one could not be found.
 	 */
 	@SuppressWarnings("deprecation")
-	public static Block getEarthSourceBlock(Player player, double range) {
-		Block testblock = player.getTargetBlock(getTransparentEarthbending(), (int) range);
-		if (isEarthbendable(player, testblock) || isMetalbendable(player, testblock.getType()))
+	public static Block getEarthSourceBlock(Player player, int range, boolean earth, boolean sand, boolean metal) {
+	Block testblock = player.getTargetBlock(getTransparentEarthbending(), range);
+		if (isEarthbendable(testblock.getType()) && earth == true) 
+			return testblock;
+		if (isSand(testblock) && sand == true)
+			return testblock;
+		if (isMetal(testblock) && metal == true)
 			return testblock;
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
@@ -178,15 +197,56 @@ public class EarthMethods {
 	}
 
 	/**
+	 * Returns a random block within a radius of a location.
+	 * 
+	 * @param location
+	 * @param radius
+	 * @return random block
+	 */
+	public static Block getRandomEarthBlock(Player player, Location location, int radius, boolean earth, boolean sand,
+			boolean metal) {
+		List<Integer> checked = new ArrayList<Integer>();
+		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(location, radius);
+		for (int i = 0; i < blocks.size(); i++) {
+			int index = GeneralMethods.rand.nextInt(blocks.size());
+			while (checked.contains(index)) {
+				index = GeneralMethods.rand.nextInt(blocks.size());
+			}
+			checked.add(index);
+			Block block = blocks.get(index);
+			if (block == null || block.getLocation().distance(location) < 2) {
+				continue;
+			}
+			if (isTransparentToEarthbending(player, block.getRelative(BlockFace.UP))) {
+				if (isEarthbendable(block.getType()) && earth == true) {
+					BlockSource.randomBlocks.add(block);
+					return block;
+				}
+				if (isSand(block) && sand == true) {
+					BlockSource.randomBlocks.add(block);
+					return block;
+				}
+					
+				if (isMetal(block) && metal == true) {
+					BlockSource.randomBlocks.add(block);
+					return block;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Attempts to find the closest earth block near a given location.
 	 * 
 	 * @param loc the initial location to search from.
 	 * @param radius the maximum radius to search for the earth block.
-	 * @param maxVertical the maximum block height difference between the
-	 *            starting location and the earth bendable block.
+	 * @param maxVertical the maximum block height difference between the starting location and the
+	 *            earth bendable block.
 	 * @return an earth bendable block, or null.
 	 */
-	public static Block getNearbyEarthBlock(Location loc, double radius, int maxVertical) {
+	public static Block getNearbyEarthBlock(Location loc, double radius, int maxVertical, boolean earth, boolean sand,
+			boolean metal) {
 		if (loc == null) {
 			return null;
 		}
@@ -197,8 +257,13 @@ public class EarthMethods {
 				Location searchLoc = loc.clone().add(tracer);
 				Block block = GeneralMethods.getTopBlock(searchLoc, maxVertical);
 
-				if (block != null && EarthMethods.isEarthbendable(block.getType())) {
-					return block;
+				if (block != null) {
+					if (isEarthbendable(block.getType()) && earth == true)
+						return block;
+					if (isSand(block) && sand == true)
+						return block;
+					if (isMetal(block) && metal == true)
+						return block;
 				}
 				tracer = GeneralMethods.rotateXZ(tracer, rotation);
 			}
@@ -225,9 +290,9 @@ public class EarthMethods {
 	}
 
 	/**
-	 * Finds a valid Lava source for a Player. To use dynamic source selection,
-	 * use BlockSource.getLavaSourceBlock() instead of this method. Dynamic
-	 * source selection saves the user's previous source for future use.
+	 * Finds a valid Lava source for a Player. To use dynamic source selection, use
+	 * BlockSource.getLavaSourceBlock() instead of this method. Dynamic source selection saves the
+	 * user's previous source for future use.
 	 * {@link BlockSource#getLavaSourceBlock(Player, double, com.projectkorra.projectkorra.util.ClickType)}
 	 * 
 	 * @param player the player that is attempting to Earthbend.
@@ -235,7 +300,7 @@ public class EarthMethods {
 	 * @return a valid Lava source block, or null if one could not be found.
 	 */
 	@SuppressWarnings("deprecation")
-	public static Block getLavaSourceBlock(Player player, double range) {
+	public static Block getLavaSourceBlock(Player player, int range) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {
@@ -246,7 +311,8 @@ public class EarthMethods {
 				if (TempBlock.isTempBlock(block)) {
 					TempBlock tb = TempBlock.get(block);
 					byte full = 0x0;
-					if (tb.getState().getRawData() != full && (tb.getState().getType() != Material.LAVA || tb.getState().getType() != Material.STATIONARY_LAVA)) {
+					if (tb.getState().getRawData() != full && (tb.getState().getType() != Material.LAVA
+							|| tb.getState().getType() != Material.STATIONARY_LAVA)) {
 						continue;
 					}
 				}
@@ -280,6 +346,10 @@ public class EarthMethods {
 		Material material = block.getType();
 		return config.getStringList("Properties.Earth.MetalBlocks").contains(material.toString());
 	}
+	public static boolean isSand(Block block) {
+		Material material = block.getType();
+		return config.getStringList("Properties.Earth.SandBlocks").contains(material.toString());
+	}
 
 	public static double getMetalAugment(double value) {
 		return value * config.getDouble("Properties.Earth.MetalPowerFactor");
@@ -302,10 +372,12 @@ public class EarthMethods {
 				valid = true;
 				break;
 			}
+		if (isSand(block) && canSandbend(player)) {
+			valid = true;
+		}
 		if (isMetal(block) && canMetalbend(player)) {
 			valid = true;
 		}
-
 		if (tempNoEarthbending.contains(block))
 			valid = false;
 
@@ -313,7 +385,7 @@ public class EarthMethods {
 			valid = false;
 		return valid;
 	}
-	
+
 	public static boolean isMetalbendable(Player player, Material mat) {
 		boolean valid = false;
 		for (String s : config.getStringList("Properties.Earth.MetalBlocks")) {
@@ -328,7 +400,9 @@ public class EarthMethods {
 	}
 
 	public static boolean isMetalBlock(Block block) {
-		if (block.getType() == Material.GOLD_BLOCK || block.getType() == Material.IRON_BLOCK || block.getType() == Material.IRON_ORE || block.getType() == Material.GOLD_ORE || block.getType() == Material.QUARTZ_BLOCK || block.getType() == Material.QUARTZ_ORE)
+		if (block.getType() == Material.GOLD_BLOCK || block.getType() == Material.IRON_BLOCK
+				|| block.getType() == Material.IRON_ORE || block.getType() == Material.GOLD_ORE
+				|| block.getType() == Material.QUARTZ_BLOCK || block.getType() == Material.QUARTZ_ORE)
 			return true;
 		return false;
 	}
@@ -370,7 +444,8 @@ public class EarthMethods {
 	}
 
 	public static boolean moveEarth(Player player, Block block, Vector direction, int chainlength, boolean throwplayer) {
-		if (isEarthbendable(player, block) && !GeneralMethods.isRegionProtectedFromBuild(player, "RaiseEarth", block.getLocation())) {
+		if (isEarthbendable(player, block)
+				&& !GeneralMethods.isRegionProtectedFromBuild(player, "RaiseEarth", block.getLocation())) {
 
 			boolean up = false;
 			boolean down = false;
@@ -405,11 +480,13 @@ public class EarthMethods {
 					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(affectedblock.getLocation(), 1.75)) {
 						if (entity instanceof LivingEntity) {
 							LivingEntity lentity = (LivingEntity) entity;
-							if (lentity.getEyeLocation().getBlockX() == affectedblock.getX() && lentity.getEyeLocation().getBlockZ() == affectedblock.getZ())
+							if (lentity.getEyeLocation().getBlockX() == affectedblock.getX()
+									&& lentity.getEyeLocation().getBlockZ() == affectedblock.getZ())
 								if (!(entity instanceof FallingBlock))
 									entity.setVelocity(norm.clone().multiply(.75));
 						} else {
-							if (entity.getLocation().getBlockX() == affectedblock.getX() && entity.getLocation().getBlockZ() == affectedblock.getZ())
+							if (entity.getLocation().getBlockX() == affectedblock.getX()
+									&& entity.getLocation().getBlockZ() == affectedblock.getZ())
 								if (!(entity instanceof FallingBlock))
 									entity.setVelocity(norm.clone().multiply(.75));
 						}
@@ -435,7 +512,8 @@ public class EarthMethods {
 					affectedblock = location.clone().add(negnorm.getX() * i, negnorm.getY() * i, negnorm.getZ() * i).getBlock();
 					if (!isEarthbendable(player, affectedblock)) {
 						if (down) {
-							if (isTransparentToEarthbending(player, affectedblock) && !affectedblock.isLiquid() && affectedblock.getType() != Material.AIR) {
+							if (isTransparentToEarthbending(player, affectedblock) && !affectedblock.isLiquid()
+									&& affectedblock.getType() != Material.AIR) {
 								moveEarthBlock(affectedblock, block);
 							}
 						}
@@ -562,7 +640,8 @@ public class EarthMethods {
 		Block block = info.getState().getBlock();
 		if (block.getType() != Material.AIR && !block.isLiquid()) {
 			if (force || !movedearth.containsKey(block)) {
-				GeneralMethods.dropItems(block, GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), pickaxe));
+				GeneralMethods.dropItems(block,
+						GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), pickaxe));
 				tempair.remove(i);
 			} else {
 				info.setTime(info.getTime() + 10000);
@@ -609,7 +688,8 @@ public class EarthMethods {
 			if (sourceblock.getType() == Material.AIR || sourceblock.isLiquid()) {
 				info.getState().update(true);
 			} else {
-				GeneralMethods.dropItems(block, GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), pickaxe));
+				GeneralMethods.dropItems(block,
+						GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), pickaxe));
 			}
 
 			if (GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {

@@ -1,14 +1,8 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.BlockSource.BlockSourceType;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -17,9 +11,14 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class LavaWall {
 	public static ConcurrentHashMap<Integer, LavaWall> instances = new ConcurrentHashMap<Integer, LavaWall>();
@@ -28,6 +27,9 @@ public class LavaWall {
 	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 	private static final long interval = 30;
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.LavaSurge.DynamicSourcing.Enabled");
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.SelectRange");
+	
 	@SuppressWarnings("unused")
 	private static final byte full = 0x0;
 	Player player;
@@ -66,7 +68,7 @@ public class LavaWall {
 
 	public boolean prepare() {
 		cancelPrevious();
-		Block block = BlockSource.getSourceBlock(player, range, BlockSourceType.LAVA, ClickType.LEFT_CLICK);
+		Block block = BlockSource.getEarthOrLavaSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, false, dynamic, true, EarthMethods.canSandbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();

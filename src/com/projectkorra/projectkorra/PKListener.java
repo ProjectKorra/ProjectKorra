@@ -132,7 +132,6 @@ import com.projectkorra.projectkorra.firebending.RingOfFire;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
-import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -1130,10 +1129,6 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (!player.isSneaking()) {
-			BlockSource.update(player, ClickType.SHIFT_DOWN);
-		}
-
 		if (!player.isSneaking() && WaterArms.hasPlayer(player)) {
 			WaterArms.displayBoundMsg(player);
 			return;
@@ -1327,8 +1322,6 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
-		BlockSource.update(player, ClickType.LEFT_CLICK);
 
 		AirScooter.check(player);
 
