@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 
@@ -16,6 +17,7 @@ public class ArcOfFire implements ConfigLoadable {
 
 	private static int defaultarc = config.get().getInt("Abilities.Fire.Blaze.ArcOfFire.Arc");
 	private static int defaultrange = config.get().getInt("Abilities.Fire.Blaze.ArcOfFire.Range");
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Fire.Blaze.Cooldown");
 	private static int stepsize = 2;
 
 	public ArcOfFire(Player player) {
@@ -51,7 +53,7 @@ public class ArcOfFire implements ConfigLoadable {
 			new FireStream(location, direction, player, range);
 		}
 
-		bPlayer.addCooldown("Blaze", GeneralMethods.getGlobalCooldown());
+		bPlayer.addCooldown("Blaze", cooldown);
 	}
 
 	public static String getDescription() {

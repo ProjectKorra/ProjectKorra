@@ -21,8 +21,10 @@ public class EarthColumn {
 
 	public static final int standardheight = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
 	private static int ID = Integer.MIN_VALUE;
-
-	private static double range = 20;
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.RaiseEarth.DynamicSourcing.Enabled");
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.RaiseEarth.SelectRange");
+	
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.RaiseEarth.Cooldown");
 	private static double speed = 8;
 	private static final Vector direction = new Vector(0, 1, 0);
 	private static long interval = (long) (1000. / speed);
@@ -47,7 +49,7 @@ public class EarthColumn {
 			if (AvatarState.isAvatarState(player)) {
 				height = (int) (2. / 5. * (double) AvatarState.getValue(height));
 			}
-			block = BlockSource.getEarthSourceBlock(player, range, ClickType.LEFT_CLICK);
+			block = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, false, dynamic, true, EarthMethods.canSandbend(player), false);
 			if (block == null)
 				return;
 			origin = block.getLocation();
@@ -66,7 +68,7 @@ public class EarthColumn {
 			if (canInstantiate()) {
 				id = ID;
 				instances.put(id, this);
-				bPlayer.addCooldown("RaiseEarth", GeneralMethods.getGlobalCooldown());
+				bPlayer.addCooldown("RaiseEarth", cooldown);
 				if (ID >= Integer.MAX_VALUE) {
 					ID = Integer.MIN_VALUE;
 				}

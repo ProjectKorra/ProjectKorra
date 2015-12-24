@@ -1,16 +1,16 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 /**
  * BlockSource is a class that handles water and earth bending sources. When a
@@ -28,13 +28,12 @@ public class BlockSource {
 	 * @author kingbirdy
 	 */
 	public static enum BlockSourceType {
-		WATER, ICE, PLANT, EARTH, METAL, LAVA
+		WATER, ICE, PLANT, EARTH, METAL, LAVA, SAND
 	}
 
+	public static List<Block> randomBlocks = new ArrayList<Block>();
 	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>>();
-	private static FileConfiguration config = ConfigManager.defaultConfig.get();
 	// The player should never need to grab source blocks from farther than this.
-	private static double MAX_RANGE = config.getDouble("Abilities.Water.WaterManipulation.Range");
 
 	/**
 	 * Updates all of the player's sources.
@@ -42,13 +41,13 @@ public class BlockSource {
 	 * @param player the player performing the bending.
 	 * @param clickType either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK
 	 */
-	public static void update(Player player, ClickType clickType) {
+	public static void update(Player player, int selectRange, ClickType clickType) {
 		String boundAbil = GeneralMethods.getBoundAbility(player);
 		if (boundAbil == null) {
 			return;
 		}
 		if (WaterMethods.isWaterAbility(boundAbil)) {
-			Block waterBlock = WaterMethods.getWaterSourceBlock(player, MAX_RANGE, true);
+			Block waterBlock = WaterMethods.getWaterSourceBlock(player, selectRange, true, true, true);
 			if (waterBlock != null) {
 				putSource(player, waterBlock, BlockSourceType.WATER, clickType);
 				if (WaterMethods.isPlant(waterBlock)) {
@@ -59,9 +58,12 @@ public class BlockSource {
 				}
 			}
 		} else if (EarthMethods.isEarthAbility(boundAbil)) {
-			Block earthBlock = EarthMethods.getEarthSourceBlock(player, MAX_RANGE);
+			Block earthBlock = EarthMethods.getEarthSourceBlock(player, selectRange, true, true, true);
 			if (earthBlock != null) {
 				putSource(player, earthBlock, BlockSourceType.EARTH, clickType);
+				if (EarthMethods.isSand(earthBlock)) {
+					putSource(player, earthBlock, BlockSourceType.SAND, clickType);
+				}
 				if (EarthMethods.isMetal(earthBlock)) {
 					putSource(player, earthBlock, BlockSourceType.METAL, clickType);
 				}
@@ -69,7 +71,7 @@ public class BlockSource {
 
 			// We need to handle lava differently, since getEarthSourceBlock doesn't account for
 			// lava. We should only select the lava source if it is closer than the earth.
-			Block lavaBlock = EarthMethods.getLavaSourceBlock(player, MAX_RANGE);
+			Block lavaBlock = EarthMethods.getLavaSourceBlock(player, selectRange);
 			double earthDist = earthBlock != null ? earthBlock.getLocation().distanceSquared(player.getLocation()) : Double.MAX_VALUE;
 			double lavaDist = lavaBlock != null ? lavaBlock.getLocation().distanceSquared(player.getLocation()) : Double.MAX_VALUE;
 			if (lavaBlock != null && lavaDist <= earthDist) {
@@ -127,7 +129,7 @@ public class BlockSource {
 	 *            either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @return a valid bendable block, or null if none was found.
 	 */
-	public static BlockSourceInformation getValidBlockSourceInformation(Player player, double range, BlockSourceType sourceType, ClickType clickType) {
+	public static BlockSourceInformation getValidBlockSourceInformation(Player player, int range, BlockSourceType sourceType, ClickType clickType) {
 		BlockSourceInformation blockInfo = getBlockSourceInformation(player, sourceType, clickType);
 		return isStillAValidSource(blockInfo, range, clickType) ? blockInfo : null;
 	}
@@ -142,67 +144,56 @@ public class BlockSource {
 	 *            either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @return a valid bendable block, or null if none was found.
 	 */
-	public static Block getSourceBlock(Player player, double range, BlockSourceType sourceType, ClickType clickType) {
-		BlockSourceInformation info = getValidBlockSourceInformation(player, range, sourceType, clickType);
-		return info != null ? info.getBlock() : null;
+	public static Block getDynamicEarthSourceBlock(Player player, int autoRange, int selectRange, BlockSourceType sourceType, ClickType clickType, boolean auto, boolean dynamic, boolean earth, boolean sand, boolean metal) {
+		update(player, selectRange, clickType);
+		BlockSourceInformation info = getValidBlockSourceInformation(player, selectRange, sourceType, clickType);
+		if (info != null && dynamic) {
+			Block tempBlock = info.getBlock();
+			if (EarthMethods.isEarthbendable(tempBlock.getType()) && earth) {
+				return tempBlock;
+			}
+			if (EarthMethods.isSand(tempBlock) && sand) {
+				return tempBlock;
+			}
+			if (EarthMethods.isMetal(tempBlock) && metal) {
+				return tempBlock;
+			}
+		}
+		if (auto) {
+			return EarthMethods.getRandomEarthBlock(player, player.getLocation(), autoRange, earth, sand, metal);
+		} else {
+			return EarthMethods.getEarthSourceBlock(player, selectRange, earth, sand, metal);
+		}
 	}
-
+	
 	/**
-	 * Attempts to access a Water bendable block that was recently shifted or
-	 * clicked on by the player.
+	 * Access a specific type of source block depending on a range and {@link ClickType}.
 	 * 
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
-	 * @return a valid Water bendable block, or null if none was found.
-	 */
-	public static Block getWaterSourceBlock(Player player, double range) {
-		return getWaterSourceBlock(player, range, ClickType.LEFT_CLICK);
-	}
-
-	/**
-	 * Attempts to access a Water bendable block that was recently shifted or
-	 * clicked on by the player.
-	 * 
-	 * @param player the player that is trying to bend.
-	 * @param range the maximum range to access the block.
+	 * @param sourceType the elemental type of block to find.
 	 * @param clickType the action that was performed to access the source,
-	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
-	 * @return a valid Water bendable block, or null if none was found.
+	 *            either ClickType.SHIFT_DOWN or ClickType.LEFT_CLICK.
+	 * @return a valid bendable block, or null if none was found.
 	 */
-	public static Block getWaterSourceBlock(Player player, double range, ClickType clickType) {
-		return getWaterSourceBlock(player, range, clickType, true, true, true);
-	}
-
-	/**
-	 * Attempts to access a Water bendable block that was recently shifted or
-	 * clicked on by the player.
-	 * 
-	 * @param player the player that is trying to bend.
-	 * @param range the maximum range to access the block.
-	 * @param allowWater true if water blocks are allowed.
-	 * @param allowIce true if ice blocks are allowed.
-	 * @param allowPlant true if plant blocks are allowed.
-	 * @return a valid Water bendable block, or null if none was found.
-	 */
-	public static Block getWaterSourceBlock(Player player, double range, boolean allowWater, boolean allowIce, boolean allowPlant) {
-		return getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, allowWater, allowIce, allowPlant);
-	}
-
-	/**
-	 * Attempts to access a Water bendable block that was recently shifted or
-	 * clicked on by the player.
-	 * 
-	 * @param player the player that is trying to bend.
-	 * @param range the maximum range to access the block.
-	 * @param clickType the action that was performed to access the source,
-	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
-	 * @param allowWater true if water blocks are allowed.
-	 * @param allowIce true if ice blocks are allowed.
-	 * @param allowPlant true if plant blocks are allowed.
-	 * @return a valid Water bendable block, or null if none was found.
-	 */
-	public static Block getWaterSourceBlock(Player player, double range, ClickType clickType, boolean allowWater, boolean allowIce, boolean allowPlant) {
-		return getWaterSourceBlock(player, range, clickType, allowWater, allowIce, allowPlant, true);
+	
+	public static Block getDynamicWaterSourceBlock(Player player, int autoRange, int selectRange, BlockSourceType sourceType, ClickType clickType, boolean auto, boolean dynamic, boolean water, boolean ice, boolean plant) {
+		update(player, selectRange, clickType);
+		BlockSourceInformation info = getValidBlockSourceInformation(player, selectRange, sourceType, clickType);
+		if (info != null && dynamic) {
+			if (WaterMethods.isWater(info.getBlock()) && water) {
+				return info.getBlock();
+			} else if (WaterMethods.isIcebendable(info.getBlock()) && ice) {
+				return info.getBlock();
+			} else if (WaterMethods.isPlant(info.getBlock()) && plant) {
+				return info.getBlock();
+			}
+		}
+		if (auto) {
+			return WaterMethods.getRandomWaterBlock(player, player.getLocation(), autoRange, water, ice, plant);
+		} else {
+			return WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
+		}
 	}
 
 	/**
@@ -220,40 +211,17 @@ public class BlockSource {
 	 *            that may have been created by a WaterBottle.
 	 * @return a valid Water bendable block, or null if none was found.
 	 */
-	public static Block getWaterSourceBlock(Player player, double range, ClickType clickType, boolean allowWater, boolean allowIce, boolean allowPlant, boolean allowWaterBottles) {
-		Block sourceBlock = null;
-		if (allowWaterBottles) {
+	public static Block getWaterSourceBlock(Player player, int autoRange, int selectRange, ClickType clickType, boolean auto, boolean dynamic, boolean bottles, boolean water, boolean ice, boolean plant) {
+		Block sourceBlock = BlockSource.getDynamicWaterSourceBlock(player, autoRange, selectRange, BlockSourceType.WATER, clickType, auto, dynamic, water, ice, plant);
+		if (bottles && sourceBlock == null) {
 			// Check the block in front of the player's eyes, it may have been created by a
 			// WaterBottle.
-			sourceBlock = WaterMethods.getWaterSourceBlock(player, range, allowPlant);
+			sourceBlock = WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
 			if (sourceBlock == null || sourceBlock.getLocation().distance(player.getEyeLocation()) > 3) {
 				sourceBlock = null;
 			}
 		}
-		if (allowWater && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.WATER, clickType);
-		}
-		if (allowIce && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.ICE, clickType);
-		}
-		if (allowPlant && sourceBlock == null) {
-			sourceBlock = getSourceBlock(player, range, BlockSourceType.PLANT, clickType);
-		}
 		return sourceBlock;
-	}
-
-	/**
-	 * Attempts to access a Earth bendable block that was recently shifted or
-	 * clicked on by the player.
-	 * 
-	 * @param player the player that is trying to bend.
-	 * @param range the maximum range to access the block.
-	 * @param clickType the action that was performed to access the source,
-	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
-	 * @return a valid Earth bendable block, or null if none was found.
-	 */
-	public static Block getEarthSourceBlock(Player player, double range, ClickType clickType) {
-		return getEarthSourceBlock(player, range, clickType, true);
 	}
 
 	/**
@@ -269,9 +237,9 @@ public class BlockSource {
 	 *            block.
 	 * @return a valid Earth bendable block, or null if none was found.
 	 */
-	public static Block getEarthSourceBlock(Player player, double range, ClickType clickType, boolean allowNearbySubstitute) {
-		Block sourceBlock = getSourceBlock(player, range, BlockSourceType.EARTH, clickType);
-		if (sourceBlock == null && allowNearbySubstitute) {
+	public static Block getEarthSourceBlock(Player player, int autoRange, int selectRange, ClickType clickType, boolean nearby, boolean auto, boolean dynamic, boolean earth, boolean sand, boolean metal) {
+		Block sourceBlock = getDynamicEarthSourceBlock(player, autoRange, selectRange, BlockSourceType.EARTH, clickType, auto, dynamic, earth, sand, metal);
+		if (!auto && nearby && sourceBlock == null) {
 			BlockSourceInformation blockInfo = getBlockSourceInformation(player, BlockSourceType.EARTH, clickType);
 
 			if (blockInfo == null) {
@@ -283,26 +251,12 @@ public class BlockSource {
 			}
 
 			Location loc = tempBlock.getLocation();
-			sourceBlock = EarthMethods.getNearbyEarthBlock(loc, 3, 3);
-			if (sourceBlock == null || !sourceBlock.getLocation().getWorld().equals(player.getWorld()) || Math.abs(sourceBlock.getLocation().distance(player.getEyeLocation())) > range || !EarthMethods.isEarthbendable(player, sourceBlock)) {
+			sourceBlock = EarthMethods.getNearbyEarthBlock(loc, autoRange, autoRange, earth, sand, metal);
+			if (sourceBlock == null || !sourceBlock.getLocation().getWorld().equals(player.getWorld()) || Math.abs(sourceBlock.getLocation().distance(player.getEyeLocation())) > autoRange) {
 				return null;
 			}
 		}
 		return sourceBlock;
-	}
-
-	/**
-	 * Attempts to access a Lava bendable block that was recently shifted or
-	 * clicked on by the player.
-	 * 
-	 * @param player the player that is trying to bend.
-	 * @param range the maximum range to access the block.
-	 * @param clickType the action that was performed to access the source,
-	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
-	 * @return a valid Lava bendable block, or null if none was found.
-	 */
-	public static Block getLavaSourceBlock(Player player, double range, ClickType clickType) {
-		return getSourceBlock(player, range, BlockSourceType.LAVA, clickType);
 	}
 
 	/**
@@ -315,14 +269,14 @@ public class BlockSource {
 	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @return a valid Earth or Lava bendable block, or null if none was found.
 	 */
-	public static Block getEarthOrLavaSourceBlock(Player player, double range, ClickType clickType) {
+	public static Block getEarthOrLavaSourceBlock(Player player, int autoRange, int selectRange, ClickType clickType, boolean nearby, boolean auto, boolean dynamic, boolean earth, boolean sand) {
 		/*
 		 * When Lava is selected as a source it automatically overrides the
 		 * previous Earth based source. Only one of these types can exist, so if
 		 * Lava exists then we know Earth is null.
 		 */
-		Block earthBlock = getEarthSourceBlock(player, range, clickType);
-		BlockSourceInformation lavaBlockInfo = getValidBlockSourceInformation(player, range, BlockSourceType.LAVA, clickType);
+		Block earthBlock = getEarthSourceBlock(player, autoRange, selectRange, clickType, nearby, auto, dynamic, earth, sand, false);
+		BlockSourceInformation lavaBlockInfo = getValidBlockSourceInformation(player, selectRange, BlockSourceType.LAVA, clickType);
 		if (earthBlock != null) {
 			return earthBlock;
 		} else if (lavaBlockInfo != null) {
@@ -340,7 +294,7 @@ public class BlockSource {
 	 * @param range the maximum bending range.
 	 * @return true if it is valid.
 	 */
-	private static boolean isStillAValidSource(BlockSourceInformation info, double range, ClickType clickType) {
+	private static boolean isStillAValidSource(BlockSourceInformation info, int range, ClickType clickType) {
 		if (info == null || info.getBlock() == null) {
 			return false;
 		} else if (info.getClickType() != clickType) {
@@ -357,11 +311,20 @@ public class BlockSource {
 			return false;
 		} else if (info.getSourceType() == BlockSourceType.EARTH && !EarthMethods.isEarthbendable(info.getPlayer(), info.getBlock())) {
 			return false;
+		} else if (info.getSourceType() == BlockSourceType.SAND && !EarthMethods.isSand(info.getBlock())) {
+			return false;
 		} else if (info.getSourceType() == BlockSourceType.METAL && (!EarthMethods.isMetal(info.getBlock()) || !EarthMethods.isEarthbendable(info.getPlayer(), info.getBlock()))) {
 			return false;
 		} else if (info.getSourceType() == BlockSourceType.LAVA && (!EarthMethods.isLava(info.getBlock()) || !EarthMethods.isLavabendable(info.getBlock(), info.getPlayer()))) {
 			return false;
 		}
 		return true;
+	}
+	
+	public static boolean isAuto(Block block) {
+		if (randomBlocks.contains(block)) {
+			return true;
+		}
+		return false;
 	}
 }

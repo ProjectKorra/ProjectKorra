@@ -132,7 +132,6 @@ import com.projectkorra.projectkorra.firebending.RingOfFire;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
-import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -181,7 +180,7 @@ public class PKListener implements Listener {
 		String append = "";
 		ChatColor color = null;
 		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
-		if ((player.hasPermission("bending.avatar") || GeneralMethods.getBendingPlayer(player.getName()).getElements().size() > 1) && chatEnabled) {
+		if (GeneralMethods.getBendingPlayer(player.getName()).getElements().size() > 1 && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
 			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
 		} else if (GeneralMethods.isBender(player.getName(), Element.Air) && chatEnabled) {
@@ -199,6 +198,9 @@ public class PKListener implements Listener {
 		} else if (GeneralMethods.isBender(player.getName(), Element.Chi) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
 			color = ChiMethods.getChiColor();
+		} else {
+			append = "[Nonbender]";
+			color = ChatColor.WHITE;
 		}
 		
 		if (chatEnabled) {
@@ -383,6 +385,9 @@ public class PKListener implements Listener {
 		} else if (e == Element.Chi && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
 			color = ChiMethods.getChiColor();
+		} else {
+			append = "[Nonbender]";
+			color = ChatColor.WHITE;
 		}
 		
 		if (chatEnabled) {
@@ -1130,10 +1135,6 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (!player.isSneaking()) {
-			BlockSource.update(player, ClickType.SHIFT_DOWN);
-		}
-
 		if (!player.isSneaking() && WaterArms.hasPlayer(player)) {
 			WaterArms.displayBoundMsg(player);
 			return;
@@ -1327,8 +1328,6 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
-		BlockSource.update(player, ClickType.LEFT_CLICK);
 
 		AirScooter.check(player);
 
