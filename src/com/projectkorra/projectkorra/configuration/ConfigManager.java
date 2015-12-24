@@ -225,7 +225,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Air.AirBubble.Radius", 7);
 
 				config.addDefault("Abilities.Air.AirBurst.Enabled", true);
-				config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to launch a cone-shaped burst " + "of air in front of you, or click to release the burst in a sphere around you. " + "Additionally, having this ability selected when you land on the ground from a " + "large enough fall will create a burst of air around you.");
+				config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to release the burst in a sphere around you " + "or click to launch a cone-shaped burst of air in front of you. " + "Additionally, having this ability selected when you land on the ground from a " + "large enough fall will create a burst of air around you.");
 				config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
 				config.addDefault("Abilities.Air.AirBurst.PushFactor", 1.5);
 				config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1750);
@@ -718,7 +718,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Fire.FireBlast.Charged.FireTicks", 4);
 
 				config.addDefault("Abilities.Fire.FireBurst.Enabled", true);
-				config.addDefault("Abilities.Fire.FireBurst.Description", "FireBurst is a very powerful firebending ability. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to launch a cone-shaped burst " + "of flames in front of you, or click to release the burst in a sphere around you. ");
+				config.addDefault("Abilities.Fire.FireBurst.Description", "FireBurst is a very powerful firebending ability. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to release the burst in a sphere around you or " + "click to launch a cone-shaped burst of flames in front of you.");
 				config.addDefault("Abilities.Fire.FireBurst.Damage", 2);
 				config.addDefault("Abilities.Fire.FireBurst.ChargeTime", 3500);
 				config.addDefault("Abilities.Fire.FireBurst.Range", 15);

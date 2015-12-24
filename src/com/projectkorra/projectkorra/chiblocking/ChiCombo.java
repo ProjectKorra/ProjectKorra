@@ -90,13 +90,17 @@ public class ChiCombo {
 		for (Entity e : paralyzedEntities.keySet()) {
 			if (paralyzedEntities.get(e) <= System.currentTimeMillis()) {
 				paralyzedEntities.remove(e);
+				List<Integer> remove = new ArrayList<Integer>();
 				for (ChiCombo c : instances) {
 					if (e == null || c.target == null) {
-						instances.remove(c);
+						remove.add(instances.indexOf(c));
 						continue;
 					}
 					if (c.target.equals(e))
-						instances.remove(c);
+						remove.add(instances.indexOf(c));
+				}
+				for (int i : remove) {
+					instances.remove(i);
 				}
 			}
 		}
