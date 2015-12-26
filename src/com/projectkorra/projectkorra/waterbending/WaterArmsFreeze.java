@@ -121,7 +121,7 @@ public class WaterArmsFreeze {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!EarthMethods.isTransparentToEarthbending(player, block) && !((WaterMethods.isWater(block) || WaterMethods.isIcebendable(block)) && TempBlock.isTempBlock(block))) {
+		if (!EarthMethods.isTransparentToEarthbending(player, block) && !((WaterMethods.isWater(block)) && TempBlock.isTempBlock(block))) {
 			return false;
 		}
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", block.getLocation())) {

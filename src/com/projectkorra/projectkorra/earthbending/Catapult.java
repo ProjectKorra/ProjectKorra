@@ -21,12 +21,14 @@ public class Catapult implements ConfigLoadable {
 	private static int LENGTH = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Catapult.Length");
 	private static double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Speed");
 	private static double PUSH = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Push");
-	
-	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
+	private static double SHIFT = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.ShiftModifier");
+	private static long COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
 	
 	private int length = LENGTH;
 	private double speed = SPEED;
 	private double push = PUSH;
+	private double shift = SHIFT;
+	private long cooldown = COOLDOWN;
 	private Player player;
 	private Location origin;
 	private Location location;
@@ -67,7 +69,7 @@ public class Catapult implements ConfigLoadable {
 				catapult = true;
 			}
 			if (player.isSneaking())
-				distance = distance / 2;
+				distance = (int) (distance / shift);
 
 			moving = true;
 			instances.put(player, this);
