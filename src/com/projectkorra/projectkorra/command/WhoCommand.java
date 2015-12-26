@@ -76,7 +76,7 @@ public class WhoCommand extends PKCommand {
 			List<String> players = new ArrayList<String>();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				String playerName = player.getName();
-				String result = "";
+				String result = ChatColor.WHITE + playerName;
 				BendingPlayer bp = GeneralMethods.getBendingPlayer(playerName);
 				if (bp == null) {
 					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
