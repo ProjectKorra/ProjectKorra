@@ -32,7 +32,7 @@ public class EarthSmash {
 	public static boolean ALLOW_GRAB = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowGrab");
 	public static boolean ALLOW_SHOOTING = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowShooting");
 	public static boolean ALLOW_FLIGHT = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowFlight");
-	public static int GRAB_RANGE = ProjectKorra.plugin.getConfig().getInt("Properties.Earth.Range");
+	public static int GRAB_RANGE = ProjectKorra.plugin.getConfig().getInt("Properties.Earth.SelectRange");
 	public static double TRAVEL_RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.ShotRange");
 	public static double SHOOTING_DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.Damage");
 
