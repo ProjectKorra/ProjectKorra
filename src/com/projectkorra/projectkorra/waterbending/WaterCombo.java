@@ -58,7 +58,7 @@ public class WaterCombo {
 			"Abilities.Water.WaterCombo.IceBullet.ShootTime");
 	private static int icebullet_selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterCombo.IceBullet.SelectRange");
 	
-	private boolean IceBulletisAuto;
+	//private boolean IceBulletisAuto;
 	
 	public static ArrayList<WaterCombo> instances = new ArrayList<WaterCombo>();
 	public static ConcurrentHashMap<Block, TempBlock> frozenBlocks = new ConcurrentHashMap<Block, TempBlock>();
@@ -274,7 +274,7 @@ public class WaterCombo {
 					remove();
 					return;
 				}
-				IceBulletisAuto = false;
+				//IceBulletisAuto = false;
 				this.time = 0;
 				origin = waterBlock.getLocation();
 				currentLoc = origin.clone();

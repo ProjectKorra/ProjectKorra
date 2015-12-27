@@ -5,25 +5,20 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-
 public final class PlayerCooldownChangeEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	private Player player;
 	private String ability;
 	private Result eventresult;
 	private boolean cancelled;
-	private BendingPlayer bPlayer;
 	private long cooldown;
 
-	public PlayerCooldownChangeEvent(Player player, String abilityname, Result result) {
+	public PlayerCooldownChangeEvent(Player player, String abilityname, long cooldown, Result result) {
 		this.player = player;
 		this.ability = abilityname;
 		this.eventresult = result;
 		this.cancelled = false;
-		this.bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		this.cooldown = bPlayer.getCooldown(ability);
+		this.cooldown = cooldown;
 	}
 
 	public Player getPlayer() {
