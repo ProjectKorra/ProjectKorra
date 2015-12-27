@@ -67,7 +67,7 @@ public class LavaWave {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getEarthOrLavaSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, false, dynamic, true, EarthMethods.canSandbend(player));
+		Block block = BlockSource.getEarthOrLavaSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, true, EarthMethods.canSandbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();

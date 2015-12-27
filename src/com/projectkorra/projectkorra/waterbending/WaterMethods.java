@@ -301,7 +301,7 @@ public class WaterMethods {
 	}
 
 	public static boolean isIcebendable(Block block) {
-		if (block.getType() == Material.ICE)
+		if (block.getType() == Material.ICE || block.getType() == Material.SNOW)
 			return true;
 		if (block.getType() == Material.PACKED_ICE && plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce"))
 			return true;

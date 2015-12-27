@@ -34,9 +34,6 @@ public class IceSpike2 {
 	static long slowCooldown = 5000;
 	
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Projectile.SelectRange");
-	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Projectile.AutoSourcing.SelectRange");
-	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceSpike.Projectile.AutoSourcing.Enabled");
-	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.AutoSourcing.Cooldown");
 	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceSpike.Projectile.DynamicSourcing.Enabled");
 
 	private static final long interval = 20;
@@ -58,8 +55,6 @@ public class IceSpike2 {
 	private TempBlock source;
 	private double defaultrange = RANGE;
 	private double defaultdamage = DAMAGE;
-	
-	private boolean isAuto;
 
 	public IceSpike2(Player player) {
 		if (!WaterMethods.canIcebend(player))
@@ -67,12 +62,7 @@ public class IceSpike2 {
 
 		block(player);
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
-		if (BlockSource.isAuto(sourceblock)) {
-			isAuto = true;
-		} else {
-			isAuto = false;
-		}
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 		if (sourceblock == null) {
 			new SpikeField(player);
 		} else {
@@ -410,11 +400,7 @@ public class IceSpike2 {
 			progressing = false;
 		}
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (isAuto) {
-			bPlayer.addCooldown("IceSpike", autocooldown);
-		} else {
-			bPlayer.addCooldown("IceSpike", GeneralMethods.getGlobalCooldown());
-		}
+		bPlayer.addCooldown("IceSpike", GeneralMethods.getGlobalCooldown());
 		instances.remove(id);
 	}
 

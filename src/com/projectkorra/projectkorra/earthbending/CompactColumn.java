@@ -41,7 +41,7 @@ public class CompactColumn {
 		if (bPlayer.isOnCooldown("Collapse"))
 			return;
 
-		block = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, false, dynamic, true, EarthMethods.canSandbend(player), false);
+		block = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, dynamic, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
 		if (block == null)
 			return;
 		origin = block.getLocation();
