@@ -45,7 +45,7 @@ public class EarthWall {
 
 		Vector orth = new Vector(ox, oy, oz);
 		orth = orth.normalize();
-		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, false, dynamic, true, EarthMethods.canSandbend(player), false);
+		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
 		if (sblock != null) {
 			Location origin = sblock.getLocation();
 			World world = origin.getWorld();

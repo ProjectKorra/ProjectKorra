@@ -359,9 +359,6 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.IceSpike.Projectile.Range", 20);
 				config.addDefault("Abilities.Water.IceSpike.Projectile.Damage", 1);
 				config.addDefault("Abilities.Water.IceSpike.SelectRange", 12);
-				config.addDefault("Abilities.Water.IceSpike.AutoSourcing.Enabled", true);
-				config.addDefault("Abilities.Water.IceSpike.AutoSourcing.Cooldown", 2000);
-				config.addDefault("Abilities.Water.IceSpike.AutoSourcing.SelectRange", 5);
 				config.addDefault("Abilities.Water.IceSpike.DynamicSourcing.Enabled", true);
 
 				config.addDefault("Abilities.Water.OctopusForm.Enabled", true);
@@ -475,8 +472,6 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.FullMoon", 6);
 				config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal", 7000);
 				config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon", 12000);
-				
-				config.addDefault("Abilities.Water.WaterArms.AutoSourcing.Enabled", false);
 
 				config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
 				config.addDefault("Abilities.Water.WaterBubble.Description", "To use, the bender must hold down sneak. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
@@ -510,7 +505,6 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterSpout.Wave.AutoSourcing.Enabled", true);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.AutoSourcing.Cooldown", 1500);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.AutoSourcing.SelectRange", 5);
-				config.addDefault("Abilities.Water.WaterSpout.Wave.DynamicSourcing.Enabled", true);
 
 				config.addDefault("Abilities.Water.WaterCombo.Enabled", true);
 				config.addDefault("Abilities.Water.WaterCombo.IceWave.Damage", 4);
@@ -522,8 +516,6 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterCombo.IceBullet.AnimationSpeed", 1);
 				config.addDefault("Abilities.Water.WaterCombo.IceBullet.ShootTime", 10000);
 				config.addDefault("Abilities.Water.WaterCombo.IceBullet.Cooldown", 10000);
-				config.addDefault("Abilities.Water.WaterCombo.IceBullet.AutoSourcing.Enabled", true);
-				config.addDefault("Abilities.Water.WaterCombo.IceBullet.DynamicSourcing.Enabled", true);
 
 				config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 				config.addDefault("Properties.Earth.Passive.SandRunPower", 1);

@@ -83,8 +83,8 @@ public class EarthBlast {
 
 	public boolean prepare() {
 		cancelPrevious();
-		Block block = BlockSource.getEarthSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, dynamic, auto,
-				dynamic, true, EarthMethods.canSandbend(player), false);
+		Block block = BlockSource.getEarthSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto,
+				dynamic, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
 		block(player);
 		if (block != null) {
 			if (block.getLocation().distance(player.getLocation()) > selectRange) {
