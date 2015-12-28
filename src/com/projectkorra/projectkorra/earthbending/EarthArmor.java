@@ -75,6 +75,10 @@ public class EarthArmor {
 			instances.put(player, this);
 		}
 	}
+	
+	public ItemStack getOriginalArmor(int i) {
+		return oldarmor[i];
+	}
 
 	private boolean moveBlocks() {
 		if (!player.getWorld().equals(headblock.getWorld())) {

@@ -37,7 +37,7 @@ public class PlantArmor {
 	public boolean hadEffect;
 	private double range = RANGE;
 	private long duration = DURATION;
-	private Material blocktype;
+	public Material blocktype;
 
 	public PlantArmor(Player player) {
 		if (instances.containsKey(player)) {
@@ -84,6 +84,10 @@ public class PlantArmor {
 		}
 
 		return true;
+	}
+	
+	public ItemStack getOriginalArmor(int i) {
+		return oldarmor[i];
 	}
 
 	private void playEffect() {
