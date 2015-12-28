@@ -5,6 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 import com.projectkorra.projectkorra.util.Flight;
 
@@ -16,15 +19,21 @@ public class FlightAbility implements ConfigLoadable {
 	private static ConcurrentHashMap<String, Boolean> hovering = new ConcurrentHashMap<String, Boolean>();
 	private Player player;
 	private Flight flight;
+	
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Air.Flight.Cooldown");
 
 	public FlightAbility(Player player) {
+		this.player = player;
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("Flight"))
+			return;
 		if (!AirMethods.canFly(player, true, false))
 			return;
 		if (flight == null)
 			flight = new Flight(player);
 		player.setAllowFlight(true);
 		player.setVelocity(player.getEyeLocation().getDirection().normalize());
-		this.player = player;
+		bPlayer.addCooldown("Flight", cooldown);
 		instances.put(player, this);
 	}
 

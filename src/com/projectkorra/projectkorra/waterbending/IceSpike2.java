@@ -32,6 +32,12 @@ public class IceSpike2 {
 	private static int defaultmod = 2;
 	private static int ID = Integer.MIN_VALUE;
 	static long slowCooldown = 5000;
+	
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Projectile.SelectRange");
+	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Projectile.AutoSourcing.SelectRange");
+	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceSpike.Projectile.AutoSourcing.Enabled");
+	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.AutoSourcing.Cooldown");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceSpike.Projectile.DynamicSourcing.Enabled");
 
 	private static final long interval = 20;
 	private static final byte data = 0;
@@ -40,7 +46,6 @@ public class IceSpike2 {
 
 	private int id;
 	private double range;
-	private boolean plantbending = false;
 	private boolean prepared = false;
 	private boolean settingup = false;
 	private boolean progressing = false;
@@ -53,18 +58,21 @@ public class IceSpike2 {
 	private TempBlock source;
 	private double defaultrange = RANGE;
 	private double defaultdamage = DAMAGE;
+	
+	private boolean isAuto;
 
 	public IceSpike2(Player player) {
 		if (!WaterMethods.canIcebend(player))
 			return;
 
 		block(player);
-		if (WaterMethods.canPlantbend(player))
-			plantbending = true;
-		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, plantbending);
-
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+		if (BlockSource.isAuto(sourceblock)) {
+			isAuto = true;
+		} else {
+			isAuto = false;
+		}
 		if (sourceblock == null) {
 			new SpikeField(player);
 		} else {
@@ -401,7 +409,12 @@ public class IceSpike2 {
 				source.revertBlock();
 			progressing = false;
 		}
-
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (isAuto) {
+			bPlayer.addCooldown("IceSpike", autocooldown);
+		} else {
+			bPlayer.addCooldown("IceSpike", GeneralMethods.getGlobalCooldown());
+		}
 		instances.remove(id);
 	}
 

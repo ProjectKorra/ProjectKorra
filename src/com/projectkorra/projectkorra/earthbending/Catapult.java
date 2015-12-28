@@ -21,7 +21,9 @@ public class Catapult implements ConfigLoadable {
 	private static int LENGTH = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Catapult.Length");
 	private static double SPEED = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Speed");
 	private static double PUSH = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Catapult.Push");
-
+	
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
+	
 	private int length = LENGTH;
 	private double speed = SPEED;
 	private double push = PUSH;
@@ -69,7 +71,7 @@ public class Catapult implements ConfigLoadable {
 
 			moving = true;
 			instances.put(player, this);
-			bplayer.addCooldown("Catapult", GeneralMethods.getGlobalCooldown());
+			bplayer.addCooldown("Catapult", cooldown);
 		}
 
 	}

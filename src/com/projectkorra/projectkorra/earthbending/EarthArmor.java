@@ -1,10 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.TempPotionEffect;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,7 +12,13 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.TempPotionEffect;
 
 public class EarthArmor {
 
@@ -26,10 +28,16 @@ public class EarthArmor {
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
 	private static long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.Duration");
 	private static int STRENGTH = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthArmor.Strength");
-	private static int range = 7;
+	
+	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthArmor.AutoSourcing.Enabled");
+	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthArmor.AutoSourcing.Cooldown");
+	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthArmor.AutoSourcing.SelectRange");
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthArmor.SelectRange");
 
 	private Player player;
-	private Block headblock, legsblock;
+	private static Block headblock;
+
+	private Block legsblock;
 	private Location headblocklocation, legsblocklocation;
 	private Material headtype, legstype;
 	private byte headdata, legsdata;
@@ -51,7 +59,12 @@ public class EarthArmor {
 			return;
 
 		this.player = player;
-		headblock = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), range);
+		headblock = BlockSource.getEarthSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, false, auto, false, true, EarthMethods.canSandbend(player), false);
+		if (BlockSource.isAuto(headblock)) {
+			bPlayer.addCooldown("EarthArmor", autocooldown);
+		} else {
+			bPlayer.addCooldown("EarthArmor", cooldown);
+		}
 		if (EarthMethods.getEarthbendableBlocksLength(player, headblock, new Vector(0, -1, 0), 2) >= 2) {
 			legsblock = headblock.getRelative(BlockFace.DOWN);
 			headtype = headblock.getType();
@@ -117,7 +130,7 @@ public class EarthArmor {
 			return false;
 		}
 
-		if (headblock.getLocation().distance(player.getEyeLocation()) > range || legsblock.getLocation().distance(player.getLocation()) > range) {
+		if (headblock.getLocation().distance(player.getEyeLocation()) > selectRange || legsblock.getLocation().distance(player.getLocation()) > selectRange) {
 			cancel();
 			return false;
 		}
@@ -201,7 +214,6 @@ public class EarthArmor {
 				eartharmor.complete = true;
 				eartharmor.removeEffect();
 				eartharmor.cancel();
-				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("EarthArmor", cooldown);
 				return;
 			}
 		} else if (System.currentTimeMillis() > eartharmor.time + interval) {

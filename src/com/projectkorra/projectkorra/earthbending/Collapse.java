@@ -16,10 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Collapse {
 
-	public static final int range = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Collapse.Range");
 	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Collapse.Radius");
 	private static final int height = EarthColumn.standardheight;
-
+	
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.Collapse.DynamicSourcing.Enabled");
+	
 	private ConcurrentHashMap<Block, Block> blocks = new ConcurrentHashMap<Block, Block>();
 	private ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
 	private double radius = defaultradius;
@@ -32,10 +34,10 @@ public class Collapse {
 			return;
 
 		this.player = player;
-		Block sblock = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
+		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, false, dynamic, true, EarthMethods.canSandbend(player), false);
 		Location location;
 		if (sblock == null) {
-			location = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), range).getLocation();
+			location = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), selectRange).getLocation();
 		} else {
 			location = sblock.getLocation();
 		}

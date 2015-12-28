@@ -41,7 +41,15 @@ public class WaterManipulation {
 	private static double defaultdamage = config.getDouble("Abilities.Water.WaterManipulation.Damage");
 	private static double speed = config.getDouble("Abilities.Water.WaterManipulation.Speed");
 	private static long COOLDOWN = config.getLong("Abilities.Water.WaterManipulation.Cooldown");
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterManipulation.SelectRange");
+	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterManipulation.AutoSourcing.SelectRange");
+	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterManipulation.AutoSourcing.Enabled");
+	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterManipulation.AutoSourcing.Cooldown");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterManipulation.DynamicSourcing.Enabled");
 	private static long interval = (long) (1000. / speed);
+
+	private boolean isAuto;
+
 	private static final double deflectrange = 3;
 	// private static double speed = 1.5;
 	private static int ID = Integer.MIN_VALUE;
@@ -91,7 +99,13 @@ public class WaterManipulation {
 
 	public boolean prepare() {
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, dynamic, true, true,
+				WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+		if (BlockSource.isAuto(block)) {
+			isAuto = true;
+		} else {
+			isAuto = false;
+		}
 		// if (prepared.containsKey(player)
 		// && !Methods.isWaterbendable(block, player)) {
 		// instances.get(prepared.get(player)).displacing = true;
@@ -153,8 +167,12 @@ public class WaterManipulation {
 				}
 
 			}
-
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", GeneralMethods.getGlobalCooldown());
+			if (isAuto) {
+				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation", autocooldown);
+			} else {
+				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WaterManipulation",
+						cooldown);
+			}
 		}
 	}
 
@@ -326,7 +344,9 @@ public class WaterManipulation {
 					double radius = FireBlast.AFFECTING_RADIUS;
 					Player source = player;
 					if (!(location == null)) {
-						if (EarthBlast.annihilateBlasts(location, radius, source) || WaterManipulation.annihilateBlasts(location, radius, source) || FireBlast.annihilateBlasts(location, radius, source)) {
+						if (EarthBlast.annihilateBlasts(location, radius, source)
+								|| WaterManipulation.annihilateBlasts(location, radius, source)
+								|| FireBlast.annihilateBlasts(location, radius, source)) {
 							breakBlock();
 							new WaterReturn(player, sourceblock);
 							return false;
@@ -388,7 +408,8 @@ public class WaterManipulation {
 							// .add(direction));
 							if (AvatarState.isAvatarState(player))
 								damage = AvatarState.getValue(damage);
-							GeneralMethods.damageEntity(player, entity, (int) WaterMethods.waterbendingNightAugment(damage, player.getWorld()), "WaterManipulation");
+							GeneralMethods.damageEntity(player, entity,
+									(int) WaterMethods.waterbendingNightAugment(damage, player.getWorld()), "WaterManipulation");
 							AirMethods.breakBreathbendingHold(entity);
 							progressing = false;
 							// }
@@ -502,7 +523,8 @@ public class WaterManipulation {
 		if (FreezeMelt.frozenblocks.containsKey(block))
 			FreezeMelt.frozenblocks.remove(block);
 		if (WaterMethods.isWater(block)) {
-			ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(.5,.5,.5), 257D);
+			ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5,
+					block.getLocation().clone().add(.5, .5, .5), 257D);
 		}
 		block.setType(Material.STATIONARY_WATER);
 		block.setData(full);
@@ -523,7 +545,8 @@ public class WaterManipulation {
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
-			if (EarthMethods.isTransparentToEarthbending(player, block) && EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
+			if (EarthMethods.isTransparentToEarthbending(player, block)
+					&& EarthMethods.isTransparentToEarthbending(player, eyeloc.getBlock())) {
 
 				if (getTargetLocation(player).distance(block.getLocation()) > 1) {
 					block.setType(Material.WATER);
@@ -561,7 +584,10 @@ public class WaterManipulation {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
-			if (mloc.distance(location) <= manip.range && GeneralMethods.getDistanceFromLine(vector, location, manip.location) < deflectrange && mloc.distance(location.clone().add(vector)) < mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
+			if (mloc.distance(location) <= manip.range
+					&& GeneralMethods.getDistanceFromLine(vector, location, manip.location) < deflectrange
+					&& mloc.distance(location.clone().add(vector)) < mloc
+							.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.redirect(player, getTargetLocation(player));
 			}
 
@@ -587,7 +613,10 @@ public class WaterManipulation {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
-			if (mloc.distance(location) <= manip.range && GeneralMethods.getDistanceFromLine(vector, location, manip.location) < deflectrange && mloc.distance(location.clone().add(vector)) < mloc.distance(location.clone().add(vector.clone().multiply(-1)))) {
+			if (mloc.distance(location) <= manip.range
+					&& GeneralMethods.getDistanceFromLine(vector, location, manip.location) < deflectrange
+					&& mloc.distance(location.clone().add(vector)) < mloc
+							.distance(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.breakBlock();
 			}
 

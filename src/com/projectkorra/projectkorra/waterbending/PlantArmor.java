@@ -1,8 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -15,7 +13,11 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
 
 public class PlantArmor {
 
@@ -24,8 +26,14 @@ public class PlantArmor {
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.Cooldown");
 	private static long DURATION = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.Duration");
 	private static int RESISTANCE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.Resistance");
-	private static int RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.Range");//7;
-
+	
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.SelectRange");
+	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.AutoSourcing.SelectRange");
+	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.PlantArmor.AutoSourcing.Enabled");
+	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.AutoSourcing.Cooldown");
+	
+	private boolean isAuto;
+	
 	private Player player;
 	private Block block;
 	private Location location;
@@ -35,7 +43,6 @@ public class PlantArmor {
 	private int resistance = RESISTANCE;
 	public ItemStack[] oldarmor;
 	public boolean hadEffect;
-	private double range = RANGE;
 	private long duration = DURATION;
 	public Material blocktype;
 
@@ -50,12 +57,16 @@ public class PlantArmor {
 			return;
 
 		this.player = player;
-		range = WaterMethods.getWaterbendingNightAugment(player.getWorld()) * range;
 		Double d = WaterMethods.getWaterbendingNightAugment(player.getWorld()) * duration;
 		duration = d.longValue();
-		block = WaterMethods.getPlantSourceBlock(player, range, true);
+		block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, auto, false, false, false, false, WaterMethods.canPlantbend(player));
 		if (block == null) {
 			return;
+		}
+		if (BlockSource.isAuto(block)) {
+			isAuto = true;
+		} else {
+			isAuto = false;
 		}
 		location = block.getLocation();
 		hadEffect = player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
@@ -73,7 +84,7 @@ public class PlantArmor {
 			return false;
 		}
 
-		if (location.distance(player.getEyeLocation()) > range) {
+		if (location.distance(player.getEyeLocation()) > selectRange) {
 			cancel();
 			return false;
 		}
@@ -106,6 +117,12 @@ public class PlantArmor {
 			plantbending.revert();
 		if (instances.containsKey(player))
 			instances.remove(player);
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (isAuto) {
+			bPlayer.addCooldown("PlantArmor", autocooldown);
+		} else {
+			bPlayer.addCooldown("PlantArmor", cooldown);
+		}
 	}
 
 	private boolean inPosition() {
