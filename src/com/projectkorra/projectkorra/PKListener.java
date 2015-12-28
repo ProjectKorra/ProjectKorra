@@ -494,6 +494,40 @@ public class PKListener implements Listener {
 			event.getDrops().addAll(newdrops);
 			MetalClips.clipped.remove(event.getEntity());
 		}
+		if (EarthArmor.instances.containsKey(event.getEntity())) {
+			List<ItemStack> drops = event.getDrops();
+			List<ItemStack> newdrops = new ArrayList<>();
+			for (int i = 0; i < drops.size(); i++) {
+				if (!(drops.get(i).getType() == Material.LEATHER_BOOTS || drops.get(i).getType() == Material.LEATHER_CHESTPLATE || drops.get(i).getType() == Material.LEATHER_HELMET || drops.get(i).getType() == Material.LEATHER_LEGGINGS || drops.get(i).getType() == Material.AIR)) {
+					newdrops.add(drops.get(i));
+				}
+			}
+			
+			for (int i = 0; i < 4; i++) {
+				newdrops.add(EarthArmor.instances.get(event.getEntity()).getOriginalArmor(i));
+			}
+			
+			event.getDrops().clear();
+			event.getDrops().addAll(newdrops);
+			EarthArmor.instances.remove(event.getEntity());
+		}
+		if (PlantArmor.instances.containsKey(event.getEntity())) {
+			List<ItemStack> drops = event.getDrops();
+			List<ItemStack> newdrops = new ArrayList<>();
+			for (int i = 0; i < drops.size(); i++) {
+				if (!(drops.get(i).getType() == Material.LEATHER_BOOTS || drops.get(i).getType() == Material.LEATHER_CHESTPLATE || drops.get(i).getType() == PlantArmor.instances.get(event.getEntity()).blocktype || drops.get(i).getType() == Material.LEATHER_LEGGINGS || drops.get(i).getType() == Material.AIR)) {
+					newdrops.add(drops.get(i));
+				}
+			}
+			
+			for (int i = 0; i < 4; i++) {
+				newdrops.add(PlantArmor.instances.get(event.getEntity()).getOriginalArmor(i));
+			}
+			
+			event.getDrops().clear();
+			event.getDrops().addAll(newdrops);
+			PlantArmor.instances.remove(event.getEntity());
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
