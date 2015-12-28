@@ -22,6 +22,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Bloodbending {
@@ -46,6 +47,14 @@ public class Bloodbending {
 	private int range = RANGE;
 	private long holdTime = HOLD_TIME;
 	private long cooldown = COOLDOWN;
+	
+	private Integer[] transparent = {0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 
+			37, 38, 39, 40, 50, 51, 55, 59, 63, 64, 
+			65, 66, 68, 69, 70, 71, 72, 75, 76, 77, 
+			78, 83, 93, 94, 104, 105, 111, 115, 117, 
+			132, 141, 142, 143, 147, 148, 149, 150, 
+			157, 175, 176, 177, 183, 184, 185, 187, 
+			193, 194, 195, 196, 197};
 
 	public Bloodbending(Player player) {
 		if (instances.containsKey(player)) {
@@ -81,7 +90,13 @@ public class Bloodbending {
 				}
 			}
 		} else {
-			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+			Location location = GeneralMethods.getTargetedLocation(player, 6, transparent);
+			List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
+			if (entities == null || entities.isEmpty()) {
+				return;
+			}
+			Entity target = entities.get(0);
+			//Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 			if (target == null)
 				return;
 			if (!(target instanceof LivingEntity) || GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", target.getLocation()))
@@ -225,7 +240,7 @@ public class Bloodbending {
 					targetentities.remove(entity);
 					continue;
 				}
-				Location location = GeneralMethods.getTargetedLocation(player, 6, 0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 63, 64, 65, 66, 68, 69, 70, 71, 72, 75, 76, 77, 78, 83, 93, 94, 104, 105, 111, 115, 117, 132, 141, 142, 143, 147, 148, 149, 150, 157, 175, 176, 177, 183, 184, 185, 187, 193, 194, 195, 196, 197);
+				Location location = GeneralMethods.getTargetedLocation(player, 6, transparent);
 				double distance = location.distance(newlocation);
 				double dx, dy, dz;
 				dx = location.getX() - newlocation.getX();
