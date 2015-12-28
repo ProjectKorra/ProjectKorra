@@ -1,17 +1,16 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * BlockSource is a class that handles water and earth bending sources. When a
@@ -190,10 +189,8 @@ public class BlockSource {
 			}
 		}
 		if (info == null && dynamic) {
-			Bukkit.broadcastMessage("2");
 			return null;
 		}
-		Bukkit.broadcastMessage("1");
 		return WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
 	}
 
@@ -225,7 +222,6 @@ public class BlockSource {
 			sourceBlock = WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
 			}
 			if (auto && (sourceBlock == null || sourceBlock.getLocation().distance(player.getEyeLocation()) > 3)) {
-				Bukkit.broadcastMessage("3");
 				sourceBlock = WaterMethods.getRandomWaterBlock(player, player.getLocation(), autoRange, water, ice, plant);
 			}
 		}
