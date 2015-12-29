@@ -215,13 +215,13 @@ public class BlockSource {
 			sourceBlock = BlockSource.getDynamicWaterSourceBlock(player, autoRange, selectRange, BlockSourceType.WATER, clickType, auto, dynamic, water, ice, plant);
 		else
 			sourceBlock = WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
-		if (bottles && sourceBlock == null) {
+		if (sourceBlock == null) {
 			if(bottles) {
 			// Check the block in front of the player's eyes, it may have been created by a
 			// WaterBottle.
 			sourceBlock = WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
 			}
-			if (auto && (sourceBlock == null || sourceBlock.getLocation().distance(player.getEyeLocation()) > 3)) {
+			if (auto && (sourceBlock == null || sourceBlock.getLocation().distance(player.getEyeLocation()) > autoRange)) {
 				sourceBlock = WaterMethods.getRandomWaterBlock(player, player.getLocation(), autoRange, water, ice, plant);
 			}
 		}
@@ -259,7 +259,7 @@ public class BlockSource {
 				}
 
 				Location loc = tempBlock.getLocation();
-				sourceBlock = EarthMethods.getNearbyEarthBlock(loc, autoRange, autoRange, earth, sand, metal);
+				sourceBlock = EarthMethods.getNearbyEarthBlock(loc, autoRange, 2, earth, sand, metal);
 			}
 			if (auto && (sourceBlock == null || !sourceBlock.getLocation().getWorld().equals(player.getWorld()) || Math.abs(sourceBlock.getLocation().distance(player.getEyeLocation())) > selectRange)) {
 				return EarthMethods.getRandomEarthBlock(player, player.getLocation(), autoRange, earth, sand, metal);

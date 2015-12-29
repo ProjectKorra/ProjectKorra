@@ -51,7 +51,7 @@ public class WaterWall {
 	private boolean frozen = false;
 	private long time;
 	private double radius = defaultradius;
-	private int selectRange = selectRANGE;
+	private double selectRange = selectRANGE;
 
 	@SuppressWarnings("deprecation")
 	public WaterWall(Player player) {
@@ -152,7 +152,7 @@ public class WaterWall {
 	public boolean prepare() {
 		cancelPrevious();
 		// Block block = player.getTargetBlock(null, (int) range);
-		Block block = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+		Block block = BlockSource.getWaterSourceBlock(player, (int) selectRange, (int) selectRange, ClickType.LEFT_CLICK, false, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();
@@ -187,7 +187,7 @@ public class WaterWall {
 	@SuppressWarnings("deprecation")
 	public void moveWater() {
 		if (sourceblock != null) {
-			targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), selectRange).getLocation();
+			targetdestination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) selectRange).getLocation();
 
 			if (targetdestination.distance(location) <= 1) {
 				progressing = false;
@@ -277,7 +277,7 @@ public class WaterWall {
 			}
 
 			if (!progressing) {
-				sourceblock.getWorld().playEffect(location, Effect.SMOKE, 4, selectRange);
+				sourceblock.getWorld().playEffect(location, Effect.SMOKE, 4, (int) selectRange);
 				return false;
 			}
 
@@ -557,7 +557,7 @@ public class WaterWall {
 		return selectRange;
 	}
 
-	public void setRange(int range) {
+	public void setRange(double range) {
 		this.selectRange = range;
 	}
 

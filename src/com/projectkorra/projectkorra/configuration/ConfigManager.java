@@ -323,7 +323,7 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
 				config.addDefault("Abilities.Water.Bloodbending.Description", "This ability was made illegal for a reason. With this ability selected, sneak while " + "targetting something and you will bloodbend that target. Bloodbent targets cannot move, " + "bend or attack. You are free to control their actions by looking elsewhere - they will " + "be forced to move in that direction. Additionally, clicking while bloodbending will " + "launch that target off in the direction you're looking. " + "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
-				config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight", false);
+				config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight", true);
 				config.addDefault("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs", true);
 				config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 				config.addDefault("Abilities.Water.Bloodbending.Range", 10);
@@ -358,7 +358,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.IceSpike.Height", 6);
 				config.addDefault("Abilities.Water.IceSpike.Projectile.Range", 20);
 				config.addDefault("Abilities.Water.IceSpike.Projectile.Damage", 1);
-				config.addDefault("Abilities.Water.IceSpike.SelectRange", 12);
+				config.addDefault("Abilities.Water.IceSpike.Projectile.SelectRange", 12);
 				config.addDefault("Abilities.Water.IceSpike.DynamicSourcing.Enabled", true);
 
 				config.addDefault("Abilities.Water.OctopusForm.Enabled", true);
@@ -378,8 +378,8 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Water.PhaseChange.Enabled", true);
 				config.addDefault("Abilities.Water.PhaseChange.Description", "To use, simply left-click. " + "Any water you are looking at within range will instantly freeze over into solid ice. " + "Provided you stay within range of the ice and do not unbind FreezeMelt, " + "that ice will not thaw. If, however, you do either of those the ice will instantly thaw. " + "If you sneak (default: shift), anything around where you are looking at will instantly melt. " + "Since this is a more favorable state for these things, they will never re-freeze unless they " + "would otherwise by nature or some other bending ability. Additionally, if you tap sneak while " + "targetting water with FreezeMelt, it will evaporate water around that block that is above " + "sea level. ");
-				config.addDefault("Abilities.Water.PhaseChange.Range", 20);
-				config.addDefault("Abilities.Water.PhaseChange.Radius", 5);
+				config.addDefault("Abilities.Water.PhaseChange.Range", 15);
+				config.addDefault("Abilities.Water.PhaseChange.Radius", 4);
 				config.addDefault("Abilities.Water.PhaseChange.Cooldown", 0);
 
 				config.addDefault("Abilities.Water.PlantArmor.Enabled", true);
@@ -401,7 +401,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.Surge.Wave.DynamicSourcing.Enabled", true);
 				config.addDefault("Abilities.Water.Surge.VerticalPush", 0.2);
 				config.addDefault("Abilities.Water.Surge.Wall.Radius", 2);
-				config.addDefault("Abilities.Water.Surge.Wall.SelectRange", 12);
+				config.addDefault("Abilities.Water.Surge.Wall.SelectRange", 6);
 				config.addDefault("Abilities.Water.Surge.Wall.DynamicSourcing.Enabled", true);
 
 				config.addDefault("Abilities.Water.Torrent.Enabled", true);
