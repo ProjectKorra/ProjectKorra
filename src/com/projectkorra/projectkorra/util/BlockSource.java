@@ -278,13 +278,13 @@ public class BlockSource {
 	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @return a valid Earth or Lava bendable block, or null if none was found.
 	 */
-	public static Block getEarthOrLavaSourceBlock(Player player, int autoRange, int selectRange, ClickType clickType, boolean auto, boolean dynamic, boolean earth, boolean sand) {
+	public static Block getEarthOrLavaSourceBlock(Player player, int autoRange, int selectRange, ClickType clickType, boolean auto, boolean dynamic, boolean earth, boolean sand, boolean metal) {
 		/*
 		 * When Lava is selected as a source it automatically overrides the
 		 * previous Earth based source. Only one of these types can exist, so if
 		 * Lava exists then we know Earth is null.
 		 */
-		Block earthBlock = getEarthSourceBlock(player, autoRange, selectRange, clickType, auto, dynamic, earth, sand, false);
+		Block earthBlock = getEarthSourceBlock(player, autoRange, selectRange, clickType, auto, dynamic, earth, sand, metal);
 		BlockSourceInformation lavaBlockInfo = getValidBlockSourceInformation(player, selectRange, BlockSourceType.LAVA, clickType);
 		if (earthBlock != null) {
 			return earthBlock;
