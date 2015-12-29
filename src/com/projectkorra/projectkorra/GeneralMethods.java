@@ -830,7 +830,7 @@ public class GeneralMethods {
 	 * @see #getBendingPlayer(UUID)
 	 */
 	public static BendingPlayer getBendingPlayer(String player) {
-		OfflinePlayer oPlayer = Bukkit.getPlayer(player);
+		OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(player);
 		if (player == null) {
 			oPlayer = Bukkit.getOfflinePlayer(oPlayer.getUniqueId());
 		}
