@@ -47,11 +47,6 @@ public class WaterWave {
 	public static double ICE_WAVE_DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.WaterCombo.IceWave.Damage");
 	
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Wave.SelectRange");
-	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Wave.AutoSourcing.SelectRange");
-	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AutoSourcing.Enabled");
-	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterSpout.Wave.AutoSourcing.Cooldown");
-	
-	private boolean isAuto;
 	
 	private Player player;
 	private long time;
@@ -112,17 +107,12 @@ public class WaterWave {
 			if (origin == null) {
 				removeType(player, AbilityType.CLICK);
 
-				Block block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, false, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+				Block block = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, false, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 				if (block == null) {
 					if(instances.contains(this)) {
 						remove();
 					}
 					return;
-				}
-				if (BlockSource.isAuto(block)) {
-					isAuto = true;
-				} else {
-					isAuto = false;
 				}
 				instances.add(this);
 				Block blockAbove = block.getRelative(BlockFace.UP);
@@ -289,11 +279,7 @@ public class WaterWave {
 		instances.remove(this);
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (bPlayer != null) {
-			if (isAuto) {
-				bPlayer.addCooldown("WaterWave", autocooldown);
-			} else {
-				bPlayer.addCooldown("WaterWave", cooldown);
-			}
+			bPlayer.addCooldown("WaterWave", cooldown);
 		}
 		revertBlocks();
 		for (BukkitRunnable task : tasks)
