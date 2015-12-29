@@ -61,7 +61,6 @@ public class Bloodbending {
 			remove(player);
 			return;
 		}
-
 		if (onlyUsableAtNight && !WaterMethods.isNight(player.getWorld()) && !WaterMethods.canBloodbendAtAnytime(player)) {
 			return;
 		}
@@ -160,12 +159,12 @@ public class Bloodbending {
 			}
 		}
 
-		if (onlyUsableDuringMoon && !WaterMethods.isFullMoon(player.getWorld())) {
+		if (onlyUsableDuringMoon && !WaterMethods.isFullMoon(player.getWorld()) && !WaterMethods.canBloodbendAtAnytime(player)) {
 			remove(player);
 			return;
 		}
 
-		if (onlyUsableAtNight && !WaterMethods.isNight(player.getWorld())) {
+		if (onlyUsableAtNight && !WaterMethods.isNight(player.getWorld()) && !WaterMethods.canBloodbendAtAnytime(player)) {
 			remove(player);
 			return;
 		}
