@@ -68,6 +68,14 @@ public class Suffocate implements ConfigLoadable {
 	private double slow, slowRepeat, slowDelay;
 
 	private double blind, blindDelay, blindRepeat;
+	
+	private Integer[] transparent = {0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 
+			37, 38, 39, 40, 50, 51, 55, 59, 63, 64, 
+			65, 66, 68, 69, 70, 71, 72, 75, 76, 77, 
+			78, 83, 93, 94, 104, 105, 111, 115, 117, 
+			132, 141, 142, 143, 147, 148, 149, 150, 
+			157, 175, 176, 177, 183, 184, 185, 187, 
+			193, 194, 195, 196, 197};
 
 	public Suffocate(Player player) {
 		this.player = player;
@@ -121,9 +129,15 @@ public class Suffocate implements ConfigLoadable {
 				if (ent instanceof LivingEntity && !ent.equals(player))
 					targets.add((LivingEntity) ent);
 		} else {
-			Entity ent = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-			if (ent != null && ent instanceof LivingEntity)
-				targets.add((LivingEntity) ent);
+			//Entity ent = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+			Location location = GeneralMethods.getTargetedLocation(player, 6, transparent);
+			List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
+			if (entities == null || entities.isEmpty()) {
+				return;
+			}
+			Entity target = entities.get(0);
+			if (target != null && target instanceof LivingEntity)
+				targets.add((LivingEntity) target);
 		}
 
 		if (!canSuffUndead) {
