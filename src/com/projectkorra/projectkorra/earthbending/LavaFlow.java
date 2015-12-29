@@ -168,7 +168,7 @@ public class LavaFlow {
 			}
 			instances.add(this);
 		} else if (type == AbilityType.CLICK) {
-			Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, clickRange, clickRange, ClickType.SHIFT_DOWN, false, dynamic, true, EarthMethods.canSandbend(player));
+			Block sourceBlock = BlockSource.getEarthOrLavaSourceBlock(player, clickRange, clickRange, ClickType.CLICK, false, dynamic, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
 			if (sourceBlock == null) {
 				remove();
 				return;
@@ -372,7 +372,6 @@ public class LavaFlow {
 	 * 
 	 * @param testBlock the block to attempt to remove
 	 */
-	@SuppressWarnings("deprecation")
 	public void removeLava(Block testBlock) {
 		for (int i = 0; i < TEMP_LAVA_BLOCKS.size(); i++) {
 			TempBlock tblock = TEMP_LAVA_BLOCKS.get(i);
@@ -384,8 +383,8 @@ public class LavaFlow {
 				return;
 			}
 		}
-
-		TempBlock tblock = new TempBlock(testBlock, REVERT_MATERIAL, testBlock.getData());
+		
+		TempBlock tblock = new TempBlock(testBlock, REVERT_MATERIAL, (byte) 0);
 		affectedBlocks.add(tblock);
 		TEMP_LAND_BLOCKS.add(tblock);
 	}
@@ -526,7 +525,10 @@ public class LavaFlow {
 	public static boolean isEarthbendableMaterial(Material mat, Player player) {
 		for (String s : ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.EarthbendableBlocks"))
 			if (mat == Material.getMaterial(s))
-				return true;
+				return true;	
+		if (ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.SandBlocks").contains(mat.toString()) && EarthMethods.canSandbend(player)) {
+			return true;
+		}
 		if (ProjectKorra.plugin.getConfig().getStringList("Properties.Earth.MetalBlocks").contains(mat.toString()) && EarthMethods.canMetalbend(player)) {
 			return true;
 		}
