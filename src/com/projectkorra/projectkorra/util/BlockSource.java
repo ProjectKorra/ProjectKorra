@@ -149,7 +149,7 @@ public class BlockSource {
 		BlockSourceInformation info = getValidBlockSourceInformation(player, selectRange, sourceType, clickType);
 		if (info != null) {
 			Block tempBlock = info.getBlock();
-			if (EarthMethods.isEarthbendable(tempBlock.getType()) && earth) {
+			if (EarthMethods.isEarth(tempBlock) && earth) {
 				return tempBlock;
 			}
 			if (EarthMethods.isSand(tempBlock) && sand) {

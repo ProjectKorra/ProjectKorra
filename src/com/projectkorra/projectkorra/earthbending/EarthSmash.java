@@ -46,7 +46,7 @@ public class EarthSmash {
 
 	private static int REQUIRED_BENDABLE_BLOCKS = 11;
 	private static int MAX_BLOCKS_TO_PASS_THROUGH = 3;
-	private static double GRAB_DETECTION_RADIUS = 2.5;
+	private static double GRAB_DETECTION_RADIUS = 5;
 	private static double FLIGHT_DETECTION_RADIUS = 3.8;
 	private static long SHOOTING_ANIMATION_COOLDOWN = 25;
 	private static long FLYING_ANIMATION_COOLDOWN = 0;
@@ -168,7 +168,7 @@ public class EarthSmash {
 		if (state == State.START && progressCounter > 1) {
 			if (!player.isSneaking()) {
 				if (System.currentTimeMillis() - time > chargeTime) {
-					origin = EarthMethods.getEarthSourceBlock(player, grabRange, true, EarthMethods.canSandbend(player), false);
+					origin = EarthMethods.getEarthSourceBlock(player, grabRange, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
 					if (origin == null) {
 						remove();
 						return;
@@ -302,8 +302,9 @@ public class EarthSmash {
 								remove();
 								return;
 							}
-							if (EarthMethods.isEarthbendable(player, block))
+							if (EarthMethods.isEarthbendable(player, block)) {
 								totalBendableBlocks++;
+							}
 						}
 				if (totalBendableBlocks < REQUIRED_BENDABLE_BLOCKS) {
 					remove();
@@ -324,7 +325,7 @@ public class EarthSmash {
 						for (int z = -1; z <= 1; z++)
 							if ((Math.abs(x) + Math.abs(y) + Math.abs(z)) % 2 == 0) {
 								Block block = tempLoc.clone().add(x, y, z).getBlock();
-								currentBlocks.add(new BlockRepresenter(x, y, z, selectMaterialForRepresenter(block.getType()), block.getData()));
+								currentBlocks.add(new BlockRepresenter(x, y, z, selectMaterialForRepresenter(block), block.getData()));
 							}
 
 				//Remove the design of the second level of removed dirt
@@ -464,12 +465,13 @@ public class EarthSmash {
 			return mat;
 	}
 
-	public Material selectMaterialForRepresenter(Material mat) {
-		Material tempMat = selectMaterial(mat);
+	public Material selectMaterialForRepresenter(Block block) {
+		Material tempMat = selectMaterial(block.getType());
 		Random rand = new Random();
-		if (!EarthMethods.isEarthbendable(tempMat) || !EarthMethods.isMetalbendable(player, tempMat)) {
-			if (currentBlocks.size() < 1)
+		if (!EarthMethods.isEarthbendable(player, block)) {
+			if (currentBlocks.size() < 1) {
 				return Material.DIRT;
+			}
 			else
 				return currentBlocks.get(rand.nextInt(currentBlocks.size())).getType();
 		}
