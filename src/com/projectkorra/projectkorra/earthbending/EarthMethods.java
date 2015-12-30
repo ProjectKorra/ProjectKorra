@@ -177,7 +177,7 @@ public class EarthMethods {
 	@SuppressWarnings("deprecation")
 	public static Block getEarthSourceBlock(Player player, int range, boolean earth, boolean sand, boolean metal) {
 	Block testblock = player.getTargetBlock(getTransparentEarthbending(), range);
-		if (isEarthbendable(testblock.getType()) && earth == true) 
+		if (isEarthbendable(testblock) && earth == true) 
 			return testblock;
 		if (isSand(testblock) && sand == true)
 			return testblock;
@@ -218,7 +218,7 @@ public class EarthMethods {
 				continue;
 			}
 			if (isTransparentToEarthbending(player, block.getRelative(BlockFace.UP))) {
-				if (isEarthbendable(block.getType()) && earth == true) {
+				if (isEarthbendable(block) && earth == true) {
 					BlockSource.randomBlocks.add(block);
 					return block;
 				}
@@ -258,7 +258,7 @@ public class EarthMethods {
 				Block block = GeneralMethods.getTopBlock(searchLoc, maxVertical);
 
 				if (block != null) {
-					if (isEarthbendable(block.getType()) && earth == true)
+					if (isEarthbendable(block) && earth == true)
 						return block;
 					if (isSand(block) && sand == true)
 						return block;
@@ -342,10 +342,16 @@ public class EarthMethods {
 		return isEarthbendable(player, "RaiseEarth", block);
 	}
 
+	public static boolean isEarth(Block block) {
+		Material material = block.getType();
+		return config.getStringList("Properties.Earth.EarthbendableBlocks").contains(material.toString());
+	}
+	
 	public static boolean isMetal(Block block) {
 		Material material = block.getType();
 		return config.getStringList("Properties.Earth.MetalBlocks").contains(material.toString());
 	}
+	
 	public static boolean isSand(Block block) {
 		Material material = block.getType();
 		return config.getStringList("Properties.Earth.SandBlocks").contains(material.toString());
@@ -354,12 +360,16 @@ public class EarthMethods {
 	public static double getMetalAugment(double value) {
 		return value * config.getDouble("Properties.Earth.MetalPowerFactor");
 	}
-
-	public static boolean isEarthbendable(Material mat) {
-		for (String s : config.getStringList("Properties.Earth.EarthbendableBlocks")) {
-			if (mat == Material.getMaterial(s)) {
-				return true;
-			}
+	
+	public static boolean isEarthbendable(Block block) {
+		if (isEarth(block)) {
+			return true;
+		}
+		if (isSand(block)) {
+			return true;
+		}
+		if (isMetal(block)) {
+			return true;
 		}
 		return false;
 	}

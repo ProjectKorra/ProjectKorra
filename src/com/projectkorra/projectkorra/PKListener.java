@@ -1160,7 +1160,9 @@ public class PKListener implements Listener {
 
 		if (Suffocate.isBreathbent(player)) {
 			if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirSwipe") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("FireBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast") || !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterManipulation")) {
-				event.setCancelled(true);
+				if(!player.isSneaking()) {
+					event.setCancelled(true);
+				}
 			}
 		}
 
