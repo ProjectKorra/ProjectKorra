@@ -250,9 +250,7 @@ public class BlockSource {
 		if (sourceBlock == null) {
 			BlockSourceInformation blockInfo = getBlockSourceInformation(player, BlockSourceType.EARTH, clickType);
 			if (dynamic) {
-				if (blockInfo == null) {
-					return null;
-				}
+				if (blockInfo != null) {
 				Block tempBlock = blockInfo.getBlock();
 				if (tempBlock == null) {
 					return null;
@@ -260,6 +258,7 @@ public class BlockSource {
 
 				Location loc = tempBlock.getLocation();
 				sourceBlock = EarthMethods.getNearbyEarthBlock(loc, autoRange, 2, earth, sand, metal);
+				}
 			}
 			if (auto && (sourceBlock == null || !sourceBlock.getLocation().getWorld().equals(player.getWorld()) || Math.abs(sourceBlock.getLocation().distance(player.getEyeLocation())) > selectRange)) {
 				return EarthMethods.getRandomEarthBlock(player, player.getLocation(), autoRange, earth, sand, metal);
