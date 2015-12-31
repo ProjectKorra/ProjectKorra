@@ -33,6 +33,8 @@ permissions:
       bending.command.give: true
       bending.command.invincible: true
       bending.command.check: true
+      bending.command.preset.bind.external: true
+      bending.command.preset.bind.external.other: true
       bending.admin.debug: true
       bending.admin.remove: true
   bending.player:

@@ -7,19 +7,41 @@ import java.util.ArrayList;
 
 public class ConfigManager {
 
+	public static Config presetConfig;
 	public static Config deathMsgConfig;
 	public static Config defaultConfig;
 
 	public ConfigManager() {
+		presetConfig = new Config(new File("presets.yml"));
 		deathMsgConfig = new Config(new File("deathmessages.yml"));
 		defaultConfig = new Config(new File("config.yml"));
 		configCheck(ConfigType.DEFAULT);
 		configCheck(ConfigType.DEATH_MESSAGE);
+		configCheck(ConfigType.PRESETS);
 	}
 
 	public static void configCheck(ConfigType type) {
 		FileConfiguration config;
 		switch (type) {
+			case PRESETS:
+				config = presetConfig.get();
+
+				ArrayList<String> abilities = new ArrayList<String>();
+				abilities.add("FireBlast");
+				abilities.add("AirBlast");
+				abilities.add("WaterManipulation");
+				abilities.add("EarthBlast");
+				abilities.add("FireBurst");
+				abilities.add("AirBurst");
+				abilities.add("Torrent");
+				abilities.add("Shockwave");
+				abilities.add("AvatarState");
+				
+				config.addDefault("Example", abilities);
+
+				presetConfig.save();
+				break;
+			
 			case DEATH_MESSAGE:
 				config = deathMsgConfig.get();
 
@@ -606,7 +628,8 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.EarthSmash.AllowGrab", true);
 				config.addDefault("Abilities.Earth.EarthSmash.AllowShooting", true);
 				config.addDefault("Abilities.Earth.EarthSmash.AllowFlight", true);
-				config.addDefault("Abilities.Earth.EarthSmash.GrabRange", 10);
+				config.addDefault("Abilities.Earth.EarthSmash.SelectRange", 10);
+				config.addDefault("Abilities.Earth.EarthSmash.GrabRange", 3.0);
 				config.addDefault("Abilities.Earth.EarthSmash.ChargeTime", 1500);
 				config.addDefault("Abilities.Earth.EarthSmash.Cooldown", 2500);
 				config.addDefault("Abilities.Earth.EarthSmash.ShotRange", 30);
