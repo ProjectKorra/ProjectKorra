@@ -59,6 +59,7 @@ import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireMethods;
 import com.projectkorra.projectkorra.firebending.FireShield;
+import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -1679,6 +1680,8 @@ public class GeneralMethods {
 		GeneralMethods.stopBending();
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.deathMsgConfig.reload();
+		ConfigManager.presetConfig.reload();
+		Preset.loadExternalPresets();
 		BendingManager.getInstance().reloadVariables();
 		new AbilityModuleManager(plugin);
 		new ComboManager();
