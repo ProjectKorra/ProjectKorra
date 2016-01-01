@@ -135,7 +135,7 @@ public class WhoCommand extends PKCommand {
 				//for (String st : players) {
 				//	sender.sendMessage(st);
 				//}
-				for (String s : getPage(players, ChatColor.GOLD + "Players:", page)) {
+				for (String s : getPage(players, ChatColor.GOLD + "Players:", page, true)) {
 					sender.sendMessage(s);
 				}
 			}

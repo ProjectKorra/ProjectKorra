@@ -186,9 +186,11 @@ public abstract class PKCommand implements SubCommand {
 	 * @param page
 	 * @return
 	 */
-	protected List<String> getPage(List<String> entries, String title, int page) {
+	protected List<String> getPage(List<String> entries, String title, int page, boolean alphabetical) {
 		List<String> strings = new ArrayList<String>();
-		Collections.sort(entries);
+		if (alphabetical) {
+			Collections.sort(entries);
+		}
 		
 		if (page < 1) {
 			page = 1;
