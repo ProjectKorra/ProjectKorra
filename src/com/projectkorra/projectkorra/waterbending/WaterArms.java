@@ -170,6 +170,10 @@ public class WaterArms {
 			remove();
 			return;
 		}
+		if (!GeneralMethods.canBend(player.getName(), "WaterArms")) {
+			remove();
+			return;
+		}
 		if (!GeneralMethods.getBendingPlayer(player.getName()).isToggled()) {
 			remove();
 			return;
