@@ -650,8 +650,8 @@ public class EarthMethods {
 		Block block = info.getState().getBlock();
 		if (block.getType() != Material.AIR && !block.isLiquid()) {
 			if (force || !movedearth.containsKey(block)) {
-				GeneralMethods.dropItems(block,
-						GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), pickaxe));
+//				GeneralMethods.dropItems(block,
+//						GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), pickaxe));
 				tempair.remove(i);
 			} else {
 				info.setTime(info.getTime() + 10000);

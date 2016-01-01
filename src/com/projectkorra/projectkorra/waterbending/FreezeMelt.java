@@ -22,23 +22,22 @@ public class FreezeMelt {
 	public static final int defaultradius = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PhaseChange.Radius");
 
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PhaseChange.Cooldown");
-	public static final int OVERLOADING_LIMIT = 200;
-	public static boolean overloading = false;
-	public static int overloadCounter = 0;
 
 	public FreezeMelt(Player player) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (!WaterMethods.canIcebend(player))
+		
+		if (!WaterMethods.canIcebend(player)) {
 			return;
-		if (bPlayer.isOnCooldown("PhaseChange"))
+		}
+		if (bPlayer.isOnCooldown("PhaseChange")) {
 			return;
+		}
 		bPlayer.addCooldown("PhaseChange", cooldown);
 
 		int range = (int) WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		int radius = (int) WaterMethods.waterbendingNightAugment(defaultradius, player.getWorld());
 		if (AvatarState.isAvatarState(player)) {
 			range = AvatarState.getValue(range);
-			// radius = AvatarState.getValue(radius);
 		}
 
 		Location location = GeneralMethods.getTargetedLocation(player, range);
@@ -47,28 +46,33 @@ public class FreezeMelt {
 				freeze(player, block);
 			}
 		}
-
 	}
 
 	private static boolean isFreezable(Player player, Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
 			return false;
-		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER)
-			if (WaterManipulation.canPhysicsChange(block) && !TempBlock.isTempBlock(block))
+		}
+		if (block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER) {
+			if (WaterManipulation.canPhysicsChange(block) && !TempBlock.isTempBlock(block)) {
 				return true;
+			}
+		}
 		return false;
 	}
 
 	@SuppressWarnings("deprecation")
 	static void freeze(Player player, Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation()))
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
 			return;
-		if (TempBlock.isTempBlock(block))
+		}
+		if (TempBlock.isTempBlock(block)) {
 			return;
+		}
 		byte data = block.getData();
 		block.setType(Material.ICE);
-		if(frozenblocks.size() % 50 == 0)
-		WaterMethods.playIcebendingSound(block.getLocation());
+		if(frozenblocks.size() % 50 == 0) {
+			WaterMethods.playIcebendingSound(block.getLocation());
+		}
 		frozenblocks.put(block, data);
 	}
 
@@ -83,62 +87,36 @@ public class FreezeMelt {
 	}
 
 	public static void handleFrozenBlocks() {
-		int size = frozenblocks.keySet().size();
-		overloadCounter++;
-		overloadCounter %= 10;
-		if (overloadCounter == 0)
-			overloading = size > OVERLOADING_LIMIT ? true : false;
-
-		// We only want to run this method once every 10 ticks if we are overloading.
-		if (overloading && overloadCounter != 0)
-			return;
-
-		if (overloading) {
-			int i = 0;
-			for (Block block : frozenblocks.keySet()) {
-				final Block fblock = block;
-				new BukkitRunnable() {
-					public void run() {
-						if (canThaw(fblock))
-							thaw(fblock);
-					}
-				}.runTaskLater(ProjectKorra.plugin, i % 10);
-				i++;
-			}
-		} else {
-			for (Block block : frozenblocks.keySet()) {
-				if (canThaw(block))
-					thaw(block);
-			}
-		}
+			new BukkitRunnable() {
+				public void run() {
+					canThaw();
+				}
+			}.runTaskLater(ProjectKorra.plugin, 100);
 	}
-
-	public static boolean canThaw(Block block) {
-		if (frozenblocks.containsKey(block)) {
+	
+	public static void canThaw() {
+		for (Block block : frozenblocks.keySet()) {
+			int canThaw = 0;
 			for (Player player : block.getWorld().getPlayers()) {
-				if (!player.isOnline()) {
-					return true;
+				double range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
+				if (AvatarState.isAvatarState(player)) {
+					range = AvatarState.getValue(range);
 				}
-				if (GeneralMethods.getBoundAbility(player) == null) {
-					return true;
+				
+				if (player == null || !player.isOnline()) {
+					canThaw++;
 				}
-				if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("OctopusForm")) {
-					if (block.getLocation().distance(player.getLocation()) <= OctopusForm.RADIUS + 2)
-						return false;
+				else if (!GeneralMethods.canBend(player.getName(), "PhaseChange")) {
+					canThaw++;
 				}
-				if (GeneralMethods.canBend(player.getName(), "PhaseChange")) {
-					double range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
-					if (AvatarState.isAvatarState(player)) {
-						range = AvatarState.getValue(range);
-					}
-					if (block.getLocation().distance(player.getLocation()) <= range)
-						return false;
+				else if (block.getLocation().distance(player.getLocation()) > range) {
+					canThaw++;
 				}
 			}
+			if(canThaw >= block.getWorld().getPlayers().size()) {
+				thaw(block);
+			}
 		}
-		if (!WaterManipulation.canPhysicsChange(block))
-			return false;
-		return true;
 	}
 
 	@SuppressWarnings("deprecation")
