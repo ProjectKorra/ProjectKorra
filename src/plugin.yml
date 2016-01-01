@@ -35,6 +35,7 @@ permissions:
       bending.command.check: true
       bending.command.preset.bind.external: true
       bending.command.preset.bind.external.other: true
+      bending.command.copy.assign: true
       bending.admin.debug: true
       bending.admin.remove: true
   bending.player:
@@ -44,6 +45,7 @@ permissions:
       bending.command.bind: true
       bending.command.display: true
       bending.command.toggle: true
+      bending.command.copy: true
       bending.command.choose: true
       bending.command.version: true
       bending.command.help: true
