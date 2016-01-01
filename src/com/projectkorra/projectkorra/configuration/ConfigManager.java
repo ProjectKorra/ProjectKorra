@@ -356,6 +356,7 @@ public class ConfigManager {
 				
 				config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
 				config.addDefault("Abilities.Water.HealingWaters.Description", "To use, the bender must be at least partially submerged in water. " + "If the user is not sneaking, this ability will automatically begin " + "working provided the user has it selected. If the user is sneaking, " + "he/she is channeling the healing to their target in front of them. " + "In order for this channel to be successful, the user and the target must " + "be at least partially submerged in water.");
+				config.addDefault("Abilities.Water.HealingWaters.ShiftRequired", true);
 				config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
 				config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
 				config.addDefault("Abilities.Water.HealingWaters.Power", 1);
@@ -365,9 +366,6 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.IceBlast.Range", 20);
 				config.addDefault("Abilities.Water.IceBlast.Cooldown", 1500);
 				config.addDefault("Abilities.Water.IceBlast.SelectRange", 12);
-				config.addDefault("Abilities.Water.IceBlast.AutoSourcing.Enabled", true);
-				config.addDefault("Abilities.Water.IceBlast.AutoSourcing.Cooldown", 1500);
-				config.addDefault("Abilities.Water.IceBlast.AutoSourcing.SelectRange", 5);
 				config.addDefault("Abilities.Water.IceBlast.Description", "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an explosive burst of ice at an opponent, spraying ice and snow around it. To use, simply tap sneak (Default: Shift) while targeting a block of ice to select it as a source. From there, you can just left click to send the blast off at your opponent.");
 				config.addDefault("Abilities.Water.IceBlast.DynamicSourcing.Enabled", true);
 				
@@ -423,7 +421,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.Surge.Wave.DynamicSourcing.Enabled", true);
 				config.addDefault("Abilities.Water.Surge.VerticalPush", 0.2);
 				config.addDefault("Abilities.Water.Surge.Wall.Radius", 2);
-				config.addDefault("Abilities.Water.Surge.Wall.SelectRange", 6);
+				config.addDefault("Abilities.Water.Surge.Wall.SelectRange", 5);
 				config.addDefault("Abilities.Water.Surge.Wall.DynamicSourcing.Enabled", true);
 
 				config.addDefault("Abilities.Water.Torrent.Enabled", true);
@@ -431,6 +429,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.Torrent.Range", 25);
 				config.addDefault("Abilities.Water.Torrent.DeflectDamage", 1);
 				config.addDefault("Abilities.Water.Torrent.Damage", 3);
+				config.addDefault("Abilities.Water.Torrent.Cooldown", 1500);
 				config.addDefault("Abilities.Water.Torrent.Wave.Radius", 15);
 				config.addDefault("Abilities.Water.Torrent.Wave.Knockback", 1.5);
 				config.addDefault("Abilities.Water.Torrent.Wave.Height", 1);

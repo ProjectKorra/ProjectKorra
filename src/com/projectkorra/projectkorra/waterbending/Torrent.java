@@ -35,6 +35,7 @@ public class Torrent {
 	static double RANGE = config.getInt("Abilities.Water.Torrent.Range");
 	private static int defaultrange = 20;
 	private static int DAMAGE = config.getInt("Abilities.Water.Torrent.Damage");
+	private static long cooldown = config.getLong("Abilities.Water.Torrent.Cooldown");
 	private static int DEFLECT_DAMAGE = config.getInt("Abilities.Water.Torrent.DeflectDamage");
 	private static int maxlayer = 3;
 	private static double factor = 1;
@@ -44,12 +45,10 @@ public class Torrent {
 	private static final byte full = 0x0;
 
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Torrent.SelectRange");
-	private static int autoSelectRange = ProjectKorra.plugin.getConfig()
-			.getInt("Abilities.Water.Torrent.AutoSourcing.SelectRange");
+	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Torrent.AutoSourcing.SelectRange");
 	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Torrent.AutoSourcing.Enabled");
 	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.Torrent.AutoSourcing.Cooldown");
-	private static boolean dynamic = ProjectKorra.plugin.getConfig()
-			.getBoolean("Abilities.Water.Torrent.DynamicSourcing.Enabled");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Torrent.DynamicSourcing.Enabled");
 
 	private Block sourceblock;
 	private TempBlock source;
@@ -85,6 +84,12 @@ public class Torrent {
 			}
 		}
 		this.player = player;
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		
+		if(bPlayer.isOnCooldown("Torrent")) {
+			return;
+		}
+		
 		time = System.currentTimeMillis();
 		sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, auto, dynamic,
 				true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
@@ -94,6 +99,7 @@ public class Torrent {
 			} else {
 				isAuto = false;
 			}
+			
 			sourceselected = true;
 			instances.put(player, this);
 		}
@@ -174,13 +180,14 @@ public class Torrent {
 					returnWater(source.getLocation());
 					return;
 				}
+				BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 				Location eyeloc = player.getEyeLocation();
 				double startangle = player.getEyeLocation().getDirection().angle(new Vector(1, 0, 0));
 				double dx = radius * Math.cos(startangle);
 				double dy = 0;
 				double dz = radius * Math.sin(startangle);
 				Location setup = eyeloc.clone().add(dx, dy, dz);
-
+				
 				if (!location.getWorld().equals(player.getWorld())) {
 					remove();
 					return;
@@ -189,6 +196,12 @@ public class Torrent {
 				if (location.distance(setup) > defaultrange) {
 					remove();
 					return;
+				}
+				
+				if (isAuto) {
+					bPlayer.addCooldown("Torrent", autocooldown);
+				} else {
+					bPlayer.addCooldown("Torrent", cooldown);
 				}
 
 				if (location.getBlockY() > setup.getBlockY()) {
@@ -469,12 +482,6 @@ public class Torrent {
 		launchblocks.clear();
 		if (source != null)
 			source.revertBlock();
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (isAuto) {
-			bPlayer.addCooldown("Torrent", autocooldown);
-		} else {
-			bPlayer.addCooldown("Torrent", GeneralMethods.getGlobalCooldown());
-		}
 		instances.remove(player);
 	}
 

@@ -80,7 +80,7 @@ public class WhoCommand extends PKCommand {
 			List<String> players = new ArrayList<String>();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				String playerName = player.getName();
-				String result = ChatColor.WHITE + playerName;
+				String result = "";
 				BendingPlayer bp = GeneralMethods.getBendingPlayer(playerName);
 				if (bp == null) {
 					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
@@ -119,10 +119,13 @@ public class WhoCommand extends PKCommand {
 				}
 				if (staff.containsKey(player.getUniqueId().toString())) {
 					if (result == "") {
-						result = ChatColor.WHITE + playerName + staff.get(player.getUniqueId().toString());
+						result = ChatColor.WHITE + playerName + " | " + staff.get(player.getUniqueId().toString());
 					} else {
 						result = result + ChatColor.WHITE + " | " + staff.get(player.getUniqueId().toString());
 					}
+				}
+				if (result == ""){
+					result = ChatColor.WHITE + playerName;
 				}
 				players.add(result);
 			}
