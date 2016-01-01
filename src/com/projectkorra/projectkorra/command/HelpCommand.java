@@ -51,9 +51,15 @@ public class HelpCommand extends PKCommand {
 		if (isNumeric(arg)) {
 			List<String> strings = new ArrayList<String>();
 			for (PKCommand command : instances.values()) {
-				strings.add(command.getProperUse());
+				if (!command.getName().equalsIgnoreCase("help")) {
+					strings.add(command.getProperUse());
+				}
 			}
-			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <required> [optional]", Integer.valueOf(arg), true)) {
+			Collections.sort(strings);
+			Collections.reverse(strings);
+			strings.add(instances.get("help").getProperUse());
+			Collections.reverse(strings);
+			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <required> [optional]", Integer.valueOf(arg), false)) {
 				sender.sendMessage(ChatColor.YELLOW + s);
 			}
 		} else if (instances.keySet().contains(arg.toLowerCase())) {//bending help command
