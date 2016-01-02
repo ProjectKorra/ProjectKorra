@@ -49,7 +49,7 @@ public class EarthColumn {
 			if (AvatarState.isAvatarState(player)) {
 				height = (int) (2. / 5. * (double) AvatarState.getValue(height));
 			}
-			block = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, false, dynamic, true, EarthMethods.canSandbend(player), false);
+			block = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, dynamic, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
 			if (block == null)
 				return;
 			origin = block.getLocation();

@@ -1,16 +1,16 @@
 package com.projectkorra.projectkorra.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * BlockSource is a class that handles water and earth bending sources. When a
@@ -147,7 +147,7 @@ public class BlockSource {
 	public static Block getDynamicEarthSourceBlock(Player player, int autoRange, int selectRange, BlockSourceType sourceType, ClickType clickType, boolean auto, boolean dynamic, boolean earth, boolean sand, boolean metal) {
 		update(player, selectRange, clickType);
 		BlockSourceInformation info = getValidBlockSourceInformation(player, selectRange, sourceType, clickType);
-		if (info != null && dynamic) {
+		if (info != null) {
 			Block tempBlock = info.getBlock();
 			if (EarthMethods.isEarthbendable(tempBlock.getType()) && earth) {
 				return tempBlock;
@@ -159,11 +159,10 @@ public class BlockSource {
 				return tempBlock;
 			}
 		}
-		if (auto) {
-			return EarthMethods.getRandomEarthBlock(player, player.getLocation(), autoRange, earth, sand, metal);
-		} else {
-			return EarthMethods.getEarthSourceBlock(player, selectRange, earth, sand, metal);
+		if (info == null && dynamic) {
+			return null;
 		}
+		return EarthMethods.getEarthSourceBlock(player, selectRange, earth, sand, metal);
 	}
 	
 	/**
@@ -189,11 +188,10 @@ public class BlockSource {
 				return info.getBlock();
 			}
 		}
-		if (auto) {
-			return WaterMethods.getRandomWaterBlock(player, player.getLocation(), autoRange, water, ice, plant);
-		} else {
-			return WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
+		if (info == null && dynamic) {
+			return null;
 		}
+		return WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
 	}
 
 	/**
@@ -212,13 +210,19 @@ public class BlockSource {
 	 * @return a valid Water bendable block, or null if none was found.
 	 */
 	public static Block getWaterSourceBlock(Player player, int autoRange, int selectRange, ClickType clickType, boolean auto, boolean dynamic, boolean bottles, boolean water, boolean ice, boolean plant) {
-		Block sourceBlock = BlockSource.getDynamicWaterSourceBlock(player, autoRange, selectRange, BlockSourceType.WATER, clickType, auto, dynamic, water, ice, plant);
+		Block sourceBlock = null;
+		if(dynamic)
+			sourceBlock = BlockSource.getDynamicWaterSourceBlock(player, autoRange, selectRange, BlockSourceType.WATER, clickType, auto, dynamic, water, ice, plant);
+		else
+			sourceBlock = WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
 		if (bottles && sourceBlock == null) {
+			if(bottles) {
 			// Check the block in front of the player's eyes, it may have been created by a
 			// WaterBottle.
 			sourceBlock = WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
-			if (sourceBlock == null || sourceBlock.getLocation().distance(player.getEyeLocation()) > 3) {
-				sourceBlock = null;
+			}
+			if (auto && (sourceBlock == null || sourceBlock.getLocation().distance(player.getEyeLocation()) > 3)) {
+				sourceBlock = WaterMethods.getRandomWaterBlock(player, player.getLocation(), autoRange, water, ice, plant);
 			}
 		}
 		return sourceBlock;
@@ -237,23 +241,28 @@ public class BlockSource {
 	 *            block.
 	 * @return a valid Earth bendable block, or null if none was found.
 	 */
-	public static Block getEarthSourceBlock(Player player, int autoRange, int selectRange, ClickType clickType, boolean nearby, boolean auto, boolean dynamic, boolean earth, boolean sand, boolean metal) {
-		Block sourceBlock = getDynamicEarthSourceBlock(player, autoRange, selectRange, BlockSourceType.EARTH, clickType, auto, dynamic, earth, sand, metal);
-		if (!auto && nearby && sourceBlock == null) {
+	public static Block getEarthSourceBlock(Player player, int autoRange, int selectRange, ClickType clickType, boolean auto, boolean dynamic, boolean earth, boolean sand, boolean metal) {
+		Block sourceBlock = null;
+		if(dynamic)
+			sourceBlock = getDynamicEarthSourceBlock(player, autoRange, selectRange, BlockSourceType.EARTH, clickType, auto, dynamic, earth, sand, metal);
+		else
+			sourceBlock = EarthMethods.getEarthSourceBlock(player, selectRange, earth, sand, metal);
+		if (sourceBlock == null) {
 			BlockSourceInformation blockInfo = getBlockSourceInformation(player, BlockSourceType.EARTH, clickType);
+			if (dynamic) {
+				if (blockInfo == null) {
+					return null;
+				}
+				Block tempBlock = blockInfo.getBlock();
+				if (tempBlock == null) {
+					return null;
+				}
 
-			if (blockInfo == null) {
-				return null;
+				Location loc = tempBlock.getLocation();
+				sourceBlock = EarthMethods.getNearbyEarthBlock(loc, autoRange, autoRange, earth, sand, metal);
 			}
-			Block tempBlock = blockInfo.getBlock();
-			if (tempBlock == null) {
-				return null;
-			}
-
-			Location loc = tempBlock.getLocation();
-			sourceBlock = EarthMethods.getNearbyEarthBlock(loc, autoRange, autoRange, earth, sand, metal);
-			if (sourceBlock == null || !sourceBlock.getLocation().getWorld().equals(player.getWorld()) || Math.abs(sourceBlock.getLocation().distance(player.getEyeLocation())) > autoRange) {
-				return null;
+			if (auto && (sourceBlock == null || !sourceBlock.getLocation().getWorld().equals(player.getWorld()) || Math.abs(sourceBlock.getLocation().distance(player.getEyeLocation())) > selectRange)) {
+				return EarthMethods.getRandomEarthBlock(player, player.getLocation(), autoRange, earth, sand, metal);
 			}
 		}
 		return sourceBlock;
@@ -269,13 +278,13 @@ public class BlockSource {
 	 *            either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK.
 	 * @return a valid Earth or Lava bendable block, or null if none was found.
 	 */
-	public static Block getEarthOrLavaSourceBlock(Player player, int autoRange, int selectRange, ClickType clickType, boolean nearby, boolean auto, boolean dynamic, boolean earth, boolean sand) {
+	public static Block getEarthOrLavaSourceBlock(Player player, int autoRange, int selectRange, ClickType clickType, boolean auto, boolean dynamic, boolean earth, boolean sand) {
 		/*
 		 * When Lava is selected as a source it automatically overrides the
 		 * previous Earth based source. Only one of these types can exist, so if
 		 * Lava exists then we know Earth is null.
 		 */
-		Block earthBlock = getEarthSourceBlock(player, autoRange, selectRange, clickType, nearby, auto, dynamic, earth, sand, false);
+		Block earthBlock = getEarthSourceBlock(player, autoRange, selectRange, clickType, auto, dynamic, earth, sand, false);
 		BlockSourceInformation lavaBlockInfo = getValidBlockSourceInformation(player, selectRange, BlockSourceType.LAVA, clickType);
 		if (earthBlock != null) {
 			return earthBlock;

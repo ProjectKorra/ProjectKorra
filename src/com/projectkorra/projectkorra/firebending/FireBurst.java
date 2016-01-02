@@ -29,7 +29,7 @@ public class FireBurst implements ConfigLoadable {
 	private int damage = config.get().getInt("Abilities.Fire.FireBurst.Damage");
 	private long chargetime = config.get().getLong("Abilities.Fire.FireBurst.ChargeTime");
 	private long range = config.get().getLong("Abilities.Fire.FireBurst.Range");
-	private static long cooldown = config.get().getLong("Abilities.Air.Flight.Cooldown");
+	private static long cooldown = config.get().getLong("Abilities.Fire.FireBurst.Cooldown");
 	private double deltheta = 10;
 	private double delphi = 10;
 	private boolean charged = false;
@@ -91,12 +91,12 @@ public class FireBurst implements ConfigLoadable {
 					if (direction.angle(vector) <= angle) {
 						// Methods.verbose(direction.angle(vector));
 						// Methods.verbose(direction);
-						GeneralMethods.getBendingPlayer(player.getName()).addCooldown("FireBurst", cooldown);
 						FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks);
 						fblast.setRange(this.range);
 					}
 				}
 			}
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("FireBurst", cooldown);
 		}
 		// Methods.verbose("--" + AirBlast.instances.size() + "--");
 		remove();
@@ -221,13 +221,13 @@ public class FireBurst implements ConfigLoadable {
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
 					Vector direction = new Vector(x, z, y);
-					GeneralMethods.getBendingPlayer(player.getName()).addCooldown("FireBurst", cooldown);
 					FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks);
 					fblast.setRange(this.range);
 					fblast.setShowParticles(false);
 					blasts.add(fblast);
 				}
 			}
+			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("FireBurst", cooldown);
 		}
 		// Methods.verbose("--" + AirBlast.instances.size() + "--");
 		remove();

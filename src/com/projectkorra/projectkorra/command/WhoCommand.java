@@ -76,7 +76,7 @@ public class WhoCommand extends PKCommand {
 			List<String> players = new ArrayList<String>();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				String playerName = player.getName();
-				String result = "";
+				String result = ChatColor.WHITE + playerName;
 				BendingPlayer bp = GeneralMethods.getBendingPlayer(playerName);
 				if (bp == null) {
 					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
@@ -144,6 +144,7 @@ public class WhoCommand extends PKCommand {
 		//Player player = Bukkit.getPlayer(playerName);
 		@SuppressWarnings("deprecation")
 		final OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+		BendingPlayer bplayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (player == null || !player.hasPlayedBefore()) {
 			sender.sendMessage(ChatColor.RED + "Player not found!");
 			return;
@@ -185,7 +186,11 @@ public class WhoCommand extends PKCommand {
 		if (BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
 			sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : "") + " - ");
 			if (GeneralMethods.isBender(playerName, Element.Air)) {
-				sender.sendMessage(AirMethods.getAirColor() + "- Airbender");
+				if(bplayer.isElementToggled(Element.Air)) {
+					sender.sendMessage(AirMethods.getAirColor() + "- Airbender");
+				} else {
+					sender.sendMessage(AirMethods.getAirColor() + "" + ChatColor.STRIKETHROUGH + "- Airbender");
+				}
 				if (player_ != null && AirMethods.canAirFlight((Player) player)) {
 					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Air) + "    Can Fly");
 				}
@@ -194,7 +199,11 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (GeneralMethods.isBender(playerName, Element.Water)) {
-				sender.sendMessage(WaterMethods.getWaterColor() + "- Waterbender");
+				if(bplayer.isElementToggled(Element.Water)) {
+					sender.sendMessage(WaterMethods.getWaterColor() + "- Waterbender");
+				} else {
+					sender.sendMessage(WaterMethods.getWaterColor() + "" + ChatColor.STRIKETHROUGH + "- Waterbender");
+				}
 				if (player_ != null && WaterMethods.canPlantbend((Player) player)) {
 					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Water) + "    Can Plantbend");
 				}
@@ -213,7 +222,11 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (GeneralMethods.isBender(playerName, Element.Earth)) {
-				sender.sendMessage(EarthMethods.getEarthColor() + "- Earthbender");
+				if(bplayer.isElementToggled(Element.Earth)) {
+					sender.sendMessage(EarthMethods.getEarthColor() + "- Earthbender");
+				} else {
+					sender.sendMessage(EarthMethods.getEarthColor() + "" + ChatColor.STRIKETHROUGH + "- Earthbender");
+				}
 				if (player_ != null && EarthMethods.canMetalbend((Player) player)) {
 					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Earth) + "    Can Metalbend");
 				}
@@ -225,7 +238,11 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (GeneralMethods.isBender(playerName, Element.Fire)) {
-				sender.sendMessage(FireMethods.getFireColor() + "- Firebender");
+				if(bplayer.isElementToggled(Element.Fire)) {
+					sender.sendMessage(FireMethods.getFireColor() + "- Firebender");
+				} else {
+					sender.sendMessage(FireMethods.getFireColor() + "" + ChatColor.STRIKETHROUGH + "- Firebender");
+				}
 				if (player_ != null && FireMethods.canCombustionbend((Player) player)) {
 					sender.sendMessage(GeneralMethods.getSubBendingColor(Element.Fire) + "    Can Combustionbend");
 				}
@@ -234,7 +251,11 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (GeneralMethods.isBender(playerName, Element.Chi)) {
-				sender.sendMessage(ChiMethods.getChiColor() + "- ChiBlocker");
+				if(bplayer.isElementToggled(Element.Chi)) {
+					sender.sendMessage(ChiMethods.getChiColor() + "- Chiblocker");
+				} else {
+					sender.sendMessage(ChiMethods.getChiColor() + "" + ChatColor.STRIKETHROUGH + "- Chiblocker");
+				}
 			}
 			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(playerName);
 			UUID uuid = player.getUniqueId();

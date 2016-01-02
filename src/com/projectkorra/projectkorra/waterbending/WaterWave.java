@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -49,7 +50,6 @@ public class WaterWave {
 	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Wave.AutoSourcing.SelectRange");
 	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AutoSourcing.Enabled");
 	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterSpout.Wave.AutoSourcing.Cooldown");
-	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.DynamicSourcing.Enabled");
 	
 	private boolean isAuto;
 	
@@ -112,7 +112,7 @@ public class WaterWave {
 			if (origin == null) {
 				removeType(player, AbilityType.CLICK);
 
-				Block block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+				Block block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, false, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 				if (block == null) {
 					if(instances.contains(this)) {
 						remove();
@@ -256,7 +256,7 @@ public class WaterWave {
 						if (entity != this.player && entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 							affectedEntities.add(entity);
 							final double aug = WaterMethods.getWaterbendingNightAugment(player.getWorld());
-							GeneralMethods.damageEntity(player, entity, aug * damage, Element.Water, "WaterWave");
+							GeneralMethods.damageEntity(player, entity, aug * damage, Element.Water, SubElement.Icebending, "IceWave");
 							final Player fplayer = this.player;
 							final Entity fent = entity;
 							new BukkitRunnable() {

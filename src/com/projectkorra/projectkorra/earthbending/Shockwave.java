@@ -94,9 +94,9 @@ public class Shockwave {
 		for (double theta = 0; theta < 360; theta += dtheta) {
 			double rtheta = Math.toRadians(theta);
 			Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("Shockwave", cooldown);
 			new Ripple(player, vector.normalize());
 		}
+		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("Shockwave", cooldown);
 	}
 
 	public static void coneShockwave(Player player) {
@@ -107,9 +107,9 @@ public class Shockwave {
 					double rtheta = Math.toRadians(theta);
 					Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
 					if (vector.angle(player.getEyeLocation().getDirection()) < angle)
-						GeneralMethods.getBendingPlayer(player.getName()).addCooldown("Shockwave", cooldown);
 						new Ripple(player, vector.normalize());
 				}
+				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("Shockwave", cooldown);
 				instances.remove(player);
 			}
 		}

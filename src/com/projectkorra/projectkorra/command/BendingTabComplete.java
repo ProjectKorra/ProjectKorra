@@ -15,6 +15,8 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
 import com.projectkorra.projectkorra.ability.combo.ComboAbilityModule;
+import com.projectkorra.projectkorra.ability.combo.ComboManager;
+import com.projectkorra.projectkorra.ability.combo.ComboManager.ComboAbility;
 import com.projectkorra.projectkorra.ability.combo.ComboModuleManager;
 import com.projectkorra.projectkorra.object.Preset;
 
@@ -111,6 +113,11 @@ public class BendingTabComplete implements TabCompleter {
 				for (String abil : AbilityModuleManager.abilities) {
 					if (GeneralMethods.canBind(sender.getName(), abil)) {
 						abils.add(abil);
+					}
+				}
+				for (ComboAbility abil : ComboManager.comboAbilityList.values()) {
+					if (GeneralMethods.canBind(sender.getName(), abil.getName()) && (abil.getName() != "IceBulletRightClick" && abil.getName() != "IceBulletLeftClick")) {
+						abils.add(abil.getName());
 					}
 				}
 				for (ComboAbilityModule abil : ComboModuleManager.combo) {

@@ -34,7 +34,7 @@ public class Collapse {
 			return;
 
 		this.player = player;
-		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, false, dynamic, true, EarthMethods.canSandbend(player), false);
+		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
 		Location location;
 		if (sblock == null) {
 			location = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), selectRange).getLocation();
