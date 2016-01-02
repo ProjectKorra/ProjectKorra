@@ -79,16 +79,13 @@ public class BendingTabComplete implements TabCompleter {
 				if (args.length > 3 || !sender.hasPermission("bending.command.add"))
 					return new ArrayList<String>();
 				List<String> l = new ArrayList<String>();
-				if (args.length == 2)
-				{
+				if (args.length == 2) {
 					l.add("Air");
 					l.add("Earth");
 					l.add("Fire");
 					l.add("Water");
 					l.add("Chi");
-				}
-				else
-				{
+				} else {
 					for (Player p : Bukkit.getOnlinePlayers()) {
 						l.add(p.getName());
 					}
@@ -137,7 +134,7 @@ public class BendingTabComplete implements TabCompleter {
 				}
 				return getPossibleCompletionsForGivenArgs(args, players);
 			} else if (args[0].equalsIgnoreCase("preset") || args[0].equalsIgnoreCase("presets") || args[0].equalsIgnoreCase("pre") || args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("p")) {
-				if (args.length > 3 || !sender.hasPermission("bending.command.preset") || !(sender instanceof Player))
+				if (args.length > 4 || !sender.hasPermission("bending.command.preset") || !(sender instanceof Player))
 					return new ArrayList<String>();
 				List<String> l = new ArrayList<String>();
 				if (args.length == 2) {
@@ -153,10 +150,28 @@ public class BendingTabComplete implements TabCompleter {
 						for (Preset preset : presets) {
 							presetNames.add(preset.getName());
 						}
-					} else
+					}
+					if (sender.hasPermission("bending.command.preset.bind.external")) {
+						if (Preset.externalPresets.keySet().size() > 0) {
+							for (String externalPreset : Preset.externalPresets.keySet()) {
+								presetNames.add(externalPreset);
+							}
+						}
+					}
+					if (presetNames.size() == 0)
 						return new ArrayList<String>();
 					return getPossibleCompletionsForGivenArgs(args, presetNames);
+				} else if (args.length == 4 && Arrays.asList(new String[] {"bind", "b"}).contains(args[1].toLowerCase())) {
+					if (!sender.hasPermission("bending.command.preset.bind.assign") || (Preset.externalPresets.keySet().contains(args[2].toLowerCase())) && !sender.hasPermission("bending.command.preset.bind.external.other")) {
+						return new ArrayList<String>();
+					}
+					List<String> players = new ArrayList<String>();
+					for (Player p : Bukkit.getOnlinePlayers()) {
+						players.add(p.getName());
+					}
+					return getPossibleCompletionsForGivenArgs(args, players);
 				}
+				return new ArrayList<String>();
 			} else if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("rm")) {
 				if (args.length > 3 || !sender.hasPermission("bending.command.remove"))
 					return new ArrayList<String>();
@@ -181,7 +196,17 @@ public class BendingTabComplete implements TabCompleter {
 					l.add(p.getName());
 				}
 				return getPossibleCompletionsForGivenArgs(args, l);
-			} else if (!PKCommand.instances.keySet().contains(args[0].toLowerCase())) {
+			} else if (args[0].equalsIgnoreCase("copy") || args[0].equalsIgnoreCase("co")) {
+				//If they can't use the command, have over 3 args (copy <player> <player>), or if have over 2 args and can't assign to other players
+				if (!sender.hasPermission("bending.command.copy") || args.length > 3 || (args.length > 2 && !sender.hasPermission("bending.command.copy.assign"))) 
+					return new ArrayList<String>(); //Return nothing
+				List<String> l = new ArrayList<String>();
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					l.add(p.getName());
+				}
+				return getPossibleCompletionsForGivenArgs(args, l);
+			}
+			else if (!PKCommand.instances.keySet().contains(args[0].toLowerCase())) {
 				return new ArrayList<String>();
 			}
 		} else {

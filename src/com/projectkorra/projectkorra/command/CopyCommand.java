@@ -41,7 +41,7 @@ public class CopyCommand extends PKCommand {
 				sender.sendMessage(ChatColor.RED + "Some abilities were not bound because you cannot bend the required element.");
 			}
 		} else if (args.size() == 2) {
-			if (!sender.hasPermission("copy.assign")) {
+			if (!hasPermission(sender, "assign")) {
 				sender.sendMessage(ChatColor.RED + "You don't have permission to do that.");
 				return;
 			}
