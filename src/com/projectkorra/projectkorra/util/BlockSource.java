@@ -1,9 +1,11 @@
 package com.projectkorra.projectkorra.util;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -33,6 +35,7 @@ public class BlockSource {
 
 	public static List<Block> randomBlocks = new ArrayList<Block>();
 	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>>();
+	private static final boolean spout = ProjectKorra.plugin.getConfig().getBoolean("Properties.Water.CanBendFromSpout");
 	// The player should never need to grab source blocks from farther than this.
 
 	/**
@@ -220,10 +223,14 @@ public class BlockSource {
 			// Check the block in front of the player's eyes, it may have been created by a
 			// WaterBottle.
 			sourceBlock = WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
+			
 			}
 			if (auto && (sourceBlock == null || sourceBlock.getLocation().distance(player.getEyeLocation()) > autoRange)) {
 				sourceBlock = WaterMethods.getRandomWaterBlock(player, player.getLocation(), autoRange, water, ice, plant);
 			}
+		}
+		if(sourceBlock != null && TempBlock.isTempBlock(sourceBlock) && spout) {
+			return null;
 		}
 		return sourceBlock;
 	}

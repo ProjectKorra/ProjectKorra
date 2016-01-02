@@ -30,7 +30,6 @@ public class IceSpike2 {
 	private static double RANGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
 	private static double DAMAGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Damage");
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Projectile.SelectRange");
-	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Projectile.AutoSourcing.SelectRange");
 	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceSpike.Projectile.DynamicSourcing.Enabled");
 	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
 
@@ -65,7 +64,7 @@ public class IceSpike2 {
 		block(player);
 		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, false, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, false, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 
 		if (sourceblock == null) {
 			new SpikeField(player);
@@ -312,12 +311,12 @@ public class IceSpike2 {
 				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 				new TempPotionEffect(entity, effect);
 				bPlayer.slow(slowCooldown);
-				entity.damage(damage, player);
+				GeneralMethods.damageEntity(player, entity, damage, "IceSpike");
 			}
 		} else {
 			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 			new TempPotionEffect(entity, effect);
-			entity.damage(damage, player);
+			GeneralMethods.damageEntity(player, entity, damage, "IceSpike");
 		}
 		AirMethods.breakBreathbendingHold(entity);
 

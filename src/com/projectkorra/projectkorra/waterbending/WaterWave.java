@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -50,6 +51,7 @@ public class WaterWave {
 	
 	private Player player;
 	private long time;
+	private Block block;
 	private AbilityType type;
 	private Location origin, currentLoc;
 	private Vector direction;
@@ -68,13 +70,14 @@ public class WaterWave {
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
 
-	public WaterWave(Player player, AbilityType type) {
+	public WaterWave(Player player, Block block, AbilityType type) {
 		if (!ENABLED || GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("WaterWave"))
 			return;
 
 		this.player = player;
 		this.time = System.currentTimeMillis();
 		this.type = type;
+		this.block = block;
 		instances.add(this);
 
 		if (type == AbilityType.CLICK)
@@ -107,7 +110,6 @@ public class WaterWave {
 			if (origin == null) {
 				removeType(player, AbilityType.CLICK);
 
-				Block block = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, false, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 				if (block == null) {
 					if(instances.contains(this)) {
 						remove();
@@ -135,7 +137,7 @@ public class WaterWave {
 				remove();
 				return;
 			} else if (player.isSneaking()) {
-				new WaterWave(player, AbilityType.SHIFT);
+				new WaterWave(player, block, AbilityType.SHIFT);
 				return;
 			}
 			WaterMethods.playFocusWaterEffect(origin.getBlock());
@@ -166,7 +168,7 @@ public class WaterWave {
 			removeType(player, AbilityType.CLICK);
 			if (!player.isSneaking()) {
 				if (System.currentTimeMillis() - time > chargeTime) {
-					WaterWave wwave = new WaterWave(player, AbilityType.RELEASE);
+					WaterWave wwave = new WaterWave(player, block, AbilityType.RELEASE);
 					wwave.anim = AnimateState.SHRINK;
 					wwave.direction = direction;
 				}

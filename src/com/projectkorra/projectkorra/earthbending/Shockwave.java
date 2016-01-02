@@ -41,6 +41,7 @@ public class Shockwave {
 	}
 
 	public static void fallShockwave(Player player) {
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		if (!GeneralMethods.canBend(player.getName(), "Shockwave")) {
 			return;
 		}
@@ -51,7 +52,10 @@ public class Shockwave {
 		if (instances.containsKey(player) || player.getFallDistance() < threshold || !EarthMethods.isEarthbendable(player, player.getLocation().add(0, -1, 0).getBlock())) {
 			return;
 		}
-
+		if(bPlayer.isOnCooldown("Shockwave")) {
+			return;
+		}
+		
 		areaShockwave(player);
 	}
 
