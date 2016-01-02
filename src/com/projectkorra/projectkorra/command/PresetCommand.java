@@ -44,6 +44,12 @@ public class PresetCommand extends PKCommand {
 		}
 
 		Player player = (Player) sender;
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+
+		if (bPlayer == null) {
+			GeneralMethods.createBendingPlayer(((Player) player).getUniqueId(), player.getName());
+			bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		}
 
 		//bending preset list
 		if (args.size() == 1) {
@@ -90,6 +96,9 @@ public class PresetCommand extends PKCommand {
 				} else if (!Preset.externalPresetExists(name) && hasPermission(sender, "bind.external")) {
 					sender.sendMessage(ChatColor.RED + "No external preset with that name exists.");
 					return;
+				} else if (bPlayer.isPermaRemoved()) {
+					player.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
+					return;
 				} else {
 					sender.sendMessage(ChatColor.RED + "You don't have a preset with that name.");
 					return;
@@ -99,17 +108,26 @@ public class PresetCommand extends PKCommand {
 				if (!boundAll) {
 					sender.sendMessage(ChatColor.RED + "Some abilities were not bound because you cannot bend the required element.");
 				}
-			} 
-			else if (hasPermission(sender, "bind.external.other")) {
+			} else if (hasPermission(sender, "bind.external.assign") && Preset.externalPresetExists(name)) {
 				if (!Preset.externalPresetExists(name)) {
 					sender.sendMessage(ChatColor.RED + "No external preset with that name exists.");
 					return;
 				}
-				
+
 				Player player2 = Bukkit.getPlayer(args.get(2));
 				if (player2 != null && player2.isOnline()) {
+					BendingPlayer bPlayer2 = GeneralMethods.getBendingPlayer(player2.getName());
+
+					if (bPlayer2 == null) {
+						GeneralMethods.createBendingPlayer(((Player) player2).getUniqueId(), player2.getName());
+						bPlayer = GeneralMethods.getBendingPlayer(player2.getName());
+					}
+					if (bPlayer2.isPermaRemoved()) {
+						player.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
+						return;
+					}
 					boolean boundAll = Preset.bindExternalPreset(player2, name);
-					
+
 					sender.sendMessage(ChatColor.GREEN + "The bound slots of " + ChatColor.YELLOW + player2.getName() + ChatColor.GREEN + " have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
 					player2.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
 					if (!boundAll) {
@@ -119,31 +137,60 @@ public class PresetCommand extends PKCommand {
 				} else {
 					sender.sendMessage(ChatColor.RED + "Player not found.");
 				}
-			}
-			return;
-		} else if (Arrays.asList(createaliases).contains(args.get(0)) && hasPermission(sender, "create")) { //bending preset create name
-			int limit = GeneralMethods.getMaxPresets(player);
+			} else if (hasPermission(sender, "bind.assign") && Preset.presetExists(player, name)) {
+				if (!Preset.presetExists(player, name)) {
+					sender.sendMessage(ChatColor.RED + "You don't have a preset with that name.");
+					return;
+				}
 
-			if (Preset.presets.get(player) != null && Preset.presets.get(player).size() >= limit) {
-				sender.sendMessage(ChatColor.RED + "You have reached your max number of Presets.");
-				return;
-			} else if (Preset.presetExists(player, name)) {
-				sender.sendMessage(ChatColor.RED + "A preset with that name already exists.");
-				return;
-			}
+				Player player2 = Bukkit.getPlayer(args.get(2));
+				if (player2 != null && player2.isOnline()) {
+					BendingPlayer bPlayer2 = GeneralMethods.getBendingPlayer(player2.getName());
 
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-			if (bPlayer == null) {
-				return;
+					if (bPlayer2 == null) {
+						GeneralMethods.createBendingPlayer(((Player) player2).getUniqueId(), player2.getName());
+						bPlayer = GeneralMethods.getBendingPlayer(player2.getName());
+					}
+					if (bPlayer2.isPermaRemoved()) {
+						player.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
+						return;
+					}
+					Preset preset = Preset.getPreset(player, name);
+					boolean boundAll = Preset.bindPreset(player2, preset);
+
+					sender.sendMessage(ChatColor.GREEN + "The bound slots of " + ChatColor.YELLOW + player2.getName() + ChatColor.GREEN + " have been set to match your " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
+					player2.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match " + ChatColor.YELLOW + player.getName() + "'s " + name + ChatColor.GREEN + " preset.");
+					if (!boundAll) {
+						player2.sendMessage(ChatColor.RED + "Some abilities were not bound, either the preset");
+					}
+					return;
+				} else {
+					sender.sendMessage(ChatColor.RED + "Player not found.");
+				}
+			} else if (Arrays.asList(createaliases).contains(args.get(0)) && hasPermission(sender, "create")) { //bending preset create name
+				int limit = GeneralMethods.getMaxPresets(player);
+
+				if (Preset.presets.get(player) != null && Preset.presets.get(player).size() >= limit) {
+					sender.sendMessage(ChatColor.RED + "You have reached your max number of Presets.");
+					return;
+				} else if (Preset.presetExists(player, name)) {
+					sender.sendMessage(ChatColor.RED + "A preset with that name already exists.");
+					return;
+				}
+
+				if (bPlayer == null) {
+					return;
+				}
+				HashMap<Integer, String> abilities = (HashMap<Integer, String>) bPlayer.getAbilities().clone();
+
+				Preset preset = new Preset(player.getUniqueId(), name, abilities);
+				preset.save(player);
+				sender.sendMessage(ChatColor.GREEN + "Created preset with the name: " + ChatColor.YELLOW + name);
+			} else {
+				help(sender, false);
 			}
-			HashMap<Integer, String> abilities = (HashMap<Integer, String>) bPlayer.getAbilities().clone();
-			
-			Preset preset = new Preset(player.getUniqueId(), name, abilities);
-			preset.save(player);
-			sender.sendMessage(ChatColor.GREEN + "Created preset with the name: " + ChatColor.YELLOW + name);
-		} else {
-			help(sender, false);
 		}
 	}
-
 }
+
+

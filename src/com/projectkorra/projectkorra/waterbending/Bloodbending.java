@@ -133,7 +133,7 @@ public class Bloodbending {
 			Vector vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, location.distance(target)));
 			vector.normalize();
 			entity.setVelocity(vector.multiply(factor));
-			new HorizontalVelocityTracker(entity, player, 200, "Bloodbending", Element.Air, SubElement.Bloodbending);
+			new HorizontalVelocityTracker(entity, player, 200, "Bloodbending", Element.Water, SubElement.Bloodbending);
 		}
 		remove(player);
 	}

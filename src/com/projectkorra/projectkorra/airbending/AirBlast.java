@@ -252,7 +252,10 @@ public class AirBlast implements ConfigLoadable {
 			entity.setFireTicks(0);
 			AirMethods.breakBreathbendingHold(entity);
 
-			if (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedentities.contains(entity)) {
+			if (source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedentities.contains(entity))) {
+				GeneralMethods.damageEntity(player, entity, damage, "AirBurst");
+				affectedentities.add(entity);
+			} else if (source == null && (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedentities.contains(entity))) {
 				GeneralMethods.damageEntity(player, entity, damage, "AirBlast");
 				affectedentities.add(entity);
 			}

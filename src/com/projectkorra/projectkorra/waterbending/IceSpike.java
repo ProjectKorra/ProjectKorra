@@ -230,7 +230,7 @@ public class IceSpike {
 
 	private void affect(LivingEntity entity) {
 		entity.setVelocity(thrown);
-		entity.damage(damage);
+		GeneralMethods.damageEntity(player, entity, damage, "IceSpike");
 		damaged.add(entity);
 		long slowCooldown = IceSpike2.slowCooldown;
 		int mod = 2;

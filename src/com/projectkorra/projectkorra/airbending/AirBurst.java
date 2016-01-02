@@ -64,6 +64,8 @@ public class AirBurst implements ConfigLoadable {
 	}
 
 	public static void fallBurst(Player player) {
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		
 		if (!GeneralMethods.canBend(player.getName(), "AirBurst")) {
 			return;
 		}
@@ -77,6 +79,9 @@ public class AirBurst implements ConfigLoadable {
 			return;
 		}
 		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBurst")) {
+			return;
+		}
+		if (bPlayer.isOnCooldown("AirBurst")) {
 			return;
 		}
 
