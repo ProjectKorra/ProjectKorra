@@ -154,7 +154,7 @@ public class WaterMethods {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location))
 				continue;
-			if (isWater(block) && water) {
+			if (isWater(block) && block.getData() == 0x0  && water) {
 				if (TempBlock.isTempBlock(block)) {
 					TempBlock tb = TempBlock.get(block);
 					byte full = 0x0;
@@ -180,6 +180,7 @@ public class WaterMethods {
 	 * @param radius
 	 * @return random block
 	 */
+	@SuppressWarnings("deprecation")
 	public static Block getRandomWaterBlock(Player player, Location location, int radius, boolean water, boolean ice, boolean plant) {
 	    List<Integer> checked = new ArrayList<Integer>();
 	    List<Block> blocks = GeneralMethods.getBlocksAroundPoint(location, radius);
@@ -191,7 +192,7 @@ public class WaterMethods {
 	        checked.add(index);
 	        Block block = blocks.get(index);
 	        if (block.getRelative(BlockFace.UP).getType() == Material.AIR) {
-	        	if (isWater(block) && water) {
+	        	if (isWater(block) && block.getState().getRawData() == 0x0 && water) {
 	        		BlockSource.randomBlocks.add(block);
 	        		return block;
 	        	}

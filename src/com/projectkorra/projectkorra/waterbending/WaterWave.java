@@ -6,11 +6,8 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.SubElement;
 import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -419,8 +416,8 @@ public class WaterWave {
 		return radius;
 	}
 
-	public void setRadius(int range) {
-		this.selectRange = range;
+	public static void setRadius(int range) {
+		selectRange = range;
 	}
 	
 	public double getRange() {

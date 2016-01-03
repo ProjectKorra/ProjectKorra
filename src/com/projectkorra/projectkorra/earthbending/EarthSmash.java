@@ -10,7 +10,6 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -116,13 +115,6 @@ public class EarthSmash {
 			}
 			if (grabbedSmash != null && grabbedSmash.state == State.LIFTED) {
 
-				grabbedSmash.state = State.GRABBED;
-				grabbedSmash.grabbedRange = grabbedSmash.loc.distance(player.getEyeLocation());
-				grabbedSmash.player = player;
-				return;
-			}
-			if (grabbedSmash != null && grabbedSmash.state == State.SHOT) {
-				
 				grabbedSmash.state = State.GRABBED;
 				grabbedSmash.grabbedRange = grabbedSmash.loc.distance(player.getEyeLocation());
 				grabbedSmash.player = player;

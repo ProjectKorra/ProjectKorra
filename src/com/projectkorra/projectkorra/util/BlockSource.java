@@ -5,7 +5,6 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -179,11 +178,12 @@ public class BlockSource {
 	 * @return a valid bendable block, or null if none was found.
 	 */
 	
+	@SuppressWarnings("deprecation")
 	public static Block getDynamicWaterSourceBlock(Player player, int autoRange, int selectRange, BlockSourceType sourceType, ClickType clickType, boolean auto, boolean dynamic, boolean water, boolean ice, boolean plant) {
 		update(player, selectRange, clickType);
 		BlockSourceInformation info = getValidBlockSourceInformation(player, selectRange, sourceType, clickType);
 		if (info != null && dynamic) {
-			if (WaterMethods.isWater(info.getBlock()) && water) {
+			if (WaterMethods.isWater(info.getBlock()) && info.getBlock().getState().getRawData() == 0x0 && water) {
 				return info.getBlock();
 			} else if (WaterMethods.isIcebendable(info.getBlock()) && ice) {
 				return info.getBlock();
@@ -223,7 +223,6 @@ public class BlockSource {
 			// Check the block in front of the player's eyes, it may have been created by a
 			// WaterBottle.
 			sourceBlock = WaterMethods.getWaterSourceBlock(player, selectRange, water, ice, plant);
-			
 			}
 			if (auto && (sourceBlock == null || sourceBlock.getLocation().distance(player.getEyeLocation()) > autoRange)) {
 				sourceBlock = WaterMethods.getRandomWaterBlock(player, player.getLocation(), autoRange, water, ice, plant);

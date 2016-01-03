@@ -642,7 +642,6 @@ public class EarthMethods {
 		revertAirBlock(i, false);
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void revertAirBlock(int i, boolean force) {
 		if (!tempair.containsKey(i))
 			return;
