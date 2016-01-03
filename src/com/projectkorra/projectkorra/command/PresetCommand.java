@@ -5,10 +5,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.multiability.MultiAbilityManager;
 import com.projectkorra.projectkorra.object.Preset;
 
-
-
-
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -167,30 +163,28 @@ public class PresetCommand extends PKCommand {
 				} else {
 					sender.sendMessage(ChatColor.RED + "Player not found.");
 				}
-			} else if (Arrays.asList(createaliases).contains(args.get(0)) && hasPermission(sender, "create")) { //bending preset create name
-				int limit = GeneralMethods.getMaxPresets(player);
-
-				if (Preset.presets.get(player) != null && Preset.presets.get(player).size() >= limit) {
-					sender.sendMessage(ChatColor.RED + "You have reached your max number of Presets.");
-					return;
-				} else if (Preset.presetExists(player, name)) {
-					sender.sendMessage(ChatColor.RED + "A preset with that name already exists.");
-					return;
-				}
-
-				if (bPlayer == null) {
-					return;
-				}
-				HashMap<Integer, String> abilities = (HashMap<Integer, String>) bPlayer.getAbilities().clone();
-
-				Preset preset = new Preset(player.getUniqueId(), name, abilities);
-				preset.save(player);
-				sender.sendMessage(ChatColor.GREEN + "Created preset with the name: " + ChatColor.YELLOW + name);
-			} else {
-				help(sender, false);
 			}
+		} else if (Arrays.asList(createaliases).contains(args.get(0)) && hasPermission(sender, "create")) { //bending preset create name
+			int limit = GeneralMethods.getMaxPresets(player);
+
+			if (Preset.presets.get(player) != null && Preset.presets.get(player).size() >= limit) {
+				sender.sendMessage(ChatColor.RED + "You have reached your max number of Presets.");
+				return;
+			} else if (Preset.presetExists(player, name)) {
+				sender.sendMessage(ChatColor.RED + "A preset with that name already exists.");
+				return;
+			}
+
+			if (bPlayer == null) {
+				return;
+			}
+			HashMap<Integer, String> abilities = (HashMap<Integer, String>) bPlayer.getAbilities().clone();
+
+			Preset preset = new Preset(player.getUniqueId(), name, abilities);
+			preset.save(player);
+			sender.sendMessage(ChatColor.GREEN + "Created preset with the name: " + ChatColor.YELLOW + name);
+		} else {
+			help(sender, false);
 		}
 	}
 }
-
-

@@ -178,7 +178,7 @@ public class ConfigManager {
 				config.addDefault("Properties.Water.NightFactor", 1.5);
 				config.addDefault("Properties.Water.FullMoonFactor", 2.0);
 				config.addDefault("Properties.Water.CanBendPackedIce", true);
-				config.addDefault("Properties.Water.CanBendFromSpout", false);
+				config.addDefault("Properties.Water.CanBendFromBentBlocks", false);
 				config.addDefault("Properties.Water.PlaySound", true);
 				config.addDefault("Properties.Water.NightMessage", "You feel the strength of the rising moon empowering your waterbending.");
 				config.addDefault("Properties.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");

@@ -419,7 +419,15 @@ public class WaterWave {
 		return radius;
 	}
 
-	public void setRadius(double radius) {
+	public void setRadius(int range) {
+		this.selectRange = range;
+	}
+	
+	public double getRange() {
+		return selectRange;
+	}
+
+	public void setRange(double radius) {
 		this.radius = radius;
 	}
 
