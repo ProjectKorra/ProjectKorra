@@ -7,6 +7,10 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.storage.DBConnection;
 
 
+
+
+
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -81,6 +85,7 @@ public class Preset {
 	 */
 	public static void loadPresets(final Player player) {
 		new BukkitRunnable() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void run() {
 				UUID uuid = player.getUniqueId();
@@ -93,13 +98,13 @@ public class Preset {
 					if (rs.next()) { // Presets exist.
 						int i = 0;
 						do {
-							HashMap<Integer, String> moves = new HashMap<Integer, String>();
+							HashMap<Integer, String> abilities = (HashMap<Integer, String>) new HashMap<Integer, String>().clone();
 							for (int total = 1; total <= 9; total++) {
 								String slot = rs.getString("slot" + total);
 								if (slot != null)
-									moves.put(total, slot);
+									abilities.put(total, slot);
 							}
-							new Preset(uuid, rs.getString("name"), moves);
+							new Preset(uuid, rs.getString("name"), abilities);
 							i++;
 						}
 						while (rs.next());
@@ -230,12 +235,13 @@ public class Preset {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static boolean bindExternalPreset(Player player, String name) {
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 		boolean boundAll = true;
 		int slot = 0;
 
-		HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+		HashMap<Integer, String> abilities = (HashMap<Integer, String>) new HashMap<Integer, String>().clone();
 
 		if (externalPresetExists(name.toLowerCase())) {
 			for (String ability : externalPresets.get(name.toLowerCase())) {

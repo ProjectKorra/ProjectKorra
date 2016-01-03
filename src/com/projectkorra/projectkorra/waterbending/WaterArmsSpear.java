@@ -227,7 +227,7 @@ public class WaterArmsSpear {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!EarthMethods.isTransparentToEarthbending(player, block) && !((WaterMethods.isWater(block) || WaterMethods.isIcebendable(block)) && (TempBlock.isTempBlock(block) && !WaterArms.revert.containsKey(block)))) {
+		if (!EarthMethods.isTransparentToEarthbending(player, block) && !WaterMethods.isWater(block) && (TempBlock.isTempBlock(block) && !WaterArms.revert.containsKey(block))) {
 			return false;
 		}
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", block.getLocation())) {
