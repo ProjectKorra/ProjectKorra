@@ -127,7 +127,7 @@ public class PresetCommand extends PKCommand {
 					sender.sendMessage(ChatColor.GREEN + "The bound slots of " + ChatColor.YELLOW + player2.getName() + ChatColor.GREEN + " have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
 					player2.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
 					if (!boundAll) {
-						player2.sendMessage(ChatColor.RED + "Some abilities were not bound, either the preset");
+						player2.sendMessage(ChatColor.RED + "Some abilities were not bound, either the preset contains invalid abilities or you cannot bend the required elements.");
 					}
 					return;
 				} else {
