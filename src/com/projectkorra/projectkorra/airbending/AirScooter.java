@@ -117,10 +117,6 @@ public class AirScooter implements ConfigLoadable {
 			remove();
 			return false;
 		}
-		if (!player.isOnline() || player.isDead() || !player.isFlying()) {
-			remove();
-			return false;
-		}
 
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirScooter", player.getLocation())) {
 			remove();
@@ -189,9 +185,6 @@ public class AirScooter implements ConfigLoadable {
 
 	public void remove() {
 		instances.remove(player);
-		player.setFlying(false);
-		player.setAllowFlight(false);
-		player.setSprinting(false);
 	}
 
 	public static void removeAll() {

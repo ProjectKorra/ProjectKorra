@@ -10,8 +10,6 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireCombo.FireComboStream;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -56,10 +54,7 @@ public class WaterCombo {
 			"Abilities.Water.WaterCombo.IceBullet.Cooldown");
 	public static long ICE_BULLET_SHOOT_TIME = ProjectKorra.plugin.getConfig().getLong(
 			"Abilities.Water.WaterCombo.IceBullet.ShootTime");
-	private static int icebullet_selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterCombo.IceBullet.SelectRange");
-	
-	//private boolean IceBulletisAuto;
-	
+
 	public static ArrayList<WaterCombo> instances = new ArrayList<WaterCombo>();
 	public static ConcurrentHashMap<Block, TempBlock> frozenBlocks = new ConcurrentHashMap<Block, TempBlock>();
 
@@ -269,12 +264,11 @@ public class WaterCombo {
 					remove();
 					return;
 				}
-				Block waterBlock = BlockSource.getWaterSourceBlock(player, icebullet_selectRange,  icebullet_selectRange, ClickType.SHIFT_DOWN, false, false, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+				Block waterBlock = WaterMethods.getRandomWaterBlock(player, player.getLocation(), (int) range, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
 				if (waterBlock == null) {
 					remove();
 					return;
 				}
-				//IceBulletisAuto = false;
 				this.time = 0;
 				origin = waterBlock.getLocation();
 				currentLoc = origin.clone();

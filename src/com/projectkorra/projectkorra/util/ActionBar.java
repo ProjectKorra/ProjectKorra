@@ -35,14 +35,14 @@ public class ActionBar {
 		return initialised;
 	}
 
-	public static boolean sendActionBar(String message, Player... p) {
+	public static boolean sendActionBar(String message, Player... player) {
 		if (!initialised) {
 			return false;
 		}
 		try {
 			Object o = chatSer.newInstance(message);
 			Object packet = packetChat.newInstance(o, (byte) 2);
-			sendTo(packet, p);
+			sendTo(packet, player);
 		}
 		catch (ReflectiveOperationException e) {
 			e.printStackTrace();
@@ -51,8 +51,8 @@ public class ActionBar {
 		return initialised;
 	}
 
-	private static void sendTo(Object packet, Player... pl) throws ReflectiveOperationException {
-		for (Player p : pl) {
+	private static void sendTo(Object packet, Player... player) throws ReflectiveOperationException {
+		for (Player p : player) {
 			Object entityplayer = getHandle.invoke(p);
 			Object PlayerConnection = playerConnection.get(entityplayer);
 			sendPacket.invoke(PlayerConnection, packet);

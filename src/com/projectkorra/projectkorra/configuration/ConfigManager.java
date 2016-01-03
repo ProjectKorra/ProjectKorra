@@ -7,19 +7,41 @@ import java.util.ArrayList;
 
 public class ConfigManager {
 
+	public static Config presetConfig;
 	public static Config deathMsgConfig;
 	public static Config defaultConfig;
 
 	public ConfigManager() {
+		presetConfig = new Config(new File("presets.yml"));
 		deathMsgConfig = new Config(new File("deathmessages.yml"));
 		defaultConfig = new Config(new File("config.yml"));
 		configCheck(ConfigType.DEFAULT);
 		configCheck(ConfigType.DEATH_MESSAGE);
+		configCheck(ConfigType.PRESETS);
 	}
 
 	public static void configCheck(ConfigType type) {
 		FileConfiguration config;
 		switch (type) {
+			case PRESETS:
+				config = presetConfig.get();
+
+				ArrayList<String> abilities = new ArrayList<String>();
+				abilities.add("FireBlast");
+				abilities.add("AirBlast");
+				abilities.add("WaterManipulation");
+				abilities.add("EarthBlast");
+				abilities.add("FireBurst");
+				abilities.add("AirBurst");
+				abilities.add("Torrent");
+				abilities.add("Shockwave");
+				abilities.add("AvatarState");
+				
+				config.addDefault("Example", abilities);
+
+				presetConfig.save();
+				break;
+			
 			case DEATH_MESSAGE:
 				config = deathMsgConfig.get();
 
@@ -156,6 +178,7 @@ public class ConfigManager {
 				config.addDefault("Properties.Water.NightFactor", 1.5);
 				config.addDefault("Properties.Water.FullMoonFactor", 2.0);
 				config.addDefault("Properties.Water.CanBendPackedIce", true);
+				config.addDefault("Properties.Water.CanBendFromBentBlocks", false);
 				config.addDefault("Properties.Water.PlaySound", true);
 				config.addDefault("Properties.Water.NightMessage", "You feel the strength of the rising moon empowering your waterbending.");
 				config.addDefault("Properties.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
@@ -323,7 +346,7 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
 				config.addDefault("Abilities.Water.Bloodbending.Description", "This ability was made illegal for a reason. With this ability selected, sneak while " + "targetting something and you will bloodbend that target. Bloodbent targets cannot move, " + "bend or attack. You are free to control their actions by looking elsewhere - they will " + "be forced to move in that direction. Additionally, clicking while bloodbending will " + "launch that target off in the direction you're looking. " + "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
-				config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight", false);
+				config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight", true);
 				config.addDefault("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs", true);
 				config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 				config.addDefault("Abilities.Water.Bloodbending.Range", 10);
@@ -334,6 +357,7 @@ public class ConfigManager {
 				
 				config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
 				config.addDefault("Abilities.Water.HealingWaters.Description", "To use, the bender must be at least partially submerged in water. " + "If the user is not sneaking, this ability will automatically begin " + "working provided the user has it selected. If the user is sneaking, " + "he/she is channeling the healing to their target in front of them. " + "In order for this channel to be successful, the user and the target must " + "be at least partially submerged in water.");
+				config.addDefault("Abilities.Water.HealingWaters.ShiftRequired", true);
 				config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
 				config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
 				config.addDefault("Abilities.Water.HealingWaters.Power", 1);
@@ -343,9 +367,6 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.IceBlast.Range", 20);
 				config.addDefault("Abilities.Water.IceBlast.Cooldown", 1500);
 				config.addDefault("Abilities.Water.IceBlast.SelectRange", 12);
-				config.addDefault("Abilities.Water.IceBlast.AutoSourcing.Enabled", true);
-				config.addDefault("Abilities.Water.IceBlast.AutoSourcing.Cooldown", 1500);
-				config.addDefault("Abilities.Water.IceBlast.AutoSourcing.SelectRange", 5);
 				config.addDefault("Abilities.Water.IceBlast.Description", "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an explosive burst of ice at an opponent, spraying ice and snow around it. To use, simply tap sneak (Default: Shift) while targeting a block of ice to select it as a source. From there, you can just left click to send the blast off at your opponent.");
 				config.addDefault("Abilities.Water.IceBlast.DynamicSourcing.Enabled", true);
 				
@@ -358,7 +379,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.IceSpike.Height", 6);
 				config.addDefault("Abilities.Water.IceSpike.Projectile.Range", 20);
 				config.addDefault("Abilities.Water.IceSpike.Projectile.Damage", 1);
-				config.addDefault("Abilities.Water.IceSpike.SelectRange", 12);
+				config.addDefault("Abilities.Water.IceSpike.Projectile.SelectRange", 12);
 				config.addDefault("Abilities.Water.IceSpike.DynamicSourcing.Enabled", true);
 
 				config.addDefault("Abilities.Water.OctopusForm.Enabled", true);
@@ -378,8 +399,8 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Water.PhaseChange.Enabled", true);
 				config.addDefault("Abilities.Water.PhaseChange.Description", "To use, simply left-click. " + "Any water you are looking at within range will instantly freeze over into solid ice. " + "Provided you stay within range of the ice and do not unbind FreezeMelt, " + "that ice will not thaw. If, however, you do either of those the ice will instantly thaw. " + "If you sneak (default: shift), anything around where you are looking at will instantly melt. " + "Since this is a more favorable state for these things, they will never re-freeze unless they " + "would otherwise by nature or some other bending ability. Additionally, if you tap sneak while " + "targetting water with FreezeMelt, it will evaporate water around that block that is above " + "sea level. ");
-				config.addDefault("Abilities.Water.PhaseChange.Range", 20);
-				config.addDefault("Abilities.Water.PhaseChange.Radius", 5);
+				config.addDefault("Abilities.Water.PhaseChange.Range", 15);
+				config.addDefault("Abilities.Water.PhaseChange.Radius", 4);
 				config.addDefault("Abilities.Water.PhaseChange.Cooldown", 0);
 
 				config.addDefault("Abilities.Water.PlantArmor.Enabled", true);
@@ -396,12 +417,12 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.Surge.Description", "This ability has two distinct features. If you sneak to select a source block, you can then click in a direction and a large wave will be launched in that direction. If you sneak again while the wave is en route, the wave will freeze the next target it hits. If, instead, you click to select a source block, you can hold sneak to form a wall of water at your cursor location. Click to shift between a water wall and an ice wall. Release sneak to dissipate it.");
 				config.addDefault("Abilities.Water.Surge.Wave.Radius", 3);
 				config.addDefault("Abilities.Water.Surge.Wave.Range", 20);
-				config.addDefault("Abilities.Water.Surge.Wave.SelectRange", 12);
+				config.addDefault("Abilities.Water.Surge.Wave.SelectRange", 6);
 				config.addDefault("Abilities.Water.Surge.Wave.HorizontalPush", 1);
 				config.addDefault("Abilities.Water.Surge.Wave.DynamicSourcing.Enabled", true);
 				config.addDefault("Abilities.Water.Surge.VerticalPush", 0.2);
 				config.addDefault("Abilities.Water.Surge.Wall.Radius", 2);
-				config.addDefault("Abilities.Water.Surge.Wall.SelectRange", 12);
+				config.addDefault("Abilities.Water.Surge.Wall.SelectRange", 5);
 				config.addDefault("Abilities.Water.Surge.Wall.DynamicSourcing.Enabled", true);
 
 				config.addDefault("Abilities.Water.Torrent.Enabled", true);
@@ -409,6 +430,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.Torrent.Range", 25);
 				config.addDefault("Abilities.Water.Torrent.DeflectDamage", 1);
 				config.addDefault("Abilities.Water.Torrent.Damage", 3);
+				config.addDefault("Abilities.Water.Torrent.Cooldown", 1500);
 				config.addDefault("Abilities.Water.Torrent.Wave.Radius", 15);
 				config.addDefault("Abilities.Water.Torrent.Wave.Knockback", 1.5);
 				config.addDefault("Abilities.Water.Torrent.Wave.Height", 1);
@@ -502,9 +524,6 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterSpout.Wave.FlightTime", 2500);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.Speed", 1.3);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.SelectRange", 12);
-				config.addDefault("Abilities.Water.WaterSpout.Wave.AutoSourcing.Enabled", true);
-				config.addDefault("Abilities.Water.WaterSpout.Wave.AutoSourcing.Cooldown", 1500);
-				config.addDefault("Abilities.Water.WaterSpout.Wave.AutoSourcing.SelectRange", 5);
 
 				config.addDefault("Abilities.Water.WaterCombo.Enabled", true);
 				config.addDefault("Abilities.Water.WaterCombo.IceWave.Damage", 4);
@@ -609,7 +628,8 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.EarthSmash.AllowGrab", true);
 				config.addDefault("Abilities.Earth.EarthSmash.AllowShooting", true);
 				config.addDefault("Abilities.Earth.EarthSmash.AllowFlight", true);
-				config.addDefault("Abilities.Earth.EarthSmash.GrabRange", 10);
+				config.addDefault("Abilities.Earth.EarthSmash.SelectRange", 10);
+				config.addDefault("Abilities.Earth.EarthSmash.GrabRange", 3.0);
 				config.addDefault("Abilities.Earth.EarthSmash.ChargeTime", 1500);
 				config.addDefault("Abilities.Earth.EarthSmash.Cooldown", 2500);
 				config.addDefault("Abilities.Earth.EarthSmash.ShotRange", 30);

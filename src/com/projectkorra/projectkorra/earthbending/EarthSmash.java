@@ -32,7 +32,8 @@ public class EarthSmash {
 	public static boolean ALLOW_GRAB = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowGrab");
 	public static boolean ALLOW_SHOOTING = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowShooting");
 	public static boolean ALLOW_FLIGHT = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowFlight");
-	public static int GRAB_RANGE = ProjectKorra.plugin.getConfig().getInt("Properties.Earth.SelectRange");
+	public static int SELECT_RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthSmash.SelectRange");
+	public static double GRAB_RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.GrabRange");
 	public static double TRAVEL_RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.ShotRange");
 	public static double SHOOTING_DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthSmash.Damage");
 
@@ -46,7 +47,7 @@ public class EarthSmash {
 
 	private static int REQUIRED_BENDABLE_BLOCKS = 11;
 	private static int MAX_BLOCKS_TO_PASS_THROUGH = 3;
-	private static double GRAB_DETECTION_RADIUS = 2.5;
+	private static double GRAB_DETECTION_RADIUS = GRAB_RANGE;
 	private static double FLIGHT_DETECTION_RADIUS = 3.8;
 	private static long SHOOTING_ANIMATION_COOLDOWN = 25;
 	private static long FLYING_ANIMATION_COOLDOWN = 0;
@@ -61,7 +62,7 @@ public class EarthSmash {
 	private long time, delay, cooldown, flightRemove, flightStart;
 	private double grabbedRange;
 	private double chargeTime, damage, knockback, knockup, flySpeed, shootRange;
-	private int grabRange;
+	private int selectRange;
 	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
 	private ArrayList<BlockRepresenter> currentBlocks = new ArrayList<BlockRepresenter>();
 	private ArrayList<TempBlock> affectedBlocks = new ArrayList<TempBlock>();
@@ -75,7 +76,7 @@ public class EarthSmash {
 		this.time = System.currentTimeMillis();
 
 		if (type == ClickType.SHIFT_DOWN || type == ClickType.SHIFT_UP && !player.isSneaking()) {
-			grabRange = GRAB_RANGE;
+			selectRange = SELECT_RANGE;
 			chargeTime = CHARGE_TIME;
 			cooldown = MAIN_COOLDOWN;
 			damage = SHOOTING_DAMAGE;
@@ -85,7 +86,7 @@ public class EarthSmash {
 			flightRemove = FLYING_REMOVE_TIMER;
 			shootRange = TRAVEL_RANGE;
 			if (AvatarState.isAvatarState(player)) {
-				grabRange = AvatarState.getValue(grabRange);
+				selectRange = AvatarState.getValue(selectRange);
 				chargeTime = 0;
 				cooldown = 0;
 				damage = AvatarState.getValue(damage);
@@ -104,14 +105,16 @@ public class EarthSmash {
 				return;
 			}
 
-			EarthSmash grabbedSmash = aimingAtSmashCheck(player, State.LIFTED);
+			EarthSmash grabbedSmash = aimingAtSmashCheck(player, null);
 			if (grabbedSmash == null) {
 				if (bplayer.isOnCooldown("EarthSmash")) {
 					return;
 				}
+				
 				grabbedSmash = aimingAtSmashCheck(player, State.SHOT);
 			}
-			if (grabbedSmash != null) {
+			if (grabbedSmash != null && grabbedSmash.state == State.LIFTED) {
+
 				grabbedSmash.state = State.GRABBED;
 				grabbedSmash.grabbedRange = grabbedSmash.loc.distance(player.getEyeLocation());
 				grabbedSmash.player = player;
@@ -168,12 +171,11 @@ public class EarthSmash {
 		if (state == State.START && progressCounter > 1) {
 			if (!player.isSneaking()) {
 				if (System.currentTimeMillis() - time > chargeTime) {
-					origin = EarthMethods.getEarthSourceBlock(player, grabRange, true, EarthMethods.canSandbend(player), false);
+					origin = EarthMethods.getEarthSourceBlock(player, selectRange, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
 					if (origin == null) {
 						remove();
 						return;
 					}
-					bplayer.addCooldown("EarthSmash", cooldown);
 					loc = origin.getLocation();
 					state = State.LIFTING;
 				} else {
@@ -212,6 +214,7 @@ public class EarthSmash {
 			}
 		} else if (state == State.SHOT) {
 			if (System.currentTimeMillis() - delay >= SHOOTING_ANIMATION_COOLDOWN) {
+				bplayer.addCooldown("EarthSmash", cooldown);
 				delay = System.currentTimeMillis();
 				if (GeneralMethods.isRegionProtectedFromBuild(player, "EarthSmash", loc)) {
 					remove();
@@ -302,8 +305,9 @@ public class EarthSmash {
 								remove();
 								return;
 							}
-							if (EarthMethods.isEarthbendable(player, block))
+							if (EarthMethods.isEarthbendable(player, block)) {
 								totalBendableBlocks++;
+							}
 						}
 				if (totalBendableBlocks < REQUIRED_BENDABLE_BLOCKS) {
 					remove();
@@ -324,7 +328,7 @@ public class EarthSmash {
 						for (int z = -1; z <= 1; z++)
 							if ((Math.abs(x) + Math.abs(y) + Math.abs(z)) % 2 == 0) {
 								Block block = tempLoc.clone().add(x, y, z).getBlock();
-								currentBlocks.add(new BlockRepresenter(x, y, z, selectMaterialForRepresenter(block.getType()), block.getData()));
+								currentBlocks.add(new BlockRepresenter(x, y, z, selectMaterialForRepresenter(block), block.getData()));
 							}
 
 				//Remove the design of the second level of removed dirt
@@ -464,12 +468,13 @@ public class EarthSmash {
 			return mat;
 	}
 
-	public Material selectMaterialForRepresenter(Material mat) {
-		Material tempMat = selectMaterial(mat);
+	public Material selectMaterialForRepresenter(Block block) {
+		Material tempMat = selectMaterial(block.getType());
 		Random rand = new Random();
-		if (!EarthMethods.isEarthbendable(tempMat) || !EarthMethods.isMetalbendable(player, tempMat)) {
-			if (currentBlocks.size() < 1)
+		if (!EarthMethods.isEarthbendable(player, block)) {
+			if (currentBlocks.size() < 1) {
 				return Material.DIRT;
+			}
 			else
 				return currentBlocks.get(rand.nextInt(currentBlocks.size())).getType();
 		}
@@ -484,7 +489,7 @@ public class EarthSmash {
 		 */
 		if (!ALLOW_GRAB)
 			return null;
-		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, grabRange, GeneralMethods.nonOpaque), 1);
+		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, GRAB_DETECTION_RADIUS, GeneralMethods.nonOpaque), 1);
 		for (EarthSmash smash : instances) {
 			if (reqState == null || smash.state == reqState)
 				for (Block block : blocks)
@@ -504,7 +509,7 @@ public class EarthSmash {
 		for (Entity entity : entities)
 			if (entity instanceof LivingEntity && entity != player && !affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
-				double damage = currentBlocks.size() / 13 * this.damage;
+				double damage = (currentBlocks.size() / 13.0) * this.damage;
 				GeneralMethods.damageEntity(player, entity, damage, "EarthSmash");
 				Vector travelVec = GeneralMethods.getDirection(loc, entity.getLocation());
 				entity.setVelocity(travelVec.setY(knockup).normalize().multiply(knockback));
@@ -673,12 +678,12 @@ public class EarthSmash {
 			bplayer.addCooldown("EarthSmash", cooldown);
 	}
 
-	public int getGrabRange() {
-		return grabRange;
+	public int getSelectRange() {
+		return selectRange;
 	}
 
-	public void setGrabRange(int grabRange) {
-		this.grabRange = grabRange;
+	public void setSelectRange(int grabRange) {
+		this.selectRange = grabRange;
 	}
 
 	public double getChargeTime() {

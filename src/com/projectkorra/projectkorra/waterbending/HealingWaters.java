@@ -1,4 +1,4 @@
-package com.projectkorra.projectkorra.waterbending;
+ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class HealingWaters {
 
+	private static final boolean shift = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.HealingWaters.ShiftRequired");
 	private static final double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.HealingWaters.Radius");
 	private static final long interval = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.HealingWaters.Interval");
 	private static final int power = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.HealingWaters.Power");
@@ -39,16 +40,15 @@ public class HealingWaters {
 
 	private static void heal(Player player) {
 		if (inWater(player)) {
-			if (player.isSneaking()) {
-				Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-				if (entity instanceof LivingEntity && inWater(entity)) {
-					giveHPToEntity((LivingEntity) entity);
-				}
-			} else {
+			Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+			if (entity instanceof LivingEntity && inWater(entity) && player.isSneaking()) {
+				giveHPToEntity((LivingEntity) entity);
+			} else if ((player.isSneaking() && shift) || (player.isSneaking() && shift)){
 				giveHP(player);
 			}
 		}
 	}
+
 
 	private static void giveHPToEntity(LivingEntity le) {
 		if (!le.isDead() && le.getHealth() < le.getMaxHealth()) {

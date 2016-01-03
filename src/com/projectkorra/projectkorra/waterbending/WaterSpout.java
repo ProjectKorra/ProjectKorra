@@ -3,6 +3,8 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -28,6 +30,8 @@ public class WaterSpout {
 	private static final int HEIGHT = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Height");
 	private static final boolean PARTICLES = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
 	private static final boolean BLOCKS = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
+	
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Wave.SelectRange");
 
 	// private static final double threshold = .05;
 	// private static final byte half = 0x4;
@@ -55,16 +59,21 @@ public class WaterSpout {
 		this.player = player;
 		this.canBendOnPackedIce = ProjectKorra.plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce");
 		
-		WaterWave wwave = new WaterWave(player, WaterWave.AbilityType.CLICK);
-		if (WaterWave.instances.contains(wwave))
-			return;
+		Block block = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, false, false, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+
+		if(block != null) {
+			WaterWave wwave = new WaterWave(player, block, WaterWave.AbilityType.CLICK);
+			if (WaterWave.instances.contains(wwave)) {
+				return;
+			}
+		}
 
 		Block topBlock = GeneralMethods.getTopBlock(player.getLocation(), 0, -50);
 		if (topBlock == null)
 			topBlock = player.getLocation().getBlock();
 		Material mat = topBlock.getType();
 		if (mat != Material.WATER && mat != Material.STATIONARY_WATER && mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW && mat != Material.SNOW_BLOCK)
-			return;
+			return; 
 		if (mat == Material.PACKED_ICE && !canBendOnPackedIce)
 			return;
 		new Flight(player);

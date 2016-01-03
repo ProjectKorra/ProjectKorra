@@ -86,6 +86,9 @@ public class WaterManipulation {
 			water.add((byte) 9);
 		}
 		this.player = player;
+		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		if (bPlayer.isOnCooldown("WaterManipulation"))
+			return;
 		if (prepare()) {
 			id = ID;
 			instances.put(id, this);
@@ -532,11 +535,6 @@ public class WaterManipulation {
 
 	@SuppressWarnings("deprecation")
 	public static void moveWater(Player player) {
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-
-		if (bPlayer.isOnCooldown("WaterManipulation"))
-			return;
-
 		if (prepared.containsKey(player)) {
 			if (instances.containsKey(prepared.get(player))) {
 				instances.get(prepared.get(player)).moveWater();

@@ -68,7 +68,7 @@ public class LavaWall {
 
 	public boolean prepare() {
 		cancelPrevious();
-		Block block = BlockSource.getEarthOrLavaSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, dynamic, true, EarthMethods.canSandbend(player));
+		Block block = BlockSource.getEarthOrLavaSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, dynamic, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
 		if (block != null) {
 			sourceblock = block;
 			focusBlock();

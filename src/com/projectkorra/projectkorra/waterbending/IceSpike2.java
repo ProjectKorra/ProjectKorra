@@ -29,12 +29,13 @@ public class IceSpike2 {
 
 	private static double RANGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
 	private static double DAMAGE = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Projectile.Damage");
+	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Projectile.SelectRange");
+	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceSpike.Projectile.DynamicSourcing.Enabled");
+	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
+
 	private static int defaultmod = 2;
 	private static int ID = Integer.MIN_VALUE;
 	static long slowCooldown = 5000;
-	
-	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceSpike.Projectile.SelectRange");
-	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceSpike.Projectile.DynamicSourcing.Enabled");
 
 	private static final long interval = 20;
 	private static final byte data = 0;
@@ -61,8 +62,10 @@ public class IceSpike2 {
 			return;
 
 		block(player);
+		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, true, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, false, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
+
 		if (sourceblock == null) {
 			new SpikeField(player);
 		} else {
@@ -308,12 +311,12 @@ public class IceSpike2 {
 				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 				new TempPotionEffect(entity, effect);
 				bPlayer.slow(slowCooldown);
-				entity.damage(damage, player);
+				GeneralMethods.damageEntity(player, entity, damage, "IceSpike");
 			}
 		} else {
 			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, mod);
 			new TempPotionEffect(entity, effect);
-			entity.damage(damage, player);
+			GeneralMethods.damageEntity(player, entity, damage, "IceSpike");
 		}
 		AirMethods.breakBreathbendingHold(entity);
 
@@ -400,7 +403,8 @@ public class IceSpike2 {
 			progressing = false;
 		}
 		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		bPlayer.addCooldown("IceSpike", GeneralMethods.getGlobalCooldown());
+		bPlayer.addCooldown("IceSpike", cooldown);
+
 		instances.remove(id);
 	}
 
@@ -442,5 +446,13 @@ public class IceSpike2 {
 
 	public void setDefaultdamage(double defaultdamage) {
 		this.defaultdamage = defaultdamage;
+	}
+	
+	public Block getBlock() {
+		return sourceblock;
+	}
+
+	public void setBlock(Block block) {
+		this.sourceblock = block;
 	}
 }

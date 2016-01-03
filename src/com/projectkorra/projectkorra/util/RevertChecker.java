@@ -73,6 +73,7 @@ public class RevertChecker implements Runnable {
 		if (config.getBoolean("Properties.Earth.RevertEarthbending")) {
 
 			try {
+				if(plugin.isEnabled()) {
 				returnFuture = plugin.getServer().getScheduler().callSyncMethod(plugin, new getOccupiedChunks(plugin.getServer()));
 				ArrayList<Chunk> chunks = returnFuture.get();
 
@@ -107,6 +108,7 @@ public class RevertChecker implements Runnable {
 					if (remove) {
 						addToAirRevertQueue(i);
 					}
+				}
 				}
 			}
 			catch (Exception e) {

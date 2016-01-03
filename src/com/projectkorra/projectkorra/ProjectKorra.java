@@ -11,6 +11,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.FirebendingManager;
+import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.MetricsLite;
 import com.projectkorra.projectkorra.util.RevertChecker;
@@ -51,13 +52,15 @@ public class ProjectKorra extends JavaPlugin {
 		}
 		new ConfigManager();
 		new GeneralMethods(this);
-		updater = new Updater(this, "http://projectkorra.com/forum/forums/dev-builds.16/index.rss");
+		updater = new Updater(this, "http://projectkorra.com/forums/dev-builds.16/index.rss");
 		new Commands(this);
 		abManager = new AbilityModuleManager(this);
 		new MultiAbilityModuleManager();
 		new MultiAbilityManager();
 		new ComboModuleManager();
 		new ComboManager();
+		
+		Preset.loadExternalPresets();
 
 		DBConnection.host = getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = getConfig().getInt("Storage.MySQL.port");

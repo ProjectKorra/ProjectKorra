@@ -177,7 +177,7 @@ public class BendingManager implements Runnable, ConfigLoadable {
 			handleCooldowns();
 		}
 		catch (Exception e) {
-			GeneralMethods.stopBending();
+			//GeneralMethods.stopBending();
 			e.printStackTrace();
 		}
 	}

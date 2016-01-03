@@ -91,7 +91,7 @@ public class FireBurst implements ConfigLoadable {
 					if (direction.angle(vector) <= angle) {
 						// Methods.verbose(direction.angle(vector));
 						// Methods.verbose(direction);
-						FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks);
+						FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks, this);
 						fblast.setRange(this.range);
 					}
 				}
@@ -221,7 +221,7 @@ public class FireBurst implements ConfigLoadable {
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
 					Vector direction = new Vector(x, z, y);
-					FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks);
+					FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks, this);
 					fblast.setRange(this.range);
 					fblast.setShowParticles(false);
 					blasts.add(fblast);

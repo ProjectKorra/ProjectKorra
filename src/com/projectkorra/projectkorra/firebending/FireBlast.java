@@ -65,8 +65,10 @@ public class FireBlast implements ConfigLoadable {
 	private double affectingradius = AFFECTING_RADIUS;
 	private boolean showParticles = true;
 	private Random rand = new Random();
+	
+	private FireBurst source = null;
 
-	public FireBlast(Location location, Vector direction, Player player, int damage, List<Block> safeblocks) {
+	public FireBlast(Location location, Vector direction, Player player, int damage, List<Block> safeblocks, FireBurst burst) {
 		/* Initial Checks */
 		if (location.getBlock().isLiquid()) {
 			return;
@@ -81,6 +83,7 @@ public class FireBlast implements ConfigLoadable {
 		origin = location.clone();
 		this.direction = direction.clone().normalize();
 		this.damage *= 1.5;
+		source = burst;
 		instances.put(idCounter, this);
 		this.id = idCounter;
 		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
@@ -182,8 +185,13 @@ public class FireBlast implements ConfigLoadable {
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks((int) (fireticks * 20));
+				if (source != null) {
+					GeneralMethods.damageEntity(player, entity,
+							(int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()), "FireBurst");
+				} else {
 				GeneralMethods.damageEntity(player, entity,
 						(int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()), "FireBlast");
+				}
 				AirMethods.breakBreathbendingHold(entity);
 				new Enflamed(entity, player);
 				remove();

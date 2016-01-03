@@ -61,7 +61,6 @@ public class Bloodbending {
 			remove(player);
 			return;
 		}
-
 		if (onlyUsableAtNight && !WaterMethods.isNight(player.getWorld()) && !WaterMethods.canBloodbendAtAnytime(player)) {
 			return;
 		}
@@ -134,7 +133,7 @@ public class Bloodbending {
 			Vector vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, location.distance(target)));
 			vector.normalize();
 			entity.setVelocity(vector.multiply(factor));
-			new HorizontalVelocityTracker(entity, player, 200, "Bloodbending", Element.Air, SubElement.Bloodbending);
+			new HorizontalVelocityTracker(entity, player, 200, "Bloodbending", Element.Water, SubElement.Bloodbending);
 		}
 		remove(player);
 	}
@@ -160,12 +159,12 @@ public class Bloodbending {
 			}
 		}
 
-		if (onlyUsableDuringMoon && !WaterMethods.isFullMoon(player.getWorld())) {
+		if (onlyUsableDuringMoon && !WaterMethods.isFullMoon(player.getWorld()) && !WaterMethods.canBloodbendAtAnytime(player)) {
 			remove(player);
 			return;
 		}
 
-		if (onlyUsableAtNight && !WaterMethods.isNight(player.getWorld())) {
+		if (onlyUsableAtNight && !WaterMethods.isNight(player.getWorld()) && !WaterMethods.canBloodbendAtAnytime(player)) {
 			remove(player);
 			return;
 		}

@@ -31,13 +31,9 @@ public class IceBlast {
 	private static double defaultrange = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceBlast.Range");
 	private static int DAMAGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Damage");
 	private static int COOLDOWN = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
-	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.AutoSourcing.SelectRange");
 	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.IceBlast.SelectRange");
-	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceBlast.AutoSourcing.Enabled");
-	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.IceBlast.AutoSourcing.Cooldown");
 	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.IceBlast.DynamicSourcing.Enabled");
 	
-	private boolean isAuto;
 	private static int ID = Integer.MIN_VALUE;
 
 	private static final long interval = 20;
@@ -71,13 +67,8 @@ public class IceBlast {
 		block(player);
 		range = WaterMethods.waterbendingNightAugment(defaultrange, player.getWorld());
 		this.player = player;
-		Block sourceblock = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto, dynamic, false, false,
+		Block sourceblock = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, false, false,
 				WaterMethods.canIcebend(player), false);
-		if (BlockSource.isAuto(sourceblock)) {
-			isAuto = true;
-		} else {
-			isAuto = false;
-		}
 
 		if (sourceblock == null) {
 			return;
@@ -174,11 +165,7 @@ public class IceBlast {
 		if (player.isOnline()) {
 			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
 			if (bPlayer != null) {
-				if (isAuto) {
-					bPlayer.addCooldown("IceBlast", autocooldown);
-				} else {
-					bPlayer.addCooldown("IceBlast", cooldown);
-				}
+				bPlayer.addCooldown("IceBlast", cooldown);
 			}
 		}
 		instances.remove(id);

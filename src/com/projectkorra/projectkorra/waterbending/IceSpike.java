@@ -83,6 +83,11 @@ public class IceSpike {
 			} else {
 				this.block = player.getTargetBlock((HashSet<Material>) null, (int) range);
 			}
+			for(IceSpike2 icespike : IceSpike2.instances.values()) {
+				if(icespike.getBlock().equals(block)) {
+					return;
+				}
+			}
 			origin = block.getLocation();
 			location = origin.clone();
 
@@ -230,7 +235,7 @@ public class IceSpike {
 
 	private void affect(LivingEntity entity) {
 		entity.setVelocity(thrown);
-		entity.damage(damage);
+		GeneralMethods.damageEntity(player, entity, damage, "IceSpike");
 		damaged.add(entity);
 		long slowCooldown = IceSpike2.slowCooldown;
 		int mod = 2;
