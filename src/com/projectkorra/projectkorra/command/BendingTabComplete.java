@@ -198,7 +198,7 @@ public class BendingTabComplete implements TabCompleter {
 				return getPossibleCompletionsForGivenArgs(args, l);
 			} else if (args[0].equalsIgnoreCase("copy") || args[0].equalsIgnoreCase("co")) {
 				//If they can't use the command, have over 3 args (copy <player> <player>), or if have over 2 args and can't assign to other players
-				if (!sender.hasPermission("bending.command.copy") || args.length > 3 || (args.length > 2 && !sender.hasPermission("bending.command.copy.assign"))) 
+				if (!sender.hasPermission("bending.command.copy") || args.length > 4 || (args.length > 3 && !sender.hasPermission("bending.command.copy.assign"))) 
 					return new ArrayList<String>(); //Return nothing
 				List<String> l = new ArrayList<String>();
 				for (Player p : Bukkit.getOnlinePlayers()) {
