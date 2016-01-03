@@ -35,7 +35,7 @@ public class BlockSource {
 
 	public static List<Block> randomBlocks = new ArrayList<Block>();
 	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>>();
-	private static final boolean spout = ProjectKorra.plugin.getConfig().getBoolean("Properties.Water.CanBendFromSpout");
+	private static final boolean tempblock = ProjectKorra.plugin.getConfig().getBoolean("Properties.Water.CanBendFromBentBlocks");
 	// The player should never need to grab source blocks from farther than this.
 
 	/**
@@ -229,7 +229,7 @@ public class BlockSource {
 				sourceBlock = WaterMethods.getRandomWaterBlock(player, player.getLocation(), autoRange, water, ice, plant);
 			}
 		}
-		if(sourceBlock != null && TempBlock.isTempBlock(sourceBlock) && spout) {
+		if(sourceBlock != null && TempBlock.isTempBlock(sourceBlock) && !tempblock) {
 			return null;
 		}
 		return sourceBlock;
