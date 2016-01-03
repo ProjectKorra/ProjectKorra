@@ -83,6 +83,11 @@ public class IceSpike {
 			} else {
 				this.block = player.getTargetBlock((HashSet<Material>) null, (int) range);
 			}
+			for(IceSpike2 icespike : IceSpike2.instances.values()) {
+				if(icespike.getBlock().equals(block)) {
+					return;
+				}
+			}
 			origin = block.getLocation();
 			location = origin.clone();
 

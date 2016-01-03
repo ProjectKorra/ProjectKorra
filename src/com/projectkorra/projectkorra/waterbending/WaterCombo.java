@@ -54,10 +54,7 @@ public class WaterCombo {
 			"Abilities.Water.WaterCombo.IceBullet.Cooldown");
 	public static long ICE_BULLET_SHOOT_TIME = ProjectKorra.plugin.getConfig().getLong(
 			"Abilities.Water.WaterCombo.IceBullet.ShootTime");
-	private static int icebullet_selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterCombo.IceBullet.SelectRange");
-	
-	//private boolean IceBulletisAuto;
-	
+
 	public static ArrayList<WaterCombo> instances = new ArrayList<WaterCombo>();
 	public static ConcurrentHashMap<Block, TempBlock> frozenBlocks = new ConcurrentHashMap<Block, TempBlock>();
 

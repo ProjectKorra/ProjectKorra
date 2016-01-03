@@ -447,4 +447,12 @@ public class IceSpike2 {
 	public void setDefaultdamage(double defaultdamage) {
 		this.defaultdamage = defaultdamage;
 	}
+	
+	public Block getBlock() {
+		return sourceblock;
+	}
+
+	public void setBlock(Block block) {
+		this.sourceblock = block;
+	}
 }
