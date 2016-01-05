@@ -1,8 +1,11 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.rpg.event.EventManager;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -11,12 +14,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingManager;
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FireBurst implements ConfigLoadable {
 
@@ -51,8 +51,8 @@ public class FireBurst implements ConfigLoadable {
 		}
 		if (AvatarState.isAvatarState(player))
 			chargetime = 0;
-		if (BendingManager.events.containsKey(player.getWorld())) {
-			if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet"))
+		if (EventManager.marker.containsKey(player.getWorld())) {
+			if (EventManager.marker.get(player.getWorld()).equalsIgnoreCase("SozinsComet"))
 				chargetime = 0;
 		}
 		this.player = player;

@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
@@ -9,7 +8,7 @@ import com.projectkorra.projectkorra.chiblocking.ChiMethods;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.rpg.RPGMethods;
-import com.projectkorra.rpg.WorldEvents;
+import com.projectkorra.rpg.event.EventManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -99,18 +98,16 @@ public class WaterMethods {
 	public static double getWaterbendingNightAugment(World world) {
 		if (GeneralMethods.hasRPG()) {
 			if (isNight(world)) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
-					return RPGMethods.getFactor(WorldEvents.LunarEclipse);
-				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
-					return config.getDouble("Properties.Water.FullMoonFactor");
+				if (EventManager.marker.get(world).equalsIgnoreCase("LunarEclipse")) {
+					return RPGMethods.getFactor("LunarEclipse");
+				} else if (EventManager.marker.get(world).equalsIgnoreCase("FullMoon")) {
+					return RPGMethods.getFactor("FullMoon");
 				}
 				return config.getDouble("Properties.Water.NightFactor");
 			} else {
 				return 1;
 			}
 		} else {
-			if (isNight(world) && BendingManager.events.get(world).equalsIgnoreCase("FullMoon"))
-				return config.getDouble("Properties.Water.FullMoonFactor");
 			if (isNight(world))
 				return config.getDouble("Properties.Water.NightFactor");
 			return 1;
@@ -154,7 +151,7 @@ public class WaterMethods {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location))
 				continue;
-			if (isWater(block) && block.getData() == 0x0  && water) {
+			if (isWater(block) && block.getData() == 0x0 && water) {
 				if (TempBlock.isTempBlock(block)) {
 					TempBlock tb = TempBlock.get(block);
 					byte full = 0x0;
@@ -192,7 +189,7 @@ public class WaterMethods {
 	        checked.add(index);
 	        Block block = blocks.get(index);
 	        if (block.getRelative(BlockFace.UP).getType() == Material.AIR) {
-	        	if (isWater(block) && block.getState().getRawData() == 0x0 && water) {
+	        	if (isWater(block) && block.getState().getRawData() == 0x0 &&  water) {
 	        		BlockSource.randomBlocks.add(block);
 	        		return block;
 	        	}
@@ -347,26 +344,23 @@ public class WaterMethods {
 	public static void removeWaterSpouts(Location loc, Player source) {
 		removeWaterSpouts(loc, 1.5, source);
 	}
-
-	public static double waterbendingNightAugment(double value, World world) {
-		if (isNight(world)) {
-			if (GeneralMethods.hasRPG()) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
-					return RPGMethods.getFactor(WorldEvents.LunarEclipse) * value;
-				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
-					return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
-				} else {
-					return value;
+	
+	public static double waterbendingNightAugment(double factor, World world) {
+		if (GeneralMethods.hasRPG()) {
+			if (isNight(world)) {
+				if (EventManager.marker.get(world).equalsIgnoreCase("LunarEclipse")) {
+					return RPGMethods.getFactor("LunarEclipse") * factor;
+				} else if (EventManager.marker.get(world).equalsIgnoreCase("FullMoon")) {
+					return RPGMethods.getFactor("FullMoon") * factor;
 				}
+				return config.getDouble("Properties.Water.NightFactor") * factor;
 			} else {
-				if (isFullMoon(world)) {
-					return plugin.getConfig().getDouble("Properties.Water.FullMoonFactor") * value;
-				} else {
-					return plugin.getConfig().getDouble("Properties.Water.NightFactor") * value;
-				}
+				return 1 * factor;
 			}
 		} else {
-			return value;
+			if (isNight(world))
+				return config.getDouble("Properties.Water.NightFactor") * factor;
+			return 1 * factor;
 		}
 	}
 

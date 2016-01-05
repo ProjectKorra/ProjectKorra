@@ -1,8 +1,11 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,13 +17,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingManager;
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Lightning implements ConfigLoadable {
 	
@@ -93,9 +92,6 @@ public class Lightning implements ConfigLoadable {
 			chainArcChance = AvatarState.getValue(chainArcChance);
 			chainRange = AvatarState.getValue(chainRange);
 			stunChance = AvatarState.getValue(stunChance);
-		} else if (BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SozinsComet")) {
-			chargeTime = 0;
-			cooldown = 0;
 		}
 		instances.put(idCounter, this);
 		this.id = idCounter;
