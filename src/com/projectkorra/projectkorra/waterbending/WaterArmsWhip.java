@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -10,7 +9,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterArms.Arm;
-import com.projectkorra.rpg.WorldEvents;
+import com.projectkorra.rpg.event.EventManager;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -105,13 +104,13 @@ public class WaterArmsWhip {
 		World world = player.getWorld();
 		if (WaterMethods.isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
+				if (EventManager.marker.get(world).equalsIgnoreCase("LunarEclipse")) {
 					if (ability.equals(Whip.Punch)) {
-						whipLength = punchLengthFullMoon;
+						whipLength = 0;
 					} else {
-						whipLength = whipLengthFullMoon;
+						whipLength = 0;
 					}
-				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+				} else if (EventManager.marker.get(world).equalsIgnoreCase("FullMoon")) {
 					if (ability.equals(Whip.Punch)) {
 						whipLength = punchLengthFullMoon;
 					} else {

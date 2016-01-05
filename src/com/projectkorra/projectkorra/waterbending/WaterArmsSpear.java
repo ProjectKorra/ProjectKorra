@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
@@ -8,7 +7,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterArms.Arm;
-import com.projectkorra.rpg.WorldEvents;
+import com.projectkorra.rpg.event.EventManager;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -78,11 +77,11 @@ public class WaterArmsSpear {
 		World world = player.getWorld();
 		if (WaterMethods.isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.LunarEclipse.toString())) {
-					spearRange = spearRangeFullMoon;
-					spearSphere = spearSphereFullMoon;
-					spearDuration = spearDurationFullMoon;
-				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+				if (EventManager.marker.get(world).equalsIgnoreCase("LunarEclipse")) {
+					spearRange = 0;
+					spearSphere = 0;
+					spearDuration = 0;
+				} else if (EventManager.marker.get(world).equalsIgnoreCase("FullMoon")) {
 					spearRange = spearRangeFullMoon;
 					spearSphere = spearSphereFullMoon;
 					spearDuration = spearDurationFullMoon;
@@ -92,15 +91,9 @@ public class WaterArmsSpear {
 					spearDuration = spearDurationNight;
 				}
 			} else {
-				if (WaterMethods.isFullMoon(world)) {
-					spearRange = spearRangeFullMoon;
-					spearSphere = spearSphereFullMoon;
-					spearDuration = spearDurationFullMoon;
-				} else {
-					spearRange = spearRangeNight;
-					spearSphere = spearSphereNight;
-					spearDuration = spearDurationNight;
-				}
+				spearRange = spearRangeNight;
+				spearSphere = spearSphereNight;
+				spearDuration = spearDurationNight;
 			}
 		}
 	}

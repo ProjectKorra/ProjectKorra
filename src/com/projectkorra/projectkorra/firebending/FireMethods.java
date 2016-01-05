@@ -1,13 +1,12 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AbilityModuleManager;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.rpg.RPGMethods;
-import com.projectkorra.rpg.WorldEvents;
+import com.projectkorra.rpg.event.EventManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -107,10 +106,10 @@ public class FireMethods {
 	public static double getFirebendingDayAugment(double value, World world) {
 		if (isDay(world)) {
 			if (GeneralMethods.hasRPG()) {
-				if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.SozinsComet.toString())) {
-					return RPGMethods.getFactor(WorldEvents.SozinsComet) * value;
-				} else if (BendingManager.events.get(world).equalsIgnoreCase(WorldEvents.SolarEclipse.toString())) {
-					return RPGMethods.getFactor(WorldEvents.SolarEclipse) * value;
+				if (EventManager.marker.get(world).equalsIgnoreCase("SozinsComet")) {
+					return RPGMethods.getFactor("SozinsComet") * value;
+				} else if (EventManager.marker.get(world).equalsIgnoreCase("SolarEclipse")) {
+					return RPGMethods.getFactor("SolarEclipse") * value;
 				} else {
 					return value * config.getDouble("Properties.Fire.DayFactor");
 				}
