@@ -95,6 +95,7 @@ public class EarthSmash {
 				flySpeed = AvatarState.getValue(flySpeed);
 				flightRemove = Integer.MAX_VALUE;
 				shootRange = AvatarState.getValue(shootRange);
+				GRAB_DETECTION_RADIUS = AvatarState.getValue(shootRange);
 			}
 
 			EarthSmash flySmash = flyingInSmashCheck(player);
@@ -107,13 +108,17 @@ public class EarthSmash {
 
 			EarthSmash grabbedSmash = aimingAtSmashCheck(player, null);
 			if (grabbedSmash == null) {
-				if (bplayer.isOnCooldown("EarthSmash")) {
-					return;
-				}
 				
 				grabbedSmash = aimingAtSmashCheck(player, State.SHOT);
 			}
-			if (grabbedSmash != null && grabbedSmash.state == State.LIFTED) {
+			else if (grabbedSmash != null && grabbedSmash.state == State.LIFTED) {
+
+				grabbedSmash.state = State.GRABBED;
+				grabbedSmash.grabbedRange = grabbedSmash.loc.distance(player.getEyeLocation());
+				grabbedSmash.player = player;
+				return;
+			}
+			else if (grabbedSmash != null && grabbedSmash.state == State.SHOT && grabbedSmash.player != player && grabbedSmash == aimingAtSmashCheck(player, State.SHOT)) {
 
 				grabbedSmash.state = State.GRABBED;
 				grabbedSmash.grabbedRange = grabbedSmash.loc.distance(player.getEyeLocation());
@@ -187,10 +192,14 @@ public class EarthSmash {
 				tempLoc.add(0, 0.3, 0);
 				ParticleEffect.SMOKE.display(tempLoc, 0.3F, 0.1F, 0.3F, 0, 4);
 			}
+			if (bplayer.isOnCooldown("EarthSmash")) {
+				return;
+			}
 		} else if (state == State.LIFTING) {
 			if (System.currentTimeMillis() - delay >= LIFT_ANIMATION_COOLDOWN) {
 				delay = System.currentTimeMillis();
 				animateLift();
+				bplayer.addCooldown("EarthSmash", cooldown);
 			}
 		} else if (state == State.GRABBED) {
 			if (player.isSneaking()) {
@@ -214,7 +223,7 @@ public class EarthSmash {
 			}
 		} else if (state == State.SHOT) {
 			if (System.currentTimeMillis() - delay >= SHOOTING_ANIMATION_COOLDOWN) {
-				bplayer.addCooldown("EarthSmash", cooldown);
+				
 				delay = System.currentTimeMillis();
 				if (GeneralMethods.isRegionProtectedFromBuild(player, "EarthSmash", loc)) {
 					remove();
@@ -489,12 +498,14 @@ public class EarthSmash {
 		 */
 		if (!ALLOW_GRAB)
 			return null;
+
 		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, GRAB_DETECTION_RADIUS, GeneralMethods.nonOpaque), 1);
 		for (EarthSmash smash : instances) {
 			if (reqState == null || smash.state == reqState)
-				for (Block block : blocks)
-					if (block.getLocation().getWorld() == smash.loc.getWorld() && block.getLocation().distanceSquared(smash.loc) <= Math.pow(GRAB_DETECTION_RADIUS, 2))
+				for (Block block : blocks) {
+					if (block.getLocation().getWorld() == smash.loc.getWorld() && block.getLocation().distanceSquared(smash.loc) <= Math.pow(2.5, 2))
 						return smash;
+				}
 		}
 		return null;
 	}
