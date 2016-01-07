@@ -147,7 +147,7 @@ public class Preset {
 		HashMap<Integer, String> abilities = (HashMap<Integer, String>) preset.abilities.clone();
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
-			if (!GeneralMethods.canBend(player.getName(), abilities.get(i))) {
+			if (!GeneralMethods.canBind(player.getName(), abilities.get(i))) {
 				abilities.remove(i);
 				boundAll = false;
 			}
