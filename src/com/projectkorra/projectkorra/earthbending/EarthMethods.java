@@ -697,8 +697,8 @@ public class EarthMethods {
 			if (sourceblock.getType() == Material.AIR || sourceblock.isLiquid()) {
 				info.getState().update(true);
 			} else {
-				GeneralMethods.dropItems(block,
-						GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), pickaxe));
+//				GeneralMethods.dropItems(block,
+//						GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), pickaxe));
 			}
 
 			if (GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
