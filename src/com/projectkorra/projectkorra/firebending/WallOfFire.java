@@ -17,7 +17,10 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AvatarState;
 import com.projectkorra.projectkorra.airbending.AirMethods;
 import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.earthbending.EarthMethods;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 public class WallOfFire implements ConfigLoadable {
 
@@ -97,13 +100,18 @@ public class WallOfFire implements ConfigLoadable {
 	}
 
 	private void affect(Entity entity) {
-		entity.setFireTicks((int) (FIRETICKS * 20));
-		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
 		if (entity instanceof LivingEntity) {
+			LivingEntity e = (LivingEntity) entity;
+			Block block = e.getEyeLocation().getBlock();
+			if (TempBlock.isTempBlock(block) && WaterMethods.isIcebendable(block)) {
+				return;
+			}
 			GeneralMethods.damageEntity(player, entity, damage, "WallOfFire");
 			new Enflamed(entity, player);
 			AirMethods.breakBreathbendingHold(entity);
 		}
+		entity.setFireTicks((int) (FIRETICKS * 20));
+		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
 	}
 
 	private void damage() {
@@ -128,6 +136,9 @@ public class WallOfFire implements ConfigLoadable {
 
 	private void display() {
 		for (Block block : blocks) {
+			if (!EarthMethods.isTransparentToEarthbending(player, block)) {
+				continue;
+			}
 			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 3);
 			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 
