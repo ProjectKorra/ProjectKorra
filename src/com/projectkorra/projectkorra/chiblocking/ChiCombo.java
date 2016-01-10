@@ -100,6 +100,9 @@ public class ChiCombo {
 						remove.add(instances.indexOf(c));
 				}
 				for (int i : remove) {
+					if (i >= instances.size()) {
+						continue;
+					}
 					instances.remove(i);
 				}
 			}
