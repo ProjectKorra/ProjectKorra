@@ -32,7 +32,7 @@ public class HelpCommand extends PKCommand {
 		else if (args.size() == 0) {
 			List<String> strings = new ArrayList<String>();
 			for (PKCommand command : instances.values()) {
-				if (!command.getName().equalsIgnoreCase("help")) {
+				if (!command.getName().equalsIgnoreCase("help") && sender.hasPermission("bending.command." + command.getName())) {
 					strings.add(command.getProperUse());
 				}
 			}
@@ -51,7 +51,7 @@ public class HelpCommand extends PKCommand {
 		if (isNumeric(arg)) {
 			List<String> strings = new ArrayList<String>();
 			for (PKCommand command : instances.values()) {
-				if (!command.getName().equalsIgnoreCase("help")) {
+				if (!command.getName().equalsIgnoreCase("help") && sender.hasPermission("bending.command." + command.getName())) {
 					strings.add(command.getProperUse());
 				}
 			}
