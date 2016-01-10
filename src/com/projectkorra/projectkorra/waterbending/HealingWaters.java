@@ -43,7 +43,7 @@ public class HealingWaters {
 			Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 			if (entity instanceof LivingEntity && inWater(entity) && player.isSneaking()) {
 				giveHPToEntity((LivingEntity) entity);
-			} else if ((player.isSneaking() && shift) || (player.isSneaking() && shift)){
+			} else if ((player.isSneaking() && shift) || !shift){
 				giveHP(player);
 			}
 		}
