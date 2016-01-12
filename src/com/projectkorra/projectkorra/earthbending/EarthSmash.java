@@ -503,6 +503,9 @@ public class EarthSmash {
 		for (EarthSmash smash : instances) {
 			if (reqState == null || smash.state == reqState)
 				for (Block block : blocks) {
+					if (block == null || smash.loc == null) {
+						continue;
+					}
 					if (block.getLocation().getWorld() == smash.loc.getWorld() && block.getLocation().distanceSquared(smash.loc) <= Math.pow(2.5, 2))
 						return smash;
 				}
