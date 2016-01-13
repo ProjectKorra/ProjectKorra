@@ -1,6 +1,11 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CombustionAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,90 +15,73 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+public class Combustion extends CombustionAbility {
 
-public class Combustion implements ConfigLoadable {
-
-	public static long chargeTime = config.get().getLong("Abilities.Fire.Combustion.ChargeTime");
-	public static long cooldown = config.get().getLong("Abilities.Fire.Combustion.Cooldown");
-
-	public static double speed = config.get().getDouble("Abilities.Fire.Combustion.Speed");
-	public static double defaultrange = config.get().getDouble("Abilities.Fire.Combustion.Range");
-	public static double defaultpower = config.get().getDouble("Abilities.Fire.Combustion.Power");
-	public static boolean breakblocks = config.get().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
-	public static double radius = config.get().getDouble("Abilities.Fire.Combustion.Radius");
-	public static double defaultdamage = config.get().getDouble("Abilities.Fire.Combustion.Damage");
-
-	public static ConcurrentHashMap<Player, Combustion> instances = new ConcurrentHashMap<>();
-
-	private static final int maxticks = 10000;
-
-	private Location location;
-	private Location origin;
-	private Player player;
-	private Vector direction;
-	private double range = defaultrange;
-	private double speedfactor;
-	private int ticks = 0;
+	private static final int MAX_TICKS = 10000;
+	
+	private boolean breakBlocks;
+	private int ticks;
+	private long cooldown;
+	private long chargeTime;
 	private float power;
 	private double damage;
-	@SuppressWarnings("unused")
-	private long starttime;
-	@SuppressWarnings("unused")
-	private boolean charged = false;
+	private double radius;
+	private double speed;
+	private double range;
+	private double speedFactor;
+	private Location location;
+	private Location origin;
+	private Vector direction;
 
 	public Combustion(Player player) {
-		/* Initial Checks */
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (instances.containsKey(player))
-			return;
-		if (bPlayer.isOnCooldown("Combustion"))
-			return;
-		/* End Initial Checks */
-		// reloadVariables();
-		this.player = player;
-		starttime = System.currentTimeMillis();
-		origin = player.getEyeLocation();
-		direction = player.getEyeLocation().getDirection().normalize();
-		location = origin.clone();
-		if (AvatarState.isAvatarState(player)) {
-			range = AvatarState.getValue(defaultrange);
-			damage = AvatarState.getValue(defaultdamage);
-		} else if (FireMethods.isDay(player.getWorld())) {
-			range = FireMethods.getFirebendingDayAugment(defaultrange, player.getWorld());
-			damage = FireMethods.getFirebendingDayAugment(defaultdamage, player.getWorld());
-		} else {
-			range = defaultrange;
-			damage = defaultdamage;
-		}
-
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "Combustion", GeneralMethods.getTargetedLocation(player, range))) {
+		super(player);
+		
+		if (hasAbility(player, Combustion.class) || !bPlayer.canBend(this)) {
 			return;
 		}
+		
+		this.ticks = 0;
+		this.breakBlocks = getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
+		this.power = (float) getConfig().getDouble("Abilities.Fire.Combustion.Power");
+		this.cooldown = getConfig().getLong("Abilities.Fire.Combustion.Cooldown");
+		this.chargeTime = getConfig().getLong("Abilities.Fire.Combustion.ChargeTime");
+		this.damage = getConfig().getDouble("Abilities.Fire.Combustion.Damage");
+		this.radius = getConfig().getDouble("Abilities.Fire.Combustion.Radius");
+		this.speed = getConfig().getDouble("Abilities.Fire.Combustion.Speed");
+		this.range = getConfig().getDouble("Abilities.Fire.Combustion.Range");
+		this.origin = player.getEyeLocation();
+		this.direction = player.getEyeLocation().getDirection().normalize();
+		this.location = origin.clone();
+		
+		if (bPlayer.isAvatarState()) {
+			range = AvatarState.getValue(range);
+			damage = AvatarState.getValue(damage);
+		} else if (isDay(player.getWorld())) {
+			range = getDayFactor(range);
+			damage = getDayFactor(damage);
+		}
 
-		instances.put(player, this);
-		bPlayer.addCooldown("Combustion", cooldown);
+		if (GeneralMethods.isRegionProtectedFromBuild(this, GeneralMethods.getTargetedLocation(player, range))) {
+			return;
+		}
+
+		start();
+		bPlayer.addCooldown(this);
 	}
 
 	public static void explode(Player player) {
-		if (instances.containsKey(player)) {
-			Combustion combustion = instances.get(player);
-			combustion.createExplosion(combustion.location, combustion.power, breakblocks);
+		Combustion combustion = getAbility(player, Combustion.class);
+		if (combustion != null) {
+			combustion.createExplosion(combustion.location, combustion.power, combustion.breakBlocks);
 			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(),
 					(float) Math.random(), 0, 3);
 		}
 	}
 
 	public static boolean removeAroundPoint(Location loc, double radius) {
-		for (Combustion combustion : instances.values()) {
-			if (combustion.location.getWorld() == loc.getWorld()) {
-				if (combustion.location.distance(loc) <= radius) {
+		for (Combustion combustion : getAbilities(Combustion.class)) {
+			if (combustion.location.getWorld().equals(loc.getWorld())) {
+				if (combustion.location.distanceSquared(loc) <= radius * radius) {
 					explode(combustion.getPlayer());
 					combustion.remove();
 					return true;
@@ -104,113 +92,188 @@ public class Combustion implements ConfigLoadable {
 	}
 
 	private void advanceLocation() {
-		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random() / 2, (float) Math.random() / 2,
-				(float) Math.random() / 2, 0, 5);
-		ParticleEffect.FLAME.display(location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2,
-				0, 2);
-		// if (Methods.rand.nextInt(4) == 0) {
-		FireMethods.playCombustionSound(location);
-		// }
-		location = location.add(direction.clone().multiply(speedfactor));
+		ParticleEffect.FIREWORKS_SPARK.display(location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2, 0, 5);
+		ParticleEffect.FLAME.display(location, (float) Math.random() / 2, (float) Math.random() / 2, (float) Math.random() / 2, 0, 2);
+		playCombustionSound(location);
+		location = location.add(direction.clone().multiply(speedFactor));
 	}
 
-	private void createExplosion(Location block, float power, boolean breakblocks) {
-		block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), (float) defaultpower, true, breakblocks);
+	private void createExplosion(Location block, float power, boolean canBreakBlocks) {
+		block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), power, true, canBreakBlocks);
 		for (Entity entity : block.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distance(block) < radius) { // They are close enough to the
-																		// explosion.
-					GeneralMethods.damageEntity(player, entity, damage, "Combustion");
-					AirMethods.breakBreathbendingHold(entity);
+				if (entity.getLocation().distanceSquared(block) < radius * radius) { // They are close enough to the explosion.
+					GeneralMethods.damageEntity(this, entity, damage);
+					AirAbility.breakBreathbendingHold(entity);
 				}
 			}
 		}
 		remove();
-
 	}
 
-	public boolean progress() {
-		if (!instances.containsKey(player)) {
-			return false;
-		}
-
-		if (player.isDead() || !player.isOnline()) {
+	@Override
+	public void progress() {
+		if (!bPlayer.canBendIgnoreCooldowns(this)) {
 			remove();
-			return false;
-		}
-
-		if (!GeneralMethods.canBend(player.getName(), "Combustion")) {
+			return;
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 			remove();
-			return false;
+			return;
 		}
 
-		if (GeneralMethods.getBoundAbility(player) == null
-				|| !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Combustion")) {
-			remove();
-			return false;
-		}
-
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "Combustion", location)) {
-			remove();
-			return false;
-		}
-
-		speedfactor = speed * (ProjectKorra.time_step / 1000.);
+		speedFactor = speed * (ProjectKorra.time_step / 1000.0);
 		ticks++;
-		if (ticks > maxticks) {
+		if (ticks > MAX_TICKS) {
 			remove();
-			return false;
-		}
-
-		if (location.distance(origin) > range) {
+			return;
+		} else if (location.distanceSquared(origin) > range * range) {
 			remove();
-			return false;
+			return;
 		}
 
 		Block block = location.getBlock();
 		if (block != null) {
-			if (block.getType() != Material.AIR && block.getType() != Material.WATER
-					&& block.getType() != Material.STATIONARY_WATER) {
-				createExplosion(block.getLocation(), power, breakblocks);
+			if (block.getType() != Material.AIR && !isWater(block)) {
+				createExplosion(block.getLocation(), power, breakBlocks);
 			}
 		}
 
 		for (Entity entity : location.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distance(location) <= 2 && !entity.equals(player)) {
-					createExplosion(location, power, breakblocks);
+				if (entity.getLocation().distanceSquared(location) <= 4 && !entity.equals(player)) {
+					createExplosion(location, power, breakBlocks);
 				}
 			}
 		}
-
 		advanceLocation();
-		return true;
-	}
-
-	public static void progressAll() {
-		for (Combustion ability : instances.values()) {
-			ability.progress();
-		}
 	}
 
 	@Override
-	public void reloadVariables() {
-		chargeTime = config.get().getLong("Abilities.Fire.Combustion.ChargeTime");
-		cooldown = config.get().getLong("Abilities.Fire.Combustion.Cooldown");
-
-		speed = config.get().getDouble("Abilities.Fire.Combustion.Speed");
-		defaultrange = config.get().getDouble("Abilities.Fire.Combustion.Range");
-		defaultpower = config.get().getDouble("Abilities.Fire.Combustion.Power");
-		breakblocks = config.get().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
-		radius = config.get().getDouble("Abilities.Fire.Combustion.Radius");
-		defaultdamage = config.get().getDouble("Abilities.Fire.Combustion.Damage");
+	public String getName() {
+		return "Combustion";
 	}
 
-	public void remove() {
-		instances.remove(player);
+	@Override
+	public Location getLocation() {
+		if (location != null) {
+			return location;
+		}
+		return origin;
 	}
 
-	public Player getPlayer() {
-		return player;
+	@Override
+	public long getCooldown() {
+		return cooldown;
 	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public boolean isBreakBlocks() {
+		return breakBlocks;
+	}
+
+	public void setBreakBlocks(boolean breakBlocks) {
+		this.breakBlocks = breakBlocks;
+	}
+
+	public int getTicks() {
+		return ticks;
+	}
+
+	public void setTicks(int ticks) {
+		this.ticks = ticks;
+	}
+
+	public long getChargeTime() {
+		return chargeTime;
+	}
+
+	public void setChargeTime(long chargeTime) {
+		this.chargeTime = chargeTime;
+	}
+
+	public float getPower() {
+		return power;
+	}
+
+	public void setPower(float power) {
+		this.power = power;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getSpeedFactor() {
+		return speedFactor;
+	}
+
+	public void setSpeedFactor(double speedFactor) {
+		this.speedFactor = speedFactor;
+	}
+
+	public Location getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+
+	public Vector getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Vector direction) {
+		this.direction = direction;
+	}
+
+	public static long getMaxTicks() {
+		return MAX_TICKS;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+	
 }

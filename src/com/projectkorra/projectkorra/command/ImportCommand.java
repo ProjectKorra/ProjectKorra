@@ -4,7 +4,6 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.StockAbility;
 import com.projectkorra.projectkorra.storage.DBConnection;
 
 import org.bukkit.Bukkit;
@@ -56,30 +55,18 @@ public class ImportCommand extends PKCommand {
 			String playername = string;
 			@SuppressWarnings("deprecation")
 			UUID uuid = ProjectKorra.plugin.getServer().getOfflinePlayer(playername).getUniqueId();
-			ArrayList<Element> element = new ArrayList<Element>();
-			List<Integer> oe = bendingPlayers.getIntegerList(string + ".BendingTypes");
-			HashMap<Integer, String> abilities = new HashMap<Integer, String>();
-			List<Integer> oa = bendingPlayers.getIntegerList(string + ".SlotAbilities");
+			ArrayList<Element> elements = new ArrayList<Element>();
+			List<Integer> bendingTypes = bendingPlayers.getIntegerList(string + ".BendingTypes");
 			boolean permaremoved = bendingPlayers.getBoolean(string + ".Permaremoved");
-
-			int slot = 1;
-			for (int i : oa) {
-				if (StockAbility.getAbility(i) != null) {
-					abilities.put(slot, StockAbility.getAbility(i).toString());
-					slot++;
-				} else {
-					abilities.put(slot, null);
-					slot++;
+			Element[] mainElements = Element.getMainElements();
+			
+			for (int i : bendingTypes) {
+				if (i < mainElements.length) {
+					elements.add(mainElements[i]);
 				}
 			}
 
-			for (int i : oe) {
-				if (Element.getType(i) != null) {
-					element.add(Element.getType(i));
-				}
-			}
-
-			BendingPlayer bPlayer = new BendingPlayer(uuid, playername, element, abilities, permaremoved);
+			BendingPlayer bPlayer = new BendingPlayer(uuid, playername, elements, new HashMap<Integer, String>(), permaremoved);
 			bPlayers.add(bPlayer);
 		}
 
@@ -110,15 +97,15 @@ public class ImportCommand extends PKCommand {
 					}
 					StringBuilder elements = new StringBuilder();
 					BendingPlayer bPlayer = bPlayers.pop();
-					if (bPlayer.hasElement(Element.Air))
+					if (bPlayer.hasElement(Element.AIR))
 						elements.append("a");
-					if (bPlayer.hasElement(Element.Water))
+					if (bPlayer.hasElement(Element.WATER))
 						elements.append("w");
-					if (bPlayer.hasElement(Element.Earth))
+					if (bPlayer.hasElement(Element.EARTH))
 						elements.append("e");
-					if (bPlayer.hasElement(Element.Fire))
+					if (bPlayer.hasElement(Element.FIRE))
 						elements.append("f");
-					if (bPlayer.hasElement(Element.Chi))
+					if (bPlayer.hasElement(Element.CHI))
 						elements.append("c");
 
 					HashMap<Integer, String> abilities = bPlayer.getAbilities();

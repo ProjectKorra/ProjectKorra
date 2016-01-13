@@ -14,9 +14,5 @@ public enum ConfigType {
 	/**
 	 * Death Message configuration represented by deathmessages.yml
 	 */
-	DEATH_MESSAGE,
-	/**
-	 * Preset configuration represented by presets.yml
-	 */
-	PRESETS;
+	DEATH_MESSAGE;
 }

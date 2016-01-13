@@ -1,32 +1,26 @@
 package com.projectkorra.projectkorra;
 
-import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.chiblocking.ChiCombo;
-import com.projectkorra.projectkorra.chiblocking.RapidPunch;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.firebending.FireMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public class BendingManager implements Runnable, ConfigLoadable {
+public class BendingManager implements Runnable {
 
 	private static BendingManager instance;
-
-	private static String sunriseMessage = config.get().getString("Properties.Fire.DayMessage");
-	private static String sunsetMessage = config.get().getString("Properties.Fire.NightMessage");
-
-	private static String moonriseMessage = config.get().getString("Properties.Water.NightMessage");
-	private static String moonsetMessage = config.get().getString("Properties.Water.DayMessage");
+	public static HashMap<World, String> events = new HashMap<World, String>(); // holds any current event.
 
 	long time;
 	long interval;
@@ -55,34 +49,44 @@ public class BendingManager implements Runnable, ConfigLoadable {
 	public void handleDayNight() {
 		for (World world : Bukkit.getServer().getWorlds()) {
 			if (!times.containsKey(world)) {
-				if (FireMethods.isDay(world)) {
+				if (FireAbility.isDay(world)) {
 					times.put(world, true);
 				} else {
 					times.put(world, false);
 				}
 			} else {
-				if (times.get(world) && !FireMethods.isDay(world)) {
+				if (times.get(world) && !FireAbility.isDay(world)) {
 					// The hashmap says it is day, but it is not.
 					times.put(world, false); // Sets time to night.
 					for (Player player : world.getPlayers()) {
-						if (GeneralMethods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.daymessage")) {
-							player.sendMessage(WaterMethods.getWaterColor() + moonriseMessage);
+						BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+						if (bPlayer == null) {
+							continue;
 						}
-						if (GeneralMethods.isBender(player.getName(), Element.Fire) && player.hasPermission("bending.message.nightmessage")) {
-							player.sendMessage(FireMethods.getFireColor() + sunsetMessage);
+						
+						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.daymessage")) {
+							player.sendMessage(Element.WATER.getColor() + getMoonriseMessage());
+						}
+						if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.nightmessage")) {
+							player.sendMessage(Element.FIRE.getColor() + getSunsetMessage());
 						}
 					}
 				}
 
-				if (!times.get(world) && FireMethods.isDay(world)) {
+				if (!times.get(world) && FireAbility.isDay(world)) {
 					// The hashmap says it is night, but it is day.
 					times.put(world, true);
 					for (Player player : world.getPlayers()) {
-						if (GeneralMethods.isBender(player.getName(), Element.Water) && player.hasPermission("bending.message.nightmessage")) {
-							player.sendMessage(WaterMethods.getWaterColor() + moonsetMessage);
+						BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+						if (bPlayer == null) {
+							continue;
 						}
-						if (GeneralMethods.isBender(player.getName(), Element.Fire) && player.hasPermission("bending.message.daymessage")) {
-							player.sendMessage(FireMethods.getFireColor() + sunriseMessage);
+						
+						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.nightmessage")) {
+							player.sendMessage(Element.WATER.getColor() + getMoonsetMessage());
+						}
+						if (bPlayer.hasElement(Element.FIRE) && player.hasPermission("bending.message.daymessage")) {
+							player.sendMessage(Element.FIRE.getColor() + getSunriseMessage());
 						}
 					}
 				}
@@ -96,29 +100,54 @@ public class BendingManager implements Runnable, ConfigLoadable {
 			time = System.currentTimeMillis();
 			ProjectKorra.time_step = interval;
 
-			AvatarState.manageAvatarStates();
+			CoreAbility.progressAll();
 			TempPotionEffect.progressAll();
 			handleDayNight();
 			Flight.handle();
-			RapidPunch.startPunchAll();
 			RevertChecker.revertAirBlocks();
 			ChiCombo.handleParalysis();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
-		}
-		catch (Exception e) {
-			//GeneralMethods.stopBending();
+		} catch (Exception e) {
+			GeneralMethods.stopBending();
 			e.printStackTrace();
 		}
 	}
 
-	@Override
-	public void reloadVariables() {
-		sunriseMessage = config.get().getString("Properties.Fire.DayMessage");
-		sunsetMessage = config.get().getString("Properties.Fire.NightMessage");
-
-		moonriseMessage = config.get().getString("Properties.Water.NightMessage");
-		moonsetMessage = config.get().getString("Properties.Water.DayMessage");
+	public static String getSozinsCometMessage() {
+		return getConfig().getString("Properties.Fire.CometMessage");
 	}
 
+	public static String getSolarEclipseMessage() {
+		return getConfig().getString("Properties.Fire.SolarEclipseMessage");
+	}
+
+	public static String getSunriseMessage() {
+		return getConfig().getString("Properties.Fire.DayMessage");
+	}
+
+	public static String getSunsetMessage() {
+		return getConfig().getString("Properties.Fire.NightMessage");
+	}
+
+	public static String getMoonriseMessage() {
+		return getConfig().getString("Properties.Water.NightMessage");
+	}
+
+	public static String getFullMoonriseMessage() {
+		return getConfig().getString("Properties.Water.FullMoonMessage");
+	}
+	
+	public static String getLunarEclipseMessage() {
+		return getConfig().getString("Properties.Water.LunarEclipseMessage");
+	}
+
+	public static String getMoonsetMessage() {
+		return getConfig().getString("Properties.Water.DayMessage");
+	}
+
+	private static FileConfiguration getConfig() {
+		return ConfigManager.getConfig();
+	}
+	
 }

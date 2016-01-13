@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.util;
 
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.Tornado;
@@ -13,6 +14,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Flight {
@@ -61,28 +63,21 @@ public class Flight {
 	}
 
 	public static void handle() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		ArrayList<Player> newflyingplayers = new ArrayList<Player>();
-		//ArrayList<Player> avatarstateplayers = new ArrayList<Player>();
-		ArrayList<Player> airscooterplayers = new ArrayList<Player>();
-		ArrayList<Player> waterspoutplayers = new ArrayList<Player>();
-		ArrayList<Player> airspoutplayers = new ArrayList<Player>();
-		ArrayList<Player> sandspoutplayers = new ArrayList<Player>();
+		ArrayList<Player> players = new ArrayList<>();
+		ArrayList<Player> newFlyingPlayers = new ArrayList<Player>();
+		HashSet<Player> airScooterPlayers = CoreAbility.getPlayers(AirScooter.class);
+		HashSet<Player> waterSpoutPlayers = CoreAbility.getPlayers(WaterSpout.class);
+		HashSet<Player> airSpoutPlayers = CoreAbility.getPlayers(AirSpout.class);
+		HashSet<Player> sandSpoutPlayers = CoreAbility.getPlayers(SandSpout.class);
 
-		players.addAll(Tornado.getPlayers());
-		//		players.addAll(Speed.getPlayers());
-		players.addAll(FireJet.getPlayers());
-		players.addAll(Catapult.getPlayers());
-		//avatarstateplayers = AvatarState.getPlayers();
-		airscooterplayers = AirScooter.getPlayers();
-		waterspoutplayers = WaterSpout.getPlayers();
-		airspoutplayers = AirSpout.getPlayers();
-		sandspoutplayers = SandSpout.getPlayers();
+		players.addAll(CoreAbility.getPlayers(Tornado.class));
+		players.addAll(CoreAbility.getPlayers(FireJet.class));
+		players.addAll(CoreAbility.getPlayers(Catapult.class));
 
 		for (Player player : instances.keySet()) {
 			Flight flight = instances.get(player);
 			if (System.currentTimeMillis() <= flight.time + duration) {
-				if (airscooterplayers.contains(player) || waterspoutplayers.contains(player) || airspoutplayers.contains(player) || sandspoutplayers.contains(player)) {
+				if (airScooterPlayers.contains(player) || waterSpoutPlayers.contains(player) || airSpoutPlayers.contains(player) || sandSpoutPlayers.contains(player)) {
 					continue;
 				}
 				if (Bloodbending.isBloodbended(player)) {
@@ -96,7 +91,7 @@ public class Flight {
 					player.setAllowFlight(true);
 					if (player.getGameMode() != GameMode.CREATIVE)
 						player.setFlying(false);
-					newflyingplayers.add(player);
+					newFlyingPlayers.add(player);
 					continue;
 				}
 				if (flight.source == null) {

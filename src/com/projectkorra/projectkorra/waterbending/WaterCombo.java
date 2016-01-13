@@ -1,15 +1,16 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.SubElement;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireCombo.FireComboStream;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -26,314 +27,136 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class WaterCombo {
+/*
+ * TODO: Combo classes should eventually be rewritten so that each combo is treated
+ * as an individual ability. In the mean time, we will just place "fake"
+ * classes so that CoreAbility will register each ability. 
+ */
+public class WaterCombo extends WaterAbility implements ComboAbility {
+
 	public static enum AbilityState {
 		ICE_PILLAR_RISING, ICE_BULLET_FORMING
 	}
 
-	private static boolean enabled = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterCombo.Enabled");
-	public static long ICE_WAVE_COOLDOWN = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.WaterCombo.IceWave.Cooldown");
+	private static final ConcurrentHashMap<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 
-	public static double ICE_PILLAR_HEIGHT = 8;
-	public static double ICE_PILLAR_RADIUS = 1.5;
-	public static double ICE_PILLAR_DAMAGE = 4;
-	public static double ICE_PILLAR_RANGE = 10;
-	public static long ICE_PILLAR_COOLDOWN = 500;
-
-	public static double ICE_BULLET_RADIUS = ProjectKorra.plugin.getConfig().getDouble(
-			"Abilities.Water.WaterCombo.IceBullet.Radius");
-	public static double ICE_BULLET_DAMAGE = ProjectKorra.plugin.getConfig().getDouble(
-			"Abilities.Water.WaterCombo.IceBullet.Damage");
-	public static double ICE_BULLET_RANGE = ProjectKorra.plugin.getConfig().getDouble(
-			"Abilities.Water.WaterCombo.IceBullet.Range");
-	public static double ICE_BULLET_ANIM_SPEED = ProjectKorra.plugin.getConfig().getDouble(
-			"Abilities.Water.WaterCombo.IceBullet.AnimationSpeed");
-	public static int ICE_BULLET_MAX_SHOTS = ProjectKorra.plugin.getConfig().getInt(
-			"Abilities.Water.WaterCombo.IceBullet.MaxShots");
-	public static long ICE_BULLET_COOLDOWN = ProjectKorra.plugin.getConfig().getLong(
-			"Abilities.Water.WaterCombo.IceBullet.Cooldown");
-	public static long ICE_BULLET_SHOOT_TIME = ProjectKorra.plugin.getConfig().getLong(
-			"Abilities.Water.WaterCombo.IceBullet.ShootTime");
-
-	public static ArrayList<WaterCombo> instances = new ArrayList<WaterCombo>();
-	public static ConcurrentHashMap<Block, TempBlock> frozenBlocks = new ConcurrentHashMap<Block, TempBlock>();
-
-	private Player player;
-	private BendingPlayer bplayer;
-	private String ability;
-
+	private boolean enabled;
+	private int leftClicks;
+	private int rightClicks;
+	private double damage;
+	private double speed;
+	private double range;
+	private double knockback;
+	private double radius;
+	private double shootTime;
+	private double shots;
+	private double maxShots;
+	private double animationSpeed;
+	private long cooldown;
 	private long time;
-	private Location origin;
-	private Location currentLoc;
-	@SuppressWarnings("unused")
-	private Location destination;
-	private Vector direction;
 	private AbilityState state;
-	private int progressCounter = 0;
-	private int leftClicks = 0, rightClicks = 0;
-	private double damage = 0, speed = 0, range = 0, knockback = 0, radius = 0, shootTime = 0, maxShots = 0;
-	private double shots = 0;
-	private long cooldown = 0;
+	private String name;
+	private Location origin;
+	private Location location;
+	private Vector direction;
 	private WaterSourceGrabber waterGrabber;
-	@SuppressWarnings("unused")
-	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
-	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
-	private ConcurrentHashMap<Block, TempBlock> affectedBlocks = new ConcurrentHashMap<Block, TempBlock>();
+	private ArrayList<BukkitRunnable> tasks;
+	private ConcurrentHashMap<Block, TempBlock> affectedBlocks;
 
-	public WaterCombo(Player player, String ability) {
-		if (!enabled)
-			return;
-		if(!GeneralMethods.getBendingPlayer(player.getName()).hasElement(Element.Water))
-			return;
-		if (Commands.isToggledForAll) 
-			return;
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation",
-				player.getLocation()))
-			return;
-		if (!GeneralMethods.getBendingPlayer(player.getName()).isToggled()) 
-			return;
-		time = System.currentTimeMillis();
-		this.player = player;
-		this.ability = ability;
-		this.bplayer = GeneralMethods.getBendingPlayer(player.getName());
+	public WaterCombo(Player player, String name) {
+		super(player);
 
-		if (!GeneralMethods.canBend(player.getName(), ability)) {
+		this.time = System.currentTimeMillis();
+		this.name = name;
+		this.enabled = getConfig().getBoolean("Abilities.Water.WaterCombo.Enabled");
+		this.tasks = new ArrayList<>();
+		this.affectedBlocks = new ConcurrentHashMap<>();
+
+		if (!enabled || !bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 
-		if (ability.equalsIgnoreCase("IceWave")) {
-			cooldown = ICE_WAVE_COOLDOWN;
-		} else if (ability.equalsIgnoreCase("IcePillar")) {
-			damage = ICE_PILLAR_DAMAGE;
-			range = ICE_PILLAR_RANGE;
-			radius = ICE_PILLAR_RADIUS;
-			cooldown = ICE_WAVE_COOLDOWN;
-		} else if (ability.equalsIgnoreCase("IceBullet")) {
-			damage = ICE_BULLET_DAMAGE;
-			range = ICE_BULLET_RANGE;
-			radius = ICE_BULLET_RADIUS;
-			cooldown = ICE_BULLET_COOLDOWN;
-			shootTime = ICE_BULLET_SHOOT_TIME;
-			maxShots = ICE_BULLET_MAX_SHOTS;
-			speed = 1;
-		}
-		double aug = WaterMethods.getWaterbendingNightAugment(player.getWorld());
-		if(aug > 1)
-			aug = 1 + (aug - 1) / 3;
-		damage *= aug;
-		range *= aug;
-		shootTime *= aug;
-		maxShots *= aug;
-		radius *= aug;
-		if (AvatarState.isAvatarState(player)) {
-			cooldown = 0;
-			damage = AvatarState.getValue(damage);
-			range = AvatarState.getValue(range);
-			shootTime = AvatarState.getValue(shootTime);
-			maxShots = AvatarState.getValue(maxShots);
-			knockback = knockback * 1.3;
+		if (name.equalsIgnoreCase("IceWave")) {
+			this.cooldown = getConfig().getLong("Abilities.Water.WaterCombo.IceWave.Cooldown");
+		} else if (name.equalsIgnoreCase("IceBullet")) {
+			this.damage = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Damage");
+			this.range = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Range");
+			this.radius = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Radius");
+			this.cooldown = getConfig().getLong("Abilities.Water.WaterCombo.IceBullet.Cooldown");
+			this.shootTime = getConfig().getLong("Abilities.Water.WaterCombo.IceBullet.ShootTime");
+			this.maxShots = getConfig().getInt("Abilities.Water.WaterCombo.IceBullet.MaxShots");
+			this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.AnimationSpeed");
+			this.speed = 1;
 		}
 		
-		if(ability.equalsIgnoreCase("IceBulletLeftClick") || ability.equalsIgnoreCase("IceBulletRightClick"))
-		{
-			ArrayList<WaterCombo> bullets = getWaterCombo(player, "IceBullet");
-			if(bullets.size() == 0)
-				return;
-			for(WaterCombo bullet : bullets)
-			{
-				if(ability.equalsIgnoreCase("IceBulletLeftClick"))
-				{
-					if(bullet.leftClicks <= bullet.rightClicks)
-						bullet.leftClicks += 1;
-				}
-				else if(bullet.leftClicks >= bullet.rightClicks)
-					bullet.rightClicks += 1;
-			}
+		double aug = getNightFactor(player.getWorld());
+		if (aug > 1) {
+			aug = 1 + (aug - 1) / 3;
 		}
-		instances.add(this);
-	}
 
-	public void progress() {
-		progressCounter++;
-		if (player.isDead() || !player.isOnline()) {
-			remove();
+		this.damage *= aug;
+		this.range *= aug;
+		this.shootTime *= aug;
+		this.maxShots *= aug;
+		this.radius *= aug;
+
+		if (bPlayer.isAvatarState()) {
+			this.cooldown = 0;
+			this.damage = AvatarState.getValue(damage);
+			this.range = AvatarState.getValue(range);
+			this.shootTime = AvatarState.getValue(shootTime);
+			this.maxShots = AvatarState.getValue(maxShots);
+			this.knockback = knockback * 1.3;
+		}
+
+		if (name.equalsIgnoreCase("IceBulletLeftClick") || name.equalsIgnoreCase("IceBulletRightClick")) {
+			ArrayList<WaterCombo> bullets = getWaterCombo(player, "IceBullet");
+			if (bullets.size() == 0) {
+				return;
+			}
+			for (WaterCombo bullet : bullets) {
+				if (name.equalsIgnoreCase("IceBulletLeftClick")) {
+					if (bullet.leftClicks <= bullet.rightClicks) {
+						bullet.leftClicks += 1;
+					}
+				} else if (bullet.leftClicks >= bullet.rightClicks) {
+					bullet.rightClicks += 1;
+				}
+			}
 			return;
 		}
+		
+		start();
+	}
 
-		if (ability.equalsIgnoreCase("IceWave")) {
-			if (origin == null
-					&& WaterWave.containsType(player,
-							WaterWave.AbilityType.RELEASE)) {
-				if (bplayer.isOnCooldown("IceWave")
-						&& !AvatarState.isAvatarState(player)) {
-					remove();
-					return;
-				}
-				bplayer.addCooldown("IceWave", cooldown);
-				origin = player.getLocation();
-				WaterWave wave = WaterWave.getType(player,
-						WaterWave.AbilityType.RELEASE).get(0);
-				wave.setIceWave(true);
-			} else if (!WaterWave.containsType(player,
-					WaterWave.AbilityType.RELEASE)) {
-				remove();
-				return;
-			}
-		} else if (ability.equalsIgnoreCase("IcePillar")) {
-			// ABILITY NOT USED or Finished because RuneFist is creating a
-			// similar ability
-			if (progressCounter > 0) {
-				remove();
-				return;
-			}
-			if (origin == null) {
-				if (bplayer.isOnCooldown("IcePillar")
-						&& !AvatarState.isAvatarState(player)) {
-					remove();
-					return;
-				}
-				origin = player.getLocation();
-				Entity ent = GeneralMethods.getTargetedEntity(player, range,
-						new ArrayList<Entity>());
-				if (ent == null || !(ent instanceof LivingEntity)) {
-					remove();
-					return;
-				}
+	public void createBlock(Block block, Material mat) {
+		createBlock(block, mat, (byte) 0);
+	}
 
-				Location startingLoc = GeneralMethods.getTopBlock(
-						ent.getLocation().add(0, -1, 0), (int) range)
-						.getLocation();
-				if (startingLoc == null) {
-					remove();
-					return;
-				}
-				startingLoc.setX(ent.getLocation().getX());
-				startingLoc.setZ(ent.getLocation().getZ());
-				int badBlocks = 0;
-				for (double x = -radius; x <= radius; x++)
-					for (double z = -radius; z <= radius; z++) {
-						Location tmpLoc = startingLoc.clone().add(x, 0, z);
-						if (tmpLoc.distance(startingLoc) > radius)
-							continue;
+	public void createBlock(Block block, Material mat, byte data) {
+		affectedBlocks.put(block, new TempBlock(block, mat, data));
+	}
 
-						Block block = GeneralMethods.getTopBlock(tmpLoc, (int) range,
-								(int) range);
-						if (!WaterMethods.isWaterbendable(block, player))
-							badBlocks++;
-					}
-				//Bukkit.broadcastMessage("Bad Blocks:" + badBlocks);
-				if (badBlocks > 5) {
-					remove();
-					return;
-				}
-				this.origin = startingLoc;
-				this.currentLoc = origin.clone();
-				this.state = AbilityState.ICE_PILLAR_RISING;
-				bplayer.addCooldown("IcePillar", cooldown);
-			} else if (this.state == AbilityState.ICE_PILLAR_RISING) {
-				if (Math.abs(currentLoc.distance(origin)) > ICE_PILLAR_HEIGHT) {
-					remove();
-					return;
-				}
-				for (double x = -radius; x <= radius; x++)
-					for (double z = -radius; z <= radius; z++) {
-						Block block = currentLoc.clone().add(x, 0, z)
-								.getBlock();
-						if (WaterMethods.isWaterbendable(block, player)
-								|| block.getType() == Material.AIR)
-							if (block.getLocation().distance(currentLoc) > radius)
-								continue;
-						if (GeneralMethods.isRegionProtectedFromBuild(player,
-								"WaterManipulation", block.getLocation()))
-							continue;
+	public void drawWaterCircle(Location loc, double theta, double increment, double radius) {
+		drawWaterCircle(loc, theta, increment, radius, Material.STATIONARY_WATER, (byte) 0);
+	}
 
-						TempBlock tblock = new TempBlock(block, Material.ICE,
-								(byte) 0);
-						frozenBlocks.put(block, tblock);
-					}
-				currentLoc.add(0, 1, 0);
-			}
-		} else if (ability.equalsIgnoreCase("IceBullet")) {
-			if(shots > maxShots || !player.isSneaking()){
-				remove();
-				return;
-			}
-			if (origin == null) {
-				if (bplayer.isOnCooldown("IceBullet")
-						&& !AvatarState.isAvatarState(player)) {
-					remove();
-					return;
-				}
-				Block waterBlock = WaterMethods.getRandomWaterBlock(player, player.getLocation(), (int) range, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
-				if (waterBlock == null) {
-					remove();
-					return;
-				}
-				this.time = 0;
-				origin = waterBlock.getLocation();
-				currentLoc = origin.clone();
-				state = AbilityState.ICE_BULLET_FORMING;
-				bplayer.addCooldown("IceBullet", cooldown);
-				direction = new Vector(1, 0, 1);
-				waterGrabber = new WaterSourceGrabber(player, origin.clone());
-			} else if (waterGrabber.getState() == WaterSourceGrabber.AnimationState.FAILED) {
-				remove();
-				return;
-			} else if (waterGrabber.getState() == WaterSourceGrabber.AnimationState.FINISHED) {
-				if(this.time == 0)
-					this.time = System.currentTimeMillis();
-				long timeDiff = System.currentTimeMillis() - this.time;
-				double animSpeed = ICE_BULLET_ANIM_SPEED;
-				if(this.state == AbilityState.ICE_BULLET_FORMING)
-				{
-					if(timeDiff < 1000 * animSpeed)
-					{
-						double steps = radius * ((timeDiff + 100) / (1000.0 * animSpeed));
-						revertBlocks();
-						for(double i = 0; i < steps; i++)
-						{
-							drawWaterCircle(player.getEyeLocation().clone().add(0, i, 0), 360, 5, radius - i);
-							drawWaterCircle(player.getEyeLocation().clone().add(0, -i, 0), 360, 5, radius - i);
-						}
-					}
-					else if(timeDiff < 2500 * animSpeed)
-					{
-						revertBlocks();
-						for(double i = 0; i < radius; i++)
-						{
-							drawWaterCircle(player.getEyeLocation().clone().add(0, i, 0), 360, 5, radius - i, Material.ICE, (byte) 0);
-							drawWaterCircle(player.getEyeLocation().clone().add(0, -i, 0), 360, 5, radius - i, Material.ICE, (byte) 0);
-						}
-					}
-					
-					if(timeDiff < shootTime)
-					{
-						if(shots < rightClicks + leftClicks)
-						{
-							shots++;
-							Vector vec = player.getEyeLocation().getDirection().normalize();
-							Location loc = player.getEyeLocation().add(vec.clone().multiply(radius + 1.3));
-							FireComboStream fs = new FireComboStream(null, vec,
-									loc, range, speed, "IceBullet");
-							fs.setDensity(10);
-							fs.setSpread(0.1F);
-							fs.setUseNewParticles(true);
-							fs.setParticleEffect(ParticleEffect.SNOW_SHOVEL);
-							fs.setCollides(false);
-							fs.runTaskTimer(ProjectKorra.plugin, (long) (0), 1L);
-							tasks.add(fs);
-						}
-						manageShots();
-					}
-					else
-						remove();
-				}
-			} else {
-				waterGrabber.progress();
+	public void drawWaterCircle(Location loc, double theta, double increment, double radius, Material mat, byte data) {
+		double rotateSpeed = theta;
+		direction = GeneralMethods.rotateXZ(direction, rotateSpeed);
+		
+		for (double i = 0; i < theta; i += increment) {
+			Vector dir = GeneralMethods.rotateXZ(direction, i - theta / 2).normalize().multiply(radius);
+			dir.setY(0);
+			Block block = loc.clone().add(dir).getBlock();
+			location = block.getLocation();
+			
+			if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
+				createBlock(block, mat, data);
 			}
 		}
 	}
-	
+
 	public void manageShots() {
 		for (int i = 0; i < tasks.size(); i++) {
 			if (((FireComboStream) tasks.get(i)).isCancelled()) {
@@ -341,53 +164,149 @@ public class WaterCombo {
 				i--;
 			}
 		}
+		
 		for (int i = 0; i < tasks.size(); i++) {
 			FireComboStream fstream = (FireComboStream) tasks.get(i);
 			Location loc = fstream.getLocation();
 
-			if (!EarthMethods.isTransparentToEarthbending(player,
-					loc.clone().add(0, 0.2, 0).getBlock())) {
+			if (!isTransparentToEarthbending(player, loc.clone().add(0, 0.2, 0).getBlock())) {
 				fstream.remove();
 				return;
 			}
 			if (i % 2 == 0) {
 				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 1.5)) {
-					if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation",
-							entity.getLocation())) {
+					if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", entity.getLocation())) {
 						remove();
 						return;
 					}
-					/*if (!entity.equals(player)
-							&& !affectedEntities.contains(entity)) {
-						affectedEntities.add(entity);*/
-					if(!entity.equals(player)) {
+
+					if (!entity.equals(player)) {
 						if (knockback != 0) {
 							Vector force = fstream.getDirection();
 							entity.setVelocity(force.multiply(knockback));
 						}
-						if (damage != 0)
-							if (entity instanceof LivingEntity)
-								if (fstream.getAbility().equalsIgnoreCase("IceBullet")) {
-									GeneralMethods.damageEntity(player, entity, damage, SubElement.Icebending, "IceBullets");
-								} else {
-									GeneralMethods.damageEntity(player, entity, damage, Element.Water, "WaterCombo");
-								}
+						if (damage != 0) {
+							if (entity instanceof LivingEntity) {
+								GeneralMethods.damageEntity(this, entity, damage);
+							}
+						}
 					}
 				}
 
-				if (GeneralMethods.blockAbilities(player, FireCombo.abilitiesToBlock,
-						loc, 1)) {
+				if (GeneralMethods.blockAbilities(player, FireCombo.getBlockableAbilities(), loc, 1)) {
 					fstream.remove();
 				}
 			}
 		}
 	}
-	public void createBlock(Block block, Material mat) {
-		createBlock(block, mat, (byte) 0);
+
+	@Override
+	public void progress() {
+		if (player.isDead() || !player.isOnline()) {
+			remove();
+			return;
+		} else if (name.equalsIgnoreCase("IceWave")) {
+			if (origin == null && WaterSpoutWave.containsType(player, WaterSpoutWave.AbilityType.RELEASE)) {
+				if (bPlayer.isOnCooldown("IceWave") && !bPlayer.isAvatarState()) {
+					remove();
+					return;
+				}
+				
+				bPlayer.addCooldown("IceWave", cooldown);
+				origin = player.getLocation();
+				WaterSpoutWave wave = WaterSpoutWave.getType(player, WaterSpoutWave.AbilityType.RELEASE).get(0);
+				wave.setIceWave(true);
+			} else if (!WaterSpoutWave.containsType(player, WaterSpoutWave.AbilityType.RELEASE)) {
+				remove();
+				return;
+			}
+		} else if (name.equalsIgnoreCase("IceBullet")) {
+			if (shots > maxShots || !player.isSneaking()) {
+				remove();
+				return;
+			}
+			
+			if (origin == null) {
+				if (bPlayer.isOnCooldown("IceBullet") && !bPlayer.isAvatarState()) {
+					remove();
+					return;
+				}
+				
+				Block waterBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
+				if (waterBlock == null) {
+					remove();
+					return;
+				}
+				
+				time = 0;
+				origin = waterBlock.getLocation();
+				location = origin.clone();
+				state = AbilityState.ICE_BULLET_FORMING;
+				bPlayer.addCooldown("IceBullet", cooldown);
+				direction = new Vector(1, 0, 1);
+				waterGrabber = new WaterSourceGrabber(player, origin.clone());
+			} else if (waterGrabber.getState() == WaterSourceGrabber.AnimationState.FAILED) {
+				remove();
+				return;
+			} else if (waterGrabber.getState() == WaterSourceGrabber.AnimationState.FINISHED) {
+				if (this.time == 0) {
+					this.time = System.currentTimeMillis();
+				}
+				
+				long timeDiff = System.currentTimeMillis() - this.time;
+				if (this.state == AbilityState.ICE_BULLET_FORMING) {
+					if (timeDiff < 1000 * animationSpeed) {
+						double steps = radius * ((timeDiff + 100) / (1000.0 * animationSpeed));
+						revertBlocks();
+						for (double i = 0; i < steps; i++) {
+							drawWaterCircle(player.getEyeLocation().clone().add(0, i, 0), 360, 5, radius - i);
+							drawWaterCircle(player.getEyeLocation().clone().add(0, -i, 0), 360, 5, radius - i);
+						}
+					} else if (timeDiff < 2500 * animationSpeed) {
+						revertBlocks();
+						for (double i = 0; i < radius; i++) {
+							drawWaterCircle(player.getEyeLocation().clone().add(0, i, 0), 360, 5, radius - i, Material.ICE, (byte) 0);
+							drawWaterCircle(player.getEyeLocation().clone().add(0, -i, 0), 360, 5, radius - i, Material.ICE, (byte) 0);
+						}
+					}
+
+					if (timeDiff < shootTime) {
+						if (shots < rightClicks + leftClicks) {
+							shots++;
+							Vector vec = player.getEyeLocation().getDirection().normalize();
+							Location loc = player.getEyeLocation().add(vec.clone().multiply(radius + 1.3));
+							FireComboStream fs = new FireComboStream(null, vec, loc, range, speed, "IceBullet");
+							
+							fs.setDensity(10);
+							fs.setSpread(0.1F);
+							fs.setUseNewParticles(true);
+							fs.setParticleEffect(ParticleEffect.SNOW_SHOVEL);
+							fs.setCollides(false);
+							fs.runTaskTimer(ProjectKorra.plugin, (0), 1L);
+							tasks.add(fs);
+						}
+						manageShots();
+					} else {
+						remove();
+						return;
+					}
+				}
+			} else {
+				waterGrabber.progress();
+			}
+		}
 	}
 
-	public void createBlock(Block block, Material mat, byte data) {
-		affectedBlocks.put(block, new TempBlock(block, mat, data));
+	@Override
+	public void remove() {
+		super.remove();
+		for (BukkitRunnable task : tasks) {
+			task.cancel();
+		}
+		revertBlocks();
+		if (waterGrabber != null) {
+			waterGrabber.remove();
+		}
 	}
 
 	public void revertBlocks() {
@@ -398,95 +317,260 @@ public class WaterCombo {
 			affectedBlocks.remove(block);
 		}
 	}
-	public void drawWaterCircle(Location loc, double theta, double increment, double radius){
-		drawWaterCircle(loc, theta, increment, radius, Material.STATIONARY_WATER, (byte) 0);
-	}
-	public void drawWaterCircle(Location loc, double theta, double increment, double radius, Material mat, byte data) {
-		double rotateSpeed = theta;
-		direction = GeneralMethods.rotateXZ(direction, rotateSpeed);
-		for (double i = 0; i < theta; i += increment) {
-			Vector dir = GeneralMethods.rotateXZ(direction, i - theta / 2).normalize()
-					.multiply(radius);
-			dir.setY(0);
-			Block block = loc.clone().add(dir).getBlock();
-			currentLoc = block.getLocation();
-			if (block.getType() == Material.AIR
-					&& !GeneralMethods.isRegionProtectedFromBuild(player,
-							"WaterManipulation", block.getLocation()))
-				createBlock(block, mat, data);
-		}
-	}
-
-	public void remove() {
-		instances.remove(this);
-		for (BukkitRunnable task : tasks)
-			task.cancel();
-		revertBlocks();
-		if(waterGrabber != null)
-			waterGrabber.remove();
-	}
-
-	public static void progressAll() {
-		for (int i = instances.size() - 1; i >= 0; i--)
-			instances.get(i).progress();
-	}
-
-	public static void removeAll() {
-		for (int i = instances.size() - 1; i >= 0; i--) {
-			instances.get(i).remove();
-		}
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public static ArrayList<WaterCombo> getWaterCombo(Player player) {
-		ArrayList<WaterCombo> list = new ArrayList<WaterCombo>();
-		for (WaterCombo combo : instances)
-			if (combo.player != null && combo.player == player)
-				list.add(combo);
-		return list;
-	}
-
-	public static ArrayList<WaterCombo> getWaterCombo(Player player,
-			String ability) {
-		ArrayList<WaterCombo> list = new ArrayList<WaterCombo>();
-		for (WaterCombo combo : instances)
-			if (combo.player != null && combo.player == player
-					&& ability != null && combo.ability.equalsIgnoreCase(ability))
-				list.add(combo);
-		return list;
-	}
-
-	public static boolean removeAroundPoint(Player player, String ability,
-			Location loc, double radius) {
-		boolean removed = false;
-		for (int i = 0; i < instances.size(); i++) {
-			WaterCombo combo = instances.get(i);
-			if (combo.getPlayer().equals(player))
-				continue;
-
-			if (ability.equalsIgnoreCase("Twister")
-					&& combo.ability.equalsIgnoreCase("Twister")) {
-				if (combo.currentLoc != null
-						&& Math.abs(combo.currentLoc.distance(loc)) <= radius) {
-					instances.remove(combo);
-					removed = true;
-				}
-			}
-		}
-		return removed;
-	}
 
 	public static boolean canThaw(Block block) {
-		return frozenBlocks.containsKey(block);
+		return FROZEN_BLOCKS.containsKey(block);
+	}
+
+	public static ArrayList<WaterCombo> getWaterCombo(Player player, String ability) {
+		ArrayList<WaterCombo> list = new ArrayList<WaterCombo>();
+		if (player == null || ability == null) {
+			return list;
+		}
+		for (WaterCombo combo : CoreAbility.getAbilities(player, WaterCombo.class)) {
+			if (player.equals(combo.player) && combo.name.equalsIgnoreCase(ability)) {
+				list.add(combo);
+			}
+		}
+		return list;
 	}
 
 	public static void thaw(Block block) {
-		if (frozenBlocks.containsKey(block)) {
-			frozenBlocks.get(block).revertBlock();
-			frozenBlocks.remove(block);
+		if (FROZEN_BLOCKS.containsKey(block)) {
+			FROZEN_BLOCKS.get(block).revertBlock();
+			FROZEN_BLOCKS.remove(block);
 		}
 	}
+
+	@Override
+	public String getName() {
+		return name != null ? name : "WaterCombo";
+	}
+
+	@Override
+	public Location getLocation() {
+		return location != null ? location : origin;
+	}
+
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+	
+	@Override
+	public String getInstructions() {
+		return null;
+	}
+
+	@Override
+	public Object createNewComboInstance(Player player) {
+		return null;
+	}
+
+	@Override
+	public ArrayList<AbilityInformation> getCombination() {
+		return null;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public int getLeftClicks() {
+		return leftClicks;
+	}
+
+	public void setLeftClicks(int leftClicks) {
+		this.leftClicks = leftClicks;
+	}
+
+	public int getRightClicks() {
+		return rightClicks;
+	}
+
+	public void setRightClicks(int rightClicks) {
+		this.rightClicks = rightClicks;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getKnockback() {
+		return knockback;
+	}
+
+	public void setKnockback(double knockback) {
+		this.knockback = knockback;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getShootTime() {
+		return shootTime;
+	}
+
+	public void setShootTime(double shootTime) {
+		this.shootTime = shootTime;
+	}
+
+	public double getShots() {
+		return shots;
+	}
+
+	public void setShots(double shots) {
+		this.shots = shots;
+	}
+
+	public double getMaxShots() {
+		return maxShots;
+	}
+
+	public void setMaxShots(double maxShots) {
+		this.maxShots = maxShots;
+	}
+
+	public double getAnimationSpeed() {
+		return animationSpeed;
+	}
+
+	public void setAnimationSpeed(double animationSpeed) {
+		this.animationSpeed = animationSpeed;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public AbilityState getState() {
+		return state;
+	}
+
+	public void setState(AbilityState state) {
+		this.state = state;
+	}
+
+	public Location getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+
+	public Vector getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Vector direction) {
+		this.direction = direction;
+	}
+
+	public WaterSourceGrabber getWaterGrabber() {
+		return waterGrabber;
+	}
+
+	public void setWaterGrabber(WaterSourceGrabber waterGrabber) {
+		this.waterGrabber = waterGrabber;
+	}
+
+	public ArrayList<BukkitRunnable> getTasks() {
+		return tasks;
+	}
+
+	public static ConcurrentHashMap<Block, TempBlock> getFrozenBlocks() {
+		return FROZEN_BLOCKS;
+	}
+
+	public ConcurrentHashMap<Block, TempBlock> getAffectedBlocks() {
+		return affectedBlocks;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+	
+	public class IceWave extends WaterCombo {
+
+		public IceWave(Player player, String name) {
+			super(player, "IceWave");
+		}
+		
+		@Override
+		public String getName() {
+			return "IceWave";
+		}
+		
+	}
+	
+	public class IceBullet extends WaterCombo {
+
+		public IceBullet(Player player, String name) {
+			super(player, "IceBullet");
+		}
+		
+		@Override
+		public String getName() {
+			return "IceBullet";
+		}
+		
+	}
+	
 }

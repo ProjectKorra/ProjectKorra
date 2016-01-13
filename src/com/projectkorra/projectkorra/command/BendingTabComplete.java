@@ -1,9 +1,9 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.object.Preset;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -11,14 +11,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AbilityModuleManager;
-import com.projectkorra.projectkorra.ability.combo.ComboAbilityModule;
-import com.projectkorra.projectkorra.ability.combo.ComboManager;
-import com.projectkorra.projectkorra.ability.combo.ComboManager.ComboAbility;
-import com.projectkorra.projectkorra.ability.combo.ComboModuleManager;
-import com.projectkorra.projectkorra.object.Preset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Completes tabbing for the bending command/subcommands.
@@ -30,15 +26,21 @@ public class BendingTabComplete implements TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		if (args.length == 0 || args[0].equals(""))
 			return getPossibleCompletionsForGivenArgs(args, getCommandsForUser(sender));
+		
 		if (args.length >= 2) {
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
+			
 			if (args[0].equalsIgnoreCase("bind") || args[0].equalsIgnoreCase("b")) {
 				if (args.length > 3 || !sender.hasPermission("bending.command.bind") || !(sender instanceof Player))
 					return new ArrayList<String>();
+				
 				List<String> abilities = new ArrayList<String>();
 				if (args.length == 2) {
-					for (String abil : AbilityModuleManager.abilities) {
-						if (GeneralMethods.canBind(sender.getName(), abil)) {
-							abilities.add(abil);
+					if (bPlayer != null) {
+						for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
+							if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil)) {
+								abilities.add(coreAbil.getName());
+							}
 						}
 					}
 				} else {
@@ -46,6 +48,7 @@ public class BendingTabComplete implements TabCompleter {
 						abilities.add("" + i);
 					}
 				}
+				
 				Collections.sort(abilities);
 				return getPossibleCompletionsForGivenArgs(args, abilities);
 			} else if (args[0].equalsIgnoreCase("display") || args[0].equalsIgnoreCase("d")) {
@@ -79,13 +82,16 @@ public class BendingTabComplete implements TabCompleter {
 				if (args.length > 3 || !sender.hasPermission("bending.command.add"))
 					return new ArrayList<String>();
 				List<String> l = new ArrayList<String>();
-				if (args.length == 2) {
+				if (args.length == 2)
+				{
 					l.add("Air");
 					l.add("Earth");
 					l.add("Fire");
 					l.add("Water");
 					l.add("Chi");
-				} else {
+				}
+				else
+				{
 					for (Player p : Bukkit.getOnlinePlayers()) {
 						l.add(p.getName());
 					}
@@ -103,25 +109,16 @@ public class BendingTabComplete implements TabCompleter {
 				if (args.length > 2 || !sender.hasPermission("bending.command.help"))
 					return new ArrayList<String>();
 				List<String> list = new ArrayList<String>();
-				for (Element e : Element.values()) {
-					list.add(e.toString());
+				for (Element e : Element.getElements()) {
+					list.add(e.getName());
 				}
 				List<String> abils = new ArrayList<String>();
-				for (String abil : AbilityModuleManager.abilities) {
-					if (GeneralMethods.canBind(sender.getName(), abil)) {
-						abils.add(abil);
+				for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
+					if (bPlayer.canBind(coreAbil)) {
+						abils.add(coreAbil.getName());
 					}
 				}
-				for (ComboAbility abil : ComboManager.comboAbilityList.values()) {
-					if (GeneralMethods.canBind(sender.getName(), abil.getName()) && (abil.getName() != "IceBulletRightClick" && abil.getName() != "IceBulletLeftClick")) {
-						abils.add(abil.getName());
-					}
-				}
-				for (ComboAbilityModule abil : ComboModuleManager.combo) {
-					if (GeneralMethods.canBind(sender.getName(), abil.getName())) {
-						abils.add(abil.getName());
-					}
-				}
+								
 				Collections.sort(abils);
 				list.addAll(abils);
 				return getPossibleCompletionsForGivenArgs(args, list);
@@ -134,7 +131,7 @@ public class BendingTabComplete implements TabCompleter {
 				}
 				return getPossibleCompletionsForGivenArgs(args, players);
 			} else if (args[0].equalsIgnoreCase("preset") || args[0].equalsIgnoreCase("presets") || args[0].equalsIgnoreCase("pre") || args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("p")) {
-				if (args.length > 4 || !sender.hasPermission("bending.command.preset") || !(sender instanceof Player))
+				if (args.length > 3 || !sender.hasPermission("bending.command.preset") || !(sender instanceof Player))
 					return new ArrayList<String>();
 				List<String> l = new ArrayList<String>();
 				if (args.length == 2) {
@@ -150,28 +147,10 @@ public class BendingTabComplete implements TabCompleter {
 						for (Preset preset : presets) {
 							presetNames.add(preset.getName());
 						}
-					}
-					if (sender.hasPermission("bending.command.preset.bind.external")) {
-						if (Preset.externalPresets.keySet().size() > 0) {
-							for (String externalPreset : Preset.externalPresets.keySet()) {
-								presetNames.add(externalPreset);
-							}
-						}
-					}
-					if (presetNames.size() == 0)
+					} else
 						return new ArrayList<String>();
 					return getPossibleCompletionsForGivenArgs(args, presetNames);
-				} else if (args.length == 4 && Arrays.asList(new String[] {"bind", "b"}).contains(args[1].toLowerCase())) {
-					if (!sender.hasPermission("bending.command.preset.bind.assign") || (Preset.externalPresets.keySet().contains(args[2].toLowerCase())) && !sender.hasPermission("bending.command.preset.bind.external.other")) {
-						return new ArrayList<String>();
-					}
-					List<String> players = new ArrayList<String>();
-					for (Player p : Bukkit.getOnlinePlayers()) {
-						players.add(p.getName());
-					}
-					return getPossibleCompletionsForGivenArgs(args, players);
 				}
-				return new ArrayList<String>();
 			} else if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("rm")) {
 				if (args.length > 3 || !sender.hasPermission("bending.command.remove"))
 					return new ArrayList<String>();
@@ -196,17 +175,7 @@ public class BendingTabComplete implements TabCompleter {
 					l.add(p.getName());
 				}
 				return getPossibleCompletionsForGivenArgs(args, l);
-			} else if (args[0].equalsIgnoreCase("copy") || args[0].equalsIgnoreCase("co")) {
-				//If they can't use the command, have over 3 args (copy <player> <player>), or if have over 2 args and can't assign to other players
-				if (!sender.hasPermission("bending.command.copy") || args.length > 4 || (args.length > 3 && !sender.hasPermission("bending.command.copy.assign"))) 
-					return new ArrayList<String>(); //Return nothing
-				List<String> l = new ArrayList<String>();
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					l.add(p.getName());
-				}
-				return getPossibleCompletionsForGivenArgs(args, l);
-			}
-			else if (!PKCommand.instances.keySet().contains(args[0].toLowerCase())) {
+			} else if (!PKCommand.instances.keySet().contains(args[0].toLowerCase())) {
 				return new ArrayList<String>();
 			}
 		} else {

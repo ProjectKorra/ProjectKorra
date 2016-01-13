@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.chiblocking.ChiMethods;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 
@@ -32,18 +31,20 @@ public class RemoveCommand extends PKCommand {
 
 		Player player = Bukkit.getPlayer(args.get(0));
 		if (player == null) {
-			Element e = Element.getType(getElement(args.get(0)));
-			if (e != null && sender instanceof Player) {
-				if (GeneralMethods.getBendingPlayer(sender.getName()).hasElement(e)) {
-					GeneralMethods.getBendingPlayer(sender.getName()).getElements().remove(e);
-					GeneralMethods.saveElements(GeneralMethods.getBendingPlayer(sender.getName()));
+			Element e = Element.getElement(getElement(args.get(0)));
+			BendingPlayer senderBPlayer = BendingPlayer.getBendingPlayer(sender.getName());
+			
+			if (senderBPlayer != null && e != null && sender instanceof Player) {
+				if (senderBPlayer.hasElement(e)) {
+					senderBPlayer.getElements().remove(e);
+					GeneralMethods.saveElements(senderBPlayer);
 					GeneralMethods.removeUnusableAbilities(sender.getName());
-					if (e == Element.Chi) {
-						sender.sendMessage(ChiMethods.getChiColor() + "You have removed your chiblocking.");
+					
+					if (e == Element.CHI) {
+						sender.sendMessage(Element.CHI.getColor() + "You have removed your chiblocking.");
 						return;
 					}
-					sender.sendMessage(GeneralMethods.getElementColor(e) + "You have removed your " + e.toString().toLowerCase() + "bending.");
-					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
+					sender.sendMessage(e.getColor() + "You have removed your " + e.toString().toLowerCase() + "bending.");
 					return;
 				} else {
 					sender.sendMessage(ChatColor.RED + "You do not have that element!");
@@ -54,13 +55,13 @@ public class RemoveCommand extends PKCommand {
 			return;
 		}
 
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			bPlayer = GeneralMethods.getBendingPlayer(player.getName());
+			bPlayer = BendingPlayer.getBendingPlayer(player);
 		}
 		if (args.size() == 2) {
-			Element e = Element.getType(getElement(args.get(1)));
+			Element e = Element.getElement(getElement(args.get(1)));
 			if (e != null) {
 				if (!bPlayer.hasElement(e)) {
 					sender.sendMessage(ChatColor.DARK_RED + "Targeted player does not have that element");
@@ -69,12 +70,12 @@ public class RemoveCommand extends PKCommand {
 				bPlayer.getElements().remove(e);
 				GeneralMethods.saveElements(bPlayer);
 				GeneralMethods.removeUnusableAbilities(player.getName());
-				if (e == Element.Chi) {
-					sender.sendMessage(ChiMethods.getChiColor() + "You have removed the chiblocking of " + ChatColor.DARK_AQUA + player.getName());
-					player.sendMessage(ChiMethods.getChiColor() + "Your chiblocking has been removed by " + ChatColor.DARK_AQUA + sender.getName());
+				if (e == Element.CHI) {
+					sender.sendMessage(Element.CHI.getColor() + "You have removed the chiblocking of " + ChatColor.DARK_AQUA + player.getName());
+					player.sendMessage(Element.CHI.getColor() + "Your chiblocking has been removed by " + ChatColor.DARK_AQUA + sender.getName());
 				} else {
-					sender.sendMessage(GeneralMethods.getElementColor(e) + "You have removed the " + getElement(args.get(1)).toLowerCase() + "bending of " + ChatColor.DARK_AQUA + player.getName());
-					player.sendMessage(GeneralMethods.getElementColor(e) + "Your " + getElement(args.get(1)).toLowerCase() + "bending has been removed by " + ChatColor.DARK_AQUA + sender.getName());
+					sender.sendMessage(e.getColor() + "You have removed the " + getElement(args.get(1)).toLowerCase() + "bending of " + ChatColor.DARK_AQUA + player.getName());
+					player.sendMessage(e.getColor() + "Your " + getElement(args.get(1)).toLowerCase() + "bending has been removed by " + ChatColor.DARK_AQUA + sender.getName());
 				}
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
 				return;

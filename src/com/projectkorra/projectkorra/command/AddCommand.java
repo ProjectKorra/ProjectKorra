@@ -52,10 +52,10 @@ public class AddCommand extends PKCommand {
 	 * @param element The element to add
 	 */
 	private void add(CommandSender sender, Player target, String element) {
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(target.getName());
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
-			bPlayer = GeneralMethods.getBendingPlayer(target.getName());
+			bPlayer = BendingPlayer.getBendingPlayer(target);
 		}
 		if (bPlayer.isPermaRemoved()) {
 			sender.sendMessage(ChatColor.RED + "That player's bending was permanently removed.");
@@ -63,9 +63,10 @@ public class AddCommand extends PKCommand {
 		}
 		if (Arrays.asList(Commands.elementaliases).contains(element.toLowerCase())) {
 			element = getElement(element.toLowerCase());
-			Element type = Element.getType(element);
+			Element type = Element.getElement(element);
 			bPlayer.addElement(type);
-			ChatColor color = GeneralMethods.getElementColor(type);
+			ChatColor color = type.getColor();
+			
 			if (element.charAt(0) == 'w' || element.charAt(0) == 'f') {
 				target.sendMessage(color + "You are also a " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
 			} else if (element.charAt(0) == 'e' || element.charAt(0) == 'a') {

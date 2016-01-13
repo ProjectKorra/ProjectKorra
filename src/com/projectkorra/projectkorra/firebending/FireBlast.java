@@ -1,9 +1,15 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.waterbending.PlantRegrowth;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,372 +21,394 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.waterbending.Plantbending;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-public class FireBlast implements ConfigLoadable {
+public class FireBlast extends FireAbility {
 	
-	public static ConcurrentHashMap<Integer, FireBlast> instances = new ConcurrentHashMap<>();
-
-	private static double SPEED = config.get().getDouble("Abilities.Fire.FireBlast.Speed");
-	private static double PUSH_FACTOR = config.get().getDouble("Abilities.Fire.FireBlast.Push");
-	private static double RANGE = config.get().getDouble("Abilities.Fire.FireBlast.Range");
-	private static int DAMAGE = config.get().getInt("Abilities.Fire.FireBlast.Damage");
-	private static double fireticks = config.get().getDouble("Abilities.Fire.FireBlast.FireTicks");
-	private static int idCounter = 0;
-
-	/* Package visible variables */
-	static boolean dissipate = config.get().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-	/* End Package visible variables */
-
-	public static double AFFECTING_RADIUS = 2;
-
-	// public static long interval = 2000;
-	public static byte full = 0x0;
-	private static boolean canPowerFurnace = true;
-	private static final int maxticks = 10000;
-	private long cooldown = config.get().getLong("Abilities.Fire.FireBlast.Cooldown");
-
+	private static final int MAX_TICKS = 10000;
+	
+	private boolean powerFurnace;
+	private boolean showParticles;
+	private boolean dissipate;
+	private int ticks;
+	private long cooldown;
+	private double speedFactor;
+	private double range;
+	private double damage;
+	private double speed;
+	private double radius;
+	private double fireTicks;
+	private double pushFactor;
+	private Random random;
 	private Location location;
-	private List<Block> safe = new ArrayList<Block>();
 	private Location origin;
 	private Vector direction;
-	private Player player;
-	private double speedfactor;
-	private int ticks = 0;
-	private int id = 0;
-	private double range = RANGE;
-	private double damage = DAMAGE;
-	private double speed = SPEED;
-	private double pushfactor = PUSH_FACTOR;
-	private double affectingradius = AFFECTING_RADIUS;
-	private boolean showParticles = true;
-	private Random rand = new Random();
+	private List<Block> safeBlocks;
 	
-	private FireBurst source = null;
-
-	public FireBlast(Location location, Vector direction, Player player, int damage, List<Block> safeblocks, FireBurst burst) {
-		/* Initial Checks */
+	public FireBlast(Location location, Vector direction, Player player, int damage, List<Block> safeBlocks) {
+		super(player);
+		
 		if (location.getBlock().isLiquid()) {
 			return;
 		}
-		/* End Initial Checks */
-		// reloadVariables();
-		safe = safeblocks;
-		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
-		// timers.put(player, System.currentTimeMillis());
-		this.player = player;
+		
+		this.safeBlocks = safeBlocks;
+		this.damage = damage;
+		this.powerFurnace = true;
+		this.showParticles = true;
+		this.radius = 2;
+		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
+		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Range");
+		this.speed = getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
+		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
+		this.pushFactor = getConfig().getDouble("Abilities.Fire.FireBlast.Push");
+		this.random = new Random();
+
 		this.location = location.clone();
-		origin = location.clone();
+		this.origin = location.clone();
 		this.direction = direction.clone().normalize();
+		
+		this.range = getDayFactor(range);
 		this.damage *= 1.5;
-		source = burst;
-		instances.put(idCounter, this);
-		this.id = idCounter;
-		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
-	}
 
+		start();
+	}
+	
 	public FireBlast(Player player) {
-		/* Initial Checks */
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("FireBlast"))
+		super(player);
+		
+		if (bPlayer.isOnCooldown(this)) {
 			return;
-		if (player.getEyeLocation().getBlock().isLiquid() || Fireball.isCharging(player)) {
+		} else if (player.getEyeLocation().getBlock().isLiquid() || FireBlastCharged.isCharging(player)) {
 			return;
 		}
-		/* End Initial Checks */
-		// reloadVariables();
-		range = FireMethods.getFirebendingDayAugment(range, player.getWorld());
-		this.player = player;
-		location = player.getEyeLocation();
-		origin = player.getEyeLocation();
-		direction = player.getEyeLocation().getDirection().normalize();
-		location = location.add(direction.clone());
-		instances.put(idCounter, this);
-		this.id = idCounter;
-		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
-		bPlayer.addCooldown("FireBlast", cooldown);
-		// time = System.currentTimeMillis();
-		// timers.put(player, System.currentTimeMillis());
-	}
-
-	public static boolean annihilateBlasts(Location location, double radius, Player source) {
-		boolean broke = false;
-		for (FireBlast blast : instances.values()) {
-			Location fireblastlocation = blast.location;
-			if (location.getWorld() == fireblastlocation.getWorld() && !blast.player.equals(source)) {
-				if (location.distance(fireblastlocation) <= radius) {
-					blast.remove();
-					broke = true;
-				}
-			}
-		}
-		if (Fireball.annihilateBlasts(location, radius, source))
-			broke = true;
-		return broke;
-	}
-
-	public static ArrayList<FireBlast> getAroundPoint(Location location, double radius) {
-		ArrayList<FireBlast> list = new ArrayList<FireBlast>();
-		for (FireBlast fireBlast : instances.values()) {
-			Location fireblastlocation = fireBlast.location;
-			if (location.getWorld() == fireblastlocation.getWorld()) {
-				if (location.distance(fireblastlocation) <= radius)
-					list.add(fireBlast);
-			}
-		}
-		return list;
-	}
-
-	public static String getDescription() {
-		return "FireBlast is the most fundamental bending technique of a firebender. "
-				+ "To use, simply left-click in a direction. A blast of fire will be created at your fingertips. "
-				+ "If this blast contacts an enemy, it will dissipate and engulf them in flames, "
-				+ "doing additional damage and knocking them back slightly. "
-				+ "If the blast hits terrain, it will ignite the nearby area. "
-				+ "Additionally, if you hold sneak, you will charge up the fireblast. "
-				+ "If you release it when it's charged, it will instead launch a powerful "
-				+ "fireball that explodes on contact.";
-	}
-
-	public static void removeFireBlastsAroundPoint(Location location, double radius) {
-		for (FireBlast fireBlast : instances.values()) {
-			Location fireblastlocation = fireBlast.location;
-			if (location.getWorld() == fireblastlocation.getWorld()) {
-				if (location.distance(fireblastlocation) <= radius)
-					fireBlast.remove();
-			}
-		}
-		Fireball.removeFireballsAroundPoint(location, radius);
-	}
+		
+		this.powerFurnace = true;
+		this.showParticles = true;
+		this.radius = 2;
+		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
+		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Range");
+		this.damage = getConfig().getInt("Abilities.Fire.FireBlast.Damage");
+		this.speed = getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
+		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
+		this.pushFactor = getConfig().getDouble("Abilities.Fire.FireBlast.Push");
+		this.random = new Random();
+		this.safeBlocks = new ArrayList<>();
+		
+		this.range = getDayFactor(this.range);
+		
+		this.location = player.getEyeLocation();
+		this.origin = player.getEyeLocation();
+		this.direction = player.getEyeLocation().getDirection().normalize();
+		this.location = location.add(direction.clone());
+		
+		start();
+		bPlayer.addCooldown(this);
+	}	
 
 	private void advanceLocation() {
 		if (showParticles) {
-			// ParticleEffect.RED_DUST.display((float) 16, (float) 111, (float) 227, 0.01F, 0,
-			// location, 256D);
 			ParticleEffect.FLAME.display(location, 0.275F, 0.275F, 0.275F, 0, 6);
 			ParticleEffect.SMOKE.display(location, 0.3F, 0.3F, 0.3F, 0, 3);
 		}
-		location = location.add(direction.clone().multiply(speedfactor));
-		if (rand.nextInt(4) == 0) {
-			FireMethods.playFirebendingSound(location);
+		location = location.add(direction.clone().multiply(speedFactor));
+		if (random.nextInt(4) == 0) {
+			playFirebendingSound(location);
 		}
 	}
 
 	private void affect(Entity entity) {
 		if (entity.getUniqueId() != player.getUniqueId()) {
-			if (AvatarState.isAvatarState(player)) {
-				GeneralMethods.setVelocity(entity, direction.clone().multiply(AvatarState.getValue(pushfactor)));
+			if (bPlayer.isAvatarState()) {
+				GeneralMethods.setVelocity(entity, direction.clone().multiply(AvatarState.getValue(pushFactor)));
 			} else {
-				GeneralMethods.setVelocity(entity, direction.clone().multiply(pushfactor));
+				GeneralMethods.setVelocity(entity, direction.clone().multiply(pushFactor));
 			}
 			if (entity instanceof LivingEntity) {
-				entity.setFireTicks((int) (fireticks * 20));
-				if (source != null) {
-					GeneralMethods.damageEntity(player, entity,
-							(int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()), "FireBurst");
-				} else {
-				GeneralMethods.damageEntity(player, entity,
-						(int) FireMethods.getFirebendingDayAugment((double) damage, entity.getWorld()), "FireBlast");
-				}
-				AirMethods.breakBreathbendingHold(entity);
-				new Enflamed(entity, player);
+				entity.setFireTicks((int) (fireTicks * 20));
+				GeneralMethods.damageEntity(this, entity, (int) getDayFactor(damage));
+				AirAbility.breakBreathbendingHold(entity);
+				new FireDamageTimer(entity, player);
 				remove();
 			}
 		}
 	}
 
-	public double getAffectingradius() {
-		return affectingradius;
+	private void ignite(Location location) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+			if (BlazeArc.isIgnitable(player, block) 
+					&& !safeBlocks.contains(block)
+					&& !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				if (canFireGrief()) {
+					if (WaterAbility.isPlantbendable(block)) {
+						new PlantRegrowth(player, block);
+					}
+					block.setType(Material.FIRE);
+				} else {
+					createTempFire(block.getLocation());
+				}
+				
+				if (dissipate) {
+					BlazeArc.getIgnitedBlocks().put(block, player);
+					BlazeArc.getIgnitedTimes().put(block, System.currentTimeMillis());
+				}
+			}
+		}
 	}
 
+	@Override
+	public void progress() {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)
+				|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+			remove();
+			return;
+		}
+		
+		speedFactor = speed * (ProjectKorra.time_step / 1000.0);
+		ticks++;
+
+		if (ticks > MAX_TICKS) {
+			remove();
+			return;
+		}
+
+		Block block = location.getBlock();
+		if (GeneralMethods.isSolid(block) || block.isLiquid()) {
+			if (block.getType() == Material.FURNACE && powerFurnace) {
+				Furnace furnace = (Furnace) block.getState();
+				furnace.setBurnTime((short) 800);
+				furnace.setCookTime((short) 800);
+				furnace.update();
+			} else if (BlazeArc.isIgnitable(player, block.getRelative(BlockFace.UP))) {
+				ignite(location);
+			}
+			remove();
+			return;
+		}
+
+		if (location.distanceSquared(origin) > range * range) {
+			remove();
+			return;
+		}
+
+		WaterAbility.removeWaterSpouts(location, player);
+		AirAbility.removeAirSpouts(location, player);
+
+		Player source = player;
+		if (EarthBlast.annihilateBlasts(location, radius, source) 
+				|| WaterManipulation.annihilateBlasts(location, radius, source)
+				|| FireBlast.annihilateBlasts(location, radius, source)) {
+			remove();
+			return;
+		}
+
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
+			affect(entity);
+			if (entity instanceof LivingEntity) {
+				break;
+			}
+		}
+
+		advanceLocation();
+	}
+
+	public static boolean annihilateBlasts(Location location, double radius, Player source) {
+		boolean broke = false;
+		for (FireBlast blast : getAbilities(FireBlast.class)) {
+			Location fireBlastLocation = blast.location;
+			if (location.getWorld().equals(fireBlastLocation.getWorld()) && !blast.player.equals(source)) {
+				if (location.distanceSquared(fireBlastLocation) <= radius * radius) {
+					blast.remove();
+					broke = true;
+				}
+			}
+		}
+		if (FireBlastCharged.annihilateBlasts(location, radius, source)) {
+			broke = true;
+		}
+		return broke;
+	}
+
+	public static ArrayList<FireBlast> getAroundPoint(Location location, double radius) {
+		ArrayList<FireBlast> list = new ArrayList<FireBlast>();
+		for (FireBlast fireBlast : getAbilities(FireBlast.class)) {
+			Location fireblastlocation = fireBlast.location;
+			if (location.getWorld().equals(fireblastlocation.getWorld())) {
+				if (location.distanceSquared(fireblastlocation) <= radius * radius) {
+					list.add(fireBlast);
+				}
+			}
+		}
+		return list;
+	}
+
+	public static void removeFireBlastsAroundPoint(Location location, double radius) {
+		for (FireBlast fireBlast : getAbilities(FireBlast.class)) {
+			Location fireBlastLocation = fireBlast.location;
+			if (location.getWorld().equals(fireBlastLocation.getWorld())) {
+				if (location.distanceSquared(fireBlastLocation) <= radius * radius) {
+					fireBlast.remove();
+				}
+			}
+		}
+		FireBlastCharged.removeFireballsAroundPoint(location, radius);
+	}
+
+	@Override
+	public String getName() {
+		return "FireBlast";
+	}
+
+	@Override
+	public Location getLocation() {
+		return location != null ? location : origin;
+	}
+
+	@Override
 	public long getCooldown() {
 		return cooldown;
 	}
-
-	public double getDamage() {
-		return damage;
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
 	}
 
-	public Player getPlayer() {
-		return player;
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
 	}
 
-	public double getPushfactor() {
-		return pushfactor;
+	public boolean isPowerFurnace() {
+		return powerFurnace;
+	}
+
+	public void setPowerFurnace(boolean powerFurnace) {
+		this.powerFurnace = powerFurnace;
+	}
+
+	public boolean isShowParticles() {
+		return showParticles;
+	}
+
+	public void setShowParticles(boolean showParticles) {
+		this.showParticles = showParticles;
+	}
+
+	public boolean isDissipate() {
+		return dissipate;
+	}
+
+	public void setDissipate(boolean dissipate) {
+		this.dissipate = dissipate;
+	}
+
+	public int getTicks() {
+		return ticks;
+	}
+
+	public void setTicks(int ticks) {
+		this.ticks = ticks;
+	}
+
+	public double getSpeedFactor() {
+		return speedFactor;
+	}
+
+	public void setSpeedFactor(double speedFactor) {
+		this.speedFactor = speedFactor;
 	}
 
 	public double getRange() {
 		return range;
 	}
 
-	public double getSpeed() {
-		return speed;
-	}
-
-	private void ignite(Location location) {
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, affectingradius)) {
-			if (FireStream.isIgnitable(player, block) && !safe.contains(block)) {
-				/*
-				 * if (WaterMethods.isPlantbendable(block)) { new Plantbending(block); }
-				 */
-				if (FireMethods.canFireGrief()) {
-					if (WaterMethods.isPlantbendable(block))
-						new Plantbending(block);
-					block.setType(Material.FIRE);
-				} else
-					FireMethods.createTempFire(block.getLocation());
-				// block.setType(Material.FIRE);
-				if (dissipate) {
-					FireStream.ignitedblocks.put(block, player);
-					FireStream.ignitedtimes.put(block, System.currentTimeMillis());
-				}
-			}
-		}
-	}
-
-	public boolean progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
-			return false;
-		}
-
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze", location)) {
-			remove();
-			return false;
-		}
-
-		speedfactor = speed * (ProjectKorra.time_step / 1000.);
-
-		ticks++;
-
-		if (ticks > maxticks) {
-			remove();
-			return false;
-		}
-
-		Block block = location.getBlock();
-
-		if (GeneralMethods.isSolid(block) || block.isLiquid()) {
-			if (block.getType() == Material.FURNACE && canPowerFurnace) {
-				Furnace furnace = (Furnace) block.getState();
-				furnace.setBurnTime((short) 800);
-				furnace.setCookTime((short) 800);
-				furnace.update();
-			} else if (FireStream.isIgnitable(player, block.getRelative(BlockFace.UP))) {
-				ignite(location);
-			}
-			remove();
-			return false;
-		}
-
-		if (location.distance(origin) > range) {
-			remove();
-			return false;
-		}
-
-		WaterMethods.removeWaterSpouts(location, player);
-		AirMethods.removeAirSpouts(location, player);
-
-		double radius = affectingradius;
-		Player source = player;
-		if (EarthBlast.annihilateBlasts(location, radius, source) || WaterManipulation.annihilateBlasts(location, radius, source)
-				|| FireBlast.annihilateBlasts(location, radius, source)) {
-			remove();
-			return false;
-		}
-
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, affectingradius)) {
-			// Block bblock = location.getBlock();
-			// Block block1 = entity.getLocation().getBlock();
-			// if (bblock.equals(block1))
-			affect(entity);
-			if (entity instanceof LivingEntity) {
-				// Block block2 = ((LivingEntity) entity).getEyeLocation()
-				// .getBlock();
-				// if (bblock.equals(block1))
-				// break;
-				// if (bblock.equals(block2)) {
-				// affect(entity);
-				break;
-				// }
-			}
-		}
-
-		advanceLocation();
-
-		return true;
-	}
-
-	public static void progressAll() {
-		for (FireBlast ability : instances.values()) {
-			ability.progress();
-		}
-	}
-
-	public void remove() {
-		instances.remove(id);
-	}
-
-	public static void removeAll() {
-		for (FireBlast ability : instances.values()) {
-			ability.remove();
-		}
-	}
-
-	@Override
-	public void reloadVariables() {
-		SPEED = config.get().getDouble("Abilities.Fire.FireBlast.Speed");
-		PUSH_FACTOR = config.get().getDouble("Abilities.Fire.FireBlast.Push");
-		RANGE = config.get().getDouble("Abilities.Fire.FireBlast.Range");
-		DAMAGE = config.get().getInt("Abilities.Fire.FireBlast.Damage");
-		fireticks = config.get().getDouble("Abilities.Fire.FireBlast.FireTicks");
-		dissipate = config.get().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-		cooldown = config.get().getLong("Abilities.Fire.FireBlast.Cooldown");
-		range = RANGE;
-		damage = DAMAGE;
-		speed = SPEED;
-		pushfactor = PUSH_FACTOR;
-		affectingradius = AFFECTING_RADIUS;
-	}
-
-	public void setAffectingradius(double affectingradius) {
-		this.affectingradius = affectingradius;
-	}
-
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
-		if (player != null)
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("FireBlast", cooldown);
-	}
-
-	public void setDamage(double dmg) {
-		this.damage = dmg;
-	}
-
-	public void setPushfactor(double pushfactor) {
-		this.pushfactor = pushfactor;
-	}
-
 	public void setRange(double range) {
 		this.range = range;
 	}
 
-	public void setShowParticles(boolean show) {
-		this.showParticles = show;
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getSpeed() {
+		return speed;
 	}
 
 	public void setSpeed(double speed) {
 		this.speed = speed;
 	}
 
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getFireTicks() {
+		return fireTicks;
+	}
+
+	public void setFireTicks(double fireTicks) {
+		this.fireTicks = fireTicks;
+	}
+
+	public double getPushFactor() {
+		return pushFactor;
+	}
+
+	public void setPushFactor(double pushFactor) {
+		this.pushFactor = pushFactor;
+	}
+
+	public Random getRandom() {
+		return random;
+	}
+
+	public void setRandom(Random random) {
+		this.random = random;
+	}
+
+	public Location getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+
+	public Vector getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Vector direction) {
+		this.direction = direction;
+	}
+
+	public static int getMaxTicks() {
+		return MAX_TICKS;
+	}
+
+	public List<Block> getSafeBlocks() {
+		return safeBlocks;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+	
 }

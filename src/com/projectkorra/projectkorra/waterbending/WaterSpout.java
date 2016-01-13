@@ -2,282 +2,76 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.chiblocking.Paralyze;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class WaterSpout {
+public class WaterSpout extends WaterAbility {
 
-	public static ConcurrentHashMap<Player, WaterSpout> instances = new ConcurrentHashMap<Player, WaterSpout>();
-	public static ConcurrentHashMap<Block, Block> affectedblocks = new ConcurrentHashMap<Block, Block>();
-	public static ConcurrentHashMap<Block, Block> newaffectedblocks = new ConcurrentHashMap<Block, Block>();
-	public static ConcurrentHashMap<Block, Block> baseblocks = new ConcurrentHashMap<Block, Block>();
-	public static ConcurrentHashMap<Block, Long> revert = new ConcurrentHashMap<Block, Long>();
+	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
+	private static final ConcurrentHashMap<Block, Block> NEW_AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
+	private static final ConcurrentHashMap<Block, Long> REVERT_BLOCKS = new ConcurrentHashMap<Block, Long>();
 
-	private static final int HEIGHT = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Height");
-	private static final boolean PARTICLES = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
-	private static final boolean BLOCKS = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
-	
-	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.WaterSpout.Wave.SelectRange");
-
-	// private static final double threshold = .05;
-	// private static final byte half = 0x4;
-	@SuppressWarnings("unused")
-	private static final byte full = 0x0;
-	private Player player;
-	private Block base;
-	private TempBlock baseblock;
-	private int defaultheight = HEIGHT;
-	private long time = 0;
-	private long interval = 50;
-	private int angle = 0;
+	private boolean canBendOnPackedIce;
+	private boolean useParticles;
+	private boolean useBlockSpiral;
+	private int angle;
+	private long time;
+	private long interval;
 	private double rotation;
-	private boolean canBendOnPackedIce = false;
-
+	private double height;
+	private Block base;
+	private TempBlock baseBlock;
+	
 	public WaterSpout(Player player) {
-		//		if (BendingPlayer.getBendingPlayer(player).isOnCooldown(
-		//				Abilities.WaterSpout))
-		//			return;
-
-		if (instances.containsKey(player)) {
-			instances.get(player).remove();
+		super(player);
+	
+		WaterSpout oldSpout = CoreAbility.getAbility(player, WaterSpout.class);
+		if (oldSpout != null) {
+			oldSpout.remove();
 			return;
 		}
-		this.player = player;
-		this.canBendOnPackedIce = ProjectKorra.plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce");
 		
-		Block block = BlockSource.getWaterSourceBlock(player, selectRange, selectRange, ClickType.LEFT_CLICK, false, false, false, true, WaterMethods.canIcebend(player), WaterMethods.canPlantbend(player));
-
-		if(block != null) {
-			WaterWave wwave = new WaterWave(player, block, WaterWave.AbilityType.CLICK);
-			if (WaterWave.instances.contains(wwave)) {
-				return;
-			}
+		this.canBendOnPackedIce = ProjectKorra.plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce");
+		this.useParticles = getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
+		this.useBlockSpiral = getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
+		this.height = getConfig().getDouble("Abilities.Water.WaterSpout.Height");
+		this.interval = 50;
+		
+		WaterSpoutWave spoutWave = new WaterSpoutWave(player, WaterSpoutWave.AbilityType.CLICK);
+		if (spoutWave.isStarted()) {
+			return;
 		}
 
 		Block topBlock = GeneralMethods.getTopBlock(player.getLocation(), 0, -50);
-		if (topBlock == null)
+		if (topBlock == null) {
 			topBlock = player.getLocation().getBlock();
-		Material mat = topBlock.getType();
-		if (mat != Material.WATER && mat != Material.STATIONARY_WATER && mat != Material.ICE && mat != Material.PACKED_ICE && mat != Material.SNOW && mat != Material.SNOW_BLOCK)
-			return; 
-		if (mat == Material.PACKED_ICE && !canBendOnPackedIce)
+		}
+		
+		if (!isWater(topBlock) && !isIcebendable(topBlock) && !isSnow(topBlock)) {
 			return;
+		} else if (topBlock.getType() == Material.PACKED_ICE && !canBendOnPackedIce) {
+			return;
+		}
+
 		new Flight(player);
 		player.setAllowFlight(true);
-		instances.put(player, this);
-		spout(player);
-		
-	}
-
-	private void remove() {
-		revertBaseBlock(player);
-		instances.remove(player);
-	}
-
-	private static void progressRevert(boolean ignoreTime) {
-		for (Block block : revert.keySet()) {
-			long time = revert.get(block);
-			if (System.currentTimeMillis() > time || ignoreTime) {
-				if (TempBlock.isTempBlock(block))
-					TempBlock.revertBlock(block, Material.AIR);
-				revert.remove(block);
-			}
-		}
-	}
-
-	public static void handleSpouts(Server server) {
-		// affectedblocks.clear();
-		newaffectedblocks.clear();
-		progressRevert(false);
-
-		for (Player player : instances.keySet()) {
-			if (!player.isOnline() || player.isDead()) {
-				instances.get(player).remove();
-			} else if (GeneralMethods.canBend(player.getName(), "WaterSpout")) {
-				spout(player);
-			} else {
-				instances.get(player).remove();
-			}
-		}
-
-		for (Block block : affectedblocks.keySet()) {
-			if (!newaffectedblocks.containsKey(block)) {
-				remove(block);
-			}
-		}
-
-		// for (Block block : affectedblocks.keySet()) {
-		// boolean remove = true;
-		// for (Player player : instances.keySet()) {
-		// if (Methods.hasAbility(player, Abilities.WaterSpout)
-		// && Methods.canBend(player, Abilities.WaterSpout)
-		// && player.getWorld() == block.getWorld()) {
-		// Location loc1 = player.getLocation().clone();
-		// loc1.setY(0);
-		// Location loc2 = block.getLocation().clone();
-		// loc2.setY(0);
-		// if (loc1.distance(loc2) < 1)
-		// remove = false;
-		// }
-		// }
-		// if (remove)
-		// remove(block);
-		// }
-
-	}
-
-	private static void remove(Block block) {
-		affectedblocks.remove(block);
-		TempBlock.revertBlock(block, Material.AIR);
-		// block.setType(Material.AIR);
-		// block.setData(half);
-	}
-
-	public static void spout(Player player) {
-		WaterSpout spout = instances.get(player);
-		if (Bloodbending.isBloodbended(player) || Paralyze.isParalyzed(player)) {
-			instances.get(player).remove();
-		} else {
-
-			player.setFallDistance(0);
-			player.setSprinting(false);
-			if (GeneralMethods.rand.nextInt(4) == 0) {
-				WaterMethods.playWaterbendingSound(player.getLocation());
-			}
-			// if (player.getVelocity().length() > threshold) {
-			// // Methods.verbose("Too fast!");
-			// player.setVelocity(player.getVelocity().clone().normalize()
-			// .multiply(threshold * .5));
-			// }
-			player.removePotionEffect(PotionEffectType.SPEED);
-			Location location = player.getLocation().clone().add(0, .2, 0);
-			Block block = location.clone().getBlock();
-			int height = spoutableWaterHeight(location, player);
-
-			// Methods.verbose(height + " " + WaterSpout.height + " "
-			// + affectedblocks.size());
-			if (height != -1) {
-				location = spout.base.getLocation();
-				for (int i = 1; i <= height; i++) {
-					block = location.clone().add(0, i, 0).getBlock();
-					if (!TempBlock.isTempBlock(block)) {
-						new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
-					}
-					// block.setType(Material.WATER);
-					// block.setData(full);
-					if (!affectedblocks.containsKey(block)) {
-						affectedblocks.put(block, block);
-					}
-					instances.get(player).rotateParticles(block);
-					newaffectedblocks.put(block, block);
-				}
-				instances.get(player).displayWaterSpiral(location.clone().add(.5, 0, .5));
-				if (player.getLocation().getBlockY() > block.getY()) {
-					player.setFlying(false);
-				} else {
-					new Flight(player);
-					player.setAllowFlight(true);
-					player.setFlying(true);
-				}
-			} else {
-				instances.get(player).remove();
-			}
-		}
-	}
-
-	public void rotateParticles(Block block) {
-		if (!PARTICLES)
-			return;
-
-		if (System.currentTimeMillis() >= time + interval) {
-			time = System.currentTimeMillis();
-
-			Location location = block.getLocation();
-			Location playerloc = player.getLocation();
-			location = new Location(location.getWorld(), playerloc.getX(), location.getY(), playerloc.getZ());
-
-			double dy = playerloc.getY() - block.getY();
-			if (dy > HEIGHT)
-				dy = HEIGHT;
-			float[] directions = { -0.5f, 0.325f, 0.25f, 0.125f, 0.f, 0.125f, 0.25f, 0.325f, 0.5f };
-			int index = angle;
-
-			angle++;
-			if (angle >= directions.length)
-				angle = 0;
-			for (int i = 1; i <= dy; i++) {
-
-				index += 1;
-				if (index >= directions.length)
-					index = 0;
-
-				Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
-
-				ParticleEffect.WATER_SPLASH.display(effectloc2, directions[index], directions[index], directions[index], 5, HEIGHT + 5);
-			}
-		}
-	}
-
-	private static int spoutableWaterHeight(Location location, Player player) {
-		WaterSpout spout = instances.get(player);
-		int height = spout.defaultheight;
-		if (WaterMethods.isNight(player.getWorld()))
-			height = (int) WaterMethods.waterbendingNightAugment((double) height, player.getWorld());
-		int maxheight = (int) ((double) spout.defaultheight * ProjectKorra.plugin.getConfig().getDouble("Properties.Water.NightFactor")) + 5;
-		Block blocki;
-		for (int i = 0; i < maxheight; i++) {
-			blocki = location.clone().add(0, -i, 0).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", blocki.getLocation()))
-				return -1;
-			if (!affectedblocks.contains(blocki)) {
-				if (blocki.getType() == Material.WATER || blocki.getType() == Material.STATIONARY_WATER) {
-					if (!TempBlock.isTempBlock(blocki)) {
-						revertBaseBlock(player);
-					}
-					spout.base = blocki;
-					if (i > height)
-						return height;
-					return i;
-				}
-				if (blocki.getType() == Material.ICE || blocki.getType() == Material.SNOW || blocki.getType() == Material.SNOW_BLOCK || (blocki.getType() == Material.PACKED_ICE && spout.canBendOnPackedIce)) {
-					if (!TempBlock.isTempBlock(blocki)) {
-						revertBaseBlock(player);
-						instances.get(player).baseblock = new TempBlock(blocki, Material.STATIONARY_WATER, (byte) 8);
-					}
-					// blocki.setType(Material.WATER);
-					// blocki.setData(full);
-					spout.base = blocki;
-					if (i > height)
-						return height;
-					return i;
-				}
-				if ((blocki.getType() != Material.AIR && (!WaterMethods.isPlant(blocki) || !WaterMethods.canPlantbend(player)))) {
-					revertBaseBlock(player);
-					return -1;
-				}
-			}
-		}
-		revertBaseBlock(player);
-		return -1;
+		start();
 	}
 
 	private void displayWaterSpiral(Location location) {
-
-		if (!BLOCKS) {
+		if (!useBlockSpiral) {
 			return;
 		}
 
@@ -285,6 +79,7 @@ public class WaterSpout {
 		double height = 0;
 		rotation += .4;
 		int i = 0;
+		
 		while (height < maxHeight) {
 			i += 20;
 			height += .4;
@@ -296,76 +91,324 @@ public class WaterSpout {
 
 			Block block = loc.getBlock();
 			if (block.getType().equals(Material.AIR) || !GeneralMethods.isSolid(block)) {
-				revert.put(block, 0L);
+				REVERT_BLOCKS.put(block, 0L);
 				new TempBlock(block, Material.STATIONARY_WATER, (byte) 1);
 			}
 		}
 	}
 
-	public static void revertBaseBlock(Player player) {
-		if (instances.containsKey(player)) {
-			if (instances.get(player).baseblock != null) {
-				instances.get(player).baseblock.revertBlock();
-				instances.get(player).baseblock = null;
+	@Override
+	public void progress() {
+		if (player.isDead() || !player.isOnline() || !bPlayer.canBind(this)) {
+			remove();
+			return;
+		} else {
+			player.setFallDistance(0);
+			player.setSprinting(false);
+			if ((new Random()).nextInt(4) == 0) {
+				playWaterbendingSound(player.getLocation());
+			}
+
+			player.removePotionEffect(PotionEffectType.SPEED);
+			Location location = player.getLocation().clone().add(0, .2, 0);
+			Block block = location.clone().getBlock();
+			double height = spoutableWaterHeight(location);
+
+			if (height != -1) {
+				location = base.getLocation();
+				for (int i = 1; i <= height; i++) {
+					block = location.clone().add(0, i, 0).getBlock();
+					
+					if (!TempBlock.isTempBlock(block)) {
+						new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
+					}
+					if (!AFFECTED_BLOCKS.containsKey(block)) {
+						AFFECTED_BLOCKS.put(block, block);
+					}
+					rotateParticles(block);
+					NEW_AFFECTED_BLOCKS.put(block, block);
+				}
+				
+				displayWaterSpiral(location.clone().add(.5, 0, .5));
+				if (player.getLocation().getBlockY() > block.getY()) {
+					player.setFlying(false);
+				} else {
+					new Flight(player);
+					player.setAllowFlight(true);
+					player.setFlying(true);
+				}
+			} else {
+				remove();
+				return;
 			}
 		}
 	}
 
-	public static void removeAll() {
-		progressRevert(true);
-		revert.clear();
+	@Override
+	public void remove() {
+		super.remove();
+		revertBaseBlock();
+	}
 
-		for (Player player : instances.keySet()) {
-			instances.get(player).remove();
-		}
-		for (Block block : affectedblocks.keySet()) {
-			// block.setType(Material.AIR);
-			TempBlock.revertBlock(block, Material.AIR);
-			affectedblocks.remove(block);
+	public void revertBaseBlock() {
+		if (baseBlock != null) {
+			baseBlock.revertBlock();
+			baseBlock = null;
 		}
 	}
 
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (Player player : instances.keySet())
-			players.add(player);
-		return players;
-	}
+	public void rotateParticles(Block block) {
+		if (!useParticles) {
+			return;
+		}
 
-	public static boolean removeSpouts(Location loc0, double radius, Player sourceplayer) {
-		boolean removed = false;
-		for (Player player : instances.keySet()) {
-			if (!player.equals(sourceplayer)) {
-				Location loc1 = player.getLocation().getBlock().getLocation();
-				loc0 = loc0.getBlock().getLocation();
-				double dx = loc1.getX() - loc0.getX();
-				double dy = loc1.getY() - loc0.getY();
-				double dz = loc1.getZ() - loc0.getZ();
+		if (System.currentTimeMillis() >= time + interval) {
+			time = System.currentTimeMillis();
 
-				double distance = Math.sqrt(dx * dx + dz * dz);
+			Location location = block.getLocation();
+			Location playerLoc = player.getLocation();
+			location = new Location(location.getWorld(), playerLoc.getX(), location.getY(), playerLoc.getZ());
 
-				if (distance <= radius && dy > 0 && dy < instances.get(player).defaultheight) {
-					removed = true;
-					instances.get(player).remove();
+			double dy = playerLoc.getY() - block.getY();
+			if (dy > height) {
+				dy = height;
+			}
+			
+			float[] directions = { -0.5f, 0.325f, 0.25f, 0.125f, 0.f, 0.125f, 0.25f, 0.325f, 0.5f };
+			int index = angle;
+			angle++;
+			if (angle >= directions.length) {
+				angle = 0;
+			}
+			for (int i = 1; i <= dy; i++) {
+				index += 1;
+				if (index >= directions.length) {
+					index = 0;
 				}
+
+				Location effectLoc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
+				ParticleEffect.WATER_SPLASH.display(effectLoc2, directions[index], directions[index], directions[index], 5, (int) (height + 5));
+			}
+		}
+	}
+
+	private double spoutableWaterHeight(Location location) {
+		double newHeight = height;
+		if (isNight(player.getWorld())) {
+			newHeight = getNightFactor(newHeight);
+		}
+		
+		double maxHeight = (height * ProjectKorra.plugin.getConfig().getDouble("Properties.Water.NightFactor")) + 5;
+		Block blocki;
+		
+		for (int i = 0; i < maxHeight; i++) {
+			blocki = location.clone().add(0, -i, 0).getBlock();
+			if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
+				return -1;
+			}
+			
+			if (!AFFECTED_BLOCKS.contains(blocki)) {
+				if (isWater(blocki)) {
+					if (!TempBlock.isTempBlock(blocki)) {
+						revertBaseBlock();
+					}
+					
+					base = blocki;
+					if (i > newHeight) {
+						return newHeight;
+					}
+					return i;
+				}
+				
+				if (isIcebendable(blocki) || isSnow(blocki)) {
+					if (!TempBlock.isTempBlock(blocki)) {
+						revertBaseBlock();
+						baseBlock = new TempBlock(blocki, Material.STATIONARY_WATER, (byte) 8);
+					}
+					
+					base = blocki;
+					if (i > newHeight) {
+						return newHeight;
+					}
+					return i;
+				}
+				if ((blocki.getType() != Material.AIR && (!isPlant(blocki) || !bPlayer.canPlantbend()))) {
+					revertBaseBlock();
+					return -1;
+				}
+			}
+		}
+		revertBaseBlock();
+		return -1;
+	}
+
+	public static void progressAllCleanup() {
+		NEW_AFFECTED_BLOCKS.clear();
+		revertAllBlocks(false);
+
+		for (Block block : AFFECTED_BLOCKS.keySet()) {
+			if (!NEW_AFFECTED_BLOCKS.containsKey(block)) {
+				AFFECTED_BLOCKS.remove(block);
+				TempBlock.revertBlock(block, Material.AIR);
+			}
+		}
+	}
+
+	private static void revertAllBlocks(boolean ignoreTime) {
+		for (Block block : REVERT_BLOCKS.keySet()) {
+			long time = REVERT_BLOCKS.get(block);
+			if (System.currentTimeMillis() > time || ignoreTime) {
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock.revertBlock(block, Material.AIR);
+				}
+				REVERT_BLOCKS.remove(block);
+			}
+		}
+	}
+
+	public static void removeAllCleanup() {
+		revertAllBlocks(true);
+		REVERT_BLOCKS.clear();
+
+		for (Block block : AFFECTED_BLOCKS.keySet()) {
+			TempBlock.revertBlock(block, Material.AIR);
+			AFFECTED_BLOCKS.remove(block);
+		}
+	}
+
+	public static boolean removeSpouts(Location loc0, double radius, Player sourcePlayer) {
+		boolean removed = false;
+		Location loc1 = sourcePlayer.getLocation().getBlock().getLocation();
+		loc0 = loc0.getBlock().getLocation();
+		double dx = loc1.getX() - loc0.getX();
+		double dy = loc1.getY() - loc0.getY();
+		double dz = loc1.getZ() - loc0.getZ();
+		double distSquared = dx * dx + dz * dz;
+		
+		for (WaterSpout spout : CoreAbility.getAbilities(sourcePlayer, WaterSpout.class)) {
+			if (distSquared <= radius * radius && dy > 0 && dy < spout.height) {
+				removed = true;
+				spout.remove();
 			}
 		}
 		return removed;
 	}
 
-	public static String getDescription() {
-		return "To use this ability, click while over or in water. " + "You will spout water up from beneath you to experience controlled levitation. " + "This ability is a toggle, so you can activate it then use other abilities and it " + "will remain on. If you try to spout over an area with no water, snow or ice, " + "the spout will dissipate and you will fall. Click again with this ability selected to deactivate it.";
+	@Override
+	public String getName() {
+		return "WaterSpout";
 	}
 
-	public Player getPlayer() {
-		return player;
+	@Override
+	public Location getLocation() {
+		return player != null ? player.getLocation() : null;
 	}
 
-	public int getDefaultheight() {
-		return defaultheight;
+	@Override
+	public long getCooldown() {
+		return 0;
 	}
 
-	public void setDefaultheight(int defaultheight) {
-		this.defaultheight = defaultheight;
+	@Override
+	public boolean isSneakAbility() {
+		return true;
 	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return true;
+	}
+	
+	public boolean isCanBendOnPackedIce() {
+		return canBendOnPackedIce;
+	}
+
+	public void setCanBendOnPackedIce(boolean canBendOnPackedIce) {
+		this.canBendOnPackedIce = canBendOnPackedIce;
+	}
+
+	public boolean isUseParticles() {
+		return useParticles;
+	}
+
+	public void setUseParticles(boolean useParticles) {
+		this.useParticles = useParticles;
+	}
+
+	public boolean isUseBlockSpiral() {
+		return useBlockSpiral;
+	}
+
+	public void setUseBlockSpiral(boolean useBlockSpiral) {
+		this.useBlockSpiral = useBlockSpiral;
+	}
+
+	public int getAngle() {
+		return angle;
+	}
+
+	public void setAngle(int angle) {
+		this.angle = angle;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public long getInterval() {
+		return interval;
+	}
+
+	public void setInterval(long interval) {
+		this.interval = interval;
+	}
+
+	public double getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(double rotation) {
+		this.rotation = rotation;
+	}
+
+	public double getHeight() {
+		return height;
+	}
+
+	public void setHeight(double height) {
+		this.height = height;
+	}
+
+	public Block getBase() {
+		return base;
+	}
+
+	public void setBase(Block base) {
+		this.base = base;
+	}
+
+	public TempBlock getBaseBlock() {
+		return baseBlock;
+	}
+
+	public void setBaseBlock(TempBlock baseBlock) {
+		this.baseBlock = baseBlock;
+	}
+
+	public static ConcurrentHashMap<Block, Block> getAffectedBlocks() {
+		return AFFECTED_BLOCKS;
+	}
+
+	public static ConcurrentHashMap<Block, Block> getNewAffectedBlocks() {
+		return NEW_AFFECTED_BLOCKS;
+	}
+
+	public static ConcurrentHashMap<Block, Long> getRevertBlocks() {
+		return REVERT_BLOCKS;
+	}
+
 }

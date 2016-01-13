@@ -3,18 +3,16 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.SubElement;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.firebending.FireMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.BloodAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -22,302 +20,309 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Bloodbending {
+public class Bloodbending extends BloodAbility {
 
-	public static ConcurrentHashMap<Player, Bloodbending> instances = new ConcurrentHashMap<Player, Bloodbending>();
-
-	ConcurrentHashMap<Entity, Location> targetentities = new ConcurrentHashMap<Entity, Location>();
-
-	private static final double FACTOR = ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
-	private static final boolean onlyUsableAtNight = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
-	private static boolean canBeUsedOnUndead = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
-	private static final boolean onlyUsableDuringMoon = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
-	private boolean canBloodbendBloodbenders = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders");
+	private static final ConcurrentHashMap<Entity, Location> TARGETED_ENTITIES = new ConcurrentHashMap<Entity, Location>();
 	
-	private int RANGE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Range");
-	private long HOLD_TIME = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.HoldTime");
-	private long COOLDOWN = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.Bloodbending.Cooldown");
-	
-	private Player player;
+	private boolean canOnlyBeUsedAtNight;
+	private boolean canBeUsedOnUndeadMobs;
+	private boolean onlyUsableDuringMoon;
+	private boolean canBloodbendOtherBloodbenders;
+	private int range;
 	private long time;
-	private double factor = FACTOR;
-	private int range = RANGE;
-	private long holdTime = HOLD_TIME;
-	private long cooldown = COOLDOWN;
-	
-	private Integer[] transparent = {0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 
-			37, 38, 39, 40, 50, 51, 55, 59, 63, 64, 
-			65, 66, 68, 69, 70, 71, 72, 75, 76, 77, 
-			78, 83, 93, 94, 104, 105, 111, 115, 117, 
-			132, 141, 142, 143, 147, 148, 149, 150, 
-			157, 175, 176, 177, 183, 184, 185, 187, 
-			193, 194, 195, 196, 197};
+	private long holdTime;
+	private long cooldown;
+	private double throwFactor;
 
 	public Bloodbending(Player player) {
-		if (instances.containsKey(player)) {
-			remove(player);
+		super(player);
+		
+		Bloodbending ability = CoreAbility.getAbility(player, getClass());
+		if (ability != null) {
+			ability.remove();
 			return;
 		}
-		if (onlyUsableAtNight && !WaterMethods.isNight(player.getWorld()) && !WaterMethods.canBloodbendAtAnytime(player)) {
+		
+		this.canOnlyBeUsedAtNight = getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
+		this.canBeUsedOnUndeadMobs = getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
+		this.onlyUsableDuringMoon = getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
+		this.canBloodbendOtherBloodbenders = getConfig().getBoolean("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders");
+		this.range = getConfig().getInt("Abilities.Water.Bloodbending.Range");
+		this.holdTime = getConfig().getInt("Abilities.Water.Bloodbending.HoldTime");
+		this.cooldown = getConfig().getInt("Abilities.Water.Bloodbending.Cooldown");
+		this.throwFactor = getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
+
+		if (canOnlyBeUsedAtNight && !isNight(player.getWorld()) && !bPlayer.canBloodbendAtAnytime()) {
+			return;
+		} else if (onlyUsableDuringMoon && !isFullMoon(player.getWorld()) && !bPlayer.canBloodbendAtAnytime()) {
+			return;
+		} else if (!bPlayer.canBend(this) && !bPlayer.isAvatarState()) {
 			return;
 		}
 
-		if (onlyUsableDuringMoon && !WaterMethods.isFullMoon(player.getWorld()) && !WaterMethods.canBloodbendAtAnytime(player)) {
-			return;
-		}
-
-		BendingPlayer bplayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bplayer.isOnCooldown("Bloodbending") && !AvatarState.isAvatarState(player)) {
-			return;
-		}
-
-		range = (int) WaterMethods.waterbendingNightAugment(range, player.getWorld());
-		if (AvatarState.isAvatarState(player)) {
+		range = (int) getNightFactor(range, player.getWorld());
+		if (bPlayer.isAvatarState()) {
 			range += AvatarState.getValue(1.5);
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
 				if (entity instanceof LivingEntity) {
 					if (entity instanceof Player) {
-						if (GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation()) || (AvatarState.isAvatarState((Player) entity) || entity.getEntityId() == player.getEntityId() || GeneralMethods.canBend(((Player) entity).getName(), "Bloodbending")))
+						Player enemyPlayer = (Player) entity;
+						BendingPlayer enemyBPlayer = BendingPlayer.getBendingPlayer(enemyPlayer);
+						if (enemyBPlayer == null
+								|| GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) 
+								|| (enemyBPlayer.isAvatarState()
+								|| entity.getEntityId() == player.getEntityId() 
+								|| enemyBPlayer.canBend(this))) {
 							continue;
+						}
 					}
-					GeneralMethods.damageEntity(player, entity, 0, "Bloodbending");
-					AirMethods.breakBreathbendingHold(entity);
-					targetentities.put(entity, entity.getLocation().clone());
+					GeneralMethods.damageEntity(this, entity, 0);
+					AirAbility.breakBreathbendingHold(entity);
+					TARGETED_ENTITIES.put(entity, entity.getLocation().clone());
 				}
 			}
 		} else {
-			List<Entity> entities = new ArrayList<Entity>();
-			for (int i = 0; i < 6; i++) {
-				Location location = GeneralMethods.getTargetedLocation(player, i, transparent);
-				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
-				if (entities.contains(player))
-					entities.remove(player);
-				if (entities != null && !entities.isEmpty() && !entities.contains(player)) {
-					break;
+			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+			if (target == null || !(target instanceof LivingEntity) || GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())) {
+				return;
+			} else if (target instanceof Player) {
+				BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer(player);
+				if (targetBPlayer != null) {
+					if ((targetBPlayer.canBend(ability) && !canBloodbendOtherBloodbenders) || targetBPlayer.isAvatarState()) {
+						if (!isDay(target.getWorld()) || targetBPlayer.canBloodbendAtAnytime()) {
+							return;
+						}
+					}
 				}
-			}
-			if (entities == null || entities.isEmpty()) {
+			} else if (!canBeUsedOnUndeadMobs && isUndead(target)) {
 				return;
 			}
-			Entity target = entities.get(0);
-			//Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-			if (target == null)
-				return;
-			if (!(target instanceof LivingEntity) || GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", target.getLocation()))
-				return;
-			if (target instanceof Player) {
-				if ((GeneralMethods.canBend(((Player) target).getName(), "Bloodbending") && !canBloodbendBloodbenders) || AvatarState.isAvatarState((Player) target))
-					if (!FireMethods.isDay(target.getWorld()) || WaterMethods.canBloodbendAtAnytime((Player) target))
-						return;
-			}
-			if (!canBeUsedOnUndead && isUndead(target)) {
-				return;
-			}
-			GeneralMethods.damageEntity(player, target, 0, "Bloodbending");
+			
+			GeneralMethods.damageEntity(this, target, 0);
 			HorizontalVelocityTracker.remove(target);
-			AirMethods.breakBreathbendingHold(target);
-			targetentities.put(target, target.getLocation().clone());
+			AirAbility.breakBreathbendingHold(target);
+			TARGETED_ENTITIES.put(target, target.getLocation().clone());
 		}
-		if (targetentities.size() > 0) {
-			bplayer.addCooldown("Bloodbending", cooldown);
+		
+		if (TARGETED_ENTITIES.size() > 0) {
+			bPlayer.addCooldown(this);
 		}
-		this.player = player;
+
 		this.time = System.currentTimeMillis();
-		instances.put(player, this);
+		start();
 	}
 
 	public static void launch(Player player) {
-		if (instances.containsKey(player))
-			instances.get(player).launch();
+		Bloodbending bloodbending = CoreAbility.getAbility(player, Bloodbending.class);
+		if (bloodbending != null) {
+			bloodbending.launch();
+		}
 	}
 
 	private void launch() {
 		Location location = player.getLocation();
-		for (Entity entity : targetentities.keySet()) {
+		for (Entity entity : TARGETED_ENTITIES.keySet()) {
 			Location target = entity.getLocation().clone();
 			Vector vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, location.distance(target)));
 			vector.normalize();
-			entity.setVelocity(vector.multiply(factor));
-			new HorizontalVelocityTracker(entity, player, 200, "Bloodbending", Element.Water, SubElement.Bloodbending);
+			entity.setVelocity(vector.multiply(throwFactor));
+			new HorizontalVelocityTracker(entity, player, 200, "Bloodbending", Element.AIR);
 		}
-		remove(player);
+		remove();
 	}
 
-	private void progress() {
+	@Override
+	public void progress() {
 		PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 60, 1);
 
 		if (!player.isSneaking()) {
-			remove(player);
+			remove();
+			return;
+		} else if (holdTime > 0 && System.currentTimeMillis() - this.time > holdTime) {
+			remove();
 			return;
 		}
 
-		if (holdTime > 0 && System.currentTimeMillis() - this.time > holdTime) {
-			remove(player);
-			return;
-		}
-
-		if (!canBeUsedOnUndead) {
-			for (Entity entity : targetentities.keySet()) {
+		if (!canBeUsedOnUndeadMobs) {
+			for (Entity entity : TARGETED_ENTITIES.keySet()) {
 				if (isUndead(entity)) {
-					targetentities.remove(entity);
+					TARGETED_ENTITIES.remove(entity);
 				}
 			}
 		}
 
-		if (onlyUsableDuringMoon && !WaterMethods.isFullMoon(player.getWorld()) && !WaterMethods.canBloodbendAtAnytime(player)) {
-			remove(player);
+		if (onlyUsableDuringMoon && !isFullMoon(player.getWorld())) {
+			remove();
+			return;
+		} else if (canOnlyBeUsedAtNight && !isNight(player.getWorld())) {
+			remove();
+			return;
+		} else if (!bPlayer.canBendIgnoreCooldowns(this)) {
+			remove();
 			return;
 		}
 
-		if (onlyUsableAtNight && !WaterMethods.isNight(player.getWorld()) && !WaterMethods.canBloodbendAtAnytime(player)) {
-			remove(player);
-			return;
-		}
-
-		if (!GeneralMethods.canBend(player.getName(), "Bloodbending")) {
-			remove(player);
-			return;
-		}
-		if (GeneralMethods.getBoundAbility(player) == null) {
-			remove(player);
-			return;
-		}
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Bloodbending")) {
-			remove(player);
-			return;
-		}
-
-		if (AvatarState.isAvatarState(player)) {
+		if (bPlayer.isAvatarState()) {
 			ArrayList<Entity> entities = new ArrayList<Entity>();
+			
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(player, "Bloodbending", entity.getLocation()))
+				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 					continue;
-				if (entity instanceof Player) {
-					if (!WaterMethods.canBeBloodbent((Player) entity) || entity.getEntityId() == player.getEntityId())
-						continue;
+				} else if (entity instanceof Player) {
+					BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer((Player) entity);
+					if (targetBPlayer != null) {
+						if (!targetBPlayer.canBeBloodbent() || entity.getEntityId() == player.getEntityId()) {
+							continue;
+						}
+					}
 				}
+				
 				entities.add(entity);
-				if (!targetentities.containsKey(entity) && entity instanceof LivingEntity) {
-					GeneralMethods.damageEntity(player, entity, 0, "Bloodbending");
-					targetentities.put(entity, entity.getLocation().clone());
+				if (!TARGETED_ENTITIES.containsKey(entity) && entity instanceof LivingEntity) {
+					GeneralMethods.damageEntity(this, entity, 0);
+					TARGETED_ENTITIES.put(entity, entity.getLocation().clone());
 				}
+				
 				if (entity instanceof LivingEntity) {
-					Location newlocation = entity.getLocation();
-					if (player.getWorld() != newlocation.getWorld()) {
-						targetentities.remove(entity);
+					Location newLocation = entity.getLocation();
+					if (player.getWorld() != newLocation.getWorld()) {
+						TARGETED_ENTITIES.remove(entity);
 						continue;
 					}
-					Location location = targetentities.get(entity);
-					double distance = location.distance(newlocation);
+					
+					Location location = TARGETED_ENTITIES.get(entity);
+					double distance = location.distance(newLocation);
 					double dx, dy, dz;
-					dx = location.getX() - newlocation.getX();
-					dy = location.getY() - newlocation.getY();
-					dz = location.getZ() - newlocation.getZ();
+					dx = location.getX() - newLocation.getX();
+					dy = location.getY() - newLocation.getY();
+					dz = location.getZ() - newLocation.getZ();
 					Vector vector = new Vector(dx, dy, dz);
+					
 					if (distance > .5) {
 						entity.setVelocity(vector.normalize().multiply(.5));
 					} else {
 						entity.setVelocity(new Vector(0, 0, 0));
 					}
+					
 					new TempPotionEffect((LivingEntity) entity, effect);
 					entity.setFallDistance(0);
 					if (entity instanceof Creature) {
 						((Creature) entity).setTarget(null);
 					}
-					AirMethods.breakBreathbendingHold(entity);
+					AirAbility.breakBreathbendingHold(entity);
 				}
 			}
-			for (Entity entity : targetentities.keySet()) {
-				if (!entities.contains(entity))
-					targetentities.remove(entity);
+			
+			for (Entity entity : TARGETED_ENTITIES.keySet()) {
+				if (!entities.contains(entity)) {
+					TARGETED_ENTITIES.remove(entity);
+				}
 			}
 		} else {
-			for (Entity entity : targetentities.keySet()) {
+			for (Entity entity : TARGETED_ENTITIES.keySet()) {
 				if (entity instanceof Player) {
-					if (!WaterMethods.canBeBloodbent((Player) entity)) {
-						targetentities.remove(entity);
+					BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer((Player) entity);
+					if (targetBPlayer != null && !targetBPlayer.canBeBloodbent()) {
+						TARGETED_ENTITIES.remove(entity);
 						continue;
 					}
 				}
-				Location newlocation = entity.getLocation();
-				if (player.getWorld() != newlocation.getWorld()) {
-					targetentities.remove(entity);
+				
+				Location newLocation = entity.getLocation();
+				if (player.getWorld() != newLocation.getWorld()) {
+					TARGETED_ENTITIES.remove(entity);
 					continue;
 				}
-				Location location = GeneralMethods.getTargetedLocation(player, 6, transparent);
-				double distance = location.distance(newlocation);
+				
+				Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
+				double distance = location.distance(newLocation);
 				double dx, dy, dz;
-				dx = location.getX() - newlocation.getX();
-				dy = location.getY() - newlocation.getY();
-				dz = location.getZ() - newlocation.getZ();
+				dx = location.getX() - newLocation.getX();
+				dy = location.getY() - newLocation.getY();
+				dz = location.getZ() - newLocation.getZ();
 				Vector vector = new Vector(dx, dy, dz);
+				
 				if (distance > .5) {
 					entity.setVelocity(vector.normalize().multiply(.5));
 				} else {
 					entity.setVelocity(new Vector(0, 0, 0));
 				}
+				
 				new TempPotionEffect((LivingEntity) entity, effect);
 				entity.setFallDistance(0);
 				if (entity instanceof Creature) {
 					((Creature) entity).setTarget(null);
 				}
-				AirMethods.breakBreathbendingHold(entity);
+				AirAbility.breakBreathbendingHold(entity);
 			}
-		}
-	}
-
-	public static void progressAll() {
-		for (Player player : instances.keySet()) {
-			instances.get(player).progress();
-		}
-	}
-
-	public static void remove(Player player) {
-		if (instances.containsKey(player)) {
-			instances.remove(player);
 		}
 	}
 
 	public static boolean isBloodbended(Entity entity) {
-		for (Player player : instances.keySet()) {
-			if (instances.get(player).targetentities.containsKey(entity)) {
-				return true;
-			}
-		}
-		return false;
+		return entity != null ? TARGETED_ENTITIES.containsKey(entity) : null;
 	}
-
-	public static boolean isUndead(Entity entity) {
-		if (entity == null)
-			return false;
-		if (entity.getType() == EntityType.ZOMBIE || entity.getType() == EntityType.BLAZE || entity.getType() == EntityType.GIANT || entity.getType() == EntityType.IRON_GOLEM || entity.getType() == EntityType.MAGMA_CUBE || entity.getType() == EntityType.PIG_ZOMBIE || entity.getType() == EntityType.SKELETON || entity.getType() == EntityType.SLIME || entity.getType() == EntityType.SNOWMAN || entity.getType() == EntityType.ZOMBIE) {
-			return true;
-		}
-		return false;
-	}
-
+	
 	public static Location getBloodbendingLocation(Entity entity) {
-		for (Player player : instances.keySet()) {
-			if (instances.get(player).targetentities.containsKey(entity)) {
-				return instances.get(player).targetentities.get(entity);
-			}
-		}
-		return null;
+		return entity != null ? TARGETED_ENTITIES.get(entity) : null;
 	}
 
-	public Player getPlayer() {
-		return player;
+	@Override
+	public String getName() {
+		return "Bloodbending";
 	}
 
-	public double getFactor() {
-		return factor;
+	@Override
+	public Location getLocation() {
+		return player != null ? player.getLocation() : null;
 	}
 
-	public void setFactor(double factor) {
-		this.factor = factor;
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public boolean isCanOnlyBeUsedAtNight() {
+		return canOnlyBeUsedAtNight;
+	}
+
+	public void setCanOnlyBeUsedAtNight(boolean canOnlyBeUsedAtNight) {
+		this.canOnlyBeUsedAtNight = canOnlyBeUsedAtNight;
+	}
+
+	public boolean isCanBeUsedOnUndeadMobs() {
+		return canBeUsedOnUndeadMobs;
+	}
+
+	public void setCanBeUsedOnUndeadMobs(boolean canBeUsedOnUndeadMobs) {
+		this.canBeUsedOnUndeadMobs = canBeUsedOnUndeadMobs;
+	}
+
+	public boolean isOnlyUsableDuringMoon() {
+		return onlyUsableDuringMoon;
+	}
+
+	public void setOnlyUsableDuringMoon(boolean onlyUsableDuringMoon) {
+		this.onlyUsableDuringMoon = onlyUsableDuringMoon;
+	}
+
+	public boolean isCanBloodbendOtherBloodbenders() {
+		return canBloodbendOtherBloodbenders;
+	}
+
+	public void setCanBloodbendOtherBloodbenders(boolean canBloodbendOtherBloodbenders) {
+		this.canBloodbendOtherBloodbenders = canBloodbendOtherBloodbenders;
 	}
 
 	public int getRange() {
@@ -328,6 +333,14 @@ public class Bloodbending {
 		this.range = range;
 	}
 
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
 	public long getHoldTime() {
 		return holdTime;
 	}
@@ -336,14 +349,16 @@ public class Bloodbending {
 		this.holdTime = holdTime;
 	}
 
-	public long getCooldown() {
-		return cooldown;
+	public double getThrowFactor() {
+		return throwFactor;
+	}
+
+	public void setThrowFactor(double throwFactor) {
+		this.throwFactor = throwFactor;
 	}
 
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
-		if (player != null)
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("Bloodbending", cooldown);
 	}
-
+		
 }

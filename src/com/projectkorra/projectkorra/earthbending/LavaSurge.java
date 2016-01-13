@@ -1,8 +1,8 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -19,104 +19,94 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class LavaSurge {
-	public static ConcurrentHashMap<Player, LavaSurge> instances = new ConcurrentHashMap<Player, LavaSurge>();
-	public static int impactDamage = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.Damage");
-	public static int cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.Cooldown");
-	public static int fractureRadius = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.FractureRadius");
-	public static int prepareRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.PrepareRange");
-	public static int travelRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.TravelRange");
-	public static int maxBlocks = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.MaxLavaWaves");
-	public static boolean canSourceBeEarth = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.LavaSurge.SourceCanBeEarth");
-	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.LavaSurge.DynamicSourcing.Enabled");
-	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.LavaSurge.SelectRange");
-	public static List<FallingBlock> falling = new ArrayList<FallingBlock>();
-	public static int particleInterval = 100;
-	public static int fallingBlockInterval = 100;
+public class LavaSurge extends LavaAbility {
 	
-	private Player player;
-	private Block sourceBlock;
-	private long lastTime;
+	private static final HashSet<FallingBlock> ALL_FALLING_BLOCKS = new HashSet<>();
+
+	private boolean hasSurgeStarted;
+	private boolean isFractureOpen;
+	private boolean canSourceBeEarth;
+	private int fallingBlocksCount;
+	private int maxBlocks;
+	private int particleInterval;
+	private int fallingBlockInterval;
 	private long time;
-	private int fallingBlocksCount = 0;
-	private boolean surgeStarted = false;
-	private boolean fractureOpen;
-	private Random randy = new Random();
+	private long lastTime;
+	private long cooldown;
+	private double impactDamage;
+	private double fractureRadius;
+	private double prepareRange;
+	private double travelRange;
+	private Block sourceBlock;
+	private Random random;
 	private Vector direction;
 	private Location startLocation;
-	//private Location currentLocation; // Unused.
-	private List<FallingBlock> fblocks = new ArrayList<FallingBlock>();
-	private List<Block> fracture = new ArrayList<Block>();	
-	private List<TempBlock> fracturetb = new ArrayList<TempBlock>();
-	private List<TempBlock> movingLava = new ArrayList<TempBlock>();
-	private ConcurrentHashMap<FallingBlock, TempBlock> lava = new ConcurrentHashMap<FallingBlock, TempBlock>();
-	private ListIterator<Block> li;
+	private ArrayList<FallingBlock> fallingBlocks;
+	private ArrayList<Block> fracture;	
+	private ArrayList<TempBlock> fractureTempBlocks;
+	private ArrayList<TempBlock> movingLava;
+	private ConcurrentHashMap<FallingBlock, TempBlock> lavaBlocks;
+	private ListIterator<Block> listIterator;
 	
-	public LavaSurge(Player player)
-	{
-		this.player = player;
+	public LavaSurge(Player player) {
+		super(player);
 		
-		if(!isEligible())
+		this.impactDamage = getConfig().getInt("Abilities.Earth.LavaSurge.Damage");
+		this.cooldown = getConfig().getLong("Abilities.Earth.LavaSurge.Cooldown");
+		this.fractureRadius = getConfig().getDouble("Abilities.Earth.LavaSurge.FractureRadius");
+		this.prepareRange = getConfig().getInt("Abilities.Earth.LavaSurge.PrepareRange");
+		this.travelRange = getConfig().getInt("Abilities.Earth.LavaSurge.TravelRange");
+		this.maxBlocks = getConfig().getInt("Abilities.Earth.LavaSurge.MaxLavaWaves");
+		this.canSourceBeEarth = getConfig().getBoolean("Abilities.Earth.LavaSurge.SourceCanBeEarth");
+		this.particleInterval = 100;
+		this.fallingBlockInterval = 100;
+		
+		this.random = new Random();
+		this.fallingBlocks = new ArrayList<>();
+		this.fracture = new ArrayList<>();
+		this.fractureTempBlocks = new ArrayList<>();
+		this.movingLava =  new ArrayList<>();
+		this.lavaBlocks = new ConcurrentHashMap<>();
+		
+		if(!isEligible()) {
 			return;
-
-		if(GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("LavaSurge"))
+		} else if(bPlayer.isOnCooldown(this)) {
 			return;
+		}
 		
 		lastTime = System.currentTimeMillis();
 	
-		if(prepare())
-		{
-			instances.put(player, this);
+		if(prepare()) {
+			start();
 		}
 	}
 	
-	public boolean isEligible()
-	{
-		final BendingPlayer bplayer = GeneralMethods.getBendingPlayer(player.getName());
-		
-		if(!GeneralMethods.canBend(player.getName(), "LavaSurge"))
-			return false;
-		
-		if(GeneralMethods.getBoundAbility(player) == null)
-			return false;
-		
-		if(!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge"))
-			return false;
-		
-		if(GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", player.getLocation()))
-			return false;
-		
-		if(!EarthMethods.canLavabend(player))
-			return false;
-		
-		if(bplayer.isOnCooldown("LavaSurge"))
-			return false;
-		
-		return true;
+	public boolean isEligible() {
+		return bPlayer.canBend(this) && bPlayer.canLavabend();
 	}
 	
-	public boolean prepare()
-	{
-		Block targetBlock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
+	public boolean prepare() {
+		Block targetBlock = BlockSource.getEarthSourceBlock(player, prepareRange, ClickType.SHIFT_DOWN);
 		
-		if(targetBlock == null || 
-				!(targetBlock.getRelative(BlockFace.UP).getType() == Material.AIR) &&
-				!isLava(targetBlock.getRelative(BlockFace.UP)))
+		if(targetBlock == null 
+				|| !(targetBlock.getRelative(BlockFace.UP).getType() == Material.AIR) 
+				&& !isLava(targetBlock.getRelative(BlockFace.UP))) {
 			return false;
+		}
 		
-		if(instances.containsKey(player))
-			instances.get(player).revertFracture();
+		LavaSurge otherSurge = CoreAbility.getAbility(player, this.getClass());
+		if (otherSurge != null) {
+			otherSurge.revertFracture();
+		}
 		
-		if((canSourceBeEarth && EarthMethods.isEarthbendable(player, targetBlock)) || 
-				EarthMethods.isLavabendable(targetBlock, player))
-		{
+		if((canSourceBeEarth && isEarthbendable(targetBlock)) || isLavabendable(targetBlock)) {
 			startLocation = targetBlock.getLocation().add(0, 1, 0);
-			//currentLocation = startLocation; // Not needed.
 			sourceBlock = targetBlock;
 			return true;
 		}
@@ -124,22 +114,14 @@ public class LavaSurge {
 		return false;
 	}
 	
-	public boolean isLava(Block b)
-	{
-		if(b.getType() == Material.STATIONARY_LAVA || b.getType() == Material.LAVA)
-			return true;
-		return false;
-	}
-	
-	public void launch()
-	{
+	public void launch() {
 		Location targetLocation = GeneralMethods.getTargetedLocation(player, travelRange*2);
 
-		try { targetLocation = GeneralMethods.getTargetedEntity(player, travelRange*2, null).getLocation(); }
-		catch(NullPointerException e) {};
+		try { 
+			targetLocation = GeneralMethods.getTargetedEntity(player, travelRange*2, null).getLocation(); 
+		} catch(NullPointerException e) {}
 		
-		if(targetLocation == null)
-		{
+		if(targetLocation == null) {
 			remove();
 			return;
 		}
@@ -147,154 +129,124 @@ public class LavaSurge {
 		time = System.currentTimeMillis();
 		direction = GeneralMethods.getDirection(startLocation, targetLocation).multiply(0.07);
 		
-		if(direction.getY() < 0)
+		if(direction.getY() < 0) {
 			direction.setY(0);
+		}
 		
-		if(canSourceBeEarth)
+		if(canSourceBeEarth) {
 			openFracture();
-		else
+		} else {
 			skipFracture();
+		}
 	}
 	
-	public void openFracture()
-	{
-		
+	public void openFracture() {
 		List<Block> affectedBlocks = GeneralMethods.getBlocksAroundPoint(sourceBlock.getLocation(), fractureRadius);
 		
-		for(Block b : affectedBlocks)
-		{
-			if(EarthMethods.isEarthbendable(player, b))
-			{
+		for(Block b : affectedBlocks) {
+			if(isEarthbendable(b)) {
 				fracture.add(b);
 			}
 		}
-		
-		li = fracture.listIterator();
-		
-		fractureOpen = true;
-		
-		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("LavaSurge", cooldown);
+	
+		listIterator = fracture.listIterator();
+		isFractureOpen = true;
+		bPlayer.addCooldown(this);
 	}
 	
-	public void skipFracture()
-	{
-		li = fracture.listIterator();
-		
-		fractureOpen = true;
+	public void skipFracture() {
+		listIterator = fracture.listIterator();
+		isFractureOpen = true;
 	}
 	
-	public void revertFracture()
-	{
-		for(TempBlock tb : fracturetb)
-		{
+	public void revertFracture() {
+		for(TempBlock tb : fractureTempBlocks) {
 			tb.revertBlock();
 		}
-		
 		fracture.clear();
 	}
 	
-	public void remove()
-	{
+	@Override
+	public void remove() {
+		super.remove();
 		revertFracture();
-		instances.remove(player);
 	}
 	
-	public boolean canMoveThrough(Block block)
-	{
-		if(EarthMethods.isTransparentToEarthbending(player, startLocation.getBlock()) ||
-				EarthMethods.isEarthbendable(player, startLocation.getBlock()) ||
-				EarthMethods.isLavabendable(startLocation.getBlock(), player))
+	public boolean canMoveThrough(Block block) {
+		if(isTransparent(startLocation.getBlock()) ||
+				isEarthbendable(startLocation.getBlock()) ||
+				isLavabendable(startLocation.getBlock())) {
 			return true;
+		}
 		return false;
 	}
 
-	public void removeLava()
-	{
-		for(TempBlock tb : lava.values())
-		{
+	public void removeLava() {
+		for(TempBlock tb : lavaBlocks.values()) {
 			tb.revertBlock();
 		}
-		
 		movingLava.clear();
 	}
 	
-	public void progress()
-	{
+	@Override
+	public void progress() {
 		long curTime = System.currentTimeMillis();
-		if(!player.isOnline() || player.isDead())
-		{
+		if(!player.isOnline() || player.isDead()) {
+			remove();
+			return;
+		} else if(!hasSurgeStarted && !bPlayer.getBoundAbilityName().equals(getName())) {
 			remove();
 			return;
 		}
 		
-		if(!surgeStarted && !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("LavaSurge"))
-		{
-			remove();
-			return;
-		}
-		
-		if(!surgeStarted && sourceBlock != null &&
-				curTime > lastTime + particleInterval)
-		{
+		if(!hasSurgeStarted && sourceBlock != null && curTime > lastTime + particleInterval) {
 			lastTime = curTime;
 			ParticleEffect.LAVA.display(sourceBlock.getLocation(), 0, 0, 0, 0, 1);
-		}
-		
-		else if(surgeStarted && curTime > lastTime + particleInterval)
-		{
+		} else if(hasSurgeStarted && curTime > lastTime + particleInterval) {
 			lastTime = curTime;
-			for(FallingBlock fblock : fblocks)
+			for(FallingBlock fblock : fallingBlocks) {
 				ParticleEffect.LAVA.display(fblock.getLocation(), 0, 0, 0, 0, 1);
+			}
 		}
 		
-		if(fractureOpen && !surgeStarted)
-		{
-			if(!li.hasNext())
-				surgeStarted = true;
-			
-			else
-			{
-				Block b = li.next();
-	
-				EarthMethods.playEarthbendingSound(b.getLocation());
+		if(isFractureOpen && !hasSurgeStarted) {
+			if(!listIterator.hasNext()) {
+				hasSurgeStarted = true;
+			} else {
+				Block b = listIterator.next();
+				playEarthbendingSound(b.getLocation());
 				
-				for(int i = 0; i < 2; i++)
-				{
+				for(int i = 0; i < 2; i++) {
 					TempBlock tb = new TempBlock(b, Material.STATIONARY_LAVA, (byte) 0);
-					fracturetb.add(tb);
+					fractureTempBlocks.add(tb);
 				}
 			}
 		}
 
-		if(surgeStarted)
-		{	
-			if(fallingBlocksCount >= maxBlocks)
-			{
+		if(hasSurgeStarted) {	
+			if(fallingBlocksCount >= maxBlocks) {
 				return;
 			}
 			
-			if(curTime > time + (fallingBlockInterval * fallingBlocksCount))
-			{
+			if(curTime > time + (fallingBlockInterval * fallingBlocksCount)) {
 				FallingBlock fbs = GeneralMethods.spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), 11, (byte) 0);
-				fblocks.add(fbs);
-				falling.add(fbs);
-				double x = randy.nextDouble()/5;
-				double z = randy.nextDouble()/5;
+				fallingBlocks.add(fbs);
+				ALL_FALLING_BLOCKS.add(fbs);
+				double x = random.nextDouble()/5;
+				double z = random.nextDouble()/5;
 				
-				x = (randy.nextBoolean()) ? -x : x;
-				z = (randy.nextBoolean()) ? -z : z;
+				x = (random.nextBoolean()) ? -x : x;
+				z = (random.nextBoolean()) ? -z : z;
 				
 				fbs.setVelocity(direction.clone().add(new Vector(x, 0.2, z)).multiply(1.2));
 				fbs.setDropItem(false);
 				
-				for(Block b : fracture)
-				{
-					if(randy.nextBoolean() && b != sourceBlock)
-					{
+				for(Block b : fracture) {
+					if(random.nextBoolean() && b != sourceBlock) {
 						FallingBlock fb = GeneralMethods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), 11, (byte) 0);
-						falling.add(fb);
-						fblocks.add(fb);
-						fb.setVelocity(direction.clone().add(new Vector(randy.nextDouble()/10, 0.1, randy.nextDouble()/10)).multiply(1.2));
+						ALL_FALLING_BLOCKS.add(fb);
+						fallingBlocks.add(fb);
+						fb.setVelocity(direction.clone().add(new Vector(random.nextDouble()/10, 0.1, random.nextDouble()/10)).multiply(1.2));
 						fb.setDropItem(false);
 					}
 				}
@@ -302,14 +254,10 @@ public class LavaSurge {
 				fallingBlocksCount++;
 			}
 			
-			for(FallingBlock fb : fblocks)
-			{
-				for(Entity e : GeneralMethods.getEntitiesAroundPoint(fb.getLocation(), 2))
-				{
-					if(e instanceof LivingEntity)
-					{
-						if(e.getEntityId() != player.getEntityId())
-						{
+			for(FallingBlock fb : fallingBlocks) {
+				for(Entity e : GeneralMethods.getEntitiesAroundPoint(fb.getLocation(), 2)) {
+					if(e instanceof LivingEntity) {
+						if(e.getEntityId() != player.getEntityId()) {
 							GeneralMethods.damageEntity(player, e, impactDamage, "LavaSurge");
 							e.setFireTicks(100);
 							GeneralMethods.setVelocity(e, direction.clone());
@@ -319,12 +267,202 @@ public class LavaSurge {
 			}
 		}
 	}
-	
-	public static void progressAll()
-	{
-		for(Player p : instances.keySet())
-		{
-			instances.get(p).progress();
-		}
+
+	@Override
+	public String getName() {
+		return null; // disabled
 	}
+
+	@Override
+	public Location getLocation() {
+		return startLocation;
+	}
+
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+	
+	public static HashSet<FallingBlock> getAllFallingBlocks() {
+		return ALL_FALLING_BLOCKS;
+	}
+	
+	public boolean isHasSurgeStarted() {
+		return hasSurgeStarted;
+	}
+
+	public void setHasSurgeStarted(boolean hasSurgeStarted) {
+		this.hasSurgeStarted = hasSurgeStarted;
+	}
+
+	public boolean isFractureOpen() {
+		return isFractureOpen;
+	}
+
+	public void setFractureOpen(boolean isFractureOpen) {
+		this.isFractureOpen = isFractureOpen;
+	}
+
+	public boolean isCanSourceBeEarth() {
+		return canSourceBeEarth;
+	}
+
+	public void setCanSourceBeEarth(boolean canSourceBeEarth) {
+		this.canSourceBeEarth = canSourceBeEarth;
+	}
+
+	public int getFallingBlocksCount() {
+		return fallingBlocksCount;
+	}
+
+	public void setFallingBlocksCount(int fallingBlocksCount) {
+		this.fallingBlocksCount = fallingBlocksCount;
+	}
+
+	public int getMaxBlocks() {
+		return maxBlocks;
+	}
+
+	public void setMaxBlocks(int maxBlocks) {
+		this.maxBlocks = maxBlocks;
+	}
+
+	public int getParticleInterval() {
+		return particleInterval;
+	}
+
+	public void setParticleInterval(int particleInterval) {
+		this.particleInterval = particleInterval;
+	}
+
+	public int getFallingBlockInterval() {
+		return fallingBlockInterval;
+	}
+
+	public void setFallingBlockInterval(int fallingBlockInterval) {
+		this.fallingBlockInterval = fallingBlockInterval;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public long getLastTime() {
+		return lastTime;
+	}
+
+	public void setLastTime(long lastTime) {
+		this.lastTime = lastTime;
+	}
+
+	public double getImpactDamage() {
+		return impactDamage;
+	}
+
+	public void setImpactDamage(double impactDamage) {
+		this.impactDamage = impactDamage;
+	}
+
+	public double getFractureRadius() {
+		return fractureRadius;
+	}
+
+	public void setFractureRadius(double fractureRadius) {
+		this.fractureRadius = fractureRadius;
+	}
+
+	public double getPrepareRange() {
+		return prepareRange;
+	}
+
+	public void setPrepareRange(double prepareRange) {
+		this.prepareRange = prepareRange;
+	}
+
+	public double getTravelRange() {
+		return travelRange;
+	}
+
+	public void setTravelRange(double travelRange) {
+		this.travelRange = travelRange;
+	}
+
+	public Block getSourceBlock() {
+		return sourceBlock;
+	}
+
+	public void setSourceBlock(Block sourceBlock) {
+		this.sourceBlock = sourceBlock;
+	}
+
+	public Random getRandom() {
+		return random;
+	}
+
+	public void setRandom(Random random) {
+		this.random = random;
+	}
+
+	public Vector getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Vector direction) {
+		this.direction = direction;
+	}
+
+	public Location getStartLocation() {
+		return startLocation;
+	}
+
+	public void setStartLocation(Location startLocation) {
+		this.startLocation = startLocation;
+	}
+
+	public ListIterator<Block> getListIterator() {
+		return listIterator;
+	}
+
+	public void setListIterator(ListIterator<Block> listIterator) {
+		this.listIterator = listIterator;
+	}
+
+	public ArrayList<FallingBlock> getFallingBlocks() {
+		return fallingBlocks;
+	}
+
+	public ArrayList<Block> getFracture() {
+		return fracture;
+	}
+
+	public ArrayList<TempBlock> getFractureTempBlocks() {
+		return fractureTempBlocks;
+	}
+
+	public ArrayList<TempBlock> getMovingLava() {
+		return movingLava;
+	}
+
+	public ConcurrentHashMap<FallingBlock, TempBlock> getLavaBlocks() {
+		return lavaBlocks;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+	
 }

@@ -1,57 +1,55 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.Random;
 
-public class AirSpout implements ConfigLoadable {
+public class AirSpout extends AirAbility {
 
-	public static ConcurrentHashMap<Player, AirSpout> instances = new ConcurrentHashMap<>();
+	private static final Integer[] DIRECTIONS = { 0, 1, 2, 3, 5, 6, 7, 8 };
 
-	private static double HEIGHT = config.get().getDouble("Abilities.Air.AirSpout.Height");
-	private static final long interval = 100;
-
-	private Player player;
-	private long time;
-	private int angle = 0;
-	private double height = HEIGHT;
+	private int angle;
+	private long updateInterval;
+	private long cooldown;
+	private double height;
 
 	public AirSpout(Player player) {
-		/* Initial Check */
-		if (instances.containsKey(player)) {
-			instances.get(player).remove();
+		super(player);
+		
+		AirSpout spout = CoreAbility.getAbility(player, AirSpout.class);
+		if (spout != null) {
+			spout.remove();
 			return;
 		}
-		/* End Initial Check */
-		// reloadVariables();
-		this.player = player;
-		time = System.currentTimeMillis();
-		new Flight(player);
-		instances.put(player, this);
-		progress();
-	}
-
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (AirSpout spout : instances.values()) {
-			players.add(spout.getPlayer());
+		
+		if (!bPlayer.canBend(this)) {
+			remove();
+			return;
 		}
-		return players;
+
+		this.angle = 0;
+		this.cooldown = 0;
+		this.height = getConfig().getDouble("Abilities.Air.AirSpout.Height");
+		this.updateInterval = 100;
+
+		new Flight(player);
+		start();
+		bPlayer.addCooldown(this);
 	}
 
 	public static boolean removeSpouts(Location loc0, double radius, Player sourceplayer) {
 		boolean removed = false;
-		for (Player player : instances.keySet()) {
-			if (!player.equals(sourceplayer)) {
-				Location loc1 = player.getLocation().getBlock().getLocation();
+		for (AirSpout spout : CoreAbility.getAbilities(AirSpout.class)) {
+			if (!spout.player.equals(sourceplayer)) {
+				Location loc1 = spout.player.getLocation().getBlock().getLocation();
 				loc0 = loc0.getBlock().getLocation();
 				double dx = loc1.getX() - loc0.getX();
 				double dy = loc1.getY() - loc0.getY();
@@ -59,8 +57,8 @@ public class AirSpout implements ConfigLoadable {
 
 				double distance = Math.sqrt(dx * dx + dz * dz);
 
-				if (distance <= radius && dy > 0 && dy < HEIGHT) {
-					instances.get(player).remove();
+				if (distance <= radius && dy > 0 && dy < spout.height) {
+					spout.remove();
 					removed = true;
 				}
 			}
@@ -71,7 +69,6 @@ public class AirSpout implements ConfigLoadable {
 	private void allowFlight() {
 		player.setAllowFlight(true);
 		player.setFlying(true);
-		// flight speed too
 	}
 
 	private Block getGround() {
@@ -85,26 +82,25 @@ public class AirSpout implements ConfigLoadable {
 		return null;
 	}
 
-	public double getHeight() {
-		return height;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public boolean progress() {
-		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "AirSpout")
-				// || !Methods.hasAbility(player, Abilities.AirSpout)
-				|| player.getEyeLocation().getBlock().isLiquid() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())) {
+	@Override
+	public void progress() {
+		if (player.isDead() || !player.isOnline() || !bPlayer.canBind(this)) {
 			remove();
-			return false;
+			return;
 		}
+
+		Block eyeBlock = player.getEyeLocation().getBlock();
+		if (eyeBlock.isLiquid() || GeneralMethods.isSolid(eyeBlock)) {
+			remove();
+			return;
+		}
+
 		player.setFallDistance(0);
 		player.setSprinting(false);
-		if (GeneralMethods.rand.nextInt(4) == 0) {
-			AirMethods.playAirbendingSound(player.getLocation());
+		if ((new Random()).nextInt(4) == 0) {
+			playAirbendingSound(player.getLocation());
 		}
+
 		Block block = getGround();
 		if (block != null) {
 			double dy = player.getLocation().getY() - block.getY();
@@ -117,92 +113,91 @@ public class AirSpout implements ConfigLoadable {
 		} else {
 			remove();
 		}
-		return true;
-	}
-
-	public static void progressAll() {
-		for (AirSpout ability : instances.values()) {
-			ability.progress();
-		}
-	}
-
-	@Override
-	public void reloadVariables() {
-		HEIGHT = config.get().getDouble("Abilities.Air.AirSpout.Height");
-		height = HEIGHT;
 	}
 
 	public void remove() {
+		super.remove();
 		removeFlight();
-		instances.remove(player);
-	}
-
-	public static void removeAll() {
-		for (AirSpout ability : instances.values()) {
-			ability.remove();
-		}
 	}
 
 	private void removeFlight() {
 		player.setAllowFlight(false);
 		player.setFlying(false);
-		// player.setAllowFlight(player.getGameMode() == GameMode.CREATIVE);
-		// flight speed too
 	}
 
 	private void rotateAirColumn(Block block) {
-		if (player.getWorld() != block.getWorld())
+		if (!player.getWorld().equals(block.getWorld())) {
 			return;
-
-		if (System.currentTimeMillis() >= time + interval) {
-			time = System.currentTimeMillis();
-
+		}
+		if (System.currentTimeMillis() >= startTime + updateInterval) {
+			startTime = System.currentTimeMillis();
 			Location location = block.getLocation();
 			Location playerloc = player.getLocation();
 			location = new Location(location.getWorld(), playerloc.getX(), location.getY(), playerloc.getZ());
 
-			double dy = playerloc.getY() - block.getY();
-			if (dy > height)
-				dy = height;
-			Integer[] directions = { 0, 1, 2, 3, 5, 6, 7, 8 };
 			int index = angle;
+			double dy = Math.min(playerloc.getY() - block.getY(), height);
+			angle = angle >= DIRECTIONS.length ? 0 : angle + 1;
 
-			angle++;
-			if (angle >= directions.length)
-				angle = 0;
 			for (int i = 1; i <= dy; i++) {
-
-				index += 1;
-				if (index >= directions.length)
-					index = 0;
-
+				index = index >= DIRECTIONS.length ? 0 : index + 1;
 				Location effectloc2 = new Location(location.getWorld(), location.getX(), block.getY() + i, location.getZ());
-				AirMethods.playAirbendingParticles(effectloc2, 3, 0.4F, 0.4F, 0.4F);
-
-				// Methods.verbose(directions[index]);
-
-				// location.getWorld().playEffect(effectloc2, Effect.SMOKE, 0,
-				// (int) height + 5);
-				// location.getWorld().playEffect(effectloc2, Effect.SMOKE, 1,
-				// (int) height + 5);
-				// location.getWorld().playEffect(effectloc2, Effect.SMOKE, 2,
-				// (int) height + 5);
-				// location.getWorld().playEffect(effectloc2, Effect.SMOKE, 3,
-				// (int) height + 5);
-				// location.getWorld().playEffect(effectloc2, Effect.SMOKE, 5,
-				// (int) height + 5);
-				// location.getWorld().playEffect(effectloc2, Effect.SMOKE, 6,
-				// (int) height + 5);
-				// location.getWorld().playEffect(effectloc2, Effect.SMOKE, 7,
-				// (int) height + 5);
-				// location.getWorld().playEffect(effectloc2, Effect.SMOKE, 8,
-				// (int) height + 5);
+				playAirbendingParticles(effectloc2, 3, 0.4F, 0.4F, 0.4F);
 			}
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "AirSpout";
+	}
+
+	@Override
+	public Location getLocation() {
+		return player != null ? player.getLocation() : null;
+	}
+
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return true;
+	}
+
+	public int getAngle() {
+		return angle;
+	}
+
+	public void setAngle(int angle) {
+		this.angle = angle;
+	}
+
+	public long getUpdateInterval() {
+		return updateInterval;
+	}
+
+	public void setUpdateInterval(long updateInterval) {
+		this.updateInterval = updateInterval;
+	}
+
+	public double getHeight() {
+		return height;
 	}
 
 	public void setHeight(double height) {
 		this.height = height;
 	}
 
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+	
 }

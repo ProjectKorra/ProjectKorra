@@ -1,9 +1,10 @@
 package com.projectkorra.projectkorra.airbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -13,48 +14,50 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Random;
 
-public class AirScooter implements ConfigLoadable {
+public class AirScooter extends AirAbility {
 
-	public static ConcurrentHashMap<Player, AirScooter> instances = new ConcurrentHashMap<>();
+	private static final long SPIN_INTERVAL = 100;
+	private static final double SCOOTER_RADIUS = 1;
+	private static final double MAX_HEIGHT_FROM_GROUND = 7;
 
-	private static double configSpeed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
-	private static final long interval = 100;
-	private static final double scooterradius = 1;
-
-	private Player player;
-	private Block floorblock;
-	private long time;
 	private double speed;
-	private ArrayList<Double> angles = new ArrayList<Double>();
+	private double spinInterval;
+	private double radius;
+	private double maxHeightFromGround;
+	private Block floorblock;
+	private Random random;
+	private ArrayList<Double> angles;
 
 	public AirScooter(Player player) {
-		/* Initial Check */
+		super(player);
 		if (check(player)) {
 			return;
+		} else if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())
+				|| player.getEyeLocation().getBlock().isLiquid()) {
+			return;
+		} else if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
+			return;
 		}
-		if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())
-				|| player.getEyeLocation().getBlock().isLiquid())
-			return;
-		if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
-			return;
-		/* End Initial Check */
-		// reloadVariables();
-		this.player = player;
-		// wasflying = player.isFlying();
-		// canfly = player.getAllowFlight();
+
+		this.speed = getConfig().getDouble("Abilities.Air.AirScooter.Speed");
+		this.spinInterval = SPIN_INTERVAL;
+		this.radius = SCOOTER_RADIUS;
+		this.maxHeightFromGround = MAX_HEIGHT_FROM_GROUND;
+		this.random = new Random();
+		this.angles = new ArrayList<>();
+
 		new Flight(player);
 		player.setAllowFlight(true);
 		player.setFlying(true);
 		player.setSprinting(false);
-		time = System.currentTimeMillis();
+
 		for (int i = 0; i < 5; i++) {
 			angles.add((double) (60 * i));
 		}
-		instances.put(player, this);
-		speed = configSpeed;
-		progress();
+
+		start();
 	}
 
 	/**
@@ -64,24 +67,16 @@ public class AirScooter implements ConfigLoadable {
 	 * @return false If player doesn't have an instance
 	 */
 	public static boolean check(Player player) {
-		if (instances.containsKey(player)) {
-			instances.get(player).remove();
+		if (CoreAbility.hasAbility(player, AirScooter.class)) {
+			CoreAbility.getAbility(player, AirScooter.class).remove();
 			return true;
 		}
 		return false;
 	}
 
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (AirScooter scooter : instances.values()) {
-			players.add(scooter.getPlayer());
-		}
-		return players;
-	}
-
 	private void getFloor() {
 		floorblock = null;
-		for (int i = 0; i <= 7; i++) {
+		for (int i = 0; i <= maxHeightFromGround; i++) {
 			Block block = player.getEyeLocation().getBlock().getRelative(BlockFace.DOWN, i);
 			if (GeneralMethods.isSolid(block) || block.isLiquid()) {
 				floorblock = block;
@@ -90,62 +85,26 @@ public class AirScooter implements ConfigLoadable {
 		}
 	}
 
-	public Player getPlayer() {
-		return player;
-	}
-
-	public double getSpeed() {
-		return speed;
-	}
-
-	public void setSpeed(double value) {
-		this.speed = value; // Used in PK Items
-	}
-
-	public boolean progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
-			return false;
-		}
+	@Override
+	public void progress() {
 		getFloor();
-		// Methods.verbose(player);
-		if (floorblock == null) {
+		if (floorblock == null || !bPlayer.canBend(this) || !player.isFlying()) {
 			remove();
-			return false;
+			return;
 		}
-		if (!GeneralMethods.canBend(player.getName(), "AirScooter")) {
-			remove();
-			return false;
-		}
-
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirScooter", player.getLocation())) {
-			remove();
-			return false;
-		}
-
-		// if (Methods
-		// .isSolid(player
-		// .getEyeLocation()
-		// .clone()
-		// .add(player.getEyeLocation().getDirection().clone()
-		// .normalize()).getBlock())) {
-		// remove();
-		// return;
-		// }
-		// player.sendBlockChange(floorblock.getLocation(), 89, (byte) 1);
-		// player.getLocation().setY((double) floorblock.getY() + 2.5);
 
 		Vector velocity = player.getEyeLocation().getDirection().clone();
 		velocity.setY(0);
 		velocity = velocity.clone().normalize().multiply(speed);
-		if (System.currentTimeMillis() > time + interval) {
-			time = System.currentTimeMillis();
+
+		if (System.currentTimeMillis() > startTime + spinInterval) {
 			if (player.getVelocity().length() < speed * .5) {
 				remove();
-				return false;
+				return;
 			}
 			spinScooter();
 		}
+
 		double distance = player.getLocation().getY() - (double) floorblock.getY();
 		double dx = Math.abs(distance - 2.4);
 		if (distance > 2.75) {
@@ -155,58 +114,108 @@ public class AirScooter implements ConfigLoadable {
 		} else {
 			velocity.setY(0);
 		}
+
 		Location loc = player.getLocation();
-		if (!WaterMethods.isWater(player.getLocation().add(0, 2, 0).getBlock()))
+		if (!WaterAbility.isWater(player.getLocation().add(0, 2, 0).getBlock())) {
 			loc.setY((double) floorblock.getY() + 1.5);
-		else
-			return false;
-		// player.setFlying(true);
-		// player.teleport(loc.add(velocity));
+		} else {
+			return;
+		}
+
 		player.setSprinting(false);
 		player.removePotionEffect(PotionEffectType.SPEED);
 		player.setVelocity(velocity);
-		if (GeneralMethods.rand.nextInt(4) == 0) {
-			AirMethods.playAirbendingSound(player.getLocation());
-		}
-		return true;
-	}
-
-	public static void progressAll() {
-		for (AirScooter ability : instances.values()) {
-			ability.progress();
+		if (random.nextInt(4) == 0) {
+			playAirbendingSound(player.getLocation());
 		}
 	}
 
 	@Override
-	public void reloadVariables() {
-		configSpeed = config.get().getDouble("Abilities.Air.AirScooter.Speed");
-		this.speed = configSpeed;
-	}
-
 	public void remove() {
-		instances.remove(player);
-	}
-
-	public static void removeAll() {
-		for (AirScooter ability : instances.values()) {
-			ability.remove();
-		}
+		super.remove();
+		player.setFlying(false);
+		player.setAllowFlight(false);
+		player.setSprinting(false);
 	}
 
 	private void spinScooter() {
 		Location origin = player.getLocation().clone();
-		origin.add(0, -scooterradius, 0);
+		origin.add(0, -radius, 0);
+
 		for (int i = 0; i < 5; i++) {
-			double x = Math.cos(Math.toRadians(angles.get(i))) * scooterradius;
-			double y = ((double) i) / 2 * scooterradius - scooterradius;
-			double z = Math.sin(Math.toRadians(angles.get(i))) * scooterradius;
-			AirMethods.playAirbendingParticles(origin.clone().add(x, y, z), 7);
-			// player.getWorld().playEffect(origin.clone().add(x, y, z),
-			// Effect.SMOKE, 4, (int) AirBlast.defaultrange);
+			double x = Math.cos(Math.toRadians(angles.get(i))) * radius;
+			double y = ((double) i) / 2 * radius - radius;
+			double z = Math.sin(Math.toRadians(angles.get(i))) * radius;
+			playAirbendingParticles(origin.clone().add(x, y, z), 7);
 		}
 		for (int i = 0; i < 5; i++) {
 			angles.set(i, angles.get(i) + 10);
 		}
 	}
 
+	@Override
+	public String getName() {
+		return "AirScooter";
+	}
+
+	@Override
+	public Location getLocation() {
+		return player.getLocation() != null ? player.getLocation() : null;
+	}
+
+	@Override
+	public long getCooldown() {
+		return 0;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return false;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return true;
+	}
+
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getSpinInterval() {
+		return spinInterval;
+	}
+
+	public void setSpinInterval(double spinInterval) {
+		this.spinInterval = spinInterval;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getMaxHeightFromGround() {
+		return maxHeightFromGround;
+	}
+
+	public void setMaxHeightFromGround(double maxHeightFromGround) {
+		this.maxHeightFromGround = maxHeightFromGround;
+	}
+
+	public Block getFloorblock() {
+		return floorblock;
+	}
+
+	public void setFloorblock(Block floorblock) {
+		this.floorblock = floorblock;
+	}
 }

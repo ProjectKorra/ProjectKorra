@@ -1,7 +1,8 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
@@ -13,92 +14,70 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class WaterReturn {
+public class WaterReturn extends WaterAbility {
 
-	private static ConcurrentHashMap<Player, WaterReturn> instances = new ConcurrentHashMap<Player, WaterReturn>();
-	// private static int ID = Integer.MIN_VALUE;
-	private static long interval = 50;
-	private static double range = 30;
-
-	private static final byte full = 0x0;
-
-	private Player player;
-	// private int id;
+	private long time;
+	private long interval;
+	private double range;
 	private Location location;
 	private TempBlock block;
-	private long time;
-
+	
 	public WaterReturn(Player player, Block block) {
-		if (instances.containsKey(player))
+		super(player);
+		if (CoreAbility.hasAbility(player, WaterReturn.class)) {
 			return;
-		this.player = player;
-		location = block.getLocation();
-		if (GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
-			if (!GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location) && GeneralMethods.canBend(player.getName(), "WaterManipulation")) {
-				if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid() && hasEmptyWaterBottle())
-					this.block = new TempBlock(block, Material.WATER, full);
+		}
+
+		this.location = block.getLocation();
+		this.range = 30;
+		this.interval = 50;
+		
+		this.range = getNightFactor(range);
+		
+		if (bPlayer.canBend(this)) {
+			if (isTransparentToEarthbending(player, block) && !block.isLiquid() && hasEmptyWaterBottle()) {
+				this.block = new TempBlock(block, Material.WATER, (byte) 0);
 			}
 		}
-		// if (ID >= Integer.MAX_VALUE) {
-		// ID = Integer.MIN_VALUE;
-		// }
-		// id = ID++;
-		instances.put(player, this);
+		start();
 	}
 
-	private void progress() {
-		if (!hasEmptyWaterBottle()) {
+	@Override
+	public void progress() {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
-		}
-
-		if (player.isDead() || !player.isOnline()) {
+		} else if (!hasEmptyWaterBottle()) {
 			remove();
 			return;
-		}
-
-		if (!player.getWorld().equals(location.getWorld())) {
-			remove();
+		} else if (System.currentTimeMillis() < time + interval) {
 			return;
 		}
-
-		if (System.currentTimeMillis() < time + interval)
-			return;
-
-		time = System.currentTimeMillis();
 
 		Vector direction = GeneralMethods.getDirection(location, player.getEyeLocation()).normalize();
+		time = System.currentTimeMillis();
 		location = location.clone().add(direction);
 
 		if (location == null || block == null) {
 			remove();
 			return;
+		} else if (location.getBlock().equals(block.getLocation().getBlock())) {
+			return;
 		}
 
-		if (location.getBlock().equals(block.getLocation().getBlock()))
-			return;
-
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
+		if (location.distanceSquared(player.getEyeLocation()) > range * range) {
 			remove();
 			return;
-		}
-
-		if (location.distance(player.getEyeLocation()) > WaterMethods.waterbendingNightAugment(range, player.getWorld())) {
-			remove();
-			return;
-		}
-
-		if (location.distance(player.getEyeLocation()) <= 1.5) {
+		} else if (location.distanceSquared(player.getEyeLocation()) <= 1.5 * 1.5) {
 			fillBottle();
 			return;
 		}
 
 		Block newblock = location.getBlock();
-		if (EarthMethods.isTransparentToEarthbending(player, newblock) && !newblock.isLiquid()) {
+		if (isTransparentToEarthbending(player, newblock) && !newblock.isLiquid()) {
 			block.revertBlock();
-			block = new TempBlock(newblock, Material.WATER, full);
+			block = new TempBlock(newblock, Material.WATER, (byte) 0);
 		} else {
 			remove();
 			return;
@@ -106,12 +85,12 @@ public class WaterReturn {
 
 	}
 
-	private void remove() {
+	@Override
+	public void remove() {
+		super.remove();
 		if (block != null) {
 			block.revertBlock();
-			block = null;
 		}
-		instances.remove(player);
 	}
 
 	private boolean hasEmptyWaterBottle() {
@@ -127,6 +106,7 @@ public class WaterReturn {
 		if (inventory.contains(Material.GLASS_BOTTLE)) {
 			int index = inventory.first(Material.GLASS_BOTTLE);
 			ItemStack item = inventory.getItem(index);
+			
 			if (item.getAmount() == 1) {
 				inventory.setItem(index, new ItemStack(Material.POTION));
 			} else {
@@ -138,40 +118,25 @@ public class WaterReturn {
 				}
 			}
 		}
-
 		remove();
 	}
 
 	private static boolean isBending(Player player) {
-		for (int id : WaterManipulation.instances.keySet()) {
-			if (WaterManipulation.instances.get(id).player.equals(player))
-				return true;
-		}
-
-		if (OctopusForm.instances.containsKey(player))
+		if (CoreAbility.hasAbility(player, WaterManipulation.class)
+				|| CoreAbility.hasAbility(player, WaterManipulation.class)
+				|| CoreAbility.hasAbility(player, OctopusForm.class)
+				|| CoreAbility.hasAbility(player, SurgeWave.class)
+				|| CoreAbility.hasAbility(player, SurgeWall.class)
+				|| CoreAbility.hasAbility(player, IceSpikeBlast.class)) {
 			return true;
-
-		for (int id : Wave.instances.keySet()) {
-			if (Wave.instances.get(id).player.equals(player))
-				return true;
 		}
-
-		for (int id : WaterWall.instances.keySet()) {
-			if (WaterWall.instances.get(id).player.equals(player))
-				return true;
-		}
-
-		if (IceSpike2.isBending(player))
-			return true;
-
 		return false;
 	}
 
 	public static boolean hasWaterBottle(Player player) {
-		if (instances.containsKey(player))
+		if (CoreAbility.hasAbility(player, WaterReturn.class) || isBending(player)) {
 			return false;
-		if (isBending(player))
-			return false;
+		}
 		PlayerInventory inventory = player.getInventory();
 		return (inventory.contains(new ItemStack(Material.POTION), 1));
 	}
@@ -179,6 +144,7 @@ public class WaterReturn {
 	public static void emptyWaterBottle(Player player) {
 		PlayerInventory inventory = player.getInventory();
 		int index = inventory.first(new ItemStack(Material.POTION));
+		
 		if (index != -1) {
 			ItemStack item = inventory.getItem(index);
 			if (item.getAmount() == 1) {
@@ -187,6 +153,7 @@ public class WaterReturn {
 				item.setAmount(item.getAmount() - 1);
 				inventory.setItem(index, item);
 				HashMap<Integer, ItemStack> leftover = inventory.addItem(new ItemStack(Material.GLASS_BOTTLE));
+				
 				for (int left : leftover.keySet()) {
 					player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(left));
 				}
@@ -194,19 +161,70 @@ public class WaterReturn {
 		}
 	}
 
-	public static void progressAll() {
-		for (Player player : instances.keySet()) {
-			instances.get(player).progress();
-		}
+	public long getTime() {
+		return time;
 	}
 
-	public static void removeAll() {
-		for (Player player : instances.keySet()) {
-			WaterReturn wr = instances.get(player);
-			if (wr.block != null)
-				wr.block.revertBlock();
-		}
-		instances.clear();
+	public void setTime(long time) {
+		this.time = time;
 	}
 
+	public long getInterval() {
+		return interval;
+	}
+
+	public void setInterval(long interval) {
+		this.interval = interval;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	@Override
+	public Location getLocation() {
+		return location;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return false;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return true;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+	public TempBlock getBlock() {
+		return block;
+	}
+
+	public void setBlock(TempBlock block) {
+		this.block = block;
+	}
+
+	@Override
+	public String getName() {
+		return "WaterReturn";
+	}
+
+	@Override
+	public long getCooldown() {
+		return 0;
+	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
+	
 }

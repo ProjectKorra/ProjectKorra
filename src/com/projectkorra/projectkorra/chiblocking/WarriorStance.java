@@ -1,79 +1,68 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.StockAbility;
-import com.projectkorra.projectkorra.waterbending.Bloodbending;
+import com.projectkorra.projectkorra.ability.ChiAbility;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.concurrent.ConcurrentHashMap;
+public class WarriorStance extends ChiAbility {
 
-public class WarriorStance {
-
-	public int strength = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
-	public int resistance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
-
-	private Player player;
-	public static ConcurrentHashMap<Player, WarriorStance> instances = new ConcurrentHashMap<Player, WarriorStance>();
-
+	private int strength;
+	private int resistance;
+	
 	public WarriorStance(Player player) {
-		this.player = player;
-		if (instances.containsKey(player)) {
-			instances.remove(player);
-			return;
+		super(player);
+		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
+		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
+		
+		ChiAbility stance = bPlayer.getStance();
+		if (stance != null && !(stance instanceof WarriorStance)) {
+			stance.remove();
+			bPlayer.setStance(this);
 		}
-
-		if (AcrobatStance.isInAcrobatStance(player)) {
-			AcrobatStance.remove(player);
-		}
-
-		instances.put(player, this);
+		start();
 	}
 
-	private void progress() {
-		if (player.isDead() || !player.isOnline()) {
+	@Override
+	public void progress() {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
 		}
-		if (!GeneralMethods.canBend(player.getName(), StockAbility.WarriorStance.toString())) {
-			remove();
-			return;
-		}
-
-		if (Paralyze.isParalyzed(player) || Bloodbending.isBloodbended(player)) {
-			remove();
-			return;
-		}
+		
 		if (!player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, resistance));
 		}
-
 		if (!player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 60, strength));
 		}
 	}
-
-	public static void progressAll() {
-		for (Player player : instances.keySet()) {
-			instances.get(player).progress();
-		}
+	
+	@Override
+	public String getName() {
+		return "WarriorStance";
 	}
 
-	private void remove() {
-		instances.remove(player);
+	@Override
+	public Location getLocation() {
+		return player != null ? player.getLocation() : null;
 	}
 
-	public static boolean isInWarriorStance(Player player) {
-		if (instances.containsKey(player))
-			return true;
+	@Override
+	public long getCooldown() {
+		return 0;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
 		return false;
 	}
 
-	public static void remove(Player player) {
-		instances.remove(player);
+	@Override
+	public boolean isHarmlessAbility() {
+		return true;
 	}
 
 	public int getStrength() {
@@ -91,8 +80,5 @@ public class WarriorStance {
 	public void setResistance(int resistance) {
 		this.resistance = resistance;
 	}
-
-	public Player getPlayer() {
-		return player;
-	}
+	
 }

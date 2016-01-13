@@ -11,14 +11,12 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
 	private String ability;
 	private Result eventresult;
 	private boolean cancelled;
-	private long cooldown;
 
-	public PlayerCooldownChangeEvent(Player player, String abilityname, long cooldown, Result result) {
+	public PlayerCooldownChangeEvent(Player player, String abilityname, Result result) {
 		this.player = player;
 		this.ability = abilityname;
 		this.eventresult = result;
 		this.cancelled = false;
-		this.cooldown = cooldown;
 	}
 
 	public Player getPlayer() {
@@ -32,10 +30,6 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
 	public Result getResult() {
 		return eventresult;
 	}
-	
-	public long getCooldown() {
-		return cooldown;
-	}
 
 	public boolean isCancelled() {
 		return cancelled;
@@ -43,10 +37,6 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
 
 	public void setCancelled(boolean cancel) {
 		this.cancelled = cancel;
-	}
-	
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
 	}
 
 	public HandlerList getHandlers() {

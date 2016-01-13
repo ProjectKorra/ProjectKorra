@@ -1,84 +1,80 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+public class RapidPunch extends ChiAbility {
 
-public class RapidPunch {
-
-	public static ConcurrentHashMap<Player, RapidPunch> instances = new ConcurrentHashMap<Player, RapidPunch>();
-	public static List<Player> punching = new ArrayList<Player>();
-
-	private int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
-	private int punches = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
-	private int distance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.RapidPunch.Distance");
-	private long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
-
-	private int numpunches;
-	// private long timers;
+	private int damage;
+	private int punches;
+	private int distance;
+	private long cooldown;
+	private int numPunches;
 	private Entity target;
-	private Player player;
-
-	public RapidPunch(Player p) {
-		this.player = p;
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(p.getName());
-		if (instances.containsKey(p))
-			return;
-		if (bPlayer.isOnCooldown("RapidPunch"))
-			return;
-
-		Entity t = GeneralMethods.getTargetedEntity(p, distance, new ArrayList<Entity>());
-
-		if (t == null)
-			return;
-
-		this.target = t;
-		this.numpunches = 0;
-		instances.put(p, this);
+	
+	public RapidPunch(Player player) {
+		super(player);
+		this.damage = getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
+		this.punches = getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
+		this.distance = getConfig().getInt("Abilities.Chi.RapidPunch.Distance");
+		this.cooldown = getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
+		this.target = GeneralMethods.getTargetedEntity(player, distance);
+		start();
 	}
 
-	public static void startPunchAll() {
-		for (Player player : instances.keySet()) {
-			if (player != null)
-				instances.get(player).startPunch(player);
+	@Override
+	public void progress() {
+		if (numPunches >= punches || target == null || !(target instanceof LivingEntity)) {
+			remove();
+			return;
 		}
-	}
-
-	public void startPunch(Player p) {
-		if (numpunches >= punches)
-			instances.remove(p);
-		if (target instanceof LivingEntity && target != null) {
-			LivingEntity lt = (LivingEntity) target;
-			GeneralMethods.damageEntity(p, target, damage, "RapidPunch");
-			if (target instanceof Player) {
-				if (ChiPassive.willChiBlock(p, (Player) target)) {
-					ChiPassive.blockChi((Player) target);
-				}
-				if (Suffocate.isChannelingSphere((Player) target)) {
-					Suffocate.remove((Player) target);
-				}
+		
+		LivingEntity lt = (LivingEntity) target;
+		GeneralMethods.damageEntity(this, target, damage);
+		
+		if (target instanceof Player) {
+			if (ChiPassive.willChiBlock(player, (Player) target)) {
+				ChiPassive.blockChi((Player) target);
 			}
-			lt.setNoDamageTicks(0);
+			if (Suffocate.isChannelingSphere((Player) target)) {
+				Suffocate.remove((Player) target);
+			}
 		}
-		GeneralMethods.getBendingPlayer(p.getName()).addCooldown("RapidPunch", cooldown);
-		swing(p);
-		numpunches++;
+		
+		lt.setNoDamageTicks(0);
+		bPlayer.addCooldown(this);
+		numPunches++;
+	}
+	
+	@Override
+	public String getName() {
+		return "RapidPunch";
 	}
 
-	private void swing(Player p) {
+	@Override
+	public Location getLocation() {
+		return target != null ? target.getLocation() : null;
 	}
 
-	public static String getDescription() {
-		return "This ability allows the chiblocker to punch rapidly in a short period. To use, simply punch." + " This has a short cooldown.";
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return false;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
 	}
 
 	public int getDamage() {
@@ -89,28 +85,6 @@ public class RapidPunch {
 		this.damage = damage;
 	}
 
-	public int getDistance() {
-		return distance;
-	}
-
-	public void setDistance(int distance) {
-		this.distance = distance;
-	}
-
-	public long getCooldown() {
-		return cooldown;
-	}
-
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
-		if (player != null)
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("RapidPunch", cooldown);
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
 	public int getPunches() {
 		return punches;
 	}
@@ -119,11 +93,32 @@ public class RapidPunch {
 		this.punches = punches;
 	}
 
-	public int getNumpunches() {
-		return numpunches;
+	public int getDistance() {
+		return distance;
 	}
 
-	public void setNumpunches(int numpunches) {
-		this.numpunches = numpunches;
+	public void setDistance(int distance) {
+		this.distance = distance;
 	}
+
+	public int getNumPunches() {
+		return numPunches;
+	}
+
+	public void setNumPunches(int numPunches) {
+		this.numPunches = numPunches;
+	}
+
+	public Entity getTarget() {
+		return target;
+	}
+
+	public void setTarget(Entity target) {
+		this.target = target;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+	
 }

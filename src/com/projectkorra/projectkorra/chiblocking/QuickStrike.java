@@ -1,46 +1,87 @@
 package com.projectkorra.projectkorra.chiblocking;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.ChiAbility;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
+public class QuickStrike extends ChiAbility {
 
-public class QuickStrike {
-	public static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.QuickStrike.Damage");
-	public static int blockChance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
-
+	private int damage;
+	private int blockChance;
+	private Entity target;
+	
 	public QuickStrike(Player player) {
-		if (!isEligible(player))
+		super(player);
+		this.damage = getConfig().getInt("Abilities.Chi.QuickStrike.Damage");
+		this.blockChance = getConfig().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
+		target = GeneralMethods.getTargetedEntity(player, 2);
+		start();
+	}
+
+	
+	@Override
+	public void progress() {
+		if (target == null) {
 			return;
-
-		Entity e = GeneralMethods.getTargetedEntity(player, 2, new ArrayList<Entity>());
-
-		if (e == null)
-			return;
-
-		GeneralMethods.damageEntity(player, e, damage, "QuickStrike");
-
-		if (e instanceof Player && ChiPassive.willChiBlock(player, (Player)e)) {
-			ChiPassive.blockChi((Player) e);
 		}
+
+		GeneralMethods.damageEntity(this, target, damage);
+		if (target instanceof Player && ChiPassive.willChiBlock(player, (Player) target)) {
+			ChiPassive.blockChi((Player) target);
+		}
+		remove();
 	}
 
-	public boolean isEligible(Player player) {
-		if (!GeneralMethods.canBend(player.getName(), "QuickStrike"))
-			return false;
-
-		if (GeneralMethods.getBoundAbility(player) == null)
-			return false;
-
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("QuickStrike"))
-			return false;
-
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "QuickStrike", player.getLocation()))
-			return false;
-
-		return true;
+	@Override
+	public String getName() {
+		return "QuickStrike";
 	}
+	
+	@Override
+	public Location getLocation() {
+		return player != null ? player.getLocation() : null;
+	}
+
+	@Override
+	public long getCooldown() {
+		return 0;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return false;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public int getBlockChance() {
+		return blockChance;
+	}
+
+	public void setBlockChance(int blockChance) {
+		this.blockChance = blockChance;
+	}
+
+	public Entity getTarget() {
+		return target;
+	}
+
+	public void setTarget(Entity target) {
+		this.target = target;
+	}
+	
 }

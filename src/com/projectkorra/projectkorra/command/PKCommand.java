@@ -4,13 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -154,66 +149,39 @@ public abstract class PKCommand implements SubCommand {
 	 *         otherwise
 	 */
 	public String getElement(String element) {
-		if (Arrays.asList(Commands.firealiases).contains(element) || Arrays.asList(Commands.firecomboaliases).contains(element) || Arrays.asList(Commands.combustionaliases).contains(element) || Arrays.asList(Commands.lightningaliases).contains(element))
+		if (Arrays.asList(Commands.firealiases).contains(element) || Arrays.asList(Commands.firecomboaliases).contains(element))
 			return "fire";
-		else if (Arrays.asList(Commands.earthaliases).contains(element) || Arrays.asList(Commands.earthcomboaliases).contains(element) || Arrays.asList(Commands.metalbendingaliases).contains(element) || Arrays.asList(Commands.sandbendingaliases).contains(element) || Arrays.asList(Commands.lavabendingaliases).contains(element))
-			return "earth";
-		else if (Arrays.asList(Commands.airaliases).contains(element) || Arrays.asList(Commands.aircomboaliases).contains(element) || Arrays.asList(Commands.spiritualprojectionaliases).contains(element) || Arrays.asList(Commands.flightaliases).contains(element))
-			return "air";
-		else if (Arrays.asList(Commands.wateraliases).contains(element) || Arrays.asList(Commands.watercomboaliases).contains(element) || Arrays.asList(Commands.healingaliases).contains(element) || Arrays.asList(Commands.bloodaliases).contains(element) || Arrays.asList(Commands.icealiases).contains(element) || Arrays.asList(Commands.plantaliases).contains(element))
-			return "water";
+		else if (Arrays.asList(Commands.combustionaliases).contains(element))
+			return "combustion";
+		else if (Arrays.asList(Commands.lightningaliases).contains(element))
+			return "lightning";
+		else if (Arrays.asList(Commands.earthaliases).contains(element) || Arrays.asList(Commands.earthcomboaliases).contains(element))
+				return "earth";	
+		else if (Arrays.asList(Commands.metalbendingaliases).contains(element))
+			return "metal";
+		else if (Arrays.asList(Commands.sandbendingaliases).contains(element))
+			return "sand";
+		else if (Arrays.asList(Commands.lavabendingaliases).contains(element))
+			return "lava";
+		else if (Arrays.asList(Commands.airaliases).contains(element) || Arrays.asList(Commands.aircomboaliases).contains(element))
+			return "air";	
+		else if (Arrays.asList(Commands.spiritualprojectionaliases).contains(element))
+			return "spiritual";
+		else if (Arrays.asList(Commands.flightaliases).contains(element))
+			return "flight";
+		else if (Arrays.asList(Commands.wateraliases).contains(element) || Arrays.asList(Commands.watercomboaliases).contains(element))
+			return "water";	
+		else if (Arrays.asList(Commands.healingaliases).contains(element)) 
+			return "healing";
+		else if (Arrays.asList(Commands.bloodaliases).contains(element)) 
+			return "blood";
+		else if (Arrays.asList(Commands.icealiases).contains(element)) 
+			return "ice";
+		else if (Arrays.asList(Commands.plantaliases).contains(element))
+			return "plant";
 		else if (Arrays.asList(Commands.chialiases).contains(element) || Arrays.asList(Commands.chicomboaliases).contains(element))
 			return "chi";
 		return null;
 	}
 
-	/**
-	 * Returns a boolean if the string provided is numerical.
-	 * @param id
-	 * @return boolean
-	 */
-	protected boolean isNumeric(String id) {
-		NumberFormat formatter = NumberFormat.getInstance();
-		ParsePosition pos = new ParsePosition(0);
-		formatter.parse(id, pos);
-		return id.length() == pos.getIndex();
-	}
-	
-	/**
-	 * Returns a list for of commands for a page.
-	 * @param entries
-	 * @param title
-	 * @param page
-	 * @return
-	 */
-	protected List<String> getPage(List<String> entries, String title, int page, boolean alphabetical) {
-		List<String> strings = new ArrayList<String>();
-		if (alphabetical) {
-			Collections.sort(entries);
-		}
-		
-		if (page < 1) {
-			page = 1;
-		}
-		if ((page * 8) - 8 >= entries.size()) {
-			page = Math.round(entries.size() / 8) + 1;
-			if (page < 1) {
-				page = 1;
-			}
-		}
-		strings.add(ChatColor.GOLD + "ProjectKorra " + ChatColor.DARK_GRAY + "- [" + ChatColor.GRAY + page + "/" + (int) Math.ceil((entries.size()+.0)/(8+.0)) + ChatColor.DARK_GRAY + "]");
-		strings.add(title);
-		if (entries.size() > ((page * 8) - 8)) {
-			for (int i = ((page * 8) - 8); i < entries.size(); i++) {
-				if (entries.get(i) != null) {
-					strings.add(entries.get(i).toString());
-				}
-				if (i >= (page * 8)-1) {
-					break;
-				}
-			}
-		}
-		
-		return strings;
-	}
 }

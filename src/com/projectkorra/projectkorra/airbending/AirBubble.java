@@ -1,42 +1,42 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class AirBubble implements ConfigLoadable {
-	
-	public static ConcurrentHashMap<Player, AirBubble> instances = new ConcurrentHashMap<>();
-	
-	private static double DEFAULT_AIR_RADIUS = config.get().getDouble("Abilities.Air.AirBubble.Radius");
-	private static double DEFAULT_WATER_RADIUS = config.get().getDouble("Abilities.Water.WaterBubble.Radius");
+public class AirBubble extends AirAbility {
 
-	private Player player;
+	private boolean waterBubble;
 	private double radius;
-	private double defaultAirRadius = DEFAULT_AIR_RADIUS;
-	private double defaultWaterRadius = DEFAULT_WATER_RADIUS;
-	private ConcurrentHashMap<Block, BlockState> waterorigins;
+	private double airRadius;
+	private double waterRadius;
+	private ConcurrentHashMap<Block, BlockState> waterOrigins;
 
 	public AirBubble(Player player) {
-		// reloadVariables();
-		this.player = player;
-		waterorigins = new ConcurrentHashMap<Block, BlockState>();
-		instances.put(player, this);
+		super(player);
+		
+		this.radius = 0;
+		this.airRadius = getConfig().getDouble("Abilities.Air.AirBubble.Radius");
+		this.waterRadius = getConfig().getDouble("Abilities.Water.WaterBubble.Radius");
+		this.waterOrigins = new ConcurrentHashMap<>();
+		start();
 	}
 
 	public static boolean canFlowTo(Block block) {
-		for (AirBubble airBubble : instances.values()) {
+		for (AirBubble airBubble : CoreAbility.getAbilities(AirBubble.class)) {
 			if (airBubble.blockInBubble(block)) {
 				return false;
 			}
@@ -44,167 +44,159 @@ public class AirBubble implements ConfigLoadable {
 		return true;
 	}
 
-	public static String getDescription() {
-		return "To use, the bender must merely have the ability selected."
-				+ " All water around the user in a small bubble will vanish,"
-				+ " replacing itself once the user either gets too far away or selects a different ability.";
-	}
-
-	public static void handleBubbles(Server server) {
-		for (Player player : server.getOnlinePlayers()) {
-			if (GeneralMethods.getBoundAbility(player) != null) {
-				if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble")
-						|| GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble")) {
-					if (!instances.containsKey(player) && player.isSneaking()) {
-						new AirBubble(player);
+	public static void handleBubbles() {
+		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			if (bPlayer == null) {
+				continue;
+			}
+			
+			String name = bPlayer.getBoundAbilityName();
+			if (name.equalsIgnoreCase("AirBubble") | name.equalsIgnoreCase("WaterBubble")) {
+				if (!CoreAbility.hasAbility(player, AirBubble.class) && player.isSneaking()) {
+					AirBubble airBubble = new AirBubble(player);
+					if (name.equalsIgnoreCase("WaterBubble")) {
+						airBubble.waterBubble = true;
 					}
 				}
 			}
 		}
-
-		AirBubble.progressAll();
 	}
 
 	public boolean blockInBubble(Block block) {
 		if (block.getWorld() != player.getWorld()) {
 			return false;
-		}
-		if (block.getLocation().distance(player.getLocation()) <= radius) {
+		} else if (block.getLocation().distanceSquared(player.getLocation()) <= radius * radius) {
 			return true;
 		}
 		return false;
 	}
 
-	public double getDefaultAirRadius() {
-		return defaultAirRadius;
+	@Override
+	public void progress() {
+		if (!player.isSneaking() || !bPlayer.canBend(this)) {
+			remove();
+			return;
+		} else {
+			pushWater();
+		}
 	}
 
-	public double getDefaultWaterRadius() {
-		return defaultWaterRadius;
+	private void pushWater() {
+		if (bPlayer.hasElement(Element.AIR)) {
+			radius = airRadius;
+		} else {
+			radius = waterRadius;
+		}
+		
+		if (bPlayer.hasElement(Element.WATER) && isNight(player.getWorld())) {
+			radius = WaterAbility.getNightFactor(waterRadius, player.getWorld());
+		}
+		if (airRadius > radius && bPlayer.hasElement(Element.AIR)) {
+			radius = airRadius;
+		}
+
+		Location location = player.getLocation();
+
+		for (Block block : waterOrigins.keySet()) {
+			if (block.getWorld() != location.getWorld()) {
+				if (block.getType() == Material.AIR || isWater(block)) {
+					waterOrigins.get(block).update(true);
+				}
+				waterOrigins.remove(block);
+			} else if (block.getLocation().distanceSquared(location) > radius * radius) {
+				if (block.getType() == Material.AIR || isWater(block)) {
+					waterOrigins.get(block).update(true);
+				}
+				waterOrigins.remove(block);
+			}
+		}
+
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+			if (waterOrigins.containsKey(block)) {
+				continue;
+			} else if (!isWater(block)) {
+				continue;
+			} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBubble", block.getLocation())) {
+				continue;
+			} else if (block.getType() == Material.STATIONARY_WATER || block.getType() == Material.WATER) {
+				if (WaterManipulation.canBubbleWater(block)) {
+					waterOrigins.put(block, block.getState());
+					block.setType(Material.AIR);
+				}
+			}
+		}
 	}
 
-	public Player getPlayer() {
-		return player;
+	@Override
+	public void remove() {
+		super.remove();
+		for (Block block : waterOrigins.keySet()) {
+			if (block.getType() == Material.AIR || block.isLiquid()) {
+				waterOrigins.get(block).update(true);
+			}
+		}
+	}
+
+	@Override
+	public String getName() {
+		return waterBubble ? "WaterBubble" : "AirBubble";
+	}
+
+	@Override
+	public Location getLocation() {
+		return player != null ? player.getLocation() : null;
+	}
+
+	@Override
+	public long getCooldown() {
+		return 0;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public boolean isWaterBubble() {
+		return waterBubble;
+	}
+
+	public void setWaterBubble(boolean waterBubble) {
+		this.waterBubble = waterBubble;
 	}
 
 	public double getRadius() {
 		return radius;
 	}
 
-	public boolean progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
-			return false;
-		}
-
-		if (!player.isSneaking()) {
-			remove();
-			return false;
-		}
-		if (GeneralMethods.getBoundAbility(player) != null) {
-			if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBubble")
-					&& GeneralMethods.canBend(player.getName(), "AirBubble")) {
-				pushWater();
-				return false;
-			}
-			if (GeneralMethods.getBoundAbility(player).equalsIgnoreCase("WaterBubble")
-					&& GeneralMethods.canBend(player.getName(), "WaterBubble")) {
-				pushWater();
-				return false;
-			}
-		}
-
-		remove();
-		return true;
-	}
-
-	private void pushWater() {
-		if (GeneralMethods.isBender(player.getName(), Element.Air)) {
-			radius = defaultAirRadius;
-		} else {
-			radius = defaultWaterRadius;
-		}
-		if (GeneralMethods.isBender(player.getName(), Element.Water) && WaterMethods.isNight(player.getWorld())) {
-			radius = WaterMethods.waterbendingNightAugment(defaultWaterRadius, player.getWorld());
-		}
-		if (defaultAirRadius > radius && GeneralMethods.isBender(player.getName(), Element.Air))
-			radius = defaultAirRadius;
-		Location location = player.getLocation();
-
-		for (Block block : waterorigins.keySet()) {
-			if (block.getWorld() != location.getWorld()) {
-				if (block.getType() == Material.AIR || WaterMethods.isWater(block))
-					waterorigins.get(block).update(true);
-				waterorigins.remove(block);
-			} else if (block.getLocation().distance(location) > radius) {
-				if (block.getType() == Material.AIR || WaterMethods.isWater(block))
-					waterorigins.get(block).update(true);
-				waterorigins.remove(block);
-			}
-		}
-
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
-			if (waterorigins.containsKey(block))
-				continue;
-			if (!WaterMethods.isWater(block))
-				continue;
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBubble", block.getLocation()))
-				continue;
-			if (block.getType() == Material.STATIONARY_WATER || block.getType() == Material.WATER) {
-				if (WaterManipulation.canBubbleWater(block)) {
-					waterorigins.put(block, block.getState());
-					block.setType(Material.AIR);
-				}
-			}
-		}
-	}
-	
-	public static void progressAll() {
-		for (AirBubble ability : instances.values()) {
-			ability.progress();
-		}
-	}
-
-	@Override
-	public void reloadVariables() {
-		DEFAULT_AIR_RADIUS = config.get().getDouble("Abilities.Air.AirBubble.Radius");
-		DEFAULT_WATER_RADIUS = config.get().getDouble("Abilities.Water.WaterBubble.Radius");
-		defaultAirRadius = DEFAULT_AIR_RADIUS;
-		defaultWaterRadius = DEFAULT_WATER_RADIUS;
-	}
-
-	public void remove() {
-		for (Block block : waterorigins.keySet()) {
-			// byte data = waterorigins.get(block);
-			// byte data = 0x0;
-			// block = block.getLocation().getBlock();
-			// if (block.getType() == Material.AIR) {
-			// block.setType(Material.WATER);
-			// block.setData(data);
-			// }
-			if (block.getType() == Material.AIR || block.isLiquid())
-				waterorigins.get(block).update(true);
-		}
-		// instances.remove(uuid);
-		instances.remove(player);
-	}
-
-	public static void removeAll() {
-		for (AirBubble ability : instances.values()) {
-			ability.remove();
-		}
-	}
-
-	public void setDefaultAirRadius(double defaultAirRadius) {
-		this.defaultAirRadius = defaultAirRadius;
-	}
-
-	public void setDefaultWaterRadius(double defaultWaterRadius) {
-		this.defaultWaterRadius = defaultWaterRadius;
-	}
-
 	public void setRadius(double radius) {
 		this.radius = radius;
+	}
+
+	public double getAirRadius() {
+		return airRadius;
+	}
+
+	public void setAirRadius(double airRadius) {
+		this.airRadius = airRadius;
+	}
+
+	public double getWaterRadius() {
+		return waterRadius;
+	}
+
+	public void setWaterRadius(double waterRadius) {
+		this.waterRadius = waterRadius;
+	}
+
+	public ConcurrentHashMap<Block, BlockState> getWaterOrigins() {
+		return waterOrigins;
 	}
 
 }
