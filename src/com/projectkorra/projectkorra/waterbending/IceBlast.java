@@ -255,7 +255,7 @@ public class IceBlast extends IceAbility {
 			source.revertBlock();
 			source = null;
 
-			if (isTransparentToEarthbending(player, block) && !block.isLiquid()) {
+			if (isTransparent(player, block) && !block.isLiquid()) {
 				GeneralMethods.breakBlock(block);
 			} else if (!isWater(block)) {
 				breakParticles(20);

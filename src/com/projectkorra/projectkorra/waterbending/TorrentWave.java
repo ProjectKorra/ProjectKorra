@@ -125,7 +125,7 @@ public class TorrentWave extends WaterAbility {
 					continue;
 				}
 				
-				if (isTransparentToEarthbending(player, block)) {
+				if (isTransparent(player, block)) {
 					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 					blocks.add(tempBlock);
 					torrentBlocks.add(block);

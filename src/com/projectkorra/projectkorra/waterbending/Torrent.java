@@ -103,7 +103,7 @@ public class Torrent extends WaterAbility {
 		
 		List<Block> ice = GeneralMethods.getBlocksAroundPoint(location, layer);
 		for (Block block : ice) {
-			if (isTransparentToEarthbending(player, block) && block.getType() != Material.ICE) {
+			if (isTransparent(player, block) && block.getType() != Material.ICE) {
 				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
 				FROZEN_BLOCKS.put(tblock, player);
 				playIcebendingSound(block.getLocation());
@@ -186,7 +186,7 @@ public class Torrent extends WaterAbility {
 					source.revertBlock();
 					source = null;
 					Block block = location.getBlock();
-					if (!isTransparentToEarthbending(player, block) || block.isLiquid()) {
+					if (!isTransparent(player, block) || block.isLiquid()) {
 						remove();
 						return;
 					}
@@ -271,10 +271,10 @@ public class Torrent extends WaterAbility {
 				
 				Block block = blockloc.getBlock();
 				if (!doneBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, blockloc)) {
-					if (isTransparentToEarthbending(player, block) && !block.isLiquid()) {
+					if (isTransparent(player, block) && !block.isLiquid()) {
 						launchedBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 						doneBlocks.add(block);
-					} else if (!isTransparentToEarthbending(player, block)) {
+					} else if (!isTransparent(player, block)) {
 						break;
 					}
 				}
@@ -316,7 +316,7 @@ public class Torrent extends WaterAbility {
 				remove();
 				return false;
 			}
-		} else if (!isTransparentToEarthbending(player, locBlock)) {
+		} else if (!isTransparent(player, locBlock)) {
 			if (layer < maxLayer) {
 				if (layer == 0) {
 					hurtEntities.clear();
@@ -405,7 +405,7 @@ public class Torrent extends WaterAbility {
 			Block block = blockLoc.getBlock();
 			
 			if (!doneBlocks.contains(block)) {
-				if (isTransparentToEarthbending(player, block) && !block.isLiquid()) {
+				if (isTransparent(player, block) && !block.isLiquid()) {
 					blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 					doneBlocks.add(block);
 					
@@ -460,7 +460,7 @@ public class Torrent extends WaterAbility {
 		if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeLoc = player.getEyeLocation();
 			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
-			if (isTransparentToEarthbending(player, block) && isTransparentToEarthbending(player, eyeLoc.getBlock())) {
+			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData((byte) 0);
 				Torrent tor = new Torrent(player);

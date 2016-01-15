@@ -18,12 +18,8 @@ import java.util.Random;
 
 public class AirScooter extends AirAbility {
 
-	private static final long SPIN_INTERVAL = 100;
-	private static final double SCOOTER_RADIUS = 1;
-	private static final double MAX_HEIGHT_FROM_GROUND = 7;
-
 	private double speed;
-	private double spinInterval;
+	private double interval;
 	private double radius;
 	private double maxHeightFromGround;
 	private Block floorblock;
@@ -42,9 +38,9 @@ public class AirScooter extends AirAbility {
 		}
 
 		this.speed = getConfig().getDouble("Abilities.Air.AirScooter.Speed");
-		this.spinInterval = SPIN_INTERVAL;
-		this.radius = SCOOTER_RADIUS;
-		this.maxHeightFromGround = MAX_HEIGHT_FROM_GROUND;
+		this.interval = getConfig().getDouble("Abilities.Air.AirScooter.Interval");
+		this.radius = getConfig().getDouble("Abilities.Air.AirScooter.Radius");
+		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
 		this.random = new Random();
 		this.angles = new ArrayList<>();
 
@@ -87,8 +83,13 @@ public class AirScooter extends AirAbility {
 
 	@Override
 	public void progress() {
+		if (!bPlayer.canBendIgnoreCooldowns(this) || !player.isFlying()) {
+			remove();
+			return;
+		}
+		
 		getFloor();
-		if (floorblock == null || !bPlayer.canBend(this) || !player.isFlying()) {
+		if (floorblock == null) {
 			remove();
 			return;
 		}
@@ -97,7 +98,7 @@ public class AirScooter extends AirAbility {
 		velocity.setY(0);
 		velocity = velocity.clone().normalize().multiply(speed);
 
-		if (System.currentTimeMillis() > startTime + spinInterval) {
+		if (System.currentTimeMillis() > startTime + interval) {
 			if (player.getVelocity().length() < speed * .5) {
 				remove();
 				return;
@@ -187,12 +188,12 @@ public class AirScooter extends AirAbility {
 		this.speed = speed;
 	}
 
-	public double getSpinInterval() {
-		return spinInterval;
+	public double getInterval() {
+		return interval;
 	}
 
-	public void setSpinInterval(double spinInterval) {
-		this.spinInterval = spinInterval;
+	public void setInterval(double interval) {
+		this.interval = interval;
 	}
 
 	public double getRadius() {

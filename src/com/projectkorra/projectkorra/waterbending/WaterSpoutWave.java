@@ -33,7 +33,7 @@ public class WaterSpoutWave extends WaterAbility {
 		RISE, TOWARD_PLAYER, CIRCLE, SHRINK
 	}
 
-	private static final ConcurrentHashMap<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<Block, TempBlock>();
+	private static final ConcurrentHashMap<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 	
 	private double radius;
 	private boolean charging;
@@ -429,7 +429,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return "WaterSpout";
+		return this.isIceWave() ? "IceWave" : "WaterSpout";
 	}
 
 	@Override

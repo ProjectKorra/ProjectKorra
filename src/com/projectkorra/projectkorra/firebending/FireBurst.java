@@ -87,8 +87,8 @@ public class FireBurst extends FireAbility {
 					}
 				}
 			}
+			bPlayer.addCooldown(this);
 		}
-		bPlayer.addCooldown(this);
 		remove();
 	}
 
@@ -158,9 +158,8 @@ public class FireBurst extends FireAbility {
 					blasts.add(fblast);
 				}
 			}
+			bPlayer.addCooldown(this);
 		}
-		
-		bPlayer.addCooldown(this);
 		remove();
 		handleSmoothParticles();
 	}

@@ -77,29 +77,35 @@ public class ConfigManager {
 			case DEFAULT:
 				config = defaultConfig.get();
 
-				ArrayList<String> earthbendable = new ArrayList<String>();
-				earthbendable.add("STONE");
-				earthbendable.add("CLAY");
-				earthbendable.add("COAL_ORE");
-				earthbendable.add("DIAMOND_ORE");
-				earthbendable.add("DIRT");
-				earthbendable.add("GOLD_ORE");
-				earthbendable.add("GRASS");
-				earthbendable.add("GRAVEL");
-				earthbendable.add("IRON_ORE");
-				earthbendable.add("LAPIS_ORE");
-				earthbendable.add("NETHERRACK");
-				earthbendable.add("QUARTZ_ORE");
-				earthbendable.add("REDSTONE_ORE");
-				earthbendable.add("SAND");
-				earthbendable.add("SANDSTONE");
-				earthbendable.add("RED_SANDSTONE");
-				earthbendable.add("MYCEL");
+				ArrayList<String> earths = new ArrayList<String>();
+				earths.add("STONE");
+				earths.add("CLAY");
+				earths.add("COAL_ORE");
+				earths.add("DIAMOND_ORE");
+				earths.add("DIRT");
+				earths.add("GOLD_ORE");
+				earths.add("GRASS");
+				earths.add("GRAVEL");
+				earths.add("IRON_ORE");
+				earths.add("LAPIS_ORE");
+				earths.add("NETHERRACK");
+				earths.add("QUARTZ_ORE");
+				earths.add("REDSTONE_ORE");
+				earths.add("SAND");
+				earths.add("SANDSTONE");
+				earths.add("RED_SANDSTONE");
+				earths.add("MYCEL");
 
 				ArrayList<String> metals = new ArrayList<String>();
 				metals.add("IRON_BLOCK");
 				metals.add("GOLD_BLOCK");
 				metals.add("QUARTZ_BLOCK");
+				
+				ArrayList<String> sands = new ArrayList<String>();
+				sands.add("SAND");
+				sands.add("SANDSTONE");
+				sands.add("RED_SAND");
+				sands.add("RED_SANDSTONE");
 
 				config.addDefault("Properties.Chat.Enable", true);
 				config.addDefault("Properties.Chat.Format", "<name>: <message>");
@@ -163,8 +169,9 @@ public class ConfigManager {
 				config.addDefault("Properties.Earth.SafeRevert", true);
 				config.addDefault("Properties.Earth.RevertCheckTime", 300000);
 				config.addDefault("Properties.Earth.CanBendWithWeapons", true);
-				config.addDefault("Properties.Earth.EarthbendableBlocks", earthbendable);
+				config.addDefault("Properties.Earth.EarthBlocks", earths);
 				config.addDefault("Properties.Earth.MetalBlocks", metals);
+				config.addDefault("Properties.Earth.SandBlocks", sands);
 				config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 				config.addDefault("Properties.Earth.PlaySound", true);
 
@@ -207,6 +214,10 @@ public class ConfigManager {
 				config.addDefault("Abilities.Air.AirBlast.Speed", 25);
 				config.addDefault("Abilities.Air.AirBlast.Range", 20);
 				config.addDefault("Abilities.Air.AirBlast.Radius", 2);
+				config.addDefault("Abilities.Air.AirBlast.SelectRange", 10);
+				config.addDefault("Abilities.Air.AirBlast.SelectParticles", 4);
+				config.addDefault("Abilities.Air.AirBlast.Particles", 6);
+				config.addDefault("Abilities.Air.AirBlast.Cooldown", 500);
 				config.addDefault("Abilities.Air.AirBlast.Push.Self", 2.5);
 				config.addDefault("Abilities.Air.AirBlast.Push.Entities", 3.5);
 				config.addDefault("Abilities.Air.AirBlast.CanFlickLevers", true);
@@ -219,15 +230,22 @@ public class ConfigManager {
 				config.addDefault("Abilities.Air.AirBubble.Radius", 7);
 
 				config.addDefault("Abilities.Air.AirBurst.Enabled", true);
-				config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to launch a cone-shaped burst " + "of air in front of you, or click to release the burst in a sphere around you. " + "Additionally, having this ability selected when you land on the ground from a " + "large enough fall will create a burst of air around you.");
+				config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to release the burst in a sphere around you " + "or click to launch a cone-shaped burst of air in front of you. " + "Additionally, having this ability selected when you land on the ground from a " + "large enough fall will create a burst of air around you.");
 				config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
 				config.addDefault("Abilities.Air.AirBurst.PushFactor", 1.5);
 				config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1750);
 				config.addDefault("Abilities.Air.AirBurst.Damage", 0);
+				config.addDefault("Abilities.Air.AirBurst.SneakParticles", 10);
+				config.addDefault("Abilities.Air.AirBurst.ParticlePercentage", 50);
+				config.addDefault("Abilities.Air.AirBurst.AnglePhi", 10);
+				config.addDefault("Abilities.Air.AirBurst.AngleTheta", 10);
 
 				config.addDefault("Abilities.Air.AirScooter.Enabled", true);
 				config.addDefault("Abilities.Air.AirScooter.Description", "AirScooter is a fast means of transportation. To use, sprint, jump then click with " + "this ability selected. You will hop on a scooter of air and be propelled forward " + "in the direction you're looking (you don't need to press anything). " + "This ability can be used to levitate above liquids, but it cannot go up steep slopes. " + "Any other actions will deactivate this ability.");
-				config.addDefault("Abilities.Air.AirScooter.Speed", .675);
+				config.addDefault("Abilities.Air.AirScooter.Speed", 0.675);
+				config.addDefault("Abilities.Air.AirScooter.Interval", 100);
+				config.addDefault("Abilities.Air.AirScooter.Radius", 1);
+				config.addDefault("Abilities.Air.AirScooter.MaxHeightFromGround", 7);
 
 				config.addDefault("Abilities.Air.Tornado.Enabled", true);
 				config.addDefault("Abilities.Air.Tornado.Description", "To use, simply sneak (default: shift). " + "This will create a swirling vortex at the targeted location. " + "Any creature or object caught in the vortex will be launched up " + "and out in some random direction. If another player gets caught " + "in the vortex, the launching effect is minimal. Tornado can " + "also be used to transport the user. If the user gets caught in his/her " + "own tornado, his movements are much more manageable. Provided the user doesn't " + "fall out of the vortex, it will take him to a maximum height and move him in " + "the general direction he's looking. Skilled airbenders can scale anything " + "with this ability.");
@@ -315,7 +333,7 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Water.Bloodbending.Enabled", true);
 				config.addDefault("Abilities.Water.Bloodbending.Description", "This ability was made illegal for a reason. With this ability selected, sneak while " + "targetting something and you will bloodbend that target. Bloodbent targets cannot move, " + "bend or attack. You are free to control their actions by looking elsewhere - they will " + "be forced to move in that direction. Additionally, clicking while bloodbending will " + "launch that target off in the direction you're looking. " + "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
-				config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight", false);
+				config.addDefault("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight", true);
 				config.addDefault("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs", true);
 				config.addDefault("Abilities.Water.Bloodbending.ThrowFactor", 2);
 				config.addDefault("Abilities.Water.Bloodbending.Range", 10);
@@ -484,6 +502,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.Catapult.Length", 6);
 				config.addDefault("Abilities.Earth.Catapult.Speed", 10);
 				config.addDefault("Abilities.Earth.Catapult.Push", 4);
+				config.addDefault("Abilities.Earth.Catapult.ShiftModifier", 2);
 
 				config.addDefault("Abilities.Earth.Collapse.Enabled", true);
 				config.addDefault("Abilities.Earth.Collapse.Description", " To use, simply left-click on an earthbendable block. " + "That block and the earthbendable blocks above it will be shoved " + "back into the earth below them, if they can. " + "This ability does have the capacity to trap something inside of it, " + "although it is incredibly difficult to do so. " + "Additionally, press sneak with this ability to affect an area around your targetted location - " + "all earth that can be moved downwards will be moved downwards. " + "This ability is especially risky or deadly in caves, depending on the " + "earthbender's goal and technique.");
@@ -564,16 +583,6 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.EarthSmash.FlightTimer", 3000);
 				config.addDefault("Abilities.Earth.EarthSmash.RemoveTimer", 30000);
 
-				//			config.addDefault("Abilities.Earth.LavaSurge.Enabled", true);
-				//		    config.addDefault("Abilities.Earth.LavaSurge.Description", "LavaSurge is a fundamental move for any Lavabender out there. To use, simply sneak (Default: Shift) while looking at a source of Earth or Lava, then click in a direction. A surge of lava will swiftly travel towards the target you were pointing at, dealing moderate damage, a large knockback, and setting them on fire.");
-				//		    config.addDefault("Abilities.Earth.LavaSurge.Damage", 4);
-				//		    config.addDefault("Abilities.Earth.LavaSurge.Cooldown", 1000);
-				//			config.addDefault("Abilities.Earth.LavaSurge.FractureRadius", 1);
-				//			config.addDefault("Abilities.Earth.LavaSurge.PrepareRange", 7);
-				//			config.addDefault("Abilities.Earth.LavaSurge.TravelRange", 15);
-				//			config.addDefault("Abilities.Earth.LavaSurge.MaxLavaWaves", 10);
-				//			config.addDefault("Abilities.Earth.LavaSurge.SourceCanBeEarth", true);
-
 				config.addDefault("Abilities.Earth.MetalClips.Enabled", true);
 				config.addDefault("Abilities.Earth.MetalClips.Description", "MetalClips has the potential to be both an offensive and a utility ability. To start, you must carry smelted Iron Ingots in your inventory. To apply the clips onto an entity, simply click at them. If the entity is a Zombie, a Skeleton, or a Player, the clips will form armor around the entity, giving you some control over them. Each additional clip will give you more control. If you have permission to do so, you may crush the entity against a wall with a 4th clip, hurting them. Without explicit permissions, you will only be able to strap three clips on your target. If the entity is not one of the above, the clip will simply do damage and fall to the ground, to be collected. Another permission requiring action is throwing entities. To do so, click while controlling a metalclipped entity");
 				config.addDefault("Abilities.Earth.MetalClips.Damage", 2);
@@ -651,7 +660,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Fire.FireBlast.Charged.FireTicks", 4);
 
 				config.addDefault("Abilities.Fire.FireBurst.Enabled", true);
-				config.addDefault("Abilities.Fire.FireBurst.Description", "FireBurst is a very powerful firebending ability. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to launch a cone-shaped burst " + "of flames in front of you, or click to release the burst in a sphere around you. ");
+				config.addDefault("Abilities.Fire.FireBurst.Description", "FireBurst is a very powerful firebending ability. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to release the burst in a sphere around you or " + "click to launch a cone-shaped burst of flames in front of you.");
 				config.addDefault("Abilities.Fire.FireBurst.Damage", 2);
 				config.addDefault("Abilities.Fire.FireBurst.ChargeTime", 3500);
 				config.addDefault("Abilities.Fire.FireBurst.Range", 15);

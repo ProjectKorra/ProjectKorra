@@ -84,7 +84,7 @@ public class SurgeWall extends WaterAbility {
 			Location eyeloc = player.getEyeLocation();
 			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
 			
-			if (isTransparentToEarthbending(player, block) && isTransparentToEarthbending(player, eyeloc.getBlock())) {
+			if (isTransparent(player, block) && isTransparent(player, eyeloc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData(FULL);
 				
@@ -381,7 +381,7 @@ public class SurgeWall extends WaterAbility {
 
 				Location eyeLoc = player.getEyeLocation();
 				Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
-				if (isTransparentToEarthbending(player, block) && isTransparentToEarthbending(player, eyeLoc.getBlock())) {
+				if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 					block.setType(Material.WATER);
 					block.setData(FULL);
 					

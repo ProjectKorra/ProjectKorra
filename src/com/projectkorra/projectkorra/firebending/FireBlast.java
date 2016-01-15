@@ -32,6 +32,7 @@ public class FireBlast extends FireAbility {
 	private boolean powerFurnace;
 	private boolean showParticles;
 	private boolean dissipate;
+	private boolean isFireBurst;
 	private int ticks;
 	private long cooldown;
 	private double speedFactor;
@@ -54,6 +55,7 @@ public class FireBlast extends FireAbility {
 			return;
 		}
 		
+		this.isFireBurst = true;
 		this.safeBlocks = safeBlocks;
 		this.damage = damage;
 		this.powerFurnace = true;
@@ -86,6 +88,7 @@ public class FireBlast extends FireAbility {
 			return;
 		}
 		
+		this.isFireBurst = false;
 		this.powerFurnace = true;
 		this.showParticles = true;
 		this.radius = 2;
@@ -260,7 +263,7 @@ public class FireBlast extends FireAbility {
 
 	@Override
 	public String getName() {
-		return "FireBlast";
+		return isFireBurst ? "FireBurst" : "FireBlast";
 	}
 
 	@Override
@@ -409,6 +412,14 @@ public class FireBlast extends FireAbility {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public boolean isFireBurst() {
+		return isFireBurst;
+	}
+
+	public void setFireBurst(boolean isFireBurst) {
+		this.isFireBurst = isFireBurst;
 	}
 	
 }

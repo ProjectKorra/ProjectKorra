@@ -70,7 +70,7 @@ public class EarthSmash extends EarthAbility {
 		this.shootAnimationCooldown = 25;
 		this.flightAnimationCooldown = 0;
 		this.liftAnimationCooldown = 30;
-		this.grabDetectionRadius = 2.5;
+		this.grabDetectionRadius = 3.5;
 		this.flightDetectionRadius = 3.8;
 		this.state = State.START;
 		this.allowGrab = getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowGrab");

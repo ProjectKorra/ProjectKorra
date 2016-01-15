@@ -185,7 +185,7 @@ public class PKListener implements Listener {
 		String append = "";
 		ChatColor color = null;
 		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
-		if ((player.hasPermission("bending.avatar") || bPlayer.getElements().size() > 1) && chatEnabled) {
+		if (bPlayer.getElements().size() > 1 && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
 			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
 		} else if (bPlayer.hasElement(Element.AIR) && chatEnabled) {
@@ -203,11 +203,16 @@ public class PKListener implements Listener {
 		} else if (bPlayer.hasElement(Element.CHI) && chatEnabled) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
 			color = Element.CHI.getColor();
+		} else {
+			append = "[Nonbender]";
+			color = ChatColor.WHITE;
 		}
 		
 		if (chatEnabled) {
 			player.setDisplayName(player.getName());
-			player.setDisplayName(color + append + ChatColor.RESET + player.getDisplayName());
+			if(color != null) {
+				player.setDisplayName(color + append + ChatColor.RESET + player.getDisplayName());
+			}
 		}
 
 		// Handle the AirSpout/WaterSpout login glitches
@@ -388,6 +393,9 @@ public class PKListener implements Listener {
 		} else if (element != null) {
 			append = plugin.getConfig().getString("Properties.Chat.Prefixes." + element.getName());
 			color = element.getColor();
+		} else {
+			append = "[Nonbender]";
+			color = ChatColor.WHITE;
 		}
 		
 		if (chatEnabled) {
@@ -1185,7 +1193,9 @@ public class PKListener implements Listener {
 					|| !abilName.equalsIgnoreCase("FireBlast") 
 					|| !abilName.equalsIgnoreCase("EarthBlast") 
 					|| !abilName.equalsIgnoreCase("WaterManipulation")) {
-				event.setCancelled(true);
+				if(!player.isSneaking()) {
+					event.setCancelled(true);
+				}
 			}
 		}
 

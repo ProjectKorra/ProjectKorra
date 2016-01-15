@@ -34,8 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AirBlast extends AirAbility {
 
 	private static final int MAX_TICKS = 10000;
-	private static final int ORIGIN_PARTICLE_COUNT = 4;
-	private static final double ORIGIN_SELECT_RANGE = 10;
 	private static final ConcurrentHashMap<Player, Location> ORIGINS = new ConcurrentHashMap<>();
 
 	private boolean canFlickLevers;
@@ -45,7 +43,7 @@ public class AirBlast extends AirAbility {
 	private boolean isFromOtherOrigin;
 	private boolean showParticles;
 	private int ticks;
-	private int particleCount;
+	private int particles;
 	private long cooldown;
 	private double speedFactor;
 	private double range;
@@ -111,6 +109,8 @@ public class AirBlast extends AirAbility {
 	}
 
 	private void setFields() {
+		this.particles = getConfig().getInt("Abilities.Air.AirBlast.Particles");
+		this.cooldown = getConfig().getLong("Abilities.Air.AirBlast.Cooldown");
 		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
 		this.speed = getConfig().getDouble("Abilities.Air.AirBlast.Speed");
 		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
@@ -121,9 +121,7 @@ public class AirBlast extends AirAbility {
 		this.canOpenDoors = getConfig().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
 		this.canPressButtons = getConfig().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
 		this.canCoolLava = getConfig().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
-
-		this.particleCount = 6;
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		
 		this.isFromOtherOrigin = false;
 		this.showParticles = true;
 		this.random = new Random();
@@ -146,12 +144,12 @@ public class AirBlast extends AirAbility {
 		} else if (!bPlayer.canBendIgnoreCooldowns(getAbility("AirBlast"))) {
 			ORIGINS.remove(player);
 			return;
-		} else if (origin.distanceSquared(player.getEyeLocation()) > ORIGIN_SELECT_RANGE * ORIGIN_SELECT_RANGE) {
+		} else if (origin.distanceSquared(player.getEyeLocation()) > getSelectRange() * getSelectRange()) {
 			ORIGINS.remove(player);
 			return;
 		}
 
-		playAirbendingParticles(origin, ORIGIN_PARTICLE_COUNT);
+		playAirbendingParticles(origin, getSelectParticles());
 	}
 
 	public static void progressOrigins() {
@@ -161,7 +159,7 @@ public class AirBlast extends AirAbility {
 	}
 
 	public static void setOrigin(Player player) {
-		Location location = GeneralMethods.getTargetedLocation(player, ORIGIN_SELECT_RANGE, GeneralMethods.NON_OPAQUE);
+		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), GeneralMethods.NON_OPAQUE);
 		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", location)) {
@@ -177,7 +175,7 @@ public class AirBlast extends AirAbility {
 
 	private void advanceLocation() {
 		if (showParticles) {
-			playAirbendingParticles(location, particleCount, 0.275F, 0.275F, 0.275F);
+			playAirbendingParticles(location, particles, 0.275F, 0.275F, 0.275F);
 		}
 		if (random.nextInt(4) == 0) {
 			playAirbendingSound(location);
@@ -606,4 +604,20 @@ public class AirBlast extends AirAbility {
 		this.cooldown = cooldown;
 	}
 
+	public int getParticles() {
+		return particles;
+	}
+
+	public void setParticles(int particles) {
+		this.particles = particles;
+	}
+	
+	public static int getSelectParticles() {
+		return getConfig().getInt("Abilities.Air.AirBlast.SelectParticles");
+	}
+	
+	public static double getSelectRange() {
+		return getConfig().getInt("Abilities.Air.AirBlast.SelectRange");
+	}
+	
 }

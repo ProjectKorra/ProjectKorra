@@ -85,7 +85,7 @@ public class HorizontalVelocityTracker {
 				impactLocation = entity.getLocation();
 				for (Block b : blocks) {
 					if (GeneralMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
-						if (!ElementalAbility.isTransparentToEarthbending(instigator, b)) {
+						if (!ElementalAbility.isTransparent(instigator, b)) {
 							hasBeenDamaged = true;
 							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation, abil, e));
 							remove();

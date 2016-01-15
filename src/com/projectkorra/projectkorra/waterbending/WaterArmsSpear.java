@@ -214,7 +214,7 @@ public class WaterArmsSpear extends WaterAbility {
 	private void createIceBall() {
 		layer++;
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, layer)) {
-			if (isTransparentToEarthbending(player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
+			if (isTransparent(player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
 				playIcebendingSound(block.getLocation());
 				new TempBlock(block, Material.ICE, (byte) 0);
 				WaterArms.getBlockRevertTimes().put(block, System.currentTimeMillis() + spearDuration + (long) (Math.random() * 500));
@@ -223,7 +223,7 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!isTransparentToEarthbending(player, block) 
+		if (!isTransparent(player, block) 
 				&& !((isWater(block) || isIcebendable(block)) && (TempBlock.isTempBlock(block) && !WaterArms.getBlockRevertTimes().containsKey(block)))) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {

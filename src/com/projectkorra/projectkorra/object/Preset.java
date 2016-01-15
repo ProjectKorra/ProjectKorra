@@ -37,9 +37,9 @@ public class Preset {
 	static String updateQuery1 = "UPDATE pk_presets SET slot";
 	static String updateQuery2 = " = ? WHERE uuid = ? AND name = ?";
 
-	UUID uuid;
-	HashMap<Integer, String> abilities;
-	String name;
+	public UUID uuid;
+	public HashMap<Integer, String> abilities;
+	public String name;
 
 	/**
 	 * Creates a new {@link Preset}
@@ -107,6 +107,16 @@ public class Preset {
 			}
 		}.runTaskAsynchronously(ProjectKorra.plugin);
 	}
+	
+	/**
+	 * Reload a Player's Presets from those stored in memory.
+	 * 
+	 * @param player The Player who's Presets should be unloaded
+	 */
+	public static void reloadPreset(Player player) {
+		unloadPreset(player);
+		loadPresets(player);
+	}
 
 	/**
 	 * Binds the abilities from a Preset for the given Player.
@@ -115,28 +125,18 @@ public class Preset {
 	 * @param name The name of the Preset that should be bound
 	 * @return True if all abilities were successfully bound, or false otherwise
 	 */
-	@SuppressWarnings("unchecked")
-	public static boolean bindPreset(Player player, String name) {
+	public static boolean bindPreset(Player player, Preset preset) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null)
+		if (bPlayer == null) {
 			return false;
-		if (!presets.containsKey(player.getUniqueId()))
+		} else if (!presets.containsKey(player.getUniqueId())) {
 			return false;
-		HashMap<Integer, String> abilities = null;
-		for (Preset preset : presets.get(player.getUniqueId())) {
-			if (preset.name.equalsIgnoreCase(name)) { // We found it
-				abilities = (HashMap<Integer, String>) preset.abilities.clone();
-			}
-		}
-		if (abilities == null) {
-
 		}
 		
+		HashMap<Integer, String> abilities = preset.abilities;
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
-			String abilName = abilities.get(i);
-			CoreAbility coreAbil = CoreAbility.getAbility(abilName);
-			if (coreAbil != null && !bPlayer.canBind(coreAbil)) {
+			if (!bPlayer.canBind(CoreAbility.getAbility(abilities.get(i)))) {
 				abilities.remove(i);
 				boundAll = false;
 			}
@@ -227,7 +227,7 @@ public class Preset {
 	/**
 	 * Saves the Preset to the database.
 	 */
-	public void save() {
+	public void save(final Player player) {
 		try {
 			PreparedStatement ps = DBConnection.sql.getConnection().prepareStatement(loadNameQuery);
 			ps.setString(1, uuid.toString());
@@ -262,5 +262,19 @@ public class Preset {
 				}
 			}.runTaskAsynchronously(ProjectKorra.plugin);
 		}
+		
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(1500);
+					reloadPreset(player);
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}.runTaskAsynchronously(ProjectKorra.plugin);
 	}
 }

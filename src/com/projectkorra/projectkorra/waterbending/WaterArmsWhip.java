@@ -226,7 +226,7 @@ public class WaterArmsWhip extends WaterAbility {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!isTransparentToEarthbending(player, block) && !(isWater(block) && TempBlock.isTempBlock(block))) {
+		if (!isTransparent(player, block) && !(isWater(block) && TempBlock.isTempBlock(block))) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return false;

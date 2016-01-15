@@ -114,7 +114,7 @@ public class BendingTabComplete implements TabCompleter {
 				}
 				List<String> abils = new ArrayList<String>();
 				for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
-					if (bPlayer.canBind(coreAbil)) {
+					if (bPlayer.canBind(coreAbil) && !coreAbil.getName().toLowerCase().contains("click")) {
 						abils.add(coreAbil.getName());
 					}
 				}

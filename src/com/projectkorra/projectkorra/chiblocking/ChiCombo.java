@@ -95,7 +95,10 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 				PARALYZED_ENTITIES.remove(entity);
 				
 				for (ChiCombo combo : getAbilities(ChiCombo.class)) {
-					if (combo.target.equals(entity)) {
+					if (combo.target == null) {
+						combo.remove();
+						continue;
+					} else if (combo.target.equals(entity)) {
 						combo.remove();
 					}
 				}

@@ -20,6 +20,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Bloodbending extends BloodAbility {
@@ -84,7 +85,13 @@ public class Bloodbending extends BloodAbility {
 				}
 			}
 		} else {
-			Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+			Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
+			List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
+			if (entities == null || entities.isEmpty()) {
+				return;
+			}
+			Entity target = entities.get(0);
+			
 			if (target == null || !(target instanceof LivingEntity) || GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())) {
 				return;
 			} else if (target instanceof Player) {
@@ -153,10 +160,10 @@ public class Bloodbending extends BloodAbility {
 			}
 		}
 
-		if (onlyUsableDuringMoon && !isFullMoon(player.getWorld())) {
+		if (onlyUsableDuringMoon && !isFullMoon(player.getWorld()) && !bPlayer.canBloodbendAtAnytime()) {
 			remove();
 			return;
-		} else if (canOnlyBeUsedAtNight && !isNight(player.getWorld())) {
+		} else if (canOnlyBeUsedAtNight && !isNight(player.getWorld()) && !bPlayer.canBloodbendAtAnytime()) {
 			remove();
 			return;
 		} else if (!bPlayer.canBendIgnoreCooldowns(this)) {
@@ -165,7 +172,7 @@ public class Bloodbending extends BloodAbility {
 		}
 
 		if (bPlayer.isAvatarState()) {
-			ArrayList<Entity> entities = new ArrayList<Entity>();
+			ArrayList<Entity> entities = new ArrayList<>();
 			
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
 				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {

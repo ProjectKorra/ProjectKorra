@@ -36,7 +36,7 @@ public class WaterReturn extends WaterAbility {
 		this.range = getNightFactor(range);
 		
 		if (bPlayer.canBend(this)) {
-			if (isTransparentToEarthbending(player, block) && !block.isLiquid() && hasEmptyWaterBottle()) {
+			if (isTransparent(player, block) && !block.isLiquid() && hasEmptyWaterBottle()) {
 				this.block = new TempBlock(block, Material.WATER, (byte) 0);
 			}
 		}
@@ -75,7 +75,7 @@ public class WaterReturn extends WaterAbility {
 		}
 
 		Block newblock = location.getBlock();
-		if (isTransparentToEarthbending(player, newblock) && !newblock.isLiquid()) {
+		if (isTransparent(player, newblock) && !newblock.isLiquid()) {
 			block.revertBlock();
 			block = new TempBlock(newblock, Material.WATER, (byte) 0);
 		} else {

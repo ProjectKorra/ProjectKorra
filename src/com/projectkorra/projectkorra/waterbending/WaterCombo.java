@@ -169,7 +169,7 @@ public class WaterCombo extends WaterAbility implements ComboAbility {
 			FireComboStream fstream = (FireComboStream) tasks.get(i);
 			Location loc = fstream.getLocation();
 
-			if (!isTransparentToEarthbending(player, loc.clone().add(0, 0.2, 0).getBlock())) {
+			if (!isTransparent(player, loc.clone().add(0, 0.2, 0).getBlock())) {
 				fstream.remove();
 				return;
 			}

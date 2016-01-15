@@ -115,7 +115,7 @@ public class OctopusForm extends WaterAbility {
 			Location eyeLoc = player.getEyeLocation();
 			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 			
-			if (isTransparentToEarthbending(player, block) && isTransparentToEarthbending(player, eyeLoc.getBlock())) {
+			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData(FULL);
 				OctopusForm form = new OctopusForm(player);

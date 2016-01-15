@@ -19,6 +19,7 @@ public class Catapult extends EarthAbility {
 	private int distance;
 	private long cooldown;
 	private double push;
+	private double shiftModifier;
 	private Location origin;
 	private Location location;
 	private Vector direction;
@@ -53,7 +54,7 @@ public class Catapult extends EarthAbility {
 				catapult = true;
 			}
 			if (player.isSneaking()) {
-				distance = distance / 2;
+				distance = (int) (distance / shiftModifier);
 			}
 
 			moving = true;
@@ -79,6 +80,7 @@ public class Catapult extends EarthAbility {
 	private void setFields() {
 		this.length = getConfig().getInt("Abilities.Earth.Catapult.Length");
 		this.push = getConfig().getDouble("Abilities.Earth.Catapult.Push");
+		this.shiftModifier = getConfig().getDouble("Abilities.Earth.Catapult.ShiftModifier");
 		this.distance = 0;
 		this.cooldown = 0;
 		this.catapult = false;

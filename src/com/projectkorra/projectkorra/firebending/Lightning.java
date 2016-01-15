@@ -151,7 +151,7 @@ public class Lightning extends LightningAbility {
 	 * @param block the block
 	 * @return true if the block is transparent
 	 */
-	private boolean isTransparent(Player player, Block block) {
+	private boolean isTransparentForLightning(Player player, Block block) {
 		if (isTransparent(block)) {
 			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				return false;
@@ -242,7 +242,7 @@ public class Lightning extends LightningAbility {
 					final Location dest = arc.getAnimationLocations().get(j + 1).getLocation().clone();
 					if (selfHitClose 
 							&& player.getLocation().distanceSquared(iterLoc) < 9 
-							&& !isTransparent(player, iterLoc.getBlock()) 
+							&& !isTransparentForLightning(player, iterLoc.getBlock()) 
 							&& !affectedEntities.contains(player)) {
 						affectedEntities.add(player);
 						electrocute(player);
@@ -485,7 +485,7 @@ public class Lightning extends LightningAbility {
 			if (count > 5) {
 				this.cancel();
 			} else if (count == 1) {
-				if (!isTransparent(player, location.getBlock())) {
+				if (!isTransparentForLightning(player, location.getBlock())) {
 					arc.cancel();
 					return;
 				}

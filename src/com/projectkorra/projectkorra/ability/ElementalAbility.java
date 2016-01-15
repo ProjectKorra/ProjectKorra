@@ -58,6 +58,14 @@ public abstract class ElementalAbility extends CoreAbility {
 		return false;
 	}
 	
+	public static boolean isEarth(Block block) {
+		return block != null ? isEarth(block.getType()) : false;
+	}
+	
+	public static boolean isEarth(Material material) {
+		return getConfig().getStringList("Properties.Earth.EarthBlocks").contains(material.toString());
+	}
+	
 	public static boolean isFullMoon(World world) {
 		if (GeneralMethods.hasRPG()) {
 			return EventManager.marker.get(world).equalsIgnoreCase("FullMoon");
@@ -70,11 +78,11 @@ public abstract class ElementalAbility extends CoreAbility {
 			return false;
 		}
 	}
-	
+
 	public static boolean isIce(Block block) {
 		return isIce(block.getType());
 	}
-	
+
 	public static boolean isIce(Material material) {
 		return material == Material.ICE || material == Material.PACKED_ICE;
 	}
@@ -82,11 +90,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	public static boolean isLava(Block block) {
 		return block != null ? isLava(block.getType()) : false;
 	}
-
+	
 	public static boolean isLava(Material material) {
 		return material == Material.LAVA || material == Material.STATIONARY_LAVA;
 	}
-
+	
 	public static boolean isLunarEclipse(World world) {
 		if (world == null) {
 			return false;
@@ -135,7 +143,7 @@ public abstract class ElementalAbility extends CoreAbility {
 		}
 		return false;
 	}
-
+	
 	public static boolean isNight(World world) {
 		if (world.getEnvironment() == Environment.NETHER || world.getEnvironment() == Environment.THE_END) {
 			return false;
@@ -147,7 +155,7 @@ public abstract class ElementalAbility extends CoreAbility {
 		}
 		return false;
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	public static boolean isPlant(Block block) {
 		if (block == null) {
@@ -157,7 +165,7 @@ public abstract class ElementalAbility extends CoreAbility {
 		}
 		return false;
 	}
-	
+
 	public static boolean isPositiveEffect(PotionEffectType effect) {
 		for (PotionEffectType effect2 : POSITIVE_EFFECTS) {
 			if (effect2.equals(effect)) {
@@ -167,18 +175,26 @@ public abstract class ElementalAbility extends CoreAbility {
 		return false;
 	}
 
+	public static boolean isSand(Block block) {
+  		return block != null ? isSand(block.getType()) : false;
+	}
+	
+	public static boolean isSand(Material material) {
+		return getConfig().getStringList("Properties.Earth.SandBlocks").contains(material.toString());
+	}
+
 	public static boolean isSozinsComet(World world) {
 		return world != null ? EventManager.marker.get(world).equalsIgnoreCase("SozinsComet") : false;
+	}
+
+	public static boolean isTransparent(Player player, Block block) {
+		return isTransparent(player, null, block);
 	}
 
 	@SuppressWarnings("deprecation")
 	public static boolean isTransparent(Player player, String abilityName, Block block) {
 		return Arrays.asList(TRANSPARENT_MATERIAL).contains(block.getTypeId())
 				&& !GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation());
-	}
-
-	public static boolean isTransparentToEarthbending(Player player, Block block) {
-		return isTransparent(player, null, block);
 	}
 	
 	public static boolean isUndead(Entity entity) {

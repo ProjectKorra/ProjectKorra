@@ -88,6 +88,7 @@ public class Shockwave extends EarthAbility {
 			Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
 			new Ripple(player, vector.normalize());
 		}
+		bPlayer.addCooldown(this);
 	}
 
 	public static void coneShockwave(Player player) {
@@ -103,13 +104,14 @@ public class Shockwave extends EarthAbility {
 						new Ripple(player, vector.normalize());
 					}
 				}
+				shockWave.bPlayer.addCooldown(shockWave);
 				shockWave.remove();
 			}
 		}
 	}
 
 	@Override
-	public String getName() { // TODO: Shockwave getName() is being overridden by Ripple
+	public String getName() {
 		return "Shockwave";
 	}
 

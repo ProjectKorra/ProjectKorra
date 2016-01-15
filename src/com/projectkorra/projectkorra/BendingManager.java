@@ -109,7 +109,6 @@ public class BendingManager implements Runnable {
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
 		} catch (Exception e) {
-			GeneralMethods.stopBending();
 			e.printStackTrace();
 		}
 	}

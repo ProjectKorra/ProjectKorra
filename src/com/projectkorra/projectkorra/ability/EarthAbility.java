@@ -265,11 +265,11 @@ public abstract class EarthAbility extends BlockAbility {
 	@SuppressWarnings("deprecation")
 	public static Block getEarthSourceBlock(Player player, String abilityName, double range) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		Block testblock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
+		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
 		if (bPlayer == null) {
 			return null;
-		} else if (isEarthbendable(player, testblock) || isMetalbendable(player, testblock.getType())) {
-			return testblock;
+		} else if (isEarthbendable(player, testBlock) || isMetalbendable(player, testBlock.getType())) {
+			return testBlock;
 		}
 
 		Location location = player.getEyeLocation();
@@ -383,7 +383,7 @@ public abstract class EarthAbility extends BlockAbility {
 	}
 
 	public static boolean isEarthbendable(Material material) {
-		return getConfig().getStringList("Properties.Earth.EarthbendableBlocks").contains(material.toString());
+		return isEarth(material) || isMetal(material) || isSand(material);
 	}
 
 	public static boolean isEarthbendable(Player player, Block block) {

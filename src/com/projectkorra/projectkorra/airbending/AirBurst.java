@@ -15,18 +15,17 @@ import com.projectkorra.projectkorra.avatar.AvatarState;
 
 public class AirBurst extends AirAbility {
 
-	private static final int CHARGED_SNEAK_PARTICLES = 10;
-	private static final double PARTICLES_PERCENTAGE = 50;
-
 	private boolean isCharged;
 	private boolean isFallBurst;
+	private int sneakParticles;
 	private float playerFallDistance;
 	private long chargeTime;
 	private double fallThreshold;
 	private double pushFactor;
 	private double damage;
 	private double blastAngleTheta;
-	private double blastAnglePhi;	
+	private double blastAnglePhi;
+	private double particlePercentage;
 	private ArrayList<AirBlast> blasts;
 	private ArrayList<Entity> affectedEntities;
 	
@@ -39,13 +38,15 @@ public class AirBurst extends AirAbility {
 
 		this.isFallBurst = isFallBurst;
 		this.isCharged = false;
-		this.blastAnglePhi = 10;
-		this.blastAngleTheta = 10;
 		this.playerFallDistance = player.getFallDistance();
 		this.chargeTime = getConfig().getLong("Abilities.Air.AirBurst.ChargeTime");
 		this.fallThreshold = getConfig().getDouble("Abilities.Air.AirBurst.FallThreshold");
 		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBurst.PushFactor");
 		this.damage = getConfig().getDouble("Abilities.Air.AirBurst.Damage");
+		this.blastAnglePhi = getConfig().getDouble("Abilities.Air.AirBurst.AnglePhi");
+		this.blastAngleTheta = getConfig().getDouble("Abilities.Air.AirBurst.AngleTheta");
+		this.sneakParticles = getConfig().getInt("Abilities.Air.AirBurst.SneakParticles");
+		this.particlePercentage = getConfig().getDouble("Abilities.Air.AirBurst.ParticlePercentage");
 		this.blasts = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
 
@@ -86,7 +87,7 @@ public class AirBurst extends AirAbility {
 			}
 		} else if (isCharged) {
 			Location location = player.getEyeLocation();
-			playAirbendingParticles(location, CHARGED_SNEAK_PARTICLES);
+			playAirbendingParticles(location, sneakParticles);
 		}
 	}
 
@@ -149,7 +150,7 @@ public class AirBurst extends AirAbility {
 			int toggleTime = 0;
 
 			if (i % 4 != 0) {
-				toggleTime = (int) (i % (100 / PARTICLES_PERCENTAGE)) + 3;
+				toggleTime = (int) (i % (100 / particlePercentage)) + 3;
 			}
 			new BukkitRunnable() {
 				public void run() {

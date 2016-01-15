@@ -163,7 +163,7 @@ public class IceSpikeBlast extends IceAbility {
 			}
 			source = null;
 
-			if (isTransparentToEarthbending(player, block) && !block.isLiquid()) {
+			if (isTransparent(player, block) && !block.isLiquid()) {
 				GeneralMethods.breakBlock(block);
 			} else if (!isWater(block)) {
 				remove();
@@ -359,7 +359,7 @@ public class IceSpikeBlast extends IceAbility {
 			Location eyeLoc = player.getEyeLocation();
 			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 			
-			if (isTransparentToEarthbending(player, block) && isTransparentToEarthbending(player, eyeLoc.getBlock())) {
+			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range);
 				Location destination;
 			

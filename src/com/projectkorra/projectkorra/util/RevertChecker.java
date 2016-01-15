@@ -68,8 +68,11 @@ public class RevertChecker implements Runnable {
 	}
 
 	public void run() {
+		if (!plugin.isEnabled()) {
+			return;
+		}
+		
 		time = System.currentTimeMillis();
-
 		if (config.getBoolean("Properties.Earth.RevertEarthbending")) {
 
 			try {

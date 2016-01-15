@@ -72,7 +72,7 @@ public class WhoCommand extends PKCommand {
 			List<String> players = new ArrayList<String>();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				String playerName = player.getName();
-				String result = "";
+				String result = ChatColor.WHITE + playerName;
 				BendingPlayer bp = BendingPlayer.getBendingPlayer(playerName);
 				
 				if (bp == null) {
@@ -185,7 +185,12 @@ public class WhoCommand extends PKCommand {
 		if (bPlayer != null) {
 			sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : "") + " - ");
 			if (bPlayer.hasElement(Element.AIR)) {
-				sender.sendMessage(Element.AIR + "- Airbender");
+				if(bPlayer.isElementToggled(Element.AIR)) {
+					sender.sendMessage(Element.AIR.getColor() + "- Airbender");
+				} else {
+					sender.sendMessage(Element.AIR.getColor() + "" + ChatColor.STRIKETHROUGH + "- Airbender");
+				}
+				
 				if (player_ != null && bPlayer.canUseFlight()) {
 					sender.sendMessage(Element.FLIGHT.getColor() + "    Can Fly");
 				}
@@ -194,7 +199,12 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (bPlayer.hasElement(Element.WATER)) {
-				sender.sendMessage(Element.WATER.getColor() + "- Waterbender");
+				if(bPlayer.isElementToggled(Element.WATER)) {
+					sender.sendMessage(Element.WATER.getColor() + "- Waterbender");
+				} else {
+					sender.sendMessage(Element.WATER.getColor() + "" + ChatColor.STRIKETHROUGH + "- Waterbender");
+				}
+				
 				if (player_ != null && bPlayer.canPlantbend()) {
 					sender.sendMessage(Element.PLANT.getColor() + "    Can Plantbend");
 				}
@@ -213,7 +223,12 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (bPlayer.hasElement(Element.EARTH)) {
-				sender.sendMessage(Element.EARTH.getColor() + "- Earthbender");
+				if(bPlayer.isElementToggled(Element.EARTH)) {
+					sender.sendMessage(Element.EARTH.getColor() + "- Earthbender");
+				} else {
+					sender.sendMessage(Element.EARTH.getColor() + "" + ChatColor.STRIKETHROUGH + "- Earthbender");
+				}
+				
 				if (player_ != null && bPlayer.canMetalbend()) {
 					sender.sendMessage(Element.METAL.getColor() + "    Can Metalbend");
 				}
@@ -225,7 +240,12 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (bPlayer.hasElement(Element.FIRE)) {
-				sender.sendMessage(Element.FIRE.getColor() + "- Firebender");
+				if(bPlayer.isElementToggled(Element.FIRE)) {
+					sender.sendMessage(Element.FIRE.getColor() + "- Firebender");
+				} else {
+					sender.sendMessage(Element.FIRE.getColor() + "" + ChatColor.STRIKETHROUGH + "- Firebender");
+				}
+				
 				if (player_ != null && bPlayer.canCombustionbend()) {
 					sender.sendMessage(Element.COMBUSTION.getColor() + "    Can Combustionbend");
 				}
@@ -234,7 +254,11 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (bPlayer.hasElement(Element.CHI)) {
-				sender.sendMessage(Element.CHI.getColor() + "- ChiBlocker");
+				if(bPlayer.isElementToggled(Element.CHI)) {
+					sender.sendMessage(Element.CHI.getColor() + "- Chibender");
+				} else {
+					sender.sendMessage(Element.CHI.getColor() + "" + ChatColor.STRIKETHROUGH + "- Chibender");
+				}
 			}
 			
 			UUID uuid = player.getUniqueId();

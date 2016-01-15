@@ -195,7 +195,7 @@ public abstract class WaterAbility extends BlockAbility {
 	}
 	
 	public static boolean isIcebendable(Material material) {
-		if (material == Material.ICE) {
+		if (material == Material.ICE || material == Material.SNOW) {
 			return true;
 		} else if (material == Material.PACKED_ICE && canBendPackedIce()) {
 			return true;

@@ -101,7 +101,7 @@ public class BendingPlayer {
 	 * @param cooldown The cooldown time
 	 */
 	public void addCooldown(String ability, long cooldown) {
-		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, Result.ADDED);
+		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, cooldown, Result.ADDED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
@@ -148,20 +148,16 @@ public class BendingPlayer {
 	}
 
 	private boolean canBend(CoreAbility ability, boolean ignoreBinds, boolean ignoreCooldowns) {
-		if (ability == null) {
+		if (ability == null || ability.getPlayer() == null) {
 			return false;
 		}
 		
 		List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
-		Location location = null;
+		Location playerLoc = player.getLocation();
 		
-		if (player != null) {
-			location = player.getLocation();
-		}
-
-		if (player == null || !player.isOnline() || player.isDead()) {
+		if (!player.isOnline() || player.isDead()) {
 			return false;
-		} else if (location != null && !location.getWorld().equals(player.getWorld())) {
+		} else if (ability.getLocation() != null && !ability.getLocation().getWorld().equals(player.getWorld())) {
 			return false;
 		} else if (!ignoreCooldowns && isOnCooldown(ability.getName())) {
 			return false;
@@ -175,7 +171,7 @@ public class BendingPlayer {
 			return false;
 		}
 		
-		if (!ignoreCooldowns && cooldowns.containsKey(name)) { // TODO: wtf is this
+		if (!ignoreCooldowns && cooldowns.containsKey(name)) {
 			if (cooldowns.get(name) + getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
 				return false;
 			}
@@ -184,7 +180,7 @@ public class BendingPlayer {
 
 		if (isChiBlocked() || isParalyzed() || isBloodbended() || isControlledByMetalClips()) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(player, ability.getName(), location)) {
+		} else if (GeneralMethods.isRegionProtectedFromBuild(player, ability.getName(), playerLoc)) {
 			return false;
 		} else if (ability instanceof FireAbility && BendingManager.events.get(player.getWorld()) != null
 				&& BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SolarEclipse")) {
@@ -555,7 +551,7 @@ public class BendingPlayer {
 	 * @param ability The ability's cooldown to remove
 	 */
 	public void removeCooldown(String ability) {
-		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, Result.REMOVED);
+		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
@@ -664,11 +660,12 @@ public class BendingPlayer {
 	 * 
 	 * @see #getBendingPlayer(UUID)
 	 */
-	public static BendingPlayer getBendingPlayer(String player) {
-		OfflinePlayer oPlayer = Bukkit.getPlayer(player);
-		if (player == null) {
-			oPlayer = Bukkit.getOfflinePlayer(oPlayer.getUniqueId());
+	public static BendingPlayer getBendingPlayer(String playerName) {
+		if (playerName == null) {
+			return null;
 		}
+		Player player = Bukkit.getPlayer(playerName);
+		OfflinePlayer oPlayer = player != null ? Bukkit.getOfflinePlayer(player.getUniqueId()) : null;
 		return getBendingPlayer(oPlayer);
 	}
 

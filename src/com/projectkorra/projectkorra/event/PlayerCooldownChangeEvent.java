@@ -6,17 +6,25 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public final class PlayerCooldownChangeEvent extends Event implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
+	
+	public static enum Result {
+		REMOVED, ADDED;
+	}
+	
+	private static final HandlerList HANDLERS = new HandlerList();
+	
 	private Player player;
 	private String ability;
 	private Result eventresult;
 	private boolean cancelled;
+	private long cooldown;
 
-	public PlayerCooldownChangeEvent(Player player, String abilityname, Result result) {
+	public PlayerCooldownChangeEvent(Player player, String abilityname, long cooldown, Result result) {
 		this.player = player;
 		this.ability = abilityname;
 		this.eventresult = result;
 		this.cancelled = false;
+		this.cooldown = cooldown;
 	}
 
 	public Player getPlayer() {
@@ -30,6 +38,10 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
 	public Result getResult() {
 		return eventresult;
 	}
+	
+	public long getCooldown() {
+		return cooldown;
+	}
 
 	public boolean isCancelled() {
 		return cancelled;
@@ -38,19 +50,17 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
 	public void setCancelled(boolean cancel) {
 		this.cancelled = cancel;
 	}
+	
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
 
 	public HandlerList getHandlers() {
-		return handlers;
+		return HANDLERS;
 	}
 
 	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
-	public static enum Result {
-		REMOVED, ADDED;
-		private Result() {
-		}
+		return HANDLERS;
 	}
 
 }

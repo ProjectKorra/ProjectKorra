@@ -81,8 +81,8 @@ public class Suffocate extends AirAbility {
 		this.blind = getConfig().getInt("Abilities.Air.Suffocate.BlindPotentcy");
 		this.blindDelay = getConfig().getDouble("Abilities.Air.Suffocate.BlindDelay");
 		this.blindRepeat = getConfig().getDouble("Abilities.Air.Suffocate.BlindInterval");
-		this.targets = new ArrayList<LivingEntity>();
-		this.tasks = new ArrayList<BukkitRunnable>();
+		this.targets = new ArrayList<>();
+		this.tasks = new ArrayList<>();
 
 		if (bPlayer.isAvatarState()) {
 			cooldown = 0;
@@ -109,12 +109,17 @@ public class Suffocate extends AirAbility {
 				}
 			}
 		} else {
-			Entity ent = GeneralMethods.getTargetedEntity(player, range);
-			if (ent != null && ent instanceof LivingEntity) {
-				targets.add((LivingEntity) ent);
+			Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
+			List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
+			if (entities == null || entities.isEmpty()) {
+				return;
+			}
+			Entity target = entities.get(0);
+			if (target != null && target instanceof LivingEntity) {
+				targets.add((LivingEntity) target);
 			}
 		}
-
+		
 		if (!canSuffocateUndead) {
 			for (int i = 0; i < targets.size(); i++) {
 				LivingEntity target = targets.get(i);

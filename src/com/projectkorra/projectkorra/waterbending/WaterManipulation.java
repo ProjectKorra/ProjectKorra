@@ -262,7 +262,7 @@ public class WaterManipulation extends WaterAbility {
 					}
 				}
 
-				if (isTransparentToEarthbending(player, block) && !block.isLiquid()) {
+				if (isTransparent(player, block) && !block.isLiquid()) {
 					GeneralMethods.breakBlock(block);
 				} else if (block.getType() != Material.AIR && !isWater(block)) {
 					remove();
@@ -479,7 +479,7 @@ public class WaterManipulation extends WaterAbility {
 			Location eyeLoc = player.getEyeLocation();
 			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 			
-			if (isTransparentToEarthbending(player, block) && isTransparentToEarthbending(player, eyeLoc.getBlock())) {
+			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				if (getTargetLocation(player, range).distanceSquared(block.getLocation()) > 1) {
 					block.setType(Material.WATER);
 					block.setData((byte) 0);
