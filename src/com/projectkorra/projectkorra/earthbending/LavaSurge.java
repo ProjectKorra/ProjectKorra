@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -100,7 +99,7 @@ public class LavaSurge extends LavaAbility {
 			return false;
 		}
 		
-		LavaSurge otherSurge = CoreAbility.getAbility(player, this.getClass());
+		LavaSurge otherSurge = getAbility(player, this.getClass());
 		if (otherSurge != null) {
 			otherSurge.revertFracture();
 		}

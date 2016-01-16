@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterArms.Arm;
@@ -102,7 +101,7 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	private void createInstance() {
-		waterArms = CoreAbility.getAbility(player, WaterArms.class);
+		waterArms = getAbility(player, WaterArms.class);
 		if (waterArms != null) {
 			waterArms.switchPreferredArm();
 			arm = waterArms.getActiveArm();
@@ -237,7 +236,7 @@ public class WaterArmsSpear extends WaterAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (CoreAbility.hasAbility(player, WaterArms.class)) {
+		if (hasAbility(player, WaterArms.class)) {
 			if (arm.equals(Arm.LEFT)) {
 				waterArms.setLeftArmCooldown(false);
 			} else {

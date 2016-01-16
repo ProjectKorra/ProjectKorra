@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -37,17 +36,17 @@ public class WaterSpout extends WaterAbility {
 	public WaterSpout(Player player) {
 		super(player);
 	
-		WaterSpout oldSpout = CoreAbility.getAbility(player, WaterSpout.class);
+		WaterSpout oldSpout = getAbility(player, WaterSpout.class);
 		if (oldSpout != null) {
 			oldSpout.remove();
 			return;
 		}
 		
-		this.canBendOnPackedIce = ProjectKorra.plugin.getConfig().getBoolean("Properties.Water.CanBendPackedIce");
+		this.canBendOnPackedIce = getConfig().getBoolean("Properties.Water.CanBendPackedIce");
 		this.useParticles = getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
 		this.useBlockSpiral = getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
 		this.height = getConfig().getDouble("Abilities.Water.WaterSpout.Height");
-		this.interval = 50;
+		this.interval = getConfig().getLong("Abilities.Water.WaterSpout.Interval");
 		
 		WaterSpoutWave spoutWave = new WaterSpoutWave(player, WaterSpoutWave.AbilityType.CLICK);
 		if (spoutWave.isStarted()) {
@@ -285,7 +284,7 @@ public class WaterSpout extends WaterAbility {
 		double dz = loc1.getZ() - loc0.getZ();
 		double distSquared = dx * dx + dz * dz;
 		
-		for (WaterSpout spout : CoreAbility.getAbilities(sourcePlayer, WaterSpout.class)) {
+		for (WaterSpout spout : getAbilities(sourcePlayer, WaterSpout.class)) {
 			if (distSquared <= radius * radius && dy > 0 && dy < spout.height) {
 				removed = true;
 				spout.remove();

@@ -74,10 +74,10 @@ public class ChiPassive {
 				ChiAbility stance = bPlayer.getStance();
 				if (player.isSprinting() && !(stance instanceof AcrobatStance)) {
 					if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
-						player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, getJumpPower() - 1));
+						player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, getJumpPower()));
 					}
 					if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
-						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, getSpeedPower() - 1));
+						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, getSpeedPower()));
 					}
 				}
 			}

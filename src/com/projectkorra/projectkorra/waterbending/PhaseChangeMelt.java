@@ -18,6 +18,7 @@ public class PhaseChangeMelt extends IceAbility {
 	private static final byte FULL = 0x0;
 	
 	private int seaLevel;
+	private long cooldown;
 	private double range;
 	private double radius;
 	private double evaporateRadius;
@@ -26,9 +27,14 @@ public class PhaseChangeMelt extends IceAbility {
 	public PhaseChangeMelt(Player player) {
 		super(player);
 		
+		if (!bPlayer.canBend(this)) {
+			return;
+		}
+		
 		this.seaLevel = getConfig().getInt("Properties.SeaLevel");
 		this.range = getConfig().getDouble("Abilities.Water.PhaseChange.Range");
 		this.radius = getConfig().getDouble("Abilities.Water.PhaseChange.Radius");
+		this.cooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
 		this.evaporateRadius = 3;
 		
 		this.range = getNightFactor(range);
@@ -60,6 +66,8 @@ public class PhaseChangeMelt extends IceAbility {
 				melt(player, block);
 			}
 		}
+		
+		bPlayer.addCooldown(this);
 		remove();
 	}
 
@@ -102,7 +110,7 @@ public class PhaseChangeMelt extends IceAbility {
 
 	@Override
 	public String getName() {
-		return "PhaseChange";
+		return "PhaseChangeMelt";
 	}
 
 	@Override
@@ -116,7 +124,12 @@ public class PhaseChangeMelt extends IceAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
 	}
 	
 	@Override

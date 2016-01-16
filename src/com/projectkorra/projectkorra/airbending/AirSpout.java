@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.airbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.Location;
@@ -14,17 +13,17 @@ import java.util.Random;
 
 public class AirSpout extends AirAbility {
 
-	private static final Integer[] DIRECTIONS = { 0, 1, 2, 3, 5, 6, 7, 8 };
+	private static final Integer[] DIRECTIONS = {0, 1, 2, 3, 5, 6, 7, 8};
 
 	private int angle;
-	private long updateInterval;
+	private long interval;
 	private long cooldown;
 	private double height;
 
 	public AirSpout(Player player) {
 		super(player);
 		
-		AirSpout spout = CoreAbility.getAbility(player, AirSpout.class);
+		AirSpout spout = getAbility(player, AirSpout.class);
 		if (spout != null) {
 			spout.remove();
 			return;
@@ -37,8 +36,8 @@ public class AirSpout extends AirAbility {
 
 		this.angle = 0;
 		this.cooldown = 0;
+		this.interval = getConfig().getLong("Abilities.Air.AirSpout.Interval");
 		this.height = getConfig().getDouble("Abilities.Air.AirSpout.Height");
-		this.updateInterval = 100;
 
 		new Flight(player);
 		start();
@@ -47,7 +46,7 @@ public class AirSpout extends AirAbility {
 
 	public static boolean removeSpouts(Location loc0, double radius, Player sourceplayer) {
 		boolean removed = false;
-		for (AirSpout spout : CoreAbility.getAbilities(AirSpout.class)) {
+		for (AirSpout spout : getAbilities(AirSpout.class)) {
 			if (!spout.player.equals(sourceplayer)) {
 				Location loc1 = spout.player.getLocation().getBlock().getLocation();
 				loc0 = loc0.getBlock().getLocation();
@@ -129,7 +128,7 @@ public class AirSpout extends AirAbility {
 		if (!player.getWorld().equals(block.getWorld())) {
 			return;
 		}
-		if (System.currentTimeMillis() >= startTime + updateInterval) {
+		if (System.currentTimeMillis() >= startTime + interval) {
 			startTime = System.currentTimeMillis();
 			Location location = block.getLocation();
 			Location playerloc = player.getLocation();
@@ -180,12 +179,12 @@ public class AirSpout extends AirAbility {
 		this.angle = angle;
 	}
 
-	public long getUpdateInterval() {
-		return updateInterval;
+	public long getInterval() {
+		return interval;
 	}
 
-	public void setUpdateInterval(long updateInterval) {
-		this.updateInterval = updateInterval;
+	public void setInterval(long interval) {
+		this.interval = interval;
 	}
 
 	public double getHeight() {

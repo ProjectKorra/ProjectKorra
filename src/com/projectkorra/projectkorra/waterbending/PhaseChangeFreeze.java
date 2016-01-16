@@ -32,17 +32,16 @@ public class PhaseChangeFreeze extends IceAbility {
 	public PhaseChangeFreeze(Player player) {
 		super(player);
 		
-		this.range = getConfig().getDouble("Abilities.Water.PhaseChange.Range");
-		this.radius = getConfig().getDouble("Abilities.Water.PhaseChange.Radius");
-		this.cooldown = 0;
-		
-		this.range = getNightFactor(range);
-		this.radius = getNightFactor(radius);
-		
 		if (!bPlayer.canBend(this) || !bPlayer.canIcebend()) {
 			return;
 		}
-
+		
+		this.range = getConfig().getDouble("Abilities.Water.PhaseChange.Range");
+		this.radius = getConfig().getDouble("Abilities.Water.PhaseChange.Radius");
+		this.cooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
+		this.range = getNightFactor(range);
+		this.radius = getNightFactor(radius);
+		
 		if (bPlayer.isAvatarState()) {
 			range = AvatarState.getValue(range);
 		}

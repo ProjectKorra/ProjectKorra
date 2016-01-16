@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Paralyze extends ChiAbility {
 
-	private static final String DURATION_STRING = "Abilities.Chi.Paralyze.Duration";
 	private static final ConcurrentHashMap<Entity, Long> ENTITIES = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Entity, Long> COOLDOWNS = new ConcurrentHashMap<>();
 
@@ -108,7 +107,7 @@ public class Paralyze extends ChiAbility {
 	}
 	
 	public static long getDuration() {
-		return getConfig().getLong(DURATION_STRING);
+		return getConfig().getLong("Abilities.Chi.Paralyze.Duration");
 	}
 
 	public Entity getTarget() {
@@ -117,10 +116,6 @@ public class Paralyze extends ChiAbility {
 
 	public void setTarget(Entity target) {
 		this.target = target;
-	}
-
-	public static String getDurationString() {
-		return DURATION_STRING;
 	}
 
 	public static ConcurrentHashMap<Entity, Long> getEntities() {

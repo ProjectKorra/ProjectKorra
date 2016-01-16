@@ -15,7 +15,6 @@ public class EarthTunnel extends EarthAbility {
 	
 	private long interval;
 	private long time;
-	private long cooldown;
 	private double depth;
 	private double radius;
 	private double angle;
@@ -34,7 +33,6 @@ public class EarthTunnel extends EarthAbility {
 		this.range = getConfig().getDouble("Abilities.Earth.EarthTunnel.Range");
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthTunnel.Radius");
 		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
-		this.cooldown = 0;
 		this.radiusIncrement = radius;
 		this.time = System.currentTimeMillis();
 		
@@ -50,7 +48,6 @@ public class EarthTunnel extends EarthAbility {
 		}
 		
 		start();
-		bPlayer.addCooldown(this);
 	}
 
 	@Override
@@ -115,7 +112,7 @@ public class EarthTunnel extends EarthAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return 0;
 	}
 	
 	@Override
@@ -214,10 +211,6 @@ public class EarthTunnel extends EarthAbility {
 
 	public void setDirection(Vector direction) {
 		this.direction = direction;
-	}
-
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
 	}
 
 	public void setLocation(Location location) {

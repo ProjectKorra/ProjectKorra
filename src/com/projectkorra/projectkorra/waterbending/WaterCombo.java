@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -327,7 +326,7 @@ public class WaterCombo extends WaterAbility implements ComboAbility {
 		if (player == null || ability == null) {
 			return list;
 		}
-		for (WaterCombo combo : CoreAbility.getAbilities(player, WaterCombo.class)) {
+		for (WaterCombo combo : getAbilities(player, WaterCombo.class)) {
 			if (player.equals(combo.player) && combo.name.equalsIgnoreCase(ability)) {
 				list.add(combo);
 			}

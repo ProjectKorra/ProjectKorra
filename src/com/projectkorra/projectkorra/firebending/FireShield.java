@@ -41,8 +41,8 @@ public class FireShield extends FireAbility {
 		
 		this.shield = shield;
 		this.ignite = true;
-		this.interval = 100;
-		this.cooldown = shield ? 0 : GeneralMethods.getGlobalCooldown();
+		this.interval = getConfig().getLong("Abilities.Fire.FireShield.Interval");
+		this.cooldown = shield ? 0 : getConfig().getLong("Abilities.Fire.FireShield.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Fire.FireShield.Duration");
 		this.radius = getConfig().getDouble("Abilities.Fire.FireShield.Radius");
 		this.discRadius = getConfig().getDouble("Abilities.Fire.FireShield.DiscRadius");

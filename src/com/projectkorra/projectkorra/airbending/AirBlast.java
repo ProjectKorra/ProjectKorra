@@ -5,7 +5,6 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
@@ -415,7 +414,7 @@ public class AirBlast extends AirAbility {
 
 	public static boolean removeAirBlastsAroundPoint(Location location, double radius) {
 		boolean removed = false;
-		for (AirBlast airBlast : CoreAbility.getAbilities(AirBlast.class)) {
+		for (AirBlast airBlast : getAbilities(AirBlast.class)) {
 			Location airBlastlocation = airBlast.location;
 			if (location.getWorld() == airBlastlocation.getWorld()) {
 				if (location.distanceSquared(airBlastlocation) <= radius * radius) {

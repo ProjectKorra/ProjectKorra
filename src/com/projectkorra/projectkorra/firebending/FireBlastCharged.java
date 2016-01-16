@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class FireBlastCharged extends FireAbility {
 
-	private static ConcurrentHashMap<Entity, FireBlastCharged> EXPLOSIONS = new ConcurrentHashMap<Entity, FireBlastCharged>();
+	private static final ConcurrentHashMap<Entity, FireBlastCharged> EXPLOSIONS = new ConcurrentHashMap<>();
 
 	private boolean charged;
 	private boolean launched;
@@ -34,7 +34,7 @@ public class FireBlastCharged extends FireAbility {
 	private long interval;	
 	private double maxDamage;
 	private double range;
-	private double radius;
+	private double collisionRadius;
 	private double damageRadius;
 	private double explosionRadius;
 	private double innerRadius;
@@ -54,7 +54,7 @@ public class FireBlastCharged extends FireAbility {
 		this.chargeTime = getConfig().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
 		this.time = System.currentTimeMillis();
 		this.interval = 25;
-		this.radius = 2;
+		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.CollisionRadius");
 		this.maxDamage = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Damage");
 		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Range");
 		this.damageRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
@@ -189,7 +189,7 @@ public class FireBlastCharged extends FireAbility {
 	}
 
 	private void executeFireball() {
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, collisionRadius)) {
 			ParticleEffect.FLAME.display(block.getLocation(), 0.5F, 0.5F, 0.5F, 0, 5);
 			ParticleEffect.SMOKE.display(block.getLocation(), 0.5F, 0.5F, 0.5F, 0, 2);
 			if ((new Random()).nextInt(4) == 0) {
@@ -199,7 +199,7 @@ public class FireBlastCharged extends FireAbility {
 		}
 
 		boolean exploded = false;
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * radius)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * collisionRadius)) {
 			if (entity.getEntityId() == player.getEntityId()
 					|| GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
@@ -216,7 +216,7 @@ public class FireBlastCharged extends FireAbility {
 	}
 
 	private void ignite(Location location) {
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, collisionRadius)) {
 			if (BlazeArc.isIgnitable(player, block)) {
 				if (block.getType() != Material.FIRE) {
 					BlazeArc.getReplacedBlocks().put(block.getLocation(), block.getState().getData());
@@ -247,7 +247,7 @@ public class FireBlastCharged extends FireAbility {
 			launched = true;
 			location = player.getEyeLocation();
 			origin = location.clone();
-			direction = location.getDirection().normalize().multiply(radius);
+			direction = location.getDirection().normalize().multiply(collisionRadius);
 		}
 
 		if (System.currentTimeMillis() > time + interval) {
@@ -307,6 +307,150 @@ public class FireBlastCharged extends FireAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	public boolean isCharged() {
+		return charged;
+	}
+
+	public void setCharged(boolean charged) {
+		this.charged = charged;
+	}
+
+	public boolean isLaunched() {
+		return launched;
+	}
+
+	public void setLaunched(boolean launched) {
+		this.launched = launched;
+	}
+
+	public boolean isCanDamageBlocks() {
+		return canDamageBlocks;
+	}
+
+	public void setCanDamageBlocks(boolean canDamageBlocks) {
+		this.canDamageBlocks = canDamageBlocks;
+	}
+
+	public boolean isDissipate() {
+		return dissipate;
+	}
+
+	public void setDissipate(boolean dissipate) {
+		this.dissipate = dissipate;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public long getChargeTime() {
+		return chargeTime;
+	}
+
+	public void setChargeTime(long chargeTime) {
+		this.chargeTime = chargeTime;
+	}
+
+	public long getInterval() {
+		return interval;
+	}
+
+	public void setInterval(long interval) {
+		this.interval = interval;
+	}
+
+	public double getMaxDamage() {
+		return maxDamage;
+	}
+
+	public void setMaxDamage(double maxDamage) {
+		this.maxDamage = maxDamage;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getCollisionRadius() {
+		return collisionRadius;
+	}
+
+	public void setCollisionRadius(double collisionRadius) {
+		this.collisionRadius = collisionRadius;
+	}
+
+	public double getDamageRadius() {
+		return damageRadius;
+	}
+
+	public void setDamageRadius(double damageRadius) {
+		this.damageRadius = damageRadius;
+	}
+
+	public double getExplosionRadius() {
+		return explosionRadius;
+	}
+
+	public void setExplosionRadius(double explosionRadius) {
+		this.explosionRadius = explosionRadius;
+	}
+
+	public double getInnerRadius() {
+		return innerRadius;
+	}
+
+	public void setInnerRadius(double innerRadius) {
+		this.innerRadius = innerRadius;
+	}
+
+	public double getFireTicks() {
+		return fireTicks;
+	}
+
+	public void setFireTicks(double fireTicks) {
+		this.fireTicks = fireTicks;
+	}
+
+	public TNTPrimed getExplosion() {
+		return explosion;
+	}
+
+	public void setExplosion(TNTPrimed explosion) {
+		this.explosion = explosion;
+	}
+
+	public Location getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+
+	public Vector getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Vector direction) {
+		this.direction = direction;
+	}
+
+	public static ConcurrentHashMap<Entity, FireBlastCharged> getExplosions() {
+		return EXPLOSIONS;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 
 }

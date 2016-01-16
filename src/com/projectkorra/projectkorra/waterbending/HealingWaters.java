@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.HealingAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
@@ -31,7 +30,7 @@ public class HealingWaters extends HealingAbility {
 			time = System.currentTimeMillis();
 			for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 				BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-				if (bPlayer != null && bPlayer.canBend(CoreAbility.getAbility("HealingWaters"))) {
+				if (bPlayer != null && bPlayer.canBend(getAbility("HealingWaters"))) {
 					heal(player);
 				}
 			}
@@ -119,8 +118,7 @@ public class HealingWaters extends HealingAbility {
 	}
 	
 	public static int getDuration() {
-		// TODO: add a duration config option
-		return 70;
+		return getConfig().getInt("Abilities.Water.HealingWaters.Duration");
 	}
 
 	@Override

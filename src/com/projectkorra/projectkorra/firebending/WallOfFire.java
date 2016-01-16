@@ -40,14 +40,14 @@ public class WallOfFire extends FireAbility {
 		super(player);
 		
 		this.active = true;
-		this.maxAngle = 50;
-		this.interval = 250;
+		this.maxAngle = getConfig().getDouble("Abilities.Fire.WallOfFire.MaxAngle");
+		this.interval = getConfig().getLong("Abilities.Fire.WallOfFire.Interval");
 		this.range = getConfig().getInt("Abilities.Fire.WallOfFire.Range");
 		this.height = getConfig().getInt("Abilities.Fire.WallOfFire.Height");
 		this.width = getConfig().getInt("Abilities.Fire.WallOfFire.Width");
 		this.damage = getConfig().getInt("Abilities.Fire.WallOfFire.Damage");
 		this.cooldown = getConfig().getLong("Abilities.Fire.WallOfFire.Cooldown");
-		this.damageInterval = getConfig().getLong("Abilities.Fire.WallOfFire.Interval");
+		this.damageInterval = getConfig().getLong("Abilities.Fire.WallOfFire.DamageInterval");
 		this.duration = getConfig().getLong("Abilities.Fire.WallOfFire.Duration");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.WallOfFire.FireTicks");
 		this.random = new Random();

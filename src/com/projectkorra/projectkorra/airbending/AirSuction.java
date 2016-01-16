@@ -5,7 +5,6 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
@@ -23,10 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AirSuction extends AirAbility {
 
-	private static final int ORIGIN_PARTICLE_COUNT = 6;
-	private static final int ABILITY_PARTICLE_COUNT = 6;
 	private static final int MAX_TICKS = 10000;
-	private static final double ORIGIN_SELECT_RANGE = 10;
 	private static final ConcurrentHashMap<Player, Location> ORIGINS = new ConcurrentHashMap<>();
 	
 	private boolean hasOtherOrigin;
@@ -44,24 +40,23 @@ public class AirSuction extends AirAbility {
 	
 	public AirSuction(Player player) {
 		super(player);
-		if (bPlayer.isOnCooldown("AirSuction")) {
+		
+		if (bPlayer.isOnCooldown(this)) {
 			return;
-		}
-		if (player.getEyeLocation().getBlock().isLiquid()) {
+		} else if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
-		}
-		if ( CoreAbility.hasAbility(player, AirSpout.class) || CoreAbility.hasAbility(player, WaterSpout.class)) {
+		} else if (hasAbility(player, AirSpout.class) || hasAbility(player, WaterSpout.class)) {
 			return;
 		}
 
 		this.hasOtherOrigin = false;
 		this.ticks = 0;
-		this.particleCount = ABILITY_PARTICLE_COUNT;
+		this.particleCount = getConfig().getInt("Abilities.Air.AirSuction.Particles");
 		this.speed = getConfig().getDouble("Abilities.Air.AirSuction.Speed");
 		this.range = getConfig().getDouble("Abilities.Air.AirSuction.Range");
 		this.radius = getConfig().getDouble("Abilities.Air.AirSuction.Radius");
 		this.pushFactor = getConfig().getDouble("Abilities.Air.AirSuction.Push");
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		this.cooldown = getConfig().getLong("Abilities.Air.AirSuction.Cooldown");
 		this.random = new Random();
 
 		if (ORIGINS.containsKey(player)) {
@@ -81,7 +76,7 @@ public class AirSuction extends AirAbility {
 			location = getLocation(origin, direction.clone().multiply(-1));
 		}
 
-		bPlayer.addCooldown("AirSuction", cooldown);
+		bPlayer.addCooldown(this);
 		start();
 	}
 
@@ -100,12 +95,12 @@ public class AirSuction extends AirAbility {
 		} else if (!bPlayer.canBendIgnoreCooldowns(getAbility("AirSuction"))) {
 			ORIGINS.remove(player);
 			return;
-		} else if (origin.distanceSquared(player.getEyeLocation()) > ORIGIN_SELECT_RANGE * ORIGIN_SELECT_RANGE) {
+		} else if (origin.distanceSquared(player.getEyeLocation()) > getSelectRange() * getSelectRange()) {
 			ORIGINS.remove(player);
 			return;
 		}
 
-		playAirbendingParticles(origin, ORIGIN_PARTICLE_COUNT);
+		playAirbendingParticles(origin, getSelectParticles());
 	}
 
 	public static void progressOrigins() {
@@ -115,7 +110,7 @@ public class AirSuction extends AirAbility {
 	}
 
 	public static void setOrigin(Player player) {
-		Location location = GeneralMethods.getTargetedLocation(player, ORIGIN_SELECT_RANGE, GeneralMethods.NON_OPAQUE);
+		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), GeneralMethods.NON_OPAQUE);
 		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
@@ -224,7 +219,7 @@ public class AirSuction extends AirAbility {
 
 	public static boolean removeAirSuctionsAroundPoint(Location location, double radius) {
 		boolean removed = false;
-		for (AirSuction airSuction : CoreAbility.getAbilities(AirSuction.class)) {
+		for (AirSuction airSuction : getAbilities(AirSuction.class)) {
 			Location airSuctionlocation = airSuction.location;
 			if (location.getWorld() == airSuctionlocation.getWorld()) {
 				if (location.distanceSquared(airSuctionlocation) <= radius * radius) {
@@ -341,4 +336,16 @@ public class AirSuction extends AirAbility {
 		this.cooldown = cooldown;
 	}
 
+	public static ConcurrentHashMap<Player, Location> getOrigins() {
+		return ORIGINS;
+	}
+
+	public static int getSelectParticles() {
+		return getConfig().getInt("Abilities.Air.AirSuction.SelectParticles");
+	}
+
+	public static double getSelectRange() {
+		return getConfig().getDouble("Abilities.Air.AirSuction.SelectRange");
+	}
+	
 }

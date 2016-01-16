@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 
@@ -55,16 +54,16 @@ public class MetalClips extends MetalAbility {
 	
 	public MetalClips(Player player, int abilityType) {
 		super(player);
-		if (CoreAbility.hasAbility(player, MetalClips.class)) {
+		if (hasAbility(player, MetalClips.class)) {
 			return;
 		}
 
 		this.abilityType = abilityType;
-		this.range = 10;
 		this.canLoot = player.hasPermission("bending.ability.MetalClips.loot");
 		this.canUse4Clips = player.hasPermission("bending.ability.MetalClips.4clips");
 		this.armorTime = getConfig().getInt("Abilities.Earth.MetalClips.Duration");
 		this.crushInterval = getConfig().getInt("Abilities.Earth.MetalClips.DamageInterval");;
+		this.range = getConfig().getDouble("Abilities.Earth.MetalClips.Range");
 		this.cooldown = getConfig().getInt("Abilities.Earth.MetalClips.Cooldown");
 		this.crushDamage = getConfig().getInt("Abilities.Earth.MetalClips.Damage");
 		this.magnetRange = getConfig().getInt("Abilities.Earth.MetalClips.MagnetRange");
@@ -454,7 +453,7 @@ public class MetalClips extends MetalAbility {
 	}
 	
 	public static boolean isControllingEntity(Player player) {
-		MetalClips clips = CoreAbility.getAbility(player, MetalClips.class);
+		MetalClips clips = getAbility(player, MetalClips.class);
 		return clips != null && player.isSneaking() && clips.targetEntity != null;
 	}
 	

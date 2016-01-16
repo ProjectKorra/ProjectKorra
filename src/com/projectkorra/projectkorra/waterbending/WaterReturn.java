@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -25,7 +24,7 @@ public class WaterReturn extends WaterAbility {
 	
 	public WaterReturn(Player player, Block block) {
 		super(player);
-		if (CoreAbility.hasAbility(player, WaterReturn.class)) {
+		if (hasAbility(player, WaterReturn.class)) {
 			return;
 		}
 
@@ -122,19 +121,19 @@ public class WaterReturn extends WaterAbility {
 	}
 
 	private static boolean isBending(Player player) {
-		if (CoreAbility.hasAbility(player, WaterManipulation.class)
-				|| CoreAbility.hasAbility(player, WaterManipulation.class)
-				|| CoreAbility.hasAbility(player, OctopusForm.class)
-				|| CoreAbility.hasAbility(player, SurgeWave.class)
-				|| CoreAbility.hasAbility(player, SurgeWall.class)
-				|| CoreAbility.hasAbility(player, IceSpikeBlast.class)) {
+		if (hasAbility(player, WaterManipulation.class)
+				|| hasAbility(player, WaterManipulation.class)
+				|| hasAbility(player, OctopusForm.class)
+				|| hasAbility(player, SurgeWave.class)
+				|| hasAbility(player, SurgeWall.class)
+				|| hasAbility(player, IceSpikeBlast.class)) {
 			return true;
 		}
 		return false;
 	}
 
 	public static boolean hasWaterBottle(Player player) {
-		if (CoreAbility.hasAbility(player, WaterReturn.class) || isBending(player)) {
+		if (hasAbility(player, WaterReturn.class) || isBending(player)) {
 			return false;
 		}
 		PlayerInventory inventory = player.getInventory();

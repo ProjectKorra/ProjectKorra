@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -26,8 +25,8 @@ public class SurgeWall extends WaterAbility {
 
 	private static final byte FULL = 0x0;
 	private static final String RANGE_CONFIG = "Abilities.Water.Surge.Wall.Range";
-	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
-	private static final ConcurrentHashMap<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<Block, Player>();	
+	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<>();	
 
 	private boolean progressing;
 	private boolean settingUp;
@@ -49,12 +48,12 @@ public class SurgeWall extends WaterAbility {
 	public SurgeWall(Player player) {
 		super(player);
 		
-		this.interval = 30;
-		this.cooldown = 0;
+		this.interval = getConfig().getLong("Abilities.Water.Surge.Wall.Interval");
+		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown");
 		this.range = getConfig().getDouble(RANGE_CONFIG);
 		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 
-		SurgeWave wave = CoreAbility.getAbility(player, SurgeWave.class);
+		SurgeWave wave = getAbility(player, SurgeWave.class);
 		if (wave != null && !wave.isProgressing()) {
 			wave.moveWater();
 			return;
@@ -64,7 +63,7 @@ public class SurgeWall extends WaterAbility {
 			radius = AvatarState.getValue(radius);
 		}
 		
-		SurgeWall wall = CoreAbility.getAbility(player, SurgeWall.class);
+		SurgeWall wall = getAbility(player, SurgeWall.class);
 		if (wall != null) {
 			if (wall.progressing) {
 				freezeThaw();
@@ -81,10 +80,10 @@ public class SurgeWall extends WaterAbility {
 		if (bPlayer.isOnCooldown(this)) {
 			return;
 		} else if (wall == null && WaterReturn.hasWaterBottle(player)) {
-			Location eyeloc = player.getEyeLocation();
-			Block block = eyeloc.add(eyeloc.getDirection().normalize()).getBlock();
+			Location eyeLoc = player.getEyeLocation();
+			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 			
-			if (isTransparent(player, block) && isTransparent(player, eyeloc.getBlock())) {
+			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData(FULL);
 				
@@ -144,7 +143,7 @@ public class SurgeWall extends WaterAbility {
 	}
 
 	private void cancelPrevious() {
-		SurgeWall oldWave = CoreAbility.getAbility(player, SurgeWall.class);
+		SurgeWall oldWave = getAbility(player, SurgeWall.class);
 		if (oldWave != null) {
 			if (oldWave.progressing) {
 				oldWave.removeWater(oldWave.sourceBlock);
@@ -167,6 +166,7 @@ public class SurgeWall extends WaterAbility {
 				progressing = false;
 				targetDestination = null;
 			} else {
+				bPlayer.addCooldown("SurgeWall", cooldown);
 				progressing = true;
 				settingUp = true;
 				firstDestination = getToEyeLevel();
@@ -368,14 +368,14 @@ public class SurgeWall extends WaterAbility {
 		}
 		
 		int range = getConfig().getInt(RANGE_CONFIG);
-		SurgeWall wall = CoreAbility.getAbility(player, SurgeWall.class);
-		SurgeWave wave = CoreAbility.getAbility(player, SurgeWave.class);
+		SurgeWall wall = getAbility(player, SurgeWall.class);
+		SurgeWave wave = getAbility(player, SurgeWave.class);
 		
 		if (wall == null) {
 			if (wave == null 
 					&& BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend()) == null
 					&& WaterReturn.hasWaterBottle(player)) {
-				if (bPlayer.isOnCooldown("Surge")) {
+				if (bPlayer.isOnCooldown("SurgeWall")) {
 					return;
 				}
 
@@ -430,7 +430,7 @@ public class SurgeWall extends WaterAbility {
 	}
 	
 	public static boolean wasBrokenFor(Player player, Block block) {
-		SurgeWall wall = CoreAbility.getAbility(player, SurgeWall.class);
+		SurgeWall wall = getAbility(player, SurgeWall.class);
 		if (wall != null) {
 			if (wall.sourceBlock == null) {
 				return false;

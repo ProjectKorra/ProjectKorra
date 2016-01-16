@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -65,7 +64,7 @@ public class LavaSurgeWave extends LavaAbility {
 		}
 		
 		if (prepare()) {
-			LavaSurgeWave wave = CoreAbility.getAbility(player, LavaSurgeWave.class);
+			LavaSurgeWave wave = getAbility(player, LavaSurgeWave.class);
 			if (wave != null) {
 				wave.remove();
 			}
@@ -87,7 +86,7 @@ public class LavaSurgeWave extends LavaAbility {
 	}
 
 	private void cancelPrevious() {
-		LavaSurgeWave oldWave = CoreAbility.getAbility(player, LavaSurgeWave.class);
+		LavaSurgeWave oldWave = getAbility(player, LavaSurgeWave.class);
 		if (oldWave != null) {
 			if (oldWave.progressing) {
 				oldWave.breakBlock();
@@ -266,7 +265,7 @@ public class LavaSurgeWave extends LavaAbility {
 	}
 
 	public static boolean isBlockInWave(Block block) {
-		for (LavaSurgeWave lavaWave : CoreAbility.getAbilities(LavaSurgeWave.class)) {
+		for (LavaSurgeWave lavaWave : getAbilities(LavaSurgeWave.class)) {
 			if (block.getLocation().distance(lavaWave.location) <= 2 * lavaWave.radius) {
 				return true;
 			}
@@ -275,7 +274,7 @@ public class LavaSurgeWave extends LavaAbility {
 	}
 
 	public static boolean isBlockWave(Block block) {
-		for (LavaSurgeWave lavaWave : CoreAbility.getAbilities(LavaSurgeWave.class)) {
+		for (LavaSurgeWave lavaWave : getAbilities(LavaSurgeWave.class)) {
 			if (lavaWave.waveBlocks.containsKey(block)) {
 				return true;
 			}
@@ -284,14 +283,14 @@ public class LavaSurgeWave extends LavaAbility {
 	}
 
 	public static void launch(Player player) {
-		LavaSurgeWave lavaWave = CoreAbility.getAbility(player, LavaSurgeWave.class);
+		LavaSurgeWave lavaWave = getAbility(player, LavaSurgeWave.class);
 		if (lavaWave != null) {
 			lavaWave.moveLava();
 		}
 	}
 
 	public static void cleanup() {
-		for (LavaSurgeWave lavaWave : CoreAbility.getAbilities(LavaSurgeWave.class)) {
+		for (LavaSurgeWave lavaWave : getAbilities(LavaSurgeWave.class)) {
 			for (Block block : lavaWave.waveBlocks.keySet()) {
 				block.setType(Material.AIR);
 				lavaWave.waveBlocks.remove(block);

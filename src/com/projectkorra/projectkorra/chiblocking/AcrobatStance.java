@@ -17,10 +17,10 @@ public class AcrobatStance extends ChiAbility {
 	public AcrobatStance(Player player) {
 		super(player);
 		
+		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed");
+		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump");
 		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
-		this.speed = ChiPassive.getSpeedPower() + 1;
-		this.jump = ChiPassive.getJumpPower() + 1;
 		
 		ChiAbility stance = bPlayer.getStance();
 		if (stance != null && !(stance instanceof AcrobatStance)) {

@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.airbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
@@ -31,15 +30,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AirSwipe extends AirAbility {
 
-	private static final Integer[] BREAKABLES = { 6, 31, 32, 37, 38, 39, 40, 59, 81, 83, 106, 175 };
-	private static byte FULL_LIQUID_DATA = 0x0;
-	private static final int STEP_SIZE = 4;
 	// Limiting the entities reduces the risk of crashing
 	private static final int MAX_AFFECTABLE_ENTITIES = 10;
-
+	private static final Integer[] BREAKABLES = {6, 31, 32, 37, 38, 39, 40, 59, 81, 83, 106, 175};
+	
 	private boolean charging;
 	private int arc;
-	private int particleCount;
+	private int particles;
+	private int stepSize;
 	private long maxChargeTime;
 	private long cooldown;
 	private double damage;
@@ -63,8 +61,9 @@ public class AirSwipe extends AirAbility {
 		this.charging = charging;
 		this.origin = player.getEyeLocation();
 		this.charging = false;
-		this.particleCount = 3;
+		this.particles = getConfig().getInt("Abilities.Air.AirSwipe.Particles");
 		this.arc = getConfig().getInt("Abilities.Air.AirSwipe.Arc");
+		this.stepSize = getConfig().getInt("Abilities.Air.AirSwipe.StepSize");
 		this.maxChargeTime = getConfig().getLong("Abilities.Air.AirSwipe.MaxChargeTime");
 		this.cooldown = getConfig().getLong("Abilities.Air.AirSwipe.Cooldown");
 		this.damage = getConfig().getDouble("Abilities.Air.AirSwipe.Damage");
@@ -90,7 +89,7 @@ public class AirSwipe extends AirAbility {
 
 	public static boolean removeSwipesAroundPoint(Location loc, double radius) {
 		boolean removed = false;
-		for (AirSwipe aswipe : CoreAbility.getAbilities(AirSwipe.class)) {
+		for (AirSwipe aswipe : getAbilities(AirSwipe.class)) {
 			for (Vector vec : aswipe.elements.keySet()) {
 				Location vectorLoc = aswipe.elements.get(vec);
 				if (vectorLoc != null && vectorLoc.getWorld().equals(loc.getWorld())) {
@@ -147,14 +146,14 @@ public class AirSwipe extends AirAbility {
 							elements.remove(direction);
 						}
 						if (isLava(block)) {
-							if (block.getData() == FULL_LIQUID_DATA) {
+							if (block.getData() == 0x0) {
 								block.setType(Material.OBSIDIAN);
 							} else {
 								block.setType(Material.COBBLESTONE);
 							}
 						}
 					} else {
-						playAirbendingParticles(location, particleCount, 0.2F, 0.2F, 0);
+						playAirbendingParticles(location, particles, 0.2F, 0.2F, 0);
 						if (random.nextInt(4) == 0) {
 							playAirbendingSound(location);
 						}
@@ -230,7 +229,7 @@ public class AirSwipe extends AirAbility {
 
 	private void launch() {
 		origin = player.getEyeLocation();
-		for (int i = -arc; i <= arc; i += STEP_SIZE) {
+		for (double i = -arc; i <= arc; i += stepSize) {
 			double angle = Math.toRadians((double) i);
 			Vector direction = player.getEyeLocation().getDirection().clone();
 
@@ -283,7 +282,7 @@ public class AirSwipe extends AirAbility {
 				pushFactor *= factor;
 				return;
 			} else if (System.currentTimeMillis() >= startTime + maxChargeTime) {
-				playAirbendingParticles(player.getEyeLocation(), particleCount);
+				playAirbendingParticles(player.getEyeLocation(), particles);
 			}
 		}
 	}
@@ -337,12 +336,20 @@ public class AirSwipe extends AirAbility {
 		this.arc = arc;
 	}
 
-	public int getParticleCount() {
-		return particleCount;
+	public int getParticles() {
+		return particles;
 	}
 
-	public void setParticleCount(int particleCount) {
-		this.particleCount = particleCount;
+	public void setParticles(int particles) {
+		this.particles = particles;
+	}
+
+	public static int getMaxAffectableEntities() {
+		return MAX_AFFECTABLE_ENTITIES;
+	}
+
+	public static Integer[] getBreakables() {
+		return BREAKABLES;
 	}
 
 	public long getMaxChargeTime() {
@@ -413,4 +420,12 @@ public class AirSwipe extends AirAbility {
 		this.cooldown = cooldown;
 	}
 
+	public int getStepSize() {
+		return stepSize;
+	}
+
+	public void setStepSize(int stepSize) {
+		this.stepSize = stepSize;
+	}
+	
 }

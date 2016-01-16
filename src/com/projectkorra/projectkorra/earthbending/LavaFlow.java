@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -526,7 +525,7 @@ public class LavaFlow extends LavaAbility {
 	 */
 	public static ArrayList<LavaFlow> getLavaFlow(Player player, AbilityType type) {
 		ArrayList<LavaFlow> list = new ArrayList<LavaFlow>();
-		for (LavaFlow lf : CoreAbility.getAbilities(LavaFlow.class)) {
+		for (LavaFlow lf : getAbilities(LavaFlow.class)) {
 			if (lf.player != null && lf.player == player && lf.type != null && lf.type == type) {
 				list.add(lf);
 			}

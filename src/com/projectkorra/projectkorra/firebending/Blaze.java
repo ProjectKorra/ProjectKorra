@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 
@@ -20,9 +19,9 @@ public class Blaze extends FireAbility {
 		super(player);
 		
 		this.speed = 2;
-		this.cooldown = GeneralMethods.getGlobalCooldown();
-		this.arc = getConfig().getInt("Abilities.Fire.Blaze.ArcOfFire.Arc");
-		this.range = getConfig().getDouble("Abilities.Fire.Blaze.ArcOfFire.Range");
+		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Cooldown");
+		this.arc = getConfig().getInt("Abilities.Fire.Blaze.Arc");
+		this.range = getConfig().getDouble("Abilities.Fire.Blaze.Range");
 		
 		if (!bPlayer.canBend(this)) {
 			return;

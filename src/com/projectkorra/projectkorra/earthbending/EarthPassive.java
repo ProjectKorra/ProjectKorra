@@ -3,9 +3,9 @@ package com.projectkorra.projectkorra.earthbending;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Bukkit;
@@ -23,11 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthPassive {
 
-	public static ConcurrentHashMap<Block, Long> sandBlocks = new ConcurrentHashMap<Block, Long>();
-	public static ConcurrentHashMap<Block, MaterialData> sandIdEntities = new ConcurrentHashMap<Block, MaterialData>();
-
-	private static final long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.Passive.Duration");
-	private static final int sandSpeed = ProjectKorra.plugin.getConfig().getInt("Properties.Earth.Passive.SandRunPower");
+	private static final ConcurrentHashMap<Block, Long> SAND_BLOCKS = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Block, MaterialData> SAND_ID_ENTITIES = new ConcurrentHashMap<>();
 
 	@SuppressWarnings("deprecation")
 	public static boolean softenLanding(Player player) {
@@ -50,9 +47,9 @@ public class EarthPassive {
 					} else {
 						block.setType(Material.SAND);
 					}
-					if (!sandBlocks.containsKey(block)) {
-						sandIdEntities.put(block, type);
-						sandBlocks.put(block, System.currentTimeMillis());
+					if (!SAND_BLOCKS.containsKey(block)) {
+						SAND_ID_ENTITIES.put(block, type);
+						SAND_BLOCKS.put(block, System.currentTimeMillis());
 					}
 				}
 			}
@@ -68,9 +65,9 @@ public class EarthPassive {
 						} else {
 							affectedBlock.setType(Material.SAND);
 						}
-						if (!sandBlocks.containsKey(affectedBlock)) {
-							sandIdEntities.putIfAbsent(affectedBlock, type);
-							sandBlocks.put(affectedBlock, System.currentTimeMillis());
+						if (!SAND_BLOCKS.containsKey(affectedBlock)) {
+							SAND_ID_ENTITIES.putIfAbsent(affectedBlock, type);
+							SAND_BLOCKS.put(affectedBlock, System.currentTimeMillis());
 						}
 					}
 				}
@@ -82,14 +79,14 @@ public class EarthPassive {
 	}
 
 	public static boolean isPassiveSand(Block block) {
-		return sandBlocks.containsKey(block);
+		return SAND_BLOCKS.containsKey(block);
 	}
 
 	@SuppressWarnings("deprecation")
 	public static void revertSand(Block block) {
-		MaterialData materialdata = sandIdEntities.get(block);
-		sandIdEntities.remove(block);
-		sandBlocks.remove(block);
+		MaterialData materialdata = SAND_ID_ENTITIES.get(block);
+		SAND_ID_ENTITIES.remove(block);
+		SAND_BLOCKS.remove(block);
 		
 		if (block.getType() == Material.SAND) {
 			block.setType(materialdata.getItemType());
@@ -107,7 +104,7 @@ public class EarthPassive {
 					if (player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SAND
 							|| player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SANDSTONE 
 							|| player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.RED_SANDSTONE) {
-						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, sandSpeed - 1));
+						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, getSandRunSpeed()));
 					}
 				}
 			}
@@ -147,15 +144,15 @@ public class EarthPassive {
 	}
 
 	public static void revertSands() {
-		for (Block block : sandBlocks.keySet()) {
-			if (System.currentTimeMillis() >= sandBlocks.get(block) + duration) {
+		for (Block block : SAND_BLOCKS.keySet()) {
+			if (System.currentTimeMillis() >= SAND_BLOCKS.get(block) + getDuration()) {
 				revertSand(block);
 			}
 		}
 	}
 
 	public static void revertAllSand() {
-		for (Block block : sandBlocks.keySet()) {
+		for (Block block : SAND_BLOCKS.keySet()) {
 			revertSand(block);
 		}
 	}
@@ -190,5 +187,21 @@ public class EarthPassive {
 			return false;
 		}
 		return true;
+	}
+	
+	public static ConcurrentHashMap<Block, Long> getSandBlocks() {
+		return SAND_BLOCKS;
+	}
+
+	public static ConcurrentHashMap<Block, MaterialData> getSandIdEntities() {
+		return SAND_ID_ENTITIES;
+	}
+
+	public static long getDuration() {
+		return ConfigManager.getConfig().getLong("Abilities.Earth.Passive.Duration");
+	}
+
+	public static int getSandRunSpeed() {
+		return ConfigManager.getConfig().getInt("Properties.Earth.Passive.SandRunSpeed");
 	}
 }

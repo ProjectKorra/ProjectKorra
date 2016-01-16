@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PlantAbility;
 
 import org.bukkit.Color;
@@ -42,7 +41,7 @@ public class PlantArmor extends PlantAbility {
 		this.range = getNightFactor(range);
 		this.duration = (long) getNightFactor(duration);  
 		
-		if (CoreAbility.hasAbility(player, PlantArmor.class)) {
+		if (hasAbility(player, PlantArmor.class)) {
 			return;
 		} else if (bPlayer.isOnCooldown(this)) {
 			return;
@@ -171,7 +170,7 @@ public class PlantArmor extends PlantAbility {
 	}
 
 	public static boolean canRemoveArmor(Player player) {
-		PlantArmor plantArmor = CoreAbility.getAbility(player, PlantArmor.class);
+		PlantArmor plantArmor = getAbility(player, PlantArmor.class);
 		if (plantArmor != null) {
 			if (System.currentTimeMillis() < plantArmor.startTime + plantArmor.duration) {
 				return false;

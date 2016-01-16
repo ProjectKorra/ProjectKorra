@@ -16,7 +16,7 @@ public class Extraction extends EarthAbility {
 
 	private int doubleChance;
 	private int tripleChance;
-	private int range;
+	private int selectRange;
 	private long cooldown;
 	private Block originBlock;
 	
@@ -26,13 +26,13 @@ public class Extraction extends EarthAbility {
 		this.doubleChance = getConfig().getInt("Abilities.Earth.Extraction.DoubleLootChance");
 		this.tripleChance = getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Extraction.Cooldown");
-		this.range = 5;
+		this.selectRange = getConfig().getInt("Abilities.Earth.Extraction.SelectRange");
 		
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
 
-		originBlock = player.getTargetBlock((HashSet<Material>) null, range);
+		originBlock = player.getTargetBlock((HashSet<Material>) null, selectRange);
 		if (originBlock == null) {
 			return;
 		}
@@ -134,12 +134,12 @@ public class Extraction extends EarthAbility {
 		this.tripleChance = tripleChance;
 	}
 
-	public int getRange() {
-		return range;
+	public int getSelectRange() {
+		return selectRange;
 	}
 
-	public void setRange(int range) {
-		this.range = range;
+	public void setSelectRange(int selectRange) {
+		this.selectRange = selectRange;
 	}
 
 	public Block getOriginBlock() {

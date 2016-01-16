@@ -1,15 +1,14 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.ability.FlightAbility;
+import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.FlightAbility;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AirFlight extends FlightAbility {
 	
@@ -18,17 +17,19 @@ public class AirFlight extends FlightAbility {
 	
 	private boolean firstProgressIteration;
 	private int maxHitsBeforeRemoval;
+	private double speed;
 	private Flight flight;
 
 	public AirFlight(Player player) {
 		super(player);		
-		this.maxHitsBeforeRemoval = 4;
+		this.maxHitsBeforeRemoval = getConfig().getInt("Abilities.Air.Flight.MaxHits");
+		this.speed = getConfig().getDouble("Abilities.Air.Flight.Speed");
 		this.firstProgressIteration = true;
 		start();
 	}
 
 	public static void addHit(Player player) {
-		AirFlight airFlight = CoreAbility.getAbility(player, AirFlight.class);
+		AirFlight airFlight = getAbility(player, AirFlight.class);
 		if (airFlight != null) {
 			if (HITS.containsKey(player.getName())) {
 				if (HITS.get(player.getName()) >= airFlight.maxHitsBeforeRemoval) {
@@ -42,7 +43,7 @@ public class AirFlight extends FlightAbility {
 	}
 
 	public static boolean isFlying(Player player) {
-		return CoreAbility.hasAbility(player, AirFlight.class);
+		return hasAbility(player, AirFlight.class);
 	}
 
 	public static boolean isHovering(Player player) {
@@ -51,7 +52,7 @@ public class AirFlight extends FlightAbility {
 
 	public static void remove(Player player) {
 		if (isFlying(player)) {
-			CoreAbility.getAbility(player, AirFlight.class).remove();
+			getAbility(player, AirFlight.class).remove();
 		}
 	}
 
@@ -100,7 +101,7 @@ public class AirFlight extends FlightAbility {
 			vec.setY(0);
 			player.setVelocity(vec);
 		} else {
-			player.setVelocity(player.getEyeLocation().getDirection().normalize());
+			player.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(speed));
 		}
 	}
 

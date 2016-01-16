@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -15,7 +14,7 @@ import org.bukkit.util.Vector;
 
 public class RaiseEarthWall extends EarthAbility {
 
-	private int range;
+	private int selectRange;
 	private int height;
 	private int width;
 	private long cooldown;
@@ -23,10 +22,10 @@ public class RaiseEarthWall extends EarthAbility {
 	
 	public RaiseEarthWall(Player player) {
 		super(player);
-		this.range = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Range");
+		this.selectRange = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.SelectRange");
 		this.height = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Height");
 		this.width = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Width");
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		this.cooldown = getConfig().getLong("Abilities.Earth.RaiseEarth.Wall.Cooldown");
 
 		if (!bPlayer.canBend(this)) {
 			return;
@@ -46,10 +45,10 @@ public class RaiseEarthWall extends EarthAbility {
 		Vector orth = new Vector(ox, oy, oz);
 		orth = orth.normalize();
 
-		Block sblock = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
+		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.SHIFT_DOWN);
 		
 		if (sblock == null) {
-			location = getTargetEarthBlock(range).getLocation();
+			location = getTargetEarthBlock(selectRange).getLocation();
 		} else {
 			location = sblock.getLocation();
 		}
@@ -120,11 +119,11 @@ public class RaiseEarthWall extends EarthAbility {
 	}
 
 	public int getRange() {
-		return range;
+		return selectRange;
 	}
 
 	public void setRange(int range) {
-		this.range = range;
+		this.selectRange = range;
 	}
 
 	public int getHeight() {
@@ -151,4 +150,12 @@ public class RaiseEarthWall extends EarthAbility {
 		this.location = location;
 	}
 
+	public int getSelectRange() {
+		return selectRange;
+	}
+
+	public void setSelectRange(int selectRange) {
+		this.selectRange = selectRange;
+	}
+	
 }

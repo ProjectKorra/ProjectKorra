@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -63,13 +62,13 @@ public class WaterSpoutWave extends WaterAbility {
 	public WaterSpoutWave(Player player, AbilityType type) {
 		super(player);
 		
-		this.radius = 3.8;
-		this.waveRadius = 1.5;
-		this.animationSpeed = 1.2;
 		this.charging = false;
 		this.iceWave = false;
 		this.iceOnly = false;
 		this.enabled = getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.Enabled");
+		this.radius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
+		this.waveRadius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
+		this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.AnimationSpeed");
 		this.range = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Range");
 		this.speed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Speed");
 		this.damage = getConfig().getDouble("Abilities.Water.WaterCombo.IceWave.Damage");
@@ -368,7 +367,7 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public static boolean containsType(Player player, AbilityType type) {
-		for (WaterSpoutWave wave : CoreAbility.getAbilities(player, WaterSpoutWave.class)) {
+		for (WaterSpoutWave wave : getAbilities(player, WaterSpoutWave.class)) {
 			if (wave.type.equals(type)) {
 				return true;
 			}
@@ -377,7 +376,7 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public void removeOldType(Player player, AbilityType type) {
-		for (WaterSpoutWave wave : CoreAbility.getAbilities(player, WaterSpoutWave.class)) {
+		for (WaterSpoutWave wave : getAbilities(player, WaterSpoutWave.class)) {
 			if (wave.type.equals(type) && !wave.equals(this)) {
 				wave.remove();
 			}
@@ -386,7 +385,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 	public static ArrayList<WaterSpoutWave> getType(Player player, AbilityType type) {
 		ArrayList<WaterSpoutWave> list = new ArrayList<WaterSpoutWave>();
-		for (WaterSpoutWave wave : CoreAbility.getAbilities(player, WaterSpoutWave.class)) {
+		for (WaterSpoutWave wave : getAbilities(player, WaterSpoutWave.class)) {
 			if (wave.type.equals(type)) {
 				list.add(wave);
 			}

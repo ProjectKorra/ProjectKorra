@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -36,7 +35,7 @@ public class IceSpikeBlast extends IceAbility {
 	private long slowCooldown;
 	private double range;
 	private double damage;
-	private double affectingRadius;
+	private double collisionRadius;
 	private double deflectRange;
 	private Block sourceBlock;
 	private Location location;
@@ -48,15 +47,15 @@ public class IceSpikeBlast extends IceAbility {
 		super(player);
 		
 		this.data = 0;
-		this.interval = 20;
-		this.slowCooldown = 5000;
-		this.affectingRadius = 2;
-		this.deflectRange = 3;
-		this.range = getConfig().getDouble("Abilities.Water.IceSpike.Projectile.Range");
-		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Projectile.Damage");
-		this.cooldown = GeneralMethods.getGlobalCooldown();
-		this.slowPower = 2;
-		this.slowDuration = 70;
+		this.interval = getConfig().getLong("Abilities.Water.IceSpike.Blast.Interval");
+		this.slowCooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.SlowCooldown");
+		this.collisionRadius = getConfig().getDouble("Abilities.Water.IceSpike.Blast.CollisionRadius");
+		this.deflectRange = getConfig().getDouble("Abilities.Water.IceSpike.Blast.DeflectRange");
+		this.range = getConfig().getDouble("Abilities.Water.IceSpike.Blast.Range");
+		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Blast.Damage");
+		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.Cooldown");
+		this.slowPower = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowPower");
+		this.slowDuration = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowDuration");
 		
 		if (!bPlayer.canBend(this) || !bPlayer.canIcebend()) {
 			return;
@@ -98,7 +97,7 @@ public class IceSpikeBlast extends IceAbility {
 	}
 
 	private void prepare(Block block) {
-		for (IceSpikeBlast iceSpike : CoreAbility.getAbilities(player, IceSpikeBlast.class)) {
+		for (IceSpikeBlast iceSpike : getAbilities(player, IceSpikeBlast.class)) {
 			if (iceSpike.prepared) {
 				iceSpike.remove();
 			}
@@ -177,7 +176,7 @@ public class IceSpikeBlast extends IceAbility {
 				return;
 			}
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, affectingRadius)) {
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
 				if (entity.getEntityId() != player.getEntityId() && entity instanceof LivingEntity) {
 					affect((LivingEntity) entity);
 					progressing = false;
@@ -270,7 +269,7 @@ public class IceSpikeBlast extends IceAbility {
 			return;
 		}
 
-		for (IceSpikeBlast ice : CoreAbility.getAbilities(player, IceSpikeBlast.class)) {
+		for (IceSpikeBlast ice : getAbilities(player, IceSpikeBlast.class)) {
 			if (ice.prepared) {
 				ice.throwIce();
 				activate = true;
@@ -286,7 +285,7 @@ public class IceSpikeBlast extends IceAbility {
 	}
 
 	private static void block(Player player) {
-		for (IceSpikeBlast iceSpike : CoreAbility.getAbilities(IceSpikeBlast.class)) {
+		for (IceSpikeBlast iceSpike : getAbilities(IceSpikeBlast.class)) {
 			if (iceSpike.player.equals(player)) {
 				continue;
 			} else if (!iceSpike.location.getWorld().equals(player.getWorld())) {
@@ -309,7 +308,7 @@ public class IceSpikeBlast extends IceAbility {
 	}
 
 	private static void redirect(Player player) {
-		for (IceSpikeBlast iceSpike : CoreAbility.getAbilities(IceSpikeBlast.class)) {
+		for (IceSpikeBlast iceSpike : getAbilities(IceSpikeBlast.class)) {
 			if (!iceSpike.progressing) {
 				continue;
 			} else if (!iceSpike.location.getWorld().equals(player.getWorld())) {
@@ -389,7 +388,7 @@ public class IceSpikeBlast extends IceAbility {
 
 	@Override
 	public String getName() {
-		return "IceSpike";
+		return "IceSpikeBlast";
 	}
 
 	@Override
@@ -405,6 +404,11 @@ public class IceSpikeBlast extends IceAbility {
 	@Override
 	public long getCooldown() {
 		return cooldown;
+	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
 	}
 	
 	@Override
@@ -505,12 +509,12 @@ public class IceSpikeBlast extends IceAbility {
 		this.damage = damage;
 	}
 
-	public double getAffectingRadius() {
-		return affectingRadius;
+	public double getCollisionRadius() {
+		return collisionRadius;
 	}
 
-	public void setAffectingRadius(double affectingRadius) {
-		this.affectingRadius = affectingRadius;
+	public void setCollisionRadius(double collisionRadius) {
+		this.collisionRadius = collisionRadius;
 	}
 
 	public double getDeflectRange() {

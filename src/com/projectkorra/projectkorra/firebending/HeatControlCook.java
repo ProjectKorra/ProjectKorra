@@ -25,7 +25,7 @@ public class HeatControlCook extends FireAbility {
 		
 		
 		this.time = System.currentTimeMillis();
-		this.cookTime = 2000;
+		this.cookTime = getConfig().getLong("Abilities.Fire.HeatControl.Cook.CookTime");
 		this.item = player.getItemInHand();
 		
 		if (isCookable(item.getType())) {
@@ -135,5 +135,33 @@ public class HeatControlCook extends FireAbility {
 	public boolean isHarmlessAbility() {
 		return true;
 	}
-	
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public long getCookTime() {
+		return cookTime;
+	}
+
+	public void setCookTime(long cookTime) {
+		this.cookTime = cookTime;
+	}
+
+	public ItemStack getItem() {
+		return item;
+	}
+
+	public void setItem(ItemStack item) {
+		this.item = item;
+	}
+
+	public static Material[] getCookableMaterials() {
+		return COOKABLE_MATERIALS;
+	}
+		
 }

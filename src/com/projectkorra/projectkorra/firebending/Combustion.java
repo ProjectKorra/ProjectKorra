@@ -22,7 +22,6 @@ public class Combustion extends CombustionAbility {
 	private boolean breakBlocks;
 	private int ticks;
 	private long cooldown;
-	private long chargeTime;
 	private float power;
 	private double damage;
 	private double radius;
@@ -44,7 +43,6 @@ public class Combustion extends CombustionAbility {
 		this.breakBlocks = getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
 		this.power = (float) getConfig().getDouble("Abilities.Fire.Combustion.Power");
 		this.cooldown = getConfig().getLong("Abilities.Fire.Combustion.Cooldown");
-		this.chargeTime = getConfig().getLong("Abilities.Fire.Combustion.ChargeTime");
 		this.damage = getConfig().getDouble("Abilities.Fire.Combustion.Damage");
 		this.radius = getConfig().getDouble("Abilities.Fire.Combustion.Radius");
 		this.speed = getConfig().getDouble("Abilities.Fire.Combustion.Speed");
@@ -190,14 +188,6 @@ public class Combustion extends CombustionAbility {
 
 	public void setTicks(int ticks) {
 		this.ticks = ticks;
-	}
-
-	public long getChargeTime() {
-		return chargeTime;
-	}
-
-	public void setChargeTime(long chargeTime) {
-		this.chargeTime = chargeTime;
 	}
 
 	public float getPower() {

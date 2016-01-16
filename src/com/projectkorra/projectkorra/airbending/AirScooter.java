@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.airbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.Flight;
 
@@ -63,8 +62,8 @@ public class AirScooter extends AirAbility {
 	 * @return false If player doesn't have an instance
 	 */
 	public static boolean check(Player player) {
-		if (CoreAbility.hasAbility(player, AirScooter.class)) {
-			CoreAbility.getAbility(player, AirScooter.class).remove();
+		if (hasAbility(player, AirScooter.class)) {
+			getAbility(player, AirScooter.class).remove();
 			return true;
 		}
 		return false;

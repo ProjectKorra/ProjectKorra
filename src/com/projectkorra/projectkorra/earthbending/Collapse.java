@@ -1,17 +1,15 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Collapse extends EarthAbility {
 
@@ -19,7 +17,7 @@ public class Collapse extends EarthAbility {
 	private int height;
 	private long time;
 	private long cooldown;
-	private double range;
+	private double selectRange;
 	private double speed;
 	private Location origin;
 	private Location location;
@@ -35,7 +33,7 @@ public class Collapse extends EarthAbility {
 			return;
 		}
 		
-		block = BlockSource.getEarthSourceBlock(player, range, ClickType.LEFT_CLICK);
+		block = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.LEFT_CLICK);
 		if (block == null) {
 			return;
 		}
@@ -73,10 +71,10 @@ public class Collapse extends EarthAbility {
 	}
 
 	private void setFields() {
-		this.height = getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
-		this.range = getConfig().getInt("Abilities.Earth.Collapse.Range");
+		this.height = getConfig().getInt("Abilities.Earth.Collapse.Column.Height");
+		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.Range");
 		this.speed = getConfig().getDouble("Abilities.Earth.Collapse.Speed");
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		this.cooldown = getConfig().getLong("Abilities.Earth.Collapse.Column.Cooldown");
 		this.direction = new Vector(0, -1, 0);
 		this.affectedBlocks = new ConcurrentHashMap<>();
 	}
@@ -95,7 +93,7 @@ public class Collapse extends EarthAbility {
 	}
 
 	public static boolean blockInAllAffectedBlocks(Block block) {
-		for (Collapse collapse : CoreAbility.getAbilities(Collapse.class)) {
+		for (Collapse collapse : getAbilities(Collapse.class)) {
 			if (collapse.affectedBlocks.containsKey(block)) {
 				return true;
 			}
@@ -104,7 +102,7 @@ public class Collapse extends EarthAbility {
 	}
 
 	public static void revert(Block block) {
-		for (Collapse collapse : CoreAbility.getAbilities(Collapse.class)) {
+		for (Collapse collapse : getAbilities(Collapse.class)) {
 			collapse.affectedBlocks.remove(block);
 		}
 	}
@@ -205,12 +203,12 @@ public class Collapse extends EarthAbility {
 		this.time = time;
 	}
 
-	public double getRange() {
-		return range;
+	public double getSelectRange() {
+		return selectRange;
 	}
 
-	public void setRange(double range) {
-		this.range = range;
+	public void setSelectRange(double selectRange) {
+		this.selectRange = selectRange;
 	}
 
 	public double getSpeed() {

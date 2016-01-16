@@ -1,9 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 
@@ -117,20 +115,20 @@ public class IceSpikePillar extends IceAbility {
 	}
 	
 	private void setFields() {
-		this.height = 2;
 		this.direction = new Vector(0, 1, 0);
-		this.speed = 25;
-		this.interval = (long) (1000. / speed);
-		this.slowCooldown = 5000;
-		this.slowPower = 2;
-		this.slowDuration = 70;
+		this.speed = getConfig().getDouble("Abilities.Water.IceSpike.Speed");
+		this.slowCooldown = getConfig().getLong("Abilities.Water.IceSpike.SlowCooldown");
+		this.slowPower = getConfig().getInt("Abilities.Water.IceSpike.SlowPower");
+		this.slowDuration = getConfig().getInt("Abilities.Water.IceSpike.SlowDuration");
 		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Damage");
 		this.range = getConfig().getDouble("Abilities.Water.IceSpike.Range");
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
 		this.height = getConfig().getInt("Abilities.Water.IceSpike.Height");
-		this.thrownForce = new Vector(0, ProjectKorra.plugin.getConfig().getDouble("Abilities.Water.IceSpike.ThrowingMult"), 0);
+		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Push"), 0);
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.damaged = new ArrayList<>();
+		
+		this.interval = (long) (1000. / speed);
 	}
 
 	private void loadAffectedBlocks() {
@@ -147,7 +145,7 @@ public class IceSpikePillar extends IceAbility {
 	}
 
 	public static boolean blockInAllAffectedBlocks(Block block) {
-		for (IceSpikePillar iceSpike : CoreAbility.getAbilities(IceSpikePillar.class)) {
+		for (IceSpikePillar iceSpike : getAbilities(IceSpikePillar.class)) {
 			if (iceSpike.blockInAffectedBlocks(block)) {
 				return true;
 			}
@@ -156,7 +154,7 @@ public class IceSpikePillar extends IceAbility {
 	}
 
 	public static void revertBlock(Block block) {
-		for (IceSpikePillar iceSpike : CoreAbility.getAbilities(IceSpikePillar.class)) {
+		for (IceSpikePillar iceSpike : getAbilities(IceSpikePillar.class)) {
 			iceSpike.affectedBlocks.remove(block);
 		}
 	}

@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -50,7 +49,7 @@ public class LavaSurgeWall extends LavaAbility {
 		this.range = getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 		this.cooldown = GeneralMethods.getGlobalCooldown();
 		
-		LavaSurgeWave wave = CoreAbility.getAbility(player, LavaSurgeWave.class);
+		LavaSurgeWave wave = getAbility(player, LavaSurgeWave.class);
 		if (wave != null && wave.isProgressing()) {
 			LavaSurgeWave.launch(player);
 			return;
@@ -78,7 +77,7 @@ public class LavaSurgeWall extends LavaAbility {
 	}
 
 	private void cancelPrevious() {
-		LavaSurgeWall lavaWall = CoreAbility.getAbility(player, LavaSurgeWall.class);
+		LavaSurgeWall lavaWall = getAbility(player, LavaSurgeWall.class);
 		if (lavaWall != null) {
 			if (lavaWall.progressing) {
 				lavaWall.removeLava(lavaWall.sourceBlock);
@@ -278,7 +277,7 @@ public class LavaSurgeWall extends LavaAbility {
 	}
 
 	public static void moveLava(Player player) {
-		LavaSurgeWall wall = CoreAbility.getAbility(player, LavaSurgeWall.class);
+		LavaSurgeWall wall = getAbility(player, LavaSurgeWall.class);
 		if (wall != null) {
 			wall.moveLava();
 		}
@@ -286,7 +285,7 @@ public class LavaSurgeWall extends LavaAbility {
 
 	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
-		if (!CoreAbility.hasAbility(player, LavaSurgeWall.class)) {
+		if (!hasAbility(player, LavaSurgeWall.class)) {
 			new LavaSurgeWave(player);
 			return;
 		} else if (isLavabendable(player.getTargetBlock((HashSet<Byte>) null, SURGE_WAVE_RANGE))) {
@@ -310,7 +309,7 @@ public class LavaSurgeWall extends LavaAbility {
 	}
 
 	public static boolean wasBrokenFor(Player player, Block block) {
-		LavaSurgeWall wall = CoreAbility.getAbility(player, LavaSurgeWall.class);
+		LavaSurgeWall wall = getAbility(player, LavaSurgeWall.class);
 		if (wall != null) {
 			if (wall.sourceBlock == null) {
 				return false;

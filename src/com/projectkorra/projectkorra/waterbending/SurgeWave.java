@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -49,7 +48,7 @@ public class SurgeWave extends WaterAbility {
 	public SurgeWave(Player player) {
 		super(player);
 
-		SurgeWave wave = CoreAbility.getAbility(player, SurgeWave.class);
+		SurgeWave wave = getAbility(player, SurgeWave.class);
 		if (wave != null) {
 			if (wave.progressing && !wave.freezing) {
 				wave.freezing = true;
@@ -59,15 +58,15 @@ public class SurgeWave extends WaterAbility {
 		
 		this.canHitSelf = true;
 		this.currentRadius = 1;
-		this.cooldown = GeneralMethods.getGlobalCooldown();
-		this.interval = 30;
+		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown");
+		this.interval = getConfig().getLong("Abilities.Water.Surge.Wave.Interval");
 		this.maxRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.Radius");
 		this.pushFactor = getConfig().getDouble("Abilities.Water.Surge.Wave.HorizontalPush");
 		this.verticalFactor = getConfig().getDouble("Abilities.Water.Surge.Wave.VerticalPush");
-		this.maxFreezeRadius = 7;
+		this.maxFreezeRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius");
 		this.range = getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
-		this.waveBlocks = new ConcurrentHashMap<Block, Block>();
-		this.frozenBlocks = new ConcurrentHashMap<Block, Block>();
+		this.waveBlocks = new ConcurrentHashMap<>();
+		this.frozenBlocks = new ConcurrentHashMap<>();
 		
 		if (bPlayer.isAvatarState()) {
 			maxRadius = AvatarState.getValue(maxRadius);
@@ -75,7 +74,7 @@ public class SurgeWave extends WaterAbility {
 		maxRadius = getNightFactor(maxRadius);
 				
 		if (prepare()) {
-			wave = CoreAbility.getAbility(player, SurgeWave.class);
+			wave = getAbility(player, SurgeWave.class);
 			if (wave != null) {
 				wave.remove();
 			}
@@ -95,7 +94,7 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	private void cancelPrevious() {
-		SurgeWave oldWave = CoreAbility.getAbility(player, SurgeWave.class);
+		SurgeWave oldWave = getAbility(player, SurgeWave.class);
 		if (oldWave != null) {
 			oldWave.remove();
 		}
@@ -368,7 +367,7 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	public static boolean canThaw(Block block) {
-		for (SurgeWave surgeWave : CoreAbility.getAbilities(SurgeWave.class)) {
+		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			if (surgeWave.frozenBlocks.containsKey(block)) {
 				return false;
 			}
@@ -377,7 +376,7 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	public static void removeAllCleanup() {
-		for (SurgeWave surgeWave : CoreAbility.getAbilities(SurgeWave.class)) {
+		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			for (Block block : surgeWave.waveBlocks.keySet()) {
 				block.setType(Material.AIR);
 				surgeWave.waveBlocks.remove(block);
@@ -390,7 +389,7 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	public static boolean isBlockWave(Block block) {
-		for (SurgeWave surgeWave : CoreAbility.getAbilities(SurgeWave.class)) {
+		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			if (surgeWave.waveBlocks.containsKey(block)) {
 				return true;
 			}
@@ -399,7 +398,7 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	public static void thaw(Block block) {
-		for (SurgeWave surgeWave : CoreAbility.getAbilities(SurgeWave.class)) {
+		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			if (surgeWave.frozenBlocks.containsKey(block)) {
 				TempBlock.revertBlock(block, Material.AIR);
 				surgeWave.frozenBlocks.remove(block);

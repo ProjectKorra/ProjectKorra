@@ -1,6 +1,8 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -8,10 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
+import java.util.ArrayList;
 
 public class AirBurst extends AirAbility {
 
@@ -101,9 +100,11 @@ public class AirBurst extends AirAbility {
 			for (double phi = 0; phi < 360; phi += dphi) {
 				double rphi = Math.toRadians(phi);
 				double rtheta = Math.toRadians(theta);
+				
 				x = r * Math.cos(rphi) * Math.sin(rtheta);
 				y = r * Math.sin(rphi) * Math.sin(rtheta);
 				z = r * Math.cos(rtheta);
+				
 				Vector direction = new Vector(x, z, y);
 				AirBlast blast = new AirBlast(player, location, direction.normalize(), pushFactor, this);
 				blast.setDamage(damage);
@@ -112,8 +113,8 @@ public class AirBurst extends AirAbility {
 	}
 
 	public static void coneBurst(Player player) {
-		if (CoreAbility.hasAbility(player, AirBurst.class)) {
-			AirBurst airBurst = CoreAbility.getAbility(player, AirBurst.class);
+		if (hasAbility(player, AirBurst.class)) {
+			AirBurst airBurst = getAbility(player, AirBurst.class);
 			airBurst.startConeBurst();
 			airBurst.remove();
 		}
@@ -126,14 +127,17 @@ public class AirBurst extends AirAbility {
 			double angle = Math.toRadians(30);
 			double x, y, z;
 			double r = 1;
+			
 			for (double theta = 0; theta <= 180; theta += blastAngleTheta) {
 				double dphi = blastAnglePhi / Math.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
 					double rphi = Math.toRadians(phi);
 					double rtheta = Math.toRadians(theta);
+					
 					x = r * Math.cos(rphi) * Math.sin(rtheta);
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
+					
 					Vector direction = new Vector(x, z, y);
 					if (direction.angle(vector) <= angle) {
 						AirBlast blast = new AirBlast(player, location, direction.normalize(), pushFactor, this);
@@ -172,11 +176,14 @@ public class AirBurst extends AirAbility {
 				for (double phi = 0; phi < 360; phi += dphi) {
 					double rphi = Math.toRadians(phi);
 					double rtheta = Math.toRadians(theta);
+					
 					x = r * Math.cos(rphi) * Math.sin(rtheta);
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
+					
 					Vector direction = new Vector(x, z, y);
 					AirBlast blast = new AirBlast(player, location, direction.normalize(), pushFactor, this);
+					
 					blast.setDamage(damage);
 					blast.setShowParticles(false);
 					blasts.add(blast);

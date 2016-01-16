@@ -16,7 +16,7 @@ public class EarthGrab extends EarthAbility {
 	
 	private long cooldown;
 	private double lowestDistance;
-	private double range;
+	private double selectRange;
 	private double height;
 	private Location origin;
 	private Vector direction;
@@ -25,12 +25,12 @@ public class EarthGrab extends EarthAbility {
 	public EarthGrab(Player player, boolean isOtherEntity) {
 		super(player);
 		
-		this.range = getConfig().getDouble("Abilities.Earth.EarthGrab.Range");
-		this.height = 6;
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthGrab.SelectRange");
+		this.height = getConfig().getDouble("Abilities.Earth.EarthGrab.Height");
+		this.cooldown = getConfig().getLong("Abilities.Earth.EarthGrab.Cooldown");
 		this.origin = player.getEyeLocation();
 		this.direction = origin.getDirection();
-		this.lowestDistance = range + 1;
+		this.lowestDistance = selectRange + 1;
 		this.closestEntity = null;
 		
 		if (!bPlayer.canBend(this)) {
@@ -47,7 +47,7 @@ public class EarthGrab extends EarthAbility {
 	}
 	
 	public void earthGrabOtherEntity() {
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, range)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, selectRange)) {
 			if (GeneralMethods.getDistanceFromLine(direction, origin, entity.getLocation()) <= 3
 					&& (entity instanceof LivingEntity)
 					&& (entity.getEntityId() != player.getEntityId())) {
@@ -195,11 +195,11 @@ public class EarthGrab extends EarthAbility {
 	}
 
 	public double getRange() {
-		return range;
+		return selectRange;
 	}
 
 	public void setRange(double range) {
-		this.range = range;
+		this.selectRange = range;
 	}
 
 	public double getHeight() {

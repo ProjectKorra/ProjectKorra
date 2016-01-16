@@ -1,5 +1,10 @@
 package com.projectkorra.projectkorra.earthbending;
 
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.TempPotionEffect;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -10,12 +15,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.TempPotionEffect;
-
 public class EarthArmor extends EarthAbility {
 
 	private boolean formed;
@@ -23,23 +22,23 @@ public class EarthArmor extends EarthAbility {
 	private byte headData;
 	private byte legsData;
 	private int strength;
-	private int range;
 	private long time;
 	private long cooldown;
 	private long interval;
 	private long duration;
+	private double selectRange;
 	private Block headBlock;
 	private Block legsBlock;
-	private Location headBlockLocation;
-	private Location legsBlockLocation;
 	private Material headType;
 	private Material legsType;
+	private Location headBlockLocation;
+	private Location legsBlockLocation;
 	private ItemStack[] oldArmor;
 
 	@SuppressWarnings("deprecation")
 	public EarthArmor(Player player) {
 		super(player);
-		if (CoreAbility.hasAbility(player, EarthArmor.class) || !bPlayer.canBend(this)) {
+		if (hasAbility(player, EarthArmor.class) || !bPlayer.canBend(this)) {
 			return;
 		}
 		
@@ -49,9 +48,9 @@ public class EarthArmor extends EarthAbility {
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
 		this.duration = getConfig().getLong("Abilities.Earth.EarthArmor.Duration");
 		this.strength = getConfig().getInt("Abilities.Earth.EarthArmor.Strength");
-		this.range = 7;
+		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthArmor.SelectRange");
 
-		headBlock = getTargetEarthBlock(range);
+		headBlock = getTargetEarthBlock((int) selectRange);
 		if (!GeneralMethods.isRegionProtectedFromBuild(this, headBlock.getLocation()) 
 				&& getEarthbendableBlocksLength(headBlock, new Vector(0, -1, 0), 2) >= 2) {			
 			this.legsBlock = headBlock.getRelative(BlockFace.DOWN);
@@ -138,8 +137,8 @@ public class EarthArmor extends EarthAbility {
 			return false;
 		}
 
-		if (headBlock.getLocation().distanceSquared(player.getEyeLocation()) > range * range 
-				|| legsBlock.getLocation().distanceSquared(player.getLocation()) > range * range) {
+		if (headBlock.getLocation().distanceSquared(player.getEyeLocation()) > selectRange * selectRange 
+				|| legsBlock.getLocation().distanceSquared(player.getLocation()) > selectRange * selectRange) {
 			remove();
 			return false;
 		}
@@ -270,13 +269,13 @@ public class EarthArmor extends EarthAbility {
 	public void setStrength(int strength) {
 		this.strength = strength;
 	}
-
-	public int getRange() {
-		return range;
+	
+	public double getSelectRange() {
+		return selectRange;
 	}
 
-	public void setRange(int range) {
-		this.range = range;
+	public void setSelectRange(double selectRange) {
+		this.selectRange = selectRange;
 	}
 
 	public long getTime() {

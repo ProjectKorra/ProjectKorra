@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.command.Commands;
@@ -85,7 +84,7 @@ public class WaterArmsWhip extends WaterAbility {
 		this.pullMultiplier = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
 		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.PunchDamage");
 		
-		WaterArmsWhip waw = CoreAbility.getAbility(player, WaterArmsWhip.class);
+		WaterArmsWhip waw = getAbility(player, WaterArmsWhip.class);
 		if (waw != null) {
 			if (waw.grabbed) {
 				waw.grabbed = false;
@@ -95,7 +94,7 @@ public class WaterArmsWhip extends WaterAbility {
 				}
 				return;
 			}
-			if (!waw.arm.equals(CoreAbility.getAbility(player, WaterArms.class).getActiveArm())) {
+			if (!waw.arm.equals(getAbility(player, WaterArms.class).getActiveArm())) {
 				return;
 			}
 		}
@@ -149,7 +148,7 @@ public class WaterArmsWhip extends WaterAbility {
 	}
 
 	private void createInstance() {
-		waterArms = CoreAbility.getAbility(player, WaterArms.class);
+		waterArms = getAbility(player, WaterArms.class);
 		if (waterArms != null) {
 			waterArms.switchPreferredArm();
 			arm = waterArms.getActiveArm();
@@ -189,7 +188,7 @@ public class WaterArmsWhip extends WaterAbility {
 
 	@Override
 	public void progress() {
-		if (!CoreAbility.hasAbility(player, WaterArms.class)) {
+		if (!hasAbility(player, WaterArms.class)) {
 			remove();
 			return;
 		} else if (player.isDead() || !player.isOnline()) {
@@ -389,7 +388,7 @@ public class WaterArmsWhip extends WaterAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (CoreAbility.hasAbility(player, WaterArms.class)) {
+		if (hasAbility(player, WaterArms.class)) {
 			if (arm.equals(Arm.LEFT)) {
 				waterArms.setLeftArmCooldown(false);
 			} else {

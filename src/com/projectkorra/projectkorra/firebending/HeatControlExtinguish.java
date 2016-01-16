@@ -29,7 +29,7 @@ public class HeatControlExtinguish extends FireAbility {
 
 		this.range = getConfig().getDouble("Abilities.Fire.HeatControl.Extinguish.Range");
 		this.radius = getConfig().getDouble("Abilities.Fire.HeatControl.Extinguish.Radius");
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		this.cooldown = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Cooldown");
 		
 		this.range = getDayFactor(this.range);
 		this.radius = getDayFactor(this.radius);
@@ -94,6 +94,30 @@ public class HeatControlExtinguish extends FireAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return true;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 	
 }

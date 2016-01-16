@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -45,7 +44,7 @@ public class WaterArmsFreeze extends IceAbility {
 	}
 
 	private void createInstance() {
-		waterArms = CoreAbility.getAbility(player, WaterArms.class);
+		waterArms = getAbility(player, WaterArms.class);
 		
 		if (waterArms != null) {
 			waterArms.switchPreferredArm();
@@ -94,7 +93,7 @@ public class WaterArmsFreeze extends IceAbility {
 		
 		if (distanceTravelled >= 5 && !cancelled) {
 			cancelled = true;
-			if (CoreAbility.hasAbility(player, WaterArms.class)) {
+			if (hasAbility(player, WaterArms.class)) {
 				if (arm.equals(Arm.LEFT)) {
 					waterArms.setLeftArmCooldown(false);
 				} else {
@@ -147,7 +146,7 @@ public class WaterArmsFreeze extends IceAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		if (CoreAbility.hasAbility(player, WaterArms.class)) {
+		if (hasAbility(player, WaterArms.class)) {
 			if (!cancelled) {
 				if (arm.equals(Arm.LEFT)) {
 					waterArms.setLeftArmCooldown(false);

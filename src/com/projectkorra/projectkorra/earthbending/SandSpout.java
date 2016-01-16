@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.SandAbility;
 import com.projectkorra.projectkorra.util.Flight;
 
@@ -23,7 +22,6 @@ public class SandSpout extends SandAbility {
 	private int blindnessTime;
 	private long time;
 	private long interval;
-	private long cooldown;
 	private double damage;
 	private double height;
 	private double currentHeight;
@@ -34,14 +32,13 @@ public class SandSpout extends SandAbility {
 		
 		this.currentHeight = 0;
 		this.angle = 0;
-		this.interval = 100;
-		this.cooldown = 0;
+		this.interval = getConfig().getLong("Abilities.Earth.SandSpout.Interval");
 		this.canSpiral = getConfig().getBoolean("Abilities.Earth.SandSpout.Spiral");
 		this.height = getConfig().getDouble("Abilities.Earth.SandSpout.Height");
 		this.blindnessTime = getConfig().getInt("Abilities.Earth.SandSpout.BlindnessTime");
 		this.damage = getConfig().getInt("Abilities.Earth.SandSpout.SpoutDamage");
 		
-		SandSpout oldSandSpout = CoreAbility.getAbility(player, SandSpout.class);
+		SandSpout oldSandSpout = getAbility(player, SandSpout.class);
 		if (oldSandSpout != null) {
 			oldSandSpout.remove();
 			return;
@@ -195,7 +192,7 @@ public class SandSpout extends SandAbility {
 
 	public static boolean removeSpouts(Location location, double radius, Player sourcePlayer) {
 		boolean removed = false;
-		for (SandSpout spout : CoreAbility.getAbilities(SandSpout.class)) {
+		for (SandSpout spout : getAbilities(SandSpout.class)) {
 			Player player = spout.player;
 			if (!player.equals(sourcePlayer)) {
 				Location loc1 = player.getLocation().getBlock().getLocation();
@@ -234,7 +231,7 @@ public class SandSpout extends SandAbility {
 
 	@Override
 	public long getCooldown() {
-		return cooldown;
+		return 0;
 	}
 	
 	@Override
@@ -309,10 +306,6 @@ public class SandSpout extends SandAbility {
 
 	public void setCurrentHeight(double currentHeight) {
 		this.currentHeight = currentHeight;
-	}
-
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
 	}
 	
 }

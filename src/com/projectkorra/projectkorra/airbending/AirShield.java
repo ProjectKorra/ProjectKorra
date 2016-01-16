@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.airbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
@@ -31,8 +30,8 @@ public class AirShield extends AirAbility {
 	private double maxRadius;
 	private double radius;
 	private double speed;
-	private int numberOfStreams;
-	private int particleCount;
+	private int streams;
+	private int particles;
 	private Random random;
 	private HashMap<Integer, Integer> angles;
 	
@@ -42,19 +41,19 @@ public class AirShield extends AirAbility {
 		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.Radius");
 		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
 		this.radius = this.maxRadius;
-		this.speed = 10;
-		this.numberOfStreams = (int) (.75 * this.maxRadius);
-		this.particleCount = 5;
+		this.speed =  getConfig().getDouble("Abilities.Air.AirShield.Speed");
+		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
+		this.particles =  getConfig().getInt("Abilities.Air.AirShield.Particles");
 		this.random = new Random();
 		this.angles = new HashMap<>();
 
-		if (bPlayer.isAvatarState() && CoreAbility.hasAbility(player, AirShield.class) && isToggledByAvatarState) {
-			CoreAbility.getAbility(player, AirShield.class).remove();
+		if (bPlayer.isAvatarState() && hasAbility(player, AirShield.class) && isToggledByAvatarState) {
+			getAbility(player, AirShield.class).remove();
 			return;
 		}
 
 		int angle = 0;
-		int di = (int) (maxRadius * 2 / numberOfStreams);
+		int di = (int) (maxRadius * 2 / streams);
 		for (int i = -(int) maxRadius + di; i < (int) maxRadius; i += di) {
 			angles.put(i, angle);
 			angle += 90;
@@ -67,7 +66,7 @@ public class AirShield extends AirAbility {
 	}
 
 	public static boolean isWithinShield(Location loc) {
-		for (AirShield ashield : CoreAbility.getAbilities(AirShield.class)) {
+		for (AirShield ashield : getAbilities(AirShield.class)) {
 			if (!ashield.player.getWorld().equals(loc.getWorld())) {
 				return false;
 			} else if (ashield.player.getLocation().distanceSquared(loc) <= ashield.radius * ashield.radius) {
@@ -166,7 +165,7 @@ public class AirShield extends AirAbility {
 
 			Location effect = new Location(origin.getWorld(), x, y, z);
 			if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
-				playAirbendingParticles(effect, particleCount);
+				playAirbendingParticles(effect, particles);
 				if (random.nextInt(4) == 0) {
 					playAirbendingSound(effect);
 				}
@@ -240,20 +239,20 @@ public class AirShield extends AirAbility {
 		this.speed = speed;
 	}
 
-	public int getNumberOfStreams() {
-		return numberOfStreams;
+	public int getStreams() {
+		return streams;
 	}
 
-	public void setNumberOfStreams(int numberOfStreams) {
-		this.numberOfStreams = numberOfStreams;
+	public void setStreams(int streams) {
+		this.streams = streams;
 	}
 
-	public int getParticleCount() {
-		return particleCount;
+	public int getParticles() {
+		return particles;
 	}
 
-	public void setParticleCount(int particleCount) {
-		this.particleCount = particleCount;
+	public void setParticles(int particles) {
+		this.particles = particles;
 	}
 
 	public HashMap<Integer, Integer> getAngles() {

@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 
@@ -18,9 +17,9 @@ public class BlazeRing extends FireAbility {
 	public BlazeRing(Player player) {
 		super(player);
 		
-		this.range = getConfig().getInt("Abilities.Fire.Blaze.RingOfFire.Range");
-		this.angleIncrement = 10;
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		this.range = getConfig().getInt("Abilities.Fire.Blaze.Ring.Range");
+		this.angleIncrement = getConfig().getDouble("Abilities.Fire.Blaze.Ring.Angle");
+		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
 		this.location = player.getLocation();
 		
 		this.range = (int) AvatarState.getValue(this.range, player);

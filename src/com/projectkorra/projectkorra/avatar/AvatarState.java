@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.avatar;
 
 import com.projectkorra.projectkorra.ability.AvatarAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.Location;
@@ -30,7 +29,7 @@ public class AvatarState extends AvatarAbility {
 	public AvatarState(Player player) {
 		super(player);
 		
-		AvatarState oldAbil = CoreAbility.getAbility(player, AvatarState.class);
+		AvatarState oldAbil = getAbility(player, AvatarState.class);
 		if (oldAbil != null) {
 			oldAbil.remove();
 			return;

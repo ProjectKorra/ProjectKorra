@@ -33,10 +33,10 @@ public class FireBurst extends FireAbility {
 		this.damage = getConfig().getInt("Abilities.Fire.FireBurst.Damage");
 		this.chargeTime = getConfig().getLong("Abilities.Fire.FireBurst.ChargeTime");
 		this.range = getConfig().getLong("Abilities.Fire.FireBurst.Range");
-		this.cooldown = 0;
-		this.angleTheta = 10;
-		this.anglePhi = 10;
-		this.particlesPercentage = 5;
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireBurst.Cooldown");
+		this.angleTheta = getConfig().getDouble("Abilities.Fire.FireBurst.AngleTheta");
+		this.anglePhi = getConfig().getDouble("Abilities.Fire.FireBurst.AnglePhi");
+		this.particlesPercentage = getConfig().getDouble("Abilities.Fire.FireBurst.ParticlesPercentage");
 		this.blasts = new ArrayList<>();
 		
 		if (!bPlayer.canBend(this) || hasAbility(player, FireBurst.class)) {

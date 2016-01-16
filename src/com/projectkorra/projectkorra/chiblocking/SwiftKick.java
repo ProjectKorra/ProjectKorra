@@ -17,8 +17,8 @@ public class SwiftKick extends ChiAbility {
 	public SwiftKick(Player player) {
 		super(player);
 		this.damage = getConfig().getInt("Abilities.Chi.SwiftKick.Damage");
-		this.cooldown = getConfig().getInt("Abilities.Chi.ChiCombo.ChiBlockChance");
-		this.cooldown = 4000;
+		this.blockChance = getConfig().getInt("Abilities.Chi.ChiCombo.ChiBlockChance");
+		this.cooldown = getConfig().getInt("Abilities.Chi.ChiCombo.Cooldown");
 		this.target = GeneralMethods.getTargetedEntity(player, 4);
 		start();
 	}

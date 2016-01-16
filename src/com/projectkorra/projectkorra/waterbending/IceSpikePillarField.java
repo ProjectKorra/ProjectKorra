@@ -18,8 +18,8 @@ import java.util.Random;
 
 public class IceSpikePillarField extends IceAbility {
 	
-	private int damage;
-	private int radius;
+	private double damage;
+	private double radius;
 	private int numberOfSpikes;
 	private long cooldown;
 	private Vector thrownForce;
@@ -27,15 +27,15 @@ public class IceSpikePillarField extends IceAbility {
 	public IceSpikePillarField(Player player) {
 		super(player);
 		
-		this.damage = 2;
-		this.radius = 6;
-		this.numberOfSpikes = ((radius * 2) * (radius * 2)) / 16;
-		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
-		this.thrownForce = new Vector(0, 1, 0);
-		
 		if (bPlayer.isOnCooldown(this)) {
 			return;
 		}
+		
+		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Field.Damage");
+		this.radius = getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius");
+		this.numberOfSpikes = (int) (((radius * 2) * (radius * 2)) / 16);
+		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
+		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Field.Push"), 0);
 		
 		Random random = new Random();
 		int locX = player.getLocation().getBlockX();
@@ -43,8 +43,8 @@ public class IceSpikePillarField extends IceAbility {
 		int locZ = player.getLocation().getBlockZ();
 		List<Block> iceBlocks = new ArrayList<Block>();
 		
-		for (int x = -(radius - 1); x <= (radius - 1); x++) {
-			for (int z = -(radius - 1); z <= (radius - 1); z++) {
+		for (int x = (int) -(radius - 1); x <= (radius - 1); x++) {
+			for (int z = (int) -(radius - 1); z <= (radius - 1); z++) {
 				for (int y = -1; y <= 1; y++) {
 					Block testBlock = player.getWorld().getBlockAt(locX + x,	locY + y, locZ + z);
 					
@@ -90,7 +90,7 @@ public class IceSpikePillarField extends IceAbility {
 			}
 			
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
-				new IceSpikePillar(player, targetBlock.getLocation(), damage, thrownForce, cooldown);
+				new IceSpikePillar(player, targetBlock.getLocation(), (int) damage, thrownForce, cooldown);
 				bPlayer.addCooldown(this);
 				iceBlocks.remove(targetBlock);
 			}
@@ -99,7 +99,7 @@ public class IceSpikePillarField extends IceAbility {
 
 	@Override
 	public String getName() {
-		return "IceSpike";
+		return "IceSpikePillarField";
 	}
 
 	@Override
@@ -116,6 +116,11 @@ public class IceSpikePillarField extends IceAbility {
 	}
 	
 	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
+	
+	@Override
 	public boolean isSneakAbility() {
 		return true;
 	}
@@ -125,19 +130,19 @@ public class IceSpikePillarField extends IceAbility {
 		return false;
 	}
 
-	public int getDamage() {
+	public double getDamage() {
 		return damage;
 	}
 
-	public void setDamage(int damage) {
+	public void setDamage(double damage) {
 		this.damage = damage;
 	}
 
-	public int getRadius() {
+	public double getRadius() {
 		return radius;
 	}
 
-	public void setRadius(int radius) {
+	public void setRadius(double radius) {
 		this.radius = radius;
 	}
 

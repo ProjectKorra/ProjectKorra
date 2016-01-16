@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 
 import org.bukkit.Effect;
@@ -21,8 +20,8 @@ public class Shockwave extends EarthAbility {
 	public Shockwave(Player player) {
 		super(player);
 				
-		this.angle = Math.toRadians(40);
-		this.cooldown = 1500;
+		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Shockwave.Angle"));
+		this.cooldown = getConfig().getLong("Abilities.Earth.Shockwave.Cooldown");
 		this.chargeTime = getConfig().getLong("Abilities.Earth.Shockwave.ChargeTime");
 		this.threshold = getConfig().getDouble("Abilities.Earth.Shockwave.FallThreshold");
 		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
@@ -92,7 +91,7 @@ public class Shockwave extends EarthAbility {
 	}
 
 	public static void coneShockwave(Player player) {
-		Shockwave shockWave = CoreAbility.getAbility(player, Shockwave.class);
+		Shockwave shockWave = getAbility(player, Shockwave.class);
 		if (shockWave != null) {
 			if (shockWave.charged) {
 				double dtheta = 360.0 / (2 * Math.PI * shockWave.range) - 1;

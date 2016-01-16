@@ -13,10 +13,9 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
-// TODO: Merge this ability with Collapse
 public class CollapseWall extends EarthAbility {
 
-	private int range;
+	private int selectRange;
 	private int height;
 	private long cooldown;
 	private double radius;
@@ -30,16 +29,16 @@ public class CollapseWall extends EarthAbility {
 			return;
 		}
 
-		this.range = getConfig().getInt("Abilities.Earth.Collapse.Range");
-		this.height = getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
+		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
+		this.height = getConfig().getInt("Abilities.Earth.Collapse.Wall.Height");
 		this.radius = getConfig().getDouble("Abilities.Earth.Collapse.Radius");
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		this.cooldown = getConfig().getLong("Abilities.Earth.Collapse.Wall.Cooldown");
 		this.blocks = new ConcurrentHashMap<>();
 		this.baseBlocks = new ConcurrentHashMap<>();
 
-		Block sblock = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
+		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.SHIFT_DOWN);
 		if (sblock == null) {
-			location = getTargetEarthBlock(range).getLocation();
+			location = getTargetEarthBlock(selectRange).getLocation();
 		} else {
 			location = sblock.getLocation();
 		}
@@ -109,12 +108,12 @@ public class CollapseWall extends EarthAbility {
 		return false;
 	}
 
-	public int getRange() {
-		return range;
+	public int getSelectRange() {
+		return selectRange;
 	}
 
-	public void setRange(int range) {
-		this.range = range;
+	public void setSelectRange(int selectRange) {
+		this.selectRange = selectRange;
 	}
 
 	public int getHeight() {

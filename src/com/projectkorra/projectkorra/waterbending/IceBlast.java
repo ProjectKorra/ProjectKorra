@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -36,7 +35,7 @@ public class IceBlast extends IceAbility {
 	private long interval;
 	private double range;
 	private double damage;
-	private double radius;
+	private double collisionRadius;
 	private double deflectRange;
 	private Block sourceBlock;
 	private Location location;
@@ -48,9 +47,9 @@ public class IceBlast extends IceAbility {
 		super(player);
 		
 		this.data = 0;
-		this.interval = 20;
-		this.radius = 2;
-		this.deflectRange = 3;
+		this.interval = getConfig().getLong("Abilities.Water.IceBlast.Interval");
+		this.collisionRadius = getConfig().getDouble("Abilities.Water.IceBlast.CollisionRadius");
+		this.deflectRange = getConfig().getDouble("Abilities.Water.IceBlast.DeflectRange");
 		this.range = getConfig().getDouble("Abilities.Water.IceBlast.Range");
 		this.damage = getConfig().getInt("Abilities.Water.IceBlast.Damage");
 		this.cooldown = getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
@@ -75,7 +74,7 @@ public class IceBlast extends IceAbility {
 	}
 
 	private void prepare(Block block) {
-		for (IceBlast iceBlast : CoreAbility.getAbilities(player, IceBlast.class)) {
+		for (IceBlast iceBlast : getAbilities(player, IceBlast.class)) {
 			if (iceBlast.prepared) {
 				iceBlast.remove();
 			}
@@ -85,13 +84,13 @@ public class IceBlast extends IceAbility {
 		location = sourceBlock.getLocation();
 		prepared = true;
 		
-		if (CoreAbility.getAbilities(player, IceBlast.class).isEmpty()) {
+		if (getAbilities(player, IceBlast.class).isEmpty()) {
 			start();
 		}
 	}
 
 	private static void block(Player player) {
-		for (IceBlast iceBlast : CoreAbility.getAbilities(player, IceBlast.class)) {
+		for (IceBlast iceBlast : getAbilities(player, IceBlast.class)) {
 			if (!iceBlast.location.getWorld().equals(player.getWorld())) {
 				continue;
 			} else if (!iceBlast.progressing) {
@@ -118,7 +117,7 @@ public class IceBlast extends IceAbility {
 			return;
 		}
 
-		for (IceBlast ice : CoreAbility.getAbilities(IceBlast.class)) {
+		for (IceBlast ice : getAbilities(IceBlast.class)) {
 			if (ice.prepared) {
 				ice.throwIce();
 			}
@@ -270,7 +269,7 @@ public class IceBlast extends IceAbility {
 				return;
 			}
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
 				if (entity.getEntityId() != player.getEntityId() && entity instanceof LivingEntity) {
 					affect((LivingEntity) entity);
 					progressing = false;
@@ -401,12 +400,12 @@ public class IceBlast extends IceAbility {
 		this.damage = damage;
 	}
 
-	public double getRadius() {
-		return radius;
+	public double getCollisionRadius() {
+		return collisionRadius;
 	}
 
-	public void setRadius(double radius) {
-		this.radius = radius;
+	public void setCollisionRadius(double collisionRadius) {
+		this.collisionRadius = collisionRadius;
 	}
 
 	public double getDeflectRange() {

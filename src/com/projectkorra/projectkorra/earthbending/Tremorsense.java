@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 
 import org.bukkit.Effect;
@@ -133,8 +132,8 @@ public class Tremorsense extends EarthAbility {
 		for (Player player : server.getOnlinePlayers()) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			
-			if (bPlayer != null && !CoreAbility.hasAbility(player, Tremorsense.class) 
-					&& bPlayer.canBend(CoreAbility.getAbility("Tremorsense"))) {
+			if (bPlayer != null && !hasAbility(player, Tremorsense.class) 
+					&& bPlayer.canBend(getAbility("Tremorsense"))) {
 				new Tremorsense(player);
 			}
 		}

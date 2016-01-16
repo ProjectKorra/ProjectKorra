@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.waterbending.PlantRegrowth;
 
@@ -37,7 +36,7 @@ public class BlazeArc extends FireAbility {
 	public BlazeArc(Player player, Location location, Vector direction, double range) {
 		super(player);
 		this.range = getDayFactor(range);
-		this.speed = 15;
+		this.speed = getConfig().getLong("Abilities.Fire.Blaze.Speed");
 		this.interval = (long) (1000. / speed);
 		this.origin = location.clone();
 		this.location = origin.clone();
@@ -147,7 +146,7 @@ public class BlazeArc extends FireAbility {
 	}
 
 	public static void removeAroundPoint(Location location, double radius) {
-		for (BlazeArc stream : CoreAbility.getAbilities(BlazeArc.class)) {
+		for (BlazeArc stream : getAbilities(BlazeArc.class)) {
 			if (stream.location.getWorld().equals(location.getWorld())) {
 				if (stream.location.distanceSquared(location) <= radius * radius) {
 					stream.remove();

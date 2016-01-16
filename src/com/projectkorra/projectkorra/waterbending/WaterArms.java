@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
@@ -81,7 +80,7 @@ public class WaterArms extends WaterAbility {
 		this.world = player.getWorld();
 		this.activeArm = Arm.RIGHT;
 		
-		WaterArms oldArms = CoreAbility.getAbility(player, WaterArms.class);
+		WaterArms oldArms = getAbility(player, WaterArms.class);
 		
 		if (oldArms != null) {
 			if (player.isSneaking()) {

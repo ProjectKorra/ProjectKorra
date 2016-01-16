@@ -4,7 +4,6 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
@@ -36,7 +35,7 @@ public class AirBubble extends AirAbility {
 	}
 
 	public static boolean canFlowTo(Block block) {
-		for (AirBubble airBubble : CoreAbility.getAbilities(AirBubble.class)) {
+		for (AirBubble airBubble : getAbilities(AirBubble.class)) {
 			if (airBubble.blockInBubble(block)) {
 				return false;
 			}
@@ -53,7 +52,7 @@ public class AirBubble extends AirAbility {
 			
 			String name = bPlayer.getBoundAbilityName();
 			if (name.equalsIgnoreCase("AirBubble") | name.equalsIgnoreCase("WaterBubble")) {
-				if (!CoreAbility.hasAbility(player, AirBubble.class) && player.isSneaking()) {
+				if (!hasAbility(player, AirBubble.class) && player.isSneaking()) {
 					AirBubble airBubble = new AirBubble(player);
 					if (name.equalsIgnoreCase("WaterBubble")) {
 						airBubble.waterBubble = true;

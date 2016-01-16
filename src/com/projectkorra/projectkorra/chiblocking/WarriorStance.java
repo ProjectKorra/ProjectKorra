@@ -14,7 +14,7 @@ public class WarriorStance extends ChiAbility {
 	
 	public WarriorStance(Player player) {
 		super(player);
-		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
+		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength");
 		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
 		
 		ChiAbility stance = bPlayer.getStance();

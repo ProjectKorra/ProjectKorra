@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -53,7 +52,7 @@ public class OctopusForm extends WaterAbility {
 	public OctopusForm(Player player) {
 		super(player);
 		
-		OctopusForm oldOctopus = CoreAbility.getAbility(player, OctopusForm.class);
+		OctopusForm oldOctopus = getAbility(player, OctopusForm.class);
 		if (oldOctopus != null) {
 			if (oldOctopus.formed) {
 				oldOctopus.attack();
@@ -61,6 +60,10 @@ public class OctopusForm extends WaterAbility {
 			} else if (!oldOctopus.sourceSelected) {
 				return;
 			}
+		}
+		
+		if (!bPlayer.canBend(this)) {
+			return;
 		}
 		
 		this.sourceSelected = false;
@@ -76,9 +79,9 @@ public class OctopusForm extends WaterAbility {
 		this.attackRange = getConfig().getInt("Abilities.Water.OctopusForm.AttackRange");
 		this.knockback = getConfig().getDouble("Abilities.Water.OctopusForm.Knockback");
 		this.radius = getConfig().getDouble("Abilities.Water.OctopusForm.Radius");
-		this.cooldown = 0;
+		this.cooldown = getConfig().getLong("Abilities.Water.OctopusForm.Cooldown");
+		this.angleIncrement = getConfig().getDouble("Abilities.Water.OctopusForm.AngleIncrement");
 		this.currentFormHeight = 0;
-		this.angleIncrement = 45;
 		this.blocks = new ArrayList<TempBlock>();
 		this.newBlocks = new ArrayList<TempBlock>();
 		this.time = System.currentTimeMillis();
@@ -102,12 +105,13 @@ public class OctopusForm extends WaterAbility {
 		} else if (forming) {
 			forming = false;
 			formed = true;
+			bPlayer.addCooldown(this);
 		}
 	}
 
 	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
-		OctopusForm oldForm = CoreAbility.getAbility(player, OctopusForm.class);
+		OctopusForm oldForm = getAbility(player, OctopusForm.class);
 		
 		if (oldForm != null) {
 			oldForm.form();
@@ -391,7 +395,7 @@ public class OctopusForm extends WaterAbility {
 	}
 
 	public static boolean wasBrokenFor(Player player, Block block) {
-		OctopusForm form = CoreAbility.getAbility(player, OctopusForm.class);
+		OctopusForm form = getAbility(player, OctopusForm.class);
 		if (form != null) {
 			if (form.sourceBlock == null) {
 				return false;

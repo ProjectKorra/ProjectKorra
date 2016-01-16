@@ -31,7 +31,7 @@ public class Illumination extends FireAbility {
 		}
 		
 		this.range = getConfig().getDouble("Abilities.Fire.Illumination.Range");
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
 		
 		this.range = getDayFactor(this.range);
 		

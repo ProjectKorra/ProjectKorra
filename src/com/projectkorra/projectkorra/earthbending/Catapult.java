@@ -9,7 +9,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-// TODO: Remove Catapult.Speed from the Configuration
 public class Catapult extends EarthAbility {
 
 	private boolean catapult;

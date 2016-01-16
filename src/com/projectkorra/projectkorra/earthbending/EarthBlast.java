@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.earthbending;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.firebending.Combustion;
@@ -35,7 +34,7 @@ public class EarthBlast extends EarthAbility {
 	private double damage;
 	private double speed;
 	private double pushFactor;
-	private double prepareRange;
+	private double selectRange;
 	private double deflectRange;
 	private double collisionRadius;
 	private Material sourceType;
@@ -50,15 +49,15 @@ public class EarthBlast extends EarthAbility {
 		this.isProgressing = false;
 		this.isAtDestination = false;
 		this.isSettingUp = true;
-		this.deflectRange = 3;
-		this.collisionRadius = 2;
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		this.deflectRange = getConfig().getDouble("Abilities.Earth.EarthBlast.DeflectRange");
+		this.collisionRadius = getConfig().getDouble("Abilities.Earth.EarthBlast.CollisionRadius");
+		this.cooldown = getConfig().getLong("Abilities.Earth.EarthBlast.Cooldown");
 		this.canHitSelf = getConfig().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
 		this.range = getConfig().getDouble("Abilities.Earth.EarthBlast.Range");
 		this.damage = getConfig().getDouble("Abilities.Earth.EarthBlast.Damage");
 		this.speed = getConfig().getDouble("Abilities.Earth.EarthBlast.Speed");
 		this.pushFactor = getConfig().getDouble("Abilities.Earth.EarthBlast.Push");
-		this.prepareRange = getConfig().getDouble("Abilities.Earth.EarthBlast.PrepareRange");		
+		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthBlast.SelectRange");		
 		this.time = System.currentTimeMillis();
 		this.interval = (long) (1000.0 / speed);
 		
@@ -69,7 +68,7 @@ public class EarthBlast extends EarthAbility {
 	}
 
 	private void checkForCollision() {
-		for (EarthBlast blast : CoreAbility.getAbilities(EarthBlast.class)) {
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
 			if (blast.player.equals(player)) {
 				continue;
 			} else if (!blast.location.getWorld().equals(player.getWorld())) {
@@ -136,7 +135,7 @@ public class EarthBlast extends EarthAbility {
 		}
 		
 		boolean selectedABlockInUse = false;
-		for (EarthBlast blast : CoreAbility.getAbilities(player, EarthBlast.class)) {
+		for (EarthBlast blast : getAbilities(player, EarthBlast.class)) {
 			if (!blast.isProgressing) {
 				blast.remove();
 			} else if (blast.isProgressing && block.equals(blast.sourceBlock)) {
@@ -149,7 +148,7 @@ public class EarthBlast extends EarthAbility {
 		}
 		
 		checkForCollision();
-		if (block.getLocation().distanceSquared(player.getLocation()) > prepareRange * prepareRange) {
+		if (block.getLocation().distanceSquared(player.getLocation()) > selectRange * selectRange) {
 			return false;
 		}
 		sourceBlock = block;
@@ -183,7 +182,7 @@ public class EarthBlast extends EarthAbility {
 				} else if (!player.getWorld().equals(sourceBlock.getWorld())) {
 					remove();
 					return;
-				} else if (sourceBlock.getLocation().distanceSquared(player.getLocation()) > prepareRange * prepareRange) {
+				} else if (sourceBlock.getLocation().distanceSquared(player.getLocation()) > selectRange * selectRange) {
 					remove();
 					return;
 				}
@@ -393,7 +392,7 @@ public class EarthBlast extends EarthAbility {
 	
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
 		boolean broke = false;
-		for (EarthBlast blast : CoreAbility.getAbilities(EarthBlast.class)) {
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
 			if (blast.location.getWorld().equals(location.getWorld()) && !source.equals(blast.player)) {
 				if (blast.location.distanceSquared(location) <= radius * radius) {
 					blast.remove();
@@ -406,7 +405,7 @@ public class EarthBlast extends EarthAbility {
 
 	public static ArrayList<EarthBlast> getAroundPoint(Location location, double radius) {
 		ArrayList<EarthBlast> list = new ArrayList<EarthBlast>();
-		for (EarthBlast blast : CoreAbility.getAbilities(EarthBlast.class)) {
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
 			if (blast.location.getWorld().equals(location.getWorld())) {
 				if (blast.location.distanceSquared(location) <= radius * radius) {
 					list.add(blast);
@@ -417,7 +416,7 @@ public class EarthBlast extends EarthAbility {
 	}
 
 	public static EarthBlast getBlastFromSource(Block block) {
-		for (EarthBlast blast : CoreAbility.getAbilities(EarthBlast.class)) {
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
 			if (blast.sourceBlock.equals(block)) {
 				return blast;
 			}
@@ -426,7 +425,7 @@ public class EarthBlast extends EarthAbility {
 	}
 
 	private static void redirectTargettedBlasts(Player player, ArrayList<EarthBlast> ignore) {
-		for (EarthBlast blast : CoreAbility.getAbilities(EarthBlast.class)) {
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
 			if (!blast.isProgressing || ignore.contains(blast)) {
 				continue;
 			} else if (!blast.location.getWorld().equals(player.getWorld())) {
@@ -452,7 +451,7 @@ public class EarthBlast extends EarthAbility {
 	}
 
 	public static void removeAroundPoint(Location location, double radius) {
-		for (EarthBlast blast : CoreAbility.getAbilities(EarthBlast.class)) {
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
 			if (blast.location.getWorld().equals(location.getWorld())) {
 				if (blast.location.distanceSquared(location) <= radius * radius) {
 					blast.remove();
@@ -470,7 +469,7 @@ public class EarthBlast extends EarthAbility {
 			return;
 		}
 		
-		for (EarthBlast blast : CoreAbility.getAbilities(player, EarthBlast.class)) {
+		for (EarthBlast blast : getAbilities(player, EarthBlast.class)) {
 			if (!blast.isProgressing && bPlayer.canBend(blast)) {
 				blast.throwEarth();
 				ignore.add(blast);
@@ -589,12 +588,12 @@ public class EarthBlast extends EarthAbility {
 		this.pushFactor = pushFactor;
 	}
 
-	public double getPrepareRange() {
-		return prepareRange;
+	public double getSelectRange() {
+		return selectRange;
 	}
 
-	public void setPrepareRange(double prepareRange) {
-		this.prepareRange = prepareRange;
+	public void setSelectRange(double selectRange) {
+		this.selectRange = selectRange;
 	}
 
 	public double getDeflectRange() {

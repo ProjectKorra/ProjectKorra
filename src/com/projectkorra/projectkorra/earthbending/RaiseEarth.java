@@ -1,7 +1,5 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -25,7 +23,7 @@ public class RaiseEarth extends EarthAbility {
 	private long time;
 	private long interval;
 	private long cooldown;
-	private double range;
+	private double selectRange;
 	private double speed;
 	private Block block;
 	private Vector direction;
@@ -45,7 +43,7 @@ public class RaiseEarth extends EarthAbility {
 			if (bPlayer.isAvatarState()) {
 				height = (int) (2.0 / 5.0 * (double) AvatarState.getValue(height));
 			}
-			block = BlockSource.getEarthSourceBlock(player, range, ClickType.LEFT_CLICK);
+			block = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.LEFT_CLICK);
 			if (block == null) {
 				return;
 			}
@@ -90,13 +88,13 @@ public class RaiseEarth extends EarthAbility {
 	}
 	
 	private void setFields() {
+		this.speed = getConfig().getDouble("Abilities.Earth.RaiseEarth.Speed");
 		this.height = getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
-		this.range = 20;
-		this.speed = 8;
+		this.selectRange = getConfig().getDouble("Abilities.Earth.RaiseEarth.Column.SelectRange");
+		this.cooldown = getConfig().getLong("Abilities.Earth.RaiseEarth.Column.Cooldown");
 		this.direction = new Vector(0, 1, 0);
 		this.interval = (long) (1000.0 / speed);
-		this.cooldown = GeneralMethods.getGlobalCooldown();
-		this.affectedBlocks = new ConcurrentHashMap<Block, Block>();
+		this.affectedBlocks = new ConcurrentHashMap<>();
 	}
 	
 	private boolean canInstantiate() {
@@ -142,7 +140,7 @@ public class RaiseEarth extends EarthAbility {
 
 	public static void revertAffectedBlock(Block block) {
 		ALL_AFFECTED_BLOCKS.remove(block);
-		for (RaiseEarth raiseEarth : CoreAbility.getAbilities(RaiseEarth.class)) {
+		for (RaiseEarth raiseEarth : getAbilities(RaiseEarth.class)) {
 			raiseEarth.affectedBlocks.remove(block);
 		}
 	}
@@ -204,14 +202,6 @@ public class RaiseEarth extends EarthAbility {
 		this.interval = interval;
 	}
 
-	public double getRange() {
-		return range;
-	}
-
-	public void setRange(double range) {
-		this.range = range;
-	}
-
 	public double getSpeed() {
 		return speed;
 	}
@@ -255,5 +245,13 @@ public class RaiseEarth extends EarthAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
+
+	public double getSelectRange() {
+		return selectRange;
+	}
+
+	public void setSelectRange(double selectRange) {
+		this.selectRange = selectRange;
+	}
+		
 }

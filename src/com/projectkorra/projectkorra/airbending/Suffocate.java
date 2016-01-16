@@ -1,7 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -11,11 +13,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Suffocate
@@ -58,7 +57,7 @@ public class Suffocate extends AirAbility {
 		super(player);
 		if (bPlayer.isOnCooldown(this)) {
 			return;
-		} else if (CoreAbility.hasAbility(player, Suffocate.class)) {
+		} else if (hasAbility(player, Suffocate.class)) {
 			return;
 		}
 
@@ -220,7 +219,7 @@ public class Suffocate extends AirAbility {
 
 	/** Stops an entity from being suffocated **/
 	public static void breakSuffocate(Entity entity) {
-		for (Suffocate suffocate : CoreAbility.getAbilities(Suffocate.class)) {
+		for (Suffocate suffocate : getAbilities(Suffocate.class)) {
 			if (suffocate.targets.contains(entity)) {
 				suffocate.breakSuffocateLocal(entity);
 			}
@@ -229,7 +228,7 @@ public class Suffocate extends AirAbility {
 
 	/** Checks if an entity is being suffocated **/
 	public static boolean isBreathbent(Entity entity) {
-		for (Suffocate suffocate : CoreAbility.getAbilities(Suffocate.class)) {
+		for (Suffocate suffocate : getAbilities(Suffocate.class)) {
 			if (suffocate.targets.contains(entity)) {
 				return suffocate.started;
 			}
@@ -239,14 +238,14 @@ public class Suffocate extends AirAbility {
 
 	/** Determines if a player is Suffocating entities **/
 	public static boolean isChannelingSphere(Player player) {
-		return CoreAbility.hasAbility(player, Suffocate.class);
+		return hasAbility(player, Suffocate.class);
 	}
 
 	/**
 	 * Removes an instance of Suffocate if player is the one suffocating entities
 	 **/
 	public static void remove(Player player) {
-		Suffocate suff = CoreAbility.getAbility(player, Suffocate.class);
+		Suffocate suff = getAbility(player, Suffocate.class);
 		if (suff != null) {
 			suff.remove();
 		}
@@ -263,7 +262,7 @@ public class Suffocate extends AirAbility {
 		if (causer == null) {
 			return false;
 		}
-		for (Suffocate suff : CoreAbility.getAbilities(Suffocate.class)) {
+		for (Suffocate suff : getAbilities(Suffocate.class)) {
 			if (!suff.player.equals(causer)) {
 				Location playerLoc = suff.getPlayer().getLocation();
 				if (playerLoc.getWorld().equals(loc.getWorld()) && playerLoc.distanceSquared(loc) <= radius * radius) {

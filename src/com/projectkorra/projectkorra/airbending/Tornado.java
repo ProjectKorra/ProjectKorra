@@ -41,8 +41,8 @@ public class Tornado extends AirAbility {
 		this.playerPushFactor = getConfig().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
 		this.radius = getConfig().getDouble("Abilities.Air.Tornado.Radius");
 		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
-		this.npcPushFactor = getConfig().getDouble("Abilities.Air.Tornado.MobPushFactor");
-		this.speed = 1;
+		this.npcPushFactor = getConfig().getDouble("Abilities.Air.Tornado.NpcPushFactor");
+		this.speed = getConfig().getDouble("Abilities.Air.Tornado.Speed");
 		this.numberOfStreams = (int) (.3 * (double) maxHeight);
 		this.currentHeight = 2;
 		this.currentRadius = currentHeight / maxHeight * radius;

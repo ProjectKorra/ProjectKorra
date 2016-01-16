@@ -39,7 +39,7 @@ public class FireBlast extends FireAbility {
 	private double range;
 	private double damage;
 	private double speed;
-	private double radius;
+	private double collisionRadius;
 	private double fireTicks;
 	private double pushFactor;
 	private Random random;
@@ -55,24 +55,13 @@ public class FireBlast extends FireAbility {
 			return;
 		}
 		
-		this.isFireBurst = true;
+		setFields();
 		this.safeBlocks = safeBlocks;
 		this.damage = damage;
-		this.powerFurnace = true;
-		this.showParticles = true;
-		this.radius = 2;
-		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Range");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
-		this.pushFactor = getConfig().getDouble("Abilities.Fire.FireBlast.Push");
-		this.random = new Random();
 
 		this.location = location.clone();
 		this.origin = location.clone();
 		this.direction = direction.clone().normalize();
-		
 		this.range = getDayFactor(range);
 		this.damage *= 1.5;
 
@@ -87,23 +76,10 @@ public class FireBlast extends FireAbility {
 		} else if (player.getEyeLocation().getBlock().isLiquid() || FireBlastCharged.isCharging(player)) {
 			return;
 		}
-		
-		this.isFireBurst = false;
-		this.powerFurnace = true;
-		this.showParticles = true;
-		this.radius = 2;
-		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Range");
-		this.damage = getConfig().getInt("Abilities.Fire.FireBlast.Damage");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
-		this.pushFactor = getConfig().getDouble("Abilities.Fire.FireBlast.Push");
-		this.random = new Random();
+
+		setFields();
 		this.safeBlocks = new ArrayList<>();
-		
 		this.range = getDayFactor(this.range);
-		
 		this.location = player.getEyeLocation();
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
@@ -111,7 +87,21 @@ public class FireBlast extends FireAbility {
 		
 		start();
 		bPlayer.addCooldown(this);
-	}	
+	}
+	
+	private void setFields() {
+		this.isFireBurst = true;
+		this.powerFurnace = true;
+		this.showParticles = true;
+		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
+		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Range");
+		this.speed = getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
+		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.CollisionRadius");
+		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
+		this.pushFactor = getConfig().getDouble("Abilities.Fire.FireBlast.Push");
+		this.random = new Random();
+	}
 
 	private void advanceLocation() {
 		if (showParticles) {
@@ -142,7 +132,7 @@ public class FireBlast extends FireAbility {
 	}
 
 	private void ignite(Location location) {
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, collisionRadius)) {
 			if (BlazeArc.isIgnitable(player, block) 
 					&& !safeBlocks.contains(block)
 					&& !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
@@ -202,14 +192,14 @@ public class FireBlast extends FireAbility {
 		AirAbility.removeAirSpouts(location, player);
 
 		Player source = player;
-		if (EarthBlast.annihilateBlasts(location, radius, source) 
-				|| WaterManipulation.annihilateBlasts(location, radius, source)
-				|| FireBlast.annihilateBlasts(location, radius, source)) {
+		if (EarthBlast.annihilateBlasts(location, collisionRadius, source) 
+				|| WaterManipulation.annihilateBlasts(location, collisionRadius, source)
+				|| FireBlast.annihilateBlasts(location, collisionRadius, source)) {
 			remove();
 			return;
 		}
 
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
 			affect(entity);
 			if (entity instanceof LivingEntity) {
 				break;
@@ -350,12 +340,12 @@ public class FireBlast extends FireAbility {
 		this.speed = speed;
 	}
 
-	public double getRadius() {
-		return radius;
+	public double getCollisionRadius() {
+		return collisionRadius;
 	}
 
-	public void setRadius(double radius) {
-		this.radius = radius;
+	public void setCollisionRadius(double collisionRadius) {
+		this.collisionRadius = collisionRadius;
 	}
 
 	public double getFireTicks() {

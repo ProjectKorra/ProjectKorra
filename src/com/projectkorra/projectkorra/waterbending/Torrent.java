@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -27,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Torrent extends WaterAbility {
 
 	private static final double CLEANUP_RANGE = 50;
-	private static final ConcurrentHashMap<TempBlock, Player> FROZEN_BLOCKS = new ConcurrentHashMap<TempBlock, Player>();
+	private static final ConcurrentHashMap<TempBlock, Player> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 	
 	private boolean sourceSelected;
 	private boolean settingUp;
@@ -44,8 +43,8 @@ public class Torrent extends WaterAbility {
 	private double startAngle;
 	private double angle;
 	private double radius;
-	private double factor;
-	private double yLimit;
+	private double push;
+	private double maxUpwardForce;
 	private double damage;
 	private double deflectDamage;
 	private double range;
@@ -61,29 +60,33 @@ public class Torrent extends WaterAbility {
 		super(player);
 
 		this.layer = 0;
-		this.maxLayer = 3;
-		this.factor = 1;
 		this.startAngle = 0;
-		this.angle = 20;
-		this.radius = 3;
-		this.yLimit = 0.2;
-		this.interval = 30;
+		this.maxLayer = getConfig().getInt("Abilities.Water.Torrent.MaxLayer");
+		this.push = getConfig().getDouble("Abilities.Water.Torrent.Push");
+		this.angle = getConfig().getDouble("Abilities.Water.Torrent.Angle");
+		this.radius = getConfig().getDouble("Abilities.Water.Torrent.Radius");
+		this.maxUpwardForce = getConfig().getDouble("Abilities.Water.Torrent.MaxUpwardForce");
+		this.interval = getConfig().getLong("Abilities.Water.Torrent.Interval");
 		this.damage = getConfig().getDouble("Abilities.Water.Torrent.Damage");
 		this.deflectDamage = getConfig().getDouble("Abilities.Water.Torrent.DeflectDamage");
 		this.range = getConfig().getDouble("Abilities.Water.Torrent.Range");
-		this.cooldown = 0;
-		this.selectRange = 10;
+		this.selectRange = getConfig().getDouble("Abilities.Water.Torrent.SelectRange");
+		this.cooldown = getConfig().getLong("Abilities.Water.Torrent.Cooldown");
 		this.blocks = new ArrayList<>();
 		this.launchedBlocks = new ArrayList<>();
 		this.hurtEntities = new ArrayList<>();
 		
-		Torrent oldTorrent = CoreAbility.getAbility(player, Torrent.class);
+		Torrent oldTorrent = getAbility(player, Torrent.class);
 		if (oldTorrent != null) {
 			if (!oldTorrent.sourceSelected) {
 				oldTorrent.use();
 				bPlayer.addCooldown(oldTorrent);
 				return;
 			}
+		}
+		
+		if (bPlayer.isOnCooldown(this)) {
+			return;
 		}
 		
 		time = System.currentTimeMillis();
@@ -453,7 +456,7 @@ public class Torrent extends WaterAbility {
 
 	@SuppressWarnings("deprecation")
 	public static void create(Player player) {
-		if (CoreAbility.hasAbility(player, Torrent.class)) {
+		if (hasAbility(player, Torrent.class)) {
 			return;
 		}
 		
@@ -497,7 +500,7 @@ public class Torrent extends WaterAbility {
 		vx = (x * Math.cos(angle) - z * Math.sin(angle)) / mag;
 		vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
-		Vector vec = new Vector(vx, 0, vz).normalize().multiply(factor);
+		Vector vec = new Vector(vx, 0, vz).normalize().multiply(push);
 		Vector velocity = entity.getVelocity();
 		
 		if (bPlayer.isAvatarState()) {
@@ -521,11 +524,11 @@ public class Torrent extends WaterAbility {
 		if (entity.getEntityId() == player.getEntityId()) {
 			return;
 		}
-		if (direction.getY() > yLimit) {
-			direction.setY(yLimit);
+		if (direction.getY() > maxUpwardForce) {
+			direction.setY(maxUpwardForce);
 		}
 		if (!freeze) {
-			entity.setVelocity(direction.multiply(factor));
+			entity.setVelocity(direction.multiply(push));
 		}
 		if (entity instanceof LivingEntity && !hurtEntities.contains(entity)) {
 			double damageDealt = getNightFactor(damage);
@@ -587,7 +590,7 @@ public class Torrent extends WaterAbility {
 	}
 
 	public static boolean wasBrokenFor(Player player, Block block) {
-		Torrent torrent = CoreAbility.getAbility(player, Torrent.class);
+		Torrent torrent = getAbility(player, Torrent.class);
 		if (torrent != null) {
 			if (torrent.sourceBlock == null) {
 				return false;
@@ -736,20 +739,20 @@ public class Torrent extends WaterAbility {
 		this.radius = radius;
 	}
 
-	public double getFactor() {
-		return factor;
+	public double getPush() {
+		return push;
 	}
 
-	public void setFactor(double factor) {
-		this.factor = factor;
+	public void setPush(double push) {
+		this.push = push;
 	}
 
-	public double getyLimit() {
-		return yLimit;
+	public double getMaxUpwardForce() {
+		return maxUpwardForce;
 	}
 
-	public void setyLimit(double yLimit) {
-		this.yLimit = yLimit;
+	public void setMaxUpwardForce(double maxUpwardForce) {
+		this.maxUpwardForce = maxUpwardForce;
 	}
 
 	public double getDamage() {

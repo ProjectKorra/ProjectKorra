@@ -4,7 +4,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -363,7 +362,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 
 	public static boolean removeAroundPoint(Player player, String ability, Location loc, double radius) {
 		boolean removed = false;
-		for (AirCombo combo : CoreAbility.getAbilities(AirCombo.class)) {
+		for (AirCombo combo : getAbilities(AirCombo.class)) {
 			if (combo.getPlayer().equals(player)) {
 				continue;
 			} else if (ability.equalsIgnoreCase("Twister") && combo.abilityName.equalsIgnoreCase("Twister")) {

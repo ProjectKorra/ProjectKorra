@@ -5,7 +5,6 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BloodAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -40,7 +39,7 @@ public class Bloodbending extends BloodAbility {
 	public Bloodbending(Player player) {
 		super(player);
 		
-		Bloodbending ability = CoreAbility.getAbility(player, getClass());
+		Bloodbending ability = getAbility(player, getClass());
 		if (ability != null) {
 			ability.remove();
 			return;
@@ -122,7 +121,7 @@ public class Bloodbending extends BloodAbility {
 	}
 
 	public static void launch(Player player) {
-		Bloodbending bloodbending = CoreAbility.getAbility(player, Bloodbending.class);
+		Bloodbending bloodbending = getAbility(player, Bloodbending.class);
 		if (bloodbending != null) {
 			bloodbending.launch();
 		}

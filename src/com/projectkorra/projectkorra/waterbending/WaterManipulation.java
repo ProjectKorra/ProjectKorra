@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
@@ -45,7 +44,7 @@ public class WaterManipulation extends WaterAbility {
 	private double damage;
 	private double speed;
 	private double deflectRange;
-	private double affectingRadius;
+	private double collisionRadius;
 	private Block sourceBlock;
 	private Location location;
 	private TempBlock trail;
@@ -63,13 +62,13 @@ public class WaterManipulation extends WaterAbility {
 		this.falling = false;
 		this.settingUp = false;
 		this.displacing = false;
-		this.affectingRadius = 2.0;
+		this.collisionRadius = getConfig().getDouble("Abilities.Water.WaterManipulation.CollisionRadius");
 		this.cooldown = getConfig().getLong("Abilities.Water.WaterManipulation.Cooldown");
 		this.range = getConfig().getDouble("Abilities.Water.WaterManipulation.Range");
 		this.pushFactor = getConfig().getDouble("Abilities.Water.WaterManipulation.Push");
 		this.damage = getConfig().getDouble("Abilities.Water.WaterManipulation.Damage");
 		this.speed = getConfig().getDouble("Abilities.Water.WaterManipulation.Speed");
-		this.deflectRange = 3;
+		this.deflectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.DeflectRange");
 		this.waterTypes = new HashSet<Byte>();
 		
 		this.interval = (long) (1000. / speed);
@@ -85,7 +84,7 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	private void cancelPrevious() {
-		WaterManipulation old = CoreAbility.getAbility(player, WaterManipulation.class);
+		WaterManipulation old = getAbility(player, WaterManipulation.class);
 		if (old != null && !old.progressing) {
 			old.remove();
 		}
@@ -223,7 +222,7 @@ public class WaterManipulation extends WaterAbility {
 						playWaterbendingSound(location);
 					}
 
-					double radius = affectingRadius;
+					double radius = collisionRadius;
 					Player source = player;
 					if (!(location == null)) {
 						if (EarthBlast.annihilateBlasts(location, radius, source) 
@@ -271,7 +270,7 @@ public class WaterManipulation extends WaterAbility {
 				}
 
 				if (!displacing) {
-					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, affectingRadius)) {
+					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
 						if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId()) {
 							Location location = player.getEyeLocation();
 							Vector vector = location.getDirection();
@@ -368,7 +367,7 @@ public class WaterManipulation extends WaterAbility {
 
 	public static boolean annihilateBlasts(Location location, double radius, Player player) {
 		boolean broke = false;
-		for (WaterManipulation manip : CoreAbility.getAbilities(WaterManipulation.class)) {
+		for (WaterManipulation manip : getAbilities(WaterManipulation.class)) {
 			if (manip.location.getWorld().equals(location.getWorld()) && !player.equals(manip.player)) {
 				if (manip.location.distanceSquared(location) <= radius * radius) {
 					manip.remove();
@@ -380,7 +379,7 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	private static void block(Player player) {
-		for (WaterManipulation manip : CoreAbility.getAbilities(player, WaterManipulation.class)) {
+		for (WaterManipulation manip : getAbilities(player, WaterManipulation.class)) {
 			if (!manip.location.getWorld().equals(player.getWorld())) {
 				continue;
 			} else if (!manip.progressing) {
@@ -466,7 +465,7 @@ public class WaterManipulation extends WaterAbility {
 
 		boolean handledPrepare = false;
 		double range = 25;
-		for (WaterManipulation waterManip : CoreAbility.getAbilities(player, WaterManipulation.class)) {
+		for (WaterManipulation waterManip : getAbilities(player, WaterManipulation.class)) {
 			range = waterManip.range;
 			if (waterManip.prepared) {
 				waterManip.prepared = false;
@@ -498,7 +497,7 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	private static void redirectTargettedBlasts(Player player) {
-		for (WaterManipulation manip : CoreAbility.getAbilities(WaterManipulation.class)) {
+		for (WaterManipulation manip : getAbilities(WaterManipulation.class)) {
 			if (!manip.progressing) {
 				continue;
 			} else if (!manip.location.getWorld().equals(player.getWorld())) {
@@ -529,7 +528,7 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	public static void removeAroundPoint(Location location, double radius) {
-		for (WaterManipulation manip : CoreAbility.getAbilities(WaterManipulation.class)) {
+		for (WaterManipulation manip : getAbilities(WaterManipulation.class)) {
 			if (manip.location.getWorld().equals(location.getWorld())) {
 				if (manip.location.distanceSquared(location) <= radius * radius) {
 					manip.remove();
@@ -743,5 +742,13 @@ public class WaterManipulation extends WaterAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
+
+	public double getCollisionRadius() {
+		return collisionRadius;
+	}
+
+	public void setCollisionRadius(double collisionRadius) {
+		this.collisionRadius = collisionRadius;
+	}
+		
 }
