@@ -1,13 +1,5 @@
 package com.projectkorra.projectkorra.object;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.storage.DBConnection;
-
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.storage.DBConnection;
 
 /**
  * A savable association of abilities and hotbar slots, stored per player.
@@ -30,6 +32,8 @@ public class Preset {
 	 * presets}, keyed to their UUID
 	 */
 	public static ConcurrentHashMap<UUID, List<Preset>> presets = new ConcurrentHashMap<UUID, List<Preset>>();
+	public static FileConfiguration config = ConfigManager.presetConfig.get();
+	public static HashMap<String, ArrayList<String>> externalPresets = new HashMap<String, ArrayList<String>>(); 
 	static String loadQuery = "SELECT * FROM pk_presets WHERE uuid = ?";
 	static String loadNameQuery = "SELECT * FROM pk_presets WHERE uuid = ? AND name = ?";
 	static String deleteQuery = "DELETE FROM pk_presets WHERE uuid = ? AND name = ?";
@@ -179,6 +183,25 @@ public class Preset {
 		}
 		return null;
 	}
+	
+	public static void loadExternalPresets() {
+		HashMap<String, ArrayList<String>> presets = new HashMap<String, ArrayList<String>>();
+		for(String name : config.getKeys(false)) {
+			if (!presets.containsKey(name)) if (!config.getStringList(name).isEmpty() && config.getStringList(name).size() <= 9) {
+				presets.put(name.toLowerCase(), (ArrayList<String>) config.getStringList(name));
+			}
+		}
+		externalPresets = presets;
+	}
+	
+	public static boolean externalPresetExists(String name) {
+		for (String preset : externalPresets.keySet()) {
+			if (name.equalsIgnoreCase(preset)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Gets the contents of a Preset for the specified Player.
@@ -197,6 +220,37 @@ public class Preset {
 			}
 		}
 		return null;
+	}
+	
+	public static boolean bindExternalPreset(Player player, String name) {
+		boolean boundAll = true;
+		int slot = 0;
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
+			return false;
+		}
+		
+		HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+
+		if (externalPresetExists(name.toLowerCase())) {
+			for (String ability : externalPresets.get(name.toLowerCase())) {
+				slot++;
+				CoreAbility coreAbil = CoreAbility.getAbility(ability);
+				if (coreAbil != null) {
+					abilities.put(slot, coreAbil.getName());
+				}
+			}
+
+			for (int i = 1; i <= 9; i++) {
+				if (!bPlayer.canBind(CoreAbility.getAbility(abilities.get(i)))) {
+					abilities.remove(i);
+					boundAll = false;
+				}
+			}
+			bPlayer.setAbilities(abilities);
+			return boundAll;
+		}
+		return false;
 	}
 
 	/**

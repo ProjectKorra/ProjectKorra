@@ -30,7 +30,7 @@ public class WhoCommand extends PKCommand {
 	Map<String, String> staff = new HashMap<String, String>();
 
 	public WhoCommand() {
-		super("who", "/bending who [Player]", "This command will tell you what element all players that are online are (If you don't specify a player) or give you information about the player that you specify.", new String[] { "who", "w" });
+		super("who", "/bending who [Player/Page]", "This command will tell you what element all players that are online are (If you don't specify a player) or give you information about the player that you specify.", new String[] { "who", "w" });
 
 		staff.put("8621211e-283b-46f5-87bc-95a66d68880e", ChatColor.RED + "ProjectKorra Founder"); // MistPhizzle
 
@@ -66,9 +66,13 @@ public class WhoCommand extends PKCommand {
 	public void execute(CommandSender sender, List<String> args) {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1)) {
 			return;
-		} else if (args.size() == 1) {
+		} else if (args.size() == 1 && args.get(0).length() > 2) {
 			whoPlayer(sender, args.get(0));
-		} else if (args.size() == 0) {
+		} else if (args.size() == 0 || args.size() == 1) {
+			int page = 1;
+			if (args.size() == 1 && isNumeric(args.get(0))) {
+				page = Integer.valueOf(args.get(0));
+			}
 			List<String> players = new ArrayList<String>();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				String playerName = player.getName();
@@ -122,8 +126,8 @@ public class WhoCommand extends PKCommand {
 			if (players.isEmpty()) {
 				sender.sendMessage(ChatColor.RED + "There is no one online.");
 			} else {
-				for (String st : players) {
-					sender.sendMessage(st);
+				for (String s : getPage(players, ChatColor.GOLD + "Players:", page)) {
+					sender.sendMessage(s);
 				}
 			}
 		}

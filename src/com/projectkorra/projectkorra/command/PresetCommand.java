@@ -1,18 +1,19 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
-import com.projectkorra.projectkorra.object.Preset;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.object.Preset;
 
 /**
  * Executor for /bending preset. Extends {@link PKCommand}.
@@ -30,7 +31,7 @@ public class PresetCommand extends PKCommand {
 
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
-		if (!isPlayer(sender) || !correctLength(sender, args.size(), 1, 2)) {
+		if (!isPlayer(sender) || !correctLength(sender, args.size(), 1, 3)) {
 			return;
 		} else if (MultiAbilityManager.hasMultiAbilityBound((Player) sender)) {
 			sender.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
@@ -74,16 +75,44 @@ public class PresetCommand extends PKCommand {
 			sender.sendMessage(ChatColor.GREEN + "You have deleted your preset named: " + ChatColor.YELLOW + name);
 			return;
 		} else if (Arrays.asList(bindaliases).contains(args.get(0)) && hasPermission(sender, "bind")) { //bending preset bind name
-			if (!Preset.presetExists(player, name)) {
-				sender.sendMessage(ChatColor.RED + "You don't have a preset with that name.");
-				return;
-			}
-			
-			Preset preset = Preset.getPreset(player, name);
-			boolean boundAll = Preset.bindPreset(player, preset);
-			sender.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
-			if (!boundAll) {
-				sender.sendMessage(ChatColor.RED + "Some abilities were not bound because you cannot bend the required element.");
+			if (args.size() < 3) {
+				boolean boundAll = false;
+				if (Preset.presetExists(player, name)) {
+					Preset preset = Preset.getPreset(player, name);
+					boundAll = Preset.bindPreset(player, preset);
+				} else if (Preset.externalPresetExists(name) && hasPermission(sender, "bind.external")) {
+					boundAll = Preset.bindExternalPreset(player, name);
+				} else if (!Preset.externalPresetExists(name) && hasPermission(sender, "bind.external")) {
+					sender.sendMessage(ChatColor.RED + "No external preset with that name exists.");
+					return;
+				} else {
+					sender.sendMessage(ChatColor.RED + "You don't have a preset with that name.");
+					return;
+				}
+
+				sender.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
+				if (!boundAll) {
+					sender.sendMessage(ChatColor.RED + "Some abilities were not bound because you cannot bend the required element.");
+				}
+			} else if (hasPermission(sender, "bind.external.other")) {
+				if (!Preset.externalPresetExists(name)) {
+					sender.sendMessage(ChatColor.RED + "No external preset with that name exists.");
+					return;
+				}
+				
+				Player player2 = Bukkit.getPlayer(args.get(2));
+				if (player2 != null && player2.isOnline()) {
+					boolean boundAll = Preset.bindExternalPreset(player2, name);
+					
+					sender.sendMessage(ChatColor.GREEN + "The bound slots of " + ChatColor.YELLOW + player2.getName() + ChatColor.GREEN + " have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
+					player2.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
+					if (!boundAll) {
+						player2.sendMessage(ChatColor.RED + "Some abilities were not bound, either the preset");
+					}
+					return;
+				} else {
+					sender.sendMessage(ChatColor.RED + "Player not found.");
+				}
 			}
 			return;
 		} else if (Arrays.asList(createaliases).contains(args.get(0)) && hasPermission(sender, "create")) { //bending preset create name

@@ -43,6 +43,7 @@ public class EarthSmash extends EarthAbility {
 	private long shootAnimationInterval;
 	private long flightAnimationInterval;
 	private long liftAnimationInterval;
+	private double selectRange;
 	private double grabRange;
 	private double shootRange;
 	private double damage;
@@ -73,6 +74,7 @@ public class EarthSmash extends EarthAbility {
 		this.flightDetectionRadius = getConfig().getDouble("Abilities.Earth.EarthSmash.FlightDetectionRadius");
 		this.allowGrab = getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowGrab");
 		this.allowFlight = getConfig().getBoolean("Abilities.Earth.EarthSmash.AllowFlight");
+		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthSmash.SelectRange");
 		this.grabRange = getConfig().getDouble("Abilities.Earth.EarthSmash.GrabRange");
 		this.shootRange = getConfig().getDouble("Abilities.Earth.EarthSmash.ShootRange");
 		this.damage = getConfig().getDouble("Abilities.Earth.EarthSmash.Damage");
@@ -89,6 +91,7 @@ public class EarthSmash extends EarthAbility {
 		
 		if (type == ClickType.SHIFT_DOWN || type == ClickType.SHIFT_UP && !player.isSneaking()) {
 			if (bPlayer.isAvatarState()) {
+				selectRange = AvatarState.getValue(selectRange);
 				grabRange = AvatarState.getValue(grabRange);
 				chargeTime = 0;
 				cooldown = 0;
@@ -110,13 +113,13 @@ public class EarthSmash extends EarthAbility {
 
 			EarthSmash grabbedSmash = aimingAtSmashCheck(player, State.LIFTED);
 			if (grabbedSmash == null) {
-				if (bPlayer.isOnCooldown(this)) {
-					return;
-				}
 				grabbedSmash = aimingAtSmashCheck(player, State.SHOT);
 			}
 			
 			if (grabbedSmash != null) {
+				if (bPlayer.isOnCooldown(this)) {
+					return;
+				}
 				grabbedSmash.state = State.GRABBED;
 				grabbedSmash.grabbedDistance = grabbedSmash.location.distance(player.getEyeLocation());
 				grabbedSmash.player = player;
@@ -168,7 +171,7 @@ public class EarthSmash extends EarthAbility {
 		if (state == State.START && progressCounter > 1) {
 			if (!player.isSneaking()) {
 				if (System.currentTimeMillis() - startTime >= chargeTime) {
-					origin = getEarthSourceBlock(grabRange);
+					origin = getEarthSourceBlock(selectRange);
 					if (origin == null) {
 						remove();
 						return;
@@ -540,7 +543,7 @@ public class EarthSmash extends EarthAbility {
 		for (Entity entity : entities) {
 			if (entity instanceof LivingEntity && entity != player && !affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
-				double damage = currentBlocks.size() / 13 * this.damage;
+				double damage = currentBlocks.size() / 13.0 * this.damage;
 				GeneralMethods.damageEntity(player, entity, damage, "EarthSmash");
 				Vector travelVec = GeneralMethods.getDirection(location, entity.getLocation());
 				entity.setVelocity(travelVec.setY(knockup).normalize().multiply(knockback));
@@ -821,6 +824,14 @@ public class EarthSmash extends EarthAbility {
 
 	public void setGrabRange(double grabRange) {
 		this.grabRange = grabRange;
+	}
+	
+	public double getSelectRange() {
+		return selectRange;
+	}
+
+	public void setSelectRange(double selectRange) {
+		this.selectRange = selectRange;
 	}
 
 	public double getShootRange() {

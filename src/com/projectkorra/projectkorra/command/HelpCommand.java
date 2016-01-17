@@ -1,22 +1,23 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
-import java.util.List;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.ComboManager;
 
 /**
  * Executor for /bending help. Extends {@link PKCommand}.
  */
 public class HelpCommand extends PKCommand {
 	public HelpCommand() {
-		super("help", "/bending help", "This command provides information on how to use other commands in ProjectKorra.", new String[] { "help", "h" });
+		super("help", "/bending help [Topic/Page]", "This command provides information on how to use other commands in ProjectKorra.", new String[] { "help", "h" });
 	}
 
 	@Override
@@ -24,15 +25,26 @@ public class HelpCommand extends PKCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1))
 			return;
 		else if (args.size() == 0) {
+			List<String> strings = new ArrayList<String>();
 			for (PKCommand command : instances.values()) {
-				sender.sendMessage(ChatColor.YELLOW + command.getProperUse());
+				strings.add(command.getProperUse());
+			}
+			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <required> [optional]", 1)) {
+				sender.sendMessage(ChatColor.YELLOW + s);
 			}
 			return;
 		}
 
 		String arg = args.get(0).toLowerCase();
-
-		if (instances.keySet().contains(arg.toLowerCase())) { //bending help command
+		if (isNumeric(arg)) {
+			List<String> strings = new ArrayList<String>();
+			for (PKCommand command : instances.values()) {
+				strings.add(command.getProperUse());
+			}
+			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <required> [optional]", Integer.valueOf(arg))) {
+				sender.sendMessage(ChatColor.YELLOW + s);
+			}
+		} else if (instances.keySet().contains(arg.toLowerCase())) {//bending help command
 			instances.get(arg).help(sender, true);
 		} else if (Arrays.asList(Commands.comboaliases).contains(arg)) { //bending help elementcombo
 			sender.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.RED + "/bending display " + arg + ChatColor.GOLD + " or " + ChatColor.RED + "/bending help <Combo Name>");

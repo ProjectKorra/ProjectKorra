@@ -1,12 +1,17 @@
 package com.projectkorra.projectkorra.command;
 
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Abstract representation of a command executor. Implements
@@ -183,5 +188,52 @@ public abstract class PKCommand implements SubCommand {
 			return "chi";
 		return null;
 	}
-
+	
+	/**
+	 * Returns a boolean if the string provided is numerical.
+	 * @param id
+	 * @return boolean
+	 */
+	protected boolean isNumeric(String id) {
+		NumberFormat formatter = NumberFormat.getInstance();
+		ParsePosition pos = new ParsePosition(0);
+		formatter.parse(id, pos);
+		return id.length() == pos.getIndex();
+	}
+	
+	/**
+	 * Returns a list for of commands for a page.
+	 * @param entries
+	 * @param title
+	 * @param page
+	 * @return
+	 */
+	protected List<String> getPage(List<String> entries, String title, int page) {
+		List<String> strings = new ArrayList<String>();
+		Collections.sort(entries);
+		
+		if (page < 1) {
+			page = 1;
+		}
+		if ((page * 8) - 8 >= entries.size()) {
+			page = Math.round(entries.size() / 8) + 1;
+			if (page < 1) {
+				page = 1;
+			}
+		}
+		strings.add(ChatColor.GOLD + "ProjectKorra " + ChatColor.DARK_GRAY + "- [" + ChatColor.GRAY + page + "/" + (int) Math.ceil((entries.size()+.0)/(8+.0)) + ChatColor.DARK_GRAY + "]");
+		strings.add(title);
+		if (entries.size() > ((page * 8) - 8)) {
+			for (int i = ((page * 8) - 8); i < entries.size(); i++) {
+				if (entries.get(i) != null) {
+					strings.add(entries.get(i).toString());
+				}
+				if (i >= (page * 8)-1) {
+					break;
+				}
+			}
+		}
+		return strings;
+	}
+	
 }
