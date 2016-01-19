@@ -24,7 +24,7 @@ public class BlazeRing extends FireAbility {
 		
 		this.range = (int) AvatarState.getValue(this.range, player);
 		
-		if (bPlayer.isOnCooldown(this)) {
+		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("BlazeRing")) {
 			return;
 		}		
 
@@ -46,7 +46,7 @@ public class BlazeRing extends FireAbility {
 		}
 		
 		start();
-		bPlayer.addCooldown(this);
+		bPlayer.addCooldown("BlazeRing", cooldown);
 		remove();
 	}
 

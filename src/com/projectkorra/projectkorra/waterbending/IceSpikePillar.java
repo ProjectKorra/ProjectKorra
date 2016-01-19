@@ -50,7 +50,7 @@ public class IceSpikePillar extends IceAbility {
 		super(player);
 		setFields();
 		
-		if (bPlayer.isOnCooldown(this)) {
+		if (bPlayer.isOnCooldown("IceSpikePillar")) {
 			return;
 		}
 		
@@ -87,7 +87,7 @@ public class IceSpikePillar extends IceAbility {
 			if (canInstantiate()) {
 				start();
 				time = System.currentTimeMillis() - interval;
-				bPlayer.addCooldown(this);
+				bPlayer.addCooldown("IceSpikePillar", cooldown);
 			}
 		}
 	}

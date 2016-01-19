@@ -20,8 +20,4 @@ public abstract class SpiritualAbility extends AirAbility implements SubAbility 
 		return Element.SPIRITUAL;
 	}
 	
-	@Override
-	public Element getParentElement() {
-		return Element.WATER;
-	}
 }

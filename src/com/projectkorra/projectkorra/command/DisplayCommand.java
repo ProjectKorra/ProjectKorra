@@ -1,5 +1,14 @@
 package com.projectkorra.projectkorra.command;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -7,15 +16,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.SubAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Executor for /bending display. Extends {@link PKCommand}.
@@ -102,7 +102,7 @@ public class DisplayCommand extends PKCommand {
 	}
 	
 	private void displayAvatar(CommandSender sender) {
-		ArrayList<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(Element.AVATAR);
+		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(Element.AVATAR);
 		if (abilities.isEmpty()) {
 			sender.sendMessage(ChatColor.YELLOW + "There are no " + Element.AVATAR.getColor() + "avatar" + ChatColor.YELLOW + " abilities on this server!");
 			return;
@@ -126,7 +126,7 @@ public class DisplayCommand extends PKCommand {
 	 */
 	private void displayElement(CommandSender sender, String element) {
 		element = this.getElement(element);
-		ArrayList<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(Element.getElement(element));
+		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(Element.getElement(element));
 		
 		if (abilities.isEmpty()) {
 			sender.sendMessage(ChatColor.RED + "You must select a valid element.");
@@ -208,7 +208,9 @@ public class DisplayCommand extends PKCommand {
 			return;
 		}
 		for (CoreAbility ability : abilities) {
-			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
+			if (ability.isHiddenAbility()) {
+				continue;
+			} else if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
 				sender.sendMessage(color + ability.getName());
 			}
 		}

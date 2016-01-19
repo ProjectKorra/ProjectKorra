@@ -35,7 +35,7 @@ public class RaiseEarth extends EarthAbility {
 		super(player);
 		setFields();
 		
-		if (!bPlayer.canBend(this)) {
+		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("RaiseEarthPillar")) {
 			return;
 		}
 
@@ -59,7 +59,7 @@ public class RaiseEarth extends EarthAbility {
 		loadAffectedBlocks();
 
 		if (distance != 0 && canInstantiate()) {
-			bPlayer.addCooldown(this);
+			bPlayer.addCooldown("RaiseEarthPillar", cooldown);
 			time = System.currentTimeMillis() - interval;
 			start();
 		}

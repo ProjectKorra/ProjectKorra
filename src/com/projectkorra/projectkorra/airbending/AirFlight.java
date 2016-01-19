@@ -90,10 +90,11 @@ public class AirFlight extends FlightAbility {
 			return;
 		}
 
+		player.setAllowFlight(true);
+		
 		if (flight == null) {
 			flight = new Flight(player);
-			player.setAllowFlight(true);
-			player.setVelocity(player.getEyeLocation().getDirection().normalize());
+			player.setFlying(true);
 		}
 
 		if (isHovering) {
@@ -113,6 +114,8 @@ public class AirFlight extends FlightAbility {
 		if (flight != null) {
 			flight.revert();
 		}
+		player.setFlying(false);
+		player.setAllowFlight(false);
 	}
 
 	@Override

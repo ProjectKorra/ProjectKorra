@@ -49,7 +49,7 @@ public class WaterSpout extends WaterAbility {
 		this.interval = getConfig().getLong("Abilities.Water.WaterSpout.Interval");
 		
 		WaterSpoutWave spoutWave = new WaterSpoutWave(player, WaterSpoutWave.AbilityType.CLICK);
-		if (spoutWave.isStarted()) {
+		if (spoutWave.isStarted() && !spoutWave.isRemoved()) {
 			return;
 		}
 

@@ -77,7 +77,7 @@ public class SurgeWall extends WaterAbility {
 			time = System.currentTimeMillis();
 		}
 
-		if (bPlayer.isOnCooldown(this)) {
+		if (bPlayer.isOnCooldown("SurgeWall")) {
 			return;
 		} else if (wall == null && WaterReturn.hasWaterBottle(player)) {
 			Location eyeLoc = player.getEyeLocation();

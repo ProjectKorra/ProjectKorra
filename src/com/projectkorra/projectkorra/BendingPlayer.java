@@ -1,11 +1,23 @@
 package com.projectkorra.projectkorra;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.SubAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
@@ -16,19 +28,6 @@ import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.waterbending.Bloodbending;
-
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class that presents a player and stores all bending information about the player.
@@ -90,7 +89,7 @@ public class BendingPlayer {
 		addCooldown(ability.getName(), cooldown);
 	}
 
-	public void addCooldown(CoreAbility ability) {
+	public void addCooldown(Ability ability) {
 		addCooldown(ability, ability.getCooldown());
 	}
 
@@ -148,7 +147,7 @@ public class BendingPlayer {
 	}
 
 	private boolean canBend(CoreAbility ability, boolean ignoreBinds, boolean ignoreCooldowns) {
-		if (ability == null || ability.getPlayer() == null) {
+		if (ability == null) {
 			return false;
 		}
 		
@@ -157,7 +156,7 @@ public class BendingPlayer {
 		
 		if (!player.isOnline() || player.isDead()) {
 			return false;
-		} else if (ability.getLocation() != null && !ability.getLocation().getWorld().equals(player.getWorld())) {
+		} else if (ability.getPlayer() != null && ability.getLocation() != null && !ability.getLocation().getWorld().equals(player.getWorld())) {
 			return false;
 		} else if (!ignoreCooldowns && isOnCooldown(ability.getName())) {
 			return false;
@@ -182,11 +181,9 @@ public class BendingPlayer {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, ability.getName(), playerLoc)) {
 			return false;
-		} else if (ability instanceof FireAbility && BendingManager.events.get(player.getWorld()) != null
-				&& BendingManager.events.get(player.getWorld()).equalsIgnoreCase("SolarEclipse")) {
+		} else if (ability instanceof FireAbility && FireAbility.isSolarEclipse(player.getWorld())) {
 			return false;
-		} else if (ability instanceof WaterAbility && BendingManager.events.get(player.getWorld()) != null
-				&& BendingManager.events.get(player.getWorld()).equalsIgnoreCase("LunarEclipse")) {
+		} else if (ability instanceof WaterAbility && WaterAbility.isLunarEclipse(player.getWorld())) {
 			return false;
 		} 
 		
@@ -239,9 +236,9 @@ public class BendingPlayer {
 			return false;
 		} else if (!hasElement(ability.getElement())) {
 			return false;
-		} else if (ability instanceof SubAbility) {
-			SubAbility subAbil = (SubAbility) ability;
-			if (!hasElement(subAbil.getParentElement())) {
+		} else if (ability.getElement() instanceof SubElement) {
+			SubElement subElement = (SubElement) ability.getElement();
+			if (!hasElement(subElement.getParentElement())) {
 				return false;
 			}
 		}

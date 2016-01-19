@@ -80,12 +80,12 @@ public class Torrent extends WaterAbility {
 		if (oldTorrent != null) {
 			if (!oldTorrent.sourceSelected) {
 				oldTorrent.use();
-				bPlayer.addCooldown(oldTorrent);
+				bPlayer.addCooldown("Torrent", oldTorrent.cooldown);
 				return;
 			}
 		}
 		
-		if (bPlayer.isOnCooldown(this)) {
+		if (bPlayer.isOnCooldown("Torrent")) {
 			return;
 		}
 		

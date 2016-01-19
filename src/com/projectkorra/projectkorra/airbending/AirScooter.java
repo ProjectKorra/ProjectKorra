@@ -160,7 +160,7 @@ public class AirScooter extends AirAbility {
 
 	@Override
 	public Location getLocation() {
-		return player.getLocation() != null ? player.getLocation() : null;
+		return player != null ? player.getLocation() : null;
 	}
 
 	@Override

@@ -20,8 +20,4 @@ public abstract class LightningAbility extends FireAbility implements SubAbility
 		return Element.LIGHTNING;
 	}
 	
-	@Override
-	public Element getParentElement() {
-		return Element.FIRE;
-	}
 }

@@ -22,7 +22,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public abstract class WaterAbility extends BlockAbility {
+public abstract class WaterAbility extends ElementalAbility {
 
 	public WaterAbility(Player player) {
 		super(player);

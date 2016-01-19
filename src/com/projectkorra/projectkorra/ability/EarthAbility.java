@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class EarthAbility extends BlockAbility {
+public abstract class EarthAbility extends ElementalAbility {
 	
 	private static final HashSet<Block> PREVENT_EARTHBENDING = new HashSet<Block>();
 	private static final ConcurrentHashMap<Block, Information> MOVED_EARTH = new ConcurrentHashMap<Block, Information>();

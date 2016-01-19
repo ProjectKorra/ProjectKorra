@@ -140,7 +140,8 @@ public class Preset {
 		HashMap<Integer, String> abilities = preset.abilities;
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
-			if (!bPlayer.canBind(CoreAbility.getAbility(abilities.get(i)))) {
+			CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
+			if (coreAbil != null && !bPlayer.canBind(coreAbil)) {
 				abilities.remove(i);
 				boundAll = false;
 			}
@@ -242,7 +243,8 @@ public class Preset {
 			}
 
 			for (int i = 1; i <= 9; i++) {
-				if (!bPlayer.canBind(CoreAbility.getAbility(abilities.get(i)))) {
+				CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
+				if (coreAbil != null && !bPlayer.canBind(coreAbil)) {
 					abilities.remove(i);
 					boundAll = false;
 				}

@@ -113,13 +113,13 @@ public class EarthSmash extends EarthAbility {
 
 			EarthSmash grabbedSmash = aimingAtSmashCheck(player, State.LIFTED);
 			if (grabbedSmash == null) {
+				if (bPlayer.isOnCooldown(this)) {
+					return;
+				}
 				grabbedSmash = aimingAtSmashCheck(player, State.SHOT);
 			}
 			
 			if (grabbedSmash != null) {
-				if (bPlayer.isOnCooldown(this)) {
-					return;
-				}
 				grabbedSmash.state = State.GRABBED;
 				grabbedSmash.grabbedDistance = grabbedSmash.location.distance(player.getEyeLocation());
 				grabbedSmash.player = player;

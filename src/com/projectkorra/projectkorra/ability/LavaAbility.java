@@ -20,9 +20,4 @@ public abstract class LavaAbility extends EarthAbility implements SubAbility {
 		return Element.LAVA;
 	}
 	
-	@Override
-	public Element getParentElement() {
-		return Element.EARTH;
-	}
-	
 }

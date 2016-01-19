@@ -214,7 +214,7 @@ public class IceSpikeBlast extends IceAbility {
 			}
 			progressing = false;
 		}
-		bPlayer.addCooldown(this);
+		bPlayer.addCooldown("IceSpikeBlast", cooldown);
 	}
 
 	private void returnWater() {
@@ -265,7 +265,7 @@ public class IceSpikeBlast extends IceAbility {
 		
 		if (bPlayer == null) {
 			return;
-		} else if (bPlayer.isOnCooldown("IceSpike")) {
+		} else if (bPlayer.isOnCooldown("IceSpikeBlast")) {
 			return;
 		}
 
@@ -388,7 +388,7 @@ public class IceSpikeBlast extends IceAbility {
 
 	@Override
 	public String getName() {
-		return "IceSpikeBlast";
+		return "IceSpike";
 	}
 
 	@Override
@@ -404,11 +404,6 @@ public class IceSpikeBlast extends IceAbility {
 	@Override
 	public long getCooldown() {
 		return cooldown;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 	
 	@Override

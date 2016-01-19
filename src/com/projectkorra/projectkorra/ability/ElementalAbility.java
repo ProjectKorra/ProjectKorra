@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.rpg.event.EventManager;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -12,10 +12,14 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.rpg.event.EventManager;
 
-// Contains methods that all 5 elements should be capable of accessing
+/**
+ * ElementalAbility is used to hold methods that should be accessible by every
+ * Air, Water, Earth, Fire, Chi, or AvatarAbility. This class is mainly used to keep
+ * CoreAbility from becoming too cluttered.
+ */
 public abstract class ElementalAbility extends CoreAbility {
 	
 	private static final Integer[] TRANSPARENT_MATERIAL = { 0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106, 175 };
@@ -96,7 +100,14 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 	
 	public static boolean isLunarEclipse(World world) {
-		if (world == null) {
+		if (world == null || !GeneralMethods.hasRPG()) {
+			return false;
+		}
+		return EventManager.marker.get(world).equalsIgnoreCase("LunarEclipse");
+	}
+	
+	public static boolean isSolarEclipse(World world) {
+		if (world == null || !GeneralMethods.hasRPG()) {
 			return false;
 		}
 		return EventManager.marker.get(world).equalsIgnoreCase("SolarEclipse");
@@ -184,7 +195,10 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSozinsComet(World world) {
-		return world != null ? EventManager.marker.get(world).equalsIgnoreCase("SozinsComet") : false;
+		if (world == null || !GeneralMethods.hasRPG()) {
+			return false;
+		}
+		return EventManager.marker.get(world).equalsIgnoreCase("SozinsComet");
 	}
 
 	public static boolean isTransparent(Player player, Block block) {

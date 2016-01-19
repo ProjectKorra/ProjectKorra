@@ -32,7 +32,7 @@ public class PhaseChangeFreeze extends IceAbility {
 	public PhaseChangeFreeze(Player player) {
 		super(player);
 		
-		if (!bPlayer.canBend(this) || !bPlayer.canIcebend()) {
+		if (!bPlayer.canBend(this) || !bPlayer.canIcebend() || bPlayer.isOnCooldown("PhaseChangeFreeze")) {
 			return;
 		}
 		
@@ -55,7 +55,7 @@ public class PhaseChangeFreeze extends IceAbility {
 			}
 		}
 
-		bPlayer.addCooldown(this);
+		bPlayer.addCooldown("PhaseChangeFreeze", cooldown);
 		remove();
 	}
 

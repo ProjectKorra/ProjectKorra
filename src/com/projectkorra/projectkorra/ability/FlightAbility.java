@@ -20,8 +20,4 @@ public abstract class FlightAbility extends AirAbility implements SubAbility {
 		return Element.FLIGHT;
 	}
 	
-	@Override
-	public Element getParentElement() {
-		return Element.AIR;
-	}
 }

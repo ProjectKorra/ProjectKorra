@@ -20,8 +20,4 @@ public abstract class CombustionAbility extends FireAbility implements SubAbilit
 		return Element.COMBUSTION;
 	}
 	
-	@Override
-	public Element getParentElement() {
-		return Element.FIRE;
-	}
 }

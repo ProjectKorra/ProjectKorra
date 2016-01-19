@@ -20,8 +20,4 @@ public abstract class HealingAbility extends WaterAbility implements SubAbility 
 		return Element.HEALING;
 	}
 	
-	@Override
-	public Element getParentElement() {
-		return Element.WATER;
-	}
 }

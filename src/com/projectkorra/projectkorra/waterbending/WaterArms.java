@@ -375,7 +375,7 @@ public class WaterArms extends WaterAbility {
 		super.remove();
 		MultiAbilityManager.unbindMultiAbility(player);
 		if (player.isOnline()) {
-			bPlayer.addCooldown(this);
+			bPlayer.addCooldown("WaterArms", cooldown);
 		}
 	}
 

@@ -138,7 +138,7 @@ public class LavaFlow extends LavaAbility {
 				}
 			}
 
-			if (bPlayer.isOnCooldown("lavaflowshift")) {
+			if (bPlayer.isOnCooldown("LavaFlowShift")) {
 				remove();
 				return;
 			}
@@ -155,20 +155,20 @@ public class LavaFlow extends LavaAbility {
 			makeLava = !isLava(sourceBlock);
 
 			if (makeLava) {
-				if (bPlayer.isOnCooldown("lavaflowmakelava")) {
+				if (bPlayer.isOnCooldown("LavaFlowMakeLava")) {
 					remove();
 					return;
 				} else {
-					bPlayer.addCooldown("lavaflowmakelava", cooldown);
+					bPlayer.addCooldown("LavaFlowMakeLava", cooldown);
 				}
 			}
 
 			if (!makeLava) {
-				if (bPlayer.isOnCooldown("lavaflowmakeland")) {
+				if (bPlayer.isOnCooldown("LavaFlowMakeLand")) {
 					remove();
 					return;
 				} else {
-					bPlayer.addCooldown("lavaflowmakeland", cooldown);
+					bPlayer.addCooldown("LavaFlowMakeLand", cooldown);
 				}
 			}
 			start();
@@ -203,7 +203,7 @@ public class LavaFlow extends LavaAbility {
 				if (affectedBlocks.size() > 0) {
 					removeOnDelay();
 					removing = true;
-					bPlayer.addCooldown("lavaflowshift", shiftCooldown);
+					bPlayer.addCooldown("LavaFlowShift", shiftCooldown);
 				} else {
 					remove();
 				}

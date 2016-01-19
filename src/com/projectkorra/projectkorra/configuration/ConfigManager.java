@@ -539,7 +539,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterManipulation.Enabled", true);
 				config.addDefault("Abilities.Water.WaterManipulation.Description", "To use, place your cursor over a waterbendable object and tap sneak (default: shift). Smoke will appear where you've selected, indicating the origin of your ability. After you have selected an origin, simply left-click in any direction and you will see your water spout off in that direction, slicing any creature in its path. If you look towards a creature when you use this ability, it will target that creature. A collision from Water Manipulation both knocks the target back and deals some damage. Alternatively, if you have the source selected and tap shift again, you will be able to control the water more directly.");
 				config.addDefault("Abilities.Water.WaterManipulation.Damage", 3.0);
-				config.addDefault("Abilities.Water.WaterManipulation.Range", 30);
+				config.addDefault("Abilities.Water.WaterManipulation.SelectRange", 30);
 				config.addDefault("Abilities.Water.WaterManipulation.CollisionRadius", 2);
 				config.addDefault("Abilities.Water.WaterManipulation.DeflectRange", 3);
 				config.addDefault("Abilities.Water.WaterManipulation.Speed", 35);
@@ -556,7 +556,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterSpout.Wave.Enabled", true);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.Radius", 3.8);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.WaveRadius", 1.5);
-				config.addDefault("Abilities.Water.WaterSpout.Wave.Range", 6);
+				config.addDefault("Abilities.Water.WaterSpout.Wave.SelectRange", 6);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.AnimationSpeed", 1.2);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.ChargeTime", 500);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.FlightTime", 2500);
@@ -821,7 +821,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Fire.Lightning.Cooldown", 500);
 				config.addDefault("Abilities.Fire.Lightning.StunChance", 0.20);
 				config.addDefault("Abilities.Fire.Lightning.StunDuration", 30.0);
-				config.addDefault("Abilities.Fire.Lightning.MaxArcAngle", 5);
+				config.addDefault("Abilities.Fire.Lightning.MaxArcAngle", 2.5);
 				config.addDefault("Abilities.Fire.Lightning.SubArcChance", 0.00125);
 				config.addDefault("Abilities.Fire.Lightning.ChainArcRange", 6.0);
 				config.addDefault("Abilities.Fire.Lightning.ChainArcChance", 0.50);

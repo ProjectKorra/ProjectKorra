@@ -20,8 +20,4 @@ public abstract class PlantAbility extends WaterAbility implements SubAbility {
 		return Element.PLANT;
 	}
 	
-	@Override
-	public Element getParentElement() {
-		return Element.WATER;
-	}
 }

@@ -20,8 +20,4 @@ public abstract class MetalAbility extends EarthAbility implements SubAbility {
 		return Element.METAL;
 	}
 
-	@Override
-	public Element getParentElement() {
-		return Element.EARTH;
-	}
 }

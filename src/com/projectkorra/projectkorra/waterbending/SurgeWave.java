@@ -79,7 +79,6 @@ public class SurgeWave extends WaterAbility {
 				wave.remove();
 			}
 			start();
-			bPlayer.addCooldown(this);
 			time = System.currentTimeMillis();
 		}
 	}
@@ -173,10 +172,10 @@ public class SurgeWave extends WaterAbility {
 
 	@SuppressWarnings("deprecation")
 	public void moveWater() {
-		if (bPlayer.isOnCooldown(this)) {
+		if (bPlayer.isOnCooldown("SurgeWave")) {
 			return;
 		}
-		bPlayer.addCooldown(this);
+		bPlayer.addCooldown("SurgeWave", cooldown);
 		
 		if (sourceBlock != null) {
 			if (!sourceBlock.getWorld().equals(player.getWorld())) {

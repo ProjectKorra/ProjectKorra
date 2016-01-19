@@ -1,15 +1,15 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
 
 public class Collapse extends EarthAbility {
 
@@ -29,7 +29,7 @@ public class Collapse extends EarthAbility {
 		super(player);
 		setFields();
 		
-		if (!bPlayer.canBend(this)) {
+		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("CollapsePillar")) {
 			return;
 		}
 		
@@ -45,7 +45,7 @@ public class Collapse extends EarthAbility {
 
 		if (distance != 0) {
 			start();
-			bPlayer.addCooldown(this);
+			bPlayer.addCooldown("CollapsePillar", cooldown);
 			time = System.currentTimeMillis() - (long) (1000.0 / speed);
 		} else {
 			remove();
@@ -72,7 +72,7 @@ public class Collapse extends EarthAbility {
 
 	private void setFields() {
 		this.height = getConfig().getInt("Abilities.Earth.Collapse.Column.Height");
-		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.Range");
+		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
 		this.speed = getConfig().getDouble("Abilities.Earth.Collapse.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Collapse.Column.Cooldown");
 		this.direction = new Vector(0, -1, 0);

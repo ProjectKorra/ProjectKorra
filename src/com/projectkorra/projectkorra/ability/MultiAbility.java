@@ -7,10 +7,10 @@ import java.util.ArrayList;
 public interface MultiAbility {
 	
 	/**
-	 * Returns the sub abilities of a MultiAbility. e.g. {@code new
-	 * MultiAbilitySub("SubAbility", Element.Fire, SubElement.Lightning);}
+	 * Returns the sub abilities of a MultiAbility. For example: <p>{@code new
+	 * MultiAbilitySub("SubAbility", Element.LIGHTNING);}
 	 * 
-	 * @return arraylist of multiabilitysub
+	 * @return a list of sub MultiAbilities
 	 */
 	public abstract ArrayList<MultiAbilityInfoSub> getMultiAbilities();
 	

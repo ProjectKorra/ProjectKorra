@@ -23,7 +23,7 @@ public class HeatControlExtinguish extends FireAbility {
 	public HeatControlExtinguish(Player player) {
 		super(player);
 		
-		if (bPlayer.isOnCooldown(this)) {
+		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("HeatControlExtinguish")) {
 			return;
 		}
 
@@ -51,7 +51,7 @@ public class HeatControlExtinguish extends FireAbility {
 			}
 		}
 
-		bPlayer.addCooldown(this);
+		bPlayer.addCooldown("HeatControlExtinguish", cooldown);
 	}
 
 	public static boolean canBurn(Player player) {

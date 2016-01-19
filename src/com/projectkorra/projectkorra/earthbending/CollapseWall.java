@@ -25,7 +25,8 @@ public class CollapseWall extends EarthAbility {
 	
 	public CollapseWall(Player player) {
 		super(player);
-		if (bPlayer.isOnCooldown(this)) {
+		
+		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("CollapseWall")) {
 			return;
 		}
 
@@ -50,7 +51,7 @@ public class CollapseWall extends EarthAbility {
 		}
 
 		if (!baseBlocks.isEmpty()) {
-			bPlayer.addCooldown(this);
+			bPlayer.addCooldown("CollapseWall", cooldown);
 		}
 		for (Block block : baseBlocks.keySet()) {
 			new Collapse(player, block.getLocation());

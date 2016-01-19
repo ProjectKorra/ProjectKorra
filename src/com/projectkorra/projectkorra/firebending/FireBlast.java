@@ -71,7 +71,7 @@ public class FireBlast extends FireAbility {
 	public FireBlast(Player player) {
 		super(player);
 		
-		if (bPlayer.isOnCooldown(this)) {
+		if (bPlayer.isOnCooldown("FireBlast")) {
 			return;
 		} else if (player.getEyeLocation().getBlock().isLiquid() || FireBlastCharged.isCharging(player)) {
 			return;
@@ -86,7 +86,7 @@ public class FireBlast extends FireAbility {
 		this.location = location.add(direction.clone());
 		
 		start();
-		bPlayer.addCooldown(this);
+		bPlayer.addCooldown("FireBlast", cooldown);
 	}
 	
 	private void setFields() {

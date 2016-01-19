@@ -72,9 +72,9 @@ public class Bloodbending extends BloodAbility {
 						BendingPlayer enemyBPlayer = BendingPlayer.getBendingPlayer(enemyPlayer);
 						if (enemyBPlayer == null
 								|| GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) 
-								|| (enemyBPlayer.isAvatarState()
+								|| enemyBPlayer.isAvatarState()
 								|| entity.getEntityId() == player.getEntityId() 
-								|| enemyBPlayer.canBend(this))) {
+								|| enemyBPlayer.canBendIgnoreBindsCooldowns(this)) {
 							continue;
 						}
 					}
@@ -91,12 +91,14 @@ public class Bloodbending extends BloodAbility {
 			}
 			Entity target = entities.get(0);
 			
-			if (target == null || !(target instanceof LivingEntity) || GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())) {
+			if (target == null || !(target instanceof LivingEntity) 
+					|| GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())
+					|| target.getEntityId() == player.getEntityId()) {
 				return;
 			} else if (target instanceof Player) {
 				BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer(player);
 				if (targetBPlayer != null) {
-					if ((targetBPlayer.canBend(ability) && !canBloodbendOtherBloodbenders) || targetBPlayer.isAvatarState()) {
+					if ((targetBPlayer.canBendIgnoreBindsCooldowns(ability) && !canBloodbendOtherBloodbenders) || targetBPlayer.isAvatarState()) {
 						if (!isDay(target.getWorld()) || targetBPlayer.canBloodbendAtAnytime()) {
 							return;
 						}

@@ -23,7 +23,6 @@ public class HeatControlCook extends FireAbility {
 	public HeatControlCook(Player player) {
 		super(player);
 		
-		
 		this.time = System.currentTimeMillis();
 		this.cookTime = getConfig().getLong("Abilities.Fire.HeatControl.Cook.CookTime");
 		this.item = player.getItemInHand();

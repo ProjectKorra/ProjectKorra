@@ -20,8 +20,4 @@ public abstract class IceAbility extends WaterAbility implements SubAbility {
 		return Element.ICE;
 	}
 	
-	@Override
-	public Element getParentElement() {
-		return Element.WATER;
-	}
 }

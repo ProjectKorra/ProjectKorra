@@ -20,9 +20,4 @@ public abstract class SandAbility extends EarthAbility implements SubAbility {
 		return Element.SAND;
 	}
 	
-	@Override
-	public Element getParentElement() {
-		return Element.EARTH;
-	}
-	
 }

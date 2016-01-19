@@ -20,8 +20,4 @@ public abstract class BloodAbility extends WaterAbility implements SubAbility {
 		return Element.BLOOD;
 	}
 	
-	@Override
-	public Element getParentElement() {
-		return Element.WATER;
-	}
 }

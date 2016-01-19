@@ -27,7 +27,7 @@ public class IceSpikePillarField extends IceAbility {
 	public IceSpikePillarField(Player player) {
 		super(player);
 		
-		if (bPlayer.isOnCooldown(this)) {
+		if (bPlayer.isOnCooldown("IceSpikePillarField")) {
 			return;
 		}
 		
@@ -91,7 +91,7 @@ public class IceSpikePillarField extends IceAbility {
 			
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
 				new IceSpikePillar(player, targetBlock.getLocation(), (int) damage, thrownForce, cooldown);
-				bPlayer.addCooldown(this);
+				bPlayer.addCooldown("IceSpikePillarField", cooldown);
 				iceBlocks.remove(targetBlock);
 			}
 		}
@@ -99,7 +99,7 @@ public class IceSpikePillarField extends IceAbility {
 
 	@Override
 	public String getName() {
-		return "IceSpikePillarField";
+		return "IceSpike";
 	}
 
 	@Override
@@ -113,11 +113,6 @@ public class IceSpikePillarField extends IceAbility {
 	@Override
 	public long getCooldown() {
 		return cooldown;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 	
 	@Override

@@ -1,11 +1,9 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,10 +15,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterSpoutWave extends WaterAbility {
 	
@@ -43,7 +41,7 @@ public class WaterSpoutWave extends WaterAbility {
 	private int progressCounter;
 	private long time;
 	private long cooldown;
-	private double range;
+	private double selectRange;
 	private double speed;
 	private double chargeTime;
 	private double flightTime;
@@ -69,7 +67,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.radius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
 		this.waveRadius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
 		this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.AnimationSpeed");
-		this.range = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Range");
+		this.selectRange = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.SelectRange");
 		this.speed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Speed");
 		this.damage = getConfig().getDouble("Abilities.Water.WaterCombo.IceWave.Damage");
 		this.chargeTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.ChargeTime");
@@ -88,6 +86,11 @@ public class WaterSpoutWave extends WaterAbility {
 		this.time = System.currentTimeMillis();
 		this.type = type;
 		start();
+		
+		if (type == AbilityType.CLICK) {
+			 // Need to progress immediately for the WaterSpout check
+			progress();
+		}
 	}
 
 	@Override
@@ -111,7 +114,7 @@ public class WaterSpoutWave extends WaterAbility {
 		if (type == AbilityType.CLICK) {
 			if (origin == null) {
 				removeOldType(player, AbilityType.CLICK);
-				Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canBend(this));
+				Block block = getWaterSourceBlock(player, selectRange, false);
 				
 				if (block == null) {
 					remove();
@@ -134,7 +137,7 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 			}
 			
-			if (player.getLocation().distanceSquared(origin) > range * range) {
+			if (player.getLocation().distanceSquared(origin) > selectRange * selectRange) {
 				remove();
 				return;
 			} else if (player.isSneaking()) {
@@ -510,12 +513,12 @@ public class WaterSpoutWave extends WaterAbility {
 		this.time = time;
 	}
 
-	public double getRange() {
-		return range;
+	public double getSelectRange() {
+		return selectRange;
 	}
 
-	public void setRange(double range) {
-		this.range = range;
+	public void setSelectRange(double selectRange) {
+		this.selectRange = selectRange;
 	}
 
 	public double getSpeed() {

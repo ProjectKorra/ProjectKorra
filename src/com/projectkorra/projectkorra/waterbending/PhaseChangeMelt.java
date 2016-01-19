@@ -40,7 +40,7 @@ public class PhaseChangeMelt extends IceAbility {
 		this.range = getNightFactor(range);
 		this.radius = getNightFactor(radius);
 		
-		if (!bPlayer.canIcebend() || !bPlayer.canIcebend()) {
+		if (!bPlayer.canBend(this) || !bPlayer.canIcebend() || bPlayer.isOnCooldown("PhaseChangeMelt")) {
 			return;
 		}		
 
@@ -67,7 +67,7 @@ public class PhaseChangeMelt extends IceAbility {
 			}
 		}
 		
-		bPlayer.addCooldown(this);
+		bPlayer.addCooldown("PhaseChangeMelt", cooldown);
 		remove();
 	}
 
@@ -110,7 +110,7 @@ public class PhaseChangeMelt extends IceAbility {
 
 	@Override
 	public String getName() {
-		return "PhaseChangeMelt";
+		return "PhaseChange";
 	}
 
 	@Override
@@ -125,11 +125,6 @@ public class PhaseChangeMelt extends IceAbility {
 	@Override
 	public long getCooldown() {
 		return cooldown;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 	
 	@Override

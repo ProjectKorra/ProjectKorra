@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-
 public class Blaze extends FireAbility {
 	
 	private int arc;
@@ -23,7 +22,7 @@ public class Blaze extends FireAbility {
 		this.arc = getConfig().getInt("Abilities.Fire.Blaze.Arc");
 		this.range = getConfig().getDouble("Abilities.Fire.Blaze.Range");
 		
-		if (!bPlayer.canBend(this)) {
+		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("BlazeArc")) {
 			return;
 		}
 		
@@ -50,7 +49,7 @@ public class Blaze extends FireAbility {
 		}
 
 		start();
-		bPlayer.addCooldown(this);
+		bPlayer.addCooldown("BlazeArc", cooldown);
 		remove();
 	}
 
