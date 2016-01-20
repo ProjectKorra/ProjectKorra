@@ -33,7 +33,6 @@ public class AirCombo extends AirAbility implements ComboAbility {
 		TWISTER_MOVING, TWISTER_STATIONARY
 	}
 
-	private boolean isEnabled;
 	private int progressCounter;
 	private long cooldown;
 	private long time;
@@ -62,12 +61,11 @@ public class AirCombo extends AirAbility implements ComboAbility {
 		super(player);
 		
 		this.abilityName = ability;
-		this.isEnabled = getConfig().getBoolean("Abilities.Air.AirCombo.Enabled");
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 		this.flights = new ArrayList<>();
 
-		if (!this.isEnabled || !bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 
@@ -488,14 +486,6 @@ public class AirCombo extends AirAbility implements ComboAbility {
 
 	public void setState(AbilityState state) {
 		this.state = state;
-	}
-
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
 	}
 
 	public int getProgressCounter() {

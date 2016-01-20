@@ -39,7 +39,6 @@ public class WaterCombo extends WaterAbility implements ComboAbility {
 
 	private static final ConcurrentHashMap<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 
-	private boolean enabled;
 	private int leftClicks;
 	private int rightClicks;
 	private double damage;
@@ -67,11 +66,10 @@ public class WaterCombo extends WaterAbility implements ComboAbility {
 
 		this.time = System.currentTimeMillis();
 		this.name = name;
-		this.enabled = getConfig().getBoolean("Abilities.Water.WaterCombo.Enabled");
 		this.tasks = new ArrayList<>();
 		this.affectedBlocks = new ConcurrentHashMap<>();
 
-		if (!enabled || !bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 
@@ -384,14 +382,6 @@ public class WaterCombo extends WaterAbility implements ComboAbility {
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
 		return null;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
 	}
 
 	public int getLeftClicks() {

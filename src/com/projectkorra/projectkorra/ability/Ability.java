@@ -69,6 +69,12 @@ public interface Ability {
 	 * @return true if the ability should not be displayed to the players
 	 */
 	public boolean isHiddenAbility();
+	
+	/**
+	 * Returns true if the ability is enabled through the config.yml. Usually the Enabled option
+	 * follows the format Abilities.ElementName.AbilityName.Enabled.
+	 */
+	public boolean isEnabled();
 
 	/**
 	 * @return the cooldown for the ability

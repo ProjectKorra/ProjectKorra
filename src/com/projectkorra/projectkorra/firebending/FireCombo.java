@@ -51,7 +51,6 @@ public class FireCombo extends FireAbility implements ComboAbility {
 	};
 
 	private boolean firstTime;
-	private boolean enabled;
 	private int progressCounter;
 	private long time;
 	private long cooldown;
@@ -76,9 +75,8 @@ public class FireCombo extends FireAbility implements ComboAbility {
 		Bukkit.broadcastMessage("Here 0");
 		
 		this.ability = ability;
-		this.enabled = getConfig().getBoolean("Abilities.Fire.FireCombo.Enabled");
 		
-		if (!this.enabled || !bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 		
@@ -615,14 +613,6 @@ public class FireCombo extends FireAbility implements ComboAbility {
 
 	public void setFirstTime(boolean firstTime) {
 		this.firstTime = firstTime;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
 	}
 
 	public int getProgressCounter() {

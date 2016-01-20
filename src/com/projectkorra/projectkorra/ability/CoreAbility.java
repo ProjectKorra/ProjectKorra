@@ -364,8 +364,10 @@ public abstract class CoreAbility implements Ability {
 					Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);;
 					CoreAbility ability = (CoreAbility) clazz.cast(intConstr.newInstance());
 
-					if (ability != null && ability.getName() != null) {
+					if (ability != null && ability.getName() != null && ability.isEnabled()) {
 						ABILITIES_BY_NAME.put(ability.getName().toLowerCase(), ability);
+					} else if (!ability.isEnabled()) {
+						plugin.getLogger().info(ability.getName() + " is disabled");
 					}
 				} catch (Exception e) {
 				} catch (Error e) {
@@ -387,12 +389,19 @@ public abstract class CoreAbility implements Ability {
 	public static void registerAddonAbilities(String folder) {
 		ProjectKorra plugin = ProjectKorra.plugin;
 		File path = new File(plugin.getDataFolder().toString() + folder);
+		if (!path.exists()) {
+			return;
+		}
+		
 		AbilityLoader<CoreAbility> abilityLoader = new AbilityLoader<CoreAbility>(plugin, path);
 		List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
 		
 		for (CoreAbility coreAbil : loadedAbilities) {
 			if (!(coreAbil instanceof AddonAbility)) {
 				plugin.getLogger().warning(coreAbil.getName() + " is an addon ability and must implement the AddonAbility interface");
+				continue;
+			} else if (!coreAbil.isEnabled()) {
+				plugin.getLogger().info(coreAbil.getName() + " is disabled");
 				continue;
 			}
 			
@@ -452,11 +461,33 @@ public abstract class CoreAbility implements Ability {
 	}
 	
 	@Override
-	public String getDescription() {
-		if (this.getElement() instanceof SubElement) {
-			return getConfig().getString("Abilities." + ((SubElement) this.getElement()).getParentElement().getName() + "." + getName() + ".Description");
+	public boolean isEnabled() {
+		String elementName = getElement().getName();
+		if (getElement() instanceof SubElement) {
+			elementName = ((SubElement) getElement()).getParentElement().getName();
 		}
-		return getConfig().getString("Abilities." + getElement().getName() + "." + getName() + ".Description");
+		
+		String tag = null;
+		if (this instanceof ComboAbility) {
+			tag = "Abilities." + elementName + "." + elementName + "Combo" + ".Enabled";
+		} else {
+			tag = "Abilities." + elementName + "." + getName() + ".Enabled";
+		}
+		
+		if (getConfig().isBoolean(tag)) {
+			return getConfig().getBoolean(tag);
+		} else {
+			return true;
+		}
+	}
+	
+	@Override
+	public String getDescription() {
+		String elementName = getElement().getName();
+		if (getElement() instanceof SubElement) {
+			elementName = ((SubElement) getElement()).getParentElement().getName();
+		}
+		return getConfig().getString("Abilities." + elementName + "." + getName() + ".Description");
 	}
 
 	@Override

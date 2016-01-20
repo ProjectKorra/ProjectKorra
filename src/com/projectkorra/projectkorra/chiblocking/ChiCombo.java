@@ -24,7 +24,6 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 	 */
 	private static final ConcurrentHashMap<Entity, Long> PARALYZED_ENTITIES = new ConcurrentHashMap<>();
 	
-	private boolean enabled;
 	private long duration;
 	private long cooldown;
 	private Entity target;
@@ -34,11 +33,7 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 		super(player);
 		
 		this.name = ability;
-		this.enabled = getConfig().getBoolean("Abilities.Chi.ChiCombo.Enabled");
 		
-		if (!enabled) {
-			return;
-		}
 		if (ability.equalsIgnoreCase("Immobilize")) {
 			this.cooldown = getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.Cooldown");
 			this.duration = getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration");
@@ -154,14 +149,6 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
 		return null;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
 	}
 
 	public long getDuration() {

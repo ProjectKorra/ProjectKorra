@@ -33,6 +33,10 @@ public class AbilityLoader<T> implements Listener {
 		this.plugin = plugin;
 		this.directory = directory;
 		this.files = new ArrayList<File>();
+		
+		if (plugin == null || directory == null) {
+			return;
+		}
 
 		for (File f : directory.listFiles(new FileExtensionFilter(".jar"))) {
 			files.add(f);

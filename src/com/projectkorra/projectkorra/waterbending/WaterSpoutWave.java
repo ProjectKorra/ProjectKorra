@@ -36,7 +36,6 @@ public class WaterSpoutWave extends WaterAbility {
 	private boolean charging;
 	private boolean iceWave;
 	private boolean iceOnly;
-	private boolean enabled;
 	private boolean moving;
 	private int progressCounter;
 	private long time;
@@ -63,7 +62,6 @@ public class WaterSpoutWave extends WaterAbility {
 		this.charging = false;
 		this.iceWave = false;
 		this.iceOnly = false;
-		this.enabled = getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.Enabled");
 		this.radius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
 		this.waveRadius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
 		this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.AnimationSpeed");
@@ -79,7 +77,7 @@ public class WaterSpoutWave extends WaterAbility {
 		
 		this.damage = getNightFactor(this.damage);
 		
-		if (!enabled || !bPlayer.canBend(this)) {
+		if (!bPlayer.canBend(this)) {
 			return;
 		}
 
@@ -482,11 +480,7 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+		return getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.Enabled");
 	}
 
 	public boolean isMoving() {
