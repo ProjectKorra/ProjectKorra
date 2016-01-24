@@ -1,8 +1,7 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.EarthAbility;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -13,62 +12,88 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 
-public class EarthGrab {
+public class EarthGrab extends EarthAbility {
+	
+	private long cooldown;
+	private double lowestDistance;
+	private double selectRange;
+	private double height;
+	private Location origin;
+	private Vector direction;
+	private Entity closestEntity;
 
-	private static double range = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthGrab.Range");
-	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthGrab.Cooldown");
-
-	public EarthGrab(Player player) {
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-
-		if (bPlayer.isOnCooldown("EarthGrab"))
+	public EarthGrab(Player player, boolean isOtherEntity) {
+		super(player);
+		
+		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthGrab.SelectRange");
+		this.height = getConfig().getDouble("Abilities.Earth.EarthGrab.Height");
+		this.cooldown = getConfig().getLong("Abilities.Earth.EarthGrab.Cooldown");
+		this.origin = player.getEyeLocation();
+		this.direction = origin.getDirection();
+		this.lowestDistance = selectRange + 1;
+		this.closestEntity = null;
+		
+		if (!bPlayer.canBend(this)) {
 			return;
-
-		Location origin = player.getEyeLocation();
-		Vector direction = origin.getDirection();
-		double lowestdistance = range + 1;
-		Entity closestentity = null;
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, range)) {
+		}
+		
+		start();
+		if (isOtherEntity) {
+			earthGrabOtherEntity();
+		} else {
+			earthGrabSelf();
+		}
+		remove();
+	}
+	
+	public void earthGrabOtherEntity() {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, selectRange)) {
 			if (GeneralMethods.getDistanceFromLine(direction, origin, entity.getLocation()) <= 3
-					&& (entity instanceof LivingEntity) && (entity.getEntityId() != player.getEntityId())) {
+					&& (entity instanceof LivingEntity)
+					&& (entity.getEntityId() != player.getEntityId())) {
 				double distance = origin.distance(entity.getLocation());
-				if (distance < lowestdistance) {
-					closestentity = entity;
-					lowestdistance = distance;
+				if (distance < lowestDistance) {
+					closestEntity = entity;
+					lowestDistance = distance;
 				}
 			}
 		}
 
-		if (closestentity != null) {
-			// Methods.verbose("grabbing");
+		if (closestEntity != null) {
 			ArrayList<Block> blocks = new ArrayList<Block>();
-			Location location = closestentity.getLocation();
+			Location location = closestEntity.getLocation();
 			Location loc1 = location.clone();
 			Location loc2 = location.clone();
-			Location testloc, testloc2;
+			Location testLoc, testloc2;
 			double factor = 3;
 			double factor2 = 4;
 			int height1 = 3;
 			int height2 = 2;
+			
 			for (double angle = 0; angle <= 360; angle += 20) {
-				testloc = loc1.clone().add(factor * Math.cos(Math.toRadians(angle)), 1, factor * Math.sin(Math.toRadians(angle)));
-				testloc2 = loc2.clone().add(factor2 * Math.cos(Math.toRadians(angle)), 1,
+				testLoc = loc1.clone().add(
+						factor * Math.cos(Math.toRadians(angle)), 1,
+						factor * Math.sin(Math.toRadians(angle)));
+				testloc2 = loc2.clone().add(
+						factor2 * Math.cos(Math.toRadians(angle)), 1,
 						factor2 * Math.sin(Math.toRadians(angle)));
-				for (int y = 0; y < EarthColumn.standardheight - height1; y++) {
-					testloc = testloc.clone().add(0, -1, 0);
-					if (EarthMethods.isEarthbendable(player, testloc.getBlock())) {
-						if (!blocks.contains(testloc.getBlock())) {
-							new EarthColumn(player, testloc, height1 + y - 1);
+				
+				for (int y = 0; y < height - height1; y++) {
+					testLoc = testLoc.clone().add(0, -1, 0);
+					if (isEarthbendable(testLoc.getBlock())) {
+						if (!blocks.contains(testLoc.getBlock())) {
+							new RaiseEarth(player, testLoc, height1 + y - 1);
 						}
-						blocks.add(testloc.getBlock());
+						blocks.add(testLoc.getBlock());
 						break;
 					}
 				}
-				for (int y = 0; y < EarthColumn.standardheight - height2; y++) {
+				
+				for (int y = 0; y < height - height2; y++) {
 					testloc2 = testloc2.clone().add(0, -1, 0);
-					if (EarthMethods.isEarthbendable(player, testloc2.getBlock())) {
+					if (isEarthbendable(testloc2.getBlock())) {
 						if (!blocks.contains(testloc2.getBlock())) {
-							new EarthColumn(player, testloc2, height2 + y - 1);
+							new RaiseEarth(player, testloc2, height2 + y - 1);
 						}
 						blocks.add(testloc2.getBlock());
 						break;
@@ -76,58 +101,141 @@ public class EarthGrab {
 				}
 			}
 
-			if (!blocks.isEmpty())
-				bPlayer.addCooldown("EarthGrab", cooldown);
+			if (!blocks.isEmpty()) {
+				bPlayer.addCooldown(this);
+			}
 		}
 	}
 
-	public static void EarthGrabSelf(Player player) {
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-
-		if (bPlayer.isOnCooldown("EarthGrab"))
-			return;
-
-		Entity closestentity = player;
-
-		if (closestentity != null) {
-			// Methods.verbose("grabbing");
+	public void earthGrabSelf() {		
+		closestEntity = player;
+		if (closestEntity != null) {
 			ArrayList<Block> blocks = new ArrayList<Block>();
-			Location location = closestentity.getLocation();
+			Location location = closestEntity.getLocation();
 			Location loc1 = location.clone();
 			Location loc2 = location.clone();
-			Location testloc, testloc2;
+			Location testLoc, testLoc2;
 			double factor = 3;
 			double factor2 = 4;
 			int height1 = 3;
 			int height2 = 2;
+			
 			for (double angle = 0; angle <= 360; angle += 20) {
-				testloc = loc1.clone().add(factor * Math.cos(Math.toRadians(angle)), 1, factor * Math.sin(Math.toRadians(angle)));
-				testloc2 = loc2.clone().add(factor2 * Math.cos(Math.toRadians(angle)), 1,
+				testLoc = loc1.clone().add(
+						factor * Math.cos(Math.toRadians(angle)), 1,
+						factor * Math.sin(Math.toRadians(angle)));
+				testLoc2 = loc2.clone().add(
+						factor2 * Math.cos(Math.toRadians(angle)), 1,
 						factor2 * Math.sin(Math.toRadians(angle)));
-				for (int y = 0; y < EarthColumn.standardheight - height1; y++) {
-					testloc = testloc.clone().add(0, -1, 0);
-					if (EarthMethods.isEarthbendable(player, testloc.getBlock())) {
-						if (!blocks.contains(testloc.getBlock())) {
-							new EarthColumn(player, testloc, height1 + y - 1);
+				
+				for (int y = 0; y < height - height1; y++) {
+					testLoc = testLoc.clone().add(0, -1, 0);
+					if (isEarthbendable(testLoc.getBlock())) {
+						if (!blocks.contains(testLoc.getBlock())) {
+							new RaiseEarth(player, testLoc, height1 + y - 1);
 						}
-						blocks.add(testloc.getBlock());
+						blocks.add(testLoc.getBlock());
 						break;
 					}
 				}
-				for (int y = 0; y < EarthColumn.standardheight - height2; y++) {
-					testloc2 = testloc2.clone().add(0, -1, 0);
-					if (EarthMethods.isEarthbendable(player, testloc2.getBlock())) {
-						if (!blocks.contains(testloc2.getBlock())) {
-							new EarthColumn(player, testloc2, height2 + y - 1);
+				
+				for (int y = 0; y < height - height2; y++) {
+					testLoc2 = testLoc2.clone().add(0, -1, 0);
+					if (isEarthbendable(testLoc2.getBlock())) {
+						if (!blocks.contains(testLoc2.getBlock())) {
+							new RaiseEarth(player, testLoc2, height2 + y - 1);
 						}
-						blocks.add(testloc2.getBlock());
+						blocks.add(testLoc2.getBlock());
 						break;
 					}
 				}
 			}
 
-			if (!blocks.isEmpty())
-				bPlayer.addCooldown("EarthGrab", GeneralMethods.getGlobalCooldown());
+			if (!blocks.isEmpty()) {
+				bPlayer.addCooldown(this);
+			}
 		}
 	}
+
+	@Override
+	public String getName() {
+		return "EarthGrab";
+	}
+
+	@Override
+	public void progress() {
+	}
+
+	@Override
+	public Location getLocation() {
+		return origin;
+	}
+
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public double getLowestDistance() {
+		return lowestDistance;
+	}
+
+	public void setLowestDistance(double lowestDistance) {
+		this.lowestDistance = lowestDistance;
+	}
+
+	public double getRange() {
+		return selectRange;
+	}
+
+	public void setRange(double range) {
+		this.selectRange = range;
+	}
+
+	public double getHeight() {
+		return height;
+	}
+
+	public void setHeight(double height) {
+		this.height = height;
+	}
+
+	public Location getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+
+	public Vector getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Vector direction) {
+		this.direction = direction;
+	}
+
+	public Entity getClosestEntity() {
+		return closestEntity;
+	}
+
+	public void setClosestEntity(Entity closestEntity) {
+		this.closestEntity = closestEntity;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+	
 }

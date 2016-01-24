@@ -2,42 +2,43 @@ package com.projectkorra.projectkorra.chiblocking;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class ChiPassive {
 
-	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-
-	public static double FallReductionFactor = config.getDouble("Abilities.Chi.Passive.FallReductionFactor");
-	public static int jumpPower = config.getInt("Abilities.Chi.Passive.Jump");
-	public static int speedPower = config.getInt("Abilities.Chi.Passive.Speed");
-	public static double chance = config.getDouble("Abilities.Chi.Passive.BlockChi.Chance");
-	public static int duration = config.getInt("Abilities.Chi.Passive.BlockChi.Duration");
-
-	static long ticks = (duration / 1000) * 20;
-
 	public static boolean willChiBlock(Player attacker, Player player) {
-		if (AcrobatStance.isInAcrobatStance(attacker)) {
-			chance = chance + AcrobatStance.CHI_BLOCK_BOOST;
-		}
-		if (GeneralMethods.getBoundAbility(player) == "QuickStrike") {
-			chance = chance + QuickStrike.blockChance;
-		}
-		if (GeneralMethods.getBoundAbility(player) == "SwiftKick") {
-			chance = chance + SwiftKick.blockChance;
-		}
-		if (Math.random() > chance/100) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
 			return false;
 		}
-		if (ChiMethods.isChiBlocked(player.getName())) {
+		
+		ChiAbility stance = bPlayer.getStance();
+		QuickStrike quickStrike = CoreAbility.getAbility(player, QuickStrike.class);
+		SwiftKick swiftKick = CoreAbility.getAbility(player, SwiftKick.class);
+		double newChance = 0;
+		
+		if (stance != null && stance instanceof AcrobatStance) {
+			newChance = getChance() + ((AcrobatStance) stance).getChiBlockBoost();
+		}
+		
+		if (quickStrike != null) {
+			newChance = getChance() + quickStrike.getBlockChance();
+		} else if (swiftKick != null) {
+			newChance = getChance() + swiftKick.getBlockChance();
+		}
+		
+		if (Math.random() > newChance / 100.0) {
+			return false;
+		} else if (bPlayer.isChiBlocked()) {
 			return false;
 		}
 		return true;
@@ -47,30 +48,64 @@ public class ChiPassive {
 		if (Suffocate.isChannelingSphere(player)) {
 			Suffocate.remove(player);
 		}
-		final BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer == null)
+		
+		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
 			return;
+		}
 		bPlayer.blockChi();
 
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new Runnable() {
+			@Override
 			public void run() {
 				bPlayer.unblockChi();
 			}
-		}, ticks);
+		}, getTicks());
 	}
 
 	public static void handlePassive() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (GeneralMethods.canBendPassive(player.getName(), Element.Chi) && !GeneralMethods.canBendPassive(player.getName(), Element.Air)) { // If they're an airbender and gets the boosts we want to give them that instead of the Chi.
-				if (player.isSprinting()) {
-					if (!player.hasPotionEffect(PotionEffectType.JUMP) && !AcrobatStance.isInAcrobatStance(player)) {
-						player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jumpPower - 1));
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			if (bPlayer == null) {
+				continue;
+			}
+			
+			if (bPlayer.canBendPassive(Element.CHI) && !bPlayer.canBendPassive(Element.AIR)) { // If they're an airbender and gets the boosts we want to give them that instead of the Chi.
+				ChiAbility stance = bPlayer.getStance();
+				if (player.isSprinting() && !(stance instanceof AcrobatStance)) {
+					if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
+						player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, getJumpPower()));
 					}
-					if (!player.hasPotionEffect(PotionEffectType.SPEED) && !AcrobatStance.isInAcrobatStance(player)) {
-						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speedPower - 1));
+					if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
+						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, getSpeedPower()));
 					}
 				}
 			}
 		}
 	}
+
+	public static double getFallReductionFactor() {
+		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.FallReductionFactor");
+	}
+
+	public static int getJumpPower() {
+		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.Jump");
+	}
+
+	public static int getSpeedPower() {
+		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.Speed");
+	}
+
+	public static double getChance() {
+		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.BlockChi.Chance");
+	}
+
+	public static int getDuration() {
+		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.BlockChi.Duration");
+	}
+
+	public static long getTicks() {
+		return (getDuration() / 1000) * 20;
+	}
+
 }

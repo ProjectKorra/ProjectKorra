@@ -1,8 +1,8 @@
 package com.projectkorra.projectkorra.util;
 
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
 
 import org.bukkit.Chunk;
 import org.bukkit.Server;
@@ -36,14 +36,14 @@ public class RevertChecker implements Runnable {
 
 	public static void revertAirBlocks() {
 		for (int ID : airRevertQueue.keySet()) {
-			EarthMethods.revertAirBlock(ID);
+			EarthAbility.revertAirBlock(ID);
 			RevertChecker.airRevertQueue.remove(ID);
 		}
 	}
 
 	public static void revertEarthBlocks() {
 		for (Block block : earthRevertQueue.keySet()) {
-			EarthMethods.revertBlock(block);
+			EarthAbility.revertBlock(block);
 			earthRevertQueue.remove(block);
 		}
 	}
@@ -68,17 +68,19 @@ public class RevertChecker implements Runnable {
 	}
 
 	public void run() {
+		if (!plugin.isEnabled()) {
+			return;
+		}
+		
 		time = System.currentTimeMillis();
-
 		if (config.getBoolean("Properties.Earth.RevertEarthbending")) {
 
 			try {
-				if(plugin.isEnabled()) {
 				returnFuture = plugin.getServer().getScheduler().callSyncMethod(plugin, new getOccupiedChunks(plugin.getServer()));
 				ArrayList<Chunk> chunks = returnFuture.get();
 
 				Map<Block, Information> earth = new HashMap<Block, Information>();
-				earth.putAll(EarthMethods.movedearth);
+				earth.putAll(EarthAbility.getMovedEarth());
 
 				for (Block block : earth.keySet()) {
 					if (earthRevertQueue.containsKey(block))
@@ -94,7 +96,7 @@ public class RevertChecker implements Runnable {
 				}
 
 				Map<Integer, Information> air = new HashMap<Integer, Information>();
-				air.putAll(EarthMethods.tempair);
+				air.putAll(EarthAbility.getTempAirLocations());
 
 				for (Integer i : air.keySet()) {
 					if (airRevertQueue.containsKey(i))
@@ -108,7 +110,6 @@ public class RevertChecker implements Runnable {
 					if (remove) {
 						addToAirRevertQueue(i);
 					}
-				}
 				}
 			}
 			catch (Exception e) {

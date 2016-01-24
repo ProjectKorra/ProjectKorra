@@ -1,84 +1,233 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
 
-public class Collapse {
+public class Collapse extends EarthAbility {
 
-	private static final double defaultradius = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.Collapse.Radius");
-	private static final int height = EarthColumn.standardheight;
+	private int distance;
+	private int height;
+	private long time;
+	private long cooldown;
+	private double selectRange;
+	private double speed;
+	private Location origin;
+	private Location location;
+	private Vector direction;
+	private Block block;
+	private ConcurrentHashMap<Block, Block> affectedBlocks;
 	
-	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
-	private static boolean dynamic = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.Collapse.DynamicSourcing.Enabled");
-	
-	private ConcurrentHashMap<Block, Block> blocks = new ConcurrentHashMap<Block, Block>();
-	private ConcurrentHashMap<Block, Integer> baseblocks = new ConcurrentHashMap<Block, Integer>();
-	private double radius = defaultradius;
-	private Player player;
-
-	@SuppressWarnings("deprecation")
 	public Collapse(Player player) {
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("Collapse"))
+		super(player);
+		setFields();
+		
+		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("CollapsePillar")) {
 			return;
+		}
+		
+		block = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.LEFT_CLICK);
+		if (block == null) {
+			return;
+		}
 
-		this.player = player;
-		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, selectRange, ClickType.SHIFT_DOWN, false, dynamic, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
-		Location location;
-		if (sblock == null) {
-			location = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), selectRange).getLocation();
+		this.origin = block.getLocation();
+		this.location = origin.clone();
+		this.distance = getEarthbendableBlocksLength(block, direction.clone().multiply(-1), height);
+		loadAffectedBlocks();
+
+		if (distance != 0) {
+			start();
+			bPlayer.addCooldown("CollapsePillar", cooldown);
+			time = System.currentTimeMillis() - (long) (1000.0 / speed);
 		} else {
-			location = sblock.getLocation();
-		}
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
-			if (EarthMethods.isEarthbendable(player, block) && !blocks.containsKey(block) && block.getY() >= location.getBlockY()) {
-				getAffectedBlocks(block);
-			}
-		}
-
-		if (!baseblocks.isEmpty()) {
-			bPlayer.addCooldown("Collapse", GeneralMethods.getGlobalCooldown());
-		}
-
-		for (Block block : baseblocks.keySet()) {
-			new CompactColumn(player, block.getLocation());
+			remove();
 		}
 	}
 
-	private void getAffectedBlocks(Block block) {
-		Block baseblock = block;
-		int tall = 0;
-		ArrayList<Block> bendableblocks = new ArrayList<Block>();
-		bendableblocks.add(block);
-		for (int i = 1; i <= height; i++) {
-			Block blocki = block.getRelative(BlockFace.DOWN, i);
-			if (EarthMethods.isEarthbendable(player, blocki)) {
-				baseblock = blocki;
-				bendableblocks.add(blocki);
-				tall++;
-			} else {
-				break;
-			}
-		}
-		baseblocks.put(baseblock, tall);
-		for (Block blocki : bendableblocks) {
-			blocks.put(blocki, baseblock);
-		}
+	public Collapse(Player player, Location origin) {
+		super(player);
+		setFields();
+		this.origin = origin;
+		this.player = player;
+		this.block = origin.getBlock();
+		this.location = origin.clone();
+		this.distance = getEarthbendableBlocksLength(block, direction.clone().multiply(-1), height);
+		loadAffectedBlocks();
 
+		if (distance != 0) {
+			start();
+			time = System.currentTimeMillis() - (long) (1000.0 / speed);
+		} else {
+			remove();
+		}
 	}
 
-	public static String getDescription() {
-		return " To use, simply left-click on an earthbendable block. " + "That block and the earthbendable blocks above it will be shoved " + "back into the earth below them, if they can. " + "This ability does have the capacity to trap something inside of it, " + "although it is incredibly difficult to do so. " + "Additionally, press sneak with this ability to affect an area around your targetted location - " + "all earth that can be moved downwards will be moved downwards. " + "This ability is especially risky or deadly in caves, depending on the " + "earthbender's goal and technique.";
+	private void setFields() {
+		this.height = getConfig().getInt("Abilities.Earth.Collapse.Column.Height");
+		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
+		this.speed = getConfig().getDouble("Abilities.Earth.Collapse.Speed");
+		this.cooldown = getConfig().getLong("Abilities.Earth.Collapse.Column.Cooldown");
+		this.direction = new Vector(0, -1, 0);
+		this.affectedBlocks = new ConcurrentHashMap<>();
+	}
+
+	private void loadAffectedBlocks() {
+		affectedBlocks.clear();
+		Block thisBlock;
+		
+		for (int i = 0; i <= distance; i++) {
+			thisBlock = block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(-i)));
+			affectedBlocks.put(thisBlock, thisBlock);
+			if (RaiseEarth.blockInAllAffectedBlocks(thisBlock)) {
+				RaiseEarth.revertBlock(thisBlock);
+			}
+		}
+	}
+
+	public static boolean blockInAllAffectedBlocks(Block block) {
+		for (Collapse collapse : getAbilities(Collapse.class)) {
+			if (collapse.affectedBlocks.containsKey(block)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void revert(Block block) {
+		for (Collapse collapse : getAbilities(Collapse.class)) {
+			collapse.affectedBlocks.remove(block);
+		}
+	}
+
+	@Override
+	public void progress() {
+		if (System.currentTimeMillis() - time >= (long) (1000.0 / speed)) {
+			time = System.currentTimeMillis();
+			if (!tryToMoveEarth()) {
+				remove();
+				return;
+			}
+		}
+	}
+
+	private boolean tryToMoveEarth() {
+		Block block = location.getBlock();
+		location = location.add(direction);
+		if (distance == 0) {
+			return false;
+		}
+		
+		moveEarth(block, direction, distance);
+		loadAffectedBlocks();
+		return location.distanceSquared(origin) < distance * distance;
+	}
+
+	@Override
+	public String getName() {
+		return "Collapse";
+	}
+
+	@Override
+	public Location getLocation() {
+		return location;
+	}
+
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public Location getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+
+	public Vector getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Vector direction) {
+		this.direction = direction;
+	}
+
+	public Block getBlock() {
+		return block;
+	}
+
+	public void setBlock(Block block) {
+		this.block = block;
+	}
+
+	public int getDistance() {
+		return distance;
+	}
+
+	public void setDistance(int distance) {
+		this.distance = distance;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public double getSelectRange() {
+		return selectRange;
+	}
+
+	public void setSelectRange(double selectRange) {
+		this.selectRange = selectRange;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public ConcurrentHashMap<Block, Block> getAffectedBlocks() {
+		return affectedBlocks;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
 	}
 }

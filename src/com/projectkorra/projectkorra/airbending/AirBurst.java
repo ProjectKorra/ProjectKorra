@@ -1,7 +1,8 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -9,136 +10,152 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
+import java.util.ArrayList;
 
-public class AirBurst implements ConfigLoadable {
+public class AirBurst extends AirAbility {
 
-	public static ConcurrentHashMap<Player, AirBurst> instances = new ConcurrentHashMap<>();
-
-	private static double PARTICLES_PERCENTAGE = 50;
-
-	private static double threshold = config.get().getDouble("Abilities.Air.AirBurst.FallThreshold");
-	private static double pushfactor = config.get().getDouble("Abilities.Air.AirBurst.PushFactor");
-	private static double damage = config.get().getDouble("Abilities.Air.AirBurst.Damage");
-	private static double deltheta = 10;
-	private static double delphi = 10;
+	private boolean isCharged;
+	private boolean isFallBurst;
+	private int sneakParticles;
+	private float playerFallDistance;
+	private long chargeTime;
+	private double fallThreshold;
+	private double pushFactor;
+	private double damage;
+	private double blastAngleTheta;
+	private double blastAnglePhi;
+	private double particlePercentage;
+	private ArrayList<AirBlast> blasts;
+	private ArrayList<Entity> affectedEntities;
 	
-	private static long cooldown = config.get().getLong("Abilities.Air.AirBurst.Cooldown");
-	
-	private Player player;
-	private long starttime;
-	private long chargetime = config.get().getLong("Abilities.Air.AirBurst.ChargeTime");
-	private boolean charged = false;
-	private ArrayList<AirBlast> blasts = new ArrayList<AirBlast>();
-	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
+	public AirBurst(Player player, boolean isFallBurst) {
+		super(player);
+		if (bPlayer.isOnCooldown(this)) {
+			remove();
+			return;
+		}
 
-	public AirBurst() {
-		// reloadVariables();
+		this.isFallBurst = isFallBurst;
+		this.isCharged = false;
+		this.playerFallDistance = player.getFallDistance();
+		this.chargeTime = getConfig().getLong("Abilities.Air.AirBurst.ChargeTime");
+		this.fallThreshold = getConfig().getDouble("Abilities.Air.AirBurst.FallThreshold");
+		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBurst.PushFactor");
+		this.damage = getConfig().getDouble("Abilities.Air.AirBurst.Damage");
+		this.blastAnglePhi = getConfig().getDouble("Abilities.Air.AirBurst.AnglePhi");
+		this.blastAngleTheta = getConfig().getDouble("Abilities.Air.AirBurst.AngleTheta");
+		this.sneakParticles = getConfig().getInt("Abilities.Air.AirBurst.SneakParticles");
+		this.particlePercentage = getConfig().getDouble("Abilities.Air.AirBurst.ParticlePercentage");
+		this.blasts = new ArrayList<>();
+		this.affectedEntities = new ArrayList<>();
+
+		if (bPlayer.isAvatarState()) {
+			this.chargeTime = 0;
+			this.damage = AvatarState.getValue(this.damage);
+		}
+		start();
 	}
 
-	public AirBurst(Player player) {
-		/* Initial Checks */
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("AirBurst"))
+	@Override
+	public void progress() {
+		if (!bPlayer.canBendIgnoreCooldowns(this)) {
+			remove();
 			return;
-		if (instances.containsKey(player))
+		}
+
+		if (isFallBurst) {
+			if (playerFallDistance >= fallThreshold) {
+				fallBurst();
+			}
+			remove();
 			return;
-		/* End Initial Checks */
-		// reloadVariables();
-		starttime = System.currentTimeMillis();
-		if (AvatarState.isAvatarState(player))
-			chargetime = 0;
-		this.player = player;
-		bPlayer.addCooldown("AirBurst", cooldown);
-		instances.put(player, this);
+		}
+
+		if (System.currentTimeMillis() > startTime + chargeTime && !isCharged) {
+			isCharged = true;
+		}
+
+		if (!player.isSneaking()) {
+			if (isCharged) {
+				sphereBurst();
+				remove();
+				return;
+			} else {
+				remove();
+				return;
+			}
+		} else if (isCharged) {
+			Location location = player.getEyeLocation();
+			playAirbendingParticles(location, sneakParticles);
+		}
 	}
 
-	public static void coneBurst(Player player) {
-		if (instances.containsKey(player)) {
-			instances.get(player).coneBurst();
-		}
-	}
-
-	public static void fallBurst(Player player) {
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		
-		if (!GeneralMethods.canBend(player.getName(), "AirBurst")) {
-			return;
-		}
-		if (player.getFallDistance() < threshold) {
-			return;
-		}
-		if (GeneralMethods.getBoundAbility(player) == null) {
-			return;
-		}
-		if (instances.containsKey(player)) {
-			return;
-		}
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBurst")) {
-			return;
-		}
-		if (bPlayer.isOnCooldown("AirBurst")) {
-			return;
-		}
-
+	private void fallBurst() {
 		Location location = player.getLocation();
 		double x, y, z;
 		double r = 1;
-		for (double theta = 75; theta < 105; theta += deltheta) {
-			double dphi = delphi / Math.sin(Math.toRadians(theta));
+
+		for (double theta = 75; theta < 105; theta += blastAngleTheta) {
+			double dphi = blastAnglePhi / Math.sin(Math.toRadians(theta));
 			for (double phi = 0; phi < 360; phi += dphi) {
 				double rphi = Math.toRadians(phi);
 				double rtheta = Math.toRadians(theta);
+				
 				x = r * Math.cos(rphi) * Math.sin(rtheta);
 				y = r * Math.sin(rphi) * Math.sin(rtheta);
 				z = r * Math.cos(rtheta);
+				
 				Vector direction = new Vector(x, z, y);
-				AirBlast blast = new AirBlast(location, direction.normalize(), player, pushfactor, new AirBurst());
+				AirBlast blast = new AirBlast(player, location, direction.normalize(), pushFactor, this);
 				blast.setDamage(damage);
 			}
 		}
 	}
 
-	void addAffectedEntity(Entity entity) {
-		affectedentities.add(entity);
+	public static void coneBurst(Player player) {
+		if (hasAbility(player, AirBurst.class)) {
+			AirBurst airBurst = getAbility(player, AirBurst.class);
+			airBurst.startConeBurst();
+			airBurst.remove();
+		}
 	}
 
-	private void coneBurst() {
-		if (charged) {
+	private void startConeBurst() {
+		if (isCharged) {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			double angle = Math.toRadians(30);
 			double x, y, z;
 			double r = 1;
-			for (double theta = 0; theta <= 180; theta += deltheta) {
-				double dphi = delphi / Math.sin(Math.toRadians(theta));
+			
+			for (double theta = 0; theta <= 180; theta += blastAngleTheta) {
+				double dphi = blastAnglePhi / Math.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
 					double rphi = Math.toRadians(phi);
 					double rtheta = Math.toRadians(theta);
+					
 					x = r * Math.cos(rphi) * Math.sin(rtheta);
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
+					
 					Vector direction = new Vector(x, z, y);
 					if (direction.angle(vector) <= angle) {
-						AirBlast blast = new AirBlast(location, direction.normalize(), player, pushfactor, this);
+						AirBlast blast = new AirBlast(player, location, direction.normalize(), pushFactor, this);
 						blast.setDamage(damage);
 					}
 				}
 			}
 		}
-		remove();
 	}
 
 	public void handleSmoothParticles() {
 		for (int i = 0; i < blasts.size(); i++) {
 			final AirBlast blast = blasts.get(i);
 			int toggleTime = 0;
-			if (i % 4 != 0)
-				toggleTime = (int) (i % (100 / PARTICLES_PERCENTAGE)) + 3;
+
+			if (i % 4 != 0) {
+				toggleTime = (int) (i % (100 / particlePercentage)) + 3;
+			}
 			new BukkitRunnable() {
 				public void run() {
 					blast.setShowParticles(true);
@@ -147,96 +164,138 @@ public class AirBurst implements ConfigLoadable {
 		}
 	}
 
-	boolean isAffectedEntity(Entity entity) {
-		return affectedentities.contains(entity);
-	}
-
-	public boolean progress() {
-		if (!GeneralMethods.canBend(player.getName(), "AirBurst")) {
-			remove();
-			return false;
-		}
-		if (GeneralMethods.getBoundAbility(player) == null) {
-			remove();
-			return false;
-		}
-
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBurst")) {
-			remove();
-			return false;
-		}
-
-		if (System.currentTimeMillis() > starttime + chargetime && !charged) {
-			charged = true;
-		}
-
-		if (!player.isSneaking()) {
-			if (charged) {
-				sphereBurst();
-			} else {
-				remove();
-				return false;
-			}
-		} else if (charged) {
-			Location location = player.getEyeLocation();
-			// location = location.add(location.getDirection().normalize());
-			AirMethods.playAirbendingParticles(location, 10);
-			// location.getWorld().playEffect(
-			// location,
-			// Effect.SMOKE,
-			// Methods.getIntCardinalDirection(player.getEyeLocation()
-			// .getDirection()), 3);
-		}
-		return true;
-	}
-
-	public static void progressAll() {
-		for (AirBurst ability : instances.values()) {
-			ability.progress();
-		}
-	}
-
-	public void remove() {
-		instances.remove(player);
-	}
-
-	public static void removeAll() {
-		for (AirBurst ability : instances.values()) {
-			ability.remove();
-		}
-	}
-
-	@Override
-	public void reloadVariables() {
-		threshold = config.get().getDouble("Abilities.Air.AirBurst.FallThreshold");
-		pushfactor = config.get().getDouble("Abilities.Air.AirBurst.PushFactor");
-		damage = config.get().getDouble("Abilities.Air.AirBurst.Damage");
-		chargetime = config.get().getLong("Abilities.Air.AirBurst.ChargeTime");
-	}
-
 	private void sphereBurst() {
-		if (charged) {
+		if (isCharged) {
 			Location location = player.getEyeLocation();
 			double x, y, z;
 			double r = 1;
-			for (double theta = 0; theta <= 180; theta += deltheta) {
-				double dphi = delphi / Math.sin(Math.toRadians(theta));
+
+			for (double theta = 0; theta <= 180; theta += blastAngleTheta) {
+				double dphi = blastAnglePhi / Math.sin(Math.toRadians(theta));
+
 				for (double phi = 0; phi < 360; phi += dphi) {
 					double rphi = Math.toRadians(phi);
 					double rtheta = Math.toRadians(theta);
+					
 					x = r * Math.cos(rphi) * Math.sin(rtheta);
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
+					
 					Vector direction = new Vector(x, z, y);
-					AirBlast blast = new AirBlast(location, direction.normalize(), player, pushfactor, this);
+					AirBlast blast = new AirBlast(player, location, direction.normalize(), pushFactor, this);
+					
 					blast.setDamage(damage);
 					blast.setShowParticles(false);
 					blasts.add(blast);
 				}
 			}
 		}
-		// Methods.verbose("--" + AirBlast.instances.size() + "--");
-		remove();
 		handleSmoothParticles();
+	}
+
+	@Override
+	public String getName() {
+		return "AirBurst";
+	}
+
+	@Override
+	public Location getLocation() {
+		return player != null ? player.getLocation() : null;
+	}
+
+	@Override
+	public long getCooldown() {
+		return 0;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+
+	public void addAffectedEntity(Entity entity) {
+		affectedEntities.add(entity);
+	}
+
+	public boolean isAffectedEntity(Entity entity) {
+		return affectedEntities.contains(entity);
+	}
+
+	public long getChargeTime() {
+		return chargeTime;
+	}
+
+	public void setChargeTime(long chargeTime) {
+		this.chargeTime = chargeTime;
+	}
+
+	public double getFallThreshold() {
+		return fallThreshold;
+	}
+
+	public void setFallThreshold(double fallThreshold) {
+		this.fallThreshold = fallThreshold;
+	}
+
+	public double getPushFactor() {
+		return pushFactor;
+	}
+
+	public void setPushFactor(double pushFactor) {
+		this.pushFactor = pushFactor;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getBlastAngleTheta() {
+		return blastAngleTheta;
+	}
+
+	public void setBlastAngleTheta(double blastAngleTheta) {
+		this.blastAngleTheta = blastAngleTheta;
+	}
+
+	public double getBlastAnglePhi() {
+		return blastAnglePhi;
+	}
+
+	public void setBlastAnglePhi(double blastAnglePhi) {
+		this.blastAnglePhi = blastAnglePhi;
+	}
+
+	public boolean isCharged() {
+		return isCharged;
+	}
+
+	public void setCharged(boolean isCharged) {
+		this.isCharged = isCharged;
+	}
+
+	public boolean isFallBurst() {
+		return isFallBurst;
+	}
+
+	public void setFallBurst(boolean isFallBurst) {
+		this.isFallBurst = isFallBurst;
+	}
+
+	public ArrayList<AirBlast> getBlasts() {
+		return blasts;
+	}
+
+	public ArrayList<Entity> getAffectedEntities() {
+		return affectedEntities;
 	}
 }

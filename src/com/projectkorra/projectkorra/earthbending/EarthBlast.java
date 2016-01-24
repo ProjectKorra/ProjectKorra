@@ -1,7 +1,15 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.firebending.Combustion;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,534 +19,541 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.firebending.Combustion;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import java.util.ArrayList;
 
-public class EarthBlast {
+public class EarthBlast extends EarthAbility {
 
-	public static ConcurrentHashMap<Integer, EarthBlast> instances = new ConcurrentHashMap<Integer, EarthBlast>();
-
-	private static boolean hitself = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
-	private static double RANGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Radius");
-	private static double DAMAGE = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Damage");
-	private static double speed = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Speed");
-	private static final double deflectrange = 3;
-
-	private static boolean revert = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.Revert");
-	private static double PUSH_FACTOR = ProjectKorra.plugin.getConfig().getDouble("Abilities.Earth.EarthBlast.Push");
-
-	private static boolean dynamic = ProjectKorra.plugin.getConfig()
-			.getBoolean("Abilities.Earth.EarthBlast.DynamicSourcing.Enabled");
-	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Earth.EarthBlast.SelectRange");
-	private static int autoSelectRange = ProjectKorra.plugin.getConfig()
-			.getInt("Abilities.Earth.EarthBlast.AutoSourcing.SelectRange");
-	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Earth.EarthBlast.AutoSourcing.Enabled");
-	private static long autocooldown = ProjectKorra.plugin.getConfig()
-			.getLong("Abilities.Earth.EarthBlast.AutoSourcing.Cooldown");
-	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Earth.EarthBlast.Cooldown");
-
-	private static long interval = (long) (1000. / speed);
-
-	private static int ID = Integer.MIN_VALUE;
-
-	private Player player;
-	private int id;
-	private Location location = null;
-	private Block sourceblock = null;
-	private Material sourcetype = null;
-	private boolean progressing = false;
-	private Location destination = null;
-	private Location firstdestination = null;
-	// private Vector firstdirection = null;
-	// private Vector targetdirection = null;
-	private boolean falling = false;
+	private boolean isProgressing;
+	private boolean isAtDestination;
+	private boolean isSettingUp;
+	private boolean canHitSelf;
 	private long time;
-	private boolean settingup = true;
-	private double range = RANGE;
-	private double damage = DAMAGE;
-	private double pushfactor = PUSH_FACTOR;
+	private long interval;
+	private long cooldown;
+	private double range;
+	private double damage;
+	private double speed;
+	private double pushFactor;
+	private double selectRange;
+	private double deflectRange;
+	private double collisionRadius;
+	private Material sourceType;
+	private Location location;
+	private Location destination;
+	private Location firstDestination;
+	private Block sourceBlock;
 
 	public EarthBlast(Player player) {
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("EarthBlast"))
-			return;
-		this.player = player;
+		super(player);
+		
+		this.isProgressing = false;
+		this.isAtDestination = false;
+		this.isSettingUp = true;
+		this.deflectRange = getConfig().getDouble("Abilities.Earth.EarthBlast.DeflectRange");
+		this.collisionRadius = getConfig().getDouble("Abilities.Earth.EarthBlast.CollisionRadius");
+		this.cooldown = getConfig().getLong("Abilities.Earth.EarthBlast.Cooldown");
+		this.canHitSelf = getConfig().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
+		this.range = getConfig().getDouble("Abilities.Earth.EarthBlast.Range");
+		this.damage = getConfig().getDouble("Abilities.Earth.EarthBlast.Damage");
+		this.speed = getConfig().getDouble("Abilities.Earth.EarthBlast.Speed");
+		this.pushFactor = getConfig().getDouble("Abilities.Earth.EarthBlast.Push");
+		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthBlast.SelectRange");		
+		this.time = System.currentTimeMillis();
+		this.interval = (long) (1000.0 / speed);
+		
 		if (prepare()) {
-			id = ID++;
-			if (ID >= Integer.MAX_VALUE)
-				ID = Integer.MIN_VALUE;
-			instances.put(id, this);
+			start();
 			time = System.currentTimeMillis();
 		}
-
 	}
 
-	public boolean prepare() {
-		cancelPrevious();
-		Block block = BlockSource.getEarthSourceBlock(player, autoSelectRange, selectRange, ClickType.SHIFT_DOWN, auto,
-				dynamic, true, EarthMethods.canSandbend(player), EarthMethods.canMetalbend(player));
-		block(player);
-		if (block != null) {
-			if (block.getLocation().distance(player.getLocation()) > selectRange) {
-				return false;
+	private void checkForCollision() {
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
+			if (blast.player.equals(player)) {
+				continue;
+			} else if (!blast.location.getWorld().equals(player.getWorld())) {
+				continue;
+			} else if (!blast.isProgressing) {
+				continue;
+			} else if (GeneralMethods.isRegionProtectedFromBuild(this, blast.location)) {
+				continue;
 			}
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-			if (BlockSource.isAuto(block)) {
-				bPlayer.addCooldown("EarthBlast", autocooldown);
-			} else {
-				bPlayer.addCooldown("EarthBlast", cooldown);
+
+			Location location = player.getEyeLocation();
+			Vector vector = location.getDirection();
+			Location mloc = blast.location;
+			if (mloc.distanceSquared(location) <= range * range 
+					&& GeneralMethods.getDistanceFromLine(vector, location, blast.location) < deflectRange
+					&& mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
+				blast.remove();
+				remove();
+				return;
 			}
-			sourceblock = block;
-			focusBlock();
-			return true;
 		}
-		return false;
 	}
 
-	private static Location getTargetLocation(Player player) {
-		Entity target = GeneralMethods.getTargetedEntity(player, RANGE, new ArrayList<Entity>());
+	@SuppressWarnings("deprecation")
+	private void focusBlock() {
+		if (EarthPassive.isPassiveSand(sourceBlock)) {
+			EarthPassive.revertSand(sourceBlock);
+		}
+		
+		if (sourceBlock.getType() == Material.SAND) {
+			sourceType = Material.SAND;
+			if (sourceBlock.getData() == (byte) 0x1) {
+				sourceBlock.setType(Material.RED_SANDSTONE);
+			} else {
+				sourceBlock.setType(Material.SANDSTONE);
+			}
+		} else if (sourceBlock.getType() == Material.STONE) {
+			sourceBlock.setType(Material.COBBLESTONE);
+			sourceType = Material.STONE;
+		} else {
+			sourceType = sourceBlock.getType();
+			sourceBlock.setType(Material.STONE);
+		}
+
+		location = sourceBlock.getLocation();
+	}
+
+	private Location getTargetLocation() {
+		Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		Location location;
+		
 		if (target == null) {
-			location = GeneralMethods.getTargetedLocation(player, RANGE);
+			location = GeneralMethods.getTargetedLocation(player, range);
 		} else {
 			location = ((LivingEntity) target).getEyeLocation();
 		}
 		return location;
 	}
 
-	private void cancelPrevious() {
-
-		for (int id : instances.keySet()) {
-			EarthBlast blast = instances.get(id);
-			if (blast.player == player && !blast.progressing)
-				blast.cancel();
-		}
-
-	}
-
-	public void cancel() {
-		unfocusBlock();
-	}
-
-	@SuppressWarnings("deprecation")
-	private void focusBlock() {
-		if (EarthPassive.isPassiveSand(sourceblock))
-			EarthPassive.revertSand(sourceblock);
-		if (sourceblock.getType() == Material.SAND) {
-			sourcetype = Material.SAND;
-			if (sourceblock.getData() == (byte) 0x1) {
-				sourceblock.setType(Material.RED_SANDSTONE);
-			} else {
-				sourceblock.setType(Material.SANDSTONE);
-			}
-		} else if (sourceblock.getType() == Material.STONE) {
-			sourceblock.setType(Material.COBBLESTONE);
-			sourcetype = Material.STONE;
-		} else {
-			sourcetype = sourceblock.getType();
-			sourceblock.setType(Material.STONE);
-		}
-		location = sourceblock.getLocation();
-	}
-
-	@SuppressWarnings("deprecation")
-	private void unfocusBlock() {
-		if (destination != null) {
-			breakBlock();
-			return;
-		}
-		if (sourceblock.getType() == Material.SAND) {
-			if (sourceblock.getData() == (byte) 0x1) {
-				sourceblock.setType(sourcetype);
-				sourceblock.setData((byte) 0x1);
-			} else {
-				sourceblock.setType(sourcetype);
-			}
-		} else {
-			sourceblock.setType(sourcetype);
-		}
-		instances.remove(id);
-	}
-
-	@SuppressWarnings("deprecation")
-	public void throwEarth() {
-		if (sourceblock != null) {
-			if (sourceblock.getWorld().equals(player.getWorld())) {
-				if (EarthMethods.movedearth.containsKey(sourceblock)) {
-					if (!revert)
-						EarthMethods.removeRevertIndex(sourceblock);
-				}
-				Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
-				// Methods.verbose(target);
-				if (target == null) {
-					destination = player.getTargetBlock(EarthMethods.getTransparentEarthbending(), (int) range).getLocation();
-					firstdestination = sourceblock.getLocation().clone();
-					firstdestination.setY(destination.getY());
-				} else {
-					destination = ((LivingEntity) target).getEyeLocation();
-					firstdestination = sourceblock.getLocation().clone();
-					firstdestination.setY(destination.getY());
-					destination = GeneralMethods.getPointOnLine(firstdestination, destination, range);
-				}
-				if (destination.distance(location) <= 1) {
-					progressing = false;
-					destination = null;
-				} else {
-					progressing = true;
-					EarthMethods.playEarthbendingSound(sourceblock.getLocation());
-					// direction = getDirection().normalize();
-					if (sourcetype != Material.SAND && sourcetype != Material.GRAVEL) {
-						sourceblock.setType(sourcetype);
-					}
-				}
-			}
-
-		}
-	}
-
-	public static EarthBlast getBlastFromSource(Block block) {
-		for (int id : instances.keySet()) {
-			EarthBlast blast = instances.get(id);
-			if (blast.sourceblock.equals(block))
-				return blast;
-		}
-		return null;
-	}
-
-	public static void progressAll() {
-		for (int ID : instances.keySet()) {
-			instances.get(ID).progress();
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private boolean progress() {
-		if (player.isDead() || !player.isOnline() || !GeneralMethods.canBend(player.getName(), "EarthBlast")) {
-			breakBlock();
+	public boolean prepare() {
+		Block block = BlockSource.getEarthSourceBlock(player, range, ClickType.SHIFT_DOWN);
+		if (block == null || !isEarthbendable(block)) {
 			return false;
 		}
+		
+		boolean selectedABlockInUse = false;
+		for (EarthBlast blast : getAbilities(player, EarthBlast.class)) {
+			if (!blast.isProgressing) {
+				blast.remove();
+			} else if (blast.isProgressing && block.equals(blast.sourceBlock)) {
+				selectedABlockInUse = true;
+			}
+		}
+		
+		if (selectedABlockInUse) {
+			return false;
+		}
+		
+		checkForCollision();
+		if (block.getLocation().distanceSquared(player.getLocation()) > selectRange * selectRange) {
+			return false;
+		}
+		sourceBlock = block;
+		focusBlock();
+		return true;
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void progress() {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			remove();
+			return;
+		}
+		
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 
-			if (falling) {
-				breakBlock();
-				return false;
+			if (isAtDestination) {
+				remove();
+				return;
+			} else if (!isEarthbendable(sourceBlock) && sourceBlock.getType() != Material.COBBLESTONE) {
+				remove();
+				return;
 			}
-			if (!progressing && !falling) {
 
-				if (GeneralMethods.getBoundAbility(player) == null) {
-					unfocusBlock();
-					return false;
-				}
-
-				if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("EarthBlast")) {
-					unfocusBlock();
-					return false;
-				}
-
-				if (sourceblock == null) {
-					instances.remove(id);
-					return false;
-				}
-				if (!player.getWorld().equals(sourceblock.getWorld())) {
-					unfocusBlock();
-					return false;
-				}
-				if (sourceblock.getLocation().distance(player.getLocation()) > selectRange) {
-					unfocusBlock();
-					return false;
+			if (!isProgressing && !isAtDestination) {
+				if (sourceBlock == null || !bPlayer.getBoundAbilityName().equals(getName())) {
+					remove();
+					return;
+				} else if (!player.getWorld().equals(sourceBlock.getWorld())) {
+					remove();
+					return;
+				} else if (sourceBlock.getLocation().distanceSquared(player.getLocation()) > selectRange * selectRange) {
+					remove();
+					return;
 				}
 			}
 
-			if (falling) {
-				breakBlock();
-
+			if (isAtDestination) {
+				remove();
+				return;
 			} else {
-				if (!progressing) {
-					return false;
+				if (!isProgressing) {
+					return;
 				}
-
-				if (sourceblock.getY() == firstdestination.getBlockY())
-					settingup = false;
+				if (sourceBlock.getY() == firstDestination.getBlockY()) {
+					isSettingUp = false;
+				}
 
 				Vector direction;
-				if (settingup) {
-					direction = GeneralMethods.getDirection(location, firstdestination).normalize();
+				if (isSettingUp) {
+					direction = GeneralMethods.getDirection(location, firstDestination).normalize();
 				} else {
 					direction = GeneralMethods.getDirection(location, destination).normalize();
 				}
 
 				location = location.clone().add(direction);
-
-				WaterMethods.removeWaterSpouts(location, player);
-				AirMethods.removeAirSpouts(location, player);
-
 				Block block = location.getBlock();
-				if (block.getLocation().equals(sourceblock.getLocation())) {
+				
+				WaterAbility.removeWaterSpouts(location, player);
+				AirAbility.removeAirSpouts(location, player);
+				
+				if (block.getLocation().equals(sourceBlock.getLocation())) {
 					location = location.clone().add(direction);
 					block = location.getBlock();
 				}
 
-				if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid()) {
+				if (isTransparent(block) && !block.isLiquid()) {
 					GeneralMethods.breakBlock(block);
-				} else if (!settingup) {
-					breakBlock();
-					return false;
+				} else if (!isSettingUp) {
+					remove();
+					return;
 				} else {
 					location = location.clone().subtract(direction);
 					direction = GeneralMethods.getDirection(location, destination).normalize();
 					location = location.clone().add(direction);
 
-					WaterMethods.removeWaterSpouts(location, player);
-					AirMethods.removeAirSpouts(location, player);
-					double radius = FireBlast.AFFECTING_RADIUS;
-					Player source = player;
-					if (EarthBlast.annihilateBlasts(location, radius, source)
-							|| WaterManipulation.annihilateBlasts(location, radius, source)
-							|| FireBlast.annihilateBlasts(location, radius, source)) {
-						breakBlock();
-						return false;
+					WaterAbility.removeWaterSpouts(location, player);
+					AirAbility.removeAirSpouts(location, player);
+					
+					if (EarthBlast.annihilateBlasts(location, collisionRadius, player) 
+							|| WaterManipulation.annihilateBlasts(location, collisionRadius, player)
+							|| FireBlast.annihilateBlasts(location, collisionRadius, player)) {
+						remove();
+						return;
 					}
 
-					Combustion.removeAroundPoint(location, radius);
+					Combustion.removeAroundPoint(location, collisionRadius);
 
 					Block block2 = location.getBlock();
-					if (block2.getLocation().equals(sourceblock.getLocation())) {
+					if (block2.getLocation().equals(sourceBlock.getLocation())) {
 						location = location.clone().add(direction);
 						block2 = location.getBlock();
 					}
 
-					if (EarthMethods.isTransparentToEarthbending(player, block) && !block.isLiquid()) {
+					if (isTransparent(block) && !block.isLiquid()) {
 						GeneralMethods.breakBlock(block);
 					} else {
-						breakBlock();
-						return false;
+						remove();
+						return;
 					}
 				}
 
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, FireBlast.AFFECTING_RADIUS)) {
-					if (GeneralMethods.isRegionProtectedFromBuild(player, "EarthBlast", entity.getLocation()))
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
+					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 						continue;
-					if (entity instanceof LivingEntity && (entity.getEntityId() != player.getEntityId() || hitself)) {
-
-						AirMethods.breakBreathbendingHold(entity);
-
+					}
+					if (entity instanceof LivingEntity && (entity.getEntityId() != player.getEntityId() || canHitSelf)) {
+						AirAbility.breakBreathbendingHold(entity);
+						
 						Location location = player.getEyeLocation();
 						Vector vector = location.getDirection();
-						entity.setVelocity(vector.normalize().multiply(pushfactor));
-						double damage = this.damage;
-						if (EarthMethods.isMetal(sourceblock) && EarthMethods.canMetalbend(player)) {
-							damage = EarthMethods.getMetalAugment(this.damage);
+						entity.setVelocity(vector.normalize().multiply(pushFactor));
+                        double damage = this.damage;
+                        
+						if (isMetal(sourceBlock) && bPlayer.canMetalbend()) {
+							damage = getMetalAugment(damage);
 						}
-						GeneralMethods.damageEntity(player, entity, damage, "EarthBlast");
-						progressing = false;
+						GeneralMethods.damageEntity(this, entity, damage);
+						isProgressing = false;
 					}
 				}
 
-				if (!progressing) {
-					breakBlock();
-					return false;
+				if (!isProgressing) {
+					remove();
+					return;
 				}
 
-				if (revert) {
-					// Methods.addTempEarthBlock(sourceblock, block);
-					if (sourceblock.getType() == Material.RED_SANDSTONE) {
-						sourceblock.setType(sourcetype);
-						if (sourcetype == Material.SAND)
-							sourceblock.setData((byte) 0x1);
-					} else {
-						sourceblock.setType(sourcetype);
+				if (isEarthRevertOn()) {
+					sourceBlock.setType(sourceType);
+					if (sourceBlock.getType() == Material.RED_SANDSTONE && sourceType == Material.SAND) {
+						sourceBlock.setData((byte) 0x1);
 					}
-					EarthMethods.moveEarthBlock(sourceblock, block);
 
-					if (block.getType() == Material.SAND)
+					moveEarthBlock(sourceBlock, block);
+					
+					if (block.getType() == Material.SAND) {
 						block.setType(Material.SANDSTONE);
-					if (block.getType() == Material.GRAVEL)
+					}
+					if (block.getType() == Material.GRAVEL) {
 						block.setType(Material.STONE);
+					}
 				} else {
-					block.setType(sourceblock.getType());
-					sourceblock.setType(Material.AIR);
+					block.setType(sourceBlock.getType());
+					sourceBlock.setType(Material.AIR);
 				}
 
-				sourceblock = block;
+				sourceBlock = block;
 
-				if (location.distance(destination) < 1) {
-					if (sourcetype == Material.SAND || sourcetype == Material.GRAVEL) {
-						progressing = false;
-						if (sourceblock.getType() == Material.RED_SANDSTONE) {
-							sourcetype = Material.SAND;
-							sourceblock.setType(sourcetype);
-							sourceblock.setData((byte) 0x1);
-						} else {
-							sourceblock.setType(sourcetype);
+				if (location.distanceSquared(destination) < 1) {
+					if (sourceType == Material.SAND || sourceType == Material.GRAVEL) {
+						isProgressing = false;
+						if (sourceBlock.getType() == Material.RED_SANDSTONE) {
+							sourceType = Material.SAND;
+							sourceBlock.setType(sourceType);
+							sourceBlock.setData((byte) 0x1);
+						}
+						else {
+							sourceBlock.setType(sourceType);
 						}
 					}
 
-					falling = true;
-					progressing = false;
+					isAtDestination = true;
+					isProgressing = false;
 				}
-
-				return true;
+				return;
 			}
-		}
-
-		return false;
-
-	}
-
-	private void breakBlock() {
-		sourceblock.setType(sourcetype);
-		if (revert) {
-			EarthMethods.addTempAirBlock(sourceblock);
-		} else {
-			sourceblock.breakNaturally();
-		}
-		instances.remove(id);
-	}
-
-	public static void throwEarth(Player player) {
-		ArrayList<EarthBlast> ignore = new ArrayList<EarthBlast>();
-
-		for (int id : instances.keySet()) {
-			EarthBlast blast = instances.get(id);
-			if (blast.player == player && !blast.progressing) {
-				blast.throwEarth();
-				ignore.add(blast);
-			}
-		}
-		redirectTargettedBlasts(player, ignore);
-	}
-
-	public static void removeAll() {
-		for (int id : instances.keySet()) {
-			instances.get(id).breakBlock();
-		}
-	}
-
-	private static void redirectTargettedBlasts(Player player, ArrayList<EarthBlast> ignore) {
-		for (int id : instances.keySet()) {
-			EarthBlast blast = instances.get(id);
-
-			if (!blast.progressing || ignore.contains(blast))
-				continue;
-
-			if (!blast.location.getWorld().equals(player.getWorld()))
-				continue;
-
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "EarthBlast", blast.location))
-				continue;
-
-			if (blast.player.equals(player))
-				blast.redirect(player, getTargetLocation(player));
-
-			Location location = player.getEyeLocation();
-			Vector vector = location.getDirection();
-			Location mloc = blast.location;
-			if (mloc.distance(location) <= RANGE
-					&& GeneralMethods.getDistanceFromLine(vector, location, blast.location) < deflectrange
-					&& mloc.distance(location.clone().add(vector)) < mloc
-							.distance(location.clone().add(vector.clone().multiply(-1)))) {
-				blast.redirect(player, getTargetLocation(player));
-			}
-
 		}
 	}
 
 	private void redirect(Player player, Location targetlocation) {
-		if (progressing) {
-			if (location.distance(player.getLocation()) <= range) {
-				// direction = Methods.getDirection(location, targetlocation)
-				// .normalize();
-				settingup = false;
+		if (isProgressing) {
+			if (location.distanceSquared(player.getLocation()) <= range * range) {
+				isSettingUp = false;
 				destination = targetlocation;
 			}
 		}
 	}
 
-	private static void block(Player player) {
-		for (int id : instances.keySet()) {
-			EarthBlast blast = instances.get(id);
+	@SuppressWarnings("deprecation")
+	@Override
+	public void remove() {
+		super.remove();
+		if(destination != null && sourceBlock != null) {
+			sourceBlock.setType(Material.AIR);
+		} else if (sourceBlock != null) {
+			if (sourceBlock.getType() == Material.SAND) {
+				if (sourceBlock.getData() == (byte) 0x1) {
+					sourceBlock.setType(sourceType);
+					sourceBlock.setData((byte) 0x1);
+				} else {
+					sourceBlock.setType(sourceType);
+				}
+			} else {
+				sourceBlock.setType(sourceType);
+			}
+		}
+	}
 
-			if (blast.player.equals(player))
-				continue;
+	public void throwEarth() {
+		if (sourceBlock == null || !sourceBlock.getWorld().equals(player.getWorld())) {
+			return;
+		}
+		
+		if (getMovedEarth().containsKey(sourceBlock)) {
+			if (!isEarthRevertOn()) {
+				removeRevertIndex(sourceBlock);
+			}
+		}
+		
+		Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+		if (target == null) {
+			destination = getTargetEarthBlock((int) range).getLocation();
+			firstDestination = sourceBlock.getLocation().clone();
+			firstDestination.setY(destination.getY());
+		} else {
+			destination = ((LivingEntity) target).getEyeLocation();
+			firstDestination = sourceBlock.getLocation().clone();
+			firstDestination.setY(destination.getY());
+			destination = GeneralMethods.getPointOnLine(firstDestination, destination, range);
+		}
+		
+		if (destination.distanceSquared(location) <= 1) {
+			isProgressing = false;
+			destination = null;
+		} else {
+			isProgressing = true;			
+			playEarthbendingSound(sourceBlock.getLocation());
 
-			if (!blast.location.getWorld().equals(player.getWorld()))
-				continue;
+			Material currentType = sourceBlock.getType();
+			sourceBlock.setType(sourceType);
+			if (isEarthRevertOn()) {
+				addTempAirBlock(sourceBlock);
+			} else {
+				sourceBlock.breakNaturally();
+			}			
+			sourceBlock.setType(currentType);
+		}
+	}
+	
+	public static boolean annihilateBlasts(Location location, double radius, Player source) {
+		boolean broke = false;
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
+			if (blast.location.getWorld().equals(location.getWorld()) && !source.equals(blast.player)) {
+				if (blast.location.distanceSquared(location) <= radius * radius) {
+					blast.remove();
+					broke = true;
+				}
+			}
+		}
+		return broke;
+	}	
 
-			if (!blast.progressing)
-				continue;
+	public static ArrayList<EarthBlast> getAroundPoint(Location location, double radius) {
+		ArrayList<EarthBlast> list = new ArrayList<EarthBlast>();
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
+			if (blast.location.getWorld().equals(location.getWorld())) {
+				if (blast.location.distanceSquared(location) <= radius * radius) {
+					list.add(blast);
+				}
+			}
+		}
+		return list;
+	}
 
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "EarthBlast", blast.location))
+	public static EarthBlast getBlastFromSource(Block block) {
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
+			if (blast.sourceBlock.equals(block)) {
+				return blast;
+			}
+		}
+		return null;
+	}
+
+	private static void redirectTargettedBlasts(Player player, ArrayList<EarthBlast> ignore) {
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
+			if (!blast.isProgressing || ignore.contains(blast)) {
 				continue;
+			} else if (!blast.location.getWorld().equals(player.getWorld())) {
+				continue;
+			} else if (GeneralMethods.isRegionProtectedFromBuild(blast, blast.location)) {
+				continue;
+			} else if (blast.player.equals(player)) {
+				blast.redirect(player, blast.getTargetLocation());
+			}
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = blast.location;
-			if (mloc.distance(location) <= RANGE
-					&& GeneralMethods.getDistanceFromLine(vector, location, blast.location) < deflectrange
-					&& mloc.distance(location.clone().add(vector)) < mloc
-							.distance(location.clone().add(vector.clone().multiply(-1)))) {
-				blast.breakBlock();
+			
+			if (mloc.distanceSquared(location) <= blast.range * blast.range 
+					&& GeneralMethods.getDistanceFromLine(vector, location, blast.location) < blast.deflectRange
+					&& mloc.distanceSquared(location.clone().add(vector)) 
+						< mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
+				blast.redirect(player, blast.getTargetLocation());
 			}
 
 		}
 	}
 
-	public static String getDescription() {
-		return "To use, place your cursor over an earthbendable object (dirt, rock, ores, etc) "
-				+ "and tap sneak (default: shift). The object will temporarily turn to stone, "
-				+ "indicating that you have it focused as the source for your ability. "
-				+ "After you have selected an origin (you no longer need to be sneaking), "
-				+ "simply left-click in any direction and you will see your object launch "
-				+ "off in that direction, smashing into any creature in its path. If you look "
-				+ "towards a creature when you use this ability, it will target that creature. "
-				+ "A collision from Earth Blast both knocks the target back and deals some damage. "
-				+ "You cannot have multiple of these abilities flying at the same time.";
-	}
-
 	public static void removeAroundPoint(Location location, double radius) {
-		for (int id : instances.keySet()) {
-			EarthBlast blast = instances.get(id);
-			if (blast.location.getWorld().equals(location.getWorld()))
-				if (blast.location.distance(location) <= radius)
-					blast.breakBlock();
-		}
-	}
-
-	public static ArrayList<EarthBlast> getAroundPoint(Location location, double radius) {
-		ArrayList<EarthBlast> list = new ArrayList<EarthBlast>();
-		for (int id : instances.keySet()) {
-			EarthBlast blast = instances.get(id);
-			if (blast.location.getWorld().equals(location.getWorld()))
-				if (blast.location.distance(location) <= radius)
-					list.add(blast);
-		}
-		return list;
-	}
-
-	public static boolean annihilateBlasts(Location location, double radius, Player source) {
-		boolean broke = false;
-		for (int id : instances.keySet()) {
-			EarthBlast blast = instances.get(id);
-			if (blast.location.getWorld().equals(location.getWorld()) && !source.equals(blast.player))
-				if (blast.location.distance(location) <= radius) {
-					blast.breakBlock();
-					broke = true;
+		for (EarthBlast blast : getAbilities(EarthBlast.class)) {
+			if (blast.location.getWorld().equals(location.getWorld())) {
+				if (blast.location.distanceSquared(location) <= radius * radius) {
+					blast.remove();
 				}
+			}
 		}
-		return broke;
 	}
 
-	public Player getPlayer() {
-		return player;
+	public static void throwEarth(Player player) {
+		ArrayList<EarthBlast> ignore = new ArrayList<EarthBlast>();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		EarthBlast earthBlast = null;
+		
+		if (bPlayer == null) {
+			return;
+		}
+		
+		for (EarthBlast blast : getAbilities(player, EarthBlast.class)) {
+			if (!blast.isProgressing && bPlayer.canBend(blast)) {
+				blast.throwEarth();
+				ignore.add(blast);
+				earthBlast = blast;
+			}
+		}
+
+		if (earthBlast != null) {
+			bPlayer.addCooldown(earthBlast);
+		}
+		redirectTargettedBlasts(player, ignore);
+	}
+
+	@Override
+	public String getName() {
+		return "EarthBlast";
+	}
+
+	@Override
+	public Location getLocation() {
+		return location;
+	}
+
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public boolean isProgressing() {
+		return isProgressing;
+	}
+
+	public void setProgressing(boolean isProgressing) {
+		this.isProgressing = isProgressing;
+	}
+
+	public boolean isAtDestination() {
+		return isAtDestination;
+	}
+
+	public void setAtDestination(boolean isAtDestination) {
+		this.isAtDestination = isAtDestination;
+	}
+
+	public boolean isSettingUp() {
+		return isSettingUp;
+	}
+
+	public void setSettingUp(boolean isSettingUp) {
+		this.isSettingUp = isSettingUp;
+	}
+
+	public boolean isCanHitSelf() {
+		return canHitSelf;
+	}
+
+	public void setCanHitSelf(boolean canHitSelf) {
+		this.canHitSelf = canHitSelf;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public long getInterval() {
+		return interval;
+	}
+
+	public void setInterval(long interval) {
+		this.interval = interval;
 	}
 
 	public double getRange() {
@@ -557,12 +572,84 @@ public class EarthBlast {
 		this.damage = damage;
 	}
 
-	public double getPushfactor() {
-		return pushfactor;
+	public double getSpeed() {
+		return speed;
 	}
 
-	public void setPushfactor(double pushfactor) {
-		this.pushfactor = pushfactor;
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getPushFactor() {
+		return pushFactor;
+	}
+
+	public void setPushFactor(double pushFactor) {
+		this.pushFactor = pushFactor;
+	}
+
+	public double getSelectRange() {
+		return selectRange;
+	}
+
+	public void setSelectRange(double selectRange) {
+		this.selectRange = selectRange;
+	}
+
+	public double getDeflectRange() {
+		return deflectRange;
+	}
+
+	public void setDeflectRange(double deflectRange) {
+		this.deflectRange = deflectRange;
+	}
+
+	public double getCollisionRadius() {
+		return collisionRadius;
+	}
+
+	public void setCollisionRadius(double collisionRadius) {
+		this.collisionRadius = collisionRadius;
+	}
+
+	public Material getSourcetype() {
+		return sourceType;
+	}
+
+	public void setSourcetype(Material sourcetype) {
+		this.sourceType = sourcetype;
+	}
+
+	public Location getDestination() {
+		return destination;
+	}
+
+	public void setDestination(Location destination) {
+		this.destination = destination;
+	}
+
+	public Location getFirstDestination() {
+		return firstDestination;
+	}
+
+	public void setFirstDestination(Location firstDestination) {
+		this.firstDestination = firstDestination;
+	}
+
+	public Block getSourceBlock() {
+		return sourceBlock;
+	}
+
+	public void setSourceBlock(Block sourceBlock) {
+		this.sourceBlock = sourceBlock;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 
 }

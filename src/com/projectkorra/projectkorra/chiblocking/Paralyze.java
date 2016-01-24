@@ -1,48 +1,57 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.command.Commands;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Paralyze {
+public class Paralyze extends ChiAbility {
 
-	private static ConcurrentHashMap<Entity, Long> entities = new ConcurrentHashMap<Entity, Long>();
-	private static ConcurrentHashMap<Entity, Long> cooldowns = new ConcurrentHashMap<Entity, Long>();
+	private static final ConcurrentHashMap<Entity, Long> ENTITIES = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Entity, Long> COOLDOWNS = new ConcurrentHashMap<>();
 
-	private static final long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Paralyze.Cooldown");
-	private static final long duration = ProjectKorra.plugin.getConfig().getLong("Abilities.Chi.Paralyze.Duration");
+	private long cooldown;
+	private Entity target;
 
 	public Paralyze(Player sourceplayer, Entity targetentity) {
-		if (GeneralMethods.getBoundAbility(sourceplayer) == null)
-			return;
-		if (GeneralMethods.isBender(sourceplayer.getName(), Element.Chi) && GeneralMethods.getBoundAbility(sourceplayer).equalsIgnoreCase("Paralyze") && GeneralMethods.canBend(sourceplayer.getName(), "Paralyze")) {
-			if (cooldowns.containsKey(targetentity)) {
-				if (System.currentTimeMillis() < cooldowns.get(targetentity) + cooldown) {
+		super(sourceplayer);
+		this.target = targetentity;
+		this.cooldown = getConfig().getLong("Abilities.Chi.Paralyze.Cooldown");
+		start();
+	}
+	
+	@Override
+	public void progress() {
+		if (bPlayer.canBendIgnoreCooldowns(this)) {
+			if (COOLDOWNS.containsKey(target)) {
+				if (System.currentTimeMillis() < COOLDOWNS.get(target) + cooldown) {
 					return;
 				} else {
-					cooldowns.remove(targetentity);
+					COOLDOWNS.remove(target);
 				}
 			}
-			if (targetentity instanceof Player) {
-				if (Commands.invincible.contains(((Player) targetentity).getName()))
+			if (target instanceof Player) {
+				if (Commands.invincible.contains(((Player) target).getName())) {
+					remove();
 					return;
+				}
 			}
-			paralyze(targetentity);
-			cooldowns.put(targetentity, System.currentTimeMillis());
+			paralyze(target);
+			COOLDOWNS.put(target, System.currentTimeMillis());
+		} else {
+			remove();
 		}
 	}
 
 	private static void paralyze(Entity entity) {
-		entities.put(entity, System.currentTimeMillis());
+		ENTITIES.put(entity, System.currentTimeMillis());
 		if (entity instanceof Creature) {
 			((Creature) entity).setTarget(null);
 		}
@@ -54,19 +63,71 @@ public class Paralyze {
 		}
 	}
 
+	//TODO change paralyze to use Spigot metadata rather than checking this class
 	public static boolean isParalyzed(Entity entity) {
 		if (entity instanceof Player) {
-			if (AvatarState.isAvatarState((Player) entity))
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer((Player) entity);
+			if (bPlayer != null && bPlayer.isAvatarState()) {
 				return false;
+			}
 		}
-		if (entities.containsKey(entity)) {
-			if (System.currentTimeMillis() < entities.get(entity) + duration) {
+		if (ENTITIES.containsKey(entity)) {
+			if (System.currentTimeMillis() < ENTITIES.get(entity) + getDuration()) {
 				return true;
 			}
-			entities.remove(entity);
+			ENTITIES.remove(entity);
 		}
 		return false;
 
 	}
 
+	@Override
+	public String getName() {
+		return "Paralyze";
+	}
+	
+	@Override
+	public Location getLocation() {
+		return target != null ? target.getLocation() : null;
+	}
+
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return false;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+	
+	public static long getDuration() {
+		return getConfig().getLong("Abilities.Chi.Paralyze.Duration");
+	}
+
+	public Entity getTarget() {
+		return target;
+	}
+
+	public void setTarget(Entity target) {
+		this.target = target;
+	}
+
+	public static ConcurrentHashMap<Entity, Long> getEntities() {
+		return ENTITIES;
+	}
+
+	public static ConcurrentHashMap<Entity, Long> getCooldowns() {
+		return COOLDOWNS;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+	
 }

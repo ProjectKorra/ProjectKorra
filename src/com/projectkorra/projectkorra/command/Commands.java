@@ -80,7 +80,6 @@ public class Commands {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");
 		new AddCommand();
 		new BindCommand();
-		new CopyCommand();
 		new CheckCommand();
 		new ChooseCommand();
 		new ClearCommand();

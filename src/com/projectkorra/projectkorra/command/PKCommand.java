@@ -1,9 +1,5 @@
 package com.projectkorra.projectkorra.command;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
@@ -12,6 +8,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * Abstract representation of a command executor. Implements
@@ -154,19 +154,41 @@ public abstract class PKCommand implements SubCommand {
 	 *         otherwise
 	 */
 	public String getElement(String element) {
-		if (Arrays.asList(Commands.firealiases).contains(element) || Arrays.asList(Commands.firecomboaliases).contains(element) || Arrays.asList(Commands.combustionaliases).contains(element) || Arrays.asList(Commands.lightningaliases).contains(element))
+		if (Arrays.asList(Commands.firealiases).contains(element) || Arrays.asList(Commands.firecomboaliases).contains(element))
 			return "fire";
-		else if (Arrays.asList(Commands.earthaliases).contains(element) || Arrays.asList(Commands.earthcomboaliases).contains(element) || Arrays.asList(Commands.metalbendingaliases).contains(element) || Arrays.asList(Commands.sandbendingaliases).contains(element) || Arrays.asList(Commands.lavabendingaliases).contains(element))
-			return "earth";
-		else if (Arrays.asList(Commands.airaliases).contains(element) || Arrays.asList(Commands.aircomboaliases).contains(element) || Arrays.asList(Commands.spiritualprojectionaliases).contains(element) || Arrays.asList(Commands.flightaliases).contains(element))
-			return "air";
-		else if (Arrays.asList(Commands.wateraliases).contains(element) || Arrays.asList(Commands.watercomboaliases).contains(element) || Arrays.asList(Commands.healingaliases).contains(element) || Arrays.asList(Commands.bloodaliases).contains(element) || Arrays.asList(Commands.icealiases).contains(element) || Arrays.asList(Commands.plantaliases).contains(element))
-			return "water";
+		else if (Arrays.asList(Commands.combustionaliases).contains(element))
+			return "combustion";
+		else if (Arrays.asList(Commands.lightningaliases).contains(element))
+			return "lightning";
+		else if (Arrays.asList(Commands.earthaliases).contains(element) || Arrays.asList(Commands.earthcomboaliases).contains(element))
+				return "earth";	
+		else if (Arrays.asList(Commands.metalbendingaliases).contains(element))
+			return "metal";
+		else if (Arrays.asList(Commands.sandbendingaliases).contains(element))
+			return "sand";
+		else if (Arrays.asList(Commands.lavabendingaliases).contains(element))
+			return "lava";
+		else if (Arrays.asList(Commands.airaliases).contains(element) || Arrays.asList(Commands.aircomboaliases).contains(element))
+			return "air";	
+		else if (Arrays.asList(Commands.spiritualprojectionaliases).contains(element))
+			return "spiritual";
+		else if (Arrays.asList(Commands.flightaliases).contains(element))
+			return "flight";
+		else if (Arrays.asList(Commands.wateraliases).contains(element) || Arrays.asList(Commands.watercomboaliases).contains(element))
+			return "water";	
+		else if (Arrays.asList(Commands.healingaliases).contains(element)) 
+			return "healing";
+		else if (Arrays.asList(Commands.bloodaliases).contains(element)) 
+			return "blood";
+		else if (Arrays.asList(Commands.icealiases).contains(element)) 
+			return "ice";
+		else if (Arrays.asList(Commands.plantaliases).contains(element))
+			return "plant";
 		else if (Arrays.asList(Commands.chialiases).contains(element) || Arrays.asList(Commands.chicomboaliases).contains(element))
 			return "chi";
 		return null;
 	}
-
+	
 	/**
 	 * Returns a boolean if the string provided is numerical.
 	 * @param id
@@ -186,11 +208,9 @@ public abstract class PKCommand implements SubCommand {
 	 * @param page
 	 * @return
 	 */
-	protected List<String> getPage(List<String> entries, String title, int page, boolean alphabetical) {
+	protected List<String> getPage(List<String> entries, String title, int page) {
 		List<String> strings = new ArrayList<String>();
-		if (alphabetical) {
-			Collections.sort(entries);
-		}
+		Collections.sort(entries);
 		
 		if (page < 1) {
 			page = 1;
@@ -213,7 +233,7 @@ public abstract class PKCommand implements SubCommand {
 				}
 			}
 		}
-		
 		return strings;
 	}
+	
 }

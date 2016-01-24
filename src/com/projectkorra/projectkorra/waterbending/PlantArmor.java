@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.PlantAbility;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -13,219 +14,171 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
+import java.util.Random;
 
-public class PlantArmor {
-
-	public static ConcurrentHashMap<Player, PlantArmor> instances = new ConcurrentHashMap<Player, PlantArmor>();
-
-	private static long cooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.Cooldown");
-	private static long DURATION = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.Duration");
-	private static int RESISTANCE = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.Resistance");
+public class PlantArmor extends PlantAbility {
 	
-	private static int selectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.SelectRange");
-	private static int autoSelectRange = ProjectKorra.plugin.getConfig().getInt("Abilities.Water.PlantArmor.AutoSourcing.SelectRange");
-	private static boolean auto = ProjectKorra.plugin.getConfig().getBoolean("Abilities.Water.PlantArmor.AutoSourcing.Enabled");
-	private static long autocooldown = ProjectKorra.plugin.getConfig().getLong("Abilities.Water.PlantArmor.AutoSourcing.Cooldown");
-	
-	private boolean isAuto;
-	
-	private Player player;
+	private boolean formed;
+	private boolean hadEffect;
+	private int resistance;
+	private long duration;
+	private long cooldown;
+	private double range;
+	private Material blockType;
 	private Block block;
 	private Location location;
-	private Plantbending plantbending;
-	private long starttime;
-	private boolean formed = false;
-	private int resistance = RESISTANCE;
-	public ItemStack[] oldarmor;
-	public boolean hadEffect;
-	private long duration = DURATION;
-	public Material blocktype;
-
+	private PlantRegrowth plantbending;
+	private ItemStack[] oldArmor;	
+	
 	public PlantArmor(Player player) {
-		if (instances.containsKey(player)) {
+		super(player);
+		
+		this.resistance = getConfig().getInt("Abilities.Water.PlantArmor.Resistance");
+		this.range = getConfig().getInt("Abilities.Water.PlantArmor.Range");
+		this.duration = getConfig().getLong("Abilities.Water.PlantArmor.Duration");
+		this.cooldown = getConfig().getLong("Abilities.Water.PlantArmor.Cooldown");
+		
+		this.range = getNightFactor(range);
+		this.duration = (long) getNightFactor(duration);  
+		
+		if (hasAbility(player, PlantArmor.class)) {
+			return;
+		} else if (bPlayer.isOnCooldown(this)) {
 			return;
 		}
-
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-
-		if (bPlayer.isOnCooldown("PlantArmor"))
-			return;
-
-		this.player = player;
-		Double d = WaterMethods.getWaterbendingNightAugment(player.getWorld()) * duration;
-		duration = d.longValue();
-		block = BlockSource.getWaterSourceBlock(player, autoSelectRange, selectRange, ClickType.LEFT_CLICK, auto, false, false, false, false, WaterMethods.canPlantbend(player));
+		
+		block = getPlantSourceBlock(player, range, true);
 		if (block == null) {
 			return;
 		}
-		if (BlockSource.isAuto(block)) {
-			isAuto = true;
-		} else {
-			isAuto = false;
-		}
+		
 		location = block.getLocation();
 		hadEffect = player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-		if (!canUse())
+		if (!canUse()) {
 			return;
-		plantbending = new Plantbending(block);
-		blocktype = block.getType();
+		}
+		
+		plantbending = new PlantRegrowth(player, block);
+		blockType = block.getType();
 		block.setType(Material.AIR);
-		instances.put(player, this);
+		
+		start();
 	}
 
 	private boolean canUse() {
-		if (!player.getWorld().equals(block.getWorld())) {
-			cancel();
+		if (!bPlayer.canPlantbend() 
+				|| !bPlayer.canBend(this) 
+				|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+			remove();
+			return false;
+		} else if (location.distanceSquared(player.getEyeLocation()) > range * range) {
+			remove();
 			return false;
 		}
-
-		if (location.distance(player.getEyeLocation()) > selectRange) {
-			cancel();
-			return false;
-		}
-
-		if (!WaterMethods.canPlantbend(player)) {
-			cancel();
-			return false;
-		}
-
 		return true;
-	}
-	
-	public ItemStack getOriginalArmor(int i) {
-		return oldarmor[i];
-	}
-
-	private void playEffect() {
-		if (!formed) {
-			if (GeneralMethods.rand.nextInt(4) == 0) {
-				WaterMethods.playPlantbendingSound(location);
-			}
-			GeneralMethods.displayColoredParticle(location, "009933");
-			Vector v = player.getEyeLocation().toVector().subtract(location.toVector());
-			location = location.add(v.normalize());
-		}
-	}
-
-	private void cancel() {
-		if (plantbending != null)
-			plantbending.revert();
-		if (instances.containsKey(player))
-			instances.remove(player);
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (isAuto) {
-			bPlayer.addCooldown("PlantArmor", autocooldown);
-		} else {
-			bPlayer.addCooldown("PlantArmor", cooldown);
-		}
-	}
-
-	private boolean inPosition() {
-		if (location.distance(player.getEyeLocation()) <= 1.5)
-			return true;
-		return false;
 	}
 
 	private void formArmor() {
-		oldarmor = player.getInventory().getArmorContents();
-		ItemStack helmet = new ItemStack(blocktype);
+		oldArmor = player.getInventory().getArmorContents();
+		ItemStack helmet = new ItemStack(blockType);
 		ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
-		LeatherArmorMeta im = (LeatherArmorMeta) chestplate.getItemMeta();
-		im.setColor(Color.GREEN);
-		chestplate.setItemMeta(im);
+		
+		LeatherArmorMeta itemMeta = (LeatherArmorMeta) chestplate.getItemMeta();
+		itemMeta.setColor(Color.GREEN);
+		chestplate.setItemMeta(itemMeta);
+		
 		ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS);
-		leggings.setItemMeta(im);
 		ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
-		boots.setItemMeta(im);
+		leggings.setItemMeta(itemMeta);
+		boots.setItemMeta(itemMeta);
+		
 		player.getInventory().setHelmet(helmet);
 		player.getInventory().setChestplate(chestplate);
 		player.getInventory().setLeggings(leggings);
 		player.getInventory().setBoots(boots);
-		if (!hadEffect)
+		
+		if (!hadEffect) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, resistance - 1));
+		}
 		formed = true;
-		starttime = System.currentTimeMillis();
+		startTime = System.currentTimeMillis();
 	}
 
-	public static void progressAll() {
-		for (Player player : instances.keySet()) {
-			progress(player);
+	private boolean inPosition() {
+		return location.distanceSquared(player.getEyeLocation()) <= 1.5 * 1.5;
+	}
+
+	private void playEffect() {
+		if (!formed) {
+			if ((new Random()).nextInt(4) == 0) {
+				playPlantbendingSound(location);
+			}
+			
+			GeneralMethods.displayColoredParticle(location, "009933");
+			Vector vector = player.getEyeLocation().toVector().subtract(location.toVector());
+			location = location.add(vector.normalize());
 		}
 	}
 
-	public static void progress(Player player) {
-		if (!instances.containsKey(player))
-			return;
-		PlantArmor plantarmor = instances.get(player);
-
+	@Override
+	public void progress() {
 		if (player.isDead() || !player.isOnline()) {
-			plantarmor.removeEffect();
-			plantarmor.cancel();
+			remove();
 			return;
 		}
 
-		if (plantarmor.formed) {
-			if (System.currentTimeMillis() > plantarmor.starttime + plantarmor.duration) {
-				plantarmor.removeEffect();
-				plantarmor.cancel();
-				GeneralMethods.getBendingPlayer(player.getName()).addCooldown("PlantArmor", cooldown);
+		if (formed) {
+			if (System.currentTimeMillis() > startTime + duration) {
+				remove();
+				bPlayer.addCooldown(this);
 				return;
 			}
-		} else {
-			if (!plantarmor.canUse())
-				return;
-
-			plantarmor.playEffect();
-
-			if (plantarmor.inPosition()) {
-				plantarmor.formArmor();
-			}
-		}
-
-	}
-
-	private void removeEffect() {
-		player.getInventory().setArmorContents(oldarmor);
-		if (!hadEffect)
-			player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-	}
-
-	public static void removeEffect(Player player) {
-		if (!instances.containsKey(player))
+		} else if (!canUse()) {
 			return;
-		instances.get(player).removeEffect();
+		}
+		
+		playEffect();
+		if (inPosition() && !formed) {
+			formArmor();
+		}
 	}
 
-	public static void removeAll() {
-		for (Player player : instances.keySet()) {
-			PlantArmor plantarmor = instances.get(player);
-			plantarmor.removeEffect();
-			plantarmor.cancel();
+	@Override
+	public void remove() {
+		super.remove();
+		
+		if (oldArmor != null) {
+			player.getInventory().setArmorContents(oldArmor);
+			if (!hadEffect) {
+				player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+			}
 		}
+		
+		if (plantbending != null) {
+			plantbending.remove();
+		}
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return false;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
 	}
 
 	public static boolean canRemoveArmor(Player player) {
-		if (instances.containsKey(player)) {
-			PlantArmor plantarmor = instances.get(player);
-			if (System.currentTimeMillis() < plantarmor.starttime + plantarmor.duration)
+		PlantArmor plantArmor = getAbility(player, PlantArmor.class);
+		if (plantArmor != null) {
+			if (System.currentTimeMillis() < plantArmor.startTime + plantArmor.duration) {
 				return false;
+			}
 		}
 		return true;
 	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public int getResistance() {
-		return resistance;
-	}
-
+	
 	public void setResistance(int resistance) {
 		this.resistance = resistance;
 		if (!hadEffect) {
@@ -233,4 +186,101 @@ public class PlantArmor {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, resistance - 1));
 		}
 	}
+	
+	public int getResistance() {
+		return resistance;
+	}
+
+	@Override
+	public String getName() {
+		return "PlantArmor";
+	}
+
+	@Override
+	public Location getLocation() {
+		if (location != null) {
+			return location;
+		} else if (block != null) {
+			return block.getLocation();
+		}
+		return player != null ? player.getLocation() : null;
+	}
+
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+
+	public boolean isFormed() {
+		return formed;
+	}
+
+	public void setFormed(boolean formed) {
+		this.formed = formed;
+	}
+
+	public boolean isHadEffect() {
+		return hadEffect;
+	}
+
+	public void setHadEffect(boolean hadEffect) {
+		this.hadEffect = hadEffect;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public Material getBlockType() {
+		return blockType;
+	}
+
+	public void setBlockType(Material blockType) {
+		this.blockType = blockType;
+	}
+
+	public Block getBlock() {
+		return block;
+	}
+
+	public void setBlock(Block block) {
+		this.block = block;
+	}
+
+	public PlantRegrowth getPlantbending() {
+		return plantbending;
+	}
+
+	public void setPlantbending(PlantRegrowth plantbending) {
+		this.plantbending = plantbending;
+	}
+
+	public ItemStack[] getOldArmor() {
+		return oldArmor;
+	}
+
+	public void setOldArmor(ItemStack[] oldArmor) {
+		this.oldArmor = oldArmor;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+		
 }

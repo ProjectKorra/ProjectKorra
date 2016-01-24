@@ -1,55 +1,93 @@
 package com.projectkorra.projectkorra.chiblocking;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.ChiAbility;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-
-public class SwiftKick {
-	public static int damage = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.SwiftKick.Damage");
-	public static int blockChance = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.ChiCombo.ChiBlockChance");
-
+public class SwiftKick extends ChiAbility {
+	
+	private int damage;
+	private int blockChance;
+	private long cooldown;
+	private Entity target;
+	
 	public SwiftKick(Player player) {
-		if (!isEligible(player))
-			return;
-
-		Entity e = GeneralMethods.getTargetedEntity(player, 4, new ArrayList<Entity>());
-
-		if (e == null)
-			return;
-
-		GeneralMethods.damageEntity(player, e, damage, "SwiftKick");
-
-		if (e instanceof Player && ChiPassive.willChiBlock(player, (Player)e)) {
-			ChiPassive.blockChi((Player) e);
-		}
-
-		GeneralMethods.getBendingPlayer(player.getName()).addCooldown("SwiftKick", 4000);
+		super(player);
+		this.damage = getConfig().getInt("Abilities.Chi.SwiftKick.Damage");
+		this.blockChance = getConfig().getInt("Abilities.Chi.ChiCombo.ChiBlockChance");
+		this.cooldown = getConfig().getInt("Abilities.Chi.ChiCombo.Cooldown");
+		this.target = GeneralMethods.getTargetedEntity(player, 4);
+		start();
 	}
 
-	@SuppressWarnings("deprecation")
-	public boolean isEligible(Player player) {
-		if (!GeneralMethods.canBend(player.getName(), "SwiftKick"))
-			return false;
+	@Override
+	public void progress() {
+		if (target == null) {
+			remove();
+			return;
+		}
+		GeneralMethods.damageEntity(this, target, damage);
+		if (target instanceof Player && ChiPassive.willChiBlock(player, (Player) target)) {
+			ChiPassive.blockChi((Player) target);
+		}
+		bPlayer.addCooldown(this);
+		remove();
+	}
+	
+	@Override
+	public String getName() {
+		return "SwiftKick";
+	}
 
-		if (GeneralMethods.getBoundAbility(player) == null)
-			return false;
+	@Override
+	public Location getLocation() {
+		return player != null ? player.getLocation() : null;
+	}
 
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("SwiftKick"))
-			return false;
-
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "SwiftKick", player.getLocation()))
-			return false;
-
-		if (GeneralMethods.getBendingPlayer(player.getName()).isOnCooldown("SwiftKick"))
-			return false;
-
-		if (player.isOnGround())
-			return false;
-
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
 		return true;
 	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public int getBlockChance() {
+		return blockChance;
+	}
+
+	public void setBlockChance(int blockChance) {
+		this.blockChance = blockChance;
+	}
+
+	public Entity getTarget() {
+		return target;
+	}
+
+	public void setTarget(Entity target) {
+		this.target = target;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+	
 }

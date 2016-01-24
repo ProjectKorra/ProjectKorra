@@ -33,10 +33,10 @@ public class ChooseCommand extends PKCommand {
 				return;
 			}
 
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(sender.getName());
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			if (bPlayer == null) {
 				GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
-				bPlayer = GeneralMethods.getBendingPlayer(sender.getName());
+				bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			}
 			if (bPlayer.isPermaRemoved()) {
 				sender.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
@@ -83,32 +83,38 @@ public class ChooseCommand extends PKCommand {
 	 * 
 	 * @param sender The CommandSender who issued the command
 	 * @param target The Player to add the element to
-	 * @param element The element to add to the Player
+	 * @param elementName The element to add to the Player
 	 */
-	private void add(CommandSender sender, Player target, String element) {
-		element = getElement(element);
-		Element e = Element.getType(element);
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(target.getName());
-		bPlayer.setElement(e);
-		ChatColor color = GeneralMethods.getElementColor(e);
-		if (element.charAt(0) == 'w' || element.charAt(0) == 'f') {
-			target.sendMessage(color + "You are now a " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
-		} else if (element.charAt(0) == 'e' || element.charAt(0) == 'a') {
-			target.sendMessage(color + "You are now an " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
-		} else if (element.equalsIgnoreCase("chi")) {
+	private void add(CommandSender sender, Player target, String elementName) {
+		elementName = getElement(elementName);
+		Element element = Element.getElement(elementName);
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
+		
+		if (bPlayer == null) {
+			return;
+		}
+		
+		bPlayer.setElement(element);
+		ChatColor color = element != null ? element.getColor() : null;
+		
+		if (elementName.charAt(0) == 'w' || elementName.charAt(0) == 'f') {
+			target.sendMessage(color + "You are now a " + Character.toString(elementName.charAt(0)).toUpperCase() + elementName.substring(1) + "bender.");
+		} else if (elementName.charAt(0) == 'e' || elementName.charAt(0) == 'a') {
+			target.sendMessage(color + "You are now an " + Character.toString(elementName.charAt(0)).toUpperCase() + elementName.substring(1) + "bender.");
+		} else if (elementName.equalsIgnoreCase("chi")) {
 			target.sendMessage(color + "You are now a Chiblocker.");
 		}
 		if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-			if (element.charAt(0) == 'w' || element.charAt(0) == 'f') {
-				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
-			} else if (element.charAt(0) == 'e' || element.charAt(0) == 'a') {
-				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now an " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
-			} else if (element.equalsIgnoreCase("chi")) {
+			if (elementName.charAt(0) == 'w' || elementName.charAt(0) == 'f') {
+				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a " + Character.toString(elementName.charAt(0)).toUpperCase() + elementName.substring(1) + "bender.");
+			} else if (elementName.charAt(0) == 'e' || elementName.charAt(0) == 'a') {
+				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now an " + Character.toString(elementName.charAt(0)).toUpperCase() + elementName.substring(1) + "bender.");
+			} else if (elementName.equalsIgnoreCase("chi")) {
 				target.sendMessage(color + "You are now a Chiblocker.");
 			}
 		}
 		GeneralMethods.removeUnusableAbilities(target.getName());
 		GeneralMethods.saveElements(bPlayer);
-		Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.CHOOSE));
+		Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 	}
 }
