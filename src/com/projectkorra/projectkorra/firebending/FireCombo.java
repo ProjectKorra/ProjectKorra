@@ -1,19 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +14,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 /*
  * TODO: Combo classes should eventually be rewritten so that each combo is treated
@@ -72,8 +71,6 @@ public class FireCombo extends FireAbility implements ComboAbility {
 	
 	public FireCombo(Player player, String ability) {
 		super(player);
-		Bukkit.broadcastMessage("Here 0");
-		
 		this.ability = ability;
 		
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
@@ -211,7 +208,6 @@ public class FireCombo extends FireAbility implements ComboAbility {
 
 	@Override
 	public void progress() {
-		Bukkit.broadcastMessage("Progressing");
 		progressCounter++;
 		for (int i = 0; i < tasks.size(); i++) {
 			BukkitRunnable br = tasks.get(i);

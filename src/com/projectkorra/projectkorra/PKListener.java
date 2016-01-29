@@ -737,7 +737,7 @@ public class PKListener implements Listener {
 		} else {
 			for (Element element : Element.getMainElements()) {
 				if (bPlayer.hasElement(element)) {
-					color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors." + element));
+					color = element.getColor();
 					break;
 				}
 			}
