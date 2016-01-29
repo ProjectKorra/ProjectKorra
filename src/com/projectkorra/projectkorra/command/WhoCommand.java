@@ -51,7 +51,7 @@ public class WhoCommand extends PKCommand {
 		staff.put("4eb6315e-9dd1-49f7-b582-c1170e497ab0", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // jedk1
 		staff.put("5031c4e3-8103-49ea-b531-0d6ae71bad69", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Simplicitee
 		staff.put("d7757be8-86de-4898-ab4f-2b1b2fbc3dfa", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // StrangeOne101
-		staff.put("a9673c93-9186-367a-96c4-e111a3bbd1b1", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // kingbirdy
+		staff.put("3b5bdfab-8ae1-4794-b160-4f33f31fde99", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // kingbirdy
 		staff.put("dedf335b-d282-47ab-8ffc-a80121661cd1", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // grasshopperMatt
 
 		staff.put("623df34e-9cd4-438d-b07c-1905e1fc46b6", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Loony
