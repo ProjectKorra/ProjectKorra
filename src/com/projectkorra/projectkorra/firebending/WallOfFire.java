@@ -1,86 +1,75 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.airbending.AirMethods;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.WaterMethods;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-public class WallOfFire implements ConfigLoadable {
+public class WallOfFire extends FireAbility {
 
-	public static ConcurrentHashMap<Player, WallOfFire> instances = new ConcurrentHashMap<>();
-
-	private static double maxangle = 50;
-
-	private static int RANGE = config.get().getInt("Abilities.Fire.WallOfFire.Range");
-
-	private static int HEIGHT = config.get().getInt("Abilities.Fire.WallOfFire.Height");
-	private static int WIDTH = config.get().getInt("Abilities.Fire.WallOfFire.Width");
-	private static long DURATION = config.get().getLong("Abilities.Fire.WallOfFire.Duration");
-	private static int DAMAGE = config.get().getInt("Abilities.Fire.WallOfFire.Damage");
-	private static long interval = 250;
-	private static long COOLDOWN = config.get().getLong("Abilities.Fire.WallOfFire.Cooldown");
-	private static long DAMAGE_INTERVAL = config.get().getLong("Abilities.Fire.WallOfFire.Interval");
-	private static double FIRETICKS = config.get().getDouble("Abilities.Fire.WallOfFire.FireTicks");
-	private Player player;
-
+	private boolean active;
+	private int damageTick;
+	private int intervalTick;
+	private int range;
+	private int height;
+	private int width;
+	private int damage;
+	private long cooldown;
+	private long damageInterval;
+	private long duration;
+	private long time;
+	private long interval;
+	private double fireTicks;
+	private double maxAngle;
+	private Random random;
 	private Location origin;
-	private long time, starttime;
-	private boolean active = true;
-	private int damagetick = 0, intervaltick = 0;
-	private int range = RANGE;
-	private int height = HEIGHT;
-	private int width = WIDTH;
-	private long duration = DURATION;
-	private int damage = DAMAGE;
-	private long cooldown = COOLDOWN;
-	private long damageinterval = DAMAGE_INTERVAL;
-	private List<Block> blocks = new ArrayList<Block>();
-
+	private List<Block> blocks;
+	
 	public WallOfFire(Player player) {
-		/* Initial Checks */
-		if (instances.containsKey(player) && !AvatarState.isAvatarState(player)) {
+		super(player);
+		
+		this.active = true;
+		this.maxAngle = getConfig().getDouble("Abilities.Fire.WallOfFire.MaxAngle");
+		this.interval = getConfig().getLong("Abilities.Fire.WallOfFire.Interval");
+		this.range = getConfig().getInt("Abilities.Fire.WallOfFire.Range");
+		this.height = getConfig().getInt("Abilities.Fire.WallOfFire.Height");
+		this.width = getConfig().getInt("Abilities.Fire.WallOfFire.Width");
+		this.damage = getConfig().getInt("Abilities.Fire.WallOfFire.Damage");
+		this.cooldown = getConfig().getLong("Abilities.Fire.WallOfFire.Cooldown");
+		this.damageInterval = getConfig().getLong("Abilities.Fire.WallOfFire.DamageInterval");
+		this.duration = getConfig().getLong("Abilities.Fire.WallOfFire.Duration");
+		this.fireTicks = getConfig().getDouble("Abilities.Fire.WallOfFire.FireTicks");
+		this.random = new Random();
+		this.blocks = new ArrayList<>();
+
+		if (hasAbility(player, WallOfFire.class) && !bPlayer.isAvatarState()) {
+			return;
+		} else if (bPlayer.isOnCooldown(this)) {
 			return;
 		}
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("WallOfFire"))
-			return;
-		/* End Initial Checks */
-
-		this.player = player;
-
+		
 		origin = GeneralMethods.getTargetedLocation(player, range);
 
-		World world = player.getWorld();
-
-		if (FireMethods.isDay(player.getWorld())) {
-			width = (int) FireMethods.getFirebendingDayAugment((double) width, world);
-			height = (int) FireMethods.getFirebendingDayAugment((double) height, world);
-			duration = (long) FireMethods.getFirebendingDayAugment((double) duration, world);
-			damage = (int) FireMethods.getFirebendingDayAugment((double) damage, world);
+		if (isDay(player.getWorld())) {
+			width = (int) getDayFactor(width);
+			height = (int) getDayFactor(height);
+			duration = (long) getDayFactor(duration);
+			damage = (int) getDayFactor(damage);
 		}
 
 		time = System.currentTimeMillis();
-		starttime = time;
-
 		Block block = origin.getBlock();
-
 		if (block.isLiquid() || GeneralMethods.isSolid(block)) {
 			return;
 		}
@@ -88,45 +77,42 @@ public class WallOfFire implements ConfigLoadable {
 		Vector direction = player.getEyeLocation().getDirection();
 		Vector compare = direction.clone();
 		compare.setY(0);
-
-		if (Math.abs(direction.angle(compare)) > Math.toRadians(maxangle)) {
+		if (Math.abs(direction.angle(compare)) > Math.toRadians(maxAngle)) {
 			return;
 		}
 
 		initializeBlocks();
-
-		instances.put(player, this);
-		bPlayer.addCooldown("WallOfFire", cooldown);
+		start();
+		bPlayer.addCooldown(this);
 	}
 
 	private void affect(Entity entity) {
-		if (entity instanceof LivingEntity) {
-			LivingEntity e = (LivingEntity) entity;
-			Block block = e.getEyeLocation().getBlock();
-			if (TempBlock.isTempBlock(block) && WaterMethods.isIcebendable(block)) {
-				return;
-			}
-			GeneralMethods.damageEntity(player, entity, damage, "WallOfFire");
-			new Enflamed(entity, player);
-			AirMethods.breakBreathbendingHold(entity);
-		}
-		entity.setFireTicks((int) (FIRETICKS * 20));
+		entity.setFireTicks((int) (fireTicks * 20));
 		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
+		if (entity instanceof LivingEntity) {
+			GeneralMethods.damageEntity(this, entity, damage);
+			new FireDamageTimer(entity, player);
+			AirAbility.breakBreathbendingHold(entity);
+		}
 	}
 
 	private void damage() {
 		double radius = height;
-		if (radius < width)
+		if (radius < width) {
 			radius = width;
+		}
+		
 		radius = radius + 1;
 		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(origin, radius);
-		if (entities.contains(player))
+		if (entities.contains(player)) {
 			entities.remove(player);
+		}
 		for (Entity entity : entities) {
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "WallOfFire", entity.getLocation()))
+			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
+			}
 			for (Block block : blocks) {
-				if (entity.getLocation().distance(block.getLocation()) <= 1.5) {
+				if (entity.getLocation().distanceSquared(block.getLocation()) <= 1.5 * 1.5) {
 					affect(entity);
 					break;
 				}
@@ -136,49 +122,15 @@ public class WallOfFire implements ConfigLoadable {
 
 	private void display() {
 		for (Block block : blocks) {
-			if (!EarthMethods.isTransparentToEarthbending(player, block)) {
-				continue;
-			}
 			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 3);
 			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 
-			if (GeneralMethods.rand.nextInt(7) == 0) {
-				FireMethods.playFirebendingSound(block.getLocation());
+			if (random.nextInt(7) == 0) {
+				playFirebendingSound(block.getLocation());
 			}
 		}
 	}
 
-	public long getCooldown() {
-		return cooldown;
-	}
-
-	public int getDamage() {
-		return damage;
-	}
-
-	public long getDamageinterval() {
-		return damageinterval;
-	}
-
-	public long getDuration() {
-		return duration;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public int getRange() {
-		return range;
-	}
-
-	public int getWidth() {
-		return width;
-	}
 
 	private void initializeBlocks() {
 		Vector direction = player.getEyeLocation().getDirection();
@@ -190,113 +142,192 @@ public class WallOfFire implements ConfigLoadable {
 		Vector orthoud = GeneralMethods.getOrthogonalVector(direction, 90, 1);
 		orthoud = orthoud.normalize();
 
-		double w = (double) width;
-		double h = (double) height;
+		double w = width;
+		double h = height;
 
 		for (double i = -w; i <= w; i++) {
 			for (double j = -h; j <= h; j++) {
 				Location location = origin.clone().add(orthoud.clone().multiply(j));
 				location = location.add(ortholr.clone().multiply(i));
-				if (GeneralMethods.isRegionProtectedFromBuild(player, "WallOfFire", location))
+				if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 					continue;
+				}
 				Block block = location.getBlock();
-				if (!blocks.contains(block))
+				if (!blocks.contains(block)) {
 					blocks.add(block);
+				}
 			}
-		}
-
-	}
-
-	public boolean progress() {
-		time = System.currentTimeMillis();
-
-		if (time - starttime > cooldown) {
-			remove();
-			return false;
-		}
-
-		if (!active)
-			return false;
-
-		if (time - starttime > duration) {
-			active = false;
-			return false;
-		}
-
-		if (time - starttime > intervaltick * interval) {
-			intervaltick++;
-			display();
-		}
-
-		if (time - starttime > damagetick * damageinterval) {
-			damagetick++;
-			damage();
-		}
-		return true;
-	}
-
-	public static void progressAll() {
-		for (WallOfFire ability : instances.values()) {
-			ability.progress();
-		}
-	}
-
-	public void remove() {
-		instances.remove(player);
-	}
-
-	public static void removeAll() {
-		for (WallOfFire ability : instances.values()) {
-			ability.remove();
 		}
 	}
 
 	@Override
-	public void reloadVariables() {
-		RANGE = config.get().getInt("Abilities.Fire.WallOfFire.Range");
-		HEIGHT = config.get().getInt("Abilities.Fire.WallOfFire.Height");
-		WIDTH = config.get().getInt("Abilities.Fire.WallOfFire.Width");
-		DURATION = config.get().getLong("Abilities.Fire.WallOfFire.Duration");
-		DAMAGE = config.get().getInt("Abilities.Fire.WallOfFire.Damage");
-		COOLDOWN = config.get().getLong("Abilities.Fire.WallOfFire.Cooldown");
-		DAMAGE_INTERVAL = config.get().getLong("Abilities.Fire.WallOfFire.Interval");
-		FIRETICKS = config.get().getDouble("Abilities.Fire.WallOfFire.FireTicks");
-		range = RANGE;
-		height = HEIGHT;
-		width = WIDTH;
-		duration = DURATION;
-		damage = DAMAGE;
-		cooldown = COOLDOWN;
-		damageinterval = DAMAGE_INTERVAL;
+	public void progress() {
+		time = System.currentTimeMillis();
+
+		if (time - startTime > cooldown) {
+			remove();
+			return;
+		} else if (!active) {
+			return;
+		} else if (time - startTime > duration) {
+			active = false;
+			return;
+		}
+
+		if (time - startTime > intervalTick * interval) {
+			intervalTick++;
+			display();
+		}
+
+		if (time - startTime > damageTick * damageInterval) {
+			damageTick++;
+			damage();
+		}
 	}
 
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
-		if (player != null)
-			GeneralMethods.getBendingPlayer(player.getName()).addCooldown("WallOfFire", cooldown);
+	@Override
+	public String getName() {
+		return "WallOfFire";
 	}
 
-	public void setDamage(int damage) {
-		this.damage = damage;
+	@Override
+	public Location getLocation() {
+		return origin;
 	}
 
-	public void setDamageinterval(long damageinterval) {
-		this.damageinterval = damageinterval;
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return false;
 	}
 
-	public void setDuration(long duration) {
-		this.duration = duration;
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
 	}
 
-	public void setHeight(int height) {
-		this.height = height;
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public int getDamageTick() {
+		return damageTick;
+	}
+
+	public void setDamageTick(int damageTick) {
+		this.damageTick = damageTick;
+	}
+
+	public int getIntervalTick() {
+		return intervalTick;
+	}
+
+	public void setIntervalTick(int intervalTick) {
+		this.intervalTick = intervalTick;
+	}
+
+	public int getRange() {
+		return range;
 	}
 
 	public void setRange(int range) {
 		this.range = range;
 	}
 
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
 	public void setWidth(int width) {
 		this.width = width;
 	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public long getDamageInterval() {
+		return damageInterval;
+	}
+
+	public void setDamageInterval(long damageInterval) {
+		this.damageInterval = damageInterval;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public long getInterval() {
+		return interval;
+	}
+
+	public void setInterval(long interval) {
+		this.interval = interval;
+	}
+
+	public double getFireTicks() {
+		return fireTicks;
+	}
+
+	public void setFireTicks(double fireTicks) {
+		this.fireTicks = fireTicks;
+	}
+
+	public double getMaxAngle() {
+		return maxAngle;
+	}
+
+	public void setMaxAngle(double maxAngle) {
+		this.maxAngle = maxAngle;
+	}
+
+	public Location getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+
+	public List<Block> getBlocks() {
+		return blocks;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+
 }

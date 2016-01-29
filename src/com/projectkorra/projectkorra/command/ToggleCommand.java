@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.chiblocking.ChiMethods;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,10 +33,10 @@ public class ToggleCommand extends PKCommand {
 				sender.sendMessage(ChatColor.RED + "Bending is currently toggled off for all players.");
 				return;
 			}
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(sender.getName());
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			if (bPlayer == null) {
 				GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
-				bPlayer = GeneralMethods.getBendingPlayer(sender.getName());
+				bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			}
 			if (bPlayer.isToggled()) {
 				sender.sendMessage(ChatColor.RED + "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
@@ -62,46 +61,54 @@ public class ToggleCommand extends PKCommand {
 				if (!(sender instanceof Player))
 					sender.sendMessage(ChatColor.RED + "Bending has been toggled off for all players.");
 			}
-		} else if (sender instanceof Player && args.size() == 1 && Element.getType(getElement(args.get(0))) != null && GeneralMethods.getBendingPlayer(sender.getName()).hasElement(Element.getType(getElement(args.get(0))))) {
-			Element e = Element.getType(getElement(args.get(0)));
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(sender.getName());
+		} else if (sender instanceof Player && args.size() == 1 
+				&& Element.getElement(getElement(args.get(0))) != null 
+				&& BendingPlayer.getBendingPlayer(sender.getName()).hasElement(Element.getElement(getElement(args.get(0))))) {
+			Element e = Element.getElement(getElement(args.get(0)));
+			ChatColor color = e != null ? e.getColor() : null;
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			bPlayer.toggleElement(e);
+			
 			if (bPlayer.isElementToggled(e) == false) {
-				if (e == Element.Chi) {
-					sender.sendMessage(ChiMethods.getChiColor() + "You have toggled off your chiblocking");
+				if (e == Element.CHI) {
+					sender.sendMessage(color + "You have toggled off your chiblocking");
 				} else {
-					sender.sendMessage(GeneralMethods.getElementColor(e) + "You have toggled off your " + getElement(args.get(0)).toLowerCase() + "bending");
+					sender.sendMessage(color + "You have toggled off your " + getElement(args.get(0)).toLowerCase() + "bending");
 				}
 			} else {
-				if (e == Element.Chi) {
-					sender.sendMessage(ChiMethods.getChiColor() + "You have toggled on your chiblocking");
+				if (e == Element.CHI) {
+					sender.sendMessage(color + "You have toggled on your chiblocking");
 				} else {
-					sender.sendMessage(GeneralMethods.getElementColor(e) + "You have toggled on your " + getElement(args.get(0)).toLowerCase() + "bending");
+					sender.sendMessage(color + "You have toggled on your " + getElement(args.get(0)).toLowerCase() + "bending");
 				}
 			}
-		} else if (sender instanceof Player && args.size() == 2 && Element.getType(getElement(args.get(0))) != null && GeneralMethods.getBendingPlayer(sender.getName()).hasElement(Element.getType(getElement(args.get(0))))) {
+		} else if (sender instanceof Player && args.size() == 2 
+				&& Element.getElement(getElement(args.get(0))) != null 
+				&& BendingPlayer.getBendingPlayer(sender.getName()).hasElement(Element.getElement(getElement(args.get(0))))) {
 			Player target = Bukkit.getPlayer(args.get(1));
 			if (!hasAdminPermission(sender)) return;
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + "Target is not found.");
 			}
-			Element e = Element.getType(getElement(args.get(0)));
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(target.getName());
+			Element e = Element.getElement(getElement(args.get(0)));
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target.getName());
+			ChatColor color = e != null ? e.getColor() : null;
+			
 			if (bPlayer.isElementToggled(e) == true) {
-				if (e == Element.Chi) {
-					sender.sendMessage(ChiMethods.getChiColor() + "You have toggled off " + ChatColor.DARK_AQUA + target.getName() + "'s chiblocking");
-					target.sendMessage(ChiMethods.getChiColor() + "Your chiblocking has been toggled off by " + ChatColor.DARK_AQUA + sender.getName());
+				if (e == Element.CHI) {
+					sender.sendMessage(color + "You have toggled off " + ChatColor.DARK_AQUA + target.getName() + "'s chiblocking");
+					target.sendMessage(color + "Your chiblocking has been toggled off by " + ChatColor.DARK_AQUA + sender.getName());
 				} else {
-					sender.sendMessage(GeneralMethods.getElementColor(e) + "You have toggled off " + ChatColor.DARK_AQUA + target.getName() + "'s " + getElement(args.get(0)).toLowerCase() + "bending");
-					target.sendMessage(GeneralMethods.getElementColor(e) + "Your " + getElement(args.get(0)).toLowerCase() + "bending has been toggled off by " + ChatColor.DARK_AQUA + sender.getName());
+					sender.sendMessage(color + "You have toggled off " + ChatColor.DARK_AQUA + target.getName() + "'s " + getElement(args.get(0)).toLowerCase() + "bending");
+					target.sendMessage(color + "Your " + getElement(args.get(0)).toLowerCase() + "bending has been toggled off by " + ChatColor.DARK_AQUA + sender.getName());
 				}
 			} else {
-				if (e == Element.Chi) {
-					sender.sendMessage(ChiMethods.getChiColor() + "You have toggled on " + ChatColor.DARK_AQUA + target.getName() + "'s chiblocking");
-					target.sendMessage(ChiMethods.getChiColor() + "Your chiblocking has been toggled on by " + ChatColor.DARK_AQUA + sender.getName());
+				if (e == Element.CHI) {
+					sender.sendMessage(color + "You have toggled on " + ChatColor.DARK_AQUA + target.getName() + "'s chiblocking");
+					target.sendMessage(color + "Your chiblocking has been toggled on by " + ChatColor.DARK_AQUA + sender.getName());
 				} else {
-					sender.sendMessage(GeneralMethods.getElementColor(e) + "You have toggled on " + ChatColor.DARK_AQUA + target.getName() + "'s " + getElement(args.get(0)).toLowerCase() + "bending");
-					target.sendMessage(GeneralMethods.getElementColor(e) + "Your " + getElement(args.get(0)).toLowerCase() + "bending has been toggled on by " + ChatColor.DARK_AQUA + sender.getName());
+					sender.sendMessage(color + "You have toggled on " + ChatColor.DARK_AQUA + target.getName() + "'s " + getElement(args.get(0)).toLowerCase() + "bending");
+					target.sendMessage(color + "Your " + getElement(args.get(0)).toLowerCase() + "bending has been toggled on by " + ChatColor.DARK_AQUA + sender.getName());
 				}
 			}
 			bPlayer.toggleElement(e);

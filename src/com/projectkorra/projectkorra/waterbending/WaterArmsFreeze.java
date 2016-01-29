@@ -1,10 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.SubElement;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -13,7 +10,6 @@ import com.projectkorra.projectkorra.waterbending.WaterArms.Arm;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -22,45 +18,39 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.concurrent.ConcurrentHashMap;
+public class WaterArmsFreeze extends IceAbility {
 
-public class WaterArmsFreeze {
-
-	private static FileConfiguration config = ProjectKorra.plugin.getConfig();
-
-	public static ConcurrentHashMap<Integer, WaterArmsFreeze> instances = new ConcurrentHashMap<Integer, WaterArmsFreeze>();
-
-	private Player player;
-	private WaterArms waterArms;
-
-	private int iceRange = config.getInt("Abilities.Water.WaterArms.Freeze.Range");
-	private double iceDamage = config.getInt("Abilities.Water.WaterArms.Freeze.Damage");
-
-	private boolean usageCooldownEnabled = config.getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
-	private long usageCooldown = config.getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
-
+	private boolean cancelled;
+	private boolean usageCooldownEnabled;
+	private int iceRange;
+	private int distanceTravelled;
+	private double iceDamage;
+	private long usageCooldown;
+	private Arm arm;
 	private Location location;
 	private Vector direction;
-	private int distanceTravelled;
-	private Arm arm;
-	private boolean cancelled;
-
-	private int id;
-	private static int ID = Integer.MIN_VALUE;
-
+	private WaterArms waterArms;
+		
 	public WaterArmsFreeze(Player player) {
-		this.player = player;
-		direction = player.getEyeLocation().getDirection();
+		super(player);
+		
+		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
+		this.iceRange = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Range");
+		this.iceDamage = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Damage");
+		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
+		this.direction = player.getEyeLocation().getDirection();
+		
 		createInstance();
 	}
 
 	private void createInstance() {
-		if (WaterArms.instances.containsKey(player)) {
-			waterArms = WaterArms.instances.get(player);
+		waterArms = getAbility(player, WaterArms.class);
+		
+		if (waterArms != null) {
 			waterArms.switchPreferredArm();
 			arm = waterArms.getActiveArm();
-			BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-			if (arm.equals(Arm.Left)) {
+			
+			if (arm.equals(Arm.LEFT)) {
 				if (waterArms.isLeftArmCooldown() || bPlayer.isOnCooldown("WaterArms_LEFT")) {
 					return;
 				} else {
@@ -70,7 +60,8 @@ public class WaterArmsFreeze {
 					waterArms.setLeftArmCooldown(true);
 				}
 			}
-			if (arm.equals(Arm.Right)) {
+			
+			if (arm.equals(Arm.RIGHT)) {
 				if (waterArms.isRightArmCooldown() || bPlayer.isOnCooldown("WaterArms_RIGHT")) {
 					return;
 				} else {
@@ -80,32 +71,30 @@ public class WaterArmsFreeze {
 					waterArms.setRightArmCooldown(true);
 				}
 			}
+			
 			Vector dir = player.getLocation().getDirection();
 			location = waterArms.getActiveArmEnd().add(dir.normalize().multiply(1));
 			direction = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, iceRange, new Integer[] { 8, 9, 79, 174 })).normalize();
 		} else {
 			return;
 		}
-		id = ID;
-		instances.put(id, this);
-		if (ID == Integer.MAX_VALUE)
-			ID = Integer.MIN_VALUE;
-		ID++;
+		start();
 	}
 
-	private void progress() {
+	@Override
+	public void progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
-		}
-		if (distanceTravelled > iceRange) {
+		} else if (distanceTravelled > iceRange) {
 			remove();
 			return;
 		}
+		
 		if (distanceTravelled >= 5 && !cancelled) {
 			cancelled = true;
-			if (WaterArms.instances.containsKey(player)) {
-				if (arm.equals(Arm.Left)) {
+			if (hasAbility(player, WaterArms.class)) {
+				if (arm.equals(Arm.LEFT)) {
 					waterArms.setLeftArmCooldown(false);
 				} else {
 					waterArms.setRightArmCooldown(false);
@@ -113,6 +102,7 @@ public class WaterArmsFreeze {
 				waterArms.setMaxIceBlasts(waterArms.getMaxIceBlasts() - 1);
 			}
 		}
+		
 		if (!canPlaceBlock(location.getBlock())) {
 			remove();
 			return;
@@ -121,10 +111,9 @@ public class WaterArmsFreeze {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!EarthMethods.isTransparentToEarthbending(player, block) && !((WaterMethods.isWater(block)) && TempBlock.isTempBlock(block))) {
+		if (!isTransparent(player, block) && !((isWater(block)) && TempBlock.isTempBlock(block))) {
 			return false;
-		}
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterArms", block.getLocation())) {
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return false;
 		}
 		return true;
@@ -133,11 +122,11 @@ public class WaterArmsFreeze {
 	private void progressIce() {
 		ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), (float) 0.05, 5);
 		new TempBlock(location.getBlock(), Material.ICE, (byte) 0);
-		WaterArms.revert.put(location.getBlock(), System.currentTimeMillis() + 10L);
+		WaterArms.getBlockRevertTimes().put(location.getBlock(), System.currentTimeMillis() + 10L);
 
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2.5)) {
 			if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !(entity instanceof ArmorStand)) {
-				GeneralMethods.damageEntity(player, entity, iceDamage, SubElement.Icebending, "WaterArms Freeze");
+				GeneralMethods.damageEntity(this, entity, iceDamage);
 				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 40, 2);
 				new TempPotionEffect((LivingEntity) entity, effect);
 				remove();
@@ -147,16 +136,19 @@ public class WaterArmsFreeze {
 
 		for (int i = 0; i < 2; i++) {
 			location = location.add(direction.clone().multiply(1));
-			if (!canPlaceBlock(location.getBlock()))
+			if (!canPlaceBlock(location.getBlock())) {
 				return;
+			}
 			distanceTravelled++;
 		}
 	}
 
-	private void remove() {
-		if (WaterArms.instances.containsKey(player)) {
+	@Override
+	public void remove() {
+		super.remove();
+		if (hasAbility(player, WaterArms.class)) {
 			if (!cancelled) {
-				if (arm.equals(Arm.Left)) {
+				if (arm.equals(Arm.LEFT)) {
 					waterArms.setLeftArmCooldown(false);
 				} else {
 					waterArms.setRightArmCooldown(false);
@@ -164,27 +156,107 @@ public class WaterArmsFreeze {
 				waterArms.setMaxIceBlasts(waterArms.getMaxIceBlasts() - 1);
 			}
 		}
-		instances.remove(id);
 	}
 
-	public static void progressAll() {
-		for (int ID : instances.keySet())
-			instances.get(ID).progress();
+	@Override
+	public String getName() {
+		return "WaterArms";
 	}
 
-	public static void removeAll() {
-		instances.clear();
+	@Override
+	public Location getLocation() {
+		return location;
 	}
 
-	public Player getPlayer() {
-		return player;
+	@Override
+	public long getCooldown() {
+		return usageCooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
 	}
 
-	public boolean getCancelled() {
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public boolean isCancelled() {
 		return cancelled;
 	}
 
 	public void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
 	}
+
+	public boolean isUsageCooldownEnabled() {
+		return usageCooldownEnabled;
+	}
+
+	public void setUsageCooldownEnabled(boolean usageCooldownEnabled) {
+		this.usageCooldownEnabled = usageCooldownEnabled;
+	}
+
+	public int getIceRange() {
+		return iceRange;
+	}
+
+	public void setIceRange(int iceRange) {
+		this.iceRange = iceRange;
+	}
+
+	public int getDistanceTravelled() {
+		return distanceTravelled;
+	}
+
+	public void setDistanceTravelled(int distanceTravelled) {
+		this.distanceTravelled = distanceTravelled;
+	}
+
+	public double getIceDamage() {
+		return iceDamage;
+	}
+
+	public void setIceDamage(double iceDamage) {
+		this.iceDamage = iceDamage;
+	}
+
+	public long getUsageCooldown() {
+		return usageCooldown;
+	}
+
+	public void setUsageCooldown(long usageCooldown) {
+		this.usageCooldown = usageCooldown;
+	}
+
+	public Arm getArm() {
+		return arm;
+	}
+
+	public void setArm(Arm arm) {
+		this.arm = arm;
+	}
+
+	public Vector getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Vector direction) {
+		this.direction = direction;
+	}
+
+	public WaterArms getWaterArms() {
+		return waterArms;
+	}
+
+	public void setWaterArms(WaterArms waterArms) {
+		this.waterArms = waterArms;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
 }

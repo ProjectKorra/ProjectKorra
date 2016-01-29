@@ -1,14 +1,11 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.earthbending.EarthMethods;
+import com.projectkorra.projectkorra.ability.LightningAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -18,140 +15,95 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class Lightning implements ConfigLoadable {
-	
-	public static ConcurrentHashMap<Integer, Lightning> instances = new ConcurrentHashMap<>();
+public class Lightning extends LightningAbility {
 
-	public static boolean SELF_HIT_WATER = config.get().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
-	public static boolean SELF_HIT_CLOSE = config.get().getBoolean("Abilities.Fire.Lightning.SelfHitClose");
-	public static boolean ARC_ON_ICE = config.get().getBoolean("Abilities.Fire.Lightning.ArcOnIce");
-	public static double RANGE = config.get().getDouble("Abilities.Fire.Lightning.Range");
-	public static double DAMAGE = config.get().getDouble("Abilities.Fire.Lightning.Damage");
-	public static double MAX_ARC_ANGLE = config.get().getDouble("Abilities.Fire.Lightning.MaxArcAngle");
-	public static double SUB_ARC_CHANCE = config.get().getDouble("Abilities.Fire.Lightning.SubArcChance");
-	public static double CHAIN_ARC_RANGE = config.get().getDouble("Abilities.Fire.Lightning.ChainArcRange");
-	public static double CHAIN_ARC_CHANCE = config.get().getDouble("Abilities.Fire.Lightning.ChainArcChance");
-	public static double WATER_ARC_RANGE = config.get().getDouble("Abilities.Fire.Lightning.WaterArcRange");
-	public static double STUN_CHANCE = config.get().getDouble("Abilities.Fire.Lightning.StunChance");
-	public static double STUN_DURATION = config.get().getDouble("Abilities.Fire.Lightning.StunDuration");
-	public static int MAX_CHAIN_ARCS = (int) config.get().getDouble("Abilities.Fire.Lightning.MaxChainArcs");
-	public static int WATER_ARCS = (int) config.get().getDouble("Abilities.Fire.Lightning.WaterArcs");
-	public static long CHARGETIME = (long) config.get().getDouble("Abilities.Fire.Lightning.ChargeTime");
-	public static long COOLDOWN = (long) config.get().getDouble("Abilities.Fire.Lightning.Cooldown");
+	public static enum State {
+		START, STRIKE, MAINBOLT
+	}
+
 	private static final int POINT_GENERATION = 5;
-	private static int idCounter = 0;
-
-	private Player player;
-
-	private BendingPlayer bplayer;
-	private Location origin, destination;
-	private int id;
-	private double range, chargeTime, cooldown, subArcChance, damage, chainArcs, chainRange, waterRange;
-	private double chainArcChance, stunChance, stunDuration;
+	
+	private boolean charged;
+	private boolean hitWater;
+	private boolean hitIce;
+	private boolean selfHitWater;
+	private boolean selfHitClose;
+	private boolean arcOnIce;
+	private int waterArcs;
+	private double range;
+	private double chargeTime;
+	private double subArcChance;
+	private double damage;
+	private double maxChainArcs; 
+	private double chainRange;
+	private double waterArcRange;
+	private double chainArcChance;
+	private double stunChance;
+	private double stunDuration;
+	private double maxArcAngle;
+	private double particleRotation;
 	private long time;
-	private boolean charged, hitWater, hitIce;
-	private State state = State.START;
-	private ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
-	private ArrayList<Arc> arcs = new ArrayList<Arc>();
-	private ArrayList<BukkitRunnable> tasks = new ArrayList<BukkitRunnable>();
-	private double i = 0.0D;
-	private double newY;
-
+	private long cooldown;
+	private State state;
+	private Location origin;
+	private Location destination;
+	private ArrayList<Entity> affectedEntities;
+	private ArrayList<Arc> arcs;
+	private ArrayList<BukkitRunnable> tasks;
+	
 	public Lightning(Player player) {
-		// reloadVariables();
-		this.player = player;
-		bplayer = GeneralMethods.getBendingPlayer(player.getName());
-		charged = false;
-		hitWater = false;
-		hitIce = false;
-		time = System.currentTimeMillis();
-		range = FireMethods.getFirebendingDayAugment(RANGE, player.getWorld());
-		subArcChance = FireMethods.getFirebendingDayAugment(SUB_ARC_CHANCE, player.getWorld());
-		damage = FireMethods.getFirebendingDayAugment(DAMAGE, player.getWorld());
-		chainArcs = FireMethods.getFirebendingDayAugment(MAX_CHAIN_ARCS, player.getWorld());
-		chainArcChance = FireMethods.getFirebendingDayAugment(CHAIN_ARC_CHANCE, player.getWorld());
-		chainRange = FireMethods.getFirebendingDayAugment(CHAIN_ARC_RANGE, player.getWorld());
-		waterRange = FireMethods.getFirebendingDayAugment(WATER_ARC_RANGE, player.getWorld());
-		stunChance = FireMethods.getFirebendingDayAugment(STUN_CHANCE, player.getWorld());
-		stunDuration = FireMethods.getFirebendingDayAugment(STUN_DURATION, player.getWorld());
-		chargeTime = CHARGETIME;
-		cooldown = COOLDOWN;
+		super(player);
+		
+		this.charged = false;
+		this.hitWater = false;
+		this.hitIce = false;
+		this.time = System.currentTimeMillis();
+		this.state = State.START;
+		this.affectedEntities = new ArrayList<>();
+		this.arcs = new ArrayList<>();
+		this.tasks = new ArrayList<>();
+	
+		this.selfHitWater = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
+		this.selfHitClose = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitClose");
+		this.arcOnIce = getConfig().getBoolean("Abilities.Fire.Lightning.ArcOnIce");
+		this.range = getConfig().getDouble("Abilities.Fire.Lightning.Range");
+		this.damage = getConfig().getDouble("Abilities.Fire.Lightning.Damage");
+		this.maxArcAngle = getConfig().getDouble("Abilities.Fire.Lightning.MaxArcAngle");
+		this.subArcChance = getConfig().getDouble("Abilities.Fire.Lightning.SubArcChance");
+		this.chainRange = getConfig().getDouble("Abilities.Fire.Lightning.ChainArcRange");
+		this.chainArcChance = getConfig().getDouble("Abilities.Fire.Lightning.ChainArcChance");
+		this.waterArcRange = getConfig().getDouble("Abilities.Fire.Lightning.WaterArcRange");
+		this.stunChance = getConfig().getDouble("Abilities.Fire.Lightning.StunChance");
+		this.stunDuration = getConfig().getDouble("Abilities.Fire.Lightning.StunDuration");
+		this.maxChainArcs = getConfig().getInt("Abilities.Fire.Lightning.MaxChainArcs");
+		this.waterArcs = getConfig().getInt("Abilities.Fire.Lightning.WaterArcs");
+		this.chargeTime = getConfig().getLong("Abilities.Fire.Lightning.ChargeTime");
+		this.cooldown = getConfig().getLong("Abilities.Fire.Lightning.Cooldown");
+		
+		this.range = getDayFactor(this.range);
+		this.subArcChance = getDayFactor(this.subArcChance);
+		this.damage = getDayFactor(this.damage);
+		this.maxChainArcs = getDayFactor(this.maxChainArcs);
+		this.chainArcChance = getDayFactor(this.chainArcChance);
+		this.chainRange = getDayFactor(this.chainRange);
+		this.waterArcRange = getDayFactor(this.waterArcRange);
+		this.stunChance = getDayFactor(this.stunChance);
+		this.stunDuration = getDayFactor(this.stunDuration);
 
-		if (AvatarState.isAvatarState(player)) {
-			/*
-			 * Some variables aren't considered here because it makes AS too overpowered and causes
-			 * crashing.
-			 */
-			chargeTime = 0;
-			cooldown = 0;
-			damage = AvatarState.getValue(damage);
-			chainArcs = AvatarState.getValue(chainArcs);
-			chainArcChance = AvatarState.getValue(chainArcChance);
-			chainRange = AvatarState.getValue(chainRange);
-			stunChance = AvatarState.getValue(stunChance);
+		if (bPlayer.isAvatarState()) {
+			this.chargeTime = 0;
+			this.cooldown = 0;
+			this.damage = AvatarState.getValue(damage);
+			this.maxChainArcs = AvatarState.getValue(maxChainArcs);
+			this.chainArcChance = AvatarState.getValue(chainArcChance);
+			this.chainRange = AvatarState.getValue(chainRange);
+			this.stunChance = AvatarState.getValue(stunChance);
+		} else if (isSozinsComet(player.getWorld())) {
+			this.chargeTime = 0;
+			this.cooldown = 0;
 		}
-		instances.put(idCounter, this);
-		this.id = idCounter;
-		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
-	}
-
-	public static ArrayList<Arc> getAllArcs() {
-		ArrayList<Arc> a = new ArrayList<Arc>();
-		for (Lightning light : instances.values()) {
-			for (Arc arcs : light.getArcs()) {
-				a.add(arcs);
-			}
-		}
-		return a;
-	}
-
-	/**
-	 * Returns an instance of this ability if it was initialized by player
-	 * 
-	 * @param player that created the instance
-	 * @return the ability
-	 */
-	public static Lightning getLightning(Player player) {
-		for (Lightning light : instances.values()) {
-			if (light.player == player)
-				return light;
-		}
-		return null;
-	}
-
-	/**
-	 * Checks if a location contains an ice block
-	 * 
-	 * @param loc the location to check
-	 * @return true if it is ice
-	 */
-	public static boolean isIce(Location loc) {
-		Material mat = loc.getBlock().getType();
-		return mat == Material.ICE || mat == Material.PACKED_ICE;
-	}
-
-	/**
-	 * Checks if a location contains a water block
-	 * 
-	 * @param loc the location to check
-	 * @return true if it is water
-	 */
-	public static boolean isWater(Location loc) {
-		Material mat = loc.getBlock().getType();
-		return mat == Material.WATER || mat == Material.STATIONARY_WATER;
-	}
-
-	/**
-	 * Checks if a location is ice or water
-	 * 
-	 * @param loc the location to check
-	 * @return true if it is water or ice
-	 */
-	public static boolean isWaterOrIce(Location loc) {
-		return isIce(loc) || isWater(loc);
+		start();
 	}
 
 	/**
@@ -162,13 +114,15 @@ public class Lightning implements ConfigLoadable {
 	public void electrocute(LivingEntity lent) {
 		lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
 		player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
-		GeneralMethods.damageEntity(player, lent, damage, "Lightning");
+		GeneralMethods.damageEntity(this, lent, damage);
+		
 		if (Math.random() < stunChance) {
 			final Location lentLoc = lent.getLocation();
 			final LivingEntity flent = lent;
+			
 			new BukkitRunnable() {
 				int count = 0;
-
+				@Override
 				public void run() {
 					if (flent.isDead() || (flent instanceof Player && !((Player) flent).isOnline())) {
 						cancel();
@@ -182,76 +136,12 @@ public class Lightning implements ConfigLoadable {
 					flent.teleport(tempLoc);
 					flent.setVelocity(tempVel);
 					count++;
-					if (count > stunDuration)
+					if (count > stunDuration) {
 						cancel();
+					}
 				}
 			}.runTaskTimer(ProjectKorra.plugin, 0, 1);
 		}
-	}
-
-	public ArrayList<Arc> getArcs() {
-		return this.arcs;
-	}
-
-	public double getChainArcChance() {
-		return chainArcChance;
-	}
-
-	public double getChainArcs() {
-		return chainArcs;
-	}
-
-	public double getChainRange() {
-		return chainRange;
-	}
-
-	public double getChargeTime() {
-		return chargeTime;
-	}
-
-	public double getCooldown() {
-		return cooldown;
-	}
-
-	public double getDamage() {
-		return damage;
-	}
-
-	/** Below are all of the accessor/mutator methods **/
-	public Player getPlayer() {
-		return player;
-	}
-
-	public double getRange() {
-		return range;
-	}
-
-	public double getStunChance() {
-		return stunChance;
-	}
-
-	public double getStunDuration() {
-		return stunDuration;
-	}
-
-	public double getSubArcChance() {
-		return subArcChance;
-	}
-
-	public double getWaterRange() {
-		return waterRange;
-	}
-
-	public boolean isCharged() {
-		return charged;
-	}
-
-	public boolean isHitIce() {
-		return hitIce;
-	}
-
-	public boolean isHitWater() {
-		return hitWater;
 	}
 
 	/**
@@ -261,15 +151,15 @@ public class Lightning implements ConfigLoadable {
 	 * @param block the block
 	 * @return true if the block is transparent
 	 */
-	@SuppressWarnings("deprecation")
-	public boolean isTransparent(Player player, Block block) {
-		if (Arrays.asList(EarthMethods.transparentToEarthbending).contains(block.getTypeId())) {
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "Lightning", block.getLocation()))
+	private boolean isTransparentForLightning(Player player, Block block) {
+		if (isTransparent(block)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				return false;
-			else if (isIce(block.getLocation()))
-				return ARC_ON_ICE;
-			else
+			} else if (isIce(block)) {
+				return arcOnIce;
+			} else {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -281,82 +171,86 @@ public class Lightning implements ConfigLoadable {
 	 * Once all of the arcs have been created then this ability instance gets removed, but the
 	 * BukkitRunnables continue until they remove themselves.
 	 **/
-	public boolean progress() {
+	@Override
+	public void progress() {
 		if (player.isDead() || !player.isOnline()) {
 			removeWithTasks();
-			return false;
-		} else if (GeneralMethods.getBoundAbility(player) == null
-				|| !GeneralMethods.getBoundAbility(player).equalsIgnoreCase("Lightning")) {
+			return;
+		} else if (!bPlayer.canBendIgnoreCooldowns(this)) {
 			remove();
-			return false;
+			return;
 		}
+		
 		if (state == State.START) {
-			if (bplayer.isOnCooldown("Lightning")) {
+			if (bPlayer.isOnCooldown(this)) {
 				remove();
-				return false;
-			}
-			if (System.currentTimeMillis() - time > chargeTime)
+				return;
+			} else if (System.currentTimeMillis() - time > chargeTime) {
 				charged = true;
+			}
+			
 			if (charged) {
 				if (player.isSneaking()) {
 					Location loc = player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(1.2));
 					loc.add(0, 0.3, 0);
-					FireMethods.playLightningbendingParticle(loc, 0.2F, 0.2F, 0.2F);
+					playLightningbendingParticle(loc, 0.2F, 0.2F, 0.2F);
 				} else {
 					state = State.MAINBOLT;
-					bplayer.addCooldown("Lightning", (long) cooldown);
-					Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+					bPlayer.addCooldown(this);
+					Entity target = GeneralMethods.getTargetedEntity(player, range);
 					origin = player.getEyeLocation();
-					if (target != null)
+					
+					if (target != null) {
 						destination = target.getLocation();
-					else
-						destination = player.getEyeLocation().add(
-								player.getEyeLocation().getDirection().normalize().multiply(range));
+					} else {
+						destination = player.getEyeLocation().add( player.getEyeLocation().getDirection().normalize().multiply(range));
+					}
 				}
 			} else {
 				if (!player.isSneaking()) {
 					remove();
-					return false;
+					return;
 				}
+				
+				Location localLocation1 = player.getLocation();
 				double d1 = 0.1570796326794897D;
 				double d2 = 0.06283185307179587D;
 				double d3 = 1.0D;
 				double d4 = 1.0D;
-				Location localLocation1 = player.getLocation();
-				double d5 = d1 * i;
-				double d6 = d2 * i;
-				newY = (localLocation1.getY() + 1.0D + d4 * Math.cos(d6));
+				double d5 = d1 * particleRotation;
+				double d6 = d2 * particleRotation;
 				double d7 = localLocation1.getX() + d4 * Math.cos(d5);
 				double d8 = localLocation1.getZ() + d4 * Math.sin(d5);
+				double newY = (localLocation1.getY() + 1.0D + d4 * Math.cos(d6));
 				Location localLocation2 = new Location(player.getWorld(), d7, newY, d8);
-
-				FireMethods.playLightningbendingParticle(localLocation2);
-
-				i += 1.0D / d3;
+				playLightningbendingParticle(localLocation2);
+				particleRotation += 1.0D / d3;
 			}
 
 		} else if (state == State.MAINBOLT) {
 			Arc mainArc = new Arc(origin, destination);
 			mainArc.generatePoints(POINT_GENERATION);
 			arcs.add(mainArc);
-			ArrayList<Arc> subArcs = mainArc.generateArcs(subArcChance, range / 2.0);
+			ArrayList<Arc> subArcs = mainArc.generateArcs(subArcChance, range / 2.0, maxArcAngle);
 			arcs.addAll(subArcs);
 			state = State.STRIKE;
 		} else if (state == State.STRIKE) {
 			for (int i = 0; i < arcs.size(); i++) {
 				Arc arc = arcs.get(i);
-				for (int j = 0; j < arc.getAnimLocs().size() - 1; j++) {
-					final Location iterLoc = arc.getAnimLocs().get(j).getLoc().clone();
-					final Location dest = arc.getAnimLocs().get(j + 1).getLoc().clone();
-					if (SELF_HIT_CLOSE && player.getLocation().distance(iterLoc) < 3
-							&& !isTransparent(player, iterLoc.getBlock()) && !affectedEntities.contains(player)) {
+				for (int j = 0; j < arc.getAnimationLocations().size() - 1; j++) {
+					final Location iterLoc = arc.getAnimationLocations().get(j).getLocation().clone();
+					final Location dest = arc.getAnimationLocations().get(j + 1).getLocation().clone();
+					if (selfHitClose 
+							&& player.getLocation().distanceSquared(iterLoc) < 9 
+							&& !isTransparentForLightning(player, iterLoc.getBlock()) 
+							&& !affectedEntities.contains(player)) {
 						affectedEntities.add(player);
 						electrocute(player);
 					}
 
-					while (iterLoc.distance(dest) > 0.15) {
-						BukkitRunnable task = new LightningParticle(arc, iterLoc.clone());
-						double timer = arc.getAnimLocs().get(j).getAnimCounter() / 2;
+					while (iterLoc.distanceSquared(dest) > 0.15 * 0.15) {
+						BukkitRunnable task = new LightningParticle(arc, iterLoc.clone(), selfHitWater, waterArcs);
+						double timer = arc.getAnimationLocations().get(j).getAnimCounter() / 2;
 						task.runTaskTimer(ProjectKorra.plugin, (long) timer, 1);
 						tasks.add(task);
 						iterLoc.add(GeneralMethods.getDirection(iterLoc, dest).normalize().multiply(0.15));
@@ -367,46 +261,9 @@ public class Lightning implements ConfigLoadable {
 			}
 			if (tasks.size() == 0) {
 				remove();
-				return false;
+				return;
 			}
 		}
-		return true;
-	}
-
-	public static void progressAll() {
-		for (Lightning ability : instances.values()) {
-			ability.progress();
-		}
-	}
-
-	public void remove() {
-		instances.remove(id);
-	}
-
-	public static void removeAll() {
-		for (Lightning ability : instances.values()) {
-			ability.remove();
-		}
-	}
-
-	@Override
-	public void reloadVariables() {
-		SELF_HIT_WATER = config.get().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
-		SELF_HIT_CLOSE = config.get().getBoolean("Abilities.Fire.Lightning.SelfHitClose");
-		ARC_ON_ICE = config.get().getBoolean("Abilities.Fire.Lightning.ArcOnIce");
-		RANGE = config.get().getDouble("Abilities.Fire.Lightning.Range");
-		DAMAGE = config.get().getDouble("Abilities.Fire.Lightning.Damage");
-		MAX_ARC_ANGLE = config.get().getDouble("Abilities.Fire.Lightning.MaxArcAngle");
-		SUB_ARC_CHANCE = config.get().getDouble("Abilities.Fire.Lightning.SubArcChance");
-		CHAIN_ARC_RANGE = config.get().getDouble("Abilities.Fire.Lightning.ChainArcRange");
-		CHAIN_ARC_CHANCE = config.get().getDouble("Abilities.Fire.Lightning.ChainArcChance");
-		WATER_ARC_RANGE = config.get().getDouble("Abilities.Fire.Lightning.WaterArcRange");
-		STUN_CHANCE = config.get().getDouble("Abilities.Fire.Lightning.StunChance");
-		STUN_DURATION = config.get().getDouble("Abilities.Fire.Lightning.StunDuration");
-		MAX_CHAIN_ARCS = (int) config.get().getDouble("Abilities.Fire.Lightning.MaxChainArcs");
-		WATER_ARCS = (int) config.get().getDouble("Abilities.Fire.Lightning.WaterArcs");
-		CHARGETIME = (long) config.get().getDouble("Abilities.Fire.Lightning.ChargeTime");
-		COOLDOWN = (long) config.get().getDouble("Abilities.Fire.Lightning.Cooldown");
 	}
 
 	/**
@@ -420,95 +277,33 @@ public class Lightning implements ConfigLoadable {
 		remove();
 	}
 
-	public void setChainArcChance(double chainArcChance) {
-		this.chainArcChance = chainArcChance;
-	}
-
-	public void setChainArcs(double chainArcs) {
-		this.chainArcs = chainArcs;
-	}
-
-	public void setChainRange(double chainRange) {
-		this.chainRange = chainRange;
-	}
-
-	public void setCharged(boolean charged) {
-		this.charged = charged;
-	}
-
-	public void setChargeTime(double chargeTime) {
-		this.chargeTime = chargeTime;
-	}
-
-	public void setCooldown(double cooldown) {
-		this.cooldown = cooldown;
-		if (player != null)
-			bplayer.addCooldown("Lightning", (long) cooldown);
-	}
-
-	public void setDamage(double damage) {
-		this.damage = damage;
-	}
-
-	public void setHitIce(boolean hitIce) {
-		this.hitIce = hitIce;
-	}
-
-	public void setHitWater(boolean hitWater) {
-		this.hitWater = hitWater;
-	}
-
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-
-	public void setRange(double range) {
-		this.range = range;
-	}
-
-	public void setStunChance(double stunChance) {
-		this.stunChance = stunChance;
-	}
-
-	public void setStunDuration(double stunDuration) {
-		this.stunDuration = stunDuration;
-	}
-
-	public void setSubArcChance(double subArcChance) {
-		this.subArcChance = subArcChance;
-	}
-
-	public void setWaterRange(double waterRange) {
-		this.waterRange = waterRange;
-	}
-
 	/**
 	 * Represents a Lightning Arc Point particle animation. This basically just holds a location and
 	 * counts the amount of times that a particle has been animated.
 	 * **/
-	public class AnimLocation {
-		private Location loc;
-		private int animCounter;
+	public class AnimationLocation {
+		private Location location;
+		private int animationCounter;
 
-		public AnimLocation(Location loc, int animCounter) {
-			this.loc = loc;
-			this.animCounter = animCounter;
+		public AnimationLocation(Location loc, int animationCounter) {
+			this.location = loc;
+			this.animationCounter = animationCounter;
 		}
 
 		public int getAnimCounter() {
-			return animCounter;
+			return animationCounter;
 		}
 
-		public Location getLoc() {
-			return loc;
+		public Location getLocation() {
+			return location;
 		}
 
-		public void setAnimCounter(int animCounter) {
-			this.animCounter = animCounter;
+		public void setAnimationCounter(int animationCounter) {
+			this.animationCounter = animationCounter;
 		}
 
-		public void setLoc(Location loc) {
-			this.loc = loc;
+		public void setLocation(Location location) {
+			this.location = location;
 		}
 	}
 
@@ -518,22 +313,22 @@ public class Lightning implements ConfigLoadable {
 	 * that chain off of their own instance.
 	 **/
 	public class Arc {
+		private int animationCounter;
+		private Vector direction;
 		private ArrayList<Location> points;
-		private ArrayList<AnimLocation> animLocs;
+		private ArrayList<AnimationLocation> animationLocations;
 		private ArrayList<LightningParticle> particles;
 		private ArrayList<Arc> subArcs;
-		private Vector direction;
-		private int animCounter;
 
 		public Arc(Location startPoint, Location endPoint) {
-			points = new ArrayList<Location>();
+			points = new ArrayList<>();
 			points.add(startPoint.clone());
 			points.add(endPoint.clone());
 			direction = GeneralMethods.getDirection(startPoint, endPoint);
-			particles = new ArrayList<LightningParticle>();
-			subArcs = new ArrayList<Arc>();
-			animLocs = new ArrayList<AnimLocation>();
-			animCounter = 0;
+			particles = new ArrayList<>();
+			subArcs = new ArrayList<>();
+			animationLocations = new ArrayList<>();
+			animationCounter = 0;
 		}
 
 		/**
@@ -558,21 +353,24 @@ public class Lightning implements ConfigLoadable {
 		 * @param range The length of each subarc.
 		 * 
 		 **/
-		public ArrayList<Arc> generateArcs(double chance, double range) {
-			ArrayList<Arc> arcs = new ArrayList<Arc>();
-			for (int i = 0; i < animLocs.size(); i++) {
+		public ArrayList<Arc> generateArcs(double chance, double range, double maxArcAngle) {
+			ArrayList<Arc> arcs = new ArrayList<>();
+			
+			for (int i = 0; i < animationLocations.size(); i++) {
 				if (Math.random() < chance) {
-					Location loc = animLocs.get(i).getLoc();
-					double angle = (Math.random() - 0.5) * MAX_ARC_ANGLE * 2;
+					Location loc = animationLocations.get(i).getLocation();
+					double angle = (Math.random() - 0.5) * maxArcAngle * 2;
 					Vector dir = GeneralMethods.rotateXZ(direction.clone(), angle);
 					double randRange = (Math.random() * range) + (range / 3.0);
+					
 					Location loc2 = loc.clone().add(dir.normalize().multiply(randRange));
 					Arc arc = new Arc(loc, loc2);
+					
 					subArcs.add(arc);
-					arc.setAnimCounter(animLocs.get(i).getAnimCounter());
+					arc.setAnimationCounter(animationLocations.get(i).getAnimCounter());
 					arc.generatePoints(POINT_GENERATION);
 					arcs.add(arc);
-					arcs.addAll(arc.generateArcs(chance / 2.0, range / 2.0));
+					arcs.addAll(arc.generateArcs(chance / 2.0, range / 2.0, maxArcAngle));
 				}
 			}
 			return arcs;
@@ -594,61 +392,56 @@ public class Lightning implements ConfigLoadable {
 					Location loc1 = points.get(j);
 					Location loc2 = points.get(j + 1);
 					double adjac = loc1.distance(loc2) / 2;
-					double angle = (Math.random() - 0.5) * MAX_ARC_ANGLE;
+					double angle = (Math.random() - 0.5) * maxArcAngle;
+					
 					angle += angle >= 0 ? 10 : -10;
+					
 					double radians = Math.toRadians(angle);
 					double hypot = adjac / Math.cos(radians);
 					Vector dir = GeneralMethods.rotateXZ(direction.clone(), angle);
 					Location newLoc = loc1.clone().add(dir.normalize().multiply(hypot));
+					
 					newLoc.add(0, (Math.random() - 0.5) / 2.0, 0);
 					points.add(j + 1, newLoc);
 				}
 			}
 			for (int i = 0; i < points.size(); i++) {
-				animLocs.add(new AnimLocation(points.get(i), animCounter));
-				animCounter++;
+				animationLocations.add(new AnimationLocation(points.get(i), animationCounter));
+				animationCounter++;
 			}
 		}
 
-		public int getAnimCounter() {
-			return animCounter;
+		public int getAnimationCounter() {
+			return animationCounter;
 		}
 
-		public ArrayList<AnimLocation> getAnimLocs() {
-			return animLocs;
+		public void setAnimationCounter(int animationCounter) {
+			this.animationCounter = animationCounter;
 		}
 
 		public Vector getDirection() {
 			return direction;
 		}
 
-		public ArrayList<LightningParticle> getParticles() {
-			return particles;
+		public void setDirection(Vector direction) {
+			this.direction = direction;
 		}
 
 		public ArrayList<Location> getPoints() {
 			return points;
 		}
 
-		public void setAnimCounter(int animCounter) {
-			this.animCounter = animCounter;
+		public ArrayList<AnimationLocation> getAnimationLocations() {
+			return animationLocations;
 		}
 
-		public void setAnimLocs(ArrayList<AnimLocation> animLocs) {
-			this.animLocs = animLocs;
+		public ArrayList<LightningParticle> getParticles() {
+			return particles;
 		}
 
-		public void setDirection(Vector direction) {
-			this.direction = direction;
-		}
-
-		public void setParticles(ArrayList<LightningParticle> particles) {
-			this.particles = particles;
-		}
-
-		public void setPoints(ArrayList<Location> points) {
-			this.points = points;
-		}
+		public ArrayList<Arc> getSubArcs() {
+			return subArcs;
+		}		
 
 	}
 
@@ -660,17 +453,22 @@ public class Lightning implements ConfigLoadable {
 	 * generate subarcs to branch out.
 	 * **/
 	public class LightningParticle extends BukkitRunnable {
-		private Arc arc;
-		private Location loc;
+		private boolean selfHitWater;
 		private int count = 0;
+		private int waterArcs;		
+		private Arc arc;
+		private Location location;
 
-		public LightningParticle(Arc arc, Location loc) {
+		public LightningParticle(Arc arc, Location location, boolean selfHitWater, int waterArcs) {
 			this.arc = arc;
-			this.loc = loc;
+			this.location = location;
+			this.selfHitWater = selfHitWater;
+			this.waterArcs = waterArcs;
 			arc.particles.add(this);
 		}
 
 		/** Cancels this Runnable **/
+		@Override
 		public void cancel() {
 			super.cancel();
 			tasks.remove(this);
@@ -680,42 +478,45 @@ public class Lightning implements ConfigLoadable {
 		 * Animates the Location, checks for water/player collision and also deals with any chain
 		 * subarcs.
 		 */
+		@Override
 		public void run() {
-			FireMethods.playLightningbendingParticle(loc, 0F, 0F, 0F);
+			playLightningbendingParticle(location, 0F, 0F, 0F);
 			count++;
-			if (count > 5)
+			if (count > 5) {
 				this.cancel();
-			else if (count == 1) {
-				if (!isTransparent(player, loc.getBlock())) {
+			} else if (count == 1) {
+				if (!isTransparentForLightning(player, location.getBlock())) {
 					arc.cancel();
 					return;
 				}
-
+				Block block = location.getBlock();
 				// Handle Water electrocution
-				if (!hitWater && (isWater(loc) || (ARC_ON_ICE && isIce(loc)))) {
+				if (!hitWater && (isWater(block) || (arcOnIce && isIce(block)))) {
 					hitWater = true;
-					if (isIce(loc))
+					if (isIce(block)) {
 						hitIce = true;
-					for (int i = 0; i < WATER_ARCS; i++) {
-						Location origin = loc.clone();
+					}
+					
+					for (int i = 0; i < waterArcs; i++) {
+						Location origin = location.clone();
 						origin.add(new Vector((Math.random() - 0.5) * 2, 0, (Math.random() - 0.5) * 2));
-						destination = origin.clone().add(
-								new Vector((Math.random() - 0.5) * waterRange, Math.random() - 0.7, (Math.random() - 0.5)
-										* waterRange));
+						destination = origin.clone().add(new Vector((Math.random() - 0.5) * waterArcRange, Math.random() - 0.7, (Math.random() - 0.5)* waterArcRange));
 						Arc newArc = new Arc(origin, destination);
 						newArc.generatePoints(POINT_GENERATION);
 						arcs.add(newArc);
 					}
 				}
 
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2.5)) {
 					/*
 					 * If the player is in water we will electrocute them only if they are standing
 					 * in water. If the lightning hit ice we can electrocute them all the time.
 					 */
-					if (entity.equals(player) && !(SELF_HIT_WATER && hitWater && isWater(player.getLocation()))
-							&& !(SELF_HIT_WATER && hitIce))
+					if (entity.equals(player) 
+							&& !(selfHitWater && hitWater && isWater(player.getLocation().getBlock()))
+							&& !(selfHitWater && hitIce)) {
 						continue;
+					}
 
 					if (entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 						affectedEntities.add(entity);
@@ -724,18 +525,19 @@ public class Lightning implements ConfigLoadable {
 							lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
 							player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
 							Player p = (Player) lent;
-							Lightning light = getLightning(p);
+							Lightning light = getAbility(p, Lightning.class);
 							if (light != null && light.state == State.START) {
 								light.charged = true;
 								remove();
 								return;
 							}
 						}
+						
 						electrocute(lent);
 
 						// Handle Chain Lightning
-						if (chainArcs >= 1 && Math.random() <= chainArcChance) {
-							chainArcs--;
+						if (maxChainArcs >= 1 && Math.random() <= chainArcChance) {
+							maxChainArcs--;
 							for (Entity ent : GeneralMethods.getEntitiesAroundPoint(lent.getLocation(), chainRange)) {
 								if (!ent.equals(player) && !ent.equals(lent) && ent instanceof LivingEntity
 										&& !affectedEntities.contains(ent)) {
@@ -753,9 +555,275 @@ public class Lightning implements ConfigLoadable {
 				}
 			}
 		}
+
+		public boolean isSelfHitWater() {
+			return selfHitWater;
+		}
+
+		public void setSelfHitWater(boolean selfHitWater) {
+			this.selfHitWater = selfHitWater;
+		}
+
+		public int getCount() {
+			return count;
+		}
+
+		public void setCount(int count) {
+			this.count = count;
+		}
+
+		public int getWaterArcs() {
+			return waterArcs;
+		}
+
+		public void setWaterArcs(int waterArcs) {
+			this.waterArcs = waterArcs;
+		}
+
+		public Arc getArc() {
+			return arc;
+		}
+
+		public void setArc(Arc arc) {
+			this.arc = arc;
+		}
+
+		public Location getLocation() {
+			return location;
+		}
+
+		public void setLocation(Location location) {
+			this.location = location;
+		}
 	}
 
-	public static enum State {
-		START, STRIKE, MAINBOLT
+	@Override
+	public String getName() {
+		return "Lightning";
 	}
+
+	@Override
+	public Location getLocation() {
+		return origin;
+	}
+
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+	
+	public boolean isCharged() {
+		return charged;
+	}
+
+	public void setCharged(boolean charged) {
+		this.charged = charged;
+	}
+
+	public boolean isHitWater() {
+		return hitWater;
+	}
+
+	public void setHitWater(boolean hitWater) {
+		this.hitWater = hitWater;
+	}
+
+	public boolean isHitIce() {
+		return hitIce;
+	}
+
+	public void setHitIce(boolean hitIce) {
+		this.hitIce = hitIce;
+	}
+
+	public boolean isSelfHitWater() {
+		return selfHitWater;
+	}
+
+	public void setSelfHitWater(boolean selfHitWater) {
+		this.selfHitWater = selfHitWater;
+	}
+
+	public boolean isSelfHitClose() {
+		return selfHitClose;
+	}
+
+	public void setSelfHitClose(boolean selfHitClose) {
+		this.selfHitClose = selfHitClose;
+	}
+
+	public boolean isArcOnIce() {
+		return arcOnIce;
+	}
+
+	public void setArcOnIce(boolean arcOnIce) {
+		this.arcOnIce = arcOnIce;
+	}
+
+	public int getWaterArcs() {
+		return waterArcs;
+	}
+
+	public void setWaterArcs(int waterArcs) {
+		this.waterArcs = waterArcs;
+	}
+
+	public double getRange() {
+		return range;
+	}
+
+	public void setRange(double range) {
+		this.range = range;
+	}
+
+	public double getChargeTime() {
+		return chargeTime;
+	}
+
+	public void setChargeTime(double chargeTime) {
+		this.chargeTime = chargeTime;
+	}
+
+	public double getSubArcChance() {
+		return subArcChance;
+	}
+
+	public void setSubArcChance(double subArcChance) {
+		this.subArcChance = subArcChance;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getMaxChainArcs() {
+		return maxChainArcs;
+	}
+
+	public void setMaxChainArcs(double maxChainArcs) {
+		this.maxChainArcs = maxChainArcs;
+	}
+
+	public double getChainRange() {
+		return chainRange;
+	}
+
+	public void setChainRange(double chainRange) {
+		this.chainRange = chainRange;
+	}
+
+	public double getWaterArcRange() {
+		return waterArcRange;
+	}
+
+	public void setWaterArcRange(double waterArcRange) {
+		this.waterArcRange = waterArcRange;
+	}
+
+	public double getChainArcChance() {
+		return chainArcChance;
+	}
+
+	public void setChainArcChance(double chainArcChance) {
+		this.chainArcChance = chainArcChance;
+	}
+
+	public double getStunChance() {
+		return stunChance;
+	}
+
+	public void setStunChance(double stunChance) {
+		this.stunChance = stunChance;
+	}
+
+	public double getStunDuration() {
+		return stunDuration;
+	}
+
+	public void setStunDuration(double stunDuration) {
+		this.stunDuration = stunDuration;
+	}
+
+	public double getMaxArcAngle() {
+		return maxArcAngle;
+	}
+
+	public void setMaxArcAngle(double maxArcAngle) {
+		this.maxArcAngle = maxArcAngle;
+	}
+
+	public double getParticleRotation() {
+		return particleRotation;
+	}
+
+	public void setParticleRotation(double particleRotation) {
+		this.particleRotation = particleRotation;
+	}
+
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+
+	public Location getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+
+	public Location getDestination() {
+		return destination;
+	}
+
+	public void setDestination(Location destination) {
+		this.destination = destination;
+	}
+
+	public static int getPointGeneration() {
+		return POINT_GENERATION;
+	}
+
+	public ArrayList<Entity> getAffectedEntities() {
+		return affectedEntities;
+	}
+
+	public ArrayList<Arc> getArcs() {
+		return arcs;
+	}
+
+	public ArrayList<BukkitRunnable> getTasks() {
+		return tasks;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+	
 }

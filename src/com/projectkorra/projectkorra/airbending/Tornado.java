@@ -1,8 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,173 +11,98 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class Tornado implements ConfigLoadable {
+public class Tornado extends AirAbility {
 
-	public static ConcurrentHashMap<Player, Tornado> instances = new ConcurrentHashMap<>();
-
-	private static double MAX_HEIGHT = config.get().getDouble("Abilities.Air.Tornado.Height");
-	private static double PLAYER_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
-	private static double MAX_RADIUS = config.get().getDouble("Abilities.Air.Tornado.Radius");
-	private static double RANGE = config.get().getDouble("Abilities.Air.Tornado.Range");
-	private static double NPC_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.MobPushFactor");
-	private static int numberOfStreams = (int) (.3 * (double) MAX_HEIGHT);
-	// private static double speed = .75;
-	// private static double speedfactor = 1000 * speed
-	// * (Bending.time_step / 1000.);
-	private static double speedfactor = 1;
-
-	private ConcurrentHashMap<Integer, Integer> angles = new ConcurrentHashMap<Integer, Integer>();
+	private int numberOfStreams;
+	private int particleCount;
+	private double speed;
+	private double maxHeight;
+	private double playerPushFactor;
+	private double radius;
+	private double range;
+	private double npcPushFactor;
+	private double currentHeight;
+	private double currentRadius;
+	private Flight flight;
 	private Location origin;
-	private Player player;
-	private double maxheight = MAX_HEIGHT;
-	private double PCpushfactor = PLAYER_PUSH_FACTOR;
-	private double maxradius = MAX_RADIUS;
-	private double range = RANGE;
-	private double NPCpushfactor = NPC_PUSH_FACTOR;
-	private double height = 2;
-	private double radius = height / maxheight * maxradius;
-
-	// private boolean canfly;
+	private Random random;
+	private ConcurrentHashMap<Integer, Integer> angles;
 
 	public Tornado(Player player) {
-		// reloadVariables();
-		this.player = player;
-		// canfly = player.getAllowFlight();
-		// player.setAllowFlight(true);
-		origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
-		origin.setY(origin.getY() - 1. / 10. * height);
+		super(player);
+		
+		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
+		this.origin.setY(origin.getY() - 1.0 / 10.0 * currentHeight);
+		this.maxHeight = getConfig().getDouble("Abilities.Air.Tornado.Height");
+		this.playerPushFactor = getConfig().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
+		this.radius = getConfig().getDouble("Abilities.Air.Tornado.Radius");
+		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
+		this.npcPushFactor = getConfig().getDouble("Abilities.Air.Tornado.NpcPushFactor");
+		this.speed = getConfig().getDouble("Abilities.Air.Tornado.Speed");
+		this.numberOfStreams = (int) (.3 * (double) maxHeight);
+		this.currentHeight = 2;
+		this.currentRadius = currentHeight / maxHeight * radius;
+		this.random = new Random();
+		this.angles = new ConcurrentHashMap<>();
 
 		int angle = 0;
-		for (int i = 0; i <= maxheight; i += (int) maxheight / numberOfStreams) {
+		for (int i = 0; i <= maxHeight; i += (int) maxHeight / numberOfStreams) {
 			angles.put(i, angle);
 			angle += 90;
-			if (angle == 360)
+			if (angle == 360) {
 				angle = 0;
+			}
 		}
 
-		new Flight(player);
+		this.flight = new Flight(player);
 		player.setAllowFlight(true);
-		instances.put(player, this);
-	}
-
-	public static ArrayList<Player> getPlayers() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		for (Tornado tornado : instances.values()) {
-			players.add(tornado.getPlayer());
-		}
-		return players;
-	}
-
-	public double getMaxheight() {
-		return maxheight;
-	}
-
-	public double getMaxradius() {
-		return maxradius;
-	}
-
-	public double getNPCpushfactor() {
-		return NPCpushfactor;
-	}
-
-	public double getPCpushfactor() {
-		return PCpushfactor;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public double getRange() {
-		return range;
-	}
-
-	public boolean progress() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
-			return false;
-		}
-		if (!GeneralMethods.canBend(player.getName(), "Tornado") || player.getEyeLocation().getBlock().isLiquid()) {
-			remove();
-			return false;
-		}
-		String abil = GeneralMethods.getBoundAbility(player);
-		if (abil == null) {
-			remove();
-			return false;
-		}
-		if (!abil.equalsIgnoreCase("Tornado") || !player.isSneaking()) {
-			remove();
-			return false;
-		}
-
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", origin)) {
-			remove();
-			return false;
-		}
-		rotateTornado();
-		return true;
-	}
-
-	public static void progressAll() {
-		for (Tornado ability : instances.values()) {
-			ability.progress();
-		}
-	}
-
-	public void remove() {
-		instances.remove(player);
-	}
-
-	public static void removeAll() {
-		for (Tornado ability : instances.values()) {
-			ability.remove();
-		}
+		start();
 	}
 
 	@Override
-	public void reloadVariables() {
-		MAX_HEIGHT = config.get().getDouble("Abilities.Air.Tornado.Height");
-		PLAYER_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
-		MAX_RADIUS = config.get().getDouble("Abilities.Air.Tornado.Radius");
-		RANGE = config.get().getDouble("Abilities.Air.Tornado.Range");
-		NPC_PUSH_FACTOR = config.get().getDouble("Abilities.Air.Tornado.MobPushFactor");
-		numberOfStreams = (int) (.3 * (double) MAX_HEIGHT);
-
-		maxheight = MAX_HEIGHT;
-		PCpushfactor = PLAYER_PUSH_FACTOR;
-		maxradius = MAX_RADIUS;
-		range = RANGE;
-		NPCpushfactor = NPC_PUSH_FACTOR;
-		radius = height / maxheight * maxradius;
+	public void progress() {
+		if (player.getEyeLocation().getBlock().isLiquid() || !player.isSneaking() || !bPlayer.canBendIgnoreCooldowns(this)) {
+			remove();
+			return;
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, origin)) {
+			remove();
+			return;
+		}
+		rotateTornado();
+	}
+	
+	@Override
+	public void remove() {
+		super.remove();
+		flight.remove();
+		player.setAllowFlight(false);
 	}
 
 	private void rotateTornado() {
 		origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
-
-		double timefactor = height / maxheight;
-		radius = timefactor * maxradius;
+		double timefactor = currentHeight / maxHeight;
+		currentRadius = timefactor * radius;
 
 		if (origin.getBlock().getType() != Material.AIR) {
-			origin.setY(origin.getY() - 1. / 10. * height);
+			origin.setY(origin.getY() - 1. / 10. * currentHeight);
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, height)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", entity.getLocation()))
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, currentHeight)) {
+				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 					continue;
+				}
 				double y = entity.getLocation().getY();
 				double factor;
-				if (y > origin.getY() && y < origin.getY() + height) {
-					factor = (y - origin.getY()) / height;
+				if (y > origin.getY() && y < origin.getY() + currentHeight) {
+					factor = (y - origin.getY()) / currentHeight;
 					Location testloc = new Location(origin.getWorld(), origin.getX(), y, origin.getZ());
-					if (testloc.distance(entity.getLocation()) < radius * factor) {
+					if (testloc.distance(entity.getLocation()) < currentRadius * factor) {
 						double x, z, vx, vz, mag;
 						double angle = 100;
-						double vy = 0.7 * NPCpushfactor;
+						double vy = 0.7 * npcPushFactor;
 						angle = Math.toRadians(angle);
 
 						x = entity.getLocation().getX() - origin.getX();
@@ -188,7 +114,7 @@ public class Tornado implements ConfigLoadable {
 						vz = (x * Math.sin(angle) + z * Math.cos(angle)) / mag;
 
 						if (entity instanceof Player) {
-							vy = 0.05 * PCpushfactor;
+							vy = 0.05 * playerPushFactor;
 						}
 
 						if (entity.getEntityId() == player.getEntityId()) {
@@ -199,18 +125,20 @@ public class Tornado implements ConfigLoadable {
 							double py = playerloc.getY();
 							double oy = origin.getY();
 							double dy = py - oy;
-							if (dy >= height * .95) {
+
+							if (dy >= currentHeight * .95) {
 								vy = 0;
-							} else if (dy >= height * .85) {
-								vy = 6.0 * (.95 - dy / height);
+							} else if (dy >= currentHeight * .85) {
+								vy = 6.0 * (.95 - dy / currentHeight);
 							} else {
 								vy = .6;
 							}
 						}
 
 						if (entity instanceof Player) {
-							if (Commands.invincible.contains(((Player) entity).getName()))
+							if (Commands.invincible.contains(((Player) entity).getName())) {
 								continue;
+							}
 						}
 
 						Vector velocity = entity.getVelocity();
@@ -221,7 +149,7 @@ public class Tornado implements ConfigLoadable {
 						GeneralMethods.setVelocity(entity, velocity);
 						entity.setFallDistance(0);
 
-						AirMethods.breakBreathbendingHold(entity);
+						breakBreathbendingHold(entity);
 
 						if (entity instanceof Player) {
 							new Flight((Player) entity);
@@ -231,59 +159,143 @@ public class Tornado implements ConfigLoadable {
 			}
 
 			for (int i : angles.keySet()) {
-				double x, y, z;
+				double x, y, z, factor;
 				double angle = (double) angles.get(i);
 				angle = Math.toRadians(angle);
-				double factor;
 
 				y = origin.getY() + timefactor * (double) i;
-				factor = (double) i / height;
+				factor = (double) i / currentHeight;
 
-				x = origin.getX() + timefactor * factor * radius * Math.cos(angle);
-				z = origin.getZ() + timefactor * factor * radius * Math.sin(angle);
+				x = origin.getX() + timefactor * factor * currentRadius * Math.cos(angle);
+				z = origin.getZ() + timefactor * factor * currentRadius * Math.sin(angle);
 
 				Location effect = new Location(origin.getWorld(), x, y, z);
-				if (!GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", effect)) {
-					AirMethods.playAirbendingParticles(effect, 4);
-					if (GeneralMethods.rand.nextInt(20) == 0) {
-						AirMethods.playAirbendingSound(effect);
+				if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
+					playAirbendingParticles(effect, particleCount);
+					if (random.nextInt(20) == 0) {
+						playAirbendingSound(effect);
 					}
 				}
-				// origin.getWorld().playEffect(effect, Effect.SMOKE, 4, (int)
-				// AirBlast.defaultrange);
-
-				angles.put(i, angles.get(i) + 25 * (int) speedfactor);
+				angles.put(i, angles.get(i) + 25 * (int) speed);
 			}
 		}
-
-		if (height < maxheight) {
-			height += 1;
-		}
-
-		if (height > maxheight) {
-			height = maxheight;
-		}
-
+		currentHeight = currentHeight > maxHeight ? maxHeight : currentHeight + 1;
 	}
 
-	public void setMaxheight(double maxheight) {
-		this.maxheight = maxheight;
+	@Override
+	public String getName() {
+		return "Tornado";
 	}
 
-	public void setMaxradius(double maxradius) {
-		this.maxradius = maxradius;
+	@Override
+	public Location getLocation() {
+		return player != null ? player.getLocation() : null;
 	}
 
-	public void setNPCpushfactor(double nPCpushfactor) {
-		NPCpushfactor = nPCpushfactor;
+	@Override
+	public long getCooldown() {
+		return 0;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
 	}
 
-	public void setPCpushfactor(double pCpushfactor) {
-		PCpushfactor = pCpushfactor;
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public Location getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+
+	public int getNumberOfStreams() {
+		return numberOfStreams;
+	}
+
+	public void setNumberOfStreams(int numberOfStreams) {
+		this.numberOfStreams = numberOfStreams;
+	}
+
+	public int getParticleCount() {
+		return particleCount;
+	}
+
+	public void setParticleCount(int particleCount) {
+		this.particleCount = particleCount;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getMaxHeight() {
+		return maxHeight;
+	}
+
+	public void setMaxHeight(double maxHeight) {
+		this.maxHeight = maxHeight;
+	}
+
+	public double getPlayerPushFactor() {
+		return playerPushFactor;
+	}
+
+	public void setPlayerPushFactor(double playerPushFactor) {
+		this.playerPushFactor = playerPushFactor;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public double getRange() {
+		return range;
 	}
 
 	public void setRange(double range) {
 		this.range = range;
 	}
 
+	public double getNpcPushFactor() {
+		return npcPushFactor;
+	}
+
+	public void setNpcPushFactor(double npcPushFactor) {
+		this.npcPushFactor = npcPushFactor;
+	}
+
+	public double getCurrentHeight() {
+		return currentHeight;
+	}
+
+	public void setCurrentHeight(double currentHeight) {
+		this.currentHeight = currentHeight;
+	}
+
+	public double getCurrentRadius() {
+		return currentRadius;
+	}
+
+	public void setCurrentRadius(double currentRadius) {
+		this.currentRadius = currentRadius;
+	}
+
+	public ConcurrentHashMap<Integer, Integer> getAngles() {
+		return angles;
+	}
 }

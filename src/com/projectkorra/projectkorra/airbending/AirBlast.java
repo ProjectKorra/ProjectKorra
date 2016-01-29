@@ -4,9 +4,9 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AvatarState;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigLoadable;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.Flight;
 
@@ -27,191 +27,182 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AirBlast implements ConfigLoadable {
-	
-	public static ConcurrentHashMap<Integer, AirBlast> instances = new ConcurrentHashMap<>();
-	
-	private static ConcurrentHashMap<Player, Location> origins = new ConcurrentHashMap<Player, Location>();
+public class AirBlast extends AirAbility {
 
-	public static double speed = config.get().getDouble("Abilities.Air.AirBlast.Speed");
-	public static double defaultrange = config.get().getDouble("Abilities.Air.AirBlast.Range");
-	public static double affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
-	public static double defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push.Entities");
-	public static double otherpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push.Self");
+	private static final int MAX_TICKS = 10000;
+	private static final ConcurrentHashMap<Player, Location> ORIGINS = new ConcurrentHashMap<>();
 
-	public static boolean flickLevers = config.get().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
-	public static boolean openDoors = config.get().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
-	public static boolean pressButtons = config.get().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
-	public static boolean coolLava = config.get().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
-
-	private static double originselectrange = 10;
-	private static int idCounter = 0;
-	private static final int maxticks = 10000;
-	/* Package visible variables */
-	static double maxspeed = 1. / defaultpushfactor;
-	/* End Package visible variables */
-
-	// public static long interval = 2000;
-	public static byte full = 0x0;
-
-	Location location;
+	private boolean canFlickLevers;
+	private boolean canOpenDoors;
+	private boolean canPressButtons;
+	private boolean canCoolLava;
+	private boolean isFromOtherOrigin;
+	private boolean showParticles;
+	private int ticks;
+	private int particles;
+	private long cooldown;
+	private double speedFactor;
+	private double range;
+	private double pushFactor;
+	private double pushFactorForOthers;
+	private double damage;
+	private double speed;
+	private double radius;
+	private Location location;
 	private Location origin;
 	private Vector direction;
-	private Player player;
-	private double speedfactor;
-	private double range = defaultrange;
-	private double pushfactor = defaultpushfactor;
-	private double damage = 0;
-
-	private boolean otherorigin = false;
-	private boolean showParticles = true;
-	private int ticks = 0;
-	private int id = 0;
-
-	private ArrayList<Block> affectedlevers = new ArrayList<Block>();
-	private ArrayList<Entity> affectedentities = new ArrayList<Entity>();
-
-	private AirBurst source = null;
-
-	public AirBlast(Location location, Vector direction, Player player, double factorpush, AirBurst burst) {
-		if (location.getBlock().isLiquid()) {
-			return;
-		}
-		source = burst;
-
-		this.player = player;
-		origin = location.clone();
-		this.direction = direction.clone();
-		this.location = location.clone();
-		pushfactor *= factorpush;
-		instances.put(idCounter, this);
-		this.id = idCounter;
-		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
-	}
+	private AirBurst source;
+	private Random random;
+	private ArrayList<Block> affectedLevers;
+	private ArrayList<Entity> affectedEntities;
 
 	public AirBlast(Player player) {
-		/* Initial Checks */
-		BendingPlayer bPlayer = GeneralMethods.getBendingPlayer(player.getName());
-		if (bPlayer.isOnCooldown("AirBlast"))
+		super(player);
+		if (bPlayer.isOnCooldown(this)) {
 			return;
-		if (player.getEyeLocation().getBlock().isLiquid()) {
+		} else if (player.getEyeLocation().getBlock().isLiquid()) {
 			return;
 		}
-		/* End Initial Checks */
-		// reloadVariables();
-		this.player = player;
-		if (origins.containsKey(player)) {
-			otherorigin = true;
-			origin = origins.get(player);
-			origins.remove(player);
-			Entity entity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+
+		setFields();
+
+		if (ORIGINS.containsKey(player)) {
+			Entity entity = GeneralMethods.getTargetedEntity(player, range);
+			this.isFromOtherOrigin = true;
+			this.origin = ORIGINS.get(player);
+			ORIGINS.remove(player);
+
 			if (entity != null) {
-				direction = GeneralMethods.getDirection(origin, entity.getLocation()).normalize();
+				this.direction = GeneralMethods.getDirection(origin, entity.getLocation()).normalize();
 			} else {
-				direction = GeneralMethods.getDirection(origin, GeneralMethods.getTargetedLocation(player, range)).normalize();
+				this.direction = GeneralMethods.getDirection(origin, GeneralMethods.getTargetedLocation(player, range)) .normalize();
 			}
 		} else {
 			origin = player.getEyeLocation();
 			direction = player.getEyeLocation().getDirection().normalize();
 		}
-		location = origin.clone();
-		instances.put(idCounter, this);
-		this.id = idCounter;
-		idCounter = (idCounter + 1) % Integer.MAX_VALUE;
-		bPlayer.addCooldown("AirBlast", GeneralMethods.getGlobalCooldown());
 
-		// time = System.currentTimeMillis();
-		// timers.put(player, System.currentTimeMillis());
+		this.location = origin.clone();
+		bPlayer.addCooldown(this);
+		start();
+	}
+
+	public AirBlast(Player player, Location location, Vector direction, double modifiedPushFactor, AirBurst burst) {
+		super(player);
+		if (location.getBlock().isLiquid()) {
+			return;
+		}
+		this.source = burst;
+		this.origin = location.clone();
+		this.direction = direction.clone();
+		this.location = location.clone();
+
+		setFields();
+		this.pushFactor *= modifiedPushFactor;
+		this.affectedLevers = new ArrayList<>();
+		this.affectedEntities = new ArrayList<>();
+		start();
+	}
+
+	private void setFields() {
+		this.particles = getConfig().getInt("Abilities.Air.AirBlast.Particles");
+		this.cooldown = getConfig().getLong("Abilities.Air.AirBlast.Cooldown");
+		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
+		this.speed = getConfig().getDouble("Abilities.Air.AirBlast.Speed");
+		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
+		this.radius = getConfig().getDouble("Abilities.Air.AirBlast.Radius");
+		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBlast.Push.Entities");
+		this.pushFactorForOthers = getConfig().getDouble("Abilities.Air.AirBlast.Push.Self");
+		this.canFlickLevers = getConfig().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
+		this.canOpenDoors = getConfig().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
+		this.canPressButtons = getConfig().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
+		this.canCoolLava = getConfig().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
+		
+		this.isFromOtherOrigin = false;
+		this.showParticles = true;
+		this.random = new Random();
+		this.affectedLevers = new ArrayList<>();
+		this.affectedEntities = new ArrayList<>();
 	}
 
 	private static void playOriginEffect(Player player) {
-		if (!origins.containsKey(player))
-			return;
-		Location origin = origins.get(player);
-		if (player.isDead() || !player.isOnline())
-			return;
-		
-		if (!origin.getWorld().equals(player.getWorld())) {
-			origins.remove(player);
+		if (!ORIGINS.containsKey(player)) {
 			return;
 		}
 
-		if (GeneralMethods.getBoundAbility(player) == null) {
-			origins.remove(player);
+		Location origin = ORIGINS.get(player);
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null || player.isDead() || !player.isOnline()) {
+			return;
+		} else if (!origin.getWorld().equals(player.getWorld())) {
+			ORIGINS.remove(player);
+			return;
+		} else if (!bPlayer.canBendIgnoreCooldowns(getAbility("AirBlast"))) {
+			ORIGINS.remove(player);
+			return;
+		} else if (origin.distanceSquared(player.getEyeLocation()) > getSelectRange() * getSelectRange()) {
+			ORIGINS.remove(player);
 			return;
 		}
 
-		if (!GeneralMethods.getBoundAbility(player).equalsIgnoreCase("AirBlast")
-				|| !GeneralMethods.canBend(player.getName(), "AirBlast")) {
-			origins.remove(player);
-			return;
-		}
-
-		if (origin.distance(player.getEyeLocation()) > originselectrange) {
-			origins.remove(player);
-			return;
-		}
-
-		AirMethods.playAirbendingParticles(origin, 4);
-		// origin.getWorld().playEffect(origin, Effect.SMOKE, 4,
-		// (int) originselectrange);
+		playAirbendingParticles(origin, getSelectParticles());
 	}
 
-	public static void progressAll() {
-		for (AirBlast blast : instances.values()) {
-			blast.progress();
-		}
-		for (Player player : origins.keySet()) {
+	public static void progressOrigins() {
+		for (Player player : ORIGINS.keySet()) {
 			playOriginEffect(player);
 		}
 	}
 
 	public static void setOrigin(Player player) {
-		Location location = GeneralMethods.getTargetedLocation(player, originselectrange, GeneralMethods.nonOpaque);
-		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock()))
+		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), GeneralMethods.NON_OPAQUE);
+		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
 			return;
-
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", location))
+		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", location)) {
 			return;
+		}
 
-		if (origins.containsKey(player)) {
-			origins.replace(player, location);
+		if (ORIGINS.containsKey(player)) {
+			ORIGINS.replace(player, location);
 		} else {
-			origins.put(player, location);
+			ORIGINS.put(player, location);
 		}
 	}
 
 	private void advanceLocation() {
-		if (showParticles)
-			AirMethods.playAirbendingParticles(location, 6, 0.275F, 0.275F, 0.275F);
-		if (GeneralMethods.rand.nextInt(4) == 0) {
-			AirMethods.playAirbendingSound(location);
+		if (showParticles) {
+			playAirbendingParticles(location, particles, 0.275F, 0.275F, 0.275F);
 		}
-		location = location.add(direction.clone().multiply(speedfactor));
+		if (random.nextInt(4) == 0) {
+			playAirbendingSound(location);
+		}
+		location = location.add(direction.clone().multiply(speedFactor));
 	}
 
 	private void affect(Entity entity) {
 		boolean isUser = entity.getUniqueId() == player.getUniqueId();
 
-		if (!isUser || otherorigin) {
-			pushfactor = otherpushfactor;
+		if (!isUser || isFromOtherOrigin) {
+			pushFactor = pushFactorForOthers;
 			Vector velocity = entity.getVelocity();
-			// double mag = Math.abs(velocity.getY());
-			double max = maxspeed;
-			double factor = pushfactor;
-			if (AvatarState.isAvatarState(player)) {
-				max = AvatarState.getValue(maxspeed);
+			double max = speed / speedFactor;
+			double factor = pushFactor;
+
+			if (bPlayer.isAvatarState()) {
+				max = AvatarState.getValue(max);
 				factor = AvatarState.getValue(factor);
 			}
 
 			Vector push = direction.clone();
 			if (Math.abs(push.getY()) > max && !isUser) {
-				if (push.getY() < 0)
+				if (push.getY() < 0) {
 					push.setY(-max);
-				else
+				} else {
 					push.setY(max);
+				}
 			}
 
 			factor *= 1 - location.distance(origin) / (2 * range);
@@ -231,87 +222,72 @@ public class AirBlast implements ConfigLoadable {
 			}
 
 			if (entity instanceof Player) {
-				if (Commands.invincible.contains(((Player) entity).getName()))
+				if (Commands.invincible.contains(((Player) entity).getName())) {
 					return;
+				}
 			}
 
-			if (Double.isNaN(velocity.length()))
+			if (Double.isNaN(velocity.length())) {
 				return;
+			}
 
 			GeneralMethods.setVelocity(entity, velocity);
-			if (source != null)
-				new HorizontalVelocityTracker(entity, player, 200l, "AirBurst", Element.Air, null);
-			else 
-				new HorizontalVelocityTracker(entity, player, 200l, "AirBlast", Element.Air, null);
+			if (source != null) {
+				new HorizontalVelocityTracker(entity, player, 200l, "AirBurst", Element.AIR);
+			} else {
+				new HorizontalVelocityTracker(entity, player, 200l, "AirBlast", Element.AIR);
+			}
+
 			entity.setFallDistance(0);
 			if (!isUser && entity instanceof Player) {
 				new Flight((Player) entity, player);
 			}
-			if (entity.getFireTicks() > 0)
+			if (entity.getFireTicks() > 0) {
 				entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
-			entity.setFireTicks(0);
-			AirMethods.breakBreathbendingHold(entity);
+			}
 
-			if (source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedentities.contains(entity))) {
-				GeneralMethods.damageEntity(player, entity, damage, "AirBurst");
-				affectedentities.add(entity);
-			} else if (source == null && (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedentities.contains(entity))) {
-				GeneralMethods.damageEntity(player, entity, damage, "AirBlast");
-				affectedentities.add(entity);
+			entity.setFireTicks(0);
+			breakBreathbendingHold(entity);
+
+			if (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity)) {
+				GeneralMethods.damageEntity(this, entity, damage);
+				affectedEntities.add(entity);
 			}
 		}
 	}
 
-	public Player getPlayer() {
-		return player;
-	}
-
-	public double getPushfactor() {
-		return pushfactor;
-	}
-
-	public double getRange() {
-		return range;
-	}
-
-	public boolean getShowParticles() {
-		return this.showParticles;
-	}
-
 	@SuppressWarnings("deprecation")
-	public boolean progress() {
-		// ProjectKorra.log.info("FireBlast id: " + getID());
+	@Override
+	public void progress() {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
-			return false;
-		}
-
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", location)) {
+			return;
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 			remove();
-			return false;
+			return;
 		}
 
-		speedfactor = speed * (ProjectKorra.time_step / 1000.);
-
+		speedFactor = speed * (ProjectKorra.time_step / 1000.0);
 		ticks++;
 
-		if (ticks > maxticks) {
+		if (ticks > MAX_TICKS) {
 			remove();
-			return false;
+			return;
 		}
+
 		Block block = location.getBlock();
-		for (Block testblock : GeneralMethods.getBlocksAroundPoint(location, affectingradius)) {
+		for (Block testblock : GeneralMethods.getBlocksAroundPoint(location, radius)) {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
-
-			if (GeneralMethods.isRegionProtectedFromBuild(getPlayer(), "AirBlast", block.getLocation()))
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				continue;
+			}
 
 			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR,
 					Material.ACACIA_DOOR, Material.DARK_OAK_DOOR };
-			if (Arrays.asList(doorTypes).contains(block.getType()) && openDoors) {
+			if (Arrays.asList(doorTypes).contains(block.getType()) && canOpenDoors) {
 				if (block.getData() >= 8) {
 					block = block.getRelative(BlockFace.DOWN);
 				}
@@ -324,21 +300,7 @@ public class AirBlast implements ConfigLoadable {
 					block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
 				}
 			}
-			if ((block.getType() == Material.LEVER) && !affectedlevers.contains(block) && flickLevers) {
-				// BlockState state = block.getState();
-				// Lever lever = (Lever) (state.getData());
-				// lever.setPowered(!lever.isPowered());
-				// state.setData(lever);
-				// state.update(true, true);
-				//
-				// Block relative = block.getRelative(((Attachable) block
-				// .getState().getData()).getFacing(), -1);
-				// relative.getState().update(true, true);
-				//
-				// for (Block block2 : Methods.getBlocksAroundPoint(
-				// relative.getLocation(), 2))
-				// block2.getState().update(true, true);
-
+			if ((block.getType() == Material.LEVER) && !affectedLevers.contains(block) && canFlickLevers) {
 				Lever lever = new Lever(Material.LEVER, block.getData());
 				lever.setPowered(!lever.isPowered());
 				block.setData(lever.getData());
@@ -351,11 +313,8 @@ public class AirBlast implements ConfigLoadable {
 					supportState.update(true, false);
 					initialSupportState.update(true);
 				}
-
-				affectedlevers.add(block);
-
-			} else if ((block.getType() == Material.STONE_BUTTON) && !affectedlevers.contains(block) && pressButtons) {
-
+				affectedLevers.add(block);
+			} else if ((block.getType() == Material.STONE_BUTTON) && !affectedLevers.contains(block) && canPressButtons) {
 				final Button button = new Button(Material.STONE_BUTTON, block.getData());
 				button.setPowered(!button.isPowered());
 				block.setData(button.getData());
@@ -370,7 +329,6 @@ public class AirBlast implements ConfigLoadable {
 				}
 
 				final Block btBlock = block;
-
 				new BukkitRunnable() {
 					public void run() {
 						button.setPowered(!button.isPowered());
@@ -387,9 +345,8 @@ public class AirBlast implements ConfigLoadable {
 					}
 				}.runTaskLater(ProjectKorra.plugin, 10);
 
-				affectedlevers.add(block);
-			} else if ((block.getType() == Material.WOOD_BUTTON) && !affectedlevers.contains(block) && pressButtons) {
-
+				affectedLevers.add(block);
+			} else if ((block.getType() == Material.WOOD_BUTTON) && !affectedLevers.contains(block) && canPressButtons) {
 				final Button button = new Button(Material.WOOD_BUTTON, block.getData());
 				button.setPowered(!button.isPowered());
 				block.setData(button.getData());
@@ -421,19 +378,19 @@ public class AirBlast implements ConfigLoadable {
 					}
 				}.runTaskLater(ProjectKorra.plugin, 15);
 
-				affectedlevers.add(block);
+				affectedLevers.add(block);
 			}
 		}
-		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !affectedlevers.contains(block) && coolLava) {
+		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !affectedLevers.contains(block) && canCoolLava) {
 			if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
-				if (block.getData() == full) {
+				if (block.getData() == 0x0) {
 					block.setType(Material.OBSIDIAN);
 				} else {
 					block.setType(Material.COBBLESTONE);
 				}
 			}
 			remove();
-			return false;
+			return;
 		}
 
 		/*
@@ -444,70 +401,222 @@ public class AirBlast implements ConfigLoadable {
 		double dist = location.distance(origin);
 		if (Double.isNaN(dist) || dist > range) {
 			remove();
-			return false;
+			return;
 		}
 
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, affectingradius)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
 			affect(entity);
 		}
 
 		advanceLocation();
-		return true;
+		return;
 	}
 
 	public static boolean removeAirBlastsAroundPoint(Location location, double radius) {
 		boolean removed = false;
-		for (AirBlast airBlast : instances.values()) {
+		for (AirBlast airBlast : getAbilities(AirBlast.class)) {
 			Location airBlastlocation = airBlast.location;
 			if (location.getWorld() == airBlastlocation.getWorld()) {
-				if (location.distance(airBlastlocation) <= radius)
+				if (location.distanceSquared(airBlastlocation) <= radius * radius) {
 					airBlast.remove();
+				}
 				removed = true;
 			}
 		}
 		return removed;
 	}
 
-	public void remove() {
-		instances.remove(id);
-	}
-	
-	public static void removeAll() {
-		for (AirBlast ability : instances.values()) {
-			ability.remove();
-		}
+	@Override
+	public String getName() {
+		return "AirBlast";
 	}
 
 	@Override
-	public void reloadVariables() {
-		speed = config.get().getDouble("Abilities.Air.AirBlast.Speed");
-		defaultrange = config.get().getDouble("Abilities.Air.AirBlast.Range");
-		affectingradius = config.get().getDouble("Abilities.Air.AirBlast.Radius");
-		defaultpushfactor = config.get().getDouble("Abilities.Air.AirBlast.Push");
-
-		flickLevers = config.get().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
-		openDoors = config.get().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
-		pressButtons = config.get().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
-		coolLava = config.get().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
-		maxspeed = 1. / defaultpushfactor;
-		range = defaultrange;
-		pushfactor = defaultpushfactor;
+	public Location getLocation() {
+		return location;
 	}
 
-	public void setDamage(double dmg) {
-		this.damage = dmg;
+	@Override
+	public long getCooldown() {
+		return cooldown;
+	}
+	
+	@Override
+	public boolean isSneakAbility() {
+		return true;
 	}
 
-	public void setPushfactor(double pushfactor) {
-		this.pushfactor = pushfactor;
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public Location getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+
+	public Vector getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Vector direction) {
+		this.direction = direction;
+	}
+
+	public int getTicks() {
+		return ticks;
+	}
+
+	public void setTicks(int ticks) {
+		this.ticks = ticks;
+	}
+
+	public double getSpeedFactor() {
+		return speedFactor;
+	}
+
+	public void setSpeedFactor(double speedFactor) {
+		this.speedFactor = speedFactor;
+	}
+
+	public double getRange() {
+		return range;
 	}
 
 	public void setRange(double range) {
 		this.range = range;
 	}
 
-	public void setShowParticles(boolean show) {
-		this.showParticles = show;
+	public double getPushFactor() {
+		return pushFactor;
 	}
 
+	public void setPushFactor(double pushFactor) {
+		this.pushFactor = pushFactor;
+	}
+
+	public double getPushFactorForOthers() {
+		return pushFactorForOthers;
+	}
+
+	public void setPushFactorForOthers(double pushFactorForOthers) {
+		this.pushFactorForOthers = pushFactorForOthers;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
+	public boolean isCanFlickLevers() {
+		return canFlickLevers;
+	}
+
+	public void setCanFlickLevers(boolean canFlickLevers) {
+		this.canFlickLevers = canFlickLevers;
+	}
+
+	public boolean isCanOpenDoors() {
+		return canOpenDoors;
+	}
+
+	public void setCanOpenDoors(boolean canOpenDoors) {
+		this.canOpenDoors = canOpenDoors;
+	}
+
+	public boolean isCanPressButtons() {
+		return canPressButtons;
+	}
+
+	public void setCanPressButtons(boolean canPressButtons) {
+		this.canPressButtons = canPressButtons;
+	}
+
+	public boolean isCanCoolLava() {
+		return canCoolLava;
+	}
+
+	public void setCanCoolLava(boolean canCoolLava) {
+		this.canCoolLava = canCoolLava;
+	}
+
+	public boolean isFromOtherOrigin() {
+		return isFromOtherOrigin;
+	}
+
+	public void setFromOtherOrigin(boolean isFromOtherOrigin) {
+		this.isFromOtherOrigin = isFromOtherOrigin;
+	}
+
+	public boolean isShowParticles() {
+		return showParticles;
+	}
+
+	public void setShowParticles(boolean showParticles) {
+		this.showParticles = showParticles;
+	}
+
+	public AirBurst getSource() {
+		return source;
+	}
+
+	public void setSource(AirBurst source) {
+		this.source = source;
+	}
+
+	public ArrayList<Block> getAffectedLevers() {
+		return affectedLevers;
+	}
+
+	public ArrayList<Entity> getAffectedEntities() {
+		return affectedEntities;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+
+	public int getParticles() {
+		return particles;
+	}
+
+	public void setParticles(int particles) {
+		this.particles = particles;
+	}
+	
+	public static int getSelectParticles() {
+		return getConfig().getInt("Abilities.Air.AirBlast.SelectParticles");
+	}
+	
+	public static double getSelectRange() {
+		return getConfig().getInt("Abilities.Air.AirBlast.SelectRange");
+	}
+	
 }

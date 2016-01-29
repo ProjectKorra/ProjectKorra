@@ -6,7 +6,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public final class PlayerCooldownChangeEvent extends Event implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
+	
+	public static enum Result {
+		REMOVED, ADDED;
+	}
+	
+	private static final HandlerList HANDLERS = new HandlerList();
+	
 	private Player player;
 	private String ability;
 	private Result eventresult;
@@ -50,17 +56,11 @@ public final class PlayerCooldownChangeEvent extends Event implements Cancellabl
 	}
 
 	public HandlerList getHandlers() {
-		return handlers;
+		return HANDLERS;
 	}
 
 	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
-	public static enum Result {
-		REMOVED, ADDED;
-		private Result() {
-		}
+		return HANDLERS;
 	}
 
 }

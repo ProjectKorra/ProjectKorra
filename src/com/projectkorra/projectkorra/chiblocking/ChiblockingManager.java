@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class ChiblockingManager implements Runnable {
-
 	public ProjectKorra plugin;
 
 	public ChiblockingManager(ProjectKorra plugin) {
@@ -16,8 +15,6 @@ public class ChiblockingManager implements Runnable {
 	@Override
 	public void run() {
 		ChiPassive.handlePassive();
-		WarriorStance.progressAll();
-		AcrobatStance.progressAll();
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			Smokescreen.removeFromHashMap(player);
 			if (Paralyze.isParalyzed(player)) {
