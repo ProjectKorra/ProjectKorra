@@ -43,6 +43,7 @@ public class RemoveCommand extends PKCommand {
 						return;
 					}
 					sender.sendMessage(GeneralMethods.getElementColor(e) + "You have removed your " + e.toString().toLowerCase() + "bending.");
+					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
 					return;
 				} else {
 					sender.sendMessage(ChatColor.RED + "You do not have that element!");
