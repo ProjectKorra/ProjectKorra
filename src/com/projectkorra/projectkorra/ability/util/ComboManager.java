@@ -1,7 +1,16 @@
 package com.projectkorra.projectkorra.ability.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -10,14 +19,6 @@ import com.projectkorra.projectkorra.chiblocking.ChiCombo;
 import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.waterbending.WaterCombo;
-
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ComboManager {
 	
@@ -271,9 +272,17 @@ public class ComboManager {
 	 */
 	public static ArrayList<String> getCombosForElement(Element element) {
 		ArrayList<String> list = new ArrayList<String>();
-		for (String comboab : DESCRIPTIONS.keySet()) {
-			CoreAbility coreAbil = CoreAbility.getAbility(COMBO_ABILITIES.get(comboab).getAbilities().get(0).getAbilityName());
-			if (coreAbil != null && coreAbil.getElement() == element) {
+		for (String comboab : COMBO_ABILITIES.keySet()) {
+			CoreAbility coreAbil = CoreAbility.getAbility(comboab);
+			if (coreAbil == null) {
+				continue;
+			}
+			
+			Element abilElement = coreAbil.getElement();
+			if (abilElement instanceof SubElement) {
+				abilElement = ((SubElement) abilElement).getParentElement();
+			}
+			if (abilElement == element) {
 				list.add(comboab);
 			}
 		}
