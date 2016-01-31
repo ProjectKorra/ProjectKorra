@@ -24,6 +24,9 @@ public class AirScooter extends AirAbility {
 	private Block floorblock;
 	private Random random;
 	private ArrayList<Double> angles;
+	
+	private boolean canFly;
+	private boolean hadFly;
 
 	public AirScooter(Player player) {
 		super(player);
@@ -42,7 +45,9 @@ public class AirScooter extends AirAbility {
 		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
 		this.random = new Random();
 		this.angles = new ArrayList<>();
-
+		canFly = player.getAllowFlight();
+		hadFly = player.isFlying();
+		
 		new Flight(player);
 		player.setAllowFlight(true);
 		player.setFlying(true);
@@ -133,8 +138,8 @@ public class AirScooter extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		player.setFlying(false);
-		player.setAllowFlight(false);
+		player.setFlying(hadFly);
+		player.setAllowFlight(canFly);
 		player.setSprinting(false);
 	}
 

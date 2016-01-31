@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -27,9 +28,15 @@ public class HelpCommand extends PKCommand {
 		else if (args.size() == 0) {
 			List<String> strings = new ArrayList<String>();
 			for (PKCommand command : instances.values()) {
-				strings.add(command.getProperUse());
+				if (!command.getName().equalsIgnoreCase("help") && sender.hasPermission("bending.command." + command.getName())) {
+					strings.add(command.getProperUse());
+				}
 			}
-			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <required> [optional]", 1)) {
+			Collections.sort(strings);
+			Collections.reverse(strings);
+			strings.add(instances.get("help").getProperUse());
+			Collections.reverse(strings);
+			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <required> [optional]", 1, false)) {
 				sender.sendMessage(ChatColor.YELLOW + s);
 			}
 			return;
@@ -41,7 +48,7 @@ public class HelpCommand extends PKCommand {
 			for (PKCommand command : instances.values()) {
 				strings.add(command.getProperUse());
 			}
-			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <required> [optional]", Integer.valueOf(arg))) {
+			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <required> [optional]", Integer.valueOf(arg), true)) {
 				sender.sendMessage(ChatColor.YELLOW + s);
 			}
 		} else if (instances.keySet().contains(arg.toLowerCase())) {//bending help command

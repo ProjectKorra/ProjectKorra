@@ -36,6 +36,7 @@ public class BlockSource {
 	private static FileConfiguration config = ConfigManager.defaultConfig.get();
 	// The player should never need to grab source blocks from farther than this.
 	private static double MAX_RANGE = config.getDouble("Abilities.Water.WaterManipulation.SelectRange");
+	private static boolean tempblock = config.getBoolean("Properties.Water.CanBendFromBentBlocks");
 
 	/**
 	 * Updates all of the player's sources.
@@ -245,6 +246,9 @@ public class BlockSource {
 		}
 		if (allowPlant && sourceBlock == null) {
 			sourceBlock = getSourceBlock(player, range, BlockSourceType.PLANT, clickType);
+		}
+		if(sourceBlock != null && TempBlock.isTempBlock(sourceBlock) && !tempblock) {
+			return null;
 		}
 		return sourceBlock;
 	}

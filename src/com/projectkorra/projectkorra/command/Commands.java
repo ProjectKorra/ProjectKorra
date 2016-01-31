@@ -83,6 +83,7 @@ public class Commands {
 		new CheckCommand();
 		new ChooseCommand();
 		new ClearCommand();
+		new CopyCommand();
 		new DebugCommand();
 		new DisplayCommand();
 		new HelpCommand();
