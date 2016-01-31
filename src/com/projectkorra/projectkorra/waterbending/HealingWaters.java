@@ -42,10 +42,18 @@ public class HealingWaters extends HealingAbility {
 			if (player.isSneaking()) {
 				Entity entity = GeneralMethods.getTargetedEntity(player, getRadius());
 				if (entity instanceof LivingEntity && inWater(entity)) {
-					giveHPToEntity((LivingEntity) entity);
+					if (getShiftRequired() && player.isSneaking()) {
+						giveHPToEntity((LivingEntity) entity);
+					} else if (!getShiftRequired()) {
+						giveHPToEntity((LivingEntity) entity);
+					}
 				}
 			} else {
-				giveHP(player);
+				if (getShiftRequired() && player.isSneaking()) {
+					giveHP(player);
+				} else if (!getShiftRequired()) {
+					giveHP(player);
+				}
 			}
 		}
 	}
@@ -105,6 +113,10 @@ public class HealingWaters extends HealingAbility {
 		HealingWaters.time = time;
 	}
 
+	public static boolean getShiftRequired() {
+		return getConfig().getBoolean("Abilities.Water.HealingWaters.ShiftRequired");
+	}
+	
 	public static double getRadius() {
 		return getConfig().getDouble("Abilities.Water.HealingWaters.Radius");
 	}

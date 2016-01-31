@@ -523,6 +523,9 @@ public class EarthSmash extends EarthAbility {
 		for (EarthSmash smash : getAbilities(EarthSmash.class)) {
 			if (reqState == null || smash.state == reqState) {
 				for (Block block : blocks) {
+					if (block == null || smash.getLocation() == null) {
+						continue;
+					}
 					if (block.getLocation().getWorld() == smash.location.getWorld() 
 							&& block.getLocation().distanceSquared(smash.location) <= Math.pow(grabDetectionRadius, 2)) {
 						return smash;
