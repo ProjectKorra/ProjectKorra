@@ -41,9 +41,9 @@ public class Preset {
 	static String updateQuery1 = "UPDATE pk_presets SET slot";
 	static String updateQuery2 = " = ? WHERE uuid = ? AND name = ?";
 
-	public UUID uuid;
-	public HashMap<Integer, String> abilities;
-	public String name;
+	private UUID uuid;
+	private HashMap<Integer, String> abilities;
+	private String name;
 
 	/**
 	 * Creates a new {@link Preset}
@@ -137,7 +137,8 @@ public class Preset {
 			return false;
 		}
 		
-		HashMap<Integer, String> abilities = preset.abilities;
+		@SuppressWarnings("unchecked")
+		HashMap<Integer, String> abilities = (HashMap<Integer, String>) preset.abilities.clone();
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
 			CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
@@ -158,12 +159,14 @@ public class Preset {
 	 * @return true if the Preset exists, false otherwise
 	 */
 	public static boolean presetExists(Player player, String name) {
-		if (!presets.containsKey(player.getUniqueId()))
+		if (!presets.containsKey(player.getUniqueId())) {
 			return false;
+		}
 		boolean exists = false;
 		for (Preset preset : presets.get(player.getUniqueId())) {
-			if (preset.name.equalsIgnoreCase(name))
+			if (preset.name.equalsIgnoreCase(name)) {
 				exists = true;
+			}
 		}
 		return exists;
 	}
@@ -176,11 +179,13 @@ public class Preset {
 	 * @return The Preset, if it exists, or null otherwise
 	 */
 	public static Preset getPreset(Player player, String name) {
-		if (!presets.containsKey(player.getUniqueId()))
+		if (!presets.containsKey(player.getUniqueId())) {
 			return null;
+		}
 		for (Preset preset : presets.get(player.getUniqueId())) {
-			if (preset.name.equalsIgnoreCase(name))
+			if (preset.name.equalsIgnoreCase(name)) {
 				return preset;
+			}
 		}
 		return null;
 	}

@@ -79,7 +79,7 @@ public class AbilityLoader<T> implements Listener {
 					Class<?> clazz = null;
 					try {
 						clazz = Class.forName(className, true, loader);
-					} catch (Exception e) {
+					} catch (Exception | Error e) {
 						continue;
 					}
 
@@ -97,7 +97,7 @@ public class AbilityLoader<T> implements Listener {
 					plugin.getServer().getPluginManager().callEvent(event);
 				}
 		
-			} catch (Exception e) {
+			} catch (Exception | Error e) {
 				e.printStackTrace();
 				plugin.getLogger().log(Level.WARNING, "Unknown cause");
 				plugin.getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " failed to load");

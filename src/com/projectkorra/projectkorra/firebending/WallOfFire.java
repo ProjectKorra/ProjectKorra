@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -87,13 +88,17 @@ public class WallOfFire extends FireAbility {
 	}
 
 	private void affect(Entity entity) {
-		entity.setFireTicks((int) (fireTicks * 20));
-		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
 		if (entity instanceof LivingEntity) {
+			Block block = ((LivingEntity) entity).getEyeLocation().getBlock();
+			if (TempBlock.isTempBlock(block) && isIce(block)) {
+				return;
+			}
 			GeneralMethods.damageEntity(this, entity, damage);
-			new FireDamageTimer(entity, player);
 			AirAbility.breakBreathbendingHold(entity);
 		}
+		entity.setFireTicks((int) (fireTicks * 20));
+		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
+		new FireDamageTimer(entity, player);
 	}
 
 	private void damage() {
@@ -122,6 +127,9 @@ public class WallOfFire extends FireAbility {
 
 	private void display() {
 		for (Block block : blocks) {
+			if (!isTransparent(block)) {
+				continue;
+			}
 			ParticleEffect.FLAME.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 3);
 			ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 

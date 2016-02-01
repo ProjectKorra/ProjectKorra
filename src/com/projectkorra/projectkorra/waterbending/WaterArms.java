@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -159,7 +160,7 @@ public class WaterArms extends WaterAbility {
 
 	@Override
 	public void progress() {
-		if (!world.equals(player.getWorld()) || !bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!world.equals(player.getWorld()) || !bPlayer.canBendIgnoreBindsCooldowns(this) || !bPlayer.hasElement(Element.WATER)) {
 			remove();
 			return;
 		} else if (!bPlayer.isToggled()) {

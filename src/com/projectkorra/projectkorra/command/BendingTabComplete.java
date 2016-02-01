@@ -26,14 +26,14 @@ public class BendingTabComplete implements TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		if (args.length == 0 || args[0].equals(""))
 			return getPossibleCompletionsForGivenArgs(args, getCommandsForUser(sender));
-		
+
 		if (args.length >= 2) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-			
+
 			if (args[0].equalsIgnoreCase("bind") || args[0].equalsIgnoreCase("b")) {
 				if (args.length > 3 || !sender.hasPermission("bending.command.bind") || !(sender instanceof Player))
 					return new ArrayList<String>();
-				
+
 				List<String> abilities = new ArrayList<String>();
 				if (args.length == 2) {
 					if (bPlayer != null) {
@@ -48,7 +48,7 @@ public class BendingTabComplete implements TabCompleter {
 						abilities.add("" + i);
 					}
 				}
-				
+
 				Collections.sort(abilities);
 				return getPossibleCompletionsForGivenArgs(args, abilities);
 			} else if (args[0].equalsIgnoreCase("display") || args[0].equalsIgnoreCase("d")) {
@@ -118,7 +118,7 @@ public class BendingTabComplete implements TabCompleter {
 						abils.add(coreAbil.getName());
 					}
 				}
-								
+
 				Collections.sort(abils);
 				list.addAll(abils);
 				return getPossibleCompletionsForGivenArgs(args, list);
@@ -131,7 +131,7 @@ public class BendingTabComplete implements TabCompleter {
 				}
 				return getPossibleCompletionsForGivenArgs(args, players);
 			} else if (args[0].equalsIgnoreCase("preset") || args[0].equalsIgnoreCase("presets") || args[0].equalsIgnoreCase("pre") || args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("p")) {
-				if (args.length > 3 || !sender.hasPermission("bending.command.preset") || !(sender instanceof Player))
+				if (args.length > 4 || !sender.hasPermission("bending.command.preset") || !(sender instanceof Player))
 					return new ArrayList<String>();
 				List<String> l = new ArrayList<String>();
 				if (args.length == 2) {
@@ -147,10 +147,28 @@ public class BendingTabComplete implements TabCompleter {
 						for (Preset preset : presets) {
 							presetNames.add(preset.getName());
 						}
-					} else
+					}
+					if (sender.hasPermission("bending.command.preset.bind.external")) {
+						if (Preset.externalPresets.keySet().size() > 0) {
+							for (String externalPreset : Preset.externalPresets.keySet()) {
+								presetNames.add(externalPreset);
+							}
+						}
+					}
+					if (presetNames.size() == 0)
 						return new ArrayList<String>();
 					return getPossibleCompletionsForGivenArgs(args, presetNames);
+				} else if (args.length == 4 && Arrays.asList(new String[] {"bind", "b"}).contains(args[1].toLowerCase())) {
+					if (!sender.hasPermission("bending.command.preset.bind.assign") || (Preset.externalPresets.keySet().contains(args[2].toLowerCase())) && !sender.hasPermission("bending.command.preset.bind.external.other")) {
+						return new ArrayList<String>();
+					}
+					List<String> players = new ArrayList<String>();
+					for (Player p : Bukkit.getOnlinePlayers()) {
+						players.add(p.getName());
+					}
+					return getPossibleCompletionsForGivenArgs(args, players);
 				}
+				return new ArrayList<String>();
 			} else if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("rm")) {
 				if (args.length > 3 || !sender.hasPermission("bending.command.remove"))
 					return new ArrayList<String>();
@@ -170,6 +188,15 @@ public class BendingTabComplete implements TabCompleter {
 			} else if (args[0].equalsIgnoreCase("who") || args[0].equalsIgnoreCase("w")) {
 				if (args.length > 2 || !sender.hasPermission("bending.command.who"))
 					return new ArrayList<String>();
+				List<String> l = new ArrayList<String>();
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					l.add(p.getName());
+				}
+				return getPossibleCompletionsForGivenArgs(args, l);
+			} else if (args[0].equalsIgnoreCase("copy") || args[0].equalsIgnoreCase("co")) {
+				//If they can't use the command, have over 3 args (copy <player> <player>), or if have over 2 args and can't assign to other players
+				if (!sender.hasPermission("bending.command.copy") || args.length > 4 || (args.length > 3 && !sender.hasPermission("bending.command.copy.assign"))) 
+					return new ArrayList<String>(); //Return nothing
 				List<String> l = new ArrayList<String>();
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					l.add(p.getName());

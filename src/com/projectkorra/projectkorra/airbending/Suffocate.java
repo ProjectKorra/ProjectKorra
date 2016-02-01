@@ -108,8 +108,18 @@ public class Suffocate extends AirAbility {
 				}
 			}
 		} else {
-			Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
-			List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
+			//Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
+			//List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
+			List<Entity> entities = new ArrayList<Entity>();
+			for (int i = 0; i < 6; i++) {
+				Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterial());
+				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
+				if (entities.contains(player))
+					entities.remove(player);
+				if (entities != null && !entities.isEmpty() && !entities.contains(player)) {
+					break;
+				}
+			}
 			if (entities == null || entities.isEmpty()) {
 				return;
 			}

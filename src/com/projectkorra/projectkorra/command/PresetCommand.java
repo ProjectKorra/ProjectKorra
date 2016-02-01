@@ -29,6 +29,7 @@ public class PresetCommand extends PKCommand {
 		super("preset", "/bending preset create|bind|list|delete [name]", "This command manages Presets, which are saved bindings. Use /bending preset list to view your existing presets, use /bending [create|delete] [name] to manage your presets, and use /bending bind [name] to bind an existing preset.", new String[] { "preset", "presets", "pre", "set", "p" });
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
 		if (!isPlayer(sender) || !correctLength(sender, args.size(), 1, 3)) {
@@ -127,9 +128,10 @@ public class PresetCommand extends PKCommand {
 			}
 
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer == null)
+			if (bPlayer == null) {
 				return;
-			HashMap<Integer, String> abilities = bPlayer.getAbilities();
+			}
+			HashMap<Integer, String> abilities = (HashMap<Integer, String>) bPlayer.getAbilities().clone();
 			Preset preset = new Preset(player.getUniqueId(), name, abilities);
 			preset.save(player);
 			sender.sendMessage(ChatColor.GREEN + "Created preset with the name: " + ChatColor.YELLOW + name);
