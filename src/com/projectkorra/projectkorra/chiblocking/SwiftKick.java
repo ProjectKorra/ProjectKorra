@@ -16,6 +16,9 @@ public class SwiftKick extends ChiAbility {
 	
 	public SwiftKick(Player player) {
 		super(player);
+		if (!bPlayer.canBend(this)) {
+			return;
+		}
 		this.damage = getConfig().getInt("Abilities.Chi.SwiftKick.Damage");
 		this.blockChance = getConfig().getInt("Abilities.Chi.ChiCombo.ChiBlockChance");
 		this.cooldown = getConfig().getInt("Abilities.Chi.ChiCombo.Cooldown");
