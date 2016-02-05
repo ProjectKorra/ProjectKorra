@@ -15,6 +15,9 @@ public class QuickStrike extends ChiAbility {
 	
 	public QuickStrike(Player player) {
 		super(player);
+		if (!bPlayer.canBend(this)) {
+			return;
+		}
 		this.damage = getConfig().getInt("Abilities.Chi.QuickStrike.Damage");
 		this.blockChance = getConfig().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
 		target = GeneralMethods.getTargetedEntity(player, 2);

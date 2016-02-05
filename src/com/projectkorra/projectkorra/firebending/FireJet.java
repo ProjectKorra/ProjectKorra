@@ -110,7 +110,7 @@ public class FireJet extends FireAbility {
 
 	@Override
 	public boolean isHarmlessAbility() {
-		return true;
+		return false;
 	}
 
 	public boolean isAvatarStateToggled() {

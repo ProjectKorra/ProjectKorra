@@ -20,6 +20,9 @@ public class RapidPunch extends ChiAbility {
 	
 	public RapidPunch(Player player) {
 		super(player);
+		if (!bPlayer.canBend(this)) {
+			return;
+		}
 		this.damage = getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
 		this.punches = getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
 		this.distance = getConfig().getInt("Abilities.Chi.RapidPunch.Distance");

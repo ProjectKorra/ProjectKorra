@@ -27,6 +27,7 @@ public class Tornado extends AirAbility {
 	private double npcPushFactor;
 	private double currentHeight;
 	private double currentRadius;
+	private boolean couldFly;
 	private Flight flight;
 	private Location origin;
 	private Random random;
@@ -35,12 +36,12 @@ public class Tornado extends AirAbility {
 	public Tornado(Player player) {
 		super(player);
 		
+		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
 		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
 		this.origin.setY(origin.getY() - 1.0 / 10.0 * currentHeight);
 		this.maxHeight = getConfig().getDouble("Abilities.Air.Tornado.Height");
 		this.playerPushFactor = getConfig().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
 		this.radius = getConfig().getDouble("Abilities.Air.Tornado.Radius");
-		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
 		this.npcPushFactor = getConfig().getDouble("Abilities.Air.Tornado.NpcPushFactor");
 		this.speed = getConfig().getDouble("Abilities.Air.Tornado.Speed");
 		this.numberOfStreams = (int) (.3 * (double) maxHeight);
@@ -59,6 +60,7 @@ public class Tornado extends AirAbility {
 		}
 
 		this.flight = new Flight(player);
+		this.couldFly = player.getAllowFlight();
 		player.setAllowFlight(true);
 		start();
 	}
@@ -79,7 +81,7 @@ public class Tornado extends AirAbility {
 	public void remove() {
 		super.remove();
 		flight.remove();
-		player.setAllowFlight(false);
+		player.setAllowFlight(couldFly);
 	}
 
 	private void rotateTornado() {
