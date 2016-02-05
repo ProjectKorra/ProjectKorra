@@ -14,6 +14,9 @@ public class WarriorStance extends ChiAbility {
 	
 	public WarriorStance(Player player) {
 		super(player);
+		if (!bPlayer.canBend(this)) {
+			return;
+		}
 		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength");
 		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
 		

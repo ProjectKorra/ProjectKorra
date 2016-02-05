@@ -76,7 +76,7 @@ public class WhoCommand extends PKCommand {
 			List<String> players = new ArrayList<String>();
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				String playerName = player.getName();
-				String result = ChatColor.WHITE + playerName;
+				String result = "";
 				BendingPlayer bp = BendingPlayer.getBendingPlayer(playerName);
 				
 				if (bp == null) {
@@ -116,17 +116,20 @@ public class WhoCommand extends PKCommand {
 				}
 				if (staff.containsKey(player.getUniqueId().toString())) {
 					if (result == "") {
-						result = ChatColor.WHITE + playerName + staff.get(player.getUniqueId().toString());
+						result = ChatColor.WHITE + playerName + " | " + staff.get(player.getUniqueId().toString());
 					} else {
 						result = result + ChatColor.WHITE + " | " + staff.get(player.getUniqueId().toString());
 					}
+				}
+				if (result == "") {
+					result = ChatColor.WHITE + playerName;
 				}
 				players.add(result);
 			}
 			if (players.isEmpty()) {
 				sender.sendMessage(ChatColor.RED + "There is no one online.");
 			} else {
-				for (String s : getPage(players, ChatColor.GOLD + "Players:", page)) {
+				for (String s : getPage(players, ChatColor.GOLD + "Players:", page, true)) {
 					sender.sendMessage(s);
 				}
 			}

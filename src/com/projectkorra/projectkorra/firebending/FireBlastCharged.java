@@ -161,13 +161,6 @@ public class FireBlastCharged extends FireAbility {
 					yield = AvatarState.getValue(yield);
 				}
 				
-				if (!bPlayer.isAvatarState()) {
-					if (isDay(player.getWorld())) {
-						yield = (float) getDayFactor(yield);
-					}
-				} else {
-					yield = AvatarState.getValue(yield);
-				}
 				explosion.setYield((float) yield);
 				EXPLOSIONS.put(explosion, this);
 			} else {

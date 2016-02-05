@@ -16,6 +16,9 @@ public class AcrobatStance extends ChiAbility {
 	
 	public AcrobatStance(Player player) {
 		super(player);
+		if (!bPlayer.canBend(this)) {
+			return;
+		}
 		
 		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed");
 		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump");

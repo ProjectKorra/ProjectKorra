@@ -22,6 +22,9 @@ public class Paralyze extends ChiAbility {
 
 	public Paralyze(Player sourceplayer, Entity targetentity) {
 		super(sourceplayer);
+		if (!bPlayer.canBend(this)) {
+			return;
+		}
 		this.target = targetentity;
 		this.cooldown = getConfig().getLong("Abilities.Chi.Paralyze.Cooldown");
 		start();

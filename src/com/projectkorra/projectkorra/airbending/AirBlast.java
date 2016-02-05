@@ -249,7 +249,10 @@ public class AirBlast extends AirAbility {
 			entity.setFireTicks(0);
 			breakBreathbendingHold(entity);
 
-			if (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity)) {
+			if (source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
+				GeneralMethods.damageEntity(player, entity, damage, "AirBurst");
+				affectedEntities.add(entity);
+			} else if (source == null && (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
 				GeneralMethods.damageEntity(this, entity, damage);
 				affectedEntities.add(entity);
 			}

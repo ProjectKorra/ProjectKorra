@@ -499,7 +499,7 @@ public class EarthSmash extends EarthAbility {
 	public Material selectMaterialForRepresenter(Material mat) {
 		Material tempMat = selectMaterial(mat);
 		Random rand = new Random();
-		if (!isEarthbendable(tempMat) || !isMetalbendable(tempMat)) {
+		if (!isEarthbendable(tempMat) && !isMetalbendable(tempMat)) {
 			if (currentBlocks.size() < 1) {
 				return Material.DIRT;
 			} else {
@@ -523,6 +523,9 @@ public class EarthSmash extends EarthAbility {
 		for (EarthSmash smash : getAbilities(EarthSmash.class)) {
 			if (reqState == null || smash.state == reqState) {
 				for (Block block : blocks) {
+					if (block == null || smash.getLocation() == null) {
+						continue;
+					}
 					if (block.getLocation().getWorld() == smash.location.getWorld() 
 							&& block.getLocation().distanceSquared(smash.location) <= Math.pow(grabDetectionRadius, 2)) {
 						return smash;

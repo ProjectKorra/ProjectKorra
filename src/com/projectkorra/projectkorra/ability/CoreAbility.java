@@ -191,6 +191,13 @@ public abstract class CoreAbility implements Ability {
 				abil.remove();
 			}
 		}
+		
+		for (CoreAbility coreAbility : ABILITIES_BY_NAME.values()) {
+			if (coreAbility instanceof AddonAbility) {
+				AddonAbility addon = (AddonAbility) coreAbility;
+				addon.stop();
+			}
+		}
 	}
 
 	/**
@@ -364,10 +371,38 @@ public abstract class CoreAbility implements Ability {
 					Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);;
 					CoreAbility ability = (CoreAbility) clazz.cast(intConstr.newInstance());
 
-					if (ability != null && ability.getName() != null && ability.isEnabled()) {
-						ABILITIES_BY_NAME.put(ability.getName().toLowerCase(), ability);
+					if (ability == null || ability.getName() == null) {
+						continue;
 					} else if (!ability.isEnabled()) {
 						plugin.getLogger().info(ability.getName() + " is disabled");
+						continue;
+					}
+
+					String name = ability.getName();
+					ABILITIES_BY_NAME.put(ability.getName().toLowerCase(), ability);
+
+					if (ability instanceof ComboAbility) {
+						ComboAbility combo = (ComboAbility) ability;
+						if (combo.getCombination() != null) {
+							ComboManager.getComboAbilities().put(name, new ComboManager.ComboAbilityInfo(name, combo.getCombination(), combo));
+							ComboManager.getDescriptions().put(name, ability.getDescription());
+							ComboManager.getInstructions().put(name, combo.getInstructions());
+							String author = "";
+							if (ability instanceof AddonAbility) {
+								author = ((AddonAbility) ability).getAuthor();
+							}
+							ComboManager.getAuthors().put(name, author);
+						}
+					}
+					
+					if (ability instanceof MultiAbility) {
+						MultiAbility multiAbil = (MultiAbility) ability;
+						MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
+					}
+					
+					if (ability instanceof AddonAbility) {
+						AddonAbility addon = (AddonAbility) ability;
+						addon.load();
 					}
 				} catch (Exception e) {
 				} catch (Error e) {
@@ -390,6 +425,7 @@ public abstract class CoreAbility implements Ability {
 		ProjectKorra plugin = ProjectKorra.plugin;
 		File path = new File(plugin.getDataFolder().toString() + folder);
 		if (!path.exists()) {
+			path.mkdir();
 			return;
 		}
 		

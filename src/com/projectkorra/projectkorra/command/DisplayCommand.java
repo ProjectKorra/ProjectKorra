@@ -46,10 +46,17 @@ public class DisplayCommand extends PKCommand {
 					sender.sendMessage(color + "There are no " + elementName + " combos avaliable.");
 					return;
 				}
-				for (String combomove : combos) {
-					if (!sender.hasPermission("bending.ability." + combomove))
+				for (String comboMove : combos) {
+					ChatColor comboColor = color;
+					if (!sender.hasPermission("bending.ability." + comboMove)) {
 						continue;
-					sender.sendMessage(color + combomove);
+					}
+					
+					CoreAbility coreAbil = CoreAbility.getAbility(comboMove);
+					if (coreAbil != null) {
+						comboColor = coreAbil.getElement().getColor();
+					}
+					sender.sendMessage(comboColor + comboMove);
 				}
 				return;
 			}
@@ -108,6 +115,9 @@ public class DisplayCommand extends PKCommand {
 			return;
 		}
 		for (CoreAbility ability : abilities) {
+			if (ability.isHiddenAbility()) {
+				continue;
+			}
 			if (sender instanceof Player) {
 				if (GeneralMethods.canView((Player) sender, ability.getName())) {
 					sender.sendMessage(ability.getElement().getColor() + ability.getName());

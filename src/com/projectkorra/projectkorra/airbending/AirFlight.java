@@ -104,6 +104,7 @@ public class AirFlight extends FlightAbility {
 		} else {
 			player.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(speed));
 		}
+		firstProgressIteration = false;
 	}
 
 	@Override
