@@ -18,11 +18,14 @@ public class WarriorStance extends ChiAbility {
 		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
 		
 		ChiAbility stance = bPlayer.getStance();
-		if (stance != null && !(stance instanceof WarriorStance)) {
+		if (stance != null) {
 			stance.remove();
+			bPlayer.setStance(null);
+			return;
+		} else {
 			bPlayer.setStance(this);
+			start();
 		}
-		start();
 	}
 
 	@Override
@@ -33,10 +36,10 @@ public class WarriorStance extends ChiAbility {
 		}
 		
 		if (!player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, resistance));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 2, resistance));
 		}
 		if (!player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 60, strength));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 2, strength));
 		}
 	}
 	

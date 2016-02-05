@@ -23,11 +23,14 @@ public class AcrobatStance extends ChiAbility {
 		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
 		
 		ChiAbility stance = bPlayer.getStance();
-		if (stance != null && !(stance instanceof AcrobatStance)) {
+		if (stance != null) {
 			stance.remove();
+			bPlayer.setStance(null);
+			return;
+		} else {
 			bPlayer.setStance(this);
+			start();
 		}
-		start();
 	}
 
 	@Override
@@ -38,10 +41,10 @@ public class AcrobatStance extends ChiAbility {
 		}
 		
 		if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speed));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2, speed));
 		}
 		if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jump));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 2, jump));
 		}
 	}
 	
