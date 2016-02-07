@@ -20,17 +20,21 @@ public class AcrobatStance extends ChiAbility {
 			return;
 		}
 		
-		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed");
-		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump");
+		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") + 1;
+		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") + 1;
 		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
 		
 		ChiAbility stance = bPlayer.getStance();
-		if (stance != null && !(stance instanceof AcrobatStance)) {
+		if (stance != null) {
 			stance.remove();
-			bPlayer.setStance(this);
+			if (stance instanceof AcrobatStance) {
+				bPlayer.setStance(null);
+				return;
+			}
 		}
 		start();
+		bPlayer.setStance(this);
 	}
 
 	@Override
@@ -41,10 +45,10 @@ public class AcrobatStance extends ChiAbility {
 		}
 		
 		if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speed));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speed, true));
 		}
 		if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jump));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jump, true));
 		}
 	}
 	

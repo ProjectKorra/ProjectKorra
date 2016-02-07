@@ -42,6 +42,7 @@ public class IceSpikeBlast extends IceAbility {
 	private Location firstDestination;
 	private Location destination;
 	private TempBlock source;
+	private TempBlock originalSource;
 
 	public IceSpikeBlast(Player player) {
 		super(player);
@@ -214,6 +215,7 @@ public class IceSpikeBlast extends IceAbility {
 			}
 			progressing = false;
 		}
+		originalSource.revertBlock();
 		bPlayer.addCooldown("IceSpikeBlast", cooldown);
 	}
 
@@ -255,7 +257,7 @@ public class IceSpikeBlast extends IceAbility {
 			sourceBlock.setType(Material.AIR);
 		}
 
-		new TempBlock(sourceBlock, Material.AIR, data);
+		originalSource = new TempBlock(sourceBlock, Material.AIR, data);
 	}
 
 	public static void activate(Player player) {

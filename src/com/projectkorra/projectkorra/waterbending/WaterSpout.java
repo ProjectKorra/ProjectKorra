@@ -13,14 +13,15 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSpout extends WaterAbility {
 
 	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
-	private static final ConcurrentHashMap<Block, Block> NEW_AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
-	private static final ConcurrentHashMap<Block, Long> REVERT_BLOCKS = new ConcurrentHashMap<Block, Long>();
+	private List<TempBlock> blocks = new ArrayList<TempBlock>();
 
 	private boolean canBendOnPackedIce;
 	private boolean useParticles;
@@ -90,18 +91,23 @@ public class WaterSpout extends WaterAbility {
 
 			Block block = loc.getBlock();
 			if (block.getType().equals(Material.AIR) || !GeneralMethods.isSolid(block)) {
-				REVERT_BLOCKS.put(block, 0L);
-				new TempBlock(block, Material.STATIONARY_WATER, (byte) 1);
+				blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 1));
+				AFFECTED_BLOCKS.put(block, block);
 			}
 		}
 	}
 
 	@Override
 	public void progress() {
+		for (TempBlock tb : blocks) {
+			AFFECTED_BLOCKS.remove(tb.getBlock());
+			tb.revertBlock();
+		}
 		if (player.isDead() || !player.isOnline() || !bPlayer.canBind(this)) {
 			remove();
 			return;
 		} else {
+			blocks.clear();
 			player.setFallDistance(0);
 			player.setSprinting(false);
 			if ((new Random()).nextInt(4) == 0) {
@@ -119,13 +125,10 @@ public class WaterSpout extends WaterAbility {
 					block = location.clone().add(0, i, 0).getBlock();
 					
 					if (!TempBlock.isTempBlock(block)) {
-						new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
-					}
-					if (!AFFECTED_BLOCKS.containsKey(block)) {
+						blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 						AFFECTED_BLOCKS.put(block, block);
 					}
 					rotateParticles(block);
-					NEW_AFFECTED_BLOCKS.put(block, block);
 				}
 				
 				displayWaterSpiral(location.clone().add(.5, 0, .5));
@@ -147,6 +150,10 @@ public class WaterSpout extends WaterAbility {
 	public void remove() {
 		super.remove();
 		revertBaseBlock();
+		for (TempBlock tb : blocks) {
+			AFFECTED_BLOCKS.remove(tb.getBlock());
+			tb.revertBlock();
+		}
 	}
 
 	public void revertBaseBlock() {
@@ -206,7 +213,7 @@ public class WaterSpout extends WaterAbility {
 				return -1;
 			}
 			
-			if (!AFFECTED_BLOCKS.contains(blocki)) {
+			if (!blocks.contains(blocki)) {
 				if (isWater(blocki)) {
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock();
@@ -239,40 +246,6 @@ public class WaterSpout extends WaterAbility {
 		}
 		revertBaseBlock();
 		return -1;
-	}
-
-	public static void progressAllCleanup() {
-		NEW_AFFECTED_BLOCKS.clear();
-		revertAllBlocks(false);
-
-		for (Block block : AFFECTED_BLOCKS.keySet()) {
-			if (!NEW_AFFECTED_BLOCKS.containsKey(block)) {
-				AFFECTED_BLOCKS.remove(block);
-				TempBlock.revertBlock(block, Material.AIR);
-			}
-		}
-	}
-
-	private static void revertAllBlocks(boolean ignoreTime) {
-		for (Block block : REVERT_BLOCKS.keySet()) {
-			long time = REVERT_BLOCKS.get(block);
-			if (System.currentTimeMillis() > time || ignoreTime) {
-				if (TempBlock.isTempBlock(block)) {
-					TempBlock.revertBlock(block, Material.AIR);
-				}
-				REVERT_BLOCKS.remove(block);
-			}
-		}
-	}
-
-	public static void removeAllCleanup() {
-		revertAllBlocks(true);
-		REVERT_BLOCKS.clear();
-
-		for (Block block : AFFECTED_BLOCKS.keySet()) {
-			TempBlock.revertBlock(block, Material.AIR);
-			AFFECTED_BLOCKS.remove(block);
-		}
 	}
 
 	public static boolean removeSpouts(Location loc0, double radius, Player sourcePlayer) {
@@ -400,14 +373,6 @@ public class WaterSpout extends WaterAbility {
 
 	public static ConcurrentHashMap<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
-	}
-
-	public static ConcurrentHashMap<Block, Block> getNewAffectedBlocks() {
-		return NEW_AFFECTED_BLOCKS;
-	}
-
-	public static ConcurrentHashMap<Block, Long> getRevertBlocks() {
-		return REVERT_BLOCKS;
 	}
 
 }

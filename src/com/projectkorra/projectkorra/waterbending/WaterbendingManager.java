@@ -15,7 +15,6 @@ public class WaterbendingManager implements Runnable {
 		WaterPassive.handlePassive();
 		PhaseChangeFreeze.handleFrozenBlocks();
 		HealingWaters.heal();
-		WaterSpout.progressAllCleanup();
 		Torrent.progressAllCleanup();
 		WaterArms.progressAllCleanup();
 	}
