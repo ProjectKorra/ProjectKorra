@@ -37,6 +37,7 @@ public class WaterSpoutWave extends WaterAbility {
 	private boolean iceWave;
 	private boolean iceOnly;
 	private boolean moving;
+	private boolean plant;
 	private int progressCounter;
 	private long time;
 	private long cooldown;
@@ -62,6 +63,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.charging = false;
 		this.iceWave = false;
 		this.iceOnly = false;
+		this.plant = getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AllowPlantSource");
 		this.radius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
 		this.waveRadius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
 		this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.AnimationSpeed");
@@ -112,7 +114,7 @@ public class WaterSpoutWave extends WaterAbility {
 		if (type == AbilityType.CLICK) {
 			if (origin == null) {
 				removeOldType(player, AbilityType.CLICK);
-				Block block = getWaterSourceBlock(player, selectRange, false);
+				Block block = getWaterSourceBlock(player, selectRange, plant);
 				
 				if (block == null) {
 					remove();
@@ -439,7 +441,7 @@ public class WaterSpoutWave extends WaterAbility {
 	
 	@Override
 	public boolean isSneakAbility() {
-		return true;
+		return this.isIceWave() ? true : false;
 	}
 
 	@Override

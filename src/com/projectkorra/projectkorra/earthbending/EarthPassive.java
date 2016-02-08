@@ -75,7 +75,8 @@ public class EarthPassive {
 			return true;
 		}
 
-		return EarthAbility.isEarthbendable(player, block) || EarthAbility.isTransparent(player, block);
+		return (TempBlock.isTempBlock(block) && EarthAbility.isEarthbendable(TempBlock.get(block).getBlock().getType())) 
+				|| EarthAbility.isEarthbendable(player, block) || EarthAbility.isTransparent(player, block);
 	}
 
 	public static boolean isPassiveSand(Block block) {

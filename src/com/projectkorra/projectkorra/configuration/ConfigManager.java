@@ -552,6 +552,7 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterSpout.Particles", false);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.Particles", false);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.Enabled", true);
+				config.addDefault("Abilities.Water.WaterSpout.Wave.AllowPlantSource", true);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.Radius", 3.8);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.WaveRadius", 1.5);
 				config.addDefault("Abilities.Water.WaterSpout.Wave.SelectRange", 6);
