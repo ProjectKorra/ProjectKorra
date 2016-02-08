@@ -184,8 +184,6 @@ public class ConfigManager {
 				config.addDefault("Properties.Water.PlaySound", true);
 				config.addDefault("Properties.Water.NightMessage", "You feel the strength of the rising moon empowering your waterbending.");
 				config.addDefault("Properties.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
-				config.addDefault("Properties.Water.LunarEclipseMessage", "A lunar eclipse is out! Waterbendings are temporarily powerless.");
-				config.addDefault("Properties.Water.FullMoonMessage", "A full moon is rising, empowering your waterbending like never before.");
 
 				config.addDefault("Properties.Earth.RevertEarthbending", true);
 				config.addDefault("Properties.Earth.SafeRevert", true);
@@ -202,8 +200,6 @@ public class ConfigManager {
 				config.addDefault("Properties.Fire.PlaySound", true);
 				config.addDefault("Properties.Fire.NightMessage", "You feel the empowering of your firebending subside as the sun sets.");
 				config.addDefault("Properties.Fire.DayMessage", "You feel the strength of the rising sun empowering your firebending.");
-				config.addDefault("Properties.Fire.SolarEclipseMessage", "A solar eclipse is out! Firebenders are temporarily powerless.");
-				config.addDefault("Properties.Fire.CometMessage", "Sozin's Comet is passing overhead! Firebending is now at its most powerful.");
 				config.addDefault("Properties.Fire.FireGriefing", false);
 				config.addDefault("Properties.Fire.RevertTicks", 12000L);
 

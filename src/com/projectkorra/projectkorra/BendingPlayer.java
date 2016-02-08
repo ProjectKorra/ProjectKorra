@@ -177,7 +177,7 @@ public class BendingPlayer {
 			cooldowns.remove(name);
 		}
 
-		if (isChiBlocked() || isParalyzed() || isBloodbended() || isControlledByMetalClips()) {
+		if (isChiBlocked() || isParalyzed() || isBloodbent() || isControlledByMetalClips()) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, ability.getName(), playerLoc)) {
 			return false;
@@ -212,7 +212,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!isToggled() || !hasElement(element) || !isElementToggled(element)) {
 			return false;
-		} else if (isChiBlocked() || isParalyzed() || isBloodbended()) {
+		} else if (isChiBlocked() || isParalyzed() || isBloodbent()) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, player.getLocation())) {
 			return false;
@@ -464,8 +464,8 @@ public class BendingPlayer {
 		return CoreAbility.hasAbility(player, AvatarState.class);
 	}
 
-	public boolean isBloodbended() {
-		return Bloodbending.isBloodbended(player);
+	public boolean isBloodbent() {
+		return Bloodbending.isBloodbent(player);
 	}
 
 	/**
