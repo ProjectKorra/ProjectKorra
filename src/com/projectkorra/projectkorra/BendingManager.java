@@ -113,14 +113,6 @@ public class BendingManager implements Runnable {
 		}
 	}
 
-	public static String getSozinsCometMessage() {
-		return getConfig().getString("Properties.Fire.CometMessage");
-	}
-
-	public static String getSolarEclipseMessage() {
-		return getConfig().getString("Properties.Fire.SolarEclipseMessage");
-	}
-
 	public static String getSunriseMessage() {
 		return getConfig().getString("Properties.Fire.DayMessage");
 	}
@@ -131,14 +123,6 @@ public class BendingManager implements Runnable {
 
 	public static String getMoonriseMessage() {
 		return getConfig().getString("Properties.Water.NightMessage");
-	}
-
-	public static String getFullMoonriseMessage() {
-		return getConfig().getString("Properties.Water.FullMoonMessage");
-	}
-	
-	public static String getLunarEclipseMessage() {
-		return getConfig().getString("Properties.Water.LunarEclipseMessage");
 	}
 
 	public static String getMoonsetMessage() {

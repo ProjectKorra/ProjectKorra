@@ -278,7 +278,7 @@ public class Bloodbending extends BloodAbility {
 		}
 	}
 
-	public static boolean isBloodbended(Entity entity) {
+	public static boolean isBloodbent(Entity entity) {
 		return entity != null ? TARGETED_ENTITIES.containsKey(entity) : null;
 	}
 

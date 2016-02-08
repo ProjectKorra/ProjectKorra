@@ -80,7 +80,7 @@ public class Flight {
 				if (airScooterPlayers.contains(player) || waterSpoutPlayers.contains(player) || airSpoutPlayers.contains(player) || sandSpoutPlayers.contains(player)) {
 					continue;
 				}
-				if (Bloodbending.isBloodbended(player)) {
+				if (Bloodbending.isBloodbent(player)) {
 					player.setAllowFlight(true);
 					player.setFlying(false);
 					continue;
