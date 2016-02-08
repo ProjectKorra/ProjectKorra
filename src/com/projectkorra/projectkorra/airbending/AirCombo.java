@@ -74,6 +74,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			this.speed = getConfig().getDouble("Abilities.Air.AirCombo.Twister.Speed");
 			this.cooldown = getConfig().getLong("Abilities.Air.AirCombo.Twister.Cooldown");
 			this.twisterHeight = getConfig().getDouble("Abilities.Air.AirCombo.Twister.Height");
+			this.twisterRadius = getConfig().getDouble("Abilities.Air.AirCombo.Twister.Radius");
 			this.twisterDegreeParticles = getConfig().getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
 			this.twisterHeightParticles = getConfig().getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
 			this.twisterRemoveDelay = getConfig().getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");

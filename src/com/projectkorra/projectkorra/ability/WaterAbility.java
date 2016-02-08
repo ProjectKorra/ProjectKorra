@@ -290,7 +290,6 @@ public abstract class WaterAbility extends ElementalAbility {
 	
 	public static void stopBending() {
 		PhaseChangeFreeze.removeAllCleanup();
-		WaterSpout.removeAllCleanup();
 		SurgeWall.removeAllCleanup();
 		SurgeWave.removeAllCleanup();
 		WaterArms.removeAllCleanup();

@@ -74,7 +74,7 @@ public class Commands {
 	public static String[] lightningaliases = { "lightningbending", "lightning" };
 	
 	//Miscellaneous
-	public static String[] commandaliases = { "b", "pk", "bending", "mtla", "tla", "korra", "bend" };
+	public static String[] commandaliases = { "b", "pk", "projectkorra", "bending", "mtla", "tla", "korra", "bend" };
 
 	private void init() {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");

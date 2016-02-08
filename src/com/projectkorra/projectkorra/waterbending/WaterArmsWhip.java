@@ -339,6 +339,14 @@ public class WaterArmsWhip extends WaterAbility {
 				GRABBED_ENTITIES.remove(grabbedEntity);
 				return;
 			}
+			if (grabbedEntity instanceof Player && hasAbility((Player) grabbedEntity, WaterArmsWhip.class)) {
+				WaterArmsWhip waw = getAbility((Player) grabbedEntity, WaterArmsWhip.class);
+				if (waw.getAbility().equals(Whip.GRAB)) {
+					grabbed = false;
+					GRABBED_ENTITIES.remove(grabbedEntity);
+					return;
+				}
+			}
 			
 			Location newLocation = grabbedEntity.getLocation();
 			double distance = location.distance(newLocation);
