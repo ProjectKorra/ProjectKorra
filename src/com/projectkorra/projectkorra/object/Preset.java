@@ -133,8 +133,6 @@ public class Preset {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return false;
-		} else if (!presets.containsKey(player.getUniqueId())) {
-			return false;
 		}
 		
 		@SuppressWarnings("unchecked")
