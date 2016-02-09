@@ -37,6 +37,7 @@ public class EarthBlast extends EarthAbility {
 	private double selectRange;
 	private double deflectRange;
 	private double collisionRadius;
+	private byte sourceData;
 	private Material sourceType;
 	private Location location;
 	private Location destination;
@@ -98,6 +99,7 @@ public class EarthBlast extends EarthAbility {
 			EarthPassive.revertSand(sourceBlock);
 		}
 		
+		sourceData = sourceBlock.getData();
 		if (sourceBlock.getType() == Material.SAND) {
 			sourceType = Material.SAND;
 			if (sourceBlock.getData() == (byte) 0x1) {
@@ -280,6 +282,7 @@ public class EarthBlast extends EarthAbility {
 
 				if (isEarthRevertOn()) {
 					sourceBlock.setType(sourceType);
+					sourceBlock.setData(sourceData);
 					if (sourceBlock.getType() == Material.RED_SANDSTONE && sourceType == Material.SAND) {
 						sourceBlock.setData((byte) 0x1);
 					}
@@ -345,10 +348,12 @@ public class EarthBlast extends EarthAbility {
 				}
 			} else {
 				sourceBlock.setType(sourceType);
+				sourceBlock.setData(sourceData);
 			}
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void throwEarth() {
 		if (sourceBlock == null || !sourceBlock.getWorld().equals(player.getWorld())) {
 			return;
@@ -381,6 +386,7 @@ public class EarthBlast extends EarthAbility {
 
 			Material currentType = sourceBlock.getType();
 			sourceBlock.setType(sourceType);
+			sourceBlock.setData(sourceData);
 			if (isEarthRevertOn()) {
 				addTempAirBlock(sourceBlock);
 			} else {

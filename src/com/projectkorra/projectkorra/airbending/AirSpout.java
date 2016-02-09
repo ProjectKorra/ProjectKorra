@@ -83,7 +83,7 @@ public class AirSpout extends AirAbility {
 
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline() || !bPlayer.canBind(this)) {
+		if (player.isDead() || !player.isOnline() || !bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
 		}
