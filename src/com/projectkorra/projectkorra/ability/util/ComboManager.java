@@ -75,8 +75,8 @@ public class ComboManager {
 
 		ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
 		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
+		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
 		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
 		COMBO_ABILITIES.put("FireWheel", new ComboAbilityInfo("FireWheel", fireWheel, FireCombo.class));
 		DESCRIPTIONS.put("FireWheel", "A high-speed wheel of fire that travels along the ground for long distances dealing high damage.");
