@@ -1244,6 +1244,7 @@ public class GeneralMethods {
 			stopPlugin();
 		}
 		for (Player player : Bukkit.getOnlinePlayers()) {
+			Preset.unloadPreset(player);
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 		}
 		plugin.updater.checkUpdate();
