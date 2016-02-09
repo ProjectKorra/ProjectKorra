@@ -66,7 +66,7 @@ public class SurgeWall extends WaterAbility {
 		SurgeWall wall = getAbility(player, SurgeWall.class);
 		if (wall != null) {
 			if (wall.progressing) {
-				freezeThaw();
+				wall.freezeThaw();
 			} else if (prepare()) {
 				wall.remove();
 				start();
