@@ -90,7 +90,8 @@ public class CopyCommand extends PKCommand {
 		HashMap<Integer, String> abilities = (HashMap<Integer, String>) orig.getAbilities().clone();
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
-			if (!target.canBend(CoreAbility.getAbility(abilities.get(i)))) {
+			CoreAbility coreAbil = CoreAbility.getAbility(abilities.get(i));
+			if (coreAbil != null && !target.canBind(coreAbil)) {
 				abilities.remove(i);
 				boundAll = false;
 			}
