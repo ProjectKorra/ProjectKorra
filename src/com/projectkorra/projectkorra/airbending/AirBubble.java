@@ -73,7 +73,13 @@ public class AirBubble extends AirAbility {
 
 	@Override
 	public void progress() {
-		if (!player.isSneaking() || !bPlayer.canBend(this)) {
+		if (!player.isSneaking()) {
+			remove();
+			return;
+		} else if (!waterBubble && !bPlayer.canBend(this)) {
+			remove();
+			return;
+		} else if (waterBubble && !bPlayer.canBend(getAbility("WaterBubble"))) {
 			remove();
 			return;
 		} else {

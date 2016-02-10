@@ -23,7 +23,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	private static final ConcurrentHashMap<Block, Information> MOVED_EARTH = new ConcurrentHashMap<Block, Information>();
 	private static final ConcurrentHashMap<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<Integer, Information>();
 	private static final ArrayList<Block> PREVENT_PHYSICS = new ArrayList<Block>();
-	private static final ItemStack DIAMOND_PICKAXE = new ItemStack(Material.DIAMOND_PICKAXE);
+	//private static final ItemStack DIAMOND_PICKAXE = new ItemStack(Material.DIAMOND_PICKAXE);
 
 	public EarthAbility(Player player) {
 		super(player);
@@ -563,8 +562,8 @@ public abstract class EarthAbility extends ElementalAbility {
 			if (sourceblock.getType() == Material.AIR || sourceblock.isLiquid()) {
 				info.getState().update(true);
 			} else {
-				GeneralMethods.dropItems(block,
-						GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), DIAMOND_PICKAXE));
+				//GeneralMethods.dropItems(block,
+				//		GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), DIAMOND_PICKAXE));
 			}
 
 			if (GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {

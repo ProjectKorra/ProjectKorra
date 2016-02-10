@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
@@ -116,7 +115,7 @@ public class WaterArmsWhip extends WaterAbility {
 					} else {
 						whipLength = whipLengthFullMoon;
 					}
-				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+				} else if (isFullMoon(world)) {
 					if (ability.equals(Whip.PUNCH)) {
 						whipLength = punchLengthFullMoon;
 					} else {

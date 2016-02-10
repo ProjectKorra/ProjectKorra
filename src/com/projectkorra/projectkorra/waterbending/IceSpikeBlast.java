@@ -216,7 +216,9 @@ public class IceSpikeBlast extends IceAbility {
 			progressing = false;
 		}
 		originalSource.revertBlock();
-		bPlayer.addCooldown("IceSpikeBlast", cooldown);
+		if (player != null && player.isOnline()) {
+			bPlayer.addCooldown("IceSpikeBlast", cooldown);
+		}
 	}
 
 	private void returnWater() {

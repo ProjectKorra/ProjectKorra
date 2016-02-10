@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingManager;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -77,7 +76,7 @@ public class WaterArmsSpear extends WaterAbility {
 					spearRange = spearRangeFullMoon;
 					spearSphere = spearSphereFullMoon;
 					spearDuration = spearDurationFullMoon;
-				} else if (BendingManager.events.get(world).equalsIgnoreCase("FullMoon")) {
+				} else if (isFullMoon(world)) {
 					spearRange = spearRangeFullMoon;
 					spearSphere = spearSphereFullMoon;
 					spearDuration = spearDurationFullMoon;
