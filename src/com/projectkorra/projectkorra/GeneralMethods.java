@@ -94,6 +94,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
+import com.projectkorra.projectkorra.event.BindingUpdateEvent;
 import com.projectkorra.projectkorra.event.PlayerBendingDeathEvent;
 import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -163,7 +164,10 @@ public class GeneralMethods {
 	 */
 	public static void bindAbility(Player player, String ability) {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
-		bindAbility(player, ability, slot);
+		BindingUpdateEvent event = new BindingUpdateEvent(player, ability, slot, true);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		if(!event.isCancelled())
+			bindAbility(player, ability, slot);
 	}
 
 	/**
@@ -180,18 +184,22 @@ public class GeneralMethods {
 			return;
 		}
 
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player.getName());
-		CoreAbility coreAbil = CoreAbility.getAbility(ability);
-		
-		if (bPlayer == null) {
-			return;
+		BindingUpdateEvent event = new BindingUpdateEvent(player, ability, slot, true);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		if(!event.isCancelled()) {
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player.getName());
+			CoreAbility coreAbil = CoreAbility.getAbility(ability);
+			
+			if (bPlayer == null) {
+				return;
+			}
+			bPlayer.getAbilities().put(slot, ability);
+			
+			if (coreAbil != null) {
+				player.sendMessage(coreAbil.getElement().getColor() + "Succesfully bound " + ability + " to slot " + slot);
+			}
+			saveAbility(bPlayer, slot, ability);
 		}
-		bPlayer.getAbilities().put(slot, ability);
-		
-		if (coreAbil != null) {
-			player.sendMessage(coreAbil.getElement().getColor() + "Succesfully bound " + ability + " to slot " + slot);
-		}
-		saveAbility(bPlayer, slot, ability);
 	}
 
 	/**
