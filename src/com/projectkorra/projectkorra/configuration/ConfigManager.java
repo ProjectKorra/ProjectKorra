@@ -537,7 +537,8 @@ public class ConfigManager {
 				config.addDefault("Abilities.Water.WaterManipulation.Enabled", true);
 				config.addDefault("Abilities.Water.WaterManipulation.Description", "To use, place your cursor over a waterbendable object and tap sneak (default: shift). Smoke will appear where you've selected, indicating the origin of your ability. After you have selected an origin, simply left-click in any direction and you will see your water spout off in that direction, slicing any creature in its path. If you look towards a creature when you use this ability, it will target that creature. A collision from Water Manipulation both knocks the target back and deals some damage. Alternatively, if you have the source selected and tap shift again, you will be able to control the water more directly.");
 				config.addDefault("Abilities.Water.WaterManipulation.Damage", 3.0);
-				config.addDefault("Abilities.Water.WaterManipulation.SelectRange", 30);
+				config.addDefault("Abilities.Water.WaterManipulation.Range", 30);
+				config.addDefault("Abilities.Water.WaterManipulation.SelectRange", 10);
 				config.addDefault("Abilities.Water.WaterManipulation.CollisionRadius", 2);
 				config.addDefault("Abilities.Water.WaterManipulation.DeflectRange", 3);
 				config.addDefault("Abilities.Water.WaterManipulation.Speed", 35);
