@@ -154,6 +154,8 @@ public class WaterSpout extends WaterAbility {
 			AFFECTED_BLOCKS.remove(tb.getBlock());
 			tb.revertBlock();
 		}
+		player.setFlying(false);
+		player.setAllowFlight(false);
 	}
 
 	public void revertBaseBlock() {
