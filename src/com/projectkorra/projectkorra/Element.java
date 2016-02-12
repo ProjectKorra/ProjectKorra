@@ -32,7 +32,7 @@ public class Element {
 	
 	private String name;
 
-	private Element(String name) {
+	protected Element(String name) {
 		this.name = name;
 		ALL_ELEMENTS.put(name.toLowerCase(), this);
 	}
