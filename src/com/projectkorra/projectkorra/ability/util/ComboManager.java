@@ -127,7 +127,7 @@ public class ComboManager {
 		iceBulletLeft.add(new AbilityInformation("IceBlast", ClickType.LEFT_CLICK));
 		COMBO_ABILITIES.put("IceBulletLeftClick", new ComboAbilityInfo("IceBulletLeftClick", iceBulletLeft, WaterCombo.class));
 		ArrayList<AbilityInformation> iceBulletRight = new ArrayList<>();
-		iceBulletRight.add(new AbilityInformation("IceBlast", ClickType.RIGHT_CLICK));
+		iceBulletRight.add(new AbilityInformation("IceBlast", ClickType.RIGHT_CLICK_BLOCK));
 		COMBO_ABILITIES.put("IceBulletRightClick", new ComboAbilityInfo("IceBulletRightClick", iceBulletRight, WaterCombo.class));
 
 		ArrayList<AbilityInformation> immobilize = new ArrayList<>();
