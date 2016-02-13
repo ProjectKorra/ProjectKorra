@@ -95,7 +95,7 @@ import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
 import com.projectkorra.projectkorra.event.BindingUpdateEvent;
-import com.projectkorra.projectkorra.event.PlayerBendingDeathEvent;
+import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireCombo;
@@ -367,8 +367,8 @@ public class GeneralMethods {
 			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
 				NCPExemptionManager.exemptPermanently(player, CheckType.FIGHT_REACH);
 			}
-			if (((LivingEntity) entity).getHealth() - damage <= 0 && entity instanceof Player && !entity.isDead()) {
-				PlayerBendingDeathEvent event = new PlayerBendingDeathEvent((Player) entity, player, damage, ability);
+			if (((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {
+				EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, player, damage, ability);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 			}
 			((LivingEntity) entity).damage(damage, player);
