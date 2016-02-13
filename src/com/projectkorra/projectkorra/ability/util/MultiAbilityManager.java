@@ -4,7 +4,9 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.event.BindingUpdateEvent;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -40,6 +42,11 @@ public class MultiAbilityManager {
 	 * @param multiAbility
 	 */
 	public static void bindMultiAbility(Player player, String multiAbility) {
+		BindingUpdateEvent event = new BindingUpdateEvent(player, multiAbility, true);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		if(event.isCancelled())
+			return;
+		
 		if (playerAbilities.containsKey(player))
 			unbindMultiAbility(player);
 		playerSlot.put(player, player.getInventory().getHeldItemSlot());
@@ -187,7 +194,7 @@ public class MultiAbilityManager {
 	 * 
 	 * @param player
 	 */
-	public static void unbindMultiAbility(Player player) {
+	public static void unbindMultiAbility(Player player) {	
 		if (playerAbilities.containsKey(player)) {
 			HashMap<Integer, String> prevBinds = playerAbilities.get(player);
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
