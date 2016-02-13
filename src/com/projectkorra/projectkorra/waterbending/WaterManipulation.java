@@ -39,7 +39,7 @@ public class WaterManipulation extends WaterAbility {
 	private long time;
 	private long cooldown;
 	private long interval;
-	private double selectRange;
+	private double selectRange, range;
 	private double pushFactor;
 	private double damage;
 	private double speed;
@@ -65,6 +65,7 @@ public class WaterManipulation extends WaterAbility {
 		this.collisionRadius = getConfig().getDouble("Abilities.Water.WaterManipulation.CollisionRadius");
 		this.cooldown = getConfig().getLong("Abilities.Water.WaterManipulation.Cooldown");
 		this.selectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange");
+		this.range = getConfig().getDouble("Abilities.Water.WaterManipulation.Range");
 		this.pushFactor = getConfig().getDouble("Abilities.Water.WaterManipulation.Push");
 		this.damage = getConfig().getDouble("Abilities.Water.WaterManipulation.Damage");
 		this.speed = getConfig().getDouble("Abilities.Water.WaterManipulation.Speed");
@@ -129,7 +130,7 @@ public class WaterManipulation extends WaterAbility {
 	public void moveWater() {
 		if (sourceBlock != null) {
 			if (sourceBlock.getWorld().equals(player.getWorld())) {
-				targetDestination = getTargetLocation(player, selectRange);
+				targetDestination = getTargetLocation(player, range);
 
 				if (targetDestination.distanceSquared(location) <= 1) {
 					progressing = false;
@@ -141,7 +142,7 @@ public class WaterManipulation extends WaterAbility {
 					settingUp = true;
 					firstDestination = getToEyeLevel();
 					firstDirection = GeneralMethods.getDirection(sourceBlock.getLocation(), firstDestination).normalize();
-					targetDestination = GeneralMethods.getPointOnLine(firstDestination, targetDestination, selectRange);
+					targetDestination = GeneralMethods.getPointOnLine(firstDestination, targetDestination, range);
 					targetDirection = GeneralMethods.getDirection(firstDestination, targetDestination).normalize();
 
 					if (isPlant(sourceBlock)) {
@@ -307,7 +308,7 @@ public class WaterManipulation extends WaterAbility {
 				trail = new TempBlock(sourceBlock, Material.STATIONARY_WATER, (byte) 1);
 				sourceBlock = block;
 
-				if (location.distanceSquared(targetDestination) <= 1 || location.distanceSquared(firstDestination) > selectRange * selectRange) {
+				if (location.distanceSquared(targetDestination) <= 1 || location.distanceSquared(firstDestination) > range * range) {
 					falling = true;
 					progressing = false;
 				}
@@ -317,7 +318,7 @@ public class WaterManipulation extends WaterAbility {
 
 	private void redirect(Player player, Location targetlocation) {
 		if (progressing && !settingUp) {
-			if (location.distanceSquared(player.getLocation()) <= selectRange * selectRange) {
+			if (location.distanceSquared(player.getLocation()) <= range * range) {
 				targetDirection = GeneralMethods.getDirection(location, targetlocation).normalize();
 			}
 			targetDestination = targetlocation;
@@ -466,7 +467,7 @@ public class WaterManipulation extends WaterAbility {
 		boolean handledPrepare = false;
 		double range = 25;
 		for (WaterManipulation waterManip : getAbilities(player, WaterManipulation.class)) {
-			range = waterManip.selectRange;
+			range = waterManip.range;
 			if (waterManip.prepared) {
 				waterManip.prepared = false;
 				handledPrepare = true;
@@ -507,7 +508,7 @@ public class WaterManipulation extends WaterAbility {
 			}
 
 			if (manip.player.equals(player)) {
-				manip.redirect(player, getTargetLocation(player, manip.selectRange));
+				manip.redirect(player, getTargetLocation(player, manip.range));
 			}
 
 			Location location = player.getEyeLocation();
@@ -629,6 +630,14 @@ public class WaterManipulation extends WaterAbility {
 
 	public void setInterval(long interval) {
 		this.interval = interval;
+	}
+	
+	public double getRange() {
+		return range;
+	}
+	
+	public void setRange(double range) {
+		this.range = range;
 	}
 
 	public double getSelectRange() {
