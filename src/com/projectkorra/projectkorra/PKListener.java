@@ -444,12 +444,6 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
-		if (event.getCause().equals(DamageCause.BLOCK_EXPLOSION)) {
-			if (event.getDamager() == null) {
-				event.setCancelled(true);
-			}
-		}
-
 		if (event.getDamager() != null) {
 			if (LavaSurgeWave.isBlockInWave(event.getDamager())) {
 				event.setCancelled(true);
