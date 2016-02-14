@@ -87,7 +87,7 @@ public class AirScooter extends AirAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this) || !player.isFlying()) {
+		if (!bPlayer.canBendIgnoreCooldowns(this)) {
 			remove();
 			return;
 		}
@@ -138,9 +138,6 @@ public class AirScooter extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		player.setFlying(hadFly);
-		player.setAllowFlight(canFly);
-		player.setSprinting(false);
 	}
 
 	private void spinScooter() {

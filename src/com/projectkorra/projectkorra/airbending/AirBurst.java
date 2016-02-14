@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
+import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -91,6 +92,10 @@ public class AirBurst extends AirAbility {
 	}
 
 	private void fallBurst() {
+		if (bPlayer.isOnCooldown("AirBurst")) {
+			return;
+		}
+		
 		Location location = player.getLocation();
 		double x, y, z;
 		double r = 1;

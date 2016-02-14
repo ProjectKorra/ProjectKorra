@@ -44,6 +44,8 @@ public class Shockwave extends EarthAbility {
 			return;
 		} else if (player.getFallDistance() < threshold || !isEarthbendable(player.getLocation().add(0, -1, 0).getBlock())) {
 			return;
+		} else if(bPlayer.isOnCooldown("Shockwave")) {
+			return;
 		}
 
 		areaShockwave();

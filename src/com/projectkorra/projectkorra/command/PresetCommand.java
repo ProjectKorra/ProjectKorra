@@ -119,7 +119,7 @@ public class PresetCommand extends PKCommand {
 						bPlayer2 = BendingPlayer.getBendingPlayer(player2);
 					}
 					if (bPlayer2.isPermaRemoved()) {
-						player.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
+						player.sendMessage(ChatColor.RED + "That players bending was permanently removed.");
 						return;
 					}
 					boolean boundAll = Preset.bindExternalPreset(player2, name);
@@ -148,7 +148,7 @@ public class PresetCommand extends PKCommand {
 						bPlayer2 = BendingPlayer.getBendingPlayer(player2);
 					}
 					if (bPlayer2.isPermaRemoved()) {
-						player.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
+						player.sendMessage(ChatColor.RED + "That players bending was permanently removed.");
 						return;
 					}
 					Preset preset = Preset.getPreset(player, name);
