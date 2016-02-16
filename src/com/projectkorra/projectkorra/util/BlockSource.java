@@ -294,7 +294,7 @@ public class BlockSource {
 			}
 
 			Location loc = tempBlock.getLocation();
-			sourceBlock = EarthAbility.getNearbyEarthBlock(loc, 3, 3);
+			sourceBlock = EarthAbility.getNearbyEarthBlock(loc, 3, 1);
 			if (sourceBlock == null || !sourceBlock.getLocation().getWorld().equals(player.getWorld()) || Math.abs(sourceBlock.getLocation().distance(player.getEyeLocation())) > range || !EarthAbility.isEarthbendable(player, sourceBlock)) {
 				return null;
 			}
