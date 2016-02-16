@@ -263,9 +263,9 @@ public class WhoCommand extends PKCommand {
 			}
 			if (bPlayer.hasElement(Element.CHI)) {
 				if(bPlayer.isElementToggled(Element.CHI)) {
-					sender.sendMessage(Element.CHI.getColor() + "- Chibender");
+					sender.sendMessage(Element.CHI.getColor() + "- Chiblocker");
 				} else {
-					sender.sendMessage(Element.CHI.getColor() + "" + ChatColor.STRIKETHROUGH + "- Chibender");
+					sender.sendMessage(Element.CHI.getColor() + "" + ChatColor.STRIKETHROUGH + "- Chiblocker");
 				}
 			}
 			
