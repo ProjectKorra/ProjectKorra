@@ -677,8 +677,8 @@ public class ConfigManager {
 				config.addDefault("Abilities.Earth.EarthSmash.ShootAnimationInterval", 25);
 				config.addDefault("Abilities.Earth.EarthSmash.FlightAnimationInterval", 0);
 				config.addDefault("Abilities.Earth.EarthSmash.LiftAnimationInterval", 30);
-				config.addDefault("Abilities.Earth.EarthSmash.GrabDetectionRadius", 3.5);
-				config.addDefault("Abilities.Earth.EarthSmash.FlightDetectionRadius", 3.8);
+				config.addDefault("Abilities.Earth.EarthSmash.GrabDetectionRadius", 2.5);
+				config.addDefault("Abilities.Earth.EarthSmash.FlightDetectionRadius", 3.5);
 
 				config.addDefault("Abilities.Earth.MetalClips.Enabled", true);
 				config.addDefault("Abilities.Earth.MetalClips.Description", "MetalClips has the potential to be both an offensive and a utility ability. To start, you must carry smelted Iron Ingots in your inventory. To apply the clips onto an entity, simply click at them. If the entity is a Zombie, a Skeleton, or a Player, the clips will form armor around the entity, giving you some control over them. Each additional clip will give you more control. If you have permission to do so, you may crush the entity against a wall with a 4th clip, hurting them. Without explicit permissions, you will only be able to strap three clips on your target. If the entity is not one of the above, the clip will simply do damage and fall to the ground, to be collected. Another permission requiring action is throwing entities. To do so, click while controlling a metalclipped entity");
