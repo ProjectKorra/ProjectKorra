@@ -319,7 +319,8 @@ public class FireCombo extends FireAbility implements ComboAbility {
 					ParticleEffect.LARGE_EXPLODE.display(player.getLocation(), spread, spread, spread, 0, 1);
 					player.getWorld().playSound(player.getLocation(), Sound.EXPLODE, 15, 0F);
 				}
-				player.setVelocity(player.getVelocity().normalize().multiply(speed));
+				FireJet fj = getAbility(player, FireJet.class);
+				fj.setSpeed(speed);
 				FireComboStream fs = new FireComboStream(this, 
 						player.getVelocity().clone().multiply(-1), player.getLocation(), 3, 0.5, "JetBlast");
 				
@@ -343,7 +344,8 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				return;
 			} else if (hasAbility(player, FireJet.class)) {
 				direction = player.getVelocity().clone().multiply(-1);
-				player.setVelocity(player.getVelocity().normalize().multiply(speed));
+				FireJet fj = getAbility(player, FireJet.class);
+				fj.setSpeed(speed);
 
 				FireComboStream fs = new FireComboStream(this, direction, player.getLocation(), 5, 1, "JetBlaze");
 				fs.setDensity(8);

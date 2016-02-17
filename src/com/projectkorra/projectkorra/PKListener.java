@@ -1134,39 +1134,6 @@ public class PKListener implements Listener {
 				}
 			}
 		}
-		
-		else {
-			Location from = event.getFrom();
-			Location to = event.getTo();
-			
-			if (from.getBlock() == to.getBlock() && (from.getBlock() != null && to.getBlock() != null)) return;
-			
-			if (from.getBlockY() < to.getBlockY()) {// Jump
-				ComboManager.addComboAbility(player, ClickType.JUMP);
-				return;
-			}
-				
-			Vector toRight = GeneralMethods.getDirection(player.getLocation(), GeneralMethods.getRightSide(player.getLocation(), 1));
-			Vector toLeft = GeneralMethods.getDirection(player.getLocation(), GeneralMethods.getLeftSide(player.getLocation(), 1));
-			Location loc = player.getLocation();
-			loc.setYaw(0);
-			loc.setPitch(0);
-			Vector forwards = loc.getDirection().normalize();
-			Vector backwards = forwards.multiply(-1);
-			Vector current = player.getLocation().toVector().normalize();
-			
-			if (current.distance(forwards) < 0.5 && current.distance(forwards) > -0.5) {
-				ComboManager.addComboAbility(player, ClickType.MOVE_FORWARDS);
-			} else if (current.distance(backwards) < 0.5 && current.distance(backwards) > -0.5) {
-				ComboManager.addComboAbility(player, ClickType.MOVE_BACKWARDS);
-			} else if (current.distance(toLeft) < 0.5 && current.distance(toLeft) > -0.5) {
-				ComboManager.addComboAbility(player, ClickType.MOVE_LEFT);
-			} else if (current.distance(toRight) < 0.5 && current.distance(toRight) > -0.5) {
-				ComboManager.addComboAbility(player, ClickType.MOVE_RIGHT);
-			}
-			
-			return;
-		}
 	}
 	
 	@EventHandler
