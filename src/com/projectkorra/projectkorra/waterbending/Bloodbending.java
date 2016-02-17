@@ -35,6 +35,7 @@ public class Bloodbending extends BloodAbility {
 	private long holdTime;
 	private long cooldown;
 	private double throwFactor;
+	private Entity target;
 
 	public Bloodbending(Player player) {
 		super(player);
@@ -99,7 +100,7 @@ public class Bloodbending extends BloodAbility {
 			if (entities == null || entities.isEmpty()) {
 				return;
 			}
-			Entity target = entities.get(0);
+			target = entities.get(0);
 
 			if (target == null || !(target instanceof LivingEntity) 
 					|| GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())
@@ -156,10 +157,12 @@ public class Bloodbending extends BloodAbility {
 		PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 60, 1);
 
 		if (!player.isSneaking()) {
+			TARGETED_ENTITIES.remove(target);
 			remove();
 			return;
 		} else if (holdTime > 0 && System.currentTimeMillis() - this.time > holdTime) {
 			remove();
+			TARGETED_ENTITIES.remove(target);
 			return;
 		}
 
@@ -373,6 +376,10 @@ public class Bloodbending extends BloodAbility {
 
 	public void setThrowFactor(double throwFactor) {
 		this.throwFactor = throwFactor;
+	}
+	
+	public Entity getTarget() {
+		return target;
 	}
 
 	public void setCooldown(long cooldown) {
