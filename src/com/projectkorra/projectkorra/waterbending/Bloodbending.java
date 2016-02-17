@@ -175,12 +175,15 @@ public class Bloodbending extends BloodAbility {
 		}
 
 		if (onlyUsableDuringMoon && !isFullMoon(player.getWorld()) && !bPlayer.canBloodbendAtAnytime()) {
+			TARGETED_ENTITIES.remove(target);
 			remove();
 			return;
 		} else if (canOnlyBeUsedAtNight && !isNight(player.getWorld()) && !bPlayer.canBloodbendAtAnytime()) {
+			TARGETED_ENTITIES.remove(target);
 			remove();
 			return;
 		} else if (!bPlayer.canBendIgnoreCooldowns(this)) {
+			TARGETED_ENTITIES.remove(target);
 			remove();
 			return;
 		}
