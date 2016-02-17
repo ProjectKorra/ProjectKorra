@@ -9,29 +9,9 @@ public enum ClickType {
 	 */
 	CUSTOM,
 	/**
-	 * The player has jumped
-	 */
-	JUMP,
-	/**
 	 * Player has swung their arm.
 	 */
 	LEFT_CLICK,
-	/**
-	 * The player has moved backwards
-	 */
-	MOVE_BACKWARDS,
-	/**
-	 * The player has moved forwards
-	 */
-	MOVE_FORWARDS,
-	/**
-	 * The player has moved left
-	 */
-	MOVE_LEFT,
-	/**
-	 * The player has moved right
-	 */
-	MOVE_RIGHT,
 	/**
 	 * For any instance of right clicking that isn't with an entity or a block (Right clicking air will not work).
 	 */

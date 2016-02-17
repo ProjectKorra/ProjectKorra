@@ -346,7 +346,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 		int rotation = 30;
 		for (int i = 0; i < radius; i++) {
-			Vector tracer = new Vector(i, 0, 0);
+			Vector tracer = new Vector(i, 1, 0);
 			for (int deg = 0; deg < 360; deg += rotation) {
 				Location searchLoc = loc.clone().add(tracer);
 				Block block = GeneralMethods.getTopBlock(searchLoc, maxVertical);

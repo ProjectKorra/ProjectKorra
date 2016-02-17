@@ -1,8 +1,13 @@
 package com.projectkorra.projectkorra.firebending;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,6 +54,11 @@ public class FireDamageTimer {
 			}
 			LivingEntity Lentity = (LivingEntity) entity;
 			Player source = INSTANCES.get(entity);
+			if (Lentity.getHealth() - DAMAGE <= 0 && !entity.isDead()) {
+				EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, source, DAMAGE, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0).getName());
+				Bukkit.getServer().getPluginManager().callEvent(event);
+			}
+			
 			Lentity.damage(DAMAGE, source);
 			if (entity.getFireTicks() > MAX_TICKS) {
 				entity.setFireTicks(MAX_TICKS);

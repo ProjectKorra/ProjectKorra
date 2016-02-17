@@ -104,6 +104,10 @@ public class AirBlast extends AirAbility {
 		this.pushFactor *= modifiedPushFactor;
 		this.affectedLevers = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
+		//prevent the airburst related airblasts from triggering doors/levers/buttons
+		this.canOpenDoors = false;
+		this.canPressButtons = false;
+		this.canFlickLevers = false;
 		start();
 	}
 

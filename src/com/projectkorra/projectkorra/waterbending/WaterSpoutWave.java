@@ -1,9 +1,9 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,10 +15,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSpoutWave extends WaterAbility {
 	
@@ -141,7 +141,7 @@ public class WaterSpoutWave extends WaterAbility {
 				remove();
 				return;
 			} else if (player.isSneaking()) {
-				new WaterSpoutWave(player, AbilityType.SHIFT);
+				setType(AbilityType.SHIFT);
 				return;
 			}
 			playFocusWaterEffect(origin.getBlock());
@@ -158,25 +158,21 @@ public class WaterSpoutWave extends WaterAbility {
 				
 				charging = true;
 				animation = AnimateState.RISE;
-				if(!getType(player, AbilityType.CLICK).isEmpty()) {
-					WaterSpoutWave clickWave = getType(player, AbilityType.CLICK).get(0);
-					origin = clickWave.origin.clone();
-					location = origin.clone();
+				location = origin.clone();
 					
-					if (isPlant(origin.getBlock())) {
-						new PlantRegrowth(player, origin.getBlock());
-					}
+				if (isPlant(origin.getBlock())) {
+					new PlantRegrowth(player, origin.getBlock());
 				}
 			}
 
 			removeOldType(player, AbilityType.CLICK);
 			if (!player.isSneaking()) {
 				if (System.currentTimeMillis() - time > chargeTime) {
-					WaterSpoutWave wave = new WaterSpoutWave(player, AbilityType.RELEASE);
-					wave.animation = AnimateState.SHRINK;
-					wave.direction = direction;
+					setType(AbilityType.RELEASE);
+					setAnimation(AnimateState.SHRINK);
+				} else {
+					remove();
 				}
-				remove();
 				return;
 			}
 

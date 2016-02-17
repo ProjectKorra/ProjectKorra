@@ -54,8 +54,8 @@ import com.projectkorra.projectkorra.earthbending.RaiseEarthWall;
 import com.projectkorra.projectkorra.earthbending.SandSpout;
 import com.projectkorra.projectkorra.earthbending.Shockwave;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
+import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
-import com.projectkorra.projectkorra.event.PlayerBendingDeathEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
@@ -444,12 +444,6 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
-		if (event.getCause().equals(DamageCause.BLOCK_EXPLOSION)) {
-			if (event.getDamager() == null) {
-				event.setCancelled(true);
-			}
-		}
-
 		if (event.getDamager() != null) {
 			if (LavaSurgeWave.isBlockInWave(event.getDamager())) {
 				event.setCancelled(true);
@@ -694,8 +688,8 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerBendingDeath(PlayerBendingDeathEvent event) {
-		if (ConfigManager.deathMsgConfig.get().getBoolean("Properties.Enabled")) {
+	public void onPlayerBendingDeath(EntityBendingDeathEvent event) {
+		if (ConfigManager.deathMsgConfig.get().getBoolean("Properties.Enabled") && event.getVictim() instanceof Player) {
 			CoreAbility ability = CoreAbility.getAbility(event.getAbility());
 			
 			if (ability == null) {
@@ -705,8 +699,8 @@ public class PKListener implements Listener {
 			StringBuilder sb = new StringBuilder();
 			sb.append(ability.getElement().getColor());
 			sb.append(event.getAbility());
-			BENDING_PLAYER_DEATH.put(event.getVictim(), sb.toString());
-			final Player player = event.getVictim();
+			BENDING_PLAYER_DEATH.put((Player) event.getVictim(), sb.toString());
+			final Player player = (Player) event.getVictim();
 
 			new BukkitRunnable() {
 				@Override
@@ -1139,39 +1133,6 @@ public class PKListener implements Listener {
 					return;
 				}
 			}
-		}
-		
-		else {
-			Location from = event.getFrom();
-			Location to = event.getTo();
-			
-			if (from.getBlock() == to.getBlock() && (from.getBlock() != null && to.getBlock() != null)) return;
-			
-			if (from.getBlockY() < to.getBlockY()) {// Jump
-				ComboManager.addComboAbility(player, ClickType.JUMP);
-				return;
-			}
-				
-			Vector toRight = GeneralMethods.getDirection(player.getLocation(), GeneralMethods.getRightSide(player.getLocation(), 1));
-			Vector toLeft = GeneralMethods.getDirection(player.getLocation(), GeneralMethods.getLeftSide(player.getLocation(), 1));
-			Location loc = player.getLocation();
-			loc.setYaw(0);
-			loc.setPitch(0);
-			Vector forwards = loc.getDirection().normalize();
-			Vector backwards = forwards.multiply(-1);
-			Vector current = player.getLocation().toVector().normalize();
-			
-			if (current.distance(forwards) < 0.5 && current.distance(forwards) > -0.5) {
-				ComboManager.addComboAbility(player, ClickType.MOVE_FORWARDS);
-			} else if (current.distance(backwards) < 0.5 && current.distance(backwards) > -0.5) {
-				ComboManager.addComboAbility(player, ClickType.MOVE_BACKWARDS);
-			} else if (current.distance(toLeft) < 0.5 && current.distance(toLeft) > -0.5) {
-				ComboManager.addComboAbility(player, ClickType.MOVE_LEFT);
-			} else if (current.distance(toRight) < 0.5 && current.distance(toRight) > -0.5) {
-				ComboManager.addComboAbility(player, ClickType.MOVE_RIGHT);
-			}
-			
-			return;
 		}
 	}
 	
