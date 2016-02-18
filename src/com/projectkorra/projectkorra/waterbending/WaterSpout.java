@@ -33,6 +33,8 @@ public class WaterSpout extends WaterAbility {
 	private double height;
 	private Block base;
 	private TempBlock baseBlock;
+	private boolean canFly;
+	private boolean hadFly;
 	
 	public WaterSpout(Player player) {
 		super(player);
@@ -48,7 +50,8 @@ public class WaterSpout extends WaterAbility {
 		this.useBlockSpiral = getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
 		this.height = getConfig().getDouble("Abilities.Water.WaterSpout.Height");
 		this.interval = getConfig().getLong("Abilities.Water.WaterSpout.Interval");
-		
+		hadFly = player.isFlying();
+		canFly = player.getAllowFlight();
 		WaterSpoutWave spoutWave = new WaterSpoutWave(player, WaterSpoutWave.AbilityType.CLICK);
 		if (spoutWave.isStarted() && !spoutWave.isRemoved()) {
 			return;
@@ -154,8 +157,8 @@ public class WaterSpout extends WaterAbility {
 			AFFECTED_BLOCKS.remove(tb.getBlock());
 			tb.revertBlock();
 		}
-		player.setAllowFlight(false);
-		player.setFlying(false);
+		player.setAllowFlight(canFly);
+		player.setFlying(hadFly);
 	}
 
 	public void revertBaseBlock() {
@@ -252,17 +255,15 @@ public class WaterSpout extends WaterAbility {
 
 	public static boolean removeSpouts(Location loc0, double radius, Player sourcePlayer) {
 		boolean removed = false;
-		Location loc1 = sourcePlayer.getLocation().getBlock().getLocation();
-		loc0 = loc0.getBlock().getLocation();
-		double dx = loc1.getX() - loc0.getX();
-		double dy = loc1.getY() - loc0.getY();
-		double dz = loc1.getZ() - loc0.getZ();
-		double distSquared = dx * dx + dz * dz;
-		
 		for (WaterSpout spout : getAbilities(sourcePlayer, WaterSpout.class)) {
-			if (distSquared <= radius * radius && dy > 0 && dy < spout.height) {
-				removed = true;
-				spout.remove();
+			Location top = spout.getLocation();
+			Location base = spout.getBase().getLocation();
+			for (double d = base.getY(); d <= top.getBlockY(); d += 0.25) {
+				Location spoutl = base.clone().add(0, d, 0);
+				if (loc0.distance(spoutl) <= radius) {
+					removed = true;
+					spout.remove();
+				}
 			}
 		}
 		return removed;
