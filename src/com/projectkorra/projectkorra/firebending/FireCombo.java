@@ -195,12 +195,14 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				affectedEntities.add(entity);
 				GeneralMethods.damageEntity(this, entity, damage);
 				entity.setFireTicks((int) (fireTicks * 20));
+				new FireDamageTimer(entity, player);
 			}
 		} else if (ability.equalsIgnoreCase("FireWheel")) {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
 				GeneralMethods.damageEntity(this, entity, damage);
 				entity.setFireTicks((int) (fireTicks * 20));
+				new FireDamageTimer(entity, player);
 				this.remove();
 			}
 		}
