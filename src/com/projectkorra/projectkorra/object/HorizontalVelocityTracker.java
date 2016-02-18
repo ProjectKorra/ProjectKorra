@@ -5,9 +5,11 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -24,6 +26,7 @@ public class HorizontalVelocityTracker {
 	
 	public static ConcurrentHashMap<Entity, HorizontalVelocityTracker> instances = new ConcurrentHashMap<Entity, HorizontalVelocityTracker>();
 	public boolean hasBeenDamaged = false;
+	public boolean barrier = ConfigManager.defaultConfig.get().getBoolean("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock");
 	private long delay;
 	private long fireTime;
 	private Entity entity;
@@ -84,6 +87,7 @@ public class HorizontalVelocityTracker {
 			if ((diff.getX() > 1 || diff.getX() < -1) || (diff.getZ() > 1 || diff.getZ() < -1)) {
 				impactLocation = entity.getLocation();
 				for (Block b : blocks) {
+					if (b.getType() == Material.BARRIER && barrier == false) return;
 					if (GeneralMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
 						if (!ElementalAbility.isTransparent(instigator, b)) {
 							hasBeenDamaged = true;
