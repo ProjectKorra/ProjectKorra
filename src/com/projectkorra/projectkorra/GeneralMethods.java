@@ -94,7 +94,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
-import com.projectkorra.projectkorra.event.BindingUpdateEvent;
+import com.projectkorra.projectkorra.event.BindChangeEvent;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -164,7 +164,7 @@ public class GeneralMethods {
 	 */
 	public static void bindAbility(Player player, String ability) {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
-		BindingUpdateEvent event = new BindingUpdateEvent(player, ability, slot, true);
+		BindChangeEvent event = new BindChangeEvent(player, ability, slot, true);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if(!event.isCancelled())
 			bindAbility(player, ability, slot);
@@ -184,7 +184,7 @@ public class GeneralMethods {
 			return;
 		}
 
-		BindingUpdateEvent event = new BindingUpdateEvent(player, ability, slot, true);
+		BindChangeEvent event = new BindChangeEvent(player, ability, slot, true);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if(!event.isCancelled()) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player.getName());

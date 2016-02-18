@@ -4,7 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.event.BindingUpdateEvent;
+import com.projectkorra.projectkorra.event.BindChangeEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,7 +42,7 @@ public class MultiAbilityManager {
 	 * @param multiAbility
 	 */
 	public static void bindMultiAbility(Player player, String multiAbility) {
-		BindingUpdateEvent event = new BindingUpdateEvent(player, multiAbility, true);
+		BindChangeEvent event = new BindChangeEvent(player, multiAbility, true);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if(event.isCancelled())
 			return;

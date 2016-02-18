@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
+import com.projectkorra.rpg.RPGMethods;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -55,6 +56,11 @@ public class BendingManager implements Runnable {
 					times.put(world, false);
 				}
 			} else {
+				if (GeneralMethods.hasRPG()) {
+					if (RPGMethods.isFullMoon(world) || RPGMethods.isLunarEclipse(world) || RPGMethods.isSolarEclipse(world) || RPGMethods.isSozinsComet(world)) {
+						continue;
+					}
+				}
 				if (times.get(world) && !FireAbility.isDay(world)) {
 					// The hashmap says it is day, but it is not.
 					times.put(world, false); // Sets time to night.
@@ -63,7 +69,6 @@ public class BendingManager implements Runnable {
 						if (bPlayer == null) {
 							continue;
 						}
-						
 						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.daymessage")) {
 							player.sendMessage(Element.WATER.getColor() + getMoonriseMessage());
 						}
