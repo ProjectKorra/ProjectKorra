@@ -138,6 +138,8 @@ public class AirScooter extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
+		player.setAllowFlight(canFly);
+		player.setFlying(hadFly);
 	}
 
 	private void spinScooter() {

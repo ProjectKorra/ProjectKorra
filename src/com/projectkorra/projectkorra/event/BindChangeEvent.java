@@ -4,14 +4,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
-
 /**
  * Called when a player binds or unbinds an ability
  * 
  * @author savior67
  */
-public class BindingUpdateEvent extends Event{
+public class BindChangeEvent extends Event{
 	
 	private static final HandlerList handlers = new HandlerList();
 	private Player player;
@@ -22,7 +20,7 @@ public class BindingUpdateEvent extends Event{
 	private boolean cancelled;
 
 	//bind event for abilities
-	public BindingUpdateEvent(Player player, String ability, int slot, boolean isBinding) {
+	public BindChangeEvent(Player player, String ability, int slot, boolean isBinding) {
 		this.player = player;
 		this.ability = ability;
 		this.slot = slot;
@@ -32,7 +30,7 @@ public class BindingUpdateEvent extends Event{
 	}
 	
 	//used for multi abilities
-	public BindingUpdateEvent(Player player, String ability, boolean isBinding) {
+	public BindChangeEvent(Player player, String ability, boolean isBinding) {
 		this.player = player;
 		this.ability = ability;
 		this.slot = -1;
@@ -41,28 +39,8 @@ public class BindingUpdateEvent extends Event{
 		this.isMultiAbility = true;
 	}
 	
-	public void setCancelled(boolean cancelled) {
-		this.cancelled = cancelled;
-	}
-	
-	public boolean isCancelled() {
-		return cancelled;
-	}
-	
-	public Player getPlayer() {
-		return player;
-	}
-	
 	public String getAbility() {
 		return ability;
-	}
-	
-	public int getSlot() {
-		return slot;
-	}
-	
-	public boolean isBinding() {
-		return isBinding;
 	}
 	
 	@Override
@@ -74,4 +52,27 @@ public class BindingUpdateEvent extends Event{
 		return handlers;
 	}
 
+	public Player getPlayer() {
+		return player;
+	}
+	
+	public int getSlot() {
+		return slot;
+	}
+	
+	public boolean isBinding() {
+		return isBinding;
+	}
+	
+	public boolean isCancelled() {
+		return cancelled;
+	}
+	
+	public boolean isMultiAbility() {
+		return isMultiAbility;
+	}
+	
+	public void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
+	}
 }

@@ -104,11 +104,11 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (isNight(world)) {
 			if (GeneralMethods.hasRPG()) {
 				if (isLunarEclipse(world)) {
-					return RPGMethods.getFactor("LunarEclipse");
+					return RPGMethods.getFactor("LunarEclipse") * value;
 				} else if (isFullMoon(world)) {
-					return RPGMethods.getFactor("FullMoon");
+					return RPGMethods.getFactor("FullMoon") * value;
 				} else {
-					return value;
+					return getConfig().getDouble("Properties.Water.NightFactor") * value;
 				}
 			} else {
 				if (isFullMoon(world)) {

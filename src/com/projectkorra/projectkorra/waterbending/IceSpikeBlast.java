@@ -4,8 +4,6 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 
@@ -47,6 +45,10 @@ public class IceSpikeBlast extends IceAbility {
 	public IceSpikeBlast(Player player) {
 		super(player);
 		
+		if (bPlayer.isOnCooldown("IceSpikeBlast")) {
+			return;
+		}
+		
 		this.data = 0;
 		this.interval = getConfig().getLong("Abilities.Water.IceSpike.Blast.Interval");
 		this.slowCooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.SlowCooldown");
@@ -66,7 +68,10 @@ public class IceSpikeBlast extends IceAbility {
 		this.range = getNightFactor(range);
 		this.damage = getNightFactor(damage);
 		this.slowPower = (int) getNightFactor(slowPower);
-		sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
+		sourceBlock = getWaterSourceBlock(player, range, bPlayer.canPlantbend());
+		if (sourceBlock == null) {
+			sourceBlock = getIceSourceBlock(player, range);
+		}
 
 		if (sourceBlock == null) {
 			new IceSpikePillarField(player);
@@ -216,9 +221,6 @@ public class IceSpikeBlast extends IceAbility {
 			progressing = false;
 		}
 		originalSource.revertBlock();
-		if (player != null && player.isOnline()) {
-			bPlayer.addCooldown("IceSpikeBlast", cooldown);
-		}
 	}
 
 	private void returnWater() {
@@ -269,18 +271,21 @@ public class IceSpikeBlast extends IceAbility {
 		
 		if (bPlayer == null) {
 			return;
-		} else if (bPlayer.isOnCooldown("IceSpikeBlast")) {
+		}
+		
+		if (bPlayer.isOnCooldown("IceSpikeBlast")) {
 			return;
 		}
-
+		
 		for (IceSpikeBlast ice : getAbilities(player, IceSpikeBlast.class)) {
 			if (ice.prepared) {
 				ice.throwIce();
+				bPlayer.addCooldown("IceSpikeBlast", ice.getCooldown());
 				activate = true;
 			}
 		}
-
-		if (!activate) {
+		
+		if (!activate && !getPlayers(IceSpikeBlast.class).contains(player)) {
 			IceSpikePillar spike = new IceSpikePillar(player);
 			if (!spike.isStarted()) {
 				waterBottle(player);
