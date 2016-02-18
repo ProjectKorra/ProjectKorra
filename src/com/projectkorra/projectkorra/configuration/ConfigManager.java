@@ -156,6 +156,7 @@ public class ConfigManager {
 				config.addDefault("Properties.SeaLevel", 62);
 
 				config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
+				config.addDefault("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock", false);
 				config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance", 5.0);
 				config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageCap", 6.0);
 
