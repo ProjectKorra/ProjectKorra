@@ -9,10 +9,20 @@ public class BendingDamageEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancelled;
 	private double damage;
+	private String ability;
 	
-	public BendingDamageEvent(double damage) {
+	public BendingDamageEvent(double damage, String ability) {
 		this.cancelled = false;
 		this.damage = damage;
+		this.ability = ability;
+	}
+	
+	public String getAbility() {
+		return ability;
+	}
+	
+	public void setAbility(String ability) {
+		this.ability = ability;
 	}
 	
 	public double getDamage() {
