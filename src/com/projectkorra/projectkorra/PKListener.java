@@ -64,6 +64,7 @@ import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
 import com.projectkorra.projectkorra.firebending.FireBurst;
+import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireDamageTimer;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.firebending.FireShield;
@@ -507,6 +508,46 @@ public class PKListener implements Listener {
 			event.getDrops().clear();
 			event.getDrops().addAll(newdrops);
 			MetalClips.getEntityClipsCount().remove(event.getEntity());
+		}
+		for (FireCombo fc : CoreAbility.getAbilities(event.getEntity().getKiller(), FireCombo.class)) {
+			if (!fc.getAffectedEntities().contains(event.getEntity())) continue;
+			List<ItemStack> drops = event.getDrops();
+			List<ItemStack> newDrops = new ArrayList<>();
+			for (int i = 0; i < drops.size(); i++) {
+				ItemStack cooked = drops.get(i);
+				Material material = drops.get(i).getType();
+				switch (material) {
+					case RAW_BEEF:
+						cooked = new ItemStack(Material.COOKED_BEEF, 1);
+						break;
+					case RAW_FISH:
+						ItemStack salmon = new ItemStack(Material.RAW_FISH, 1, (short) 1);
+						if (drops.get(i).getDurability() == salmon.getDurability()) {
+							cooked = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
+						} else {
+							cooked = new ItemStack(Material.COOKED_FISH, 1);
+						}
+						break;
+					case RAW_CHICKEN:
+						cooked = new ItemStack(Material.COOKED_CHICKEN, 1);
+						break;
+					case PORK:
+						cooked = new ItemStack(Material.GRILLED_PORK, 1);
+						break;
+					case MUTTON:
+						cooked = new ItemStack(Material.COOKED_MUTTON);
+						break;
+					case RABBIT:
+						cooked = new ItemStack(Material.COOKED_RABBIT);
+						break;
+					default:
+						break;
+				}
+				
+				newDrops.add(cooked);
+			}
+			event.getDrops().clear();
+			event.getDrops().addAll(newDrops);
 		}
 	}
 
