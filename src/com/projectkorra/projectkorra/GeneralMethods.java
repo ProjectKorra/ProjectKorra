@@ -93,6 +93,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
+import com.projectkorra.projectkorra.event.BendingDamageEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
 import com.projectkorra.projectkorra.event.BindChangeEvent;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
@@ -371,6 +372,8 @@ public class GeneralMethods {
 				EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, player, damage, ability);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 			}
+			BendingDamageEvent event = new BendingDamageEvent();
+			Bukkit.getServer().getPluginManager().callEvent(event);
 			((LivingEntity) entity).damage(damage, player);
 			entity.setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
 			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
