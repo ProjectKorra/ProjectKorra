@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 
 public class BendingDamageEvent extends Event implements Cancellable {
 	
-	private static final HandlerList handlers = new HandlerList();
+	public static final HandlerList handlers = new HandlerList();
 	private boolean cancelled;
 	private Player attacker;
 	private Entity damaged;
@@ -21,6 +21,7 @@ public class BendingDamageEvent extends Event implements Cancellable {
 		this.damaged = damaged;
 		this.damage = damage;
 		this.ability = ability;
+		
 	}
 	
 	public String getAbility() {
