@@ -372,7 +372,7 @@ public class GeneralMethods {
 				EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, player, damage, ability);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 			}
-			BendingDamageEvent event = new BendingDamageEvent(damage);
+			BendingDamageEvent event = new BendingDamageEvent(player, entity, damage, ability);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			
 			if(!event.isCancelled()) {

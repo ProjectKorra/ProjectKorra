@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra.event;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -8,11 +10,15 @@ public class BendingDamageEvent extends Event implements Cancellable {
 	
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancelled;
+	private Player attacker;
+	private Entity damaged;
 	private double damage;
 	private String ability;
 	
-	public BendingDamageEvent(double damage, String ability) {
+	public BendingDamageEvent(Player attacker, Entity damaged, double damage, String ability) {
 		this.cancelled = false;
+		this.attacker = attacker;
+		this.damaged = damaged;
 		this.damage = damage;
 		this.ability = ability;
 	}
@@ -31,6 +37,14 @@ public class BendingDamageEvent extends Event implements Cancellable {
 	
 	public void setDamage(double damage) {
 		this.damage = damage;
+	}
+	
+	public Entity getDamaged() {
+		return damaged;
+	}
+	
+	public Player getAttacker() {
+		return attacker;
 	}
 
 	@Override
