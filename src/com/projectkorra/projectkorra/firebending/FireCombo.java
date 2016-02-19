@@ -177,19 +177,24 @@ public class FireCombo extends FireAbility implements ComboAbility {
 		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.VILLAGER_HIT, 0.3f, 0.3f);
 
 		if (ability.equalsIgnoreCase("FireKick")) {
-			GeneralMethods.damageEntity(this, entity, damage);
-			fstream.remove();
+			if (!affectedEntities.contains(entity)) {
+				affectedEntities.add(entity);
+				GeneralMethods.damageEntity(this, entity, damage);
+				fstream.remove();
+			}
 		} else if (ability.equalsIgnoreCase("FireSpin")) {
 			if (entity instanceof Player) {
 				if (Commands.invincible.contains(((Player) entity).getName())) {
 					return;
 				}
 			}
-			
-			double newKnockback = bPlayer.isAvatarState() ? knockback + 0.5 : knockback;
-			GeneralMethods.damageEntity(this, entity, damage);
-			entity.setVelocity(direction.normalize().multiply(newKnockback));
-			fstream.remove();
+			if (!affectedEntities.contains(entity)) {
+				affectedEntities.add(entity);
+				double newKnockback = bPlayer.isAvatarState() ? knockback + 0.5 : knockback;
+				GeneralMethods.damageEntity(this, entity, damage);
+				entity.setVelocity(direction.normalize().multiply(newKnockback));
+				fstream.remove();
+			}
 		} else if (ability.equalsIgnoreCase("JetBlaze")) {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
