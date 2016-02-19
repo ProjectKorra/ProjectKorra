@@ -84,7 +84,6 @@ public class AirSwipe extends AirAbility {
 			launch();
 		}
 		start();
-		bPlayer.addCooldown(this);
 	}
 
 	public static boolean removeSwipesAroundPoint(Location loc, double radius) {
@@ -228,6 +227,7 @@ public class AirSwipe extends AirAbility {
 	}
 
 	private void launch() {
+		bPlayer.addCooldown("AirSwipe", cooldown);
 		origin = player.getEyeLocation();
 		for (double i = -arc; i <= arc; i += stepSize) {
 			double angle = Math.toRadians((double) i);
