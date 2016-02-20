@@ -372,12 +372,15 @@ public class GeneralMethods {
 				EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, player, damage, ability);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 			}
-			BendingDamageEvent event = new BendingDamageEvent();
+			BendingDamageEvent event = new BendingDamageEvent(player, entity, damage, ability);
 			Bukkit.getServer().getPluginManager().callEvent(event);
-			((LivingEntity) entity).damage(damage, player);
-			entity.setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
-			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
-				NCPExemptionManager.unexempt(player);
+			
+			if(!event.isCancelled()) {
+				((LivingEntity) entity).damage(damage, player);
+				entity.setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
+				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
+					NCPExemptionManager.unexempt(player);
+				}
 			}
 		}
 	}
