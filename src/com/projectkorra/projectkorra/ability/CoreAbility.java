@@ -346,6 +346,7 @@ public abstract class CoreAbility implements Ability {
 	 * @see #getAbility(String)
 	 */
 	public static void registerPluginAbilities(JavaPlugin plugin, String packagePrefix) {
+		List<String> disabled = new ArrayList<String>(); //this way multiple classes with the same name only show once
 		if (plugin == null) {
 			return;
 		}
@@ -373,8 +374,9 @@ public abstract class CoreAbility implements Ability {
 
 					if (ability == null || ability.getName() == null) {
 						continue;
-					} else if (!ability.isEnabled()) {
+					} else if (!ability.isEnabled() && !disabled.contains(ability.getName())) {
 						plugin.getLogger().info(ability.getName() + " is disabled");
+						disabled.add(ability.getName());
 						continue;
 					}
 
