@@ -32,6 +32,8 @@ import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfo;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.event.AbilityEndEvent;
+import com.projectkorra.projectkorra.event.AbilityStartEvent;
 
 import sun.reflect.ReflectionFactory;
 
@@ -114,7 +116,12 @@ public abstract class CoreAbility implements Ability {
 		if (player == null) {
 			return;
 		}
-		
+		AbilityStartEvent event = new AbilityStartEvent(this);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		if(event.isCancelled()) {
+			remove();
+			return;
+		}
 		this.started = true;
 		this.startTime = System.currentTimeMillis();
 		Class<? extends CoreAbility> clazz = getClass();
@@ -148,6 +155,7 @@ public abstract class CoreAbility implements Ability {
 			return;
 		}
 		
+		Bukkit.getServer().getPluginManager().callEvent(new AbilityEndEvent(this));
 		removed = true;
 		
 		ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>> classMap = INSTANCES.get(getClass());
@@ -346,6 +354,7 @@ public abstract class CoreAbility implements Ability {
 	 * @see #getAbility(String)
 	 */
 	public static void registerPluginAbilities(JavaPlugin plugin, String packagePrefix) {
+		List<String> disabled = new ArrayList<String>(); //this way multiple classes with the same name only show once
 		if (plugin == null) {
 			return;
 		}
@@ -373,8 +382,9 @@ public abstract class CoreAbility implements Ability {
 
 					if (ability == null || ability.getName() == null) {
 						continue;
-					} else if (!ability.isEnabled()) {
+					} else if (!ability.isEnabled() && !disabled.contains(ability.getName())) {
 						plugin.getLogger().info(ability.getName() + " is disabled");
+						disabled.add(ability.getName());
 						continue;
 					}
 

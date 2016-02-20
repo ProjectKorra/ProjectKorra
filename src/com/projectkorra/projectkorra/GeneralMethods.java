@@ -93,7 +93,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
-import com.projectkorra.projectkorra.event.BendingDamageEvent;
+import com.projectkorra.projectkorra.event.AbilityDamageEntityEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
 import com.projectkorra.projectkorra.event.BindChangeEvent;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
@@ -359,25 +359,26 @@ public class GeneralMethods {
 	 * @param ability The ability that is used to damage the entity
 	 */
 	public static void damageEntity(Player player, Entity entity, double damage, String ability) {
+		AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, CoreAbility.getAbility(player, CoreAbility.getAbility(ability).getClass()), damage);
+		Bukkit.getServer().getPluginManager().callEvent(damageEvent);
 		if (entity instanceof LivingEntity) {
-			if (entity instanceof Player) {
-				if (Commands.invincible.contains(entity.getName())) {
-					return;
+			if (entity instanceof Player && Commands.invincible.contains(entity.getName())) {
+				damageEvent.setCancelled(true);
+			}
+			if (!damageEvent.isCancelled()) {
+				damage = damageEvent.getDamage();
+				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
+					NCPExemptionManager.exemptPermanently(player, CheckType.FIGHT_REACH);
 				}
-			}
-			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
-				NCPExemptionManager.exemptPermanently(player, CheckType.FIGHT_REACH);
-			}
-			if (((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {
-				EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, player, damage, ability);
-				Bukkit.getServer().getPluginManager().callEvent(event);
-			}
-			BendingDamageEvent event = new BendingDamageEvent();
-			Bukkit.getServer().getPluginManager().callEvent(event);
-			((LivingEntity) entity).damage(damage, player);
-			entity.setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
-			if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
-				NCPExemptionManager.unexempt(player);
+				if (((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {
+					EntityBendingDeathEvent deathEvent = new EntityBendingDeathEvent(entity, player, damage, ability);
+					Bukkit.getServer().getPluginManager().callEvent(deathEvent);
+				}
+				((LivingEntity) entity).damage(damage, player);
+				entity.setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
+				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
+					NCPExemptionManager.unexempt(player);
+				}
 			}
 		}
 	}

@@ -149,7 +149,7 @@ public class WhoCommand extends PKCommand {
 		//Player player = Bukkit.getPlayer(playerName);
 		@SuppressWarnings("deprecation")
 		final OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-		if (player == null || !player.hasPlayedBefore()) {
+		if (player == null || !player.hasPlayedBefore() && !player.isOnline()) {
 			sender.sendMessage(ChatColor.RED + "Player not found!");
 			return;
 		}
