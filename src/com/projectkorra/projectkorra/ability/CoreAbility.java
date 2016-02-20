@@ -32,6 +32,8 @@ import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfo;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.event.AbilityEndEvent;
+import com.projectkorra.projectkorra.event.AbilityStartEvent;
 
 import sun.reflect.ReflectionFactory;
 
@@ -114,7 +116,12 @@ public abstract class CoreAbility implements Ability {
 		if (player == null) {
 			return;
 		}
-		
+		AbilityStartEvent event = new AbilityStartEvent(this);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		if(event.isCancelled()) {
+			remove();
+			return;
+		}
 		this.started = true;
 		this.startTime = System.currentTimeMillis();
 		Class<? extends CoreAbility> clazz = getClass();
@@ -148,6 +155,7 @@ public abstract class CoreAbility implements Ability {
 			return;
 		}
 		
+		Bukkit.getServer().getPluginManager().callEvent(new AbilityEndEvent(this));
 		removed = true;
 		
 		ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>> classMap = INSTANCES.get(getClass());
