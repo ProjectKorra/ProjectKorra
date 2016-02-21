@@ -55,7 +55,9 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 	 * @param duration The time in milliseconds the target will be paralyzed
 	 */
 	private static void paralyze(Entity target, Long duration) {
-		PARALYZED_ENTITIES.put(target, (System.currentTimeMillis() + duration));
+		if (target != null) {
+			PARALYZED_ENTITIES.put(target, (System.currentTimeMillis() + duration));
+		}
 	}
 
 	/**
@@ -86,6 +88,7 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 	 */
 	public static void handleParalysis() {
 		for (Entity entity : PARALYZED_ENTITIES.keySet()) {
+			entity.setFallDistance(0);
 			if (PARALYZED_ENTITIES.get(entity) <= System.currentTimeMillis()) {
 				PARALYZED_ENTITIES.remove(entity);
 				
