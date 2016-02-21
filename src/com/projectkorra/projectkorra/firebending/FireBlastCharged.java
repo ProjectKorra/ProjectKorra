@@ -130,7 +130,7 @@ public class FireBlastCharged extends FireAbility {
 		if (distance > damageRadius) {
 			return;
 		} else if (distance < innerRadius) {
-			GeneralMethods.damageEntity(player, entity, maxDamage, "FireBlast");
+			GeneralMethods.damageEntity(this, entity, maxDamage);
 			return;
 		}
 		

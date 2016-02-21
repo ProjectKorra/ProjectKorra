@@ -1,12 +1,7 @@
 package com.projectkorra.projectkorra.object;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,8 +11,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 
 /**
  * Created by Carbogen on 2/2/2015.
@@ -35,12 +35,11 @@ public class HorizontalVelocityTracker {
 	private Vector thisVelocity;
 	private Location launchLocation;
 	private Location impactLocation;
-	private String abil;
-	private Element e;
+	private Ability abil;
 	
 	public static String[] abils = {"AirBlast", "AirBurst", "AirSuction", "Bloodbending"};
 
-	public HorizontalVelocityTracker(Entity e, Player instigator, long delay, String ability, Element element) {
+	public HorizontalVelocityTracker(Entity e, Player instigator, long delay, Ability ability) {
 		if (!ProjectKorra.plugin.getConfig().getBoolean("Properties.HorizontalCollisionPhysics.Enabled"))
 			return;
 
@@ -54,7 +53,6 @@ public class HorizontalVelocityTracker {
 		impactLocation = launchLocation.clone();
 		this.delay = delay;
 		abil = ability;
-		this.e = element;
 		update();
 		instances.put(entity, this);
 	}
@@ -91,7 +89,7 @@ public class HorizontalVelocityTracker {
 					if (GeneralMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
 						if (!ElementalAbility.isTransparent(instigator, b)) {
 							hasBeenDamaged = true;
-							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation, abil, e));
+							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation, abil));
 							remove();
 							return;
 						}

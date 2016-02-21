@@ -48,6 +48,7 @@ public class AirSwipe extends AirAbility {
 	private double maxChargeFactor;
 	private Location origin;
 	private Random random;
+	private AirSwipe ability;
 	private ConcurrentHashMap<Vector, Location> elements;
 	private ArrayList<Entity> affectedEntities;
 	
@@ -58,6 +59,7 @@ public class AirSwipe extends AirAbility {
 	public AirSwipe(Player player, boolean charging) {
 		super(player);
 		
+		ability = this;
 		this.charging = charging;
 		this.origin = player.getEyeLocation();
 		this.charging = false;
@@ -194,7 +196,7 @@ public class AirSwipe extends AirAbility {
 						}
 						if (entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 							if (damage != 0) {
-								GeneralMethods.damageEntity(player, entity, damage, "AirSwipe");
+								GeneralMethods.damageEntity(ability, entity, damage);
 							}
 							affectedEntities.add(entity);
 						}

@@ -55,7 +55,7 @@ public class FireDamageTimer {
 			LivingEntity Lentity = (LivingEntity) entity;
 			Player source = INSTANCES.get(entity);
 			if (Lentity.getHealth() - DAMAGE <= 0 && !entity.isDead()) {
-				EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, source, DAMAGE, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0).getName());
+				EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, DAMAGE, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0));
 				Bukkit.getServer().getPluginManager().callEvent(event);
 			}
 			

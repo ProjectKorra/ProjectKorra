@@ -1,9 +1,7 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -13,8 +11,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 
 /**
  * Suffocate
@@ -50,11 +50,13 @@ public class Suffocate extends AirAbility {
 	private double blindDelay;
 	private double blindRepeat;
 	private double animationSpeed;
+	private Suffocate ability;
 	private ArrayList<BukkitRunnable> tasks;
 	private ArrayList<LivingEntity> targets;
 	
 	public Suffocate(Player player) {
 		super(player);
+		ability = this;
 		if (bPlayer.isOnCooldown(this)) {
 			return;
 		} else if (hasAbility(player, Suffocate.class)) {
@@ -189,13 +191,12 @@ public class Suffocate extends AirAbility {
 			return;
 		} else if (!started) {
 			started = true;
-			final Player fplayer = player;
 			for (LivingEntity targ : targets) {
 				final LivingEntity target = targ;
 				BukkitRunnable br1 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						GeneralMethods.damageEntity(fplayer, target, damage, "Suffocate");
+						GeneralMethods.damageEntity(ability, target, damage);
 					}
 				};
 				BukkitRunnable br2 = new BukkitRunnable() {
