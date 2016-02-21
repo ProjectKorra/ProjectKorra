@@ -1,14 +1,9 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -25,10 +20,14 @@ import org.bukkit.material.Lever;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.Flight;
 
 public class AirBlast extends AirAbility {
 
@@ -237,9 +236,9 @@ public class AirBlast extends AirAbility {
 
 			GeneralMethods.setVelocity(entity, velocity);
 			if (source != null) {
-				new HorizontalVelocityTracker(entity, player, 200l, "AirBurst", Element.AIR);
+				new HorizontalVelocityTracker(entity, player, 200l, this);
 			} else {
-				new HorizontalVelocityTracker(entity, player, 200l, "AirBlast", Element.AIR);
+				new HorizontalVelocityTracker(entity, player, 200l, this);
 			}
 
 			entity.setFallDistance(0);
@@ -254,7 +253,7 @@ public class AirBlast extends AirAbility {
 			breakBreathbendingHold(entity);
 
 			if (source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
-				GeneralMethods.damageEntity(player, entity, damage, "AirBurst");
+				GeneralMethods.damageEntity(this, entity, damage);
 				affectedEntities.add(entity);
 			} else if (source == null && (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
 				GeneralMethods.damageEntity(this, entity, damage);

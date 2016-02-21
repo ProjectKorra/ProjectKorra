@@ -257,7 +257,7 @@ public class LavaSurge extends LavaAbility {
 				for(Entity e : GeneralMethods.getEntitiesAroundPoint(fb.getLocation(), 2)) {
 					if(e instanceof LivingEntity) {
 						if(e.getEntityId() != player.getEntityId()) {
-							GeneralMethods.damageEntity(player, e, impactDamage, "LavaSurge");
+							GeneralMethods.damageEntity(this, e, impactDamage);
 							e.setFireTicks(100);
 							GeneralMethods.setVelocity(e, direction.clone());
 						}

@@ -1,7 +1,5 @@
 package com.projectkorra.projectkorra.event;
 
-import com.projectkorra.projectkorra.Element;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,6 +7,8 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.projectkorra.ability.Ability;
 
 /**
  * Created by Carbogen on 2/2/2015.
@@ -26,8 +26,7 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 	private Vector difference;
 	private Location start;
 	private Location end;
-	private String abil;
-	private Element element;
+	private Ability abil;
 
 	@Deprecated
 	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference) {
@@ -38,7 +37,7 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 		this.difference = difference;
 	}
 
-	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference, Location start, Location end, String ability, Element element) {
+	public HorizontalVelocityChangeEvent(Entity entity, Player instigator, Vector from, Vector to, Vector difference, Location start, Location end, Ability ability) {
 		this.entity = entity;
 		this.instigator = instigator;
 		this.from = from;
@@ -47,7 +46,6 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 		this.start = start;
 		this.end = end;
 		abil = ability;
-		this.element = element;
 	}
 
 	public Entity getEntity() {
@@ -85,12 +83,8 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 		return difference;
 	}
 	
-	public String getAbility() {
+	public Ability getAbility() {
 		return abil;
-	}
-	
-	public Element getElement() {
-		return element;
 	}
 	
 	@Override
