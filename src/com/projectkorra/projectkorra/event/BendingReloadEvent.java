@@ -1,19 +1,19 @@
 package com.projectkorra.projectkorra.event;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 /**
  * Called when the /bending reload command is executed.
- * 
- * @author kingbirdy
- * @version 1.0
  */
 
-public class BendingReloadEvent extends Event {
+public class BendingReloadEvent extends Event implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
-
-	public BendingReloadEvent() {
+	private boolean cancelled = false;
+	
+	public BendingReloadEvent(CommandSender sender) {
 
 	}
 
@@ -23,5 +23,22 @@ public class BendingReloadEvent extends Event {
 
 	public static HandlerList getHandlerList() {
 		return handlers;
+	}
+
+	/**
+	 * @return Whether the event is cancelled
+	 */
+	@Override
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	/**
+	 * Sets if the event is cancelled
+	 * @param cancel boolean value indicating whether the event is cancelled or not
+	 */
+	@Override
+	public void setCancelled(boolean cancel) {
+		cancelled = cancel;
 	}
 }

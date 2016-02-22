@@ -21,7 +21,7 @@ public class ReloadCommand extends PKCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 0)) {
 			return;
 		}
-		GeneralMethods.reloadPlugin();
+		GeneralMethods.reloadPlugin(sender);
 		sender.sendMessage(ChatColor.AQUA + "Bending config reloaded.");
 	}
 
