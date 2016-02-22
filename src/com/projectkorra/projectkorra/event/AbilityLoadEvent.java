@@ -8,8 +8,6 @@ import java.util.jar.JarFile;
 
 /**
  * Called when an ability is successfully loaded.
- * 
- * @author kingbirdy
  */
 public class AbilityLoadEvent<T> extends Event {
 

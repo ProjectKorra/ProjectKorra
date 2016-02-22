@@ -9,9 +9,6 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Called when a player's bending element is modified
- * 
- * @author kingbirdy
- *
  */
 public class PlayerChangeElementEvent extends Event {
 
