@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
  * 
  * @author savior67
  */
-public class BindChangeEvent extends Event{
+public class BindChangeEvent extends Event {
 	
 	private static final HandlerList handlers = new HandlerList();
 	private Player player;

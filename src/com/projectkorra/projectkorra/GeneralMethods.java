@@ -39,6 +39,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -1225,10 +1226,14 @@ public class GeneralMethods {
 		return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE);
 	}
 
-	public static void reloadPlugin() {
+	public static void reloadPlugin(CommandSender sender) {
 		ProjectKorra.log.info("Reloading ProjectKorra and configuration");
-		BendingReloadEvent event = new BendingReloadEvent();
+		BendingReloadEvent event = new BendingReloadEvent(sender);
 		Bukkit.getServer().getPluginManager().callEvent(event);
+		if (event.isCancelled()) {
+			sender.sendMessage(ChatColor.RED + "Reload event cancelled");
+			return;
+		}
 		if (DBConnection.isOpen) {
 			DBConnection.sql.close();
 		}

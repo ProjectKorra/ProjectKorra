@@ -20,6 +20,7 @@ public class EntityBendingDeathEvent extends Event {
 	private double damage;
 
 	/**
+	 * Creates a new EntityBendingDeathEvent
 	 * 
 	 * @param victim the player who died
 	 * @param attacker the player who killed the victim
