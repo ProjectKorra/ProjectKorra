@@ -801,8 +801,7 @@ public class PKListener implements Listener {
 			}
 
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL) {
-				Shockwave shockwave = new Shockwave(player);
-				shockwave.fallShockwave();
+				new Shockwave(player, true);
 			}
 
 			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR)) {
@@ -1369,7 +1368,7 @@ public class PKListener implements Listener {
 					new CollapseWall(player);
 				}
 				if (abil.equalsIgnoreCase("Shockwave")) {
-					new Shockwave(player);
+					new Shockwave(player, false);
 				}
 				if (abil.equalsIgnoreCase("EarthGrab")) {
 					new EarthGrab(player, false);

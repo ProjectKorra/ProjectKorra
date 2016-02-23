@@ -251,7 +251,6 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Air.AirBurst.Enabled", true);
 				config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to release the burst in a sphere around you " + "or click to launch a cone-shaped burst of air in front of you. " + "Additionally, having this ability selected when you land on the ground from a " + "large enough fall will create a burst of air around you.");
-				config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
 				config.addDefault("Abilities.Air.AirBurst.PushFactor", 1.5);
 				config.addDefault("Abilities.Air.AirBurst.ChargeTime", 1750);
 				config.addDefault("Abilities.Air.AirBurst.Damage", 0);
@@ -705,7 +704,6 @@ public class ConfigManager {
 
 				config.addDefault("Abilities.Earth.Shockwave.Enabled", true);
 				config.addDefault("Abilities.Earth.Shockwave.Description", "This is one of the most powerful moves in the earthbender's arsenal. " + "To use, you must first charge it by holding sneak (default: shift). " + "Once charged, you can release sneak to create an enormous shockwave of earth, " + "disturbing all earth around you and expanding radially outwards. " + "Anything caught in the shockwave will be blasted back and dealt damage. " + "If you instead click while charged, the disruption is focused in a cone in front of you. " + "Lastly, if you fall from a great enough height with this ability selected, you will automatically create a shockwave.");
-				config.addDefault("Abilities.Earth.Shockwave.FallThreshold", 10);
 				config.addDefault("Abilities.Earth.Shockwave.ChargeTime", 2500);
 				config.addDefault("Abilities.Earth.Shockwave.Cooldown", 1500);
 				config.addDefault("Abilities.Earth.Shockwave.Damage", 4);

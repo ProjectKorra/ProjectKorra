@@ -9,42 +9,41 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class Shockwave extends EarthAbility {
-	
+
 	private boolean charged;
 	private long chargeTime;
 	private long cooldown;
 	private double angle;
-	private double threshold;
 	private double range;
 
-	public Shockwave(Player player) {
+	public Shockwave(Player player, boolean isFallShockwave) {
 		super(player);
-				
+		
 		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Shockwave.Angle"));
 		this.cooldown = getConfig().getLong("Abilities.Earth.Shockwave.Cooldown");
 		this.chargeTime = getConfig().getLong("Abilities.Earth.Shockwave.ChargeTime");
-		this.threshold = getConfig().getDouble("Abilities.Earth.Shockwave.FallThreshold");
 		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
-		
+
 		if (bPlayer.isAvatarState()) {
 			chargeTime = 0;
 			cooldown = 0;
 		}
-		
+
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		
+
+		if (isFallShockwave) {
+			this.fallShockwave();
+		}
 		start();
 		bPlayer.addCooldown(this);
 	}
 
 	public void fallShockwave() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
+		if (!isEarthbendable(player.getLocation().add(0, -1, 0).getBlock())) {
 			return;
-		} else if (player.getFallDistance() < threshold || !isEarthbendable(player.getLocation().add(0, -1, 0).getBlock())) {
-			return;
-		} else if(bPlayer.isOnCooldown("Shockwave")) {
+		} else if (bPlayer.isOnCooldown("Shockwave")) {
 			return;
 		}
 
@@ -74,7 +73,8 @@ public class Shockwave extends EarthAbility {
 			}
 		} else if (charged) {
 			Location location = player.getEyeLocation();
-			location.getWorld().playEffect(location, Effect.SMOKE, GeneralMethods.getIntCardinalDirection(player.getEyeLocation().getDirection()), 3);
+			location.getWorld().playEffect(location, Effect.SMOKE,
+					GeneralMethods.getIntCardinalDirection(player.getEyeLocation().getDirection()), 3);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class Shockwave extends EarthAbility {
 		if (shockWave != null) {
 			if (shockWave.charged) {
 				double dtheta = 360.0 / (2 * Math.PI * shockWave.range) - 1;
-				
+
 				for (double theta = 0; theta < 360; theta += dtheta) {
 					double rtheta = Math.toRadians(theta);
 					Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
@@ -125,7 +125,7 @@ public class Shockwave extends EarthAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -160,14 +160,6 @@ public class Shockwave extends EarthAbility {
 		this.angle = angle;
 	}
 
-	public double getThreshold() {
-		return threshold;
-	}
-
-	public void setThreshold(double threshold) {
-		this.threshold = threshold;
-	}
-
 	public double getRange() {
 		return range;
 	}
@@ -179,5 +171,5 @@ public class Shockwave extends EarthAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
+
 }
