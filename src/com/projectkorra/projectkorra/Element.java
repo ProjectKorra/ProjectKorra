@@ -32,7 +32,12 @@ public class Element {
 	
 	private String name;
 
-	protected Element(String name) {
+	/**
+	 * To be used when creating a new Element.
+	 * Do not use for comparing Elements.
+	 * @param name Name of the new Element.
+	 */
+	public Element(String name) {
 		this.name = name;
 		ALL_ELEMENTS.put(name.toLowerCase(), this);
 	}
@@ -73,7 +78,12 @@ public class Element {
 		
 		private Element parentElement;
 		
-		private SubElement(String name, Element parentElement) {
+		/**
+		 * To be used when creating a new SubElement.
+		 * Do not use for comparing SubElements.
+		 * @param name Name of the new SubElement.
+		 */
+		public SubElement(String name, Element parentElement) {
 			super(name);
 			this.parentElement = parentElement;
 		}
