@@ -12,9 +12,10 @@ public class BendingReloadEvent extends Event implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancelled = false;
+	private CommandSender sender;
 	
 	public BendingReloadEvent(CommandSender sender) {
-
+		this.sender = sender;
 	}
 
 	public HandlerList getHandlers() {
@@ -25,6 +26,13 @@ public class BendingReloadEvent extends Event implements Cancellable {
 		return handlers;
 	}
 
+	/**
+	 * @return Who called the reload
+	 */
+	public CommandSender getSender() {
+		return sender;
+	}
+	
 	/**
 	 * @return Whether the event is cancelled
 	 */

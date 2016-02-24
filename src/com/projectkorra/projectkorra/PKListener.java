@@ -740,7 +740,7 @@ public class PKListener implements Listener {
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append(ability.getElement().getColor());
-			sb.append(event.getAbility());
+			sb.append(event.getAbility().getName());
 			BENDING_PLAYER_DEATH.put((Player) event.getEntity(), sb.toString());
 			final Player player = (Player) event.getEntity();
 
