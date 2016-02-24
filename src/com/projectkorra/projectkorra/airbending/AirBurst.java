@@ -17,9 +17,7 @@ public class AirBurst extends AirAbility {
 	private boolean isCharged;
 	private boolean isFallBurst;
 	private int sneakParticles;
-	private float playerFallDistance;
 	private long chargeTime;
-	private double fallThreshold;
 	private double pushFactor;
 	private double damage;
 	private double blastAngleTheta;
@@ -37,9 +35,7 @@ public class AirBurst extends AirAbility {
 
 		this.isFallBurst = isFallBurst;
 		this.isCharged = false;
-		this.playerFallDistance = player.getFallDistance();
 		this.chargeTime = getConfig().getLong("Abilities.Air.AirBurst.ChargeTime");
-		this.fallThreshold = getConfig().getDouble("Abilities.Air.AirBurst.FallThreshold");
 		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBurst.PushFactor");
 		this.damage = getConfig().getDouble("Abilities.Air.AirBurst.Damage");
 		this.blastAnglePhi = getConfig().getDouble("Abilities.Air.AirBurst.AnglePhi");
@@ -64,11 +60,7 @@ public class AirBurst extends AirAbility {
 		}
 
 		if (isFallBurst) {
-			if (playerFallDistance >= fallThreshold) {
-				fallBurst();
-			}
-			remove();
-			return;
+			this.fallBurst();
 		}
 
 		if (System.currentTimeMillis() > startTime + chargeTime && !isCharged) {
@@ -237,14 +229,6 @@ public class AirBurst extends AirAbility {
 
 	public void setChargeTime(long chargeTime) {
 		this.chargeTime = chargeTime;
-	}
-
-	public double getFallThreshold() {
-		return fallThreshold;
-	}
-
-	public void setFallThreshold(double fallThreshold) {
-		this.fallThreshold = fallThreshold;
 	}
 
 	public double getPushFactor() {
