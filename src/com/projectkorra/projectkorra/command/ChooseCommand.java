@@ -48,11 +48,12 @@ public class ChooseCommand extends PKCommand {
 				return;
 			}
 			String element = args.get(0).toLowerCase();
-			if (Arrays.asList(Commands.elementaliases).contains(element)) {
+			Element target = Element.getElement(element);
+			if (Arrays.asList(Element.getAllElements()).contains(target)) {
 				if (!hasPermission(sender, element)) {
 					return;
 				}
-				add(sender, (Player) sender, element);
+				add(sender, (Player) sender, target);
 				return;
 			} else {
 				sender.sendMessage(ChatColor.RED + "That is not a valid element.");
@@ -69,8 +70,9 @@ public class ChooseCommand extends PKCommand {
 				return;
 			}
 			String element = args.get(0).toLowerCase();
-			if (Arrays.asList(Commands.elementaliases).contains(element)) {
-				add(sender, target, element);
+			Element targetElement = Element.getElement(element);
+			if (Arrays.asList(Element.getAllElements()).contains(target)) {
+				add(sender, target, targetElement);
 				return;
 			} else {
 				sender.sendMessage(ChatColor.RED + "That is not a valid element.");
@@ -83,11 +85,9 @@ public class ChooseCommand extends PKCommand {
 	 * 
 	 * @param sender The CommandSender who issued the command
 	 * @param target The Player to add the element to
-	 * @param elementName The element to add to the Player
+	 * @param element The element to add to the Player
 	 */
-	private void add(CommandSender sender, Player target, String elementName) {
-		elementName = getElement(elementName);
-		Element element = Element.getElement(elementName);
+	private void add(CommandSender sender, Player target, Element element) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
 		
 		if (bPlayer == null) {
@@ -96,25 +96,28 @@ public class ChooseCommand extends PKCommand {
 		
 		bPlayer.setElement(element);
 		ChatColor color = element != null ? element.getColor() : null;
-		
-		if (elementName.charAt(0) == 'w' || elementName.charAt(0) == 'f') {
-			target.sendMessage(color + "You are now a " + Character.toString(elementName.charAt(0)).toUpperCase() + elementName.substring(1) + "bender.");
-		} else if (elementName.charAt(0) == 'e' || elementName.charAt(0) == 'a') {
-			target.sendMessage(color + "You are now an " + Character.toString(elementName.charAt(0)).toUpperCase() + elementName.substring(1) + "bender.");
-		} else if (elementName.equalsIgnoreCase("chi")) {
-			target.sendMessage(color + "You are now a Chiblocker.");
-		}
 		if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-			if (elementName.charAt(0) == 'w' || elementName.charAt(0) == 'f') {
-				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a " + Character.toString(elementName.charAt(0)).toUpperCase() + elementName.substring(1) + "bender.");
-			} else if (elementName.charAt(0) == 'e' || elementName.charAt(0) == 'a') {
-				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now an " + Character.toString(elementName.charAt(0)).toUpperCase() + elementName.substring(1) + "bender.");
-			} else if (elementName.equalsIgnoreCase("chi")) {
+			if (element != Element.CHI) {
+				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() +  "bender.");
+			} else {
+				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a Chiblocker.");
+			}
+		} else {
+			if (element != Element.CHI) {
+				target.sendMessage(color + "You are now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() +  "bender.");
+			} else {
 				target.sendMessage(color + "You are now a Chiblocker.");
 			}
 		}
+		
+		
+		
 		GeneralMethods.removeUnusableAbilities(target.getName());
 		GeneralMethods.saveElements(bPlayer);
 		Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
+	}
+	
+	public static boolean isVowel(char c) {
+		return "AEIOUaeiou".indexOf(c) != -1;
 	}
 }

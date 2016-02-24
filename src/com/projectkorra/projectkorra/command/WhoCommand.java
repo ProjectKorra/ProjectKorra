@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -84,6 +85,7 @@ public class WhoCommand extends PKCommand {
 					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 					bp = BendingPlayer.getBendingPlayer(player.getName());
 				}
+				/*
 				if (bp.hasElement(Element.AIR)) {
 					result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.AIR) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&7&mA") : Element.AIR.getColor() + "A");
 				}
@@ -113,6 +115,14 @@ public class WhoCommand extends PKCommand {
 						result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.CHI) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&6&mC") : Element.CHI.getColor() + "C");
 					} else {
 						result = result + ChatColor.WHITE + " | " + ((!bp.isElementToggled(Element.CHI) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&6&mC") : Element.CHI.getColor() + "C");
+					}
+				}
+				*/
+				for (Element element : bp.getElements()) {
+					if (result == "") {
+						result = ChatColor.WHITE + playerName + " - " + (((!bp.isElementToggled(element) || !bp.isToggled()) ? element.getColor() + "" + ChatColor.STRIKETHROUGH : element.getColor()) + element.getName().substring(0, 1));
+					} else {
+						result = result + ChatColor.WHITE + " | " + (((!bp.isElementToggled(element) || !bp.isToggled()) ? element.getColor() + "" + ChatColor.STRIKETHROUGH : element.getColor()) + element.getName().substring(0, 1));
 					}
 				}
 				if (staff.containsKey(player.getUniqueId().toString())) {
@@ -266,6 +276,19 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(Element.CHI.getColor() + "- Chiblocker");
 				} else {
 					sender.sendMessage(Element.CHI.getColor() + "" + ChatColor.STRIKETHROUGH + "- Chiblocker");
+				}
+			}
+			for (Element element : Element.getAddonElements()) {
+				if (bPlayer.hasElement(element)) {
+					sender.sendMessage(element.getColor() + "" + (bPlayer.isElementToggled(element) ? "" : ChatColor.STRIKETHROUGH) + "- " + element.getName() + (element.getType() != null ? element.getType().getBender() : ""));
+					if (player_ != null) {
+						for (SubElement subelement : Element.getAddonSubElements()) {
+							if (player_.hasPermission("bending." + element.getName().toLowerCase() + "." + subelement.getName().toLowerCase())) {
+								String type = (subelement.getType() != null ? subelement.getType().getBend() : null);
+								sender.sendMessage(subelement.getColor() + "    Can " + (type != null ? "" : "use ") + subelement.getName() + (type != null ? type : ""));
+							}
+						}
+					}
 				}
 			}
 			

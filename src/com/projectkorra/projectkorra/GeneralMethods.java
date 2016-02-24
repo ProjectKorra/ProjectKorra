@@ -302,21 +302,30 @@ public class GeneralMethods {
 				String permaremoved = rs2.getString("permaremoved");
 				boolean p = false;
 				final ArrayList<Element> elements = new ArrayList<Element>();
-				if (element != null) { // Player has an element.
-					if (element.contains("a")) {
+				boolean hasAddon = element.contains(";");
+				String[] split = element.split(";");
+				if (split[0] != null) { // Player has an element.
+					if (split[0].contains("a")) {
 						elements.add(Element.AIR);
 					}
-					if (element.contains("w")) {
+					if (split[0].contains("w")) {
 						elements.add(Element.WATER);
 					}
-					if (element.contains("e")) {
+					if (split[0].contains("e")) {
 						elements.add(Element.EARTH);
 					}
-					if (element.contains("f")) {
+					if (split[0].contains("f")) {
 						elements.add(Element.FIRE);
 					}
-					if (element.contains("c")) {
+					if (split[0].contains("c")) {
 						elements.add(Element.CHI);
+					}
+				}
+				if (hasAddon) {
+					for (String addon : split[split.length - 1].split(",")) {
+						if (Element.getElement(addon) != null) {
+							elements.add(Element.getElement(addon));
+						}
 					}
 				}
 
@@ -1488,6 +1497,16 @@ public class GeneralMethods {
 		}
 		if (bPlayer.hasElement(Element.CHI)) {
 			elements.append("c");
+		}
+		boolean hasAddon = false;
+		for (Element element : bPlayer.getElements()) {
+			if (Arrays.asList(Element.getAddonElements()).contains(element)) {
+				if (!hasAddon) {
+					hasAddon = true;
+					elements.append(";");
+				}
+				elements.append(element.getName() + ",");
+			}
 		}
 
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
