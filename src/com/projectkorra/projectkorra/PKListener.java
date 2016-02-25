@@ -799,26 +799,19 @@ public class PKListener implements Listener {
 			if (bPlayer == null) {
 				return;
 			}
-
+			
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL) {
-				Shockwave shockwave = new Shockwave(player);
-				shockwave.fallShockwave();
+				new Shockwave(player, true);
 			}
 
-			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR)) {
-				new Flight(player);
-				player.setAllowFlight(true);
+			if (!event.isCancelled() && bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR)) {
 				new AirBurst(player, true);
-				player.setFallDistance(0);
 				event.setDamage(0D);
 				event.setCancelled(true);
 			}
 
 			if (!event.isCancelled() && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER)) {
 				if (WaterPassive.applyNoFall(player)) {
-					new Flight(player);
-					player.setAllowFlight(true);
-					player.setFallDistance(0);
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
@@ -826,9 +819,6 @@ public class PKListener implements Listener {
 
 			if (!event.isCancelled() && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH)) {
 				if (EarthPassive.softenLanding(player)) {
-					new Flight(player);
-					player.setAllowFlight(true);
-					player.setFallDistance(0);
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
@@ -837,7 +827,6 @@ public class PKListener implements Listener {
 			if (!event.isCancelled() && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI)) {
 				if (player.isSprinting()) {
 					event.setDamage(0);
-					event.setCancelled(true);
 				} else {
 					double initdamage = event.getDamage();
 					double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
@@ -1369,7 +1358,7 @@ public class PKListener implements Listener {
 					new CollapseWall(player);
 				}
 				if (abil.equalsIgnoreCase("Shockwave")) {
-					new Shockwave(player);
+					new Shockwave(player, false);
 				}
 				if (abil.equalsIgnoreCase("EarthGrab")) {
 					new EarthGrab(player, false);

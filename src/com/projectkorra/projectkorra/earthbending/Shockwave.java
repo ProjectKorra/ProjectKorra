@@ -17,7 +17,7 @@ public class Shockwave extends EarthAbility {
 	private double threshold;
 	private double range;
 
-	public Shockwave(Player player) {
+	public Shockwave(Player player, boolean fall) {
 		super(player);
 				
 		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Shockwave.Angle"));
@@ -35,20 +35,24 @@ public class Shockwave extends EarthAbility {
 			return;
 		}
 		
+		if (fall) {
+			fallShockwave();
+		}
+		
 		start();
-		bPlayer.addCooldown(this);
 	}
 
 	public void fallShockwave() {
 		if (!bPlayer.canBendIgnoreCooldowns(this)) {
 			return;
-		} else if (player.getFallDistance() < threshold || !isEarthbendable(player.getLocation().add(0, -1, 0).getBlock())) {
+		} else if (player.getFallDistance() < threshold || !isEarthbendable(player.getLocation().clone().subtract(0, 1, 0).getBlock())) {
 			return;
-		} else if(bPlayer.isOnCooldown("Shockwave")) {
+		} else if (bPlayer.isOnCooldown("Shockwave")) {
 			return;
 		}
-
+		
 		areaShockwave();
+		bPlayer.addCooldown(this);
 		remove();
 	}
 
