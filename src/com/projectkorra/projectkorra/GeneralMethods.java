@@ -39,6 +39,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -344,22 +345,19 @@ public class GeneralMethods {
 		}
 	}
 	
-	public static void damageEntity(Ability ability, Entity entity, double damage) {
-		damageEntity(ability.getPlayer(), entity, damage, ability.getName());
-	}
-			
 	/**
 	 * Damages an Entity by amount of damage specified. Starts a
 	 * {@link EntityDamageByEntityEvent}.
 	 * 
-	 * @param player The player dealing the damage
+	 * @param ability The ability that is used to damage the entity
 	 * @param entity The entity that is receiving the damage
 	 * @param damage The amount of damage to deal
-	 * @param element The element of the ability
-	 * @param ability The ability that is used to damage the entity
 	 */
-	public static void damageEntity(Player player, Entity entity, double damage, String ability) {
-		AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, CoreAbility.getAbility(player, CoreAbility.getAbility(ability).getClass()), damage);
+	public static void damageEntity(Ability ability, Entity entity, double damage) {
+		if (ability==null)
+			return;
+		Player player = ability.getPlayer();
+		AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage);
 		Bukkit.getServer().getPluginManager().callEvent(damageEvent);
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Player && Commands.invincible.contains(entity.getName())) {
@@ -371,7 +369,7 @@ public class GeneralMethods {
 					NCPExemptionManager.exemptPermanently(player, CheckType.FIGHT_REACH);
 				}
 				if (((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {
-					EntityBendingDeathEvent deathEvent = new EntityBendingDeathEvent(entity, player, damage, ability);
+					EntityBendingDeathEvent deathEvent = new EntityBendingDeathEvent(entity, damage, ability);
 					Bukkit.getServer().getPluginManager().callEvent(deathEvent);
 				}
 				((LivingEntity) entity).damage(damage, player);
@@ -1228,10 +1226,14 @@ public class GeneralMethods {
 		return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE);
 	}
 
-	public static void reloadPlugin() {
+	public static void reloadPlugin(CommandSender sender) {
 		ProjectKorra.log.info("Reloading ProjectKorra and configuration");
-		BendingReloadEvent event = new BendingReloadEvent();
+		BendingReloadEvent event = new BendingReloadEvent(sender);
 		Bukkit.getServer().getPluginManager().callEvent(event);
+		if (event.isCancelled()) {
+			sender.sendMessage(ChatColor.RED + "Reload event cancelled");
+			return;
+		}
 		if (DBConnection.isOpen) {
 			DBConnection.sql.close();
 		}

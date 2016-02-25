@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.event;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -8,54 +9,51 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when a player is killed by {@link GeneralMethods#damageEntity(Player player, Entity entity, double damage, String ability) GeneralMethods.damageEntity}
- * 
- * @author kingbirdy
+ * Called when an entity is killed by {@link GeneralMethods#damageEntity(Player player, Entity entity, double damage, String ability) GeneralMethods.damageEntity}
  */
 
 public class EntityBendingDeathEvent extends Event {
 
 	public static final HandlerList handlers = new HandlerList();
-	private Entity victim;
-	private Player attacker;
-	private String ability;
+	private Entity entity;
+	private Ability ability;
 	private double damage;
 
 	/**
+	 * Creates a new EntityBendingDeathEvent
 	 * 
 	 * @param victim the player who died
 	 * @param attacker the player who killed the victim
 	 * @param damage the amount of damage done in the attack that killed the victim
 	 * @param ability the ability used to kill the victim
 	 */
-	public EntityBendingDeathEvent(Entity victim, Player attacker, double damage, String ability) {
-		this.victim = victim;
-		this.attacker = attacker;
+	public EntityBendingDeathEvent(Entity entity, double damage, Ability ability) {
+		this.entity = entity;
 		this.ability = ability;
 		this.damage = damage;
 	}
 
 	/**
 	 * 
-	 * @return the player who was killed
+	 * @return the entity that was killed
 	 */
-	public Entity getVictim() {
-		return victim;
+	public Entity getEntity() {
+		return entity;
 	}
 
 	/**
 	 * 
-	 * @return the player who killed the victim
+	 * @return the player who killed the entity
 	 */
 	public Player getAttacker() {
-		return attacker;
+		return ability.getPlayer();
 	}
 
 	/**
 	 * 
 	 * @return the ability used to kill the victim
 	 */
-	public String getAbility() {
+	public Ability getAbility() {
 		return ability;
 	}
 

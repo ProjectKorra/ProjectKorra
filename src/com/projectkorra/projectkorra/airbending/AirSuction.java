@@ -1,7 +1,15 @@
 package com.projectkorra.projectkorra.airbending;
 
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
@@ -10,15 +18,6 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
-
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class AirSuction extends AirAbility {
 
@@ -200,7 +199,7 @@ public class AirSuction extends AirAbility {
 				}
 
 				GeneralMethods.setVelocity(entity, velocity);
-				new HorizontalVelocityTracker(entity, player, 200l, "AirSuction", Element.AIR);
+				new HorizontalVelocityTracker(entity, player, 200l, this);
 				entity.setFallDistance(0);
 				if (entity.getEntityId() != player.getEntityId() && entity instanceof Player) {
 					new Flight((Player) entity, player);
