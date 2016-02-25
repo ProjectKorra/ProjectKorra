@@ -11,7 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,11 +40,7 @@ public class RemoveCommand extends PKCommand {
 						GeneralMethods.saveElements(senderBPlayer);
 						GeneralMethods.removeUnusableAbilities(sender.getName());
 
-						if (e == Element.CHI) {
-							sender.sendMessage(Element.CHI.getColor() + "You have removed your Chiblocking.");
-							return;
-						}
-						sender.sendMessage(e.getColor() + "You have removed your " + e.getName() + "bending.");
+						sender.sendMessage(e.getColor() + "You have removed your " + e.getName() + e.getType().getBending() + ".");
 						Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
 						return;
 					} else {
@@ -76,13 +71,8 @@ public class RemoveCommand extends PKCommand {
 				bPlayer.getElements().remove(e);
 				GeneralMethods.saveElements(bPlayer);
 				GeneralMethods.removeUnusableAbilities(player.getName());
-				if (e == Element.CHI) {
-					sender.sendMessage(Element.CHI.getColor() + "You have removed the Chiblocking of " + ChatColor.DARK_AQUA + player.getName());
-					player.sendMessage(Element.CHI.getColor() + "Your Chiblocking has been removed by " + ChatColor.DARK_AQUA + sender.getName());
-				} else {
-					sender.sendMessage(e.getColor() + "You have removed the " + e.getName() + "bending of " + ChatColor.DARK_AQUA + player.getName());
-					player.sendMessage(e.getColor() + "Your " + e.getName() + "bending has been removed by " + ChatColor.DARK_AQUA + sender.getName());
-				}
+				sender.sendMessage(e.getColor() + "You have removed the " + e.getName() + e.getType().getBending() + " of " + ChatColor.DARK_AQUA + player.getName());
+				sender.sendMessage(e.getColor() + "Your " + e.getName() + e.getType().getBending() + " has been removed by " + ChatColor.DARK_AQUA + player.getName());
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
 				return;
 			}
@@ -109,14 +99,5 @@ public class RemoveCommand extends PKCommand {
 		}
 		sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
 		return false;
-	}
-
-	public String getElement(String string) {
-		if (Arrays.asList(Commands.airaliases).contains(string)) return "air";
-		if (Arrays.asList(Commands.chialiases).contains(string)) return "chi";
-		if (Arrays.asList(Commands.earthaliases).contains(string)) return "earth";
-		if (Arrays.asList(Commands.firealiases).contains(string)) return "fire";
-		if (Arrays.asList(Commands.wateraliases).contains(string)) return "water";
-		return null;
 	}
 }

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.ElementType;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -85,39 +86,6 @@ public class WhoCommand extends PKCommand {
 					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 					bp = BendingPlayer.getBendingPlayer(player.getName());
 				}
-				/*
-				if (bp.hasElement(Element.AIR)) {
-					result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.AIR) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&7&mA") : Element.AIR.getColor() + "A");
-				}
-				if (bp.hasElement(Element.EARTH)) {
-					if (result == "") {
-						result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.EARTH) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&a&mE") : Element.EARTH.getColor() + "E");
-					} else {
-						result = result + ChatColor.WHITE + " | " + ((!bp.isElementToggled(Element.EARTH) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&a&mE") : Element.EARTH.getColor() + "E");
-					}
-				}
-				if (bp.hasElement(Element.FIRE)) {
-					if (result == "") {
-						result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.FIRE) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&c&mF") : Element.FIRE.getColor() + "F");
-					} else {
-						result = result + ChatColor.WHITE + " | " + ((!bp.isElementToggled(Element.FIRE) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&c&mF") : Element.FIRE.getColor() + "F");
-					}
-				}
-				if (bp.hasElement(Element.WATER)) {
-					if (result == "") {
-						result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.WATER) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&b&mW") : Element.WATER.getColor() + "W");
-					} else {
-						result = result + ChatColor.WHITE + " | " + ((!bp.isElementToggled(Element.WATER) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&b&mW") : Element.WATER.getColor() + "W");
-					}
-				}
-				if (bp.hasElement(Element.CHI)) {
-					if (result == "") {
-						result = ChatColor.WHITE + playerName + " - " + ((!bp.isElementToggled(Element.CHI) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&6&mC") : Element.CHI.getColor() + "C");
-					} else {
-						result = result + ChatColor.WHITE + " | " + ((!bp.isElementToggled(Element.CHI) || !bp.isToggled()) ? ChatColor.translateAlternateColorCodes('&', "&6&mC") : Element.CHI.getColor() + "C");
-					}
-				}
-				*/
 				for (Element element : bp.getElements()) {
 					if (result == "") {
 						result = ChatColor.WHITE + playerName + " - " + (((!bp.isElementToggled(element) || !bp.isToggled()) ? element.getColor() + "" + ChatColor.STRIKETHROUGH : element.getColor()) + element.getName().substring(0, 1));
@@ -282,10 +250,9 @@ public class WhoCommand extends PKCommand {
 				if (bPlayer.hasElement(element)) {
 					sender.sendMessage(element.getColor() + "" + (bPlayer.isElementToggled(element) ? "" : ChatColor.STRIKETHROUGH) + "- " + element.getName() + (element.getType() != null ? element.getType().getBender() : ""));
 					if (player_ != null) {
-						for (SubElement subelement : Element.getAddonSubElements()) {
+						for (SubElement subelement : Element.getSubElements(element)) {
 							if (player_.hasPermission("bending." + element.getName().toLowerCase() + "." + subelement.getName().toLowerCase())) {
-								String type = (subelement.getType() != null ? subelement.getType().getBend() : null);
-								sender.sendMessage(subelement.getColor() + "    Can " + (type != null ? "" : "use ") + subelement.getName() + (type != null ? type : ""));
+								sender.sendMessage(subelement.getColor() + "    Can " + (!subelement.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + subelement.getName() + subelement.getType().getBend());
 							}
 						}
 					}

@@ -97,9 +97,9 @@ public class ChooseCommand extends PKCommand {
 		bPlayer.setElement(element);
 		ChatColor color = element != null ? element.getColor() : null;
 		if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-			sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + (element.getType() != null ? element.getType().getBender() : "") + ".");
+			sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + element.getType().getBender() + ".");
 		} else {
-			target.sendMessage(color + "You are now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + (element.getType() != null ? element.getType().getBender() : "") + ".");
+			target.sendMessage(color + "You are now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + element.getType().getBender() + ".");
 		}
 		
 		

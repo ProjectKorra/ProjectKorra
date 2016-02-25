@@ -12,7 +12,8 @@ public class Element {
 	
 	public enum ElementType {
 		BENDING("bending", "bender", "bend"),
-		BLOCKING("blocking", "blocker", "block");
+		BLOCKING("blocking", "blocker", "block"),
+		NO_SUFFIX("", "", "");
 		
 		private String bending;
 		private String bender;
@@ -45,10 +46,10 @@ public class Element {
 	public static final Element FIRE = new Element("Fire");
 	public static final Element CHI = new Element("Chi", ElementType.BLOCKING);
 	public static final Element AVATAR = new Element("Avatar", null);
-	public static final SubElement FLIGHT = new SubElement("Flight", AIR);
-	public static final SubElement SPIRITUAL = new SubElement("Spiritual", AIR);
+	public static final SubElement FLIGHT = new SubElement("Flight", AIR, ElementType.NO_SUFFIX);
+	public static final SubElement SPIRITUAL = new SubElement("Spiritual", AIR, ElementType.NO_SUFFIX);
 	public static final SubElement BLOOD = new SubElement("Blood", WATER);
-	public static final SubElement HEALING = new SubElement("Healing", WATER, null);
+	public static final SubElement HEALING = new SubElement("Healing", WATER, ElementType.NO_SUFFIX);
 	public static final SubElement ICE = new SubElement("Ice", WATER);
 	public static final SubElement PLANT = new SubElement("Plant", WATER);
 	public static final SubElement LAVA = new SubElement("Lava", EARTH);
@@ -117,6 +118,7 @@ public class Element {
 	}
 	
 	public ElementType getType() {
+		if (type == null) return ElementType.NO_SUFFIX;
 		return type;
 	}
 	
