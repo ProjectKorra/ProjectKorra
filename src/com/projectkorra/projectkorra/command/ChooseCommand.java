@@ -97,17 +97,9 @@ public class ChooseCommand extends PKCommand {
 		bPlayer.setElement(element);
 		ChatColor color = element != null ? element.getColor() : null;
 		if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-			if (element != Element.CHI) {
-				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() +  "bender.");
-			} else {
-				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a Chiblocker.");
-			}
+			sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + (element.getType() != null ? element.getType().getBender() : "") + ".");
 		} else {
-			if (element != Element.CHI) {
-				target.sendMessage(color + "You are now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() +  "bender.");
-			} else {
-				target.sendMessage(color + "You are now a Chiblocker.");
-			}
+			target.sendMessage(color + "You are now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + (element.getType() != null ? element.getType().getBender() : "") + ".");
 		}
 		
 		
