@@ -1,14 +1,5 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -16,6 +7,14 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.SubAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Executor for /bending display. Extends {@link PKCommand}.
@@ -34,16 +33,15 @@ public class DisplayCommand extends PKCommand {
 
 		//bending display [Element]
 		if (args.size() == 1) {
-			String elementName = args.get(0).toLowerCase();
+			String elementName = args.get(0).toLowerCase().replace("bending", "");
+			Element element = Element.fromString(elementName.replace("combos", "").replace("combo", ""));
 			//combos
-			if (Arrays.asList(Commands.comboaliases).contains(elementName)) {
-				elementName = this.getElement(elementName);
-				Element element = Element.getElement(elementName);
+			if (element != null && elementName.contains("combo")) {
 				ChatColor color = element != null ? element.getColor() : null;
 				ArrayList<String> combos = ComboManager.getCombosForElement(element);
-				
+
 				if (combos.isEmpty()) {
-					sender.sendMessage(color + "There are no " + elementName + " combos avaliable.");
+					sender.sendMessage(color + "There are no " + element.getName() + " combos available.");
 					return;
 				}
 				for (String comboMove : combos) {
@@ -51,7 +49,7 @@ public class DisplayCommand extends PKCommand {
 					if (!sender.hasPermission("bending.ability." + comboMove)) {
 						continue;
 					}
-					
+
 					CoreAbility coreAbil = CoreAbility.getAbility(comboMove);
 					if (coreAbil != null) {
 						comboColor = coreAbil.getElement().getColor();
@@ -60,42 +58,32 @@ public class DisplayCommand extends PKCommand {
 				}
 				return;
 			}
-
-			//normal elements
-			else if (Arrays.asList(Commands.elementaliases).contains(elementName)) {
-				elementName = getElement(elementName);
-				displayElement(sender, elementName);
-			}
-
-			//subelements
-			else if (Arrays.asList(Commands.subelementaliases).contains(elementName)) {
-				displaySubElement(sender, elementName);
-			}
-			
-			//avatar
-			else if (Arrays.asList(Commands.avataraliases).contains(elementName)) {
-				displayAvatar(sender);
+			else if (element != null) {
+				if (!element.equals(Element.AVATAR)) {
+					if (!(element instanceof SubElement)) {
+						displayElement(sender, element);
+					} else {
+						displaySubElement(sender, element);
+					}
+				} else {
+					displayAvatar(sender);
+				}
 			}
 
 			else {
-				ChatColor w = ChatColor.WHITE;
-				sender.sendMessage(ChatColor.RED + "Not a valid argument." + ChatColor.WHITE + "\nElements: " 
-						+ Element.AIR.getColor() + "Air" + ChatColor.WHITE + " | " 
-						+ Element.WATER.getColor() + "Water" + ChatColor.WHITE + " | " 
-						+ Element.EARTH.getColor() + "Earth" + ChatColor.WHITE + " | " 
-						+ Element.FIRE.getColor() + "Fire" + ChatColor.WHITE + " | " 
-						+ Element.CHI.getColor() + "Chi");
-				sender.sendMessage(w + "SubElements: "
-						+ w + "\n-" + Element.AIR.getColor() + " Flight"
-						+ w + "\n-" + Element.EARTH.getColor() + " Lavabending"
-						+ w + "\n-" + Element.EARTH.getColor() + " Metalbending"
-						+ w + "\n-" + Element.EARTH.getColor() + " Sandbending"
-						+ w + "\n-" + Element.FIRE.getColor() + " Combustion"
-						+ w + "\n-" + Element.FIRE.getColor() + " Lightning"
-						+ w + "\n-" + Element.WATER.getColor() + " Bloodbending"
-						+ w + "\n-" + Element.WATER.getColor() + " Healing"
-						+ w + "\n-" + Element.WATER.getColor() + " Icebending"
-						+ w + "\n-" + Element.WATER.getColor() + " Plantbending");
+				StringBuilder elements = new StringBuilder(ChatColor.RED + "Not a valid argument.");
+				elements.append(ChatColor.WHITE + "\nElements: ");
+				for (Element e : Element.getAllElements()) {
+					if (!(e instanceof SubElement)) {
+						elements.append(e.getColor() + e.getName() + ChatColor.WHITE + " | ");
+					}
+				}
+				sender.sendMessage(elements.toString());
+				StringBuilder subelements = new StringBuilder(ChatColor.WHITE + "SubElements: ");
+				for (SubElement e : Element.getAllSubElements()) {
+					subelements.append(ChatColor.WHITE + "\n- " + e.getColor() + e.getName());
+				}
+				sender.sendMessage(subelements.toString());
 			}
 		}
 		if (args.size() == 0) {
@@ -107,7 +95,7 @@ public class DisplayCommand extends PKCommand {
 			displayBinds(sender);
 		}
 	}
-	
+
 	private void displayAvatar(CommandSender sender) {
 		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(Element.AVATAR);
 		if (abilities.isEmpty()) {
@@ -134,17 +122,16 @@ public class DisplayCommand extends PKCommand {
 	 * @param sender The CommandSender to show the moves to
 	 * @param element The element to show the moves for
 	 */
-	private void displayElement(CommandSender sender, String element) {
-		element = this.getElement(element);
-		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(Element.getElement(element));
-		
+	private void displayElement(CommandSender sender, Element element) {
+		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(element);
+
 		if (abilities.isEmpty()) {
 			sender.sendMessage(ChatColor.RED + "You must select a valid element.");
 			return;
 		} else if (abilities.isEmpty()) {
 			sender.sendMessage(ChatColor.YELLOW + "There are no " + element + " abilities enabled on the server.");
 		}
-		
+
 		for (CoreAbility ability : abilities) {
 			if (ability instanceof SubAbility || ability.isHiddenAbility()) {
 				continue;
@@ -153,46 +140,16 @@ public class DisplayCommand extends PKCommand {
 				sender.sendMessage(ability.getElement().getColor() + ability.getName());
 			}
 		}
-		
-		if (element.equalsIgnoreCase("earth")) {
-			if (sender.hasPermission("bending.earth.lavabending")) {
-				sender.sendMessage(ChatColor.DARK_GREEN + "Lavabending abilities: " + ChatColor.GREEN + "/bending display Lavabending");
-			}
-			if (sender.hasPermission("bending.earth.metalbending")) {
-				sender.sendMessage(ChatColor.DARK_GREEN + "Metalbending abilities: " + ChatColor.GREEN + "/bending display Metalbending");
-			}
-			if (sender.hasPermission("bending.earth.sandbending")) {
-				sender.sendMessage(ChatColor.DARK_GREEN + "Sandbending abilities: " + ChatColor.GREEN + "/bending display Sandbending");
-			}
-		} else if (element.equalsIgnoreCase("air")) {
-			sender.sendMessage(ChatColor.DARK_GRAY + "Combos: " + ChatColor.GRAY + "/bending display AirCombos");
-			if (sender.hasPermission("bending.air.flight")) {
-				sender.sendMessage(ChatColor.DARK_GRAY + "Flight abilities: " + ChatColor.GRAY + "/bending display Flight");
-			}
-		} else if (element.equalsIgnoreCase("fire")) {
-			sender.sendMessage(ChatColor.DARK_RED + "Combos: " + ChatColor.RED + "/bending display FireCombos");
-			if (sender.hasPermission("bending.fire.lightningbending")) {
-				sender.sendMessage(ChatColor.DARK_RED + "Lightning abilities: " + ChatColor.RED + "/bending display Lightning");
-			}
-			if (sender.hasPermission("bending.fire.combustionbending")) {
-				sender.sendMessage(ChatColor.DARK_RED + "Combustion abilities: " + ChatColor.RED + "/bending display Combustion");
-			}
-		} else if (element.equalsIgnoreCase("water")) {
-			sender.sendMessage(ChatColor.DARK_AQUA + "Combos: " + ChatColor.AQUA + "/bending display WaterCombos");
-			if (sender.hasPermission("bending.water.bloodbending")) {
-				sender.sendMessage(ChatColor.DARK_AQUA + "Bloodbending abilities: " + ChatColor.AQUA + "/bending display Bloodbending");
-			}
-			if (sender.hasPermission("bending.water.healing")) {
-				sender.sendMessage(ChatColor.DARK_AQUA + "Healing abilities: " + ChatColor.AQUA + "/bending display Healing");
-			}
-			if (sender.hasPermission("bending.water.icebending")) {
-				sender.sendMessage(ChatColor.DARK_AQUA + "Icebending abilities: " + ChatColor.AQUA + "/bending display Icebending");
-			}
-			if (sender.hasPermission("bending.water.plantbending")) {
-				sender.sendMessage(ChatColor.DARK_AQUA + "Plantbending abilities: " + ChatColor.AQUA + "/bending display Plantbending");
-			}
-		} else if (element.equalsIgnoreCase("chi")) {
+
+		if (element.equals(Element.CHI)) {
 			sender.sendMessage(ChatColor.GOLD + "Combos: " + ChatColor.YELLOW + "/bending display ChiCombos");
+		} else {
+			sender.sendMessage(element.getSubColor() + "Combos: " + element.getColor() + "/bending display " + element.getName() + "Combos");
+			for (SubElement sub : Element.getSubElements(element)) {
+				if (sender.hasPermission("bending." + element.getName().toLowerCase() + "." + sub.getName().toLowerCase())) {
+					sender.sendMessage(sub.getColor() + sub.getName() + " abilities: " + element.getColor() + "/bending display " + sub.getName());
+				}
+			}
 		}
 	}
 
@@ -202,26 +159,18 @@ public class DisplayCommand extends PKCommand {
 	 * @param sender The CommandSender to show the moves to
 	 * @param element The subelement to show the moves for
 	 */
-	private void displaySubElement(CommandSender sender, String element) {
-		element = this.getElement(element);
-		Element mainElement = Element.getElement(element);
-		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(mainElement);
-		
-		
-		if (mainElement instanceof SubElement) {
-			mainElement = ((SubElement) mainElement).getParentElement();
-		}
-		ChatColor color = mainElement != null ? mainElement.getColor() : null;
-		
-		if (abilities.isEmpty() && mainElement != null) {
-			sender.sendMessage(ChatColor.YELLOW + "There are no " + color + element + ChatColor.YELLOW + " abilities installed!");
+	private void displaySubElement(CommandSender sender, Element element) {
+		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(element);
+
+		if (abilities.isEmpty() && element != null) {
+			sender.sendMessage(ChatColor.YELLOW + "There are no " + element.getColor() + element + ChatColor.YELLOW + " abilities installed!");
 			return;
 		}
 		for (CoreAbility ability : abilities) {
 			if (ability.isHiddenAbility()) {
 				continue;
 			} else if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
-				sender.sendMessage(color + ability.getName());
+				sender.sendMessage(element.getColor() + ability.getName());
 			}
 		}
 	}

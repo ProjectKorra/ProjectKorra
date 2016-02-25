@@ -75,11 +75,11 @@ public class BendingPlayer {
 		this.chiBlocked = false;
 		cooldowns = new ConcurrentHashMap<String, Long>();
 		toggledElements = new ConcurrentHashMap<Element, Boolean>();
-		toggledElements.put(Element.AIR, true);
-		toggledElements.put(Element.EARTH, true);
-		toggledElements.put(Element.FIRE, true);
-		toggledElements.put(Element.WATER, true);
-		toggledElements.put(Element.CHI, true);
+		for (Element e : Element.getAllElements()) {
+			if (!e.equals(Element.AVATAR)) {
+				toggledElements.put(e, true);
+			}
+		}
 
 		PLAYERS.put(uuid, this);
 		PKListener.login(this);
@@ -483,7 +483,7 @@ public class BendingPlayer {
 
 	public boolean isElementToggled(Element element) {
 		if (element != null && toggledElements.containsKey(element)) {
-			return toggledElements.containsKey(element);
+			return toggledElements.get(element);
 		}
 		return true;
 	}

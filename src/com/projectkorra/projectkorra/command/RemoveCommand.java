@@ -11,7 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,24 +30,25 @@ public class RemoveCommand extends PKCommand {
 
 		Player player = Bukkit.getPlayer(args.get(0));
 		if (player == null) {
-			Element e = Element.getElement(getElement(args.get(0)));
+			Element e = Element.fromString(args.get(0));
 			BendingPlayer senderBPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-			
-			if (senderBPlayer != null && e != null && sender instanceof Player) {
-				if (senderBPlayer.hasElement(e)) {
-					senderBPlayer.getElements().remove(e);
-					GeneralMethods.saveElements(senderBPlayer);
-					GeneralMethods.removeUnusableAbilities(sender.getName());
-					
-					if (e == Element.CHI) {
-						sender.sendMessage(Element.CHI.getColor() + "You have removed your chiblocking.");
+
+			if (senderBPlayer != null && sender instanceof Player) {
+				if (e != null) {
+					if (senderBPlayer.hasElement(e)) {
+						senderBPlayer.getElements().remove(e);
+						GeneralMethods.saveElements(senderBPlayer);
+						GeneralMethods.removeUnusableAbilities(sender.getName());
+
+						sender.sendMessage(e.getColor() + "You have removed your " + e.getName() + e.getType().getBending() + ".");
+						Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
+						return;
+					} else {
+						sender.sendMessage(ChatColor.RED + "You do not have that element!");
 						return;
 					}
-					sender.sendMessage(e.getColor() + "You have removed your " + e.toString().toLowerCase() + "bending.");
-					Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
-					return;
 				} else {
-					sender.sendMessage(ChatColor.RED + "You do not have that element!");
+					sender.sendMessage(ChatColor.RED + "That is not a valid element!");
 					return;
 				}
 			}
@@ -62,7 +62,7 @@ public class RemoveCommand extends PKCommand {
 			bPlayer = BendingPlayer.getBendingPlayer(player);
 		}
 		if (args.size() == 2) {
-			Element e = Element.getElement(getElement(args.get(1)));
+			Element e = Element.fromString(args.get(1));
 			if (e != null) {
 				if (!bPlayer.hasElement(e)) {
 					sender.sendMessage(ChatColor.DARK_RED + "Targeted player does not have that element");
@@ -71,13 +71,8 @@ public class RemoveCommand extends PKCommand {
 				bPlayer.getElements().remove(e);
 				GeneralMethods.saveElements(bPlayer);
 				GeneralMethods.removeUnusableAbilities(player.getName());
-				if (e == Element.CHI) {
-					sender.sendMessage(Element.CHI.getColor() + "You have removed the chiblocking of " + ChatColor.DARK_AQUA + player.getName());
-					player.sendMessage(Element.CHI.getColor() + "Your chiblocking has been removed by " + ChatColor.DARK_AQUA + sender.getName());
-				} else {
-					sender.sendMessage(e.getColor() + "You have removed the " + getElement(args.get(1)).toLowerCase() + "bending of " + ChatColor.DARK_AQUA + player.getName());
-					player.sendMessage(e.getColor() + "Your " + getElement(args.get(1)).toLowerCase() + "bending has been removed by " + ChatColor.DARK_AQUA + sender.getName());
-				}
+				sender.sendMessage(e.getColor() + "You have removed the " + e.getName() + e.getType().getBending() + " of " + ChatColor.DARK_AQUA + player.getName());
+				sender.sendMessage(e.getColor() + "Your " + e.getName() + e.getType().getBending() + " has been removed by " + ChatColor.DARK_AQUA + player.getName());
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
 				return;
 			}
@@ -104,14 +99,5 @@ public class RemoveCommand extends PKCommand {
 		}
 		sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
 		return false;
-	}
-	
-	public String getElement(String string) {
-		if (Arrays.asList(Commands.airaliases).contains(string)) return "air";
-		if (Arrays.asList(Commands.chialiases).contains(string)) return "chi";
-		if (Arrays.asList(Commands.earthaliases).contains(string)) return "earth";
-		if (Arrays.asList(Commands.firealiases).contains(string)) return "fire";
-		if (Arrays.asList(Commands.wateraliases).contains(string)) return "water";
-		return null;
 	}
 }
