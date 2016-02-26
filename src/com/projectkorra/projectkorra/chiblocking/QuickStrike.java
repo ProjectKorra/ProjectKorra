@@ -21,6 +21,9 @@ public class QuickStrike extends ChiAbility {
 		this.damage = getConfig().getInt("Abilities.Chi.QuickStrike.Damage");
 		this.blockChance = getConfig().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
 		target = GeneralMethods.getTargetedEntity(player, 2);
+		if (target == null) {
+			return;
+		}
 		start();
 	}
 
@@ -28,6 +31,7 @@ public class QuickStrike extends ChiAbility {
 	@Override
 	public void progress() {
 		if (target == null) {
+			remove();
 			return;
 		}
 

@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,55 +44,56 @@ public class ToggleCommand extends PKCommand {
 				sender.sendMessage(ChatColor.GREEN + "You have turned your Bending back on.");
 				bPlayer.toggleBending();
 			}
-		} else if (args.size() == 1 && args.get(0).equalsIgnoreCase("all") && hasPermission(sender, "all")) { //bending toggle all
-			if (Commands.isToggledForAll) { // Bending is toggled off for all players.
-				Commands.isToggledForAll = false;
-				for (Player player : Bukkit.getOnlinePlayers()) {
-					player.sendMessage(ChatColor.GREEN + "Bending has been toggled back on for all players.");
-				}
-				if (!(sender instanceof Player))
-					sender.sendMessage(ChatColor.GREEN + "Bending has been toggled back on for all players.");
-			} else {
-				Commands.isToggledForAll = true;
-				for (Player player : Bukkit.getOnlinePlayers()) {
-					player.sendMessage(ChatColor.RED + "Bending has been toggled off for all players.");
-				}
-				if (!(sender instanceof Player))
-					sender.sendMessage(ChatColor.RED + "Bending has been toggled off for all players.");
-			}
-		} else if (sender instanceof Player && args.size() == 1 
-				&& Element.getElement(getElement(args.get(0))) != null 
-				&& BendingPlayer.getBendingPlayer(sender.getName()).hasElement(Element.getElement(getElement(args.get(0))))) {
-			Element e = Element.getElement(getElement(args.get(0)));
-			ChatColor color = e != null ? e.getColor() : null;
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-			bPlayer.toggleElement(e);
-			
-			if (bPlayer.isElementToggled(e) == false) {
-				if (e == Element.CHI) {
-					sender.sendMessage(color + "You have toggled off your chiblocking");
+		} else if (args.size() == 1 ) { 
+			if (args.size() == 1 && args.get(0).equalsIgnoreCase("all") && hasPermission(sender, "all")) { //bending toggle all
+				if (Commands.isToggledForAll) { // Bending is toggled off for all players.
+					Commands.isToggledForAll = false;
+					for (Player player : Bukkit.getOnlinePlayers()) {
+						player.sendMessage(ChatColor.GREEN + "Bending has been toggled back on for all players.");
+					}
+					if (!(sender instanceof Player))
+						sender.sendMessage(ChatColor.GREEN + "Bending has been toggled back on for all players.");
 				} else {
-					sender.sendMessage(color + "You have toggled off your " + getElement(args.get(0)).toLowerCase() + "bending");
+					Commands.isToggledForAll = true;
+					for (Player player : Bukkit.getOnlinePlayers()) {
+						player.sendMessage(ChatColor.RED + "Bending has been toggled off for all players.");
+					}
+					if (!(sender instanceof Player))
+						sender.sendMessage(ChatColor.RED + "Bending has been toggled off for all players.");
 				}
-			} else {
-				if (e == Element.CHI) {
-					sender.sendMessage(color + "You have toggled on your chiblocking");
+			} else if (sender instanceof Player && args.size() == 1 
+					&& Element.fromString(args.get(0)) != null) {
+				if (!BendingPlayer.getBendingPlayer(sender.getName()).hasElement(Element.fromString(args.get(0)))) {
+					sender.sendMessage(ChatColor.RED + "You do not have that element.");
+					return;
+				}
+				Element e = Element.fromString(args.get(0));
+				ChatColor color = e != null ? e.getColor() : null;
+				BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
+				bPlayer.toggleElement(e);
+
+				if (bPlayer.isElementToggled(e)) {
+					sender.sendMessage(color + "You have toggled on your " + e.getName() + (e.getType() != null ? e.getType().getBending() : "") + ".");
 				} else {
-					sender.sendMessage(color + "You have toggled on your " + getElement(args.get(0)).toLowerCase() + "bending");
+					sender.sendMessage(color + "You have toggled off your " + e.getName() + (e.getType() != null ? e.getType().getBending() : "") + ".");
 				}
 			}
 		} else if (sender instanceof Player && args.size() == 2 
-				&& Element.getElement(getElement(args.get(0))) != null 
-				&& BendingPlayer.getBendingPlayer(sender.getName()).hasElement(Element.getElement(getElement(args.get(0))))) {
+				&& Element.fromString(args.get(0)) != null) {
 			Player target = Bukkit.getPlayer(args.get(1));
 			if (!hasAdminPermission(sender)) return;
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + "Target is not found.");
+				return;
 			}
-			Element e = Element.getElement(getElement(args.get(0)));
+			if (!BendingPlayer.getBendingPlayer(target.getName()).hasElement(Element.fromString(args.get(0)))) {
+				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + ChatColor.RED + " doesn't have that element.");
+				return;
+			}
+			Element e = Element.fromString(args.get(0));
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target.getName());
 			ChatColor color = e != null ? e.getColor() : null;
-			
+
 			if (bPlayer.isElementToggled(e) == true) {
 				if (e == Element.CHI) {
 					sender.sendMessage(color + "You have toggled off " + ChatColor.DARK_AQUA + target.getName() + "'s chiblocking");
@@ -115,15 +115,6 @@ public class ToggleCommand extends PKCommand {
 		} else {
 			help(sender, false);
 		}
-	}
-
-	public String getElement(String string) {
-		if (Arrays.asList(Commands.airaliases).contains(string)) return "air";
-		if (Arrays.asList(Commands.chialiases).contains(string)) return "chi";
-		if (Arrays.asList(Commands.earthaliases).contains(string)) return "earth";
-		if (Arrays.asList(Commands.firealiases).contains(string)) return "fire";
-		if (Arrays.asList(Commands.wateraliases).contains(string)) return "water";
-		return null;
 	}
 
 	public boolean hasAdminPermission(CommandSender sender) {

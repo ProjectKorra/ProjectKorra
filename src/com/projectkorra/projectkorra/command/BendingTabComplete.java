@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.object.Preset;
 
@@ -77,6 +78,12 @@ public class BendingTabComplete implements TabCompleter {
 				list.add("WaterCombos");
 				list.add("ChiCombos");
 				list.add("Avatar");
+				for (Element e : Element.getAddonElements()) {
+					list.add(e.getName());
+				}
+				for (SubElement se : Element.getAddonSubElements()) {
+					list.add(se.getName());
+				}
 				return getPossibleCompletionsForGivenArgs(args, list);
 			} else if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("choose") || args[0].equalsIgnoreCase("ch")) {
 				if (args.length > 3 || !sender.hasPermission("bending.command.add"))
@@ -89,6 +96,9 @@ public class BendingTabComplete implements TabCompleter {
 					l.add("Fire");
 					l.add("Water");
 					l.add("Chi");
+					for (Element e : Element.getAddonElements()) {
+						l.add(e.getName());
+					}
 				}
 				else
 				{
@@ -183,6 +193,9 @@ public class BendingTabComplete implements TabCompleter {
 					l.add("Fire");
 					l.add("Water");
 					l.add("Chi");
+					for (Element e : Element.getAddonElements()) {
+						l.add(e.getName());
+					}
 				}
 				return getPossibleCompletionsForGivenArgs(args, l);
 			} else if (args[0].equalsIgnoreCase("who") || args[0].equalsIgnoreCase("w")) {

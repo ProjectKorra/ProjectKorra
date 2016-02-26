@@ -30,7 +30,7 @@ public class AddCommand extends PKCommand {
 			if (!hasPermission(sender) || !isPlayer(sender)) {
 				return;
 			}
-			add(sender, (Player) sender, args.get(0).toLowerCase());
+			add(sender, (Player) sender, Element.fromString(args.get(0).toLowerCase()));
 		} else if (args.size() == 2) { //bending add element combo
 			if (!hasPermission(sender, "others")) {
 				return;
@@ -40,7 +40,7 @@ public class AddCommand extends PKCommand {
 				sender.sendMessage(ChatColor.RED + "That player is not online.");
 				return;
 			}
-			add(sender, player, args.get(0).toLowerCase());
+			add(sender, player, Element.fromString(args.get(0).toLowerCase()));
 		}
 	}
 
@@ -51,7 +51,7 @@ public class AddCommand extends PKCommand {
 	 * @param target The player to add the element to
 	 * @param element The element to add
 	 */
-	private void add(CommandSender sender, Player target, String element) {
+	private void add(CommandSender sender, Player target, Element element) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
@@ -61,33 +61,32 @@ public class AddCommand extends PKCommand {
 			sender.sendMessage(ChatColor.RED + "That player's bending was permanently removed.");
 			return;
 		}
-		if (Arrays.asList(Commands.elementaliases).contains(element.toLowerCase())) {
-			element = getElement(element.toLowerCase());
-			Element type = Element.getElement(element);
-			bPlayer.addElement(type);
-			ChatColor color = type.getColor();
-			
-			if (element.charAt(0) == 'w' || element.charAt(0) == 'f') {
-				target.sendMessage(color + "You are also a " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
-			} else if (element.charAt(0) == 'e' || element.charAt(0) == 'a') {
-				target.sendMessage(color + "You are also an " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
-			} else if (element.charAt(0) == 'c' || element.equalsIgnoreCase("chi")) {
-				target.sendMessage(color + "You are now a Chiblocker.");
-			}
-			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				if (element.charAt(0) == 'w' || element.charAt(0) == 'f') {
-					sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is also a " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
-				} else if (element.charAt(0) == 'e' || element.charAt(0) == 'a') {
-					sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is also an " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "bender.");
-				} else if (element.charAt(0) == 'c' || element.equalsIgnoreCase("chi")) {
-					sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is also a " + Character.toString(element.charAt(0)).toUpperCase() + element.substring(1) + "blocker.");
+		if (Arrays.asList(Element.getAllElements()).contains(element)) {
+			if (bPlayer.hasElement(element)) {
+				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+					sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + ChatColor.RED + " already has that element!");
+				} else {
+					sender.sendMessage(ChatColor.RED + "You already have that element!");
 				}
+				return;
+			}
+			bPlayer.addElement(element);
+			ChatColor color = element.getColor();
+			
+			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is also a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + element.getType().getBender() + ".");
+			} else {
+				target.sendMessage(color + "You are also a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + element.getType().getBender() + ".");
 			}
 			GeneralMethods.saveElements(bPlayer);
-			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, type, Result.ADD));
+			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.ADD));
 			return;
 		} else {
 			sender.sendMessage(ChatColor.RED + "You must specify a valid element.");
 		}
+	}
+	
+	public static boolean isVowel(char c) {
+		return "AEIOUaeiou".indexOf(c) != -1;
 	}
 }
