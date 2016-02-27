@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
@@ -56,7 +57,7 @@ public class ProjectKorra extends JavaPlugin {
 		new Commands(this);
 		new MultiAbilityManager();
 		new ComboManager();
-
+		
 		Preset.loadExternalPresets();
 		
 		DBConnection.host = getConfig().getString("Storage.MySQL.host");
@@ -92,6 +93,8 @@ public class ProjectKorra extends JavaPlugin {
 		}
 
 		double cacheTime = ConfigManager.getConfig().getDouble("Properties.RegionProtection.CacheBlockTime");
+		if (Bukkit.getPluginManager().getPlugin("Residence") != null)
+			FlagPermissions.addFlag(ConfigManager.defaultConfig.get().getString("Properties.RegionProtection.Residence.Flag"));
 		GeneralMethods.deserializeFile();
 		GeneralMethods.startCacheCleaner(cacheTime);
 		updater.checkUpdate();

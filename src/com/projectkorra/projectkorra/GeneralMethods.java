@@ -1,60 +1,15 @@
 package com.projectkorra.projectkorra;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import fr.neatmonster.nocheatplus.checks.CheckType;
+import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.FallingSand;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
+import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import com.google.common.reflect.ClassPath;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
@@ -113,12 +68,60 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
-import fr.neatmonster.nocheatplus.checks.CheckType;
-import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.FallingSand;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("deprecation")
 public class GeneralMethods {
@@ -758,7 +761,7 @@ public class GeneralMethods {
 	}
 
 	public static long getGlobalCooldown() {
-		return plugin.getConfig().getLong("Properties.GlobalCooldown");
+		return ConfigManager.defaultConfig.get().getLong("Properties.GlobalCooldown");
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -1003,7 +1006,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isImportEnabled() {
-		return plugin.getConfig().getBoolean("Properties.ImportEnabled");
+		return ConfigManager.defaultConfig.get().getBoolean("Properties.ImportEnabled");
 	}
 	
 	public static boolean isInteractable(Block block) {
@@ -1069,13 +1072,14 @@ public class GeneralMethods {
 	}
 
 	public static boolean isRegionProtectedFromBuildPostCache(Player player, String ability, Location loc) {
-		boolean allowHarmless = plugin.getConfig().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
-		boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		boolean respectPreciousStones = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		boolean respectFactions = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectFactions");
-		boolean respectTowny = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectTowny");
-		boolean respectGriefPrevention = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		boolean respectLWC = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectLWC");
+		boolean allowHarmless = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.AllowHarmlessAbilities");
+		boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
+		boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
+		boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
+		boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
+		boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
+		boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
+		boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
 
 		boolean isIgnite = false;
 		boolean isExplosive = false;
@@ -1103,6 +1107,7 @@ public class GeneralMethods {
 		Plugin gpp = pm.getPlugin("GriefPrevention");
 		Plugin massivecore = pm.getPlugin("MassiveCore");
 		Plugin lwc = pm.getPlugin("LWC");
+		Plugin residence = pm.getPlugin("Residence");
 
 		for (Location location : new Location[] { loc, player.getLocation() }) {
 			World world = location.getWorld();
@@ -1219,6 +1224,14 @@ public class GeneralMethods {
 					return true;
 				}
 			}
+			
+			if (residence != null && respectResidence) {
+				ClaimedResidence res = Residence.getResidenceManager().getByLoc(loc);
+				if (res != null) {
+					ResidencePermissions perms = res.getPermissions();
+					return perms.playerHas(player.getName(), ConfigManager.defaultConfig.get().getString("Properities.RegionProtection.Residence.Flag"), true);
+				}
+			}
 		}
 		return false;
 	}
@@ -1257,11 +1270,11 @@ public class GeneralMethods {
 		new ComboManager();
 		new MultiAbilityManager();
 		
-		DBConnection.host = plugin.getConfig().getString("Storage.MySQL.host");
-		DBConnection.port = plugin.getConfig().getInt("Storage.MySQL.port");
-		DBConnection.pass = plugin.getConfig().getString("Storage.MySQL.pass");
-		DBConnection.db = plugin.getConfig().getString("Storage.MySQL.db");
-		DBConnection.user = plugin.getConfig().getString("Storage.MySQL.user");
+		DBConnection.host = ConfigManager.defaultConfig.get().getString("Storage.MySQL.host");
+		DBConnection.port = ConfigManager.defaultConfig.get().getInt("Storage.MySQL.port");
+		DBConnection.pass = ConfigManager.defaultConfig.get().getString("Storage.MySQL.pass");
+		DBConnection.db = ConfigManager.defaultConfig.get().getString("Storage.MySQL.db");
+		DBConnection.user = ConfigManager.defaultConfig.get().getString("Storage.MySQL.user");
 		DBConnection.init();
 		
 		if (!DBConnection.isOpen()) {
@@ -1382,12 +1395,12 @@ public class GeneralMethods {
 		writeToDebug("Supported Plugins");
 		writeToDebug("====================");
 
-		boolean respectWorldGuard = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectWorldGuard");
-		boolean respectPreciousStones = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectPreciousStones");
-		boolean respectFactions = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectFactions");
-		boolean respectTowny = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectTowny");
-		boolean respectGriefPrevention = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
-		boolean respectLWC = plugin.getConfig().getBoolean("Properties.RegionProtection.RespectLWC");
+		boolean respectWorldGuard = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectWorldGuard");
+		boolean respectPreciousStones = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectPreciousStones");
+		boolean respectFactions = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectFactions");
+		boolean respectTowny = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectTowny");
+		boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
+		boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		PluginManager pm = Bukkit.getPluginManager();
 
 		Plugin wgp = pm.getPlugin("WorldGuard");
@@ -1525,14 +1538,14 @@ public class GeneralMethods {
 
 	public static void setVelocity(Entity entity, Vector velocity) {
 		if (entity instanceof TNTPrimed) {
-			if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.TNT")) {
-				entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier")));
+			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.TNT")) {
+				entity.setVelocity(velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.TNTStrengthMultiplier")));
 			}
 			return;
 		}
 		if (entity instanceof FallingSand) {
-			if (plugin.getConfig().getBoolean("Properties.BendingAffectFallingSand.Normal")) {
-				entity.setVelocity(velocity.multiply(plugin.getConfig().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
+			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.Normal")) {
+				entity.setVelocity(velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
 			}
 			return;
 		}
