@@ -78,6 +78,7 @@ public class FireBlast extends FireAbility {
 		}
 
 		setFields();
+		this.isFireBurst = false;
 		this.damage = getDayFactor(getConfig().getDouble("Abilities.Fire.FireBlast.Damage"));
 		this.safeBlocks = new ArrayList<>();
 		this.range = getDayFactor(this.range);
