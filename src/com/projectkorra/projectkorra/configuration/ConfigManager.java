@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.configuration;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
@@ -98,35 +99,59 @@ public class ConfigManager {
 			case DEFAULT:
 				config = defaultConfig.get();
 
-				ArrayList<String> earths = new ArrayList<String>();
-				earths.add("STONE");
-				earths.add("CLAY");
-				earths.add("COAL_ORE");
-				earths.add("DIAMOND_ORE");
-				earths.add("DIRT");
-				earths.add("GOLD_ORE");
-				earths.add("GRASS");
-				earths.add("GRAVEL");
-				earths.add("IRON_ORE");
-				earths.add("LAPIS_ORE");
-				earths.add("NETHERRACK");
-				earths.add("QUARTZ_ORE");
-				earths.add("REDSTONE_ORE");
-				earths.add("SAND");
-				earths.add("SANDSTONE");
-				earths.add("RED_SANDSTONE");
-				earths.add("MYCEL");
+				ArrayList<String> earthBlocks = new ArrayList<String>();
+				earthBlocks.add("DIRT");
+				earthBlocks.add("MYCEL");
+				earthBlocks.add("GRASS");
+				earthBlocks.add("STONE");
+				earthBlocks.add("GRAVEL");
+				earthBlocks.add("CLAY");
+				earthBlocks.add("COAL_ORE");
+				earthBlocks.add("IRON_ORE");
+				earthBlocks.add("GOLD_ORE");
+				earthBlocks.add("REDSTONE_ORE");
+				earthBlocks.add("LAPIS_ORE");
+				earthBlocks.add("DIAMOND_ORE");
+				earthBlocks.add("NETHERRACK");
+				earthBlocks.add("QUARTZ_ORE");
 
-				ArrayList<String> metals = new ArrayList<String>();
-				metals.add("IRON_BLOCK");
-				metals.add("GOLD_BLOCK");
-				metals.add("QUARTZ_BLOCK");
+				ArrayList<String> metalBlocks = new ArrayList<String>();
+				metalBlocks.add("IRON_BLOCK");
+				metalBlocks.add("GOLD_BLOCK");
+				metalBlocks.add("QUARTZ_BLOCK");
 				
-				ArrayList<String> sands = new ArrayList<String>();
-				sands.add("SAND");
-				sands.add("SANDSTONE");
-				sands.add("RED_SAND");
-				sands.add("RED_SANDSTONE");
+				ArrayList<String> sandBlocks = new ArrayList<String>();
+				sandBlocks.add("SAND");
+				sandBlocks.add("SANDSTONE");
+				sandBlocks.add("RED_SAND");
+				sandBlocks.add("RED_SANDSTONE");
+
+				ArrayList<String> iceBlocks = new ArrayList<String>();
+				iceBlocks.add("ICE");
+				iceBlocks.add("PACKED_ICE");
+				
+				ArrayList<String> plantBlocks = new ArrayList<String>();
+				plantBlocks.add("SAPLING");
+				plantBlocks.add("LEAVES");
+				plantBlocks.add("LEAVES_2");
+				plantBlocks.add("DEAD_BUSH");
+				plantBlocks.add("YELLOW_FLOWER");
+				plantBlocks.add("RED_ROSE");
+				plantBlocks.add("RED_MUSHROOM");
+				plantBlocks.add("BROWN_MUSHROOM");
+				plantBlocks.add("CACTUS");
+				plantBlocks.add("PUMPKIN");
+				plantBlocks.add("HUGE_MUSHROOM_1");
+				plantBlocks.add("HUGE_MUSHROOM_2");
+				plantBlocks.add("MELON_BLOCK");
+				plantBlocks.add("VINE");
+				plantBlocks.add("WATER_LILY");
+				plantBlocks.add("DOUBLE_PLANT");
+				plantBlocks.add("CROPS");
+				plantBlocks.add("LONG_GRASS");
+				plantBlocks.add("SUGAR_CANE_BLOCK");
+				plantBlocks.add("PUMPKIN_STEM");
+				plantBlocks.add("MELON_STEM");
 
 				config.addDefault("Properties.Chat.Enable", true);
 				config.addDefault("Properties.Chat.Format", "<name>: <message>");
@@ -160,10 +185,6 @@ public class ConfigManager {
 				config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageMinimumDistance", 5.0);
 				config.addDefault("Properties.HorizontalCollisionPhysics.WallDamageCap", 6.0);
 
-				config.addDefault("Properties.CustomItems.GrapplingHook.Enable", true);
-				config.addDefault("Properties.CustomItems.GrapplingHook.IronUses", 25);
-				config.addDefault("Properties.CustomItems.GrapplingHook.GoldUses", 50);
-
 				config.addDefault("Properties.RegionProtection.AllowHarmlessAbilities", true);
 				config.addDefault("Properties.RegionProtection.RespectWorldGuard", true);
 				config.addDefault("Properties.RegionProtection.RespectGriefPrevention", true);
@@ -180,10 +201,10 @@ public class ConfigManager {
 				config.addDefault("Properties.Air.PlaySound", true);
 
 				config.addDefault("Properties.Water.CanBendWithWeapons", true);
+				config.addDefault("Properties.Water.IceBlocks", iceBlocks);
+				config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
 				config.addDefault("Properties.Water.NightFactor", 1.5);
 				config.addDefault("Properties.Water.FullMoonFactor", 2.0);
-				config.addDefault("Properties.Water.CanBendPackedIce", true);
-				config.addDefault("Properties.Water.CanBendFromBentBlocks", false);
 				config.addDefault("Properties.Water.PlaySound", true);
 				config.addDefault("Properties.Water.NightMessage", "You feel the strength of the rising moon empowering your waterbending.");
 				config.addDefault("Properties.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
@@ -192,9 +213,9 @@ public class ConfigManager {
 				config.addDefault("Properties.Earth.SafeRevert", true);
 				config.addDefault("Properties.Earth.RevertCheckTime", 300000);
 				config.addDefault("Properties.Earth.CanBendWithWeapons", true);
-				config.addDefault("Properties.Earth.EarthBlocks", earths);
-				config.addDefault("Properties.Earth.MetalBlocks", metals);
-				config.addDefault("Properties.Earth.SandBlocks", sands);
+				config.addDefault("Properties.Earth.EarthBlocks", earthBlocks);
+				config.addDefault("Properties.Earth.MetalBlocks", metalBlocks);
+				config.addDefault("Properties.Earth.SandBlocks", sandBlocks);
 				config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 				config.addDefault("Properties.Earth.PlaySound", true);
 

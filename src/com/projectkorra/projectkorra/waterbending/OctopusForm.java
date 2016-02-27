@@ -379,7 +379,7 @@ public class OctopusForm extends WaterAbility {
 				}
 				newBlocks.add(tblock);
 			}
-		} else if (isWaterbendable(block, player) || block.getType() == Material.FIRE || block.getType() == Material.AIR) {
+		} else if (isWaterbendable(player, block) || block.getType() == Material.FIRE || block.getType() == Material.AIR) {
 			newBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 		}
 	}

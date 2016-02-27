@@ -21,11 +21,11 @@ public class WaterPassive {
 		Block fallBlock = block.getRelative(BlockFace.DOWN);
 		if (TempBlock.isTempBlock(fallBlock) && (fallBlock.getType().equals(Material.ICE))) {
 			return true;
-		} else if (WaterAbility.isWaterbendable(block, player) && !WaterAbility.isPlant(block)) {
+		} else if (WaterAbility.isWaterbendable(player, null, block) && !WaterAbility.isPlant(block)) {
 			return true;
 		} else if (fallBlock.getType() == Material.AIR) {
 			return true;
-		} else if ((WaterAbility.isWaterbendable(fallBlock, player) && !WaterAbility.isPlant(fallBlock)) || fallBlock.getType() == Material.SNOW_BLOCK) {
+		} else if ((WaterAbility.isWaterbendable(player, null, fallBlock) && !WaterAbility.isPlant(fallBlock)) || fallBlock.getType() == Material.SNOW_BLOCK) {
 			return true;
 		}
 		return false;

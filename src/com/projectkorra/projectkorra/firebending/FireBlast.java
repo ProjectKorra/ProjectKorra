@@ -138,7 +138,7 @@ public class FireBlast extends FireAbility {
 					&& !safeBlocks.contains(block)
 					&& !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				if (canFireGrief()) {
-					if (WaterAbility.isPlantbendable(block)) {
+					if (WaterAbility.isPlantbendable(player, block.getType(), false)) {
 						new PlantRegrowth(player, block);
 					}
 					block.setType(Material.FIRE);
