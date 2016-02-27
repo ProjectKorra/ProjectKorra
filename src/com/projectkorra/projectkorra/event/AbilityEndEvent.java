@@ -14,6 +14,10 @@ public class AbilityEndEvent extends Event {
 		this.ability = ability;
 	}
 	
+	public Ability getAbility() {
+		return ability;
+	}
+	
 	@Override
 	public HandlerList getHandlers() {
 		return handlers;
