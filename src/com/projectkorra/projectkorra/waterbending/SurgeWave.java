@@ -256,7 +256,7 @@ public class SurgeWave extends WaterAbility {
 				if (!GeneralMethods.isRegionProtectedFromBuild(this, location) 
 						&& (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE 
 							|| isPlant(blockl) || isWater(blockl) 
-							|| isWaterbendable(blockl, player))) 
+							|| isWaterbendable(player, blockl))) 
 						&& blockl.getType() != Material.LEAVES)) {
 					for (double i = 0; i <= currentRadius; i += .5) {
 						for (double angle = 0; angle < 360; angle += 10) {

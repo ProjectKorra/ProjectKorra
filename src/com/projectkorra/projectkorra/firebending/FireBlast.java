@@ -63,7 +63,7 @@ public class FireBlast extends FireAbility {
 		this.origin = location.clone();
 		this.direction = direction.clone().normalize();
 		this.range = getDayFactor(range);
-		this.damage *= 1.5;
+		this.damage = getDayFactor(damage);
 
 		start();
 	}
@@ -78,6 +78,7 @@ public class FireBlast extends FireAbility {
 		}
 
 		setFields();
+		this.damage = getDayFactor(getConfig().getDouble("Abilities.Fire.FireBlast.Damage"));
 		this.safeBlocks = new ArrayList<>();
 		this.range = getDayFactor(this.range);
 		this.location = player.getEyeLocation();
@@ -137,7 +138,7 @@ public class FireBlast extends FireAbility {
 					&& !safeBlocks.contains(block)
 					&& !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				if (canFireGrief()) {
-					if (WaterAbility.isPlantbendable(block)) {
+					if (WaterAbility.isPlantbendable(player, block.getType(), false)) {
 						new PlantRegrowth(player, block);
 					}
 					block.setType(Material.FIRE);
