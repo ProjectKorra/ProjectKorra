@@ -288,7 +288,7 @@ public class LavaSurgeWall extends LavaAbility {
 		if (!hasAbility(player, LavaSurgeWall.class)) {
 			new LavaSurgeWave(player);
 			return;
-		} else if (isLavabendable(player.getTargetBlock((HashSet<Byte>) null, SURGE_WAVE_RANGE))) {
+		} else if (isLavabendable(player, player.getTargetBlock((HashSet<Byte>) null, SURGE_WAVE_RANGE))) {
 			new LavaSurgeWave(player);
 			return;
 		}

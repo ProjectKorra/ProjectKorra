@@ -55,7 +55,7 @@ public class WaterSourceGrabber {
 			currentLoc.add(0, animimationSpeed * Math.signum(locDiff), 0);
 			Block block = currentLoc.getBlock();
 			
-			if (!(WaterAbility.isWaterbendable(block, player) || block.getType() == Material.AIR) 
+			if (!(WaterAbility.isWaterbendable(player, null, block) || block.getType() == Material.AIR) 
 					|| GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
 				remove();
 				return;
@@ -73,7 +73,7 @@ public class WaterSourceGrabber {
 			currentLoc.add(vec.normalize().multiply(animimationSpeed));
 
 			Block block = currentLoc.getBlock();
-			if (!(WaterAbility.isWaterbendable(block, player) || block.getType() == Material.AIR)
+			if (!(WaterAbility.isWaterbendable(player, null, block) || block.getType() == Material.AIR)
 					|| GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
 				remove();
 				return;
