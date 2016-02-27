@@ -400,7 +400,7 @@ public class SurgeWall extends WaterAbility {
 			wave = new SurgeWave(player);
 			return;
 		} else {
-			if (isWaterbendable(player.getTargetBlock((HashSet<Material>) null, range), player)) {
+			if (isWaterbendable(player, null, player.getTargetBlock((HashSet<Material>) null, range))) {
 				wave = new SurgeWave(player);
 				return;
 			}

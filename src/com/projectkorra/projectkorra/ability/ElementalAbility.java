@@ -23,7 +23,7 @@ import com.projectkorra.rpg.event.EventManager;
 public abstract class ElementalAbility extends CoreAbility {
 	
 	private static final Integer[] TRANSPARENT_MATERIAL = { 0, 6, 8, 9, 10, 11, 30, 31, 32, 37, 38, 39, 40, 50, 51, 59, 78, 83, 106, 175 };
-	private static final Integer[] PLANT_IDS = { 6, 18, 31, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175 };
+	//private static final Integer[] PLANT_IDS = { 6, 18, 31, 37, 38, 39, 40, 59, 81, 83, 86, 99, 100, 103, 104, 105, 106, 111, 161, 175 };
 	private static final PotionEffectType[] POSITIVE_EFFECTS = {PotionEffectType.ABSORPTION, PotionEffectType.DAMAGE_RESISTANCE, PotionEffectType.FAST_DIGGING, 
 				PotionEffectType.FIRE_RESISTANCE, PotionEffectType.HEAL, PotionEffectType.HEALTH_BOOST, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.JUMP, 
 				PotionEffectType.NIGHT_VISION, PotionEffectType.REGENERATION, PotionEffectType.SATURATION, PotionEffectType.SPEED, PotionEffectType.WATER_BREATHING};
@@ -84,11 +84,11 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isIce(Block block) {
-		return isIce(block.getType());
+		return block != null ? isIce(block.getType()) : false;
 	}
 
 	public static boolean isIce(Material material) {
-		return material == Material.ICE || material == Material.PACKED_ICE;
+		return getConfig().getStringList("Properties.Water.IceBlocks").contains(material.toString());
 	}
 
 	public static boolean isLava(Block block) {
@@ -167,14 +167,12 @@ public abstract class ElementalAbility extends CoreAbility {
 		return false;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static boolean isPlant(Block block) {
-		if (block == null) {
-			return false;
-		} else if (Arrays.asList(PLANT_IDS).contains(block.getTypeId())) {
-			return true;
-		}
-		return false;
+		return block != null ? isPlant(block.getType()) : false;
+	}
+	
+	public static boolean isPlant(Material material) {
+		return getConfig().getStringList("Properties.Water.PlantBlocks").contains(material.toString());
 	}
 
 	public static boolean isPositiveEffect(PotionEffectType effect) {

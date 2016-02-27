@@ -62,7 +62,7 @@ public class BlockSource {
 				if (WaterAbility.isPlant(waterBlock)) {
 					putSource(player, waterBlock, BlockSourceType.PLANT, clickType);
 				}
-				if (WaterAbility.isIcebendable(waterBlock)) {
+				if (WaterAbility.isIce(waterBlock)) {
 					putSource(player, waterBlock, BlockSourceType.ICE, clickType);
 				}
 			}
@@ -360,17 +360,17 @@ public class BlockSource {
 			return false;
 		} else if (Math.abs(info.getPlayer().getLocation().distance(info.getBlock().getLocation())) > range) {
 			return false;
-		} else if (info.getSourceType() == BlockSourceType.WATER && !WaterAbility.isWaterbendable(info.getBlock(), info.getPlayer())) {
+		} else if (info.getSourceType() == BlockSourceType.WATER && !WaterAbility.isWaterbendable(info.getPlayer(), null, info.getBlock())) {
 			return false;
-		} else if (info.getSourceType() == BlockSourceType.ICE && !WaterAbility.isIcebendable(info.getBlock())) {
+		} else if (info.getSourceType() == BlockSourceType.ICE && !WaterAbility.isIcebendable(info.getPlayer(), info.getBlock().getType(), false)) {
 			return false;
-		} else if (info.getSourceType() == BlockSourceType.PLANT && (!WaterAbility.isPlant(info.getBlock()) || !WaterAbility.isWaterbendable(info.getBlock(), info.getPlayer()))) {
+		} else if (info.getSourceType() == BlockSourceType.PLANT && (!WaterAbility.isPlant(info.getBlock()) || !WaterAbility.isWaterbendable(info.getPlayer(), null, info.getBlock()))) {
 			return false;
 		} else if (info.getSourceType() == BlockSourceType.EARTH && !EarthAbility.isEarthbendable(info.getPlayer(), info.getBlock())) {
 			return false;
 		} else if (info.getSourceType() == BlockSourceType.METAL && (!EarthAbility.isMetal(info.getBlock()) || !EarthAbility.isEarthbendable(info.getPlayer(), info.getBlock()))) {
 			return false;
-		} else if (info.getSourceType() == BlockSourceType.LAVA && (!EarthAbility.isLava(info.getBlock()) || !EarthAbility.isLavabendable(info.getBlock()))) {
+		} else if (info.getSourceType() == BlockSourceType.LAVA && (!EarthAbility.isLava(info.getBlock()) || !EarthAbility.isLavabendable(info.getPlayer(), info.getBlock()))) {
 			return false;
 		}
 		return true;

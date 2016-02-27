@@ -35,7 +35,6 @@ public abstract class EarthAbility extends ElementalAbility {
 	private static final ConcurrentHashMap<Block, Information> MOVED_EARTH = new ConcurrentHashMap<Block, Information>();
 	private static final ConcurrentHashMap<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<Integer, Information>();
 	private static final ArrayList<Block> PREVENT_PHYSICS = new ArrayList<Block>();
-	//private static final ItemStack DIAMOND_PICKAXE = new ItemStack(Material.DIAMOND_PICKAXE);
 
 	public EarthAbility(Player player) {
 		super(player);
@@ -70,10 +69,6 @@ public abstract class EarthAbility extends ElementalAbility {
 		return getTargetEarthBlock(player, range);
 	}
 
-	public boolean isEarthbendable(Block block) {
-		return isEarthbendable(player, getName(), block);
-	}
-
 	@Override
 	public boolean isExplosiveAbility() {
 		return false;
@@ -83,6 +78,22 @@ public abstract class EarthAbility extends ElementalAbility {
 	public boolean isIgniteAbility() {
 		return false;
 	}
+	
+	public static boolean isEarthbendable(Material material) {
+		return isEarth(material) || isMetal(material) || isSand(material) || isLava(material);
+	}
+
+	public boolean isEarthbendable(Block block) {
+		return isEarthbendable(player, getName(), block);
+	}
+	
+	public static boolean isEarthbendable(Player player, Block block) {
+		return isEarthbendable(player, null, block);
+	}
+
+	public boolean isLavabendable(Block block) {
+		return isLavabendable(player, block);
+	}
 
 	public boolean isMetalbendable(Block block) {
 		return isMetalbendable(block.getType());
@@ -90,6 +101,14 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	public boolean isMetalbendable(Material material) {
 		return isMetalbendable(player, material);
+	}
+	
+	public boolean isSandbendable(Block block) {
+		return isSandbendable(block.getType());
+	}
+
+	public boolean isSandbendable(Material material) {
+		return isSandbendable(player, material);
 	}
 
 	public void moveEarth(Block block, Vector direction, int chainlength) {
@@ -267,8 +286,10 @@ public abstract class EarthAbility extends ElementalAbility {
 		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
 		if (bPlayer == null) {
 			return null;
-		} else if (isEarthbendable(player, testBlock) || isMetalbendable(player, testBlock.getType())) {
+		} else if (isEarthbendable(testBlock.getType())) {
 			return testBlock;
+		} else if (!isTransparent(player, testBlock)) {
+			return null;
 		}
 
 		Location location = player.getEyeLocation();
@@ -308,7 +329,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			if (GeneralMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
 				continue;
 			}
-			if (isLavabendable(block)) {
+			if (isLavabendable(player, block)) {
 				if (TempBlock.isTempBlock(block)) {
 					TempBlock tb = TempBlock.get(block);
 					byte full = 0x0;
@@ -381,20 +402,16 @@ public abstract class EarthAbility extends ElementalAbility {
 		return TEMP_AIR_LOCATIONS;
 	}
 
-	public static boolean isEarthbendable(Material material) {
-		return isEarth(material) || isMetal(material) || isSand(material);
-	}
-
-	public static boolean isEarthbendable(Player player, Block block) {
-		return isEarthbendable(player, null, block);
-	}
-
 	public static boolean isEarthbendable(Player player, String abilityName, Block block) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null || !isEarthbendable(block.getType()) || PREVENT_EARTHBENDING.contains(block)
 				|| GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		} else if (isMetal(block) && !bPlayer.canMetalbend()) {
+			return false;
+		} else if (isSand(block) && !bPlayer.canSandbend()) {
+			return false;
+		}  else if (isLava(block) && !bPlayer.canLavabend()) {
 			return false;
 		}
 		return true;
@@ -403,9 +420,9 @@ public abstract class EarthAbility extends ElementalAbility {
 	public static boolean isEarthRevertOn() {
 		return getConfig().getBoolean("Properties.Earth.RevertEarthbending");
 	}
-
+	
 	@SuppressWarnings("deprecation")
-	public static boolean isLavabendable(Block block) {
+	public static boolean isLavabendable(Player player, Block block) {
 		byte full = 0x0;
 		if (TempBlock.isTempBlock(block)) {
 			TempBlock tblock = TempBlock.instances.get(block);
@@ -422,6 +439,11 @@ public abstract class EarthAbility extends ElementalAbility {
 	public static boolean isMetalbendable(Player player, Material material) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		return bPlayer == null ? null : isMetal(material) && bPlayer.canMetalbend();
+	}
+	
+	public static boolean isSandbendable(Player player, Material material) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		return bPlayer == null ? null : isSand(material) && bPlayer.canSandbend();
 	}
 
 	@SuppressWarnings("deprecation")
