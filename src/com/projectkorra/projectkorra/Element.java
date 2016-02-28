@@ -134,6 +134,10 @@ public class Element {
 		return ALL_ELEMENTS.get(name.toLowerCase());
 	}
 	
+	/**
+	 * Returns an array of all official and addon elements excluding subelements.
+	 * @return Array of all official and addon elements.
+	 */
 	public static Element[] getAllElements() {
 		List<Element> ae = new ArrayList<Element>();
 		ae.addAll(Arrays.asList(getMainElements()));
@@ -145,14 +149,26 @@ public class Element {
 		return ae.toArray(new Element[ae.size()]);
 	}
 	
+	/**
+	 * Returns an array of all the official elements and subelements.
+	 * @return Array of all official elements and subelements.
+	 */
 	public static Element[] getElements() {
 		return ELEMENTS;
 	}
 	
+	/**
+	 * Returns an array of all the official elements.
+	 * @return Array of all official elements.
+	 */
 	public static Element[] getMainElements() {
 		return MAIN_ELEMENTS;
 	}
 	
+	/**
+	 * Returns an array of all the addon elements.
+	 * @return Array of all addon elements.
+	 */
 	public static Element[] getAddonElements() {
 		List<Element> ae = new ArrayList<Element>();
 		for (Element e : getAllElements()) {
@@ -164,6 +180,10 @@ public class Element {
 		return ae.toArray(new Element[ae.size()]);
 	}
 	
+	/**
+	 * Returns all subelements, official and addon.
+	 * @return Array of all the subelements.
+	 */
 	public static SubElement[] getAllSubElements() {
 		List<SubElement> se = new ArrayList<SubElement>();
 		se.addAll(Arrays.asList(getSubElements()));
@@ -175,10 +195,19 @@ public class Element {
 		return se.toArray(new SubElement[se.size()]);
 	}
 	
+	/**
+	 * Return official subelements.
+	 * @return Array of official subelements.
+	 */
 	public static SubElement[] getSubElements() {
 		return SUB_ELEMENTS;
 	}
 	
+	/**
+	 * Return all subelements belonging to a parent element.
+	 * @param element
+	 * @return Array of all subelements belonging to a parent element.
+	 */
 	public static SubElement[] getSubElements(Element element) {
 		List<SubElement> se = new ArrayList<SubElement>();
 		for (SubElement sub : getAllSubElements()) {
@@ -189,6 +218,10 @@ public class Element {
 		return se.toArray(new SubElement[se.size()]);
 	}
 	
+	/**
+	 * Returns an array of all the addon subelements.
+	 * @return Array of all addon subelements.
+	 */
 	public static SubElement[] getAddonSubElements() {
 		List<SubElement> ae = new ArrayList<SubElement>();
 		for (SubElement e : getAllSubElements()) {
@@ -197,6 +230,21 @@ public class Element {
 			}
 		}
 		return ae.toArray(new SubElement[ae.size()]);
+	}
+	
+	/**
+	 * Returns array of addon subelements belonging to a parent element.
+	 * @param element
+	 * @return Array of addon subelements belonging to a parent element.
+	 */
+	public static SubElement[] getAddonSubElements(Element element) {
+		List<SubElement> se = new ArrayList<SubElement>();
+		for (SubElement sub : getAllSubElements()) {
+			if (sub.getParentElement().equals(element) && !Arrays.asList(getSubElements()).contains(sub)) {
+				se.add(sub);
+			}
+		}
+		return se.toArray(new SubElement[se.size()]);
 	}
 	
 	public static Element fromString(String element) {
