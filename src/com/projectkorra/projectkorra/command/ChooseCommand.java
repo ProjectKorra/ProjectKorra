@@ -71,7 +71,7 @@ public class ChooseCommand extends PKCommand {
 			}
 			String element = args.get(0).toLowerCase();
 			Element targetElement = Element.getElement(element);
-			if (Arrays.asList(Element.getAllElements()).contains(target)) {
+			if (Arrays.asList(Element.getAllElements()).contains(targetElement)) {
 				add(sender, target, targetElement);
 				return;
 			} else {

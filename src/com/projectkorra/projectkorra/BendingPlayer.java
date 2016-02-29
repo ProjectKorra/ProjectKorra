@@ -334,8 +334,21 @@ public class BendingPlayer {
 		return player.hasPermission("bending.air.spiritualprojection");
 	}
 
+	/**
+	 * Checks to see if a player can use Water Healing.
+	 * @return true If player has permission node "bending.water.healing"
+	 */
 	public boolean canWaterHeal() {
 		return player.hasPermission("bending.water.healing");
+	}
+	
+	/**
+	 * Checks to see if a player can bend a specific sub element. Used when checking addon sub elements.
+	 * @param sub SubElement to check for.
+	 * @return true If the player has permission to bend that subelement.
+	 */
+	public boolean canUseSubElement(SubElement sub) {
+		return player.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase());
 	}
 
 	/**
