@@ -34,6 +34,11 @@ public class AirBurst extends AirAbility {
 			remove();
 			return;
 		}
+		if (hasAbility(player, AirBurst.class)) {
+			if (!getAbility(player, AirBurst.class).isCharged()) {
+				return;
+			}
+		}
 
 		this.isFallBurst = isFallBurst;
 		this.isCharged = false;

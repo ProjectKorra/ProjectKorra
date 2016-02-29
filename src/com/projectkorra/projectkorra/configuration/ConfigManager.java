@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.configuration;
 
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
