@@ -177,11 +177,18 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(Element.AIR.getColor() + "" + ChatColor.STRIKETHROUGH + "- Airbender");
 				}
 				
-				if (player_ != null && bPlayer.canUseFlight()) {
-					sender.sendMessage(Element.FLIGHT.getColor() + "    Can Fly");
-				}
-				if (player_ != null && bPlayer.canUseSpiritualProjection()) {
-					sender.sendMessage(Element.SPIRITUAL.getColor() + "    Can use Spiritual Projection");
+				if (player_ != null) {
+					if (bPlayer.canUseFlight()) {
+						sender.sendMessage(Element.FLIGHT.getColor() + "    Can Fly");
+					}
+					if (bPlayer.canUseSpiritualProjection()) {
+						sender.sendMessage(Element.SPIRITUAL.getColor() + "    Can use Spiritual Projection");
+					}
+					for (SubElement se : Element.getAddonSubElements(Element.AIR)) {
+						if (bPlayer.canUseSubElement(se)) {
+							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
+						}
+					}
 				}
 			}
 			if (bPlayer.hasElement(Element.WATER)) {
@@ -191,21 +198,28 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(Element.WATER.getColor() + "" + ChatColor.STRIKETHROUGH + "- Waterbender");
 				}
 				
-				if (player_ != null && bPlayer.canPlantbend()) {
-					sender.sendMessage(Element.PLANT.getColor() + "    Can Plantbend");
-				}
-				if (player_ != null && bPlayer.canBloodbend()) {
-					if (bPlayer.canBloodbendAtAnytime()) {
-						sender.sendMessage(Element.BLOOD.getColor() + "    Can Bloodbend anytime, on any day");
-					} else {
-						sender.sendMessage(Element.BLOOD.getColor() + "    Can Bloodbend");
+				if (player_ != null) {
+					if (bPlayer.canPlantbend()) {
+						sender.sendMessage(Element.PLANT.getColor() + "    Can Plantbend");
 					}
-				}
-				if (player_ != null && bPlayer.canIcebend()) {
-					sender.sendMessage(Element.ICE.getColor() + "    Can Icebend");
-				}
-				if (player_ != null && bPlayer.canWaterHeal()) {
-					sender.sendMessage(Element.HEALING.getColor() + "    Can Heal");
+					if (bPlayer.canBloodbend()) {
+						if (bPlayer.canBloodbendAtAnytime()) {
+							sender.sendMessage(Element.BLOOD.getColor() + "    Can Bloodbend anytime, on any day");
+						} else {
+							sender.sendMessage(Element.BLOOD.getColor() + "    Can Bloodbend");
+						}
+					}
+					if (bPlayer.canIcebend()) {
+						sender.sendMessage(Element.ICE.getColor() + "    Can Icebend");
+					}
+					if (bPlayer.canWaterHeal()) {
+						sender.sendMessage(Element.HEALING.getColor() + "    Can Heal");
+					}
+					for (SubElement se : Element.getAddonSubElements(Element.WATER)) {
+						if (bPlayer.canUseSubElement(se)) {
+							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
+						}
+					}
 				}
 			}
 			if (bPlayer.hasElement(Element.EARTH)) {
@@ -215,14 +229,21 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(Element.EARTH.getColor() + "" + ChatColor.STRIKETHROUGH + "- Earthbender");
 				}
 				
-				if (player_ != null && bPlayer.canMetalbend()) {
-					sender.sendMessage(Element.METAL.getColor() + "    Can Metalbend");
-				}
-				if (player_ != null && bPlayer.canLavabend()) {
-					sender.sendMessage(Element.LAVA.getColor() + "    Can Lavabend");
-				}
-				if (player_ != null && bPlayer.canSandbend()) {
-					sender.sendMessage(Element.SAND.getColor() + "    Can Sandbend");
+				if (player_ != null) {
+					if (bPlayer.canMetalbend()) {
+						sender.sendMessage(Element.METAL.getColor() + "    Can Metalbend");
+					}
+					if (bPlayer.canLavabend()) {
+						sender.sendMessage(Element.LAVA.getColor() + "    Can Lavabend");
+					}
+					if (bPlayer.canSandbend()) {
+						sender.sendMessage(Element.SAND.getColor() + "    Can Sandbend");
+					}
+					for (SubElement se : Element.getAddonSubElements(Element.EARTH)) {
+						if (bPlayer.canUseSubElement(se)) {
+							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
+						}
+					}
 				}
 			}
 			if (bPlayer.hasElement(Element.FIRE)) {
@@ -232,11 +253,18 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(Element.FIRE.getColor() + "" + ChatColor.STRIKETHROUGH + "- Firebender");
 				}
 				
-				if (player_ != null && bPlayer.canCombustionbend()) {
-					sender.sendMessage(Element.COMBUSTION.getColor() + "    Can Combustionbend");
-				}
-				if (player_ != null && bPlayer.canLightningbend()) {
-					sender.sendMessage(Element.LIGHTNING.getColor() + "    Can Lightningbend");
+				if (player_ != null) {
+					if (bPlayer.canCombustionbend()) {
+						sender.sendMessage(Element.COMBUSTION.getColor() + "    Can Combustionbend");
+					}
+					if (bPlayer.canLightningbend()) {
+						sender.sendMessage(Element.LIGHTNING.getColor() + "    Can Lightningbend");
+					}
+					for (SubElement se : Element.getAddonSubElements(Element.FIRE)) {
+						if (bPlayer.canUseSubElement(se)) {
+							sender.sendMessage(se.getColor() + "    Can " + (!se.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + se.getName() + se.getType().getBend());
+						}
+					}
 				}
 			}
 			if (bPlayer.hasElement(Element.CHI)) {
@@ -251,7 +279,7 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(element.getColor() + "" + (bPlayer.isElementToggled(element) ? "" : ChatColor.STRIKETHROUGH) + "- " + element.getName() + (element.getType() != null ? element.getType().getBender() : ""));
 					if (player_ != null) {
 						for (SubElement subelement : Element.getSubElements(element)) {
-							if (player_.hasPermission("bending." + element.getName().toLowerCase() + "." + subelement.getName().toLowerCase())) {
+							if (bPlayer.canUseSubElement(subelement)) {
 								sender.sendMessage(subelement.getColor() + "    Can " + (!subelement.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + subelement.getName() + subelement.getType().getBend());
 							}
 						}
