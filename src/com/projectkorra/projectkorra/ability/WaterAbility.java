@@ -12,7 +12,6 @@ import com.projectkorra.projectkorra.waterbending.WaterArms;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.rpg.RPGMethods;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
