@@ -55,6 +55,15 @@ public class Lightning extends LightningAbility {
 	public Lightning(Player player) {
 		super(player);
 		
+		if (!bPlayer.canBend(this)) {
+			return;
+		}
+		if (hasAbility(player, Lightning.class)) {
+			if (!getAbility(player, Lightning.class).isCharged()) {
+				return;
+			}
+		}
+		
 		this.charged = false;
 		this.hitWater = false;
 		this.hitIce = false;

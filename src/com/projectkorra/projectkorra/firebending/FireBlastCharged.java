@@ -47,6 +47,10 @@ public class FireBlastCharged extends FireAbility {
 	public FireBlastCharged(Player player) {
 		super(player);
 		
+		if (!bPlayer.canBend(this) || hasAbility(player, FireBlastCharged.class)) {
+			return;
+		}
+		
 		this.charged = false;
 		this.launched = false;
 		this.canDamageBlocks = getConfig().getBoolean("Abilities.Fire.FireBlast.Charged.DamageBlocks");

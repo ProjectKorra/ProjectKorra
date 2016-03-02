@@ -31,7 +31,7 @@ public class Shockwave extends EarthAbility {
 			cooldown = 0;
 		}
 		
-		if (!bPlayer.canBend(this)) {
+		if (!bPlayer.canBend(this) || hasAbility(player, Shockwave.class)) {
 			return;
 		}
 		
