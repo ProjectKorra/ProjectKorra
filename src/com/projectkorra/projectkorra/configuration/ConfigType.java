@@ -7,30 +7,33 @@ import java.util.List;
 
 public class ConfigType {
 	
+	private static final HashMap<String, ConfigType> ALL_TYPES = new HashMap<>();
+	
 	public static final ConfigType DEFAULT = new ConfigType("Default");
 	public static final ConfigType PRESETS = new ConfigType("Presets");
 	public static final ConfigType DEATH_MESSAGE = new ConfigType("DeathMessage");
-	public static final ConfigType[] CORE_TYPES = {DEFAULT, PRESETS, DEATH_MESSAGE};
 	
-	private static HashMap<String, ConfigType> allTypes = new HashMap<>();
-	private static List<ConfigType> addonTypes = new ArrayList<>();
+	private static final ConfigType[] CORE_TYPES = {DEFAULT, PRESETS, DEATH_MESSAGE};
 	
 	private String string;
 	
 	public ConfigType(String string) {
 		this.string = string;
-		allTypes.put(string, this);
-		if (!Arrays.asList(CORE_TYPES).contains(this)) {
-			addonTypes.add(this);
-		}
+		ALL_TYPES.put(string, this);
 	}
 	
 	public static List<ConfigType> addonValues() {
-		return addonTypes;
+		List<ConfigType> values = new ArrayList<>();
+		for (String key : ALL_TYPES.keySet()) {
+			if (!Arrays.asList(CORE_TYPES).contains(ALL_TYPES.get(key))) {
+				values.add(ALL_TYPES.get(key));
+			}
+		}
+		return values;
 	}
 	
-	public static ConfigType[] coreValues() {
-		return CORE_TYPES;
+	public static List<ConfigType> coreValues() {
+		return Arrays.asList(CORE_TYPES);
 	}
 	
 	public String toString() {
@@ -39,8 +42,8 @@ public class ConfigType {
 	
 	public static List<ConfigType> values() {
 		List<ConfigType> values = new ArrayList<>();
-		for (String key : allTypes.keySet()) {
-			values.add(allTypes.get(key));
+		for (String key : ALL_TYPES.keySet()) {
+			values.add(ALL_TYPES.get(key));
 		}
 		return values;
 	}
