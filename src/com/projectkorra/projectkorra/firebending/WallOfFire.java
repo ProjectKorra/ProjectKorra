@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -93,7 +94,7 @@ public class WallOfFire extends FireAbility {
 			if (TempBlock.isTempBlock(block) && isIce(block)) {
 				return;
 			}
-			GeneralMethods.damageEntity(this, entity, damage);
+			DamageHandler.damageEntity(entity, damage, this);
 			AirAbility.breakBreathbendingHold(entity);
 		}
 		entity.setFireTicks((int) (fireTicks * 20));

@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
@@ -125,7 +126,7 @@ public class FireBlast extends FireAbility {
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks((int) (fireTicks * 20));
-				GeneralMethods.damageEntity(this, entity, (int) getDayFactor(damage));
+				DamageHandler.damageEntity(entity, (int) getDayFactor(damage), this);
 				AirAbility.breakBreathbendingHold(entity);
 				new FireDamageTimer(entity, player);
 				remove();

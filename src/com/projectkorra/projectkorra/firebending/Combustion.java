@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CombustionAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 import org.bukkit.Location;
@@ -101,7 +102,7 @@ public class Combustion extends CombustionAbility {
 		for (Entity entity : block.getWorld().getEntities()) {
 			if (entity instanceof LivingEntity) {
 				if (entity.getLocation().distanceSquared(block) < radius * radius) { // They are close enough to the explosion.
-					GeneralMethods.damageEntity(this, entity, damage);
+					DamageHandler.damageEntity((LivingEntity) entity, damage, this);
 					AirAbility.breakBreathbendingHold(entity);
 				}
 			}

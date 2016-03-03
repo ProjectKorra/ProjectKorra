@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -281,7 +282,7 @@ public class WaterManipulation extends WaterAbility {
 								damage = AvatarState.getValue(damage);
 							}
 							damage = getNightFactor(damage);
-							GeneralMethods.damageEntity(this, entity, damage);
+							DamageHandler.damageEntity(entity, damage, this);
 							AirAbility.breakBreathbendingHold(entity);
 							progressing = false;
 						}

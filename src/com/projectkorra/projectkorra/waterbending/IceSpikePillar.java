@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 
 import org.bukkit.Location;
@@ -220,7 +221,7 @@ public class IceSpikePillar extends IceAbility {
 
 	private void affect(LivingEntity entity) {
 		entity.setVelocity(thrownForce);
-		GeneralMethods.damageEntity(this, entity, damage);
+		DamageHandler.damageEntity(entity, damage, this);
 		damaged.add(entity);
 
 		if (entity instanceof Player) {

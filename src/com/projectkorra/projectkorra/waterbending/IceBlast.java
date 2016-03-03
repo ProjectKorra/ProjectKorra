@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -151,12 +152,12 @@ public class IceBlast extends IceAbility {
 				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
 				new TempPotionEffect(entity, effect);
 				bPlayer.slow(10);
-				GeneralMethods.damageEntity(this, entity, damage);
+				DamageHandler.damageEntity(entity, damage, this);
 			}
 		} else {
 			PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 70, 2);
 			new TempPotionEffect(entity, effect);
-			GeneralMethods.damageEntity(this, entity, damage);
+			DamageHandler.damageEntity(entity, damage, this);
 		}
 		AirAbility.breakBreathbendingHold(entity);
 

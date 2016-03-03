@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 /**
  * Suffocate
@@ -196,7 +197,7 @@ public class Suffocate extends AirAbility {
 				BukkitRunnable br1 = new BukkitRunnable() {
 					@Override
 					public void run() {
-						GeneralMethods.damageEntity(ability, target, damage);
+						DamageHandler.damageEntity(target, damage, ability);
 					}
 				};
 				BukkitRunnable br2 = new BukkitRunnable() {

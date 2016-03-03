@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
@@ -171,7 +172,7 @@ public class OctopusForm extends WaterAbility {
 			entity.setVelocity(GeneralMethods.getDirection(player.getLocation(), location).normalize().multiply(knock));
 			
 			if (entity instanceof LivingEntity) {
-				GeneralMethods.damageEntity(this, entity, damage);
+				DamageHandler.damageEntity(entity, damage, this);
 			}
 			AirAbility.breakBreathbendingHold(entity);
 		}
