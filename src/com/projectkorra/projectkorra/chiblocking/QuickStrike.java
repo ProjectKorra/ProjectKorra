@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.chiblocking;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -35,7 +36,7 @@ public class QuickStrike extends ChiAbility {
 			return;
 		}
 
-		GeneralMethods.damageEntity(this, target, damage);
+		DamageHandler.damageEntity(target, damage, this);
 		if (target instanceof Player && ChiPassive.willChiBlock(player, (Player) target)) {
 			ChiPassive.blockChi((Player) target);
 		}

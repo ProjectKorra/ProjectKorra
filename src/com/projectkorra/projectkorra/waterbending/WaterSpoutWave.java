@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
@@ -255,7 +256,7 @@ public class WaterSpoutWave extends WaterAbility {
 						if (entity != this.player && entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 							affectedEntities.add(entity);
 							final double augment = getNightFactor(player.getWorld());
-							GeneralMethods.damageEntity(this, entity, damage);
+							DamageHandler.damageEntity(entity, damage, this);
 							final Player fplayer = this.player;
 							final Entity fent = entity;
 							

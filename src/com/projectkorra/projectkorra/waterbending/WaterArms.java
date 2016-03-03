@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.firebending.Lightning;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterArmsWhip.Whip;
@@ -352,9 +353,9 @@ public class WaterArms extends WaterAbility {
 								FireAbility.playLightningbendingParticle(l1);
 							}
 							if (lightningKill) {
-								GeneralMethods.damageEntity(lightning, player, 60D);
+								DamageHandler.damageEntity(player, 60D, lightning);
 							} else {
-								GeneralMethods.damageEntity(lightning, player, lightningDamage);
+								DamageHandler.damageEntity(player, lightningDamage, lightning);
 							}
 						}
 					}

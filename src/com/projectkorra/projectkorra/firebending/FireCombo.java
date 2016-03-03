@@ -25,6 +25,7 @@ import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformatio
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 /*
@@ -179,7 +180,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 		if (ability.equalsIgnoreCase("FireKick")) {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
-				GeneralMethods.damageEntity(this, entity, damage);
+				DamageHandler.damageEntity(entity, damage, this);
 				fstream.remove();
 			}
 		} else if (ability.equalsIgnoreCase("FireSpin")) {
@@ -191,21 +192,21 @@ public class FireCombo extends FireAbility implements ComboAbility {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
 				double newKnockback = bPlayer.isAvatarState() ? knockback + 0.5 : knockback;
-				GeneralMethods.damageEntity(this, entity, damage);
+				DamageHandler.damageEntity(entity, damage, this);
 				entity.setVelocity(direction.normalize().multiply(newKnockback));
 				fstream.remove();
 			}
 		} else if (ability.equalsIgnoreCase("JetBlaze")) {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
-				GeneralMethods.damageEntity(this, entity, damage);
+				DamageHandler.damageEntity(entity, damage, this);
 				entity.setFireTicks((int) (fireTicks * 20));
 				new FireDamageTimer(entity, player);
 			}
 		} else if (ability.equalsIgnoreCase("FireWheel")) {
 			if (!affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
-				GeneralMethods.damageEntity(this, entity, damage);
+				DamageHandler.damageEntity(entity, damage, this);
 				entity.setFireTicks((int) (fireTicks * 20));
 				new FireDamageTimer(entity, player);
 				this.remove();

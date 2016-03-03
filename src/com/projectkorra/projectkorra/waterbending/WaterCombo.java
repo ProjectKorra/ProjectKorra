@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireCombo.FireComboStream;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -184,7 +185,7 @@ public class WaterCombo extends WaterAbility implements ComboAbility {
 						}
 						if (damage != 0) {
 							if (entity instanceof LivingEntity) {
-								GeneralMethods.damageEntity(this, entity, damage);
+								DamageHandler.damageEntity(entity, damage, this);
 							}
 						}
 					}

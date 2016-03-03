@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.Illumination;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
@@ -196,7 +197,7 @@ public class AirSwipe extends AirAbility {
 						}
 						if (entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 							if (damage != 0) {
-								GeneralMethods.damageEntity(ability, entity, damage);
+								DamageHandler.damageEntity(entity, damage, ability);
 							}
 							affectedEntities.add(entity);
 						}

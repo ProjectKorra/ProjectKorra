@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.LightningAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -123,7 +124,7 @@ public class Lightning extends LightningAbility {
 	public void electrocute(LivingEntity lent) {
 		lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
 		player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
-		GeneralMethods.damageEntity(this, lent, damage);
+		DamageHandler.damageEntity(lent, damage, this);
 		
 		if (Math.random() < stunChance) {
 			final Location lentLoc = lent.getLocation();

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.SandAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.Location;
@@ -157,7 +158,7 @@ public class SandSpout extends SandAbility {
 					for (Player sPlayer : players) {
 						if (!sPlayer.equals(player)) {
 							sPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindnessTime * 20, 1));
-							GeneralMethods.damageEntity(this, sPlayer, damage);
+							DamageHandler.damageEntity(sPlayer, damage, this);
 						}
 					}
 				}

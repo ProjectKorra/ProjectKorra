@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -257,7 +258,7 @@ public class LavaSurge extends LavaAbility {
 				for(Entity e : GeneralMethods.getEntitiesAroundPoint(fb.getLocation(), 2)) {
 					if(e instanceof LivingEntity) {
 						if(e.getEntityId() != player.getEntityId()) {
-							GeneralMethods.damageEntity(this, e, impactDamage);
+							DamageHandler.damageEntity(e, impactDamage, this);
 							e.setFireTicks(100);
 							GeneralMethods.setVelocity(e, direction.clone());
 						}
