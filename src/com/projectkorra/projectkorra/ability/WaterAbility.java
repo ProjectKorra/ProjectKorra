@@ -194,8 +194,6 @@ public abstract class WaterAbility extends ElementalAbility {
 			return null;
 		} else if (isWaterbendable(testBlock.getType())) {
 			return testBlock;
-		} else if (!isTransparent(player, testBlock)) {
-			return null;
 		}
 		
 		for (double i = 0; i <= range; i++) {
