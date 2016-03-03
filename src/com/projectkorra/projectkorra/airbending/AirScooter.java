@@ -20,6 +20,7 @@ public class AirScooter extends AirAbility {
 	private double speed;
 	private double interval;
 	private double radius;
+	private long cooldown;
 	private double maxHeightFromGround;
 	private Block floorblock;
 	private Random random;
@@ -30,18 +31,21 @@ public class AirScooter extends AirAbility {
 
 	public AirScooter(Player player) {
 		super(player);
-		if (check(player)) {
+		
+		if (check(player)) 
 			return;
-		} else if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())
-				|| player.getEyeLocation().getBlock().isLiquid()) {
+		else if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())
+				|| player.getEyeLocation().getBlock().isLiquid()) 
 			return;
-		} else if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
+		else if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
 			return;
-		}
+		else if (bPlayer.isOnCooldown(this))
+			return;
 
 		this.speed = getConfig().getDouble("Abilities.Air.AirScooter.Speed");
 		this.interval = getConfig().getDouble("Abilities.Air.AirScooter.Interval");
 		this.radius = getConfig().getDouble("Abilities.Air.AirScooter.Radius");
+		this.cooldown = getConfig().getLong("Abilities.Air.AirScooter.Cooldown");
 		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
 		this.random = new Random();
 		this.angles = new ArrayList<>();
@@ -138,6 +142,7 @@ public class AirScooter extends AirAbility {
 	@Override
 	public void remove() {
 		super.remove();
+		bPlayer.addCooldown(this);
 		player.setAllowFlight(canFly);
 		player.setFlying(hadFly);
 	}
@@ -169,7 +174,7 @@ public class AirScooter extends AirAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
 	}
 	
 	@Override
@@ -221,5 +226,9 @@ public class AirScooter extends AirAbility {
 
 	public void setFloorblock(Block floorblock) {
 		this.floorblock = floorblock;
+	}
+	
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
 	}
 }
