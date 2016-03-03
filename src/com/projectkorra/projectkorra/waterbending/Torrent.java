@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -517,7 +518,7 @@ public class Torrent extends WaterAbility {
 		entity.setFallDistance(0);
 		if (entity instanceof LivingEntity) {
 			double damageDealt = getNightFactor(deflectDamage);
-			GeneralMethods.damageEntity(this, entity, damageDealt);
+			DamageHandler.damageEntity(entity, damageDealt, this);
 			AirAbility.breakBreathbendingHold(entity);
 		}
 	}
@@ -534,7 +535,7 @@ public class Torrent extends WaterAbility {
 		}
 		if (entity instanceof LivingEntity && !hurtEntities.contains(entity)) {
 			double damageDealt = getNightFactor(damage);
-			GeneralMethods.damageEntity(this, entity, damageDealt);
+			DamageHandler.damageEntity(entity, damageDealt, this);
 			AirAbility.breakBreathbendingHold(entity);
 			hurtEntities.add(entity);
 			((LivingEntity) entity).setNoDamageTicks(0);

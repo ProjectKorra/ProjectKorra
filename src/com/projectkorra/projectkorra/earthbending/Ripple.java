@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -265,7 +266,7 @@ public class Ripple extends EarthAbility {
 
 	private void affect(Entity entity) {
 		if (entity instanceof LivingEntity) {
-			GeneralMethods.damageEntity(this, entity, damage);
+			DamageHandler.damageEntity(entity, damage, this);
 		}
 
 		Vector vector = direction.clone();

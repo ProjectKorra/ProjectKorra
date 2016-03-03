@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterArms.Arm;
 
@@ -304,7 +305,7 @@ public class WaterArmsWhip extends WaterAbility {
 					if (entity instanceof LivingEntity) {
 						if (entity.getEntityId() != player.getEntityId()) {
 							hasDamaged = true;
-							GeneralMethods.damageEntity(this, entity, punchDamage);
+							DamageHandler.damageEntity(entity, punchDamage, this);
 						}
 					}
 				}

@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BloodAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 
 public class Bloodbending extends BloodAbility {
@@ -78,7 +79,7 @@ public class Bloodbending extends BloodAbility {
 							continue;
 						}
 					}
-					GeneralMethods.damageEntity(this, entity, 0);
+					DamageHandler.damageEntity(entity, 0, this);
 					AirAbility.breakBreathbendingHold(entity);
 					TARGETED_ENTITIES.put(entity, entity.getLocation().clone());
 				}
@@ -118,7 +119,7 @@ public class Bloodbending extends BloodAbility {
 				return;
 			}
 
-			GeneralMethods.damageEntity(this, target, 0);
+			DamageHandler.damageEntity(target, 0, this);
 			HorizontalVelocityTracker.remove(target);
 			AirAbility.breakBreathbendingHold(target);
 			TARGETED_ENTITIES.put(target, target.getLocation().clone());
@@ -204,7 +205,7 @@ public class Bloodbending extends BloodAbility {
 
 				entities.add(entity);
 				if (!TARGETED_ENTITIES.containsKey(entity) && entity instanceof LivingEntity) {
-					GeneralMethods.damageEntity(this, entity, 0);
+					DamageHandler.damageEntity(entity, 0, this);
 					TARGETED_ENTITIES.put(entity, entity.getLocation().clone());
 				}
 

@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireCombo.FireComboStream;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.Location;
@@ -331,9 +332,9 @@ public class AirCombo extends AirAbility implements ComboAbility {
 						if (damage != 0) {
 							if (entity instanceof LivingEntity) {
 								if (fstream.getAbility().equalsIgnoreCase("AirSweep")) {
-									GeneralMethods.damageEntity(this, entity, damage);
+									DamageHandler.damageEntity(entity, damage, this);
 								} else {
-									GeneralMethods.damageEntity(this, entity, damage);
+									DamageHandler.damageEntity(entity, damage, this);
 								}
 							}
 						}

@@ -78,6 +78,7 @@ import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.Bloodbending;
@@ -699,9 +700,9 @@ public class PKListener implements Listener {
 				double damage = ((e.getDistanceTraveled() - minimumDistance) < 0 ? 0 : e.getDistanceTraveled() - minimumDistance) / (e.getDifference().length());
 				if (damage > 0) {
 					if(damage <= maxDamage) {
-						GeneralMethods.damageEntity(e.getAbility(), e.getEntity(), damage);
+						DamageHandler.damageEntity((LivingEntity) e.getEntity(), damage, e.getAbility());
 					} else {
-						GeneralMethods.damageEntity(e.getAbility(), e.getEntity(), maxDamage);
+						DamageHandler.damageEntity((LivingEntity) e.getEntity(), maxDamage, e.getAbility());
 					}
 				}
 			}
@@ -840,7 +841,6 @@ public class PKListener implements Listener {
 				Player source = Flight.getLaunchedBy(player);
 				if (source != null) {
 					event.setCancelled(true);
-					GeneralMethods.damageEntity(null, player, event.getDamage());
 				}
 			}
 

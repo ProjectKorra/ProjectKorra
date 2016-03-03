@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 import org.bukkit.Effect;
@@ -134,13 +135,13 @@ public class FireBlastCharged extends FireAbility {
 		if (distance > damageRadius) {
 			return;
 		} else if (distance < innerRadius) {
-			GeneralMethods.damageEntity(this, entity, maxDamage);
+			DamageHandler.damageEntity(entity, maxDamage, this);
 			return;
 		}
 		
 		double slope = -(maxDamage * .5) / (damageRadius - innerRadius);
 		double damage = slope * (distance - innerRadius) + maxDamage;
-		GeneralMethods.damageEntity(this, entity, damage);
+		DamageHandler.damageEntity(entity, damage, this);
 		AirAbility.breakBreathbendingHold(entity);
 	}
 
@@ -173,7 +174,7 @@ public class FireBlastCharged extends FireAbility {
 					if (entity instanceof LivingEntity) {
 						double slope = -(maxDamage * .5) / (damageRadius - innerRadius);
 						double damage = slope * (entity.getLocation().distance(location) - innerRadius) + maxDamage;
-						GeneralMethods.damageEntity(this, entity, damage);
+						DamageHandler.damageEntity(entity, damage, this);
 					}
 				}
 				location.getWorld().playSound(location, Sound.EXPLODE, 5, 1);

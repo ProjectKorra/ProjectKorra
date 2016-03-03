@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -550,7 +551,7 @@ public class EarthSmash extends EarthAbility {
 			if (entity instanceof LivingEntity && entity != player && !affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
 				double damage = currentBlocks.size() / 13.0 * this.damage;
-				GeneralMethods.damageEntity(this, entity, damage);
+				DamageHandler.damageEntity(entity, damage, this);
 				Vector travelVec = GeneralMethods.getDirection(location, entity.getLocation());
 				entity.setVelocity(travelVec.setY(knockup).normalize().multiply(knockback));
 			}

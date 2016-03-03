@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.chiblocking;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -39,7 +40,7 @@ public class RapidPunch extends ChiAbility {
 		}
 		
 		LivingEntity lt = (LivingEntity) target;
-		GeneralMethods.damageEntity(this, target, damage);
+		DamageHandler.damageEntity(target, damage, this);
 		
 		if (target instanceof Player) {
 			if (ChiPassive.willChiBlock(player, (Player) target)) {

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.WaterArms.Arm;
 
@@ -172,7 +173,7 @@ public class WaterArmsSpear extends WaterAbility {
 					location = entity.getLocation();
 
 					if (spearDamageEnabled) {
-						GeneralMethods.damageEntity(this, entity, spearDamage);
+						DamageHandler.damageEntity(entity, spearDamage, this);
 					}
 
 					return;
