@@ -13,6 +13,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+
 /**
  * Abstract representation of a command executor. Implements
  * {@link SubCommand}.
@@ -21,6 +23,9 @@ import org.bukkit.entity.Player;
  *
  */
 public abstract class PKCommand implements SubCommand {
+	
+	protected String noPermissionMessage, mustBePlayerMessage;
+	
 	/**
 	 * The full name of the command.
 	 */
@@ -48,6 +53,10 @@ public abstract class PKCommand implements SubCommand {
 		this.properUse = properUse;
 		this.description = description;
 		this.aliases = aliases;
+		
+		this.noPermissionMessage = ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.NoPermission");
+		this.mustBePlayerMessage = ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.MustBePlayer");
+		
 		instances.put(name, this);
 	}
 
@@ -86,7 +95,7 @@ public abstract class PKCommand implements SubCommand {
 		if (sender.hasPermission("bending.command." + name)) {
 			return true;
 		} else {
-			sender.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+			sender.sendMessage(this.noPermissionMessage);
 			return false;
 		}
 	}
@@ -104,7 +113,7 @@ public abstract class PKCommand implements SubCommand {
 		if (sender.hasPermission("bending.command." + name + "." + extra)) {
 			return true;
 		} else {
-			sender.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+			sender.sendMessage(this.noPermissionMessage);
 			return false;
 		}
 	}
@@ -139,7 +148,7 @@ public abstract class PKCommand implements SubCommand {
 		if (sender instanceof Player) {
 			return true;
 		} else {
-			sender.sendMessage(ChatColor.RED + "You must be a player to use that command.");
+			sender.sendMessage(this.mustBePlayerMessage);
 			return false;
 		}
 	}

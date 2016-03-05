@@ -731,7 +731,7 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerBendingDeath(EntityBendingDeathEvent event) {
-		if (ConfigManager.deathMsgConfig.get().getBoolean("Properties.Enabled") && event.getEntity() instanceof Player) {
+		if (ConfigManager.languageConfig.get().getBoolean("DeathMessages.Enabled") && event.getEntity() instanceof Player) {
 			Ability ability = event.getAbility();
 			
 			if (ability == null) {
@@ -757,7 +757,7 @@ public class PKListener implements Listener {
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		if (event.isCancelled()) {
 			return;
-		} else if (!plugin.getConfig().getBoolean("Properties.Chat.Enable")) {
+		} else if (!ConfigManager.languageConfig.get().getBoolean("Chat.Enable")) {
 			return;
 		}
 
@@ -770,7 +770,7 @@ public class PKListener implements Listener {
 		}
 
 		if (player.hasPermission("bending.avatar") || bPlayer.getElements().size() > 1) {
-			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
+			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Colors.Avatar"));
 		} else {
 			for (Element element : Element.getMainElements()) {
 				if (bPlayer.hasElement(element)) {
@@ -780,7 +780,7 @@ public class PKListener implements Listener {
 			}
 		}
 
-		String format = plugin.getConfig().getString("Properties.Chat.Format");
+		String format = ConfigManager.languageConfig.get().getString("Chat.Format");
 		format = format.replace("<message>", "%2$s");
 		format = format.replace("<name>", color + player.getDisplayName() + ChatColor.RESET);
 		event.setFormat(format);
@@ -1009,7 +1009,7 @@ public class PKListener implements Listener {
 		
 		if (event.getEntity().getKiller() != null) {
 			if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
-				String message = ConfigManager.deathMsgConfig.get().getString("Properties.Default");
+				String message = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
 				String ability = BENDING_PLAYER_DEATH.get(event.getEntity());
 				String tempAbility = ChatColor.stripColor(ability).replaceAll(" ", "");
 				CoreAbility coreAbil = CoreAbility.getAbility(ability);
@@ -1021,22 +1021,22 @@ public class PKListener implements Listener {
 				}
 	
 				if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(event.getEntity()) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
-					if (ConfigManager.deathMsgConfig.get().contains("HorizontalVelocity." + tempAbility)) {
-						message = ConfigManager.deathMsgConfig.get().getString("HorizontalVelocity." + tempAbility);
+					if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath")) {
+						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
 					}
 				} else if (element != null) {
-					if (ConfigManager.deathMsgConfig.get().contains(element.toString() + "." + tempAbility)) {
-						message = ConfigManager.deathMsgConfig.get().getString(element + "." + tempAbility);
-					} else if (ConfigManager.deathMsgConfig.get().contains("Combo." + tempAbility)) {
-						message = ConfigManager.deathMsgConfig.get().getString("Combo." + tempAbility);
+					if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage")) {
+						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".DeathMessage");
+					} else if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage")) {
+						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + ".Combo." + tempAbility + ".DeathMessage");
 					}
 				} else {
 					if (isAvatarAbility) {
-						if (ConfigManager.deathMsgConfig.get().contains("Avatar." + tempAbility)) {
-							message = ConfigManager.deathMsgConfig.get().getString("Avatar." + tempAbility);
+						if (ConfigManager.languageConfig.get().contains("Abilities.Avatar." + tempAbility + ".DeathMessage")) {
+							message = ConfigManager.languageConfig.get().getString("Abilities.Avatar." + tempAbility + ".DeathMessage");
 						}
-					} else if (ConfigManager.deathMsgConfig.get().contains("Combo." + tempAbility)) {
-						message = ConfigManager.deathMsgConfig.get().getString("Combo." + tempAbility);
+					} else if (ConfigManager.languageConfig.get().contains("Abilities.Avatar.Combo." + tempAbility + ".DeathMessage")) {
+						message = ConfigManager.languageConfig.get().getString("Abilities.Avatar.Combo." + tempAbility + ".DeathMessage");
 					}
 				}
 				message = message.replace("{victim}", event.getEntity().getName()).replace("{attacker}", event.getEntity().getKiller().getName()).replace("{ability}", ability);

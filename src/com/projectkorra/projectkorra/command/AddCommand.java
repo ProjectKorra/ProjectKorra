@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 
@@ -19,8 +20,22 @@ import java.util.List;
  */
 public class AddCommand extends PKCommand {
 
+	private String playerNotFound;
+	private String invalidElement;
+	private String addedOther;
+	private String added;
+	private String alreadyHasElementOther;
+	private String alreadyHasElement;
+
 	public AddCommand() {
-		super("add", "/bending add <Element> [Player]", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.", new String[] { "add", "a" });
+		super("add", "/bending add <Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Add.Description"), new String[] { "add", "a" });
+		
+		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Add.PlayerNotFound");
+		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Add.InvalidElement");
+		this.addedOther = ConfigManager.languageConfig.get().getString("Commands.Add.Other.SuccessfullyAdded");
+		this.added = ConfigManager.languageConfig.get().getString("Commands.Add.SuccessfullyAdded");
+		this.alreadyHasElementOther = ConfigManager.languageConfig.get().getString("Commands.Add.Other.AlreadyHasElement");
+		this.alreadyHasElement = ConfigManager.languageConfig.get().getString("Commands.Add.AlreadyHasElement");
 	}
 
 	public void execute(CommandSender sender, List<String> args) {
@@ -37,7 +52,7 @@ public class AddCommand extends PKCommand {
 			}
 			Player player = Bukkit.getPlayer(args.get(1));
 			if (player == null) {
-				sender.sendMessage(ChatColor.RED + "That player is not online.");
+				sender.sendMessage(ChatColor.RED + playerNotFound);
 				return;
 			}
 			add(sender, player, Element.fromString(args.get(0).toLowerCase()));
@@ -58,15 +73,15 @@ public class AddCommand extends PKCommand {
 			bPlayer = BendingPlayer.getBendingPlayer(target);
 		}
 		if (bPlayer.isPermaRemoved()) {
-			sender.sendMessage(ChatColor.RED + "That player's bending was permanently removed.");
+			sender.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
 			return;
 		}
 		if (Arrays.asList(Element.getAllElements()).contains(element)) {
 			if (bPlayer.hasElement(element)) {
 				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-					sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + ChatColor.RED + " already has that element!");
+					sender.sendMessage(ChatColor.RED + alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 				} else {
-					sender.sendMessage(ChatColor.RED + "You already have that element!");
+					sender.sendMessage(ChatColor.RED + alreadyHasElement);
 				}
 				return;
 			}
@@ -74,15 +89,15 @@ public class AddCommand extends PKCommand {
 			ChatColor color = element.getColor();
 			
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is also a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + element.getType().getBender() + ".");
+				sender.sendMessage(color + addedOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
 			} else {
-				target.sendMessage(color + "You are also a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + element.getType().getBender() + ".");
+				target.sendMessage(color + added.replace("{element}", element.getName() + element.getType().getBender()));
 			}
 			GeneralMethods.saveElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.ADD));
 			return;
 		} else {
-			sender.sendMessage(ChatColor.RED + "You must specify a valid element.");
+			sender.sendMessage(ChatColor.RED + invalidElement);
 		}
 	}
 	

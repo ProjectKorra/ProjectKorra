@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.storage.DBConnection;
 
 import org.bukkit.Bukkit;
@@ -30,9 +31,20 @@ public class ImportCommand extends PKCommand {
 
 	boolean debugEnabled = ProjectKorra.plugin.getConfig().getBoolean("debug");
 	BukkitTask importTask;
+	private String disabled;
+	private String preparingData;
+	private String importStarted;
+	private String debugWarning;
+	private String queuedUp;
 
 	public ImportCommand() {
-		super("import", "/bending import", "This command will import your old bendingPlayers.yml from the Bending plugin. It will generate a convert.yml file to convert the data to be used with this plugin. You can delete the file once the complete message is displayed. This command should only be used ONCE.", new String[] { "import", "i" });
+		super("import", "/bending import", ConfigManager.languageConfig.get().getString("Commands.Import.Description"), new String[] { "import", "i" });
+		
+		this.disabled = ConfigManager.languageConfig.get().getString("Commands.Import.Description");
+		this.preparingData = ConfigManager.languageConfig.get().getString("Commands.Import.PreparingData");
+		this.importStarted = ConfigManager.languageConfig.get().getString("Commands.Import.ImportStarted");
+		this.debugWarning = ConfigManager.languageConfig.get().getString("Commands.Import.DebugWarning");
+		this.queuedUp = ConfigManager.languageConfig.get().getString("Commands.Import.DataQueuedUp");
 	}
 
 	@Override
@@ -40,11 +52,11 @@ public class ImportCommand extends PKCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 0)) {
 			return;
 		} else if (!GeneralMethods.isImportEnabled()) {
-			sender.sendMessage(ChatColor.RED + "Importing has been disabled in the config");
+			sender.sendMessage(ChatColor.RED + this.disabled);
 			return;
 		}
 
-		sender.sendMessage(ChatColor.GREEN + "Preparing data for import.");
+		sender.sendMessage(ChatColor.GREEN + this.preparingData);
 		File bendingPlayersFile = new File(".", "converted.yml");
 		FileConfiguration bendingPlayers = YamlConfiguration.loadConfiguration(bendingPlayersFile);
 
@@ -72,21 +84,21 @@ public class ImportCommand extends PKCommand {
 
 		final CommandSender s = sender;
 		final int total = bPlayers.size();
-		sender.sendMessage(ChatColor.GREEN + "Import of data started. Do NOT stop / reload your server.");
+		sender.sendMessage(ChatColor.GREEN + this.importStarted);
 		if (debugEnabled) {
-			sender.sendMessage(ChatColor.RED + "Console will print out all of the players that are imported if debug mode is enabled as they import.");
+			sender.sendMessage(ChatColor.RED + this.debugWarning);
 		}
 		importTask = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(ProjectKorra.plugin, new Runnable() {
 			public void run() {
 				int i = 0;
 				if (i >= 10) {
-					s.sendMessage(ChatColor.GREEN + "10 / " + total + " players converted thus far!");
+					s.sendMessage(ChatColor.GREEN + "10 / " + total + "!");
 					return;
 				}
 
 				while (i < 10) {
 					if (bPlayers.isEmpty()) {
-						s.sendMessage(ChatColor.GREEN + "All data has been queued up, please allow up to 5 minutes for the data to complete, then reboot your server.");
+						s.sendMessage(ChatColor.GREEN + queuedUp);
 						Bukkit.getServer().getScheduler().cancelTask(importTask.getTaskId());
 						ProjectKorra.plugin.getConfig().set("Properties.ImportEnabled", false);
 						ProjectKorra.plugin.saveConfig();
@@ -132,7 +144,7 @@ public class ImportCommand extends PKCommand {
 					}
 					i++;
 					if (debugEnabled) {
-						System.out.println("[ProjectKorra] Successfully imported " + bPlayer.getName() + ". " + bPlayers.size() + " players left to import.");
+						System.out.println("[ProjectKorra] Successfully imported " + bPlayer.getName() + ". " + bPlayers.size() + " players left to import."); // not configurable because it's internal
 					}
 				}
 			}

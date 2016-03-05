@@ -3,6 +3,8 @@ package com.projectkorra.projectkorra.command;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+
 import java.util.List;
 
 /**
@@ -11,7 +13,7 @@ import java.util.List;
 public class InvincibleCommand extends PKCommand {
 
 	public InvincibleCommand() {
-		super("invincible", "/bending invincible", "This command will make you impervious to all Bending damage. Once you use this command, you will stay invincible until you log off or use this command again.", new String[] { "invincible", "inv" });
+		super("invincible", "/bending invincible", ConfigManager.languageConfig.get().getString("Commands.Invincible.Description"), new String[] { "invincible", "inv" });
 
 	}
 
@@ -23,10 +25,10 @@ public class InvincibleCommand extends PKCommand {
 
 		if (!Commands.invincible.contains(sender.getName())) {
 			Commands.invincible.add(sender.getName());
-			sender.sendMessage(ChatColor.GREEN + "You are now invincible to all bending damage and effects. Use this command again to disable this.");
+			sender.sendMessage(ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOn"));
 		} else {
 			Commands.invincible.remove(sender.getName());
-			sender.sendMessage(ChatColor.RED + "You are no longer invincible to all bending damage and effects.");
+			sender.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOff"));
 		}
 	}
 
