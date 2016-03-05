@@ -8,19 +8,16 @@ import java.util.ArrayList;
 public class ConfigManager {
 
 	public static Config presetConfig;
-	public static Config deathMsgConfig;
 	public static Config defaultConfig;
 	public static Config languageConfig;
 	
 	public ConfigManager() {
 		presetConfig = new Config(new File("presets.yml"));
-		deathMsgConfig = new Config(new File("deathmessages.yml"));
 		defaultConfig = new Config(new File("config.yml"));
 		languageConfig = new Config(new File("language.yml"));
 		configCheck(ConfigType.DEFAULT);
 		configCheck(ConfigType.LANGUAGE);
 		configCheck(ConfigType.PRESETS);
-		configCheck(ConfigType.DEATH_MESSAGE);
 	}
 
 	public static void configCheck(ConfigType type) {
@@ -42,12 +39,6 @@ public class ConfigManager {
 			config.addDefault("Example", abilities);
 
 			presetConfig.save();
-		} else if (type == ConfigType.DEATH_MESSAGE) {
-			config = deathMsgConfig.get();
-			
-			// TODO: remove DeathMessage.yml ?
-			
-			deathMsgConfig.save();
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 			
@@ -62,7 +53,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBubble.Description", "To use, the bender must hold down sneak. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
 			config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. " + "To use, press and hold sneak to charge your burst. " + "Once charged, you can either release sneak to release the burst in a sphere around you " + "or click to launch a cone-shaped burst of air in front of you. " + "Additionally, having this ability selected when you land on the ground from a " + "large enough fall will create a burst of air around you.");
 			config.addDefault("Abilities.Air.AirBurst.DeathMessage", "{victim} was thrown down by {attacker}'s {ability}");
-			config.addDefault("Abilities.Air.AirBurst.HorizontalVelocityDeath","{victim} experienced kinetic damage by {attacker}'s {ability}");
+			config.addDefault("Abilities.Air.AirBurst.HorizontalVelocityDeath", "{victim} experienced kinetic damage by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.AirScooter.Description", "AirScooter is a fast means of transportation. To use, sprint, jump then click with " + "this ability selected. You will hop on a scooter of air and be propelled forward " + "in the direction you're looking (you don't need to press anything). " + "This ability can be used to levitate above liquids, but it cannot go up steep slopes. " + "Any other actions will deactivate this ability.");
 			config.addDefault("Abilities.Air.Tornado.Description", "To use, simply sneak (default: shift). " + "This will create a swirling vortex at the targeted location. " + "Any creature or object caught in the vortex will be launched up " + "and out in some random direction. If another player gets caught " + "in the vortex, the launching effect is minimal. Tornado can " + "also be used to transport the user. If the user gets caught in his/her " + "own tornado, his movements are much more manageable. Provided the user doesn't " + "fall out of the vortex, it will take him to a maximum height and move him in " + "the general direction he's looking. Skilled airbenders can scale anything " + "with this ability.");
 			config.addDefault("Abilities.Air.AirShield.Description", "Air Shield is one of the most powerful defensive techniques in existence. " + "To use, simply sneak (default: shift). " + "This will create a whirlwind of air around the user, " + "with a small pocket of safe space in the center. " + "This wind will deflect all projectiles and will prevent any creature from " + "entering it for as long as its maintained.");
@@ -74,6 +65,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Flight.Description", "Jump in the air, crouch (default: shift) and hold with this ability bound and you will glide around in the direction you look. While flying, click to Hover. Click again to disable Hovering.");
 			config.addDefault("Abilities.Air.Suffocate.Description", "This ability is one of the most dangerous abilities an Airbender possesses. To use, simply look at an entity and hold shift. The entity will begin taking damage as you extract the air from their lungs. Any bender caught in this sphere will only be able to use basic moves, such as AirSwipe, WaterManipulation, FireBlast, or EarthBlast. An entity can be knocked out of the sphere by certain bending arts, and your attention will be disrupted if you are hit by bending.");
 			config.addDefault("Abilities.Air.Suffocate.DeathMessage", "{victim} was asphyxiated by {attacker}'s {ability}");
+			config.addDefault("Abilities.Air.Combo.Twister.Description", "Create a cyclone of air that travels along the ground grabbing nearby entities.");
+			config.addDefault("Abilities.Air.Combo.AirStream.Description", "Control a large stream of air that grabs onto enemies allowing you to direct them temporarily.");
+			config.addDefault("Abilities.Air.Combo.AirSweep.Description", "Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst");
 			config.addDefault("Abilities.Air.Combo.AirSweep.DeathMessage", "{victim} was swept away by {attacker}'s {ability}");
 			
 			config.addDefault("Abilities.Water.Bloodbending.Description", "This ability was made illegal for a reason. With this ability selected, sneak while " + "targetting something and you will bloodbend that target. Bloodbent targets cannot move, " + "bend or attack. You are free to control their actions by looking elsewhere - they will " + "be forced to move in that direction. Additionally, clicking while bloodbending will " + "launch that target off in the direction you're looking. " + "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
@@ -100,8 +94,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterManipulation.Description", "To use, place your cursor over a waterbendable object and tap sneak (default: shift). Smoke will appear where you've selected, indicating the origin of your ability. After you have selected an origin, simply left-click in any direction and you will see your water spout off in that direction, slicing any creature in its path. If you look towards a creature when you use this ability, it will target that creature. A collision from Water Manipulation both knocks the target back and deals some damage. Alternatively, if you have the source selected and tap shift again, you will be able to control the water more directly.");
 			config.addDefault("Abilities.Water.WaterManipulation.DeathMessage", "{victim} was taken down by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.WaterSpout.Description", "This ability provides a Waterbender with a means of transportation. To use, simply left click while in or over water to spout water up beneath you, experiencing controlled levitation. Left clicking again while the spout is active will cause it to disappear. Alternatively, tapping a Waterbendable block while not in Water will select a water block as a source, from there, you can tap sneak (Default:Shift) to channel the Water around you. Releasing the sneak will create a wave allowing you a quick burst of controlled transportation. While riding the wave you may press sneak to cause the wave to disappear.");
+			config.addDefault("Abilities.Water.Combo.IceBullets.Description", "Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
 			config.addDefault("Abilities.Water.Combo.IceBullets.DeathMessage", "{victim}'s heart was frozen by {attacker}'s {ability}");
-			
+			config.addDefault("Abilities.Water.Combo.IceWave.Description", "PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
 			
 			config.addDefault("Abilities.Earth.Catapult.Description", "To use, left-click while looking in the direction you want to be launched. " + "A pillar of earth will jut up from under you and launch you in that direction - " + "if and only if there is enough earth behind where you're looking to launch you. " + "Skillful use of this ability takes much time and work, and it does result in the " + "death of certain gung-ho earthbenders. If you plan to use this ability, be sure " + "you've read about your passive ability you innately have as an earthbender.");
 			config.addDefault("Abilities.Earth.Collapse.Description", " To use, simply left-click on an earthbendable block. " + "That block and the earthbendable blocks above it will be shoved " + "back into the earth below them, if they can. " + "This ability does have the capacity to trap something inside of it, " + "although it is incredibly difficult to do so. " + "Additionally, press sneak with this ability to affect an area around your targetted location - " + "all earth that can be moved downwards will be moved downwards. " + "This ability is especially risky or deadly in caves, depending on the " + "earthbender's goal and technique.");
@@ -141,9 +136,14 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.Lightning.DeathMessage", "{victim} was electrocuted by {attacker}'s {ability}");	
 			config.addDefault("Abilities.Fire.WallOfFire.Description", "To use this ability, click at a location. A wall of fire will appear at this location, igniting enemies caught in it and blocking projectiles.");
 			config.addDefault("Abilities.Fire.WallOfFire.DeathMessage", "{victim} ran into {attacker}'s {ability}");
+			config.addDefault("Abilities.Fire.Combo.FireKick.Description", "A short ranged arc of fire launches from the player's feet dealing moderate damage to enemies.");
 			config.addDefault("Abilities.Fire.Combo.FireKick.DeathMessage", "{victim} was kicked to the floor with flames by {attacker}'s {ability}");
+			config.addDefault("Abilities.Fire.Combo.FireSpin.Description", "A circular array of fire that causes damage and massive knockback to nearby enemies.");
 			config.addDefault("Abilities.Fire.Combo.FireSpin.DeathMessage", "{victim} was caught in {attacker}'s {ability} inferno");
+			config.addDefault("Abilities.Fire.Combo.JetBlaze.Description", "Damages and burns all enemies in the proximity of your FireJet.");
 			config.addDefault("Abilities.Fire.Combo.JetBlaze.DeathMessage", "{victim} was blasted away by {attacker}'s {ability}");
+			config.addDefault("Abilities.Fire.Combo.JetBlast.Description", "Create an explosive blast that propels your FireJet at higher speeds.");
+			config.addDefault("Abilities.Fire.Combo.FireWheel.Description", "A high-speed wheel of fire that travels along the ground for long distances dealing high damage.");
 			config.addDefault("Abilities.Fire.Combo.FireWheel.DeathMessage", "{victim} was incinerated by {attacker}'s {ability}");
 			
 			config.addDefault("Abilities.Chi.AcrobatStance.Description", "AcrobatStance gives a Chiblocker a higher probability of blocking a Bender's Chi while granting them a Speed and Jump Boost. It also increases the rate at which the hunger bar depletes. To use, simply left click. Left clicking again will de-activate the stance.");
@@ -157,6 +157,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.QuickStrike.DeathMessage", "{victim} was struck down by {attacker}'s {ability}");
 			config.addDefault("Abilities.Chi.SwiftKick.Description", "SwiftKick allows a chiblocker to swiftly kick an enemy, potentially blocking their chi. The chiblocker must be in the air to use this ability.");
 			config.addDefault("Abilities.Chi.SwiftKick.DeathMessage", "{victim} was kicked to the floor by {attacker}'s {ability}");
+			config.addDefault("Abilities.Chi.Combo.Immobilize.Description", "Immobilizes the opponent for several seconds.");
 			
 			config.addDefault("Chat.Enable", true);
 			config.addDefault("Chat.Format", "<name>: <message>");
@@ -177,69 +178,74 @@ public class ConfigManager {
 			config.addDefault("Chat.Colors.FireSub", "DARK_RED");
 			config.addDefault("Chat.Colors.Chi", "GOLD");
 			
+			config.addDefault("Commands.NoPermission", "You do not have permission to do that.");
+			config.addDefault("Commands.MustBePlayer", "You must be a player to perform this action.");
+			config.addDefault("Commands.GeneralHelpLines", new String[] {"&c/bending help [Ability/Command] &eDisplay help.", 
+					"&c/bending choose [Element] &eChoose an element.", 
+					"&c/bending bind [Ability] # &eBind an ability."});
+			
 			config.addDefault("Commands.Who.Description", "This command will tell you what element all players that are online are (If you don't specify a player) or give you information about the player that you specify.");
 			config.addDefault("Commands.Who.NoPlayersOnline", "There is no one online.");
 			config.addDefault("Commands.Who.DatabaseOverload", "The database appears to be overloaded. Please try again later.");
 			config.addDefault("Commands.Who.PlayerOffline", "{target} is currently offline. A lookup is currently being done (this might take a few seconds).");
 			
-			config.addDefault("Commands.NoPermission", "You do not have permission to do that.");
-			config.addDefault("Commands.MustBePlayer", "You must be a player to perform this action.");
-			
 			config.addDefault("Commands.Version.Description", "Displays the installed version of ProjectKorra.");
 			
 			config.addDefault("Commands.Toggle.Description", "This command will toggle a player's own Bending on or off. If toggled off, all abilities should stop working until it is toggled back on. Logging off will automatically toggle your Bending back on. If you run the command /bending toggle all, Bending will be turned off for all players and cannot be turned back on until the command is run again.");
-			config.addDefault("Commands.Toggle.All.ToggledOffForAll", "Bending is currently toggled off for all players.");
-			config.addDefault("Commands.Toggle.ToggledOff", "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
 			config.addDefault("Commands.Toggle.ToggledOn", "You have turned your Bending back on.");
-			config.addDefault("Commands.Toggle.All.ToggleOn", "Bending has been toggled back on for all players.");
-			config.addDefault("Commands.Toggle.All.ToggleOff", "Bending has been toggled off for all players.");
+			config.addDefault("Commands.Toggle.ToggledOff", "Your bending has been toggled off. You will not be able to use most abilities until you toggle it back.");
 			config.addDefault("Commands.Toggle.ToggleOnSingleElement", "You have toggled on your {element}.");
 			config.addDefault("Commands.Toggle.ToggleOffSingleElement", "You have toggled off your {element}.");
-			config.addDefault("Commands.Toggle.Other.WrongElement", "{target} doesn't have that element.");
+			config.addDefault("Commands.Toggle.WrongElement", "You do not have that element.");
+			config.addDefault("Commands.Toggle.All.ToggledOffForAll", "Bending is currently toggled off for all players.");
+			config.addDefault("Commands.Toggle.All.ToggleOn", "Bending has been toggled back on for all players.");
+			config.addDefault("Commands.Toggle.All.ToggleOff", "Bending has been toggled off for all players.");
 			config.addDefault("Commands.Toggle.Other.ToggledOnElementConfirm", "You've toggled on {target}'s {element}");
 			config.addDefault("Commands.Toggle.Other.ToggledOffElementConfirm", "You've toggled off {target}'s {element}");
 			config.addDefault("Commands.Toggle.Other.ToggledOnElementByOther", "Your {element} has been toggled on by {sender}.");
 			config.addDefault("Commands.Toggle.Other.ToggledOffElementByOther", "Your {element} has been toggled off by {sender}.");
-			config.addDefault("Commands.Toggle.WrongElement", "You do not have that element.");
 			config.addDefault("Commands.Toggle.Other.PlayerNotFound", "Target is not found.");
+			config.addDefault("Commands.Toggle.Other.WrongElement", "{target} doesn't have that element.");
 			
 			config.addDefault("Commands.Remove.Description", "This command will remove the element of the targeted [Player]. The player will be able to re-pick their element after this command is run on them, assuming their Bending was not permaremoved.");
 			config.addDefault("Commands.Remove.Other.RemovedAllElements", "Your bending has been removed by {sender}.");
-			config.addDefault("Commands.Remove.Other.RemovedAllElementsConfirm", "You've removed {target's} bending.");
+			config.addDefault("Commands.Remove.Other.RemovedAllElementsConfirm", "You've removed {target}'s bending.");
 			config.addDefault("Commands.Remove.Other.RemovedElement", "Your {element} has been removed by {sender}.");
 			config.addDefault("Commands.Remove.Other.RemovedElementConfirm", "{sender} has removed your {element}.");
+			config.addDefault("Commands.Remove.Other.WrongElement", "{target} does not have that element!");
 			config.addDefault("Commands.Remove.RemovedElement", "You've removed your {element}.");
 			config.addDefault("Commands.Remove.InvalidElement", "That element is invalid!");
 			config.addDefault("Commands.Remove.WrongElement", "You do not have that element!");
-			config.addDefault("Commands.Remove.Other.WrongElement", "{target} does not have that element!");
 			config.addDefault("Commands.Remove.PlayerOffline", "That player is offline!");
 			
 			config.addDefault("Commands.Reload.Description", "This command will reload the Bending config file.");
-			config.addDefault("Commands.Reload.SuccesfullyReloaded", "Bending Config reloaded!");
+			config.addDefault("Commands.Reload.SuccessfullyReloaded", "Bending Config reloaded!");
 			
 			config.addDefault("Commands.Preset.Description", "This command manages Presets, which are saved bindings. Use /bending preset list to view your existing presets, use /bending [create|delete] [name] to manage your presets, and use /bending bind [name] to bind an existing preset.");
 			config.addDefault("Commands.Preset.NoPresets", "You do not have any presets.");
 			config.addDefault("Commands.Preset.NoPresetName", "You don't have a preset with that name.");
-			config.addDefault("Commands.Preset.Delete", "You have deleted your '{name}' preset.");
-			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
-			config.addDefault("Commands.Preset.BendingPermanentlyRemoved", "Your bending was permanently removed.");
-			config.addDefault("Commands.Preset.SuccesfullyBound", "Your binds have been set to match the {name} preset.");
-			config.addDefault("Commands.Preset.FailedToBindAll", "Some abilities were not bound because you cannot bend the required element.");
-			config.addDefault("Commands.Preset.Other.BendingPermanentlyRemoved", "That player's bending was permanently removed.");
-			config.addDefault("Commands.Preset.Other.SuccesfullyBoundConfirm", "The bound slots of {target} have been set to match the {name} preset.");
-			config.addDefault("Commands.Preset.PlayerNotFound", "Player not found.");
-			config.addDefault("Commands.Preset.SuccesfullyCopied", "Your binds have been set to match {target}'s binds.");
-			config.addDefault("Commands.Preset.MaxPresets", "You've reached your maximum number of presets.");
-			config.addDefault("Commands.Preset.AlreadyExists", "A preset with that name already exists.");
 			config.addDefault("Commands.Preset.Created", "Created a new preset named '{name}'.");
+			config.addDefault("Commands.Preset.Delete", "You have deleted your '{name}' preset.");
 			config.addDefault("Commands.Preset.Removed", "Your bending has been permanently removed.");
 			config.addDefault("Commands.Preset.RemovedConfirm", "You have permanently removed {target}'s bending.");
+			config.addDefault("Commands.Preset.SuccesfullyBound", "Your binds have been set to match the {name} preset.");
+			config.addDefault("Commands.Preset.SuccesfullyCopied", "Your binds have been set to match {target}'s binds.");
+			config.addDefault("Commands.Preset.FailedToBindAll", "Some abilities were not bound because you cannot bend the required element.");
+			config.addDefault("Commands.Preset.AlreadyExists", "A preset with that name already exists.");
+			config.addDefault("Commands.Preset.BendingPermanentlyRemoved", "Your bending was permanently removed.");
+			config.addDefault("Commands.Preset.PlayerNotFound", "Player not found.");
+			config.addDefault("Commands.Preset.MaxPresets", "You've reached your maximum number of presets.");
 			config.addDefault("Commands.Preset.CantEditBinds", "You can't edit your binds right now!");
+			config.addDefault("Commands.Preset.Other.BendingPermanentlyRemoved", "That player's bending was permanently removed.");
+			config.addDefault("Commands.Preset.Other.SuccesfullyBoundConfirm", "The bound slots of {target} have been set to match the {name} preset.");
+			config.addDefault("Commands.Preset.External.NoPresetName", "No external preset found with that name.");
 			
 			config.addDefault("Commands.PermaRemove.Description", "This command will permanently remove the Bending of the targeted <Player>. Once removed, a player may only receive Bending again if this command is run on them again. This command is typically reserved for administrators.");
 			config.addDefault("Commands.PermaRemove.PlayerOffline", "That player is not online.");
 			config.addDefault("Commands.PermaRemove.Restored", "Your bending has been restored.");
-			config.addDefault("Commands.PermaRemove.RestoredConfirm", "You have restored the bending off {target}.");
+			config.addDefault("Commands.PermaRemove.RestoredConfirm", "You have restored the bending of {target}.");
+			config.addDefault("Commands.PermaRemove.Removed", "Your bending has been permanently removed.");
+			config.addDefault("Commands.PermaRemove.RemovedConfirm", "You have removed the bending of {target}.");
 			
 			config.addDefault("Commands.Invincible.Description", "This command will make you impervious to all Bending damage. Once you use this command, you will stay invincible until you log off or use this command again.");
 			config.addDefault("Commands.Invincible.ToggledOn", "You are now invincible to all bending damage and effects. Use this command again to disable this.");
@@ -273,7 +279,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Display.NoBinds", "You do not have any abilities bound.\nIf you would like to see a list of available abilities, please use the /bending display [Element] command. Use /bending help for more information.");
 			
 			config.addDefault("Commands.Debug.Description", "Outputs information on the current ProjectKorra installation to /plugins/ProjectKorra/debug.txt");
-			config.addDefault("Commands.Debug.SuccesfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
+			config.addDefault("Commands.Debug.SuccessfullyExported", "Debug File Created as debug.txt in the ProjectKorra plugin folder.\nPut contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
 			
 			config.addDefault("Commands.Copy.Description", "This command will allow the user to copy the binds of another player either for himself or assign them to <Player> if specified.");
 			config.addDefault("Commands.Copy.PlayerNotFound", "Couldn't find player.");
@@ -307,12 +313,12 @@ public class ConfigManager {
 			config.addDefault("Commands.Bind.SuccessfullyBound", "Succesfully bound {ability} to slot {slot}.");
 			
 			config.addDefault("Commands.Add.Choose", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
+			config.addDefault("Commands.Add.SuccessfullyAdded", "You are now also a {element}.");
 			config.addDefault("Commands.Add.PlayerNotFound", "That player could not be found.");
 			config.addDefault("Commands.Add.InvalidElement", "You must specify a valid element.");
-			config.addDefault("Commands.Add.SuccessfullyAdded", "You are now also a {element}.");
+			config.addDefault("Commands.Add.AlreadyHasElement", "You already have that element!");
 			config.addDefault("Commands.Add.Other.SuccessfullyAdded", "{target} is now also a {element}.");
 			config.addDefault("Commands.Add.Other.AlreadyHasElement", "{target} already has that element!");
-			config.addDefault("Commands.Add.AlreadyHasElement", "You already have that element!");
 			
 			config.addDefault("Extras.Water.NightMessage", "You feel the strength of the rising moon empowering your waterbending.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");

@@ -27,7 +27,7 @@ public class DebugCommand extends PKCommand {
 		}
 
 		GeneralMethods.runDebug();
-		sender.sendMessage(ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Debug.SuccesfullyExported"));
+		sender.sendMessage(ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Debug.SuccessfullyExported"));
 	}
 
 	/**

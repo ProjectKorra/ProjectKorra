@@ -12,14 +12,11 @@ public class ConfigType {
 	public static final ConfigType DEFAULT = new ConfigType("Default");
 	public static final ConfigType PRESETS = new ConfigType("Presets");
 	public static final ConfigType DEATH_MESSAGE = new ConfigType("DeathMessage");
-<<<<<<< HEAD
+
 	public static final ConfigType LANGUAGE = new ConfigType("Language");
 	public static final ConfigType[] CORE_TYPES = {DEFAULT, PRESETS, DEATH_MESSAGE, LANGUAGE};
 	
-	private static HashMap<String, ConfigType> allTypes = new HashMap<String, ConfigType>();
 	private static List<ConfigType> addonTypes = new ArrayList<ConfigType>();
-=======
->>>>>>> Fix ConfigType
 	
 	private String string;
 	

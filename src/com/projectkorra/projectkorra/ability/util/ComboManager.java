@@ -16,6 +16,7 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.AirCombo;
 import com.projectkorra.projectkorra.chiblocking.ChiCombo;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.waterbending.WaterCombo;
@@ -36,7 +37,7 @@ public class ComboManager {
 		fireKick.add(new AbilityInformation("FireBlast", ClickType.SHIFT_DOWN));
 		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
 		COMBO_ABILITIES.put("FireKick", new ComboAbilityInfo("FireKick", fireKick, FireCombo.class));
-		DESCRIPTIONS.put("FireKick", "A short ranged arc of fire launches from the player's feet dealing moderate damage to enemies.");
+		DESCRIPTIONS.put("FireKick", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireKick.Description"));
 		INSTRUCTIONS.put("FireKick", "FireBlast > FireBlast > (Hold Shift) > FireBlast.");
 
 		ArrayList<AbilityInformation> fireSpin = new ArrayList<>();
@@ -46,7 +47,7 @@ public class ComboManager {
 		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
 		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
 		COMBO_ABILITIES.put("FireSpin", new ComboAbilityInfo("FireSpin", fireSpin, FireCombo.class));
-		DESCRIPTIONS.put("FireSpin", "A circular array of fire that causes damage and massive knockback to nearby enemies.");
+		DESCRIPTIONS.put("FireSpin", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireSpin.Description"));
 		INSTRUCTIONS.put("FireSpin", "FireBlast > FireBlast > FireShield > (Tap Shift).");
 
 		ArrayList<AbilityInformation> jetBlast = new ArrayList<>();
@@ -58,7 +59,7 @@ public class ComboManager {
 		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
 		jetBlast.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
 		COMBO_ABILITIES.put("JetBlast", new ComboAbilityInfo("JetBlast", jetBlast, FireCombo.class));
-		DESCRIPTIONS.put("JetBlast", "Create an explosive blast that propels your FireJet at higher speeds.");
+		DESCRIPTIONS.put("JetBlast", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.JetBlast.Description"));
 		INSTRUCTIONS.put("JetBlast", "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet.");
 
 		ArrayList<AbilityInformation> jetBlaze = new ArrayList<>();
@@ -70,7 +71,7 @@ public class ComboManager {
 		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
 		jetBlaze.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
 		COMBO_ABILITIES.put("JetBlaze", new ComboAbilityInfo("JetBlaze", jetBlaze, FireCombo.class));
-		DESCRIPTIONS.put("JetBlaze", "Damages and burns all enemies in the proximity of your FireJet.");
+		DESCRIPTIONS.put("JetBlaze", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.JetBlaze.Description"));
 		INSTRUCTIONS.put("JetBlaze", "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet.");
 
 		ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
@@ -79,7 +80,7 @@ public class ComboManager {
 		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
 		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
 		COMBO_ABILITIES.put("FireWheel", new ComboAbilityInfo("FireWheel", fireWheel, FireCombo.class));
-		DESCRIPTIONS.put("FireWheel", "A high-speed wheel of fire that travels along the ground for long distances dealing high damage.");
+		DESCRIPTIONS.put("FireWheel", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireWheel.Description"));
 		INSTRUCTIONS.put("FireWheel", "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift.");
 
 		ArrayList<AbilityInformation> twister = new ArrayList<AbilityInformation>();
@@ -88,7 +89,7 @@ public class ComboManager {
 		twister.add(new AbilityInformation("Tornado", ClickType.SHIFT_DOWN));
 		twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
 		COMBO_ABILITIES.put("Twister", new ComboAbilityInfo("Twister", twister, AirCombo.class));
-		DESCRIPTIONS.put("Twister", "Create a cyclone of air that travels along the ground grabbing nearby entities.");
+		DESCRIPTIONS.put("Twister", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.Twister.Description"));
 		INSTRUCTIONS.put("Twister", "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
 
 		ArrayList<AbilityInformation> airStream = new ArrayList<>();
@@ -96,7 +97,7 @@ public class ComboManager {
 		airStream.add(new AbilityInformation("AirSuction", ClickType.LEFT_CLICK));
 		airStream.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
 		COMBO_ABILITIES.put("AirStream", new ComboAbilityInfo("AirStream", airStream, AirCombo.class));
-		DESCRIPTIONS.put("AirStream", "Control a large stream of air that grabs onto enemies allowing you to direct them temporarily.");
+		DESCRIPTIONS.put("AirStream", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.AirStream.Description"));
 		INSTRUCTIONS.put("AirStream", "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
 
 		ArrayList<AbilityInformation> airSweep = new ArrayList<>();
@@ -105,14 +106,14 @@ public class ComboManager {
 		airSweep.add(new AbilityInformation("AirBurst", ClickType.SHIFT_DOWN));
 		airSweep.add(new AbilityInformation("AirBurst", ClickType.LEFT_CLICK));
 		COMBO_ABILITIES.put("AirSweep", new ComboAbilityInfo("AirSweep", airSweep, AirCombo.class));
-		DESCRIPTIONS.put("AirSweep", "Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst");
+		DESCRIPTIONS.put("AirSweep", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.AirSweep.Description"));
 		INSTRUCTIONS.put("AirSweep", "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
 
 		ArrayList<AbilityInformation> iceWave = new ArrayList<>();
 		iceWave.add(new AbilityInformation("WaterSpout", ClickType.SHIFT_UP));
 		iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFT_CLICK));
 		COMBO_ABILITIES.put("IceWave", new ComboAbilityInfo("IceWave", iceWave, WaterCombo.class));
-		DESCRIPTIONS.put("IceWave", "PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
+		DESCRIPTIONS.put("IceWave", ConfigManager.languageConfig.get().getString("Abilities.Water.Combo.IceWave.Description"));
 		INSTRUCTIONS.put("IceWave", "Create a WaterSpout Wave > PhaseChange (Left Click)");
 
 		ArrayList<AbilityInformation> iceBullet = new ArrayList<>();
@@ -120,7 +121,7 @@ public class ComboManager {
 		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_UP));
 		iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFT_DOWN));
 		COMBO_ABILITIES.put("IceBullet", new ComboAbilityInfo("IceBullet", iceBullet, WaterCombo.class));
-		DESCRIPTIONS.put("IceBullet", "Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
+		DESCRIPTIONS.put("IceBullet", ConfigManager.languageConfig.get().getString("Abilities.Water.Combo.IceBullet.Description"));
 		INSTRUCTIONS.put("IceBullet", "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
 
 		ArrayList<AbilityInformation> iceBulletLeft = new ArrayList<>();
@@ -136,7 +137,7 @@ public class ComboManager {
 		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
 		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
 		COMBO_ABILITIES.put("Immobilize", new ComboAbilityInfo("Immobilize", immobilize, ChiCombo.class));
-		DESCRIPTIONS.put("Immobilize", "Immobilizes the opponent for several seconds.");
+		DESCRIPTIONS.put("Immobilize", ConfigManager.languageConfig.get().getString("Abilities.Chi.Combo.Immobilize.Description"));
 		INSTRUCTIONS.put("Immobilize", "QuickStrike (Left Click) > SwiftKick (Left Click) > QuickStrike (Left Click) > QuickStrike (Left Click)");
 		
 		startCleanupTask();

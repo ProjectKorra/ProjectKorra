@@ -23,7 +23,7 @@ public class ReloadCommand extends PKCommand {
 			return;
 		}
 		GeneralMethods.reloadPlugin(sender);
-		sender.sendMessage(ChatColor.AQUA + ConfigManager.languageConfig.get().getString("Commands.Reload.SuccesfullyReloaded"));
+		sender.sendMessage(ChatColor.AQUA + ConfigManager.languageConfig.get().getString("Commands.Reload.SuccessfullyReloaded"));
 	}
 
 }

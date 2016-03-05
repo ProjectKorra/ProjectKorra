@@ -123,11 +123,11 @@ public class ToggleCommand extends PKCommand {
 			ChatColor color = e != null ? e.getColor() : null;
 
 			if (bPlayer.isElementToggled(e)) {
-				sender.sendMessage(color + this.toggledOffOtherElementConfirm.replace("{target}", target.getName()).replace("{element}", e.getName()));
-				target.sendMessage(color + this.toggledOffOtherElement.replace("{element}", e.getName()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName()));
+				sender.sendMessage(color + this.toggledOffOtherElementConfirm.replace("{target}", target.getName()).replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+				target.sendMessage(color + this.toggledOffOtherElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")).replace("{sender}", ChatColor.DARK_AQUA + sender.getName()));
 			} else {
-				sender.sendMessage(color + this.toggledOnOtherElementConfirm.replace("{target}", target.getName()).replace("{element}", e.getName()));
-				target.sendMessage(color + this.toggledOnOtherElement.replace("{element}", e.getName()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName()));
+				sender.sendMessage(color + this.toggledOnOtherElementConfirm.replace("{target}", target.getName()).replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
+				target.sendMessage(color + this.toggledOnOtherElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")).replace("{sender}", ChatColor.DARK_AQUA + sender.getName()));
 			}
 			bPlayer.toggleElement(e);
 		} else {

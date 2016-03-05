@@ -1229,7 +1229,7 @@ public class GeneralMethods {
 		}
 		GeneralMethods.stopBending();
 		ConfigManager.defaultConfig.reload();
-		ConfigManager.deathMsgConfig.reload();
+		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
 		Preset.loadExternalPresets();
 		CoreAbility.registerAbilities();

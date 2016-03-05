@@ -24,12 +24,12 @@ public class RemoveCommand extends PKCommand {
 	
 	public RemoveCommand() {
 		super("remove", "/bending remove <Player> [Element]", ConfigManager.languageConfig.get().getString("Commands.Remove.Description"), new String[] { "remove", "rm" });
-	
+		
+		this.succesfullyRemovedElementSelf = ConfigManager.languageConfig.get().getString("Commands.Remove.RemovedElement");
 		this.succesfullyRemovedAllElementsTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedAllElements");
 		this.succesfullyRemovedAllElementsTargetConfirm = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedAllElementsConfirm");
 		this.succesfullyRemovedElementTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedElement");
 		this.succesfullyRemovedElementTargetConfirm = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedElementConfirm");
-		this.succesfullyRemovedElementSelf = ConfigManager.languageConfig.get().getString("Commands.Remove.RemovedElement");
 		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Remove.InvalidElement");
 		this.wrongElementSelf = ConfigManager.languageConfig.get().getString("Commands.Remove.WrongElement");
 		this.wrongElementTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.WrongElement");
@@ -79,7 +79,7 @@ public class RemoveCommand extends PKCommand {
 			Element e = Element.fromString(args.get(1));
 			if (e != null) {
 				if (!bPlayer.hasElement(e)) {
-					sender.sendMessage(ChatColor.DARK_RED + wrongElementTarget);
+					sender.sendMessage(ChatColor.DARK_RED + wrongElementTarget.replace("{target}", player.getName()));
 					return;
 				}
 				bPlayer.getElements().remove(e);
@@ -94,7 +94,7 @@ public class RemoveCommand extends PKCommand {
 			bPlayer.getElements().clear();
 			GeneralMethods.saveElements(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player.getName());
-			sender.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{sender}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
+			sender.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
 			player.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW));
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.REMOVE));
 		}
