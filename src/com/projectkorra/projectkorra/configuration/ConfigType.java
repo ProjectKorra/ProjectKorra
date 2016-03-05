@@ -11,10 +11,8 @@ public class ConfigType {
 	
 	public static final ConfigType DEFAULT = new ConfigType("Default");
 	public static final ConfigType PRESETS = new ConfigType("Presets");
-	public static final ConfigType DEATH_MESSAGE = new ConfigType("DeathMessage");
-
 	public static final ConfigType LANGUAGE = new ConfigType("Language");
-	public static final ConfigType[] CORE_TYPES = {DEFAULT, PRESETS, DEATH_MESSAGE, LANGUAGE};
+	public static final ConfigType[] CORE_TYPES = {DEFAULT, PRESETS, LANGUAGE};
 	
 	private static List<ConfigType> addonTypes = new ArrayList<ConfigType>();
 	
