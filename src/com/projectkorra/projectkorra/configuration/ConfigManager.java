@@ -284,6 +284,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirScooter.Speed", 0.675);
 			config.addDefault("Abilities.Air.AirScooter.Interval", 100);
 			config.addDefault("Abilities.Air.AirScooter.Radius", 1);
+			config.addDefault("Abilities.Air.AirScooter.Cooldown", 7000);
 			config.addDefault("Abilities.Air.AirScooter.MaxHeightFromGround", 7);
 
 			config.addDefault("Abilities.Air.Tornado.Enabled", true);

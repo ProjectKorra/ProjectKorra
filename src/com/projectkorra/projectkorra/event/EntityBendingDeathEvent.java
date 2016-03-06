@@ -22,10 +22,9 @@ public class EntityBendingDeathEvent extends Event {
 	/**
 	 * Creates a new EntityBendingDeathEvent
 	 * 
-	 * @param victim the player who died
-	 * @param attacker the player who killed the victim
+	 * @param entity the entity who died
 	 * @param damage the amount of damage done in the attack that killed the victim
-	 * @param ability the ability used to kill the victim
+	 * @param ability the ability used to kill the entity
 	 */
 	public EntityBendingDeathEvent(Entity entity, double damage, Ability ability) {
 		this.entity = entity;

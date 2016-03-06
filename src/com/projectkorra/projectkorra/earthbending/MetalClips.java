@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.earthbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -381,7 +382,7 @@ public class MetalClips extends MetalAbility {
 
 						if (System.currentTimeMillis() > time + crushInterval) {
 							time = System.currentTimeMillis();
-							GeneralMethods.damageEntity(this, targetEntity, (crushDamage + (crushDamage * 1.2)));
+							DamageHandler.damageEntity(targetEntity, (crushDamage + (crushDamage * 1.2)), this);
 						}
 					}
 				}
@@ -408,7 +409,7 @@ public class MetalClips extends MetalAbility {
 							TARGET_TO_ABILITY.put(targetEntity, this);
 							formArmor();
 						} else {
-							GeneralMethods.damageEntity(this, e, 5);
+							DamageHandler.damageEntity(e, 5, this);
 							ii.getWorld().dropItem(ii.getLocation(), ii.getItemStack());
 							remove();
 						}

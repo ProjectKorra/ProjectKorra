@@ -27,6 +27,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
 
 public class AirBlast extends AirAbility {
@@ -253,10 +254,10 @@ public class AirBlast extends AirAbility {
 			breakBreathbendingHold(entity);
 
 			if (source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
-				GeneralMethods.damageEntity(this, entity, damage);
+				DamageHandler.damageEntity((LivingEntity) entity, damage, this);
 				affectedEntities.add(entity);
 			} else if (source == null && (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
-				GeneralMethods.damageEntity(this, entity, damage);
+				DamageHandler.damageEntity((LivingEntity) entity, damage, this);
 				affectedEntities.add(entity);
 			}
 		}

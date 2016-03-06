@@ -9,6 +9,7 @@ import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
 import org.bukkit.Location;
@@ -270,7 +271,7 @@ public class EarthBlast extends EarthAbility {
 						if (isMetal(sourceBlock) && bPlayer.canMetalbend()) {
 							damage = getMetalAugment(damage);
 						}
-						GeneralMethods.damageEntity(this, entity, damage);
+						DamageHandler.damageEntity(entity, damage, this);
 						isProgressing = false;
 					}
 				}
