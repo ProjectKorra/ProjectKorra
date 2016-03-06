@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.object.Preset;
 
@@ -215,7 +216,23 @@ public class BendingTabComplete implements TabCompleter {
 					l.add(p.getName());
 				}
 				return getPossibleCompletionsForGivenArgs(args, l);
-			} else if (!PKCommand.instances.keySet().contains(args[0].toLowerCase())) {
+			} else if (GeneralMethods.hasRPG() && (args[0].equalsIgnoreCase("avatar") || args[0].equalsIgnoreCase("av") || args[0].equalsIgnoreCase("avy"))) {
+				if (!sender.hasPermission("bending.command.avatar") || args.length > 2) return new ArrayList<String>();
+				List<String> l = new ArrayList<String>();
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					l.add(p.getName());
+				}
+				return getPossibleCompletionsForGivenArgs(args, l);
+			} else if (GeneralMethods.hasRPG() && (args[0].equalsIgnoreCase("worldevent") || args[0].equalsIgnoreCase("event") || args[0].equalsIgnoreCase("we") || args[0].equalsIgnoreCase("worlde"))) {
+				if (!sender.hasPermission("bending.command.worldevent") || args.length > 3) return new ArrayList<String>();
+				if (args.length == 2) {
+					return getPossibleCompletionsForGivenArgs(args, Arrays.asList(new String[] {"current", "help", "start"}));
+				} else if (args[1].equalsIgnoreCase("start")) {
+					return getPossibleCompletionsForGivenArgs(args, Arrays.asList(new String[] {"FullMoon", "LunarEclipse", "SolarEclipse", "SozinsComet"}));
+				}
+			}
+			
+			else if (!PKCommand.instances.keySet().contains(args[0].toLowerCase())) {
 				return new ArrayList<String>();
 			}
 		} else {
