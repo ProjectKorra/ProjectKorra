@@ -27,6 +27,7 @@ public class DamageHandler {
 	 * @param entity The entity that is receiving the damage
 	 * @param damage The amount of damage to deal
 	 */
+	@SuppressWarnings("deprecation")
 	public static void damageEntity(Entity entity, Player source, double damage, Ability ability) {
 		
 		if (ability == null)
@@ -44,16 +45,16 @@ public class DamageHandler {
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
 					NCPExemptionManager.exemptPermanently(player, CheckType.FIGHT_REACH);
 				}
-
-				boolean wasDead = entity.isDead();
 				
-				((LivingEntity) entity).damage(damage, source);
-				entity.setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
-				
-				if(!wasDead && entity.isDead()) {
+				if(((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {
 					EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, damage, ability);
 					Bukkit.getServer().getPluginManager().callEvent(event);
 				}
+				
+				((LivingEntity) entity).damage(damage, source);
+				
+				System.out.println("calling regular damage");
+				entity.setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
 				
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
 					NCPExemptionManager.unexempt(player);
