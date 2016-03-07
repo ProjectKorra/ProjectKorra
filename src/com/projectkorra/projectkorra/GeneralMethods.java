@@ -202,7 +202,7 @@ public class GeneralMethods {
 			bPlayer.getAbilities().put(slot, ability);
 			
 			if (coreAbil != null) {
-				player.sendMessage(coreAbil.getElement().getColor() + "Succesfully bound " + ability + " to slot " + slot);
+				player.sendMessage(coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
 			}
 			saveAbility(bPlayer, slot, ability);
 		}
@@ -1229,7 +1229,7 @@ public class GeneralMethods {
 		}
 		GeneralMethods.stopBending();
 		ConfigManager.defaultConfig.reload();
-		ConfigManager.deathMsgConfig.reload();
+		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
 		Preset.loadExternalPresets();
 		CoreAbility.registerAbilities();

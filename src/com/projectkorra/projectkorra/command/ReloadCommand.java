@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -13,7 +14,7 @@ import java.util.List;
 public class ReloadCommand extends PKCommand {
 
 	public ReloadCommand() {
-		super("reload", "/bending reload", "This command will reload the Bending config file.", new String[] { "reload", "r" });
+		super("reload", "/bending reload", ConfigManager.languageConfig.get().getString("Commands.Reload.Description"), new String[] { "reload", "r" });
 	}
 
 	@Override
@@ -22,7 +23,7 @@ public class ReloadCommand extends PKCommand {
 			return;
 		}
 		GeneralMethods.reloadPlugin(sender);
-		sender.sendMessage(ChatColor.AQUA + "Bending config reloaded.");
+		sender.sendMessage(ChatColor.AQUA + ConfigManager.languageConfig.get().getString("Commands.Reload.SuccessfullyReloaded"));
 	}
 
 }

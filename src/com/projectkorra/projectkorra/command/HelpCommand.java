@@ -12,13 +12,39 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * Executor for /bending help. Extends {@link PKCommand}.
  */
 public class HelpCommand extends PKCommand {
+	
+	private String required;
+	private String optional;
+	private String properUsage;
+	private String learnMore;
+	private String air;
+	private String water;
+	private String earth;
+	private String fire;
+	private String chi;
+	private String invalidTopic;
+	private String usage;
+
 	public HelpCommand() {
-		super("help", "/bending help [Topic/Page]", "This command provides information on how to use other commands in ProjectKorra.", new String[] { "help", "h" });
+		super("help", "/bending help [Topic/Page]", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
+		
+		this.required = ConfigManager.languageConfig.get().getString("Commands.Help.Required");
+		this.optional = ConfigManager.languageConfig.get().getString("Commands.Help.Optional");
+		this.properUsage = ConfigManager.languageConfig.get().getString("Commands.Help.ProperUsage");
+		this.learnMore = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.LearnMore");
+		this.air = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Air");
+		this.water = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Water");
+		this.earth = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Earth");
+		this.fire = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Fire");
+		this.chi = ConfigManager.languageConfig.get().getString("Commands.Help.Elements.Chi");
+		this.invalidTopic = ConfigManager.languageConfig.get().getString("Commands.Help.InvalidTopic");
+		this.usage = ConfigManager.languageConfig.get().getString("Commands.Help.Usage");
 	}
 
 	@Override
@@ -36,7 +62,7 @@ public class HelpCommand extends PKCommand {
 			Collections.reverse(strings);
 			strings.add(instances.get("help").getProperUse());
 			Collections.reverse(strings);
-			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <required> [optional]", 1, false)) {
+			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <" + required + "> [" + optional + "]", 1, false)) {
 				sender.sendMessage(ChatColor.YELLOW + s);
 			}
 			return;
@@ -48,38 +74,33 @@ public class HelpCommand extends PKCommand {
 			for (PKCommand command : instances.values()) {
 				strings.add(command.getProperUse());
 			}
-			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <required> [optional]", Integer.valueOf(arg), true)) {
+			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <" + required + "> [" + optional + "]", Integer.valueOf(arg), true)) {
 				sender.sendMessage(ChatColor.YELLOW + s);
 			}
 		} else if (instances.keySet().contains(arg.toLowerCase())) {//bending help command
 			instances.get(arg).help(sender, true);
 		} else if (Arrays.asList(Commands.comboaliases).contains(arg)) { //bending help elementcombo
-			sender.sendMessage(ChatColor.GOLD + "Proper Usage: " + ChatColor.RED + "/bending display " + arg + ChatColor.GOLD + " or " + ChatColor.RED + "/bending help <Combo Name>");
+			sender.sendMessage(ChatColor.GOLD + properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Combo Name>" + ChatColor.GOLD));
 		} else if (CoreAbility.getAbility(arg) != null && !(CoreAbility.getAbility(arg) instanceof ComboAbility)) { //bending help ability
 			CoreAbility ability = CoreAbility.getAbility(arg);
 			ChatColor color = ability.getElement().getColor();
 			sender.sendMessage(color + ability.getName() + " - ");
 			sender.sendMessage(color + ability.getDescription());
 		} else if (Arrays.asList(Commands.airaliases).contains(args.get(0))) {
-			sender.sendMessage(Element.AIR.getColor() + "Air is the element of freedom. Airbenders are natural pacifists and " + "great explorers. There is nothing stopping them from scaling the tallest of mountains and walls easily. They specialize in redirection, " + "from blasting things away with gusts of winds, to forming a shield around them to prevent damage. Easy to get across flat terrains, " + "such as oceans, there is practically no terrain off limits to Airbenders. They lack much raw damage output, but make up for it with " + "with their ridiculous amounts of utility and speed.");
-			sender.sendMessage(ChatColor.YELLOW + "Airbenders can chain their abilities into combos, type " + Element.AIR.getColor() + "/b help AirCombos" + ChatColor.YELLOW + " for more information.");
-			sender.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qffg9m3");
+			sender.sendMessage(Element.AIR.getColor() + air.replace("/b help AirCombos", Element.AIR.getSubColor() + "/b help AirCombos" + Element.AIR.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/qffg9m3");
 		} else if (Arrays.asList(Commands.wateraliases).contains(args.get(0))) {
-			sender.sendMessage(Element.WATER.getColor() + "Water is the element of change. Waterbending focuses on using your " + "opponents own force against them. Using redirection and various dodging tactics, you can be made " + "practically untouchable by an opponent. Waterbending provides agility, along with strong offensive " + "skills while in or near water.");
-			sender.sendMessage(ChatColor.YELLOW + "Waterbenders can chain their abilities into combos, type " + Element.WATER.getColor() + "/b help WaterCombos" + ChatColor.YELLOW + " for more information.");
-			sender.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/lod3plv");
+			sender.sendMessage(Element.WATER.getColor() + water.replace("/b help WaterCombos", Element.WATER.getSubColor() + "/b h WaterCombos" + Element.WATER.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/lod3plv");
 		} else if (Arrays.asList(Commands.earthaliases).contains(args.get(0))) {
-			sender.sendMessage(Element.EARTH.getColor() + "Earth is the element of substance. Earthbenders share many of the " + "same fundamental techniques as Waterbenders, but their domain is quite different and more readily " + "accessible. Earthbenders dominate the ground and subterranean, having abilities to pull columns " + "of rock straight up from the earth or drill their way through the mountain. They can also launch " + "themselves through the air using pillars of rock, and will not hurt themselves assuming they land " + "on something they can bend. The more skilled Earthbenders can even bend metal.");
-			//sender.sendMessage(ChatColor.YELLOW + "Earthbenders can chain their abilities into combos, type " + EarthMethods.getEarthColor() + "/b help EarthCombos" + ChatColor.YELLOW + " for more information.");
-			sender.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/qaudl42");
+			sender.sendMessage(Element.EARTH.getColor() + earth);
+			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/qaudl42");
 		} else if (Arrays.asList(Commands.firealiases).contains(args.get(0))) {
-			sender.sendMessage(Element.FIRE.getColor() + "Fire is the element of power. Firebenders focus on destruction and " + "incineration. Their abilities are pretty straight forward: set things on fire. They do have a bit " + "of utility however, being able to make themselves un-ignitable, extinguish large areas, cook food " + "in their hands, extinguish large areas, small bursts of flight, and then comes the abilities to shoot " + "fire from your hands.");
-			sender.sendMessage(ChatColor.YELLOW + "Firebenders can chain their abilities into combos, type " + Element.FIRE.getColor() + "/b help FireCombos" + ChatColor.YELLOW + " for more information.");
-			sender.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/k4fkjhb");
+			sender.sendMessage(Element.FIRE.getColor() + fire.replace("/b h FireCombos", Element.FIRE.getSubColor() + "/b h FireCombos" + Element.FIRE.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/k4fkjhb");
 		} else if (Arrays.asList(Commands.chialiases).contains(args.get(0))) {
-			sender.sendMessage(Element.CHI.getColor() + "Chiblockers focus on bare handed combat, utilizing their agility and " + "speed to stop any bender right in their path. Although they lack the ability to bend any of the " + "other elements, they are great in combat, and a serious threat to any bender. Chiblocking was " + "first shown to be used by Ty Lee in Avatar: The Last Airbender, then later by members of the " + "Equalists in The Legend of Korra.");
-			sender.sendMessage(ChatColor.YELLOW + "Chiblockers can chain their abilities into combos, type " + Element.CHI.getColor() + "/b help ChiCombos" + ChatColor.YELLOW + " for more information.");
-			sender.sendMessage(ChatColor.YELLOW + "Learn More: " + ChatColor.DARK_AQUA + "http://tinyurl.com/mkp9n6y");
+			sender.sendMessage(Element.CHI.getColor() + chi.replace("/b h ChiCombos", Element.CHI.getSubColor() + "/b h ChiCombos" + Element.CHI.getColor()));
+			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/mkp9n6y");
 		} else {
 			//combos - handled differently because they're stored in CamelCase in ComboManager
 			for (String combo : ComboManager.getDescriptions().keySet()) {
@@ -88,11 +109,11 @@ public class HelpCommand extends PKCommand {
 					ChatColor color = coreAbility != null ? coreAbility.getElement().getColor() : null;
 					sender.sendMessage(color + combo + " (Combo) - ");
 					sender.sendMessage(color + ComboManager.getDescriptions().get(combo));
-					sender.sendMessage(ChatColor.GOLD + "Usage: " + ComboManager.getInstructions().get(combo));
+					sender.sendMessage(ChatColor.GOLD + usage + ComboManager.getInstructions().get(combo));
 					return;
 				}
 			}
-			sender.sendMessage(ChatColor.RED + "That isn't a valid help topic. Use /bending help for more information.");
+			sender.sendMessage(ChatColor.RED + invalidTopic);
 		}
 	}
 }

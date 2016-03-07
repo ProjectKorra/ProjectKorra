@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -75,7 +76,9 @@ public class Commands {
 	
 	//Miscellaneous
 	public static String[] commandaliases = { "b", "pk", "projectkorra", "bending", "mtla", "tla", "korra", "bend" };
-
+	
+	private List<String> help;
+	
 	private void init() {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");
 		new AddCommand();
@@ -96,7 +99,9 @@ public class Commands {
 		new ToggleCommand();
 		new VersionCommand();
 		new WhoCommand();
-
+		
+		help = ConfigManager.languageConfig.get().getStringList("Commands.GeneralHelpLines");
+		
 		/**
 		 * Set of all of the Classes which extend Command
 		 */
@@ -111,9 +116,8 @@ public class Commands {
 				}
 
 				if (args.length == 0 && Arrays.asList(commandaliases).contains(label.toLowerCase())) {
-					s.sendMessage(ChatColor.RED + "/bending help [Ability/Command] " + ChatColor.YELLOW + "Display help.");
-					s.sendMessage(ChatColor.RED + "/bending choose [Element] " + ChatColor.YELLOW + "Choose an element.");
-					s.sendMessage(ChatColor.RED + "/bending bind [Ability] # " + ChatColor.YELLOW + "Bind an ability.");
+					for (String line : help)
+						s.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
 					return true;
 				}
 
