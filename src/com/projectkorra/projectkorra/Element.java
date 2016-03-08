@@ -102,12 +102,12 @@ public class Element {
 	}
 	
 	public ChatColor getColor() {
-		String color = ConfigManager.languageConfig.get().getString("Chat.Colors." + name);
+		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name) : plugin.getConfig().getString(name + ".Color");
 		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 	}
 	
 	public ChatColor getSubColor() {
-		String color = ConfigManager.languageConfig.get().getString("Chat.Colors." + name + "Sub");
+		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name + "Sub") : ConfigManager.languageConfig.get().getString(name + "Sub.Color");
 		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 	}
 	
