@@ -22,6 +22,8 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.rpg.RPGMethods;
+import com.projectkorra.spirits.SpiritElement;
+import com.projectkorra.spirits.SpiritPlayer;
 
 /**
  * Executor for /bending who. Extends {@link PKCommand}.
@@ -283,6 +285,15 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(element.getColor() + "" + (bPlayer.isElementToggled(element) ? "" : ChatColor.STRIKETHROUGH) + "- " + element.getName() + (element.getType() != null ? element.getType().getBender() : ""));
 					if (player_ != null) {
 						for (SubElement subelement : Element.getSubElements(element)) {
+							if (GeneralMethods.hasSpirits()) {
+								SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player_);
+								if (subelement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
+									continue;
+								}
+								if (subelement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
+									continue;
+								}
+							}
 							if (bPlayer.canUseSubElement(subelement)) {
 								sender.sendMessage(subelement.getColor() + "    Can " + (!subelement.getType().equals(ElementType.NO_SUFFIX) ? "" : "use ") + subelement.getName() + subelement.getType().getBend());
 							}
