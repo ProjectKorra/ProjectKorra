@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import com.projectkorra.projectkorra.ability.FlightAbility;
 import com.projectkorra.projectkorra.util.Flight;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -116,7 +117,7 @@ public class AirFlight extends FlightAbility {
 			flight.revert();
 		}
 		player.setFlying(false);
-		player.setAllowFlight(false);
+		player.setAllowFlight(player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR);
 	}
 
 	@Override
