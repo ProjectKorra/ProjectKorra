@@ -28,6 +28,8 @@ import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.waterbending.Bloodbending;
+import com.projectkorra.spirits.SpiritElement;
+import com.projectkorra.spirits.SpiritPlayer;
 
 /**
  * Class that presents a player and stores all bending information about the player.
@@ -240,6 +242,17 @@ public class BendingPlayer {
 			SubElement subElement = (SubElement) ability.getElement();
 			if (!hasElement(subElement.getParentElement())) {
 				return false;
+			}
+			if (GeneralMethods.hasSpirits()) {
+				if (GeneralMethods.hasSpirits()) {
+					SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player);
+					if (subElement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
+						return false;
+					}
+					if (subElement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
+						return false;
+					}
+				}
 			}
 		}
 		return true;
