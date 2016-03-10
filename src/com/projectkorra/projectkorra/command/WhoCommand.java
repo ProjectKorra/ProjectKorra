@@ -288,9 +288,12 @@ public class WhoCommand extends PKCommand {
 							if (GeneralMethods.hasSpirits()) {
 								SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player_);
 								if (subelement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
-									continue;
+									sender.sendMessage(subelement.getColor() + "    Is " + sPlayer.getSpirit().getName() + element.getName());
 								}
 								if (subelement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
+									sender.sendMessage(subelement.getColor() + "    Is " + sPlayer.getSpirit().getName() + element.getName());
+								}
+								if (sPlayer.isSpirit()) {
 									continue;
 								}
 							}
