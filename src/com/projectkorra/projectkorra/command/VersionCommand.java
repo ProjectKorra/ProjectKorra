@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -14,7 +15,7 @@ import java.util.List;
 public class VersionCommand extends PKCommand {
 
 	public VersionCommand() {
-		super("version", "/bending version", "Displays the installed version of ProjectKorra.", new String[] { "version", "v" });
+		super("version", "/bending version", ConfigManager.languageConfig.get().getString("Commands.Version.Description"), new String[] { "version", "v" });
 	}
 
 	@Override

@@ -3,6 +3,8 @@ package com.projectkorra.projectkorra;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -100,12 +102,12 @@ public class Element {
 	}
 	
 	public ChatColor getColor() {
-		String color = getPlugin().getConfig().getString("Properties.Chat.Colors." + name);
+		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name) : plugin.getConfig().getString(name + ".Color");
 		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 	}
 	
 	public ChatColor getSubColor() {
-		String color = getPlugin().getConfig().getString("Properties.Chat.Colors." + name + "Sub");
+		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name + "Sub") : ConfigManager.languageConfig.get().getString(name + "Sub.Color");
 		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 	}
 	
@@ -304,7 +306,7 @@ public class Element {
 		
 		@Override
 		public ChatColor getColor() {
-			String color = getPlugin().getConfig().getString("Properties.Chat.Colors." + parentElement.name + "Sub");
+			String color = ConfigManager.languageConfig.get().getString("Chat.Colors." + parentElement.name + "Sub");
 			return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 		}
 		

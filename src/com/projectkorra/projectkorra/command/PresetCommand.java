@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.Preset;
 
 /**
@@ -24,9 +25,39 @@ public class PresetCommand extends PKCommand {
 	private static final String[] deletealiases = { "delete", "d", "del" };
 	private static final String[] listaliases = { "list", "l" };
 	private static final String[] bindaliases = { "bind", "b" };
-
+	
+	private String noPresets;
+	private String noPresetName;
+	private String deletePreset;
+	private String noPresetNameExternal;
+	private String bendingRemoved;
+	private String bound;
+	private String failedToBindAll;
+	private String bendingRemovedOther;
+	private String boundOtherConfirm;
+	private String succesfullyCopied;
+	private String reachedMax;
+	private String alreadyExists;
+	private String createdNewPreset;
+	private String cantEditBinds;
+	
 	public PresetCommand() {
-		super("preset", "/bending preset create|bind|list|delete [name]", "This command manages Presets, which are saved bindings. Use /bending preset list to view your existing presets, use /bending [create|delete] [name] to manage your presets, and use /bending bind [name] to bind an existing preset.", new String[] { "preset", "presets", "pre", "set", "p" });
+		super("preset", "/bending preset create|bind|list|delete [name]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
+		
+		this.noPresets = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresets");
+		this.noPresetName = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresetName");
+		this.deletePreset = ConfigManager.languageConfig.get().getString("Commands.Preset.Delete");
+		this.noPresetNameExternal = ConfigManager.languageConfig.get().getString("Commands.Preset.External.NoPresetName");
+		this.bendingRemoved = ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved");
+		this.bound = ConfigManager.languageConfig.get().getString("Commands.Preset.SuccesfullyBound");
+		this.failedToBindAll = ConfigManager.languageConfig.get().getString("Commands.Preset.FailedToBindAll");
+		this.bendingRemovedOther = ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved");
+		this.boundOtherConfirm = ConfigManager.languageConfig.get().getString("Commands.Preset.Other.SuccesfullyBoundConfirm");
+		this.succesfullyCopied = ConfigManager.languageConfig.get().getString("Commands.Preset.SuccesfullyCopied");
+		this.reachedMax = ConfigManager.languageConfig.get().getString("Commands.Preset.MaxPresets");
+		this.alreadyExists = ConfigManager.languageConfig.get().getString("Commands.Preset.AlreadyExists");
+		this.createdNewPreset = ConfigManager.languageConfig.get().getString("Commands.Preset.Created");
+		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Preset.CantEditBinds");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -35,7 +66,7 @@ public class PresetCommand extends PKCommand {
 		if (!isPlayer(sender) || !correctLength(sender, args.size(), 1, 3)) {
 			return;
 		} else if (MultiAbilityManager.hasMultiAbilityBound((Player) sender)) {
-			sender.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
+			sender.sendMessage(this.cantEditBinds);
 			return;
 		}
 
@@ -54,7 +85,7 @@ public class PresetCommand extends PKCommand {
 				List<String> presetNames = new ArrayList<String>();
 
 				if (presets == null || presets.isEmpty()) {
-					sender.sendMessage(ChatColor.RED + "You don't have any presets.");
+					sender.sendMessage(ChatColor.RED + this.noPresets);
 					return;
 				}
 
@@ -62,7 +93,7 @@ public class PresetCommand extends PKCommand {
 					presetNames.add(preset.getName());
 				}
 
-				sender.sendMessage(ChatColor.GREEN + "Your Presets: " + ChatColor.DARK_AQUA + presetNames.toString());
+				sender.sendMessage(ChatColor.GREEN + "Presets: " + ChatColor.DARK_AQUA + presetNames.toString());
 				return;
 			} else {
 				help(sender, false);
@@ -73,13 +104,13 @@ public class PresetCommand extends PKCommand {
 		String name = args.get(1);
 		if (Arrays.asList(deletealiases).contains(args.get(0)) && hasPermission(sender, "delete")) { //bending preset delete name
 			if (!Preset.presetExists(player, name)) {
-				sender.sendMessage(ChatColor.RED + "You don't have a preset with that name.");
+				sender.sendMessage(ChatColor.RED + this.noPresetName);
 				return;
 			}
 
 			Preset preset = Preset.getPreset(player, name);
 			preset.delete();
-			sender.sendMessage(ChatColor.GREEN + "You have deleted your preset named: " + ChatColor.YELLOW + name);
+			sender.sendMessage(ChatColor.GREEN + this.deletePreset.replace("{name}", ChatColor.YELLOW + preset.getName() + ChatColor.GREEN));
 			return;
 		} else if (Arrays.asList(bindaliases).contains(args.get(0)) && hasPermission(sender, "bind")) { //bending preset bind name
 			if (args.size() < 3) {
@@ -90,23 +121,23 @@ public class PresetCommand extends PKCommand {
 				} else if (Preset.externalPresetExists(name) && hasPermission(sender, "bind.external")) {
 					boundAll = Preset.bindExternalPreset(player, name);
 				} else if (!Preset.externalPresetExists(name) && hasPermission(sender, "bind.external")) {
-					sender.sendMessage(ChatColor.RED + "No external preset with that name exists.");
+					sender.sendMessage(ChatColor.RED + this.noPresetNameExternal);
 					return;
 				} else if (bPlayer.isPermaRemoved()) {
-					player.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
+					player.sendMessage(ChatColor.RED + this.bendingRemoved);
 					return;
 				} else {
-					sender.sendMessage(ChatColor.RED + "You don't have a preset with that name.");
+					sender.sendMessage(ChatColor.RED + this.noPresetName);
 					return;
 				}
 
-				sender.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
+				sender.sendMessage(ChatColor.GREEN + bound.replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN));
 				if (!boundAll) {
-					sender.sendMessage(ChatColor.RED + "Some abilities were not bound because you cannot bend the required element.");
+					sender.sendMessage(ChatColor.RED + this.failedToBindAll);
 				}
 			} else if (hasPermission(sender, "bind.external.assign") && Preset.externalPresetExists(name)) {
 				if (!Preset.externalPresetExists(name)) {
-					sender.sendMessage(ChatColor.RED + "No external preset with that name exists.");
+					sender.sendMessage(ChatColor.RED + this.noPresetNameExternal);
 					return;
 				}
 
@@ -119,23 +150,23 @@ public class PresetCommand extends PKCommand {
 						bPlayer2 = BendingPlayer.getBendingPlayer(player2);
 					}
 					if (bPlayer2.isPermaRemoved()) {
-						player.sendMessage(ChatColor.RED + "That players bending was permanently removed.");
+						player.sendMessage(ChatColor.RED + this.bendingRemovedOther);
 						return;
 					}
 					boolean boundAll = Preset.bindExternalPreset(player2, name);
 
-					sender.sendMessage(ChatColor.GREEN + "The bound slots of " + ChatColor.YELLOW + player2.getName() + ChatColor.GREEN + " have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
-					player2.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match the " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
+					sender.sendMessage(ChatColor.GREEN + this.boundOtherConfirm.replace("{target}", ChatColor.YELLOW + player2.getName() + ChatColor.GREEN).replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN + ChatColor.YELLOW));
+					player2.sendMessage(ChatColor.GREEN + this.bound.replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN));
 					if (!boundAll) {
-						player2.sendMessage(ChatColor.RED + "Some abilities were not bound, either the preset contains invalid abilities or you cannot bend the required elements.");
+						player2.sendMessage(ChatColor.RED + this.failedToBindAll);
 					}
 					return;
 				} else {
-					sender.sendMessage(ChatColor.RED + "Player not found.");
+					sender.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.PlayerNotFound"));
 				}
 			} else if (hasPermission(sender, "bind.assign") && Preset.presetExists(player, name)) {
 				if (!Preset.presetExists(player, name)) {
-					sender.sendMessage(ChatColor.RED + "You don't have a preset with that name.");
+					sender.sendMessage(ChatColor.RED + this.noPresetName);
 					return;
 				}
 
@@ -148,30 +179,30 @@ public class PresetCommand extends PKCommand {
 						bPlayer2 = BendingPlayer.getBendingPlayer(player2);
 					}
 					if (bPlayer2.isPermaRemoved()) {
-						player.sendMessage(ChatColor.RED + "That players bending was permanently removed.");
+						player.sendMessage(ChatColor.RED + this.bendingRemovedOther);
 						return;
 					}
 					Preset preset = Preset.getPreset(player, name);
 					boolean boundAll = Preset.bindPreset(player2, preset);
 
-					sender.sendMessage(ChatColor.GREEN + "The bound slots of " + ChatColor.YELLOW + player2.getName() + ChatColor.GREEN + " have been set to match your " + ChatColor.YELLOW + name + ChatColor.GREEN + " preset.");
-					player2.sendMessage(ChatColor.GREEN + "Your bound slots have been set to match " + ChatColor.YELLOW + player.getName() + "'s " + name + ChatColor.GREEN + " preset.");
+					sender.sendMessage(ChatColor.GREEN + this.boundOtherConfirm.replace("{target}", ChatColor.YELLOW + player2.getName() + ChatColor.GREEN).replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN + ChatColor.YELLOW));
+					player2.sendMessage(ChatColor.GREEN + this.succesfullyCopied.replace("{target}", ChatColor.YELLOW + player.getName() + ChatColor.GREEN));
 					if (!boundAll) {
-						player2.sendMessage(ChatColor.RED + "Some abilities were not bound, either the preset contains invalid abilities or you cannot bend the required elements.");
+						player2.sendMessage(ChatColor.RED + this.failedToBindAll);
 					}
 					return;
 				} else {
-					sender.sendMessage(ChatColor.RED + "Player not found.");
+					sender.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.PlayerNotFound"));
 				}
 			}
 		} else if (Arrays.asList(createaliases).contains(args.get(0)) && hasPermission(sender, "create")) { //bending preset create name
 			int limit = GeneralMethods.getMaxPresets(player);
 
 			if (Preset.presets.get(player) != null && Preset.presets.get(player).size() >= limit) {
-				sender.sendMessage(ChatColor.RED + "You have reached your max number of Presets.");
+				sender.sendMessage(ChatColor.RED + this.reachedMax);
 				return;
 			} else if (Preset.presetExists(player, name)) {
-				sender.sendMessage(ChatColor.RED + "A preset with that name already exists.");
+				sender.sendMessage(ChatColor.RED + this.alreadyExists);
 				return;
 			}
 
@@ -182,7 +213,7 @@ public class PresetCommand extends PKCommand {
 
 			Preset preset = new Preset(player.getUniqueId(), name, abilities);
 			preset.save(player);
-			sender.sendMessage(ChatColor.GREEN + "Created preset with the name: " + ChatColor.YELLOW + name);
+			sender.sendMessage(ChatColor.GREEN + this.createdNewPreset.replace("{name}", ChatColor.YELLOW + name + ChatColor.GREEN));
 		} else {
 			help(sender, false);
 		}

@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -12,8 +13,18 @@ import java.util.List;
  */
 public class CheckCommand extends PKCommand {
 
+	private String newVersionAvailable;
+	private String curVersion;
+	private String newVersion;
+	private String upToDate;
+
 	public CheckCommand() {
-		super("check", "/bending check", "Checks if ProjectKorra is up to date.", new String[] { "check", "chk" });
+		super("check", "/bending check", ConfigManager.languageConfig.get().getString("Commands.Check.Description"), new String[] { "check", "chk" });
+		
+		this.newVersionAvailable = ConfigManager.languageConfig.get().getString("Commands.Check.NewVersionAvailable");
+		this.curVersion = ConfigManager.languageConfig.get().getString("Commands.Check.CurrentVersion");
+		this.newVersion = ConfigManager.languageConfig.get().getString("Commands.Check.LatestVersion");
+		this.upToDate = ConfigManager.languageConfig.get().getString("Commands.Check.UpToDate");
 	}
 
 	@Override
@@ -25,11 +36,11 @@ public class CheckCommand extends PKCommand {
 			return;
 		}
 		if (ProjectKorra.plugin.updater.updateAvailable()) {
-			sender.sendMessage(ChatColor.GREEN + "There is a new version of " + ChatColor.GOLD + "ProjectKorra" + ChatColor.GREEN + " available!");
-			sender.sendMessage(ChatColor.YELLOW + "Current version: " + ChatColor.RED + ProjectKorra.plugin.updater.getCurrentVersion());
-			sender.sendMessage(ChatColor.YELLOW + "Latest version: " + ChatColor.GOLD + ProjectKorra.plugin.updater.getUpdateVersion());
+			sender.sendMessage(ChatColor.GREEN + this.newVersionAvailable.replace("ProjectKorra", ChatColor.GOLD + "ProjectKorra" + ChatColor.GREEN));
+			sender.sendMessage(ChatColor.YELLOW + this.curVersion.replace("{version}", ChatColor.RED + ProjectKorra.plugin.updater.getCurrentVersion() + ChatColor.YELLOW));
+			sender.sendMessage(ChatColor.YELLOW + this.newVersion.replace("{version}", ChatColor.GOLD + ProjectKorra.plugin.updater.getUpdateVersion() + ChatColor.YELLOW));
 		} else {
-			sender.sendMessage(ChatColor.YELLOW + "You have the latest version of " + ChatColor.GOLD + "ProjectKorra");
+			sender.sendMessage(ChatColor.YELLOW + this.upToDate.replace("ProjectKorra", ChatColor.GOLD + "ProjectKorra" + ChatColor.YELLOW));
 		}
 	}
 

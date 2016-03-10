@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 
@@ -20,8 +21,18 @@ import java.util.List;
  */
 public class ChooseCommand extends PKCommand {
 
+	private String invalidElement;
+	private String playerNotFound;
+	private String chosen;
+	private String chosenOther;
+
 	public ChooseCommand() {
-		super("choose", "/bending choose <Element> [Player]", "This command will allow the user to choose a player either for himself or <Player> if specified. This command can only be used once per player unless they have permission to rechoose their element.", new String[] { "choose", "ch" });
+		super("choose", "/bending choose <Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Choose.Description"), new String[] { "choose", "ch" });
+		
+		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Choose.PlayerNotFound");
+		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Choose.InvalidElement");
+		this.chosen = ConfigManager.languageConfig.get().getString("Commands.Choose.SuccessfullyChosen");
+		this.chosenOther = ConfigManager.languageConfig.get().getString("Commands.Choose.Other.SuccessfullyChosen");
 	}
 
 	@Override
@@ -39,12 +50,12 @@ public class ChooseCommand extends PKCommand {
 				bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			}
 			if (bPlayer.isPermaRemoved()) {
-				sender.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
+				sender.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
 				return;
 			}
 
 			if (!bPlayer.getElements().isEmpty() && !sender.hasPermission("bending.command.rechoose")) {
-				sender.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+				sender.sendMessage(super.noPermissionMessage);
 				return;
 			}
 			String element = args.get(0).toLowerCase();
@@ -56,17 +67,17 @@ public class ChooseCommand extends PKCommand {
 				add(sender, (Player) sender, target);
 				return;
 			} else {
-				sender.sendMessage(ChatColor.RED + "That is not a valid element.");
+				sender.sendMessage(ChatColor.RED + invalidElement);
 				return;
 			}
 		} else if (args.size() == 2) {
 			if (!sender.hasPermission("bending.admin.choose")) {
-				sender.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+				sender.sendMessage(super.noPermissionMessage);
 				return;
 			}
 			Player target = ProjectKorra.plugin.getServer().getPlayer(args.get(1));
 			if (target == null || !target.isOnline()) {
-				sender.sendMessage(ChatColor.RED + "That player is not online.");
+				sender.sendMessage(ChatColor.RED + playerNotFound);
 				return;
 			}
 			String element = args.get(0).toLowerCase();
@@ -75,7 +86,7 @@ public class ChooseCommand extends PKCommand {
 				add(sender, target, targetElement);
 				return;
 			} else {
-				sender.sendMessage(ChatColor.RED + "That is not a valid element.");
+				sender.sendMessage(ChatColor.RED + invalidElement);
 			}
 		}
 	}
@@ -97,9 +108,9 @@ public class ChooseCommand extends PKCommand {
 		bPlayer.setElement(element);
 		ChatColor color = element != null ? element.getColor() : null;
 		if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-			sender.sendMessage(ChatColor.DARK_AQUA + target.getName() + color + " is now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + element.getType().getBender() + ".");
+			sender.sendMessage(color + chosenOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
 		} else {
-			target.sendMessage(color + "You are now a" + (isVowel(element.getName().charAt(0)) ? "n " : " ") + element.getName() + element.getType().getBender() + ".");
+			target.sendMessage(color + chosen.replace("{element}", element.getName() + element.getType().getBender()));
 		}
 		
 		

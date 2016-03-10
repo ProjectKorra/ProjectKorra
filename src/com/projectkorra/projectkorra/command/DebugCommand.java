@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -13,7 +14,7 @@ import java.util.List;
 public class DebugCommand extends PKCommand {
 
 	public DebugCommand() {
-		super("debug", "/bending debug", "Outputs information on the current ProjectKorra installation to /plugins/ProjectKorra/debug.txt", new String[] { "debug", "de" });
+		super("debug", "/bending debug", ConfigManager.languageConfig.get().getString("Commands.Debug.Description"), new String[] { "debug", "de" });
 	}
 
 	@Override
@@ -26,8 +27,7 @@ public class DebugCommand extends PKCommand {
 		}
 
 		GeneralMethods.runDebug();
-		sender.sendMessage(ChatColor.GREEN + "Debug File Created as debug.txt in the ProjectKorra plugin folder.");
-		sender.sendMessage(ChatColor.GREEN + "Put contents on pastie.org and create a bug report  on the ProjectKorra forum if you need to.");
+		sender.sendMessage(ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Debug.SuccessfullyExported"));
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class DebugCommand extends PKCommand {
 	@Override
 	public boolean hasPermission(CommandSender sender) {
 		if (!sender.hasPermission("bending.admin." + getName())) {
-			sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+			sender.sendMessage(super.noPermissionMessage);
 			return false;
 		}
 		return true;

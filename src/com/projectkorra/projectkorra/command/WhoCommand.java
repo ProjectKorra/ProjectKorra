@@ -1,13 +1,10 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.Element.ElementType;
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.rpg.RPGMethods;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,11 +13,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.ElementType;
+import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.rpg.RPGMethods;
 
 /**
  * Executor for /bending who. Extends {@link PKCommand}.
@@ -29,11 +30,17 @@ public class WhoCommand extends PKCommand {
 	/**
 	 * Map storage of all ProjectKorra staffs' UUIDs and titles
 	 */
-	Map<String, String> staff = new HashMap<String, String>();
-
+	Map<String, String> staff = new HashMap<String, String>(), playerInfoWords = new HashMap<String, String>();
+	
+	private String databaseOverload, noPlayersOnline, playerOffline;
+	
 	public WhoCommand() {
-		super("who", "/bending who [Player/Page]", "This command will tell you what element all players that are online are (If you don't specify a player) or give you information about the player that you specify.", new String[] { "who", "w" });
-
+		super("who", "/bending who [Player/Page]", ConfigManager.languageConfig.get().getString("Commands.Who.Description"), new String[] { "who", "w" });
+		
+		databaseOverload = ConfigManager.languageConfig.get().getString("Commands.Who.DatabaseOverload");
+		noPlayersOnline = ConfigManager.languageConfig.get().getString("Commands.Who.NoPlayersOnline");
+		playerOffline = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerOffline");
+		
 		staff.put("8621211e-283b-46f5-87bc-95a66d68880e", ChatColor.RED + "ProjectKorra Founder"); // MistPhizzle
 
 		staff.put("a197291a-cd78-43bb-aa38-52b7c82bc68c", ChatColor.DARK_PURPLE + "ProjectKorra Lead Developer"); // OmniCypher
@@ -103,7 +110,7 @@ public class WhoCommand extends PKCommand {
 				players.add(result);
 			}
 			if (players.isEmpty()) {
-				sender.sendMessage(ChatColor.RED + "There is no one online.");
+				sender.sendMessage(ChatColor.RED + noPlayersOnline);
 			} else {
 				for (String s : getPage(players, ChatColor.GOLD + "Players:", page, true)) {
 					sender.sendMessage(s);
@@ -129,7 +136,7 @@ public class WhoCommand extends PKCommand {
 			return;
 		}
 		if (!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
-			sender.sendMessage(player.getName() + ChatColor.GRAY + " is currently offline. A lookup is currently being done (this might take a few seconds).");
+			sender.sendMessage(ChatColor.GRAY + playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
 		}
 		
 		Player player_ = (Player) (player.isOnline() ? player : null);
@@ -144,7 +151,7 @@ public class WhoCommand extends PKCommand {
 					final long delay = 200L;
 					while (!BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
 						if (count > 5 * (1000 / delay)) { //After 5 seconds of waiting, tell the user the database is busy and to try again in a few seconds.
-							sender.sendMessage(ChatColor.DARK_RED + "The database appears to busy at the moment. Please wait a few seconds and try again.");
+							sender.sendMessage(ChatColor.DARK_RED + databaseOverload);
 							break;
 						}
 						count++;
@@ -153,7 +160,7 @@ public class WhoCommand extends PKCommand {
 						}
 						catch (InterruptedException e) {
 							e.printStackTrace();
-							sender.sendMessage(ChatColor.DARK_RED + "The database appears to busy at the moment. Please wait a few seconds and try again.");
+							sender.sendMessage(ChatColor.DARK_RED + databaseOverload);
 							break;
 						}
 					}

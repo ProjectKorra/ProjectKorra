@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,8 +16,18 @@ import java.util.List;
 
 public class CopyCommand extends PKCommand {
 	
+	private String playerNotFound;
+	private String copied;
+	private String failedToBindAll;
+	private String copiedOther;
+
 	public CopyCommand() {
-		super("copy", "/bending copy <Player> [Player]", "This command will allow the user to copy the binds of another player either for himself or assign them to <Player> if specified.", new String[] { "copy", "co" });
+		super("copy", "/bending copy <Player> [Player]", ConfigManager.languageConfig.get().getString("Commands.Copy.Description"), new String[] { "copy", "co" });
+		
+		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Copy.PlayerNotFound");
+		this.copied = ConfigManager.languageConfig.get().getString("Commands.Copy.SuccessfullyCopied");
+		this.failedToBindAll = ConfigManager.languageConfig.get().getString("Commands.Copy.FailedToBindAll");
+		this.copiedOther = ConfigManager.languageConfig.get().getString("Commands.Copy.Other.SuccessfullyCopied");
 	}
 
 	@Override
@@ -31,19 +42,19 @@ public class CopyCommand extends PKCommand {
 			Player orig = Bukkit.getPlayer(args.get(0));
 
 			if (orig == null || !orig.isOnline()) {
-				sender.sendMessage(ChatColor.RED + "Player not found.");
+				sender.sendMessage(ChatColor.RED + playerNotFound);
 				return;
 			}
 
 
 			boolean boundAll = assignAbilities(sender, orig, (Player) sender, true);
-			sender.sendMessage(ChatColor.GREEN + "Your bound abilities have been made the same as " + ChatColor.YELLOW + orig.getName());
+			sender.sendMessage(ChatColor.GREEN + copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
 			if (!boundAll) {
-				sender.sendMessage(ChatColor.RED + "Some abilities were not bound because you cannot bend the required element.");
+				sender.sendMessage(ChatColor.RED + failedToBindAll);
 			}
 		} else if (args.size() == 2) {
 			if (!hasPermission(sender, "assign")) {
-				sender.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+				sender.sendMessage(super.noPermissionMessage);
 				return;
 			}
 
@@ -51,15 +62,15 @@ public class CopyCommand extends PKCommand {
 			Player target = ProjectKorra.plugin.getServer().getPlayer(args.get(1));
 
 			if ((orig == null || !orig.isOnline()) || (target == null || !target.isOnline())) {
-				sender.sendMessage(ChatColor.RED + "That player is not online.");
+				sender.sendMessage(ChatColor.RED + playerNotFound);
 				return;
 			}
 
 			boolean boundAll = assignAbilities(sender, orig, target, false);
-			sender.sendMessage(ChatColor.GREEN + "The bound abilities of " + ChatColor.YELLOW + target.getName() + ChatColor.GREEN + " have been been made the same as " + ChatColor.YELLOW + orig.getName());
-			target.sendMessage(ChatColor.GREEN + "Your bound abilities have been made the same as " + ChatColor.YELLOW + orig.getName());
+			sender.sendMessage(ChatColor.GREEN + copiedOther.replace("{target1}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{target2}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+			target.sendMessage(ChatColor.GREEN + copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
 			if (!boundAll) {
-				sender.sendMessage(ChatColor.RED + "Some abilities were not bound because you cannot bend the required element.");
+				sender.sendMessage(ChatColor.RED + failedToBindAll);
 			}
 		}
 	}
@@ -80,9 +91,9 @@ public class CopyCommand extends PKCommand {
 		}
 		if (orig.isPermaRemoved()) {
 			if (self) {
-				player.sendMessage(ChatColor.RED + "Your bending was permanently removed.");
+				player.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
 			} else {
-				sender.sendMessage(ChatColor.RED + "That players bending was permanently removed.");
+				sender.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
 			}
 			return false;
 		}

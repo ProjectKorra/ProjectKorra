@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 
@@ -16,9 +17,21 @@ import java.util.List;
  * Executor for /bending permaremove. Extends {@link PKCommand}.
  */
 public class PermaremoveCommand extends PKCommand {
-
+	
+	private String playerIsOffline;
+	private String restored;
+	private String restoredConfirm;
+	private String removed;
+	private String removedConfirm;
+	
 	public PermaremoveCommand() {
-		super("permaremove", "/bending permaremove [Player]", "This command will permanently remove the Bending of the targeted <Player>. Once removed, a player may only receive Bending again if this command is run on them again. This command is typically reserved for administrators.", new String[] { "permaremove", "premove", "permremove", "pr" });
+		super("permaremove", "/bending permaremove [Player]", ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Description"), new String[] { "permaremove", "premove", "permremove", "pr" });
+	
+		this.playerIsOffline = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.PlayerOffline");
+		this.restored = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Restored");
+		this.restoredConfirm = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.RestoredConfirm");
+		this.removed = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Removed");
+		this.removedConfirm = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.RemovedConfirm");
 	}
 
 	@Override
@@ -42,7 +55,7 @@ public class PermaremoveCommand extends PKCommand {
 	private void permaremove(CommandSender sender, String target) {
 		Player player = Bukkit.getPlayer(target);
 		if (player == null) {
-			sender.sendMessage(ChatColor.RED + "That player is not online.");
+			sender.sendMessage(ChatColor.RED + this.playerIsOffline);
 			return;
 		}
 
@@ -55,18 +68,18 @@ public class PermaremoveCommand extends PKCommand {
 		if (bPlayer.isPermaRemoved()) {
 			bPlayer.setPermaRemoved(false);
 			GeneralMethods.savePermaRemoved(bPlayer);
-			player.sendMessage(ChatColor.GREEN + "Your bending has been restored.");
+			player.sendMessage(ChatColor.GREEN + this.restored);
 			if (!(sender instanceof Player) || sender.getName().equals(target))
-				sender.sendMessage(ChatColor.GREEN + "You have restored the bending of: " + ChatColor.DARK_AQUA + player.getName());
+				sender.sendMessage(ChatColor.GREEN + this.restoredConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN));
 		} else {
 			bPlayer.getElements().clear();
 			GeneralMethods.saveElements(bPlayer);
 			bPlayer.setPermaRemoved(true);
 			GeneralMethods.savePermaRemoved(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player.getName());
-			player.sendMessage(ChatColor.RED + "Your bending has been permanently removed.");
+			player.sendMessage(ChatColor.RED + this.removed);
 			if (!(sender instanceof Player) || sender.getName().equals(target))
-				sender.sendMessage(ChatColor.RED + "You have permenantly removed the bending of: " + ChatColor.DARK_AQUA + player.getName());
+				sender.sendMessage(ChatColor.RED + this.removedConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.RED));
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.PERMAREMOVE));
 		}
 	}
@@ -80,7 +93,7 @@ public class PermaremoveCommand extends PKCommand {
 	@Override
 	public boolean hasPermission(CommandSender sender) {
 		if (!sender.hasPermission("bending.admin.permaremove")) {
-			sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+			sender.sendMessage(super.noPermissionMessage);
 			return false;
 		}
 		return true;

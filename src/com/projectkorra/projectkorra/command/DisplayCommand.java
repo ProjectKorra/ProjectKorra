@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.SubAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -21,8 +22,20 @@ import java.util.List;
  */
 public class DisplayCommand extends PKCommand {
 
+	private String noCombosAvailable;
+	private String invalidArgument;
+	private String playersOnly;
+	private String noAbilitiesAvailable;
+	private String noBinds;
+	
 	public DisplayCommand() {
-		super("display", "/bending display <Element>", "This command will show you all of the elements you have bound if you do not specify an element. If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available abilities of that element installed on the server.", new String[] { "display", "dis", "d" });
+		super("display", "/bending display <Element>", ConfigManager.languageConfig.get().getString("Commands.Display.Description"), new String[] { "display", "dis", "d" });
+		
+		this.noCombosAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoCombosAvailable");
+		this.noAbilitiesAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoAbilitiesAvailable");
+		this.invalidArgument = ConfigManager.languageConfig.get().getString("Commands.Display.InvalidArgument");
+		this.playersOnly = ConfigManager.languageConfig.get().getString("Commands.Display.PlayersOnly");
+		this.noBinds = ConfigManager.languageConfig.get().getString("Commands.Display.NoBinds");
 	}
 
 	@Override
@@ -41,7 +54,7 @@ public class DisplayCommand extends PKCommand {
 				ArrayList<String> combos = ComboManager.getCombosForElement(element);
 
 				if (combos.isEmpty()) {
-					sender.sendMessage(color + "There are no " + element.getName() + " combos available.");
+					sender.sendMessage(color + noCombosAvailable.replace("{element}", element.getName()));
 					return;
 				}
 				for (String comboMove : combos) {
@@ -71,7 +84,7 @@ public class DisplayCommand extends PKCommand {
 			}
 
 			else {
-				StringBuilder elements = new StringBuilder(ChatColor.RED + "Not a valid argument.");
+				StringBuilder elements = new StringBuilder(ChatColor.RED + invalidArgument);
 				elements.append(ChatColor.WHITE + "\nElements: ");
 				for (Element e : Element.getAllElements()) {
 					if (!(e instanceof SubElement)) {
@@ -89,7 +102,7 @@ public class DisplayCommand extends PKCommand {
 		if (args.size() == 0) {
 			//bending display
 			if (!(sender instanceof Player)) {
-				sender.sendMessage(ChatColor.RED + "This command is only usable by players.");
+				sender.sendMessage(ChatColor.RED + playersOnly);
 				return;
 			}
 			displayBinds(sender);
@@ -99,7 +112,7 @@ public class DisplayCommand extends PKCommand {
 	private void displayAvatar(CommandSender sender) {
 		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(Element.AVATAR);
 		if (abilities.isEmpty()) {
-			sender.sendMessage(ChatColor.YELLOW + "There are no " + Element.AVATAR.getColor() + "avatar" + ChatColor.YELLOW + " abilities on this server!");
+			sender.sendMessage(ChatColor.YELLOW + noAbilitiesAvailable.replace("{element}", Element.AVATAR.getColor() + "Avatar" + ChatColor.YELLOW));
 			return;
 		}
 		for (CoreAbility ability : abilities) {
@@ -126,10 +139,10 @@ public class DisplayCommand extends PKCommand {
 		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(element);
 
 		if (abilities.isEmpty()) {
-			sender.sendMessage(ChatColor.RED + "You must select a valid element.");
+			sender.sendMessage(ChatColor.RED + invalidArgument);
 			return;
 		} else if (abilities.isEmpty()) {
-			sender.sendMessage(ChatColor.YELLOW + "There are no " + element + " abilities enabled on the server.");
+			sender.sendMessage(ChatColor.YELLOW + noAbilitiesAvailable.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW));
 		}
 
 		for (CoreAbility ability : abilities) {
@@ -163,7 +176,7 @@ public class DisplayCommand extends PKCommand {
 		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(element);
 
 		if (abilities.isEmpty() && element != null) {
-			sender.sendMessage(ChatColor.YELLOW + "There are no " + element.getColor() + element + ChatColor.YELLOW + " abilities installed!");
+			sender.sendMessage(ChatColor.YELLOW + noAbilitiesAvailable.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW));
 			return;
 		}
 		for (CoreAbility ability : abilities) {
@@ -189,8 +202,7 @@ public class DisplayCommand extends PKCommand {
 		HashMap<Integer, String> abilities = bPlayer.getAbilities();
 
 		if (abilities.isEmpty()) {
-			sender.sendMessage(ChatColor.RED + "You don't have any bound abilities.");
-			sender.sendMessage("If you would like to see a list of available abilities, please use the /bending display [Element] command. Use /bending help for more information.");
+			sender.sendMessage(ChatColor.RED + this.noBinds);
 			return;
 		}
 

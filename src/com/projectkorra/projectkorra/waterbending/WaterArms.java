@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.Lightning;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -74,7 +75,7 @@ public class WaterArms extends WaterAbility {
 		this.maxUses = getConfig().getInt("Abilities.Water.WaterArms.Arms.MaxAlternateUsage");
 		this.cooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldown");
 		this.lightningDamage = getConfig().getDouble("Abilities.Water.WaterArms.Arms.Lightning.Damage");
-		this.sneakMsg = getConfig().getString("Abilities.Water.WaterArms.SneakMessage");
+		this.sneakMsg = ConfigManager.languageConfig.get().getString("Abilities.Water.WaterArms.SneakMessage");
 		this.lengthReduction = 0;
 		this.selectedSlot = 0;
 		this.freezeSlot = 4;

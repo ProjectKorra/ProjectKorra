@@ -533,7 +533,7 @@ public abstract class CoreAbility implements Ability {
 		if (getElement() instanceof SubElement) {
 			elementName = ((SubElement) getElement()).getParentElement().getName();
 		}
-		return getConfig().getString("Abilities." + elementName + "." + getName() + ".Description");
+		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Description");
 	}
 
 	@Override

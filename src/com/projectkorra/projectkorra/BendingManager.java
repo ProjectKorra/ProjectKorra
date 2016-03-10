@@ -11,8 +11,8 @@ import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.rpg.RPGMethods;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -119,23 +119,19 @@ public class BendingManager implements Runnable {
 	}
 
 	public static String getSunriseMessage() {
-		return getConfig().getString("Properties.Fire.DayMessage");
+		return ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Extras.Fire.DayMessage"));
 	}
 
 	public static String getSunsetMessage() {
-		return getConfig().getString("Properties.Fire.NightMessage");
+		return ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Extras.Fire.NightMessage"));
 	}
 
 	public static String getMoonriseMessage() {
-		return getConfig().getString("Properties.Water.NightMessage");
+		return ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Extras.Water.NightMessage"));
 	}
 
 	public static String getMoonsetMessage() {
-		return getConfig().getString("Properties.Water.DayMessage");
-	}
-
-	private static FileConfiguration getConfig() {
-		return ConfigManager.getConfig();
+		return ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Extras.Water.DayMessage"));
 	}
 	
 }
