@@ -851,6 +851,13 @@ public class GeneralMethods {
 		return null;
 	}
 	
+	public static Plugin getSpirits() {
+		if (hasSpirits()) {
+			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraSpirits");
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("unused")
 	public static Entity getTargetedEntity(Player player, double range, List<Entity> avoid) {
 		double longestr = range + 1;
@@ -950,6 +957,10 @@ public class GeneralMethods {
 
 	public static boolean hasRPG() {
 		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") != null;
+	}
+	
+	public static boolean hasSpirits() {
+		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraSpirits") != null;
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
@@ -1332,6 +1343,13 @@ public class GeneralMethods {
 			writeToDebug("====================");
 			writeToDebug("Version: " + getItems().getDescription().getVersion());
 			writeToDebug("Author: " + getItems().getDescription().getAuthors());
+		}
+		if (hasSpirits()) {
+			writeToDebug("");
+			writeToDebug("ProjectKorra (Spirits) Information");
+			writeToDebug("====================");
+			writeToDebug("Version: " + getSpirits().getDescription().getVersion());
+			writeToDebug("Author: " + getSpirits().getDescription().getAuthors());
 		}
 		writeToDebug("");
 		writeToDebug("Ability Information");

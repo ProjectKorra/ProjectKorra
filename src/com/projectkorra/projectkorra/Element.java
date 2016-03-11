@@ -102,12 +102,12 @@ public class Element {
 	}
 	
 	public ChatColor getColor() {
-		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name) : plugin.getConfig().getString(name + ".Color");
+		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name) : plugin.getConfig().getString("Chat.Colors." + name);
 		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 	}
 	
 	public ChatColor getSubColor() {
-		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name + "Sub") : ConfigManager.languageConfig.get().getString(name + "Sub.Color");
+		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name + "Sub") : plugin.getConfig().getString("Chat.Colors." + name + "Sub");
 		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 	}
 	
@@ -306,7 +306,7 @@ public class Element {
 		
 		@Override
 		public ChatColor getColor() {
-			String color = ConfigManager.languageConfig.get().getString("Chat.Colors." + parentElement.name + "Sub");
+			String color = getPlugin().getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + parentElement.name + "Sub") : getPlugin().getConfig().getString("Chat.Colors." + parentElement.name + "Sub");
 			return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 		}
 		
