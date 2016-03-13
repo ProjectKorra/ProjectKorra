@@ -38,8 +38,8 @@ public class MultiAbilityManager {
 	/**
 	 * Sets up a player's binds for a MultiAbility.
 	 * 
-	 * @param player
-	 * @param multiAbility
+	 * @param player Player having the multiability bound
+	 * @param multiAbility MultiAbility being bound
 	 */
 	public static void bindMultiAbility(Player player, String multiAbility) {
 		BindChangeEvent event = new BindChangeEvent(player, multiAbility, true);

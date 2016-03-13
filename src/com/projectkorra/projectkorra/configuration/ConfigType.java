@@ -14,8 +14,6 @@ public class ConfigType {
 	public static final ConfigType LANGUAGE = new ConfigType("Language");
 	public static final ConfigType[] CORE_TYPES = {DEFAULT, PRESETS, LANGUAGE};
 	
-	private static List<ConfigType> addonTypes = new ArrayList<ConfigType>();
-	
 	private String string;
 	
 	public ConfigType(String string) {

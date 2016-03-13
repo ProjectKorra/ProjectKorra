@@ -2,11 +2,13 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
+import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,7 +29,7 @@ public class ChooseCommand extends PKCommand {
 	private String chosenOther;
 
 	public ChooseCommand() {
-		super("choose", "/bending choose <Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Choose.Description"), new String[] { "choose", "ch" });
+		super("choose", "/bending choose <Element/SubElement> [Player]", ConfigManager.languageConfig.get().getString("Commands.Choose.Description"), new String[] { "choose", "ch" });
 		
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Choose.PlayerNotFound");
 		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Choose.InvalidElement");
@@ -66,6 +68,12 @@ public class ChooseCommand extends PKCommand {
 				}
 				add(sender, (Player) sender, target);
 				return;
+			} else if (Arrays.asList(Element.getAllSubElements()).contains(target)) {
+				SubElement sub = (SubElement) target;
+				if (!hasPermission(sender, sub.getName())) {
+					return;
+				}
+				add(sender, (Player) sender, sub);
 			} else {
 				sender.sendMessage(ChatColor.RED + invalidElement);
 				return;
@@ -104,20 +112,33 @@ public class ChooseCommand extends PKCommand {
 		if (bPlayer == null) {
 			return;
 		}
-		
-		bPlayer.setElement(element);
-		ChatColor color = element != null ? element.getColor() : null;
-		if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-			sender.sendMessage(color + chosenOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
+		if (element instanceof SubElement) {
+			SubElement sub = (SubElement) element;
+			bPlayer.addSubElement(sub);
+			ChatColor color = sub != null ? sub.getColor() : ChatColor.WHITE;
+			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+				sender.sendMessage(color + chosenOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+			} else {
+				target.sendMessage(color + chosen.replace("{element}", sub.getName() + sub.getType().getBender()));
+			}
+			GeneralMethods.saveSubElements(bPlayer);
+			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.CHOOSE));
 		} else {
-			target.sendMessage(color + chosen.replace("{element}", element.getName() + element.getType().getBender()));
+			bPlayer.setElement(element);
+			ChatColor color = element != null ? element.getColor() : ChatColor.WHITE;
+			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
+				sender.sendMessage(color + chosenOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
+			} else {
+				target.sendMessage(color + chosen.replace("{element}", element.getName() + element.getType().getBender()));
+			}
+			GeneralMethods.saveElements(bPlayer);
+			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 		}
 		
 		
-		
 		GeneralMethods.removeUnusableAbilities(target.getName());
-		GeneralMethods.saveElements(bPlayer);
-		Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
+		
+		
 	}
 	
 	public static boolean isVowel(char c) {

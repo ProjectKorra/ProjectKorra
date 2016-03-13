@@ -1,7 +1,5 @@
 package com.projectkorra.projectkorra;
 
-import fr.neatmonster.nocheatplus.checks.CheckType;
-import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
@@ -29,6 +27,7 @@ import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWar;
 import com.palmergames.bukkit.towny.war.flagwar.TownyWarConfig;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -45,14 +44,11 @@ import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
-import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
-import com.projectkorra.projectkorra.event.AbilityDamageEntityEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
 import com.projectkorra.projectkorra.event.BindChangeEvent;
-import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.firebending.Combustion;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireCombo;
@@ -60,7 +56,6 @@ import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
-import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -86,8 +81,6 @@ import org.bukkit.entity.FallingSand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -170,10 +163,7 @@ public class GeneralMethods {
 	 */
 	public static void bindAbility(Player player, String ability) {
 		int slot = player.getInventory().getHeldItemSlot() + 1;
-		BindChangeEvent event = new BindChangeEvent(player, ability, slot, true);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-		if(!event.isCancelled())
-			bindAbility(player, ability, slot);
+		bindAbility(player, ability, slot);
 	}
 
 	/**
@@ -190,22 +180,18 @@ public class GeneralMethods {
 			return;
 		}
 
-		BindChangeEvent event = new BindChangeEvent(player, ability, slot, true);
-		Bukkit.getServer().getPluginManager().callEvent(event);
-		if(!event.isCancelled()) {
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player.getName());
-			CoreAbility coreAbil = CoreAbility.getAbility(ability);
-			
-			if (bPlayer == null) {
-				return;
-			}
-			bPlayer.getAbilities().put(slot, ability);
-			
-			if (coreAbil != null) {
-				player.sendMessage(coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
-			}
-			saveAbility(bPlayer, slot, ability);
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player.getName());
+		CoreAbility coreAbil = CoreAbility.getAbility(ability);
+		
+		if (bPlayer == null) {
+			return;
 		}
+		bPlayer.getAbilities().put(slot, ability);
+		
+		if (coreAbil != null) {
+			player.sendMessage(coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
+		}
+		saveAbility(bPlayer, slot, ability);
 	}
 
 	/**
@@ -290,7 +276,7 @@ public class GeneralMethods {
 		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
 		try {
 			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
-				new BendingPlayer(uuid, player, new ArrayList<Element>(), new HashMap<Integer, String>(), false);
+				new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
 				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player) VALUES ('" + uuid.toString() + "', '" + player + "')");
 				ProjectKorra.log.info("Created new BendingPlayer for " + player);
 			} else {
@@ -301,7 +287,7 @@ public class GeneralMethods {
 					// They have changed names.
 					ProjectKorra.log.info("Updating Player Name for " + player);
 				}
-
+				String subelement = rs2.getString("subelement");
 				String element = rs2.getString("element");
 				String permaremoved = rs2.getString("permaremoved");
 				boolean p = false;
@@ -334,6 +320,53 @@ public class GeneralMethods {
 						}
 					}
 				}
+				final ArrayList<SubElement> subelements = new ArrayList<SubElement>();
+				if (subelement != null) {
+					boolean hasAddon = subelement.contains(";");
+					String[] split = subelement.split(";");
+					if (split[0] != null) {
+						if (split[0].contains("m")) {
+							subelements.add(Element.METAL);
+						}
+						if (split[0].contains("v")) {
+							subelements.add(Element.LAVA);
+						}
+						if (split[0].contains("s")) {
+							subelements.add(Element.SAND);
+						}
+						if (split[0].contains("c")) {
+							subelements.add(Element.COMBUSTION);
+						}
+						if (split[0].contains("l")) {
+							subelements.add(Element.LIGHTNING);
+						}
+						if (split[0].contains("t")) {
+							subelements.add(Element.SPIRITUAL);
+						}
+						if (split[0].contains("f")) {
+							subelements.add(Element.FLIGHT);
+						}
+						if (split[0].contains("i")) {
+							subelements.add(Element.ICE);
+						}
+						if (split[0].contains("h")) {
+							subelements.add(Element.HEALING);
+						}
+						if (split[0].contains("b")) {
+							subelements.add(Element.BLOOD);
+						}
+						if (split[0].contains("p")) {
+							subelements.add(Element.PLANT);
+						}
+						if (hasAddon) {
+							for (String addon : split[split.length - 1].split(",")) {
+								if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
+									subelements.add((SubElement)Element.getElement(addon));
+								}
+							}
+						}
+					}
+				}
 
 				final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
 				for (int i = 1; i <= 9; i++) {
@@ -350,7 +383,7 @@ public class GeneralMethods {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						new BendingPlayer(uuid, player, elements, abilities, boolean_p);
+						new BendingPlayer(uuid, player, elements, subelements, abilities, boolean_p);
 					}
 				}.runTask(ProjectKorra.plugin);
 			}
@@ -1447,7 +1480,12 @@ public class GeneralMethods {
 			return;
 		}
 		String uuid = bPlayer.getUUIDString();
-
+		
+		BindChangeEvent event = new BindChangeEvent(Bukkit.getPlayer(UUID.fromString(uuid)), ability, slot, false);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		if (event.isCancelled()) {
+			return;
+		}
 		//Temp code to block modifications of binds, Should be replaced when bind event is added.
 		if (MultiAbilityManager.playerAbilities.containsKey(Bukkit.getPlayer(bPlayer.getUUID()))) {
 			return;
@@ -1491,6 +1529,61 @@ public class GeneralMethods {
 		}
 
 		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
+	}
+	
+	public static void saveSubElements(BendingPlayer bPlayer) {
+		if (bPlayer == null) {
+			return;
+		}
+		String uuid = bPlayer.getUUIDString();
+		
+		StringBuilder subs = new StringBuilder();
+		if (bPlayer.hasSubElement(Element.METAL)) {
+			subs.append("m");
+		}
+		if (bPlayer.hasSubElement(Element.LAVA)) {
+			subs.append("v");
+		}
+		if (bPlayer.hasSubElement(Element.SAND)) {
+			subs.append("s");
+		}
+		if (bPlayer.hasSubElement(Element.COMBUSTION)) {
+			subs.append("c");
+		}
+		if (bPlayer.hasSubElement(Element.LIGHTNING)) {
+			subs.append("l");
+		}
+		if (bPlayer.hasSubElement(Element.SPIRITUAL)) {
+			subs.append("t");
+		}
+		if (bPlayer.hasSubElement(Element.FLIGHT)) {
+			subs.append("f");
+		}
+		if (bPlayer.hasSubElement(Element.ICE)) {
+			subs.append("i");
+		}
+		if (bPlayer.hasSubElement(Element.HEALING)) {
+			subs.append("h");
+		}
+		if (bPlayer.hasSubElement(Element.BLOOD)) {
+			subs.append("b");
+		}
+		if (bPlayer.hasSubElement(Element.PLANT)) {
+			subs.append("p");
+		}
+		boolean hasAddon = false;
+		for (Element element : bPlayer.getElements()) {
+			if (!(element instanceof SubElement)) continue;
+			if (Arrays.asList(Element.getAddonElements()).contains(element)) {
+				if (!hasAddon) {
+					hasAddon = true;
+					subs.append(";");
+				}
+				subs.append(element.getName() + ",");
+			}
+		}
+		
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs + "' WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void savePermaRemoved(BendingPlayer bPlayer) {

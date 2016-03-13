@@ -200,8 +200,10 @@ public class ConfigManager {
 			config.addDefault("Commands.Add.PlayerNotFound", "That player could not be found.");
 			config.addDefault("Commands.Add.InvalidElement", "You must specify a valid element.");
 			config.addDefault("Commands.Add.AlreadyHasElement", "You already have that element!");
+			config.addDefault("Commands.Add.AlreadyHasSubElement", "You already have that subelement!");
 			config.addDefault("Commands.Add.Other.SuccessfullyAdded", "{target} is now also a {element}.");
 			config.addDefault("Commands.Add.Other.AlreadyHasElement", "{target} already has that element!");
+			config.addDefault("Commands.Add.Other.AlreadyHasSubElement", "{target} already has that subelement!");
 			
 			config.addDefault("DeathMessages.Enabled", true);
 			config.addDefault("DeathMessages.Default", "{victim} was slain by {attacker}'s {ability}");
@@ -1100,6 +1102,7 @@ public class ConfigManager {
 			config.addDefault("Storage.MySQL.pass", "");
 			config.addDefault("Storage.MySQL.db", "minecraft");
 			config.addDefault("Storage.MySQL.user", "root");
+			config.addDefault("Storage.MySQL.SubElementAdded", false);
 
 			config.addDefault("debug", false);
 
