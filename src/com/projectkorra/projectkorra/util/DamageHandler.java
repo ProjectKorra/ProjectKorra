@@ -1,21 +1,19 @@
 package com.projectkorra.projectkorra.util;
 
+import fr.neatmonster.nocheatplus.checks.CheckType;
+import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
+
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.event.AbilityDamageEntityEvent;
+import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ability.Ability;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.event.AbilityDamageEntityEvent;
-import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
-
-import fr.neatmonster.nocheatplus.checks.CheckType;
-import fr.neatmonster.nocheatplus.hooks.NCPExemptionManager;
 
 public class DamageHandler {
 
@@ -53,7 +51,6 @@ public class DamageHandler {
 				
 				((LivingEntity) entity).damage(damage, source);
 				
-				System.out.println("calling regular damage");
 				entity.setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
 				
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {

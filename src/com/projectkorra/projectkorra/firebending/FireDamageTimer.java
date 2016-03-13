@@ -1,14 +1,12 @@
 package com.projectkorra.projectkorra.firebending;
 
-import org.bukkit.Bukkit;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
-import com.projectkorra.projectkorra.util.DamageHandler;
 
 import java.util.concurrent.ConcurrentHashMap;
 

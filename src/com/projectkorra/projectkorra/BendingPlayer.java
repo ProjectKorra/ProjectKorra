@@ -51,6 +51,7 @@ public class BendingPlayer {
 	private String name;
 	private ChiAbility stance;
 	private ArrayList<Element> elements;
+	private ArrayList<SubElement> subelements;
 	private HashMap<Integer, String> abilities;
 	private ConcurrentHashMap<String, Long> cooldowns;
 	private ConcurrentHashMap<Element, Boolean> toggledElements;	
@@ -64,11 +65,12 @@ public class BendingPlayer {
 	 * @param abilities The known abilities
 	 * @param permaRemoved The permanent removed status
 	 */
-	public BendingPlayer(UUID uuid, String playerName, ArrayList<Element> elements, HashMap<Integer, String> abilities,
+	public BendingPlayer(UUID uuid, String playerName, ArrayList<Element> elements, ArrayList<SubElement> subelements, HashMap<Integer, String> abilities,
 			boolean permaRemoved) {
 		this.uuid = uuid;
 		this.name = playerName;
 		this.elements = elements;
+		this.subelements = subelements;
 		this.setAbilities(abilities);
 		this.permaRemoved = permaRemoved;
 		this.player = Bukkit.getPlayer(uuid);
@@ -112,10 +114,19 @@ public class BendingPlayer {
 	/**
 	 * Adds an element to the {@link BendingPlayer}'s known list.
 	 * 
-	 * @param e The element to add
+	 * @param element The element to add.
 	 */
 	public void addElement(Element element) {
 		this.elements.add(element);
+	}
+	
+	/**
+	 * Adds a subelement to the {@link BendingPlayer}'s known list.
+	 * 
+	 * @param subelement The subelement to add.
+	 */
+	public void addSubElement(SubElement subelement) {
+		this.subelements.add(subelement);
 	}
 
 	/**
@@ -264,7 +275,7 @@ public class BendingPlayer {
 	 * @return true If player has permission node "bending.earth.bloodbending"
 	 */
 	public boolean canBloodbend() {
-		return player.hasPermission("bending.water.bloodbending");
+		return subelements.contains(SubElement.BLOOD);
 	}
 	
 	public boolean canBloodbendAtAnytime() {
@@ -272,12 +283,11 @@ public class BendingPlayer {
 	}
 
 	public boolean canCombustionbend() {
-		return player.hasPermission("bending.fire.combustionbending");
+		return subelements.contains(SubElement.COMBUSTION);
 	}
 
 	public boolean canIcebend() {
-		return player.hasPermission("bending.water.icebending");
-
+		return subelements.contains(SubElement.ICE);
 	}
 
 	/**
@@ -287,11 +297,11 @@ public class BendingPlayer {
 	 * @return true If player has permission node "bending.earth.lavabending"
 	 */
 	public boolean canLavabend() {
-		return player.hasPermission("bending.earth.lavabending");
+		return subelements.contains(SubElement.LAVA);
 	}
 
 	public boolean canLightningbend() {
-		return player.hasPermission("bending.fire.lightningbending");
+		return subelements.contains(SubElement.LIGHTNING);
 	}
 
 	/**
@@ -301,11 +311,7 @@ public class BendingPlayer {
 	 * @return true If player has permission node "bending.earth.metalbending"
 	 */
 	public boolean canMetalbend() {
-		return player.hasPermission("bending.earth.metalbending");
-	}
-
-	public boolean canPackedIcebend() {
-		return getConfig().getBoolean("Properties.Water.CanBendPackedIce");
+		return subelements.contains(SubElement.METAL);
 	}
 
 	/**
@@ -315,7 +321,7 @@ public class BendingPlayer {
 	 * @return true If player has permission node "bending.ability.plantbending"
 	 */
 	public boolean canPlantbend() {
-		return player.hasPermission("bending.water.plantbending");
+		return subelements.contains(SubElement.PLANT);
 	}
 
 	/**
@@ -325,7 +331,7 @@ public class BendingPlayer {
 	 * @return true If player has permission node "bending.earth.sandbending"
 	 */
 	public boolean canSandbend() {
-		return player.hasPermission("bending.earth.sandbending");
+		return subelements.contains(SubElement.SAND);
 	}
 
 	/**
@@ -334,7 +340,7 @@ public class BendingPlayer {
 	 * @return true If player has permission node "bending.air.flight"
 	 */
 	public boolean canUseFlight() {
-		return player.hasPermission("bending.air.flight");
+		return subelements.contains(SubElement.FLIGHT);
 	}
 
 	/**
@@ -344,7 +350,7 @@ public class BendingPlayer {
 	 * @return true If player has permission node "bending.air.spiritualprojection"
 	 */
 	public boolean canUseSpiritualProjection() {
-		return player.hasPermission("bending.air.spiritualprojection");
+		return subelements.contains(SubElement.SPIRITUAL);
 	}
 
 	/**
@@ -352,7 +358,7 @@ public class BendingPlayer {
 	 * @return true If player has permission node "bending.water.healing"
 	 */
 	public boolean canWaterHeal() {
-		return player.hasPermission("bending.water.healing");
+		return subelements.contains(SubElement.HEALING);
 	}
 	
 	/**
@@ -361,7 +367,7 @@ public class BendingPlayer {
 	 * @return true If the player has permission to bend that subelement.
 	 */
 	public boolean canUseSubElement(SubElement sub) {
-		return player.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase());
+		return subelements.contains(sub);
 	}
 
 	/**
@@ -484,6 +490,14 @@ public class BendingPlayer {
 			}
 		}
 		return false;
+	}
+	
+	public boolean hasSubElement(SubElement sub) {
+		if (sub == null) {
+			return false;
+		} else {
+			return this.subelements.contains(sub);
+		}
 	}
 
 	public boolean isAvatarState() {

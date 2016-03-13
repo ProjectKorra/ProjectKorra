@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -68,17 +69,26 @@ public class ImportCommand extends PKCommand {
 			@SuppressWarnings("deprecation")
 			UUID uuid = ProjectKorra.plugin.getServer().getOfflinePlayer(playername).getUniqueId();
 			ArrayList<Element> elements = new ArrayList<Element>();
+			ArrayList<SubElement> subs = new ArrayList<SubElement>();
 			List<Integer> bendingTypes = bendingPlayers.getIntegerList(string + ".BendingTypes");
 			boolean permaremoved = bendingPlayers.getBoolean(string + ".Permaremoved");
 			Element[] mainElements = Element.getMainElements();
+			Element[] allElements = Element.getAllElements();
 			
 			for (int i : bendingTypes) {
 				if (i < mainElements.length) {
 					elements.add(mainElements[i]);
 				}
 			}
+			
+			for (Element e : allElements) {
+				if (e instanceof SubElement) {
+					SubElement s = (SubElement) e;
+					subs.add(s);
+				}
+			}
 
-			BendingPlayer bPlayer = new BendingPlayer(uuid, playername, elements, new HashMap<Integer, String>(), permaremoved);
+			BendingPlayer bPlayer = new BendingPlayer(uuid, playername, elements, subs, new HashMap<Integer, String>(), permaremoved);
 			bPlayers.add(bPlayer);
 		}
 
