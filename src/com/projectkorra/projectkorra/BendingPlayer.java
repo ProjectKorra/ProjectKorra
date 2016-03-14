@@ -254,6 +254,9 @@ public class BendingPlayer {
 			if (!hasElement(subElement.getParentElement())) {
 				return false;
 			}
+			if (!hasSubElement(subElement)) {
+				return false;
+			}
 			if (GeneralMethods.hasSpirits()) {
 				if (GeneralMethods.hasSpirits()) {
 					SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player);
@@ -447,6 +450,15 @@ public class BendingPlayer {
 	}
 
 	/**
+	 * Gets the list of subelements the {@link BendingPlayer} knows.
+	 * 
+	 * @return a list of subelements
+	 */
+	public List<SubElement> getSubElements() {
+		return this.subelements;
+	}
+	
+	/**
 	 * Gets the unique identifier of the {@link BendingPlayer}.
 	 * 
 	 * @return the uuid
@@ -498,6 +510,17 @@ public class BendingPlayer {
 		} else {
 			return this.subelements.contains(sub);
 		}
+	}
+	
+	/**
+	 * Returns whether the player has permission to bend the subelement
+	 * @param sub The SubElement
+	 */
+	public boolean hasSubElementPermission(SubElement sub) {
+		if (sub == null) {
+			return false;
+		}
+		return player.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase() + sub.getType().getBending());
 	}
 
 	public boolean isAvatarState() {

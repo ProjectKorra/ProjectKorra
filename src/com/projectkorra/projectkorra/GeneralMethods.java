@@ -321,10 +321,21 @@ public class GeneralMethods {
 					}
 				}
 				final ArrayList<SubElement> subelements = new ArrayList<SubElement>();
+				boolean shouldSave = false;
 				if (subelement != null) {
 					boolean hasAddon = subelement.contains(";");
 					String[] split = subelement.split(";");
-					if (split[0] != null) {
+					if (subelement.equals("-")) {
+						Player playero = Bukkit.getPlayer(uuid);
+						for (SubElement sub : Element.getAllSubElements()) {
+							if (playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase()
+									+ sub.getType().getBending()) && elements.contains(sub.getParentElement())) {
+								subelements.add(sub);
+								shouldSave = true;
+							}
+						}
+					}
+					else if (split[0] != null) {
 						if (split[0].contains("m")) {
 							subelements.add(Element.METAL);
 						}
@@ -380,10 +391,14 @@ public class GeneralMethods {
 				p = (permaremoved != null && (permaremoved.equals("true")));
 
 				final boolean boolean_p = p;
+				final boolean shouldSave_ = shouldSave;
 				new BukkitRunnable() {
 					@Override
 					public void run() {
 						new BendingPlayer(uuid, player, elements, subelements, abilities, boolean_p);
+						if (shouldSave_) {
+							saveSubElements(BendingPlayer.getBendingPlayer(player));
+						}
 					}
 				}.runTask(ProjectKorra.plugin);
 			}

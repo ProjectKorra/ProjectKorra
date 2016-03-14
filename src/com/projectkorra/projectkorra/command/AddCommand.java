@@ -32,7 +32,7 @@ public class AddCommand extends PKCommand {
 	private String alreadyHasSubElement;
 
 	public AddCommand() {
-		super("add", "/bending add <Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Add.Description"), new String[] { "add", "a" });
+		super("add", "/bending add <Element/SubElement> [Player]", ConfigManager.languageConfig.get().getString("Commands.Add.Description"), new String[] { "add", "a" });
 		
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Add.PlayerNotFound");
 		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Add.InvalidElement");
@@ -51,7 +51,7 @@ public class AddCommand extends PKCommand {
 			if (!hasPermission(sender) || !isPlayer(sender)) {
 				return;
 			}
-			add(sender, (Player) sender, Element.fromString(args.get(0).toLowerCase()));
+			add(sender, (Player) sender, args.get(0).toLowerCase());
 		} else if (args.size() == 2) { //bending add element combo
 			if (!hasPermission(sender, "others")) {
 				return;
@@ -61,7 +61,7 @@ public class AddCommand extends PKCommand {
 				sender.sendMessage(ChatColor.RED + playerNotFound);
 				return;
 			}
-			add(sender, player, Element.fromString(args.get(0).toLowerCase()));
+			add(sender, player, args.get(0).toLowerCase());
 		}
 	}
 
@@ -72,7 +72,13 @@ public class AddCommand extends PKCommand {
 	 * @param target The player to add the element to
 	 * @param element The element to add
 	 */
-	private void add(CommandSender sender, Player target, Element element) {
+	private void add(CommandSender sender, Player target, String element) {
+		
+		Element e = Element.fromString(element);
+		if (e == null) {
+			e = SubElement.fromString(element);
+		}
+		
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
@@ -82,8 +88,8 @@ public class AddCommand extends PKCommand {
 			sender.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
 			return;
 		}
-		if (Arrays.asList(Element.getAllElements()).contains(element)) {
-			if (bPlayer.hasElement(element)) {
+		if (Arrays.asList(Element.getAllElements()).contains(e)) {
+			if (bPlayer.hasElement(e)) {
 				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 					sender.sendMessage(ChatColor.RED + alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 				} else {
@@ -91,19 +97,19 @@ public class AddCommand extends PKCommand {
 				}
 				return;
 			}
-			bPlayer.addElement(element);
-			ChatColor color = element.getColor();
+			bPlayer.addElement(e);
+			ChatColor color = e.getColor();
 			
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				sender.sendMessage(color + addedOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
+				sender.sendMessage(color + addedOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
 			} else {
-				target.sendMessage(color + added.replace("{element}", element.getName() + element.getType().getBender()));
+				target.sendMessage(color + added.replace("{element}", e.getName() + e.getType().getBender()));
 			}
 			GeneralMethods.saveElements(bPlayer);
-			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.ADD));
+			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
 			return;
-		} else if (Arrays.asList(Element.getAllSubElements()).contains(element)) {
-			SubElement sub = (SubElement) element;
+		} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
+			SubElement sub = (SubElement) e;
 			if (bPlayer.hasSubElement(sub)) {
 				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 					sender.sendMessage(ChatColor.RED + alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
@@ -113,7 +119,7 @@ public class AddCommand extends PKCommand {
 				return;
 			}
 			bPlayer.addSubElement(sub);
-			ChatColor color = element.getColor();
+			ChatColor color = e.getColor();
 			
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 				sender.sendMessage(color + addedOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
