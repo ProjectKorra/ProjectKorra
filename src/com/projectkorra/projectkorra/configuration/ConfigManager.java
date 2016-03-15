@@ -1102,7 +1102,6 @@ public class ConfigManager {
 			config.addDefault("Storage.MySQL.pass", "");
 			config.addDefault("Storage.MySQL.db", "minecraft");
 			config.addDefault("Storage.MySQL.user", "root");
-			config.addDefault("Storage.MySQL.SubElementAdded", false);
 
 			config.addDefault("debug", false);
 

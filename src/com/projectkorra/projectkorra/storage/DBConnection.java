@@ -1,8 +1,9 @@
 package com.projectkorra.projectkorra.storage;
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class DBConnection {
 
@@ -14,8 +15,7 @@ public class DBConnection {
 	public static String user;
 	public static String pass;
 	public static boolean isOpen = false;
-	private static boolean subelement = ConfigManager.defaultConfig.get().getBoolean("Storage.MySQL.SubElementAdded");
-
+	
 	public static void init() {
 		if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
 			sql = new MySQL(ProjectKorra.log, "Establishing MySQL Connection...", host, port, user, pass, db);
@@ -32,10 +32,20 @@ public class DBConnection {
 				ProjectKorra.log.info("Creating pk_players table");
 				String query = "CREATE TABLE `pk_players` (" + "`uuid` varchar(36) NOT NULL," + "`player` varchar(16) NOT NULL," + "`element` varchar(255)," + "`subelement` varchar(255)" + "`permaremoved` varchar(5)," + "`slot1` varchar(255)," + "`slot2` varchar(255)," + "`slot3` varchar(255)," + "`slot4` varchar(255)," + "`slot5` varchar(255)," + "`slot6` varchar(255)," + "`slot7` varchar(255)," + "`slot8` varchar(255)," + "`slot9` varchar(255)," + " PRIMARY KEY (uuid));";
 				sql.modifyQuery(query);
-			} else {
-				if (!subelement) {
-					sql.modifyQuery("ALTER TABLE `pk_players` ADD subelement varchar(255);");
-					ConfigManager.defaultConfig.get().set("Storage.MySQL.SubElementAdded", true);
+			} else {				
+				try {
+					DatabaseMetaData md = sql.connection.getMetaData();
+					if (!md.getColumns(null, null, "pk_players", "subelement").next()) {
+						ProjectKorra.log.info("Updating Database with subelements...");
+						sql.getConnection().setAutoCommit(false);
+						sql.modifyQuery("ALTER TABLE `pk_players` ADD subelement varchar(255);");
+						sql.getConnection().commit();
+						sql.modifyQuery("UPDATE pk_players SET subelement = '-';");
+						sql.getConnection().setAutoCommit(true);
+						ProjectKorra.log.info("Database Updated.");
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
 			}
 
@@ -58,9 +68,20 @@ public class DBConnection {
 				String query = "CREATE TABLE `pk_players` (" + "`uuid` TEXT(36) PRIMARY KEY," + "`player` TEXT(16)," + "`element` TEXT(255)," + "`subelement` TEXT(255)" + "`permaremoved` TEXT(5)," + "`slot1` TEXT(255)," + "`slot2` TEXT(255)," + "`slot3` TEXT(255)," + "`slot4` TEXT(255)," + "`slot5` TEXT(255)," + "`slot6` TEXT(255)," + "`slot7` TEXT(255)," + "`slot8` TEXT(255)," + "`slot9` TEXT(255));";
 				sql.modifyQuery(query);
 			} else {
-				if (!subelement) {
-					sql.modifyQuery("ALTER TABLE `pk_players` ADD subelement TEXT(255);");
-					ConfigManager.defaultConfig.get().set("Storage.MySQL.SubElementAdded", true);
+				try {
+					DatabaseMetaData md = sql.connection.getMetaData();
+					if (!md.getColumns(null, null, "pk_players", "subelement").next()) {						
+						ProjectKorra.log.info("Updating Database with subelements...");
+						sql.getConnection().setAutoCommit(false);
+						sql.modifyQuery("ALTER TABLE `pk_players` ADD subelement TEXT(255);");
+						sql.getConnection().commit();
+						sql.modifyQuery("UPDATE pk_players SET subelement = '-';");
+						sql.getConnection().setAutoCommit(true);
+						ProjectKorra.log.info("Database Updated.");
+					}
+						
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
 			}
 

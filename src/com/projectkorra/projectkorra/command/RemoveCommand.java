@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
@@ -61,6 +62,11 @@ public class RemoveCommand extends PKCommand {
 						sender.sendMessage(ChatColor.RED + wrongElementSelf);
 						return;
 					}
+				} else if (SubElement.fromString(args.get(0)) != null) {
+					SubElement sub = (SubElement) SubElement.fromString(args.get(0));
+					if (senderBPlayer.hasSubElement(sub)) {
+						senderBPlayer.getSubElements().remove(sub);
+					}
 				} else {
 					sender.sendMessage(ChatColor.RED + invalidElement);
 					return;
@@ -82,8 +88,14 @@ public class RemoveCommand extends PKCommand {
 					sender.sendMessage(ChatColor.DARK_RED + wrongElementTarget.replace("{target}", player.getName()));
 					return;
 				}
-				bPlayer.getElements().remove(e);
-				GeneralMethods.saveElements(bPlayer);
+				if (e instanceof SubElement) {
+					bPlayer.getSubElements().remove(e);
+					GeneralMethods.saveSubElements(bPlayer);
+				} else {
+					bPlayer.getElements().remove(e);
+					GeneralMethods.saveElements(bPlayer);
+				}
+				
 				GeneralMethods.removeUnusableAbilities(player.getName());
 				sender.sendMessage(e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
 				sender.sendMessage(e.getColor() + this.succesfullyRemovedElementTarget.replace("{element}" , e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));

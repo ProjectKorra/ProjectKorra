@@ -87,8 +87,10 @@ public class BendingTabComplete implements TabCompleter {
 				}
 				return getPossibleCompletionsForGivenArgs(args, list);
 			} else if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("choose") || args[0].equalsIgnoreCase("ch")) {
-				if (args.length > 3 || !sender.hasPermission("bending.command.add"))
-					return new ArrayList<String>();
+				if (args.length > 3) return new ArrayList<String>();
+				if ((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a")) && !sender.hasPermission("bending.command.add")) return new ArrayList<String>();
+				if ((args[0].equalsIgnoreCase("choose") || args[0].equalsIgnoreCase("ch")) && !sender.hasPermission("bending.command.choose")) return new ArrayList<String>();
+				
 				List<String> l = new ArrayList<String>();
 				if (args.length == 2)
 				{
@@ -99,6 +101,23 @@ public class BendingTabComplete implements TabCompleter {
 					l.add("Chi");
 					for (Element e : Element.getAddonElements()) {
 						l.add(e.getName());
+					}
+					
+					if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a")) {
+						l.add("Blood");
+						l.add("Combustion");
+						l.add("Flight");
+						l.add("Healing");
+						l.add("Ice");
+						l.add("Lava");
+						l.add("Lightning");
+						l.add("Metal");
+						l.add("Plant");
+						l.add("Sand");
+						l.add("Spiritual");
+						for (SubElement e : Element.getAddonSubElements()) {
+							l.add(e.getName());
+						}
 					}
 				}
 				else
@@ -195,6 +214,22 @@ public class BendingTabComplete implements TabCompleter {
 					l.add("Water");
 					l.add("Chi");
 					for (Element e : Element.getAddonElements()) {
+						l.add(e.getName());
+					}
+					
+					l.add("Blood");
+					l.add("Combustion");
+					l.add("Flight");
+					l.add("Healing");
+					l.add("Ice");
+					l.add("Lava");
+					l.add("Lightning");
+					l.add("Metal");
+					l.add("Plant");
+					l.add("Sand");
+					l.add("Spiritual");
+					
+					for (SubElement e : Element.getAddonSubElements()) {
 						l.add(e.getName());
 					}
 				}
