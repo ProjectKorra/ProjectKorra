@@ -29,7 +29,7 @@ public class ChooseCommand extends PKCommand {
 	private String chosenOther;
 
 	public ChooseCommand() {
-		super("choose", "/bending choose <Element/SubElement> [Player]", ConfigManager.languageConfig.get().getString("Commands.Choose.Description"), new String[] { "choose", "ch" });
+		super("choose", "/bending choose <Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Choose.Description"), new String[] { "choose", "ch" });
 		
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Choose.PlayerNotFound");
 		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Choose.InvalidElement");
@@ -61,6 +61,11 @@ public class ChooseCommand extends PKCommand {
 				return;
 			}
 			String element = args.get(0).toLowerCase();
+			if (element.equalsIgnoreCase("a")) element = "air";
+			else if (element.equalsIgnoreCase("e")) element = "earth";
+			else if (element.equalsIgnoreCase("f")) element = "fire";
+			else if (element.equalsIgnoreCase("w")) element = "water";
+			else if (element.equalsIgnoreCase("c")) element = "chi";
 			Element target = Element.getElement(element);
 			if (Arrays.asList(Element.getAllElements()).contains(target)) {
 				if (!hasPermission(sender, element)) {
@@ -68,12 +73,6 @@ public class ChooseCommand extends PKCommand {
 				}
 				add(sender, (Player) sender, target);
 				return;
-			} else if (Arrays.asList(Element.getAllSubElements()).contains(target)) {
-				SubElement sub = (SubElement) target;
-				if (!hasPermission(sender, sub.getName())) {
-					return;
-				}
-				add(sender, (Player) sender, sub);
 			} else {
 				sender.sendMessage(ChatColor.RED + invalidElement);
 				return;
@@ -125,6 +124,13 @@ public class ChooseCommand extends PKCommand {
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.CHOOSE));
 		} else {
 			bPlayer.setElement(element);
+			
+			for (SubElement sub : Element.getAllSubElements()) {
+				if (sub.getParentElement() == element && bPlayer.hasSubElementPermission(sub)) {
+					bPlayer.addSubElement(sub);
+				}
+			}
+			
 			ChatColor color = element != null ? element.getColor() : ChatColor.WHITE;
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 				sender.sendMessage(color + chosenOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
