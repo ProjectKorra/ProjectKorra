@@ -219,6 +219,8 @@ public class BendingPlayer {
 	}
 	
 	public boolean canBendPassive(Element element) {
+		List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
+		
 		if (element == null || player == null) {
 			return false;
 		} else if (!player.hasPermission("bending." + element.getName() + ".passive")) {
@@ -226,6 +228,8 @@ public class BendingPlayer {
 		} else if (!isToggled() || !hasElement(element) || !isElementToggled(element)) {
 			return false;
 		} else if (isChiBlocked() || isParalyzed() || isBloodbent()) {
+			return false;
+		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, player.getLocation())) {
 			return false;
