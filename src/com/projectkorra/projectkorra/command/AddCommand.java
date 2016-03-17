@@ -98,6 +98,13 @@ public class AddCommand extends PKCommand {
 				return;
 			}
 			bPlayer.addElement(e);
+			
+			for (SubElement sub : Element.getAllSubElements()) {
+				if (sub.getParentElement() == e && bPlayer.hasSubElementPermission(sub)) {
+					bPlayer.addSubElement(sub);
+				}
+			}
+			
 			ChatColor color = e.getColor();
 			
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
@@ -106,6 +113,7 @@ public class AddCommand extends PKCommand {
 				target.sendMessage(color + added.replace("{element}", e.getName() + e.getType().getBender()));
 			}
 			GeneralMethods.saveElements(bPlayer);
+			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
 			return;
 		} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
