@@ -30,7 +30,7 @@ public class DBConnection {
 
 			if (!sql.tableExists("pk_players")) {
 				ProjectKorra.log.info("Creating pk_players table");
-				String query = "CREATE TABLE `pk_players` (" + "`uuid` varchar(36) NOT NULL," + "`player` varchar(16) NOT NULL," + "`element` varchar(255)," + "`subelement` varchar(255)" + "`permaremoved` varchar(5)," + "`slot1` varchar(255)," + "`slot2` varchar(255)," + "`slot3` varchar(255)," + "`slot4` varchar(255)," + "`slot5` varchar(255)," + "`slot6` varchar(255)," + "`slot7` varchar(255)," + "`slot8` varchar(255)," + "`slot9` varchar(255)," + " PRIMARY KEY (uuid));";
+				String query = "CREATE TABLE `pk_players` (" + "`uuid` varchar(36) NOT NULL," + "`player` varchar(16) NOT NULL," + "`element` varchar(255)," + "`subelement` varchar(255)," + "`permaremoved` varchar(5)," + "`slot1` varchar(255)," + "`slot2` varchar(255)," + "`slot3` varchar(255)," + "`slot4` varchar(255)," + "`slot5` varchar(255)," + "`slot6` varchar(255)," + "`slot7` varchar(255)," + "`slot8` varchar(255)," + "`slot9` varchar(255)," + " PRIMARY KEY (uuid));";
 				sql.modifyQuery(query);
 			} else {				
 				try {
@@ -65,7 +65,7 @@ public class DBConnection {
 			isOpen = true;
 			if (!sql.tableExists("pk_players")) {
 				ProjectKorra.log.info("Creating pk_players table.");
-				String query = "CREATE TABLE `pk_players` (" + "`uuid` TEXT(36) PRIMARY KEY," + "`player` TEXT(16)," + "`element` TEXT(255)," + "`subelement` TEXT(255)" + "`permaremoved` TEXT(5)," + "`slot1` TEXT(255)," + "`slot2` TEXT(255)," + "`slot3` TEXT(255)," + "`slot4` TEXT(255)," + "`slot5` TEXT(255)," + "`slot6` TEXT(255)," + "`slot7` TEXT(255)," + "`slot8` TEXT(255)," + "`slot9` TEXT(255));";
+				String query = "CREATE TABLE `pk_players` (" + "`uuid` TEXT(36) PRIMARY KEY," + "`player` TEXT(16)," + "`element` TEXT(255)," + "`subelement` TEXT(255)," + "`permaremoved` TEXT(5)," + "`slot1` TEXT(255)," + "`slot2` TEXT(255)," + "`slot3` TEXT(255)," + "`slot4` TEXT(255)," + "`slot5` TEXT(255)," + "`slot6` TEXT(255)," + "`slot7` TEXT(255)," + "`slot8` TEXT(255)," + "`slot9` TEXT(255));";
 				sql.modifyQuery(query);
 			} else {
 				try {
