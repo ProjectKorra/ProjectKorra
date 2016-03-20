@@ -5,9 +5,7 @@ import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -43,10 +41,6 @@ public abstract class PKCommand implements SubCommand {
 	 * String[] of all possible aliases of the command.
 	 */
 	private final String[] aliases;
-	/**
-	 * List of all command executors which extends PKCommand
-	 */
-	public static Map<String, PKCommand> instances = new HashMap<String, PKCommand>();
 
 	public PKCommand(String name, String properUse, String description, String[] aliases) {
 		this.name = name;

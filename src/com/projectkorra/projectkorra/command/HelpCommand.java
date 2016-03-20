@@ -53,7 +53,7 @@ public class HelpCommand extends PKCommand {
 			return;
 		else if (args.size() == 0) {
 			List<String> strings = new ArrayList<String>();
-			for (PKCommand command : instances.values()) {
+			for (SubCommand command : instances.values()) {
 				if (!command.getName().equalsIgnoreCase("help") && sender.hasPermission("bending.command." + command.getName())) {
 					strings.add(command.getProperUse());
 				}
@@ -71,7 +71,7 @@ public class HelpCommand extends PKCommand {
 		String arg = args.get(0).toLowerCase();
 		if (isNumeric(arg)) {
 			List<String> strings = new ArrayList<String>();
-			for (PKCommand command : instances.values()) {
+			for (SubCommand command : instances.values()) {
 				strings.add(command.getProperUse());
 			}
 			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <" + required + "> [" + optional + "]", Integer.valueOf(arg), true)) {
