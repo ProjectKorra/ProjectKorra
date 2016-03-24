@@ -1,18 +1,20 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.rpg.commands.RPGCommand;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Executor for /bending help. Extends {@link PKCommand}.
@@ -58,6 +60,18 @@ public class HelpCommand extends PKCommand {
 					strings.add(command.getProperUse());
 				}
 			}
+			if (GeneralMethods.hasItems()) {
+				//items commands being added
+			}
+			if (GeneralMethods.hasRPG()) {
+				for (RPGCommand command : RPGCommand.instances.values()) {
+					if (sender.hasPermission("bending.command.rpg." + command.getName()))
+						strings.add(command.getProperUse());
+				}
+			}
+			if (GeneralMethods.hasSpirits()) {
+				//spirits commands being added (if needed)
+			}
 			Collections.sort(strings);
 			Collections.reverse(strings);
 			strings.add(instances.get("help").getProperUse());
@@ -73,6 +87,18 @@ public class HelpCommand extends PKCommand {
 			List<String> strings = new ArrayList<String>();
 			for (PKCommand command : instances.values()) {
 				strings.add(command.getProperUse());
+			}
+			if (GeneralMethods.hasItems()) {
+				//items commands being added
+			}
+			if (GeneralMethods.hasRPG()) {
+				for (RPGCommand command : RPGCommand.instances.values()) {
+					if (sender.hasPermission("bending.command.rpg." + command.getName()))
+						strings.add(command.getProperUse());
+				}
+			}
+			if (GeneralMethods.hasSpirits()) {
+				//spirits commands being added (if needed)
 			}
 			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <" + required + "> [" + optional + "]", Integer.valueOf(arg), true)) {
 				sender.sendMessage(ChatColor.YELLOW + s);

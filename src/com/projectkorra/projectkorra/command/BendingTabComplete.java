@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.rpg.commands.RPGCommand;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -251,19 +252,54 @@ public class BendingTabComplete implements TabCompleter {
 					l.add(p.getName());
 				}
 				return getPossibleCompletionsForGivenArgs(args, l);
-			} else if (GeneralMethods.hasRPG() && (args[0].equalsIgnoreCase("avatar") || args[0].equalsIgnoreCase("av") || args[0].equalsIgnoreCase("avy"))) {
-				if (!sender.hasPermission("bending.command.avatar") || args.length > 2) return new ArrayList<String>();
-				List<String> l = new ArrayList<String>();
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					l.add(p.getName());
-				}
-				return getPossibleCompletionsForGivenArgs(args, l);
-			} else if (GeneralMethods.hasRPG() && (args[0].equalsIgnoreCase("worldevent") || args[0].equalsIgnoreCase("event") || args[0].equalsIgnoreCase("we") || args[0].equalsIgnoreCase("worlde"))) {
-				if (!sender.hasPermission("bending.command.worldevent") || args.length > 3) return new ArrayList<String>();
-				if (args.length == 2) {
-					return getPossibleCompletionsForGivenArgs(args, Arrays.asList(new String[] {"current", "help", "start"}));
-				} else if (args[1].equalsIgnoreCase("start")) {
-					return getPossibleCompletionsForGivenArgs(args, Arrays.asList(new String[] {"FullMoon", "LunarEclipse", "SolarEclipse", "SozinsComet"}));
+			} else if (GeneralMethods.hasRPG()) {
+				if (args[0].equalsIgnoreCase("rpg")) {
+					if (sender.hasPermission("bending.command.rpg") && args.length <= 4) {
+						if (args.length == 2) {
+							List<String> l = new ArrayList<>();
+							l.addAll(RPGCommand.instances.keySet());
+							Collections.sort(l);
+							return getPossibleCompletionsForGivenArgs(args, l);
+						} else if (args.length == 3) {
+							List<String> l = new ArrayList<>();
+							if (Arrays.asList(RPGCommand.instances.get("avatar").getAliases()).contains(args[1].toLowerCase()) && sender.hasPermission("bending.command.rpg.avatar")) {
+								for (Player p : Bukkit.getOnlinePlayers()) {
+									l.add(p.getName());
+								}
+							} else if (Arrays.asList(RPGCommand.instances.get("worldevent").getAliases()).contains(args[1].toLowerCase()) && sender.hasPermission("bending.command.rpg.worldevent")) {
+								l.add("start");
+								l.add("end");
+								l.add("help");
+								l.add("skip");
+								l.add("current");
+							} else if (Arrays.asList(RPGCommand.instances.get("help").getAliases()).contains(args[1].toLowerCase()) && sender.hasPermission("bending.command.rpg.help")) {
+								l.add("lunareclipse");
+								l.add("solareclipse");
+								l.add("sozinscomet");
+								l.add("fullmoon");
+								for (String rpg : RPGCommand.instances.keySet()) {
+									if (!rpg.equalsIgnoreCase("help")) {
+										l.add(rpg);
+									}
+								}
+							}
+							Collections.sort(l);
+							return getPossibleCompletionsForGivenArgs(args, l);
+						} else if (args.length == 4) {
+							List<String> l = new ArrayList<>();
+							String[] start = {"start", "st", "strt", "begin"};
+							if (Arrays.asList(RPGCommand.instances.get("worldevent").getAliases()).contains(args[1].toLowerCase()) && sender.hasPermission("bending.command.rpg.worldevent")) {
+								if (Arrays.asList(start).contains(args[2].toLowerCase())) {
+									l.add("lunareclipse");
+									l.add("solareclipse");
+									l.add("sozinscomet");
+									l.add("fullmoon");
+								}
+							}
+							Collections.sort(l);
+							return getPossibleCompletionsForGivenArgs(args, l);
+						}
+					}
 				}
 			}
 			
