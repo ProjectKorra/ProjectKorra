@@ -138,6 +138,7 @@ public class ChooseCommand extends PKCommand {
 				target.sendMessage(color + chosen.replace("{element}", element.getName() + element.getType().getBender()));
 			}
 			GeneralMethods.saveElements(bPlayer);
+			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 		}
 		
