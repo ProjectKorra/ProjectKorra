@@ -1,16 +1,8 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.EarthPassive;
-import com.projectkorra.projectkorra.earthbending.LavaFlow;
-import com.projectkorra.projectkorra.earthbending.RaiseEarth;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.Information;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -25,9 +17,17 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.EarthPassive;
+import com.projectkorra.projectkorra.earthbending.LavaFlow;
+import com.projectkorra.projectkorra.earthbending.RaiseEarth;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.Information;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public abstract class EarthAbility extends ElementalAbility {
 	
@@ -240,15 +240,19 @@ public abstract class EarthAbility extends ElementalAbility {
 	 * 
 	 * @param block The block to use as a base
 	 */
+	@SuppressWarnings("deprecation")
 	public static void addTempAirBlock(Block block) {
 		Information info;
+		
 		if (MOVED_EARTH.containsKey(block)) {
 			info = MOVED_EARTH.get(block);
 			MOVED_EARTH.remove(block);
+			
 		} else {
 			info = new Information();
+			
 			info.setBlock(block);
-			info.setState(block.getState());
+			info.setData(block.getData());
 		}
 		block.setType(Material.AIR);
 		info.setTime(System.currentTimeMillis());
