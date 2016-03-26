@@ -25,7 +25,7 @@ public class PermaremoveCommand extends PKCommand {
 	private String removedConfirm;
 	
 	public PermaremoveCommand() {
-		super("permaremove", "/bending permaremove [Player]", ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Description"), new String[] { "permaremove", "premove", "permremove", "pr" });
+		super("permaremove", "/bending permaremove <Player>", ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Description"), new String[] { "permaremove", "premove", "permremove", "pr" });
 	
 		this.playerIsOffline = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.PlayerOffline");
 		this.restored = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Restored");
