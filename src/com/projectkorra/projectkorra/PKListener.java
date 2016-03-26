@@ -383,28 +383,24 @@ public class PKListener implements Listener {
 		Player player = event.getTarget();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		Element element = event.getElement();
-		String append = "";
-		ChatColor color = null;
-		
+		String prefix = "";
+
 		if (bPlayer == null) {
 			return;
 		}
 		
-		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
+		boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
 		if (bPlayer.getElements().size() > 1) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
-			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
-		} else if (element != null) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes." + element.getName());
-			color = element.getColor();
+			prefix = Element.AVATAR.getPrefix();
+		} else if (element != null){
+			prefix = element.getPrefix();
 		} else {
-			append = "[Nonbender]";
-			color = ChatColor.WHITE;
+			 prefix = ChatColor.WHITE + "[Nonbender] ";
 		}
 		
 		if (chatEnabled) {
 			player.setDisplayName(player.getName());
-			player.setDisplayName(color + append + ChatColor.RESET + player.getDisplayName());
+			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
 		}
 	}
 
