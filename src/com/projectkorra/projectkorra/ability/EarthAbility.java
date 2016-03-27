@@ -252,6 +252,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			info = new Information();
 			
 			info.setBlock(block);
+			info.setState(block.getState());
 			info.setData(block.getData());
 		}
 		block.setType(Material.AIR);
@@ -536,7 +537,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 
 		Information info = TEMP_AIR_LOCATIONS.get(i);
-		Block block = info.getBlock();
+		Block block = info.getState().getBlock();
 
 		if (block.getType() != Material.AIR && !block.isLiquid()) {
 			if (force || !MOVED_EARTH.containsKey(block)) {
