@@ -190,12 +190,12 @@ public class ConfigManager {
 			config.addDefault("Commands.Check.UpToDate", "You have the latest version of ProjectKorra.");
 			
 			config.addDefault("Commands.Bind.Description", "This command will bind an ability to the slot you specify (if you specify one), or the slot currently selected in your hotbar (If you do not specify a Slot #).");
-			config.addDefault("Commands.Bind.AbilityDoesntExist", "This command will bind an ability to the slot you specify (if you specify one), or the slot currently selected in your hotbar (If you do not specify a Slot #).");
+			config.addDefault("Commands.Bind.AbilityDoesntExist", "{ability} is not a valid ability.");
 			config.addDefault("Commands.Bind.WrongNumber", "Slot must be an integer between 1 and 9.");
 			config.addDefault("Commands.Bind.ElementToggledOff", "You have that ability's element toggled off currently.");
 			config.addDefault("Commands.Bind.SuccessfullyBound", "Succesfully bound {ability} to slot {slot}.");
 			
-			config.addDefault("Commands.Add.Choose", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
+			config.addDefault("Commands.Add.Description", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
 			config.addDefault("Commands.Add.SuccessfullyAdded", "You are now also a {element}.");
 			config.addDefault("Commands.Add.PlayerNotFound", "That player could not be found.");
 			config.addDefault("Commands.Add.InvalidElement", "You must specify a valid element.");

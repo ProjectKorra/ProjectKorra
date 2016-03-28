@@ -51,7 +51,7 @@ public class ClearCommand extends PKCommand {
 			for (int i = 1; i <= 9; i++) {
 				GeneralMethods.saveAbility(bPlayer, i, null);
 			}
-			sender.sendMessage(cleared);
+			sender.sendMessage(ChatColor.YELLOW + cleared);
 		} else if (args.size() == 1) {
 			try {
 				int slot = Integer.parseInt(args.get(0));
@@ -63,7 +63,7 @@ public class ClearCommand extends PKCommand {
 					GeneralMethods.saveAbility(bPlayer, slot, null);
 					sender.sendMessage(clearedSlot.replace("{slot}", String.valueOf(slot)));
 				} else {
-					sender.sendMessage(alreadyEmpty);
+					sender.sendMessage(ChatColor.YELLOW + alreadyEmpty);
 				}
 			} catch (NumberFormatException e) {
 				sender.sendMessage(ChatColor.RED + wrongNumber);
