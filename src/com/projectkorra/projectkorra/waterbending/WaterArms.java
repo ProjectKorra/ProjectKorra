@@ -140,7 +140,6 @@ public class WaterArms extends WaterAbility {
 				remove();
 				return;
 			}
-			displayBoundMsg();
 		}
 	}
 
@@ -419,8 +418,11 @@ public class WaterArms extends WaterAbility {
 		return false;
 	}
 
-	public void displayBoundMsg() {
-		player.sendMessage(getElement().getColor() + sneakMsg + " " + bPlayer.getBoundAbilityName());
+	public void displayBoundMsg(int slot) {
+		String name = bPlayer.getAbilities().get(slot);
+		if(name != null) {
+			player.sendMessage(getElement().getColor() + sneakMsg + " " + name);
+		}
 	}
 
 	/**

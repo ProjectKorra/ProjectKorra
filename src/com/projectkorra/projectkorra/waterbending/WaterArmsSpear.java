@@ -211,8 +211,7 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	private void createIceBall() {
-		layer++;
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, layer)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, spearSphere)) {
 			if (isTransparent(player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
 				playIcebendingSound(block.getLocation());
 				new TempBlock(block, Material.ICE, (byte) 0);

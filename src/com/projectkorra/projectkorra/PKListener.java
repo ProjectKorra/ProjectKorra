@@ -142,6 +142,7 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -968,7 +969,6 @@ public class PKListener implements Listener {
 						|| type == Material.LEAVES || type == Material.LEAVES_2 
 						|| type == Material.LEATHER_LEGGINGS || type == Material.AIR)) {
 					newDrops.add(drops.get(i));
-					Bukkit.broadcastMessage("Adding " + drops.get(i));
 				}
 			}
 			if (plantArmor.getOldArmor() != null) {
@@ -1251,12 +1251,6 @@ public class PKListener implements Listener {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
 
-		WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
-		if (!player.isSneaking() && waterArms != null) {
-			waterArms.displayBoundMsg();
-			return;
-		}
-
 		AirScooter.check(player);
 
 
@@ -1416,6 +1410,17 @@ public class PKListener implements Listener {
 					new Combustion(player);
 				}
 			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerSlotChange(PlayerItemHeldEvent event) {
+		Player player = event.getPlayer();
+		
+		WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
+		if (waterArms != null) {
+			waterArms.displayBoundMsg(event.getNewSlot()+1);
+			return;
 		}
 	}
 

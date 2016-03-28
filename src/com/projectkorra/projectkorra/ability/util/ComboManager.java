@@ -196,7 +196,6 @@ public class ComboManager {
 		}
 		list.add(info);
 		RECENTLY_USED.put(name, list);
-		//Bukkit.broadcastMessage("recentlyUsedAbilities: " + recentlyUsedAbilities.get(name).size());
 	}
 
 	/**
