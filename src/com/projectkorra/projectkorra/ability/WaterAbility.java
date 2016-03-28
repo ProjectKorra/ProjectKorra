@@ -249,7 +249,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static boolean isLeaves(Material material) {
-		return material == Material.LEAVES || material == Material.LEAVES;
+		return material == Material.LEAVES || material == Material.LEAVES_2;
 	}
 	
 	public static boolean isSnow(Block block) {

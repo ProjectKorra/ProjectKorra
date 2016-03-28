@@ -37,7 +37,7 @@ public class WhoCommand extends PKCommand {
 	private String databaseOverload, noPlayersOnline, playerOffline;
 	
 	public WhoCommand() {
-		super("who", "/bending who [Player/Page]", ConfigManager.languageConfig.get().getString("Commands.Who.Description"), new String[] { "who", "w" });
+		super("who", "/bending who [Page/Player]", ConfigManager.languageConfig.get().getString("Commands.Who.Description"), new String[] { "who", "w" });
 		
 		databaseOverload = ConfigManager.languageConfig.get().getString("Commands.Who.DatabaseOverload");
 		noPlayersOnline = ConfigManager.languageConfig.get().getString("Commands.Who.NoPlayersOnline");

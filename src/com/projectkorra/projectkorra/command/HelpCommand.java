@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.command;
 
+import com.projectkorra.items.command.PKICommand;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
@@ -34,7 +35,7 @@ public class HelpCommand extends PKCommand {
 	private String usage;
 
 	public HelpCommand() {
-		super("help", "/bending help [Topic/Page]", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
+		super("help", "/bending help <Page/Topic>", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
 		
 		this.required = ConfigManager.languageConfig.get().getString("Commands.Help.Required");
 		this.optional = ConfigManager.languageConfig.get().getString("Commands.Help.Optional");
@@ -61,7 +62,10 @@ public class HelpCommand extends PKCommand {
 				}
 			}
 			if (GeneralMethods.hasItems()) {
-				//items commands being added
+				for (PKICommand command : PKICommand.instances.values()) {
+					if (sender.hasPermission("bendingitems.command." + command.getName()))
+						strings.add(command.getProperUse());
+				}
 			}
 			if (GeneralMethods.hasRPG()) {
 				for (RPGCommand command : RPGCommand.instances.values()) {
@@ -89,7 +93,10 @@ public class HelpCommand extends PKCommand {
 				strings.add(command.getProperUse());
 			}
 			if (GeneralMethods.hasItems()) {
-				//items commands being added
+				for (PKICommand command : PKICommand.instances.values()) {
+					if (sender.hasPermission("bendingitems.command." + command.getName()))
+						strings.add(command.getProperUse());
+				}
 			}
 			if (GeneralMethods.hasRPG()) {
 				for (RPGCommand command : RPGCommand.instances.values()) {
