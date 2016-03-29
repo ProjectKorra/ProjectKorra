@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.PlantAbility;
+import com.projectkorra.projectkorra.earthbending.EarthArmor;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -43,8 +44,14 @@ public class PlantArmor extends PlantAbility {
 		
 		if (hasAbility(player, PlantArmor.class)) {
 			return;
-		} else if (bPlayer.isOnCooldown(this)) {
+		} else if (!bPlayer.canBend(this)) {
 			return;
+		}
+		
+		if (hasAbility(player, EarthArmor.class)) {
+			EarthArmor abil = getAbility(player, EarthArmor.class);
+			abil.remove();
+			player.sendMessage("Previous armor reverted");
 		}
 		
 		block = getPlantSourceBlock(player, range, true);

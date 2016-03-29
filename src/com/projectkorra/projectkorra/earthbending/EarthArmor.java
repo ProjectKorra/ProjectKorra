@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
+import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,6 +41,12 @@ public class EarthArmor extends EarthAbility {
 		super(player);
 		if (hasAbility(player, EarthArmor.class) || !bPlayer.canBend(this)) {
 			return;
+		}
+		
+		if (hasAbility(player, PlantArmor.class)) {
+			PlantArmor abil = getAbility(player, PlantArmor.class);
+			abil.remove();
+			player.sendMessage("Previous ability reverted");
 		}
 		
 		this.formed = false;
