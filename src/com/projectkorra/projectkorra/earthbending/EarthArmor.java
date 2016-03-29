@@ -46,7 +46,6 @@ public class EarthArmor extends EarthAbility {
 		if (hasAbility(player, PlantArmor.class)) {
 			PlantArmor abil = getAbility(player, PlantArmor.class);
 			abil.remove();
-			player.sendMessage("Previous ability reverted");
 		}
 		
 		this.formed = false;
