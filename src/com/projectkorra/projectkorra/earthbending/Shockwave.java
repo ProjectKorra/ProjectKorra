@@ -37,6 +37,7 @@ public class Shockwave extends EarthAbility {
 		
 		if (fall) {
 			fallShockwave();
+			return;
 		}
 		
 		start();
