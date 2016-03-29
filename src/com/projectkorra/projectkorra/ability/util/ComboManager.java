@@ -31,114 +31,140 @@ public class ComboManager {
 	private static final HashMap<String, String> INSTRUCTIONS = new HashMap<>();
 
 	public ComboManager() {
-		ArrayList<AbilityInformation> fireKick = new ArrayList<>();
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.SHIFT_DOWN));
-		fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		COMBO_ABILITIES.put("FireKick", new ComboAbilityInfo("FireKick", fireKick, FireCombo.class));
-		DESCRIPTIONS.put("FireKick", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireKick.Description"));
-		INSTRUCTIONS.put("FireKick", "FireBlast > FireBlast > (Hold Shift) > FireBlast.");
+		COMBO_ABILITIES.clear();
+		DESCRIPTIONS.clear();
+		INSTRUCTIONS.clear();
+		
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.FireCombo.FireKick.Enabled")) {
+			ArrayList<AbilityInformation> fireKick = new ArrayList<>();
+			fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+			fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+			fireKick.add(new AbilityInformation("FireBlast", ClickType.SHIFT_DOWN));
+			fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+			COMBO_ABILITIES.put("FireKick", new ComboAbilityInfo("FireKick", fireKick, FireCombo.class));
+			DESCRIPTIONS.put("FireKick", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireKick.Description"));
+			INSTRUCTIONS.put("FireKick", "FireBlast > FireBlast > (Hold Shift) > FireBlast.");
+		}
 
-		ArrayList<AbilityInformation> fireSpin = new ArrayList<>();
-		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.LEFT_CLICK));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
-		fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
-		COMBO_ABILITIES.put("FireSpin", new ComboAbilityInfo("FireSpin", fireSpin, FireCombo.class));
-		DESCRIPTIONS.put("FireSpin", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireSpin.Description"));
-		INSTRUCTIONS.put("FireSpin", "FireBlast > FireBlast > FireShield > (Tap Shift).");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.FireCombo.FireSpin.Enabled")) {
+			ArrayList<AbilityInformation> fireSpin = new ArrayList<>();
+			fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+			fireSpin.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
+			fireSpin.add(new AbilityInformation("FireShield", ClickType.LEFT_CLICK));
+			fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+			fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
+			COMBO_ABILITIES.put("FireSpin", new ComboAbilityInfo("FireSpin", fireSpin, FireCombo.class));
+			DESCRIPTIONS.put("FireSpin", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireSpin.Description"));
+			INSTRUCTIONS.put("FireSpin", "FireBlast > FireBlast > FireShield > (Tap Shift).");
+		}
 
-		ArrayList<AbilityInformation> jetBlast = new ArrayList<>();
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
-		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
-		jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
-		jetBlast.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
-		COMBO_ABILITIES.put("JetBlast", new ComboAbilityInfo("JetBlast", jetBlast, FireCombo.class));
-		DESCRIPTIONS.put("JetBlast", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.JetBlast.Description"));
-		INSTRUCTIONS.put("JetBlast", "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet.");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.FireCombo.JetBlast.Enabled")) {
+			ArrayList<AbilityInformation> jetBlast = new ArrayList<>();
+			jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+			jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+			jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+			jetBlast.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+			jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+			jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
+			jetBlast.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
+			COMBO_ABILITIES.put("JetBlast", new ComboAbilityInfo("JetBlast", jetBlast, FireCombo.class));
+			DESCRIPTIONS.put("JetBlast", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.JetBlast.Description"));
+			INSTRUCTIONS.put("JetBlast", "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet.");
+		}
 
-		ArrayList<AbilityInformation> jetBlaze = new ArrayList<>();
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
-		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_DOWN));
-		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
-		COMBO_ABILITIES.put("JetBlaze", new ComboAbilityInfo("JetBlaze", jetBlaze, FireCombo.class));
-		DESCRIPTIONS.put("JetBlaze", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.JetBlaze.Description"));
-		INSTRUCTIONS.put("JetBlaze", "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet.");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.FireCombo.JetBlaze.Enabled")) {
+			ArrayList<AbilityInformation> jetBlaze = new ArrayList<>();
+			jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+			jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+			jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
+			jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
+			jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_DOWN));
+			jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
+			jetBlaze.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
+			COMBO_ABILITIES.put("JetBlaze", new ComboAbilityInfo("JetBlaze", jetBlaze, FireCombo.class));
+			DESCRIPTIONS.put("JetBlaze", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.JetBlaze.Description"));
+			INSTRUCTIONS.put("JetBlaze", "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet.");
+		}
 
-		ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
-		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
-		COMBO_ABILITIES.put("FireWheel", new ComboAbilityInfo("FireWheel", fireWheel, FireCombo.class));
-		DESCRIPTIONS.put("FireWheel", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireWheel.Description"));
-		INSTRUCTIONS.put("FireWheel", "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift.");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.FireCombo.FireWheel.Enabled")) {
+			ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
+			fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
+			fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
+			fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
+			fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
+			COMBO_ABILITIES.put("FireWheel", new ComboAbilityInfo("FireWheel", fireWheel, FireCombo.class));
+			DESCRIPTIONS.put("FireWheel", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireWheel.Description"));
+			INSTRUCTIONS.put("FireWheel", "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift.");
+		}
 
-		ArrayList<AbilityInformation> twister = new ArrayList<AbilityInformation>();
-		twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
-		twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_UP));
-		twister.add(new AbilityInformation("Tornado", ClickType.SHIFT_DOWN));
-		twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
-		COMBO_ABILITIES.put("Twister", new ComboAbilityInfo("Twister", twister, AirCombo.class));
-		DESCRIPTIONS.put("Twister", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.Twister.Description"));
-		INSTRUCTIONS.put("Twister", "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Air.AirCombo.Twister.Enabled")) {
+			ArrayList<AbilityInformation> twister = new ArrayList<AbilityInformation>();
+			twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
+			twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_UP));
+			twister.add(new AbilityInformation("Tornado", ClickType.SHIFT_DOWN));
+			twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
+			COMBO_ABILITIES.put("Twister", new ComboAbilityInfo("Twister", twister, AirCombo.class));
+			DESCRIPTIONS.put("Twister", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.Twister.Description"));
+			INSTRUCTIONS.put("Twister", "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
+		}
 
-		ArrayList<AbilityInformation> airStream = new ArrayList<>();
-		airStream.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
-		airStream.add(new AbilityInformation("AirSuction", ClickType.LEFT_CLICK));
-		airStream.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
-		COMBO_ABILITIES.put("AirStream", new ComboAbilityInfo("AirStream", airStream, AirCombo.class));
-		DESCRIPTIONS.put("AirStream", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.AirStream.Description"));
-		INSTRUCTIONS.put("AirStream", "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Air.AirCombo.AirStream.Enabled")) {
+			ArrayList<AbilityInformation> airStream = new ArrayList<>();
+			airStream.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
+			airStream.add(new AbilityInformation("AirSuction", ClickType.LEFT_CLICK));
+			airStream.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
+			COMBO_ABILITIES.put("AirStream", new ComboAbilityInfo("AirStream", airStream, AirCombo.class));
+			DESCRIPTIONS.put("AirStream", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.AirStream.Description"));
+			INSTRUCTIONS.put("AirStream", "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
+		}
 
-		ArrayList<AbilityInformation> airSweep = new ArrayList<>();
-		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
-		airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
-		airSweep.add(new AbilityInformation("AirBurst", ClickType.SHIFT_DOWN));
-		airSweep.add(new AbilityInformation("AirBurst", ClickType.LEFT_CLICK));
-		COMBO_ABILITIES.put("AirSweep", new ComboAbilityInfo("AirSweep", airSweep, AirCombo.class));
-		DESCRIPTIONS.put("AirSweep", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.AirSweep.Description"));
-		INSTRUCTIONS.put("AirSweep", "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Air.AirCombo.AirSweep.Enabled")) {
+			ArrayList<AbilityInformation> airSweep = new ArrayList<>();
+			airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
+			airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
+			airSweep.add(new AbilityInformation("AirBurst", ClickType.SHIFT_DOWN));
+			airSweep.add(new AbilityInformation("AirBurst", ClickType.LEFT_CLICK));
+			COMBO_ABILITIES.put("AirSweep", new ComboAbilityInfo("AirSweep", airSweep, AirCombo.class));
+			DESCRIPTIONS.put("AirSweep", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.AirSweep.Description"));
+			INSTRUCTIONS.put("AirSweep", "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
+		}
 
-		ArrayList<AbilityInformation> iceWave = new ArrayList<>();
-		iceWave.add(new AbilityInformation("WaterSpout", ClickType.SHIFT_UP));
-		iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFT_CLICK));
-		COMBO_ABILITIES.put("IceWave", new ComboAbilityInfo("IceWave", iceWave, WaterCombo.class));
-		DESCRIPTIONS.put("IceWave", ConfigManager.languageConfig.get().getString("Abilities.Water.Combo.IceWave.Description"));
-		INSTRUCTIONS.put("IceWave", "Create a WaterSpout Wave > PhaseChange (Left Click)");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterCombo.IceWave.Enabled")) {
+			ArrayList<AbilityInformation> iceWave = new ArrayList<>();
+			iceWave.add(new AbilityInformation("WaterSpout", ClickType.SHIFT_UP));
+			iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFT_CLICK));
+			COMBO_ABILITIES.put("IceWave", new ComboAbilityInfo("IceWave", iceWave, WaterCombo.class));
+			DESCRIPTIONS.put("IceWave", ConfigManager.languageConfig.get().getString("Abilities.Water.Combo.IceWave.Description"));
+			INSTRUCTIONS.put("IceWave", "Create a WaterSpout Wave > PhaseChange (Left Click)");
+		}
 
-		ArrayList<AbilityInformation> iceBullet = new ArrayList<>();
-		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_DOWN));
-		iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_UP));
-		iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFT_DOWN));
-		COMBO_ABILITIES.put("IceBullet", new ComboAbilityInfo("IceBullet", iceBullet, WaterCombo.class));
-		DESCRIPTIONS.put("IceBullet", ConfigManager.languageConfig.get().getString("Abilities.Water.Combo.IceBullet.Description"));
-		INSTRUCTIONS.put("IceBullet", "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterCombo.IceBullet.Enabled")) {
+			ArrayList<AbilityInformation> iceBullet = new ArrayList<>();
+			iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_DOWN));
+			iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_UP));
+			iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFT_DOWN));
+			COMBO_ABILITIES.put("IceBullet", new ComboAbilityInfo("IceBullet", iceBullet, WaterCombo.class));
+			DESCRIPTIONS.put("IceBullet", ConfigManager.languageConfig.get().getString("Abilities.Water.Combo.IceBullet.Description"));
+			INSTRUCTIONS.put("IceBullet", "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
 
-		ArrayList<AbilityInformation> iceBulletLeft = new ArrayList<>();
-		iceBulletLeft.add(new AbilityInformation("IceBlast", ClickType.LEFT_CLICK));
-		COMBO_ABILITIES.put("IceBulletLeftClick", new ComboAbilityInfo("IceBulletLeftClick", iceBulletLeft, WaterCombo.class));
-		ArrayList<AbilityInformation> iceBulletRight = new ArrayList<>();
-		iceBulletRight.add(new AbilityInformation("IceBlast", ClickType.RIGHT_CLICK_BLOCK));
-		COMBO_ABILITIES.put("IceBulletRightClick", new ComboAbilityInfo("IceBulletRightClick", iceBulletRight, WaterCombo.class));
+			ArrayList<AbilityInformation> iceBulletLeft = new ArrayList<>();
+			iceBulletLeft.add(new AbilityInformation("IceBlast", ClickType.LEFT_CLICK));
+			COMBO_ABILITIES.put("IceBulletLeftClick", new ComboAbilityInfo("IceBulletLeftClick", iceBulletLeft, WaterCombo.class));
+			ArrayList<AbilityInformation> iceBulletRight = new ArrayList<>();
+			iceBulletRight.add(new AbilityInformation("IceBlast", ClickType.RIGHT_CLICK_BLOCK));
+			COMBO_ABILITIES.put("IceBulletRightClick", new ComboAbilityInfo("IceBulletRightClick", iceBulletRight, WaterCombo.class));
+		}
 
-		ArrayList<AbilityInformation> immobilize = new ArrayList<>();
-		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
-		immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK));
-		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
-		immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
-		COMBO_ABILITIES.put("Immobilize", new ComboAbilityInfo("Immobilize", immobilize, ChiCombo.class));
-		DESCRIPTIONS.put("Immobilize", ConfigManager.languageConfig.get().getString("Abilities.Chi.Combo.Immobilize.Description"));
-		INSTRUCTIONS.put("Immobilize", "QuickStrike (Left Click) > SwiftKick (Left Click) > QuickStrike (Left Click) > QuickStrike (Left Click)");
+		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Chi.ChiCombo.Immobilize.Enabled")) {
+			ArrayList<AbilityInformation> immobilize = new ArrayList<>();
+			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
+			immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK));
+			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
+			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
+			COMBO_ABILITIES.put("Immobilize", new ComboAbilityInfo("Immobilize", immobilize, ChiCombo.class));
+			DESCRIPTIONS.put("Immobilize", ConfigManager.languageConfig.get().getString("Abilities.Chi.Combo.Immobilize.Description"));
+			INSTRUCTIONS.put("Immobilize", "QuickStrike (Left Click) > SwiftKick (Left Click) > QuickStrike (Left Click) > QuickStrike (Left Click)");
+		}
 		
 		startCleanupTask();
 	}
