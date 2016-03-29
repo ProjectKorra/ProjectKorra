@@ -15,8 +15,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -92,23 +90,6 @@ public class EarthPassive {
 		if (block.getType() == Material.SAND) {
 			block.setType(materialdata.getItemType());
 			block.setData(materialdata.getData());
-		}
-	}
-
-	public static void sandSpeed() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			
-			if (bPlayer != null) {
-				if (bPlayer.canSandbend() && bPlayer.hasElement(Element.EARTH) 
-						&& !bPlayer.canBendPassive(Element.AIR) && !bPlayer.canBendPassive(Element.CHI)) {
-					if (player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SAND
-							|| player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SANDSTONE 
-							|| player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.RED_SANDSTONE) {
-						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, getSandRunSpeed()));
-					}
-				}
-			}
 		}
 	}
 
@@ -203,6 +184,6 @@ public class EarthPassive {
 	}
 
 	public static int getSandRunSpeed() {
-		return ConfigManager.getConfig().getInt("Properties.Earth.Passive.SandRunSpeed");
+		return ConfigManager.getConfig().getInt("Abilities.Earth.Passive.SandRunSpeed");
 	}
 }

@@ -785,7 +785,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Cooldown", 10000);
 
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
-			config.addDefault("Properties.Earth.Passive.SandRunSpeed", 0);
+			config.addDefault("Abilities.Earth.Passive.SandRunSpeed", 2);
 
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
 			config.addDefault("Abilities.Earth.Catapult.Length", 6);
@@ -1052,6 +1052,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.FireTicks", 2.5);
 
+			config.addDefault("Abilities.Chi.Passive.ExhaustionFactor", 0.3);
 			config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 			config.addDefault("Abilities.Chi.Passive.Speed", 1);
 			config.addDefault("Abilities.Chi.Passive.Jump", 1);
