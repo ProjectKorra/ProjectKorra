@@ -1,18 +1,14 @@
 package com.projectkorra.projectkorra.chiblocking;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.airbending.AirPassive;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 public class ChiPassive {
 
@@ -64,44 +60,10 @@ public class ChiPassive {
 		}, getTicks());
 	}
 
-	public static void handlePassive() {
-		int speedPower = 0;
-		int jumpPower = 0;
-		
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer == null) {
-				continue;
-			}
-			
-			if (bPlayer.canBendPassive(Element.CHI)) {
-				if (bPlayer.canBendPassive(Element.AIR)) {
-					if (AirPassive.getJumpPower() > getJumpPower()) {
-						jumpPower = AirPassive.getJumpPower();
-					} else {
-						jumpPower = getJumpPower();
-					}
-					
-					if (AirPassive.getSpeedPower() > getSpeedPower()) {
-						speedPower = AirPassive.getSpeedPower();
-					} else {
-						speedPower = getSpeedPower();
-					}
-				}
-				ChiAbility stance = bPlayer.getStance();
-				
-				if (player.isSprinting() && !(stance instanceof AcrobatStance)) {
-					if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
-						player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speedPower));
-					}
-					if (!player.hasPotionEffect(PotionEffectType.JUMP)) {
-						player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jumpPower));
-					}
-				}
-			}
-		}
+	public static double getExhaustionFactor() {
+		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.ExhaustionFactor");
 	}
-
+	
 	public static double getFallReductionFactor() {
 		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.FallReductionFactor");
 	}
