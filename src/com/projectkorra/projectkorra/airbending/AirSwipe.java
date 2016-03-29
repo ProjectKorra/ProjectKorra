@@ -63,7 +63,6 @@ public class AirSwipe extends AirAbility {
 		ability = this;
 		this.charging = charging;
 		this.origin = player.getEyeLocation();
-		this.charging = false;
 		this.particles = getConfig().getInt("Abilities.Air.AirSwipe.Particles");
 		this.arc = getConfig().getInt("Abilities.Air.AirSwipe.Arc");
 		this.stepSize = getConfig().getInt("Abilities.Air.AirSwipe.StepSize");
@@ -74,12 +73,18 @@ public class AirSwipe extends AirAbility {
 		this.speed = getConfig().getDouble("Abilities.Air.AirSwipe.Speed") * (ProjectKorra.time_step / 1000.0);
 		this.range = getConfig().getDouble("Abilities.Air.AirSwipe.Range");
 		this.radius = getConfig().getDouble("Abilities.Air.AirSwipe.Radius");
-		this.maxChargeFactor = getConfig().getDouble("Abilities.Air.AirSwipe.chargeFactor");
+		this.maxChargeFactor = getConfig().getDouble("Abilities.Air.AirSwipe.ChargeFactor");
 		this.random = new Random();
 		this.elements = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
 		
 		if (bPlayer.isOnCooldown(this) || player.getEyeLocation().getBlock().isLiquid()) {
+			remove();
+			return;
+		}
+		
+		if (!bPlayer.canBend(this)) {
+			remove();
 			return;
 		}
 		
@@ -255,7 +260,6 @@ public class AirSwipe extends AirAbility {
 			remove();
 			return;
 		}
-
 		if (!charging) {
 			if (elements.isEmpty()) {
 				remove();
@@ -263,11 +267,6 @@ public class AirSwipe extends AirAbility {
 			}
 			advanceSwipe();
 		} else {
-			if (!bPlayer.canBend(this)) {
-				remove();
-				return;
-			}
-
 			if (!player.isSneaking()) {
 				double factor = 1;
 				if (System.currentTimeMillis() >= startTime + maxChargeTime) {
@@ -283,7 +282,6 @@ public class AirSwipe extends AirAbility {
 				factor = Math.max(1, factor);
 				damage *= factor;
 				pushFactor *= factor;
-				return;
 			} else if (System.currentTimeMillis() >= startTime + maxChargeTime) {
 				playAirbendingParticles(player.getEyeLocation(), particles);
 			}
