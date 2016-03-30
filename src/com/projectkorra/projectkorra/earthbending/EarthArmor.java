@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.earthbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
 import org.bukkit.Location;
@@ -12,8 +11,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public class EarthArmor extends EarthAbility {
@@ -98,8 +95,6 @@ public class EarthArmor extends EarthAbility {
 				new ItemStack(Material.LEATHER_CHESTPLATE, 1), 
 				new ItemStack(Material.LEATHER_HELMET, 1) };
 		player.getInventory().setArmorContents(armors);
-		PotionEffect resistance = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, (int) duration / 50, strength - 1);
-		new TempPotionEffect(player, resistance);
 		formed = true;
 	}
 	
@@ -208,7 +203,6 @@ public class EarthArmor extends EarthAbility {
 		if (oldArmor != null) {
 			player.getInventory().setArmorContents(oldArmor);
 		}
-		player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 	}
 
 	@Override

@@ -8,7 +8,9 @@ import com.projectkorra.projectkorra.airbending.AirPassive;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.ChiPassive;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
+import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -39,6 +41,52 @@ public class PassiveHandler implements Runnable{
 		}
 	}
 	
+	public static void handleArmorPassives() {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
+				return;
+			}
+			
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			
+			if (bPlayer == null) continue;
+			if (CoreAbility.hasAbility(player, EarthArmor.class)) {
+				EarthArmor abil = CoreAbility.getAbility(player, EarthArmor.class);
+				int strength = abil.getStrength();
+				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 3, strength - 1), false);
+			}
+			if (CoreAbility.hasAbility(player, PlantArmor.class)) {
+				PlantArmor abil = CoreAbility.getAbility(player, PlantArmor.class);
+				int strength = abil.getResistance();
+				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 3, strength - 1), false);
+			}
+		}
+	}
+	
+	public static void handleExhaustionPassives() {
+		double air = AirPassive.getExhaustionFactor();
+		double chi = ChiPassive.getExhaustionFactor();
+		
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
+				return;
+			}
+			
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			
+			if (bPlayer == null) continue;
+			
+			if (!bPlayer.hasElement(Element.AIR)) air = 0;
+			if (!bPlayer.hasElement(Element.CHI)) chi = 0;
+			
+			double max = Math.max(air, chi);
+			if (max == 0) continue;
+			else {
+				player.setExhaustion(getExhaustion(player, player.getExhaustion(), max));
+			}
+		}
+	}
+
 	public static void handleSpeedPassives() {
 		int air = AirPassive.getSpeedPower();
 		int chi = ChiPassive.getSpeedPower();
@@ -121,34 +169,11 @@ public class PassiveHandler implements Runnable{
 		}
 	}
 	
-	public static void handleExhaustionPassives() {
-		double air = AirPassive.getExhaustionFactor();
-		double chi = ChiPassive.getExhaustionFactor();
-		
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
-				return;
-			}
-			
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			
-			if (bPlayer == null) continue;
-			
-			if (!bPlayer.hasElement(Element.AIR)) air = 0;
-			if (!bPlayer.hasElement(Element.CHI)) chi = 0;
-			
-			double max = Math.max(air, chi);
-			if (max == 0) continue;
-			else {
-				player.setExhaustion(getExhaustion(player, player.getExhaustion(), max));
-			}
-		}
-	}
-
 	@Override
 	public void run() {
+		handleArmorPassives();
+		handleExhaustionPassives();
 		handleSpeedPassives();
 		handleJumpPassives();
-		handleExhaustionPassives();
 	}
 }
