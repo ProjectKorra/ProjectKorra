@@ -1245,7 +1245,7 @@ public class GeneralMethods {
 
 				Claim claim = GriefPrevention.instance.dataStore.getClaimAt(loc, true, null);
 
-				if (reason != null && claim.siegeData != null) {
+				if (reason != null && claim != null) {
 					return true;
 				}
 			}
