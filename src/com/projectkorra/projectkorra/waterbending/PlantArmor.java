@@ -1,8 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.PlantAbility;
-import com.projectkorra.projectkorra.earthbending.EarthArmor;
+import java.util.Random;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -13,7 +11,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.util.Vector;
 
-import java.util.Random;
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.ability.PlantAbility;
+import com.projectkorra.projectkorra.earthbending.EarthArmor;
+import com.projectkorra.projectkorra.util.PassiveHandler;
 
 public class PlantArmor extends PlantAbility {
 	
@@ -70,7 +71,7 @@ public class PlantArmor extends PlantAbility {
 	private boolean canUse() {
 		if (!bPlayer.canPlantbend() 
 				|| !bPlayer.canBend(this) 
-				|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+				|| PKMethods.isRegionProtectedFromBuild(this, location)) {
 			remove();
 			return false;
 		} else if (location.distanceSquared(player.getEyeLocation()) > range * range) {
@@ -113,7 +114,7 @@ public class PlantArmor extends PlantAbility {
 				playPlantbendingSound(location);
 			}
 			
-			GeneralMethods.displayColoredParticle(location, "009933");
+			PKMethods.displayColoredParticle(location, "009933");
 			Vector vector = player.getEyeLocation().toVector().subtract(location.toVector());
 			location = location.add(vector.normalize());
 		}
@@ -127,6 +128,7 @@ public class PlantArmor extends PlantAbility {
 		}
 
 		if (formed) {
+			PassiveHandler.handleArmorPassives();
 			if (System.currentTimeMillis() > startTime + duration) {
 				remove();
 				bPlayer.addCooldown(this);

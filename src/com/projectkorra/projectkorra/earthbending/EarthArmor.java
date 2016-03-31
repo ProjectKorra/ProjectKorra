@@ -1,10 +1,5 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.PlantArmor;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,6 +7,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.util.PassiveHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
 public class EarthArmor extends EarthAbility {
 
@@ -54,7 +55,7 @@ public class EarthArmor extends EarthAbility {
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthArmor.SelectRange");
 
 		headBlock = getTargetEarthBlock((int) selectRange);
-		if (!GeneralMethods.isRegionProtectedFromBuild(this, headBlock.getLocation()) 
+		if (!PKMethods.isRegionProtectedFromBuild(this, headBlock.getLocation()) 
 				&& getEarthbendableBlocksLength(headBlock, new Vector(0, -1, 0), 2) >= 2) {			
 			this.legsBlock = headBlock.getRelative(BlockFace.DOWN);
 			this.headType = headBlock.getType();
@@ -74,8 +75,8 @@ public class EarthArmor extends EarthAbility {
 				addTempAirBlock(oldHeadBlock);
 				addTempAirBlock(oldLegsBlock);
 			} else {
-				GeneralMethods.removeBlock(oldHeadBlock);
-				GeneralMethods.removeBlock(oldLegsBlock);
+				PKMethods.removeBlock(oldHeadBlock);
+				PKMethods.removeBlock(oldLegsBlock);
 			}
 			start();
 		}
@@ -125,14 +126,14 @@ public class EarthArmor extends EarthAbility {
 		}
 
 		if (isTransparent(newHeadBlock) && !newHeadBlock.isLiquid()) {
-			GeneralMethods.breakBlock(newHeadBlock);
+			PKMethods.breakBlock(newHeadBlock);
 		} else if (!isEarthbendable(newHeadBlock) && !newHeadBlock.isLiquid() && newHeadBlock.getType() != Material.AIR) {
 			remove();
 			return false;
 		}
 
 		if (isTransparent(newLegsBlock) && !newLegsBlock.isLiquid()) {
-			GeneralMethods.breakBlock(newLegsBlock);
+			PKMethods.breakBlock(newLegsBlock);
 		} else if (!isEarthbendable(newLegsBlock) && !newLegsBlock.isLiquid() && newLegsBlock.getType() != Material.AIR) {
 			remove();
 			return false;
@@ -163,12 +164,13 @@ public class EarthArmor extends EarthAbility {
 	}
 
 	@Override
-	public void progress() {		
+	public void progress() {	
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 
 		if (formed) {
+			PassiveHandler.handleArmorPassives();
 			if (System.currentTimeMillis() > startTime + duration && !complete) {
 				complete = true;
 				bPlayer.addCooldown(this);
