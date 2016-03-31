@@ -58,8 +58,8 @@ public class OctopusForm extends WaterAbility {
 			if (oldOctopus.formed) {
 				oldOctopus.attack();
 				return;
-			} else if (!oldOctopus.sourceSelected) {
-				return;
+			} else if (oldOctopus.sourceSelected) {
+				oldOctopus.remove();
 			}
 		}
 		
@@ -92,7 +92,6 @@ public class OctopusForm extends WaterAbility {
 			sourceLocation = sourceBlock.getLocation();
 			sourceSelected = true;
 			start();
-			bPlayer.addCooldown(this);
 		}
 	}
 
@@ -100,6 +99,7 @@ public class OctopusForm extends WaterAbility {
 		if (sourceSelected) {
 			sourceSelected = false;
 			settingUp = true;
+			bPlayer.addCooldown(this);
 		} else if (settingUp) {
 			settingUp = false;
 			forming = true;
