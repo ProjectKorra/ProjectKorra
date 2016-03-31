@@ -163,7 +163,7 @@ public class AirSpout extends AirAbility {
 	
 	@Override
 	public boolean isSneakAbility() {
-		return true;
+		return false;
 	}
 
 	@Override

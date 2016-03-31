@@ -28,7 +28,7 @@ public class ToggleCommand extends PKCommand {
 	//config.addDefault("Commands.Toggle.Other.ToggledOffElementConfirm", "Your {element} has been toggled off by {sender}.");
 	
 	public ToggleCommand() {
-		super("toggle", "/bending toggle <all | (element) <player>>", ConfigManager.languageConfig.get().getString("Commands.Toggle.Description"), new String[] { "toggle", "t" });
+		super("toggle", "/bending toggle <All/Element/Player> [Player]", ConfigManager.languageConfig.get().getString("Commands.Toggle.Description"), new String[] { "toggle", "t" });
 		
 		FileConfiguration c = ConfigManager.languageConfig.get();
 		

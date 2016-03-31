@@ -252,6 +252,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			info = new Information();
 			
 			info.setBlock(block);
+			info.setState(block.getState());
 			info.setData(block.getData());
 		}
 		block.setType(Material.AIR);

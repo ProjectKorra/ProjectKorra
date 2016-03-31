@@ -22,7 +22,7 @@ public class BindCommand extends PKCommand {
 	private String toggledElementOff;
 
 	public BindCommand() {
-		super("bind", "/bending bind [Ability] <#>", ConfigManager.languageConfig.get().getString("Commands.Bind.Description"), new String[]{ "bind", "b" });
+		super("bind", "/bending bind <Ability> [Slot]", ConfigManager.languageConfig.get().getString("Commands.Bind.Description"), new String[]{ "bind", "b" });
 		
 		this.abilityDoesntExist = ConfigManager.languageConfig.get().getString("Commands.Bind.AbilityDoesntExist");
 		this.wrongNumber = ConfigManager.languageConfig.get().getString("Commands.Bind.WrongNumber");

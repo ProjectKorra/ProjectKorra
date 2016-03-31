@@ -190,12 +190,12 @@ public class ConfigManager {
 			config.addDefault("Commands.Check.UpToDate", "You have the latest version of ProjectKorra.");
 			
 			config.addDefault("Commands.Bind.Description", "This command will bind an ability to the slot you specify (if you specify one), or the slot currently selected in your hotbar (If you do not specify a Slot #).");
-			config.addDefault("Commands.Bind.AbilityDoesntExist", "This command will bind an ability to the slot you specify (if you specify one), or the slot currently selected in your hotbar (If you do not specify a Slot #).");
+			config.addDefault("Commands.Bind.AbilityDoesntExist", "{ability} is not a valid ability.");
 			config.addDefault("Commands.Bind.WrongNumber", "Slot must be an integer between 1 and 9.");
 			config.addDefault("Commands.Bind.ElementToggledOff", "You have that ability's element toggled off currently.");
 			config.addDefault("Commands.Bind.SuccessfullyBound", "Succesfully bound {ability} to slot {slot}.");
 			
-			config.addDefault("Commands.Add.Choose", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
+			config.addDefault("Commands.Add.Description", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
 			config.addDefault("Commands.Add.SuccessfullyAdded", "You are now also a {element}.");
 			config.addDefault("Commands.Add.PlayerNotFound", "That player could not be found.");
 			config.addDefault("Commands.Add.InvalidElement", "You must specify a valid element.");
@@ -562,7 +562,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Tornado.NpcPushFactor", 1);
 			config.addDefault("Abilities.Air.Tornado.PlayerPushFactor", 1);
 
-			config.addDefault("Abilities.Air.AirCombo.Enabled", true);
+			config.addDefault("Abilities.Air.AirCombo.Twister.Enabled", true);
 			config.addDefault("Abilities.Air.AirCombo.Twister.Speed", 0.35);
 			config.addDefault("Abilities.Air.AirCombo.Twister.Range", 16);
 			config.addDefault("Abilities.Air.AirCombo.Twister.Height", 8);
@@ -571,11 +571,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirCombo.Twister.Cooldown", 10000);
 			config.addDefault("Abilities.Air.AirCombo.Twister.DegreesPerParticle", 7);
 			config.addDefault("Abilities.Air.AirCombo.Twister.HeightPerParticle", 1.25);
+			config.addDefault("Abilities.Air.AirCombo.AirStream.Enabled", true);
 			config.addDefault("Abilities.Air.AirCombo.AirStream.Speed", 0.5);
 			config.addDefault("Abilities.Air.AirCombo.AirStream.Range", 40);
 			config.addDefault("Abilities.Air.AirCombo.AirStream.EntityDuration", 4000);
 			config.addDefault("Abilities.Air.AirCombo.AirStream.EntityHeight", 14);
 			config.addDefault("Abilities.Air.AirCombo.AirStream.Cooldown", 7000);
+			config.addDefault("Abilities.Air.AirCombo.AirSweep.Enabled", true);
 			config.addDefault("Abilities.Air.AirCombo.AirSweep.Speed", 1.4);
 			config.addDefault("Abilities.Air.AirCombo.AirSweep.Range", 14);
 			config.addDefault("Abilities.Air.AirCombo.AirSweep.Damage", 3);
@@ -770,9 +772,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Speed", 1.3);
 			config.addDefault("Abilities.Water.WaterSpout.Wave.Cooldown", 4500);
 
-			config.addDefault("Abilities.Water.WaterCombo.Enabled", true);
+			config.addDefault("Abilities.Water.WaterCombo.IceWave.Enabled", true);
 			config.addDefault("Abilities.Water.WaterCombo.IceWave.Damage", 4);
 			config.addDefault("Abilities.Water.WaterCombo.IceWave.Cooldown", 6000);
+			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Enabled", true);
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Damage", 2);
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Radius", 2.5);
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Range", 12);
@@ -782,7 +785,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Cooldown", 10000);
 
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
-			config.addDefault("Properties.Earth.Passive.SandRunSpeed", 0);
+			config.addDefault("Abilities.Earth.Passive.SandRunSpeed", 2);
 
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
 			config.addDefault("Abilities.Earth.Catapult.Length", 6);
@@ -919,8 +922,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Tremorsense.Radius", 5);
 			config.addDefault("Abilities.Earth.Tremorsense.LightThreshold", 7);
 			config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
-
-			config.addDefault("Abilities.Earth.EarthCombo.Enabled", true);
 			
 			config.addDefault("Abilities.Fire.Blaze.Enabled", true);
 			config.addDefault("Abilities.Fire.Blaze.Arc", 16);
@@ -1028,7 +1029,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.WallOfFire.FireTicks", 2);
 			config.addDefault("Abilities.Fire.WallOfFire.MaxAngle", 50);
 
-			config.addDefault("Abilities.Fire.FireCombo.Enabled", true);
+			config.addDefault("Abilities.Fire.FireCombo.FireKick.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Range", 7.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Cooldown", 5500);
@@ -1036,25 +1037,29 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Knockback", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Cooldown", 4500);
+			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Range", 20.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Damage", 4.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Speed", 0.55);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.FireTicks", 2.5);
+			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Speed", 1.2);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Cooldown", 6000);
+			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Speed", 1.1);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Damage", 4);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.FireTicks", 2.5);
 
+			config.addDefault("Abilities.Chi.Passive.ExhaustionFactor", 0.3);
 			config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
 			config.addDefault("Abilities.Chi.Passive.Speed", 1);
 			config.addDefault("Abilities.Chi.Passive.Jump", 1);
 			config.addDefault("Abilities.Chi.Passive.BlockChi.Chance", 35);
 			config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 1000);
 
-			config.addDefault("Abilities.Chi.ChiCombo.Enabled", true);
+			config.addDefault("Abilities.Chi.ChiCombo.Immobilize.Enabled", true);
 			config.addDefault("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration", 4000);
 			config.addDefault("Abilities.Chi.ChiCombo.Immobilize.Cooldown", 15000);
 

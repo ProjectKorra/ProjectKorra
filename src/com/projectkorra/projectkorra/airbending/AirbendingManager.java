@@ -13,7 +13,6 @@ public class AirbendingManager implements Runnable {
 	@Override
 	public void run() {
 		AirBlast.progressOrigins();
-		AirPassive.handlePassive();
 		AirBubble.handleBubbles();
 		AirSuction.progressOrigins();
 	}

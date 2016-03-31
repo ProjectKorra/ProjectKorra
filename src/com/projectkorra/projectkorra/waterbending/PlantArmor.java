@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.PlantAbility;
+import com.projectkorra.projectkorra.earthbending.EarthArmor;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -10,8 +11,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.Random;
@@ -19,7 +18,6 @@ import java.util.Random;
 public class PlantArmor extends PlantAbility {
 	
 	private boolean formed;
-	private boolean hadEffect;
 	private int resistance;
 	private long duration;
 	private long cooldown;
@@ -43,8 +41,13 @@ public class PlantArmor extends PlantAbility {
 		
 		if (hasAbility(player, PlantArmor.class)) {
 			return;
-		} else if (bPlayer.isOnCooldown(this)) {
+		} else if (!bPlayer.canBend(this)) {
 			return;
+		}
+		
+		if (hasAbility(player, EarthArmor.class)) {
+			EarthArmor abil = getAbility(player, EarthArmor.class);
+			abil.remove();
 		}
 		
 		block = getPlantSourceBlock(player, range, true);
@@ -53,7 +56,6 @@ public class PlantArmor extends PlantAbility {
 		}
 		
 		location = block.getLocation();
-		hadEffect = player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 		if (!canUse()) {
 			return;
 		}
@@ -96,10 +98,7 @@ public class PlantArmor extends PlantAbility {
 		player.getInventory().setChestplate(chestplate);
 		player.getInventory().setLeggings(leggings);
 		player.getInventory().setBoots(boots);
-		
-		if (!hadEffect) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, resistance - 1));
-		}
+
 		formed = true;
 		startTime = System.currentTimeMillis();
 	}
@@ -149,9 +148,6 @@ public class PlantArmor extends PlantAbility {
 		
 		if (oldArmor != null) {
 			player.getInventory().setArmorContents(oldArmor);
-			if (!hadEffect) {
-				player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-			}
 		}
 		
 		if (plantbending != null) {
@@ -181,10 +177,6 @@ public class PlantArmor extends PlantAbility {
 	
 	public void setResistance(int resistance) {
 		this.resistance = resistance;
-		if (!hadEffect) {
-			player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, resistance - 1));
-		}
 	}
 	
 	public int getResistance() {
@@ -217,14 +209,6 @@ public class PlantArmor extends PlantAbility {
 
 	public void setFormed(boolean formed) {
 		this.formed = formed;
-	}
-
-	public boolean isHadEffect() {
-		return hadEffect;
-	}
-
-	public void setHadEffect(boolean hadEffect) {
-		this.hadEffect = hadEffect;
 	}
 
 	public long getDuration() {

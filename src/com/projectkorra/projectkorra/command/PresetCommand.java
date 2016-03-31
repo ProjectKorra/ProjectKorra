@@ -42,7 +42,7 @@ public class PresetCommand extends PKCommand {
 	private String cantEditBinds;
 	
 	public PresetCommand() {
-		super("preset", "/bending preset create|bind|list|delete [name]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
+		super("preset", "/bending preset <Bind/Create/Delete/List> [Preset]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
 		
 		this.noPresets = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresets");
 		this.noPresetName = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresetName");

@@ -101,6 +101,11 @@ public class Element {
 		ALL_ELEMENTS.put(name.toLowerCase(), this);
 	}
 	
+	public String getPrefix() {
+		String prefix = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? this.getColor() + ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name) + " " : ChatColor.WHITE + "[Nonbender] ";
+		return prefix;
+	}
+	
 	public ChatColor getColor() {
 		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name) : plugin.getConfig().getString("Chat.Colors." + name);
 		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
