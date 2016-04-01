@@ -86,7 +86,7 @@ public class BendingPlayer {
 		}
 
 		PLAYERS.put(uuid, this);
-		PKListener.login(this);
+		GeneralMethods.loadBendingPlayer(this);
 	}
 	
 	public void addCooldown(Ability ability, long cooldown) {

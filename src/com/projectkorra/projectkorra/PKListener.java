@@ -97,7 +97,6 @@ import com.projectkorra.projectkorra.waterbending.WaterPassive;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -170,73 +169,6 @@ public class PKListener implements Listener {
 
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
-	}
-
-	public static void login(BendingPlayer pl) {
-		ProjectKorra plugin = ProjectKorra.plugin;
-		Player player = Bukkit.getPlayer(pl.getUUID());
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-		if (bPlayer == null) {
-			return;
-		}
-
-		if (TOGGLED_OUT.contains(player.getUniqueId())) {
-			bPlayer.toggleBending();
-			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
-		}
-
-		Preset.loadPresets(player);
-		String append = "";
-		ChatColor color = null;
-		boolean chatEnabled = ProjectKorra.plugin.getConfig().getBoolean("Properties.Chat.Enable");
-		if (bPlayer.getElements().size() > 1 && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Avatar");
-			color = ChatColor.valueOf(plugin.getConfig().getString("Properties.Chat.Colors.Avatar"));
-		} else if (bPlayer.hasElement(Element.AIR) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Air");
-			color = Element.AIR.getColor();
-		} else if (bPlayer.hasElement(Element.WATER) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Water");
-			color = Element.WATER.getColor();
-		} else if (bPlayer.hasElement(Element.EARTH) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Earth");
-			color = Element.EARTH.getColor();
-		} else if (bPlayer.hasElement(Element.FIRE) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Fire");
-			color = Element.FIRE.getColor();
-		} else if (bPlayer.hasElement(Element.CHI) && chatEnabled) {
-			append = plugin.getConfig().getString("Properties.Chat.Prefixes.Chi");
-			color = Element.CHI.getColor();
-		} else {
-			append = "[Nonbender]";
-			color = ChatColor.WHITE;
-		}
-		
-		if (chatEnabled) {
-			player.setDisplayName(player.getName());
-			if(color != null) {
-				player.setDisplayName(color + append + ChatColor.RESET + player.getDisplayName());
-			}
-		}
-
-		// Handle the AirSpout/WaterSpout login glitches
-		if (player.getGameMode() != GameMode.CREATIVE) {
-			HashMap<Integer, String> bound = bPlayer.getAbilities();
-			for (String str : bound.values()) {
-				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
-					final Player fplayer = player;
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							fplayer.setFlying(false);
-							fplayer.setAllowFlight(false);
-						}
-					}.runTaskLater(ProjectKorra.plugin, 2);
-					break;
-				}
-			}
-		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

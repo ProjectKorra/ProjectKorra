@@ -47,6 +47,7 @@ import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
+import com.projectkorra.projectkorra.event.BendingPlayerCreationEvent;
 import com.projectkorra.projectkorra.event.BendingReloadEvent;
 import com.projectkorra.projectkorra.event.BindChangeEvent;
 import com.projectkorra.projectkorra.firebending.Combustion;
@@ -1273,6 +1274,58 @@ public class GeneralMethods {
 
 	public static boolean isWeapon(Material mat) {
 		return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE);
+	}
+	
+	public static void loadBendingPlayer(BendingPlayer pl) {
+		Player player = Bukkit.getPlayer(pl.getUUID());
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+		if (bPlayer == null) {
+			return;
+		}
+
+		if (PKListener.getToggledOut().contains(player.getUniqueId())) {
+			bPlayer.toggleBending();
+			player.sendMessage(ChatColor.YELLOW + "Reminder, you toggled your bending before signing off. Enable it again with /bending toggle.");
+		}
+
+		Preset.loadPresets(player);
+		Element element = null;
+		String prefix = "";
+		
+		boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
+		if (bPlayer.getElements().size() > 1) {
+			prefix = Element.AVATAR.getPrefix();
+		} else if (bPlayer.getElements().size() == 1){
+			element = bPlayer.getElements().get(0);
+			prefix = element.getPrefix();
+		} else {
+			 prefix = ChatColor.WHITE + "[Nonbender] ";
+		}
+		
+		if (chatEnabled) {
+			player.setDisplayName(player.getName());
+			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
+		}
+
+		// Handle the AirSpout/WaterSpout login glitches
+		if (player.getGameMode() != GameMode.CREATIVE) {
+			HashMap<Integer, String> bound = bPlayer.getAbilities();
+			for (String str : bound.values()) {
+				if (str.equalsIgnoreCase("AirSpout") || str.equalsIgnoreCase("WaterSpout") || str.equalsIgnoreCase("SandSpout")) {
+					final Player fplayer = player;
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							fplayer.setFlying(false);
+							fplayer.setAllowFlight(false);
+						}
+					}.runTaskLater(ProjectKorra.plugin, 2);
+					break;
+				}
+			}
+		}
+		Bukkit.getServer().getPluginManager().callEvent(new BendingPlayerCreationEvent(bPlayer));
 	}
 
 	public static void reloadPlugin(CommandSender sender) {
