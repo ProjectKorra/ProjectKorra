@@ -1,12 +1,9 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.object.Preset;
-import com.projectkorra.rpg.commands.RPGCommand;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -14,10 +11,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.object.Preset;
+import com.projectkorra.rpg.commands.RPGCommand;
 
 /**
  * Completes tabbing for the bending command/subcommands.
@@ -252,7 +252,7 @@ public class BendingTabComplete implements TabCompleter {
 					l.add(p.getName());
 				}
 				return getPossibleCompletionsForGivenArgs(args, l);
-			} else if (GeneralMethods.hasRPG()) {
+			} else if (PKMethods.hasRPG()) {
 				if (args[0].equalsIgnoreCase("rpg")) {
 					if (sender.hasPermission("bending.command.rpg") && args.length <= 4) {
 						if (args.length == 2) {

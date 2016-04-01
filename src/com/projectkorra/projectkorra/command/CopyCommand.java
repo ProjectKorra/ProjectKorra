@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -82,11 +82,11 @@ public class CopyCommand extends PKCommand {
 		BendingPlayer target = BendingPlayer.getBendingPlayer(player2);
 
 		if (orig == null) {
-			GeneralMethods.createBendingPlayer(((Player) player).getUniqueId(), player.getName());
+			PKMethods.createBendingPlayer(((Player) player).getUniqueId(), player.getName());
 			orig = BendingPlayer.getBendingPlayer(player);
 		}
 		if (target == null) {
-			GeneralMethods.createBendingPlayer(((Player) player2).getUniqueId(), player2.getName());
+			PKMethods.createBendingPlayer(((Player) player2).getUniqueId(), player2.getName());
 			target = BendingPlayer.getBendingPlayer(player2);
 		}
 		if (orig.isPermaRemoved()) {

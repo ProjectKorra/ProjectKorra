@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -134,7 +134,7 @@ public class SurgeWall extends WaterAbility {
 		cancelPrevious();
 		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
 		
-		if (block != null && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (block != null && !PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			sourceBlock = block;
 			focusBlock();
 			return true;
@@ -176,7 +176,7 @@ public class SurgeWall extends WaterAbility {
 				if (isPlant(sourceBlock)) {
 					new PlantRegrowth(player, sourceBlock);
 				}
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
+				if (!PKMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
 					sourceBlock.setType(Material.AIR);
 				}
 				addWater(sourceBlock);
@@ -234,7 +234,7 @@ public class SurgeWall extends WaterAbility {
 				}
 				
 				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location targetLoc = GeneralMethods.getTargetedLocation(player, (int) range, 8, 9, 79);
+				Location targetLoc = PKMethods.getTargetedLocation(player, (int) range, 8, 9, 79);
 				location = targetLoc.clone();
 				Vector eyeDir = player.getEyeLocation().getDirection();
 				Vector vector;
@@ -242,10 +242,10 @@ public class SurgeWall extends WaterAbility {
 				
 				for (double i = 0; i <= getNightFactor(radius); i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
-						vector = GeneralMethods.getOrthogonalVector(eyeDir.clone(), angle, i);
+						vector = PKMethods.getOrthogonalVector(eyeDir.clone(), angle, i);
 						block = targetLoc.clone().add(vector).getBlock();
 						
-						if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+						if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 							continue;
 						} else if (WALL_BLOCKS.containsKey(block)) {
 							blocks.add(block);
@@ -332,7 +332,7 @@ public class SurgeWall extends WaterAbility {
 	private void removeWater(Block block) {
 		if (block != null) {
 			if (AFFECTED_BLOCKS.containsKey(block)) {
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+				if (!PKMethods.isAdjacentToThreeOrMoreSources(block)) {
 					TempBlock.revertBlock(block, Material.AIR);
 				}
 				AFFECTED_BLOCKS.remove(block);
@@ -352,7 +352,7 @@ public class SurgeWall extends WaterAbility {
 	}
 
 	private void addWater(Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);

@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
@@ -172,7 +172,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 	}
 
 	public void collision(LivingEntity entity, Vector direction, FireComboStream fstream) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze", entity.getLocation())) {
+		if (PKMethods.isRegionProtectedFromBuild(player, "Blaze", entity.getLocation())) {
 			return;
 		}
 		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.VILLAGER_HIT, 0.3f, 0.3f);
@@ -246,8 +246,8 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				player.getWorld().playSound(player.getLocation(), Sound.HORSE_JUMP, 0.5f, 0f);
 				player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 0.5f, 1f);
 				for (int i = -30; i <= 30; i += 5) {
-					Vector vec = GeneralMethods.getDirection(player.getLocation(), destination.clone());
-					vec = GeneralMethods.rotateXZ(vec, i);
+					Vector vec = PKMethods.getDirection(player.getLocation(), destination.clone());
+					vec = PKMethods.rotateXZ(vec, i);
 
 					FireComboStream fs = new FireComboStream(this, vec, player.getLocation(), range, speed, "FireKick");
 					fs.setSpread(0.2F);
@@ -262,7 +262,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				}
 				location = tasks.get(0).getLocation();
 				for (FireComboStream stream : tasks) {
-					if (GeneralMethods.blockAbilities(player, BLOCKABLE_ABILITIES, stream.location, 2)) {
+					if (PKMethods.blockAbilities(player, BLOCKABLE_ABILITIES, stream.location, 2)) {
 						stream.remove();
 					}
 				}
@@ -281,8 +281,8 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 0.5f, 0.5f);
 
 				for (int i = 0; i <= 360; i += 5) {
-					Vector vec = GeneralMethods.getDirection(player.getLocation(), destination.clone());
-					vec = GeneralMethods.rotateXZ(vec, i - 180);
+					Vector vec = PKMethods.getDirection(player.getLocation(), destination.clone());
+					vec = PKMethods.rotateXZ(vec, i - 180);
 					vec.setY(0);
 
 					FireComboStream fs = new FireComboStream(this, vec, player.getLocation().clone().add(0, 1, 0), range, speed, "FireSpin");
@@ -379,7 +379,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				bPlayer.addCooldown("FireWheel", cooldown);
 				origin = player.getLocation();
 
-				if (GeneralMethods.getTopBlock(player.getLocation(), 3, 3) == null) {
+				if (PKMethods.getTopBlock(player.getLocation(), 3, 3) == null) {
 					remove();
 					return;
 				}
@@ -392,7 +392,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				return;
 			}
 
-			Block topBlock = GeneralMethods.getTopBlock(location, 2, -4);
+			Block topBlock = PKMethods.getTopBlock(location, 2, -4);
 			if (topBlock == null || (WaterAbility.isWaterbendable(player, ability, topBlock) && !isPlant(topBlock))) {
 				remove();
 				return;
@@ -419,7 +419,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 
 			location = location.add(direction.clone().multiply(speed));
 			location.getWorld().playSound(location, Sound.FIRE, 1, 1);
-			if (GeneralMethods.blockAbilities(player, BLOCKABLE_ABILITIES, location, 2)) {
+			if (PKMethods.blockAbilities(player, BLOCKABLE_ABILITIES, location, 2)) {
 				remove();
 				return;
 			}
@@ -497,7 +497,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				remove();
 				return;
 			} else if (collides && checkCollisionCounter % checkCollisionDelay == 0) {
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
+				for (Entity entity : PKMethods.getEntitiesAroundPoint(location, collisionRadius)) {
 					if (entity instanceof LivingEntity && !entity.equals(fireCombo.getPlayer())) {
 						fireCombo.collision((LivingEntity) entity, direction, this);
 					}

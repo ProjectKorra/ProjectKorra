@@ -1,8 +1,8 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.Element;
 
 public abstract class HealingAbility extends WaterAbility implements SubAbility {
 	

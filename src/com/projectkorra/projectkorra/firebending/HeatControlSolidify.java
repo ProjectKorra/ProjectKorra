@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
@@ -110,9 +110,9 @@ public class HeatControlSolidify extends FireAbility {
 			return;
 		}
 
-		Location targetlocation = GeneralMethods.getTargetedLocation(player, range);
+		Location targetlocation = PKMethods.getTargetedLocation(player, range);
 		resetLocation(targetlocation);
-		List<Location> area = GeneralMethods.getCircle(location, radius, 3, true, true, 0);
+		List<Location> area = PKMethods.getCircle(location, radius, 3, true, true, 0);
 		particles(area);
 		freeze(area);
 	}

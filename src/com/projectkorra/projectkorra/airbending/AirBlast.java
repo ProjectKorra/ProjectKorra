@@ -21,7 +21,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -70,15 +70,15 @@ public class AirBlast extends AirAbility {
 		setFields();
 
 		if (ORIGINS.containsKey(player)) {
-			Entity entity = GeneralMethods.getTargetedEntity(player, range);
+			Entity entity = PKMethods.getTargetedEntity(player, range);
 			this.isFromOtherOrigin = true;
 			this.origin = ORIGINS.get(player);
 			ORIGINS.remove(player);
 
 			if (entity != null) {
-				this.direction = GeneralMethods.getDirection(origin, entity.getLocation()).normalize();
+				this.direction = PKMethods.getDirection(origin, entity.getLocation()).normalize();
 			} else {
-				this.direction = GeneralMethods.getDirection(origin, GeneralMethods.getTargetedLocation(player, range)) .normalize();
+				this.direction = PKMethods.getDirection(origin, PKMethods.getTargetedLocation(player, range)) .normalize();
 			}
 		} else {
 			origin = player.getEyeLocation();
@@ -162,10 +162,10 @@ public class AirBlast extends AirAbility {
 	}
 
 	public static void setOrigin(Player player) {
-		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), GeneralMethods.NON_OPAQUE);
-		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
+		Location location = PKMethods.getTargetedLocation(player, getSelectRange(), PKMethods.NON_OPAQUE);
+		if (location.getBlock().isLiquid() || PKMethods.isSolid(location.getBlock())) {
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBlast", location)) {
+		} else if (PKMethods.isRegionProtectedFromBuild(player, "AirBlast", location)) {
 			return;
 		}
 
@@ -211,7 +211,7 @@ public class AirBlast extends AirAbility {
 
 			factor *= 1 - location.distance(origin) / (2 * range);
 
-			if (isUser && GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
+			if (isUser && PKMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
 				factor *= .5;
 			}
 
@@ -235,7 +235,7 @@ public class AirBlast extends AirAbility {
 				return;
 			}
 
-			GeneralMethods.setVelocity(entity, velocity);
+			PKMethods.setVelocity(entity, velocity);
 			if (source != null) {
 				new HorizontalVelocityTracker(entity, player, 200l, this);
 			} else {
@@ -269,7 +269,7 @@ public class AirBlast extends AirAbility {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+		} else if (PKMethods.isRegionProtectedFromBuild(this, location)) {
 			remove();
 			return;
 		}
@@ -283,12 +283,12 @@ public class AirBlast extends AirAbility {
 		}
 
 		Block block = location.getBlock();
-		for (Block testblock : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+		for (Block testblock : PKMethods.getBlocksAroundPoint(location, radius)) {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 			}
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				continue;
 			}
 
@@ -388,7 +388,7 @@ public class AirBlast extends AirAbility {
 				affectedLevers.add(block);
 			}
 		}
-		if ((GeneralMethods.isSolid(block) || block.isLiquid()) && !affectedLevers.contains(block) && canCoolLava) {
+		if ((PKMethods.isSolid(block) || block.isLiquid()) && !affectedLevers.contains(block) && canCoolLava) {
 			if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
 				if (block.getData() == 0x0) {
 					block.setType(Material.OBSIDIAN);
@@ -411,7 +411,7 @@ public class AirBlast extends AirAbility {
 			return;
 		}
 
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
+		for (Entity entity : PKMethods.getEntitiesAroundPoint(location, radius)) {
 			affect(entity);
 		}
 

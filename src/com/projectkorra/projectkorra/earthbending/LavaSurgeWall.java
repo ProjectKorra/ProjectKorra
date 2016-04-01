@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireBlast;
@@ -47,7 +47,7 @@ public class LavaSurgeWall extends LavaAbility {
 		this.interval = 30;
 		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 		this.range = getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
-		this.cooldown = GeneralMethods.getGlobalCooldown();
+		this.cooldown = PKMethods.getGlobalCooldown();
 		
 		LavaSurgeWave wave = getAbility(player, LavaSurgeWave.class);
 		if (wave != null && wave.isProgressing()) {
@@ -109,7 +109,7 @@ public class LavaSurgeWall extends LavaAbility {
 				firstDirection = getDirection(sourceBlock.getLocation(), firstDestination);
 				targetDirection = getDirection(firstDestination, targetDestination);
 
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
+				if (!PKMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
 					sourceBlock.setType(Material.AIR);
 				}
 				addLava(sourceBlock);
@@ -159,7 +159,7 @@ public class LavaSurgeWall extends LavaAbility {
 			
 			if (forming) {
 				ArrayList<Block> blocks = new ArrayList<Block>();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) range, 8, 9, 79);
+				Location loc = PKMethods.getTargetedLocation(player, (int) range, 8, 9, 79);
 				location = loc.clone();
 				Vector dir = player.getEyeLocation().getDirection();
 				Vector vec;
@@ -167,10 +167,10 @@ public class LavaSurgeWall extends LavaAbility {
 				
 				for (double i = 0; i <= radius; i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
-						vec = GeneralMethods.getOrthogonalVector(dir.clone(), angle, i);
+						vec = PKMethods.getOrthogonalVector(dir.clone(), angle, i);
 						block = loc.clone().add(vec).getBlock();
 						
-						if (GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", block.getLocation())) {
+						if (PKMethods.isRegionProtectedFromBuild(player, "LavaSurge", block.getLocation())) {
 							continue;
 						}
 						if (WALL_BLOCKS.containsKey(block)) {
@@ -248,7 +248,7 @@ public class LavaSurgeWall extends LavaAbility {
 	private void removeLava(Block block) {
 		if (block != null) {
 			if (AFFECTED_BLOCKS.containsKey(block)) {
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+				if (!PKMethods.isAdjacentToThreeOrMoreSources(block)) {
 					TempBlock.revertBlock(block, Material.AIR);
 				}
 				AFFECTED_BLOCKS.remove(block);
@@ -268,7 +268,7 @@ public class LavaSurgeWall extends LavaAbility {
 	}
 
 	private void addLava(Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", block.getLocation()))
+		if (PKMethods.isRegionProtectedFromBuild(player, "LavaSurge", block.getLocation()))
 			return;
 		if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);

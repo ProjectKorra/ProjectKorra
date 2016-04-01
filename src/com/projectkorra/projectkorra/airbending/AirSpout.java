@@ -1,15 +1,15 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import java.util.Random;
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.util.Flight;
 
 public class AirSpout extends AirAbility {
 
@@ -74,7 +74,7 @@ public class AirSpout extends AirAbility {
 		Block standingblock = player.getLocation().getBlock();
 		for (int i = 0; i <= height + 5; i++) {
 			Block block = standingblock.getRelative(BlockFace.DOWN, i);
-			if (GeneralMethods.isSolid(block) || block.isLiquid()) {
+			if (PKMethods.isSolid(block) || block.isLiquid()) {
 				return block;
 			}
 		}
@@ -89,7 +89,7 @@ public class AirSpout extends AirAbility {
 		}
 
 		Block eyeBlock = player.getEyeLocation().getBlock();
-		if (eyeBlock.isLiquid() || GeneralMethods.isSolid(eyeBlock)) {
+		if (eyeBlock.isLiquid() || PKMethods.isSolid(eyeBlock)) {
 			remove();
 			return;
 		}

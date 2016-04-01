@@ -1,12 +1,11 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.LavaAbility;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,12 +17,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.ability.LavaAbility;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class LavaSurge extends LavaAbility {
 	
@@ -115,10 +115,10 @@ public class LavaSurge extends LavaAbility {
 	}
 	
 	public void launch() {
-		Location targetLocation = GeneralMethods.getTargetedLocation(player, travelRange*2);
+		Location targetLocation = PKMethods.getTargetedLocation(player, travelRange*2);
 
 		try { 
-			targetLocation = GeneralMethods.getTargetedEntity(player, travelRange*2, null).getLocation(); 
+			targetLocation = PKMethods.getTargetedEntity(player, travelRange*2, null).getLocation(); 
 		} catch(NullPointerException e) {}
 		
 		if(targetLocation == null) {
@@ -127,7 +127,7 @@ public class LavaSurge extends LavaAbility {
 		}
 		
 		time = System.currentTimeMillis();
-		direction = GeneralMethods.getDirection(startLocation, targetLocation).multiply(0.07);
+		direction = PKMethods.getDirection(startLocation, targetLocation).multiply(0.07);
 		
 		if(direction.getY() < 0) {
 			direction.setY(0);
@@ -141,7 +141,7 @@ public class LavaSurge extends LavaAbility {
 	}
 	
 	public void openFracture() {
-		List<Block> affectedBlocks = GeneralMethods.getBlocksAroundPoint(sourceBlock.getLocation(), fractureRadius);
+		List<Block> affectedBlocks = PKMethods.getBlocksAroundPoint(sourceBlock.getLocation(), fractureRadius);
 		
 		for(Block b : affectedBlocks) {
 			if(isEarthbendable(b)) {
@@ -229,7 +229,7 @@ public class LavaSurge extends LavaAbility {
 			}
 			
 			if(curTime > time + (fallingBlockInterval * fallingBlocksCount)) {
-				FallingBlock fbs = GeneralMethods.spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), 11, (byte) 0);
+				FallingBlock fbs = PKMethods.spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), 11, (byte) 0);
 				fallingBlocks.add(fbs);
 				ALL_FALLING_BLOCKS.add(fbs);
 				double x = random.nextDouble()/5;
@@ -243,7 +243,7 @@ public class LavaSurge extends LavaAbility {
 				
 				for(Block b : fracture) {
 					if(random.nextBoolean() && b != sourceBlock) {
-						FallingBlock fb = GeneralMethods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), 11, (byte) 0);
+						FallingBlock fb = PKMethods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), 11, (byte) 0);
 						ALL_FALLING_BLOCKS.add(fb);
 						fallingBlocks.add(fb);
 						fb.setVelocity(direction.clone().add(new Vector(random.nextDouble()/10, 0.1, random.nextDouble()/10)).multiply(1.2));
@@ -255,12 +255,12 @@ public class LavaSurge extends LavaAbility {
 			}
 			
 			for(FallingBlock fb : fallingBlocks) {
-				for(Entity e : GeneralMethods.getEntitiesAroundPoint(fb.getLocation(), 2)) {
+				for(Entity e : PKMethods.getEntitiesAroundPoint(fb.getLocation(), 2)) {
 					if(e instanceof LivingEntity) {
 						if(e.getEntityId() != player.getEntityId()) {
 							DamageHandler.damageEntity(e, impactDamage, this);
 							e.setFireTicks(100);
-							GeneralMethods.setVelocity(e, direction.clone());
+							PKMethods.setVelocity(e, direction.clone());
 						}
 					}
 				}

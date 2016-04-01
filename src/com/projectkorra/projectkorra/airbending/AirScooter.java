@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.Flight;
@@ -34,10 +34,10 @@ public class AirScooter extends AirAbility {
 		
 		if (check(player)) 
 			return;
-		else if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())
+		else if (!player.isSprinting() || PKMethods.isSolid(player.getEyeLocation().getBlock())
 				|| player.getEyeLocation().getBlock().isLiquid()) 
 			return;
-		else if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
+		else if (PKMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
 			return;
 		else if (bPlayer.isOnCooldown(this))
 			return;
@@ -82,7 +82,7 @@ public class AirScooter extends AirAbility {
 		floorblock = null;
 		for (int i = 0; i <= maxHeightFromGround; i++) {
 			Block block = player.getEyeLocation().getBlock().getRelative(BlockFace.DOWN, i);
-			if (GeneralMethods.isSolid(block) || block.isLiquid()) {
+			if (PKMethods.isSolid(block) || block.isLiquid()) {
 				floorblock = block;
 				return;
 			}

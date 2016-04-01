@@ -17,7 +17,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.ElementType;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -89,7 +89,7 @@ public class WhoCommand extends PKCommand {
 				BendingPlayer bp = BendingPlayer.getBendingPlayer(playerName);
 				
 				if (bp == null) {
-					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+					PKMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 					bp = BendingPlayer.getBendingPlayer(player.getName());
 				}
 				for (Element element : bp.getElements()) {
@@ -145,7 +145,7 @@ public class WhoCommand extends PKCommand {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), playerName);
+			PKMethods.createBendingPlayer(player.getUniqueId(), playerName);
 			BukkitRunnable runnable = new BukkitRunnable() {
 				@Override
 				public void run() {
@@ -285,7 +285,7 @@ public class WhoCommand extends PKCommand {
 					sender.sendMessage(element.getColor() + "" + (bPlayer.isElementToggled(element) ? "" : ChatColor.STRIKETHROUGH) + "- " + element.getName() + (element.getType() != null ? element.getType().getBender() : ""));
 					if (player_ != null) {
 						for (SubElement subelement : Element.getSubElements(element)) {
-							if (GeneralMethods.hasSpirits()) {
+							if (PKMethods.hasSpirits()) {
 								SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player_);
 								if (subelement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
 									sender.sendMessage(subelement.getColor() + "    Is " + sPlayer.getSpirit().getName() + element.getName());
@@ -319,7 +319,7 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 
-			if (GeneralMethods.hasRPG()) {
+			if (PKMethods.hasRPG()) {
 				if (RPGMethods.isCurrentAvatar(player.getUniqueId())) {
 					sender.sendMessage(Element.AVATAR.getColor() + "Current Avatar");
 				} else if (RPGMethods.hasBeenAvatar(player.getUniqueId())) {

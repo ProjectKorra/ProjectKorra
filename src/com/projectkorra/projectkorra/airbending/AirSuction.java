@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -66,12 +66,12 @@ public class AirSuction extends AirAbility {
 			origin = player.getEyeLocation();
 		}
 
-		location = GeneralMethods.getTargetedLocation(player, range, GeneralMethods.NON_OPAQUE);
-		direction = GeneralMethods.getDirection(location, origin).normalize();
-		Entity entity = GeneralMethods.getTargetedEntity(player, range);
+		location = PKMethods.getTargetedLocation(player, range, PKMethods.NON_OPAQUE);
+		direction = PKMethods.getDirection(location, origin).normalize();
+		Entity entity = PKMethods.getTargetedEntity(player, range);
 
 		if (entity != null) {
-			direction = GeneralMethods.getDirection(entity.getLocation(), origin).normalize();
+			direction = PKMethods.getDirection(entity.getLocation(), origin).normalize();
 			location = getLocation(origin, direction.clone().multiply(-1));
 		}
 
@@ -109,10 +109,10 @@ public class AirSuction extends AirAbility {
 	}
 
 	public static void setOrigin(Player player) {
-		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), GeneralMethods.NON_OPAQUE);
-		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
+		Location location = PKMethods.getTargetedLocation(player, getSelectRange(), PKMethods.NON_OPAQUE);
+		if (location.getBlock().isLiquid() || PKMethods.isSolid(location.getBlock())) {
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
+		} else if (PKMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
 			return;
 		} else if (ORIGINS.containsKey(player)) {
 			ORIGINS.replace(player, location);
@@ -135,7 +135,7 @@ public class AirSuction extends AirAbility {
 		for (double i = 1; i <= range; i++) {
 			location = origin.clone().add(direction.clone().multiply(i));
 			if (!isTransparent(location.getBlock())
-					|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+					|| PKMethods.isRegionProtectedFromBuild(this, location)) {
 				return origin.clone().add(direction.clone().multiply(i - 1));
 			}
 		}
@@ -147,7 +147,7 @@ public class AirSuction extends AirAbility {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
+		} else if (PKMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
 			remove();
 			return;
 		}
@@ -161,7 +161,7 @@ public class AirSuction extends AirAbility {
 			return;
 		}
 
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
+		for (Entity entity : PKMethods.getEntitiesAroundPoint(location, radius)) {
 			if (entity.getEntityId() != player.getEntityId() || hasOtherOrigin) {
 				Vector velocity = entity.getVelocity();
 				double max = speed;
@@ -198,7 +198,7 @@ public class AirSuction extends AirAbility {
 					}
 				}
 
-				GeneralMethods.setVelocity(entity, velocity);
+				PKMethods.setVelocity(entity, velocity);
 				new HorizontalVelocityTracker(entity, player, 200l, this);
 				entity.setFallDistance(0);
 				if (entity.getEntityId() != player.getEntityId() && entity instanceof Player) {

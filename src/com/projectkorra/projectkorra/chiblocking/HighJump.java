@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.waterbending.WaterArmsWhip;
@@ -26,7 +26,7 @@ public class HighJump extends ChiAbility {
 	}
 
 	private void jump(Player p) {
-		if (!GeneralMethods.isSolid(p.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+		if (!PKMethods.isSolid(p.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
 			return;
 		}
 		Vector vec = p.getVelocity();

@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.storage;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 
 public class DBConnection {
@@ -21,7 +21,7 @@ public class DBConnection {
 			sql = new MySQL(ProjectKorra.log, "Establishing MySQL Connection...", host, port, user, pass, db);
 			if (((MySQL) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");
-				GeneralMethods.stopPlugin();
+				PKMethods.stopPlugin();
 				return;
 			}
 
@@ -58,7 +58,7 @@ public class DBConnection {
 			sql = new SQLite(ProjectKorra.log, "Establishing SQLite Connection.", "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
 			if (((SQLite) sql).open() == null) {
 				ProjectKorra.log.severe("Disabling due to database error");
-				GeneralMethods.stopPlugin();
+				PKMethods.stopPlugin();
 				return;
 			}
 

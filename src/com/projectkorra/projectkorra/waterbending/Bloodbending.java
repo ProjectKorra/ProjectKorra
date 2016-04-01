@@ -14,7 +14,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BloodAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -66,13 +66,13 @@ public class Bloodbending extends BloodAbility {
 		range = (int) getNightFactor(range, player.getWorld());
 		if (bPlayer.isAvatarState()) {
 			range += AvatarState.getValue(1.5);
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
+			for (Entity entity : PKMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
 				if (entity instanceof LivingEntity) {
 					if (entity instanceof Player) {
 						Player enemyPlayer = (Player) entity;
 						BendingPlayer enemyBPlayer = BendingPlayer.getBendingPlayer(enemyPlayer);
 						if (enemyBPlayer == null
-								|| GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation()) 
+								|| PKMethods.isRegionProtectedFromBuild(this, entity.getLocation()) 
 								|| enemyBPlayer.isAvatarState()
 								|| entity.getEntityId() == player.getEntityId() 
 								|| enemyBPlayer.canBendIgnoreBindsCooldowns(this)) {
@@ -89,8 +89,8 @@ public class Bloodbending extends BloodAbility {
 			//List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
 			List<Entity> entities = new ArrayList<Entity>();
 			for (int i = 0; i < 6; i++) {
-				Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterial());
-				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
+				Location location = PKMethods.getTargetedLocation(player, i, getTransparentMaterial());
+				entities = PKMethods.getEntitiesAroundPoint(location, 1.7);
 				if (entities.contains(player))
 					entities.remove(player);
 				if (entities != null && !entities.isEmpty() && !entities.contains(player)) {
@@ -103,7 +103,7 @@ public class Bloodbending extends BloodAbility {
 			target = entities.get(0);
 
 			if (target == null || !(target instanceof LivingEntity) 
-					|| GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())
+					|| PKMethods.isRegionProtectedFromBuild(this, target.getLocation())
 					|| target.getEntityId() == player.getEntityId()) {
 				return;
 			} else if (target instanceof Player) {
@@ -144,7 +144,7 @@ public class Bloodbending extends BloodAbility {
 		Location location = player.getLocation();
 		for (Entity entity : TARGETED_ENTITIES.keySet()) {
 			Location target = entity.getLocation().clone();
-			Vector vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, location.distance(target)));
+			Vector vector = PKMethods.getDirection(location, PKMethods.getTargetedLocation(player, location.distance(target)));
 			vector.normalize();
 			entity.setVelocity(vector.multiply(throwFactor));
 			new HorizontalVelocityTracker(entity, player, 200, this);
@@ -191,8 +191,8 @@ public class Bloodbending extends BloodAbility {
 		if (bPlayer.isAvatarState()) {
 			ArrayList<Entity> entities = new ArrayList<>();
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
-				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+			for (Entity entity : PKMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
+				if (PKMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 					continue;
 				} else if (entity instanceof Player) {
 					BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer((Player) entity);
@@ -260,7 +260,7 @@ public class Bloodbending extends BloodAbility {
 					continue;
 				}
 
-				Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
+				Location location = PKMethods.getTargetedLocation(player, 6, getTransparentMaterial());
 				double distance = location.distance(newLocation);
 				double dx, dy, dz;
 				dx = location.getX() - newLocation.getX();

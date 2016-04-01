@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
@@ -61,22 +61,22 @@ public class PermaremoveCommand extends PKCommand {
 
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			PKMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			bPlayer = BendingPlayer.getBendingPlayer(player.getName());
 		}
 
 		if (bPlayer.isPermaRemoved()) {
 			bPlayer.setPermaRemoved(false);
-			GeneralMethods.savePermaRemoved(bPlayer);
+			PKMethods.savePermaRemoved(bPlayer);
 			player.sendMessage(ChatColor.GREEN + this.restored);
 			if (!(sender instanceof Player) || sender.getName().equals(target))
 				sender.sendMessage(ChatColor.GREEN + this.restoredConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN));
 		} else {
 			bPlayer.getElements().clear();
-			GeneralMethods.saveElements(bPlayer);
+			PKMethods.saveElements(bPlayer);
 			bPlayer.setPermaRemoved(true);
-			GeneralMethods.savePermaRemoved(bPlayer);
-			GeneralMethods.removeUnusableAbilities(player.getName());
+			PKMethods.savePermaRemoved(bPlayer);
+			PKMethods.removeUnusableAbilities(player.getName());
 			player.sendMessage(ChatColor.RED + this.removed);
 			if (!(sender instanceof Player) || sender.getName().equals(target))
 				sender.sendMessage(ChatColor.RED + this.removedConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.RED));

@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
@@ -111,7 +111,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
-		} else if (currentLoc != null && GeneralMethods.isRegionProtectedFromBuild(this, currentLoc)) {
+		} else if (currentLoc != null && PKMethods.isRegionProtectedFromBuild(this, currentLoc)) {
 			remove();
 			return;
 		}
@@ -133,12 +133,12 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			} else if (System.currentTimeMillis() - time >= twisterRemoveDelay) {
 				remove();
 				return;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(this, currentLoc)) {
+			} else if (PKMethods.isRegionProtectedFromBuild(this, currentLoc)) {
 				remove();
 				return;
 			}
 
-			Block topBlock = GeneralMethods.getTopBlock(currentLoc, 3, -3);
+			Block topBlock = PKMethods.getTopBlock(currentLoc, 3, -3);
 			if (topBlock == null) {
 				remove();
 				return;
@@ -150,7 +150,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			for (double y = 0; y < height; y += twisterHeightParticles) {
 				double animRadius = ((radius / height) * y);
 				for (double i = -180; i <= 180; i += twisterDegreeParticles) {
-					Vector animDir = GeneralMethods.rotateXZ(new Vector(1, 0, 1), i);
+					Vector animDir = PKMethods.rotateXZ(new Vector(1, 0, 1), i);
 					Location animLoc = currentLoc.clone().add(animDir.multiply(animRadius));
 					animLoc.add(0, y, 0);
 					playAirbendingParticles(animLoc, 1, 0, 0, 0);
@@ -159,7 +159,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			playAirbendingSound(currentLoc);
 
 			for (int i = 0; i < height; i += 3) {
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(currentLoc.clone().add(0, i, 0), radius * 0.75)) {
+				for (Entity entity : PKMethods.getEntitiesAroundPoint(currentLoc.clone().add(0, i, 0), radius * 0.75)) {
 					if (!affectedEntities.contains(entity) && !entity.equals(player)) {
 						affectedEntities.add(entity);
 					}
@@ -167,7 +167,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			}
 
 			for (Entity entity : affectedEntities) {
-				Vector forceDir = GeneralMethods.getDirection(entity.getLocation(), currentLoc.clone().add(0, height, 0));
+				Vector forceDir = PKMethods.getDirection(entity.getLocation(), currentLoc.clone().add(0, height, 0));
 				if (entity instanceof Player) {
 					if (Commands.invincible.contains(((Player) entity).getName())) {
 						break;
@@ -180,7 +180,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 				origin = player.getEyeLocation();
 				currentLoc = origin.clone();
 			}
-			Entity target = GeneralMethods.getTargetedEntity(player, range);
+			Entity target = PKMethods.getTargetedEntity(player, range);
 			if (target instanceof Player) {
 				if (Commands.invincible.contains(((Player) target).getName())) {
 					return;
@@ -190,10 +190,10 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			if (target != null && target.getLocation().distanceSquared(currentLoc) > 49) {
 				destination = target.getLocation();
 			} else {
-				destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterial());
+				destination = PKMethods.getTargetedLocation(player, range, getTransparentMaterial());
 			}
 
-			direction = GeneralMethods.getDirection(currentLoc, destination).normalize();
+			direction = PKMethods.getDirection(currentLoc, destination).normalize();
 			currentLoc.add(direction.clone().multiply(speed));
 			
 			if (player.getWorld() != currentLoc.getWorld()) {
@@ -214,7 +214,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			} else if (currentLoc.getY() - origin.getY() > airStreamMaxEntityHeight) {
 				remove();
 				return;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(this, currentLoc)) {
+			} else if (PKMethods.isRegionProtectedFromBuild(this, currentLoc)) {
 				remove();
 				return;
 			} else if (FireAbility.isWithinFireShield(currentLoc)) {
@@ -235,7 +235,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 					@Override
 					public void run() {
 						for (int angle = -180; angle <= 180; angle += 45) {
-							Vector orthog = GeneralMethods.getOrthogonalVector(dir.clone(), angle, 0.5);
+							Vector orthog = PKMethods.getOrthogonalVector(dir.clone(), angle, 0.5);
 							playAirbendingParticles(loc.clone().add(orthog), 1, 0F, 0F, 0F);
 						}
 					}
@@ -244,7 +244,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 				tasks.add(br);
 			}
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(currentLoc, 2.8)) {
+			for (Entity entity : PKMethods.getEntitiesAroundPoint(currentLoc, 2.8)) {
 				if (affectedEntities.size() == 0) {
 					// Set the timer to remove the ability
 					time = System.currentTimeMillis();
@@ -258,7 +258,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			}
 
 			for (Entity entity : affectedEntities) {
-				Vector force = GeneralMethods.getDirection(entity.getLocation(), currentLoc);
+				Vector force = PKMethods.getDirection(entity.getLocation(), currentLoc);
 				entity.setVelocity(force.clone().normalize().multiply(speed));
 				entity.setFallDistance(0F);
 			}
@@ -272,9 +272,9 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			}
 			if (destination == null) {
 				destination = player.getLocation().add(player.getEyeLocation().getDirection().normalize().multiply(10));
-				Vector origToDest = GeneralMethods.getDirection(origin, destination);
+				Vector origToDest = PKMethods.getDirection(origin, destination);
 				for (double i = 0; i < 30; i++) {
-					Vector vec = GeneralMethods.getDirection(player.getLocation(),
+					Vector vec = PKMethods.getDirection(player.getLocation(),
 							origin.clone().add(origToDest.clone().multiply(i / 30)));
 
 					FireComboStream fs = new FireComboStream(null, vec, player.getLocation(), range, speed, "AirSweep");
@@ -306,7 +306,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			FireComboStream fstream = (FireComboStream) tasks.get(i);
 			Location loc = fstream.getLocation();
 
-			if (GeneralMethods.isRegionProtectedFromBuild(this, loc)) {
+			if (PKMethods.isRegionProtectedFromBuild(this, loc)) {
 				fstream.remove();
 				return;
 			}
@@ -318,8 +318,8 @@ public class AirCombo extends AirAbility implements ComboAbility {
 				}
 			}
 			if (i % 3 == 0) {
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
-					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+				for (Entity entity : PKMethods.getEntitiesAroundPoint(loc, 2.5)) {
+					if (PKMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 						remove();
 						return;
 					}
@@ -341,7 +341,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 					}
 				}
 
-				if (GeneralMethods.blockAbilities(player, FireCombo.getBlockableAbilities(), loc, 1)) {
+				if (PKMethods.blockAbilities(player, FireCombo.getBlockableAbilities(), loc, 1)) {
 					fstream.remove();
 				}
 			}

@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.PlantAbility;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.ability.PlantAbility;
 
 public class PlantRegrowth extends PlantAbility {
 	
@@ -38,7 +38,7 @@ public class PlantRegrowth extends PlantAbility {
 			block.setType(type);
 			block.setData(data);
 		} else {
-			GeneralMethods.dropItems(block, GeneralMethods.getDrops(block, type, data, null));
+			PKMethods.dropItems(block, PKMethods.getDrops(block, type, data, null));
 		}
 	}
 

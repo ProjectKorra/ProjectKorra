@@ -1,11 +1,11 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.ability.ChiAbility;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import com.projectkorra.projectkorra.ability.ChiAbility;
 
 public class WarriorStance extends ChiAbility {
 

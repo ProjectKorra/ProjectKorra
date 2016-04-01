@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.PhaseChangeFreeze;
@@ -115,7 +115,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		Vector vector = location.getDirection().clone().normalize();
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "IceBlast", location)) {
+			if (PKMethods.isRegionProtectedFromBuild(player, "IceBlast", location)) {
 				continue;
 			}
 			if (isIcebendable(player, block.getType(), false)) {
@@ -130,7 +130,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static double getNightFactor(double value, World world) {
 		if (isNight(world)) {
-			if (GeneralMethods.hasRPG()) {
+			if (PKMethods.hasRPG()) {
 				if (isLunarEclipse(world)) {
 					return RPGMethods.getFactor("LunarEclipse") * value;
 				} else if (isFullMoon(world)) {
@@ -160,7 +160,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location)) {
+			if (PKMethods.isRegionProtectedFromBuild(player, "PlantDisc", location)) {
 				continue;
 			} else if (isPlantbendable (player, block.getType(), onlyLeaves)) {
 				if (TempBlock.isTempBlock(block)) {
@@ -198,7 +198,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (!isTransparent(player, block) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
+			if (!isTransparent(player, block) || PKMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block)) {
@@ -264,7 +264,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	public static boolean isWaterbendable(Player player, String abilityName, Block block) {
 		byte full = 0x0;
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null || !isWaterbendable(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
+		if (bPlayer == null || !isWaterbendable(block.getType()) || PKMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		}
 		

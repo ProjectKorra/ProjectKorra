@@ -1,13 +1,5 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.HealingAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.chiblocking.Smokescreen;
-import com.projectkorra.projectkorra.util.TempBlock;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -16,6 +8,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.HealingAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.chiblocking.Smokescreen;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class HealingWaters extends HealingAbility {
 
@@ -40,7 +40,7 @@ public class HealingWaters extends HealingAbility {
 	private static void heal(Player player) {
 		if (inWater(player)) {
 			if (player.isSneaking()) {
-				Entity entity = GeneralMethods.getTargetedEntity(player, getRadius());
+				Entity entity = PKMethods.getTargetedEntity(player, getRadius());
 				if (entity == null) {
 						giveHP(player);
 				} else {
@@ -88,7 +88,7 @@ public class HealingWaters extends HealingAbility {
 	}
 
 	private static void applyHealing(Player player) {
-		if (!GeneralMethods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation())) {
+		if (!PKMethods.isRegionProtectedFromBuild(player, "HealingWaters", player.getLocation())) {
 			if (player.getHealth() < player.getMaxHealth()) {
 				player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, getDuration(), getPower()));
 				AirAbility.breakBreathbendingHold(player);

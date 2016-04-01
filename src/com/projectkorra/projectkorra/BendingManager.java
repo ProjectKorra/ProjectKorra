@@ -1,5 +1,13 @@
 package com.projectkorra.projectkorra;
 
+import java.util.HashMap;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.chiblocking.ChiCombo;
@@ -9,14 +17,6 @@ import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 import com.projectkorra.rpg.RPGMethods;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
-import java.util.HashMap;
-import java.util.UUID;
 
 public class BendingManager implements Runnable {
 
@@ -56,7 +56,7 @@ public class BendingManager implements Runnable {
 					times.put(world, false);
 				}
 			} else {
-				if (GeneralMethods.hasRPG()) {
+				if (PKMethods.hasRPG()) {
 					if (RPGMethods.isFullMoon(world) || RPGMethods.isLunarEclipse(world) || RPGMethods.isSolarEclipse(world) || RPGMethods.isSozinsComet(world)) {
 						continue;
 					}

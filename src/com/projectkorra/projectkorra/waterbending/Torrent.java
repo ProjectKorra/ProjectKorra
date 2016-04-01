@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -94,7 +94,7 @@ public class Torrent extends WaterAbility {
 		
 		time = System.currentTimeMillis();
 		sourceBlock = BlockSource.getWaterSourceBlock(player, selectRange, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
-		if (sourceBlock != null && !GeneralMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
+		if (sourceBlock != null && !PKMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
 			sourceSelected = true;
 			start();
 		}
@@ -107,7 +107,7 @@ public class Torrent extends WaterAbility {
 			return;
 		}
 		
-		List<Block> ice = GeneralMethods.getBlocksAroundPoint(location, layer);
+		List<Block> ice = PKMethods.getBlocksAroundPoint(location, layer);
 		for (Block block : ice) {
 			if (isTransparent(player, block) && block.getType() != Material.ICE) {
 				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
@@ -139,7 +139,7 @@ public class Torrent extends WaterAbility {
 					if (isPlant(sourceBlock)) {
 						new PlantRegrowth(player, sourceBlock);
 						sourceBlock.setType(Material.AIR);
-					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
+					} else if (!PKMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
 						sourceBlock.setType(Material.AIR);
 					}
 					source = new TempBlock(sourceBlock, Material.STATIONARY_WATER, (byte) 8);
@@ -179,7 +179,7 @@ public class Torrent extends WaterAbility {
 					Vector direction = new Vector(0, 1, 0);
 					location = location.clone().add(direction);
 				} else {
-					Vector direction = GeneralMethods.getDirection(location, setup).normalize();
+					Vector direction = PKMethods.getDirection(location, setup).normalize();
 					location = location.clone().add(direction);
 				}
 
@@ -276,7 +276,7 @@ public class Torrent extends WaterAbility {
 				}
 				
 				Block block = blockloc.getBlock();
-				if (!doneBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, blockloc)) {
+				if (!doneBlocks.contains(block) && !PKMethods.isRegionProtectedFromBuild(this, blockloc)) {
 					if (isTransparent(player, block) && !block.isLiquid()) {
 						launchedBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 						doneBlocks.add(block);
@@ -292,17 +292,17 @@ public class Torrent extends WaterAbility {
 			}
 		}
 
-		Entity target = GeneralMethods.getTargetedEntity(player, range, hurtEntities);
+		Entity target = PKMethods.getTargetedEntity(player, range, hurtEntities);
 		Location targetLoc = player.getTargetBlock(getTransparentMaterialSet(), (int) range).getLocation();
 		if (target != null) {
 			targetLoc = target.getLocation();
 		}
 
 		ArrayList<TempBlock> newBlocks = new ArrayList<TempBlock>();
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range + 5);
+		List<Entity> entities = PKMethods.getEntitiesAroundPoint(player.getLocation(), range + 5);
 		List<Entity> affectedEntities = new ArrayList<Entity>();
 		Block realBlock = launchedBlocks.get(0).getBlock();
-		Vector dir = GeneralMethods.getDirection(location, targetLoc).normalize();
+		Vector dir = PKMethods.getDirection(location, targetLoc).normalize();
 
 		if (target != null) {
 			targetLoc = location.clone().add(dir.clone().multiply(10));
@@ -312,7 +312,7 @@ public class Torrent extends WaterAbility {
 		}
 
 		Block locBlock = location.getBlock();
-		if (location.distanceSquared(player.getLocation()) > range * range || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+		if (location.distanceSquared(player.getLocation()) > range * range || PKMethods.isRegionProtectedFromBuild(this, location)) {
 			if (layer < maxLayer) {
 				if (freeze || layer < 1) {
 					layer++;
@@ -376,7 +376,7 @@ public class Torrent extends WaterAbility {
 						if (i == 0) {
 							affect(entity, dir);
 						} else {
-							affect(entity, GeneralMethods.getDirection(block.getLocation(), launchedBlocks.get(i - 1).getLocation()).normalize());
+							affect(entity, PKMethods.getDirection(block.getLocation(), launchedBlocks.get(i - 1).getLocation()).normalize());
 						}
 						affectedEntities.add(entity);
 					}
@@ -400,7 +400,7 @@ public class Torrent extends WaterAbility {
 		Location loc = player.getEyeLocation();
 		ArrayList<Block> doneBlocks = new ArrayList<Block>();
 		ArrayList<Entity> affectedEntities = new ArrayList<Entity>();
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(loc, radius + 2);
+		List<Entity> entities = PKMethods.getEntitiesAroundPoint(loc, radius + 2);
 		
 		for (double theta = startAngle; theta < angle + startAngle; theta += 20) {
 			double phi = Math.toRadians(theta);
@@ -514,7 +514,7 @@ public class Torrent extends WaterAbility {
 			velocity.setZ(vec.getY());
 		}
 
-		GeneralMethods.setVelocity(entity, velocity);
+		PKMethods.setVelocity(entity, velocity);
 		entity.setFallDistance(0);
 		if (entity instanceof LivingEntity) {
 			double damageDealt = getNightFactor(deflectDamage);

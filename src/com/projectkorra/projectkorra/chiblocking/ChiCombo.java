@@ -1,16 +1,16 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 
 /*
  * TODO: Combo classes should eventually be rewritten so that each combo is treated
@@ -40,7 +40,7 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 			if (!bPlayer.canBendIgnoreBinds(this)) {
 				return;
 			} else {
-				target = GeneralMethods.getTargetedEntity(player, 5);
+				target = PKMethods.getTargetedEntity(player, 5);
 				paralyze(target, duration);
 				start();
 				bPlayer.addCooldown(this);

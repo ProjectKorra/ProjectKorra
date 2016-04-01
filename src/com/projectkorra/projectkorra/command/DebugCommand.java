@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import java.util.List;
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * Executor for /bending debug. Extends {@link PKCommand}.
@@ -26,7 +26,7 @@ public class DebugCommand extends PKCommand {
 			return;
 		}
 
-		GeneralMethods.runDebug();
+		PKMethods.runDebug();
 		sender.sendMessage(ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Debug.SuccessfullyExported"));
 	}
 

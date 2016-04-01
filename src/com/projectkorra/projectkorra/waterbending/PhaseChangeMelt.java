@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -50,14 +50,14 @@ public class PhaseChangeMelt extends IceAbility {
 		}
 		
 		boolean evaporate = false;
-		location = GeneralMethods.getTargetedLocation(player, range);
+		location = PKMethods.getTargetedLocation(player, range);
 		if (isWater(player.getTargetBlock((HashSet<Material>) null, (int) range)) && !(player.getEyeLocation().getBlockY() <= 62)) {
 			evaporate = true;
 			radius = (int) getNightFactor(evaporateRadius);
 		}
 		
 		start();
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : PKMethods.getBlocksAroundPoint(location, radius)) {
 			if (evaporate) {
 				if (block.getY() > seaLevel) {
 					evaporate(player, block);
@@ -73,7 +73,7 @@ public class PhaseChangeMelt extends IceAbility {
 
 	@SuppressWarnings("deprecation")
 	public static void melt(Player player, Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
+		if (PKMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
 			return;
 		} else if (!SurgeWave.canThaw(block)) {
 			SurgeWave.thaw(block);
@@ -100,7 +100,7 @@ public class PhaseChangeMelt extends IceAbility {
 	}
 
 	public static void evaporate(Player player, Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
+		if (PKMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
 			return;
 		} else if (isWater(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
 			block.setType(Material.AIR);

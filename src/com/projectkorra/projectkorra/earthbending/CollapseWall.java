@@ -8,7 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -44,7 +44,7 @@ public class CollapseWall extends EarthAbility {
 			location = sblock.getLocation();
 		}
 		
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : PKMethods.getBlocksAroundPoint(location, radius)) {
 			if (isEarthbendable(block) && !blocks.containsKey(block) && block.getY() >= location.getBlockY()) {
 				getAffectedBlocks(block);
 			}

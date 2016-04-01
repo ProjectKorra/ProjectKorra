@@ -3,7 +3,7 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.storage.DBConnection;
@@ -52,7 +52,7 @@ public class ImportCommand extends PKCommand {
 	public void execute(CommandSender sender, List<String> args) {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 0)) {
 			return;
-		} else if (!GeneralMethods.isImportEnabled()) {
+		} else if (!PKMethods.isImportEnabled()) {
 			sender.sendMessage(ChatColor.RED + this.disabled);
 			return;
 		}
@@ -113,7 +113,7 @@ public class ImportCommand extends PKCommand {
 						ProjectKorra.plugin.getConfig().set("Properties.ImportEnabled", false);
 						ProjectKorra.plugin.saveConfig();
 						for (Player player : Bukkit.getOnlinePlayers()) {
-							GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+							PKMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 						}
 						return;
 					}

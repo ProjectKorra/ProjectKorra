@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.items.command.PKICommand;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
@@ -61,19 +61,19 @@ public class HelpCommand extends PKCommand {
 					strings.add(command.getProperUse());
 				}
 			}
-			if (GeneralMethods.hasItems()) {
+			if (PKMethods.hasItems()) {
 				for (PKICommand command : PKICommand.instances.values()) {
 					if (sender.hasPermission("bendingitems.command." + command.getName()))
 						strings.add(command.getProperUse());
 				}
 			}
-			if (GeneralMethods.hasRPG()) {
+			if (PKMethods.hasRPG()) {
 				for (RPGCommand command : RPGCommand.instances.values()) {
 					if (sender.hasPermission("bending.command.rpg." + command.getName()))
 						strings.add(command.getProperUse());
 				}
 			}
-			if (GeneralMethods.hasSpirits()) {
+			if (PKMethods.hasSpirits()) {
 				//spirits commands being added (if needed)
 			}
 			Collections.sort(strings);
@@ -92,19 +92,19 @@ public class HelpCommand extends PKCommand {
 			for (PKCommand command : instances.values()) {
 				strings.add(command.getProperUse());
 			}
-			if (GeneralMethods.hasItems()) {
+			if (PKMethods.hasItems()) {
 				for (PKICommand command : PKICommand.instances.values()) {
 					if (sender.hasPermission("bendingitems.command." + command.getName()))
 						strings.add(command.getProperUse());
 				}
 			}
-			if (GeneralMethods.hasRPG()) {
+			if (PKMethods.hasRPG()) {
 				for (RPGCommand command : RPGCommand.instances.values()) {
 					if (sender.hasPermission("bending.command.rpg." + command.getName()))
 						strings.add(command.getProperUse());
 				}
 			}
-			if (GeneralMethods.hasSpirits()) {
+			if (PKMethods.hasSpirits()) {
 				//spirits commands being added (if needed)
 			}
 			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <" + required + "> [" + optional + "]", Integer.valueOf(arg), true)) {

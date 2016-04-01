@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -61,7 +61,7 @@ public class WallOfFire extends FireAbility {
 			return;
 		}
 		
-		origin = GeneralMethods.getTargetedLocation(player, range);
+		origin = PKMethods.getTargetedLocation(player, range);
 
 		if (isDay(player.getWorld())) {
 			width = (int) getDayFactor(width);
@@ -72,7 +72,7 @@ public class WallOfFire extends FireAbility {
 
 		time = System.currentTimeMillis();
 		Block block = origin.getBlock();
-		if (block.isLiquid() || GeneralMethods.isSolid(block)) {
+		if (block.isLiquid() || PKMethods.isSolid(block)) {
 			return;
 		}
 
@@ -98,7 +98,7 @@ public class WallOfFire extends FireAbility {
 			AirAbility.breakBreathbendingHold(entity);
 		}
 		entity.setFireTicks((int) (fireTicks * 20));
-		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
+		PKMethods.setVelocity(entity, new Vector(0, 0, 0));
 		new FireDamageTimer(entity, player);
 	}
 
@@ -109,12 +109,12 @@ public class WallOfFire extends FireAbility {
 		}
 		
 		radius = radius + 1;
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(origin, radius);
+		List<Entity> entities = PKMethods.getEntitiesAroundPoint(origin, radius);
 		if (entities.contains(player)) {
 			entities.remove(player);
 		}
 		for (Entity entity : entities) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+			if (PKMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
 			}
 			for (Block block : blocks) {
@@ -145,10 +145,10 @@ public class WallOfFire extends FireAbility {
 		Vector direction = player.getEyeLocation().getDirection();
 		direction = direction.normalize();
 
-		Vector ortholr = GeneralMethods.getOrthogonalVector(direction, 0, 1);
+		Vector ortholr = PKMethods.getOrthogonalVector(direction, 0, 1);
 		ortholr = ortholr.normalize();
 
-		Vector orthoud = GeneralMethods.getOrthogonalVector(direction, 90, 1);
+		Vector orthoud = PKMethods.getOrthogonalVector(direction, 90, 1);
 		orthoud = orthoud.normalize();
 
 		double w = width;
@@ -158,7 +158,7 @@ public class WallOfFire extends FireAbility {
 			for (double j = -h; j <= h; j++) {
 				Location location = origin.clone().add(orthoud.clone().multiply(j));
 				location = location.add(ortholr.clone().multiply(i));
-				if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+				if (PKMethods.isRegionProtectedFromBuild(this, location)) {
 					continue;
 				}
 				Block block = location.getBlock();

@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -72,7 +72,7 @@ public class WaterArmsSpear extends WaterAbility {
 	private void getNightAugments() {
 		World world = player.getWorld();
 		if (isNight(world)) {
-			if (GeneralMethods.hasRPG()) {
+			if (PKMethods.hasRPG()) {
 				if (isLunarEclipse(world)) {
 					spearRange = spearRangeFullMoon;
 					spearSphere = spearSphereFullMoon;
@@ -167,7 +167,7 @@ public class WaterArmsSpear extends WaterAbility {
 
 	private void progressSpear() {
 		for (int i = 0; i < 2; i++) {
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
+			for (Entity entity : PKMethods.getEntitiesAroundPoint(location, 2)) {
 				if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !(entity instanceof ArmorStand)) {
 					hitEntity = true;
 					location = entity.getLocation();
@@ -182,7 +182,7 @@ public class WaterArmsSpear extends WaterAbility {
 			
 			new TempBlock(location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 			WaterArms.getBlockRevertTimes().put(location.getBlock(), System.currentTimeMillis() + 600L);
-			Vector direction = GeneralMethods.getDirection(initLocation, GeneralMethods.getTargetedLocation(player, spearRange, new Integer[] { 8, 9, 79, 174 })).normalize();
+			Vector direction = PKMethods.getDirection(initLocation, PKMethods.getTargetedLocation(player, spearRange, new Integer[] { 8, 9, 79, 174 })).normalize();
 			
 			location = location.add(direction.clone().multiply(1));
 			spearLocations.add(location.clone());
@@ -211,7 +211,7 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	private void createIceBall() {
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, spearSphere)) {
+		for (Block block : PKMethods.getBlocksAroundPoint(location, spearSphere)) {
 			if (isTransparent(player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
 				playIcebendingSound(block.getLocation());
 				new TempBlock(block, Material.ICE, (byte) 0);
@@ -224,7 +224,7 @@ public class WaterArmsSpear extends WaterAbility {
 		if (!isTransparent(player, block) 
 				&& !((isWater(block) || isIcebendable(block)) && (TempBlock.isTempBlock(block) && !WaterArms.getBlockRevertTimes().containsKey(block)))) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		} else if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return false;
 		} else if (WaterArms.isUnbreakable(block) && !isWater(block)) {
 			return false;

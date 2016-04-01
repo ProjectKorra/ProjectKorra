@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
@@ -25,11 +25,11 @@ public class VersionCommand extends PKCommand {
 		}
 
 		sender.sendMessage(ChatColor.GREEN + "Core Version: " + ChatColor.RED + ProjectKorra.plugin.getDescription().getVersion());
-		if (GeneralMethods.hasRPG()) {
-			sender.sendMessage(ChatColor.GREEN + "RPG Version: " + ChatColor.RED + GeneralMethods.getRPG().getDescription().getVersion());
+		if (PKMethods.hasRPG()) {
+			sender.sendMessage(ChatColor.GREEN + "RPG Version: " + ChatColor.RED + PKMethods.getRPG().getDescription().getVersion());
 		}
-		if (GeneralMethods.hasItems()) {
-			sender.sendMessage(ChatColor.GREEN + "Items Version: " + ChatColor.RED + GeneralMethods.getItems().getDescription().getVersion());
+		if (PKMethods.hasItems()) {
+			sender.sendMessage(ChatColor.GREEN + "Items Version: " + ChatColor.RED + PKMethods.getItems().getDescription().getVersion());
 		}
 		sender.sendMessage(ChatColor.GREEN + "Founded by: " + ChatColor.RED + "MistPhizzle");
 		sender.sendMessage(ChatColor.GREEN + "Learn More: " + ChatColor.RED + "http://projectkorra.com");

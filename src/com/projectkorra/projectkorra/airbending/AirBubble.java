@@ -1,11 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,7 +9,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
 public class AirBubble extends AirAbility {
 
@@ -117,12 +117,12 @@ public class AirBubble extends AirAbility {
 			}
 		}
 
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : PKMethods.getBlocksAroundPoint(location, radius)) {
 			if (waterOrigins.containsKey(block)) {
 				continue;
 			} else if (!isWater(block)) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBubble", block.getLocation())) {
+			} else if (PKMethods.isRegionProtectedFromBuild(player, "AirBubble", block.getLocation())) {
 				continue;
 			} else if (block.getType() == Material.STATIONARY_WATER || block.getType() == Material.WATER) {
 				if (WaterManipulation.canBubbleWater(block)) {

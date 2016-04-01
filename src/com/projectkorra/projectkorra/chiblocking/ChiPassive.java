@@ -1,14 +1,14 @@
 package com.projectkorra.projectkorra.chiblocking;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 public class ChiPassive {
 

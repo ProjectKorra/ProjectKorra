@@ -3,7 +3,7 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
@@ -48,7 +48,7 @@ public class ChooseCommand extends PKCommand {
 
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			if (bPlayer == null) {
-				GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
+				PKMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
 				bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			}
 			if (bPlayer.isPermaRemoved()) {
@@ -120,7 +120,7 @@ public class ChooseCommand extends PKCommand {
 			} else {
 				target.sendMessage(color + chosen.replace("{element}", sub.getName() + sub.getType().getBender()));
 			}
-			GeneralMethods.saveSubElements(bPlayer);
+			PKMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.CHOOSE));
 		} else {
 			bPlayer.setElement(element);
@@ -137,13 +137,13 @@ public class ChooseCommand extends PKCommand {
 			} else {
 				target.sendMessage(color + chosen.replace("{element}", element.getName() + element.getType().getBender()));
 			}
-			GeneralMethods.saveElements(bPlayer);
-			GeneralMethods.saveSubElements(bPlayer);
+			PKMethods.saveElements(bPlayer);
+			PKMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 		}
 		
 		
-		GeneralMethods.removeUnusableAbilities(target.getName());
+		PKMethods.removeUnusableAbilities(target.getName());
 		
 		
 	}

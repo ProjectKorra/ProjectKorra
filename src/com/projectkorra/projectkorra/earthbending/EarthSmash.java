@@ -1,14 +1,8 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -19,9 +13,15 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthSmash extends EarthAbility {
 	
@@ -219,13 +219,13 @@ public class EarthSmash extends EarthAbility {
 		} else if (state == State.SHOT) {
 			if (System.currentTimeMillis() - delay >= shootAnimationInterval) {
 				delay = System.currentTimeMillis();
-				if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+				if (PKMethods.isRegionProtectedFromBuild(this, location)) {
 					remove();
 					return;
 				}
 				
 				revert();
-				location.add(GeneralMethods.getDirection(location, destination).normalize().multiply(1));
+				location.add(PKMethods.getDirection(location, destination).normalize().multiply(1));
 				if (location.distanceSquared(destination) < 4) {
 					remove();
 					return;
@@ -258,15 +258,15 @@ public class EarthSmash extends EarthAbility {
 				return;
 			} else if (System.currentTimeMillis() - delay >= flightAnimationInterval) {
 				delay = System.currentTimeMillis();
-				if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+				if (PKMethods.isRegionProtectedFromBuild(this, location)) {
 					remove();
 					return;
 				}
 				revert();
 				destination = player.getEyeLocation().clone().add(player.getEyeLocation().getDirection().normalize().multiply(shootRange));
-				Vector direction = GeneralMethods.getDirection(location, destination).normalize();
+				Vector direction = PKMethods.getDirection(location, destination).normalize();
 
-				List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location.clone().add(0, 2, 0), flightDetectionRadius);
+				List<Entity> entities = PKMethods.getEntitiesAroundPoint(location.clone().add(0, 2, 0), flightDetectionRadius);
 				if (entities.size() == 0) {
 					remove();
 					return;
@@ -312,7 +312,7 @@ public class EarthSmash extends EarthAbility {
 					for (int y = -2; y <= -1; y++) {
 						for (int z = -1; z <= 1; z++) {
 							Block block = location.clone().add(x, y, z).getBlock();
-							if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+							if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 								remove();
 								return;
 							}
@@ -375,7 +375,7 @@ public class EarthSmash extends EarthAbility {
 
 			}
 			//Move any entities that are above the rock
-			List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 2.5);
+			List<Entity> entities = PKMethods.getEntitiesAroundPoint(location, 2.5);
 			for (Entity entity : entities) {
 				org.bukkit.util.Vector velocity = entity.getVelocity();
 				entity.setVelocity(velocity.add(new Vector(0, 0.36, 0)));
@@ -523,7 +523,7 @@ public class EarthSmash extends EarthAbility {
 			return null;
 		}
 		
-		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, grabRange, GeneralMethods.NON_OPAQUE), 1);
+		List<Block> blocks = PKMethods.getBlocksAroundPoint(PKMethods.getTargetedLocation(player, grabRange, PKMethods.NON_OPAQUE), 1);
 		for (EarthSmash smash : getAbilities(EarthSmash.class)) {
 			if (reqState == null || smash.state == reqState) {
 				for (Block block : blocks) {
@@ -546,13 +546,13 @@ public class EarthSmash extends EarthAbility {
 	 * have already been shot.
 	 */
 	public void shootingCollisionDetection() {
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, flightDetectionRadius);
+		List<Entity> entities = PKMethods.getEntitiesAroundPoint(location, flightDetectionRadius);
 		for (Entity entity : entities) {
 			if (entity instanceof LivingEntity && entity != player && !affectedEntities.contains(entity)) {
 				affectedEntities.add(entity);
 				double damage = currentBlocks.size() / 13.0 * this.damage;
 				DamageHandler.damageEntity(entity, damage, this);
-				Vector travelVec = GeneralMethods.getDirection(location, entity.getLocation());
+				Vector travelVec = PKMethods.getDirection(location, entity.getLocation());
 				entity.setVelocity(travelVec.setY(knockup).normalize().multiply(knockback));
 			}
 		}

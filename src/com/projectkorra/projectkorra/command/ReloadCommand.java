@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
@@ -22,7 +22,7 @@ public class ReloadCommand extends PKCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 0)) {
 			return;
 		}
-		GeneralMethods.reloadPlugin(sender);
+		PKMethods.reloadPlugin(sender);
 		sender.sendMessage(ChatColor.AQUA + ConfigManager.languageConfig.get().getString("Commands.Reload.SuccessfullyReloaded"));
 	}
 

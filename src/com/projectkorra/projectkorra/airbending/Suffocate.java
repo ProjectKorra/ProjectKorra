@@ -11,7 +11,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -105,7 +105,7 @@ public class Suffocate extends AirAbility {
 		}
 
 		if (bPlayer.isAvatarState()) {
-			for (Entity ent : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
+			for (Entity ent : PKMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
 				if (ent instanceof LivingEntity && !ent.equals(player)) {
 					targets.add((LivingEntity) ent);
 				}
@@ -115,8 +115,8 @@ public class Suffocate extends AirAbility {
 			//List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
 			List<Entity> entities = new ArrayList<Entity>();
 			for (int i = 0; i < 6; i++) {
-				Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterial());
-				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
+				Location location = PKMethods.getTargetedLocation(player, i, getTransparentMaterial());
+				entities = PKMethods.getEntitiesAroundPoint(location, 1.7);
 				if (entities.contains(player))
 					entities.remove(player);
 				if (entities != null && !entities.isEmpty() && !entities.contains(player)) {
@@ -135,7 +135,7 @@ public class Suffocate extends AirAbility {
 		if (!canSuffocateUndead) {
 			for (int i = 0; i < targets.size(); i++) {
 				LivingEntity target = targets.get(i);
-				if (GeneralMethods.isUndead(target)) {
+				if (PKMethods.isUndead(target)) {
 					targets.remove(i);
 					i--;
 				}
@@ -153,7 +153,7 @@ public class Suffocate extends AirAbility {
 			if (target.isDead() 
 					|| !target.getWorld().equals(player.getWorld())
 					|| target.getLocation().distanceSquared(player.getEyeLocation()) > range * range
-					|| GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())) {
+					|| PKMethods.isRegionProtectedFromBuild(this, target.getLocation())) {
 				breakSuffocateLocal(target);
 				i--;
 			} else if (target instanceof Player) {
@@ -173,7 +173,7 @@ public class Suffocate extends AirAbility {
 			double dist = player.getEyeLocation().distance(targets.get(0).getEyeLocation());
 			Location targetLoc = player.getEyeLocation().clone()
 					.add(player.getEyeLocation().getDirection().normalize().multiply(dist));
-			List<Entity> ents = GeneralMethods.getEntitiesAroundPoint(targetLoc, constantAimRadius);
+			List<Entity> ents = PKMethods.getEntitiesAroundPoint(targetLoc, constantAimRadius);
 
 			for (int i = 0; i < targets.size(); i++) {
 				LivingEntity target = targets.get(i);

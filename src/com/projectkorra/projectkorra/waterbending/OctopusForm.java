@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -140,7 +140,7 @@ public class OctopusForm extends WaterAbility {
 		if (isPlant(sourceBlock)) {
 			new PlantRegrowth(player, sourceBlock);
 			sourceBlock.setType(Material.AIR);
-		} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
+		} else if (!PKMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
 			sourceBlock.setType(Material.AIR);
 		}
 		source = new TempBlock(sourceBlock, Material.STATIONARY_WATER, (byte) 8);
@@ -159,17 +159,17 @@ public class OctopusForm extends WaterAbility {
 	}
 
 	private void affect(Location location) {
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, attackRange)) {
+		for (Entity entity : PKMethods.getEntitiesAroundPoint(location, attackRange)) {
 			if (entity.getEntityId() == player.getEntityId()) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+			} else if (PKMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
-			} else if (GeneralMethods.isObstructed(location, entity.getLocation())) {
+			} else if (PKMethods.isObstructed(location, entity.getLocation())) {
 				continue;
 			}
 			
 			double knock = bPlayer.isAvatarState() ? AvatarState.getValue(knockback) : knockback;
-			entity.setVelocity(GeneralMethods.getDirection(player.getLocation(), location).normalize().multiply(knock));
+			entity.setVelocity(PKMethods.getDirection(player.getLocation(), location).normalize().multiply(knock));
 			
 			if (entity instanceof LivingEntity) {
 				DamageHandler.damageEntity(entity, damage, this);
@@ -206,7 +206,7 @@ public class OctopusForm extends WaterAbility {
 					Block newBlock = sourceBlock.getRelative(BlockFace.UP);
 					sourceLocation = newBlock.getLocation();
 					
-					if (!GeneralMethods.isSolid(newBlock)) {
+					if (!PKMethods.isSolid(newBlock)) {
 						source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
 						sourceBlock = newBlock;
 					} else {
@@ -219,7 +219,7 @@ public class OctopusForm extends WaterAbility {
 					Block newBlock = sourceBlock.getRelative(BlockFace.DOWN);
 					sourceLocation = newBlock.getLocation();
 					
-					if (!GeneralMethods.isSolid(newBlock)) {
+					if (!PKMethods.isSolid(newBlock)) {
 						source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
 						sourceBlock = newBlock;
 					} else {
@@ -227,7 +227,7 @@ public class OctopusForm extends WaterAbility {
 						return;
 					}
 				} else if (sourceLocation.distanceSquared(location) > radius * radius) {
-					Vector vector = GeneralMethods.getDirection(sourceLocation, location.getBlock().getLocation()).normalize();
+					Vector vector = PKMethods.getDirection(sourceLocation, location.getBlock().getLocation()).normalize();
 					sourceLocation.add(vector);
 					Block newBlock = sourceLocation.getBlock();
 					
@@ -235,7 +235,7 @@ public class OctopusForm extends WaterAbility {
 						if (source != null) {
 							source.revertBlock();
 						}
-						if (!GeneralMethods.isSolid(newBlock)) {
+						if (!PKMethods.isSolid(newBlock)) {
 							source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
 							sourceBlock = newBlock;
 						}
@@ -248,7 +248,7 @@ public class OctopusForm extends WaterAbility {
 					
 					source = null;
 					Vector vector = new Vector(1, 0, 0);
-					startAngle = vector.angle(GeneralMethods.getDirection(sourceBlock.getLocation(), location));
+					startAngle = vector.angle(PKMethods.getDirection(sourceBlock.getLocation(), location));
 					angle = startAngle;
 				}
 			} else if (forming) {
@@ -332,7 +332,7 @@ public class OctopusForm extends WaterAbility {
 			return;
 		}
 
-		Vector direction = GeneralMethods.getDirection(player.getLocation(), base);
+		Vector direction = PKMethods.getDirection(player.getLocation(), base);
 		direction.setY(0);
 		direction.normalize();
 
@@ -368,7 +368,7 @@ public class OctopusForm extends WaterAbility {
 
 	private void addWater(Block block) {
 		clearNearbyWater(block);
-		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		}
 		

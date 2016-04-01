@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.util.BlockSource;
@@ -67,7 +67,7 @@ public class IceBlast extends IceAbility {
 
 		if (sourceBlock == null) {
 			return;
-		} else if (TempBlock.isTempBlock(sourceBlock) || GeneralMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
+		} else if (TempBlock.isTempBlock(sourceBlock) || PKMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
 			return;
 		} else {
 			prepare(sourceBlock);
@@ -96,7 +96,7 @@ public class IceBlast extends IceAbility {
 				continue;
 			} else if (!iceBlast.progressing) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(iceBlast, iceBlast.location)) {
+			} else if (PKMethods.isRegionProtectedFromBuild(iceBlast, iceBlast.location)) {
 				continue;
 			}
 
@@ -105,7 +105,7 @@ public class IceBlast extends IceAbility {
 			Location mloc = iceBlast.location;
 			
 			if (mloc.distanceSquared(location) <= iceBlast.range * iceBlast.range
-					&& GeneralMethods.getDistanceFromLine(vector, location, iceBlast.location) < iceBlast.deflectRange 
+					&& PKMethods.getDistanceFromLine(vector, location, iceBlast.location) < iceBlast.deflectRange 
 					&& mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				iceBlast.remove();
 			}
@@ -171,9 +171,9 @@ public class IceBlast extends IceAbility {
 			return;
 		}
 		
-		LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+		LivingEntity target = (LivingEntity) PKMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		if (target == null) {
-			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterial());
+			destination = PKMethods.getTargetedLocation(player, range, getTransparentMaterial());
 		} else {
 			destination = target.getEyeLocation();
 		}
@@ -190,7 +190,7 @@ public class IceBlast extends IceAbility {
 			firstDestination.add(0, 2, 0);
 		}
 		
-		destination = GeneralMethods.getPointOnLine(firstDestination, destination, range);
+		destination = PKMethods.getPointOnLine(firstDestination, destination, range);
 		progressing = true;
 		settingUp = true;
 		prepared = false;
@@ -241,9 +241,9 @@ public class IceBlast extends IceAbility {
 			}
 
 			if (settingUp) {
-				direction = GeneralMethods.getDirection(location, firstDestination).normalize();
+				direction = PKMethods.getDirection(location, firstDestination).normalize();
 			} else {
-				direction = GeneralMethods.getDirection(location, destination).normalize();
+				direction = PKMethods.getDirection(location, destination).normalize();
 			}
 
 			location.add(direction);
@@ -256,7 +256,7 @@ public class IceBlast extends IceAbility {
 			source = null;
 
 			if (isTransparent(player, block) && !block.isLiquid()) {
-				GeneralMethods.breakBlock(block);
+				PKMethods.breakBlock(block);
 			} else if (!isWater(block)) {
 				breakParticles(20);
 				remove();
@@ -264,13 +264,13 @@ public class IceBlast extends IceAbility {
 				return;
 			}
 
-			if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+			if (PKMethods.isRegionProtectedFromBuild(this, location)) {
 				remove();
 				returnWater();
 				return;
 			}
 
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
+			for (Entity entity : PKMethods.getEntitiesAroundPoint(location, collisionRadius)) {
 				if (entity.getEntityId() != player.getEntityId() && entity instanceof LivingEntity) {
 					affect((LivingEntity) entity);
 					progressing = false;

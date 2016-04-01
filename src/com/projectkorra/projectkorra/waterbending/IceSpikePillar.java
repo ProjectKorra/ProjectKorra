@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -58,8 +58,8 @@ public class IceSpikePillar extends IceAbility {
 		try {
 			double lowestDistance = range + 1;
 			Entity closestEntity = null;
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
-				if (GeneralMethods.getDistanceFromLine(player.getLocation().getDirection(), player.getLocation(), entity.getLocation()) <= 2 
+			for (Entity entity : PKMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
+				if (PKMethods.getDistanceFromLine(player.getLocation().getDirection(), player.getLocation(), entity.getLocation()) <= 2 
 						&& (entity instanceof LivingEntity) 
 						&& (entity.getEntityId() != player.getEntityId())) {
 					double distance = player.getLocation().distance(entity.getLocation());
@@ -198,11 +198,11 @@ public class IceSpikePillar extends IceAbility {
 		Block affectedBlock = location.clone().add(direction).getBlock();
 		location = location.add(direction);
 		
-		if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+		if (PKMethods.isRegionProtectedFromBuild(this, location)) {
 			return false;
 		}
 		
-		for (Entity en : GeneralMethods.getEntitiesAroundPoint(location, 1.4)) {
+		for (Entity en : PKMethods.getEntitiesAroundPoint(location, 1.4)) {
 			if (en instanceof LivingEntity && en != player && !damaged.contains((en))) {
 				LivingEntity le = (LivingEntity) en;
 				affect(le);

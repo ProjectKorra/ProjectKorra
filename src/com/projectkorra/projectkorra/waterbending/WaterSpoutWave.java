@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -129,7 +129,7 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 				
 				origin = block.getLocation();
-				if (!isWaterbendable(block) || GeneralMethods.isRegionProtectedFromBuild(this, origin)) {
+				if (!isWaterbendable(block) || PKMethods.isRegionProtectedFromBuild(this, origin)) {
 					remove();
 					return;
 				} else if (iceOnly && !(isIcebendable(block) || isSnow(block))) {
@@ -182,7 +182,7 @@ public class WaterSpoutWave extends WaterAbility {
 				location.add(0, animationSpeed, 0);
 				Block block = location.getBlock();
 				
-				if (!(isWaterbendable(block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				if (!(isWaterbendable(block) || block.getType() == Material.AIR) || PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 					remove();
 					return;
 				}
@@ -194,11 +194,11 @@ public class WaterSpoutWave extends WaterAbility {
 				revertBlocks();
 				Location eyeLoc = player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
 				eyeLoc.setY(player.getEyeLocation().getY());
-				Vector vec = GeneralMethods.getDirection(location, eyeLoc);
+				Vector vec = PKMethods.getDirection(location, eyeLoc);
 				location.add(vec.normalize().multiply(animationSpeed));
 				Block block = location.getBlock();
 				
-				if (!(isWaterbendable(block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				if (!(isWaterbendable(block) || block.getType() == Material.AIR) || PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 					remove();
 					return;
 				}
@@ -240,8 +240,8 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 
 				player.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(currentSpeed));
-				for (Block block : GeneralMethods.getBlocksAroundPoint(player.getLocation().add(0, -1, 0), waveRadius)) {
-					if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+				for (Block block : PKMethods.getBlocksAroundPoint(player.getLocation().add(0, -1, 0), waveRadius)) {
+					if (block.getType() == Material.AIR && !PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						if (iceWave) {
 							createBlockDelay(block, Material.ICE, (byte) 0, 2L);
 						} else {
@@ -252,7 +252,7 @@ public class WaterSpoutWave extends WaterAbility {
 				revertBlocksDelay(20L);
 
 				if (iceWave && progressCounter % 3 == 0) {
-					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation().add(0, -1, 0), waveRadius * 1.5)) {
+					for (Entity entity : PKMethods.getEntitiesAroundPoint(player.getLocation().add(0, -1, 0), waveRadius * 1.5)) {
 						if (entity != this.player && entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 							affectedEntities.add(entity);
 							final double augment = getNightFactor(player.getWorld());
@@ -276,13 +276,13 @@ public class WaterSpoutWave extends WaterAbility {
 	public void drawCircle(double theta, double increment) {
 		double rotateSpeed = 45;
 		revertBlocks();
-		direction = GeneralMethods.rotateXZ(direction, rotateSpeed);
+		direction = PKMethods.rotateXZ(direction, rotateSpeed);
 		for (double i = 0; i < theta; i += increment) {
-			Vector dir = GeneralMethods.rotateXZ(direction, i - theta / 2).normalize().multiply(radius);
+			Vector dir = PKMethods.rotateXZ(direction, i - theta / 2).normalize().multiply(radius);
 			dir.setY(0);
 			Block block = player.getEyeLocation().add(dir).getBlock();
 			location = block.getLocation();
-			if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (block.getType() == Material.AIR && !PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				createBlock(block, Material.STATIONARY_WATER, (byte) 8);
 			}
 		}

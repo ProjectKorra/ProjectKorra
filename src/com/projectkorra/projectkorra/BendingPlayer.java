@@ -192,7 +192,7 @@ public class BendingPlayer {
 
 		if (isChiBlocked() || isParalyzed() || isBloodbent() || isControlledByMetalClips()) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(player, ability.getName(), playerLoc)) {
+		} else if (PKMethods.isRegionProtectedFromBuild(player, ability.getName(), playerLoc)) {
 			return false;
 		} else if (ability instanceof FireAbility && FireAbility.isSolarEclipse(player.getWorld())) {
 			return false;
@@ -231,7 +231,7 @@ public class BendingPlayer {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
-		} else if (GeneralMethods.isRegionProtectedFromBuild(player, player.getLocation())) {
+		} else if (PKMethods.isRegionProtectedFromBuild(player, player.getLocation())) {
 			return false;
 		} 
 		return true;
@@ -261,8 +261,8 @@ public class BendingPlayer {
 			if (!hasSubElement(subElement)) {
 				return false;
 			}
-			if (GeneralMethods.hasSpirits()) {
-				if (GeneralMethods.hasSpirits()) {
+			if (PKMethods.hasSpirits()) {
+				if (PKMethods.hasSpirits()) {
 					SpiritPlayer sPlayer = SpiritPlayer.getSpiritPlayer(player);
 					if (subElement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
 						return false;

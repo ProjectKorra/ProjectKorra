@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.waterbending.PhaseChangeMelt;
 
@@ -24,8 +24,8 @@ public class HeatControlMelt extends FireAbility {
 		this.range = getDayFactor(range);
 		this.radius = getDayFactor(radius);
 		
-		location = GeneralMethods.getTargetedLocation(player, range);
-		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
+		location = PKMethods.getTargetedLocation(player, range);
+		for (Block block : PKMethods.getBlocksAroundPoint(location, radius)) {
 			if (isMeltable(block)) {
 				PhaseChangeMelt.melt(player, block);
 			} else if (isHeatable(block)) {

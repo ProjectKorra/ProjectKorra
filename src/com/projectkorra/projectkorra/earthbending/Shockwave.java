@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 
 import org.bukkit.Effect;
@@ -79,7 +79,7 @@ public class Shockwave extends EarthAbility {
 			}
 		} else if (charged) {
 			Location location = player.getEyeLocation();
-			location.getWorld().playEffect(location, Effect.SMOKE, GeneralMethods.getIntCardinalDirection(player.getEyeLocation().getDirection()), 3);
+			location.getWorld().playEffect(location, Effect.SMOKE, PKMethods.getIntCardinalDirection(player.getEyeLocation().getDirection()), 3);
 		}
 	}
 

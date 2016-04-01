@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -37,7 +37,7 @@ public class EarthPassive {
 		if (EarthAbility.isEarthbendable(player, block) || ElementalAbility.isTransparent(player, block)) {
 			if (!ElementalAbility.isTransparent(player, block)) {
 				MaterialData type = block.getState().getData();
-				if (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
+				if (PKMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
 					if (type.getItemType() == Material.RED_SANDSTONE) {
 						byte data = (byte) 0x1;
 						block.setType(Material.SAND);
@@ -52,9 +52,9 @@ public class EarthPassive {
 				}
 			}
 
-			for (Block affectedBlock : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
+			for (Block affectedBlock : PKMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
 				if (EarthAbility.isEarthbendable(player, affectedBlock)) {
-					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
+					if (PKMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
 						MaterialData type = affectedBlock.getState().getData();
 						if (type.getItemType() == Material.RED_SANDSTONE) {
 							byte data = (byte) 0x1;
@@ -105,7 +105,7 @@ public class EarthPassive {
 						continue;
 					}
 					
-					if (block.getType() == Material.IRON_DOOR_BLOCK && !GeneralMethods.isRegionProtectedFromBuild(player, block.getLocation())) {
+					if (block.getType() == Material.IRON_DOOR_BLOCK && !PKMethods.isRegionProtectedFromBuild(player, block.getLocation())) {
 						if (block.getData() >= 8) {
 							block = block.getRelative(BlockFace.DOWN);
 						}

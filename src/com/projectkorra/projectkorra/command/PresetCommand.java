@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.Preset;
@@ -74,7 +74,7 @@ public class PresetCommand extends PKCommand {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(((Player) player).getUniqueId(), player.getName());
+			PKMethods.createBendingPlayer(((Player) player).getUniqueId(), player.getName());
 			bPlayer = BendingPlayer.getBendingPlayer(player);
 		}
 
@@ -146,7 +146,7 @@ public class PresetCommand extends PKCommand {
 					BendingPlayer bPlayer2 = BendingPlayer.getBendingPlayer(player2);
 
 					if (bPlayer2 == null) {
-						GeneralMethods.createBendingPlayer(((Player) player2).getUniqueId(), player2.getName());
+						PKMethods.createBendingPlayer(((Player) player2).getUniqueId(), player2.getName());
 						bPlayer2 = BendingPlayer.getBendingPlayer(player2);
 					}
 					if (bPlayer2.isPermaRemoved()) {
@@ -175,7 +175,7 @@ public class PresetCommand extends PKCommand {
 					BendingPlayer bPlayer2 = BendingPlayer.getBendingPlayer(player2);
 
 					if (bPlayer2 == null) {
-						GeneralMethods.createBendingPlayer(((Player) player2).getUniqueId(), player2.getName());
+						PKMethods.createBendingPlayer(((Player) player2).getUniqueId(), player2.getName());
 						bPlayer2 = BendingPlayer.getBendingPlayer(player2);
 					}
 					if (bPlayer2.isPermaRemoved()) {
@@ -196,7 +196,7 @@ public class PresetCommand extends PKCommand {
 				}
 			}
 		} else if (Arrays.asList(createaliases).contains(args.get(0)) && hasPermission(sender, "create")) { //bending preset create name
-			int limit = GeneralMethods.getMaxPresets(player);
+			int limit = PKMethods.getMaxPresets(player);
 
 			if (Preset.presets.get(player) != null && Preset.presets.get(player).size() >= limit) {
 				sender.sendMessage(ChatColor.RED + this.reachedMax);

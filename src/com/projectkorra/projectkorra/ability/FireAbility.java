@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.ability;
 
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.util.Information;
@@ -110,7 +110,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 */
 	public static double getDayFactor(double value, World world) {
 		if (isDay(world)) {
-			if (GeneralMethods.hasRPG()) {
+			if (PKMethods.hasRPG()) {
 				if (isSozinsComet(world)) {
 					return RPGMethods.getFactor("SozinsComet") * value;
 				} else if (isLunarEclipse(world)) {
@@ -146,7 +146,7 @@ public abstract class FireAbility extends ElementalAbility {
 	public static boolean isWithinFireShield(Location loc) {
 		List<String> list = new ArrayList<String>();
 		list.add("FireShield");
-		return GeneralMethods.blockAbilities(null, list, loc, 0);
+		return PKMethods.blockAbilities(null, list, loc, 0);
 	}
 
 	public static void playCombustionSound(Location loc) {
@@ -173,7 +173,7 @@ public abstract class FireAbility extends ElementalAbility {
 		loc.setX(loc.getX() + Math.random() * (xOffset / 2 - -(xOffset / 2)));
 		loc.setY(loc.getY() + Math.random() * (yOffset / 2 - -(yOffset / 2)));
 		loc.setZ(loc.getZ() + Math.random() * (zOffset / 2 - -(zOffset / 2)));
-		GeneralMethods.displayColoredParticle(loc, "#01E1FF");
+		PKMethods.displayColoredParticle(loc, "#01E1FF");
 	}
 
 	/** Removes all temp fire that no longer needs to be there */

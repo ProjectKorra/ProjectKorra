@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -77,7 +77,7 @@ public class EarthBlast extends EarthAbility {
 				continue;
 			} else if (!blast.isProgressing) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(this, blast.location)) {
+			} else if (PKMethods.isRegionProtectedFromBuild(this, blast.location)) {
 				continue;
 			}
 
@@ -85,7 +85,7 @@ public class EarthBlast extends EarthAbility {
 			Vector vector = location.getDirection();
 			Location mloc = blast.location;
 			if (mloc.distanceSquared(location) <= range * range 
-					&& GeneralMethods.getDistanceFromLine(vector, location, blast.location) < deflectRange
+					&& PKMethods.getDistanceFromLine(vector, location, blast.location) < deflectRange
 					&& mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				blast.remove();
 				remove();
@@ -120,11 +120,11 @@ public class EarthBlast extends EarthAbility {
 	}
 
 	private Location getTargetLocation() {
-		Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+		Entity target = PKMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		Location location;
 		
 		if (target == null) {
-			location = GeneralMethods.getTargetedLocation(player, range);
+			location = PKMethods.getTargetedLocation(player, range);
 		} else {
 			location = ((LivingEntity) target).getEyeLocation();
 		}
@@ -204,9 +204,9 @@ public class EarthBlast extends EarthAbility {
 
 				Vector direction;
 				if (isSettingUp) {
-					direction = GeneralMethods.getDirection(location, firstDestination).normalize();
+					direction = PKMethods.getDirection(location, firstDestination).normalize();
 				} else {
-					direction = GeneralMethods.getDirection(location, destination).normalize();
+					direction = PKMethods.getDirection(location, destination).normalize();
 				}
 
 				location = location.clone().add(direction);
@@ -221,13 +221,13 @@ public class EarthBlast extends EarthAbility {
 				}
 
 				if (isTransparent(block) && !block.isLiquid()) {
-					GeneralMethods.breakBlock(block);
+					PKMethods.breakBlock(block);
 				} else if (!isSettingUp) {
 					remove();
 					return;
 				} else {
 					location = location.clone().subtract(direction);
-					direction = GeneralMethods.getDirection(location, destination).normalize();
+					direction = PKMethods.getDirection(location, destination).normalize();
 					location = location.clone().add(direction);
 
 					WaterAbility.removeWaterSpouts(location, player);
@@ -249,15 +249,15 @@ public class EarthBlast extends EarthAbility {
 					}
 
 					if (isTransparent(block) && !block.isLiquid()) {
-						GeneralMethods.breakBlock(block);
+						PKMethods.breakBlock(block);
 					} else {
 						remove();
 						return;
 					}
 				}
 
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
-					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+				for (Entity entity : PKMethods.getEntitiesAroundPoint(location, collisionRadius)) {
+					if (PKMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 						continue;
 					}
 					if (entity instanceof LivingEntity && (entity.getEntityId() != player.getEntityId() || canHitSelf)) {
@@ -366,7 +366,7 @@ public class EarthBlast extends EarthAbility {
 			}
 		}
 		
-		Entity target = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+		Entity target = PKMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		if (target == null) {
 			destination = getTargetEarthBlock((int) range).getLocation();
 			firstDestination = sourceBlock.getLocation().clone();
@@ -375,7 +375,7 @@ public class EarthBlast extends EarthAbility {
 			destination = ((LivingEntity) target).getEyeLocation();
 			firstDestination = sourceBlock.getLocation().clone();
 			firstDestination.setY(destination.getY());
-			destination = GeneralMethods.getPointOnLine(firstDestination, destination, range);
+			destination = PKMethods.getPointOnLine(firstDestination, destination, range);
 		}
 		
 		if (destination.distanceSquared(location) <= 1) {
@@ -437,7 +437,7 @@ public class EarthBlast extends EarthAbility {
 				continue;
 			} else if (!blast.location.getWorld().equals(player.getWorld())) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(blast, blast.location)) {
+			} else if (PKMethods.isRegionProtectedFromBuild(blast, blast.location)) {
 				continue;
 			} else if (blast.player.equals(player)) {
 				blast.redirect(player, blast.getTargetLocation());
@@ -448,7 +448,7 @@ public class EarthBlast extends EarthAbility {
 			Location mloc = blast.location;
 			
 			if (mloc.distanceSquared(location) <= blast.range * blast.range 
-					&& GeneralMethods.getDistanceFromLine(vector, location, blast.location) < blast.deflectRange
+					&& PKMethods.getDistanceFromLine(vector, location, blast.location) < blast.deflectRange
 					&& mloc.distanceSquared(location.clone().add(vector)) 
 						< mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				blast.redirect(player, blast.getTargetLocation());

@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
@@ -106,8 +106,8 @@ public class AirShield extends AirAbility {
 		WaterSpout.removeSpouts(origin, radius, player);
 		WaterManipulation.removeAroundPoint(origin, radius);
 
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, radius)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(player, "AirShield", entity.getLocation())) {
+		for (Entity entity : PKMethods.getEntitiesAroundPoint(origin, radius)) {
+			if (PKMethods.isRegionProtectedFromBuild(player, "AirShield", entity.getLocation())) {
 				continue;
 			}
 			if (origin.distanceSquared(entity.getLocation()) > 4) {
@@ -139,12 +139,12 @@ public class AirShield extends AirAbility {
 				}
 
 				velocity.multiply(0.5);
-				GeneralMethods.setVelocity(entity, velocity);
+				PKMethods.setVelocity(entity, velocity);
 				entity.setFallDistance(0);
 			}
 		}
 
-		for (Block testblock : GeneralMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
+		for (Block testblock : PKMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
 			if (testblock.getType() == Material.FIRE) {
 				testblock.setType(Material.AIR);
 				testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
@@ -164,7 +164,7 @@ public class AirShield extends AirAbility {
 			z = origin.getZ() + radius * Math.sin(angle) * f;
 
 			Location effect = new Location(origin.getWorld(), x, y, z);
-			if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
+			if (!PKMethods.isRegionProtectedFromBuild(this, effect)) {
 				playAirbendingParticles(effect, particles);
 				if (random.nextInt(4) == 0) {
 					playAirbendingSound(effect);

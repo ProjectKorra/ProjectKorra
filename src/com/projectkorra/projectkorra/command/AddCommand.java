@@ -3,7 +3,7 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
@@ -81,7 +81,7 @@ public class AddCommand extends PKCommand {
 		
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
 		if (bPlayer == null) {
-			GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
+			PKMethods.createBendingPlayer(target.getUniqueId(), target.getName());
 			bPlayer = BendingPlayer.getBendingPlayer(target);
 		}
 		if (bPlayer.isPermaRemoved()) {
@@ -112,8 +112,8 @@ public class AddCommand extends PKCommand {
 			} else {
 				target.sendMessage(color + added.replace("{element}", e.getName() + e.getType().getBender()));
 			}
-			GeneralMethods.saveElements(bPlayer);
-			GeneralMethods.saveSubElements(bPlayer);
+			PKMethods.saveElements(bPlayer);
+			PKMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, e, Result.ADD));
 			return;
 		} else if (Arrays.asList(Element.getAllSubElements()).contains(e)) {
@@ -134,7 +134,7 @@ public class AddCommand extends PKCommand {
 			} else {
 				target.sendMessage(color + added.replace("{element}", sub.getName() + sub.getType().getBender()));
 			}
-			GeneralMethods.saveSubElements(bPlayer);
+			PKMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD));
 			return;
 		} else {

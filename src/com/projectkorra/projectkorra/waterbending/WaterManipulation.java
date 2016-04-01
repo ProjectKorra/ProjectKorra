@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.PKMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -106,7 +106,7 @@ public class WaterManipulation extends WaterAbility {
 			return;
 		}
 		if (AFFECTED_BLOCKS.containsKey(block)) {
-			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+			if (!PKMethods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.AIR);
 			}
 			AFFECTED_BLOCKS.remove(block);
@@ -142,9 +142,9 @@ public class WaterManipulation extends WaterAbility {
 					progressing = true;
 					settingUp = true;
 					firstDestination = getToEyeLevel();
-					firstDirection = GeneralMethods.getDirection(sourceBlock.getLocation(), firstDestination).normalize();
-					targetDestination = GeneralMethods.getPointOnLine(firstDestination, targetDestination, range);
-					targetDirection = GeneralMethods.getDirection(firstDestination, targetDestination).normalize();
+					firstDirection = PKMethods.getDirection(sourceBlock.getLocation(), firstDestination).normalize();
+					targetDestination = PKMethods.getPointOnLine(firstDestination, targetDestination, range);
+					targetDirection = PKMethods.getDirection(firstDestination, targetDestination).normalize();
 
 					if (isPlant(sourceBlock)) {
 						new PlantRegrowth(player, sourceBlock);
@@ -206,7 +206,7 @@ public class WaterManipulation extends WaterAbility {
 				Block block = location.getBlock();
 				if (displacing) {
 					Block targetBlock = player.getTargetBlock((HashSet<Material>) null, dispelRange);
-					direction = GeneralMethods.getDirection(location, targetBlock.getLocation()).normalize();
+					direction = PKMethods.getDirection(location, targetBlock.getLocation()).normalize();
 					if (!location.getBlock().equals(targetBlock.getLocation())) {
 						location = location.clone().add(direction);
 
@@ -264,7 +264,7 @@ public class WaterManipulation extends WaterAbility {
 				}
 
 				if (isTransparent(player, block) && !block.isLiquid()) {
-					GeneralMethods.breakBlock(block);
+					PKMethods.breakBlock(block);
 				} else if (block.getType() != Material.AIR && !isWater(block)) {
 					remove();
 					new WaterReturn(player, sourceBlock);
@@ -272,7 +272,7 @@ public class WaterManipulation extends WaterAbility {
 				}
 
 				if (!displacing) {
-					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
+					for (Entity entity : PKMethods.getEntitiesAroundPoint(location, collisionRadius)) {
 						if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId()) {
 							Location location = player.getEyeLocation();
 							Vector vector = location.getDirection();
@@ -320,7 +320,7 @@ public class WaterManipulation extends WaterAbility {
 	private void redirect(Player player, Location targetlocation) {
 		if (progressing && !settingUp) {
 			if (location.distanceSquared(player.getLocation()) <= range * range) {
-				targetDirection = GeneralMethods.getDirection(location, targetlocation).normalize();
+				targetDirection = PKMethods.getDirection(location, targetlocation).normalize();
 			}
 			targetDestination = targetlocation;
 			this.player = player;
@@ -333,7 +333,7 @@ public class WaterManipulation extends WaterAbility {
 			return;
 		}
 		if (AFFECTED_BLOCKS.containsKey(block)) {
-			if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+			if (!PKMethods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.AIR);
 			}
 			AFFECTED_BLOCKS.remove(block);
@@ -343,7 +343,7 @@ public class WaterManipulation extends WaterAbility {
 	private void removeWater(Block block) {
 		if (block != null) {
 			if (AFFECTED_BLOCKS.containsKey(block)) {
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
+				if (!PKMethods.isAdjacentToThreeOrMoreSources(block)) {
 					block.setType(Material.AIR);
 				}
 				AFFECTED_BLOCKS.remove(block);
@@ -386,7 +386,7 @@ public class WaterManipulation extends WaterAbility {
 				continue;
 			} else if (!manip.progressing) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(manip, manip.location)) {
+			} else if (PKMethods.isRegionProtectedFromBuild(manip, manip.location)) {
 				continue;
 			}
 
@@ -394,7 +394,7 @@ public class WaterManipulation extends WaterAbility {
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
 			if (mloc.distanceSquared(location) <= manip.selectRange * manip.selectRange 
-					&& GeneralMethods.getDistanceFromLine(vector, location, manip.location) < manip.deflectRange 
+					&& PKMethods.getDistanceFromLine(vector, location, manip.location) < manip.deflectRange 
 					&& mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.remove();
 			}
@@ -445,10 +445,10 @@ public class WaterManipulation extends WaterAbility {
 
 	private static Location getTargetLocation(Player player, double range) {
 		Location location;
-		Entity target = GeneralMethods.getTargetedEntity(player, range);
+		Entity target = PKMethods.getTargetedEntity(player, range);
 		
 		if (target == null) {
-			location = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterial());
+			location = PKMethods.getTargetedLocation(player, range, getTransparentMaterial());
 		} else {
 			location = ((LivingEntity) target).getEyeLocation();
 		}
@@ -504,7 +504,7 @@ public class WaterManipulation extends WaterAbility {
 				continue;
 			} else if (!manip.location.getWorld().equals(player.getWorld())) {
 				continue;
-			} else if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", manip.location)) {
+			} else if (PKMethods.isRegionProtectedFromBuild(player, "WaterManipulation", manip.location)) {
 				continue;
 			}
 
@@ -516,7 +516,7 @@ public class WaterManipulation extends WaterAbility {
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
 			if (mloc.distanceSquared(location) <= manip.selectRange * manip.selectRange 
-					&& GeneralMethods.getDistanceFromLine(vector, location, manip.location) < manip.deflectRange 
+					&& PKMethods.getDistanceFromLine(vector, location, manip.location) < manip.deflectRange 
 					&& mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.redirect(player, getTargetLocation(player, manip.selectRange));
 			}
