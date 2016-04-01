@@ -11,7 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
@@ -72,7 +72,7 @@ public class HorizontalVelocityTracker {
 
 		Vector diff = thisVelocity.subtract(lastVelocity);
 
-		List<Block> blocks = PKMethods.getBlocksAroundPoint(entity.getLocation(), 1.5);
+		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(entity.getLocation(), 1.5);
 
 		for (Block b : blocks) {
 			if (WaterAbility.isWater(b)) {
@@ -86,7 +86,7 @@ public class HorizontalVelocityTracker {
 				impactLocation = entity.getLocation();
 				for (Block b : blocks) {
 					if (b.getType() == Material.BARRIER && barrier == false) return;
-					if (PKMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
+					if (GeneralMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
 						if (!ElementalAbility.isTransparent(instigator, b)) {
 							hasBeenDamaged = true;
 							ProjectKorra.plugin.getServer().getPluginManager().callEvent(new HorizontalVelocityChangeEvent(entity, instigator, lastVelocity, thisVelocity, diff, launchLocation, impactLocation, abil));

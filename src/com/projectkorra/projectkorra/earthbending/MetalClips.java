@@ -16,7 +16,7 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -136,11 +136,11 @@ public class MetalClips extends MetalAbility {
 		Item item = player.getWorld().dropItemNaturally(player.getLocation().add(0, 1, 0), is);
 		Vector vector;
 
-		Entity targetedEntity = PKMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
+		Entity targetedEntity = GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		if (targetedEntity != null) {
-			vector = PKMethods.getDirection(player.getLocation(), targetedEntity.getLocation());
+			vector = GeneralMethods.getDirection(player.getLocation(), targetedEntity.getLocation());
 		} else {
-			vector = PKMethods.getDirection(player.getLocation(), PKMethods.getTargetedLocation(player, range));
+			vector = GeneralMethods.getDirection(player.getLocation(), GeneralMethods.getTargetedLocation(player, range));
 		}
 
 		item.setVelocity(vector.normalize().add(new Vector(0, 0.1, 0).multiply(1.2)));
@@ -155,7 +155,7 @@ public class MetalClips extends MetalAbility {
 			return;
 		} else if (metalClipsCount == 3 && !canUse4Clips) {
 			return;
-		} else if (targetEntity != null && PKMethods.isRegionProtectedFromBuild(this, targetEntity.getLocation())) {
+		} else if (targetEntity != null && GeneralMethods.isRegionProtectedFromBuild(this, targetEntity.getLocation())) {
 			return;
 		}
 
@@ -250,12 +250,12 @@ public class MetalClips extends MetalAbility {
 		}
 
 		if (isMagnetized) {
-			if (PKMethods.getEntitiesAroundPoint(player.getLocation(), magnetRange).size() == 0) {
+			if (GeneralMethods.getEntitiesAroundPoint(player.getLocation(), magnetRange).size() == 0) {
 				remove();
 				return;
 			}
-			for (Entity entity : PKMethods.getEntitiesAroundPoint(player.getLocation(), magnetRange)) {
-				Vector vector = PKMethods.getDirection(entity.getLocation(), player.getLocation());
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), magnetRange)) {
+				Vector vector = GeneralMethods.getDirection(entity.getLocation(), player.getLocation());
 				ItemStack itemInHand = player.getInventory().getItemInHand();
 				
 				if (entity instanceof Player && canLoot && itemInHand.getType() == Material.IRON_INGOT && itemInHand.getItemMeta().getDisplayName().equalsIgnoreCase("Magnet")) {
@@ -337,9 +337,9 @@ public class MetalClips extends MetalAbility {
 		if (isControlling && player.isSneaking()) {
 			if (metalClipsCount == 1) {
 				Location oldLocation = targetEntity.getLocation();
-				Location loc = PKMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
+				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
-				Vector vector = PKMethods.getDirection(targetEntity.getLocation(), player.getLocation());
+				Vector vector = GeneralMethods.getDirection(targetEntity.getLocation(), player.getLocation());
 
 				if (distance > 0.5) {
 					targetEntity.setVelocity(vector.normalize().multiply(0.2));
@@ -348,10 +348,10 @@ public class MetalClips extends MetalAbility {
 
 			if (metalClipsCount == 2) {
 				Location oldLocation = targetEntity.getLocation();
-				Location loc = PKMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
+				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
 
-				Vector vector = PKMethods.getDirection(targetEntity.getLocation(), PKMethods.getTargetedLocation(player, 10));
+				Vector vector = GeneralMethods.getDirection(targetEntity.getLocation(), GeneralMethods.getTargetedLocation(player, 10));
 
 				if (distance > 1.2) {
 					targetEntity.setVelocity(vector.normalize().multiply(0.2));
@@ -360,9 +360,9 @@ public class MetalClips extends MetalAbility {
 
 			if (metalClipsCount >= 3) {
 				Location oldLocation = targetEntity.getLocation();
-				Location loc = PKMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
+				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
 				double distance = loc.distance(oldLocation);
-				Vector vector = PKMethods.getDirection(oldLocation, PKMethods.getTargetedLocation(player, 10));
+				Vector vector = GeneralMethods.getDirection(oldLocation, GeneralMethods.getTargetedLocation(player, 10));
 				
 				if (distance > 1.2) {
 					targetEntity.setVelocity(vector.normalize().multiply(.5));
@@ -397,12 +397,12 @@ public class MetalClips extends MetalAbility {
 			}
 
 			if (ii.getItemStack().getType() == Material.IRON_INGOT) {
-				if (PKMethods.getEntitiesAroundPoint(ii.getLocation(), 2).size() == 0) {
+				if (GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2).size() == 0) {
 					remove();
 					return;
 				}
 
-				for (Entity e : PKMethods.getEntitiesAroundPoint(ii.getLocation(), 2)) {
+				for (Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2)) {
 					if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId()) {
 						if (e instanceof Player || e instanceof Zombie || e instanceof Skeleton) {
 							targetEntity = (LivingEntity) e;

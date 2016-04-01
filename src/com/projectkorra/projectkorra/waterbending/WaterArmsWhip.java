@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.command.Commands;
@@ -109,7 +109,7 @@ public class WaterArmsWhip extends WaterAbility {
 		}
 		World world = player.getWorld();
 		if (isNight(world)) {
-			if (PKMethods.hasRPG()) {
+			if (GeneralMethods.hasRPG()) {
 				if (isLunarEclipse(world)) {
 					if (ability.equals(Whip.PUNCH)) {
 						whipLength = punchLengthFullMoon;
@@ -227,7 +227,7 @@ public class WaterArmsWhip extends WaterAbility {
 	private boolean canPlaceBlock(Block block) {
 		if (!isTransparent(player, block) && !(isWater(block) && TempBlock.isTempBlock(block))) {
 			return false;
-		} else if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return false;
 		}
 		return true;
@@ -261,9 +261,9 @@ public class WaterArmsWhip extends WaterAbility {
 				if (i == activeLength) {
 					Location l3 = null;
 					if (arm.equals(Arm.LEFT)) {
-						l3 = PKMethods.getRightSide(l2, 1);
+						l3 = GeneralMethods.getRightSide(l2, 1);
 					} else {
-						l3 = PKMethods.getLeftSide(l2, 1);
+						l3 = GeneralMethods.getLeftSide(l2, 1);
 					}
 					
 					end = l3.clone();
@@ -286,7 +286,7 @@ public class WaterArmsWhip extends WaterAbility {
 		Location endOfArm = waterArms.getLeftArmEnd().clone();
 		switch (ability) {
 			case PULL:
-				for (Entity entity : PKMethods.getEntitiesAroundPoint(location, 2)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
 					if (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())) {
 						continue;
 					}
@@ -295,7 +295,7 @@ public class WaterArmsWhip extends WaterAbility {
 				}
 				break;
 			case PUNCH:
-				for (Entity entity : PKMethods.getEntitiesAroundPoint(location, 2)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
 					if (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())) {
 						continue;
 					}
@@ -315,7 +315,7 @@ public class WaterArmsWhip extends WaterAbility {
 				break;
 			case GRAB:
 				if (grabbedEntity == null) {
-					for (Entity entity : PKMethods.getEntitiesAroundPoint(location, 2)) {
+					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
 						if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !GRABBED_ENTITIES.containsKey(entity)) {
 							GRABBED_ENTITIES.put((LivingEntity) entity, this);
 							grabbedEntity = (LivingEntity) entity;
@@ -371,7 +371,7 @@ public class WaterArmsWhip extends WaterAbility {
 
 	private void grapplePlayer(Location location) {
 		if (reverting && grappled && player != null && end != null && ability.equals(Whip.GRAPPLE)) {
-			if (PKMethods.isRegionProtectedFromBuild(this, location) && grappleRespectRegions) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, location) && grappleRespectRegions) {
 				return;
 			}
 			Vector vector = player.getLocation().toVector().subtract(location.toVector());

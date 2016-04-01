@@ -12,7 +12,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -49,7 +49,7 @@ public class LavaSurgeWave extends LavaAbility {
 		this.range = 20;
 		this.radius = 1;
 		this.interval = 30;
-		this.cooldown = PKMethods.getGlobalCooldown();
+		this.cooldown = GeneralMethods.getGlobalCooldown();
 		this.maxRadius = getConfig().getDouble("Abilities.Earth.LavaSurge.Radius");
 		this.horizontalPush = getConfig().getDouble("Abilities.Earth.LavaSurge.HorizontalPush");
 		this.verticalPush = getConfig().getDouble("Abilities.Earth.LavaSurge.VerticalPush");
@@ -111,7 +111,7 @@ public class LavaSurgeWave extends LavaAbility {
 				return;
 			}
 
-			Entity target = PKMethods.getTargetedEntity(player, range);
+			Entity target = GeneralMethods.getTargetedEntity(player, range);
 			if (target == null) {
 				targetDestination = getTargetEarthBlock((int) range).getLocation();
 			} else {
@@ -126,7 +126,7 @@ public class LavaSurgeWave extends LavaAbility {
 				targetDirection = getDirection(sourceBlock.getLocation(), targetDestination).normalize();
 				targetDestination = location.clone().add(targetDirection.clone().multiply(range));
 				
-				if (!PKMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
+				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
 					sourceBlock.setType(Material.AIR);
 				}
 				addLava(sourceBlock);
@@ -165,14 +165,14 @@ public class LavaSurgeWave extends LavaAbility {
 			Block blockl = location.getBlock();
 			ArrayList<Block> blocks = new ArrayList<Block>();
 			
-			if (!PKMethods.isRegionProtectedFromBuild(this, location) && blockl.getType() != Material.LEAVES
+			if (!GeneralMethods.isRegionProtectedFromBuild(this, location) && blockl.getType() != Material.LEAVES
 					&& (blockl.getType() == Material.AIR 
 						|| blockl.getType() == Material.FIRE 
 						|| WaterAbility.isPlant(blockl) 
 						|| isLava(blockl)))  {
 				for (double i = 0; i <= radius; i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
-						Vector vec = PKMethods.getOrthogonalVector(targetDirection, angle, i);
+						Vector vec = GeneralMethods.getOrthogonalVector(targetDirection, angle, i);
 						Block block = location.clone().add(vec).getBlock();
 						
 						if (!blocks.contains(block) && (block.getType() == Material.AIR 
@@ -201,7 +201,7 @@ public class LavaSurgeWave extends LavaAbility {
 				return;
 			}
 			
-			for (Entity entity : PKMethods.getEntitiesAroundPoint(location, 2 * radius)) {
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * radius)) {
 				boolean knockback = false;
 				for (Block block : waveBlocks.keySet()) {
 					if (entity.getLocation().distanceSquared(block.getLocation()) <= 2 * 2) {
@@ -256,7 +256,7 @@ public class LavaSurgeWave extends LavaAbility {
 	}
 
 	private void addLava(Block block) {
-		if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_LAVA, (byte) 8);

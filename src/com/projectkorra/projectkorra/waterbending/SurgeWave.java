@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -84,7 +84,7 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	private void addWater(Block block) {
-		if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		} else if (!TempBlock.isTempBlock(block)) {
 			new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
@@ -128,8 +128,8 @@ public class SurgeWave extends WaterAbility {
 			freezeradius = maxFreezeRadius;
 		}
 
-		for (Block block : PKMethods.getBlocksAroundPoint(frozenLocation, freezeradius)) {
-			if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation()) || PKMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(frozenLocation, freezeradius)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()) || GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
 				continue;
 			} else if (TempBlock.isTempBlock(block)) {
 				continue;
@@ -187,7 +187,7 @@ public class SurgeWave extends WaterAbility {
 				pushFactor = AvatarState.getValue(pushFactor);
 			}
 			
-			Entity target = PKMethods.getTargetedEntity(player, range);
+			Entity target = GeneralMethods.getTargetedEntity(player, range);
 			if (target == null) {
 				targetDestination = player.getTargetBlock(getTransparentMaterialSet(), (int) range).getLocation();
 			} else {
@@ -205,7 +205,7 @@ public class SurgeWave extends WaterAbility {
 				if (isPlant(sourceBlock)) {
 					new PlantRegrowth(player, sourceBlock);
 				}
-				if (!PKMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
+				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
 					sourceBlock.setType(Material.AIR);
 				}
 				addWater(sourceBlock);
@@ -216,7 +216,7 @@ public class SurgeWave extends WaterAbility {
 	public boolean prepare() {
 		cancelPrevious();
 		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
-		if (block != null && !PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (block != null && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			sourceBlock = block;
 			focusBlock();
 			return true;
@@ -253,14 +253,14 @@ public class SurgeWave extends WaterAbility {
 				Block blockl = location.getBlock();
 				ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!PKMethods.isRegionProtectedFromBuild(this, location) 
+				if (!GeneralMethods.isRegionProtectedFromBuild(this, location) 
 						&& (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE 
 							|| isPlant(blockl) || isWater(blockl) 
 							|| isWaterbendable(player, blockl))) 
 						&& blockl.getType() != Material.LEAVES)) {
 					for (double i = 0; i <= currentRadius; i += .5) {
 						for (double angle = 0; angle < 360; angle += 10) {
-							Vector vec = PKMethods.getOrthogonalVector(targetDirection, angle, i);
+							Vector vec = GeneralMethods.getOrthogonalVector(targetDirection, angle, i);
 							Block block = location.clone().add(vec).getBlock();
 							
 							if (!blocks.contains(block) 
@@ -295,7 +295,7 @@ public class SurgeWave extends WaterAbility {
 					return;
 				}
 
-				for (Entity entity : PKMethods.getEntitiesAroundPoint(location, 2 * currentRadius)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * currentRadius)) {
 					boolean knockback = false;
 					for (Block block : waveBlocks.keySet()) {
 						if (entity.getLocation().distanceSquared(block.getLocation()) <= 4) {
@@ -313,7 +313,7 @@ public class SurgeWave extends WaterAbility {
 					if (knockback) {
 						Vector dir = direction.clone();
 						dir.setY(dir.getY() * verticalFactor);
-						PKMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(getNightFactor(pushFactor))));
+						GeneralMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(getNightFactor(pushFactor))));
 						
 						entity.setFallDistance(0);
 						if (entity.getFireTicks() > 0) {

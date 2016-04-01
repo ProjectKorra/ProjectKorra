@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
 
@@ -63,7 +63,7 @@ public class FireBurst extends FireAbility {
 	private void coneBurst() {
 		if (charged) {
 			Location location = player.getEyeLocation();
-			List<Block> safeBlocks = PKMethods.getBlocksAroundPoint(player.getLocation(), 2);
+			List<Block> safeBlocks = GeneralMethods.getBlocksAroundPoint(player.getLocation(), 2);
 			Vector vector = location.getDirection();
 			
 			double angle = Math.toRadians(30);
@@ -136,7 +136,7 @@ public class FireBurst extends FireAbility {
 	private void sphereBurst() {
 		if (charged) {
 			Location location = player.getEyeLocation();
-			List<Block> safeblocks = PKMethods.getBlocksAroundPoint(player.getLocation(), 2);
+			List<Block> safeblocks = GeneralMethods.getBlocksAroundPoint(player.getLocation(), 2);
 			double x, y, z;
 			double r = 1;
 			

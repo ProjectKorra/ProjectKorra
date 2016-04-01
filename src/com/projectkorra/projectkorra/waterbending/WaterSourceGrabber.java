@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -56,7 +56,7 @@ public class WaterSourceGrabber {
 			Block block = currentLoc.getBlock();
 			
 			if (!(WaterAbility.isWaterbendable(player, null, block) || block.getType() == Material.AIR) 
-					|| PKMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
+					|| GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
 				remove();
 				return;
 			}
@@ -69,12 +69,12 @@ public class WaterSourceGrabber {
 			revertBlocks();
 			Location eyeLoc = player.getTargetBlock((HashSet<Material>) null, 2).getLocation();
 			eyeLoc.setY(player.getEyeLocation().getY());
-			Vector vec = PKMethods.getDirection(currentLoc, eyeLoc);
+			Vector vec = GeneralMethods.getDirection(currentLoc, eyeLoc);
 			currentLoc.add(vec.normalize().multiply(animimationSpeed));
 
 			Block block = currentLoc.getBlock();
 			if (!(WaterAbility.isWaterbendable(player, null, block) || block.getType() == Material.AIR)
-					|| PKMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
+					|| GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
 				remove();
 				return;
 			}

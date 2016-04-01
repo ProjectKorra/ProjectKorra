@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -141,15 +141,15 @@ public class WaterCombo extends WaterAbility implements ComboAbility {
 
 	public void drawWaterCircle(Location loc, double theta, double increment, double radius, Material mat, byte data) {
 		double rotateSpeed = theta;
-		direction = PKMethods.rotateXZ(direction, rotateSpeed);
+		direction = GeneralMethods.rotateXZ(direction, rotateSpeed);
 		
 		for (double i = 0; i < theta; i += increment) {
-			Vector dir = PKMethods.rotateXZ(direction, i - theta / 2).normalize().multiply(radius);
+			Vector dir = GeneralMethods.rotateXZ(direction, i - theta / 2).normalize().multiply(radius);
 			dir.setY(0);
 			Block block = loc.clone().add(dir).getBlock();
 			location = block.getLocation();
 			
-			if (block.getType() == Material.AIR && !PKMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
+			if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
 				createBlock(block, mat, data);
 			}
 		}
@@ -172,8 +172,8 @@ public class WaterCombo extends WaterAbility implements ComboAbility {
 				return;
 			}
 			if (i % 2 == 0) {
-				for (Entity entity : PKMethods.getEntitiesAroundPoint(loc, 1.5)) {
-					if (PKMethods.isRegionProtectedFromBuild(player, "WaterManipulation", entity.getLocation())) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(loc, 1.5)) {
+					if (GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", entity.getLocation())) {
 						remove();
 						return;
 					}
@@ -191,7 +191,7 @@ public class WaterCombo extends WaterAbility implements ComboAbility {
 					}
 				}
 
-				if (PKMethods.blockAbilities(player, FireCombo.getBlockableAbilities(), loc, 1)) {
+				if (GeneralMethods.blockAbilities(player, FireCombo.getBlockableAbilities(), loc, 1)) {
 					fstream.remove();
 				}
 			}

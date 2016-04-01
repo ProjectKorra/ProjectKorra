@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
@@ -43,13 +43,13 @@ public class ClearCommand extends PKCommand {
 
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		if (bPlayer == null) {
-			PKMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
+			GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
 			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		}
 		if (args.size() == 0) {
 			bPlayer.getAbilities().clear();
 			for (int i = 1; i <= 9; i++) {
-				PKMethods.saveAbility(bPlayer, i, null);
+				GeneralMethods.saveAbility(bPlayer, i, null);
 			}
 			sender.sendMessage(ChatColor.YELLOW + cleared);
 		} else if (args.size() == 1) {
@@ -60,7 +60,7 @@ public class ClearCommand extends PKCommand {
 				}
 				if (bPlayer.getAbilities().get(slot) != null) {
 					bPlayer.getAbilities().remove(slot);
-					PKMethods.saveAbility(bPlayer, slot, null);
+					GeneralMethods.saveAbility(bPlayer, slot, null);
 					sender.sendMessage(clearedSlot.replace("{slot}", String.valueOf(slot)));
 				} else {
 					sender.sendMessage(ChatColor.YELLOW + alreadyEmpty);

@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -75,7 +75,7 @@ public class WaterArmsFreeze extends IceAbility {
 			
 			Vector dir = player.getLocation().getDirection();
 			location = waterArms.getActiveArmEnd().add(dir.normalize().multiply(1));
-			direction = PKMethods.getDirection(location, PKMethods.getTargetedLocation(player, iceRange, new Integer[] { 8, 9, 79, 174 })).normalize();
+			direction = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, iceRange, new Integer[] { 8, 9, 79, 174 })).normalize();
 		} else {
 			return;
 		}
@@ -114,7 +114,7 @@ public class WaterArmsFreeze extends IceAbility {
 	private boolean canPlaceBlock(Block block) {
 		if (!isTransparent(player, block) && !((isWater(block)) && TempBlock.isTempBlock(block))) {
 			return false;
-		} else if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return false;
 		}
 		return true;
@@ -125,7 +125,7 @@ public class WaterArmsFreeze extends IceAbility {
 		new TempBlock(location.getBlock(), Material.ICE, (byte) 0);
 		WaterArms.getBlockRevertTimes().put(location.getBlock(), System.currentTimeMillis() + 10L);
 
-		for (Entity entity : PKMethods.getEntitiesAroundPoint(location, 2.5)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2.5)) {
 			if (entity instanceof LivingEntity && entity.getEntityId() != player.getEntityId() && !(entity instanceof ArmorStand)) {
 				DamageHandler.damageEntity(entity, iceDamage, this);
 				PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 40, 2);

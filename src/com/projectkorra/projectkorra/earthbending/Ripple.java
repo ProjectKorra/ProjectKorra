@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -252,7 +252,7 @@ public class Ripple extends EarthAbility {
 			length = 2;
 		}
 		if (moveEarth(block, new Vector(0, 1, 0), length, false)) {
-			for (Entity entity : PKMethods.getEntitiesAroundPoint(block.getLocation().clone().add(0, 1, 0), 2)) {
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(block.getLocation().clone().add(0, 1, 0), 2)) {
 				if (entity.getEntityId() != player.getEntityId() && !entities.contains(entity)) {
 					if (!(entity instanceof FallingBlock)) {
 						entities.add(entity);

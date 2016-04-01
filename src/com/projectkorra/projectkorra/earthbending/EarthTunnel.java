@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 
 import org.bukkit.Location;
@@ -86,7 +86,7 @@ public class EarthTunnel extends EarthAbility {
 						angle += 20;
 					}
 					
-					Vector vec = PKMethods.getOrthogonalVector(direction, angle, radius);
+					Vector vec = GeneralMethods.getOrthogonalVector(direction, angle, radius);
 					block = location.clone().add(direction.clone().normalize().multiply(depth)).add(vec).getBlock();
 				}
 

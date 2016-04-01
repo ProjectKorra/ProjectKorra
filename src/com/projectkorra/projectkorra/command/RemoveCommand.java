@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
@@ -52,8 +52,8 @@ public class RemoveCommand extends PKCommand {
 				if (e != null) {
 					if (senderBPlayer.hasElement(e)) {
 						senderBPlayer.getElements().remove(e);
-						PKMethods.saveElements(senderBPlayer);
-						PKMethods.removeUnusableAbilities(sender.getName());
+						GeneralMethods.saveElements(senderBPlayer);
+						GeneralMethods.removeUnusableAbilities(sender.getName());
 
 						sender.sendMessage(e.getColor() + succesfullyRemovedElementSelf.replace("{element}", e.getName()));
 						Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
@@ -78,7 +78,7 @@ public class RemoveCommand extends PKCommand {
 
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
-			PKMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			bPlayer = BendingPlayer.getBendingPlayer(player);
 		}
 		if (args.size() == 2) {
@@ -90,13 +90,13 @@ public class RemoveCommand extends PKCommand {
 				}
 				if (e instanceof SubElement) {
 					bPlayer.getSubElements().remove(e);
-					PKMethods.saveSubElements(bPlayer);
+					GeneralMethods.saveSubElements(bPlayer);
 				} else {
 					bPlayer.getElements().remove(e);
-					PKMethods.saveElements(bPlayer);
+					GeneralMethods.saveElements(bPlayer);
 				}
 				
-				PKMethods.removeUnusableAbilities(player.getName());
+				GeneralMethods.removeUnusableAbilities(player.getName());
 				sender.sendMessage(e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
 				sender.sendMessage(e.getColor() + this.succesfullyRemovedElementTarget.replace("{element}" , e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
@@ -104,8 +104,8 @@ public class RemoveCommand extends PKCommand {
 			}
 		} else if (args.size() == 1) {
 			bPlayer.getElements().clear();
-			PKMethods.saveElements(bPlayer);
-			PKMethods.removeUnusableAbilities(player.getName());
+			GeneralMethods.saveElements(bPlayer);
+			GeneralMethods.removeUnusableAbilities(player.getName());
 			sender.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
 			player.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW));
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.REMOVE));

@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 
 import org.bukkit.Effect;
@@ -39,11 +39,11 @@ public class HeatControlExtinguish extends FireAbility {
 		}
 		
 		location = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
-		for (Block block : PKMethods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
 			Material mat = block.getType();
 			if (mat != Material.FIRE) {
 				continue;
-			} else if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				continue;
 			} else if (block.getType() == Material.FIRE) {
 				block.setType(Material.AIR);

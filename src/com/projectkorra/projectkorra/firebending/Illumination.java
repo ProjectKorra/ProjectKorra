@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 
 import org.bukkit.Location;
@@ -88,7 +88,7 @@ public class Illumination extends FireAbility {
 				&& standBlock.getType() != Material.LEAVES && standBlock .getType() != Material.LEAVES_2)
 				&& !block.equals(standBlock)
 				&& !BLOCKS.containsKey(standBlock)
-				&& PKMethods.isSolid(standBlock)) {
+				&& GeneralMethods.isSolid(standBlock)) {
 			revert();
 			block = standingBlock;
 			normalType = block.getType();

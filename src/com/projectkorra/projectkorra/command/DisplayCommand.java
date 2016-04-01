@@ -3,7 +3,7 @@ package com.projectkorra.projectkorra.command;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.SubAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
@@ -120,7 +120,7 @@ public class DisplayCommand extends PKCommand {
 				continue;
 			}
 			if (sender instanceof Player) {
-				if (PKMethods.canView((Player) sender, ability.getName())) {
+				if (GeneralMethods.canView((Player) sender, ability.getName())) {
 					sender.sendMessage(ability.getElement().getColor() + ability.getName());
 				}
 			} else {
@@ -149,7 +149,7 @@ public class DisplayCommand extends PKCommand {
 			if (ability instanceof SubAbility || ability.isHiddenAbility()) {
 				continue;
 			}
-			if (!(sender instanceof Player) || PKMethods.canView((Player) sender, ability.getName())) {
+			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
 				sender.sendMessage(ability.getElement().getColor() + ability.getName());
 			}
 		}
@@ -182,7 +182,7 @@ public class DisplayCommand extends PKCommand {
 		for (CoreAbility ability : abilities) {
 			if (ability.isHiddenAbility()) {
 				continue;
-			} else if (!(sender instanceof Player) || PKMethods.canView((Player) sender, ability.getName())) {
+			} else if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
 				sender.sendMessage(element.getColor() + ability.getName());
 			}
 		}
@@ -196,7 +196,7 @@ public class DisplayCommand extends PKCommand {
 	private void displayBinds(CommandSender sender) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		if (bPlayer == null) {
-			PKMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
+			GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
 			bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		}
 		HashMap<Integer, String> abilities = bPlayer.getAbilities();

@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
@@ -117,12 +117,12 @@ public class AirBubble extends AirAbility {
 			}
 		}
 
-		for (Block block : PKMethods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
 			if (waterOrigins.containsKey(block)) {
 				continue;
 			} else if (!isWater(block)) {
 				continue;
-			} else if (PKMethods.isRegionProtectedFromBuild(player, "AirBubble", block.getLocation())) {
+			} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirBubble", block.getLocation())) {
 				continue;
 			} else if (block.getType() == Material.STATIONARY_WATER || block.getType() == Material.WATER) {
 				if (WaterManipulation.canBubbleWater(block)) {

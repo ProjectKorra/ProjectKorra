@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -54,7 +54,7 @@ public class WaterReturn extends WaterAbility {
 			return;
 		}
 
-		Vector direction = PKMethods.getDirection(location, player.getEyeLocation()).normalize();
+		Vector direction = GeneralMethods.getDirection(location, player.getEyeLocation()).normalize();
 		time = System.currentTimeMillis();
 		location = location.clone().add(direction);
 

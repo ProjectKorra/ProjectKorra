@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
 
 import org.bukkit.Location;
@@ -61,7 +61,7 @@ public class IceSpikePillarField extends IceAbility {
 			}
 		}
 
-		List<Entity> entities = PKMethods.getEntitiesAroundPoint(player.getLocation(),	radius);
+		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getLocation(),	radius);
 		for (int i = 0; i < numberOfSpikes; i++) {
 			if (iceBlocks.isEmpty()) {
 				return;

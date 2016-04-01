@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -120,7 +120,7 @@ public class AirSwipe extends AirAbility {
 				elements.replace(direction, location);
 
 				if (location.distanceSquared(origin) > range * range
-						|| PKMethods.isRegionProtectedFromBuild(this, location)) {
+						|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 					elements.remove(direction);
 				} else {
 					removeAirSpouts(location, player);
@@ -137,18 +137,18 @@ public class AirSwipe extends AirAbility {
 					}
 
 					Block block = location.getBlock();
-					for (Block testblock : PKMethods.getBlocksAroundPoint(location, radius)) {
+					for (Block testblock : GeneralMethods.getBlocksAroundPoint(location, radius)) {
 						if (testblock.getType() == Material.FIRE) {
 							testblock.setType(Material.AIR);
 						}
 						if (isBlockBreakable(testblock)) {
-							PKMethods.breakBlock(testblock);
+							GeneralMethods.breakBlock(testblock);
 						}
 					}
 
 					if (block.getType() != Material.AIR) {
 						if (isBlockBreakable(block)) {
-							PKMethods.breakBlock(block);
+							GeneralMethods.breakBlock(block);
 						} else {
 							elements.remove(direction);
 						}
@@ -177,14 +177,14 @@ public class AirSwipe extends AirAbility {
 	private void affectPeople(Location location, Vector direction) {
 		WaterAbility.removeWaterSpouts(location, player);
 		removeAirSpouts(location, player);
-		final List<Entity> entities = PKMethods.getEntitiesAroundPoint(location, radius);
+		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, radius);
 		final Vector fDirection = direction;
 
 		for (int i = 0; i < entities.size(); i++) {
 			final Entity entity = entities.get(i);
 			new BukkitRunnable() {
 				public void run() {
-					if (PKMethods.isRegionProtectedFromBuild(AirSwipe.this, entity.getLocation())) {
+					if (GeneralMethods.isRegionProtectedFromBuild(AirSwipe.this, entity.getLocation())) {
 						return;
 					}
 					if (entity.getEntityId() != player.getEntityId() && entity instanceof LivingEntity) {
@@ -195,9 +195,9 @@ public class AirSwipe extends AirAbility {
 						}
 						if (entities.size() < MAX_AFFECTABLE_ENTITIES) {
 							if (bPlayer.isAvatarState()) {
-								PKMethods.setVelocity(entity, fDirection.multiply(AvatarState.getValue(pushFactor)));
+								GeneralMethods.setVelocity(entity, fDirection.multiply(AvatarState.getValue(pushFactor)));
 							} else {
-								PKMethods.setVelocity(entity, fDirection.multiply(pushFactor));
+								GeneralMethods.setVelocity(entity, fDirection.multiply(pushFactor));
 							}
 						}
 						if (entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
@@ -215,9 +215,9 @@ public class AirSwipe extends AirAbility {
 						}
 					} else if (entity.getEntityId() != player.getEntityId() && !(entity instanceof LivingEntity)) {
 						if (bPlayer.isAvatarState()) {
-							PKMethods.setVelocity(entity, fDirection.multiply(AvatarState.getValue(pushFactor)));
+							GeneralMethods.setVelocity(entity, fDirection.multiply(AvatarState.getValue(pushFactor)));
 						} else {
-							PKMethods.setVelocity(entity, fDirection.multiply(pushFactor));
+							GeneralMethods.setVelocity(entity, fDirection.multiply(pushFactor));
 						}
 					}
 				}

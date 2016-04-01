@@ -11,7 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.Flight;
@@ -57,7 +57,7 @@ public class WaterSpout extends WaterAbility {
 			return;
 		}
 
-		Block topBlock = PKMethods.getTopBlock(player.getLocation(), 0, -50);
+		Block topBlock = GeneralMethods.getTopBlock(player.getLocation(), 0, -50);
 		if (topBlock == null) {
 			topBlock = player.getLocation().getBlock();
 		}
@@ -93,7 +93,7 @@ public class WaterSpout extends WaterAbility {
 			loc.add(x, height, z);
 
 			Block block = loc.getBlock();
-			if (block.getType().equals(Material.AIR) || !PKMethods.isSolid(block)) {
+			if (block.getType().equals(Material.AIR) || !GeneralMethods.isSolid(block)) {
 				blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 1));
 				AFFECTED_BLOCKS.put(block, block);
 			}
@@ -214,7 +214,7 @@ public class WaterSpout extends WaterAbility {
 		
 		for (int i = 0; i < maxHeight; i++) {
 			blocki = location.clone().add(0, -i, 0).getBlock();
-			if (PKMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
 				return -1;
 			}
 			

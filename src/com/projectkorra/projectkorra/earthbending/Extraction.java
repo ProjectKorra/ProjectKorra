@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 
 import org.bukkit.Location;
@@ -36,7 +36,7 @@ public class Extraction extends EarthAbility {
 		if (originBlock == null) {
 			return;
 		}
-		if (!PKMethods.isRegionProtectedFromBuild(this, originBlock.getLocation())) {
+		if (!GeneralMethods.isRegionProtectedFromBuild(this, originBlock.getLocation())) {
 			if (bPlayer.canMetalbend() && bPlayer.canBend(this)) {
 				Material type = null;
 

@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
@@ -202,7 +202,7 @@ public class WaterArms extends WaterAbility {
 			return false;
 		}
 
-		Location r1 = PKMethods.getRightSide(player.getLocation(), 1).add(0, 1.5, 0);
+		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 1).add(0, 1.5, 0);
 		if (!canPlaceBlock(r1.getBlock())) {
 			return false;
 		}
@@ -212,7 +212,7 @@ public class WaterArms extends WaterAbility {
 			BLOCK_REVERT_TIMES.put(r1.getBlock(), System.currentTimeMillis() + 1);
 		}
 
-		Location r2 = PKMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
+		Location r2 = GeneralMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
 		if (!canPlaceBlock(r2.getBlock())) {
 			return false;
 		}
@@ -252,7 +252,7 @@ public class WaterArms extends WaterAbility {
 			return false;
 		}
 
-		Location l1 = PKMethods.getLeftSide(player.getLocation(), 1).add(0, 1.5, 0);
+		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 1).add(0, 1.5, 0);
 		if (!canPlaceBlock(l1.getBlock())) {
 			return false;
 		}
@@ -262,7 +262,7 @@ public class WaterArms extends WaterAbility {
 			BLOCK_REVERT_TIMES.put(l1.getBlock(), 0L);
 		}
 
-		Location l2 = PKMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
+		Location l2 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
 		if (!canPlaceBlock(l2.getBlock())) {
 			return false;
 		}
@@ -297,7 +297,7 @@ public class WaterArms extends WaterAbility {
 	 * @return location of right hand
 	 */
 	private Location getRightHandPos() {
-		return PKMethods.getRightSide(player.getLocation(), .34).add(0, 1.5, 0);
+		return GeneralMethods.getRightSide(player.getLocation(), .34).add(0, 1.5, 0);
 	}
 
 	/**
@@ -306,7 +306,7 @@ public class WaterArms extends WaterAbility {
 	 * @return location of left hand
 	 */
 	private Location getLeftHandPos() {
-		return PKMethods.getLeftSide(player.getLocation(), .34).add(0, 1.5, 0);
+		return GeneralMethods.getLeftSide(player.getLocation(), .34).add(0, 1.5, 0);
 	}
 
 	/**
@@ -316,7 +316,7 @@ public class WaterArms extends WaterAbility {
 	 * @return location of the tip of the right arm
 	 */
 	public Location getRightArmEnd() {
-		Location r1 = PKMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
+		Location r1 = GeneralMethods.getRightSide(player.getLocation(), 2).add(0, 1.5, 0);
 		return r1.clone().add(player.getLocation().getDirection().normalize().multiply(initLength));
 	}
 
@@ -327,7 +327,7 @@ public class WaterArms extends WaterAbility {
 	 * @return location of the tip of the left arm
 	 */
 	public Location getLeftArmEnd() {
-		Location l1 = PKMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
+		Location l1 = GeneralMethods.getLeftSide(player.getLocation(), 2).add(0, 1.5, 0);
 		return l1.clone().add(player.getLocation().getDirection().normalize().multiply(initLength));
 	}
 

@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
@@ -23,7 +23,7 @@ public class SwiftKick extends ChiAbility {
 		this.damage = getConfig().getInt("Abilities.Chi.SwiftKick.Damage");
 		this.blockChance = getConfig().getInt("Abilities.Chi.ChiCombo.ChiBlockChance");
 		this.cooldown = getConfig().getInt("Abilities.Chi.ChiCombo.Cooldown");
-		this.target = PKMethods.getTargetedEntity(player, 4);
+		this.target = GeneralMethods.getTargetedEntity(player, 4);
 		start();
 	}
 

@@ -11,7 +11,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 
 public class Tremorsense extends EarthAbility {
@@ -55,7 +55,7 @@ public class Tremorsense extends EarthAbility {
 				
 				for (int k = 0; k <= maxDepth; k++) {
 					Block blocki = block.getRelative(BlockFace.EAST, i).getRelative(BlockFace.NORTH, j).getRelative(BlockFace.DOWN, k);
-					if (PKMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
+					if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
 						continue;
 					}
 					if (isEarthbendable(blocki) && !earth) {

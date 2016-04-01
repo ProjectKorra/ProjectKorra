@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -147,8 +147,8 @@ public class FireBlastCharged extends FireAbility {
 
 	public void explode() {
 		boolean explode = true;
-		for (Block block : PKMethods.getBlocksAroundPoint(location, 3)) {
-			if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, 3)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				explode = false;
 				break;
 			}
@@ -169,7 +169,7 @@ public class FireBlastCharged extends FireAbility {
 				explosion.setYield((float) yield);
 				EXPLOSIONS.put(explosion, this);
 			} else {
-				List<Entity> entities = PKMethods.getEntitiesAroundPoint(location, damageRadius);
+				List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, damageRadius);
 				for (Entity entity : entities) {
 					if (entity instanceof LivingEntity) {
 						double slope = -(maxDamage * .5) / (damageRadius - innerRadius);
@@ -187,7 +187,7 @@ public class FireBlastCharged extends FireAbility {
 	}
 
 	private void executeFireball() {
-		for (Block block : PKMethods.getBlocksAroundPoint(location, collisionRadius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, collisionRadius)) {
 			ParticleEffect.FLAME.display(block.getLocation(), 0.5F, 0.5F, 0.5F, 0, 5);
 			ParticleEffect.SMOKE.display(block.getLocation(), 0.5F, 0.5F, 0.5F, 0, 2);
 			if ((new Random()).nextInt(4) == 0) {
@@ -197,9 +197,9 @@ public class FireBlastCharged extends FireAbility {
 		}
 
 		boolean exploded = false;
-		for (Entity entity : PKMethods.getEntitiesAroundPoint(location, 2 * collisionRadius)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * collisionRadius)) {
 			if (entity.getEntityId() == player.getEntityId()
-					|| PKMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+					|| GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
 			}
 			entity.setFireTicks((int) (fireTicks * 20));
@@ -214,7 +214,7 @@ public class FireBlastCharged extends FireAbility {
 	}
 
 	private void ignite(Location location) {
-		for (Block block : PKMethods.getBlocksAroundPoint(location, collisionRadius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, collisionRadius)) {
 			if (BlazeArc.isIgnitable(player, block)) {
 				if (block.getType() != Material.FIRE) {
 					BlazeArc.getReplacedBlocks().put(block.getLocation(), block.getState().getData());
@@ -250,7 +250,7 @@ public class FireBlastCharged extends FireAbility {
 
 		if (System.currentTimeMillis() > time + interval) {
 			if (launched) {
-				if (PKMethods.isRegionProtectedFromBuild(this, location)) {
+				if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 					remove();
 					return;
 				}
@@ -271,7 +271,7 @@ public class FireBlastCharged extends FireAbility {
 				return;
 			}
 
-			if (PKMethods.isSolid(location.getBlock())) {
+			if (GeneralMethods.isSolid(location.getBlock())) {
 				explode();
 				return;
 			} else if (location.getBlock().isLiquid()) {

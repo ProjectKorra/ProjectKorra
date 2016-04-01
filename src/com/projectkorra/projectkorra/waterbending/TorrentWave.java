@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -106,7 +106,7 @@ public class TorrentWave extends WaterAbility {
 		affectedEntities.clear();
 		
 		ArrayList<Entity> indexList = new ArrayList<Entity>();
-		indexList.addAll(PKMethods.getEntitiesAroundPoint(origin, radius + 2));
+		indexList.addAll(GeneralMethods.getEntitiesAroundPoint(origin, radius + 2));
 		ArrayList<Block> torrentBlocks = new ArrayList<Block>();
 
 		if (indexList.contains(player)) {
@@ -164,7 +164,7 @@ public class TorrentWave extends WaterAbility {
 	}
 
 	private void affect(Entity entity) {
-		Vector direction = PKMethods.getDirection(origin, entity.getLocation());
+		Vector direction = GeneralMethods.getDirection(origin, entity.getLocation());
 		direction.setY(0);
 		direction.normalize();
 		entity.setVelocity(entity.getVelocity().clone().add(direction.multiply(knockback)));

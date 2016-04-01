@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 
 import org.bukkit.Location;
@@ -47,8 +47,8 @@ public class EarthGrab extends EarthAbility {
 	}
 	
 	public void earthGrabOtherEntity() {
-		for (Entity entity : PKMethods.getEntitiesAroundPoint(origin, selectRange)) {
-			if (PKMethods.getDistanceFromLine(direction, origin, entity.getLocation()) <= 3
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, selectRange)) {
+			if (GeneralMethods.getDistanceFromLine(direction, origin, entity.getLocation()) <= 3
 					&& (entity instanceof LivingEntity)
 					&& (entity.getEntityId() != player.getEntityId())) {
 				double distance = origin.distance(entity.getLocation());

@@ -5,7 +5,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
@@ -26,7 +26,7 @@ public class DebugCommand extends PKCommand {
 			return;
 		}
 
-		PKMethods.runDebug();
+		GeneralMethods.runDebug();
 		sender.sendMessage(ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Debug.SuccessfullyExported"));
 	}
 

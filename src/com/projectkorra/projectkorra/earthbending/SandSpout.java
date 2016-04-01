@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.SandAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
@@ -50,7 +50,7 @@ public class SandSpout extends SandAbility {
 		}
 
 		time = System.currentTimeMillis();
-		Block topBlock = PKMethods.getTopBlock(player.getLocation(), 0, -50);
+		Block topBlock = GeneralMethods.getTopBlock(player.getLocation(), 0, -50);
 		if (topBlock == null) {
 			topBlock = player.getLocation().getBlock();
 		}
@@ -68,7 +68,7 @@ public class SandSpout extends SandAbility {
 	@Override
 	public void progress() {
 		Block eyeBlock = player.getEyeLocation().getBlock();
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || eyeBlock.isLiquid() || PKMethods.isSolid(eyeBlock)) {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || eyeBlock.isLiquid() || GeneralMethods.isSolid(eyeBlock)) {
 			remove();
 			return;
 		}
@@ -108,7 +108,7 @@ public class SandSpout extends SandAbility {
 		Block standingblock = player.getLocation().getBlock();
 		for (int i = 0; i <= height + 5; i++) {
 			Block block = standingblock.getRelative(BlockFace.DOWN, i);
-			if (PKMethods.isSolid(block) || block.isLiquid()) {
+			if (GeneralMethods.isSolid(block) || block.isLiquid()) {
 				return block;
 			}
 		}
@@ -153,7 +153,7 @@ public class SandSpout extends SandAbility {
 					displaySandParticle(effectloc2, 1f, 3f, 1f, 20, .2f, true);
 				}
 
-				Collection<Player> players = PKMethods.getPlayersAroundPoint(effectloc2, 1.5f);
+				Collection<Player> players = GeneralMethods.getPlayersAroundPoint(effectloc2, 1.5f);
 				if (!players.isEmpty()) {
 					for (Player sPlayer : players) {
 						if (!sPlayer.equals(player)) {

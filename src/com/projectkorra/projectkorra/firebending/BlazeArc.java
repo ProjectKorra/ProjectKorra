@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.waterbending.PlantRegrowth;
 
@@ -83,7 +83,7 @@ public class BlazeArc extends FireAbility {
 			if (location.distanceSquared(origin) > range * range) {
 				remove();
 				return;
-			} else if (PKMethods.isRegionProtectedFromBuild(this, location)) {
+			} else if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 				return;
 			}
 			

@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.LightningAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -163,7 +163,7 @@ public class Lightning extends LightningAbility {
 	 */
 	private boolean isTransparentForLightning(Player player, Block block) {
 		if (isTransparent(block)) {
-			if (PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				return false;
 			} else if (isIce(block)) {
 				return arcOnIce;
@@ -207,7 +207,7 @@ public class Lightning extends LightningAbility {
 				} else {
 					state = State.MAINBOLT;
 					bPlayer.addCooldown(this);
-					Entity target = PKMethods.getTargetedEntity(player, range);
+					Entity target = GeneralMethods.getTargetedEntity(player, range);
 					origin = player.getEyeLocation();
 					
 					if (target != null) {
@@ -263,7 +263,7 @@ public class Lightning extends LightningAbility {
 						double timer = arc.getAnimationLocations().get(j).getAnimCounter() / 2;
 						task.runTaskTimer(ProjectKorra.plugin, (long) timer, 1);
 						tasks.add(task);
-						iterLoc.add(PKMethods.getDirection(iterLoc, dest).normalize().multiply(0.15));
+						iterLoc.add(GeneralMethods.getDirection(iterLoc, dest).normalize().multiply(0.15));
 					}
 				}
 				arcs.remove(i);
@@ -334,7 +334,7 @@ public class Lightning extends LightningAbility {
 			points = new ArrayList<>();
 			points.add(startPoint.clone());
 			points.add(endPoint.clone());
-			direction = PKMethods.getDirection(startPoint, endPoint);
+			direction = GeneralMethods.getDirection(startPoint, endPoint);
 			particles = new ArrayList<>();
 			subArcs = new ArrayList<>();
 			animationLocations = new ArrayList<>();
@@ -370,7 +370,7 @@ public class Lightning extends LightningAbility {
 				if (Math.random() < chance) {
 					Location loc = animationLocations.get(i).getLocation();
 					double angle = (Math.random() - 0.5) * maxArcAngle * 2;
-					Vector dir = PKMethods.rotateXZ(direction.clone(), angle);
+					Vector dir = GeneralMethods.rotateXZ(direction.clone(), angle);
 					double randRange = (Math.random() * range) + (range / 3.0);
 					
 					Location loc2 = loc.clone().add(dir.normalize().multiply(randRange));
@@ -408,7 +408,7 @@ public class Lightning extends LightningAbility {
 					
 					double radians = Math.toRadians(angle);
 					double hypot = adjac / Math.cos(radians);
-					Vector dir = PKMethods.rotateXZ(direction.clone(), angle);
+					Vector dir = GeneralMethods.rotateXZ(direction.clone(), angle);
 					Location newLoc = loc1.clone().add(dir.normalize().multiply(hypot));
 					
 					newLoc.add(0, (Math.random() - 0.5) / 2.0, 0);
@@ -517,7 +517,7 @@ public class Lightning extends LightningAbility {
 					}
 				}
 
-				for (Entity entity : PKMethods.getEntitiesAroundPoint(location, 2.5)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2.5)) {
 					/*
 					 * If the player is in water we will electrocute them only if they are standing
 					 * in water. If the lightning hit ice we can electrocute them all the time.
@@ -548,7 +548,7 @@ public class Lightning extends LightningAbility {
 						// Handle Chain Lightning
 						if (maxChainArcs >= 1 && Math.random() <= chainArcChance) {
 							maxChainArcs--;
-							for (Entity ent : PKMethods.getEntitiesAroundPoint(lent.getLocation(), chainRange)) {
+							for (Entity ent : GeneralMethods.getEntitiesAroundPoint(lent.getLocation(), chainRange)) {
 								if (!ent.equals(player) && !ent.equals(lent) && ent instanceof LivingEntity
 										&& !affectedEntities.contains(ent)) {
 									origin = lent.getLocation().add(0, 1, 0);

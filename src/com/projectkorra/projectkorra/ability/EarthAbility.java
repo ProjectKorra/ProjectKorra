@@ -19,7 +19,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.LavaFlow;
@@ -116,7 +116,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 	
 	public boolean moveEarth(Block block, Vector direction, int chainlength, boolean throwplayer) {
-		if (isEarthbendable(block) && !PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+		if (isEarthbendable(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			boolean up = false;
 			boolean down = false;
 			Vector norm = direction.clone().normalize();
@@ -147,7 +147,7 @@ public abstract class EarthAbility extends ElementalAbility {
 				return false;
 			} else if (isTransparent(affectedblock)) {
 				if (throwplayer) {
-					for (Entity entity : PKMethods.getEntitiesAroundPoint(affectedblock.getLocation(), 1.75)) {
+					for (Entity entity : GeneralMethods.getEntitiesAroundPoint(affectedblock.getLocation(), 1.75)) {
 						if (entity instanceof LivingEntity) {
 							LivingEntity lentity = (LivingEntity) entity;
 							if (lentity.getEyeLocation().getBlockX() == affectedblock.getX()
@@ -169,12 +169,12 @@ public abstract class EarthAbility extends ElementalAbility {
 				if (up) {
 					Block topblock = affectedblock.getRelative(BlockFace.UP);
 					if (topblock.getType() != Material.AIR) {
-						PKMethods.breakBlock(affectedblock);
+						GeneralMethods.breakBlock(affectedblock);
 					} else if (!affectedblock.isLiquid() && affectedblock.getType() != Material.AIR) {
 						moveEarthBlock(affectedblock, topblock);
 					}
 				} else {
-					PKMethods.breakBlock(affectedblock);
+					GeneralMethods.breakBlock(affectedblock);
 				}
 
 				moveEarthBlock(block, affectedblock);
@@ -302,7 +302,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (PKMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
 				continue;
 			} else if (isEarthbendable(player, block)) {
 				return block;
@@ -331,7 +331,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if (PKMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
+			if (GeneralMethods.isRegionProtectedFromBuild(player, abilityName, location)) {
 				continue;
 			}
 			if (isLavabendable(player, block)) {
@@ -375,12 +375,12 @@ public abstract class EarthAbility extends ElementalAbility {
 			Vector tracer = new Vector(i, 1, 0);
 			for (int deg = 0; deg < 360; deg += rotation) {
 				Location searchLoc = loc.clone().add(tracer);
-				Block block = PKMethods.getTopBlock(searchLoc, maxVertical);
+				Block block = GeneralMethods.getTopBlock(searchLoc, maxVertical);
 
 				if (block != null && isEarthbendable(block.getType())) {
 					return block;
 				}
-				tracer = PKMethods.rotateXZ(tracer, rotation);
+				tracer = GeneralMethods.rotateXZ(tracer, rotation);
 			}
 		}
 		return null;
@@ -410,7 +410,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	public static boolean isEarthbendable(Player player, String abilityName, Block block) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null || !isEarthbendable(block.getType()) || PREVENT_EARTHBENDING.contains(block)
-				|| PKMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
+				|| GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		} else if (isMetal(block) && !bPlayer.canMetalbend()) {
 			return false;
@@ -468,7 +468,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		info.setTime(System.currentTimeMillis());
 		MOVED_EARTH.put(target, info);
 
-		if (PKMethods.isAdjacentToThreeOrMoreSources(source)) {
+		if (GeneralMethods.isAdjacentToThreeOrMoreSources(source)) {
 			source.setType(Material.WATER);
 			source.setData(full);
 		} else {
@@ -593,7 +593,7 @@ public abstract class EarthAbility extends ElementalAbility {
 				//		GeneralMethods.getDrops(block, info.getState().getType(), info.getState().getRawData(), DIAMOND_PICKAXE));
 			}
 
-			if (PKMethods.isAdjacentToThreeOrMoreSources(block)) {
+			if (GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.WATER);
 				block.setData(full);
 			} else {

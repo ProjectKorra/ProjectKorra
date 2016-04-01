@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
@@ -62,7 +62,7 @@ public class ToggleCommand extends PKCommand {
 			}
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			if (bPlayer == null) {
-				PKMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
+				GeneralMethods.createBendingPlayer(((Player) sender).getUniqueId(), sender.getName());
 				bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			}
 			if (bPlayer.isToggled()) {

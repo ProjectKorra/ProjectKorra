@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -224,14 +224,14 @@ public class LavaFlow extends LavaAbility {
 			for (double x = -currentRadius; x <= currentRadius + particleOffset; x++) {
 				for (double z = -currentRadius; z < currentRadius + particleOffset; z++) {
 					Location loc = origin.clone().add(x, 0, z);
-					Block block = PKMethods.getTopBlock(loc, upwardFlow, downwardFlow);
+					Block block = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
 					if (block == null) {
 						continue;
 					}
 
 					double dSquared = distanceSquaredXZ(block.getLocation(), origin);
 					if (!isLava(block) && dSquared > Math.pow(shiftPlatformRadius, 2)) {
-						if (dSquared < Math.pow(currentRadius, 2) && !PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+						if (dSquared < Math.pow(currentRadius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 							if (dSquared < shiftPlatformRadius * 4 || getAdjacentLavaBlocks(block.getLocation()).size() > 0) {
 								createLava(block);
 							}
@@ -280,7 +280,7 @@ public class LavaFlow extends LavaAbility {
 				for (double x = -clickLavaRadius; x <= clickLavaRadius; x++) {
 					for (double z = -clickLavaRadius; z <= clickLavaRadius; z++) {
 						Location loc = origin.clone().add(x, 0, z);
-						Block tempBlock = PKMethods.getTopBlock(loc, upwardFlow, downwardFlow);
+						Block tempBlock = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
 						
 						if (tempBlock != null && !isLava(tempBlock) && Math.random() < particleDensity 
 								&& tempBlock.getLocation().distanceSquared(origin) <= Math.pow(clickLavaRadius, 2)) {
@@ -305,13 +305,13 @@ public class LavaFlow extends LavaAbility {
 				for (double x = -radius; x <= radius; x++) {
 					for (double z = -radius; z <= radius; z++) {
 						Location loc = origin.clone().add(x, 0, z);
-						Block tempBlock = PKMethods.getTopBlock(loc, upwardFlow, downwardFlow);
+						Block tempBlock = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
 						if (tempBlock == null) {
 							continue;
 						}
 
 						double dSquared = distanceSquaredXZ(tempBlock.getLocation(), origin);
-						if (dSquared < Math.pow(radius, 2) && !PKMethods.isRegionProtectedFromBuild(this, loc)) {
+						if (dSquared < Math.pow(radius, 2) && !GeneralMethods.isRegionProtectedFromBuild(this, loc)) {
 							if (makeLava && !isLava(tempBlock)) {
 								clickIsFinished = false;
 								if (Math.random() < lavaCreateSpeed) {

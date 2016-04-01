@@ -5,11 +5,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.Ability;
 
 /**
- * Called when an entity is killed by {@link PKMethods#damageEntity(Player player, Entity entity, double damage, String ability) GeneralMethods.damageEntity}
+ * Called when an entity is killed by {@link GeneralMethods#damageEntity(Player player, Entity entity, double damage, String ability) GeneralMethods.damageEntity}
  */
 
 public class EntityBendingDeathEvent extends Event {

@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
@@ -120,9 +120,9 @@ public class FireBlast extends FireAbility {
 	private void affect(Entity entity) {
 		if (entity.getUniqueId() != player.getUniqueId()) {
 			if (bPlayer.isAvatarState()) {
-				PKMethods.setVelocity(entity, direction.clone().multiply(AvatarState.getValue(pushFactor)));
+				GeneralMethods.setVelocity(entity, direction.clone().multiply(AvatarState.getValue(pushFactor)));
 			} else {
-				PKMethods.setVelocity(entity, direction.clone().multiply(pushFactor));
+				GeneralMethods.setVelocity(entity, direction.clone().multiply(pushFactor));
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks((int) (fireTicks * 20));
@@ -135,10 +135,10 @@ public class FireBlast extends FireAbility {
 	}
 
 	private void ignite(Location location) {
-		for (Block block : PKMethods.getBlocksAroundPoint(location, collisionRadius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, collisionRadius)) {
 			if (BlazeArc.isIgnitable(player, block) 
 					&& !safeBlocks.contains(block)
-					&& !PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+					&& !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				if (canFireGrief()) {
 					if (WaterAbility.isPlantbendable(player, block.getType(), false)) {
 						new PlantRegrowth(player, block);
@@ -159,7 +159,7 @@ public class FireBlast extends FireAbility {
 	@Override
 	public void progress() {
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)
-				|| PKMethods.isRegionProtectedFromBuild(this, location)) {
+				|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 			remove();
 			return;
 		}
@@ -173,7 +173,7 @@ public class FireBlast extends FireAbility {
 		}
 
 		Block block = location.getBlock();
-		if (PKMethods.isSolid(block) || block.isLiquid()) {
+		if (GeneralMethods.isSolid(block) || block.isLiquid()) {
 			if (block.getType() == Material.FURNACE && powerFurnace) {
 				Furnace furnace = (Furnace) block.getState();
 				furnace.setBurnTime((short) 800);
@@ -202,7 +202,7 @@ public class FireBlast extends FireAbility {
 			return;
 		}
 
-		for (Entity entity : PKMethods.getEntitiesAroundPoint(location, collisionRadius)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
 			affect(entity);
 			if (entity instanceof LivingEntity) {
 				break;

@@ -51,7 +51,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 		
 		new ConfigManager();
-		new PKMethods(this);
+		new GeneralMethods(this);
 		CoreAbility.registerAbilities();
 		updater = new Updater(this, "http://projectkorra.com/forum/forums/dev-builds.16/index.rss");
 		new Commands(this);
@@ -81,7 +81,7 @@ public class ProjectKorra extends JavaPlugin {
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			PKMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 		}
 
 		try {
@@ -95,14 +95,14 @@ public class ProjectKorra extends JavaPlugin {
 		double cacheTime = ConfigManager.getConfig().getDouble("Properties.RegionProtection.CacheBlockTime");
 		if (Bukkit.getPluginManager().getPlugin("Residence") != null)
 			FlagPermissions.addFlag(ConfigManager.defaultConfig.get().getString("Properties.RegionProtection.Residence.Flag"));
-		PKMethods.deserializeFile();
-		PKMethods.startCacheCleaner(cacheTime);
+		GeneralMethods.deserializeFile();
+		GeneralMethods.startCacheCleaner(cacheTime);
 		updater.checkUpdate();
 	}
 
 	@Override
 	public void onDisable() {
-		PKMethods.stopBending();
+		GeneralMethods.stopBending();
 		if (DBConnection.isOpen != false) {
 			DBConnection.sql.close();
 		}

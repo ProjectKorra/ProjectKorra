@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -28,7 +28,7 @@ public class RapidPunch extends ChiAbility {
 		this.punches = getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
 		this.distance = getConfig().getInt("Abilities.Chi.RapidPunch.Distance");
 		this.cooldown = getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
-		this.target = PKMethods.getTargetedEntity(player, distance);
+		this.target = GeneralMethods.getTargetedEntity(player, distance);
 		start();
 	}
 

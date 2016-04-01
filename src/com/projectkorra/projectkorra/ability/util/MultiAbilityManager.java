@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.ability.util;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.event.BindChangeEvent;
 
@@ -116,7 +116,7 @@ public class MultiAbilityManager {
 	}
 
 	/**
-	 * MultiAbility equivalent of {@link PKMethods#getBoundAbility(Player)}. Returns a
+	 * MultiAbility equivalent of {@link GeneralMethods#getBoundAbility(Player)}. Returns a
 	 * boolean based on whether a player has a specific MultiAbility active.
 	 * 
 	 * @param player The player to check
@@ -209,7 +209,7 @@ public class MultiAbilityManager {
 				bPlayer.getAbilities().put(i, prevBinds.get(i));
 			}
 			if (lastNonNull > -1)
-				PKMethods.saveAbility(bPlayer, lastNonNull, prevBinds.get(lastNonNull));
+				GeneralMethods.saveAbility(bPlayer, lastNonNull, prevBinds.get(lastNonNull));
 
 			if (player.isOnline())
 				bPlayer.addCooldown("MAM_Setup", 1L); // Support for bending

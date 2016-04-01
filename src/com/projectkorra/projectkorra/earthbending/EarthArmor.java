@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.util.PassiveHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -55,7 +55,7 @@ public class EarthArmor extends EarthAbility {
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthArmor.SelectRange");
 
 		headBlock = getTargetEarthBlock((int) selectRange);
-		if (!PKMethods.isRegionProtectedFromBuild(this, headBlock.getLocation()) 
+		if (!GeneralMethods.isRegionProtectedFromBuild(this, headBlock.getLocation()) 
 				&& getEarthbendableBlocksLength(headBlock, new Vector(0, -1, 0), 2) >= 2) {			
 			this.legsBlock = headBlock.getRelative(BlockFace.DOWN);
 			this.headType = headBlock.getType();
@@ -75,8 +75,8 @@ public class EarthArmor extends EarthAbility {
 				addTempAirBlock(oldHeadBlock);
 				addTempAirBlock(oldLegsBlock);
 			} else {
-				PKMethods.removeBlock(oldHeadBlock);
-				PKMethods.removeBlock(oldLegsBlock);
+				GeneralMethods.removeBlock(oldHeadBlock);
+				GeneralMethods.removeBlock(oldLegsBlock);
 			}
 			start();
 		}
@@ -126,14 +126,14 @@ public class EarthArmor extends EarthAbility {
 		}
 
 		if (isTransparent(newHeadBlock) && !newHeadBlock.isLiquid()) {
-			PKMethods.breakBlock(newHeadBlock);
+			GeneralMethods.breakBlock(newHeadBlock);
 		} else if (!isEarthbendable(newHeadBlock) && !newHeadBlock.isLiquid() && newHeadBlock.getType() != Material.AIR) {
 			remove();
 			return false;
 		}
 
 		if (isTransparent(newLegsBlock) && !newLegsBlock.isLiquid()) {
-			PKMethods.breakBlock(newLegsBlock);
+			GeneralMethods.breakBlock(newLegsBlock);
 		} else if (!isEarthbendable(newLegsBlock) && !newLegsBlock.isLiquid() && newLegsBlock.getType() != Material.AIR) {
 			remove();
 			return false;

@@ -118,7 +118,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("deprecation")
-public class PKMethods {
+public class GeneralMethods {
 	
 	public static final Integer[] NON_OPAQUE = { 0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 68, 
 			69, 70, 72, 75, 76, 77, 78, 83, 90, 93, 94, 104, 105, 106, 111, 115, 119, 127, 131, 132, 175 };
@@ -139,8 +139,8 @@ public class PKMethods {
 	private static final ArrayList<Ability> INVINCIBLE = new ArrayList<>();
 	private static ProjectKorra plugin;
 
-	public PKMethods(ProjectKorra plugin) {
-		PKMethods.plugin = plugin;
+	public GeneralMethods(ProjectKorra plugin) {
+		GeneralMethods.plugin = plugin;
 	}
 
 	/**
@@ -927,9 +927,9 @@ public class PKMethods {
 		}
 		if (target != null) {
 			List<Block> blocklist = new ArrayList<Block>();
-			blocklist = PKMethods.getBlocksAlongLine(player.getLocation(), target.getLocation(), player.getWorld());
+			blocklist = GeneralMethods.getBlocksAlongLine(player.getLocation(), target.getLocation(), player.getWorld());
 			for (Block isAir : blocklist) {
-				if (PKMethods.isObstructed(origin, target.getLocation())) {
+				if (GeneralMethods.isObstructed(origin, target.getLocation())) {
 					target = null;
 					break;
 				}
@@ -1286,7 +1286,7 @@ public class PKMethods {
 		if (DBConnection.isOpen) {
 			DBConnection.sql.close();
 		}
-		PKMethods.stopBending();
+		GeneralMethods.stopBending();
 		ConfigManager.defaultConfig.reload();
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
@@ -1308,7 +1308,7 @@ public class PKMethods {
 		}
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			Preset.unloadPreset(player);
-			PKMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 		}
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");

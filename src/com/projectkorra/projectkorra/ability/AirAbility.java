@@ -9,7 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -85,7 +85,7 @@ public abstract class AirAbility extends ElementalAbility {
 	public static boolean isWithinAirShield(Location loc) {
 		List<String> list = new ArrayList<String>();
 		list.add("AirShield");
-		return PKMethods.blockAbilities(null, list, loc, 0);
+		return GeneralMethods.blockAbilities(null, list, loc, 0);
 	}
 
 	/**

@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
@@ -74,6 +74,6 @@ public class BindCommand extends PKCommand {
 		}
 		
 		String name = coreAbil != null ? coreAbil.getName() : null;
-		PKMethods.bindAbility((Player) sender, name, slot);
+		GeneralMethods.bindAbility((Player) sender, name, slot);
 	}
 }

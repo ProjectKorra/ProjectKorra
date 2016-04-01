@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CombustionAbility;
@@ -60,7 +60,7 @@ public class Combustion extends CombustionAbility {
 			damage = getDayFactor(damage);
 		}
 
-		if (PKMethods.isRegionProtectedFromBuild(this, PKMethods.getTargetedLocation(player, range))) {
+		if (GeneralMethods.isRegionProtectedFromBuild(this, GeneralMethods.getTargetedLocation(player, range))) {
 			return;
 		}
 
@@ -115,7 +115,7 @@ public class Combustion extends CombustionAbility {
 		if (!bPlayer.canBendIgnoreCooldowns(this)) {
 			remove();
 			return;
-		} else if (PKMethods.isRegionProtectedFromBuild(this, location)) {
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 			remove();
 			return;
 		}

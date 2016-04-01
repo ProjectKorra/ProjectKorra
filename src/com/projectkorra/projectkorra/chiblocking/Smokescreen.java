@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.command.Commands;
 
@@ -67,7 +67,7 @@ public class Smokescreen extends ChiAbility {
 		if (entity instanceof Player) {
 			if (Commands.invincible.contains(((Player) entity).getName())) {
 				return;
-			} else if (PKMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+			} else if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				return;
 			}
 			Player p = (Player) entity;

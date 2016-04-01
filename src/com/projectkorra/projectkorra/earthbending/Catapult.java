@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 
 import org.bukkit.Location;
@@ -101,8 +101,8 @@ public class Catapult extends EarthAbility {
 			return;
 		}
 
-		for (Block block : PKMethods.getBlocksAroundPoint(player.getLocation(), 1.5)) {
-			if ((PKMethods.isSolid(block) || block.isLiquid())) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(player.getLocation(), 1.5)) {
+			if ((GeneralMethods.isSolid(block) || block.isLiquid())) {
 				flying = false;
 				return;
 			}
@@ -117,7 +117,7 @@ public class Catapult extends EarthAbility {
 		location = location.clone().add(direction);
 		if (catapult) {
 			if (location.distance(origin) < 0.5) {
-				for (Entity entity : PKMethods.getEntitiesAroundPoint(origin, 2)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, 2)) {
 					if (entity instanceof Player) {
 						Player target = (Player) entity;
 						new Catapult(target, this);
@@ -129,7 +129,7 @@ public class Catapult extends EarthAbility {
 		} else {
 			double lengthSquared = (length - distance) * (length - distance);
 			if (location.distanceSquared(origin) <= lengthSquared) {
-				for (Entity entity : PKMethods.getEntitiesAroundPoint(location, 2)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
 					entity.setVelocity(direction.clone().multiply(push * distance / length));
 				}
 				return false;

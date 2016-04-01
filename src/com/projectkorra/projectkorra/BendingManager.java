@@ -56,7 +56,7 @@ public class BendingManager implements Runnable {
 					times.put(world, false);
 				}
 			} else {
-				if (PKMethods.hasRPG()) {
+				if (GeneralMethods.hasRPG()) {
 					if (RPGMethods.isFullMoon(world) || RPGMethods.isLunarEclipse(world) || RPGMethods.isSolarEclipse(world) || RPGMethods.isSozinsComet(world)) {
 						continue;
 					}

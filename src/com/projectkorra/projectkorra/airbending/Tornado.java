@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.Flight;
@@ -70,7 +70,7 @@ public class Tornado extends AirAbility {
 		if (player.getEyeLocation().getBlock().isLiquid() || !player.isSneaking() || !bPlayer.canBendIgnoreCooldowns(this)) {
 			remove();
 			return;
-		} else if (PKMethods.isRegionProtectedFromBuild(this, origin)) {
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, origin)) {
 			remove();
 			return;
 		}
@@ -92,8 +92,8 @@ public class Tornado extends AirAbility {
 		if (origin.getBlock().getType() != Material.AIR) {
 			origin.setY(origin.getY() - 1. / 10. * currentHeight);
 
-			for (Entity entity : PKMethods.getEntitiesAroundPoint(origin, currentHeight)) {
-				if (PKMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, currentHeight)) {
+				if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 					continue;
 				}
 				double y = entity.getLocation().getY();
@@ -148,7 +148,7 @@ public class Tornado extends AirAbility {
 						velocity.setZ(vz);
 						velocity.setY(vy);
 						velocity.multiply(timefactor);
-						PKMethods.setVelocity(entity, velocity);
+						GeneralMethods.setVelocity(entity, velocity);
 						entity.setFallDistance(0);
 
 						breakBreathbendingHold(entity);
@@ -172,7 +172,7 @@ public class Tornado extends AirAbility {
 				z = origin.getZ() + timefactor * factor * currentRadius * Math.sin(angle);
 
 				Location effect = new Location(origin.getWorld(), x, y, z);
-				if (!PKMethods.isRegionProtectedFromBuild(this, effect)) {
+				if (!GeneralMethods.isRegionProtectedFromBuild(this, effect)) {
 					playAirbendingParticles(effect, particleCount);
 					if (random.nextInt(20) == 0) {
 						playAirbendingSound(effect);

@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.PlantAbility;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.util.PassiveHandler;
@@ -71,7 +71,7 @@ public class PlantArmor extends PlantAbility {
 	private boolean canUse() {
 		if (!bPlayer.canPlantbend() 
 				|| !bPlayer.canBend(this) 
-				|| PKMethods.isRegionProtectedFromBuild(this, location)) {
+				|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 			remove();
 			return false;
 		} else if (location.distanceSquared(player.getEyeLocation()) > range * range) {
@@ -114,7 +114,7 @@ public class PlantArmor extends PlantAbility {
 				playPlantbendingSound(location);
 			}
 			
-			PKMethods.displayColoredParticle(location, "009933");
+			GeneralMethods.displayColoredParticle(location, "009933");
 			Vector vector = player.getEyeLocation().toVector().subtract(location.toVector());
 			location = location.add(vector.normalize());
 		}

@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -46,10 +46,10 @@ public class PhaseChangeFreeze extends IceAbility {
 			range = AvatarState.getValue(range);
 		}
 
-		location = PKMethods.getTargetedLocation(player, range);
+		location = GeneralMethods.getTargetedLocation(player, range);
 		start();
 		
-		for (Block block : PKMethods.getBlocksAroundPoint(location, radius)) {
+		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
 			if (isFreezable(player, block)) {
 				freeze(player, block);
 			}
@@ -60,7 +60,7 @@ public class PhaseChangeFreeze extends IceAbility {
 	}
 
 	private static boolean isFreezable(Player player, Block block) {
-		if (PKMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
 			return false;
 		}
 		return isWater(block) && WaterManipulation.canPhysicsChange(block) && !TempBlock.isTempBlock(block);
@@ -68,7 +68,7 @@ public class PhaseChangeFreeze extends IceAbility {
 
 	@SuppressWarnings("deprecation")
 	public static void freeze(Player player, Block block) {
-		if (PKMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
 			return;
 		} else if (TempBlock.isTempBlock(block)) {
 			return;

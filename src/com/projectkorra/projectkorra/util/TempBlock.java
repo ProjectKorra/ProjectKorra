@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -80,10 +80,10 @@ public class TempBlock {
 		if (instances.containsKey(block)) {
 			instances.get(block).revertBlock();
 		} else {
-			if ((defaulttype == Material.LAVA || defaulttype == Material.STATIONARY_LAVA) && PKMethods.isAdjacentToThreeOrMoreSources(block)) {
+			if ((defaulttype == Material.LAVA || defaulttype == Material.STATIONARY_LAVA) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.LAVA);
 				block.setData((byte) 0x0);
-			} else if ((defaulttype == Material.WATER || defaulttype == Material.STATIONARY_WATER) && PKMethods.isAdjacentToThreeOrMoreSources(block)) {
+			} else if ((defaulttype == Material.WATER || defaulttype == Material.STATIONARY_WATER) && GeneralMethods.isAdjacentToThreeOrMoreSources(block)) {
 				block.setType(Material.WATER);
 				block.setData((byte) 0x0);
 			} else {

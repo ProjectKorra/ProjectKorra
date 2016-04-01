@@ -12,7 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.rpg.event.EventManager;
 
 /**
@@ -71,7 +71,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 	
 	public static boolean isFullMoon(World world) {
-		if (PKMethods.hasRPG()) {
+		if (GeneralMethods.hasRPG()) {
 			return EventManager.marker.get(world).equalsIgnoreCase("FullMoon");
 		} else {
 			long days = world.getFullTime() / 24000;
@@ -100,14 +100,14 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 	
 	public static boolean isLunarEclipse(World world) {
-		if (world == null || !PKMethods.hasRPG()) {
+		if (world == null || !GeneralMethods.hasRPG()) {
 			return false;
 		}
 		return EventManager.marker.get(world).equalsIgnoreCase("LunarEclipse");
 	}
 	
 	public static boolean isSolarEclipse(World world) {
-		if (world == null || !PKMethods.hasRPG()) {
+		if (world == null || !GeneralMethods.hasRPG()) {
 			return false;
 		}
 		return EventManager.marker.get(world).equalsIgnoreCase("SolarEclipse");
@@ -193,7 +193,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 
 	public static boolean isSozinsComet(World world) {
-		if (world == null || !PKMethods.hasRPG()) {
+		if (world == null || !GeneralMethods.hasRPG()) {
 			return false;
 		}
 		return EventManager.marker.get(world).equalsIgnoreCase("SozinsComet");
@@ -206,7 +206,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	@SuppressWarnings("deprecation")
 	public static boolean isTransparent(Player player, String abilityName, Block block) {
 		return Arrays.asList(TRANSPARENT_MATERIAL).contains(block.getTypeId())
-				&& !PKMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation());
+				&& !GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation());
 	}
 	
 	public static boolean isUndead(Entity entity) {

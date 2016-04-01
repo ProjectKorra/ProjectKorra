@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class AvatarState extends AvatarAbility {
 
-	private static final HashMap<String, Long> START_TIMES = new HashMap<>();
+	private static final HashMap<Player, Long> START_TIMES = new HashMap<>();
 
 	private boolean regenEnabled;
 	private boolean speedEnabled;
@@ -55,7 +55,7 @@ public class AvatarState extends AvatarAbility {
 		start();
 		bPlayer.addCooldown(this);
 		if (duration != 0) {
-			START_TIMES.put(player.getName(), System.currentTimeMillis());
+			START_TIMES.put(player, System.currentTimeMillis());
 		}
 	}
 
@@ -71,9 +71,9 @@ public class AvatarState extends AvatarAbility {
 			return;
 		}
 
-		if (START_TIMES.containsKey(player.getName())) {
-			if (START_TIMES.get(player.getName()) + duration < System.currentTimeMillis()) {
-				START_TIMES.remove(player.getName());
+		if (START_TIMES.containsKey(player)) {
+			if (START_TIMES.get(player) + duration < System.currentTimeMillis()) {
+				START_TIMES.remove(player);
 				remove();
 				return;
 			}
@@ -220,7 +220,7 @@ public class AvatarState extends AvatarAbility {
 		this.factor = factor;
 	}
 
-	public static HashMap<String, Long> getStartTimes() {
+	public static HashMap<Player, Long> getStartTimes() {
 		return START_TIMES;
 	}
 

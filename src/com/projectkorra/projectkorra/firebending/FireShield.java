@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.PKMethods;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -109,14 +109,14 @@ public class FireShield extends FireAbility {
 						
 						Block block = location .clone() .add(radius * Math.cos(rphi) * Math.sin(rtheta), radius * Math.cos(rtheta),
 										radius * Math.sin(rphi) * Math.sin(rtheta)).getBlock();
-						if (!blocks.contains(block) && !PKMethods.isSolid(block) && !block.isLiquid()) {
+						if (!blocks.contains(block) && !GeneralMethods.isSolid(block) && !block.isLiquid()) {
 							blocks.add(block);
 						}
 					}
 				}
 
 				for (Block block : blocks) {
-					if (!PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+					if (!GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						if (random.nextInt(3) == 0) {
 							ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 						}
@@ -127,15 +127,15 @@ public class FireShield extends FireAbility {
 					}
 				}
 
-				for (Block testblock : PKMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
+				for (Block testblock : GeneralMethods.getBlocksAroundPoint(player.getLocation(), radius)) {
 					if (testblock.getType() == Material.FIRE) {
 						testblock.setType(Material.AIR);
 						testblock.getWorld().playEffect(testblock.getLocation(), Effect.EXTINGUISH, 0);
 					}
 				}
 
-				for (Entity entity : PKMethods.getEntitiesAroundPoint(location, radius)) {
-					if (PKMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, radius)) {
+					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 						continue;
 					} else if (player.getEntityId() != entity.getEntityId() && ignite) {
 						entity.setFireTicks(120);
@@ -153,15 +153,15 @@ public class FireShield extends FireAbility {
 				location = location.clone().add(direction.multiply(radius));
 
 				for (double theta = 0; theta < 360; theta += 20) {
-					Vector vector = PKMethods.getOrthogonalVector(direction, theta, discRadius);
+					Vector vector = GeneralMethods.getOrthogonalVector(direction, theta, discRadius);
 					Block block = location.clone().add(vector).getBlock();
-					if (!blocks.contains(block) && !PKMethods.isSolid(block) && !block.isLiquid()) {
+					if (!blocks.contains(block) && !GeneralMethods.isSolid(block) && !block.isLiquid()) {
 						blocks.add(block);
 					}
 				}
 
 				for (Block block : blocks) {
-					if (!PKMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+					if (!GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 						if (random.nextInt(1) == 0) {
 							ParticleEffect.SMOKE.display(block.getLocation(), 0.6F, 0.6F, 0.6F, 0, 1);
 						}
@@ -172,8 +172,8 @@ public class FireShield extends FireAbility {
 					}
 				}
 
-				for (Entity entity : PKMethods.getEntitiesAroundPoint(location, discRadius)) {
-					if (PKMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, discRadius)) {
+					if (GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 						continue;
 					}
 					if (player.getEntityId() != entity.getEntityId() && ignite) {
@@ -189,7 +189,7 @@ public class FireShield extends FireAbility {
 				EarthBlast.removeAroundPoint(location, discRadius);
 				BlazeArc.removeAroundPoint(location, discRadius);
 				Combustion.removeAroundPoint(location, discRadius);
-				for (Entity entity : PKMethods.getEntitiesAroundPoint(location, discRadius)) {
+				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, discRadius)) {
 					if (entity instanceof Projectile) {
 						entity.remove();
 					}
