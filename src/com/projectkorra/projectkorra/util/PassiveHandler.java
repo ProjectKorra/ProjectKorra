@@ -1,5 +1,14 @@
 package com.projectkorra.projectkorra.util;
 
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -12,16 +21,7 @@ import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
-import java.util.concurrent.ConcurrentHashMap;
-
-public class PassiveHandler implements Runnable{
+public class PassiveHandler {
 	
 	private static final ConcurrentHashMap<Player, Float> FOOD = new ConcurrentHashMap<>();
 
@@ -167,13 +167,5 @@ public class PassiveHandler implements Runnable{
 				player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 3, max-1), false);
 			}
 		}
-	}
-	
-	@Override
-	public void run() {
-		handleArmorPassives();
-		handleExhaustionPassives();
-		handleSpeedPassives();
-		handleJumpPassives();
 	}
 }

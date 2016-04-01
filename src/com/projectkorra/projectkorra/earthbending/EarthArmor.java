@@ -1,10 +1,5 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.PlantArmor;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,6 +7,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.util.PassiveHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
 public class EarthArmor extends EarthAbility {
 
@@ -163,12 +164,13 @@ public class EarthArmor extends EarthAbility {
 	}
 
 	@Override
-	public void progress() {		
+	public void progress() {	
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
 
 		if (formed) {
+			PassiveHandler.handleArmorPassives();
 			if (System.currentTimeMillis() > startTime + duration && !complete) {
 				complete = true;
 				bPlayer.addCooldown(this);

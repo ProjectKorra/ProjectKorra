@@ -1,14 +1,14 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.util.DamageHandler;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class FireDamageTimer {
 
