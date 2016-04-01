@@ -202,12 +202,13 @@ public abstract class WaterAbility extends ElementalAbility {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block)) {
-					TempBlock tb = TempBlock.get(block);
+					continue;
+					/*TempBlock tb = TempBlock.get(block);
 					byte full = 0x0;
 					if (tb.getState().getRawData() != full 
 							&& (tb.getState().getType() != Material.WATER || tb.getState().getType() != Material.STATIONARY_WATER)) {
 						continue;
-					}
+					}*/
 				}
 				return block;
 			}
@@ -228,11 +229,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	
 	public static boolean isIcebendable(Player player, Material material, boolean onlyIce) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if(onlyIce) {
-			return bPlayer == null ? null : isIce(material) && bPlayer.canIcebend() && isIce(material);
-		} else {
-			return bPlayer == null ? null : isIce(material) && bPlayer.canIcebend();
-		}
+		return bPlayer == null ? null : isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
 	}
 	
 	public static boolean isPlantbendable(Player player, Material material, boolean onlyLeaves) {

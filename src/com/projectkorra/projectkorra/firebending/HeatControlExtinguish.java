@@ -12,6 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class HeatControlExtinguish extends FireAbility {
 
@@ -20,6 +21,7 @@ public class HeatControlExtinguish extends FireAbility {
 	private long cooldown;
 	private Location location;
 	
+	@SuppressWarnings("deprecation")
 	public HeatControlExtinguish(Player player) {
 		super(player);
 		
@@ -33,7 +35,11 @@ public class HeatControlExtinguish extends FireAbility {
 		
 		this.range = getDayFactor(this.range);
 		this.radius = getDayFactor(this.radius);
-		if (isMeltable(player.getTargetBlock((HashSet<Material>) null, (int) range))) {
+		Set<Material> blocks = new HashSet<Material>();
+		for (Integer mat : GeneralMethods.NON_OPAQUE) {
+			blocks.add(Material.getMaterial(mat));
+		}
+		if (isMeltable(player.getTargetBlock(blocks, (int) range))) {
 			new HeatControlMelt(player);
 			return;
 		}
