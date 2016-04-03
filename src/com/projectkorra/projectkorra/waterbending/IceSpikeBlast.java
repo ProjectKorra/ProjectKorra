@@ -14,6 +14,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -41,7 +42,6 @@ public class IceSpikeBlast extends IceAbility {
 	private Location firstDestination;
 	private Location destination;
 	private TempBlock source;
-	private TempBlock originalSource;
 
 	public IceSpikeBlast(Player player) {
 		super(player);
@@ -203,7 +203,8 @@ public class IceSpikeBlast extends IceAbility {
 			sourceBlock = block;
 			source = new TempBlock(sourceBlock, Material.ICE, data);
 		} else if (prepared) {
-			playFocusWaterEffect(sourceBlock);
+			if (sourceBlock != null)
+				playFocusWaterEffect(sourceBlock);
 		}
 	}
 
@@ -221,11 +222,10 @@ public class IceSpikeBlast extends IceAbility {
 			}
 			progressing = false;
 		}
-		originalSource.revertBlock();
 	}
 
 	private void returnWater() {
-		new WaterReturn(player, sourceBlock);
+		new WaterReturn(player, location.getBlock());
 	}
 
 	private void throwIce() {
@@ -257,12 +257,12 @@ public class IceSpikeBlast extends IceAbility {
 		settingUp = true;
 		prepared = false;
 
-		if (isPlant(sourceBlock)) {
+		/*if (isPlant(sourceBlock)) {
 			new PlantRegrowth(player, sourceBlock);
 			sourceBlock.setType(Material.AIR);
 		}
 
-		originalSource = new TempBlock(sourceBlock, Material.AIR, data);
+		originalSource = new TempBlock(sourceBlock, Material.AIR, data);*/
 	}
 
 	public static void activate(Player player) {
@@ -382,16 +382,19 @@ public class IceSpikeBlast extends IceAbility {
 					return;
 				}
 
+				MaterialData data = block.getState().getData();
 				block.setType(Material.WATER);
-				block.setData((byte) 0x0);
+				block.setData((byte)0);
 				IceSpikeBlast iceSpike = new IceSpikeBlast(player);
 				iceSpike.throwIce();
+				iceSpike.sourceBlock = null;
 
 				if (iceSpike.progressing) {
 					WaterReturn.emptyWaterBottle(player);
-				} else {
-					block.setType(Material.AIR);
-				}
+				} 
+				block.setType(data.getItemType());
+				block.setData(data.getData());
+				
 			}
 		}
 	}

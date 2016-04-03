@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,15 +47,15 @@ public class IceSpikePillarField extends IceAbility {
 		for (int x = (int) -(radius - 1); x <= (radius - 1); x++) {
 			for (int z = (int) -(radius - 1); z <= (radius - 1); z++) {
 				for (int y = -1; y <= 1; y++) {
-					Block testBlock = player.getWorld().getBlockAt(locX + x,	locY + y, locZ + z);
+					Block testBlock = player.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
 					
-					if (testBlock.getType() == Material.ICE
+					if (WaterAbility.isIcebendable(player, testBlock.getType(), false)
 							&& testBlock.getRelative(BlockFace.UP).getType() == Material.AIR
 							&& !(testBlock.getX() == player.getEyeLocation().getBlock().getX() 
 								&& testBlock.getZ() == player.getEyeLocation().getBlock().getZ())) {
 						iceBlocks.add(testBlock);
-						for(Block iceBlockForSound : iceBlocks) {
-							playIcebendingSound(iceBlockForSound.getLocation());
+						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
+							playIcebendingSound(iceBlocks.get(i).getLocation());
 						}
 					}
 				}
@@ -90,7 +91,8 @@ public class IceSpikePillarField extends IceAbility {
 			}
 			
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
-				new IceSpikePillar(player, targetBlock.getLocation(), (int) damage, thrownForce, cooldown);
+				IceSpikePillar pillar = new IceSpikePillar(player, targetBlock.getLocation(), (int) damage, thrownForce, cooldown);
+				pillar.inField = true;
 				bPlayer.addCooldown("IceSpikePillarField", cooldown);
 				iceBlocks.remove(targetBlock);
 			}

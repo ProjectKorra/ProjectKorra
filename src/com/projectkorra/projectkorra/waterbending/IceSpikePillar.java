@@ -19,6 +19,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IceSpikePillar extends IceAbility {
@@ -46,6 +47,7 @@ public class IceSpikePillar extends IceAbility {
 	private Vector direction;
 	private ConcurrentHashMap<Block, Block> affectedBlocks;
 	private ArrayList<LivingEntity> damaged;
+	protected boolean inField = false;
 
 	public IceSpikePillar(Player player) {
 		super(player);
@@ -107,7 +109,7 @@ public class IceSpikePillar extends IceAbility {
 
 		loadAffectedBlocks();
 
-		if (block.getType() == Material.ICE) {
+		if (isIcebendable(block)) {
 			if (canInstantiate()) {
 				start();
 				time = System.currentTimeMillis() - interval;
@@ -161,7 +163,7 @@ public class IceSpikePillar extends IceAbility {
 	}
 
 	private boolean canInstantiate() {
-		if (block.getType() != Material.ICE) {
+		if (!isIcebendable(block.getType())) {
 			return false;
 		}
 		for (Block block : affectedBlocks.keySet()) {
@@ -179,7 +181,7 @@ public class IceSpikePillar extends IceAbility {
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			if (progress < height) {
-				moveEarth();
+				risePillar();
 				removeTimestamp = System.currentTimeMillis();
 			} else {
 				if (removeTimestamp != 0 && removeTimestamp + removeTimer <= System.currentTimeMillis()) {
@@ -193,7 +195,7 @@ public class IceSpikePillar extends IceAbility {
 		}
 	}
 
-	private boolean moveEarth() {
+	private boolean risePillar() {
 		progress++;
 		Block affectedBlock = location.clone().add(direction).getBlock();
 		location = location.add(direction);
@@ -210,7 +212,9 @@ public class IceSpikePillar extends IceAbility {
 		}
 		
 		affectedBlock.setType(Material.ICE);
-		playIcebendingSound(block.getLocation());
+		if (!inField || new Random().nextInt((int) ((height + 1) * 1.5)) == 0) {
+			playIcebendingSound(block.getLocation());
+		}
 		loadAffectedBlocks();
 
 		if (location.distanceSquared(origin) >= height * height) {
