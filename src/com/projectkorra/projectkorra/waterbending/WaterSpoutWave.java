@@ -47,6 +47,7 @@ public class WaterSpoutWave extends WaterAbility {
 	private double chargeTime;
 	private double flightTime;
 	private double waveRadius;
+	private double thawRadius;
 	private double damage;
 	private double animationSpeed;
 	private AbilityType type;
@@ -67,6 +68,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.plant = getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AllowPlantSource");
 		this.radius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
 		this.waveRadius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
+		this.thawRadius = getConfig().getDouble("Abilities.Water.WaterCombo.IceWave.ThawRadius");
 		this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.AnimationSpeed");
 		this.selectRange = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.SelectRange");
 		this.speed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Speed");
@@ -266,6 +268,13 @@ public class WaterSpoutWave extends WaterAbility {
 									createIceSphere(fplayer, fent, augment * 2.5);
 								}
 							}.runTaskLater(ProjectKorra.plugin, 6);
+						}
+					}
+					for (Block block : FROZEN_BLOCKS.keySet()) {
+						TempBlock tBlock = FROZEN_BLOCKS.get(block);
+						if (tBlock.getLocation().distance(player.getLocation()) >= thawRadius) {
+							tBlock.revertBlock();
+							FROZEN_BLOCKS.remove(block);
 						}
 					}
 				}

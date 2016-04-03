@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
@@ -237,12 +238,11 @@ public class AirBlast extends AirAbility {
 
 			GeneralMethods.setVelocity(entity, velocity);
 			if (source != null) {
-				new HorizontalVelocityTracker(entity, player, 200l, this);
+				new HorizontalVelocityTracker(entity, player, 200l, CoreAbility.getAbility("AirBurst"));
 			} else {
 				new HorizontalVelocityTracker(entity, player, 200l, this);
 			}
 
-			entity.setFallDistance(0);
 			if (!isUser && entity instanceof Player) {
 				new Flight((Player) entity, player);
 			}
@@ -254,7 +254,7 @@ public class AirBlast extends AirAbility {
 			breakBreathbendingHold(entity);
 
 			if (source != null && (this.damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
-				DamageHandler.damageEntity((LivingEntity) entity, damage, this);
+				DamageHandler.damageEntity((LivingEntity) entity, damage, CoreAbility.getAbility("AirBurst"));
 				affectedEntities.add(entity);
 			} else if (source == null && (damage > 0 && entity instanceof LivingEntity && !entity.equals(player) && !affectedEntities.contains(entity))) {
 				DamageHandler.damageEntity((LivingEntity) entity, damage, this);
