@@ -1452,6 +1452,8 @@ public class PKListener implements Listener {
 		} else if (GeneralMethods.isInteractable(player.getTargetBlock((Set<Material>)null, 5))) {
 			event.setCancelled(true);
 			return;
+		} else if (player.getItemInHand().getType() == Material.FISHING_ROD) {
+			return;
 		}
 
 		BlockSource.update(player, ClickType.LEFT_CLICK);

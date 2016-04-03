@@ -775,6 +775,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterCombo.IceWave.Enabled", true);
 			config.addDefault("Abilities.Water.WaterCombo.IceWave.Damage", 4);
 			config.addDefault("Abilities.Water.WaterCombo.IceWave.Cooldown", 6000);
+			config.addDefault("Abilities.Water.WaterCombo.IceWave.ThawRadius", 10);
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Enabled", true);
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Damage", 2);
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Radius", 2.5);
@@ -858,6 +859,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.LavaFlow.DownwardFlow", 4);
 			config.addDefault("Abilities.Earth.LavaFlow.AllowNaturalFlow", false);
 			config.addDefault("Abilities.Earth.LavaFlow.ParticleDensity", 0.11);
+			config.addDefault("Abilities.Earth.LavaFlow.RevertMaterial", "STONE");
 
 			config.addDefault("Abilities.Earth.EarthSmash.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthSmash.AllowGrab", true);
