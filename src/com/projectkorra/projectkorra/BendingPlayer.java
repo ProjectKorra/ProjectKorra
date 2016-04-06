@@ -496,16 +496,8 @@ public class BendingPlayer {
 		} else if (!(element instanceof SubElement)) {
 			return this.elements.contains(element);
 		} else {
-			Element parentElement = ((SubElement) element).getParentElement();
-			String prefix = "bending." + parentElement.getName() + ".";
-			
-			// Some permissions are bending.water.name and some are bending.water.namebending
-			if (player.hasPermission(prefix + element.getName())
-					|| player.hasPermission(prefix + element.getName() + "bending")) {
-				return true;
-			}
+			return hasSubElement((SubElement)element);
 		}
-		return false;
 	}
 	
 	public boolean hasSubElement(SubElement sub) {
