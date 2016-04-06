@@ -58,6 +58,7 @@ import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
+import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.firebending.BlazeRing;
@@ -96,6 +97,7 @@ import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterPassive;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
+import com.projectkorra.rpg.RPGMethods;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -315,25 +317,31 @@ public class PKListener implements Listener {
 	public void onElementChange(PlayerChangeElementEvent event) {
 		Player player = event.getTarget();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		Element element = event.getElement();
-		String prefix = "";
-
-		if (bPlayer == null) {
-			return;
-		}
-		
 		boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-		if (bPlayer.getElements().size() > 1) {
-			prefix = Element.AVATAR.getPrefix();
-		} else if (element != null){
-			prefix = element.getPrefix();
-		} else {
-			 prefix = ChatColor.WHITE + "[Nonbender] ";
-		}
-		
-		if (chatEnabled) {
+		if (chatEnabled) {	
+			Element element = event.getElement();
+			String prefix = "";
+	
+			if (bPlayer == null) {
+				return;
+			}
+			
+			
+			if (bPlayer.getElements().size() > 1) {
+				prefix = Element.AVATAR.getPrefix();
+			} else if (element != null){
+				prefix = element.getPrefix();
+			} else {
+				 prefix = ChatColor.WHITE + "[Nonbender] ";
+			}
 			player.setDisplayName(player.getName());
 			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
+		}
+		
+		if (event.getResult() == Result.REMOVE) {
+			if (GeneralMethods.hasRPG()) {
+				RPGMethods.revokeAvatar(player.getUniqueId());
+			}
 		}
 	}
 
