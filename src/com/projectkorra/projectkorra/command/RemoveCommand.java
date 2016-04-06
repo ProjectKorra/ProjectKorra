@@ -2,11 +2,12 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.Element.SubElement;
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
+import com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent;
 import com.projectkorra.rpg.RPGMethods;
 
 import org.bukkit.Bukkit;
@@ -57,7 +58,7 @@ public class RemoveCommand extends PKCommand {
 							GeneralMethods.saveSubElements(senderBPlayer);
 							GeneralMethods.removeUnusableAbilities(sender.getName());
 							sender.sendMessage(e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}" , e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
-							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
+							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, player, (SubElement) e, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.REMOVE));
 						} else sender.sendMessage(ChatColor.RED + invalidElement);
 						return;
 					}
@@ -72,15 +73,6 @@ public class RemoveCommand extends PKCommand {
 					} else {
 						sender.sendMessage(ChatColor.RED + wrongElementSelf);
 						return;
-					}
-				} else if (SubElement.fromString(args.get(0)) != null) {
-					SubElement sub = (SubElement) SubElement.fromString(args.get(0));
-					if (senderBPlayer.hasSubElement(sub)) {
-						senderBPlayer.getSubElements().remove(sub);
-						GeneralMethods.saveSubElements(senderBPlayer);
-						GeneralMethods.removeUnusableAbilities(sender.getName());
-						sender.sendMessage(sub.getColor() + this.succesfullyRemovedElementSelf.replace("{element}" , sub.getName() + sub.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + sub.getColor()));
-						Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
 					}
 				} else {
 					sender.sendMessage(ChatColor.RED + invalidElement);
