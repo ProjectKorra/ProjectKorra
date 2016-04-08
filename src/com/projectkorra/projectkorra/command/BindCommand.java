@@ -9,6 +9,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -75,5 +78,27 @@ public class BindCommand extends PKCommand {
 		
 		String name = coreAbil != null ? coreAbil.getName() : null;
 		GeneralMethods.bindAbility((Player) sender, name, slot);
+	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (args.size() >= 2 || !sender.hasPermission("bending.command.bind") || !(sender instanceof Player)) return new ArrayList<String>();
+		
+		List<String> abilities = new ArrayList<String>();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
+		if (args.size() == 0) {
+			if (bPlayer != null) {
+				for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
+					if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil)) {
+						abilities.add(coreAbil.getName());
+					}
+				}
+			}
+		} else {
+			abilities = Arrays.asList("123456789".split(""));
+		}
+
+		Collections.sort(abilities);
+		return abilities;
 	}
 }

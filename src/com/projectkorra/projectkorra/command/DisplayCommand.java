@@ -213,4 +213,44 @@ public class DisplayCommand extends PKCommand {
 				sender.sendMessage(i + " - " + coreAbil.getElement().getColor() + ability);
 		}
 	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.display")) return new ArrayList<String>();
+		List<String> list = new ArrayList<String>();
+		list.add("Air");
+		list.add("Earth");
+		list.add("Fire");
+		list.add("Water");
+		list.add("Chi");
+		
+		for (Element e : Element.getAddonElements()) {
+			list.add(e.getName());
+		}
+		
+		list.add("Bloodbending");
+		list.add("Combustion");
+		list.add("Flight");
+		list.add("Healing");
+		list.add("Ice");
+		list.add("Lava");
+		list.add("Lightning");
+		list.add("Metal");
+		list.add("Plantbending");
+		list.add("Sand");
+		list.add("SpiritualProjection");
+		
+		for (SubElement se : Element.getAddonSubElements()) {
+			list.add(se.getName());
+		}
+		
+		list.add("AirCombos");
+		list.add("EarthCombos");
+		list.add("FireCombos");
+		list.add("WaterCombos");
+		list.add("ChiCombos");
+		list.add("Avatar");
+		
+		return list;
+	}
 }

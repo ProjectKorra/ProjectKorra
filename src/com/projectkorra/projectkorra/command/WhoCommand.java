@@ -331,5 +331,16 @@ public class WhoCommand extends PKCommand {
 				sender.sendMessage(staff.get(uuid.toString()));
 			}
 		}
+		
+	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.who")) return new ArrayList<String>();
+		List<String> l = new ArrayList<String>();
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			l.add(p.getName());
+		}
+		return l;
 	}
 }

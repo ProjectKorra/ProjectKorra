@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -133,5 +134,42 @@ public class RemoveCommand extends PKCommand {
 		}
 		sender.sendMessage(super.noPermissionMessage);
 		return false;
+	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (args.size() >= 2 || !sender.hasPermission("bending.command.remove")) return new ArrayList<String>();
+		List<String> l = new ArrayList<String>();
+		if (args.size() == 1) {
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				l.add(p.getName());
+			}
+		} else {
+			l.add("Air");
+			l.add("Earth");
+			l.add("Fire");
+			l.add("Water");
+			l.add("Chi");
+			for (Element e : Element.getAddonElements()) {
+				l.add(e.getName());
+			}
+			
+			l.add("Blood");
+			l.add("Combustion");
+			l.add("Flight");
+			l.add("Healing");
+			l.add("Ice");
+			l.add("Lava");
+			l.add("Lightning");
+			l.add("Metal");
+			l.add("Plant");
+			l.add("Sand");
+			l.add("Spiritual");
+			
+			for (SubElement e : Element.getAddonSubElements()) {
+				l.add(e.getName());
+			}
+		}
+		return l;
 	}
 }
