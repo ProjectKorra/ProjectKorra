@@ -14,6 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -144,5 +145,42 @@ public class AddCommand extends PKCommand {
 	
 	public static boolean isVowel(char c) {
 		return "AEIOUaeiou".indexOf(c) != -1;
+	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (args.size() >= 2 || !sender.hasPermission("bending.command.add")) return new ArrayList<String>();
+		List<String> l = new ArrayList<String>();
+		if (args.size() == 0) {
+			
+			l.add("Air");
+			l.add("Earth");
+			l.add("Fire");
+			l.add("Water");
+			l.add("Chi");
+			for (Element e : Element.getAddonElements()) {
+				l.add(e.getName());
+			}
+			
+			l.add("Blood");
+			l.add("Combustion");
+			l.add("Flight");
+			l.add("Healing");
+			l.add("Ice");
+			l.add("Lava");
+			l.add("Lightning");
+			l.add("Metal");
+			l.add("Plant");
+			l.add("Sand");
+			l.add("Spiritual");
+			for (SubElement e : Element.getAddonSubElements()) {
+				l.add(e.getName());
+			}
+		} else {
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				l.add(p.getName());
+			}
+		}
+		return l;
 	}
 }

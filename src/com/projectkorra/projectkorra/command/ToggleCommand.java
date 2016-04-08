@@ -11,6 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -141,5 +143,25 @@ public class ToggleCommand extends PKCommand {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (args.size() >= 2 || !sender.hasPermission("bending.command.toggle.others")) return new ArrayList<String>();
+		List<String> l = new ArrayList<String>();
+		if (args.size() == 0) {
+			List<String> elements = new ArrayList<String>();
+			for (Element e : Element.getAllElements()) {
+				elements.add(e.getName());
+			}
+			Collections.sort(elements);
+			l.add("All");
+			l.addAll(elements);
+		} else {
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				l.add(p.getName());
+			}
+		}
+		return l;
 	}
 }

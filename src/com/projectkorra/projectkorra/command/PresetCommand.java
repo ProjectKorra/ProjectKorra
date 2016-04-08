@@ -218,4 +218,35 @@ public class PresetCommand extends PKCommand {
 			help(sender, false);
 		}
 	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (args.size() >= 3 || !sender.hasPermission("bending.command.preset") || !(sender instanceof Player))
+			return new ArrayList<String>();
+		List<String> l = new ArrayList<String>();
+		if (args.size() == 0) {
+			l.add("create");
+			l.add("delete");
+			l.add("list");
+			l.add("bind");
+			return l;
+		} else if (args.size() == 2 && Arrays.asList(new String[] { "delete", "d", "del", "bind", "b" }).contains(args.get(0).toLowerCase())) {
+			List<Preset> presets = Preset.presets.get(((Player) sender).getUniqueId());
+			List<String> presetNames = new ArrayList<String>();
+			if (presets != null && presets.size() != 0) {
+				for (Preset preset : presets) {
+					presetNames.add(preset.getName());
+				}
+			}
+			if (sender.hasPermission("bending.command.preset.bind.external")) {
+				if (Preset.externalPresets.keySet().size() > 0) {
+					for (String externalPreset : Preset.externalPresets.keySet()) {
+						presetNames.add(externalPreset);
+					}
+				}
+			}
+			if (presetNames.size() == 0) return new ArrayList<String>();
+		}
+		return l;
+	}
 }

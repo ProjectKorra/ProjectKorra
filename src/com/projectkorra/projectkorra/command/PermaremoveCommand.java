@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -97,5 +98,15 @@ public class PermaremoveCommand extends PKCommand {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.permaremove")) return new ArrayList<String>();
+		List<String> players = new ArrayList<String>();
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			players.add(p.getName());
+		}
+		return players;
 	}
 }

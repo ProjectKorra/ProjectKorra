@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.items.command.PKICommand;
+import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
@@ -11,6 +12,7 @@ import com.projectkorra.rpg.commands.RPGCommand;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -148,5 +150,24 @@ public class HelpCommand extends PKCommand {
 			}
 			sender.sendMessage(ChatColor.RED + invalidTopic);
 		}
+	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.help")) return new ArrayList<String>();
+		List<String> list = new ArrayList<String>();
+		for (Element e : Element.getAllElements()) {
+			list.add(e.getName());
+		}
+		List<String> abils = new ArrayList<String>();
+		for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
+			if ((!(sender instanceof Player) || BendingPlayer.getBendingPlayer(sender.getName()).canBind(coreAbil)) && !coreAbil.getName().toLowerCase().contains("click")) {
+				abils.add(coreAbil.getName());
+			}
+		}
+
+		Collections.sort(abils);
+		list.addAll(abils);
+		return list;
 	}
 }

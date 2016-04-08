@@ -9,6 +9,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -69,6 +71,12 @@ public class ClearCommand extends PKCommand {
 				sender.sendMessage(ChatColor.RED + wrongNumber);
 			}
 		}
+	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.clear")) return new ArrayList<String>();
+		return Arrays.asList("123456789".split(""));
 	}
 
 }
