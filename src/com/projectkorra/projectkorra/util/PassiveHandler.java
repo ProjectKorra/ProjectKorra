@@ -94,7 +94,7 @@ public class PassiveHandler implements Runnable{
 		
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
-				return;
+				continue;
 			}
 			
 			boolean sandbender = true;
@@ -143,7 +143,7 @@ public class PassiveHandler implements Runnable{
 		
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
-				return;
+				continue;
 			}
 			
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
