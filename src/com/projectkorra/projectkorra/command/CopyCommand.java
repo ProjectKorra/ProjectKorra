@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -109,6 +110,16 @@ public class CopyCommand extends PKCommand {
 		}
 		target.setAbilities(abilities);
 		return boundAll;
+	}
+	
+	@Override
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
+		if (!sender.hasPermission("bending.command.copy") || args.size() >= 2 || (args.size() >= 1 && !sender.hasPermission("bending.command.copy.assign"))) return new ArrayList<String>(); //Return nothing
+		List<String> l = new ArrayList<String>();
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			l.add(p.getName());
+		}
+		return l;
 	}
 
 }
