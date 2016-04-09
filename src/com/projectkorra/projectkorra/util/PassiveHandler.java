@@ -44,7 +44,7 @@ public class PassiveHandler implements Runnable{
 	public static void handleArmorPassives() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
-				return;
+				continue;
 			}
 			
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -69,7 +69,7 @@ public class PassiveHandler implements Runnable{
 		
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
-				return;
+				continue;
 			}
 			
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
