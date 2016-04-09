@@ -44,12 +44,6 @@ public class ConfigManager {
 			
 			config.addDefault("Chat.Enable", true);
 			config.addDefault("Chat.Format", "<name>: <message>");
-			config.addDefault("Chat.Prefixes.Air", "[Airbender]");
-			config.addDefault("Chat.Prefixes.Water", "[Waterbender]");
-			config.addDefault("Chat.Prefixes.Earth", "[Earthbender]");
-			config.addDefault("Chat.Prefixes.Fire", "[Firebender]");
-			config.addDefault("Chat.Prefixes.Chi", "[Chiblocker]");
-			config.addDefault("Chat.Prefixes.Avatar", "[Avatar]");
 			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
 			config.addDefault("Chat.Colors.Air", "GRAY");
 			config.addDefault("Chat.Colors.AirSub", "DARK_GRAY");
