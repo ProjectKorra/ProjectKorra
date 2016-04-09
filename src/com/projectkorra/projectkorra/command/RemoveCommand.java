@@ -105,7 +105,7 @@ public class RemoveCommand extends PKCommand {
 				}
 				
 				GeneralMethods.removeUnusableAbilities(player.getName());
-				sender.sendMessage(e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
+				player.sendMessage(e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
 				sender.sendMessage(e.getColor() + this.succesfullyRemovedElementTarget.replace("{element}" , e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
 				return;
