@@ -115,6 +115,7 @@ public class BlockSource {
 	 * @return a valid bendable block, or null if none was found.
 	 */
 	public static BlockSourceInformation getBlockSourceInformation(Player player, BlockSourceType sourceType, ClickType clickType) {
+		
 		if (!playerSources.containsKey(player)) {
 			return null;
 		} else if (!playerSources.get(player).containsKey(sourceType)) {
@@ -152,6 +153,9 @@ public class BlockSource {
 	 */
 	public static Block getSourceBlock(Player player, double range, BlockSourceType sourceType, ClickType clickType) {
 		BlockSourceInformation info = getValidBlockSourceInformation(player, range, sourceType, clickType);
+		if (TempBlock.isTempBlock(info.getBlock())) {
+			return null;
+		}
 		return info != null ? info.getBlock() : null;
 	}
 
@@ -282,6 +286,7 @@ public class BlockSource {
 	 */
 	public static Block getEarthSourceBlock(Player player, double range, ClickType clickType, boolean allowNearbySubstitute) {
 		Block sourceBlock = getSourceBlock(player, range, BlockSourceType.EARTH, clickType);
+		
 		if (sourceBlock == null && allowNearbySubstitute) {
 			BlockSourceInformation blockInfo = getBlockSourceInformation(player, BlockSourceType.EARTH, clickType);
 
