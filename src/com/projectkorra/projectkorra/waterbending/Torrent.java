@@ -38,6 +38,8 @@ public class Torrent extends WaterAbility {
 	private boolean freeze;
 	private int layer;
 	private int maxLayer;
+	private int maxHits;
+	private int hits = 1;
 	private long time;
 	private long interval;
 	private long cooldown;
@@ -47,6 +49,7 @@ public class Torrent extends WaterAbility {
 	private double push;
 	private double maxUpwardForce;
 	private double damage;
+	private double successiveDamage;
 	private double deflectDamage;
 	private double range;
 	private double selectRange;
@@ -68,7 +71,9 @@ public class Torrent extends WaterAbility {
 		this.radius = getConfig().getDouble("Abilities.Water.Torrent.Radius");
 		this.maxUpwardForce = getConfig().getDouble("Abilities.Water.Torrent.MaxUpwardForce");
 		this.interval = getConfig().getLong("Abilities.Water.Torrent.Interval");
-		this.damage = getConfig().getDouble("Abilities.Water.Torrent.Damage");
+		this.damage = getConfig().getDouble("Abilities.Water.Torrent.InitialDamage");
+		this.successiveDamage = getConfig().getDouble("Abilities.Water.Torrent.SuccessiveDamage");
+		this.maxHits = getConfig().getInt("Abilities.Water.Torrent.MaxHits");
 		this.deflectDamage = getConfig().getDouble("Abilities.Water.Torrent.DeflectDamage");
 		this.range = getConfig().getDouble("Abilities.Water.Torrent.Range");
 		this.selectRange = getConfig().getDouble("Abilities.Water.Torrent.SelectRange");
@@ -535,6 +540,14 @@ public class Torrent extends WaterAbility {
 		}
 		if (entity instanceof LivingEntity && !hurtEntities.contains(entity)) {
 			double damageDealt = getNightFactor(damage);
+			if (hits > 1 && hits <= maxHits) {
+				damageDealt = getNightFactor(successiveDamage);
+			}
+			if (hits == maxHits) {
+				hits = maxHits + 1;
+			} else {
+				hits += 1;
+			}
 			DamageHandler.damageEntity(entity, damageDealt, this);
 			AirAbility.breakBreathbendingHold(entity);
 			hurtEntities.add(entity);
