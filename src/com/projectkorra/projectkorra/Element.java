@@ -102,8 +102,7 @@ public class Element {
 	}
 	
 	public String getPrefix() {
-		String prefix = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? this.getColor() + ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name) + " " : ChatColor.WHITE + "[Nonbender] ";
-		return prefix;
+		return getColor() + "[" + getName() + (getType() != null ? getType().getBender() : "") + "] ";
 	}
 	
 	public ChatColor getColor() {

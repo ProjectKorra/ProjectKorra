@@ -549,6 +549,13 @@ public abstract class CoreAbility implements Ability {
 	}
 	
 	/**
+	 * @return the language.yml for the plugin
+	 */
+	public static FileConfiguration getLanguageConfig() {
+		return ConfigManager.languageConfig.get();
+	}
+	
+	/**
 	 * Returns a String used to debug potential CoreAbility memory that can be caused
 	 * by a developer forgetting to call {@link #remove()}
 	 */
