@@ -34,6 +34,7 @@ public class SurgeWave extends WaterAbility {
 	private double currentRadius;
 	private double maxRadius;
 	private double range;
+	private double selectRange;
 	private double pushFactor;
 	private double verticalFactor;
 	private double maxFreezeRadius;
@@ -65,6 +66,7 @@ public class SurgeWave extends WaterAbility {
 		this.verticalFactor = getConfig().getDouble("Abilities.Water.Surge.Wave.VerticalPush");
 		this.maxFreezeRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius");
 		this.range = getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
+		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange");
 		this.waveBlocks = new ConcurrentHashMap<>();
 		this.frozenBlocks = new ConcurrentHashMap<>();
 		
@@ -215,7 +217,7 @@ public class SurgeWave extends WaterAbility {
 
 	public boolean prepare() {
 		cancelPrevious();
-		Block block = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
+		Block block = BlockSource.getWaterSourceBlock(player, selectRange, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
 		if (block != null && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			sourceBlock = block;
 			focusBlock();

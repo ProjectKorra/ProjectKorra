@@ -99,6 +99,10 @@ public abstract class ElementalAbility extends CoreAbility {
 		return material == Material.LAVA || material == Material.STATIONARY_LAVA;
 	}
 	
+	public static boolean isSnow(Material material) {
+		return getConfig().getStringList("Properties.Water.SnowBlocks").contains(material.toString());
+	}
+	
 	public static boolean isLunarEclipse(World world) {
 		if (world == null || !GeneralMethods.hasRPG()) {
 			return false;

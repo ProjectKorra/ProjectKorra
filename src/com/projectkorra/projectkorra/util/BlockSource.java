@@ -29,7 +29,7 @@ public class BlockSource {
 	 * @author kingbirdy
 	 */
 	public static enum BlockSourceType {
-		WATER, ICE, PLANT, EARTH, METAL, LAVA
+		WATER, ICE, PLANT, EARTH, METAL, LAVA, SNOW
 	}
 
 	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>>();
@@ -64,6 +64,9 @@ public class BlockSource {
 				}
 				if (WaterAbility.isIce(waterBlock)) {
 					putSource(player, waterBlock, BlockSourceType.ICE, clickType);
+				}
+				if (WaterAbility.isSnow(waterBlock)) {
+					putSource(player, waterBlock, BlockSourceType.SNOW, clickType);
 				}
 			}
 		} else if (coreAbil instanceof EarthAbility) {
@@ -210,7 +213,7 @@ public class BlockSource {
 	 * @return a valid Water bendable block, or null if none was found.
 	 */
 	public static Block getWaterSourceBlock(Player player, double range, ClickType clickType, boolean allowWater, boolean allowIce, boolean allowPlant) {
-		return getWaterSourceBlock(player, range, clickType, allowWater, allowIce, allowPlant, true);
+		return getWaterSourceBlock(player, range, clickType, allowWater, allowIce, allowPlant, true, true);
 	}
 
 	/**
@@ -228,7 +231,7 @@ public class BlockSource {
 	 *            that may have been created by a WaterBottle.
 	 * @return a valid Water bendable block, or null if none was found.
 	 */
-	public static Block getWaterSourceBlock(Player player, double range, ClickType clickType, boolean allowWater, boolean allowIce, boolean allowPlant, boolean allowWaterBottles) {
+	public static Block getWaterSourceBlock(Player player, double range, ClickType clickType, boolean allowWater, boolean allowIce, boolean allowPlant, boolean allowSnow, boolean allowWaterBottles) {
 		Block sourceBlock = null;
 		if (allowWaterBottles) {
 			// Check the block in front of the player's eyes, it may have been created by a
@@ -246,6 +249,9 @@ public class BlockSource {
 		}
 		if (allowPlant && sourceBlock == null) {
 			sourceBlock = getSourceBlock(player, range, BlockSourceType.PLANT, clickType);
+		}
+		if (allowSnow && sourceBlock == null) {
+			sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
 		}
 		if(sourceBlock != null && TempBlock.isTempBlock(sourceBlock) && !tempblock) {
 			return null;

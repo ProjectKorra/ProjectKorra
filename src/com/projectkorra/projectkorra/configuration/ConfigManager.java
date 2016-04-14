@@ -378,6 +378,9 @@ public class ConfigManager {
 			plantBlocks.add("SUGAR_CANE_BLOCK");
 			plantBlocks.add("PUMPKIN_STEM");
 			plantBlocks.add("MELON_STEM");
+			
+			ArrayList<String> snowBlocks = new ArrayList<>();
+			snowBlocks.add("SNOW");
 
 			config.addDefault("Properties.ImportEnabled", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
@@ -410,6 +413,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
 			config.addDefault("Properties.Water.PlantBlocks", plantBlocks);
+			config.addDefault("Properties.Water.SnowBlocks", snowBlocks);
 			config.addDefault("Properties.Water.NightFactor", 1.5);
 			config.addDefault("Properties.Water.FullMoonFactor", 2.0);
 			config.addDefault("Properties.Water.PlaySound", true);
@@ -654,6 +658,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Surge.Enabled", true);
 			config.addDefault("Abilities.Water.Surge.Wave.Radius", 3);
 			config.addDefault("Abilities.Water.Surge.Wave.Range", 20);
+			config.addDefault("Abilities.Water.Surge.Wave.SelectRange", 7);
 			config.addDefault("Abilities.Water.Surge.Wave.HorizontalPush", 1);
 			config.addDefault("Abilities.Water.Surge.Wave.VerticalPush", 0.2);
 			config.addDefault("Abilities.Water.Surge.Wave.MaxFreezeRadius", 7);
@@ -1029,6 +1034,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Range", 7.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Cooldown", 5500);
+			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Range", 7);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Knockback", 3.0);

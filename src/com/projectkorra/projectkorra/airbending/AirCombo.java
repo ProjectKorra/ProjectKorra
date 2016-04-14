@@ -69,6 +69,10 @@ public class AirCombo extends AirAbility implements ComboAbility {
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
+		
+		if (bPlayer.isOnCooldown(ability)) {
+			return;
+		}
 
 		if (ability.equalsIgnoreCase("Twister")) {
 			this.range = getConfig().getDouble("Abilities.Air.AirCombo.Twister.Range");

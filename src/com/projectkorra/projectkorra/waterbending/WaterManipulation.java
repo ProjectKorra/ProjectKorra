@@ -148,8 +148,11 @@ public class WaterManipulation extends WaterAbility {
 
 					if (isPlant(sourceBlock)) {
 						new PlantRegrowth(player, sourceBlock);
+					} else if (!isIce(sourceBlock)) {
+						addWater(sourceBlock);
+					} else {
+						sourceBlock.setType(Material.AIR);
 					}
-					addWater(sourceBlock);
 				}
 			}
 			bPlayer.addCooldown(this);

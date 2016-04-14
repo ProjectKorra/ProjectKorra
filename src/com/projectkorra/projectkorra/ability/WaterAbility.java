@@ -107,7 +107,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 	
 	public static boolean isWaterbendable(Material material) {
-		return isWater(material) || isIce(material) || isPlant(material);
+		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material);
 	}
 	
 	public static Block getIceSourceBlock(Player player, double range) {
