@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.util.PassiveHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
@@ -169,6 +170,7 @@ public class EarthArmor extends EarthAbility {
 		}
 
 		if (formed) {
+			PassiveHandler.checkArmorPassives(player);
 			if (System.currentTimeMillis() > startTime + duration && !complete) {
 				complete = true;
 				bPlayer.addCooldown(this);

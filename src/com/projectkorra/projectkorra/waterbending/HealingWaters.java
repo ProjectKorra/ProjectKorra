@@ -39,23 +39,19 @@ public class HealingWaters extends HealingAbility {
 	
 	private static void heal(Player player) {
 		if (inWater(player)) {
-			if (player.isSneaking()) {
-				Entity entity = GeneralMethods.getTargetedEntity(player, getRadius());
-				if (entity == null) {
-						giveHP(player);
-				} else {
-					giveHPToEntity((LivingEntity) entity);
-				}
-			} else {
-				if (getShiftRequired()) {
-					return;
-				} else {
+			if ((getShiftRequired() == true && player.isSneaking()) || getShiftRequired() == false) {
+				Entity target = GeneralMethods.getTargetedEntity(player, getRadius());
+				if (target == null || !(target instanceof LivingEntity)) {
 					giveHP(player);
+				} else {
+					giveHPToEntity((LivingEntity) target);
 				}
+			} else if (getShiftRequired() == true && !player.isSneaking()) {
+				return;
 			}
 		}
 	}
-
+	
 	private static void giveHPToEntity(LivingEntity le) {
 		if (!le.isDead() && le.getHealth() < le.getMaxHealth()) {
 			applyHealingToEntity(le);

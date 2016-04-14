@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.PlantAbility;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
+import com.projectkorra.projectkorra.util.PassiveHandler;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -127,6 +128,7 @@ public class PlantArmor extends PlantAbility {
 		}
 
 		if (formed) {
+			PassiveHandler.checkArmorPassives(player);
 			if (System.currentTimeMillis() > startTime + duration) {
 				remove();
 				bPlayer.addCooldown(this);

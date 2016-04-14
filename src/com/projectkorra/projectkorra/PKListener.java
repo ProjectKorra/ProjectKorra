@@ -59,6 +59,7 @@ import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
+import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.firebending.BlazeRing;
@@ -81,6 +82,7 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.util.PassiveHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.IceBlast;
@@ -99,10 +101,12 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.rpg.RPGMethods;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -151,6 +155,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -158,6 +163,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -168,6 +174,7 @@ public class PKListener implements Listener {
 	private static final HashMap<Player, String> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending
 	private static final List<UUID> RIGHT_CLICK_INTERACT = new ArrayList<UUID>(); // Player right click block
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out
+	private static final Map<Player, Integer> JUMPS = new HashMap<>();
 
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
@@ -1034,6 +1041,7 @@ public class PKListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
+		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
 		GeneralMethods.createBendingPlayer(e.getPlayer().getUniqueId(), player.getName());
 	}
 
@@ -1043,6 +1051,7 @@ public class PKListener implements Listener {
 			return;
 		}
 		AirFlight.remove(event.getPlayer());
+		JUMPS.remove(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1101,6 +1110,45 @@ public class PKListener implements Listener {
 					return;
 				}
 			}
+		} 
+		
+		else {
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			double xDif = event.getTo().getX() - event.getFrom().getX();
+			double yDif = event.getTo().getY() - event.getFrom().getY();
+			double zDif = event.getTo().getZ() - event.getFrom().getZ();
+			if ((xDif > 0.12 || xDif < -0.12) || (yDif > 0.12 || yDif < -0.12) || (zDif > 0.12 || zDif < -0.12)) {
+				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI) || bPlayer.hasElement(Element.EARTH)) {
+					if (player.hasPotionEffect(PotionEffectType.SPEED)) {
+						player.removePotionEffect(PotionEffectType.SPEED);
+					}
+					PassiveHandler.checkSpeedPassives(player);
+				}
+				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
+					if (player.hasPotionEffect(PotionEffectType.JUMP)) {
+						player.removePotionEffect(PotionEffectType.JUMP);
+					}
+					PassiveHandler.checkJumpPassives(player);
+					PassiveHandler.checkExhaustionPassives(player);
+				}
+			}
+		}
+		
+		if (event.getTo().getY() > event.getFrom().getY()) {
+			if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
+				int current = player.getStatistic(Statistic.JUMP);
+				int last = JUMPS.get(player);
+				
+				if (last != current) {
+					JUMPS.put(player, current);
+					
+					double yDif = event.getTo().getY() - event.getFrom().getY();
+					
+					if ((yDif < 0.035 || yDif > 0.037) && (yDif < 0.116 || yDif > 0.118)) {
+						Bukkit.getServer().getPluginManager().callEvent(new PlayerJumpEvent(player, yDif));
+					}
+				}
+			}
 		}
 	}
 	
@@ -1152,7 +1200,8 @@ public class PKListener implements Listener {
 		}
 
 		MultiAbilityManager.remove(player);
-		AirFlight.remove(event.getPlayer());
+		AirFlight.remove(player);
+		JUMPS.remove(player);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1650,6 +1699,10 @@ public class PKListener implements Listener {
 
 	public static ArrayList<UUID> getToggledOut() {
 		return TOGGLED_OUT;
+	}
+	
+	public static Map<Player, Integer> getJumpStatistics() {
+		return JUMPS;
 	}
 
 }
