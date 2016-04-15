@@ -672,9 +672,11 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Torrent.Enabled", true);
 			config.addDefault("Abilities.Water.Torrent.Range", 25);
 			config.addDefault("Abilities.Water.Torrent.SelectRange", 10);
-			config.addDefault("Abilities.Water.Torrent.Damage", 3);
+			config.addDefault("Abilities.Water.Torrent.InitialDamage", 3);
 			config.addDefault("Abilities.Water.Torrent.DeflectDamage", 1);
+			config.addDefault("Abilities.Water.Torrent.SuccessiveDamage", 1);
 			config.addDefault("Abilities.Water.Torrent.MaxLayer", 3);
+			config.addDefault("Abilities.Water.Torrent.MaxHits", 2);
 			config.addDefault("Abilities.Water.Torrent.Push", 1);
 			config.addDefault("Abilities.Water.Torrent.Angle", 20);
 			config.addDefault("Abilities.Water.Torrent.Radius", 3);

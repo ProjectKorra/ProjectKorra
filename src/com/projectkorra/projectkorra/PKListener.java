@@ -770,15 +770,10 @@ public class PKListener implements Listener {
 			}
 
 			if (!event.isCancelled() && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI)) {
-				if (player.isSprinting()) {
-					event.setDamage(0);
-					event.setCancelled(true);
-				} else {
-					double initdamage = event.getDamage();
-					double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
-					double finaldamage = initdamage - newdamage;
-					event.setDamage(finaldamage);
-				}
+				double initdamage = event.getDamage();
+				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
+				double finaldamage = initdamage - newdamage;
+				event.setDamage(finaldamage);
 			}
 
 			if (!event.isCancelled() && event.getCause() == DamageCause.FALL) {
