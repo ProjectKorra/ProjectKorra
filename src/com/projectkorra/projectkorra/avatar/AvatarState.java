@@ -69,7 +69,7 @@ public class AvatarState extends AvatarAbility {
 				public void run() {
 					GLOBAL_COOLDOWNS.remove(id);
 				}
-			}, cooldown);
+			}, cooldown/50);
 		}
 	}
 
