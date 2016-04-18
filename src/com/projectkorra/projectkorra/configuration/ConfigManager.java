@@ -788,6 +788,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 			config.addDefault("Abilities.Earth.Passive.SandRunSpeed", 2);
+			config.addDefault("Abilities.Earth.Passive.SandRunHeight", 3);
 
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
 			config.addDefault("Abilities.Earth.Catapult.Length", 6);
