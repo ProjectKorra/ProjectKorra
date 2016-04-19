@@ -156,10 +156,13 @@ public class BlockSource {
 	 */
 	public static Block getSourceBlock(Player player, double range, BlockSourceType sourceType, ClickType clickType) {
 		BlockSourceInformation info = getValidBlockSourceInformation(player, range, sourceType, clickType);
-		if (TempBlock.isTempBlock(info.getBlock())) {
-			return null;
+		if (info != null) {
+			if (TempBlock.isTempBlock(info.getBlock())) {
+				return null;
+			}
+			return info.getBlock();
 		}
-		return info != null ? info.getBlock() : null;
+		return null;
 	}
 
 	/**
