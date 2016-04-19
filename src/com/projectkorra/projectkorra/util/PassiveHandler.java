@@ -23,6 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PassiveHandler {
 	
 	private static final ConcurrentHashMap<Player, Float> FOOD = new ConcurrentHashMap<>();
+	
+	private static int sandRunHeight = ConfigManager.defaultConfig.get().getInt("Abilities.Earth.Passive.SandRunHeight");
 
 	public static float getExhaustion(Player player, float level, double factor) {
 		if (!FOOD.keySet().contains(player)) {
@@ -106,9 +108,9 @@ public class PassiveHandler {
 		
 		int max = 0;
 		
-		if (sandbender && (player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SAND
-				|| player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.SANDSTONE 
-				|| player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.RED_SANDSTONE)) {
+		if (sandbender && (player.getLocation().getBlock().getRelative(BlockFace.DOWN, sandRunHeight).getType() == Material.SAND
+				|| player.getLocation().getBlock().getRelative(BlockFace.DOWN, sandRunHeight).getType() == Material.SANDSTONE 
+				|| player.getLocation().getBlock().getRelative(BlockFace.DOWN, sandRunHeight).getType() == Material.RED_SANDSTONE)) {
 			if (CoreAbility.hasAbility(player, AcrobatStance.class)) {
 				AcrobatStance abil = CoreAbility.getAbility(player, AcrobatStance.class);
 				max = Math.max(air, chi);
