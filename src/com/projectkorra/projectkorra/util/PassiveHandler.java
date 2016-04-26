@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.airbending.AirPassive;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.ChiPassive;
@@ -12,7 +13,7 @@ import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
-import org.bukkit.Material;
+import org.bukkit.Bukkit;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -20,12 +21,10 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PassiveHandler {
+public class PassiveHandler implements Runnable {
 	
 	private static final ConcurrentHashMap<Player, Float> FOOD = new ConcurrentHashMap<>();
 	
-	private static int sandRunHeight = ConfigManager.defaultConfig.get().getInt("Abilities.Earth.Passive.SandRunHeight");
-
 	public static float getExhaustion(Player player, float level, double factor) {
 		if (!FOOD.keySet().contains(player)) {
 			FOOD.put(player, level);
@@ -89,6 +88,7 @@ public class PassiveHandler {
 	}
 
 	public static void checkSpeedPassives(Player player) {
+		if (!player.isSprinting()) return;
 		int air = AirPassive.getSpeedPower();
 		int chi = ChiPassive.getSpeedPower();
 		int earth = EarthPassive.getSandRunSpeed();
@@ -101,16 +101,14 @@ public class PassiveHandler {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		
 		if (bPlayer == null) return;
-		if (!bPlayer.hasElement(Element.EARTH)) sandbender = false;
+		if (!bPlayer.canBendPassive(Element.EARTH)) sandbender = false;
 		if (!bPlayer.hasSubElement(SubElement.SAND)) sandbender = false;
-		if (!bPlayer.hasElement(Element.AIR)) air = 0;
-		if (!bPlayer.hasElement(Element.CHI)) chi = 0;
+		if (!bPlayer.canBendPassive(Element.AIR)) air = 0;
+		if (!bPlayer.canBendPassive(Element.CHI)) chi = 0;
 		
 		int max = 0;
 		
-		if (sandbender && (player.getLocation().getBlock().getRelative(BlockFace.DOWN, sandRunHeight).getType() == Material.SAND
-				|| player.getLocation().getBlock().getRelative(BlockFace.DOWN, sandRunHeight).getType() == Material.SANDSTONE 
-				|| player.getLocation().getBlock().getRelative(BlockFace.DOWN, sandRunHeight).getType() == Material.RED_SANDSTONE)) {
+		if (sandbender && EarthAbility.isSand(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
 			if (CoreAbility.hasAbility(player, AcrobatStance.class)) {
 				AcrobatStance abil = CoreAbility.getAbility(player, AcrobatStance.class);
 				max = Math.max(air, chi);
@@ -131,10 +129,21 @@ public class PassiveHandler {
 		}
 		
 		if (max == 0) return;
-		player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3, max-1));
+		boolean b = true;
+		if (player.hasPotionEffect(PotionEffectType.SPEED)) {
+			for (PotionEffect potion : player.getActivePotionEffects()) {
+				if (potion.getType() == PotionEffectType.SPEED) {
+					if (potion.getAmplifier() > max - 1) b = false;
+				}
+			}
+		}
+		if (b) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3, max-1, true, false), false);
+		}
 	}
 	
 	public static void checkJumpPassives(Player player) {
+		if (!player.isSprinting()) return;
 		int air = AirPassive.getJumpPower();
 		int chi = ChiPassive.getJumpPower();
 		
@@ -145,8 +154,8 @@ public class PassiveHandler {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		
 		if (bPlayer == null) return;
-		if (!bPlayer.hasElement(Element.AIR)) air = 0;
-		if (!bPlayer.hasElement(Element.CHI)) chi = 0;
+		if (!bPlayer.canBendPassive(Element.AIR)) air = 0;
+		if (!bPlayer.canBendPassive(Element.CHI)) chi = 0;
 		int max = 0;
 		if (CoreAbility.hasAbility(player, AcrobatStance.class)) {
 			AcrobatStance abil = CoreAbility.getAbility(player, AcrobatStance.class);
@@ -155,7 +164,27 @@ public class PassiveHandler {
 		} else {
 			max = Math.max(air, chi);
 		}
+		
 		if (max == 0) return;
-		player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 3, max-1), false);
+		boolean b = true;
+		if (player.hasPotionEffect(PotionEffectType.JUMP)) {
+			for (PotionEffect potion : player.getActivePotionEffects()) {
+				if (potion.getType() == PotionEffectType.JUMP) {
+					if (potion.getAmplifier() > max - 1) b = false;
+				}
+			}
+		}
+		if (b) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 3, max-1, true, false), false);
+		}
+	}
+
+	@Override
+	public void run() {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			checkSpeedPassives(player);
+			checkJumpPassives(player);
+		}
+		
 	}
 }

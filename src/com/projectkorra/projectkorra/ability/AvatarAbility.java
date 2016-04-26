@@ -30,5 +30,12 @@ public abstract class AvatarAbility extends ElementalAbility {
 	public static void playAvatarSound(Location loc) {
 		loc.getWorld().playSound(loc, Sound.ANVIL_LAND, 1, 10);
 	}
+	
+	/**Determines whether the ability requires the user to be an avatar in order to be able 
+	 * to use it. Set this to <tt>false</tt> for moves that should be able to be used without 
+	 * players needing to have the avatar element*/
+	public boolean requireAvatar() {
+		return true;
+	}
 
 }

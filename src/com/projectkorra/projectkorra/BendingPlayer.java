@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
@@ -251,7 +252,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!player.hasPermission("bending.ability." + ability.getName())) {
 			return false;
-		} else if (!hasElement(ability.getElement())) {
+		} else if (!hasElement(ability.getElement()) && !(ability instanceof AvatarAbility && !((AvatarAbility)ability).requireAvatar())) {
 			return false;
 		} else if (ability.getElement() instanceof SubElement) {
 			SubElement subElement = (SubElement) ability.getElement();

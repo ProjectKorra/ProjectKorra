@@ -112,7 +112,9 @@ public class RemoveCommand extends PKCommand {
 			}
 		} else if (args.size() == 1) {
 			bPlayer.getElements().clear();
+			bPlayer.getSubElements().clear();
 			GeneralMethods.saveElements(bPlayer);
+			GeneralMethods.saveSubElements(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player.getName());
 			if (GeneralMethods.hasRPG()) RPGMethods.revokeAvatar(bPlayer.getUUID());
 			sender.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
@@ -140,7 +142,7 @@ public class RemoveCommand extends PKCommand {
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
 		if (args.size() >= 2 || !sender.hasPermission("bending.command.remove")) return new ArrayList<String>();
 		List<String> l = new ArrayList<String>();
-		if (args.size() == 1) {
+		if (args.size() == 0) {
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				l.add(p.getName());
 			}
