@@ -33,6 +33,7 @@ import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfo;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
+import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
 
 import sun.reflect.ReflectionFactory;
@@ -186,6 +187,7 @@ public abstract class CoreAbility implements Ability {
 		for (Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (CoreAbility abil : setAbils) {
 				abil.progress();
+				Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
 			}
 		}
 	}

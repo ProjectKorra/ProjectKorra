@@ -155,7 +155,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -1109,20 +1108,11 @@ public class PKListener implements Listener {
 		
 		else {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			double xDif = event.getTo().getX() - event.getFrom().getX();
-			double yDif = event.getTo().getY() - event.getFrom().getY();
-			double zDif = event.getTo().getZ() - event.getFrom().getZ();
-			if ((xDif > 0.12 || xDif < -0.12) || (yDif > 0.12 || yDif < -0.12) || (zDif > 0.12 || zDif < -0.12)) {
+			if (bPlayer != null) {
 				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI) || bPlayer.hasElement(Element.EARTH)) {
-					if (player.hasPotionEffect(PotionEffectType.SPEED)) {
-						player.removePotionEffect(PotionEffectType.SPEED);
-					}
 					PassiveHandler.checkSpeedPassives(player);
 				}
 				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
-					if (player.hasPotionEffect(PotionEffectType.JUMP)) {
-						player.removePotionEffect(PotionEffectType.JUMP);
-					}
 					PassiveHandler.checkJumpPassives(player);
 					PassiveHandler.checkExhaustionPassives(player);
 				}
