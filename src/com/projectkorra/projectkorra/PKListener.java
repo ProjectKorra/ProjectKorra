@@ -1035,10 +1035,12 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerJoin(PlayerJoinEvent e) {
-		Player player = e.getPlayer();
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
-		GeneralMethods.createBendingPlayer(e.getPlayer().getUniqueId(), player.getName());
+		
+		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+		GeneralMethods.removeUnusableAbilities(player.getName());
 	}
 
 	@EventHandler
