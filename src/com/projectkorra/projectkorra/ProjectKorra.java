@@ -1,5 +1,14 @@
 package com.projectkorra.projectkorra;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Statistic;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
@@ -18,15 +27,6 @@ import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.Updater;
 import com.projectkorra.projectkorra.util.logging.PKLogHandler;
 import com.projectkorra.projectkorra.waterbending.WaterbendingManager;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Statistic;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Logger;
 
 public class ProjectKorra extends JavaPlugin {
 
@@ -85,7 +85,9 @@ public class ProjectKorra extends JavaPlugin {
 		
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
+			
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			GeneralMethods.removeUnusableAbilities(player.getName());
 		}
 
 		try {

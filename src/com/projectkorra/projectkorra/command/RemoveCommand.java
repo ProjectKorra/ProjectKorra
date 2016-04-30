@@ -22,18 +22,24 @@ import java.util.List;
  * Executor for /bending remove. Extends {@link PKCommand}.
  */
 public class RemoveCommand extends PKCommand {
-	
-	private String succesfullyRemovedElementSelf, wrongElementSelf, invalidElement, playerOffline, wrongElementTarget, 
-	succesfullyRemovedElementTarget, succesfullyRemovedElementTargetConfirm, succesfullyRemovedAllElementsTarget, succesfullyRemovedAllElementsTargetConfirm;
-	
+
+	private String succesfullyRemovedElementSelf, wrongElementSelf, invalidElement, playerOffline, wrongElementTarget,
+			succesfullyRemovedElementTarget, succesfullyRemovedElementTargetConfirm, succesfullyRemovedAllElementsTarget,
+			succesfullyRemovedAllElementsTargetConfirm;
+
 	public RemoveCommand() {
-		super("remove", "/bending remove <Player> [Element]", ConfigManager.languageConfig.get().getString("Commands.Remove.Description"), new String[] { "remove", "rm" });
-		
+		super("remove", "/bending remove <Player> [Element]",
+				ConfigManager.languageConfig.get().getString("Commands.Remove.Description"), new String[] { "remove", "rm" });
+
 		this.succesfullyRemovedElementSelf = ConfigManager.languageConfig.get().getString("Commands.Remove.RemovedElement");
-		this.succesfullyRemovedAllElementsTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedAllElements");
-		this.succesfullyRemovedAllElementsTargetConfirm = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedAllElementsConfirm");
-		this.succesfullyRemovedElementTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedElement");
-		this.succesfullyRemovedElementTargetConfirm = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.RemovedElementConfirm");
+		this.succesfullyRemovedAllElementsTarget = ConfigManager.languageConfig.get()
+				.getString("Commands.Remove.Other.RemovedAllElements");
+		this.succesfullyRemovedAllElementsTargetConfirm = ConfigManager.languageConfig.get()
+				.getString("Commands.Remove.Other.RemovedAllElementsConfirm");
+		this.succesfullyRemovedElementTarget = ConfigManager.languageConfig.get()
+				.getString("Commands.Remove.Other.RemovedElement");
+		this.succesfullyRemovedElementTargetConfirm = ConfigManager.languageConfig.get()
+				.getString("Commands.Remove.Other.RemovedElementConfirm");
 		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Remove.InvalidElement");
 		this.wrongElementSelf = ConfigManager.languageConfig.get().getString("Commands.Remove.WrongElement");
 		this.wrongElementTarget = ConfigManager.languageConfig.get().getString("Commands.Remove.Other.WrongElement");
@@ -58,25 +64,34 @@ public class RemoveCommand extends PKCommand {
 							senderBPlayer.getSubElements().remove(e);
 							GeneralMethods.saveSubElements(senderBPlayer);
 							GeneralMethods.removeUnusableAbilities(sender.getName());
-							sender.sendMessage(e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}" , e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
-							Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, player, (SubElement) e, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.REMOVE));
-						} else sender.sendMessage(ChatColor.RED + invalidElement);
+							sender.sendMessage(e.getColor() + this.succesfullyRemovedElementSelf
+									.replace("{element}", e.getName() + e.getType().getBending())
+									.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
+							Bukkit.getServer().getPluginManager()
+									.callEvent(new PlayerChangeSubElementEvent(sender, player, (SubElement) e,
+											com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.REMOVE));
+						} else
+							sender.sendMessage(ChatColor.RED + wrongElementSelf);
 						return;
-					}
- 					if (senderBPlayer.hasElement(e)) {
-						senderBPlayer.getElements().remove(e);
-						GeneralMethods.saveElements(senderBPlayer);
-						GeneralMethods.removeUnusableAbilities(sender.getName());
+					} else if (e instanceof Element) {
+						if (senderBPlayer.hasElement(e)) {
+							senderBPlayer.getElements().remove(e);
+							GeneralMethods.saveElements(senderBPlayer);
+							GeneralMethods.removeUnusableAbilities(sender.getName());
 
-						sender.sendMessage(e.getColor() + succesfullyRemovedElementSelf.replace("{element}", e.getName()));
-						Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
-						return;
-					} else {
-						sender.sendMessage(ChatColor.RED + wrongElementSelf);
-						return;
+							sender.sendMessage(e.getColor() + succesfullyRemovedElementSelf.replace("{element}", e.getName()));
+							Bukkit.getServer().getPluginManager()
+									.callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
+							return;
+						} else
+							sender.sendMessage(ChatColor.RED + wrongElementSelf);
+						{
+							return;
+						}
 					}
-				} else {
+				} else
 					sender.sendMessage(ChatColor.RED + invalidElement);
+				{
 					return;
 				}
 			}
@@ -103,10 +118,14 @@ public class RemoveCommand extends PKCommand {
 					bPlayer.getElements().remove(e);
 					GeneralMethods.saveElements(bPlayer);
 				}
-				
+
 				GeneralMethods.removeUnusableAbilities(player.getName());
-				player.sendMessage(e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
-				sender.sendMessage(e.getColor() + this.succesfullyRemovedElementTarget.replace("{element}" , e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
+				player.sendMessage(e.getColor()
+						+ this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.getName() + e.getType().getBending())
+								.replace("{sender}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
+				sender.sendMessage(e.getColor()
+						+ this.succesfullyRemovedElementTarget.replace("{element}", e.getName() + e.getType().getBending())
+								.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
 				return;
 			}
@@ -116,16 +135,19 @@ public class RemoveCommand extends PKCommand {
 			GeneralMethods.saveElements(bPlayer);
 			GeneralMethods.saveSubElements(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player.getName());
-			if (GeneralMethods.hasRPG()) RPGMethods.revokeAvatar(bPlayer.getUUID());
-			sender.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
-			player.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW));
+			if (GeneralMethods.hasRPG())
+				RPGMethods.revokeAvatar(bPlayer.getUUID());
+			sender.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}",
+					ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
+			player.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}",
+					ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW));
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.REMOVE));
 		}
 	}
 
 	/**
-	 * Checks if the CommandSender has the permission 'bending.admin.remove'. If
-	 * not, it tells them they don't have permission to use the command.
+	 * Checks if the CommandSender has the permission 'bending.admin.remove'. If not, it tells them
+	 * they don't have permission to use the command.
 	 * 
 	 * @return True if they have the permission, false otherwise
 	 */
@@ -137,10 +159,11 @@ public class RemoveCommand extends PKCommand {
 		sender.sendMessage(super.noPermissionMessage);
 		return false;
 	}
-	
+
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 2 || !sender.hasPermission("bending.command.remove")) return new ArrayList<String>();
+		if (args.size() >= 2 || !sender.hasPermission("bending.command.remove"))
+			return new ArrayList<String>();
 		List<String> l = new ArrayList<String>();
 		if (args.size() == 0) {
 			for (Player p : Bukkit.getOnlinePlayers()) {
@@ -155,7 +178,7 @@ public class RemoveCommand extends PKCommand {
 			for (Element e : Element.getAddonElements()) {
 				l.add(e.getName());
 			}
-			
+
 			l.add("Blood");
 			l.add("Combustion");
 			l.add("Flight");
@@ -167,7 +190,7 @@ public class RemoveCommand extends PKCommand {
 			l.add("Plant");
 			l.add("Sand");
 			l.add("Spiritual");
-			
+
 			for (SubElement e : Element.getAddonSubElements()) {
 				l.add(e.getName());
 			}
