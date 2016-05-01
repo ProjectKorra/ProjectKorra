@@ -173,7 +173,7 @@ permissions:
       bending.ability.AcrobatStance: true
       bending.ability.QuickStrike: true
       bending.ability.SwiftKick: true
-      bending.ability.Immobilize.ChiCombo: true
+      bending.ability.ChiCombo: true
       bending.chi.passive: true
   bending.avatar:
     default: false
@@ -208,3 +208,8 @@ permissions:
         bending.ability.JetBlast: true
         bending.ability.JetBlaze: true
         bending.ability.FireWheel: true
+  bending.ability.ChiCombo:
+    default: false
+    description: Grants access to all ChiCombos.
+    children:
+        bending.ability.Immobilize: true
