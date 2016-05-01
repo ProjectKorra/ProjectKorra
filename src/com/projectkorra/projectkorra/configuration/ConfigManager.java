@@ -340,6 +340,7 @@ public class ConfigManager {
 			earthBlocks.add("DIAMOND_ORE");
 			earthBlocks.add("NETHERRACK");
 			earthBlocks.add("QUARTZ_ORE");
+			earthBlocks.add("COBBLESTONE");
 
 			ArrayList<String> metalBlocks = new ArrayList<String>();
 			metalBlocks.add("IRON_BLOCK");
@@ -793,6 +794,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Catapult.Length", 6);
 			config.addDefault("Abilities.Earth.Catapult.Push", 4);
 			config.addDefault("Abilities.Earth.Catapult.ShiftModifier", 2);
+			config.addDefault("Abilities.Earth.Catapult.Cooldown", 1500);
 
 			config.addDefault("Abilities.Earth.Collapse.Enabled", true);
 			config.addDefault("Abilities.Earth.Collapse.SelectRange", 20);

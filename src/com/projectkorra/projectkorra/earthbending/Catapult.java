@@ -81,7 +81,7 @@ public class Catapult extends EarthAbility {
 		this.push = getConfig().getDouble("Abilities.Earth.Catapult.Push");
 		this.shiftModifier = getConfig().getDouble("Abilities.Earth.Catapult.ShiftModifier");
 		this.distance = 0;
-		this.cooldown = 0;
+		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
 		this.catapult = false;
 		this.moving = false;
 		this.flying = false;
