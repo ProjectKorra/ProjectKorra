@@ -173,7 +173,7 @@ permissions:
       bending.ability.AcrobatStance: true
       bending.ability.QuickStrike: true
       bending.ability.SwiftKick: true
-      bending.ability.Immobilize: true
+      bending.ability.Immobilize.ChiCombo: true
       bending.chi.passive: true
   bending.avatar:
     default: false
