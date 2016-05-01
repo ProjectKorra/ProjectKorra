@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -31,6 +32,9 @@ public class SwiftKick extends ChiAbility {
 	public void progress() {
 		if (target == null) {
 			remove();
+			return;
+		}
+		if (player.getLocation().subtract(0, 0.5, 0).getBlock().getType() != Material.AIR) {
 			return;
 		}
 		DamageHandler.damageEntity(target, damage, this);
