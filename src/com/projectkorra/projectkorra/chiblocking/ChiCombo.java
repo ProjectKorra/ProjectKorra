@@ -37,10 +37,13 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 		if (ability.equalsIgnoreCase("Immobilize")) {
 			this.cooldown = getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.Cooldown");
 			this.duration = getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration");
+			target = GeneralMethods.getTargetedEntity(player, 5);
 			if (!bPlayer.canBendIgnoreBinds(this)) {
 				return;
+			} if (target == null){
+				remove();
+				return;
 			} else {
-				target = GeneralMethods.getTargetedEntity(player, 5);
 				paralyze(target, duration);
 				start();
 				bPlayer.addCooldown(this);
@@ -69,6 +72,7 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 	 */
 	public static boolean isParalyzed(Player player) {
 		return isParalyzed((Entity) player);
+		
 	}
 
 	/**
