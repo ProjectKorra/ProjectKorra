@@ -47,6 +47,12 @@ public class DisplayCommand extends PKCommand {
 		//bending display [Element]
 		if (args.size() == 1) {
 			String elementName = args.get(0).toLowerCase().replace("bending", "");
+			if (elementName.equalsIgnoreCase("wc")) elementName = "watercombo";
+			else if (elementName.equalsIgnoreCase("ac")) elementName = "aircombo";
+			else if (elementName.equalsIgnoreCase("ec")) elementName = "earthcombo";
+			else if (elementName.equalsIgnoreCase("fc")) elementName = "firecombo";
+			else if (elementName.equalsIgnoreCase("cc")) elementName = "chicombo";
+			else if (elementName.equalsIgnoreCase("avc")) elementName = "avatarcombo";
 			Element element = Element.fromString(elementName.replace("combos", "").replace("combo", ""));
 			//combos
 			if (element != null && elementName.contains("combo")) {

@@ -775,6 +775,7 @@ public class PKListener implements Listener {
 				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
 				event.setDamage(finaldamage);
+				if (finaldamage <= 0.4) event.setCancelled(true);
 			}
 
 			if (!event.isCancelled() && event.getCause() == DamageCause.FALL) {

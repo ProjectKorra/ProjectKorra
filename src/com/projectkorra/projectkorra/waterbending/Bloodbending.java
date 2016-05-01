@@ -88,7 +88,7 @@ public class Bloodbending extends BloodAbility {
 			//Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
 			//List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
 			List<Entity> entities = new ArrayList<Entity>();
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < range; i++) {
 				Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterial());
 				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
 				if (entities.contains(player))
