@@ -341,13 +341,15 @@ public class SurgeWall extends WaterAbility {
 	}
 
 	private static void finalRemoveWater(Block block) {
-		if (AFFECTED_BLOCKS.containsKey(block)) {
-			TempBlock.revertBlock(block, Material.AIR);
-			AFFECTED_BLOCKS.remove(block);
-		}
-		if (WALL_BLOCKS.containsKey(block)) {
-			TempBlock.revertBlock(block, Material.AIR);
-			WALL_BLOCKS.remove(block);
+		if (block != null) {
+			if (AFFECTED_BLOCKS.containsKey(block)) {
+				TempBlock.revertBlock(block, Material.AIR);
+				AFFECTED_BLOCKS.remove(block);
+			}
+			if (WALL_BLOCKS.containsKey(block)) {
+				TempBlock.revertBlock(block, Material.AIR);
+				WALL_BLOCKS.remove(block);
+			}
 		}
 	}
 
