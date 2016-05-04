@@ -317,32 +317,31 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onElementChange(PlayerChangeElementEvent event) {
 		Player player = event.getTarget();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
-		if (chatEnabled) {	
+		if (chatEnabled) {
 			Element element = event.getElement();
 			String prefix = "";
-	
+
 			if (bPlayer == null) {
 				return;
 			}
-			
-			
+
 			if (bPlayer.getElements().size() > 1) {
 				prefix = Element.AVATAR.getPrefix();
-			} else if (element != null){
+			} else if (element != null) {
 				prefix = element.getPrefix();
 			} else {
-				 prefix = ChatColor.WHITE + "[Nonbender] ";
+				prefix = ChatColor.WHITE + "[Nonbender] ";
 			}
 			player.setDisplayName(player.getName());
 			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());
 		}
-		
+
 		if (event.getResult() == Result.REMOVE) {
 			if (GeneralMethods.hasRPG()) {
 				RPGMethods.revokeAvatar(player.getUniqueId());
@@ -390,7 +389,7 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
 		Block block = event.getDamager();
-		
+
 		if (TempBlock.isTempBlock(block)) {
 			if (EarthAbility.isEarthbendable(block.getType()) && GeneralMethods.isSolid(block)) {
 				event.setCancelled(true);
@@ -422,7 +421,7 @@ public class PKListener implements Listener {
 			if (bPlayer == null) {
 				return;
 			}
-			
+
 			if (bPlayer.isElementToggled(Element.FIRE)) {
 				return;
 			}
@@ -434,7 +433,7 @@ public class PKListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDeath(EntityDeathEvent event) {
 		if (MetalClips.getEntityClipsCount().containsKey(event.getEntity())) {
@@ -445,19 +444,20 @@ public class PKListener implements Listener {
 					newdrops.add(drops.get(i));
 				}
 			}
-			
+
 			newdrops.add(new ItemStack(Material.IRON_INGOT, MetalClips.getEntityClipsCount().get(event.getEntity())));
 			newdrops.add(MetalClips.getOriginalHelmet(event.getEntity()));
 			newdrops.add(MetalClips.getOriginalChestplate(event.getEntity()));
 			newdrops.add(MetalClips.getOriginalLeggings(event.getEntity()));
 			newdrops.add(MetalClips.getOriginalBoots(event.getEntity()));
-			
+
 			event.getDrops().clear();
 			event.getDrops().addAll(newdrops);
 			MetalClips.getEntityClipsCount().remove(event.getEntity());
 		}
 		for (FireCombo fc : CoreAbility.getAbilities(event.getEntity().getKiller(), FireCombo.class)) {
-			if (!fc.getAffectedEntities().contains(event.getEntity())) continue;
+			if (!fc.getAffectedEntities().contains(event.getEntity()))
+				continue;
 			List<ItemStack> drops = event.getDrops();
 			List<ItemStack> newDrops = new ArrayList<>();
 			for (int i = 0; i < drops.size(); i++) {
@@ -490,7 +490,7 @@ public class PKListener implements Listener {
 					default:
 						break;
 				}
-				
+
 				newDrops.add(cooked);
 			}
 			event.getDrops().clear();
@@ -644,7 +644,7 @@ public class PKListener implements Listener {
 				double maxDamage = plugin.getConfig().getDouble("Properties.HorizontalCollisionPhysics.WallDamageCap");
 				double damage = ((e.getDistanceTraveled() - minimumDistance) < 0 ? 0 : e.getDistanceTraveled() - minimumDistance) / (e.getDifference().length());
 				if (damage > 0) {
-					if(damage <= maxDamage) {
+					if (damage <= maxDamage) {
 						DamageHandler.damageEntity((LivingEntity) e.getEntity(), damage, e.getAbility());
 					} else {
 						DamageHandler.damageEntity((LivingEntity) e.getEntity(), maxDamage, e.getAbility());
@@ -679,11 +679,11 @@ public class PKListener implements Listener {
 	public void onPlayerBendingDeath(EntityBendingDeathEvent event) {
 		if (ConfigManager.languageConfig.get().getBoolean("DeathMessages.Enabled") && event.getEntity() instanceof Player) {
 			Ability ability = event.getAbility();
-			
+
 			if (ability == null) {
 				return;
 			}
-			
+
 			StringBuilder sb = new StringBuilder();
 			sb.append(ability.getElement().getColor());
 			sb.append(event.getAbility().getName());
@@ -710,7 +710,7 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		ChatColor color = ChatColor.WHITE;
-		
+
 		if (bPlayer == null) {
 			return;
 		}
@@ -741,11 +741,11 @@ public class PKListener implements Listener {
 		if (event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			
+
 			if (bPlayer == null) {
 				return;
 			}
-			
+
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL) {
 				new Shockwave(player, true);
 			}
@@ -775,7 +775,8 @@ public class PKListener implements Listener {
 				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
 				event.setDamage(finaldamage);
-				if (finaldamage <= 0.4) event.setCancelled(true);
+				if (finaldamage <= 0.4)
+					event.setCancelled(true);
 			}
 
 			if (!event.isCancelled() && event.getCause() == DamageCause.FALL) {
@@ -785,9 +786,7 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (bPlayer.canBendPassive(Element.FIRE) 
-					&& bPlayer.hasElement(Element.FIRE) 
-					&& (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
+			if (bPlayer.canBendPassive(Element.FIRE) && bPlayer.hasElement(Element.FIRE) && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
 				event.setCancelled(!HeatControlExtinguish.canBurn(player));
 			}
 
@@ -832,9 +831,9 @@ public class PKListener implements Listener {
 				if (sourceBPlayer == null) {
 					return;
 				}
-				
-				String boundAbil = sourceBPlayer.getBoundAbilityName(); 
-				
+
+				String boundAbil = sourceBPlayer.getBoundAbilityName();
+
 				if (sourceBPlayer.canBendPassive(Element.CHI)) {
 					if (e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
 						if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
@@ -859,8 +858,7 @@ public class PKListener implements Listener {
 					}
 					if (e.getCause() == DamageCause.ENTITY_ATTACK && sourceBPlayer.isElementToggled(Element.CHI) == true) {
 						if (boundAbil.equalsIgnoreCase("Paralyze") && e.getDamage() == 1) {
-							if (sourcePlayer.getWorld().equals(targetPlayer.getWorld()) 
-									&& Math.abs(sourcePlayer.getLocation().distance(targetPlayer.getLocation())) < 3) {
+							if (sourcePlayer.getWorld().equals(targetPlayer.getWorld()) && Math.abs(sourcePlayer.getLocation().distance(targetPlayer.getLocation())) < 3) {
 								new Paralyze(sourcePlayer, targetPlayer);
 							}
 						}
@@ -875,19 +873,17 @@ public class PKListener implements Listener {
 		if (!(event.getEntity() instanceof Player)) {
 			return;
 		}
-		
+
 		Player player = event.getEntity();
 		EarthArmor earthArmor = CoreAbility.getAbility(player, EarthArmor.class);
 		PlantArmor plantArmor = CoreAbility.getAbility(player, PlantArmor.class);
-		
+
 		if (earthArmor != null) {
 			List<ItemStack> drops = event.getDrops();
 			List<ItemStack> newDrops = new ArrayList<ItemStack>();
 			for (int i = 0; i < drops.size(); i++) {
 				Material type = drops.get(i).getType();
-				if (!(type == Material.LEATHER_BOOTS || type == Material.LEATHER_CHESTPLATE 
-						|| type == Material.LEATHER_HELMET || type == Material.LEATHER_LEGGINGS 
-						|| type == Material.AIR)) {
+				if (!(type == Material.LEATHER_BOOTS || type == Material.LEATHER_CHESTPLATE || type == Material.LEATHER_HELMET || type == Material.LEATHER_LEGGINGS || type == Material.AIR)) {
 					newDrops.add(drops.get(i));
 				}
 			}
@@ -902,16 +898,14 @@ public class PKListener implements Listener {
 			event.getDrops().addAll(newDrops);
 			earthArmor.remove();
 		}
-		
+
 		if (plantArmor != null) {
 			List<ItemStack> drops = event.getDrops();
 			List<ItemStack> newDrops = new ArrayList<>();
-			
+
 			for (int i = 0; i < drops.size(); i++) {
 				Material type = drops.get(i).getType();
-				if (!(type == Material.LEATHER_BOOTS || type == Material.LEATHER_CHESTPLATE 
-						|| type == Material.LEAVES || type == Material.LEAVES_2 
-						|| type == Material.LEATHER_LEGGINGS || type == Material.AIR)) {
+				if (!(type == Material.LEATHER_BOOTS || type == Material.LEATHER_CHESTPLATE || type == Material.LEAVES || type == Material.LEAVES_2 || type == Material.LEATHER_LEGGINGS || type == Material.AIR)) {
 					newDrops.add(drops.get(i));
 				}
 			}
@@ -922,12 +916,12 @@ public class PKListener implements Listener {
 					}
 				}
 			}
-			
+
 			event.getDrops().clear();
 			event.getDrops().addAll(newDrops);
 			plantArmor.remove();
 		}
-		
+
 		if (MetalClips.getEntityClipsCount().containsKey(event.getEntity())) {
 			List<ItemStack> drops = event.getDrops();
 			List<ItemStack> newdrops = new ArrayList<ItemStack>();
@@ -936,17 +930,17 @@ public class PKListener implements Listener {
 					newdrops.add(drops.get(i));
 				}
 			}
-			
+
 			newdrops.add(MetalClips.getOriginalHelmet(event.getEntity()));
 			newdrops.add(MetalClips.getOriginalChestplate(event.getEntity()));
 			newdrops.add(MetalClips.getOriginalLeggings(event.getEntity()));
 			newdrops.add(MetalClips.getOriginalBoots(event.getEntity()));
-			
+
 			event.getDrops().clear();
 			event.getDrops().addAll(newdrops);
 			MetalClips.getEntityClipsCount().remove(event.getEntity());
 		}
-		
+
 		if (event.getEntity().getKiller() != null) {
 			if (BENDING_PLAYER_DEATH.containsKey(event.getEntity())) {
 				String message = ConfigManager.languageConfig.get().getString("DeathMessages.Default");
@@ -955,11 +949,11 @@ public class PKListener implements Listener {
 				CoreAbility coreAbil = CoreAbility.getAbility(ability);
 				Element element = null;
 				boolean isAvatarAbility = false;
-				
+
 				if (coreAbil != null) {
 					element = coreAbil.getElement();
 				}
-	
+
 				if (HorizontalVelocityTracker.hasBeenDamagedByHorizontalVelocity(event.getEntity()) && Arrays.asList(HorizontalVelocityTracker.abils).contains(tempAbility)) {
 					if (ConfigManager.languageConfig.get().contains("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath")) {
 						message = ConfigManager.languageConfig.get().getString("Abilities." + element.getName() + "." + tempAbility + ".HorizontalVelocityDeath");
@@ -997,20 +991,20 @@ public class PKListener implements Listener {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			final UUID uuid = player.getUniqueId();
 			RIGHT_CLICK_INTERACT.add(uuid);
-			
+
 			new BukkitRunnable() {
 				@Override
 				public void run() {
 					RIGHT_CLICK_INTERACT.remove(uuid);
 				}
 			}.runTaskLater(plugin, 5);
-			
+
 			if (event.getClickedBlock() != null) {
 				ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_BLOCK);
 			} else {
 				ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
 			}
-			
+
 			if (bPlayer.getBoundAbilityName().equalsIgnoreCase("EarthSmash")) {
 				new EarthSmash(player, ClickType.RIGHT_CLICK);
 			}
@@ -1019,17 +1013,17 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
 		if (event.isCancelled()) {
 			return;
 		}
-		
+
 		Player player = event.getPlayer();
-		
+
 		ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
-		
+
 		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
@@ -1039,7 +1033,7 @@ public class PKListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
-		
+
 		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 		GeneralMethods.removeUnusableAbilities(player.getName());
 	}
@@ -1070,9 +1064,7 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		else if (CoreAbility.hasAbility(player, WaterSpout.class) 
-				|| CoreAbility.hasAbility(player, AirSpout.class) 
-				|| CoreAbility.hasAbility(player, SandSpout.class)) {
+		else if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class) || CoreAbility.hasAbility(player, SandSpout.class)) {
 			Vector vel = new Vector();
 			vel.setX(event.getTo().getX() - event.getFrom().getX());
 			vel.setY(event.getTo().getY() - event.getFrom().getY());
@@ -1109,8 +1101,8 @@ public class PKListener implements Listener {
 					return;
 				}
 			}
-		} 
-		
+		}
+
 		else {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer != null) {
@@ -1123,17 +1115,17 @@ public class PKListener implements Listener {
 				}
 			}
 		}
-		
+
 		if (event.getTo().getY() > event.getFrom().getY()) {
 			if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
 				int current = player.getStatistic(Statistic.JUMP);
 				int last = JUMPS.get(player);
-				
+
 				if (last != current) {
 					JUMPS.put(player, current);
-					
+
 					double yDif = event.getTo().getY() - event.getFrom().getY();
-					
+
 					if ((yDif < 0.035 || yDif > 0.037) && (yDif < 0.116 || yDif > 0.118)) {
 						Bukkit.getServer().getPluginManager().callEvent(new PlayerJumpEvent(player, yDif));
 					}
@@ -1141,7 +1133,7 @@ public class PKListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onPlayerGamemodeChange(PlayerGameModeChangeEvent event) {
 		Player player = event.getPlayer();
@@ -1149,18 +1141,17 @@ public class PKListener implements Listener {
 			if (!Commands.invincible.contains(player.getName())) {
 				Commands.invincible.add(player.getName());
 			}
-		}
-		else if (!(event.getNewGameMode() == GameMode.SPECTATOR) && Commands.invincible.contains(player.getName())) {
+		} else if (!(event.getNewGameMode() == GameMode.SPECTATOR) && Commands.invincible.contains(player.getName())) {
 			Commands.invincible.remove(player.getName());
 		}
-		
+
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		
+
 		if (bPlayer != null) {
 			if (TOGGLED_OUT.contains(player.getUniqueId()) && bPlayer.isToggled()) {
 				TOGGLED_OUT.remove(player.getUniqueId());
@@ -1178,7 +1169,7 @@ public class PKListener implements Listener {
 		EarthArmor earthArmor = CoreAbility.getAbility(player, EarthArmor.class);
 		PlantArmor plantArmor = CoreAbility.getAbility(player, PlantArmor.class);
 		MetalClips metalClips = CoreAbility.getAbility(player, MetalClips.class);
-		
+
 		if (earthArmor != null) {
 			earthArmor.remove();
 		}
@@ -1211,11 +1202,8 @@ public class PKListener implements Listener {
 
 		String abilName = bPlayer.getBoundAbilityName();
 		if (Suffocate.isBreathbent(player)) {
-			if (!abilName.equalsIgnoreCase("AirSwipe") 
-					|| !abilName.equalsIgnoreCase("FireBlast") 
-					|| !abilName.equalsIgnoreCase("EarthBlast") 
-					|| !abilName.equalsIgnoreCase("WaterManipulation")) {
-				if(!player.isSneaking()) {
+			if (!abilName.equalsIgnoreCase("AirSwipe") || !abilName.equalsIgnoreCase("FireBlast") || !abilName.equalsIgnoreCase("EarthBlast") || !abilName.equalsIgnoreCase("WaterManipulation")) {
+				if (!player.isSneaking()) {
 					event.setCancelled(true);
 				}
 			}
@@ -1232,7 +1220,6 @@ public class PKListener implements Listener {
 
 		AirScooter.check(player);
 
-
 		CoreAbility coreAbil = bPlayer.getBoundAbility();
 		String abil = bPlayer.getBoundAbilityName();
 		if (coreAbil == null) {
@@ -1243,7 +1230,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		if (!player.isSneaking() && bPlayer.canBendIgnoreCooldowns(coreAbil)) {
 			if (coreAbil instanceof AddonAbility) {
 				return;
@@ -1313,7 +1300,7 @@ public class PKListener implements Listener {
 					new WaterArms(player);
 				}
 			}
-			
+
 			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
 				if (GeneralMethods.isWeapon(player.getItemInHand().getType()) && !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
 					return;
@@ -1391,14 +1378,14 @@ public class PKListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSlotChange(PlayerItemHeldEvent event) {
 		Player player = event.getPlayer();
-		
+
 		WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 		if (waterArms != null) {
-			waterArms.displayBoundMsg(event.getNewSlot()+1);
+			waterArms.displayBoundMsg(event.getNewSlot() + 1);
 			return;
 		}
 	}
@@ -1410,14 +1397,20 @@ public class PKListener implements Listener {
 		}
 
 		Player player = event.getPlayer();
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);		
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
 		} else if (RIGHT_CLICK_INTERACT.contains(player.getUniqueId())) {
 			return;
 		}
-		
-		ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
+
+		Entity target = GeneralMethods.getTargetedEntity(player, 3);
+		if (target != null && !(target.equals(player)) && target instanceof LivingEntity) {
+			ComboManager.addComboAbility(player, ClickType.LEFT_CLICK_ENTITY);
+
+		} else {
+			ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
+		}
 
 		if (Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
@@ -1428,7 +1421,7 @@ public class PKListener implements Listener {
 		} else if (bPlayer.isChiBlocked()) {
 			event.setCancelled(true);
 			return;
-		} else if (GeneralMethods.isInteractable(player.getTargetBlock((Set<Material>)null, 5))) {
+		} else if (GeneralMethods.isInteractable(player.getTargetBlock((Set<Material>) null, 5))) {
 			event.setCancelled(true);
 			return;
 		} else if (player.getItemInHand().getType() == Material.FISHING_ROD) {
@@ -1440,7 +1433,7 @@ public class PKListener implements Listener {
 
 		String abil = bPlayer.getBoundAbilityName();
 		CoreAbility coreAbil = bPlayer.getBoundAbility();
-		
+
 		if (coreAbil == null && !MultiAbilityManager.hasMultiAbilityBound(player)) {
 			return;
 		} else if (bPlayer.canBendIgnoreCooldowns(coreAbil)) {
@@ -1656,11 +1649,7 @@ public class PKListener implements Listener {
 		}
 
 		Player player = event.getPlayer();
-		if (CoreAbility.hasAbility(player, Tornado.class) 
-				|| Bloodbending.isBloodbent(player) 
-				|| Suffocate.isBreathbent(player) 
-				|| CoreAbility.hasAbility(player, FireJet.class) 
-				|| CoreAbility.hasAbility(player,  AvatarState.class)) {
+		if (CoreAbility.hasAbility(player, Tornado.class) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player) || CoreAbility.hasAbility(player, FireJet.class) || CoreAbility.hasAbility(player, AvatarState.class)) {
 			event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
 		}
 	}
@@ -1690,7 +1679,7 @@ public class PKListener implements Listener {
 	public static ArrayList<UUID> getToggledOut() {
 		return TOGGLED_OUT;
 	}
-	
+
 	public static Map<Player, Integer> getJumpStatistics() {
 		return JUMPS;
 	}
