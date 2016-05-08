@@ -240,6 +240,9 @@ public class IceSpikeBlast extends IceAbility {
 			destination = target.getEyeLocation();
 		}
 
+		if (sourceBlock == null) {
+			return;
+		}
 		location = sourceBlock.getLocation();
 		if (destination.distanceSquared(location) < 1) {
 			return;
