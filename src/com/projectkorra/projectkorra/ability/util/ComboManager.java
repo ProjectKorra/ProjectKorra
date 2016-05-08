@@ -22,7 +22,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.waterbending.WaterCombo;
 
 public class ComboManager {
-	
+
 	private static final long CLEANUP_DELAY = 20 * 600;
 	private static final ConcurrentHashMap<String, ArrayList<AbilityInformation>> RECENTLY_USED = new ConcurrentHashMap<>();
 	private static final HashMap<String, ComboAbilityInfo> COMBO_ABILITIES = new HashMap<>();
@@ -34,7 +34,7 @@ public class ComboManager {
 		COMBO_ABILITIES.clear();
 		DESCRIPTIONS.clear();
 		INSTRUCTIONS.clear();
-		
+
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.FireCombo.FireKick.Enabled")) {
 			ArrayList<AbilityInformation> fireKick = new ArrayList<>();
 			fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
@@ -157,15 +157,15 @@ public class ComboManager {
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Chi.ChiCombo.Immobilize.Enabled")) {
 			ArrayList<AbilityInformation> immobilize = new ArrayList<>();
-			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
-			immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK));
-			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
-			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
+			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
+			immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK_ENTITY));
+			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
+			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
 			COMBO_ABILITIES.put("Immobilize", new ComboAbilityInfo("Immobilize", immobilize, ChiCombo.class));
 			DESCRIPTIONS.put("Immobilize", ConfigManager.languageConfig.get().getString("Abilities.Chi.Combo.Immobilize.Description"));
 			INSTRUCTIONS.put("Immobilize", "QuickStrike (Left Click) > SwiftKick (Left Click) > QuickStrike (Left Click) > QuickStrike (Left Click)");
 		}
-		
+
 		startCleanupTask();
 	}
 
@@ -174,7 +174,7 @@ public class ComboManager {
 		if (bPlayer == null) {
 			return;
 		}
-		
+
 		String abilityName = bPlayer.getBoundAbilityName();
 		if (abilityName == null) {
 			return;
@@ -247,11 +247,16 @@ public class ComboManager {
 
 			boolean isValid = true;
 			for (int i = 1; i <= size; i++) {
-				if (!playerCombo.get(playerCombo.size() - i).equalsWithoutTime(abilityCombo.get(abilityCombo.size() - i))) {
+				AbilityInformation playerInfo = playerCombo.get(playerCombo.size() - i);
+				AbilityInformation comboInfo = abilityCombo.get(abilityCombo.size() - i);
+				if (playerInfo.getAbilityName().equals(comboInfo.getAbilityName()) && playerInfo.getClickType() == ClickType.LEFT_CLICK_ENTITY && comboInfo.getClickType() == ClickType.LEFT_CLICK) {
+					continue;
+				} else if (!playerInfo.equalsWithoutTime(comboInfo)) {
 					isValid = false;
 					break;
 				}
 			}
+
 			if (isValid) {
 				return customAbility;
 			}
@@ -303,7 +308,7 @@ public class ComboManager {
 			if (coreAbil == null) {
 				continue;
 			}
-			
+
 			Element abilElement = coreAbil.getElement();
 			if (abilElement instanceof SubElement) {
 				abilElement = ((SubElement) abilElement).getParentElement();
@@ -324,7 +329,7 @@ public class ComboManager {
 			}
 		}.runTaskTimer(ProjectKorra.plugin, 0, CLEANUP_DELAY);
 	}
-	
+
 	public static long getCleanupDelay() {
 		return CLEANUP_DELAY;
 	}
@@ -345,13 +350,11 @@ public class ComboManager {
 		return INSTRUCTIONS;
 	}
 
-
-
 	/**
 	 * Contains information on an ability used in a combo.
 	 * 
 	 * @author kingbirdy
-	 *
+	 * 
 	 */
 	public static class AbilityInformation {
 		private String abilityName;

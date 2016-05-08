@@ -13,7 +13,12 @@ public enum ClickType {
 	 */
 	LEFT_CLICK,
 	/**
-	 * For any instance of right clicking that isn't with an entity or a block (Right clicking air will not work).
+	 * For any instance of right clicking that isn't with an entity or a block
+	 * (Right clicking air will not work).
+	 */
+	LEFT_CLICK_ENTITY,
+	/**
+	 * Player has left clicked and hit an entity.
 	 */
 	RIGHT_CLICK,
 	/**
@@ -27,7 +32,7 @@ public enum ClickType {
 	/**
 	 * The shift key being released.
 	 */
-	SHIFT_DOWN, 
+	SHIFT_DOWN,
 	/**
 	 * The shift key being pressed.
 	 */

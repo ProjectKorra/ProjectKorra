@@ -13,7 +13,7 @@ public class QuickStrike extends ChiAbility {
 	private int damage;
 	private int blockChance;
 	private Entity target;
-	
+
 	public QuickStrike(Player player) {
 		super(player);
 		if (!bPlayer.canBend(this)) {
@@ -28,7 +28,6 @@ public class QuickStrike extends ChiAbility {
 		start();
 	}
 
-	
 	@Override
 	public void progress() {
 		if (target == null) {
@@ -47,7 +46,7 @@ public class QuickStrike extends ChiAbility {
 	public String getName() {
 		return "QuickStrike";
 	}
-	
+
 	@Override
 	public Location getLocation() {
 		return player != null ? player.getLocation() : null;
@@ -57,7 +56,7 @@ public class QuickStrike extends ChiAbility {
 	public long getCooldown() {
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -91,5 +90,5 @@ public class QuickStrike extends ChiAbility {
 	public void setTarget(Entity target) {
 		this.target = target;
 	}
-	
+
 }
