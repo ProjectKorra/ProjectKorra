@@ -208,3 +208,8 @@ permissions:
         bending.ability.JetBlast: true
         bending.ability.JetBlaze: true
         bending.ability.FireWheel: true
+  bending.ability.ChiCombo:
+    default: false
+    description: Grants access to all ChiCombos.
+    children:
+        bending.ability.Immobilize: true

@@ -47,16 +47,13 @@ public class WhoCommand extends PKCommand {
 
 		staff.put("a197291a-cd78-43bb-aa38-52b7c82bc68c", ChatColor.DARK_PURPLE + "ProjectKorra Lead Developer"); // OmniCypher
 
-		staff.put("929b14fc-aaf1-4f0f-84c2-f20c55493f53", ChatColor.GREEN + "ProjectKorra Head Concept Designer"); // Vidcom
-
-		staff.put("15d1a5a7-76ef-49c3-b193-039b27c47e30", ChatColor.BLUE + "ProjectKorra Digital Director"); // Kiam
+		staff.put("15d1a5a7-76ef-49c3-b193-039b27c47e30", ChatColor.GREEN + "ProjectKorra Head Concept Designer"); // Kiam
 		
 		staff.put("1553482a-5e86-4270-9262-b57c11151074", ChatColor.GOLD + "ProjectKorra Head Community Moderator"); // Pickle9775
 
 		staff.put("96f40c81-dd5d-46b6-9afe-365114d4a082", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Coolade
 		staff.put("833a7132-a9ec-4f0a-ad9c-c3d6b8a1c7eb", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Jacklin213
 		staff.put("4eb6315e-9dd1-49f7-b582-c1170e497ab0", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // jedk1
-		staff.put("5031c4e3-8103-49ea-b531-0d6ae71bad69", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Simplicitee
 		staff.put("d7757be8-86de-4898-ab4f-2b1b2fbc3dfa", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // StrangeOne101
 		staff.put("3b5bdfab-8ae1-4794-b160-4f33f31fde99", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // kingbirdy
 		staff.put("dedf335b-d282-47ab-8ffc-a80121661cd1", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // grasshopperMatt
@@ -64,11 +61,11 @@ public class WhoCommand extends PKCommand {
 		staff.put("7bb267eb-cf0b-4fb9-a697-27c2a913ed92", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Finn
 
 		staff.put("623df34e-9cd4-438d-b07c-1905e1fc46b6", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Loony
-		staff.put("38217173-8a32-4ba7-9fe1-dd4fed031a74", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Easte
 		staff.put("3c484e61-7876-46c0-98c9-88c7834dc96c", ChatColor.GREEN + "ProjectKorra Concept Designer"); // SamuraiSnowman (Zmeduna)
 		staff.put("1d4a8a47-1f3b-40a6-b412-c15d874491b8", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Fyf 
 		
 		staff.put("3d5bc713-ab8b-4125-b5ba-a1c1c2400b2c", ChatColor.GOLD + "ProjectKorra Community Moderator"); // Gold
+		staff.put("38217173-8a32-4ba7-9fe1-dd4fed031a74", ChatColor.GOLD + "ProjectKorra Community Moderator"); // Easte
 	}
 
 	@Override
