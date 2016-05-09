@@ -53,6 +53,8 @@ public class TempBlock {
 	}
 
 	public static boolean isTempBlock(Block block) {
+		if (instances.containsKey(block) == null)
+			return false;
 		return instances.containsKey(block);
 	}
 
