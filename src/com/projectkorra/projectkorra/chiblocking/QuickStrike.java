@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.util.DamageHandler;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class QuickStrike extends ChiAbility {
 
@@ -16,15 +16,15 @@ public class QuickStrike extends ChiAbility {
 
 	public QuickStrike(Player player) {
 		super(player);
+		
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
+		
 		this.damage = getConfig().getInt("Abilities.Chi.QuickStrike.Damage");
 		this.blockChance = getConfig().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
-		target = GeneralMethods.getTargetedEntity(player, 2);
-		if (target == null) {
-			return;
-		}
+		this.target = GeneralMethods.getTargetedEntity(player, 3);
+		
 		start();
 	}
 

@@ -157,10 +157,10 @@ public class ComboManager {
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Chi.ChiCombo.Immobilize.Enabled")) {
 			ArrayList<AbilityInformation> immobilize = new ArrayList<>();
-			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
-			immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK_ENTITY));
-			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
-			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
+			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
+			immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK));
+			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
+			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK));
 			COMBO_ABILITIES.put("Immobilize", new ComboAbilityInfo("Immobilize", immobilize, ChiCombo.class));
 			DESCRIPTIONS.put("Immobilize", ConfigManager.languageConfig.get().getString("Abilities.Chi.Combo.Immobilize.Description"));
 			INSTRUCTIONS.put("Immobilize", "QuickStrike (Left Click) > SwiftKick (Left Click) > QuickStrike (Left Click) > QuickStrike (Left Click)");
@@ -249,7 +249,7 @@ public class ComboManager {
 			for (int i = 1; i <= size; i++) {
 				AbilityInformation playerInfo = playerCombo.get(playerCombo.size() - i);
 				AbilityInformation comboInfo = abilityCombo.get(abilityCombo.size() - i);
-				if (playerInfo.getAbilityName().equals(comboInfo.getAbilityName()) && playerInfo.getClickType() == ClickType.LEFT_CLICK_ENTITY && comboInfo.getClickType() == ClickType.LEFT_CLICK) {
+				if (playerInfo.getAbilityName().equals(comboInfo.getAbilityName()) && comboInfo.getClickType() == ClickType.LEFT_CLICK) {
 					continue;
 				} else if (!playerInfo.equalsWithoutTime(comboInfo)) {
 					isValid = false;

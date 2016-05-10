@@ -1,17 +1,17 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
  * BlockSource is a class that handles water and earth bending sources. When a
@@ -28,6 +28,7 @@ public class BlockSource {
 	 * 
 	 * @author kingbirdy
 	 */
+	
 	public static enum BlockSourceType {
 		WATER, ICE, PLANT, EARTH, METAL, LAVA, SNOW
 	}

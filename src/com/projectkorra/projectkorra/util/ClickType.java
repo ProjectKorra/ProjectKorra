@@ -13,20 +13,15 @@ public enum ClickType {
 	 */
 	LEFT_CLICK,
 	/**
-	 * For any instance of right clicking that isn't with an entity or a block
-	 * (Right clicking air will not work).
+	 * Player has swung their arm and hit a block.
 	 */
-	LEFT_CLICK_ENTITY,
+	LEFT_CLICK_BLOCK,
 	/**
-	 * Player has left clicked and hit an entity.
+	 * Player has right clicked.
 	 */
 	RIGHT_CLICK,
 	/**
-	 * Specifically for right clicking an entity.
-	 */
-	RIGHT_CLICK_ENTITY,
-	/**
-	 * Specifically for right clicking a block.
+	 * Player has right clicked a block.
 	 */
 	RIGHT_CLICK_BLOCK,
 	/**

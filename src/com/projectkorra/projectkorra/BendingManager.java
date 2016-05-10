@@ -1,22 +1,21 @@
 package com.projectkorra.projectkorra;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.chiblocking.ChiCombo;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
-import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.util.RevertChecker;
-import com.projectkorra.projectkorra.util.TempPotionEffect;
-import com.projectkorra.rpg.RPGMethods;
+import java.util.HashMap;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.UUID;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.util.RevertChecker;
+import com.projectkorra.projectkorra.util.TempPotionEffect;
+import com.projectkorra.rpg.RPGMethods;
 
 public class BendingManager implements Runnable {
 
@@ -110,7 +109,6 @@ public class BendingManager implements Runnable {
 			handleDayNight();
 			Flight.handle();
 			RevertChecker.revertAirBlocks();
-			ChiCombo.handleParalysis();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
 		} catch (Exception e) {
