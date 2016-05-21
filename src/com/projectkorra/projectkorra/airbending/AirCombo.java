@@ -42,7 +42,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 	private double range;
 	private double knockback;
 	private double airStreamMaxEntityHeight;
-	private double airStreamEntityCarryDuration;
+	private double airStreamDuration;
 	private double twisterHeight;
 	private double twisterRadius;
 	private double twisterDegreeParticles;
@@ -88,7 +88,8 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			this.speed = getConfig().getDouble("Abilities.Air.AirCombo.AirStream.Speed");
 			this.cooldown = getConfig().getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
 			this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Air.AirCombo.AirStream.EntityHeight");
-			this.airStreamEntityCarryDuration = getConfig().getLong("Abilities.Air.AirCombo.AirStream.EntityDuration");
+			this.airStreamDuration = getConfig().getLong("Abilities.Air.AirCombo.AirStream.Duration");	
+			this.time = System.currentTimeMillis();
 		} else if (ability.equalsIgnoreCase("AirSweep")) {
 			this.damage = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
 			this.range = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Range");
@@ -103,8 +104,9 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			this.range = AvatarState.getValue(range);
 			this.knockback = knockback * 1.4;
 			this.airStreamMaxEntityHeight = AvatarState.getValue(airStreamMaxEntityHeight);
-			this.airStreamEntityCarryDuration = AvatarState.getValue(airStreamEntityCarryDuration);
+			this.airStreamDuration = AvatarState.getValue(airStreamDuration);
 		}
+		
 		bPlayer.addCooldown(this);
 		start();
 	}
@@ -179,11 +181,12 @@ public class AirCombo extends AirAbility implements ComboAbility {
 				}
 				entity.setVelocity(forceDir.clone().normalize().multiply(0.3));
 			}
-		} else if (abilityName.equalsIgnoreCase("AirStream")) {
+		} else if (abilityName.equalsIgnoreCase("AirStream")) {		
 			if (destination == null) {
 				origin = player.getEyeLocation();
 				currentLoc = origin.clone();
 			}
+			
 			Entity target = GeneralMethods.getTargetedEntity(player, range);
 			if (target instanceof Player) {
 				if (Commands.invincible.contains(((Player) target).getName())) {
@@ -209,7 +212,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			} else if (Math.abs(player.getLocation().distanceSquared(currentLoc)) > range * range) {
 				remove();
 				return;
-			} else if (affectedEntities.size() > 0 && System.currentTimeMillis() - time >= airStreamEntityCarryDuration) {
+			} else if (affectedEntities.size() > 0 && System.currentTimeMillis() - time >= airStreamDuration) {
 				remove();
 				return;
 			} else if (!isTransparent(currentLoc.getBlock())) {
@@ -249,10 +252,6 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			}
 
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(currentLoc, 2.8)) {
-				if (affectedEntities.size() == 0) {
-					// Set the timer to remove the ability
-					time = System.currentTimeMillis();
-				}
 				if (!entity.equals(player) && !affectedEntities.contains(entity)) {
 					affectedEntities.add(entity);
 					if (entity instanceof Player) {
@@ -550,12 +549,12 @@ public class AirCombo extends AirAbility implements ComboAbility {
 		this.airStreamMaxEntityHeight = airStreamMaxEntityHeight;
 	}
 
-	public double getAirStreamEntityCarryDuration() {
-		return airStreamEntityCarryDuration;
+	public double getAirStreamDuration() {
+		return airStreamDuration;
 	}
 
-	public void setAirStreamEntityCarryDuration(double airStreamEntityCarryDuration) {
-		this.airStreamEntityCarryDuration = airStreamEntityCarryDuration;
+	public void setAirStreamDuration(double airStreamDuration) {
+		this.airStreamDuration = airStreamDuration;
 	}
 
 	public double getTwisterHeight() {
@@ -654,3 +653,4 @@ public class AirCombo extends AirAbility implements ComboAbility {
 	}
 		
 }
+

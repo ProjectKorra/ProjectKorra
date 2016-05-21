@@ -573,7 +573,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirCombo.AirStream.Enabled", true);
 			config.addDefault("Abilities.Air.AirCombo.AirStream.Speed", 0.5);
 			config.addDefault("Abilities.Air.AirCombo.AirStream.Range", 40);
-			config.addDefault("Abilities.Air.AirCombo.AirStream.EntityDuration", 4000);
+			config.addDefault("Abilities.Air.AirCombo.AirStream.Duration", 6000);
 			config.addDefault("Abilities.Air.AirCombo.AirStream.EntityHeight", 14);
 			config.addDefault("Abilities.Air.AirCombo.AirStream.Cooldown", 7000);
 			config.addDefault("Abilities.Air.AirCombo.AirSweep.Enabled", true);
@@ -1066,7 +1066,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 1000);
 
 			config.addDefault("Abilities.Chi.ChiCombo.Immobilize.Enabled", true);
-			config.addDefault("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration", 3500);
+			config.addDefault("Abilities.Chi.ChiCombo.Immobilize.Duration", 3500);
+			config.addDefault("Abilities.Chi.ChiCombo.Immobilize.Distance", 3);
 			config.addDefault("Abilities.Chi.ChiCombo.Immobilize.Cooldown", 15000);
 
 			config.addDefault("Abilities.Chi.AcrobatStance.Enabled", true);
@@ -1079,8 +1080,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.HighJump.Cooldown", 3000);
 
 			config.addDefault("Abilities.Chi.Paralyze.Enabled", true);
-			config.addDefault("Abilities.Chi.Paralyze.Cooldown", 10000);
 			config.addDefault("Abilities.Chi.Paralyze.Duration", 1500);
+			config.addDefault("Abilities.Chi.Paralyze.Distance", 3);
+			config.addDefault("Abilities.Chi.Paralyze.Cooldown", 10000);
 
 			config.addDefault("Abilities.Chi.RapidPunch.Enabled", true);
 			config.addDefault("Abilities.Chi.RapidPunch.Damage", 1);

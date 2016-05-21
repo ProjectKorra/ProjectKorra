@@ -1,149 +1,83 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import java.util.ArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.Ability;
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 
-/*
- * TODO: Combo classes should eventually be rewritten so that each combo is
- * treated as an individual ability. In the mean time, we will just place "fake"
- * classes so that CoreAbility will register each ability.
- */
 public class ChiCombo extends ChiAbility implements ComboAbility {
 
-	/**
-	 * a Map containing every entity which is paralyzed, and the time in
-	 * milliseconds at which they will be unparalyzed.
-	 */
-	private static final ConcurrentHashMap<Entity, Long> PARALYZED_ENTITIES = new ConcurrentHashMap<>();
-
-	private long duration;
-	private long cooldown;
-	private Entity target;
+	private Player player;
 	private String name;
+	private Ability ability;
 
-	public ChiCombo(Player player, String ability) {
+	public ChiCombo(Player player, String name) {
 		super(player);
-
-		this.name = ability;
-
-		if (ability.equalsIgnoreCase("Immobilize")) {
-			this.cooldown = getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.Cooldown");
-			this.duration = getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration");
-			target = GeneralMethods.getTargetedEntity(player, 5);
-			if (!bPlayer.canBendIgnoreBinds(this)) {
-				return;
-			}
-			if (target == null) {
-				remove();
-				return;
-			} else {
-				paralyze(target, duration);
-				start();
-				bPlayer.addCooldown(this);
-			}
+		
+		this.name = name;
+		
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			return;
+		}
+		
+		if (name.equalsIgnoreCase("Immobilize")) {
+			this.ability = new Immobilize(player);
 		}
 	}
-
-	/**
-	 * Paralyzes the target for the given duration. The player will be unable to
-	 * move or interact for the duration.
-	 * 
-	 * @param target The Entity to be paralyzed
-	 * @param duration The time in milliseconds the target will be paralyzed
-	 */
-	private static void paralyze(Entity target, Long duration) {
-		if (target != null) {
-			PARALYZED_ENTITIES.put(target, (System.currentTimeMillis() + duration));
-		}
+	
+	public Player getPlayer() {
+		return player;
 	}
-
-	/**
-	 * Convenience method to see if a Player is paralyzed by a ChiCombo. Calls
-	 * {@link ChiCombo#isParalyzed(Entity)} with the Player casted to an Entity.
-	 * 
-	 * @param player The player to check if they're paralyzed
-	 * @return True if the player is paralyzed, false otherwise
-	 */
-	public static boolean isParalyzed(Player player) {
-		return isParalyzed((Entity) player);
-
+	
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
-
-	/**
-	 * Checks if an entity is paralyzed by a ChiCombo.
-	 * 
-	 * @param entity The entity to check if they're paralyzed
-	 * @return True if the entity is paralyzed, false otherwise
-	 */
-	public static boolean isParalyzed(Entity entity) {
-		return PARALYZED_ENTITIES.containsKey(entity);
-	}
-
-	/**
-	 * Checks the status of all paralyzed entities. If their paralysis has
-	 * expired, it removes them from {@link ChiCombo#PARALYZED_ENTITIES
-	 * paralyzedEntities} and removes the instance of the combo from
-	 * {@link ChiCombo#instances instances}.
-	 */
-	public static void handleParalysis() {
-		for (Entity entity : PARALYZED_ENTITIES.keySet()) {
-			entity.setFallDistance(0);
-			if (PARALYZED_ENTITIES.get(entity) <= System.currentTimeMillis()) {
-				PARALYZED_ENTITIES.remove(entity);
-
-				for (ChiCombo combo : getAbilities(ChiCombo.class)) {
-					if (combo.target == null) {
-						combo.remove();
-						continue;
-					} else if (combo.target.equals(entity)) {
-						combo.remove();
-					}
-				}
-			}
-		}
-	}
-
-	@Override
+	
 	public String getName() {
-		return name != null ? name : "ChiCombo";
+		return name;
 	}
-
-	@Override
-	public void progress() {
+	
+	public void setName(String name) {
+		this.name = name;
 	}
-
-	@Override
-	public Location getLocation() {
-		return target != null ? target.getLocation() : null;
+	
+	public Ability getAbility() {
+		return ability;
 	}
-
-	@Override
-	public long getCooldown() {
-		return cooldown;
+	
+	public void setAbility(Ability ability) {
+		this.ability = ability;
 	}
-
+	
 	@Override
-	public boolean isHiddenAbility() {
-		return true;
+	public void progress() {	
 	}
 
 	@Override
 	public boolean isSneakAbility() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public long getCooldown() {
+		return 0;
+	}
+
+	@Override
+	public Location getLocation() {
+		return null;
 	}
 
 	@Override
@@ -160,45 +94,103 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 	public ArrayList<AbilityInformation> getCombination() {
 		return null;
 	}
+	
+	public class Immobilize extends ChiAbility implements ComboAbility {
 
-	public long getDuration() {
-		return duration;
-	}
+		private Entity target;
+		private long cooldown;		
+		private long duration;
+		private double distance;
 
-	public void setDuration(long duration) {
-		this.duration = duration;
-	}
+		
+		public Immobilize(Player player) {
+			super(player);
+			
+			if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+				return;
+			}
+			
+			this.duration = getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.Duration");
+			this.cooldown = getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.Cooldown");
+			this.distance = getConfig().getDouble("Abilities.Chi.ChiCombo.Immobilize.Distance");
+			
+			this.target = GeneralMethods.getTargetedEntity(player, distance);
+			if (target == null) {
+				return;
+			}
+			
+			new Paralyze(this, target, duration, true, true);
+		}
+		
+		public Entity getTarget() {
+			return target;
+		}
+		
+		public void setTarget(Entity target) {
+			this.target = target;
+		}
+		
+		public long getCooldown() {
+			return cooldown;
+		}
+		
+		public void setCooldown(long cooldown) {
+			this.cooldown = cooldown;
+		}
+		
+		public long getDuration() {
+			return duration;
+		}
+		
+		public void setDuration(long duration)  {
+			this.duration = duration;
+		}
+		
+		public double getDistance() {
+			return distance;
+		}
+		
+		public void setDistance(double distance) {
+			this.distance = distance;
+		}
+		
+		@Override
+		public Location getLocation() {
+			return target != null ? target.getLocation() : null;
+		}
 
-	public Entity getTarget() {
-		return target;
-	}
+		@Override
+		public void progress() {
+		}
 
-	public void setTarget(Entity target) {
-		this.target = target;
-	}
+		@Override
+		public boolean isSneakAbility() {
+			return false;
+		}
 
-	public static ConcurrentHashMap<Entity, Long> getParalyzedEntities() {
-		return PARALYZED_ENTITIES;
-	}
-
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public class Immobilize extends ChiCombo {
-
-		public Immobilize(Player player, String name) {
-			super(player, "Immobilize");
+		@Override
+		public boolean isHarmlessAbility() {
+			return false;
 		}
 
 		@Override
 		public String getName() {
 			return "Immobilize";
 		}
-	}
 
+		@Override
+		public String getInstructions() {
+			return null;
+		}
+
+		@Override
+		public Object createNewComboInstance(Player player) {
+			return null;
+		}
+
+		@Override
+		public ArrayList<AbilityInformation> getCombination() {
+			return null;
+		}
+	}
 }
