@@ -303,6 +303,7 @@ public class BlockSource {
 				return null;
 			}
 			Block tempBlock = blockInfo.getBlock();
+			
 			if (tempBlock == null) {
 				return null;
 			}
