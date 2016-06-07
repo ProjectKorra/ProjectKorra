@@ -389,7 +389,8 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
 		Block block = event.getDamager();
-
+		if (block == null) return;
+		
 		if (TempBlock.isTempBlock(block)) {
 			if (EarthAbility.isEarthbendable(block.getType()) && GeneralMethods.isSolid(block)) {
 				event.setCancelled(true);

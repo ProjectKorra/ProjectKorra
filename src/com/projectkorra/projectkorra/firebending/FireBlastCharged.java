@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -233,7 +234,11 @@ public class FireBlastCharged extends FireAbility {
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this) && !launched) {
 			remove();
 			return;
-		} else if (!player.isSneaking() && !charged) {
+		} else if (!bPlayer.canBend(CoreAbility.getAbility("FireBlast")) && !launched) {
+			remove();
+			return;
+		}
+		else if (!player.isSneaking() && !charged) {
 			remove();
 			return;
 		}
