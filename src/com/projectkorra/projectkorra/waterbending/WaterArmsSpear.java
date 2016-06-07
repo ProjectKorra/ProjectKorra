@@ -151,6 +151,7 @@ public class WaterArmsSpear extends WaterAbility {
 			progressSpear();
 		} else {
 			createIceBall();
+			remove();
 		}
 		
 		if (layer >= spearSphere) {
