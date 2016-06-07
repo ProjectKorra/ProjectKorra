@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -163,6 +164,14 @@ public class FireBlast extends FireAbility {
 			remove();
 			return;
 		}
+		
+		if (isFireBurst && !bPlayer.canBend(CoreAbility.getAbility("FireBurst"))) {
+			remove();
+			return;
+		} else if (!isFireBurst && !bPlayer.canBend(CoreAbility.getAbility("FireBlast"))) {
+			remove();
+			return;
+		} 
 		
 		speedFactor = speed * (ProjectKorra.time_step / 1000.0);
 		ticks++;
