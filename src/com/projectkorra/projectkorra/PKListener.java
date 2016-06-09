@@ -733,11 +733,8 @@ public class PKListener implements Listener {
 		event.setFormat(format);
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerDamage(EntityDamageEvent event) {
-		if (event.isCancelled()) {
-			return;
-		}
 
 		if (event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
