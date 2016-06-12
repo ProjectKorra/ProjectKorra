@@ -341,6 +341,16 @@ public class WaterArms extends WaterAbility {
 				BLOCK_REVERT_TIMES.remove(block);
 			}
 		}
+		
+		for (Block block : WaterArmsSpear.getIceBlocks().keySet()) {
+			long time = WaterArmsSpear.getIceBlocks().get(block);
+			if (System.currentTimeMillis() > time || ignoreTime) {
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock.revertBlock(block, Material.AIR);
+				}
+				WaterArmsSpear.getIceBlocks().remove(block);
+			}
+		}
 	}
 
 	private void checkIfZapped() {
@@ -407,6 +417,7 @@ public class WaterArms extends WaterAbility {
 	public static void removeAllCleanup() {
 		progressRevert(true);
 		BLOCK_REVERT_TIMES.clear();
+		WaterArmsSpear.getIceBlocks().clear();
 		WaterArmsWhip.removeAllCleanup();
 	}
 
