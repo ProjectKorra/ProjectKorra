@@ -384,7 +384,7 @@ public class GeneralMethods {
 				for (int i = 1; i <= 9; i++) {
 					String slot = rs2.getString("slot" + i);
 
-					if (slot != null && !slot.equalsIgnoreCase("null")) {
+					if (slot != null && !slot.equalsIgnoreCase("null") && CoreAbility.getAbility(slot) != null && CoreAbility.getAbility(slot).isEnabled()) {
 						abilities.put(i, slot);
 					}
 				}

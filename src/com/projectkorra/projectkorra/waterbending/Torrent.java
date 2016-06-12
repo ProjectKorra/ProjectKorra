@@ -473,7 +473,7 @@ public class Torrent extends WaterAbility {
 			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				block.setType(Material.WATER);
-				block.setData((byte) 0);
+				block.setData((byte) 8);
 				Torrent tor = new Torrent(player);
 				
 				if (tor.sourceSelected || tor.settingUp) {
