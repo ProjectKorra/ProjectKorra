@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
@@ -23,7 +24,7 @@ import java.util.Random;
 
 public class OctopusForm extends WaterAbility {
 
-	private static final byte FULL = 0;
+	private static final byte FULL = 8;
 
 	private boolean sourceSelected;
 	private boolean settingUp;
@@ -64,6 +65,7 @@ public class OctopusForm extends WaterAbility {
 		}
 		
 		if (!bPlayer.canBend(this)) {
+			remove();
 			return;
 		}
 		
@@ -295,9 +297,12 @@ public class OctopusForm extends WaterAbility {
 			double rtheta = Math.toRadians(theta);
 			Block block = location.clone().add(new Vector(radius * Math.cos(rtheta), 0, radius * Math.sin(rtheta))).getBlock();
 			if (!doneBlocks.contains(block)) {
-				addWater(block);
+				addBaseWater(block);
 				doneBlocks.add(block);
 			}
+		}
+		for (int i = 0; i < 9; i++) {
+			freezeBellow(player.getLocation().add(i / 3 - 1, 0, i % 3 - 1).getBlock());
 		}
 
 		Vector eyeDir = player.getEyeLocation().getDirection();
@@ -367,7 +372,6 @@ public class OctopusForm extends WaterAbility {
 	}
 
 	private void addWater(Block block) {
-		clearNearbyWater(block);
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		}
@@ -378,20 +382,27 @@ public class OctopusForm extends WaterAbility {
 				if (!blocks.contains(tblock)) {
 					tblock.setType(Material.WATER, FULL);
 				}
+				if (isWater(block) && !TempBlock.isTempBlock(block)) {
+					ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(0.5, 0.5, 0.5), 257D);
+				} 
 				newBlocks.add(tblock);
 			}
 		} else if (isWaterbendable(player, block) || block.getType() == Material.FIRE || block.getType() == Material.AIR) {
+			if (isWater(block) && !TempBlock.isTempBlock(block)) {
+				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(0.5, 0.5, 0.5), 257D);
+			} 
 			newBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 		}
 	}
+	
+	private void addBaseWater(Block block) {
+		freezeBellow(block);
+		addWater(block);
+	}
 
-	private void clearNearbyWater(Block block) {
-		BlockFace[] faces = { BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.DOWN };
-		for (BlockFace face : faces) {
-			Block relBlock = block.getRelative(face);
-			if (isWater(relBlock) && !TempBlock.isTempBlock(relBlock)) {
-				PhaseChangeFreeze.freeze(player, relBlock);
-			}
+	private void freezeBellow(Block block) {
+		if (isWater(block.getRelative(BlockFace.DOWN)) && !GeneralMethods.isSolid(block) && !isWater(block)) {//&& !TempBlock.isTempBlock(block)) {
+			PhaseChangeFreeze.freeze(player, block.getRelative(BlockFace.DOWN));
 		}
 	}
 
