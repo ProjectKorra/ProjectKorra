@@ -81,6 +81,9 @@ public class PhaseChangeMelt extends IceAbility {
 		} else if (!Torrent.canThaw(block)) {
 			Torrent.thaw(block);
 			return;
+		} else if (WaterArmsSpear.canThaw(block)) {
+			WaterArmsSpear.thaw(block);
+			return;
 		}
 		
 		WaterSpoutWave.thaw(block);

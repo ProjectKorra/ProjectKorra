@@ -248,7 +248,7 @@ public class BendingPlayer {
 	}
 
 	public boolean canBind(CoreAbility ability) {
-		if (ability == null || !player.isOnline()) {
+		if (ability == null || !player.isOnline() || !ability.isEnabled()) {
 			return false;
 		} else if (!player.hasPermission("bending.ability." + ability.getName())) {
 			return false;

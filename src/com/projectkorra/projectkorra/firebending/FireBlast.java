@@ -33,7 +33,7 @@ public class FireBlast extends FireAbility {
 	private boolean powerFurnace;
 	private boolean showParticles;
 	private boolean dissipate;
-	private boolean isFireBurst;
+	private boolean isFireBurst = false;
 	private int ticks;
 	private long cooldown;
 	private double speedFactor;

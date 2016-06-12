@@ -517,7 +517,7 @@ public abstract class CoreAbility implements Ability {
 		
 		String tag = null;
 		if (this instanceof ComboAbility) {
-			tag = "Abilities." + elementName + "." + elementName + "Combo" + ".Enabled";
+			tag = "Abilities." + elementName + "." + elementName  + "Combo." + getName() + ".Enabled";
 		} else {
 			tag = "Abilities." + elementName + "." + getName() + ".Enabled";
 		}
