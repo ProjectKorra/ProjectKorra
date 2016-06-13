@@ -1,11 +1,8 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -14,9 +11,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WallOfFire extends FireAbility {
 
@@ -98,7 +98,7 @@ public class WallOfFire extends FireAbility {
 			AirAbility.breakBreathbendingHold(entity);
 		}
 		entity.setFireTicks((int) (fireTicks * 20));
-		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
+		entity.setVelocity(player.getLocation().getDirection().multiply(1.2));
 		new FireDamageTimer(entity, player);
 	}
 
