@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
+import java.util.HashSet;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,10 +9,10 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.MetalAbility;
 
-public class Extraction extends EarthAbility {
+public class Extraction extends MetalAbility {
 
 	private int doubleChance;
 	private int tripleChance;
