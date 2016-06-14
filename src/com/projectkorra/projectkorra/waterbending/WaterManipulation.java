@@ -47,6 +47,7 @@ public class WaterManipulation extends WaterAbility {
 	private double deflectRange;
 	private double collisionRadius;
 	private Block sourceBlock;
+	private static Player p;
 	private Location location;
 	private TempBlock trail;
 	private TempBlock trail2;
@@ -59,6 +60,7 @@ public class WaterManipulation extends WaterAbility {
 	public WaterManipulation(Player player) {
 		super(player);
 
+		WaterManipulation.p = player;
 		this.progressing = false;
 		this.falling = false;
 		this.settingUp = false;
@@ -368,7 +370,9 @@ public class WaterManipulation extends WaterAbility {
 		if (isWater(block)) {
 			ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f,
 					5, block.getLocation().clone().add(.5, .5, .5), 257D);
-			AFFECTED_BLOCKS.remove(block);
+			if(block.getLocation().distance(p.getLocation()) > 3) {
+				AFFECTED_BLOCKS.remove(block);
+			}
 		} else {
 			block.setType(Material.STATIONARY_WATER);
 			block.setData((byte) 0);
