@@ -47,7 +47,6 @@ public class WaterManipulation extends WaterAbility {
 	private double deflectRange;
 	private double collisionRadius;
 	private Block sourceBlock;
-	private Player p;
 	private Location location;
 	private TempBlock trail;
 	private TempBlock trail2;
@@ -59,8 +58,7 @@ public class WaterManipulation extends WaterAbility {
 
 	public WaterManipulation(Player player) {
 		super(player);
-		
-		this.p = player;
+
 		this.progressing = false;
 		this.falling = false;
 		this.settingUp = false;
@@ -360,23 +358,23 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void addWater(Block block) {
-		if (!AFFECTED_BLOCKS.containsKey(block)) {
-			AFFECTED_BLOCKS.put(block, block);
-		}
-		if (PhaseChangeFreeze.getFrozenBlocks().containsKey(block)) {
-			PhaseChangeFreeze.getFrozenBlocks().remove(block);
-		}
-		if (isWater(block)) {
-			ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f,
-					5, block.getLocation().clone().add(.5, .5, .5), 257D);
-			if(block.getLocation().distance(p.getLocation()) > 3) {
-				AFFECTED_BLOCKS.remove(block);
+	private static void addWater(Block block) {
+		if (!isWater(block)) {
+			if (!AFFECTED_BLOCKS.containsKey(block)) {
+				AFFECTED_BLOCKS.put(block, block);
 			}
-		} else {
+			if (PhaseChangeFreeze.getFrozenBlocks().containsKey(block)) {
+				PhaseChangeFreeze.getFrozenBlocks().remove(block);
+			}
 			block.setType(Material.STATIONARY_WATER);
 			block.setData((byte) 0);
+		} else {
+			if (isWater(block) && !AFFECTED_BLOCKS.containsKey(block)) {
+				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f,
+						5, block.getLocation().clone().add(.5, .5, .5), 257D);
+			} 
 		}
+
 	}
 
 	public static boolean annihilateBlasts(Location location, double radius, Player player) {
@@ -493,6 +491,9 @@ public class WaterManipulation extends WaterAbility {
 		if (!handledPrepare && WaterReturn.hasWaterBottle(player)) {
 			Location eyeLoc = player.getEyeLocation();
 			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
+			if (!AFFECTED_BLOCKS.containsKey(block)) {
+				AFFECTED_BLOCKS.put(block, block);
+			}
 
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				if (getTargetLocation(player, range).distanceSquared(block.getLocation()) > 1) {
