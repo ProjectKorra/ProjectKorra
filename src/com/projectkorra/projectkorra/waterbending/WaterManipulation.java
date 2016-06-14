@@ -47,7 +47,7 @@ public class WaterManipulation extends WaterAbility {
 	private double deflectRange;
 	private double collisionRadius;
 	private Block sourceBlock;
-	private static Player p;
+	private Player p;
 	private Location location;
 	private TempBlock trail;
 	private TempBlock trail2;
@@ -59,8 +59,8 @@ public class WaterManipulation extends WaterAbility {
 
 	public WaterManipulation(Player player) {
 		super(player);
-
-		WaterManipulation.p = player;
+		
+		this.p = player;
 		this.progressing = false;
 		this.falling = false;
 		this.settingUp = false;
@@ -360,7 +360,7 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	@SuppressWarnings("deprecation")
-	private static void addWater(Block block) {
+	private void addWater(Block block) {
 		if (!AFFECTED_BLOCKS.containsKey(block)) {
 			AFFECTED_BLOCKS.put(block, block);
 		}
