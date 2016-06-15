@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.airbending;
 
 import com.projectkorra.projectkorra.ability.FlightAbility;
+import com.projectkorra.projectkorra.object.PlayerFlyData;
 import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.GameMode;
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AirFlight extends FlightAbility {
 	
 	private static final ConcurrentHashMap<String, Integer> HITS = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<String, Boolean> HOVERING = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<String, PlayerFlyData> HOVERING = new ConcurrentHashMap<>();
 	
 	private boolean firstProgressIteration;
 	private int maxHitsBeforeRemoval;
@@ -67,11 +68,15 @@ public class AirFlight extends FlightAbility {
 
 		if (bool) {
 			if (!HOVERING.containsKey(playername)) {
-				HOVERING.put(playername, true);
+				HOVERING.put(playername, new PlayerFlyData(player.getAllowFlight(), player.isFlying()));
 				player.setVelocity(new Vector(0, 0, 0));
+				player.setFlying(true);
 			}
 		} else {
 			if (HOVERING.containsKey(playername)) {
+				PlayerFlyData pfd = HOVERING.get(playername);
+				player.setAllowFlight(pfd.canFly());
+				player.setFlying(pfd.isFlying());
 				HOVERING.remove(playername);
 			}
 		}
