@@ -47,7 +47,7 @@ public class WhoCommand extends PKCommand {
 
 		staff.put("a197291a-cd78-43bb-aa38-52b7c82bc68c", ChatColor.DARK_PURPLE + "ProjectKorra Lead Developer"); // OmniCypher
 
-		staff.put("15d1a5a7-76ef-49c3-b193-039b27c47e30", ChatColor.GREEN + "ProjectKorra Head Concept Designer"); // Kiam
+		staff.put("15d1a5a7-76ef-49c3-b193-039b27c47e30", ChatColor.GREEN + "ProjectKorra Administrator"); // Kiam
 		
 		staff.put("1553482a-5e86-4270-9262-b57c11151074", ChatColor.GOLD + "ProjectKorra Head Community Moderator"); // Pickle9775
 
@@ -59,6 +59,7 @@ public class WhoCommand extends PKCommand {
 		staff.put("dedf335b-d282-47ab-8ffc-a80121661cd1", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // grasshopperMatt
 		staff.put("679a6396-6a31-4898-8130-044f34bef743", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // savior67
 		staff.put("7bb267eb-cf0b-4fb9-a697-27c2a913ed92", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Finn
+		staff.put("1c30007f-f8ef-4b4e-aff0-787aa1bc09a3", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Sorin
 
 		staff.put("623df34e-9cd4-438d-b07c-1905e1fc46b6", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Loony
 		staff.put("3c484e61-7876-46c0-98c9-88c7834dc96c", ChatColor.GREEN + "ProjectKorra Concept Designer"); // SamuraiSnowman (Zmeduna)
