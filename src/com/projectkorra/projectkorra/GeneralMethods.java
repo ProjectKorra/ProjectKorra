@@ -329,10 +329,10 @@ public class GeneralMethods {
 					if (subelement.equals("-")) {
 						Player playero = Bukkit.getPlayer(uuid);
 						for (SubElement sub : Element.getAllSubElements()) {
-							if (playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase()
-									+ sub.getType().getBending()) && elements.contains(sub.getParentElement())) {
+							if ((playero != null && playero.hasPermission("bending." + sub.getParentElement().getName().toLowerCase() + "." + sub.getName().toLowerCase()
+									+ sub.getType().getBending())) && elements.contains(sub.getParentElement())) {
 								subelements.add(sub);
-								shouldSave = true;
+								shouldSave = true && playero != null;
 							}
 						}
 					}
