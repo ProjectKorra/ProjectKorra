@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
@@ -77,6 +78,10 @@ public class WaterReturn extends WaterAbility {
 		if (isTransparent(player, newblock) && !newblock.isLiquid()) {
 			block.revertBlock();
 			block = new TempBlock(newblock, Material.WATER, (byte) 0);
+		} else if (isTransparent(player, newblock)) {
+			if (isWater(newblock)) {
+				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, newblock.getLocation().clone().add(.5,.5,.5), 257D);
+			}
 		} else {
 			remove();
 			return;
