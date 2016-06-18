@@ -55,6 +55,14 @@ public class ConfigManager {
 			config.addDefault("Chat.Colors.FireSub", "DARK_RED");
 			config.addDefault("Chat.Colors.Chi", "GOLD");
 			
+			config.addDefault("Chat.Prefixes.Air", "[Airbender]");
+			config.addDefault("Chat.Prefixes.Earth", "[Earthbender]");
+			config.addDefault("Chat.Prefixes.Fire", "[Firebender]");
+			config.addDefault("Chat.Prefixes.Water", "[Waterbender]");
+			config.addDefault("Chat.Prefixes.Chi", "[Chiblocker]");
+			config.addDefault("Chat.Prefixes.Avatar", "[Avatar]");
+			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
+			
 			config.addDefault("Extras.Water.NightMessage", "You feel the strength of the rising moon empowering your waterbending.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
 			config.addDefault("Extras.Fire.NightMessage", "You feel the empowering of your firebending subside as the sun sets.");

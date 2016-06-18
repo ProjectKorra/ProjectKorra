@@ -136,7 +136,8 @@ public class WhoCommand extends PKCommand {
 			return;
 		}
 		if (!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
-			sender.sendMessage(ChatColor.GRAY + playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
+			sender.sendMessage(ChatColor.GRAY + playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY)
+			.replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
 		}
 		
 		Player player_ = (Player) (player.isOnline() ? player : null);
