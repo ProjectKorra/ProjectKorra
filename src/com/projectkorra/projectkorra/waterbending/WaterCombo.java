@@ -3,7 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireCombo;
@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * as an individual ability. In the mean time, we will just place "fake"
  * classes so that CoreAbility will register each ability. 
  */
-public class WaterCombo extends WaterAbility implements ComboAbility {
+public class WaterCombo extends IceAbility implements ComboAbility {
 
 	public static enum AbilityState {
 		ICE_PILLAR_RISING, ICE_BULLET_FORMING

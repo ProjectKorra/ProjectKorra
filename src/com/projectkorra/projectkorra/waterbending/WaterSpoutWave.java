@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
@@ -448,6 +449,12 @@ public class WaterSpoutWave extends WaterAbility {
 	@Override
 	public String getName() {
 		return this.isIceWave() ? "IceWave" : "WaterSpout";
+	}
+	
+	@Override
+	public Element getElement() 
+	{
+		return this.isIceWave() ? Element.ICE : Element.WATER;
 	}
 
 	@Override

@@ -55,11 +55,11 @@ public class ConfigManager {
 			config.addDefault("Chat.Colors.FireSub", "DARK_RED");
 			config.addDefault("Chat.Colors.Chi", "GOLD");
 			
-			config.addDefault("Chat.Prefixes.Air", "[Airbender]");
-			config.addDefault("Chat.Prefixes.Earth", "[Earthbender]");
-			config.addDefault("Chat.Prefixes.Fire", "[Firebender]");
-			config.addDefault("Chat.Prefixes.Water", "[Waterbender]");
-			config.addDefault("Chat.Prefixes.Chi", "[Chiblocker]");
+			config.addDefault("Chat.Prefixes.Air", "[Air]");
+			config.addDefault("Chat.Prefixes.Earth", "[Earth]");
+			config.addDefault("Chat.Prefixes.Fire", "[Fire]");
+			config.addDefault("Chat.Prefixes.Water", "[Water]");
+			config.addDefault("Chat.Prefixes.Chi", "[Chi]");
 			config.addDefault("Chat.Prefixes.Avatar", "[Avatar]");
 			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
 			
@@ -398,6 +398,7 @@ public class ConfigManager {
 			config.addDefault("Properties.BendingAffectFallingSand.TNT", true);
 			config.addDefault("Properties.BendingAffectFallingSand.TNTStrengthMultiplier", 1.0);
 			config.addDefault("Properties.GlobalCooldown", 500);
+			config.addDefault("Properties.TogglePassivesWithAllBending", true);
 			config.addDefault("Properties.SeaLevel", 62);
 
 			config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
@@ -1102,8 +1103,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.Smokescreen.Radius", 4);
 			config.addDefault("Abilities.Chi.Smokescreen.Duration", 12);
 
-			config.addDefault("Abilities.Chi.WarriorStance.Enabled", false);
-			config.addDefault("Abilities.Chi.WarriorStance.Strength", 0);
+			config.addDefault("Abilities.Chi.WarriorStance.Enabled", true);
+			config.addDefault("Abilities.Chi.WarriorStance.Strength", 1);
 			config.addDefault("Abilities.Chi.WarriorStance.Resistance", -1);
 
 			config.addDefault("Abilities.Chi.QuickStrike.Enabled", true);

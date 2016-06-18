@@ -154,8 +154,6 @@ public class WaterManipulation extends WaterAbility {
 						new PlantRegrowth(player, sourceBlock);
 					} else if (!isIce(sourceBlock)) {
 						addWater(sourceBlock);
-					} else {
-						sourceBlock.setType(Material.AIR);
 					}
 				}
 			}
@@ -196,7 +194,7 @@ public class WaterManipulation extends WaterAbility {
 				return;
 			} else {
 				if (!progressing) {
-					if (!isWater(sourceBlock.getType())) {
+					if (!(isWater(sourceBlock.getType()) || (isIce(sourceBlock) && bPlayer.canIcebend()) || (isSnow(sourceBlock) && bPlayer.canIcebend()) || (isPlant(sourceBlock) && bPlayer.canPlantbend()))) {
 						remove();
 						return;
 					}
