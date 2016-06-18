@@ -1300,7 +1300,7 @@ public class GeneralMethods {
 			element = bPlayer.getElements().get(0);
 			prefix = element.getPrefix();
 		} else {
-			 prefix = ChatColor.WHITE + "[Nonbender] ";
+			 prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
 		}
 		
 		if (chatEnabled) {
