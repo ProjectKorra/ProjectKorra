@@ -41,7 +41,7 @@ public class BindCommand extends PKCommand {
 
 		CoreAbility coreAbil = CoreAbility.getAbility(args.get(0));
 		if (coreAbil == null || coreAbil.isHiddenAbility() || !coreAbil.isEnabled()) {
-			sender.sendMessage(ChatColor.RED + abilityDoesntExist);
+			sender.sendMessage(ChatColor.RED + abilityDoesntExist.replace("{ability}", args.get(0)));
 			return;
 		}
 		

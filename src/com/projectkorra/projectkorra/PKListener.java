@@ -336,7 +336,7 @@ public class PKListener implements Listener {
 			} else if (element != null) {
 				prefix = element.getPrefix();
 			} else {
-				prefix = ChatColor.WHITE + "[Nonbender] ";
+				prefix = ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes.Nonbender")) + " ";
 			}
 			player.setDisplayName(player.getName());
 			player.setDisplayName(prefix + ChatColor.RESET + player.getDisplayName());

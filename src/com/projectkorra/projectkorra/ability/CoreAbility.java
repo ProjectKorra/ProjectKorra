@@ -595,7 +595,7 @@ public abstract class CoreAbility implements Ability {
 		sb.append("Class->UUID's in memory: " + playerCounter + "\n");
 		sb.append("Abilities in memory\n");
 		for (String className : classCounter.keySet()) {
-			sb.append(className + ": " + classCounter.get(className));
+			sb.append(className + ": " + classCounter.get(className) + "\n");
 		}
 		return sb.toString();
 	}

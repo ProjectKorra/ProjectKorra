@@ -55,6 +55,14 @@ public class ConfigManager {
 			config.addDefault("Chat.Colors.FireSub", "DARK_RED");
 			config.addDefault("Chat.Colors.Chi", "GOLD");
 			
+			config.addDefault("Chat.Prefixes.Air", "[Air]");
+			config.addDefault("Chat.Prefixes.Earth", "[Earth]");
+			config.addDefault("Chat.Prefixes.Fire", "[Fire]");
+			config.addDefault("Chat.Prefixes.Water", "[Water]");
+			config.addDefault("Chat.Prefixes.Chi", "[Chi]");
+			config.addDefault("Chat.Prefixes.Avatar", "[Avatar]");
+			config.addDefault("Chat.Prefixes.Nonbender", "[Nonbender]");
+			
 			config.addDefault("Extras.Water.NightMessage", "You feel the strength of the rising moon empowering your waterbending.");
 			config.addDefault("Extras.Water.DayMessage", "You feel the empowering of your waterbending subside as the moon sets.");
 			config.addDefault("Extras.Fire.NightMessage", "You feel the empowering of your firebending subside as the sun sets.");
@@ -256,6 +264,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Combo.IceBullet.Description", "Using a large cavern of ice, you can punch ice shards at your opponent causing moderate damage. To rapid fire, you must alternate between Left clicking and right clicking with IceBlast.");
 			config.addDefault("Abilities.Water.Combo.IceBullet.DeathMessage", "{victim}'s heart was frozen by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.Combo.IceWave.Description", "PhaseChange your WaterWave into an IceWave that freezes and damages enemies.");
+			config.addDefault("Abilities.Water.Combo.IceWave.DeathMessage", "{victim} was frozen solid by {attacker}'s {ability}");
 			
 			config.addDefault("Abilities.Earth.Description", "Earth is the element of substance. Earthbenders share many of the same fundamental techniques as Waterbenders, but their domain is quite different and more readily accessible. Earthbenders dominate the ground and subterranean, having abilities to pull columns of rock straight up from the earth or drill their way through the mountain. They can also launch themselves through the air using pillars of rock, and will not hurt themselves assuming they land on something they can bend. The more skilled Earthbenders can even bend metal.");
 			config.addDefault("Abilities.Earth.Catapult.Description", "To use, left-click while looking in the direction you want to be launched. " + "A pillar of earth will jut up from under you and launch you in that direction - " + "if and only if there is enough earth behind where you're looking to launch you. " + "Skillful use of this ability takes much time and work, and it does result in the " + "death of certain gung-ho earthbenders. If you plan to use this ability, be sure " + "you've read about your passive ability you innately have as an earthbender.");
@@ -389,6 +398,7 @@ public class ConfigManager {
 			config.addDefault("Properties.BendingAffectFallingSand.TNT", true);
 			config.addDefault("Properties.BendingAffectFallingSand.TNTStrengthMultiplier", 1.0);
 			config.addDefault("Properties.GlobalCooldown", 500);
+			config.addDefault("Properties.TogglePassivesWithAllBending", true);
 			config.addDefault("Properties.SeaLevel", 62);
 
 			config.addDefault("Properties.HorizontalCollisionPhysics.Enabled", true);
@@ -1093,8 +1103,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.Smokescreen.Radius", 4);
 			config.addDefault("Abilities.Chi.Smokescreen.Duration", 12);
 
-			config.addDefault("Abilities.Chi.WarriorStance.Enabled", false);
-			config.addDefault("Abilities.Chi.WarriorStance.Strength", 0);
+			config.addDefault("Abilities.Chi.WarriorStance.Enabled", true);
+			config.addDefault("Abilities.Chi.WarriorStance.Strength", 1);
 			config.addDefault("Abilities.Chi.WarriorStance.Resistance", -1);
 
 			config.addDefault("Abilities.Chi.QuickStrike.Enabled", true);

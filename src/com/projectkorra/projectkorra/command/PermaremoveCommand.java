@@ -70,7 +70,7 @@ public class PermaremoveCommand extends PKCommand {
 			bPlayer.setPermaRemoved(false);
 			GeneralMethods.savePermaRemoved(bPlayer);
 			player.sendMessage(ChatColor.GREEN + this.restored);
-			if (!(sender instanceof Player) || sender.getName().equals(target))
+			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(target))
 				sender.sendMessage(ChatColor.GREEN + this.restoredConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN));
 		} else {
 			bPlayer.getElements().clear();
@@ -79,7 +79,7 @@ public class PermaremoveCommand extends PKCommand {
 			GeneralMethods.savePermaRemoved(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player.getName());
 			player.sendMessage(ChatColor.RED + this.removed);
-			if (!(sender instanceof Player) || sender.getName().equals(target))
+			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(target))
 				sender.sendMessage(ChatColor.RED + this.removedConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.RED));
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.PERMAREMOVE));
 		}

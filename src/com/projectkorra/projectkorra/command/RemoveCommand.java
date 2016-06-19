@@ -142,6 +142,7 @@ public class RemoveCommand extends PKCommand {
 			GeneralMethods.removeUnusableAbilities(player.getName());
 			if (GeneralMethods.hasRPG())
 				RPGMethods.revokeAvatar(bPlayer.getUUID());
+			if (!player.getName().equalsIgnoreCase(sender.getName()))
 			sender.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}",
 					ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
 			player.sendMessage(ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}",

@@ -407,13 +407,46 @@ public enum ParticleEffect {
 	 */
 	ITEM_TAKE("take", 40, 8),
 	/**
-	 * A particle effect which is displayed by elder guardians:
+	 * A particle effect (use unknown)
+	 */
+	MOB_APPEARANCE("mobappearance", 41, 8),
+	/**
+	 * A particle effect displayed by end rods and shelker bullets:
 	 * <ul>
-	 * <li>It looks like the shape of the elder guardian
-	 * <li>The speed value has no influence on this particle effect
+	 * <li>Looks like a white twinkly star that rises
 	 * </ul>
 	 */
-	MOB_APPEARANCE("mobappearance", 41, 8);
+	END_ROD("endRod", 42, 9),
+	/**
+	 * A particle effect created by the Ender Dragon when it breathes acid:
+	 * <ul>
+	 * <li>Looks similar to portal particles but bigger
+	 * <li>A purple varaint of the cloud effect
+	 * </ul>
+	 */
+	DRAGON_BREATH("dragonBreath", 43, 9),
+	/**
+	 * A particle effect which is displayed when mobs are damaged:
+	 * <ul>
+	 * <li>Looks like a black heart
+	 * </ul>
+	 */
+	DAMAGE_INDICATOR("damageIndicator", 44, 9),
+	/**
+	 * A particle effect displayed when mobs are attacked with a sword:
+	 * <ul>
+	 * <li>Looks like a sweep of air
+	 * </ul>
+	 */
+	SWEEP("sweepAttack", 45, 9),
+	/***
+	 * A particle effect displayed by floating sand and gravel blocks
+	 * <ul>
+	 * <li>Looks like a yellow/cream colored reddust
+	 * <li>Has a downwards motion by default
+	 * </ul>
+	 */
+	FALLING_DUST("fallingDust", 46, 10);
 
 	private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<String, ParticleEffect>();
 	private static final Map<Integer, ParticleEffect> ID_MAP = new HashMap<Integer, ParticleEffect>();
@@ -1148,7 +1181,7 @@ public enum ParticleEffect {
 				return;
 			}
 			try {
-				version = Integer.parseInt(Character.toString(PackageType.getServerVersion().charAt(3)));
+				version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 				if (version > 7) {
 					enumParticle = PackageType.MINECRAFT_SERVER.getClass("EnumParticle");
 				}

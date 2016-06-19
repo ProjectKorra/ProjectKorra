@@ -102,7 +102,9 @@ public class Element {
 	}
 	
 	public String getPrefix() {
-		return getColor() + "[" + getName() + (getType() != null ? getType().getBender() : "") + "] ";
+		String name_ = name;
+		if (this instanceof SubElement) name_ = ((SubElement)this).parentElement.name;
+		return getColor() + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name_)) + " ";
 	}
 	
 	public ChatColor getColor() {
