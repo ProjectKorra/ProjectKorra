@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.airbending.AirPassive;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.ChiPassive;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
@@ -46,6 +47,10 @@ public class PassiveHandler implements Runnable {
 			return;
 		}
 		
+		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+			return;
+		}
+		
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		
 		if (bPlayer == null) return;
@@ -73,6 +78,10 @@ public class PassiveHandler implements Runnable {
 			return;
 		}
 		
+		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+			return;
+		}
+		
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		
 		if (bPlayer == null) return;
@@ -94,6 +103,10 @@ public class PassiveHandler implements Runnable {
 		int earth = EarthPassive.getSandRunSpeed();
 		
 		if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
+			return;
+		}
+		
+		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return;
 		}
 		
@@ -148,6 +161,10 @@ public class PassiveHandler implements Runnable {
 		int chi = ChiPassive.getJumpPower();
 		
 		if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
+			return;
+		}
+		
+		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return;
 		}
 		

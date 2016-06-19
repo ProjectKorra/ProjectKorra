@@ -116,7 +116,7 @@ public class HelpCommand extends PKCommand {
 			instances.get(arg).help(sender, true);
 		} else if (Arrays.asList(Commands.comboaliases).contains(arg)) { //bending help elementcombo
 			sender.sendMessage(ChatColor.GOLD + properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Combo Name>" + ChatColor.GOLD));
-		} else if (CoreAbility.getAbility(arg) != null && !(CoreAbility.getAbility(arg) instanceof ComboAbility)) { //bending help ability
+		} else if (CoreAbility.getAbility(arg) != null && !(CoreAbility.getAbility(arg) instanceof ComboAbility) && CoreAbility.getAbility(arg).isEnabled() && !CoreAbility.getAbility(arg).isHiddenAbility()) { //bending help ability
 			CoreAbility ability = CoreAbility.getAbility(arg);
 			ChatColor color = ability.getElement().getColor();
 			sender.sendMessage(color + ability.getName() + " - ");
@@ -161,7 +161,7 @@ public class HelpCommand extends PKCommand {
 		}
 		List<String> abils = new ArrayList<String>();
 		for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
-			if ((!(sender instanceof Player) || BendingPlayer.getBendingPlayer(sender.getName()).canBind(coreAbil)) && !coreAbil.getName().toLowerCase().contains("click")) {
+			if ((!(sender instanceof Player) || BendingPlayer.getBendingPlayer(sender.getName()).canBind(coreAbil)) && !coreAbil.isHiddenAbility() && coreAbil.isEnabled()) {
 				abils.add(coreAbil.getName());
 			}
 		}

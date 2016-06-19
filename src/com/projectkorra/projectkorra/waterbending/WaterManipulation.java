@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -86,9 +87,11 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	private void cancelPrevious() {
-		WaterManipulation old = getAbility(player, WaterManipulation.class);
-		if (old != null && !old.progressing) {
-			old.remove();
+		Collection<WaterManipulation> manips = getAbilities(player, WaterManipulation.class);
+		for (WaterManipulation oldmanip : manips) {
+			if (oldmanip != null && !oldmanip.progressing) {
+				oldmanip.remove();
+			}
 		}
 	}
 
@@ -151,8 +154,6 @@ public class WaterManipulation extends WaterAbility {
 						new PlantRegrowth(player, sourceBlock);
 					} else if (!isIce(sourceBlock)) {
 						addWater(sourceBlock);
-					} else {
-						sourceBlock.setType(Material.AIR);
 					}
 				}
 			}
@@ -193,6 +194,10 @@ public class WaterManipulation extends WaterAbility {
 				return;
 			} else {
 				if (!progressing) {
+					if (!(isWater(sourceBlock.getType()) || (isIce(sourceBlock) && bPlayer.canIcebend()) || (isSnow(sourceBlock) && bPlayer.canIcebend()) || (isPlant(sourceBlock) && bPlayer.canPlantbend()))) {
+						remove();
+						return;
+					}
 					sourceBlock.getWorld().playEffect(location, Effect.SMOKE, 4, (int) selectRange);
 					return;
 				}
@@ -380,7 +385,7 @@ public class WaterManipulation extends WaterAbility {
 	public static boolean annihilateBlasts(Location location, double radius, Player player) {
 		boolean broke = false;
 		for (WaterManipulation manip : getAbilities(WaterManipulation.class)) {
-			if (manip.location.getWorld().equals(location.getWorld()) && !player.equals(manip.player)) {
+			if (manip.location.getWorld().equals(location.getWorld()) && !player.equals(manip.player) && manip.progressing) {
 				if (manip.location.distanceSquared(location) <= radius * radius) {
 					manip.remove();
 					broke = true;
@@ -390,11 +395,14 @@ public class WaterManipulation extends WaterAbility {
 		return broke;
 	}
 
+	/**Blocks other water manips*/
 	private static void block(Player player) {
-		for (WaterManipulation manip : getAbilities(player, WaterManipulation.class)) {
+		for (WaterManipulation manip : getAbilities(WaterManipulation.class)) {
 			if (!manip.location.getWorld().equals(player.getWorld())) {
 				continue;
 			} else if (!manip.progressing) {
+				continue;
+			} else if (manip.getPlayer().equals(player)) {
 				continue;
 			} else if (GeneralMethods.isRegionProtectedFromBuild(manip, manip.location)) {
 				continue;

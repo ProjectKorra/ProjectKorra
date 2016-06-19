@@ -1,7 +1,9 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -88,6 +90,15 @@ public class WaterSpoutWave extends WaterAbility {
 
 		this.time = System.currentTimeMillis();
 		this.type = type;
+		
+		if (type == AbilityType.CLICK && CoreAbility.getAbility(player, WaterSpoutWave.class) != null) {
+			WaterSpoutWave wave = CoreAbility.getAbility(player, WaterSpoutWave.class);
+			if (wave.charging || wave.moving) {
+				remove();
+				return;
+			}
+		}
+		
 		start();
 		
 		if (type == AbilityType.CLICK) {
@@ -438,6 +449,12 @@ public class WaterSpoutWave extends WaterAbility {
 	@Override
 	public String getName() {
 		return this.isIceWave() ? "IceWave" : "WaterSpout";
+	}
+	
+	@Override
+	public Element getElement() 
+	{
+		return this.isIceWave() ? Element.ICE : Element.WATER;
 	}
 
 	@Override
