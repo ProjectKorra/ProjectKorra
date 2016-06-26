@@ -88,7 +88,9 @@ public class OctopusForm extends WaterAbility {
 		this.blocks = new ArrayList<TempBlock>();
 		this.newBlocks = new ArrayList<TempBlock>();
 		this.time = System.currentTimeMillis();
-		this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
+		if(!player.isSneaking()) {
+			this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
+		}
 		
 		if (sourceBlock != null) {
 			sourceLocation = sourceBlock.getLocation();
