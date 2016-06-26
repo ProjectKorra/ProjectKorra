@@ -39,6 +39,11 @@ public class AirSpout extends AirAbility {
 		this.interval = getConfig().getLong("Abilities.Air.AirSpout.Interval");
 		this.height = getConfig().getDouble("Abilities.Air.AirSpout.Height");
 
+		double heightRemoveThreshold = 2;
+		if (!isWithinMaxSpoutHeight(heightRemoveThreshold)) {
+			return;
+		}
+		
 		new Flight(player);
 		start();
 		bPlayer.addCooldown(this);
@@ -69,6 +74,18 @@ public class AirSpout extends AirAbility {
 		player.setAllowFlight(true);
 		player.setFlying(true);
 	}
+	
+	private boolean isWithinMaxSpoutHeight(double threshold) {
+		Block ground = getGround();
+		if (ground == null) {
+			return false;
+		}
+		double playerHeight = player.getLocation().getY();
+		if (playerHeight > ground.getLocation().getY() + height + threshold) {
+			return false;
+		}
+		return true;
+	}
 
 	private Block getGround() {
 		Block standingblock = player.getLocation().getBlock();
@@ -84,6 +101,12 @@ public class AirSpout extends AirAbility {
 	@Override
 	public void progress() {
 		if (player.isDead() || !player.isOnline() || !bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			remove();
+			return;
+		}
+		
+		double heightRemoveThreshold = 2;
+		if (!isWithinMaxSpoutHeight(heightRemoveThreshold)) {
 			remove();
 			return;
 		}
