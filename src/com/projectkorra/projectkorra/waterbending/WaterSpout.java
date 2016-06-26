@@ -67,7 +67,12 @@ public class WaterSpout extends WaterAbility {
 		} else if (topBlock.getType() == Material.PACKED_ICE && !canBendOnPackedIce) {
 			return;
 		}
-
+		
+		double heightRemoveThreshold = 2;
+		if (!isWithinMaxSpoutHeight(topBlock.getLocation(), heightRemoveThreshold)) {
+			return;
+		}
+		
 		new Flight(player);
 		player.setAllowFlight(true);
 		start();
@@ -124,6 +129,12 @@ public class WaterSpout extends WaterAbility {
 
 			if (height != -1) {
 				location = base.getLocation();
+				double heightRemoveThreshold = 2;
+				if (!isWithinMaxSpoutHeight(location, heightRemoveThreshold)) {
+					remove();
+					return;
+				}
+				
 				for (int i = 1; i <= height; i++) {
 					block = location.clone().add(0, i, 0).getBlock();
 					
@@ -160,12 +171,24 @@ public class WaterSpout extends WaterAbility {
 		player.setAllowFlight(canFly);
 		player.setFlying(hadFly);
 	}
-
+	
 	public void revertBaseBlock() {
 		if (baseBlock != null) {
 			baseBlock.revertBlock();
 			baseBlock = null;
 		}
+	}
+	
+	private boolean isWithinMaxSpoutHeight(Location baseBlockLocation, double threshold) {
+		if (baseBlockLocation == null) {
+			return false;
+		}
+		double playerHeight = player.getLocation().getY();
+		double maxHeight = isNight(player.getWorld()) ? getNightFactor(height) : height;
+		if (playerHeight > baseBlockLocation.getY() + maxHeight + threshold) {
+			return false;
+		}
+		return true;
 	}
 
 	public void rotateParticles(Block block) {

@@ -53,7 +53,7 @@ public class TempBlock {
 	}
 
 	public static boolean isTempBlock(Block block) {
-		return instances.containsKey(block);
+		return block != null ? instances.containsKey(block) : false;
 	}
 
 	public static boolean isTouchingTempBlock(Block block) {
