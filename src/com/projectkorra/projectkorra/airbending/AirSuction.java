@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,7 +23,7 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 public class AirSuction extends AirAbility {
 
 	private static final int MAX_TICKS = 10000;
-	private static final ConcurrentHashMap<Player, Location> ORIGINS = new ConcurrentHashMap<>();
+	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
 	
 	private boolean hasOtherOrigin;
 	private int ticks;
@@ -335,7 +336,7 @@ public class AirSuction extends AirAbility {
 		this.cooldown = cooldown;
 	}
 
-	public static ConcurrentHashMap<Player, Location> getOrigins() {
+	public static Map<Player, Location> getOrigins() {
 		return ORIGINS;
 	}
 

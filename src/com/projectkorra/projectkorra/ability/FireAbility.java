@@ -21,12 +21,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class FireAbility extends ElementalAbility {
 	
-	private static final ConcurrentHashMap<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
+	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
 	private static final Material[] IGNITABLE_MATERIALS = { Material.BEDROCK, Material.BOOKSHELF, Material.BRICK, Material.CLAY, Material.CLAY_BRICK,
 			Material.COAL_ORE, Material.COBBLESTONE, Material.DIAMOND_ORE, Material.DIAMOND_BLOCK, Material.DIRT,
 			Material.ENDER_STONE, Material.GLOWING_REDSTONE_ORE, Material.GOLD_BLOCK, Material.GRAVEL, Material.GRASS,

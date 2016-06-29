@@ -8,11 +8,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TempBlock {
 
-	public static ConcurrentHashMap<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();
+	public static Map<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();
 
 	private Block block;
 	private Material newtype;

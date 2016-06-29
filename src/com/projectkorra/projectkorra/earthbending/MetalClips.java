@@ -19,12 +19,13 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MetalClips extends MetalAbility {
 	
-	private static final ConcurrentHashMap<Entity, Integer> ENTITY_CLIPS_COUNT = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Entity, MetalClips> TARGET_TO_ABILITY = new ConcurrentHashMap<>();
+	private static final Map<Entity, Integer> ENTITY_CLIPS_COUNT = new ConcurrentHashMap<>();
+	private static final Map<Entity, MetalClips> TARGET_TO_ABILITY = new ConcurrentHashMap<>();
 	private static final Material[] METAL_ITEMS = { 
 		Material.IRON_INGOT, Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, 
 		Material.IRON_BOOTS, Material.IRON_BLOCK, Material.IRON_AXE, Material.IRON_PICKAXE, 
@@ -458,11 +459,11 @@ public class MetalClips extends MetalAbility {
 		return clips != null && player.isSneaking() && clips.targetEntity != null;
 	}
 	
-	public static ConcurrentHashMap<Entity, Integer> getEntityClipsCount() {
+	public static Map<Entity, Integer> getEntityClipsCount() {
 		return ENTITY_CLIPS_COUNT;
 	}
 	
-	public static ConcurrentHashMap<Entity, MetalClips> getTargetToAbility() {
+	public static Map<Entity, MetalClips> getTargetToAbility() {
 		return TARGET_TO_ABILITY;
 	}
 

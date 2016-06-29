@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.airbending;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,7 +35,7 @@ import com.projectkorra.projectkorra.util.Flight;
 public class AirBlast extends AirAbility {
 
 	private static final int MAX_TICKS = 10000;
-	private static final ConcurrentHashMap<Player, Location> ORIGINS = new ConcurrentHashMap<>();
+	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
 
 	private boolean canFlickLevers;
 	private boolean canOpenDoors;

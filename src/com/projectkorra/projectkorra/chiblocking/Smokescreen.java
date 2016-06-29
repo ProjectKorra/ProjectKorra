@@ -12,13 +12,14 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Smokescreen extends ChiAbility {
 
-	private static final ConcurrentHashMap<Integer, Smokescreen> SNOWBALLS = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<String, Long> BLINDED_TIMES = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<String, Smokescreen> BLINDED_TO_ABILITY = new ConcurrentHashMap<>();
+	private static final Map<Integer, Smokescreen> SNOWBALLS = new ConcurrentHashMap<>();
+	private static final Map<String, Long> BLINDED_TIMES = new ConcurrentHashMap<>();
+	private static final Map<String, Smokescreen> BLINDED_TO_ABILITY = new ConcurrentHashMap<>();
 
 	private int duration;
 	private long cooldown;
@@ -136,15 +137,15 @@ public class Smokescreen extends ChiAbility {
 		this.radius = radius;
 	}
 
-	public static ConcurrentHashMap<Integer, Smokescreen> getSnowballs() {
+	public static Map<Integer, Smokescreen> getSnowballs() {
 		return SNOWBALLS;
 	}
 
-	public static ConcurrentHashMap<String, Long> getBlindedTimes() {
+	public static Map<String, Long> getBlindedTimes() {
 		return BLINDED_TIMES;
 	}
 
-	public static ConcurrentHashMap<String, Smokescreen> getBlindedToAbility() {
+	public static Map<String, Smokescreen> getBlindedToAbility() {
 		return BLINDED_TO_ABILITY;
 	}
 

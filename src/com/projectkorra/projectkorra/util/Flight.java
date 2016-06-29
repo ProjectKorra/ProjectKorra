@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.util;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +20,7 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
 public class Flight {
 
-	private static ConcurrentHashMap<Player, Flight> instances = new ConcurrentHashMap<Player, Flight>();
+	private static Map<Player, Flight> instances = new ConcurrentHashMap<Player, Flight>();
 	private static long duration = 5000;
 
 	private Player player;

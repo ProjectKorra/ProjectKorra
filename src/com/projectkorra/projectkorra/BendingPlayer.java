@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,7 +41,7 @@ public class BendingPlayer {
 	/**
 	 * ConcurrentHashMap that contains all instances of BendingPlayer, with UUID key.
 	 */
-	private static final ConcurrentHashMap<UUID, BendingPlayer> PLAYERS = new ConcurrentHashMap<>();
+	private static final Map<UUID, BendingPlayer> PLAYERS = new ConcurrentHashMap<>();
 
 	private boolean permaRemoved;
 	private boolean toggled;
@@ -54,8 +55,8 @@ public class BendingPlayer {
 	private ArrayList<Element> elements;
 	private ArrayList<SubElement> subelements;
 	private HashMap<Integer, String> abilities;
-	private ConcurrentHashMap<String, Long> cooldowns;
-	private ConcurrentHashMap<Element, Boolean> toggledElements;	
+	private Map<String, Long> cooldowns;
+	private Map<Element, Boolean> toggledElements;	
 
 	/**
 	 * Creates a new {@link BendingPlayer}.
@@ -423,7 +424,7 @@ public class BendingPlayer {
 	 * 
 	 * @return map of cooldowns
 	 */
-	public ConcurrentHashMap<String, Long> getCooldowns() {
+	public Map<String, Long> getCooldowns() {
 		return cooldowns;
 	}
 
@@ -735,7 +736,7 @@ public class BendingPlayer {
 	 * 
 	 * @return {@link #PLAYERS}
 	 */
-	public static ConcurrentHashMap<UUID, BendingPlayer> getPlayers() {
+	public static Map<UUID, BendingPlayer> getPlayers() {
 		return PLAYERS;
 	}
 }

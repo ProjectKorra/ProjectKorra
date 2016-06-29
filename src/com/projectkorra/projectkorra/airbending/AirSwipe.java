@@ -26,6 +26,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,7 +51,7 @@ public class AirSwipe extends AirAbility {
 	private Location origin;
 	private Random random;
 	private AirSwipe ability;
-	private ConcurrentHashMap<Vector, Location> elements;
+	private Map<Vector, Location> elements;
 	private ArrayList<Entity> affectedEntities;
 	
 	public AirSwipe(Player player) {
@@ -409,7 +410,7 @@ public class AirSwipe extends AirAbility {
 		this.maxChargeFactor = maxChargeFactor;
 	}
 
-	public ConcurrentHashMap<Vector, Location> getElements() {
+	public Map<Vector, Location> getElements() {
 		return elements;
 	}
 

@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,8 +28,8 @@ public class LavaFlow extends LavaAbility {
 		SHIFT, CLICK
 	}
 
-	private static final ConcurrentHashMap<Block, TempBlock> TEMP_LAVA_BLOCKS = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Block, TempBlock> TEMP_LAND_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, TempBlock> TEMP_LAVA_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, TempBlock> TEMP_LAND_BLOCKS = new ConcurrentHashMap<>();
 
 	private boolean removing;
 	private boolean makeLava;
@@ -452,11 +453,11 @@ public class LavaFlow extends LavaAbility {
 				}
 			}.runTaskLater(ProjectKorra.plugin, (long) (i / shiftRemoveSpeed));
 
-			if (TEMP_LAVA_BLOCKS.contains(tblock)) {
+			if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
 				affectedBlocks.remove(tblock);
 				TEMP_LAVA_BLOCKS.remove(tblock);
 			}
-			if (TEMP_LAND_BLOCKS.contains(tblock)) {
+			if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
 				affectedBlocks.remove(tblock);
 				TEMP_LAND_BLOCKS.remove(tblock);
 			}
@@ -476,11 +477,11 @@ public class LavaFlow extends LavaAbility {
 		for (int i = affectedBlocks.size() - 1; i > -1; i--) {
 			final TempBlock tblock = affectedBlocks.get(i);
 			tblock.revertBlock();
-			if (TEMP_LAVA_BLOCKS.contains(tblock)) {
+			if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
 				affectedBlocks.remove(tblock);
 				TEMP_LAVA_BLOCKS.remove(tblock);
 			}
-			if (TEMP_LAND_BLOCKS.contains(tblock)) {
+			if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
 				affectedBlocks.remove(tblock);
 				TEMP_LAND_BLOCKS.remove(tblock);
 			}
@@ -577,11 +578,11 @@ public class LavaFlow extends LavaAbility {
 		return m;
 	}
 	
-	public static ConcurrentHashMap<Block, TempBlock> getTempLandBlocks() {
+	public static Map<Block, TempBlock> getTempLandBlocks() {
 		return TEMP_LAND_BLOCKS;
 	}
 	
-	public static ConcurrentHashMap<Block, TempBlock> getTempLavaBlocks() {
+	public static Map<Block, TempBlock> getTempLavaBlocks() {
 		return TEMP_LAVA_BLOCKS;
 	}
 

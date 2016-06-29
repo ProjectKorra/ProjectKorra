@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,7 +32,7 @@ public class Tornado extends AirAbility {
 	private Flight flight;
 	private Location origin;
 	private Random random;
-	private ConcurrentHashMap<Integer, Integer> angles;
+	private Map<Integer, Integer> angles;
 
 	public Tornado(Player player) {
 		super(player);
@@ -297,7 +298,7 @@ public class Tornado extends AirAbility {
 		this.currentRadius = currentRadius;
 	}
 
-	public ConcurrentHashMap<Integer, Integer> getAngles() {
+	public Map<Integer, Integer> getAngles() {
 		return angles;
 	}
 }

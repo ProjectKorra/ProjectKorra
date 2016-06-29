@@ -18,11 +18,12 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterArmsSpear extends WaterAbility {
 
-	private static final ConcurrentHashMap<Block, Long> ICE_BLOCKS = new ConcurrentHashMap<Block, Long>();
+	private static final Map<Block, Long> ICE_BLOCKS = new ConcurrentHashMap<Block, Long>();
 	
 	private boolean hitEntity;
 	private boolean canFreeze;
@@ -466,7 +467,7 @@ public class WaterArmsSpear extends WaterAbility {
 		this.location = location;
 	}
 
-	public static ConcurrentHashMap<Block, Long> getIceBlocks() {
+	public static Map<Block, Long> getIceBlocks() {
 		return ICE_BLOCKS;
 	}
 	

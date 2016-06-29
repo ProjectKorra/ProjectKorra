@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -24,7 +25,7 @@ import com.projectkorra.projectkorra.util.TempPotionEffect;
 
 public class Bloodbending extends BloodAbility {
 
-	private static final ConcurrentHashMap<Entity, Location> TARGETED_ENTITIES = new ConcurrentHashMap<Entity, Location>();
+	private static final Map<Entity, Location> TARGETED_ENTITIES = new ConcurrentHashMap<Entity, Location>();
 
 	private boolean canOnlyBeUsedAtNight;
 	private boolean canBeUsedOnUndeadMobs;

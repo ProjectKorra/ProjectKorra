@@ -126,7 +126,7 @@ public class FireBlast extends FireAbility {
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks((int) (fireTicks * 20));
-				DamageHandler.damageEntity(entity, (int) getDayFactor(damage), this);
+				DamageHandler.damageEntity(entity, damage, this);
 				AirAbility.breakBreathbendingHold(entity);
 				new FireDamageTimer(entity, player);
 				remove();

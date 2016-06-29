@@ -3,15 +3,16 @@ package com.projectkorra.projectkorra.util;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TempPotionEffect {
 
-	private static ConcurrentHashMap<LivingEntity, TempPotionEffect> instances = new ConcurrentHashMap<LivingEntity, TempPotionEffect>();
+	private static Map<LivingEntity, TempPotionEffect> instances = new ConcurrentHashMap<LivingEntity, TempPotionEffect>();
 	private static final long tick = 21;
 
 	private int ID = Integer.MIN_VALUE;
-	private ConcurrentHashMap<Integer, PotionInfo> infos = new ConcurrentHashMap<Integer, PotionInfo>();
+	private Map<Integer, PotionInfo> infos = new ConcurrentHashMap<Integer, PotionInfo>();
 	private LivingEntity entity;
 
 	public TempPotionEffect(LivingEntity entity, PotionEffect effect) {
