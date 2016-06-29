@@ -510,6 +510,10 @@ public abstract class CoreAbility implements Ability {
 	
 	@Override
 	public boolean isEnabled() {
+		if (this instanceof AddonAbility) {
+			return true;
+		}
+		
 		String elementName = getElement().getName();
 		if (getElement() instanceof SubElement) {
 			elementName = ((SubElement) getElement()).getParentElement().getName();
