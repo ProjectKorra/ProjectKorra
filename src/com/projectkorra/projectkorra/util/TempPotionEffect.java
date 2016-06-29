@@ -25,7 +25,7 @@ public class TempPotionEffect {
 			TempPotionEffect instance = instances.get(entity);
 			instance.infos.put(instance.ID++, new PotionInfo(starttime, effect));
 			// instance.effects.put(starttime, effect);
-			instances.replace(entity, instance);
+			instances.put(entity, instance);
 		} else {
 			// effects.put(starttime, effect);
 			infos.put(ID++, new PotionInfo(starttime, effect));

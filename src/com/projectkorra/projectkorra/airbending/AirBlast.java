@@ -171,11 +171,8 @@ public class AirBlast extends AirAbility {
 			return;
 		}
 
-		if (ORIGINS.containsKey(player)) {
-			ORIGINS.replace(player, location);
-		} else {
-			ORIGINS.put(player, location);
-		}
+		ORIGINS.put(player, location);
+		
 	}
 
 	private void advanceLocation() {

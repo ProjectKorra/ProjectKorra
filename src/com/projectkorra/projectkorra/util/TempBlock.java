@@ -36,7 +36,7 @@ public class TempBlock {
 				temp.newdata = newdata;
 			}
 			state = temp.state;
-			instances.replace(block, temp);
+			instances.put(block, temp);
 		} else {
 			state = block.getState();
 			block.setType(newtype);

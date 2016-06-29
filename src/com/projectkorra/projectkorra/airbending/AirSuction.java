@@ -115,8 +115,6 @@ public class AirSuction extends AirAbility {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
 			return;
-		} else if (ORIGINS.containsKey(player)) {
-			ORIGINS.replace(player, location);
 		} else {
 			ORIGINS.put(player, location);
 		}

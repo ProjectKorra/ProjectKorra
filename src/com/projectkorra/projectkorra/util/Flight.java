@@ -126,7 +126,7 @@ public class Flight {
 	private void refresh(Player source) {
 		this.source = source;
 		time = System.currentTimeMillis();
-		instances.replace(player, this);
+		instances.put(player, this);
 	}
 
 	public void remove() {

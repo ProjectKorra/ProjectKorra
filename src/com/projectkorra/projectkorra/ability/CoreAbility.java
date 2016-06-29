@@ -479,7 +479,7 @@ public abstract class CoreAbility implements Ability {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
 				e.printStackTrace();
 				addon.stop();
-				ABILITIES_BY_NAME.remove(coreAbil.getName(), coreAbil);				
+				ABILITIES_BY_NAME.remove(name.toLowerCase());				
 			}
 		}
 	}

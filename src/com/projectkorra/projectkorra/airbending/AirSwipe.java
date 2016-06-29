@@ -118,7 +118,7 @@ public class AirSwipe extends AirAbility {
 			Location location = elements.get(direction);
 			if (direction != null && location != null) {
 				location = location.clone().add(direction.clone().multiply(speed));
-				elements.replace(direction, location);
+				elements.put(direction, location);
 
 				if (location.distanceSquared(origin) > range * range
 						|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {

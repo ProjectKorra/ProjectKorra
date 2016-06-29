@@ -65,7 +65,7 @@ public class EarthPassive {
 							affectedBlock.setType(Material.SAND);
 						}
 						if (!SAND_BLOCKS.containsKey(affectedBlock)) {
-							SAND_ID_ENTITIES.putIfAbsent(affectedBlock, type);
+							SAND_ID_ENTITIES.put(affectedBlock, type);
 							SAND_BLOCKS.put(affectedBlock, System.currentTimeMillis());
 						}
 					}
