@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,9 +52,9 @@ import sun.reflect.ReflectionFactory;
  */
 public abstract class CoreAbility implements Ability {
 	
-	private static final ConcurrentHashMap<Class<? extends CoreAbility>, ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>>> INSTANCES = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Class<? extends CoreAbility>, Set<CoreAbility>> INSTANCES_BY_CLASS = new ConcurrentHashMap<>();
-	private static final ConcurrentSkipListMap<String, CoreAbility> ABILITIES_BY_NAME = new ConcurrentSkipListMap<>();
+	private static final Map<Class<? extends CoreAbility>, Map<UUID, Map<Integer, CoreAbility>>> INSTANCES = new ConcurrentHashMap<>();
+	private static final Map<Class<? extends CoreAbility>, Set<CoreAbility>> INSTANCES_BY_CLASS = new ConcurrentHashMap<>();
+	private static final Map<String, CoreAbility> ABILITIES_BY_NAME = new ConcurrentSkipListMap<>();
 	
 	private static int idCounter;
 
@@ -129,7 +130,7 @@ public abstract class CoreAbility implements Ability {
 		UUID uuid = player.getUniqueId();
 
 		if (!INSTANCES.containsKey(clazz)) {
-			INSTANCES.put(clazz, new ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>>());
+			INSTANCES.put(clazz, new ConcurrentHashMap<UUID, Map<Integer, CoreAbility>>());
 		}
 		if (!INSTANCES.get(clazz).containsKey(uuid)) {
 			INSTANCES.get(clazz).put(uuid, new ConcurrentHashMap<Integer, CoreAbility>());
@@ -159,9 +160,9 @@ public abstract class CoreAbility implements Ability {
 		Bukkit.getServer().getPluginManager().callEvent(new AbilityEndEvent(this));
 		removed = true;
 		
-		ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>> classMap = INSTANCES.get(getClass());
+		Map<UUID, Map<Integer, CoreAbility>> classMap = INSTANCES.get(getClass());
 		if (classMap != null) {
-			ConcurrentHashMap<Integer, CoreAbility> playerMap = classMap.get(player.getUniqueId());
+			Map<Integer, CoreAbility> playerMap = classMap.get(player.getUniqueId());
 			if (playerMap != null) {
 				playerMap.remove(this.id);
 				if (playerMap.size() == 0) {
@@ -324,7 +325,7 @@ public abstract class CoreAbility implements Ability {
 	public static Set<Player> getPlayers(Class<? extends CoreAbility> clazz) {
 		HashSet<Player> players = new HashSet<>();
 		if (clazz != null) {
-			ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>> uuidMap = INSTANCES.get(clazz);
+			Map<UUID, Map<Integer, CoreAbility>> uuidMap = INSTANCES.get(clazz);
 			if (uuidMap != null) {
 				for (UUID uuid : uuidMap.keySet()) {
 					Player uuidPlayer = Bukkit.getPlayer(uuid);
@@ -478,7 +479,7 @@ public abstract class CoreAbility implements Ability {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
 				e.printStackTrace();
 				addon.stop();
-				ABILITIES_BY_NAME.remove(coreAbil.getName(), coreAbil);				
+				ABILITIES_BY_NAME.remove(name.toLowerCase());				
 			}
 		}
 	}
@@ -510,6 +511,10 @@ public abstract class CoreAbility implements Ability {
 	
 	@Override
 	public boolean isEnabled() {
+		if (this instanceof AddonAbility) {
+			return true;
+		}
+		
 		String elementName = getElement().getName();
 		if (getElement() instanceof SubElement) {
 			elementName = ((SubElement) getElement()).getParentElement().getName();
@@ -566,9 +571,9 @@ public abstract class CoreAbility implements Ability {
 		int playerCounter = 0;
 		HashMap<String, Integer> classCounter = new HashMap<>();
 		
-		for (ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, CoreAbility>> map1 : INSTANCES.values()) {
+		for (Map<UUID, Map<Integer, CoreAbility>> map1 : INSTANCES.values()) {
 			playerCounter++;
-			for (ConcurrentHashMap<Integer, CoreAbility> map2 : map1.values()) {
+			for (Map<Integer, CoreAbility> map2 : map1.values()) {
 				for (CoreAbility coreAbil : map2.values()) {
 					String simpleName = coreAbil.getClass().getSimpleName();
 					

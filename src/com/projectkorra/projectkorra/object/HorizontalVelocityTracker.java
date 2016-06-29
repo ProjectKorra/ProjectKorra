@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.object;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -24,7 +25,7 @@ import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
  */
 public class HorizontalVelocityTracker {
 	
-	public static ConcurrentHashMap<Entity, HorizontalVelocityTracker> instances = new ConcurrentHashMap<Entity, HorizontalVelocityTracker>();
+	public static Map<Entity, HorizontalVelocityTracker> instances = new ConcurrentHashMap<Entity, HorizontalVelocityTracker>();
 	public boolean hasBeenDamaged = false;
 	public boolean barrier = ConfigManager.defaultConfig.get().getBoolean("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock");
 	private long delay;

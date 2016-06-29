@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.ability.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ import com.projectkorra.projectkorra.waterbending.WaterCombo;
 public class ComboManager {
 
 	private static final long CLEANUP_DELAY = 20 * 600;
-	private static final ConcurrentHashMap<String, ArrayList<AbilityInformation>> RECENTLY_USED = new ConcurrentHashMap<>();
+	private static final Map<String, ArrayList<AbilityInformation>> RECENTLY_USED = new ConcurrentHashMap<>();
 	private static final HashMap<String, ComboAbilityInfo> COMBO_ABILITIES = new HashMap<>();
 	private static final HashMap<String, String> AUTHORS = new HashMap<>();
 	private static final HashMap<String, String> DESCRIPTIONS = new HashMap<>();

@@ -15,12 +15,13 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSpout extends WaterAbility {
 
-	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
+	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
 	private List<TempBlock> blocks = new ArrayList<TempBlock>();
 
 	private boolean canBendOnPackedIce;
@@ -398,7 +399,7 @@ public class WaterSpout extends WaterAbility {
 		this.baseBlock = baseBlock;
 	}
 
-	public static ConcurrentHashMap<Block, Block> getAffectedBlocks() {
+	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
 

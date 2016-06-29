@@ -17,12 +17,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthPassive {
 
-	private static final ConcurrentHashMap<Block, Long> SAND_BLOCKS = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Block, MaterialData> SAND_ID_ENTITIES = new ConcurrentHashMap<>();
+	private static final Map<Block, Long> SAND_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, MaterialData> SAND_ID_ENTITIES = new ConcurrentHashMap<>();
 
 	@SuppressWarnings("deprecation")
 	public static boolean softenLanding(Player player) {
@@ -64,7 +65,7 @@ public class EarthPassive {
 							affectedBlock.setType(Material.SAND);
 						}
 						if (!SAND_BLOCKS.containsKey(affectedBlock)) {
-							SAND_ID_ENTITIES.putIfAbsent(affectedBlock, type);
+							SAND_ID_ENTITIES.put(affectedBlock, type);
 							SAND_BLOCKS.put(affectedBlock, System.currentTimeMillis());
 						}
 					}
@@ -171,11 +172,11 @@ public class EarthPassive {
 		return true;
 	}
 	
-	public static ConcurrentHashMap<Block, Long> getSandBlocks() {
+	public static Map<Block, Long> getSandBlocks() {
 		return SAND_BLOCKS;
 	}
 
-	public static ConcurrentHashMap<Block, MaterialData> getSandIdEntities() {
+	public static Map<Block, MaterialData> getSandIdEntities() {
 		return SAND_ID_ENTITIES;
 	}
 

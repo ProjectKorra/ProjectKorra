@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterArms extends WaterAbility {
@@ -33,7 +34,7 @@ public class WaterArms extends WaterAbility {
 		RIGHT, LEFT;
 	}
 
-	private static final ConcurrentHashMap<Block, Long> BLOCK_REVERT_TIMES = new ConcurrentHashMap<Block, Long>();
+	private static final Map<Block, Long> BLOCK_REVERT_TIMES = new ConcurrentHashMap<Block, Long>();
 	private static final Integer[] UNBREAKABLES = { 7, 8, 9, 10, 11, 49, 54, 90, 119, 120, 130, 146 };
 
 	private boolean cooldownLeft;
@@ -720,7 +721,7 @@ public class WaterArms extends WaterAbility {
 		this.sneakMsg = sneakMsg;
 	}
 
-	public static ConcurrentHashMap<Block, Long> getBlockRevertTimes() {
+	public static Map<Block, Long> getBlockRevertTimes() {
 		return BLOCK_REVERT_TIMES;
 	}
 

@@ -12,11 +12,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Tremorsense extends EarthAbility {
 
-	private static final ConcurrentHashMap<Block, Player> BLOCKS = new ConcurrentHashMap<Block, Player>();
+	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<Block, Player>();
 
 	private byte lightThreshold;
 	private int maxDepth;
@@ -139,7 +140,7 @@ public class Tremorsense extends EarthAbility {
 		}
 	}
 	
-	public static ConcurrentHashMap<Block, Player> getBlocks() {
+	public static Map<Block, Player> getBlocks() {
 		return BLOCKS;
 	}
 

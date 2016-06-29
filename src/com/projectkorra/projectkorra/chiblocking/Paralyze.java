@@ -10,12 +10,13 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Paralyze extends ChiAbility {
 
-	private static final ConcurrentHashMap<Entity, Long> ENTITIES = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Entity, Long> COOLDOWNS = new ConcurrentHashMap<>();
+	private static final Map<Entity, Long> ENTITIES = new ConcurrentHashMap<>();
+	private static final Map<Entity, Long> COOLDOWNS = new ConcurrentHashMap<>();
 
 	private long cooldown;
 	private Entity target;
@@ -121,11 +122,11 @@ public class Paralyze extends ChiAbility {
 		this.target = target;
 	}
 
-	public static ConcurrentHashMap<Entity, Long> getEntities() {
+	public static Map<Entity, Long> getEntities() {
 		return ENTITIES;
 	}
 
-	public static ConcurrentHashMap<Entity, Long> getCooldowns() {
+	public static Map<Entity, Long> getCooldowns() {
 		return COOLDOWNS;
 	}
 
