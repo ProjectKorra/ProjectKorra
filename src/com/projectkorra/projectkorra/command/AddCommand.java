@@ -110,8 +110,10 @@ public class AddCommand extends PKCommand {
 			
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 				sender.sendMessage(color + addedOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
+				target.sendMessage(color + added.replace("{element}", e.getName() + e.getType().getBender()));
 			} else {
 				target.sendMessage(color + added.replace("{element}", e.getName() + e.getType().getBender()));
+				
 			}
 			GeneralMethods.saveElements(bPlayer);
 			GeneralMethods.saveSubElements(bPlayer);
@@ -134,6 +136,7 @@ public class AddCommand extends PKCommand {
 				sender.sendMessage(color + addedOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
 			} else {
 				target.sendMessage(color + added.replace("{element}", sub.getName() + sub.getType().getBender()));
+				
 			}
 			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD));
