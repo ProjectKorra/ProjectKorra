@@ -136,7 +136,7 @@ public class GeneralMethods {
 			Material.WOOD_BUTTON, Material.WOOD_DOOR, Material.WORKBENCH };
 	
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
-	private static final ConcurrentHashMap<String, ConcurrentHashMap<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
+	private static final Map<String, Map<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
 	private static final ArrayList<Ability> INVINCIBLE = new ArrayList<>();
 	private static ProjectKorra plugin;
 
@@ -892,7 +892,14 @@ public class GeneralMethods {
 		float angle = location.getYaw() / 60;
 		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
-
+	
+	public static Plugin getProbending() {
+		if (hasProbending()) {
+			return Bukkit.getServer().getPluginManager().getPlugin("Probending");
+		}
+		return null;
+	}
+	
 	public static Plugin getRPG() {
 		if (hasRPG()) {
 			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG");
@@ -1003,6 +1010,10 @@ public class GeneralMethods {
 	public static boolean hasItems() {
 		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null;
 	}
+	
+	public static boolean hasProbending() {
+		return Bukkit.getServer().getPluginManager().getPlugin("Probending") != null;
+	}
 
 	public static boolean hasRPG() {
 		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG") != null;
@@ -1073,7 +1084,7 @@ public class GeneralMethods {
 			BLOCK_CACHE.put(player.getName(), new ConcurrentHashMap<Block, BlockCacheElement>());
 		}
 
-		ConcurrentHashMap<Block, BlockCacheElement> blockMap = BLOCK_CACHE.get(player.getName());
+		Map<Block, BlockCacheElement> blockMap = BLOCK_CACHE.get(player.getName());
 		Block block = loc.getBlock();
 		if (blockMap.containsKey(block)) {
 			BlockCacheElement elem = blockMap.get(block);
@@ -1425,57 +1436,35 @@ public class GeneralMethods {
 		writeToDebug("");
 		writeToDebug("");
 		writeToDebug("Date Created: " + getCurrentDate());
+		writeToDebug("Java Version: " + Runtime.class.getPackage().getImplementationVersion());
 		writeToDebug("Bukkit Version: " + Bukkit.getServer().getVersion());
 		writeToDebug("");
 		writeToDebug("ProjectKorra (Core) Information");
 		writeToDebug("====================");
 		writeToDebug("Version: " + plugin.getDescription().getVersion());
 		writeToDebug("Author: " + plugin.getDescription().getAuthors());
+		List<String> officialSidePlugins = new ArrayList<String>();
 		if (hasRPG()) {
-			writeToDebug("");
-			writeToDebug("ProjectKorra (RPG) Information");
-			writeToDebug("====================");
-			writeToDebug("Version: " + getRPG().getDescription().getVersion());
-			writeToDebug("Author: " + getRPG().getDescription().getAuthors());
+			officialSidePlugins.add("ProjectKorra RPG v" + getRPG().getDescription().getVersion());
 		}
 		if (hasItems()) {
-			writeToDebug("");
-			writeToDebug("ProjectKorra (Items) Information");
-			writeToDebug("====================");
-			writeToDebug("Version: " + getItems().getDescription().getVersion());
-			writeToDebug("Author: " + getItems().getDescription().getAuthors());
+			officialSidePlugins.add("ProjectKorra Items v" + getItems().getDescription().getVersion());
 		}
 		if (hasSpirits()) {
+			officialSidePlugins.add("ProjectKorra Spirits v" + getSpirits().getDescription().getVersion());
+		}
+		if (hasProbending()) {
+			officialSidePlugins.add("Probending v" + getProbending().getDescription().getVersion());
+		}
+		if (!officialSidePlugins.isEmpty()) {
 			writeToDebug("");
-			writeToDebug("ProjectKorra (Spirits) Information");
+			writeToDebug("ProjectKorra (Side Plugin) Information");
 			writeToDebug("====================");
-			writeToDebug("Version: " + getSpirits().getDescription().getVersion());
-			writeToDebug("Author: " + getSpirits().getDescription().getAuthors());
-		}
-		writeToDebug("");
-		writeToDebug("Ability Information");
-		writeToDebug("====================");
-		ArrayList<String> stockAbils = new ArrayList<String>();
-		ArrayList<String> unofficialAbils = new ArrayList<String>();
-		for (CoreAbility ability : CoreAbility.getAbilities()) {
-			if (ability.getClass().getPackage().getName().startsWith("com.projectkorra")) {
-				stockAbils.add(ability.getName());
-			} else {
-				unofficialAbils.add(ability.getName());
+			for (String line : officialSidePlugins) {
+				writeToDebug(line);
 			}
 		}
-		if (!stockAbils.isEmpty()) {
-			Collections.sort(stockAbils);
-			for (String ability : stockAbils) {
-				writeToDebug(ability + " - STOCK");
-			}
-		}
-		if (!unofficialAbils.isEmpty()) {
-			Collections.sort(unofficialAbils);
-			for (String ability : unofficialAbils) {
-				writeToDebug(ability + " - UNOFFICAL");
-			}
-		}
+		
 		writeToDebug("");
 		writeToDebug("Supported Plugins");
 		writeToDebug("====================");
@@ -1528,6 +1517,31 @@ public class GeneralMethods {
 		}
 		
 		writeToDebug("");
+		writeToDebug("Ability Information");
+		writeToDebug("====================");
+		ArrayList<String> stockAbils = new ArrayList<String>();
+		ArrayList<String> unofficialAbils = new ArrayList<String>();
+		for (CoreAbility ability : CoreAbility.getAbilities()) {
+			if (ability.getClass().getPackage().getName().startsWith("com.projectkorra")) {
+				stockAbils.add(ability.getName());
+			} else {
+				unofficialAbils.add(ability.getName());
+			}
+		}
+		if (!stockAbils.isEmpty()) {
+			Collections.sort(stockAbils);
+			for (String ability : stockAbils) {
+				writeToDebug(ability + " - STOCK");
+			}
+		}
+		if (!unofficialAbils.isEmpty()) {
+			Collections.sort(unofficialAbils);
+			for (String ability : unofficialAbils) {
+				writeToDebug(ability + " - UNOFFICAL");
+			}
+		}
+		
+		writeToDebug("");
 		writeToDebug("Collection Sizes");
 		writeToDebug("====================");
 		ClassLoader loader = ProjectKorra.class.getClassLoader();
@@ -1558,7 +1572,10 @@ public class GeneralMethods {
 		writeToDebug("");
 		writeToDebug("CoreAbility Debugger");
 		writeToDebug("====================");
-		writeToDebug(CoreAbility.getDebugString());
+		for (String line : CoreAbility.getDebugString().split("\\n")) {
+			writeToDebug(line);
+		}
+		
 	}
 
 	public static void saveAbility(BendingPlayer bPlayer, int slot, String ability) {
@@ -1717,7 +1734,7 @@ public class GeneralMethods {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				for (ConcurrentHashMap<Block, BlockCacheElement> map : BLOCK_CACHE.values()) {
+				for (Map<Block, BlockCacheElement> map : BLOCK_CACHE.values()) {
 					for (Iterator<Block> i = map.keySet().iterator(); i.hasNext();) {
 						Block key = i.next();
 						BlockCacheElement value = map.get(key);

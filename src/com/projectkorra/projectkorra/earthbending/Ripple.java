@@ -16,11 +16,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Ripple extends EarthAbility {
 
-	private static final ConcurrentHashMap<Integer[], Block> BLOCKS = new ConcurrentHashMap<Integer[], Block>();
+	private static final Map<Integer[], Block> BLOCKS = new ConcurrentHashMap<Integer[], Block>();
 
 	private int step;
 	private int maxStep;
@@ -297,7 +298,7 @@ public class Ripple extends EarthAbility {
 		BLOCKS.clear();
 	}
 
-	public static ConcurrentHashMap<Integer[], Block> getBlocks() {
+	public static Map<Integer[], Block> getBlocks() {
 		return BLOCKS;
 	}
 

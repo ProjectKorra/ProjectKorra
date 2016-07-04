@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,7 +32,7 @@ public class Preset {
 	 * ConcurrentHashMap that stores a list of every Player's {@link Preset
 	 * presets}, keyed to their UUID
 	 */
-	public static ConcurrentHashMap<UUID, List<Preset>> presets = new ConcurrentHashMap<UUID, List<Preset>>();
+	public static Map<UUID, List<Preset>> presets = new ConcurrentHashMap<UUID, List<Preset>>();
 	public static FileConfiguration config = ConfigManager.presetConfig.get();
 	public static HashMap<String, ArrayList<String>> externalPresets = new HashMap<String, ArrayList<String>>(); 
 	static String loadQuery = "SELECT * FROM pk_presets WHERE uuid = ?";

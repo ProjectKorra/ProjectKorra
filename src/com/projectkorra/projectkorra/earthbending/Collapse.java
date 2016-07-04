@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.earthbending;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -23,7 +24,7 @@ public class Collapse extends EarthAbility {
 	private Location location;
 	private Vector direction;
 	private Block block;
-	private ConcurrentHashMap<Block, Block> affectedBlocks;
+	private Map<Block, Block> affectedBlocks;
 	
 	public Collapse(Player player) {
 		super(player);
@@ -219,7 +220,7 @@ public class Collapse extends EarthAbility {
 		this.speed = speed;
 	}
 
-	public ConcurrentHashMap<Block, Block> getAffectedBlocks() {
+	public Map<Block, Block> getAffectedBlocks() {
 		return affectedBlocks;
 	}
 

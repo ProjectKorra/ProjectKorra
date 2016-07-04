@@ -8,11 +8,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TempBlock {
 
-	public static ConcurrentHashMap<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();
+	public static Map<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();
 
 	private Block block;
 	private Material newtype;
@@ -35,7 +36,7 @@ public class TempBlock {
 				temp.newdata = newdata;
 			}
 			state = temp.state;
-			instances.replace(block, temp);
+			instances.put(block, temp);
 		} else {
 			state = block.getState();
 			block.setType(newtype);
@@ -53,7 +54,7 @@ public class TempBlock {
 	}
 
 	public static boolean isTempBlock(Block block) {
-		return instances.containsKey(block);
+		return block != null ? instances.containsKey(block) : false;
 	}
 
 	public static boolean isTouchingTempBlock(Block block) {

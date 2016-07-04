@@ -15,12 +15,13 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSpout extends WaterAbility {
 
-	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
+	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
 	private List<TempBlock> blocks = new ArrayList<TempBlock>();
 
 	private boolean canBendOnPackedIce;
@@ -67,7 +68,12 @@ public class WaterSpout extends WaterAbility {
 		} else if (topBlock.getType() == Material.PACKED_ICE && !canBendOnPackedIce) {
 			return;
 		}
-
+		
+		double heightRemoveThreshold = 2;
+		if (!isWithinMaxSpoutHeight(topBlock.getLocation(), heightRemoveThreshold)) {
+			return;
+		}
+		
 		new Flight(player);
 		player.setAllowFlight(true);
 		start();
@@ -124,6 +130,12 @@ public class WaterSpout extends WaterAbility {
 
 			if (height != -1) {
 				location = base.getLocation();
+				double heightRemoveThreshold = 2;
+				if (!isWithinMaxSpoutHeight(location, heightRemoveThreshold)) {
+					remove();
+					return;
+				}
+				
 				for (int i = 1; i <= height; i++) {
 					block = location.clone().add(0, i, 0).getBlock();
 					
@@ -160,12 +172,24 @@ public class WaterSpout extends WaterAbility {
 		player.setAllowFlight(canFly);
 		player.setFlying(hadFly);
 	}
-
+	
 	public void revertBaseBlock() {
 		if (baseBlock != null) {
 			baseBlock.revertBlock();
 			baseBlock = null;
 		}
+	}
+	
+	private boolean isWithinMaxSpoutHeight(Location baseBlockLocation, double threshold) {
+		if (baseBlockLocation == null) {
+			return false;
+		}
+		double playerHeight = player.getLocation().getY();
+		double maxHeight = isNight(player.getWorld()) ? getNightFactor(height) : height;
+		if (playerHeight > baseBlockLocation.getY() + maxHeight + threshold) {
+			return false;
+		}
+		return true;
 	}
 
 	public void rotateParticles(Block block) {
@@ -375,7 +399,7 @@ public class WaterSpout extends WaterAbility {
 		this.baseBlock = baseBlock;
 	}
 
-	public static ConcurrentHashMap<Block, Block> getAffectedBlocks() {
+	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
 

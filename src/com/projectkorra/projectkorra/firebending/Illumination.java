@@ -9,11 +9,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Illumination extends FireAbility {
 	
-	private static final ConcurrentHashMap<Block, Player> BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<>();
 
 	private byte normalData;
 	private long cooldown;
@@ -162,7 +163,7 @@ public class Illumination extends FireAbility {
 		this.block = block;
 	}
 
-	public static ConcurrentHashMap<Block, Player> getBlocks() {
+	public static Map<Block, Player> getBlocks() {
 		return BLOCKS;
 	}
 

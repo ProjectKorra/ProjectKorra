@@ -21,13 +21,14 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Torrent extends WaterAbility {
 
 	private static final double CLEANUP_RANGE = 50;
-	private static final ConcurrentHashMap<TempBlock, Player> FROZEN_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<TempBlock, Player> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 	
 	private boolean sourceSelected;
 	private boolean settingUp;
@@ -831,7 +832,7 @@ public class Torrent extends WaterAbility {
 		return CLEANUP_RANGE;
 	}
 
-	public static ConcurrentHashMap<TempBlock, Player> getFrozenBlocks() {
+	public static Map<TempBlock, Player> getFrozenBlocks() {
 		return FROZEN_BLOCKS;
 	}
 
