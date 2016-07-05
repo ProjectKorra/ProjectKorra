@@ -113,6 +113,11 @@ public class AirSpout extends AirAbility {
 			remove();
 			return;
 		}
+		
+		if(!bPlayer.canBind(this)) {
+			remove();
+			return;
+		}
 
 		Block eyeBlock = player.getEyeLocation().getBlock();
 		if (eyeBlock.isLiquid() || GeneralMethods.isSolid(eyeBlock)) {
