@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.ability.PlantAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 public class PlantRegrowth extends PlantAbility {
@@ -25,6 +26,12 @@ public class PlantRegrowth extends PlantAbility {
 			this.block = block;
 			this.type = block.getType();
 			this.data = block.getData();
+			
+			if (block.getType() == Material.DOUBLE_PLANT && block.getRelative(BlockFace.DOWN).getType() == Material.DOUBLE_PLANT) {
+				this.block = block.getRelative(BlockFace.DOWN);
+				this.data = (byte) (block.getData() - 8);
+			}
+			
 			time = System.currentTimeMillis() + regrowTime / 2 + (long) (Math.random() * (double) regrowTime) / 2;
 			start();
 		}
@@ -37,6 +44,11 @@ public class PlantRegrowth extends PlantAbility {
 		if (block.getType() == Material.AIR) {
 			block.setType(type);
 			block.setData(data);
+			if (type == Material.DOUBLE_PLANT) {
+				block.getRelative(BlockFace.UP).setType(Material.DOUBLE_PLANT);
+				block.getRelative(BlockFace.UP).setData((byte) (data + 8));
+			}
+			
 		} else {
 			GeneralMethods.dropItems(block, GeneralMethods.getDrops(block, type, data, null));
 		}
