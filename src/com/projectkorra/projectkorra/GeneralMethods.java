@@ -1510,8 +1510,11 @@ public class GeneralMethods {
 		writeToDebug("");
 		writeToDebug("Plugins Hooking Into ProjectKorra (Core)");
 		writeToDebug("====================");
+		
+		String[] pkPlugins = new String[] {"projectkorrarpg", "projectkorraitems", "projectkorraspirits", "probending"};
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			if (plugin.getDescription().getDepend() != null && plugin.getDescription().getDepend().contains("ProjectKorra")) {
+			if (plugin.getDescription().getDepend() != null && plugin.getDescription().getDepend().contains("ProjectKorra") 
+					&& !Arrays.asList(pkPlugins).contains(plugin.getName().toLowerCase())) {
 				writeToDebug(plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion());
 			}
 		}
