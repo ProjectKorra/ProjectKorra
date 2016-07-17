@@ -55,7 +55,10 @@ public class IceSpikePillarField extends IceAbility {
 								&& testBlock.getZ() == player.getEyeLocation().getBlock().getZ())) {
 						iceBlocks.add(testBlock);
 						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
-							playIcebendingSound(iceBlocks.get(i).getLocation());
+							Random rand = new Random();
+							if(rand.nextInt(5)==0) {
+								playIcebendingSound(iceBlocks.get(i).getLocation());
+							}
 						}
 					}
 				}

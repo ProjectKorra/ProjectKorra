@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,7 +52,7 @@ public class LavaSurge extends LavaAbility {
 	private ArrayList<Block> fracture;	
 	private ArrayList<TempBlock> fractureTempBlocks;
 	private ArrayList<TempBlock> movingLava;
-	private ConcurrentHashMap<FallingBlock, TempBlock> lavaBlocks;
+	private Map<FallingBlock, TempBlock> lavaBlocks;
 	private ListIterator<Block> listIterator;
 	
 	public LavaSurge(Player player) {
@@ -457,7 +458,7 @@ public class LavaSurge extends LavaAbility {
 		return movingLava;
 	}
 
-	public ConcurrentHashMap<FallingBlock, TempBlock> getLavaBlocks() {
+	public Map<FallingBlock, TempBlock> getLavaBlocks() {
 		return lavaBlocks;
 	}
 

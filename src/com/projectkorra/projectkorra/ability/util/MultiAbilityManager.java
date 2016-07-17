@@ -14,13 +14,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MultiAbilityManager {
 
-	public static ConcurrentHashMap<Player, HashMap<Integer, String>> playerAbilities = new ConcurrentHashMap<>();
-	public static ConcurrentHashMap<Player, Integer> playerSlot = new ConcurrentHashMap<>();
-	public static ConcurrentHashMap<Player, String> playerBoundAbility = new ConcurrentHashMap<>();
+	public static Map<Player, HashMap<Integer, String>> playerAbilities = new ConcurrentHashMap<>();
+	public static Map<Player, Integer> playerSlot = new ConcurrentHashMap<>();
+	public static Map<Player, String> playerBoundAbility = new ConcurrentHashMap<>();
 	public static ArrayList<MultiAbilityInfo> multiAbilityList = new ArrayList<MultiAbilityInfo>();
 
 	public MultiAbilityManager() {

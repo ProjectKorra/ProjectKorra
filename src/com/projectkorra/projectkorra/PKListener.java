@@ -1029,11 +1029,17 @@ public class PKListener implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
+		final Player player = event.getPlayer();
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
 
 		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-		GeneralMethods.removeUnusableAbilities(player.getName());
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
+
+			@Override
+			public void run() {
+				GeneralMethods.removeUnusableAbilities(player.getName());
+			}
+		}, 5);
 	}
 
 	@EventHandler

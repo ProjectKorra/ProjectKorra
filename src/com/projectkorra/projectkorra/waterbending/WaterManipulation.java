@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,7 +31,7 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterManipulation extends WaterAbility {
 
-	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 
 	private boolean progressing;
 	private boolean falling;
@@ -761,7 +762,7 @@ public class WaterManipulation extends WaterAbility {
 		this.targetDirection = targetDirection;
 	}
 
-	public static ConcurrentHashMap<Block, Block> getAffectedBlocks() {
+	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
 
