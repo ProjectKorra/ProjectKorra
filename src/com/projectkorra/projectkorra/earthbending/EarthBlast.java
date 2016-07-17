@@ -107,7 +107,11 @@ public class EarthBlast extends EarthAbility {
 				sourceBlock.setType(Material.RED_SANDSTONE);
 			} else {
 				sourceBlock.setType(Material.SANDSTONE);
-			}
+			} 
+		} if (sourceBlock.getType() == Material.STEP) {
+				sourceBlock.setType(Material.STEP);
+				sourceType = Material.STEP;
+			
 		} else if (sourceBlock.getType() == Material.STONE) {
 			sourceBlock.setType(Material.COBBLESTONE);
 			sourceType = Material.STONE;
