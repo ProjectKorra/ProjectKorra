@@ -182,8 +182,10 @@ public class ConfigManager {
 			config.addDefault("Commands.Choose.Description", "This command will allow the user to choose a player either for himself or <Player> if specified. This command can only be used once per player unless they have permission to rechoose their element.");
 			config.addDefault("Commands.Choose.InvalidElement", "That is not a valid element.");
 			config.addDefault("Commands.Choose.PlayerNotFound", "Could not find player.");
-			config.addDefault("Commands.Choose.SuccessfullyChosen", "You are now a {element}.");
-			config.addDefault("Commands.Choose.Other.SuccessfullyChosen", "{target} is now a {element}.");
+			config.addDefault("Commands.Choose.SuccessfullyChosenCFW", "You are now a {element}.");
+			config.addDefault("Commands.Choose.SuccessfullyChosenAE", "You are now an {element}.");
+			config.addDefault("Commands.Choose.Other.SuccessfullyChosenCFW", "{target} is now a {element}.");
+			config.addDefault("Commands.Choose.Other.SuccessfullyChosenAE", "{target} is now an {element}.");
 			
 			config.addDefault("Commands.Check.Description", "Checks if ProjectKorra is up to date.");
 			config.addDefault("Commands.Check.NewVersionAvailable", "There's a new version of ProjectKorra available!");
@@ -198,12 +200,14 @@ public class ConfigManager {
 			config.addDefault("Commands.Bind.SuccessfullyBound", "Succesfully bound {ability} to slot {slot}.");
 			
 			config.addDefault("Commands.Add.Description", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
-			config.addDefault("Commands.Add.SuccessfullyAdded", "You are now also a {element}.");
+			config.addDefault("Commands.Add.SuccessfullyAddedCFW", "You are now also a {element}.");
+			config.addDefault("Commands.Add.SuccessfullyAddedAE", "You are now also an {element}.");
 			config.addDefault("Commands.Add.PlayerNotFound", "That player could not be found.");
 			config.addDefault("Commands.Add.InvalidElement", "You must specify a valid element.");
 			config.addDefault("Commands.Add.AlreadyHasElement", "You already have that element!");
 			config.addDefault("Commands.Add.AlreadyHasSubElement", "You already have that subelement!");
-			config.addDefault("Commands.Add.Other.SuccessfullyAdded", "{target} is now also a {element}.");
+			config.addDefault("Commands.Add.Other.SuccessfullyAddedCFW", "{target} is now also a {element}.");
+			config.addDefault("Commands.Add.Other.SuccessfullyAddedAE", "{target} is now also an {element}.");
 			config.addDefault("Commands.Add.Other.AlreadyHasElement", "{target} already has that element!");
 			config.addDefault("Commands.Add.Other.AlreadyHasSubElement", "{target} already has that subelement!");
 			
