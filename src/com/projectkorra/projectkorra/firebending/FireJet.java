@@ -51,11 +51,14 @@ public class FireJet extends FireAbility {
 		this.speed = getDayFactor(speed);
 		Block block = player.getLocation().getBlock();
 		
-		if (BlazeArc.isIgnitable(player, block) || block.getType() == Material.AIR || bPlayer.isAvatarState()) {
+		if (BlazeArc.isIgnitable(player, block) || block.getType() == Material.AIR || block.getType() == Material.STEP || block.getType() == Material.WOOD_STEP || bPlayer.isAvatarState()) {
 			player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(speed));
 			if (canFireGrief()) {
-				createTempFire(block.getLocation());
-			} else {
+				if (block.getType() == Material.AIR) {
+					createTempFire(block.getLocation());
+					}
+				
+			} else if (block.getType() == Material.AIR) {
 				block.setType(Material.FIRE);
 			}
 			
