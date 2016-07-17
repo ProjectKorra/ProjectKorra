@@ -53,13 +53,12 @@ public class WhoCommand extends PKCommand {
 
 		staff.put("96f40c81-dd5d-46b6-9afe-365114d4a082", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Coolade
 		staff.put("833a7132-a9ec-4f0a-ad9c-c3d6b8a1c7eb", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Jacklin213
-		staff.put("4eb6315e-9dd1-49f7-b582-c1170e497ab0", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // jedk1
 		staff.put("d7757be8-86de-4898-ab4f-2b1b2fbc3dfa", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // StrangeOne101
 		staff.put("3b5bdfab-8ae1-4794-b160-4f33f31fde99", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // kingbirdy
 		staff.put("dedf335b-d282-47ab-8ffc-a80121661cd1", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // grasshopperMatt
 		staff.put("679a6396-6a31-4898-8130-044f34bef743", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // savior67
-		staff.put("7bb267eb-cf0b-4fb9-a697-27c2a913ed92", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Finn
 		staff.put("1c30007f-f8ef-4b4e-aff0-787aa1bc09a3", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Sorin
+		staff.put("dd578a4f-d35e-4fed-94db-9d5a627ff962", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Sobki
 
 		staff.put("623df34e-9cd4-438d-b07c-1905e1fc46b6", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Loony
 		staff.put("3c484e61-7876-46c0-98c9-88c7834dc96c", ChatColor.GREEN + "ProjectKorra Concept Designer"); // SamuraiSnowman (Zmeduna)

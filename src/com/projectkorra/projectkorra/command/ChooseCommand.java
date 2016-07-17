@@ -26,16 +26,20 @@ public class ChooseCommand extends PKCommand {
 
 	private String invalidElement;
 	private String playerNotFound;
-	private String chosen;
-	private String chosenOther;
+	private String chosenCFW;
+	private String chosenAE;
+	private String chosenOtherCFW;
+	private String chosenOtherAE;
 
 	public ChooseCommand() {
 		super("choose", "/bending choose <Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Choose.Description"), new String[] { "choose", "ch" });
 		
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Choose.PlayerNotFound");
 		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Choose.InvalidElement");
-		this.chosen = ConfigManager.languageConfig.get().getString("Commands.Choose.SuccessfullyChosen");
-		this.chosenOther = ConfigManager.languageConfig.get().getString("Commands.Choose.Other.SuccessfullyChosen");
+		this.chosenCFW = ConfigManager.languageConfig.get().getString("Commands.Choose.SuccessfullyChosenCFW");
+		this.chosenAE = ConfigManager.languageConfig.get().getString("Commands.Choose.SuccessfullyChosenAE");
+		this.chosenOtherCFW = ConfigManager.languageConfig.get().getString("Commands.Choose.Other.SuccessfullyChosenCFW");
+		this.chosenOtherAE = ConfigManager.languageConfig.get().getString("Commands.Choose.Other.SuccessfullyChosenAE");
 	}
 
 	@Override
@@ -117,9 +121,9 @@ public class ChooseCommand extends PKCommand {
 			bPlayer.addSubElement(sub);
 			ChatColor color = sub != null ? sub.getColor() : ChatColor.WHITE;
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				sender.sendMessage(color + chosenOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+				sender.sendMessage(color + chosenOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
 			} else {
-				target.sendMessage(color + chosen.replace("{element}", sub.getName() + sub.getType().getBender()));
+				target.sendMessage(color + chosenCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
 			}
 			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.CHOOSE));
@@ -134,9 +138,15 @@ public class ChooseCommand extends PKCommand {
 			
 			ChatColor color = element != null ? element.getColor() : ChatColor.WHITE;
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				sender.sendMessage(color + chosenOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
+				if (element != Element.AIR && element != Element.EARTH)
+					sender.sendMessage(color + chosenOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
+				else
+					sender.sendMessage(color + chosenOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
 			} else {
-				target.sendMessage(color + chosen.replace("{element}", element.getName() + element.getType().getBender()));
+				if (element != Element.AIR && element != Element.EARTH)
+					target.sendMessage(color + chosenCFW.replace("{element}", element.getName() + element.getType().getBender()));
+				else
+					target.sendMessage(color + chosenAE.replace("{element}", element.getName() + element.getType().getBender()));
 			}
 			GeneralMethods.saveElements(bPlayer);
 			GeneralMethods.saveSubElements(bPlayer);
