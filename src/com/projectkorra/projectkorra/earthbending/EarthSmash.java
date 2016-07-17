@@ -399,7 +399,7 @@ public class EarthSmash extends EarthAbility {
 		for (BlockRepresenter blockRep : currentBlocks) {
 			Block block = location.clone().add(blockRep.getX(), blockRep.getY(), blockRep.getZ()).getBlock();
 			if (block.getType().equals(Material.SAND) || block.getType().equals(Material.GRAVEL)) { //Check if block can be affected by gravity.
-				addTempAirBlock(block); //If so, set it to a temp air block.
+
 			}
 			if (player != null && isTransparent(block)) {
 				affectedBlocks.add(new TempBlock(block, blockRep.getType(), blockRep.getData()));
