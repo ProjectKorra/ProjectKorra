@@ -101,7 +101,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Remove.Other.RemovedAllElements", "Your bending has been removed by {sender}.");
 			config.addDefault("Commands.Remove.Other.RemovedAllElementsConfirm", "You've removed {target}'s bending.");
 			config.addDefault("Commands.Remove.Other.RemovedElement", "Your {element} has been removed by {sender}.");
-			config.addDefault("Commands.Remove.Other.RemovedElementConfirm", "{sender} has removed your {element}.");
+			config.addDefault("Commands.Remove.Other.RemovedElementConfirm", "You removed {target}'s {element}.");
 			config.addDefault("Commands.Remove.Other.WrongElement", "{target} does not have that element!");
 			config.addDefault("Commands.Remove.RemovedElement", "You've removed your {element}.");
 			config.addDefault("Commands.Remove.InvalidElement", "That element is invalid!");
