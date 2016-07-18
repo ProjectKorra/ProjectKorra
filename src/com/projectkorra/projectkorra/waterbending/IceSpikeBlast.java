@@ -260,12 +260,11 @@ public class IceSpikeBlast extends IceAbility {
 		settingUp = true;
 		prepared = false;
 
-		/*if (isPlant(sourceBlock)) {
+		if (isPlant(sourceBlock)) {
 			new PlantRegrowth(player, sourceBlock);
 			sourceBlock.setType(Material.AIR);
 		}
 
-		originalSource = new TempBlock(sourceBlock, Material.AIR, data);*/
 	}
 
 	public static void activate(Player player) {
