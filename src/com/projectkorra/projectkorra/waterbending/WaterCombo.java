@@ -1,5 +1,18 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
@@ -13,19 +26,6 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * TODO: Combo classes should eventually be rewritten so that each combo is treated
@@ -305,6 +305,7 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 		if (waterGrabber != null) {
 			waterGrabber.remove();
 		}
+		bPlayer.addCooldown(this);
 	}
 
 	public void revertBlocks() {
