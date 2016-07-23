@@ -25,6 +25,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
+import com.projectkorra.projectkorra.earthbending.SandSpout;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -610,7 +611,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			MOVED_EARTH.remove(block);
 		}
 		return true;
-	}
+	} 
 	
 	public static void stopBending() {
 		EarthPassive.removeAll();
@@ -618,5 +619,12 @@ public abstract class EarthAbility extends ElementalAbility {
 		if (isEarthRevertOn()) {
 			removeAllEarthbendedBlocks();
 		}
+	}
+
+	public static void removeSandSpouts(Location loc, double radius, Player source) {
+		SandSpout.removeSpouts(loc, radius, source);
+	}
+	public static void removeSandSpouts(Location loc, Player source) {
+		removeSandSpouts(loc, 1.5, source);
 	}
 }

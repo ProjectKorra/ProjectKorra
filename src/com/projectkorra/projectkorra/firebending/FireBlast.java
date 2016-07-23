@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -193,6 +194,7 @@ public class FireBlast extends FireAbility {
 
 		WaterAbility.removeWaterSpouts(location, player);
 		AirAbility.removeAirSpouts(location, player);
+		EarthAbility.removeSandSpouts(location, player);
 
 		Player source = player;
 		if (EarthBlast.annihilateBlasts(location, collisionRadius, source) 

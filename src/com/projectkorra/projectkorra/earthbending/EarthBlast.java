@@ -218,6 +218,7 @@ public class EarthBlast extends EarthAbility {
 				
 				WaterAbility.removeWaterSpouts(location, player);
 				AirAbility.removeAirSpouts(location, player);
+				EarthAbility.removeSandSpouts(location, player);
 				
 				if (block.getLocation().equals(sourceBlock.getLocation())) {
 					location = location.clone().add(direction);
@@ -236,6 +237,7 @@ public class EarthBlast extends EarthAbility {
 
 					WaterAbility.removeWaterSpouts(location, player);
 					AirAbility.removeAirSpouts(location, player);
+					EarthAbility.removeSandSpouts(location, player);
 					
 					if (EarthBlast.annihilateBlasts(location, collisionRadius, player) 
 							|| WaterManipulation.annihilateBlasts(location, collisionRadius, player)

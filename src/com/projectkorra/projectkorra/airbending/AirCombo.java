@@ -4,7 +4,9 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
@@ -347,7 +349,9 @@ public class AirCombo extends AirAbility implements ComboAbility {
 
 				if (GeneralMethods.blockAbilities(player, FireCombo.getBlockableAbilities(), loc, 1)) {
 					fstream.remove();
-				}
+				} else AirAbility.removeAirSpouts(loc, player);
+				WaterAbility.removeWaterSpouts(loc, player);
+				EarthAbility.removeSandSpouts(loc, player);
 			}
 		}
 	}
