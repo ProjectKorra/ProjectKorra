@@ -210,6 +210,7 @@ public class EarthSmash extends EarthAbility {
 				
 				WaterAbility.removeWaterSpouts(location, 2, player);
 				AirAbility.removeAirSpouts(location, 2, player);
+				EarthAbility.removeSandSpouts(location, player);
 				draw();
 				return;
 			} else {

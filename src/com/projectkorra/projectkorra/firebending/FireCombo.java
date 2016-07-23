@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -264,12 +265,14 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				for (FireComboStream stream : tasks) {
 					if (GeneralMethods.blockAbilities(player, BLOCKABLE_ABILITIES, stream.location, 2)) {
 						stream.remove();
-					}
+					} 
 				}
 			} else if (tasks.size() == 0) {
 				remove();
 				return;
-			}
+			} AirAbility.removeAirSpouts(location, player);
+			WaterAbility.removeWaterSpouts(location, player);
+			EarthAbility.removeSandSpouts(location, player);
 		} else if (ability.equalsIgnoreCase("FireSpin")) {
 			if (destination == null) {
 				if (bPlayer.isOnCooldown("FireSpin") && !bPlayer.isAvatarState()) {

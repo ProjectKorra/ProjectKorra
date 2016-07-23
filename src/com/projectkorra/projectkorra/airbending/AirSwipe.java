@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
@@ -126,6 +127,8 @@ public class AirSwipe extends AirAbility {
 				} else {
 					removeAirSpouts(location, player);
 					WaterAbility.removeWaterSpouts(location, player);
+					EarthAbility.removeSandSpouts(location, player);
+					
 					
 					if (EarthBlast.annihilateBlasts(location, radius, player)
 							|| WaterManipulation.annihilateBlasts(location, radius, player)
@@ -177,6 +180,7 @@ public class AirSwipe extends AirAbility {
 
 	private void affectPeople(Location location, Vector direction) {
 		WaterAbility.removeWaterSpouts(location, player);
+		removeAirSpouts(location, player);
 		removeAirSpouts(location, player);
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, radius);
 		final Vector fDirection = direction;

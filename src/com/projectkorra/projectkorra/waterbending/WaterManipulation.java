@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
@@ -231,6 +232,7 @@ public class WaterManipulation extends WaterAbility {
 				} else {
 					WaterAbility.removeWaterSpouts(location, player);
 					AirAbility.removeAirSpouts(location, player);
+					EarthAbility.removeSandSpouts(location, player);
 
 					if ((new Random()).nextInt(4) == 0) {
 						playWaterbendingSound(location);

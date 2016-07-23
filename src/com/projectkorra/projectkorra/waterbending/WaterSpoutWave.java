@@ -176,6 +176,7 @@ public class WaterSpoutWave extends WaterAbility {
 					
 				if (isPlant(origin.getBlock())) {
 					new PlantRegrowth(player, origin.getBlock());
+					origin.getBlock().setType(Material.AIR);
 				}
 			}
 
