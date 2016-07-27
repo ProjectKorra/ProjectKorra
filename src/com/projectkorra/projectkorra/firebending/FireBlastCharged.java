@@ -70,18 +70,18 @@ public class FireBlastCharged extends FireAbility {
 		
 		if (isDay(player.getWorld())) {
 			this.chargeTime = (long) (chargeTime / getDayFactor());
+			this.maxDamage = getDayFactor(maxDamage);
+			this.range = getDayFactor(range);
 		}
 		if (bPlayer.isAvatarState()) {
 			this.chargeTime = 0;
 			this.maxDamage = AvatarState.getValue(maxDamage);
 		}
 		
-		this.range = getDayFactor(range);
+		
 		if (!player.getEyeLocation().getBlock().isLiquid()) {
 			start();
-		} if (isDay(player.getWorld())) {
-			this.maxDamage = getDayFactor(maxDamage);
-		}
+		} 
 	}
 
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
