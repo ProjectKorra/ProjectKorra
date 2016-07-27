@@ -359,6 +359,7 @@ public class SurgeWave extends WaterAbility {
 			if (player.isOnline()) {
 			new WaterReturn(player, location.getBlock());
 		}
+		}
 	}
 
 	private void thaw() {
