@@ -79,6 +79,8 @@ public class FireBlastCharged extends FireAbility {
 		this.range = getDayFactor(range);
 		if (!player.getEyeLocation().getBlock().isLiquid()) {
 			start();
+		} if (isDay(player.getWorld())) {
+			this.maxDamage = getDayFactor(maxDamage);
 		}
 	}
 
