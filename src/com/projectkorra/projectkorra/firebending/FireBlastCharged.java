@@ -149,7 +149,7 @@ public class FireBlastCharged extends FireAbility {
 	public void explode() {
 		boolean explode = true;
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, 3)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()) || !canFireGrief()) {
 				explode = false;
 				break;
 			}

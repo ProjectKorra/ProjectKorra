@@ -98,12 +98,14 @@ public class Combustion extends CombustionAbility {
 	}
 
 	private void createExplosion(Location block, float power, boolean canBreakBlocks) {
-		block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), power, true, canBreakBlocks);
-		for (Entity entity : block.getWorld().getEntities()) {
-			if (entity instanceof LivingEntity) {
-				if (entity.getLocation().distanceSquared(block) < radius * radius) { // They are close enough to the explosion.
-					DamageHandler.damageEntity((LivingEntity) entity, damage, this);
-					AirAbility.breakBreathbendingHold(entity);
+			if(canFireGrief()) {
+				block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), power, true, canBreakBlocks);
+			}
+			for (Entity entity : block.getWorld().getEntities()) {
+				if (entity instanceof LivingEntity) {
+					if (entity.getLocation().distanceSquared(block) < radius * radius) { // They are close enough to the explosion.
+						DamageHandler.damageEntity((LivingEntity) entity, damage, this);
+						AirAbility.breakBreathbendingHold(entity);
 				}
 			}
 		}
