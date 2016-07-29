@@ -56,6 +56,7 @@ import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -556,6 +557,23 @@ public class GeneralMethods {
 		for (ItemStack item : items) {
 			block.getWorld().dropItem(block.getLocation(), item);
 		}
+	}
+	
+	public static void displayMovePreview(Player player, CoreAbility ability) {
+		String displayedMessage = null;
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		
+		if (ability != null) {
+			if (bPlayer.isOnCooldown(ability)) {
+				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
+			} else {
+				displayedMessage = ability.getElement().getColor() + ability.getName();
+			}
+		} else {
+			displayedMessage = "";
+		}
+		
+		ActionBar.sendActionBar(displayedMessage, player);
 	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
