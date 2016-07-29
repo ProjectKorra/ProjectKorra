@@ -151,14 +151,14 @@ public class FireBlastCharged extends FireAbility {
 	public void explode() {
 		boolean explode = true;
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, 3)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()) || !canFireGrief()) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				explode = false;
 				break;
 			}
 		}
 		
 		if (explode) {
-			if (canDamageBlocks && explosionRadius > 0) {
+			if (canDamageBlocks && explosionRadius > 0 && canFireGrief()) {
 				explosion = player.getWorld().spawn(location, TNTPrimed.class);
 				explosion.setFuseTicks(0);
 				double yield = explosionRadius;
