@@ -397,6 +397,7 @@ public class ConfigManager {
 			ArrayList<String> snowBlocks = new ArrayList<>();
 			snowBlocks.add("SNOW");
 
+			config.addDefault("Properties.BendingPreview", true);
 			config.addDefault("Properties.ImportEnabled", true);
 			config.addDefault("Properties.BendingAffectFallingSand.Normal", true);
 			config.addDefault("Properties.BendingAffectFallingSand.NormalStrengthMultiplier", 1.0);

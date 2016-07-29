@@ -563,6 +563,7 @@ public class GeneralMethods {
 		String displayedMessage = null;
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		
+		if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview") == true) {
 		if (ability != null) {
 			if (bPlayer.isOnCooldown(ability)) {
 				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
@@ -574,6 +575,7 @@ public class GeneralMethods {
 		}
 		
 		ActionBar.sendActionBar(displayedMessage, player);
+	}
 	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
