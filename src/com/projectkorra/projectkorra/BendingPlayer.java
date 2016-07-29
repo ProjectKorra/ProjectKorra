@@ -110,6 +110,15 @@ public class BendingPlayer {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
+			
+			Player player = event.getPlayer();
+			int slot = player.getInventory().getHeldItemSlot() + 1;
+			String abilityName = event.getAbility();
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+			if (bPlayer.getBoundAbility()!= null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
+				GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
+			}
 		}
 	}
 
@@ -613,6 +622,15 @@ public class BendingPlayer {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
+			
+			Player player = event.getPlayer();
+			int slot = player.getInventory().getHeldItemSlot() + 1;
+			String abilityName = event.getAbility();
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			
+			if (bPlayer.getBoundAbility()!= null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
+				GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
+			}
 		}
 	}
 

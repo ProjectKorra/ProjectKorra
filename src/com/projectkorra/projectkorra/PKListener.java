@@ -123,6 +123,7 @@ import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent.Result;
+import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerJumpEvent;
 import com.projectkorra.projectkorra.firebending.Blaze;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
@@ -1386,7 +1387,11 @@ public class PKListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSlotChange(PlayerItemHeldEvent event) {
 		Player player = event.getPlayer();
-
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		int slot = event.getNewSlot() + 1;
+		
+		GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
+		
 		WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 		if (waterArms != null) {
 			waterArms.displayBoundMsg(event.getNewSlot() + 1);
