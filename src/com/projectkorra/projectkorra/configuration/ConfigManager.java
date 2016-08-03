@@ -198,6 +198,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Bind.WrongNumber", "Slot must be an integer between 1 and 9.");
 			config.addDefault("Commands.Bind.ElementToggledOff", "You have that ability's element toggled off currently.");
 			config.addDefault("Commands.Bind.SuccessfullyBound", "Succesfully bound {ability} to slot {slot}.");
+			config.addDefault("Commands.Bind.NoElement", "You are not a {element}!");
 			
 			config.addDefault("Commands.Add.Description", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
 			config.addDefault("Commands.Add.SuccessfullyAddedCFW", "You are now also a {element}.");

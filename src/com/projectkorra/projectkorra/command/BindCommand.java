@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -23,6 +24,7 @@ public class BindCommand extends PKCommand {
 	private String wrongNumber;
 	private String loadingInfo;
 	private String toggledElementOff;
+	private String noElement;
 
 	public BindCommand() {
 		super("bind", "/bending bind <Ability> [Slot]", ConfigManager.languageConfig.get().getString("Commands.Bind.Description"), new String[]{ "bind", "b" });
@@ -31,6 +33,7 @@ public class BindCommand extends PKCommand {
 		this.wrongNumber = ConfigManager.languageConfig.get().getString("Commands.Bind.WrongNumber");
 		this.loadingInfo = ConfigManager.languageConfig.get().getString("Commands.Bind.LoadingInfo");
 		this.toggledElementOff = ConfigManager.languageConfig.get().getString("Commands.Bind.ToggledElementOff");
+		this.noElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElement");
 	}
 
 	@Override
@@ -70,7 +73,11 @@ public class BindCommand extends PKCommand {
 			sender.sendMessage(ChatColor.RED + loadingInfo);
 			return;
 		} else if (coreAbil == null || !bPlayer.canBind(coreAbil)) {
-			sender.sendMessage(ChatColor.RED + super.noPermissionMessage);
+			if (coreAbil != null && coreAbil.getElement() != Element.AVATAR && !bPlayer.hasElement(coreAbil.getElement())) {
+				sender.sendMessage(ChatColor.RED + this.noElement.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+			} else {
+				sender.sendMessage(ChatColor.RED + super.noPermissionMessage);
+			}
 			return;
 		} else if (!bPlayer.isElementToggled(coreAbil.getElement())) {
 			sender.sendMessage(ChatColor.RED + toggledElementOff);
