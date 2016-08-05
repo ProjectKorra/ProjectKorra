@@ -99,7 +99,7 @@ public class WaterSpout extends WaterAbility {
 			loc.add(x, height, z);
 
 			Block block = loc.getBlock();
-			if (block.getType().equals(Material.AIR) || !GeneralMethods.isSolid(block)) {
+			if ((!TempBlock.isTempBlock(block)) && (block.getType().equals(Material.AIR) || !GeneralMethods.isSolid(block))) {
 				blocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 1));
 				AFFECTED_BLOCKS.put(block, block);
 			}
@@ -279,11 +279,11 @@ public class WaterSpout extends WaterAbility {
 
 	public static boolean removeSpouts(Location loc0, double radius, Player sourcePlayer) {
 		boolean removed = false;
-		for (WaterSpout spout : getAbilities(sourcePlayer, WaterSpout.class)) {
+		for (WaterSpout spout : getAbilities(WaterSpout.class)) {
 			Location top = spout.getLocation();
 			Location base = spout.getBase().getLocation();
 			double dist = top.getBlockY() - base.getBlockY();
-			for (double d = 0; d <= dist; d += 0.25) {
+			for (double d = 0; d <= dist; d += 0.5) {
 				Location spoutl = base.clone().add(0, d, 0);
 				if (loc0.distance(spoutl) <= radius) {
 					removed = true;
