@@ -260,14 +260,14 @@ public class WaterManipulation extends WaterAbility {
 				}
 
 				if (trail2 != null) {
-					if (trail2.getBlock().equals(block)) {
+					if (!TempBlock.isTempBlock(block) && (trail2.getBlock().equals(block))) {
 						trail2.revertBlock();
 						trail2 = null;
 					}
 				}
 
 				if (trail != null) {
-					if (trail.getBlock().equals(block)) {
+					if (!TempBlock.isTempBlock(block) && trail.getBlock().equals(block)) {
 						trail.revertBlock();
 						trail = null;
 						if (trail2 != null) {

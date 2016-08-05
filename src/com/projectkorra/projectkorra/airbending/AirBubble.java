@@ -132,6 +132,8 @@ public class AirBubble extends AirAbility {
 				}
 			}
 		}
+		
+		WaterAbility.removeWaterSpouts(location, radius, player);
 	}
 
 	@Override
