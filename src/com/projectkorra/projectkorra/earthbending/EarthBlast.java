@@ -214,11 +214,7 @@ public class EarthBlast extends EarthAbility {
 				}
 
 				location = location.clone().add(direction);
-				Block block = location.getBlock();
-				
-				WaterAbility.removeWaterSpouts(location, player);
-				AirAbility.removeAirSpouts(location, player);
-				EarthAbility.removeSandSpouts(location, player);
+				Block block = location.getBlock();	
 				
 				if (block.getLocation().equals(sourceBlock.getLocation())) {
 					location = location.clone().add(direction);
@@ -234,7 +230,7 @@ public class EarthBlast extends EarthAbility {
 					location = location.clone().subtract(direction);
 					direction = GeneralMethods.getDirection(location, destination).normalize();
 					location = location.clone().add(direction);
-
+					
 					WaterAbility.removeWaterSpouts(location, player);
 					AirAbility.removeAirSpouts(location, player);
 					EarthAbility.removeSandSpouts(location, player);
@@ -303,7 +299,7 @@ public class EarthBlast extends EarthAbility {
 						block.setType(Material.STONE);
 					}
 				} else {
-					block.setType(sourceBlock.getType());
+					block.setType(sourceType);
 					sourceBlock.setType(Material.AIR);
 				}
 

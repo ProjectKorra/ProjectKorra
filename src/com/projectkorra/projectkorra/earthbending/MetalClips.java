@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -122,6 +123,14 @@ public class MetalClips extends MetalAbility {
 		MetalClips clips = TARGET_TO_ABILITY.get(ent);
 		if (clips != null) {
 			return clips.oldArmor[0];
+		}
+		return null;
+	}
+	
+	public static ItemStack[] getOriginalArmor(LivingEntity ent) {
+		MetalClips clips = TARGET_TO_ABILITY.get(ent);
+		if (clips != null) {
+			return clips.oldArmor;
 		}
 		return null;
 	}
@@ -405,7 +414,7 @@ public class MetalClips extends MetalAbility {
 
 				for (Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2)) {
 					if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId()) {
-						if (e instanceof Player || e instanceof Zombie || e instanceof Skeleton) {
+						if ((e instanceof Player || e instanceof Zombie || e instanceof Skeleton) && targetEntity == null) {
 							targetEntity = (LivingEntity) e;
 							TARGET_TO_ABILITY.put(targetEntity, this);
 							formArmor();
@@ -450,7 +459,7 @@ public class MetalClips extends MetalAbility {
 		}
 	}
 
-	public static boolean isControlled(Player player) {
+	public static boolean isControlled(LivingEntity player) {
 		return TARGET_TO_ABILITY.containsKey(player);
 	}
 	
@@ -465,6 +474,17 @@ public class MetalClips extends MetalAbility {
 	
 	public static Map<Entity, MetalClips> getTargetToAbility() {
 		return TARGET_TO_ABILITY;
+	}
+	
+	public static boolean removeControlledEnitity(LivingEntity entity) {
+		if (entity == null) return false;
+		for (MetalClips metalclips : CoreAbility.getAbilities(MetalClips.class)) {
+			if (metalclips.targetEntity == entity) {
+				metalclips.remove();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
