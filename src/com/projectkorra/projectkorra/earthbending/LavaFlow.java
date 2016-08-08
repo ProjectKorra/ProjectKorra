@@ -232,12 +232,12 @@ public class LavaFlow extends LavaAbility {
 										Block lower = block.getRelative(BlockFace.DOWN);
 										if (isPlant(lower)) {
 											Block lower2 = lower.getRelative(BlockFace.DOWN);
-											if (!(isEarth(lower2) || isSand(lower2) || isMetal(lower2))) {
+											if (!isEarth(lower2) && !isSand(lower2) && !isMetal(lower2)) {
 												continue;
 											}
 											createLava(lower2);
 										} else {
-											if (!(isEarth(lower) || isSand(lower) || isMetal(lower))) {
+											if (!isEarth(lower) && !isSand(lower) && !isMetal(lower)) {
 												continue;
 											}
 											createLava(lower);
@@ -339,7 +339,6 @@ public class LavaFlow extends LavaAbility {
 												if (!isEarth(lower2) && !isSand(lower2) && !isMetal(lower2)) {
 													continue;
 												}
-												tempBlock.breakNaturally();
 												createLava(lower2);
 											} else {
 												if (!isEarth(lower) && !isSand(lower) && !isMetal(lower)) {
@@ -387,19 +386,16 @@ public class LavaFlow extends LavaAbility {
 			if (isPlant(block.getRelative(BlockFace.UP))) {
 				Block above = block.getRelative(BlockFace.UP);
 				Block above2 = above.getRelative(BlockFace.UP);
-				if (isPlant(above2) && above2.getType() == Material.DOUBLE_PLANT) {
+				if (isPlant(above) && above.getType() == Material.DOUBLE_PLANT) {
 					TempBlock tb = new TempBlock(above, Material.AIR, (byte) 0);
 					TEMP_AIR_BLOCKS.put(above, tb);
 					affectedBlocks.add(tb);
-					TempBlock tb2 = new TempBlock(above2, Material.AIR, (byte) 0);
-					TEMP_AIR_BLOCKS.put(above2, tb2);
-					affectedBlocks.add(tb2);
 				} else if (!isPlant(above2)) {
 					TempBlock tb = new TempBlock(above, Material.AIR, (byte) 0);
 					TEMP_AIR_BLOCKS.put(above, tb);
 					affectedBlocks.add(tb);
 				} else return;
-			}
+			} 
 			TempBlock tblock = new TempBlock(block, Material.STATIONARY_LAVA, (byte) 0);
 			TEMP_LAVA_BLOCKS.put(block, tblock);
 			affectedBlocks.add(tblock);
@@ -458,10 +454,17 @@ public class LavaFlow extends LavaAbility {
 		super.remove();
 		for (int i = affectedBlocks.size() - 1; i > -1; i--) {
 			final TempBlock tblock = affectedBlocks.get(i);
+			final boolean isTempAir = TEMP_AIR_BLOCKS.values().contains(tblock);
 			new BukkitRunnable() {
+				@SuppressWarnings("deprecation")
 				@Override
 				public void run() {
 					tblock.revertBlock();
+					if (isTempAir && tblock.getState().getType() == Material.DOUBLE_PLANT) {
+						tblock.getBlock().getRelative(BlockFace.UP).setType(Material.DOUBLE_PLANT);
+						tblock.getBlock().getRelative(BlockFace.UP).setData((byte) (tblock.getState().getRawData() + 8));
+					}
+					
 				}
 			}.runTaskLater(ProjectKorra.plugin, (long) (i / shiftRemoveSpeed));
 
@@ -540,7 +543,7 @@ public class LavaFlow extends LavaAbility {
 		Block block = loc.getBlock();
 		
 		for (int x = -1; x <= 1; x++) {
-			for (int y = -1; y <= 1; y++) {
+			for (int y = -2; y <= 1; y++) {
 				for (int z = -1; z <= 1; z++) {
 					if (!(x == 0 && y == 0 && z == 0)) {
 						list.add(block.getLocation().add(x, y, z).getBlock());

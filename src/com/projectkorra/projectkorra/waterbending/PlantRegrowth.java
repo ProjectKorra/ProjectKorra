@@ -27,9 +27,17 @@ public class PlantRegrowth extends PlantAbility {
 			this.type = block.getType();
 			this.data = block.getData();
 			
-			if (block.getType() == Material.DOUBLE_PLANT && block.getRelative(BlockFace.DOWN).getType() == Material.DOUBLE_PLANT) {
-				this.block = block.getRelative(BlockFace.DOWN);
-				this.data = (byte) (block.getData() - 8);
+			if (block.getType() == Material.DOUBLE_PLANT) {
+				if (block.getRelative(BlockFace.DOWN).getType() == Material.DOUBLE_PLANT) {
+					this.block = block.getRelative(BlockFace.DOWN);
+					this.data = block.getRelative(BlockFace.DOWN).getData();
+					
+					block.getRelative(BlockFace.DOWN).setType(Material.AIR);
+					block.setType(Material.AIR);
+				} else {
+					block.setType(Material.AIR);
+					block.getRelative(BlockFace.UP).setType(Material.AIR);
+				}
 			}
 			
 			time = System.currentTimeMillis() + regrowTime / 2 + (long) (Math.random() * (double) regrowTime) / 2;
@@ -46,7 +54,7 @@ public class PlantRegrowth extends PlantAbility {
 			block.setData(data);
 			if (type == Material.DOUBLE_PLANT) {
 				block.getRelative(BlockFace.UP).setType(Material.DOUBLE_PLANT);
-				block.getRelative(BlockFace.UP).setData((byte) (data + 8));
+				block.getRelative(BlockFace.UP).setData((byte) 10);
 			}
 			
 		} else {
