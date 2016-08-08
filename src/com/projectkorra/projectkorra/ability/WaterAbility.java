@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.PhaseChangeFreeze;
+import com.projectkorra.projectkorra.waterbending.PhaseChangeMelt;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.WaterArms;
@@ -322,6 +323,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	
 	public static void stopBending() {
 		PhaseChangeFreeze.removeAllCleanup();
+		PhaseChangeMelt.removeAllCleanup();
 		SurgeWall.removeAllCleanup();
 		SurgeWave.removeAllCleanup();
 		WaterArms.removeAllCleanup();

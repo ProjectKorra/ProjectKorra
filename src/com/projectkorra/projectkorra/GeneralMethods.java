@@ -1024,7 +1024,7 @@ public class GeneralMethods {
 				return blockHolder;
 			}
 		}
-		return null;
+		return blockHolder;
 	}
 
 	public static boolean hasItems() {

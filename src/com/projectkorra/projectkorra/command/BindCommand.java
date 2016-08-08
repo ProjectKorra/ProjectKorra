@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -25,6 +26,7 @@ public class BindCommand extends PKCommand {
 	private String loadingInfo;
 	private String toggledElementOff;
 	private String noElement;
+	private String noSubElement;
 
 	public BindCommand() {
 		super("bind", "/bending bind <Ability> [Slot]", ConfigManager.languageConfig.get().getString("Commands.Bind.Description"), new String[]{ "bind", "b" });
@@ -34,6 +36,7 @@ public class BindCommand extends PKCommand {
 		this.loadingInfo = ConfigManager.languageConfig.get().getString("Commands.Bind.LoadingInfo");
 		this.toggledElementOff = ConfigManager.languageConfig.get().getString("Commands.Bind.ToggledElementOff");
 		this.noElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElement");
+		this.noSubElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoSubElement");
 	}
 
 	@Override
@@ -74,7 +77,11 @@ public class BindCommand extends PKCommand {
 			return;
 		} else if (coreAbil == null || !bPlayer.canBind(coreAbil)) {
 			if (coreAbil != null && coreAbil.getElement() != Element.AVATAR && !bPlayer.hasElement(coreAbil.getElement())) {
-				sender.sendMessage(ChatColor.RED + this.noElement.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+				if (coreAbil.getElement() instanceof SubElement) {
+					sender.sendMessage(ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
+				} else {
+					sender.sendMessage(ChatColor.RED + this.noElement.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+				}
 			} else {
 				sender.sendMessage(ChatColor.RED + super.noPermissionMessage);
 			}

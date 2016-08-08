@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -10,11 +11,15 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PhaseChangeMelt extends IceAbility {
 
+	private static final List<Block> MELTED_BLOCKS = new CopyOnWriteArrayList<Block>();
 	private static final byte FULL = 0x0;
 	
 	private int seaLevel;
@@ -72,7 +77,7 @@ public class PhaseChangeMelt extends IceAbility {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static void melt(Player player, Block block) {
+	public static void melt(Player player, final Block block) {
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
 			return;
 		} else if (!SurgeWave.canThaw(block)) {
@@ -96,8 +101,17 @@ public class PhaseChangeMelt extends IceAbility {
 			} else if (PhaseChangeFreeze.getFrozenBlocks().containsKey(block)) {
 				PhaseChangeFreeze.thaw(block);
 			} else {
+				MELTED_BLOCKS.add(block);
 				block.setType(Material.WATER);
 				block.setData(FULL);
+				
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						MELTED_BLOCKS.remove(block);
+						block.setType(Material.ICE);
+					}
+				}.runTaskLater(ProjectKorra.plugin, 5 * 20 * 60);
 			}
 		}
 	}
@@ -108,6 +122,13 @@ public class PhaseChangeMelt extends IceAbility {
 		} else if (isWater(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
 			block.setType(Material.AIR);
 			block.getWorld().playEffect(block.getLocation(), Effect.SMOKE, 1);
+		}
+	}
+	
+	public static void removeAllCleanup() {
+		for (Block b : MELTED_BLOCKS) {
+			b.setType(Material.ICE);
+			MELTED_BLOCKS.remove(b);
 		}
 	}
 
@@ -174,6 +195,10 @@ public class PhaseChangeMelt extends IceAbility {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+	
+	public static List<Block> getMeltedBlocks() {
+		return MELTED_BLOCKS;
 	}
 	
 }
