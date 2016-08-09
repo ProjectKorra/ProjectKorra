@@ -31,7 +31,14 @@ public class VersionCommand extends PKCommand {
 		if (GeneralMethods.hasItems()) {
 			sender.sendMessage(ChatColor.GREEN + "Items Version: " + ChatColor.RED + GeneralMethods.getItems().getDescription().getVersion());
 		}
+		if (GeneralMethods.hasSpirits()) {
+			sender.sendMessage(ChatColor.GREEN + "Spirits Version: " + ChatColor.RED + GeneralMethods.getSpirits().getDescription().getVersion());
+		}
+		if (GeneralMethods.hasProbending()) {
+			sender.sendMessage(ChatColor.GREEN + "Probending Version: " + ChatColor.RED + GeneralMethods.getProbending().getDescription().getVersion());
+		}
 		sender.sendMessage(ChatColor.GREEN + "Founded by: " + ChatColor.RED + "MistPhizzle");
+		sender.sendMessage(ChatColor.GREEN + "Special thanks to " + ChatColor.RED + "Orion304 " + ChatColor.GREEN + "for establishing this great community.");
 		sender.sendMessage(ChatColor.GREEN + "Learn More: " + ChatColor.RED + "http://projectkorra.com");
 	}
 
