@@ -180,6 +180,8 @@ public class BendingPlayer {
 		
 		if (!player.isOnline() || player.isDead()) {
 			return false;
+		} else if (!canBind(ability)) {
+			return false;
 		} else if (ability.getPlayer() != null && ability.getLocation() != null && !ability.getLocation().getWorld().equals(player.getWorld())) {
 			return false;
 		} else if (!ignoreCooldowns && isOnCooldown(ability.getName())) {
