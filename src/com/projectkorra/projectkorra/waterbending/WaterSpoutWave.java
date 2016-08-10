@@ -174,7 +174,7 @@ public class WaterSpoutWave extends WaterAbility {
 				animation = AnimateState.RISE;
 				location = origin.clone();
 					
-				if (isPlant(origin.getBlock())) {
+				if (isPlant(origin.getBlock()) || isSnow(origin.getBlock())) {
 					new PlantRegrowth(player, origin.getBlock());
 					origin.getBlock().setType(Material.AIR);
 				}

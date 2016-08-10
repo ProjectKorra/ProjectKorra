@@ -173,7 +173,7 @@ public class SurgeWall extends WaterAbility {
 				firstDirection = getDirection(sourceBlock.getLocation(), firstDestination);
 				targetDirection = getDirection(firstDestination, targetDestination);
 				
-				if (isPlant(sourceBlock)) {
+				if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 					new PlantRegrowth(player, sourceBlock);
 				}
 				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {

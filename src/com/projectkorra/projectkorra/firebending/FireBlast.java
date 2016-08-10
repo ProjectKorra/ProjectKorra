@@ -35,6 +35,7 @@ public class FireBlast extends FireAbility {
 	private boolean showParticles;
 	private boolean dissipate;
 	private boolean isFireBurst = false;
+	private boolean fireBurstIgnite;
 	private int ticks;
 	private long cooldown;
 	private double speedFactor;
@@ -97,6 +98,7 @@ public class FireBlast extends FireAbility {
 		this.isFireBurst = true;
 		this.powerFurnace = true;
 		this.showParticles = true;
+		this.fireBurstIgnite = getConfig().getBoolean("Abilities.Fire.FireBurst.Ignite");
 		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
 		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Range");
@@ -141,7 +143,7 @@ public class FireBlast extends FireAbility {
 					&& !safeBlocks.contains(block)
 					&& !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				if (canFireGrief()) {
-					if (WaterAbility.isPlantbendable(player, block.getType(), false)) {
+					if (isPlant(block) || isSnow(block)) {
 						new PlantRegrowth(player, block);
 					}
 					block.setType(Material.FIRE);
@@ -181,7 +183,9 @@ public class FireBlast extends FireAbility {
 				furnace.setCookTime((short) 800);
 				furnace.update();
 			} else if (BlazeArc.isIgnitable(player, block.getRelative(BlockFace.UP))) {
-				ignite(location);
+				if((isFireBurst && fireBurstIgnite) || !isFireBurst) {
+					ignite(location);
+				}
 			}
 			remove();
 			return;

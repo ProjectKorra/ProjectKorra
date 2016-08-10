@@ -147,7 +147,7 @@ public class WaterArms extends WaterAbility {
 	private boolean prepare() {
 		Block sourceBlock = getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource);
 		if (sourceBlock != null) {
-			if (isPlant(sourceBlock)) {
+			if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 				fullSource = false;
 			}
 			ParticleEffect.LARGE_SMOKE.display(getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource).getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
