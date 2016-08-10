@@ -704,12 +704,20 @@ public class PKListener implements Listener {
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		if (event.isCancelled()) {
 			return;
-		} else if (!ConfigManager.languageConfig.get().getBoolean("Chat.Enable")) {
-			return;
-		}
-
+		} 
+		
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		
+		String e = bPlayer == null || bPlayer.getElements().size() == 0 ? "Nonbender" : (bPlayer.getElements().size() > 1 ? "Avatar" : bPlayer.getElements().get(0).getName());
+		String element = ConfigManager.languageConfig.get().getString("Chat.Prefixes." + e);
+		ChatColor c = bPlayer == null || bPlayer.getElements().size() == 0 ? ChatColor.WHITE : (bPlayer.getElements().size() > 1 ? Element.AVATAR.getColor() : bPlayer.getElements().get(0).getColor());
+		event.setFormat(event.getFormat().replace("{element}", c + element + ChatColor.RESET).replace("{ELEMENT}", c + element + ChatColor.RESET).replace("{elementcolor}", c + "").replace("{ELEMENTCOLOR}", c + ""));
+		
+		if (!ConfigManager.languageConfig.get().getBoolean("Chat.Enable")) {
+			return;
+		}
+		
 		ChatColor color = ChatColor.WHITE;
 
 		if (bPlayer == null) {
@@ -719,9 +727,9 @@ public class PKListener implements Listener {
 		if (player.hasPermission("bending.avatar") || bPlayer.getElements().size() > 1) {
 			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Colors.Avatar"));
 		} else {
-			for (Element element : Element.getMainElements()) {
-				if (bPlayer.hasElement(element)) {
-					color = element.getColor();
+			for (Element element_ : Element.getMainElements()) {
+				if (bPlayer.hasElement(element_)) {
+					color = element_.getColor();
 					break;
 				}
 			}
