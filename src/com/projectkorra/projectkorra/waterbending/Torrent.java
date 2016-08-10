@@ -142,7 +142,7 @@ public class Torrent extends WaterAbility {
 					sourceSelected = false;
 					settingUp = true;
 					
-					if (isPlant(sourceBlock)) {
+					if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 						new PlantRegrowth(player, sourceBlock);
 						sourceBlock.setType(Material.AIR);
 					} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {

@@ -152,7 +152,7 @@ public class WaterManipulation extends WaterAbility {
 					targetDestination = GeneralMethods.getPointOnLine(firstDestination, targetDestination, range);
 					targetDirection = GeneralMethods.getDirection(firstDestination, targetDestination).normalize();
 
-					if (isPlant(sourceBlock)) {
+					if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 						new PlantRegrowth(player, sourceBlock);
 						sourceBlock.setType(Material.AIR);
 					} else if (!isIce(sourceBlock)) {

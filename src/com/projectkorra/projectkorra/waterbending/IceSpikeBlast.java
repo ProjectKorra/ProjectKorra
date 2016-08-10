@@ -260,7 +260,7 @@ public class IceSpikeBlast extends IceAbility {
 		settingUp = true;
 		prepared = false;
 
-		if (isPlant(sourceBlock)) {
+		if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 			new PlantRegrowth(player, sourceBlock);
 			sourceBlock.setType(Material.AIR);
 		}

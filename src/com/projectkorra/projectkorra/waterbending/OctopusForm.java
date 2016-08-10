@@ -141,7 +141,7 @@ public class OctopusForm extends WaterAbility {
 
 	private void form() {
 		incrementStep();
-		if (isPlant(sourceBlock)) {
+		if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 			new PlantRegrowth(player, sourceBlock);
 			sourceBlock.setType(Material.AIR);
 		} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
