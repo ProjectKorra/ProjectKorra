@@ -414,7 +414,7 @@ public class MetalClips extends MetalAbility {
 
 				for (Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2)) {
 					if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId()) {
-						if ((e instanceof Player || e instanceof Zombie || e instanceof Skeleton) && targetEntity == null) {
+						if (e instanceof Player || e instanceof Zombie || e instanceof Skeleton) {
 							targetEntity = (LivingEntity) e;
 							TARGET_TO_ABILITY.put(targetEntity, this);
 							formArmor();
