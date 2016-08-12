@@ -414,10 +414,19 @@ public class MetalClips extends MetalAbility {
 
 				for (Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2)) {
 					if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId()) {
-						if ((e instanceof Player || e instanceof Zombie || e instanceof Skeleton) && targetEntity == null) {
-							targetEntity = (LivingEntity) e;
-							TARGET_TO_ABILITY.put(targetEntity, this);
-							formArmor();
+						if ((e instanceof Player || e instanceof Zombie || e instanceof Skeleton)) {
+							if (targetEntity == null) {
+								targetEntity = (LivingEntity) e;
+								TARGET_TO_ABILITY.put(targetEntity, this);
+								formArmor();
+							} else if (targetEntity == e) {
+								formArmor();
+							} else {
+								TARGET_TO_ABILITY.get(targetEntity).remove();
+								targetEntity = (LivingEntity) e;
+								TARGET_TO_ABILITY.put(targetEntity, this);
+								formArmor();
+							}
 						} else {
 							DamageHandler.damageEntity(e, 5, this);
 							ii.getWorld().dropItem(ii.getLocation(), ii.getItemStack());
@@ -425,6 +434,7 @@ public class MetalClips extends MetalAbility {
 						}
 
 						ii.remove();
+						break;
 					}
 				}
 			}
