@@ -21,6 +21,7 @@ public class AirFlight extends FlightAbility {
 	private int maxHitsBeforeRemoval;
 	private double speed;
 	private Flight flight;
+	static int hoverY;
 
 	public AirFlight(Player player) {
 		super(player);		
@@ -71,6 +72,7 @@ public class AirFlight extends FlightAbility {
 				HOVERING.put(playername, new PlayerFlyData(player.getAllowFlight(), player.isFlying()));
 				player.setVelocity(new Vector(0, 0, 0));
 				player.setFlying(true);
+				hoverY = Integer.valueOf((int) player.getLocation().getY());
 			}
 		} else {
 			if (HOVERING.containsKey(playername)) {
@@ -107,6 +109,15 @@ public class AirFlight extends FlightAbility {
 			Vector vec = player.getVelocity().clone();
 			vec.setY(0);
 			player.setVelocity(vec);
+			if (!Integer.valueOf((int) player.getLocation().getY()).equals(hoverY)) {
+				Location loc = new Location(player.getWorld(), 
+						player.getLocation().getX(), 
+						hoverY + 0.5, 
+						player.getLocation().getZ(), 
+						player.getLocation().getYaw(), 
+						player.getLocation().getPitch());
+				player.teleport(loc);
+			}
 		} else {
 			player.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(speed));
 		}
