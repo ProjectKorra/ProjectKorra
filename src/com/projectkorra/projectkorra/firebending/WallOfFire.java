@@ -37,7 +37,8 @@ public class WallOfFire extends FireAbility {
 	private Random random;
 	private Location origin;
 	private List<Block> blocks;
-	
+	private double kockback;
+
 	public WallOfFire(Player player) {
 		super(player);
 		
@@ -52,6 +53,7 @@ public class WallOfFire extends FireAbility {
 		this.damageInterval = getConfig().getLong("Abilities.Fire.WallOfFire.DamageInterval");
 		this.duration = getConfig().getLong("Abilities.Fire.WallOfFire.Duration");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.WallOfFire.FireTicks");
+		this.kockback = getConfig().getDouble("Abilities.Fire.WallOfFire.Knockback");
 		this.random = new Random();
 		this.blocks = new ArrayList<>();
 
@@ -98,7 +100,7 @@ public class WallOfFire extends FireAbility {
 			AirAbility.breakBreathbendingHold(entity);
 		}
 		entity.setFireTicks((int) (fireTicks * 20));
-		entity.setVelocity(player.getLocation().getDirection().multiply(1.4));
+		entity.setVelocity(player.getLocation().getDirection().multiply(this.kockback);
 		new FireDamageTimer(entity, player);
 	}
 
