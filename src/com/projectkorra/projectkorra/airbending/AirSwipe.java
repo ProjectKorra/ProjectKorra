@@ -141,11 +141,6 @@ public class AirSwipe extends AirAbility {
 					}
 
 					Block block = location.getBlock();
-					if (!EarthAbility.isTransparent(player, block)) {
-						remove();
-						return;
-					}
-					
 					for (Block testblock : GeneralMethods.getBlocksAroundPoint(location, radius)) {
 						if (testblock.getType() == Material.FIRE) {
 							testblock.setType(Material.AIR);

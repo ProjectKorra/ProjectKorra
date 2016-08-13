@@ -1,10 +1,11 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,11 +13,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSpout extends WaterAbility {
 
@@ -31,7 +32,6 @@ public class WaterSpout extends WaterAbility {
 	private long interval;
 	private double rotation;
 	private double height;
-	private double maxHeight;
 	private Block base;
 	private TempBlock baseBlock;
 	private boolean canFly;
@@ -185,6 +185,7 @@ public class WaterSpout extends WaterAbility {
 			return false;
 		}
 		double playerHeight = player.getLocation().getY();
+		double maxHeight = isNight(player.getWorld()) ? getNightFactor(height) : height;
 		if (playerHeight > baseBlockLocation.getY() + maxHeight + threshold) {
 			return false;
 		}
@@ -232,7 +233,7 @@ public class WaterSpout extends WaterAbility {
 			newHeight = getNightFactor(newHeight);
 		}
 		
-		this.maxHeight = newHeight + 5;
+		double maxHeight = (height * ProjectKorra.plugin.getConfig().getDouble("Properties.Water.NightFactor")) + 5;
 		Block blocki;
 		
 		for (int i = 0; i < maxHeight; i++) {
@@ -272,6 +273,7 @@ public class WaterSpout extends WaterAbility {
 				}
 			}
 		}
+		revertBaseBlock();
 		return -1;
 	}
 
