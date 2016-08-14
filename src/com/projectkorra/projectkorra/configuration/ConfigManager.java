@@ -906,11 +906,12 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Earth.MetalClips.Enabled", true);			
 			config.addDefault("Abilities.Earth.MetalClips.Damage", 2);
-			config.addDefault("Abilities.Earth.MetalClips.DamageInterval", 500);
 			config.addDefault("Abilities.Earth.MetalClips.Range", 10);
 			config.addDefault("Abilities.Earth.MetalClips.MagnetRange", 20);
 			config.addDefault("Abilities.Earth.MetalClips.MagnetPower", 0.6);
-			config.addDefault("Abilities.Earth.MetalClips.Cooldown", 1000);
+			config.addDefault("Abilities.Earth.MetalClips.Cooldown", 6000);
+			config.addDefault("Abilities.Earth.MetalClips.CrushCooldown", 2000);
+			config.addDefault("Abilities.Earth.MetalClips.ShootCooldown", 1500);
 			config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
 			config.addDefault("Abilities.Earth.MetalClips.ThrowEnabled", false);
 
