@@ -44,7 +44,7 @@ public class SurgeWave extends WaterAbility {
 	private Location frozenLocation;
 	private Vector targetDirection;
 	private ConcurrentHashMap<Block, Block> waveBlocks;
-	private ConcurrentHashMap<Block, Block> frozenBlocks;
+	private ConcurrentHashMap<Block, Material> frozenBlocks;
 	
 	public SurgeWave(Player player) {
 		super(player);
@@ -137,17 +137,15 @@ public class SurgeWave extends WaterAbility {
 				continue;
 			}
 			
-			if (block.getType() == Material.AIR || block.getType() == Material.SNOW) {
+			Block oldBlock = block;
+			if (block.getType() == Material.AIR || block.getType() == Material.SNOW || isWater(block)) {
 				new TempBlock(block, Material.ICE, (byte) 0);
-				frozenBlocks.put(block, block);
-			}
-			if (isWater(block)) {
-				PhaseChangeFreeze.freeze(player, block);
+				frozenBlocks.put(block, oldBlock.getType());
 			}
 			if (isPlant(block) && block.getType() != Material.LEAVES) {
 				block.breakNaturally();
 				new TempBlock(block, Material.ICE, (byte) 0);
-				frozenBlocks.put(block, block);
+				frozenBlocks.put(block, oldBlock.getType());
 			}
 			for (Block sound : frozenBlocks.keySet()) {
 				if ((new Random()).nextInt(4) == 0) {
@@ -364,7 +362,7 @@ public class SurgeWave extends WaterAbility {
 
 	private void thaw() {
 		for (Block block : frozenBlocks.keySet()) {
-			TempBlock.revertBlock(block, Material.AIR);
+			TempBlock.revertBlock(block, frozenBlocks.get(block));
 			frozenBlocks.remove(block);
 		}
 	}
@@ -571,7 +569,7 @@ public class SurgeWave extends WaterAbility {
 		return waveBlocks;
 	}
 
-	public ConcurrentHashMap<Block, Block> getFrozenBlocks() {
+	public ConcurrentHashMap<Block, Material> getFrozenBlocks() {
 		return frozenBlocks;
 	}
 
