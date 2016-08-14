@@ -906,6 +906,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Earth.MetalClips.Enabled", true);			
 			config.addDefault("Abilities.Earth.MetalClips.Damage", 2);
+			config.addDefault("Abilities.Earth.MetalClips.CrushDamage", 1);
 			config.addDefault("Abilities.Earth.MetalClips.Range", 10);
 			config.addDefault("Abilities.Earth.MetalClips.MagnetRange", 20);
 			config.addDefault("Abilities.Earth.MetalClips.MagnetPower", 0.6);
