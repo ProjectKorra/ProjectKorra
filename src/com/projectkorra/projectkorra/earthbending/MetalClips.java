@@ -39,18 +39,19 @@ public class MetalClips extends MetalAbility {
 	private boolean isMagnetized;
 	private boolean canUse4Clips;
 	private boolean canLoot;
+	private boolean hasSnuck;
 	private int metalClipsCount;
 	private int abilityType;
 	private int armorTime;
-	private int crushInterval;
-	private int crushDamage;
 	private int magnetRange;
 	private long armorStartTime;
-	private long time;
 	private long cooldown;
-	private double lastDistanceCheck;
+	private long shootCooldown;
+	private long crushCooldown;
 	private double magnetPower;
 	private double range;
+	private double crushDamage;
+	private double damage;
 	private LivingEntity targetEntity;
 	private ItemStack[] oldArmor;
 	private List<Item> trackedIngots;
@@ -65,12 +66,14 @@ public class MetalClips extends MetalAbility {
 		this.canLoot = player.hasPermission("bending.ability.MetalClips.loot");
 		this.canUse4Clips = player.hasPermission("bending.ability.MetalClips.4clips");
 		this.armorTime = getConfig().getInt("Abilities.Earth.MetalClips.Duration");
-		this.crushInterval = getConfig().getInt("Abilities.Earth.MetalClips.DamageInterval");;
 		this.range = getConfig().getDouble("Abilities.Earth.MetalClips.Range");
-		this.cooldown = getConfig().getInt("Abilities.Earth.MetalClips.Cooldown");
-		this.crushDamage = getConfig().getInt("Abilities.Earth.MetalClips.Damage");
+		this.cooldown = getConfig().getLong("Abilities.Earth.MetalClips.Cooldown");
+		this.shootCooldown = getConfig().getLong("Abilities.Earth.MetalClips.ShootCooldown");
+		this.crushCooldown = getConfig().getLong("Abilities.Earth.MetalClips.CrushCooldown");
 		this.magnetRange = getConfig().getInt("Abilities.Earth.MetalClips.MagnetRange");
 		this.magnetPower = getConfig().getDouble("Abilities.Earth.MetalClips.MagnetPower");
+		this.crushDamage = getConfig().getDouble("Abilities.Earth.MetalClips.CrushDamage");
+		this.damage = getConfig().getDouble("Abilities.Earth.MetalClips.Damage");
 		this.canThrow = (getConfig().getBoolean("Abilities.Earth.MetalClips.ThrowEnabled") && player.hasPermission("bending.ability.metalclips.throw"));
 		this.trackedIngots = new ArrayList<>();		
 		
@@ -136,6 +139,10 @@ public class MetalClips extends MetalAbility {
 	}
 
 	public void shootMetal() {
+		if (bPlayer.isOnCooldown("MetalClips Shoot")) {
+			return;
+		}
+		bPlayer.addCooldown("MetalClips Shoot", shootCooldown);
 		ItemStack is = new ItemStack(Material.IRON_INGOT, 1);
 
 		if (!player.getInventory().containsAtLeast(is, 1)) {
@@ -156,8 +163,6 @@ public class MetalClips extends MetalAbility {
 		item.setVelocity(vector.normalize().add(new Vector(0, 0.1, 0).multiply(1.2)));
 		trackedIngots.add(item);
 		player.getInventory().removeItem(is);
-
-		bPlayer.addCooldown(this);
 	}
 
 	public void formArmor() {
@@ -199,11 +204,6 @@ public class MetalClips extends MetalAbility {
 			ENTITY_CLIPS_COUNT.put(targetEntity, metalClipsCount);
 			targetEntity.getEquipment().setArmorContents(metalarmor);
 		}
-
-		if (metalClipsCount == 4) {
-			time = System.currentTimeMillis();
-			lastDistanceCheck = player.getLocation().distance(targetEntity.getLocation());
-		}
 		armorStartTime = System.currentTimeMillis();
 		isBeingWorn = true;
 	}
@@ -236,8 +236,16 @@ public class MetalClips extends MetalAbility {
 		dz = target.getZ() - location.getZ();
 		Vector vector = new Vector(dx, dy, dz);
 		vector.normalize();
-		targetEntity.setVelocity(vector.multiply(2));
+		targetEntity.setVelocity(vector.multiply(metalClipsCount/2).normalize());
 		remove();
+	}
+	
+	public void crush() {
+		if (bPlayer.isOnCooldown("MetalClips Crush")) {
+			return;
+		}
+		bPlayer.addCooldown("MetalClips Crush", crushCooldown);
+		DamageHandler.damageEntity(targetEntity, player, crushDamage, this);
 	}
 
 	@Override
@@ -253,10 +261,17 @@ public class MetalClips extends MetalAbility {
 				return;
 			}
 		}
+		
+		if (player.isSneaking()) {
+			hasSnuck = true;
+		}
 
 		if (!player.isSneaking()) {
 			isControlling = false;
 			isMagnetized = false;
+			if (metalClipsCount < 4 && hasSnuck) {
+				launch();
+			}
 		}
 
 		if (isMagnetized) {
@@ -382,21 +397,6 @@ public class MetalClips extends MetalAbility {
 
 				targetEntity.setFallDistance(0);
 			}
-
-			if (metalClipsCount == 4 && canUse4Clips) {
-				double distance = player.getLocation().distance(targetEntity.getLocation());
-				if (distance < lastDistanceCheck - 0.3) {
-					double height = targetEntity.getLocation().getY();
-					if (height > player.getEyeLocation().getY()) {
-						lastDistanceCheck = distance;
-
-						if (System.currentTimeMillis() > time + crushInterval) {
-							time = System.currentTimeMillis();
-							DamageHandler.damageEntity(targetEntity, (crushDamage + (crushDamage * 1.2)), this);
-						}
-					}
-				}
-			}
 		}
 
 		for (int i = 0; i < trackedIngots.size(); i++) {
@@ -428,7 +428,7 @@ public class MetalClips extends MetalAbility {
 								formArmor();
 							}
 						} else {
-							DamageHandler.damageEntity(e, 5, this);
+							DamageHandler.damageEntity(e, player, damage, this);
 							ii.getWorld().dropItem(ii.getLocation(), ii.getItemStack());
 							remove();
 						}
@@ -466,6 +466,10 @@ public class MetalClips extends MetalAbility {
 		if (targetEntity != null) {
 			ENTITY_CLIPS_COUNT.remove(targetEntity);
 			TARGET_TO_ABILITY.remove(targetEntity);
+		}
+		
+		if (player != null && player.isOnline()) {
+			bPlayer.addCooldown(this);
 		}
 	}
 
@@ -515,6 +519,14 @@ public class MetalClips extends MetalAbility {
 	@Override
 	public long getCooldown() {
 		return cooldown;
+	}
+	
+	public long getShootCooldown() {
+		return shootCooldown;
+	}
+	
+	public long getCrushCooldown() {
+		return crushCooldown;
 	}
 	
 	@Override
@@ -599,19 +611,11 @@ public class MetalClips extends MetalAbility {
 		this.armorTime = armorTime;
 	}
 
-	public int getCrushInterval() {
-		return crushInterval;
-	}
-
-	public void setCrushInterval(int crushInterval) {
-		this.crushInterval = crushInterval;
-	}
-
-	public int getCrushDamage() {
+	public double getCrushDamage() {
 		return crushDamage;
 	}
 
-	public void setCrushDamage(int crushDamage) {
+	public void setCrushDamage(double crushDamage) {
 		this.crushDamage = crushDamage;
 	}
 
@@ -629,22 +633,6 @@ public class MetalClips extends MetalAbility {
 
 	public void setArmorStartTime(long armorStartTime) {
 		this.armorStartTime = armorStartTime;
-	}
-
-	public long getTime() {
-		return time;
-	}
-
-	public void setTime(long time) {
-		this.time = time;
-	}
-
-	public double getLastDistanceCheck() {
-		return lastDistanceCheck;
-	}
-
-	public void setLastDistanceCheck(double lastDistanceCheck) {
-		this.lastDistanceCheck = lastDistanceCheck;
 	}
 
 	public double getMagnetPower() {

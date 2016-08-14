@@ -278,14 +278,16 @@ public class WaterSpout extends WaterAbility {
 	public static boolean removeSpouts(Location loc0, double radius, Player sourcePlayer) {
 		boolean removed = false;
 		for (WaterSpout spout : getAbilities(WaterSpout.class)) {
-			Location top = spout.getLocation();
-			Location base = spout.getBase().getLocation();
-			double dist = top.getBlockY() - base.getBlockY();
-			for (double d = 0; d <= dist; d += 0.5) {
-				Location spoutl = base.clone().add(0, d, 0);
-				if (loc0.distance(spoutl) <= radius) {
-					removed = true;
-					spout.remove();
+			if (!spout.player.equals(sourcePlayer)) {
+				Location top = spout.getLocation();
+				Location base = spout.getBase().getLocation();
+				double dist = top.getBlockY() - base.getBlockY();
+				for (double d = 0; d <= dist; d += 0.5) {
+					Location spoutl = base.clone().add(0, d, 0);
+					if (loc0.distance(spoutl) <= radius) {
+						removed = true;
+						spout.remove();
+					}
 				}
 			}
 		}

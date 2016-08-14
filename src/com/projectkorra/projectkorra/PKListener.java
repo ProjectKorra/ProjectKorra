@@ -1577,8 +1577,8 @@ public class PKListener implements Listener {
 						new MetalClips(player, 0);
 					} else if (clips.getMetalClipsCount() < (player.hasPermission("bending.ability.MetalClips.4clips") ? 4 : 3)) {
 						clips.shootMetal();
-					} else if (MetalClips.isControllingEntity(player)) {
-						clips.launch();
+					} else if (clips.getMetalClipsCount() == 4 && clips.isCanUse4Clips()) {
+						clips.crush();
 					}
 				}
 				if (abil.equalsIgnoreCase("LavaSurge")) {
