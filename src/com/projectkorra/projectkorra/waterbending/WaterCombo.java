@@ -75,6 +75,12 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 		}
 
 		if (name.equalsIgnoreCase("IceWave")) {
+			
+			if (bPlayer.isOnCooldown("IceWave") && !bPlayer.isAvatarState()) {
+				remove();
+				return;
+			}
+			
 			this.cooldown = getConfig().getLong("Abilities.Water.WaterCombo.IceWave.Cooldown");
 		} else if (name.equalsIgnoreCase("IceBullet")) {
 			this.damage = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Damage");
@@ -205,13 +211,9 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 			return;
 		} else if (name.equalsIgnoreCase("IceWave")) {
 			if (origin == null && WaterSpoutWave.containsType(player, WaterSpoutWave.AbilityType.RELEASE)) {
-				if (bPlayer.isOnCooldown("IceWave") && !bPlayer.isAvatarState()) {
-					remove();
-					return;
-				}
-				
 				bPlayer.addCooldown("IceWave", cooldown);
 				origin = player.getLocation();
+				
 				WaterSpoutWave wave = WaterSpoutWave.getType(player, WaterSpoutWave.AbilityType.RELEASE).get(0);
 				wave.setIceWave(true);
 			} else if (!WaterSpoutWave.containsType(player, WaterSpoutWave.AbilityType.RELEASE)) {
@@ -305,7 +307,12 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 		if (waterGrabber != null) {
 			waterGrabber.remove();
 		}
+		
 		bPlayer.addCooldown(this);
+		
+		if (name == "IceWave") {
+			bPlayer.addCooldown("WaterWave", getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown"));
+		}
 	}
 
 	public void revertBlocks() {

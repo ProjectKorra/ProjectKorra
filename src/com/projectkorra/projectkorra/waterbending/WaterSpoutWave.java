@@ -449,7 +449,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return this.isIceWave() ? "IceWave" : "WaterSpout";
+		return "WaterSpout";
 	}
 	
 	@Override
