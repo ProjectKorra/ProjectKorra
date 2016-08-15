@@ -60,6 +60,10 @@ public class SandSpout extends SandAbility {
 			return;
 		}
 		
+		if (EarthPassive.isPassiveSand(topBlock)) {
+			return;
+		}
+		
 		flight = new Flight(player);
 		start();
 		bPlayer.addCooldown(this);
@@ -80,6 +84,12 @@ public class SandSpout extends SandAbility {
 		}
 		
 		Block block = getGround();
+		
+		if (EarthPassive.isPassiveSand(block)) {
+			remove();
+			return;
+		}
+		
 		if (block != null && (block.getType() == Material.SAND || block.getType() == Material.SANDSTONE || block.getType() == Material.RED_SANDSTONE)) {
 			double dy = player.getLocation().getY() - block.getY();
 			if (dy > height) {
