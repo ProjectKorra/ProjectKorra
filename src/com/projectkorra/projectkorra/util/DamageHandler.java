@@ -26,13 +26,13 @@ public class DamageHandler {
 	 * @param damage The amount of damage to deal
 	 */
 	@SuppressWarnings("deprecation")
-	public static void damageEntity(Entity entity, Player source, double damage, Ability ability) {
+	public static void damageEntity(Entity entity, Player source, double damage, Ability ability, boolean ignoreArmor) {
 		
 		if (ability == null)
 			return;
 		
 		Player player = ability.getPlayer();
-		AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage);
+		AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage, ignoreArmor);
 		Bukkit.getServer().getPluginManager().callEvent(damageEvent);
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Player && Commands.invincible.contains(entity.getName())) {
@@ -49,9 +49,17 @@ public class DamageHandler {
 					Bukkit.getServer().getPluginManager().callEvent(event);
 				}
 				
-				((LivingEntity) entity).damage(damage, source);
+				DamageCause cause = DamageCause.CUSTOM;
+				if (ignoreArmor) {
+					cause = DamageCause.MAGIC;
+				}
 				
-				entity.setLastDamageCause(new EntityDamageByEntityEvent(player, entity, DamageCause.CUSTOM, damage));
+				EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(player, entity, cause, damage);
+				if (!finalEvent.isCancelled()) {
+					damage = finalEvent.getDamage();
+					((LivingEntity) entity).damage(damage, source);
+					entity.setLastDamageCause(finalEvent);
+				}
 				
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus")) {
 					NCPExemptionManager.unexempt(player);
@@ -59,6 +67,10 @@ public class DamageHandler {
 			}
 		}
 
+	}
+	
+	public static void damageEntity(Entity entity, Player source, double damage, Ability ability) {
+		damageEntity(entity, source, damage, ability, true);
 	}
 	
 	public static void damageEntity(Entity entity, double damage, Ability ability) {
