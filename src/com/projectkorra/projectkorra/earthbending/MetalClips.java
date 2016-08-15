@@ -227,6 +227,10 @@ public class MetalClips extends MetalAbility {
 		if (!canThrow) {
 			return;
 		}
+		
+		if (targetEntity == null) {
+			return;
+		}
 
 		Location location = player.getLocation();
 		double dx, dy, dz;
@@ -269,7 +273,7 @@ public class MetalClips extends MetalAbility {
 		if (!player.isSneaking()) {
 			isControlling = false;
 			isMagnetized = false;
-			if (metalClipsCount < 4 && hasSnuck) {
+			if (metalClipsCount < 4 && hasSnuck && abilityType == 0) {
 				launch();
 			}
 		}
