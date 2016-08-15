@@ -1,9 +1,8 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,9 +10,10 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthTunnel extends EarthAbility {
 	
@@ -97,13 +97,16 @@ public class EarthTunnel extends EarthAbility {
 					Vector vec = GeneralMethods.getOrthogonalVector(direction, angle, radius);
 					block = location.clone().add(direction.clone().normalize().multiply(depth)).add(vec).getBlock();
 				}
-
-				if (this.revert) {
-					airBlocks.put(new TempBlock(block, Material.AIR, (byte) 0), System.currentTimeMillis());
+				
+				if (revert) {
+					if (getMovedEarth().containsKey(block)) {
+						block.setType(Material.AIR);
+					} else {
+						airBlocks.put(new TempBlock(block, Material.AIR, (byte) 0), System.currentTimeMillis());
+					}
 				} else {
-					block.breakNaturally();
+					block.setType(Material.AIR);
 				}
-				return;
 			}
 		}
 	}
