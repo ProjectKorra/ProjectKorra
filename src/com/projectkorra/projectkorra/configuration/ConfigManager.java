@@ -914,7 +914,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.MetalClips.CrushCooldown", 2000);
 			config.addDefault("Abilities.Earth.MetalClips.ShootCooldown", 1500);
 			config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
-			config.addDefault("Abilities.Earth.MetalClips.ThrowEnabled", false);
+			config.addDefault("Abilities.Earth.MetalClips.ThrowEnabled", true);
 
 			config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 			config.addDefault("Abilities.Earth.RaiseEarth.Speed", 10);
