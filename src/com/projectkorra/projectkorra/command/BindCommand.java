@@ -78,7 +78,7 @@ public class BindCommand extends PKCommand {
 		} else if (coreAbil == null || !bPlayer.canBind(coreAbil)) {
 			if (coreAbil != null && coreAbil.getElement() != Element.AVATAR && !bPlayer.hasElement(coreAbil.getElement())) {
 				if (coreAbil.getElement() instanceof SubElement) {
-					sender.sendMessage(ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
+					sender.sendMessage(ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
 				} else {
 					sender.sendMessage(ChatColor.RED + this.noElement.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
 				}
