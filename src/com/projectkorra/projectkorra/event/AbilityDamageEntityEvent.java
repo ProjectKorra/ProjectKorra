@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.event;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -19,7 +20,8 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 	private boolean cancelled = false;
 	private Entity entity;
 	private Ability ability;
-	double damage;
+	private double damage;
+	private boolean ignoreArmor;
 	
 	/**
 	 * Create a new AbilityDamageEntityEvent
@@ -27,10 +29,11 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 	 * @param ability The damaging ability
 	 * @param damage The amount of damage done
 	 */
-	public AbilityDamageEntityEvent(Entity entity, Ability ability, double damage) {
+	public AbilityDamageEntityEvent(Entity entity, Ability ability, double damage, boolean ignoreArmor) {
 		this.entity = entity;
 		this.ability = ability;
 		this.damage = damage;
+		this.ignoreArmor = ignoreArmor;
 	}
 	
 	/**
@@ -58,11 +61,23 @@ public class AbilityDamageEntityEvent extends Event implements Cancellable {
 	}
 
 	/**
-	 * 
-	 * @return
+	 * Gets the ability used
+	 * @return ability used
 	 */
 	public Ability getAbility() {
 		return ability;
+	}
+	
+	public boolean doesIgnoreArmor() {
+		return ignoreArmor;
+	}
+	
+	/**
+	 * Gets the player that used the ability
+	 * @return player that used ability
+	 */
+	public Player getSource() {
+		return ability.getPlayer();
 	}
 	
 	public HandlerList getHandlers() {
