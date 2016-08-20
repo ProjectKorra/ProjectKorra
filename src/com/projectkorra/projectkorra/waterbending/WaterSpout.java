@@ -51,14 +51,16 @@ public class WaterSpout extends WaterAbility {
 		this.useBlockSpiral = getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
 		this.height = getConfig().getDouble("Abilities.Water.WaterSpout.Height");
 		this.interval = getConfig().getLong("Abilities.Water.WaterSpout.Interval");
+		
 		hadFly = player.isFlying();
 		canFly = player.getAllowFlight();
+		maxHeight = getNightFactor(height);
 		WaterSpoutWave spoutWave = new WaterSpoutWave(player, WaterSpoutWave.AbilityType.CLICK);
 		if (spoutWave.isStarted() && !spoutWave.isRemoved()) {
 			return;
 		}
 
-		Block topBlock = GeneralMethods.getTopBlock(player.getLocation(), 0, -50);
+		Block topBlock = GeneralMethods.getTopBlock(player.getLocation(), (int)-getNightFactor(height), (int)-getNightFactor(height));
 		if (topBlock == null) {
 			topBlock = player.getLocation().getBlock();
 		}
@@ -255,6 +257,13 @@ public class WaterSpout extends WaterAbility {
 				}
 				
 				if (isIcebendable(blocki) || isSnow(blocki)) {
+					if (isIcebendable(blocki)) {
+						if (blocki.getType() == Material.PACKED_ICE && !canBendOnPackedIce) {
+							remove();
+							return -1;
+						}
+					}
+					
 					if (!TempBlock.isTempBlock(blocki)) {
 						revertBaseBlock();
 						baseBlock = new TempBlock(blocki, Material.STATIONARY_WATER, (byte) 8);
@@ -266,6 +275,7 @@ public class WaterSpout extends WaterAbility {
 					}
 					return i;
 				}
+				
 				if ((blocki.getType() != Material.AIR && (!isPlant(blocki) || !bPlayer.canPlantbend()))) {
 					revertBaseBlock();
 					return -1;
