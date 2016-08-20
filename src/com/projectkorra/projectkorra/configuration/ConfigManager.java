@@ -912,7 +912,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.MetalClips.MagnetPower", 0.6);
 			config.addDefault("Abilities.Earth.MetalClips.Cooldown", 6000);
 			config.addDefault("Abilities.Earth.MetalClips.CrushCooldown", 2000);
-			config.addDefault("Abilities.Earth.MetalClips.ShootCooldown", 1500);
+			config.addDefault("Abilities.Earth.MetalClips.ShootCooldown", 0);
 			config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
 			config.addDefault("Abilities.Earth.MetalClips.ThrowEnabled", true);
 
