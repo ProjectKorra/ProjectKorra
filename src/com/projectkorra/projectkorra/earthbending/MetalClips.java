@@ -459,9 +459,6 @@ public class MetalClips extends MetalAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		for (Item i : trackedIngots) {
-			i.remove();
-		}
 		
 		resetArmor();
 		trackedIngots.clear();
