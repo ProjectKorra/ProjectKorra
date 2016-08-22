@@ -35,6 +35,7 @@ public class SwiftKick extends ChiAbility {
 			return;
 		}
 		if (player.getLocation().subtract(0, 0.5, 0).getBlock().getType() != Material.AIR) {
+			remove();
 			return;
 		}
 		DamageHandler.damageEntity(target, damage, this);
