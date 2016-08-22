@@ -26,7 +26,11 @@ public class AirFlight extends FlightAbility {
 	private double hoverY;
 
 	public AirFlight(Player player) {
-		super(player);		
+		super(player);
+		
+		if (CoreAbility.getAbility(player, AirFlight.class) != null)
+			return;
+			
 		this.maxHitsBeforeRemoval = getConfig().getInt("Abilities.Air.Flight.MaxHits");
 		this.speed = getConfig().getDouble("Abilities.Air.Flight.Speed");
 		this.firstProgressIteration = true;

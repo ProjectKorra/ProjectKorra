@@ -71,12 +71,12 @@ public class ChooseCommand extends PKCommand {
 			else if (element.equalsIgnoreCase("f")) element = "fire";
 			else if (element.equalsIgnoreCase("w")) element = "water";
 			else if (element.equalsIgnoreCase("c")) element = "chi";
-			Element target = Element.getElement(element);
-			if (Arrays.asList(Element.getAllElements()).contains(target)) {
+			Element targetElement = Element.getElement(element);
+			if (Arrays.asList(Element.getAllElements()).contains(targetElement)) {
 				if (!hasPermission(sender, element)) {
 					return;
 				}
-				add(sender, (Player) sender, target);
+				add(sender, (Player) sender, targetElement);
 				return;
 			} else {
 				sender.sendMessage(ChatColor.RED + invalidElement);
@@ -93,6 +93,11 @@ public class ChooseCommand extends PKCommand {
 				return;
 			}
 			String element = args.get(0).toLowerCase();
+			if (element.equalsIgnoreCase("a")) element = "air";
+			else if (element.equalsIgnoreCase("e")) element = "earth";
+			else if (element.equalsIgnoreCase("f")) element = "fire";
+			else if (element.equalsIgnoreCase("w")) element = "water";
+			else if (element.equalsIgnoreCase("c")) element = "chi";
 			Element targetElement = Element.getElement(element);
 			if (Arrays.asList(Element.getAllElements()).contains(targetElement)) {
 				add(sender, target, targetElement);

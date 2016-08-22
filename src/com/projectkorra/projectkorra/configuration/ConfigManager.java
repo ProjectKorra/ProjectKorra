@@ -199,7 +199,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Bind.ElementToggledOff", "You have that ability's element toggled off currently.");
 			config.addDefault("Commands.Bind.SuccessfullyBound", "Succesfully bound {ability} to slot {slot}.");
 			config.addDefault("Commands.Bind.NoElement", "You are not a {element}!");
-			config.addDefault("Commands.Bind.NoSubElement", "You don't have access to {subelement}!");
+			config.addDefault("Commands.Bind.NoSubElement", "You are not a {subelement}!");
 			
 			config.addDefault("Commands.Add.Description", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
 			config.addDefault("Commands.Add.SuccessfullyAddedCFW", "You are now also a {element}.");
@@ -912,9 +912,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.MetalClips.MagnetPower", 0.6);
 			config.addDefault("Abilities.Earth.MetalClips.Cooldown", 6000);
 			config.addDefault("Abilities.Earth.MetalClips.CrushCooldown", 2000);
-			config.addDefault("Abilities.Earth.MetalClips.ShootCooldown", 1500);
+			config.addDefault("Abilities.Earth.MetalClips.ShootCooldown", 0);
 			config.addDefault("Abilities.Earth.MetalClips.Duration", 10000);
-			config.addDefault("Abilities.Earth.MetalClips.ThrowEnabled", false);
+			config.addDefault("Abilities.Earth.MetalClips.ThrowEnabled", true);
 
 			config.addDefault("Abilities.Earth.RaiseEarth.Enabled", true);
 			config.addDefault("Abilities.Earth.RaiseEarth.Speed", 10);
