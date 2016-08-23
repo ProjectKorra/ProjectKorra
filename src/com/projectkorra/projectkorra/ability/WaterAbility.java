@@ -190,10 +190,10 @@ public abstract class WaterAbility extends ElementalAbility {
 		Vector vector = location.getDirection().clone().normalize();
 		
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
+		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), range > 3 ? 3 : (int) range);
 		if (bPlayer == null) {
 			return null;
-		} else if (isWaterbendable(testBlock.getType())) {
+		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
 			return testBlock;
 		}
 		
