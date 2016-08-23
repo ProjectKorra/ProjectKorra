@@ -232,6 +232,10 @@ public class BendingPlayer {
 	}
 	
 	public boolean canBendPassive(Element element) {
+		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+			return false;
+		}
+		
 		List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 		
 		if (element == null || player == null) {
