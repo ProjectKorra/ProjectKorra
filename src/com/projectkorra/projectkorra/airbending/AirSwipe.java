@@ -266,10 +266,16 @@ public class AirSwipe extends AirAbility {
 	}
 
 	public void progress() {
+		if (!bPlayer.canBendIgnoreCooldowns(this)) {
+			remove();
+			return;
+		}
+		
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
 		}
+		
 		if (!charging) {
 			if (elements.isEmpty()) {
 				remove();
