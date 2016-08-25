@@ -33,7 +33,7 @@ public class Tremorsense extends EarthAbility {
 		this.lightThreshold = (byte) getConfig().getInt("Abilities.Earth.Tremorsense.LightThreshold");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Tremorsense.Cooldown");
 
-		if (!bPlayer.canBend(this)) {
+		if (!bPlayer.canBendIgnoreBinds(this)) {
 			return;
 		}
 		
@@ -134,7 +134,7 @@ public class Tremorsense extends EarthAbility {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			
 			if (bPlayer != null && !hasAbility(player, Tremorsense.class) 
-					&& bPlayer.canBend(getAbility("Tremorsense"))) {
+					&& bPlayer.canBendIgnoreBinds(getAbility("Tremorsense"))) {
 				new Tremorsense(player);
 			}
 		}

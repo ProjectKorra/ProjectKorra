@@ -719,7 +719,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Arms.MaxAlternateUsage", 50);
 			config.addDefault("Abilities.Water.WaterArms.Arms.MaxIceShots", 8);
 			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldown", 20000);
-			config.addDefault("Abilities.Water.WaterArms.Arms.AllowPlantSource", false);
+			config.addDefault("Abilities.Water.WaterArms.Arms.AllowPlantSource", true);
 
 			config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Enabled", true);
 			config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Damage", Double.valueOf(10.0));
