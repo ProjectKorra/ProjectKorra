@@ -26,6 +26,7 @@ public class BindCommand extends PKCommand {
 	private String loadingInfo;
 	private String toggledElementOff;
 	private String noElement;
+	private String noElementAE;
 	private String noSubElement;
 
 	public BindCommand() {
@@ -36,6 +37,7 @@ public class BindCommand extends PKCommand {
 		this.loadingInfo = ConfigManager.languageConfig.get().getString("Commands.Bind.LoadingInfo");
 		this.toggledElementOff = ConfigManager.languageConfig.get().getString("Commands.Bind.ToggledElementOff");
 		this.noElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElement");
+		this.noElementAE = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElementAE");
 		this.noSubElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoSubElement");
 	}
 
@@ -78,9 +80,14 @@ public class BindCommand extends PKCommand {
 		} else if (coreAbil == null || !bPlayer.canBind(coreAbil)) {
 			if (coreAbil != null && coreAbil.getElement() != Element.AVATAR && !bPlayer.hasElement(coreAbil.getElement())) {
 				if (coreAbil.getElement() instanceof SubElement) {
-					sender.sendMessage(ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+					SubElement sub = (SubElement) coreAbil.getElement();
+					if (!bPlayer.hasElement(sub.getParentElement())) {
+						sender.sendMessage(ChatColor.RED + ("AEIOUaeiou".indexOf(sub.getParentElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
+					} else {
+						sender.sendMessage(ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
+					}
 				} else {
-					sender.sendMessage(ChatColor.RED + this.noElement.replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+					sender.sendMessage(ChatColor.RED + ("AEIOUaeiou".indexOf(coreAbil.getElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
 				}
 			} else {
 				sender.sendMessage(ChatColor.RED + super.noPermissionMessage);
