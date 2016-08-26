@@ -56,7 +56,7 @@ public class WaterArmsWhip extends WaterAbility {
 	private Arm arm;
 	private Whip ability;
 	private LivingEntity grabbedEntity;
-	private Location end;	
+	private Location end;
 	private WaterArms waterArms;
 	
 	public WaterArmsWhip(Player player, Whip ability) {
@@ -243,12 +243,12 @@ public class WaterArmsWhip extends WaterAbility {
 				l1 = waterArms.getRightArmEnd().clone();
 			}
 			
-			Vector dir = player.getLocation().getDirection();
+			Vector direction = player.getLocation().getDirection();
 			for (int i = 1; i <= activeLength; i++) {
-				Location l2 = l1.clone().add(dir.normalize().multiply(i));
+				Location l2 = l1.clone().add(direction.normalize().multiply(i));
 
 				if (!canPlaceBlock(l2.getBlock())) {
-					if (!l2.getBlock().getType().equals(Material.BARRIER)) {
+					if (!l2.getBlock().getType().equals(Material.BARRIER) || !l2.getBlock().getType().equals(Material.AIR)) {
 						grappled = true;
 					}
 					reverting = true;
@@ -266,13 +266,14 @@ public class WaterArmsWhip extends WaterAbility {
 						l3 = GeneralMethods.getLeftSide(l2, 1);
 					}
 					
-					end = l3.clone();
+					if (end == null)
+						end = l3.clone();
 					if (canPlaceBlock(l3.getBlock())) {
 						new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 3);
 						WaterArms.getBlockRevertTimes().put(l3.getBlock(), System.currentTimeMillis() + 10);
 						performAction(l3);
 					} else {
-						if (!l3.getBlock().getType().equals(Material.BARRIER)) {
+						if (!l3.getBlock().getType().equals(Material.BARRIER) || !l3.getBlock().getType().equals(Material.AIR)) {
 							grappled = true;
 						}
 						reverting = true;
@@ -371,9 +372,10 @@ public class WaterArmsWhip extends WaterAbility {
 
 	private void grapplePlayer(Location location) {
 		if (reverting && grappled && player != null && end != null && ability.equals(Whip.GRAPPLE)) {
-			if (GeneralMethods.isRegionProtectedFromBuild(this, location) && grappleRespectRegions) {
+			if (GeneralMethods.isRegionProtectedFromBuild(this, location) && grappleRespectRegions)
 				return;
-			}
+			if (end.getBlock().getType() == Material.AIR)
+				return;
 			Vector vector = player.getLocation().toVector().subtract(location.toVector());
 			player.setVelocity(vector.multiply(-0.25));
 			player.setFallDistance(0);
