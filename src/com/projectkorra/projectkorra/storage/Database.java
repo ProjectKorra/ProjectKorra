@@ -93,7 +93,6 @@ public abstract class Database {
                 }
             }.runTaskAsynchronously(ProjectKorra.plugin);
         } else {
-            System.out.println("THIS SHOULD HAPPEN BEFORE THE ERROR");
             doQuery(query);
         }
     }
@@ -134,7 +133,7 @@ public abstract class Database {
         }
     }
 
-    private void doQuery(final String query) {
+    private synchronized void doQuery(final String query) {
         try {
             PreparedStatement stmt = connection.prepareStatement(query);
             stmt.execute();
