@@ -81,18 +81,20 @@ public abstract class Database {
      * @param query Query to run
      */
     public void modifyQuery(final String query) {
-    	new BukkitRunnable() {
-    		@Override
-    		public void run() {
-    			try {
-    				PreparedStatement stmt = connection.prepareStatement(query);
-    				stmt.execute();
-    				stmt.close();
-    			} catch (SQLException e) {
-    				e.printStackTrace();
-    			}
-    		}
-    	}.runTaskAsynchronously(ProjectKorra.plugin);
+    	modifyQuery(query, true);
+    }
+
+    public void modifyQuery(final String query, final boolean async) {
+        if (async) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    doQuery(query);
+                }
+            }.runTaskAsynchronously(ProjectKorra.plugin);
+        } else {
+            doQuery(query);
+        }
     }
 
     /**
@@ -130,4 +132,15 @@ public abstract class Database {
             return false;
         }
     }
+
+    private void doQuery(final String query) {
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.execute();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
