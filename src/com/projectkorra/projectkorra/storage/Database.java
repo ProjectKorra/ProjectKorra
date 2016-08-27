@@ -93,6 +93,7 @@ public abstract class Database {
                 }
             }.runTaskAsynchronously(ProjectKorra.plugin);
         } else {
+            System.out.println("THIS SHOULD HAPPEN BEFORE THE ERROR");
             doQuery(query);
         }
     }
