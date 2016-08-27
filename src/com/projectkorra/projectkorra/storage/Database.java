@@ -76,7 +76,7 @@ public abstract class Database {
     }
 
     /**
-     * Queries the Database, for queries which modify data.
+     * Queries the Database, for queries which modify data. Run async by default.
      *
      * @param query Query to run
      */
@@ -84,6 +84,12 @@ public abstract class Database {
     	modifyQuery(query, true);
     }
 
+    /**
+     * Queries the Databases, for queries which modify data.
+     *
+     * @param query Query to run
+     * @param async If to run asynchronously
+     */
     public void modifyQuery(final String query, final boolean async) {
         if (async) {
             new BukkitRunnable() {
