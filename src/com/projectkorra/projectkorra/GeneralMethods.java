@@ -266,12 +266,13 @@ public class GeneralMethods {
 	 * @throws SQLException
 	 */
 	public static void createBendingPlayer(final UUID uuid, final String player) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				createBendingPlayerAsynchronously(uuid, player);
-			}
-		}.runTaskAsynchronously(ProjectKorra.plugin);
+//		new BukkitRunnable() {
+//			@Override
+//			public void run() {
+//				createBendingPlayerAsynchronously(uuid, player);
+//			}
+//		}.runTaskAsynchronously(ProjectKorra.plugin);
+		createBendingPlayerAsynchronously(uuid, player); // "async"
 	}
 
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
