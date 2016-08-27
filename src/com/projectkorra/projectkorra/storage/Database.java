@@ -76,23 +76,31 @@ public abstract class Database {
     }
 
     /**
-     * Queries the Database, for queries which modify data.
+     * Queries the Database, for queries which modify data. Run async by default.
      *
      * @param query Query to run
      */
     public void modifyQuery(final String query) {
-    	new BukkitRunnable() {
-    		@Override
-    		public void run() {
-    			try {
-    				PreparedStatement stmt = connection.prepareStatement(query);
-    				stmt.execute();
-    				stmt.close();
-    			} catch (SQLException e) {
-    				e.printStackTrace();
-    			}
-    		}
-    	}.runTaskAsynchronously(ProjectKorra.plugin);
+    	modifyQuery(query, true);
+    }
+
+    /**
+     * Queries the Databases, for queries which modify data.
+     *
+     * @param query Query to run
+     * @param async If to run asynchronously
+     */
+    public void modifyQuery(final String query, final boolean async) {
+        if (async) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    doQuery(query);
+                }
+            }.runTaskAsynchronously(ProjectKorra.plugin);
+        } else {
+            doQuery(query);
+        }
     }
 
     /**
@@ -130,4 +138,15 @@ public abstract class Database {
             return false;
         }
     }
+
+    private synchronized void doQuery(final String query) {
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.execute();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
