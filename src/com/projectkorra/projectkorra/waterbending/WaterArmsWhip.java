@@ -221,7 +221,6 @@ public class WaterArmsWhip extends WaterAbility {
 
 		useArm();
 		dragEntity(end);
-		grapplePlayer(end);
 	}
 
 	private boolean canPlaceBlock(Block block) {
