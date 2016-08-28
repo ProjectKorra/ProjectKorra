@@ -1,7 +1,9 @@
 package com.projectkorra.projectkorra.command;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -9,10 +11,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class Commands {
 
@@ -76,7 +76,7 @@ public class Commands {
 	
 	//Miscellaneous
 	public static String[] commandaliases = { "b", "pk", "projectkorra", "bending", "mtla", "tla", "korra", "bend" };
-	
+
 	private List<String> help;
 	
 	private void init() {
@@ -99,7 +99,7 @@ public class Commands {
 		new ToggleCommand();
 		new VersionCommand();
 		new WhoCommand();
-		
+
 		help = ConfigManager.languageConfig.get().getStringList("Commands.GeneralHelpLines");
 		
 		/**
@@ -111,10 +111,7 @@ public class Commands {
 		exe = new CommandExecutor() {
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
-				for (int i = 0; i < args.length; i++) {
-					args[i] = args[i];
-				}
-
+				
 				if (args.length == 0 && Arrays.asList(commandaliases).contains(label.toLowerCase())) {
 					for (String line : help)
 						s.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
@@ -128,6 +125,10 @@ public class Commands {
 						return true;
 					}
 				}
+				
+				for (String line : help)
+					s.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
+				
 				return true;
 			}
 		};
