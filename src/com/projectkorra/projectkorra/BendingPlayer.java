@@ -46,6 +46,7 @@ public class BendingPlayer {
 	private boolean permaRemoved;
 	private boolean toggled;
 	private boolean tremorSense;
+	private boolean illumination;
 	private boolean chiBlocked;
 	private long slowTime;
 	private Player player;
@@ -78,6 +79,7 @@ public class BendingPlayer {
 		this.player = Bukkit.getPlayer(uuid);
 		this.toggled = true;
 		this.tremorSense = true;
+		this.illumination = true;
 		this.chiBlocked = false;
 		cooldowns = new ConcurrentHashMap<String, Long>();
 		toggledElements = new ConcurrentHashMap<Element, Boolean>();
@@ -611,6 +613,15 @@ public class BendingPlayer {
 	public boolean isTremorSensing() {
 		return this.tremorSense;
 	}
+	
+	/**
+	 * Checks if the {@link BendingPlayer} is using illumination.
+	 * 
+	 * @return true if player is using illumination
+	 */
+	public boolean isIlluminating() {
+		return this.illumination;
+	}
 
 	public void removeCooldown(CoreAbility ability) {
 		if (ability != null) {
@@ -713,6 +724,13 @@ public class BendingPlayer {
 	 */
 	public void toggleTremorSense() {
 		tremorSense = !tremorSense;
+	}
+	
+	/**
+	 * Toggles the {@link BendingPlayer}'s illumination.
+	 */
+	public void toggleIllumination() {
+		illumination = !illumination;
 	}
 
 	/**

@@ -53,6 +53,8 @@ public class WaterPassive {
 			if (bPlayer.canBendPassive(Element.WATER)) {
 				if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, EarthArmor.class)) {
 					continue;
+				} else if (CoreAbility.getAbility(player, WaterArms.class) != null) {
+					continue;
 				} else if (coreAbil == null || (coreAbil != null && !coreAbil.isSneakAbility())) {
 					if (player.isSneaking() && WaterAbility.isWater(player.getLocation().getBlock())) {
 						player.setVelocity(player.getEyeLocation().getDirection().clone().normalize().multiply(swimSpeed));

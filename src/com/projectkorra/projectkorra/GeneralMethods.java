@@ -565,18 +565,18 @@ public class GeneralMethods {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		
 		if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview") == true) {
-		if (ability != null) {
-			if (bPlayer.isOnCooldown(ability)) {
-				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
+			if (ability != null) {
+				if (bPlayer.isOnCooldown(ability)) {
+					displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
+				} else {
+					displayedMessage = ability.getElement().getColor() + ability.getName();
+				}
 			} else {
-				displayedMessage = ability.getElement().getColor() + ability.getName();
+				displayedMessage = "";
 			}
-		} else {
-			displayedMessage = "";
-		}
 		
-		ActionBar.sendActionBar(displayedMessage, player);
-	}
+			ActionBar.sendActionBar(displayedMessage, player);
+		}
 	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
