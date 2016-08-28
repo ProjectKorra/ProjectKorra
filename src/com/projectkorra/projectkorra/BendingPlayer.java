@@ -624,6 +624,9 @@ public class BendingPlayer {
 	 * @param ability The ability's cooldown to remove
 	 */
 	public void removeCooldown(String ability) {
+		if (Bukkit.getPlayer(uuid) == null) {
+			return;
+		}
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {

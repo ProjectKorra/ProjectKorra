@@ -42,6 +42,11 @@ public class ConfigManager {
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 			
+			ArrayList<String> helpLines = new ArrayList<String>();
+			helpLines.add("&c/bending help [Ability/Command] &eDisplay help.");
+			helpLines.add("&c/bending choose [Element] &eChoose an element.");
+			helpLines.add("&c/bending bind [Ability] # &eBind an ability.");
+			
 			config.addDefault("Chat.Enable", true);
 			config.addDefault("Chat.Format", "<name>: <message>");
 			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
@@ -70,9 +75,7 @@ public class ConfigManager {
 			
 			config.addDefault("Commands.NoPermission", "You do not have permission to do that.");
 			config.addDefault("Commands.MustBePlayer", "You must be a player to perform this action.");
-			config.addDefault("Commands.GeneralHelpLines", new String[] {"&c/bending help [Ability/Command] &eDisplay help.", 
-					"&c/bending choose [Element] &eChoose an element.", 
-					"&c/bending bind [Ability] # &eBind an ability."});
+			config.addDefault("Commands.GeneralHelpLines", helpLines);
 			
 			config.addDefault("Commands.Who.Description", "This command will tell you what element all players that are online are (If you don't specify a player) or give you information about the player that you specify.");
 			config.addDefault("Commands.Who.NoPlayersOnline", "There is no one online.");
