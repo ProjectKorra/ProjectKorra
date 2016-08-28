@@ -1615,7 +1615,7 @@ public class PKListener implements Listener {
 					new HeatControlExtinguish(player);
 				}
 				if (abil.equalsIgnoreCase("Illumination")) {
-					new Illumination(player);
+					bPlayer.toggleIllumination();
 				}
 				if (abil.equalsIgnoreCase("FireBurst")) {
 					FireBurst.coneBurst(player);

@@ -31,6 +31,11 @@ public class Illumination extends FireAbility {
 			return;
 		}
 		
+		if (!bPlayer.isIlluminating()) {
+			remove();
+			return;
+		}
+		
 		this.range = getConfig().getDouble("Abilities.Fire.Illumination.Range");
 		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
 		
@@ -51,6 +56,12 @@ public class Illumination extends FireAbility {
 			remove();
 			return;
 		}
+		
+		if (!bPlayer.isIlluminating()) {
+			remove();
+			return;
+		}
+		
 		set();
 	}
 
