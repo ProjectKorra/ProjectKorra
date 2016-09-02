@@ -455,7 +455,6 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	@SuppressWarnings("deprecation")
 	public static void moveEarthBlock(Block source, Block target) {
-		byte full = 0x0;
 		Information info;
 
 		if (MOVED_EARTH.containsKey(source)) {
@@ -470,12 +469,8 @@ public abstract class EarthAbility extends ElementalAbility {
 		info.setTime(System.currentTimeMillis());
 		MOVED_EARTH.put(target, info);
 
-		if (GeneralMethods.isAdjacentToThreeOrMoreSources(source)) {
-			source.setType(Material.WATER);
-			source.setData(full);
-		} else {
-			source.setType(Material.AIR);
-		}
+		source.setType(Material.AIR);
+		
 		if (info.getState().getType() == Material.SAND) {
 			if (info.getState().getRawData() == (byte) 0x1) {
 				target.setType(Material.RED_SANDSTONE);

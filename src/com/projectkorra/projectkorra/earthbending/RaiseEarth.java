@@ -9,6 +9,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -98,8 +99,12 @@ public class RaiseEarth extends EarthAbility {
 	}
 	
 	private boolean canInstantiate() {
+		if (location.getBlock().getRelative(BlockFace.UP).getType() == Material.STATIONARY_LAVA) {
+			return false;
+		}
+		
 		for (Block block : affectedBlocks.keySet()) {
-			if (block.getType() == Material.AIR || ALL_AFFECTED_BLOCKS.containsKey(block)) {
+			if (!isEarthbendable(block) || ALL_AFFECTED_BLOCKS.containsKey(block)) {
 				return false;
 			}
 		}
@@ -124,7 +129,10 @@ public class RaiseEarth extends EarthAbility {
 			time = System.currentTimeMillis();
 			Block block = location.getBlock();
 			location = location.add(direction);
-			moveEarth(block, direction, distance);
+			if (!block.isLiquid()) {
+				moveEarth(block, direction, distance);
+			}
+			
 			loadAffectedBlocks();
 
 			if (location.distanceSquared(origin) >= distance * distance) {

@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -297,13 +298,16 @@ public class PKListener implements Listener {
 		}
 
 		Block block = event.getBlock();
-		event.setCancelled(!WaterManipulation.canPhysicsChange(block));
-		event.setCancelled(!EarthPassive.canPhysicsChange(block));
-		if (!event.isCancelled()) {
-			event.setCancelled(Illumination.getBlocks().containsKey(block));
+		
+		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) 
+				|| Illumination.getBlocks().containsKey(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+			event.setCancelled(true);
 		}
-		if (!event.isCancelled()) {
-			event.setCancelled(EarthAbility.getPreventPhysicsBlocks().contains(block));
+		
+		//If there is a TempBlock of Air bellow FallingSand blocks, prevent it from updating.
+		if (!event.isCancelled() && (block.getType() == Material.SAND || block.getType() == Material.GRAVEL || block.getType() == Material.ANVIL)
+				&& TempBlock.isTempBlock(block.getRelative(BlockFace.DOWN)) && block.getRelative(BlockFace.DOWN).getType() == Material.AIR) {
+			event.setCancelled(true);
 		}
 	}
 
@@ -313,7 +317,8 @@ public class PKListener implements Listener {
 			return;
 		}
 		Player player = event.getPlayer();
-		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
+		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) 
+				|| Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
 	}
@@ -1410,7 +1415,12 @@ public class PKListener implements Listener {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		int slot = event.getNewSlot() + 1;
 		
-		GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
+		if (bPlayer.getAbilities().get(slot) != null ) {
+			CoreAbility ability = CoreAbility.getAbility(bPlayer.getAbilities().get(slot));
+			if (ability != null) {
+				GeneralMethods.displayMovePreview(player, ability);
+			}
+		}
 		
 		WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 		if (waterArms != null) {

@@ -67,6 +67,7 @@ public class SurgeWall extends WaterAbility {
 		if (wall != null) {
 			if (wall.progressing) {
 				wall.freezeThaw();
+				return;
 			} else if (prepare()) {
 				wall.remove();
 				start();
@@ -445,6 +446,9 @@ public class SurgeWall extends WaterAbility {
 
 	private void returnWater() {
 		if (location != null) {
+			if (frozen) {
+				location.getBlock().setType(Material.WATER);
+			}
 			new WaterReturn(player, location.getBlock());
 		}
 	}

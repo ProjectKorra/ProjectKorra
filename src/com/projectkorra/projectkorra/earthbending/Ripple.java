@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -209,7 +210,7 @@ public class Ripple extends EarthAbility {
 				Block topblock = loc.getBlock();
 				Block botblock = loc.clone().add(0, -1, 0).getBlock();
 
-				if (isTransparent(topblock) && !topblock.isLiquid() && isEarthbendable(botblock)) {
+				if (isTransparent(topblock) && !topblock.isLiquid() && isEarthbendable(botblock) && botblock.getType() != Material.STATIONARY_LAVA) {
 					location = loc.clone().add(0, -1, 0);
 					locations.add(location);
 					break;
