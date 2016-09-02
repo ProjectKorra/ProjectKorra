@@ -114,7 +114,7 @@ public class WaterSpout extends WaterAbility {
 			AFFECTED_BLOCKS.remove(tb.getBlock());
 			tb.revertBlock();
 		}
-		if (player.isDead() || !player.isOnline() || !bPlayer.canBind(this)) {
+		if (player.isDead() || !player.isOnline() || !bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
 		} else {
