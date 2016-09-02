@@ -22,7 +22,8 @@ public class FirePassive {
 					player.setFireTicks(80);
 				}
 				
-				if (CoreAbility.getAbility(player, Illumination.class) == null) {
+				if (bPlayer != null && !CoreAbility.hasAbility(player, Illumination.class) 
+						&& bPlayer.canBendIgnoreBinds(CoreAbility.getAbility("Illumination"))) {
 					new Illumination(player);
 				}
 			}
