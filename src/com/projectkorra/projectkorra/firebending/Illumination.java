@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.FireAbility;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,19 +9,20 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class Illumination extends FireAbility {
 	
-	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<TempBlock, Player> BLOCKS = new ConcurrentHashMap<>();
 
 	private byte normalData;
 	private long cooldown;
 	private double range;
 	private int lightThreshold;
 	private Material normalType;
-	private Block block;
+	private TempBlock block;
 	private int oldLevel;
 	
 	public Illumination(Player player) {
@@ -32,9 +33,9 @@ public class Illumination extends FireAbility {
 		this.range = getDayFactor(this.range);
 		this.lightThreshold = getConfig().getInt("Abilities.Fire.Illumination.LightThreshold");
 		
-		Illumination oldIllum = getAbility(player, Illumination.class);
-		if (oldIllum != null) {
-			oldIllum.remove();
+		Illumination oldIllumination = getAbility(player, Illumination.class);
+		if (oldIllumination != null) {
+			oldIllumination.remove();
 			return;
 		}
 		
@@ -82,17 +83,16 @@ public class Illumination extends FireAbility {
 		revert();
 	}	
 
-	@SuppressWarnings("deprecation")
 	private void revert() {
 		if (block != null) {
+			TempBlock.removeBlock(block.getBlock());
 			BLOCKS.remove(block);
-			block.setType(normalType);
-			block.setData(normalData);
+			
+			block.revertBlock();
 			oldLevel = player.getLocation().getBlock().getLightLevel();
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void set() {
 		Block standingBlock = player.getLocation().getBlock();
 		Block standBlock = standingBlock.getRelative(BlockFace.DOWN);
@@ -102,11 +102,8 @@ public class Illumination extends FireAbility {
 		} else if ((BlazeArc.isIgnitable(player, standingBlock) 
 				&& standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2) 
 				&& block == null && !BLOCKS.containsKey(standBlock)) {
-			block = standingBlock;
-			normalType = block.getType();
-			normalData = block.getData();
 			
-			block.setType(Material.TORCH);
+			this.block = new TempBlock(standingBlock, Material.TORCH, (byte)0);
 			BLOCKS.put(block, player);
 		} else if ((BlazeArc.isIgnitable(player, standingBlock) 
 				&& standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2)
@@ -114,15 +111,12 @@ public class Illumination extends FireAbility {
 				&& !BLOCKS.containsKey(standBlock)
 				&& GeneralMethods.isSolid(standBlock)) {
 			revert();
-			block = standingBlock;
-			normalType = block.getType();
-			normalData = block.getData();
 			
-			block.setType(Material.TORCH);
+			this.block = new TempBlock(standingBlock, Material.TORCH, (byte)0);
 			BLOCKS.put(block, player);
 		} else if (block == null) {
 			return;
-		} else if (!player.getWorld().equals(block.getWorld())) {
+		} else if (!player.getWorld().equals(block.getBlock().getWorld())) {
 			revert();
 		} else if (player.getLocation().distanceSquared(block.getLocation()) > range * range) {
 			revert();
@@ -178,15 +172,15 @@ public class Illumination extends FireAbility {
 		this.normalType = normalType;
 	}
 
-	public Block getBlock() {
+	public TempBlock getBlock() {
 		return block;
 	}
 
-	public void setBlock(Block block) {
+	public void setBlock(TempBlock block) {
 		this.block = block;
 	}
 
-	public static Map<Block, Player> getBlocks() {
+	public static Map<TempBlock, Player> getBlocks() {
 		return BLOCKS;
 	}
 
