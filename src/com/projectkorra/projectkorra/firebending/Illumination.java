@@ -19,11 +19,18 @@ public class Illumination extends FireAbility {
 	private byte normalData;
 	private long cooldown;
 	private double range;
+	private int lightThreshold;
 	private Material normalType;
 	private Block block;
+	private int oldLevel;
 	
 	public Illumination(Player player) {
 		super(player);
+		
+		this.range = getConfig().getDouble("Abilities.Fire.Illumination.Range");
+		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
+		this.range = getDayFactor(this.range);
+		this.lightThreshold = getConfig().getInt("Abilities.Fire.Illumination.LightThreshold");
 		
 		Illumination oldIllum = getAbility(player, Illumination.class);
 		if (oldIllum != null) {
@@ -36,18 +43,17 @@ public class Illumination extends FireAbility {
 			return;
 		}
 		
-		this.range = getConfig().getDouble("Abilities.Fire.Illumination.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
-		
-		this.range = getDayFactor(this.range);
-		
 		if (bPlayer.isOnCooldown(this)) {
 			return;
 		}
 
-		set();
-		start();
-		bPlayer.addCooldown(this);
+		if (player.getLocation().getBlock().getLightLevel() < this.lightThreshold) {
+			oldLevel = player.getLocation().getBlock().getLightLevel();
+			bPlayer.addCooldown(this);
+			set();
+			start();
+		}
+		
 	}
 
 	@Override
@@ -58,6 +64,11 @@ public class Illumination extends FireAbility {
 		}
 		
 		if (!bPlayer.isIlluminating()) {
+			remove();
+			return;
+		}
+		
+		if (oldLevel > this.lightThreshold) {
 			remove();
 			return;
 		}
@@ -77,6 +88,7 @@ public class Illumination extends FireAbility {
 			BLOCKS.remove(block);
 			block.setType(normalType);
 			block.setData(normalData);
+			oldLevel = player.getLocation().getBlock().getLightLevel();
 		}
 	}
 
@@ -88,7 +100,7 @@ public class Illumination extends FireAbility {
 		if (standBlock.getType() == Material.GLOWSTONE) {
 			revert();
 		} else if ((BlazeArc.isIgnitable(player, standingBlock) 
-				&& standBlock.getType() != Material.LEAVES && standBlock .getType() != Material.LEAVES_2) 
+				&& standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2) 
 				&& block == null && !BLOCKS.containsKey(standBlock)) {
 			block = standingBlock;
 			normalType = block.getType();
@@ -97,7 +109,7 @@ public class Illumination extends FireAbility {
 			block.setType(Material.TORCH);
 			BLOCKS.put(block, player);
 		} else if ((BlazeArc.isIgnitable(player, standingBlock) 
-				&& standBlock.getType() != Material.LEAVES && standBlock .getType() != Material.LEAVES_2)
+				&& standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2)
 				&& !block.equals(standBlock)
 				&& !BLOCKS.containsKey(standBlock)
 				&& GeneralMethods.isSolid(standBlock)) {
