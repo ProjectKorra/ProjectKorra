@@ -1,7 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.FireAbility;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,19 +9,18 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Illumination extends FireAbility {
 	
-	private static final Map<TempBlock, Player> BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Player> BLOCKS = new ConcurrentHashMap<>();
 
 	private byte normalData;
 	private long cooldown;
 	private double range;
 	private Material normalType;
-	private TempBlock block;
+	private Block block;
 	
 	public Illumination(Player player) {
 		super(player);
@@ -71,12 +70,13 @@ public class Illumination extends FireAbility {
 		super.remove();
 		revert();
 	}	
-	
+
+	@SuppressWarnings("deprecation")
 	private void revert() {
 		if (block != null) {
 			BLOCKS.remove(block);
-			block.revertBlock();
-			TempBlock.removeBlock(block.getBlock());
+			block.setType(normalType);
+			block.setData(normalData);
 		}
 	}
 
@@ -90,10 +90,9 @@ public class Illumination extends FireAbility {
 		} else if ((BlazeArc.isIgnitable(player, standingBlock) 
 				&& standBlock.getType() != Material.LEAVES && standBlock .getType() != Material.LEAVES_2) 
 				&& block == null && !BLOCKS.containsKey(standBlock)) {
-			
-			normalType = standingBlock.getType();
-			normalData = standingBlock.getData();
-			block = new TempBlock(standingBlock, Material.TORCH, (byte)0);
+			block = standingBlock;
+			normalType = block.getType();
+			normalData = block.getData();
 			
 			block.setType(Material.TORCH);
 			BLOCKS.put(block, player);
@@ -103,16 +102,15 @@ public class Illumination extends FireAbility {
 				&& !BLOCKS.containsKey(standBlock)
 				&& GeneralMethods.isSolid(standBlock)) {
 			revert();
-			
-			normalType = standingBlock.getType();
-			normalData = standingBlock.getData();
-			block = new TempBlock(standingBlock, Material.TORCH, (byte)0);
+			block = standingBlock;
+			normalType = block.getType();
+			normalData = block.getData();
 			
 			block.setType(Material.TORCH);
 			BLOCKS.put(block, player);
 		} else if (block == null) {
 			return;
-		} else if (!player.getWorld().equals(block.getBlock().getWorld())) {
+		} else if (!player.getWorld().equals(block.getWorld())) {
 			revert();
 		} else if (player.getLocation().distanceSquared(block.getLocation()) > range * range) {
 			revert();
@@ -168,15 +166,15 @@ public class Illumination extends FireAbility {
 		this.normalType = normalType;
 	}
 
-	public TempBlock getBlock() {
+	public Block getBlock() {
 		return block;
 	}
 
-	public void setBlock(TempBlock block) {
+	public void setBlock(Block block) {
 		this.block = block;
 	}
 
-	public static Map<TempBlock, Player> getBlocks() {
+	public static Map<Block, Player> getBlocks() {
 		return BLOCKS;
 	}
 
