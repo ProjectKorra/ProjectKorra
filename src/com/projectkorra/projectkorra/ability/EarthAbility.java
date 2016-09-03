@@ -477,6 +477,8 @@ public abstract class EarthAbility extends ElementalAbility {
 			} else {
 				target.setType(Material.SANDSTONE);
 			}
+		} else if (info.getState().getType() == Material.GRAVEL) {
+			target.setType(Material.STONE);
 		} else {
 			target.setType(info.getState().getType());
 			target.setData(info.getState().getRawData());

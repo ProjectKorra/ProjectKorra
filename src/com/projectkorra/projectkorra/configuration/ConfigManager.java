@@ -1028,6 +1028,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.Illumination.Enabled", true);
 			config.addDefault("Abilities.Fire.Illumination.Range", 5);
 			config.addDefault("Abilities.Fire.Illumination.Cooldown", 500);
+			config.addDefault("Abilities.Fire.Illumination.LightThreshold", 7);
 
 			config.addDefault("Abilities.Fire.Lightning.Enabled", true);
 			config.addDefault("Abilities.Fire.Lightning.Damage", 4.0);
