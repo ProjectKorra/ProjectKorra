@@ -428,9 +428,7 @@ public class MetalClips extends MetalAbility {
 								formArmor();
 							} else {
 								TARGET_TO_ABILITY.get(targetEntity).remove();
-								targetEntity = (LivingEntity) e;
-								TARGET_TO_ABILITY.put(targetEntity, this);
-								formArmor();
+								player.getWorld().dropItemNaturally(e.getLocation(), new ItemStack(Material.IRON_INGOT, 1));
 							}
 						} else {
 							DamageHandler.damageEntity(e, player, damage, this);
