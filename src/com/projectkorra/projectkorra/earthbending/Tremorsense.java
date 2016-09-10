@@ -131,13 +131,21 @@ public class Tremorsense extends EarthAbility {
 
 	public static void manage(Server server) {
 		for (Player player : server.getOnlinePlayers()) {
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			
-			if (bPlayer != null && !hasAbility(player, Tremorsense.class) 
-					&& bPlayer.canBendIgnoreBinds(getAbility("Tremorsense"))) {
+			if (canTremorSense(player) && !hasAbility(player, Tremorsense.class)) {
 				new Tremorsense(player);
 			}
 		}
+	}
+	
+	public static boolean canTremorSense(Player player) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		
+		if (bPlayer != null && bPlayer.canBendIgnoreBindsCooldowns(getAbility("Tremorsense"))) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public static Map<Block, Player> getBlocks() {
