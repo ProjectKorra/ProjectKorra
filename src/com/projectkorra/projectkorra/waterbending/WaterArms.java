@@ -35,7 +35,7 @@ public class WaterArms extends WaterAbility {
 	}
 
 	private static final Map<Block, Long> BLOCK_REVERT_TIMES = new ConcurrentHashMap<Block, Long>();
-	private static final Integer[] UNBREAKABLES = { 7, 8, 9, 10, 11, 49, 54, 90, 119, 120, 130, 146 };
+	private static final Integer[] UNBREAKABLES = { 7, 10, 11, 49, 54, 90, 119, 120, 130, 146 };
 
 	private boolean cooldownLeft;
 	private boolean cooldownRight;

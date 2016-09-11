@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class Illumination extends FireAbility {
@@ -65,6 +66,11 @@ public class Illumination extends FireAbility {
 		}
 		
 		if (!bPlayer.isIlluminating()) {
+			remove();
+			return;
+		}
+		
+		if (Tremorsense.canTremorSense(player)) {
 			remove();
 			return;
 		}
