@@ -26,6 +26,7 @@ import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.earthbending.SandSpout;
+import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -143,6 +144,9 @@ public abstract class EarthAbility extends ElementalAbility {
 			Block affectedblock = location.clone().add(norm).getBlock();
 			if (EarthPassive.isPassiveSand(block)) {
 				EarthPassive.revertSand(block);
+			}
+			if (Illumination.isIlluminationTorch(affectedblock) && TempBlock.isTempBlock(affectedblock)) {
+				TempBlock.get(affectedblock).revertBlock();
 			}
 
 			if (affectedblock == null) {
