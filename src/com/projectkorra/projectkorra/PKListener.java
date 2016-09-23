@@ -1415,9 +1415,10 @@ public class PKListener implements Listener {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		int slot = event.getNewSlot() + 1;
 		
-		
-		CoreAbility ability = CoreAbility.getAbility(bPlayer.getAbilities().get(slot));
-		GeneralMethods.displayMovePreview(player, ability);
+		if (bPlayer != null && bPlayer.getAbilities() != null) {
+			CoreAbility ability = CoreAbility.getAbility(bPlayer.getAbilities().get(slot));
+			GeneralMethods.displayMovePreview(player, ability);	
+		}
 		
 		WaterArms waterArms = CoreAbility.getAbility(player, WaterArms.class);
 		if (waterArms != null) {
