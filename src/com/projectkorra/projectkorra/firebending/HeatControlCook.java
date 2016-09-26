@@ -83,7 +83,7 @@ public class HeatControlCook extends FireAbility {
 		}
 		return cooked;
 	}
-
+	
 	@Override
 	public void progress() {
 		if (!bPlayer.canBendIgnoreCooldowns(this)) {
