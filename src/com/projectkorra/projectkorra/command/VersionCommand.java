@@ -24,7 +24,7 @@ public class VersionCommand extends PKCommand {
 			return;
 		}
 
-		sender.sendMessage(ChatColor.GREEN + "Core Version: " + ChatColor.RED + ProjectKorra.plugin.getDescription().getVersion() + " for MC v1.9." + ChatColor.ITALIC + "*");
+		sender.sendMessage(ChatColor.GREEN + "Core Version: " + ChatColor.RED + ProjectKorra.plugin.getDescription().getVersion() + " (MC 1.9)");
 		if (GeneralMethods.hasRPG()) {
 			sender.sendMessage(ChatColor.GREEN + "RPG Version: " + ChatColor.RED + GeneralMethods.getRPG().getDescription().getVersion());
 		}
