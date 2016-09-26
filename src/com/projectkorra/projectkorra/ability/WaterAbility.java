@@ -284,19 +284,19 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static void playIcebendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.FIRE_IGNITE, 2, 10);
+			loc.getWorld().playSound(loc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 10);
 		}
 	}
 
 	public static void playPlantbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.STEP_GRASS, 1, 10);
+			loc.getWorld().playSound(loc, Sound.BLOCK_GRASS_STEP, 1, 10);
 		}
 	}
 
 	public static void playWaterbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.WATER, 1, 10);
+			loc.getWorld().playSound(loc, Sound.BLOCK_WATER_AMBIENT, 1, 10);
 		}
 	}
 

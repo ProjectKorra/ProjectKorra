@@ -122,8 +122,8 @@ public class Lightning extends LightningAbility {
 	 * @param lent The LivingEntity that is being damaged
 	 */
 	public void electrocute(LivingEntity lent) {
-		lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
-		player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
+		lent.getWorld().playSound(lent.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0);
+		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0);
 		DamageHandler.damageEntity(lent, damage, this);
 		
 		if (Math.random() < stunChance) {
@@ -532,8 +532,8 @@ public class Lightning extends LightningAbility {
 						affectedEntities.add(entity);
 						LivingEntity lent = (LivingEntity) entity;
 						if (lent instanceof Player) {
-							lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
-							player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
+							lent.getWorld().playSound(lent.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0);
+							player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0);
 							Player p = (Player) lent;
 							Lightning light = getAbility(p, Lightning.class);
 							if (light != null && light.state == State.START) {

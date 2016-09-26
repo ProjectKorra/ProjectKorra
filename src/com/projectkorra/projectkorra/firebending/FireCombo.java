@@ -176,7 +176,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze", entity.getLocation())) {
 			return;
 		}
-		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.VILLAGER_HIT, 0.3f, 0.3f);
+		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.ENTITY_VILLAGER_HURT, 0.3f, 0.3f);
 
 		if (ability.equalsIgnoreCase("FireKick")) {
 			if (!affectedEntities.contains(entity)) {
@@ -244,8 +244,8 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				Vector eyeDir = player.getEyeLocation().getDirection().normalize().multiply(range);
 				destination = player.getEyeLocation().add(eyeDir);
 
-				player.getWorld().playSound(player.getLocation(), Sound.HORSE_JUMP, 0.5f, 0f);
-				player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 0.5f, 1f);
+				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_HORSE_JUMP, 0.5f, 0f);
+				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 1f);
 				for (int i = -30; i <= 30; i += 5) {
 					Vector vec = GeneralMethods.getDirection(player.getLocation(), destination.clone());
 					vec = GeneralMethods.rotateXZ(vec, i);
@@ -259,7 +259,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 					}
 					fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 					tasks.add(fs);
-					player.getWorld().playSound(player.getLocation(), Sound.FIRE_IGNITE, 0.5f, 1f);
+					player.getWorld().playSound(player.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 0.5f, 1f);
 				}
 				location = tasks.get(0).getLocation();
 				for (FireComboStream stream : tasks) {
@@ -281,7 +281,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				}
 				bPlayer.addCooldown("FireSpin", cooldown);
 				destination = player.getEyeLocation().add(range, 0, range);
-				player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 0.5f, 0.5f);
+				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 0.5f);
 
 				for (int i = 0; i <= 360; i += 5) {
 					Vector vec = GeneralMethods.getDirection(player.getLocation(), destination.clone());
@@ -328,7 +328,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 					firstTime = false;
 					float spread = 0F;
 					ParticleEffect.LARGE_EXPLODE.display(player.getLocation(), spread, spread, spread, 0, 1);
-					player.getWorld().playSound(player.getLocation(), Sound.EXPLODE, 15, 0F);
+					player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 15, 0F);
 				}
 				FireJet fj = getAbility(player, FireJet.class);
 				fj.setSpeed(speed);
@@ -370,7 +370,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 				tasks.add(fs);
 				if (progressCounter % 4 == 0) {
-					player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 1, 0F);
+					player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0F);
 				}
 			}
 		} else if (ability.equalsIgnoreCase("FireWheel")) {
@@ -421,7 +421,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 			}
 
 			location = location.add(direction.clone().multiply(speed));
-			location.getWorld().playSound(location, Sound.FIRE, 1, 1);
+			location.getWorld().playSound(location, Sound.BLOCK_FIRE_AMBIENT, 1, 1);
 			if (GeneralMethods.blockAbilities(player, BLOCKABLE_ABILITIES, location, 2)) {
 				remove();
 				return;

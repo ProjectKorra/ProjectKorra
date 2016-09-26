@@ -180,7 +180,7 @@ public class FireBlastCharged extends FireAbility {
 						DamageHandler.damageEntity(entity, damage, this);
 					}
 				}
-				location.getWorld().playSound(location, Sound.EXPLODE, 5, 1);
+				location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 5, 1);
 				ParticleEffect.EXPLOSION_HUGE.display(new Vector(0, 0, 0), 0, location, 256);
 			}
 		}
