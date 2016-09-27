@@ -286,7 +286,7 @@ public class MetalClips extends MetalAbility {
 			}
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), magnetRange)) {
 				Vector vector = GeneralMethods.getDirection(entity.getLocation(), player.getLocation());
-				ItemStack itemInHand = player.getInventory().getItemInHand();
+				ItemStack itemInHand = player.getInventory().getItemInMainHand();
 				
 				if (entity instanceof Player && canLoot && itemInHand.getType() == Material.IRON_INGOT && itemInHand.getItemMeta().getDisplayName().equalsIgnoreCase("Magnet")) {
 					Player targetPlayer = (Player) entity;
@@ -320,9 +320,9 @@ public class MetalClips extends MetalAbility {
 					}
 
 					targetPlayer.getInventory().setArmorContents(armor);
-					if (Arrays.asList(METAL_ITEMS).contains(targetPlayer.getInventory().getItemInHand().getType())) {
-						targetPlayer.getWorld().dropItem(targetPlayer.getLocation(), targetPlayer.getEquipment().getItemInHand());
-						targetPlayer.getEquipment().setItemInHand(new ItemStack(Material.AIR, 1));
+					if (Arrays.asList(METAL_ITEMS).contains(targetPlayer.getInventory().getItemInMainHand().getType())) {
+						targetPlayer.getWorld().dropItem(targetPlayer.getLocation(), targetPlayer.getEquipment().getItemInMainHand());
+						targetPlayer.getEquipment().setItemInMainHand(new ItemStack(Material.AIR, 1));
 					}
 				}
 
@@ -343,9 +343,9 @@ public class MetalClips extends MetalAbility {
 
 					livingEntity.getEquipment().setArmorContents(armor);
 
-					if (Arrays.asList(METAL_ITEMS).contains(livingEntity.getEquipment().getItemInHand().getType())) {
-						livingEntity.getWorld().dropItem(livingEntity.getLocation(), livingEntity.getEquipment().getItemInHand());
-						livingEntity.getEquipment().setItemInHand(new ItemStack(Material.AIR, 1));
+					if (Arrays.asList(METAL_ITEMS).contains(livingEntity.getEquipment().getItemInMainHand().getType())) {
+						livingEntity.getWorld().dropItem(livingEntity.getLocation(), livingEntity.getEquipment().getItemInMainHand());
+						livingEntity.getEquipment().setItemInMainHand(new ItemStack(Material.AIR, 1));
 					}
 				}
 
