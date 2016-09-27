@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -51,7 +52,6 @@ public class AirSwipe extends AirAbility {
 	private double maxChargeFactor;
 	private Location origin;
 	private Random random;
-	private AirSwipe ability;
 	private Map<Vector, Location> elements;
 	private ArrayList<Entity> affectedEntities;
 	
@@ -62,7 +62,16 @@ public class AirSwipe extends AirAbility {
 	public AirSwipe(Player player, boolean charging) {
 		super(player);
 		
-		ability = this;
+		if (CoreAbility.hasAbility(player, AirSwipe.class)) {
+			for (AirSwipe ability : CoreAbility.getAbilities(player, AirSwipe.class)) {
+				if (ability.charging) {
+					ability.launch();
+					ability.charging = false;
+					return;
+				}
+			}
+		}
+		
 		this.charging = charging;
 		this.origin = player.getEyeLocation();
 		this.particles = getConfig().getInt("Abilities.Air.AirSwipe.Particles");
@@ -192,6 +201,7 @@ public class AirSwipe extends AirAbility {
 
 		for (int i = 0; i < entities.size(); i++) {
 			final Entity entity = entities.get(i);
+			final AirSwipe abil = this;
 			new BukkitRunnable() {
 				public void run() {
 					if (GeneralMethods.isRegionProtectedFromBuild(AirSwipe.this, entity.getLocation())) {
@@ -212,7 +222,7 @@ public class AirSwipe extends AirAbility {
 						}
 						if (entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 							if (damage != 0) {
-								DamageHandler.damageEntity(entity, damage, ability);
+								DamageHandler.damageEntity(entity, damage, abil);
 							}
 							affectedEntities.add(entity);
 						}

@@ -69,6 +69,11 @@ public class Illumination extends FireAbility {
 			return;
 		}
 		
+		if (bPlayer.isTremorSensing()) {
+			remove();
+			return;
+		}
+		
 		if (oldLevel > this.lightThreshold) {
 			remove();
 			return;
@@ -182,6 +187,18 @@ public class Illumination extends FireAbility {
 
 	public static Map<TempBlock, Player> getBlocks() {
 		return BLOCKS;
+	}
+	
+	/**Returns whether the block provided is a torch created by Illumination
+	 * 
+	 * @param block The block being tested*/
+	public static boolean isIlluminationTorch(Block block) {
+		for (TempBlock b : BLOCKS.keySet()) {
+			if (b.getBlock().equals(block)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setCooldown(long cooldown) {

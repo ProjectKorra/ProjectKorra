@@ -26,6 +26,7 @@ import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.earthbending.SandSpout;
+import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -143,6 +144,9 @@ public abstract class EarthAbility extends ElementalAbility {
 			Block affectedblock = location.clone().add(norm).getBlock();
 			if (EarthPassive.isPassiveSand(block)) {
 				EarthPassive.revertSand(block);
+			}
+			if (Illumination.isIlluminationTorch(affectedblock) && TempBlock.isTempBlock(affectedblock)) {
+				TempBlock.get(affectedblock).revertBlock();
 			}
 
 			if (affectedblock == null) {
@@ -493,13 +497,13 @@ public abstract class EarthAbility extends ElementalAbility {
 	
 	public static void playMetalbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.IRONGOLEM_HIT, 1, 10);
+			loc.getWorld().playSound(loc, Sound.ENTITY_IRONGOLEM_HURT, 1, 10);
 		}
 	}
 
 	public static void playSandBendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.DIG_SAND, 1.5f, 5);
+			loc.getWorld().playSound(loc, Sound.BLOCK_SAND_BREAK, 1.5f, 5);
 		}
 	}
 

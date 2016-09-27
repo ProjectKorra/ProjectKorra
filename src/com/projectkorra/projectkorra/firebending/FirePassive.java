@@ -23,8 +23,10 @@ public class FirePassive {
 				}
 				
 				if (bPlayer != null && !CoreAbility.hasAbility(player, Illumination.class) 
-						&& bPlayer.canBendIgnoreBinds(CoreAbility.getAbility("Illumination"))) {
-					new Illumination(player);
+						&& bPlayer.canBendIgnoreBinds(CoreAbility.getAbility("Illumination")) && ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
+					if (!bPlayer.isTremorSensing()) {
+						new Illumination(player);
+					}
 				}
 			}
 		}
