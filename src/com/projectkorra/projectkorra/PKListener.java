@@ -60,6 +60,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -640,6 +641,16 @@ public class PKListener implements Listener {
 		if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
 			event.setCancelled(true);
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onPlayerTeleportEvent(PlayerTeleportEvent event) {
+		Player player = event.getPlayer();
+		if (CoreAbility.getAbility(player, WaterSpout.class) != null)
+			CoreAbility.getAbility(player, WaterSpout.class).remove();
+		if (CoreAbility.getAbility(player, SandSpout.class) != null)
+			CoreAbility.getAbility(player, SandSpout.class).remove();
+		
 	}
 
 	@EventHandler
