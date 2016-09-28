@@ -1,12 +1,14 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ChiAbility;
 
 public class WarriorStance extends ChiAbility {
 
@@ -26,11 +28,15 @@ public class WarriorStance extends ChiAbility {
 			stance.remove();
 			if (stance instanceof WarriorStance) {
 				bPlayer.setStance(null);
+				GeneralMethods.displayMovePreview(player, this);
+				player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
 				return;
 			}
 		}
 		start();
 		bPlayer.setStance(this);
+		GeneralMethods.displayMovePreview(player, this);
+		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 0.5F, 2F);
 	}
 
 	@Override
