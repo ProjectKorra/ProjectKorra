@@ -446,7 +446,7 @@ public enum ParticleEffect {
 	 * <li>Has a downwards motion by default
 	 * </ul>
 	 */
-	FALLING_DUST("fallingDust", 46, 10);
+	FALLING_DUST("fallingDust", 46, 10, true);
 
 	private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<String, ParticleEffect>();
 	private static final Map<Integer, ParticleEffect> ID_MAP = new HashMap<Integer, ParticleEffect>();
