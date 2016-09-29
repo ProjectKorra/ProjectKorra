@@ -99,7 +99,7 @@ public class ChooseCommand extends PKCommand {
 			else if (element.equalsIgnoreCase("w")) element = "water";
 			else if (element.equalsIgnoreCase("c")) element = "chi";
 			Element targetElement = Element.getElement(element);
-			if (Arrays.asList(Element.getAllElements()).contains(targetElement)) {
+			if (Arrays.asList(Element.getAllElements()).contains(targetElement) && targetElement != Element.AVATAR) {
 				add(sender, target, targetElement);
 				return;
 			} else {
