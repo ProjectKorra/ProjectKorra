@@ -62,6 +62,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -1014,10 +1015,12 @@ public class PKListener implements Listener {
 				}
 			}.runTaskLater(plugin, 5);
 
-			if (event.getClickedBlock() != null) {
-				ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_BLOCK);
-			} else {
-				ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
+			if (event.getHand() == EquipmentSlot.HAND) {
+				if (event.getClickedBlock() != null) {
+					ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_BLOCK);
+				} else {
+					ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
+				}
 			}
 
 			if (bPlayer.getBoundAbilityName().equalsIgnoreCase("EarthSmash")) {
