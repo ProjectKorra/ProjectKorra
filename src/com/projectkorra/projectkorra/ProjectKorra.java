@@ -54,11 +54,11 @@ public class ProjectKorra extends JavaPlugin {
 		
 		new ConfigManager();
 		new GeneralMethods(this);
-		CoreAbility.registerAbilities();
 		updater = new Updater(this, "http://projectkorra.com/forum/forums/dev-builds.16/index.rss");
 		new Commands(this);
 		new MultiAbilityManager();
 		new ComboManager();
+		CoreAbility.registerAbilities();
 		
 		Preset.loadExternalPresets();
 		
