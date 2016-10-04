@@ -300,8 +300,7 @@ public class PKListener implements Listener {
 
 		Block block = event.getBlock();
 		
-		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) 
-				|| Illumination.getBlocks().containsKey(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || Illumination.getBlocks().containsKey(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
 			event.setCancelled(true);
 		}
 		
@@ -1089,22 +1088,22 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		else if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class) || CoreAbility.hasAbility(player, SandSpout.class)) {
-			Vector vel = new Vector();
-			vel.setX(event.getTo().getX() - event.getFrom().getX());
-			vel.setY(event.getTo().getY() - event.getFrom().getY());
-			vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
-			// You now know the old velocity. Set to match recommended velocity
-			double currspeed = vel.length();
-			double maxspeed = .15;
-			if (currspeed > maxspeed) {
-				// only if moving set a factor
-				vel = vel.normalize().multiply(maxspeed);
-				// apply the new velocity (MAY REQUIRE A SCHEDULED TASK
-				// INSTEAD!)
-				event.getPlayer().setVelocity(vel);
-			}
-		}
+//		else if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class) || CoreAbility.hasAbility(player, SandSpout.class)) {
+//			Vector vel = new Vector();
+//			vel.setX(event.getTo().getX() - event.getFrom().getX());
+//			vel.setY(event.getTo().getY() - event.getFrom().getY());
+//			vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
+//			// You now know the old velocity. Set to match recommended velocity
+//			double currspeed = vel.length();
+//			double maxspeed = .15;
+//			if (currspeed > maxspeed) {
+//				// only if moving set a factor
+//				vel = vel.normalize().multiply(maxspeed);
+//				// apply the new velocity (MAY REQUIRE A SCHEDULED TASK
+//				// INSTEAD!)
+//				event.getPlayer().setVelocity(vel);
+//			}
+//		}
 
 		else if (Bloodbending.isBloodbent(player)) {
 			double distance1, distance2;
