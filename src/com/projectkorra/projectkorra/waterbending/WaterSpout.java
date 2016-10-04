@@ -97,6 +97,7 @@ public class WaterSpout extends WaterAbility {
 			double angle = (i * Math.PI / 180);
 			double x = 1 * Math.cos(angle + rotation);
 			double z = 1 * Math.sin(angle + rotation);
+
 			Location loc = location.clone().getBlock().getLocation().add(.5, .5, .5);
 			loc.add(x, height, z);
 
@@ -121,11 +122,12 @@ public class WaterSpout extends WaterAbility {
 			blocks.clear();
 			player.setFallDistance(0);
 			player.setSprinting(false);
-			if ((new Random()).nextInt(4) == 0) {
+			if ((new Random()).nextInt(10) == 0) {
 				playWaterbendingSound(player.getLocation());
 			}
 
 			player.removePotionEffect(PotionEffectType.SPEED);
+
 			Location location = player.getLocation().clone().add(0, .2, 0);
 			Block block = location.clone().getBlock();
 			double height = spoutableWaterHeight(location);
@@ -137,8 +139,8 @@ public class WaterSpout extends WaterAbility {
 					remove();
 					return;
 				}
-				
 				for (int i = 1; i <= height; i++) {
+
 					block = location.clone().add(0, i, 0).getBlock();
 					
 					if (!TempBlock.isTempBlock(block)) {
@@ -148,7 +150,7 @@ public class WaterSpout extends WaterAbility {
 					rotateParticles(block);
 				}
 				
-				displayWaterSpiral(location.clone().add(.5, 0, .5));
+				displayWaterSpiral(location.add(.5, 0, .5));
 				if (player.getLocation().getBlockY() > block.getY()) {
 					player.setFlying(false);
 				} else {
@@ -203,6 +205,7 @@ public class WaterSpout extends WaterAbility {
 
 			Location location = block.getLocation();
 			Location playerLoc = player.getLocation();
+
 			location = new Location(location.getWorld(), playerLoc.getX(), location.getY(), playerLoc.getZ());
 
 			double dy = playerLoc.getY() - block.getY();
@@ -238,6 +241,7 @@ public class WaterSpout extends WaterAbility {
 		Block blocki;
 		
 		for (int i = 0; i < maxHeight; i++) {
+
 			blocki = location.clone().add(0, -i, 0).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
 				return -1;
@@ -293,7 +297,7 @@ public class WaterSpout extends WaterAbility {
 				Location base = spout.getBase().getLocation();
 				double dist = top.getBlockY() - base.getBlockY();
 				for (double d = 0; d <= dist; d += 0.5) {
-					Location spoutl = base.clone().add(0, d, 0);
+					Location spoutl = base.add(0, d, 0);
 					if (loc0.distance(spoutl) <= radius) {
 						removed = true;
 						spout.remove();
