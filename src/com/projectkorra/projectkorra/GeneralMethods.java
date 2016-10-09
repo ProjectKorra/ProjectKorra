@@ -467,13 +467,13 @@ public class GeneralMethods {
 		loc.setZ(loc.getZ() + Math.random() * (zOffset / 2 - -(zOffset / 2)));
 
 		if (type == ParticleEffect.RED_DUST || type == ParticleEffect.REDSTONE) {
-			ParticleEffect.RED_DUST.display(R, G, B, 0.004F, 0, loc, 257D);
+			ParticleEffect.RED_DUST.display(R, G, B, 0.004F, 0, loc, 255.0);
 		} else if (type == ParticleEffect.SPELL_MOB || type == ParticleEffect.MOB_SPELL) {
-			ParticleEffect.SPELL_MOB.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 257D);
+			ParticleEffect.SPELL_MOB.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 255.0);
 		} else if (type == ParticleEffect.SPELL_MOB_AMBIENT || type == ParticleEffect.MOB_SPELL_AMBIENT) {
-			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 257D);
+			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 255.0);
 		} else {
-			ParticleEffect.RED_DUST.display(0, 0, 0, 0.004F, 0, loc, 257D);
+			ParticleEffect.RED_DUST.display(0, 0, 0, 0.004F, 0, loc, 255.0D);
 		}
 	}
 

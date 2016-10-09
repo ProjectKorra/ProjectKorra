@@ -1573,7 +1573,7 @@ public class PKListener implements Listener {
 					new EarthGrab(player, true);
 				}
 				if (abil.equalsIgnoreCase("Tremorsense")) {
-					new Tremorsense(player);
+					new Tremorsense(player, true);
 				}
 				if (abil.equalsIgnoreCase("MetalClips")) {
 					MetalClips clips = CoreAbility.getAbility(player, MetalClips.class);
