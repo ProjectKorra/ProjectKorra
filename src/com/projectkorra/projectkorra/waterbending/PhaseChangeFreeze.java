@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PhaseChangeFreeze extends IceAbility {
 
-	private static final ConcurrentHashMap<Block, Byte> FROZEN_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Byte> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 	private static final double REMOVE_RANGE = 50; // TODO: Make the remove range non static
 	
 	private static boolean overloading = false;
