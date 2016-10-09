@@ -82,7 +82,7 @@ public class WaterReturn extends WaterAbility {
 			block = new TempBlock(newblock, Material.WATER, (byte) 0);
 		} else if (isTransparent(player, newblock)) {
 			if (isWater(newblock)) {
-				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, newblock.getLocation().clone().add(.5,.5,.5), 257D);
+				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, newblock.getLocation().clone().add(.5,.5,.5), 255.0);
 			}
 		} else {
 			remove();

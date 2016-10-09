@@ -181,7 +181,7 @@ public class FireBlastCharged extends FireAbility {
 					}
 				}
 				location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 5, 1);
-				ParticleEffect.EXPLOSION_HUGE.display(new Vector(0, 0, 0), 0, location, 256);
+				ParticleEffect.EXPLOSION_HUGE.display(new Vector(0, 0, 0), 0, location, 255.0D);
 			}
 		}
 

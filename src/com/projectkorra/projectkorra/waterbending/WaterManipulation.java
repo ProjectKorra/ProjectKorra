@@ -380,7 +380,7 @@ public class WaterManipulation extends WaterAbility {
 		} else {
 			if (isWater(block) && !AFFECTED_BLOCKS.containsKey(block)) {
 				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f,
-						5, block.getLocation().clone().add(.5, .5, .5), 257D);
+						5, block.getLocation().clone().add(.5, .5, .5), 255.0);
 			} 
 		}
 
