@@ -242,7 +242,7 @@ public class PhaseChangeFreeze extends IceAbility {
 		this.radius = radius;
 	}
 
-	public static ConcurrentHashMap<Block, Byte> getFrozenBlocks() {
+	public static Map<Block, Byte> getFrozenBlocks() {
 		return FROZEN_BLOCKS;
 	}
 
