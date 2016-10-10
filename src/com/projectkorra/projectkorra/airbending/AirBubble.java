@@ -95,9 +95,6 @@ public class AirBubble extends AirAbility {
 			radius = waterRadius;
 		}
 		
-		if (bPlayer.hasElement(Element.WATER) && isNight(player.getWorld())) {
-			radius = WaterAbility.getNightFactor(waterRadius, player.getWorld());
-		}
 		if (airRadius > radius && bPlayer.hasElement(Element.AIR)) {
 			radius = airRadius;
 		}

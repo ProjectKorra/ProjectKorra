@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -27,6 +28,10 @@ public class EarthPassive {
 
 	@SuppressWarnings("deprecation")
 	public static boolean softenLanding(Player player) {
+		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+			return false;
+		}
+		
 		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
@@ -113,10 +118,10 @@ public class EarthPassive {
 
 						if (block.getData() < 4) {
 							block.setData((byte) (block.getData() + 4));
-							block.getWorld().playSound(block.getLocation(), Sound.DOOR_CLOSE, 10, 1);
+							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, 10, 1);
 						} else {
 							block.setData((byte) (block.getData() - 4));
-							block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
+							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 10, 1);
 						}
 
 						bPlayer.addCooldown("MetalPassive", 200);

@@ -165,7 +165,7 @@ public class HelpCommand extends PKCommand {
 				abils.add(coreAbil.getName());
 			} else if (sender instanceof Player) {
 				BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
-				if (bPlayer.canBind(coreAbil) || (coreAbil instanceof ComboAbility)) {
+				if (bPlayer.canBind(coreAbil) || ((coreAbil instanceof ComboAbility) && bPlayer.hasElement(coreAbil.getElement()))) {
 					abils.add(coreAbil.getName());
 				}
 			}

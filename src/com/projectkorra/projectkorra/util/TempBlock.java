@@ -39,9 +39,9 @@ public class TempBlock {
 			instances.put(block, temp);
 		} else {
 			state = block.getState();
+			instances.put(block, this);
 			block.setType(newtype);
 			block.setData(newdata);
-			instances.put(block, this);
 		}
 		if (state.getType() == Material.FIRE)
 			state.setType(Material.AIR);

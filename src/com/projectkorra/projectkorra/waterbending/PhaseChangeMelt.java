@@ -56,17 +56,15 @@ public class PhaseChangeMelt extends IceAbility {
 		
 		boolean evaporate = false;
 		location = GeneralMethods.getTargetedLocation(player, range, 0, 8, 9);
-		if (isWater(player.getTargetBlock((HashSet<Material>) null, (int) range)) && !(player.getEyeLocation().getBlockY() <= 62)) {
+		if (isWater(player.getTargetBlock((HashSet<Material>) null, (int) range)) && player.getEyeLocation().getBlockY() > seaLevel) {
 			evaporate = true;
 			radius = (int) getNightFactor(evaporateRadius);
 		}
 		
 		start();
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
-			if (evaporate) {
-				if (block.getY() > seaLevel) {
-					evaporate(player, block);
-				}
+			if (evaporate && block.getY() > seaLevel) {
+				evaporate(player, block);
 			} else {
 				melt(player, block);
 			}

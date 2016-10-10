@@ -1,10 +1,10 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.MetalAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.DamageHandler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,11 +17,11 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.MetalAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class MetalClips extends MetalAbility {
 	
@@ -221,6 +221,7 @@ public class MetalClips extends MetalAbility {
 
 		player.getWorld().dropItem(targetEntity.getLocation(), new ItemStack(Material.IRON_INGOT, metalClipsCount));
 		isBeingWorn = false;
+		bPlayer.addCooldown(this);
 	}
 
 	public void launch() {
@@ -285,7 +286,7 @@ public class MetalClips extends MetalAbility {
 			}
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), magnetRange)) {
 				Vector vector = GeneralMethods.getDirection(entity.getLocation(), player.getLocation());
-				ItemStack itemInHand = player.getInventory().getItemInHand();
+				ItemStack itemInHand = player.getInventory().getItemInMainHand();
 				
 				if (entity instanceof Player && canLoot && itemInHand.getType() == Material.IRON_INGOT && itemInHand.getItemMeta().getDisplayName().equalsIgnoreCase("Magnet")) {
 					Player targetPlayer = (Player) entity;
@@ -319,9 +320,9 @@ public class MetalClips extends MetalAbility {
 					}
 
 					targetPlayer.getInventory().setArmorContents(armor);
-					if (Arrays.asList(METAL_ITEMS).contains(targetPlayer.getInventory().getItemInHand().getType())) {
-						targetPlayer.getWorld().dropItem(targetPlayer.getLocation(), targetPlayer.getEquipment().getItemInHand());
-						targetPlayer.getEquipment().setItemInHand(new ItemStack(Material.AIR, 1));
+					if (Arrays.asList(METAL_ITEMS).contains(targetPlayer.getInventory().getItemInMainHand().getType())) {
+						targetPlayer.getWorld().dropItem(targetPlayer.getLocation(), targetPlayer.getEquipment().getItemInMainHand());
+						targetPlayer.getEquipment().setItemInMainHand(new ItemStack(Material.AIR, 1));
 					}
 				}
 
@@ -342,9 +343,9 @@ public class MetalClips extends MetalAbility {
 
 					livingEntity.getEquipment().setArmorContents(armor);
 
-					if (Arrays.asList(METAL_ITEMS).contains(livingEntity.getEquipment().getItemInHand().getType())) {
-						livingEntity.getWorld().dropItem(livingEntity.getLocation(), livingEntity.getEquipment().getItemInHand());
-						livingEntity.getEquipment().setItemInHand(new ItemStack(Material.AIR, 1));
+					if (Arrays.asList(METAL_ITEMS).contains(livingEntity.getEquipment().getItemInMainHand().getType())) {
+						livingEntity.getWorld().dropItem(livingEntity.getLocation(), livingEntity.getEquipment().getItemInMainHand());
+						livingEntity.getEquipment().setItemInMainHand(new ItemStack(Material.AIR, 1));
 					}
 				}
 
@@ -427,9 +428,7 @@ public class MetalClips extends MetalAbility {
 								formArmor();
 							} else {
 								TARGET_TO_ABILITY.get(targetEntity).remove();
-								targetEntity = (LivingEntity) e;
-								TARGET_TO_ABILITY.put(targetEntity, this);
-								formArmor();
+								player.getWorld().dropItemNaturally(e.getLocation(), new ItemStack(Material.IRON_INGOT, 1));
 							}
 						} else {
 							DamageHandler.damageEntity(e, player, damage, this);
@@ -467,10 +466,6 @@ public class MetalClips extends MetalAbility {
 		if (targetEntity != null) {
 			ENTITY_CLIPS_COUNT.remove(targetEntity);
 			TARGET_TO_ABILITY.remove(targetEntity);
-		}
-		
-		if (player != null && player.isOnline()) {
-			bPlayer.addCooldown(this);
 		}
 	}
 

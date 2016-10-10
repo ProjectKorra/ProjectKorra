@@ -26,6 +26,8 @@ public class SandSpout extends SandAbility {
 	private double damage;
 	private double height;
 	private double currentHeight;
+	private boolean couldFly;
+	private boolean wasFlying;
 	private Flight flight;
 	
 	public SandSpout(Player player) {
@@ -38,6 +40,9 @@ public class SandSpout extends SandAbility {
 		this.height = getConfig().getDouble("Abilities.Earth.SandSpout.Height");
 		this.blindnessTime = getConfig().getInt("Abilities.Earth.SandSpout.BlindnessTime");
 		this.damage = getConfig().getInt("Abilities.Earth.SandSpout.SpoutDamage");
+		
+		this.couldFly = player.getAllowFlight();
+		this.wasFlying = player.isFlying();
 		
 		SandSpout oldSandSpout = getAbility(player, SandSpout.class);
 		if (oldSandSpout != null) {
@@ -110,8 +115,8 @@ public class SandSpout extends SandAbility {
 	}
 
 	private void removeFlight() {
-		player.setAllowFlight(false);
-		player.setFlying(false);
+		player.setAllowFlight(couldFly);
+		player.setFlying(wasFlying);
 	}
 
 	private Block getGround() {

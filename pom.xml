@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.projectkorra</groupId>
+    <artifactId>projectkorra</artifactId>
+    <version>don't matter</version>
+	<properties>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+    </properties>
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>worldedit-worldguard-repo</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
+
+    </repositories>
+    <build>
+    <!--Maintain existing structure (as much as possible)-->
+        <sourceDirectory>${project.basedir}/src</sourceDirectory>
+        <finalName>${project.name}</finalName>
+        <resources>
+            <resource>
+            <!-- Use plugin.yml in src directory-->
+                <directory>${basedir}/src</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>plugin.yml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+    <dependencies>
+        <!--Spigot API-->
+        <dependency>
+                 <groupId>org.spigotmc</groupId>
+                 <artifactId>spigot-api</artifactId>
+                 <version>1.10.2-R0.1-SNAPSHOT</version>
+                 <scope>provided</scope>
+        </dependency>
+         <!--Worldguard dependency-->
+        <dependency>
+                <groupId>com.sk89q</groupId>
+                <artifactId>worldguard</artifactId>
+                <version>6.1.1-SNAPSHOT</version>
+        </dependency>
+        <!--WorldGuard depends on WorldEdit-->
+        <dependency>
+                <groupId>com.sk89q.worldedit</groupId>
+                <artifactId>worldedit-bukkit</artifactId>
+                <version>6.1.4-SNAPSHOT</version>
+        </dependency>
+        <!--Google stuff-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+		<dependency>
+            <groupId>me.ryanhamshire</groupId>
+            <artifactId>GriefPrevention</artifactId>
+            <version>10.5.3</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/GriefPrevention 10.5.3.jar</systemPath>
+        </dependency>
+		<dependency>
+            <groupId>com.griefcraft</groupId>
+            <artifactId>lwc</artifactId>
+            <version>4.5.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/LWC.jar</systemPath>
+        </dependency>
+		<dependency>
+            <groupId>com.massivecraft</groupId>
+            <artifactId>massivecore</artifactId>
+            <version>2.7.5</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/MassiveCore 2.7.5.jar</systemPath>
+        </dependency>
+		<dependency>
+            <groupId>fr.neatmonster</groupId>
+            <artifactId>nocheatplus</artifactId>
+            <version>3.11.0-RC-sMD5NET-b739</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/NoCheatPlus.jar</systemPath>
+        </dependency>
+		<dependency>
+            <groupId>com.palmergames.bukkit</groupId>
+            <artifactId>towny</artifactId>
+            <version>0.89.2.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/Towny.jar</systemPath>
+        </dependency>
+		<dependency>
+            <groupId>com.bekvon.bukkit</groupId>
+            <artifactId>residence</artifactId>
+            <version>4.0.0.4</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/Residence4.0.0.4.jar</systemPath>
+        </dependency>
+		<dependency>
+            <groupId>com.projectkorra</groupId>
+            <artifactId>spirits</artifactId>
+            <version>1.0.0 PRIVATE PREALPHA</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/ProjectKorraSpirits.jar</systemPath>
+        </dependency>
+		<dependency>
+            <groupId>com.projectkorra</groupId>
+            <artifactId>rpg</artifactId>
+            <version>1.0.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/ProjectKorraRPG.jar</systemPath>
+        </dependency>
+		<dependency>
+            <groupId>com.projectkorra</groupId>
+            <artifactId>items</artifactId>
+            <version>1.2.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/ProjectKorraItems.jar</systemPath>
+        </dependency>
+		<dependency>
+            <groupId>net.sacredlabyrinth.Phaed</groupId>
+            <artifactId>PreciousStones</artifactId>
+            <version>9.7.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/PreciousStones 9.7.1.jar</systemPath>
+        </dependency>
+		<dependency>
+            <groupId>com.massivecraft</groupId>
+            <artifactId>factions</artifactId>
+            <version>2.7.5</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/Factions 2.7.5.jar</systemPath>
+        </dependency>
+    </dependencies>
+</project>

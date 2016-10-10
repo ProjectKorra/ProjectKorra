@@ -42,6 +42,11 @@ public class ConfigManager {
 		} else if (type == ConfigType.LANGUAGE) {
 			config = languageConfig.get();
 			
+			ArrayList<String> helpLines = new ArrayList<String>();
+			helpLines.add("&c/bending help [Ability/Command] &eDisplay help.");
+			helpLines.add("&c/bending choose [Element] &eChoose an element.");
+			helpLines.add("&c/bending bind [Ability] # &eBind an ability.");
+			
 			config.addDefault("Chat.Enable", true);
 			config.addDefault("Chat.Format", "<name>: <message>");
 			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
@@ -70,9 +75,7 @@ public class ConfigManager {
 			
 			config.addDefault("Commands.NoPermission", "You do not have permission to do that.");
 			config.addDefault("Commands.MustBePlayer", "You must be a player to perform this action.");
-			config.addDefault("Commands.GeneralHelpLines", new String[] {"&c/bending help [Ability/Command] &eDisplay help.", 
-					"&c/bending choose [Element] &eChoose an element.", 
-					"&c/bending bind [Ability] # &eBind an ability."});
+			config.addDefault("Commands.GeneralHelpLines", helpLines);
 			
 			config.addDefault("Commands.Who.Description", "This command will tell you what element all players that are online are (If you don't specify a player) or give you information about the player that you specify.");
 			config.addDefault("Commands.Who.NoPlayersOnline", "There is no one online.");
@@ -199,7 +202,8 @@ public class ConfigManager {
 			config.addDefault("Commands.Bind.ElementToggledOff", "You have that ability's element toggled off currently.");
 			config.addDefault("Commands.Bind.SuccessfullyBound", "Succesfully bound {ability} to slot {slot}.");
 			config.addDefault("Commands.Bind.NoElement", "You are not a {element}!");
-			config.addDefault("Commands.Bind.NoSubElement", "You are not a {subelement}!");
+			config.addDefault("Commands.Bind.NoElementAE", "You are not an {element}!");
+			config.addDefault("Commands.Bind.NoSubElement", "You don't have access to {subelement}!");
 			
 			config.addDefault("Commands.Add.Description", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
 			config.addDefault("Commands.Add.SuccessfullyAddedCFW", "You are now also a {element}.");
@@ -258,7 +262,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Surge.Description", "This ability has two distinct features. If you sneak to select a source block, you can then click in a direction and a large wave will be launched in that direction. If you sneak again while the wave is en route, the wave will freeze the next target it hits. If, instead, you click to select a source block, you can hold sneak to form a wall of water at your cursor location. Click to shift between a water wall and an ice wall. Release sneak to dissipate it.");
 			config.addDefault("Abilities.Water.Torrent.Description", "Torrent is one of the strongest moves in a waterbender's arsenal. To use, first click a source block to select it; then hold shift to begin streaming the water around you. Water flowing around you this way will damage and knock back nearby enemies and projectiles. If you release shift during this, you will create a large wave that expands outwards from you, launching anything in its path back. Instead, if you click you release the water and channel it to flow towards your cursor. Anything caught in the blast will be tossed about violently and take damage. Finally, if you click again when the water is torrenting, it will freeze the area around it when it is obstructed.");
 			config.addDefault("Abilities.Water.Torrent.DeathMessage", "{victim} was taken down by {attacker}'s {ability}");
-			config.addDefault("Abilities.Water.WaterArms.Description", "One of the most diverse moves in a Waterbender's arsenal, this move creates tendrils " + "of water from the players arms to emulate their actual arms. Each water arms mode will be binded to a slot, switch slots to change mode. " + "To deactive the arms, hold Sneak and Double Left-Click." + "\nPull - Use your Arms to pull blocks, items, mobs or even players towards you!" + "\nPunch - An offensive attack, harming players or mobs!" + "\nGrapple - Scale walls and speed across battlefields, using your Arms as a grappling hook!" + "\nGrab - Grab an entity with your arm, and swing them about!" + "\nFreeze - Use your Arms to fire small blasts of ice in any direction!" + "\nSpear - Throw your Arms in any direction, freezing whatever it hits!");
+			config.addDefault("Abilities.Water.WaterArms.Description", "One of the most diverse moves in a Waterbender's arsenal, this move creates tendrils " + "of water from the players arms to emulate their actual arms. Each water arms mode will be bound to a slot, switch slots to change mode. " + "To deactive the arms, hold Sneak and Double Left-Click." + "\nPull - Use your Arms to pull blocks, items, mobs or even players towards you!" + "\nPunch - An offensive attack, harming players or mobs!" + "\nGrapple - Scale walls and speed across battlefields, using your Arms as a grappling hook!" + "\nGrab - Grab an entity with your arm, and swing them about!" + "\nFreeze - Use your Arms to fire small blasts of ice in any direction!" + "\nSpear - Throw your Arms in any direction, freezing whatever it hits!");
 			config.addDefault("Abilities.Water.WaterArms.SneakMessage", "Active Ability:");
 			config.addDefault("Abilities.Water.WaterArms.Punch.Description", "{victim} was too slow for {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.WaterArms.Freeze.Description", "{victim} was frozen by {attacker}'s {ability}");
@@ -719,7 +723,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Arms.MaxAlternateUsage", 50);
 			config.addDefault("Abilities.Water.WaterArms.Arms.MaxIceShots", 8);
 			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldown", 20000);
-			config.addDefault("Abilities.Water.WaterArms.Arms.AllowPlantSource", false);
+			config.addDefault("Abilities.Water.WaterArms.Arms.AllowPlantSource", true);
 
 			config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Enabled", true);
 			config.addDefault("Abilities.Water.WaterArms.Arms.Lightning.Damage", Double.valueOf(10.0));
@@ -1022,8 +1026,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.HeatControl.Cook.CookTime", 2000);
 
 			config.addDefault("Abilities.Fire.Illumination.Enabled", true);
+			config.addDefault("Abilities.Fire.Illumination.Passive", true);
 			config.addDefault("Abilities.Fire.Illumination.Range", 5);
 			config.addDefault("Abilities.Fire.Illumination.Cooldown", 500);
+			config.addDefault("Abilities.Fire.Illumination.LightThreshold", 7);
 
 			config.addDefault("Abilities.Fire.Lightning.Enabled", true);
 			config.addDefault("Abilities.Fire.Lightning.Damage", 4.0);

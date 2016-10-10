@@ -25,25 +25,30 @@ public class Tremorsense extends EarthAbility {
 	private long cooldown;
 	private Block block;
 	
-	public Tremorsense(Player player) {
+	public Tremorsense(Player player, boolean clicked) {
 		super(player);
+
+		if (!bPlayer.canBendIgnoreBinds(this)) {
+			return;
+		}
 		
+		setFields();
+		byte lightLevel = player.getLocation().getBlock().getLightLevel();
+		
+		if (lightLevel < this.lightThreshold && isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+			if(clicked) {
+				bPlayer.addCooldown(this);
+				activate();
+			}
+			start();
+		}
+	}
+	
+	private void setFields() {
 		this.maxDepth = getConfig().getInt("Abilities.Earth.Tremorsense.MaxDepth");
 		this.radius = getConfig().getInt("Abilities.Earth.Tremorsense.Radius");
 		this.lightThreshold = (byte) getConfig().getInt("Abilities.Earth.Tremorsense.LightThreshold");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Tremorsense.Cooldown");
-
-		if (!bPlayer.canBend(this)) {
-			return;
-		}
-		
-		byte lightLevel = player.getLocation().getBlock().getLightLevel();
-
-		if (lightLevel < this.lightThreshold && isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
-			bPlayer.addCooldown(this);
-			activate();
-			start();
-		}
 	}
 
 	private void activate() {
@@ -131,13 +136,21 @@ public class Tremorsense extends EarthAbility {
 
 	public static void manage(Server server) {
 		for (Player player : server.getOnlinePlayers()) {
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			
-			if (bPlayer != null && !hasAbility(player, Tremorsense.class) 
-					&& bPlayer.canBend(getAbility("Tremorsense"))) {
-				new Tremorsense(player);
+			if (canTremorSense(player) && !hasAbility(player, Tremorsense.class)) {
+				new Tremorsense(player, false);
 			}
 		}
+	}
+	
+	public static boolean canTremorSense(Player player) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		
+		if (bPlayer != null && bPlayer.canBendIgnoreBindsCooldowns(getAbility("Tremorsense"))) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public static Map<Block, Player> getBlocks() {

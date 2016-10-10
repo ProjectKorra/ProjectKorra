@@ -13,11 +13,12 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PhaseChangeFreeze extends IceAbility {
 
-	private static final ConcurrentHashMap<Block, Byte> FROZEN_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Byte> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 	private static final double REMOVE_RANGE = 50; // TODO: Make the remove range non static
 	
 	private static boolean overloading = false;
@@ -241,7 +242,7 @@ public class PhaseChangeFreeze extends IceAbility {
 		this.radius = radius;
 	}
 
-	public static ConcurrentHashMap<Block, Byte> getFrozenBlocks() {
+	public static Map<Block, Byte> getFrozenBlocks() {
 		return FROZEN_BLOCKS;
 	}
 

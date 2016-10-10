@@ -89,6 +89,7 @@ public class WallOfFire extends FireAbility {
 	}
 
 	private void affect(Entity entity) {
+		GeneralMethods.setVelocity(entity, new Vector(0, 0, 0));
 		if (entity instanceof LivingEntity) {
 			Block block = ((LivingEntity) entity).getEyeLocation().getBlock();
 			if (TempBlock.isTempBlock(block) && isIce(block)) {
@@ -98,7 +99,6 @@ public class WallOfFire extends FireAbility {
 			AirAbility.breakBreathbendingHold(entity);
 		}
 		entity.setFireTicks((int) (fireTicks * 20));
-		entity.setVelocity(player.getLocation().getDirection().multiply(1.4));
 		new FireDamageTimer(entity, player);
 	}
 

@@ -1,9 +1,57 @@
 package com.projectkorra.projectkorra;
 
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.FallingSand;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
@@ -44,6 +92,8 @@ import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
+import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
+import com.projectkorra.projectkorra.chiblocking.WarriorStance;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
@@ -66,58 +116,10 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.FallingSand;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 @SuppressWarnings("deprecation")
 public class GeneralMethods {
@@ -266,12 +268,13 @@ public class GeneralMethods {
 	 * @throws SQLException
 	 */
 	public static void createBendingPlayer(final UUID uuid, final String player) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				createBendingPlayerAsynchronously(uuid, player);
-			}
-		}.runTaskAsynchronously(ProjectKorra.plugin);
+//		new BukkitRunnable() {
+//			@Override
+//			public void run() {
+//				createBendingPlayerAsynchronously(uuid, player);
+//			}
+//		}.runTaskAsynchronously(ProjectKorra.plugin);
+		createBendingPlayerAsynchronously(uuid, player); // "async"
 	}
 
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
@@ -464,13 +467,13 @@ public class GeneralMethods {
 		loc.setZ(loc.getZ() + Math.random() * (zOffset / 2 - -(zOffset / 2)));
 
 		if (type == ParticleEffect.RED_DUST || type == ParticleEffect.REDSTONE) {
-			ParticleEffect.RED_DUST.display(R, G, B, 0.004F, 0, loc, 257D);
+			ParticleEffect.RED_DUST.display(R, G, B, 0.004F, 0, loc, 255.0);
 		} else if (type == ParticleEffect.SPELL_MOB || type == ParticleEffect.MOB_SPELL) {
-			ParticleEffect.SPELL_MOB.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 257D);
+			ParticleEffect.SPELL_MOB.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 255.0);
 		} else if (type == ParticleEffect.SPELL_MOB_AMBIENT || type == ParticleEffect.MOB_SPELL_AMBIENT) {
-			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 257D);
+			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 255.0);
 		} else {
-			ParticleEffect.RED_DUST.display(0, 0, 0, 0.004F, 0, loc, 257D);
+			ParticleEffect.RED_DUST.display(0, 0, 0, 0.004F, 0, loc, 255.0D);
 		}
 	}
 
@@ -564,18 +567,24 @@ public class GeneralMethods {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		
 		if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview") == true) {
-		if (ability != null) {
-			if (bPlayer.isOnCooldown(ability)) {
-				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
+			if (ability != null) {
+				
+				if (bPlayer.isOnCooldown(ability)) {
+					displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
+				} else {
+					if (bPlayer.getStance() instanceof AcrobatStance && ability.getName().equals("AcrobatStance") ||
+							bPlayer.getStance() instanceof WarriorStance && ability.getName().equals("WarriorStance")) {
+						displayedMessage = ability.getElement().getColor() + "" + ChatColor.UNDERLINE + ability.getName();
+					} else {
+						displayedMessage = ability.getElement().getColor() + ability.getName();
+					}
+				}
 			} else {
-				displayedMessage = ability.getElement().getColor() + ability.getName();
+				displayedMessage = "";
 			}
-		} else {
-			displayedMessage = "";
-		}
 		
-		ActionBar.sendActionBar(displayedMessage, player);
-	}
+			ActionBar.sendActionBar(displayedMessage, player);
+		}
 	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {

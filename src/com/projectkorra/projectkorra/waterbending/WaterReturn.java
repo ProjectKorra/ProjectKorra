@@ -11,6 +11,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
@@ -80,7 +82,7 @@ public class WaterReturn extends WaterAbility {
 			block = new TempBlock(newblock, Material.WATER, (byte) 0);
 		} else if (isTransparent(player, newblock)) {
 			if (isWater(newblock)) {
-				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, newblock.getLocation().clone().add(.5,.5,.5), 257D);
+				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, newblock.getLocation().clone().add(.5,.5,.5), 255.0);
 			}
 		} else {
 			remove();
@@ -129,7 +131,7 @@ public class WaterReturn extends WaterAbility {
 		if (hasAbility(player, WaterManipulation.class)
 				|| hasAbility(player, WaterManipulation.class)
 				|| hasAbility(player, OctopusForm.class)
-				|| hasAbility(player, SurgeWave.class)
+				// || hasAbility(player, SurgeWave.class) NOTE: ONLY DISABLED TO PREVENT BOTTLEBENDING FROM BEING DISABLED FOREVER. ONCE BOTTLEBENDING HAS BEEN RECODED IN 1.9, THIS NEEDS TO BE READDED TO THE NEW SYSTEM.
 				|| hasAbility(player, SurgeWall.class)
 				|| hasAbility(player, IceSpikeBlast.class)) {
 			return true;
@@ -142,12 +144,30 @@ public class WaterReturn extends WaterAbility {
 			return false;
 		}
 		PlayerInventory inventory = player.getInventory();
-		return (inventory.contains(new ItemStack(Material.POTION), 1));
+		if (inventory.contains(Material.POTION)) {
+			ItemStack item = inventory.getItem(inventory.first(Material.POTION));
+			PotionMeta meta = (PotionMeta) item.getItemMeta();
+			return meta.getBasePotionData().getType().equals(PotionType.WATER);
+		}
+		return false;
 	}
 
 	public static void emptyWaterBottle(Player player) {
 		PlayerInventory inventory = player.getInventory();
-		int index = inventory.first(new ItemStack(Material.POTION));
+		int index = inventory.first(Material.POTION);
+		
+		//Check that the first one found is actually a WATER bottle. We aren't implementing potion bending just yet ;)
+		if (index != -1 && !((PotionMeta)inventory.getItem(index).getItemMeta()).getBasePotionData().getType().equals(PotionType.WATER)) {
+			for (int i = 0; i < inventory.getSize(); i++) {
+				if (inventory.getItem(i).getType() == Material.POTION) {
+					PotionMeta meta = (PotionMeta) inventory.getItem(i).getItemMeta();
+					if (meta.getBasePotionData().getType().equals(PotionType.WATER)) {
+						index = i;
+						break;
+					}
+				}
+			}
+		}
 		
 		if (index != -1) {
 			ItemStack item = inventory.getItem(index);

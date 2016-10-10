@@ -190,16 +190,16 @@ public abstract class WaterAbility extends ElementalAbility {
 		Vector vector = location.getDirection().clone().normalize();
 		
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
+		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), range > 3 ? 3 : (int) range);
 		if (bPlayer == null) {
 			return null;
-		} else if (isWaterbendable(testBlock.getType())) {
+		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
 			return testBlock;
 		}
 		
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
+			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block)) {
@@ -284,19 +284,19 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static void playIcebendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.FIRE_IGNITE, 2, 10);
+			loc.getWorld().playSound(loc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 10);
 		}
 	}
 
 	public static void playPlantbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.STEP_GRASS, 1, 10);
+			loc.getWorld().playSound(loc, Sound.BLOCK_GRASS_STEP, 1, 10);
 		}
 	}
 
 	public static void playWaterbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.WATER, 1, 10);
+			loc.getWorld().playSound(loc, Sound.BLOCK_WATER_AMBIENT, 1, 10);
 		}
 	}
 

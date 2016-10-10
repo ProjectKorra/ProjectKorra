@@ -164,7 +164,7 @@ public class IceBlast extends IceAbility {
 		AirAbility.breakBreathbendingHold(entity);
 
 		for (int x = 0; x < 30; x++) {
-			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .3f, location, 257.0D);
+			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .3f, location, 255.0);
 		}
 	}
 
@@ -289,7 +289,7 @@ public class IceBlast extends IceAbility {
 			source = new TempBlock(sourceBlock, Material.PACKED_ICE, data);
 
 			for (int x = 0; x < 10; x++) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .5f, location, 257.0D);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .5f, location, 255.0);
 				ParticleEffect.SNOW_SHOVEL.display(location, (float) (Math.random() - 0.5), (float) (Math.random() - 0.5), (float) (Math.random() - 0.5), 0, 5);
 			}
 			if ((new Random()).nextInt(4) == 0) {
@@ -303,10 +303,10 @@ public class IceBlast extends IceAbility {
 
 	public void breakParticles(int amount) {
 		for (int x = 0; x < amount; x++) {
-			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), 2f, location, 257.0D);
+			ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), 2f, location, 255.0);
 			ParticleEffect.SNOW_SHOVEL.display(location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 2);
 		}
-		location.getWorld().playSound(location, Sound.GLASS, 5, 1.3f);
+		location.getWorld().playSound(location, Sound.BLOCK_GLASS_BREAK, 5, 1.3f);
 	}
 
 	@Override

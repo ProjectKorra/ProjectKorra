@@ -25,7 +25,7 @@ public class HeatControlCook extends FireAbility {
 		
 		this.time = System.currentTimeMillis();
 		this.cookTime = getConfig().getLong("Abilities.Fire.HeatControl.Cook.CookTime");
-		this.item = player.getItemInHand();
+		this.item = player.getInventory().getItemInMainHand();
 		
 		if (isCookable(item.getType())) {
 			start();
@@ -83,15 +83,15 @@ public class HeatControlCook extends FireAbility {
 		}
 		return cooked;
 	}
-
+	
 	@Override
 	public void progress() {
 		if (!bPlayer.canBendIgnoreCooldowns(this)) {
 			remove();
 			return;
-		} else if (!item.equals(player.getItemInHand())) {
+		} else if (!item.equals(player.getInventory().getItemInMainHand())) {
 			time = System.currentTimeMillis();
-			item = player.getItemInHand();
+			item = player.getInventory().getItemInMainHand();
 		}
 
 		if (!isCookable(item.getType())) {

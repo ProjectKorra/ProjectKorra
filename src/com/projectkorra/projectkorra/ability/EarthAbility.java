@@ -26,6 +26,7 @@ import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.earthbending.SandSpout;
+import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -143,6 +144,9 @@ public abstract class EarthAbility extends ElementalAbility {
 			Block affectedblock = location.clone().add(norm).getBlock();
 			if (EarthPassive.isPassiveSand(block)) {
 				EarthPassive.revertSand(block);
+			}
+			if (Illumination.isIlluminationTorch(affectedblock) && TempBlock.isTempBlock(affectedblock)) {
+				TempBlock.get(affectedblock).revertBlock();
 			}
 
 			if (affectedblock == null) {
@@ -268,11 +272,11 @@ public abstract class EarthAbility extends ElementalAbility {
 
 		for (int x = 0; x < amount; x++) {
 			if (!red) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
 			} else if (red) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 1), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.RED_SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 1), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.RED_SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
 			}
 
 		}
@@ -455,7 +459,6 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	@SuppressWarnings("deprecation")
 	public static void moveEarthBlock(Block source, Block target) {
-		byte full = 0x0;
 		Information info;
 
 		if (MOVED_EARTH.containsKey(source)) {
@@ -470,18 +473,16 @@ public abstract class EarthAbility extends ElementalAbility {
 		info.setTime(System.currentTimeMillis());
 		MOVED_EARTH.put(target, info);
 
-		if (GeneralMethods.isAdjacentToThreeOrMoreSources(source)) {
-			source.setType(Material.WATER);
-			source.setData(full);
-		} else {
-			source.setType(Material.AIR);
-		}
+		source.setType(Material.AIR);
+		
 		if (info.getState().getType() == Material.SAND) {
 			if (info.getState().getRawData() == (byte) 0x1) {
 				target.setType(Material.RED_SANDSTONE);
 			} else {
 				target.setType(Material.SANDSTONE);
 			}
+		} else if (info.getState().getType() == Material.GRAVEL) {
+			target.setType(Material.STONE);
 		} else {
 			target.setType(info.getState().getType());
 			target.setData(info.getState().getRawData());
@@ -496,13 +497,13 @@ public abstract class EarthAbility extends ElementalAbility {
 	
 	public static void playMetalbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.IRONGOLEM_HIT, 1, 10);
+			loc.getWorld().playSound(loc, Sound.ENTITY_IRONGOLEM_HURT, 1, 10);
 		}
 	}
 
 	public static void playSandBendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.DIG_SAND, 1.5f, 5);
+			loc.getWorld().playSound(loc, Sound.BLOCK_SAND_BREAK, 1.5f, 5);
 		}
 	}
 
