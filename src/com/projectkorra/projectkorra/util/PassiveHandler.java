@@ -10,7 +10,6 @@ import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.ChiPassive;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
@@ -54,13 +53,13 @@ public class PassiveHandler implements Runnable {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		
 		if (bPlayer == null) return;
-		if (CoreAbility.hasAbility(player, EarthArmor.class)) {
+		/*if (CoreAbility.hasAbility(player, EarthArmor.class)) {
 			EarthArmor abil = CoreAbility.getAbility(player, EarthArmor.class);
 			if (abil.isFormed()) {
 				int strength = abil.getStrength();
 				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, strength - 1), false);
 			}
-		}
+		}*/
 		if (CoreAbility.hasAbility(player, PlantArmor.class)) {
 			PlantArmor abil = CoreAbility.getAbility(player, PlantArmor.class);
 			if (abil.isFormed()) {

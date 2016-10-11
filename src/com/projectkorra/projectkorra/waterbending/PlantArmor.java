@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.PlantAbility;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.util.PassiveHandler;
+import com.projectkorra.projectkorra.util.TempArmor;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -27,7 +28,6 @@ public class PlantArmor extends PlantAbility {
 	private Block block;
 	private Location location;
 	private PlantRegrowth plantbending;
-	private ItemStack[] oldArmor;	
 	
 	public PlantArmor(Player player) {
 		super(player);
@@ -82,7 +82,6 @@ public class PlantArmor extends PlantAbility {
 	}
 
 	private void formArmor() {
-		oldArmor = player.getInventory().getArmorContents();
 		ItemStack helmet = new ItemStack(blockType);
 		ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
 		
@@ -95,10 +94,7 @@ public class PlantArmor extends PlantAbility {
 		leggings.setItemMeta(itemMeta);
 		boots.setItemMeta(itemMeta);
 		
-		player.getInventory().setHelmet(helmet);
-		player.getInventory().setChestplate(chestplate);
-		player.getInventory().setLeggings(leggings);
-		player.getInventory().setBoots(boots);
+		new TempArmor(player, this, new ItemStack[] {boots, leggings, chestplate, helmet});
 
 		formed = true;
 		startTime = System.currentTimeMillis();
@@ -148,8 +144,8 @@ public class PlantArmor extends PlantAbility {
 	public void remove() {
 		super.remove();
 		
-		if (oldArmor != null) {
-			player.getInventory().setArmorContents(oldArmor);
+		if (TempArmor.hasTempArmor(player) && TempArmor.getTempArmor(player).getAbility().equals(this)) {
+			TempArmor.getTempArmor(player).revert();
 		}
 		
 		if (plantbending != null) {
@@ -251,14 +247,6 @@ public class PlantArmor extends PlantAbility {
 
 	public void setPlantbending(PlantRegrowth plantbending) {
 		this.plantbending = plantbending;
-	}
-
-	public ItemStack[] getOldArmor() {
-		return oldArmor;
-	}
-
-	public void setOldArmor(ItemStack[] oldArmor) {
-		this.oldArmor = oldArmor;
 	}
 
 	public void setCooldown(long cooldown) {
