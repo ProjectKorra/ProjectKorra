@@ -22,6 +22,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempArmor;
 
 public class MetalClips extends MetalAbility {
 	
@@ -53,7 +54,7 @@ public class MetalClips extends MetalAbility {
 	private double crushDamage;
 	private double damage;
 	private LivingEntity targetEntity;
-	private ItemStack[] oldArmor;
+	//private ItemStack[] oldArmor;
 	private List<Item> trackedIngots;
 	
 	public MetalClips(Player player, int abilityType) {
@@ -98,7 +99,7 @@ public class MetalClips extends MetalAbility {
 		start();
 	}
 	
-	public static ItemStack getOriginalHelmet(LivingEntity ent) {
+	/*public static ItemStack getOriginalHelmet(LivingEntity ent) {
 		MetalClips clips = TARGET_TO_ABILITY.get(ent);
 		if (clips != null) {
 			return clips.oldArmor[3];
@@ -136,7 +137,7 @@ public class MetalClips extends MetalAbility {
 			return clips.oldArmor;
 		}
 		return null;
-	}
+	}*/
 
 	public void shootMetal() {
 		if (bPlayer.isOnCooldown("MetalClips Shoot")) {
@@ -178,46 +179,44 @@ public class MetalClips extends MetalAbility {
 
 		if (targetEntity instanceof Player) {
 			Player target = (Player) targetEntity;
-			if (oldArmor == null) {
-				oldArmor = target.getInventory().getArmorContents();
-			}
 
 			ItemStack[] metalArmor = new ItemStack[4];
 
-			metalArmor[2] = (metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE, 1) : oldArmor[2];
-			metalArmor[0] = (metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS, 1) : oldArmor[0];
-			metalArmor[1] = (metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS, 1) : oldArmor[1];
-			metalArmor[3] = (metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET, 1) : oldArmor[3];
+			metalArmor[2] = (metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : new ItemStack(Material.AIR);
+			metalArmor[0] = (metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : new ItemStack(Material.AIR);
+			metalArmor[1] = (metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : new ItemStack(Material.AIR);
+			metalArmor[3] = (metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : new ItemStack(Material.AIR);
 			ENTITY_CLIPS_COUNT.put(target, metalClipsCount);
-			target.getInventory().setArmorContents(metalArmor);
+			
+			TempArmor armor = TempArmor.getTempArmor(target);
+			if (armor != null) armor.revert();
+			
+			new TempArmor(target, this, metalArmor);
 		} else {
-			if (oldArmor == null) {
-				oldArmor = targetEntity.getEquipment().getArmorContents();
-			}
 
 			ItemStack[] metalarmor = new ItemStack[4];
 
-			metalarmor[2] = (metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE, 1) : oldArmor[2];
-			metalarmor[0] = (metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS, 1) : oldArmor[0];
-			metalarmor[1] = (metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS, 1) : oldArmor[1];
-			metalarmor[3] = (metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET, 1) : oldArmor[3];
+			metalarmor[2] = (metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : new ItemStack(Material.AIR);
+			metalarmor[0] = (metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : new ItemStack(Material.AIR);
+			metalarmor[1] = (metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : new ItemStack(Material.AIR);
+			metalarmor[3] = (metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : new ItemStack(Material.AIR);
 			ENTITY_CLIPS_COUNT.put(targetEntity, metalClipsCount);
-			targetEntity.getEquipment().setArmorContents(metalarmor);
+			
+			TempArmor armor = TempArmor.getTempArmor(targetEntity);
+			if (armor != null) armor.revert();
+			
+			new TempArmor(targetEntity, this, metalarmor);
 		}
 		armorStartTime = System.currentTimeMillis();
 		isBeingWorn = true;
 	}
 
 	public void resetArmor() {
-		if (targetEntity == null || oldArmor == null || targetEntity.isDead()) {
+		if (targetEntity == null || !TempArmor.hasTempArmor(targetEntity) || targetEntity.isDead()) {
 			return;
 		}
-
-		if (targetEntity instanceof Player) {
-			((Player) targetEntity).getInventory().setArmorContents(oldArmor);
-		} else {
-			targetEntity.getEquipment().setArmorContents(oldArmor);
-		}
+		
+		TempArmor.getTempArmor(targetEntity).revert();
 
 		player.getWorld().dropItem(targetEntity.getLocation(), new ItemStack(Material.IRON_INGOT, metalClipsCount));
 		isBeingWorn = false;
@@ -653,10 +652,6 @@ public class MetalClips extends MetalAbility {
 
 	public void setTargetEntity(LivingEntity targetEntity) {
 		this.targetEntity = targetEntity;
-	}
-
-	public ItemStack[] getOldArmor() {
-		return oldArmor;
 	}
 
 	public List<Item> getTrackedIngots() {

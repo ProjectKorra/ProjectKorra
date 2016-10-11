@@ -20,12 +20,13 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.util.Vector;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FireBlastCharged extends FireAbility {
 
-	private static final ConcurrentHashMap<Entity, FireBlastCharged> EXPLOSIONS = new ConcurrentHashMap<>();
+	private static final Map<Entity, FireBlastCharged> EXPLOSIONS = new ConcurrentHashMap<>();
 
 	private boolean charged;
 	private boolean launched;
@@ -450,7 +451,7 @@ public class FireBlastCharged extends FireAbility {
 		this.direction = direction;
 	}
 
-	public static ConcurrentHashMap<Entity, FireBlastCharged> getExplosions() {
+	public static Map<Entity, FireBlastCharged> getExplosions() {
 		return EXPLOSIONS;
 	}
 

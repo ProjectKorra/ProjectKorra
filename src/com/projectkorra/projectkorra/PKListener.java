@@ -55,6 +55,7 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -149,6 +150,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.PassiveHandler;
+import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.IceBlast;
@@ -442,26 +444,18 @@ public class PKListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDeath(EntityDeathEvent event) {
-		if (MetalClips.getEntityClipsCount().containsKey(event.getEntity())) {
-			List<ItemStack> drops = event.getDrops();
-			List<ItemStack> newdrops = new ArrayList<ItemStack>();
-			for (int i = 0; i < drops.size(); i++) {
-				if (!(drops.get(i).getType() == Material.IRON_HELMET || drops.get(i).getType() == Material.IRON_CHESTPLATE || drops.get(i).getType() == Material.IRON_LEGGINGS || drops.get(i).getType() == Material.IRON_BOOTS || drops.get(i).getType() == Material.AIR)) {
-					newdrops.add(drops.get(i));
-				}
-			}
-
-			newdrops.add(new ItemStack(Material.IRON_INGOT, MetalClips.getEntityClipsCount().get(event.getEntity())));
-			newdrops.add(MetalClips.getOriginalHelmet(event.getEntity()));
-			newdrops.add(MetalClips.getOriginalChestplate(event.getEntity()));
-			newdrops.add(MetalClips.getOriginalLeggings(event.getEntity()));
-			newdrops.add(MetalClips.getOriginalBoots(event.getEntity()));
-
+		if (TempArmor.hasTempArmor(event.getEntity())) {
+			TempArmor armor = TempArmor.getTempArmor(event.getEntity());
+			
+			List<ItemStack> newDrops = armor.filterArmor(event.getDrops());
 			event.getDrops().clear();
-			event.getDrops().addAll(newdrops);
-			MetalClips.getEntityClipsCount().remove(event.getEntity());
+			event.getDrops().addAll(newDrops);
+			
+			armor.revert();
 		}
-		for (FireCombo fc : CoreAbility.getAbilities(event.getEntity().getKiller(), FireCombo.class)) {
+		
+		
+	for (FireCombo fc : CoreAbility.getAbilities(event.getEntity().getKiller(), FireCombo.class)) {
 			if (!fc.getAffectedEntities().contains(event.getEntity()))
 				continue;
 			List<ItemStack> drops = event.getDrops();
@@ -679,6 +673,10 @@ public class PKListener implements Listener {
 		if (event.getSlotType() == SlotType.ARMOR && !PlantArmor.canRemoveArmor((Player) event.getWhoClicked())) {
 			event.setCancelled(true);
 		}
+		
+		if (event.getSlotType() == SlotType.ARMOR && TempArmor.hasTempArmor((Player) event.getWhoClicked())) {
+			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -802,6 +800,11 @@ public class PKListener implements Listener {
 				event.setDamage(0D);
 				event.setCancelled(true);
 			}
+			
+			if (!event.isCancelled() && CoreAbility.getAbility(player, EarthArmor.class) != null) {
+				EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
+				eartharmor.updateAbsorbtion();
+			}
 		}
 	}
 
@@ -882,78 +885,12 @@ public class PKListener implements Listener {
 			return;
 		}
 		
-		Player player = event.getEntity();
-		EarthArmor earthArmor = CoreAbility.getAbility(player, EarthArmor.class);
-		PlantArmor plantArmor = CoreAbility.getAbility(player, PlantArmor.class);
-		
 		if (event.getKeepInventory()) {
-			if (earthArmor != null && earthArmor.getOldArmor() != null) {
-				player.getInventory().setArmorContents(earthArmor.getOldArmor());
-			} else if (plantArmor != null && plantArmor.getOldArmor() != null) {
-				player.getInventory().setArmorContents(plantArmor.getOldArmor());
-			} else if (event.getEntity() instanceof LivingEntity && MetalClips.isControlled(event.getEntity()) && MetalClips.getOriginalArmor(player) != null) {
-				player.getInventory().setArmorContents(MetalClips.getOriginalArmor(player));
+			if (TempArmor.hasTempArmor(event.getEntity())) {
+				TempArmor.getTempArmor(event.getEntity()).revert();
 			}
 		} else {
-			if (earthArmor != null) {
-				List<Material> earthArmorItems = Arrays.asList(new Material[] {Material.LEATHER_BOOTS, Material.LEATHER_LEGGINGS, Material.LEATHER_CHESTPLATE, Material.LEATHER_HELMET});
-				List<ItemStack> newDrops = new ArrayList<ItemStack>();
-				if (earthArmor.getOldArmor() != null) {
-					int size = event.getDrops().size();
-					for (int i = 0; i < 4; i++) {
-						//Armor always drops last (items, boots, leggings, chestplate, helmet) so we got to get the last drop items
-						ItemStack is = event.getDrops().get(size - i - 1); 
-						if (earthArmorItems.contains(is.getType())) {
-							event.getDrops().remove(is);
-							newDrops.add(earthArmor.getOldArmor()[i]);
-						}
-					}
-				}
-				event.getDrops().addAll(newDrops);
-				earthArmor.remove();
-			}
-
-			if (plantArmor != null) {
-				List<Material> plantArmorItems = Arrays.asList(new Material[] {Material.LEATHER_BOOTS, Material.LEATHER_LEGGINGS, Material.LEATHER_CHESTPLATE, Material.LEAVES});
-				List<ItemStack> newDrops = new ArrayList<ItemStack>();
-				if (plantArmor.getOldArmor() != null) {
-					int size = event.getDrops().size();
-					for (int i = 0; i < 4; i++) {
-						ItemStack is = event.getDrops().get(size - i - 1); 
-						if (plantArmorItems.contains(is.getType())) {
-							event.getDrops().remove(is);
-							newDrops.add(plantArmor.getOldArmor()[i]);
-						}
-					}
-				}
-
-				event.getDrops().addAll(newDrops);
-				plantArmor.remove();
-			}
-
-			if (event.getEntity() instanceof LivingEntity && MetalClips.isControlled(event.getEntity())) {
-				
-				List<ItemStack> currentArmor = new ArrayList<ItemStack>();
-				for (ItemStack is : Arrays.asList(event.getEntity().getInventory().getArmorContents())) {
-					if (is.getType() != Material.AIR) { //Remove Air because it won't show in the drops
-						currentArmor.add(is);
-					}
-				}
-				
-				List<ItemStack> oldArmor = new ArrayList<ItemStack>();
-				for (ItemStack is : Arrays.asList(MetalClips.getOriginalArmor(player))) {
-					if (is.getType() != Material.AIR) { //Shouldn't add air itemstacks to drop list 
-						oldArmor.add(is);
-					}
-				}
-				
-				for (int i = 0; i < currentArmor.size(); i++) { //Remove all armor drops completely, so we can then drop the correct armor.
-					event.getDrops().remove(event.getDrops().size() - 1);
-				}
-				
-				event.getDrops().addAll(oldArmor);
-				MetalClips.getEntityClipsCount().remove(event.getEntity());
-			}
+			//Do nothing. TempArmor drops are handled by the EntityDeath event and not PlayerDeath
 		}
 
 		if (event.getEntity().getKiller() != null) {
@@ -1046,6 +983,21 @@ public class PKListener implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void onPlayerItemDamage(PlayerItemDamageEvent event) {
+		if (event.isCancelled()) return;
+		
+		if (TempArmor.hasTempArmor(event.getPlayer())) {
+			TempArmor armor = TempArmor.getTempArmor(event.getPlayer());
+			for (ItemStack i : armor.getNewArmor()) {
+				if (i != null && event.getItem().isSimilar(i)) {
+					event.setCancelled(true);
+					break;
+				}
+			}
+		}
+	}
+	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
@@ -1187,19 +1139,9 @@ public class PKListener implements Listener {
 			Commands.invincible.remove(player.getName());
 		}
 		Preset.unloadPreset(player);
-
-		EarthArmor earthArmor = CoreAbility.getAbility(player, EarthArmor.class);
-		PlantArmor plantArmor = CoreAbility.getAbility(player, PlantArmor.class);
-		MetalClips metalClips = CoreAbility.getAbility(player, MetalClips.class);
-
-		if (earthArmor != null) {
-			earthArmor.remove();
-		}
-		if (plantArmor != null) {
-			plantArmor.remove();
-		}
-		if (metalClips != null) {
-			metalClips.remove();
+		
+		if (TempArmor.hasTempArmor(player)) {
+			TempArmor.getTempArmor(player).revert();
 		}
 		
 		if (MetalClips.isControlled(event.getPlayer())) {
@@ -1268,25 +1210,25 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Tornado")) {
 					new Tornado(player);
 				}
-				if (abil.equalsIgnoreCase("AirBlast")) {
+				else if (abil.equalsIgnoreCase("AirBlast")) {
 					AirBlast.setOrigin(player);
 				}
-				if (abil.equalsIgnoreCase("AirBurst")) {
+				else if (abil.equalsIgnoreCase("AirBurst")) {
 					new AirBurst(player, false);
 				}
-				if (abil.equalsIgnoreCase("AirSuction")) {
+				else if (abil.equalsIgnoreCase("AirSuction")) {
 					AirSuction.setOrigin(player);
 				}
-				if (abil.equalsIgnoreCase("AirSwipe")) {
+				else if (abil.equalsIgnoreCase("AirSwipe")) {
 					new AirSwipe(player, true);
 				}
-				if (abil.equalsIgnoreCase("AirShield")) {
+				else if (abil.equalsIgnoreCase("AirShield")) {
 					new AirShield(player);
 				}
-				if (abil.equalsIgnoreCase("Suffocate")) {
+				else if (abil.equalsIgnoreCase("Suffocate")) {
 					new Suffocate(player);
 				}
-				if (abil.equalsIgnoreCase("Flight")) {
+				else if (abil.equalsIgnoreCase("Flight")) {
 					if (player.isSneaking() || !bPlayer.canUseFlight()) {
 						return;
 					}
@@ -1301,28 +1243,28 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					new Bloodbending(player);
 				}
-				if (abil.equalsIgnoreCase("IceBlast")) {
+				else if (abil.equalsIgnoreCase("IceBlast")) {
 					new IceBlast(player);
 				}
-				if (abil.equalsIgnoreCase("IceSpike")) {
+				else if (abil.equalsIgnoreCase("IceSpike")) {
 					new IceSpikeBlast(player);
 				}
-				if (abil.equalsIgnoreCase("OctopusForm")) {
+				else if (abil.equalsIgnoreCase("OctopusForm")) {
 					OctopusForm.form(player);
 				}
-				if (abil.equalsIgnoreCase("PhaseChange")) {
+				else if (abil.equalsIgnoreCase("PhaseChange")) {
 					new PhaseChangeMelt(player);
 				}
-				if (abil.equalsIgnoreCase("WaterManipulation")) {
+				else if (abil.equalsIgnoreCase("WaterManipulation")) {
 					new WaterManipulation(player);
 				}
-				if (abil.equalsIgnoreCase("Surge")) {
+				else if (abil.equalsIgnoreCase("Surge")) {
 					SurgeWall.form(player);
 				}
-				if (abil.equalsIgnoreCase("Torrent")) {
+				else if (abil.equalsIgnoreCase("Torrent")) {
 					Torrent.create(player);
 				}
-				if (abil.equalsIgnoreCase("WaterArms")) {
+				else if (abil.equalsIgnoreCase("WaterArms")) {
 					new WaterArms(player);
 				}
 			}
@@ -1334,28 +1276,31 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("EarthBlast")) {
 					new EarthBlast(player);
 				}
-				if (abil.equalsIgnoreCase("RaiseEarth")) {
+				else if (abil.equalsIgnoreCase("EarthArmor")) {
+					new EarthArmor(player);
+				}
+				else if (abil.equalsIgnoreCase("RaiseEarth")) {
 					new RaiseEarthWall(player);
 				}
-				if (abil.equalsIgnoreCase("Collapse")) {
+				else if (abil.equalsIgnoreCase("Collapse")) {
 					new CollapseWall(player);
 				}
-				if (abil.equalsIgnoreCase("Shockwave")) {
+				else if (abil.equalsIgnoreCase("Shockwave")) {
 					new Shockwave(player, false);
 				}
-				if (abil.equalsIgnoreCase("EarthGrab")) {
+				else if (abil.equalsIgnoreCase("EarthGrab")) {
 					new EarthGrab(player, false);
 				}
-				if (abil.equalsIgnoreCase("EarthTunnel")) {
+				else if (abil.equalsIgnoreCase("EarthTunnel")) {
 					new EarthTunnel(player);
 				}
-				if (abil.equalsIgnoreCase("Tremorsense")) {
+				else if (abil.equalsIgnoreCase("Tremorsense")) {
 					bPlayer.toggleTremorSense();
 				}
-				if (abil.equalsIgnoreCase("Extraction")) {
+				else if (abil.equalsIgnoreCase("Extraction")) {
 					new Extraction(player);
 				}
-				if (abil.equalsIgnoreCase("MetalClips")) {
+				else if (abil.equalsIgnoreCase("MetalClips")) {
 					MetalClips clips = CoreAbility.getAbility(player, MetalClips.class);
 					if (clips != null) {
 						if (clips.getTargetEntity() == null) {
@@ -1368,10 +1313,10 @@ public class PKListener implements Listener {
 					}
 				}
 
-				if (abil.equalsIgnoreCase("LavaFlow")) {
+				else if (abil.equalsIgnoreCase("LavaFlow")) {
 					new LavaFlow(player, LavaFlow.AbilityType.SHIFT);
 				}
-				if (abil.equalsIgnoreCase("EarthSmash")) {
+				else if (abil.equalsIgnoreCase("EarthSmash")) {
 					new EarthSmash(player, ClickType.SHIFT_DOWN);
 				}
 			}
@@ -1383,22 +1328,22 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Blaze")) {
 					new BlazeRing(player);
 				}
-				if (abil.equalsIgnoreCase("FireBlast")) {
+				else if (abil.equalsIgnoreCase("FireBlast")) {
 					new FireBlastCharged(player);
 				}
-				if (abil.equalsIgnoreCase("HeatControl")) {
+				else if (abil.equalsIgnoreCase("HeatControl")) {
 					new HeatControlSolidify(player);
 				}
-				if (abil.equalsIgnoreCase("FireBurst")) {
+				else if (abil.equalsIgnoreCase("FireBurst")) {
 					new FireBurst(player);
 				}
-				if (abil.equalsIgnoreCase("FireShield")) {
+				else if (abil.equalsIgnoreCase("FireShield")) {
 					new FireShield(player, true);
 				}
-				if (abil.equalsIgnoreCase("Lightning")) {
+				else if (abil.equalsIgnoreCase("Lightning")) {
 					new Lightning(player);
 				}
-				if (abil.equalsIgnoreCase("Combustion")) {
+				else if (abil.equalsIgnoreCase("Combustion")) {
 					new Combustion(player);
 				}
 			}
@@ -1428,6 +1373,7 @@ public class PKListener implements Listener {
 		if (event.isCancelled()) {
 			return;
 		}
+		
 
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -1481,22 +1427,24 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("AirBlast")) {
 					new AirBlast(player);
 				}
-				if (abil.equalsIgnoreCase("AirSuction")) {
+				else if (abil.equalsIgnoreCase("AirSuction")) {
 					new AirSuction(player);
 				}
-				if (abil.equalsIgnoreCase("AirBurst")) {
+				else if (abil.equalsIgnoreCase("AirBurst")) {
 					AirBurst.coneBurst(player);
 				}
-				if (abil.equalsIgnoreCase("AirScooter")) {
+				else if (abil.equalsIgnoreCase("AirScooter")) {
 					new AirScooter(player);
+					player.sendMessage("Pitch: " + player.getLocation().getPitch());
+					player.sendMessage("Yaw: " + player.getLocation().getYaw());
 				}
-				if (abil.equalsIgnoreCase("AirSpout")) {
+				else if (abil.equalsIgnoreCase("AirSpout")) {
 					new AirSpout(player);
 				}
-				if (abil.equalsIgnoreCase("AirSwipe")) {
+				else if (abil.equalsIgnoreCase("AirSwipe")) {
 					new AirSwipe(player);
 				}
-				if (abil.equalsIgnoreCase("Flight")) {
+				else if (abil.equalsIgnoreCase("Flight")) {
 					if (!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled") || !bPlayer.canUseFlight()) {
 						return;
 					}
@@ -1518,31 +1466,31 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Bloodbending")) {
 					Bloodbending.launch(player);
 				}
-				if (abil.equalsIgnoreCase("IceBlast")) {
+				else if (abil.equalsIgnoreCase("IceBlast")) {
 					IceBlast.activate(player);
 				}
-				if (abil.equalsIgnoreCase("IceSpike")) {
+				else if (abil.equalsIgnoreCase("IceSpike")) {
 					IceSpikeBlast.activate(player);
 				}
-				if (abil.equalsIgnoreCase("OctopusForm")) {
+				else if (abil.equalsIgnoreCase("OctopusForm")) {
 					new OctopusForm(player);
 				}
-				if (abil.equalsIgnoreCase("PhaseChange")) {
+				else if (abil.equalsIgnoreCase("PhaseChange")) {
 					new PhaseChangeFreeze(player);
 				}
-				if (abil.equalsIgnoreCase("PlantArmor")) {
+				else if (abil.equalsIgnoreCase("PlantArmor")) {
 					new PlantArmor(player);
 				}
-				if (abil.equalsIgnoreCase("WaterSpout")) {
+				else if (abil.equalsIgnoreCase("WaterSpout")) {
 					new WaterSpout(player);
 				}
-				if (abil.equalsIgnoreCase("WaterManipulation")) {
+				else if (abil.equalsIgnoreCase("WaterManipulation")) {
 					WaterManipulation.moveWater(player);
 				}
-				if (abil.equalsIgnoreCase("Surge")) {
+				else if (abil.equalsIgnoreCase("Surge")) {
 					new SurgeWall(player);
 				}
-				if (abil.equalsIgnoreCase("Torrent")) {
+				else if (abil.equalsIgnoreCase("Torrent")) {
 					new Torrent(player);
 				}
 			}
@@ -1554,28 +1502,31 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Catapult")) {
 					new Catapult(player);
 				}
-				if (abil.equalsIgnoreCase("EarthBlast")) {
+				else if (abil.equalsIgnoreCase("EarthBlast")) {
 					EarthBlast.throwEarth(player);
 				}
-				if (abil.equalsIgnoreCase("RaiseEarth")) {
+				else if (abil.equalsIgnoreCase("RaiseEarth")) {
 					new RaiseEarth(player);
 				}
-				if (abil.equalsIgnoreCase("Collapse")) {
+				else if (abil.equalsIgnoreCase("Collapse")) {
 					new Collapse(player);
 				}
-				if (abil.equalsIgnoreCase("Shockwave")) {
+				else if (abil.equalsIgnoreCase("Shockwave")) {
 					Shockwave.coneShockwave(player);
 				}
-				if (abil.equalsIgnoreCase("EarthArmor")) {
-					new EarthArmor(player);
+				else if (abil.equalsIgnoreCase("EarthArmor")) {
+					EarthArmor armor = CoreAbility.getAbility(player, EarthArmor.class);
+					if (armor != null && armor.isFormed()) {
+						armor.click();
+					}
 				}
-				if (abil.equalsIgnoreCase("EarthGrab")) {
+				else if (abil.equalsIgnoreCase("EarthGrab")) {
 					new EarthGrab(player, true);
 				}
-				if (abil.equalsIgnoreCase("Tremorsense")) {
+				else if (abil.equalsIgnoreCase("Tremorsense")) {
 					new Tremorsense(player, true);
 				}
-				if (abil.equalsIgnoreCase("MetalClips")) {
+				else if (abil.equalsIgnoreCase("MetalClips")) {
 					MetalClips clips = CoreAbility.getAbility(player, MetalClips.class);
 					if (clips == null) {
 						new MetalClips(player, 0);
@@ -1585,19 +1536,19 @@ public class PKListener implements Listener {
 						clips.crush();
 					}
 				}
-				if (abil.equalsIgnoreCase("LavaSurge")) {
+				else if (abil.equalsIgnoreCase("LavaSurge")) {
 					LavaSurge surge = CoreAbility.getAbility(player, LavaSurge.class);
 					if (surge != null) {
 						surge.launch();
 					}
 				}
-				if (abil.equalsIgnoreCase("LavaFlow")) {
+				else if (abil.equalsIgnoreCase("LavaFlow")) {
 					new LavaFlow(player, AbilityType.CLICK);
 				}
-				if (abil.equalsIgnoreCase("EarthSmash")) {
+				else if (abil.equalsIgnoreCase("EarthSmash")) {
 					new EarthSmash(player, ClickType.LEFT_CLICK);
 				}
-				if (abil.equalsIgnoreCase("SandSpout")) {
+				else if (abil.equalsIgnoreCase("SandSpout")) {
 					new SandSpout(player);
 				}
 			}
@@ -1609,16 +1560,16 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Blaze")) {
 					new Blaze(player);
 				}
-				if (abil.equalsIgnoreCase("FireBlast")) {
+				else if (abil.equalsIgnoreCase("FireBlast")) {
 					new FireBlast(player);
 				}
-				if (abil.equalsIgnoreCase("FireJet")) {
+				else if (abil.equalsIgnoreCase("FireJet")) {
 					new FireJet(player);
 				}
-				if (abil.equalsIgnoreCase("HeatControl")) {
+				else if (abil.equalsIgnoreCase("HeatControl")) {
 					new HeatControlExtinguish(player);
 				}
-				if (abil.equalsIgnoreCase("Illumination")) {
+				else if (abil.equalsIgnoreCase("Illumination")) {
 					if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
 						bPlayer.toggleIllumination();
 					} else {
@@ -1626,16 +1577,16 @@ public class PKListener implements Listener {
 					}
 					
 				}
-				if (abil.equalsIgnoreCase("FireBurst")) {
+				else if (abil.equalsIgnoreCase("FireBurst")) {
 					FireBurst.coneBurst(player);
 				}
-				if (abil.equalsIgnoreCase("FireShield")) {
+				else if (abil.equalsIgnoreCase("FireShield")) {
 					new FireShield(player);
 				}
-				if (abil.equalsIgnoreCase("WallOfFire")) {
+				else if (abil.equalsIgnoreCase("WallOfFire")) {
 					new WallOfFire(player);
 				}
-				if (abil.equalsIgnoreCase("Combustion")) {
+				else if (abil.equalsIgnoreCase("Combustion")) {
 					Combustion.explode(player);
 				}
 			}
@@ -1647,22 +1598,22 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("HighJump")) {
 					new HighJump(player);
 				}
-				if (abil.equalsIgnoreCase("RapidPunch")) {
+				else if (abil.equalsIgnoreCase("RapidPunch")) {
 					new RapidPunch(player);
 				}
-				if (abil.equalsIgnoreCase("Smokescreen")) {
+				else if (abil.equalsIgnoreCase("Smokescreen")) {
 					new Smokescreen(player);
 				}
-				if (abil.equalsIgnoreCase("WarriorStance")) {
+				else if (abil.equalsIgnoreCase("WarriorStance")) {
 					new WarriorStance(player);
 				}
-				if (abil.equalsIgnoreCase("AcrobatStance")) {
+				else if (abil.equalsIgnoreCase("AcrobatStance")) {
 					new AcrobatStance(player);
 				}
-				if (abil.equalsIgnoreCase("QuickStrike")) {
+				else if (abil.equalsIgnoreCase("QuickStrike")) {
 					new QuickStrike(player);
 				}
-				if (abil.equalsIgnoreCase("SwiftKick")) {
+				else if (abil.equalsIgnoreCase("SwiftKick")) {
 					new SwiftKick(player);
 				}
 			}

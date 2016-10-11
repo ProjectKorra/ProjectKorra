@@ -113,7 +113,7 @@ permissions:
       bending.ability.WaterArms.Grab: true
       bending.ability.WaterArms.Freeze: true
       bending.ability.WaterArms.Spear: true
-      bending.ability.WaterReturn: true
+      bending.ability.Bottlebending: true
   bending.earth:
     default: true
     description: Grants access to all Earthbending abilities.

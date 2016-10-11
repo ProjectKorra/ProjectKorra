@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.earthbending;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -20,8 +21,8 @@ public class CollapseWall extends EarthAbility {
 	private long cooldown;
 	private double radius;
 	private Location location;
-	private ConcurrentHashMap<Block, Block> blocks;
-	private ConcurrentHashMap<Block, Integer> baseBlocks;
+	private Map<Block, Block> blocks;
+	private Map<Block, Integer> baseBlocks;
 	
 	public CollapseWall(Player player) {
 		super(player);
@@ -133,11 +134,11 @@ public class CollapseWall extends EarthAbility {
 		this.radius = radius;
 	}
 
-	public ConcurrentHashMap<Block, Block> getBlocks() {
+	public Map<Block, Block> getBlocks() {
 		return blocks;
 	}
 
-	public ConcurrentHashMap<Block, Integer> getBaseBlocks() {
+	public Map<Block, Integer> getBaseBlocks() {
 		return baseBlocks;
 	}
 

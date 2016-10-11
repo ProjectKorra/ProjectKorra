@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -38,7 +39,7 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 		ICE_PILLAR_RISING, ICE_BULLET_FORMING
 	}
 
-	private static final ConcurrentHashMap<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 
 	private int leftClicks;
 	private int rightClicks;
@@ -525,11 +526,11 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 		return tasks;
 	}
 
-	public static ConcurrentHashMap<Block, TempBlock> getFrozenBlocks() {
+	public static Map<Block, TempBlock> getFrozenBlocks() {
 		return FROZEN_BLOCKS;
 	}
 
-	public ConcurrentHashMap<Block, TempBlock> getAffectedBlocks() {
+	public Map<Block, TempBlock> getAffectedBlocks() {
 		return affectedBlocks;
 	}
 
