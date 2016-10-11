@@ -26,8 +26,6 @@ public class EarthArmor extends EarthAbility {
 	private boolean formed;
 	private MaterialData headData;
 	private MaterialData legsData;
-	private int strength;
-	private long time;
 	private long cooldown;
 	private long interval;
 	private double selectRange;
@@ -38,6 +36,7 @@ public class EarthArmor extends EarthAbility {
 	private boolean active;
 	private PotionEffect oldAbsorbtion = null;
 	private float goldHearts;
+	private int maxGoldHearts;
 	
 	public EarthArmor(Player player) {
 		super(player);
@@ -55,8 +54,8 @@ public class EarthArmor extends EarthAbility {
 		this.interval = 2000;
 		this.goldHearts = 0;
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
-		this.strength = getConfig().getInt("Abilities.Earth.EarthArmor.Strength");
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthArmor.SelectRange");
+		this.maxGoldHearts = getConfig().getInt("Abilities.Earth.EarthArmor.GoldHearts");
 		
 		headBlock = getTargetEarthBlock((int) selectRange);
 		if (!GeneralMethods.isRegionProtectedFromBuild(this, headBlock.getLocation()) 
@@ -126,9 +125,11 @@ public class EarthArmor extends EarthAbility {
 				break;
 			}
 		}
-		player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, 1, true, false));
+		int level = (int) (maxGoldHearts / 2 - 1 + (maxGoldHearts % 2));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, level, true, false));
 		
-		this.goldHearts = 8F;
+		this.goldHearts = maxGoldHearts * 2;
+		GeneralMethods.setAbsorbationHealth(player, goldHearts);
 	}
 	
 	private boolean inPosition() {
@@ -229,7 +230,9 @@ public class EarthArmor extends EarthAbility {
 				remove();
 				return;
 			}
-		} else if (System.currentTimeMillis() > time + interval) {
+			
+			player.setFireTicks(0);
+		} else {
 			if (!moveBlocks()) {
 				return;
 			}
@@ -267,10 +270,21 @@ public class EarthArmor extends EarthAbility {
 	}
 
 	public void updateAbsorbtion() {
+		final EarthArmor abil = this;
 		new BukkitRunnable() {
+			@SuppressWarnings("deprecation")
 			public void run() {
 				goldHearts = GeneralMethods.getAbsorbationHealth(player);
 				if (formed && goldHearts < 0.9F) {
+					bPlayer.addCooldown(abil);
+					
+					player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+					player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+					player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+					
+					ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(headData.getItemType(), headData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getEyeLocation(), 128);
+					ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(legsData.getItemType(), legsData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getLocation(), 128);
+				
 					remove();
 				}
 			}
@@ -311,8 +325,18 @@ public class EarthArmor extends EarthAbility {
 		return 0x999999; //Default dirt brown
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void click() {
 		if (!this.player.isSneaking()) return;
+		
+		player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+		player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+		player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+		
+		ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(headData.getItemType(), headData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getEyeLocation(), 128);
+		ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(legsData.getItemType(), legsData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getLocation(), 128);
+		
+		bPlayer.addCooldown(this);
 		remove();
 	}
 	
@@ -364,14 +388,6 @@ public class EarthArmor extends EarthAbility {
 	public void setLegsData(MaterialData materialdata) {
 		this.legsData = materialdata;
 	}
-
-	public int getStrength() {
-		return strength;
-	}
-
-	public void setStrength(int strength) {
-		this.strength = strength;
-	}
 	
 	public double getSelectRange() {
 		return selectRange;
@@ -379,14 +395,6 @@ public class EarthArmor extends EarthAbility {
 
 	public void setSelectRange(double selectRange) {
 		this.selectRange = selectRange;
-	}
-
-	public long getTime() {
-		return time;
-	}
-
-	public void setTime(long time) {
-		this.time = time;
 	}
 
 	public long getInterval() {
@@ -431,6 +439,22 @@ public class EarthArmor extends EarthAbility {
 
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
+	}
+	
+	public float getGoldHearts() {
+		return goldHearts;
+	}
+	
+	public int getMaxGoldHearts() {
+		return maxGoldHearts;
+	}
+	
+	public void setGoldHearts(float goldHearts) {
+		this.goldHearts = goldHearts;
+	}
+	
+	public void setMaxGoldHearts(int maxGoldHearts) {
+		this.maxGoldHearts = maxGoldHearts;
 	}
 	
 }

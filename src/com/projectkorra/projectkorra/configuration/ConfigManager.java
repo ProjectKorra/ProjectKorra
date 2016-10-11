@@ -280,7 +280,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Catapult.Description", "To use, left-click while looking in the direction you want to be launched. " + "A pillar of earth will jut up from under you and launch you in that direction - " + "if and only if there is enough earth behind where you're looking to launch you. " + "Skillful use of this ability takes much time and work, and it does result in the " + "death of certain gung-ho earthbenders. If you plan to use this ability, be sure " + "you've read about your passive ability you innately have as an earthbender.");
 			config.addDefault("Abilities.Earth.Collapse.Description", " To use, simply left-click on an earthbendable block. " + "That block and the earthbendable blocks above it will be shoved " + "back into the earth below them, if they can. " + "This ability does have the capacity to trap something inside of it, " + "although it is incredibly difficult to do so. " + "Additionally, press sneak with this ability to affect an area around your targetted location - " + "all earth that can be moved downwards will be moved downwards. " + "This ability is especially risky or deadly in caves, depending on the " + "earthbender's goal and technique.");
 			config.addDefault("Abilities.Earth.Collapse.DeathMessage", "{victim} was suffocated by {attacker}'s {ability}");
-			config.addDefault("Abilities.Earth.EarthArmor.Description", "This ability encases the earthbender in temporary armor. To use, click on a block that is earthbendable. If there is another block under it that is earthbendable, the block will fly to you and grant you temporary armor and damage reduction. This ability has a long cooldown.");
+			config.addDefault("Abilities.Earth.EarthArmor.Description", "This ability encases the Earthbender in temporary armor. To use, hold shift while looking at an earthbendable block and that block will travel towards you and grant you temporary armor and resistance. Shift click while on the move's slot to manually remove it.");
 			config.addDefault("Abilities.Earth.EarthBlast.Description", "To use, place your cursor over an earthbendable object (dirt, rock, ores, etc) " + "and tap sneak (default: shift). The object will temporarily turn to stone, " + "indicating that you have it focused as the source for your ability. " + "After you have selected an origin (you no longer need to be sneaking), " + "simply left-click in any direction and you will see your object launch " + "off in that direction, smashing into any creature in its path. If you look " + "towards a creature when you use this ability, it will target that creature. " + "A collision from Earth Blast both knocks the target back and deals some damage. " + "You cannot have multiple of these abilities flying at the same time.");
 			config.addDefault("Abilities.Earth.EarthBlast.DeathMessage", "{victim} was broken apart by {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.EarthGrab.Description", "To use, simply left-click while targeting a creature within range. " + "This ability will erect a circle of earth to trap the creature in.");
@@ -829,8 +829,7 @@ public class ConfigManager {
 			
 			config.addDefault("Abilities.Earth.EarthArmor.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthArmor.SelectRange", 10);
-			config.addDefault("Abilities.Earth.EarthArmor.Duration", 10000);
-			config.addDefault("Abilities.Earth.EarthArmor.Strength", 2);
+			config.addDefault("Abilities.Earth.EarthArmor.GoldHearts", 4);
 			config.addDefault("Abilities.Earth.EarthArmor.Cooldown", 17500);
 
 			config.addDefault("Abilities.Earth.EarthBlast.Enabled", true);

@@ -19,13 +19,14 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IceSpikePillar extends IceAbility {
 
-	private static final ConcurrentHashMap<Block, Block> ALREADY_DONE_BLOCKS = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Block, Integer> BASE_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Block> ALREADY_DONE_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Integer> BASE_BLOCKS = new ConcurrentHashMap<>();
 
 	private int height;
 	private int progress;
@@ -423,11 +424,11 @@ public class IceSpikePillar extends IceAbility {
 		this.direction = direction;
 	}
 
-	public static ConcurrentHashMap<Block, Block> getAlreadyDoneBlocks() {
+	public static Map<Block, Block> getAlreadyDoneBlocks() {
 		return ALREADY_DONE_BLOCKS;
 	}
 
-	public static ConcurrentHashMap<Block, Integer> getBaseBlocks() {
+	public static Map<Block, Integer> getBaseBlocks() {
 		return BASE_BLOCKS;
 	}
 		

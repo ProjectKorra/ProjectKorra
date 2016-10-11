@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,8 +44,8 @@ public class SurgeWave extends WaterAbility {
 	private Location targetDestination;
 	private Location frozenLocation;
 	private Vector targetDirection;
-	private ConcurrentHashMap<Block, Block> waveBlocks;
-	private ConcurrentHashMap<Block, Material> frozenBlocks;
+	private Map<Block, Block> waveBlocks;
+	private Map<Block, Material> frozenBlocks;
 	
 	public SurgeWave(Player player) {
 		super(player);
@@ -563,11 +564,11 @@ public class SurgeWave extends WaterAbility {
 		this.targetDirection = targetDirection;
 	}
 
-	public ConcurrentHashMap<Block, Block> getWaveBlocks() {
+	public Map<Block, Block> getWaveBlocks() {
 		return waveBlocks;
 	}
 
-	public ConcurrentHashMap<Block, Material> getFrozenBlocks() {
+	public Map<Block, Material> getFrozenBlocks() {
 		return frozenBlocks;
 	}
 

@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,8 +26,8 @@ public class SurgeWall extends WaterAbility {
 
 	private static final byte FULL = 0x0;
 	private static final String RANGE_CONFIG = "Abilities.Water.Surge.Wall.Range";
-	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<>();	
+	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<>();	
 
 	private boolean progressing;
 	private boolean settingUp;
@@ -587,11 +588,11 @@ public class SurgeWall extends WaterAbility {
 		this.targetDirection = targetDirection;
 	}
 
-	public static ConcurrentHashMap<Block, Block> getAffectedBlocks() {
+	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
 
-	public static ConcurrentHashMap<Block, Player> getWallBlocks() {
+	public static Map<Block, Player> getWallBlocks() {
 		return WALL_BLOCKS;
 	}
 

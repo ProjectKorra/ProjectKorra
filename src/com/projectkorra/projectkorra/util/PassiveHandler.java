@@ -19,11 +19,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PassiveHandler implements Runnable {
 	
-	private static final ConcurrentHashMap<Player, Float> FOOD = new ConcurrentHashMap<>();
+	private static final Map<Player, Float> FOOD = new ConcurrentHashMap<>();
 	
 	public static float getExhaustion(Player player, float level, double factor) {
 		if (!FOOD.keySet().contains(player)) {
@@ -36,7 +37,7 @@ public class PassiveHandler implements Runnable {
 			} else {
 				level = (float) ((level - oldlevel) * factor + oldlevel);
 			}
-			FOOD.replace(player, level);
+			FOOD.put(player, level);
 			return level;
 		}
 	}
