@@ -1,16 +1,20 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.EarthAbility;
+import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class EarthGrab extends EarthAbility {
 	
@@ -21,8 +25,14 @@ public class EarthGrab extends EarthAbility {
 	private Location origin;
 	private Vector direction;
 	private Entity closestEntity;
+	private Location startLoc;
+	private Location loc;
+	private Vector dir;
+	private Block groundBlock;
+	private Material blockType;
+	private Random random;
 
-	public EarthGrab(Player player, boolean isOtherEntity) {
+	public EarthGrab(Player player) {
 		super(player);
 		
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthGrab.SelectRange");
@@ -32,32 +42,26 @@ public class EarthGrab extends EarthAbility {
 		this.direction = origin.getDirection();
 		this.lowestDistance = selectRange + 1;
 		this.closestEntity = null;
+		this.startLoc = player.getLocation();
+		this.loc = player.getLocation();
+		this.dir = player.getLocation().getDirection();
+		this.random = new Random();
 		
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		
-		start();
-		if (isOtherEntity) {
-			earthGrabOtherEntity();
-		} else {
-			earthGrabSelf();
+		if(player.isSneaking()) {
+			start();
 		}
-		remove();
+		Location targetLocation = GeneralMethods.getTargetedLocation(player, 1);
+		Block block = GeneralMethods.getTopBlock(targetLocation, 1);
+		if(isEarthbendable(block) && block.getLocation().distance(player.getLocation()) <= 2) {
+			earthGrabSelf();
+			remove();
+		}
 	}
 	
-	public void earthGrabOtherEntity() {
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, selectRange)) {
-			if (GeneralMethods.getDistanceFromLine(direction, origin, entity.getLocation()) <= 3
-					&& (entity instanceof LivingEntity)
-					&& (entity.getEntityId() != player.getEntityId())) {
-				double distance = origin.distance(entity.getLocation());
-				if (distance < lowestDistance) {
-					closestEntity = entity;
-					lowestDistance = distance;
-				}
-			}
-		}
+	public void formDome() {
 
 		if (closestEntity != null) {
 			ArrayList<Block> blocks = new ArrayList<Block>();
@@ -101,14 +105,16 @@ public class EarthGrab extends EarthAbility {
 				}
 			}
 
-			if (!blocks.isEmpty()) {
-				bPlayer.addCooldown(this);
-			}
+			bPlayer.addCooldown(this);
 		}
 	}
 
 	public void earthGrabSelf() {		
 		closestEntity = player;
+		getGround();
+		ParticleEffect.BLOCK_CRACK.display(
+				(ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, (byte) 0), 1F, 1F, 1F,
+				0.1F, 100, player.getLocation(), 500);
 		if (closestEntity != null) {
 			ArrayList<Block> blocks = new ArrayList<Block>();
 			Location location = closestEntity.getLocation();
@@ -151,9 +157,7 @@ public class EarthGrab extends EarthAbility {
 				}
 			}
 
-			if (!blocks.isEmpty()) {
-				bPlayer.addCooldown(this);
-			}
+			bPlayer.addCooldown(this);
 		}
 	}
 
@@ -161,9 +165,65 @@ public class EarthGrab extends EarthAbility {
 	public String getName() {
 		return "EarthGrab";
 	}
+	
+	private void getGround() {
+		for (int i = 0; i <= 5; i++) {
+			Block block = loc.getBlock().getRelative(BlockFace.DOWN, i);
+			if (isEarthbendable(block)) {
+				groundBlock = block;
+				blockType = block.getType();
+				return;
+			}
+		}
+	}
 
 	@Override
 	public void progress() {
+		getGround();
+		bPlayer.addCooldown(this);
+		if(groundBlock == null) {
+			remove();
+			return;
+		}
+		dir = player.getLocation().getDirection().clone().normalize().multiply(1.5);
+		dir.setY(0);
+		double distance = loc.getY() - (double) groundBlock.getY();
+		double dx = Math.abs(distance - 2.4);
+		if (distance > 1.75) {
+			dir.setY(-.50 * dx * dx);
+		} else if (distance < 1) {
+			dir.setY(.50 * dx * dx);
+		} else {
+			dir.setY(0);
+		}
+		loc.add(dir);
+		ParticleEffect.BLOCK_CRACK.display(
+				(ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, (byte) 0), 1F, 0.1F, 1F,
+				0.1F, 100, loc.add(0, -1, 0), 500);
+		if(player.isDead() || !player.isOnline()) {
+			remove();
+			return;
+		}
+		if(!player.isSneaking()) {
+			remove();
+			return;
+		}
+		if(loc.distance(startLoc) >= selectRange) {
+			remove();
+			return;
+		}
+		for(Entity e : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
+			if(e.getEntityId() != player.getEntityId() && e instanceof LivingEntity) {
+				closestEntity = e;
+				formDome();
+				remove();
+				return;
+			}
+		}
+		if(random.nextInt(2) == 0) {
+			playEarthbendingSound(loc);
+		}
+		
 	}
 
 	@Override
