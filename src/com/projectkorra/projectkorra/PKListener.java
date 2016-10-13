@@ -1288,9 +1288,6 @@ public class PKListener implements Listener {
 				else if (abil.equalsIgnoreCase("Shockwave")) {
 					new Shockwave(player, false);
 				}
-				else if (abil.equalsIgnoreCase("EarthGrab")) {
-					new EarthGrab(player, false);
-				}
 				else if (abil.equalsIgnoreCase("EarthTunnel")) {
 					new EarthTunnel(player);
 				}
@@ -1521,7 +1518,7 @@ public class PKListener implements Listener {
 					}
 				}
 				else if (abil.equalsIgnoreCase("EarthGrab")) {
-					new EarthGrab(player, true);
+					new EarthGrab(player);
 				}
 				else if (abil.equalsIgnoreCase("Tremorsense")) {
 					new Tremorsense(player, true);
