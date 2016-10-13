@@ -283,7 +283,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthArmor.Description", "This ability encases the earthbender in temporary armor. To use, click on a block that is earthbendable. If there is another block under it that is earthbendable, the block will fly to you and grant you temporary armor and damage reduction. This ability has a long cooldown.");
 			config.addDefault("Abilities.Earth.EarthBlast.Description", "To use, place your cursor over an earthbendable object (dirt, rock, ores, etc) " + "and tap sneak (default: shift). The object will temporarily turn to stone, " + "indicating that you have it focused as the source for your ability. " + "After you have selected an origin (you no longer need to be sneaking), " + "simply left-click in any direction and you will see your object launch " + "off in that direction, smashing into any creature in its path. If you look " + "towards a creature when you use this ability, it will target that creature. " + "A collision from Earth Blast both knocks the target back and deals some damage. " + "You cannot have multiple of these abilities flying at the same time.");
 			config.addDefault("Abilities.Earth.EarthBlast.DeathMessage", "{victim} was broken apart by {attacker}'s {ability}");
-			config.addDefault("Abilities.Earth.EarthGrab.Description", "To use, simply hold shift and left click while targeting an entity. This ability will erect a circle of earth to trap the entity in. Alternatively, click the block below you to encase yourself.");
+			config.addDefault("Abilities.Earth.EarthGrab.Description", "To use, simply left-click while targeting a creature within range. " + "This ability will erect a circle of earth to trap the creature in.");
 			config.addDefault("Abilities.Earth.EarthTunnel.Description", "Earth Tunnel is a completely utility ability for earthbenders. To use, simply sneak (default: shift) in the direction you want to tunnel. You will slowly begin tunneling in the direction you're facing for as long as you sneak or if the tunnel has been dug long enough. This ability will be interrupted if it hits a block that cannot be earthbent.");
 			config.addDefault("Abilities.Earth.Extraction.Description", "This ability allows metalbenders to extract the minerals from ore blocks. To use, simply tap sneak while looking at an ore block with metal in it (iron, gold, quartz) and the ore will be extracted and drop in front of you. This ability has a small chance of doubling or tripling the loot. This ability has a short cooldown.");
 			config.addDefault("Abilities.Earth.LavaFlow.Description", "This ability allows an Earthbender to create lava using the Earth around them. To use, simply hold sneak (Default: Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an Earthbendable block to create a pool of lava after a small delay. Additionally, you can left click at any time to turn lava back into its original state -- Earth.");
@@ -846,9 +846,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthBlast.CollisionRadius", 2);
 
 			config.addDefault("Abilities.Earth.EarthGrab.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthGrab.SelectRange", 20);
+			config.addDefault("Abilities.Earth.EarthGrab.SelectRange", 14);
 			config.addDefault("Abilities.Earth.EarthGrab.Height", 6);
-			config.addDefault("Abilities.Earth.EarthGrab.Cooldown", 2000);
+			config.addDefault("Abilities.Earth.EarthGrab.Cooldown", 500);
 
 			config.addDefault("Abilities.Earth.EarthTunnel.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthTunnel.MaxRadius", 1);
