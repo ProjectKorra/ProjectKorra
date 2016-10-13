@@ -59,7 +59,6 @@ public class WhoCommand extends PKCommand {
 		staff.put("679a6396-6a31-4898-8130-044f34bef743", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // savior67
 		staff.put("1c30007f-f8ef-4b4e-aff0-787aa1bc09a3", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Sorin
 		staff.put("dd578a4f-d35e-4fed-94db-9d5a627ff962", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Sobki
-		staff.put("ed8c05af-eb43-4b71-9be3-c2ccca6c849a", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Matan
 
 		staff.put("623df34e-9cd4-438d-b07c-1905e1fc46b6", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Loony
 		staff.put("3c484e61-7876-46c0-98c9-88c7834dc96c", ChatColor.GREEN + "ProjectKorra Concept Designer"); // SamuraiSnowman (Zmeduna)
