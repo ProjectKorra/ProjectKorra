@@ -1551,6 +1551,10 @@ public class PKListener implements Listener {
 				if (abil.equalsIgnoreCase("Torrent")) {
 					new Torrent(player);
 				}
+				if (abil.equalsIgnoreCase("HealingWaters")) {
+					 HealingWaters instance = CoreAbility.getAbility(player, HealingWaters.class);
+					 instance.click();
+				}
 			}
 
 			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {

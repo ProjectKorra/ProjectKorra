@@ -14,7 +14,6 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.HealingAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class HealingWaters extends HealingAbility {
@@ -33,13 +32,15 @@ public class HealingWaters extends HealingAbility {
 	
 	private Player player;
 	private LivingEntity target;
+	private Location origin;
 	private Location location;
 	private long currTime;
 	private int pstage;
-	private int tstage;
-	private int lstage;
-	private boolean healing;
-	private boolean healingSelf;
+	private int tstage1;
+	private int tstage2;
+	private boolean healing = false;
+	private boolean healingSelf = false;
+	private boolean charged = false;
 	private String hex;
 
 	public HealingWaters(Player player) {
@@ -52,11 +53,12 @@ public class HealingWaters extends HealingAbility {
 		
 		setFields();
 		this.player = player;
-		this.location = player.getLocation();
+		this.origin = player.getLocation().clone().add(player.getLocation().getDirection()).add(0, 1.5, 0);
+		this.location = origin.clone();
 		this.currTime = System.currentTimeMillis();
 		this.pstage = 0;
-		this.tstage = 0;
-		this.lstage = 0;
+		this.tstage1 = 0;
+		this.tstage2 = 18;
 		
 		start();
 	}
@@ -91,46 +93,58 @@ public class HealingWaters extends HealingAbility {
 			return;
 		}
 		
-		// If ability is charging.
-		if (System.currentTimeMillis() < startTime + chargeTime) {
-			
-			ParticleEffect.SMOKE.display(player.getLocation().clone().add(player.getLocation().getDirection()).add(0, 1.5, 0), 0, 0, 0, 0, 1);
-			return;
+		// If ability is is charged, set charged = true. If not, play charging particles.
+		if (System.currentTimeMillis() >= startTime + chargeTime) {
+			if (!charged) {
+				this.charged = true;
+			}
+		} else {
+			GeneralMethods.displayColoredParticle(origin, hex);
 		}
 		
-		// Try to heal them with 'interval' millisecond intervals.
-		if (System.currentTimeMillis() - currTime >= interval) {
+		// If the ability is charged, try healing.
+		if (charged) {
 			
-			currTime = System.currentTimeMillis(); 
-			heal(player);
-		} 
-		
-		// Display healing particles.
-		if (healing && enableParticles) {
-			if (healingSelf) {
-				displayHealingParticlesSelf();
-			} else {
-				displayHealingParticlesOther();
+			// Try to heal themselves/target with 'interval' millisecond intervals.
+			if (System.currentTimeMillis() - currTime >= interval) {
+				
+				heal(player);
+				currTime = System.currentTimeMillis();
+			} 
+			
+			// Display healing particles.
+			if (healing && enableParticles) {
+				if (healingSelf) {
+					displayHealingParticlesSelf();
+				} else {
+					displayHealingParticlesOther();
+				}
 			}
+		}
+	}
+	
+	public void click() {
+		Entity target = GeneralMethods.getTargetedEntity(player, range);
+		if (target != null && target instanceof LivingEntity) {
+			this.target = (LivingEntity) target;
 		}
 	}
 	
 	private void heal(Player player) {
 		Entity target = GeneralMethods.getTargetedEntity(player, range);
-		if (target == null || !(target instanceof LivingEntity)) {
-			giveHP(player);
+		if (target != null && this.target != null && target instanceof LivingEntity && this.target.getEntityId() == target.getEntityId()) {
+			giveHP(this.target);
 		} else {
-			giveHP((LivingEntity) target);
+			giveHP(player);
+			this.target = null;
 		}
 	}
 	
 	private void giveHP(Player player) {
-		if (!player.isDead()) {
-			if (player.getHealth() < player.getMaxHealth()) {
-				applyHealing(player);
-			} else {
-				healing = false;
-			}
+		if (!player.isDead() && player.getHealth() < player.getMaxHealth()) {
+			applyHealing(player);
+		} else {
+			healing = false;
 		}
 		
 		for (PotionEffect effect : player.getActivePotionEffects()) {
@@ -144,12 +158,10 @@ public class HealingWaters extends HealingAbility {
 	}
 	
 	private void giveHP(LivingEntity livingEntity) {
-		if (!livingEntity.isDead()) {
-			if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
-				applyHealing(livingEntity);
-			} else {
-				healing = false;
-			}
+		if (!livingEntity.isDead() && livingEntity.getHealth() < livingEntity.getMaxHealth()) {
+			applyHealing(livingEntity);
+		} else {
+			healing = false;
 		}
 		
 		for (PotionEffect effect : livingEntity.getActivePotionEffects()) {
@@ -204,29 +216,38 @@ public class HealingWaters extends HealingAbility {
 			
 			Location centre = target.getLocation().clone().add(0, 1, 0);
 			double increment = (2 * Math.PI) / 36;
-			double angle = tstage * increment;
-			double x = centre.getX() + (0.75 * Math.cos(angle));
-			double z = centre.getZ() + (0.75 * Math.sin(angle));
+			double angle1 = tstage1 * increment;
+			double angle2 = tstage2 * increment;
+			double x1 = centre.getX() + (0.75 * Math.cos(angle1));
+			double z1 = centre.getZ() + (0.75 * Math.sin(angle1));
+			double x2 = centre.getX() + (0.75 * Math.cos(angle2));
+			double z2 = centre.getZ() + (0.75 * Math.sin(angle2));
 			
-			GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x, centre.getY() + (0.75 * Math.cos(angle)), z), hex);
-			GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x, centre.getY() + (0.75 * -Math.cos(angle)), z), hex);
+			GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x1, centre.getY() + (0.75 * Math.cos(angle1)), z1), hex);
+			GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x2, centre.getY() + (0.75 * -Math.cos(angle2)), z2), hex);
 			
-			if (tstage >= 36) {
-				tstage = 0;
+			if (tstage1 >= 36) {
+				tstage1 = 0;
 			}
-			tstage++;
+			tstage1++;
 			
-			float f = 0.3F;
+			if (tstage2 >= 36) {
+				tstage2 = 0;
+			}
+			tstage2++;
 			
-			double distance = player.getLocation().distance(target.getLocation());
+			 double factor = 0.2;
+			
+			Location targetLoc = target.getLocation().clone().add(0, 1, 0);
+			double distance = origin.distance(targetLoc);
 			Vector vec = new Vector(
-					target.getLocation().getX() - player.getLocation().getX(),
-					target.getLocation().getY() - player.getLocation().getY(),
-					target.getLocation().getZ() - player.getLocation().getZ()).normalize();
+					targetLoc.getX() - location.getX(),
+					targetLoc.getY() - location.getY(),
+					targetLoc.getZ() - location.getZ()).normalize();
 			
-			if (lstage < distance) {
-				GeneralMethods.displayColoredParticle(player.getLocation().clone().add(vec.clone().multiply(f * lstage)), hex);
-				lstage++;
+			if (origin.distance(location) < distance) {
+				location = location.clone().add(vec.clone().multiply(factor));
+				GeneralMethods.displayColoredParticle(location, hex);
 			}
 			
 		}
