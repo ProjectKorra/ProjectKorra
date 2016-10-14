@@ -7,10 +7,12 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,13 +121,27 @@ public class HeatControlSolidify extends FireAbility {
 
 	@Override
 	public void remove() {
-		ProjectKorra.plugin.getServer().getScheduler().scheduleSyncDelayedTask(ProjectKorra.plugin, new Runnable() {
+		if(Bukkit.getServer().getPluginManager().isPluginEnabled(ProjectKorra.plugin.getName())) {
+			revert();
+		} else {
+			HeatControlSolidify.super.remove();
+		}
+	}
+	
+	public void revert() {
+		new BukkitRunnable() {
 			@Override
 			public void run() {
 				revertAll();
 				HeatControlSolidify.super.remove();
 			}
-		}, revertTime);
+		}.runTaskLater(ProjectKorra.plugin, revertTime);
+	}
+	
+	public static void revertAllInstances() {
+		for (HeatControlSolidify heatControlSolidify : getAbilities(HeatControlSolidify.class)) {
+			heatControlSolidify.revertAll();
+		}
 	}
 
 	public void resetLocation(Location loc) {
