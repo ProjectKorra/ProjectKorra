@@ -1010,7 +1010,8 @@ public class GeneralMethods {
 					&& getDistanceFromLine(direction, origin, entity.getLocation()) < 2 
 					&& (entity instanceof LivingEntity) 
 					&& entity.getEntityId() != player.getEntityId() 
-					&& entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))) {
+					&& entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))
+					&& entity.getWorld().equals(origin.getWorld())) {
 				target = entity;
 				longestr = entity.getLocation().distance(origin);
 			}
@@ -1048,7 +1049,10 @@ public class GeneralMethods {
 		}
 
 		Block block = player.getTargetBlock(trans, (int) originselectrange + 1);
-		double distance = block.getLocation().distance(origin) - 1.5;
+		double distance = originselectrange;
+		if(block.getWorld().equals(origin.getWorld())) {
+			distance = block.getLocation().distance(origin) - 1.5;
+		}
 		Location location = origin.add(direction.multiply(distance));
 
 		return location;
@@ -1141,7 +1145,9 @@ public class GeneralMethods {
 
 		Location loc;
 
-		double max = location1.distance(location2);
+		double max = 0;
+		if(location1.getWorld().equals(location2.getWorld()))
+			max = location1.distance(location2);
 
 		for (double i = 0; i <= max; i++) {
 			loc = location1.clone().add(direction.clone().multiply(i));

@@ -348,7 +348,11 @@ public class WaterArmsWhip extends WaterAbility {
 			}
 			
 			Location newLocation = grabbedEntity.getLocation();
-			double distance = location.distance(newLocation);
+			double distance = 0;
+			if(location.getWorld().equals(newLocation.getWorld())) {
+				distance = location.distance(newLocation);
+			}
+			
 			double dx, dy, dz;
 			dx = location.getX() - newLocation.getX();
 			dy = location.getY() - newLocation.getY();

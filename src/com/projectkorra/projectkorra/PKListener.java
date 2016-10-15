@@ -1057,8 +1057,10 @@ public class PKListener implements Listener {
 		}
 
 		else if (Bloodbending.isBloodbent(player)) {
-			double distance1, distance2;
+			double distance1 = 0; 
+			double distance2 = 0;
 			Location loc = Bloodbending.getBloodbendingLocation(player);
+			if (event.getPlayer().getWorld().equals(loc.getWorld()))
 			distance1 = event.getFrom().distance(loc);
 			distance2 = event.getTo().distance(loc);
 			if (distance2 > distance1) {

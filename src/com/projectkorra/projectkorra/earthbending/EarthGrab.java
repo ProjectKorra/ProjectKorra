@@ -55,7 +55,7 @@ public class EarthGrab extends EarthAbility {
 		}
 		Location targetLocation = GeneralMethods.getTargetedLocation(player, 1);
 		Block block = GeneralMethods.getTopBlock(targetLocation, 1);
-		if(isEarthbendable(block) && block.getLocation().distance(player.getLocation()) <= 2) {
+		if(isEarthbendable(block) && block.getWorld().equals(player.getWorld()) && block.getLocation().distance(player.getLocation()) <= 2) {
 			earthGrabSelf();
 			remove();
 		}
@@ -208,7 +208,7 @@ public class EarthGrab extends EarthAbility {
 			remove();
 			return;
 		}
-		if(loc.distance(startLoc) >= selectRange) {
+		if(loc.getWorld().equals(startLoc.getWorld()) && loc.distance(startLoc) >= selectRange) {
 			remove();
 			return;
 		}

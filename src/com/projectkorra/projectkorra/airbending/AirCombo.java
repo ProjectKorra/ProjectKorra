@@ -208,7 +208,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			} else if (!player.isSneaking()) {
 				remove();
 				return;
-			} else if (Math.abs(player.getLocation().distanceSquared(currentLoc)) > range * range) {
+			} else if (player.getWorld().equals(currentLoc.getWorld()) && Math.abs(player.getLocation().distanceSquared(currentLoc)) > range * range) {
 				remove();
 				return;
 			} else if (affectedEntities.size() > 0 && System.currentTimeMillis() - time >= airStreamEntityCarryDuration) {
@@ -374,12 +374,12 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			if (combo.getPlayer().equals(player)) {
 				continue;
 			} else if (ability.equalsIgnoreCase("Twister") && combo.abilityName.equalsIgnoreCase("Twister")) {
-				if (combo.currentLoc != null && Math.abs(combo.currentLoc.distance(loc)) <= radius) {
+				if (combo.currentLoc != null && combo.currentLoc.getWorld().equals(loc.getWorld()) && Math.abs(combo.currentLoc.distance(loc)) <= radius) {
 					combo.remove();
 					removed = true;
 				}
 			} else if (ability.equalsIgnoreCase("AirStream") && combo.abilityName.equalsIgnoreCase("AirStream")) {
-				if (combo.currentLoc != null && Math.abs(combo.currentLoc.distance(loc)) <= radius) {
+				if (combo.currentLoc != null && combo.currentLoc.getWorld().equals(loc.getWorld()) && Math.abs(combo.currentLoc.distance(loc)) <= radius) {
 					combo.remove();
 					removed = true;
 				}
