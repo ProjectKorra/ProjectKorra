@@ -153,6 +153,7 @@ import com.projectkorra.projectkorra.util.PassiveHandler;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.Bloodbending;
+import com.projectkorra.projectkorra.waterbending.HealingWaters;
 import com.projectkorra.projectkorra.waterbending.IceBlast;
 import com.projectkorra.projectkorra.waterbending.IceSpikeBlast;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
@@ -1267,6 +1268,9 @@ public class PKListener implements Listener {
 				else if (abil.equalsIgnoreCase("WaterArms")) {
 					new WaterArms(player);
 				}
+				if (abil.equalsIgnoreCase("HealingWaters")) {
+					new HealingWaters(player);
+				}
 			}
 
 			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
@@ -1489,6 +1493,10 @@ public class PKListener implements Listener {
 				}
 				else if (abil.equalsIgnoreCase("Torrent")) {
 					new Torrent(player);
+				}
+				if (abil.equalsIgnoreCase("HealingWaters")) {
+					 HealingWaters instance = CoreAbility.getAbility(player, HealingWaters.class);
+					 instance.click();
 				}
 			}
 
