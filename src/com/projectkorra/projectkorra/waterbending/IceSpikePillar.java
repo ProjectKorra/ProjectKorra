@@ -65,7 +65,10 @@ public class IceSpikePillar extends IceAbility {
 				if (GeneralMethods.getDistanceFromLine(player.getLocation().getDirection(), player.getLocation(), entity.getLocation()) <= 2 
 						&& (entity instanceof LivingEntity) 
 						&& (entity.getEntityId() != player.getEntityId())) {
-					double distance = player.getLocation().distance(entity.getLocation());
+					double distance = 0;
+					if(player.getWorld().equals(entity.getWorld())) {
+						distance = player.getLocation().distance(entity.getLocation());
+					}
 					if (distance < lowestDistance) {
 						closestEntity = entity;
 						lowestDistance = distance;

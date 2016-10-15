@@ -139,7 +139,7 @@ public class PhaseChangeFreeze extends IceAbility {
 				}
 				
 				if (bPlayer.getBoundAbilityName().equalsIgnoreCase("OctopusForm")) {
-					if (block.getLocation().distance(player.getLocation()) <= REMOVE_RANGE + 2) {
+					if (block.getWorld().equals(player.getWorld()) && block.getLocation().distance(player.getLocation()) <= REMOVE_RANGE + 2) {
 						return false;
 					}
 				}
