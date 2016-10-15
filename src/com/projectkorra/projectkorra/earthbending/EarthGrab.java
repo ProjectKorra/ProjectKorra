@@ -30,6 +30,7 @@ public class EarthGrab extends EarthAbility {
 	private Vector dir;
 	private Block groundBlock;
 	private Material blockType;
+	private Byte blockByte;
 	private Random random;
 
 	public EarthGrab(Player player) {
@@ -44,7 +45,7 @@ public class EarthGrab extends EarthAbility {
 		this.closestEntity = null;
 		this.startLoc = player.getLocation();
 		this.loc = player.getLocation();
-		this.dir = player.getLocation().getDirection();
+		this.dir = player.getLocation().getDirection().clone().normalize().multiply(1.5);
 		this.random = new Random();
 		
 		if (!bPlayer.canBend(this)) {
@@ -52,12 +53,13 @@ public class EarthGrab extends EarthAbility {
 		}
 		if(player.isSneaking()) {
 			start();
-		}
-		Location targetLocation = GeneralMethods.getTargetedLocation(player, 1);
-		Block block = GeneralMethods.getTopBlock(targetLocation, 1);
-		if(isEarthbendable(block) && block.getLocation().distance(player.getLocation()) <= 2) {
-			earthGrabSelf();
-			remove();
+		} else {
+			Location targetLocation = GeneralMethods.getTargetedLocation(player, 1);
+			Block block = GeneralMethods.getTopBlock(targetLocation, 1, 1);
+			if(isEarthbendable(block) && block.getLocation().distance(player.getLocation()) <= 1.3) {
+				earthGrabSelf();
+				remove();
+			}
 		}
 	}
 	
@@ -113,7 +115,7 @@ public class EarthGrab extends EarthAbility {
 		closestEntity = player;
 		getGround();
 		ParticleEffect.BLOCK_CRACK.display(
-				(ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, (byte) 0), 1F, 1F, 1F,
+				(ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, blockByte), 1F, 1F, 1F,
 				0.1F, 100, player.getLocation(), 500);
 		if (closestEntity != null) {
 			ArrayList<Block> blocks = new ArrayList<Block>();
@@ -166,12 +168,14 @@ public class EarthGrab extends EarthAbility {
 		return "EarthGrab";
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void getGround() {
 		for (int i = 0; i <= 5; i++) {
 			Block block = loc.getBlock().getRelative(BlockFace.DOWN, i);
 			if (isEarthbendable(block)) {
 				groundBlock = block;
 				blockType = block.getType();
+				blockByte = block.getData();
 				return;
 			}
 		}
@@ -185,7 +189,7 @@ public class EarthGrab extends EarthAbility {
 			remove();
 			return;
 		}
-		dir = player.getLocation().getDirection().clone().normalize().multiply(1.5);
+		dir = dir.clone().normalize().multiply(1.5);
 		dir.setY(0);
 		double distance = loc.getY() - (double) groundBlock.getY();
 		double dx = Math.abs(distance - 2.4);
@@ -198,7 +202,7 @@ public class EarthGrab extends EarthAbility {
 		}
 		loc.add(dir);
 		ParticleEffect.BLOCK_CRACK.display(
-				(ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, (byte) 0), 1F, 0.1F, 1F,
+				(ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, blockByte), 1F, 0.1F, 1F,
 				0.1F, 100, loc.add(0, -1, 0), 500);
 		if(player.isDead() || !player.isOnline()) {
 			remove();
