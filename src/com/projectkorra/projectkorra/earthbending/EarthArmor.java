@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,6 +16,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -87,6 +89,7 @@ public class EarthArmor extends EarthAbility {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void formArmor() {
 		if (TempBlock.isTempBlock(headBlock)) {
 			TempBlock.revertBlock(headBlock, Material.AIR);
@@ -102,16 +105,20 @@ public class EarthArmor extends EarthAbility {
 		
 		//Color disabled for now since the colors are all weird...
 		
-		/*LeatherArmorMeta metaHead = (LeatherArmorMeta) head.getItemMeta();
+		LeatherArmorMeta metaHead = (LeatherArmorMeta) head.getItemMeta();
+		LeatherArmorMeta metaChest = (LeatherArmorMeta) head.getItemMeta();
+		LeatherArmorMeta metaLegs = (LeatherArmorMeta) leggings.getItemMeta();
 		LeatherArmorMeta metaBottom = (LeatherArmorMeta) leggings.getItemMeta();
 		
-		metaHead.setColor(Color.fromBGR(getColor(headType, headData)));
-		metaBottom.setColor(Color.fromBGR(getColor(legsType, legsData)));
+		metaHead.setColor(Color.fromRGB(getColor(headData.getItemType(), headData.getData())));
+		metaChest.setColor(Color.fromRGB(getColor(headData.getItemType(), headData.getData())));
+		metaLegs.setColor(Color.fromRGB(getColor(legsData.getItemType(), legsData.getData())));
+		metaBottom.setColor(Color.fromRGB(getColor(legsData.getItemType(), legsData.getData())));
 		
 		head.setItemMeta(metaHead);
-		chestplate.setItemMeta(metaHead);
-		leggings.setItemMeta(metaBottom);
-		boots.setItemMeta(metaBottom);*/
+		chestplate.setItemMeta(metaChest);
+		leggings.setItemMeta(metaLegs);
+		boots.setItemMeta(metaBottom);
 		
 		ItemStack armors[] = { boots, leggings, chestplate, head };
 		TempArmor armor = new TempArmor(player, 72000000L, this, armors); //Duration of 2 hours
@@ -295,34 +302,35 @@ public class EarthArmor extends EarthAbility {
 		return getColor(material, (byte) 0x0);
 	}
 	
+	/**Returns the color for the specified material.*/
 	public static int getColor(Material material, byte damage) {
-		if (material == Material.GRASS) return 0x4D8400; //Dark dull green
-		if (material == Material.CLAY) return 0xD1C2BA; //Dull gray-brown
+		if (material == Material.GRASS) return 0x29932C; //Dark dull green - Needs to be darker
+		if (material == Material.CLAY) return 0xBAC2D1; //Dull gray-brown - PERFECT
 		if (material == Material.STONE && damage == 0x0) return 0xCCCCCC; //Gray
-		if (material == Material.STONE && (damage == 0x1 || damage == 0x2)) return 0xCCCCCC; //Dark dull green
-		if (material == Material.STONE && (damage == 0x3 || damage == 0x4)) return 0xFCF8F7; //White
-		if (material == Material.STONE && (damage == 0x5 || damage == 0x6)) return 0xCECECE; //Gray
+		if (material == Material.STONE && (damage == 0x1 || damage == 0x2)) return 0xC9705C; //Pink - Needs to be richer
+		if (material == Material.STONE && (damage == 0x3 || damage == 0x4)) return 0xF8F7FC; //White
+		if (material == Material.STONE && (damage == 0x5 || damage == 0x6)) return 0xBFBFBF; //Gray  - fine for now
 		if (material == Material.COBBLESTONE) return 0x6B6B6B; //Dark Gray
-		if (material == Material.SAND && damage == 0x0) return 0xFFFFCC; //Sand yellow
-		if (material == Material.SAND && damage == 0x1) return 0xFFA723; //Sand orange //
-		if (material == Material.SANDSTONE) return 0xF2E9BA; //Sand
-		if (material == Material.RED_SANDSTONE) return 0xB85F25; //Sand
+		if (material == Material.SAND && damage == 0x0) return 0xFFFFCC; //Sand yellow - PERFECT
+		if (material == Material.SAND && damage == 0x1) return 0xB85F25; //Sand orange - Needs more red --------------
+		if (material == Material.SANDSTONE) return 0xFFF372; //Sand - Could be darker/more vibrant
+		if (material == Material.RED_SANDSTONE) return 0xB85F25; //Red sandstone - PERFECT
 		if (material == Material.GRAVEL) return 0xEDE4DC; //Dark Gray 
-		if (material == Material.GOLD_ORE) return 0xEDE4DC; //Gray with gold tint
-		if (material == Material.GOLD_BLOCK) return 0xf2f204; //Gold
-		if (material == Material.IRON_ORE) return 0xDBBFA0; //Gray with iron tint
+		if (material == Material.GOLD_ORE) return 0xF2F204;
+		if (material == Material.GOLD_BLOCK) return 0xF2F204; //Gold - Could be a tiny bit darker
+		if (material == Material.IRON_ORE) 	return 0xf4f4f4;
 		if (material == Material.IRON_BLOCK) return 0xf4f4f4; //Silver/Gray
 		if (material == Material.COAL_ORE) return 0x999999; //Stone gray
-		if (material == Material.DIRT) return 0xA34401; //Default dirt brown
-		if (material == Material.LAPIS_ORE) return 0x7A8899; //Stone gray with blue tint
-		if (material == Material.LAPIS_BLOCK) return 0x1C4475; //Dark blue
-		if (material == Material.NETHERRACK) return 0x9A1313; //Pinkish-red
-		if (material == Material.QUARTZ_ORE) return 0x9A1313; //Pinkish-red
+		if (material == Material.DIRT) return 0x843700; //Default dirt brown - NEEDS SERIOUS CHANGING
+		if (material == Material.LAPIS_ORE) return 0x0060BA;
+		if (material == Material.LAPIS_BLOCK) return 0x0060BA; //Dark blue
+		if (material == Material.NETHERRACK) return 0x13139A; //Pinkish-red - PERFECT
+		if (material == Material.QUARTZ_ORE) return 0x13139A; //Pinkish-red
 		if (material == Material.QUARTZ_BLOCK) return 0xFDFDFD; //White
 		
 		
 		
-		return 0x999999; //Default dirt brown
+		return 0xCCCCCC; //Stone
 	}
 	
 	@SuppressWarnings("deprecation")
