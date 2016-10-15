@@ -250,7 +250,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Bloodbending.Description", "This ability was made illegal for a reason. With this ability selected, sneak while " + "targetting something and you will bloodbend that target. Bloodbent targets cannot move, " + "bend or attack. You are free to control their actions by looking elsewhere - they will " + "be forced to move in that direction. Additionally, clicking while bloodbending will " + "launch that target off in the direction you're looking. " + "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
 			config.addDefault("Abilities.Water.Bloodbending.DeathMessage", "{victim} was destroyed by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.Bloodbending.HorizontalVelocityDeath","{victim} experienced kinetic damage by {attacker}'s {ability}");
-			config.addDefault("Abilities.Water.HealingWaters.Description", "To use, the bender must be at least partially submerged in water. " + "If the user is not sneaking, this ability will automatically begin " + "working provided the user has it selected. If the user is sneaking, " + "he/she is channeling the healing to their target in front of them. " + "In order for this channel to be successful, the user and the target must " + "be at least partially submerged in water.");
+			config.addDefault("Abilities.Water.HealingWaters.Description", "To use, the bender must be at least partially submerged in water. " + "Once in the water, hold shift to begin using the ability. " + "This will default to healing the user. To heal somebody else, left click while looking at them. " + "This will channel the healing to their target in front of them. " + "In order for this channel to be successful, the user must remain in water, while the target is in reach of the caster.");
 			config.addDefault("Abilities.Water.IceBlast.Description", "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an explosive burst of ice at an opponent, spraying ice and snow around it. To use, simply tap sneak (Default: Shift) while targeting a block of ice to select it as a source. From there, you can just left click to send the blast off at your opponent.");
 			config.addDefault("Abilities.Water.IceBlast.DeathMessage", "{victim} was shattered by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.IceSpike.Description", "This ability has many functions. Clicking while targetting ice, or an entity over some ice, " + "will raise a spike of ice up, damaging and slowing the target. Tapping sneak (shift) while" + " selecting a water source will select that source that can then be fired with a click. Firing" + " this will launch a spike of ice at your target, dealing a bit of damage and slowing the target. " + "If you sneak (shift) while not selecting a source, many ice spikes will erupt from around you, " + "damaging and slowing those targets.");
@@ -618,11 +618,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders", false);
 			
 			config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
-			config.addDefault("Abilities.Water.HealingWaters.ShiftRequired", true);
-			config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
+			config.addDefault("Abilities.Water.HealingWaters.Cooldown", 0);
+			config.addDefault("Abilities.Water.HealingWaters.Range", 5);
 			config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
+			config.addDefault("Abilities.Water.HealingWaters.ChargeTime", 1000);
 			config.addDefault("Abilities.Water.HealingWaters.Power", 1);
 			config.addDefault("Abilities.Water.HealingWaters.Duration", 70);
+			config.addDefault("Abilities.Water.HealingWaters.EnableParticles", true);
 
 			config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 			config.addDefault("Abilities.Water.IceBlast.Damage", 3);
