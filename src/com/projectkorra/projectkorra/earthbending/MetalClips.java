@@ -366,8 +366,14 @@ public class MetalClips extends MetalAbility {
 		if (isControlling && player.isSneaking()) {
 			if (metalClipsCount == 1) {
 				Location oldLocation = targetEntity.getLocation();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
-				double distance = loc.distance(oldLocation);
+				Location loc = oldLocation;
+				if(player.getWorld().equals(oldLocation.getWorld())) {
+						loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
+				}
+				double distance = 0;
+				if(loc.getWorld().equals(oldLocation.getWorld())) {
+					distance = loc.distance(oldLocation);
+				}
 				Vector vector = GeneralMethods.getDirection(targetEntity.getLocation(), player.getLocation());
 
 				if (distance > 0.5) {
@@ -377,9 +383,14 @@ public class MetalClips extends MetalAbility {
 
 			if (metalClipsCount == 2) {
 				Location oldLocation = targetEntity.getLocation();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
-				double distance = loc.distance(oldLocation);
-
+				Location loc = oldLocation;
+				if(player.getWorld().equals(oldLocation.getWorld())) {
+						loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
+				}
+				double distance = 0;
+				if(loc.getWorld().equals(oldLocation.getWorld())) {
+					distance = loc.distance(oldLocation);
+				}
 				Vector vector = GeneralMethods.getDirection(targetEntity.getLocation(), GeneralMethods.getTargetedLocation(player, 10));
 
 				if (distance > 1.2) {
@@ -389,8 +400,14 @@ public class MetalClips extends MetalAbility {
 
 			if (metalClipsCount >= 3) {
 				Location oldLocation = targetEntity.getLocation();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
-				double distance = loc.distance(oldLocation);
+				Location loc = oldLocation;
+				if(player.getWorld().equals(oldLocation.getWorld())) {
+						loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
+				}
+				double distance = 0;
+				if(loc.getWorld().equals(oldLocation.getWorld())) {
+					distance = loc.distance(oldLocation);
+				}
 				Vector vector = GeneralMethods.getDirection(oldLocation, GeneralMethods.getTargetedLocation(player, 10));
 				
 				if (distance > 1.2) {

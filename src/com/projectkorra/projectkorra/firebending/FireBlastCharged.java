@@ -135,7 +135,10 @@ public class FireBlastCharged extends FireAbility {
 			return;
 		}
 		
-		double distance = entity.getLocation().distance(explosion.getLocation());
+		double distance = 0;
+		if(entity.getWorld().equals(explosion.getWorld())) {
+				distance = entity.getLocation().distance(explosion.getLocation());
+		}
 		if (distance > damageRadius) {
 			return;
 		} else if (distance < innerRadius) {
@@ -177,7 +180,10 @@ public class FireBlastCharged extends FireAbility {
 				for (Entity entity : entities) {
 					if (entity instanceof LivingEntity) {
 						double slope = -(maxDamage * .5) / (damageRadius - innerRadius);
-						double damage = slope * (entity.getLocation().distance(location) - innerRadius) + maxDamage;
+						double damage = 0;
+						if(entity.getWorld().equals(location.getWorld())) {
+							damage = slope * (entity.getLocation().distance(location) - innerRadius) + maxDamage;
+						}
 						DamageHandler.damageEntity(entity, damage, this);
 					}
 				}

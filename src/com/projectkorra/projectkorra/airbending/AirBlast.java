@@ -207,8 +207,9 @@ public class AirBlast extends AirAbility {
 					push.setY(max);
 				}
 			}
-
-			factor *= 1 - location.distance(origin) / (2 * range);
+			if(location.getWorld().equals(origin.getWorld())) {
+				factor *= 1 - location.distance(origin) / (2 * range);
+			}
 
 			if (isUser && GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
 				factor *= .5;
@@ -403,7 +404,10 @@ public class AirBlast extends AirAbility {
 		 * messed up and reading the distance returns Double.NaN. If we don't remove this instance
 		 * then the AirBlast will never be removed.
 		 */
-		double dist = location.distance(origin);
+		double dist = 0;
+		if(location.getWorld().equals(origin.getWorld())) {
+			dist = location.distance(origin);
+		}
 		if (Double.isNaN(dist) || dist > range) {
 			remove();
 			return;

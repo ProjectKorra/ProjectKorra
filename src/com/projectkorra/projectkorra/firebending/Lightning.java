@@ -401,7 +401,11 @@ public class Lightning extends LightningAbility {
 				for (int j = 0; j < points.size() - 1; j += 2) {
 					Location loc1 = points.get(j);
 					Location loc2 = points.get(j + 1);
-					double adjac = loc1.distance(loc2) / 2;
+					double adjac = 0;
+					if (loc1.getWorld().equals(loc2.getWorld())) {
+						adjac = loc1.distance(loc2) / 2;
+					}
+					
 					double angle = (Math.random() - 0.5) * maxArcAngle;
 					
 					angle += angle >= 0 ? 10 : -10;

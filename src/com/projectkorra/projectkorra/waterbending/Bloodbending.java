@@ -146,7 +146,10 @@ public class Bloodbending extends BloodAbility {
 		Location location = player.getLocation();
 		for (Entity entity : TARGETED_ENTITIES.keySet()) {
 			Location target = entity.getLocation().clone();
-			Vector vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, location.distance(target)));
+			Vector vector = new Vector(0,0,0);
+			if (location.getWorld().equals(target.getWorld())) {
+				vector = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, location.distance(target)));
+			}
 			vector.normalize();
 			entity.setVelocity(vector.multiply(throwFactor));
 			new HorizontalVelocityTracker(entity, player, 200, this);
@@ -252,7 +255,10 @@ public class Bloodbending extends BloodAbility {
 			}
 			
 			Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
-			double distance = location.distance(target.getLocation());
+			double distance = 0;
+			if(location.getWorld().equals(target.getWorld())) {
+				location.distance(target.getLocation());
+			}
 			double dx, dy, dz;
 			dx = location.getX() - target.getLocation().getX();
 			dy = location.getY() - target.getLocation().getY();

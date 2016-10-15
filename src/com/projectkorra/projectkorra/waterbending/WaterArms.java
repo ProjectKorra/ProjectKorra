@@ -361,7 +361,7 @@ public class WaterArms extends WaterAbility {
 			for (Lightning.Arc arc : lightning.getArcs()) {
 				for (Block arm : BLOCK_REVERT_TIMES.keySet()) {
 					for (Location loc : arc.getPoints()) {
-						if (arm.getLocation().getWorld() == loc.getWorld() && loc.distance(arm.getLocation()) <= 2.5) {
+						if (arm.getLocation().getWorld().equals(loc.getWorld()) && loc.distance(arm.getLocation()) <= 2.5) {
 							for (Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25)) {
 								FireAbility.playLightningbendingParticle(l1);
 							}
