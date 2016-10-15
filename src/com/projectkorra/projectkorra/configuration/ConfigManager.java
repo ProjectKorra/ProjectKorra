@@ -439,7 +439,6 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.SnowBlocks", snowBlocks);
 			config.addDefault("Properties.Water.NightFactor", 1.5);
 			config.addDefault("Properties.Water.FullMoonFactor", 1.75);
-			config.addDefault("Properties.Water.FreezeRadius", 20);
 			config.addDefault("Properties.Water.PlaySound", true);
 
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
