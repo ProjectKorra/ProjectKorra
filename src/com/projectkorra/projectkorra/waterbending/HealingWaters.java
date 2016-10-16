@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.waterbending;
 
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -143,16 +142,13 @@ public class HealingWaters extends HealingAbility {
 	}
 	
 	public void click() {
-		Bukkit.broadcastMessage("Click!");
 		Entity target = GeneralMethods.getTargetedEntity(player, range);
 		if (target != null && !target.equals(this.target) && target instanceof LivingEntity) {
 			hasReached = false;
 			this.target = (LivingEntity) target;
-			Bukkit.broadcastMessage("New Target Found!");
 		} else if (target != null && target.equals(this.target) && target instanceof LivingEntity) {
 			hasReached = false;
 			this.target = null;
-			Bukkit.broadcastMessage("Target Removed!");
 		}
 	}
 		
