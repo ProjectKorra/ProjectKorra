@@ -1447,8 +1447,6 @@ public class PKListener implements Listener {
 				}
 				else if (abil.equalsIgnoreCase("AirScooter")) {
 					new AirScooter(player);
-					player.sendMessage("Pitch: " + player.getLocation().getPitch());
-					player.sendMessage("Yaw: " + player.getLocation().getYaw());
 				}
 				else if (abil.equalsIgnoreCase("AirSpout")) {
 					new AirSpout(player);
