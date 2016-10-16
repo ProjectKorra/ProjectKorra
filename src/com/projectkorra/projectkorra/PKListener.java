@@ -967,13 +967,6 @@ public class PKListener implements Listener {
 		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 		}
-//		if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HealingWaters")) {
-//			 HealingWaters instance = CoreAbility.getAbility(player, HealingWaters.class);
-//			 if(instance != null && instance.charged) {
-//				 instance.click();
-//				 event.setCancelled(true);
-//			 }
-//		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
