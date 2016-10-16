@@ -103,12 +103,10 @@ public class EarthArmor extends EarthAbility {
 		ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS, 1);
 		ItemStack boots = new ItemStack(Material.LEATHER_BOOTS, 1);
 		
-		//Color disabled for now since the colors are all weird...
-		
 		LeatherArmorMeta metaHead = (LeatherArmorMeta) head.getItemMeta();
-		LeatherArmorMeta metaChest = (LeatherArmorMeta) head.getItemMeta();
+		LeatherArmorMeta metaChest = (LeatherArmorMeta) chestplate.getItemMeta();
 		LeatherArmorMeta metaLegs = (LeatherArmorMeta) leggings.getItemMeta();
-		LeatherArmorMeta metaBottom = (LeatherArmorMeta) leggings.getItemMeta();
+		LeatherArmorMeta metaBottom = (LeatherArmorMeta) boots.getItemMeta();
 		
 		metaHead.setColor(Color.fromRGB(getColor(headData.getItemType(), headData.getData())));
 		metaChest.setColor(Color.fromRGB(getColor(headData.getItemType(), headData.getData())));
@@ -327,8 +325,6 @@ public class EarthArmor extends EarthAbility {
 		if (material == Material.NETHERRACK) return 0x13139A; //Pinkish-red - PERFECT
 		if (material == Material.QUARTZ_ORE) return 0x13139A; //Pinkish-red
 		if (material == Material.QUARTZ_BLOCK) return 0xFDFDFD; //White
-		
-		
 		
 		return 0xCCCCCC; //Stone
 	}
