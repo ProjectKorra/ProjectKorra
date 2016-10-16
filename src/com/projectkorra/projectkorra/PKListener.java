@@ -962,7 +962,7 @@ public class PKListener implements Listener {
 
 			if (bPlayer.getBoundAbilityName().equalsIgnoreCase("EarthSmash")) {
 				new EarthSmash(player, ClickType.RIGHT_CLICK);
-			}
+			} 
 		}
 		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
@@ -976,11 +976,20 @@ public class PKListener implements Listener {
 		}
 
 		Player player = event.getPlayer();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
 
 		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
+		}
+		
+		if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HealingWaters")) {
+			 HealingWaters instance = CoreAbility.getAbility(player, HealingWaters.class);
+			 if(instance != null && instance.charged) {
+				 instance.click();
+				 event.setCancelled(true);
+			 }
 		}
 	}
 
@@ -1495,10 +1504,6 @@ public class PKListener implements Listener {
 				}
 				else if (abil.equalsIgnoreCase("Torrent")) {
 					new Torrent(player);
-				}
-				if (abil.equalsIgnoreCase("HealingWaters")) {
-					 HealingWaters instance = CoreAbility.getAbility(player, HealingWaters.class);
-					 instance.click();
 				}
 			}
 

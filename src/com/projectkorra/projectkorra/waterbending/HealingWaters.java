@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -45,7 +46,7 @@ public class HealingWaters extends HealingAbility {
 	private int tstage2;
 	private boolean healing = false;
 	private boolean healingSelf = false;
-	private boolean charged = false;
+	public boolean charged = false;
 	private boolean bottle = false;
 	private boolean hasReached = false;
 	private String hex;
@@ -117,6 +118,12 @@ public class HealingWaters extends HealingAbility {
 		// If the ability is charged, try healing.
 		if (charged) {
 			
+			if (target != null) {
+				displayHealingWater(target);
+			} else {
+				displayHealingWater((LivingEntity) player);
+			}
+			
 			// Try to heal themselves/target with 'interval' millisecond intervals.
 			if (System.currentTimeMillis() - currTime >= interval) {
 				
@@ -136,23 +143,30 @@ public class HealingWaters extends HealingAbility {
 	}
 	
 	public void click() {
+		Bukkit.broadcastMessage("Click!");
 		Entity target = GeneralMethods.getTargetedEntity(player, range);
-		if (target != null && target instanceof LivingEntity) {
+		if (target != null && !target.equals(this.target) && target instanceof LivingEntity) {
 			hasReached = false;
 			this.target = (LivingEntity) target;
+			Bukkit.broadcastMessage("New Target Found!");
+		} else if (target != null && target.equals(this.target) && target instanceof LivingEntity) {
+			hasReached = false;
+			this.target = null;
+			Bukkit.broadcastMessage("Target Removed!");
 		}
 	}
-	
-	private void heal(Player player) {
-		if(!inWater(player) && !bottle){
-			remove();
-		}
 		
-		if (this.target != null && GeneralMethods.getTargetedEntity(player, range).equals(target) && target instanceof LivingEntity && hasReached) {
-			giveHP(this.target);
+	private void heal(Player player) {
+		Entity target = GeneralMethods.getTargetedEntity(player, range);
+		if (target != null && this.target != null && target instanceof LivingEntity) {
+			if (this.target.getEntityId() == target.getEntityId() && hasReached) {
+				giveHP((LivingEntity ) this.target);
+			}
 		} else {
-			giveHP(player);
-			this.target = null;
+			if(hasReached) {
+				giveHP(player);
+				this.target = null;
+			}
 		}
 	}
 	
@@ -200,7 +214,6 @@ public class HealingWaters extends HealingAbility {
 		if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
 			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, 1));
 			AirAbility.breakBreathbendingHold(livingEntity);
-			this.target = livingEntity;
 			healing = true;
 			healingSelf = false;
 		}
@@ -212,18 +225,19 @@ public class HealingWaters extends HealingAbility {
 	}
 	
 	public void displayHealingParticlesSelf() {
-		
-		Location centre = player.getLocation().clone().add(0, 1, 0);
-		double increment = (2 * Math.PI) / 36;
-		double angle = pstage * increment;
-		double x = centre.getX() + (0.75 * Math.cos(angle));
-		double z = centre.getZ() + (0.75 * Math.sin(angle));
-		GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x, centre.getY(), z), hex);
-			
-		if (pstage >= 36) {
-			pstage = 0;
+		if (hasReached) {
+			Location centre = player.getLocation().clone().add(0, 1, 0);
+			double increment = (2 * Math.PI) / 36;
+			double angle = pstage * increment;
+			double x = centre.getX() + (0.75 * Math.cos(angle));
+			double z = centre.getZ() + (0.75 * Math.sin(angle));
+			GeneralMethods.displayColoredParticle(new Location(centre.getWorld(), x, centre.getY(), z), hex);
+
+			if (pstage >= 36) {
+				pstage = 0;
+			}
+			pstage++;
 		}
-		pstage++;
 	}
 	
 	public void displayHealingParticlesOther() {
@@ -252,26 +266,32 @@ public class HealingWaters extends HealingAbility {
 				tstage2++;
 			}
 			
-			 double factor = 0.2;
-			
-			Location targetLoc = target.getLocation().clone().add(0, 1, 0);
-			double distance = 0;
-			if (origin.getWorld().equals(targetLoc.getWorld())) {
-				distance = origin.distance(targetLoc);
-			}
-			Vector vec = new Vector(
-					targetLoc.getX() - location.getX(),
-					targetLoc.getY() - location.getY(),
-					targetLoc.getZ() - location.getZ()).normalize();
-			
-			if (origin.getWorld().equals(location.getWorld()) && origin.distance(location) < distance) {
-				location = location.clone().add(vec.clone().multiply(factor));
-				GeneralMethods.displayColoredParticle(location, hex);
-			} else if (origin.getWorld().equals(location.getWorld()) && origin.distance(location) >= distance) {
-				hasReached = true;
-			}
-			
 		}
+	}
+	
+	public void displayHealingWater(LivingEntity target) {
+		double factor = 0.2;
+		
+		Location targetLoc = target.getLocation().clone().add(0, 1, 0);
+		double distance = 0;
+		if (location.getWorld().equals(targetLoc.getWorld())) {
+			distance = location.distance(targetLoc);
+		}
+		Vector vec = new Vector(
+				targetLoc.getX() - location.getX(),
+				targetLoc.getY() - location.getY(),
+				targetLoc.getZ() - location.getZ()).normalize();
+		
+		if (location.getWorld().equals(targetLoc.getWorld()) && location.distance(targetLoc) <= distance) {
+			location = location.clone().add(vec.clone().multiply(factor));
+			if(location.distance(targetLoc) <= 0.5) {
+				hasReached = true;
+			} else {
+				hasReached = false;
+			}
+		}
+		
+		GeneralMethods.displayColoredParticle(location, hex);
 	}
 	
 	private void fillBottle() {
