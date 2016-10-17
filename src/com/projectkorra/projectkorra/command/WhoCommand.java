@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -59,7 +64,7 @@ public class WhoCommand extends PKCommand {
 						String[] staffUUIDS = unparsed.split("\\|");
 						for (String s : staffUUIDS)
 						{
-							String[] parts = s.split("-");
+							String[] parts = s.split("/");
 							if (parts.length == 2)
 							{
 								staff.put(parts[0], parts[1]);
