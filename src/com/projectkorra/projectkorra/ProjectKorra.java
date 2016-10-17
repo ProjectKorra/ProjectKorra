@@ -54,7 +54,7 @@ public class ProjectKorra extends JavaPlugin {
 		
 		new ConfigManager();
 		new GeneralMethods(this);
-		updater = new Updater(this, "http://projectkorra.com/forum/forums/dev-builds.16/index.rss");
+		updater = new Updater(this, "http://projectkorra.com/forums/dev-builds.16/index.rss");
 		new Commands(this);
 		new MultiAbilityManager();
 		new ComboManager();
