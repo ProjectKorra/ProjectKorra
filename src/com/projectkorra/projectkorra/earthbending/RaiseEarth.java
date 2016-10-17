@@ -13,11 +13,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RaiseEarth extends EarthAbility {
 	
-	private static final ConcurrentHashMap<Block, Block> ALL_AFFECTED_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Block> ALL_AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 
 	private int distance;
 	private int height;

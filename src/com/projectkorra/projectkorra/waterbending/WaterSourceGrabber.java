@@ -10,8 +10,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSourceGrabber {
@@ -30,7 +31,7 @@ public class WaterSourceGrabber {
 	private AnimationState state;
 	private Material material;
 	private Location currentLoc;
-	private ConcurrentHashMap<Block, TempBlock> affectedBlocks;
+	private Map<Block, TempBlock> affectedBlocks;
 
 	public WaterSourceGrabber(Player player, Location origin) {
 		this(player, origin, 1);
@@ -96,9 +97,9 @@ public class WaterSourceGrabber {
 	}
 
 	public void revertBlocks() {
-		Enumeration<Block> keys = affectedBlocks.keys();
-		while (keys.hasMoreElements()) {
-			Block block = keys.nextElement();
+		Iterator<Block> keys = affectedBlocks.keySet().iterator();
+		while (keys.hasNext()) {
+			Block block = keys.next();
 			affectedBlocks.get(block).revertBlock();
 			affectedBlocks.remove(block);
 		}
@@ -152,7 +153,7 @@ public class WaterSourceGrabber {
 		this.currentLoc = currentLoc;
 	}
 
-	public ConcurrentHashMap<Block, TempBlock> getAffectedBlocks() {
+	public Map<Block, TempBlock> getAffectedBlocks() {
 		return affectedBlocks;
 	}
 

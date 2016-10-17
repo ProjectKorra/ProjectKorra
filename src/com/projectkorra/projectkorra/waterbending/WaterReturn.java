@@ -238,7 +238,7 @@ public class WaterReturn extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return "WaterReturn";
+		return "Bottlebending";
 	}
 
 	@Override

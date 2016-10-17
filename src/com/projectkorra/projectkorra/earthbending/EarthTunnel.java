@@ -48,7 +48,10 @@ public class EarthTunnel extends EarthAbility {
 		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
 		this.block = origin.getBlock();
 		this.direction = location.getDirection().clone().normalize();
-		this.depth = Math.max(0, origin.distance(location) - 1);
+		this.depth = 0;
+		if(origin.getWorld().equals(location.getWorld())) {
+				this.depth = Math.max(0, origin.distance(location) - 1);
+		}
 		this.angle = 0;
 
 		if (!bPlayer.canBend(this)) {

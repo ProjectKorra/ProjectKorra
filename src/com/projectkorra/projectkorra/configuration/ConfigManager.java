@@ -250,7 +250,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Bloodbending.Description", "This ability was made illegal for a reason. With this ability selected, sneak while " + "targetting something and you will bloodbend that target. Bloodbent targets cannot move, " + "bend or attack. You are free to control their actions by looking elsewhere - they will " + "be forced to move in that direction. Additionally, clicking while bloodbending will " + "launch that target off in the direction you're looking. " + "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
 			config.addDefault("Abilities.Water.Bloodbending.DeathMessage", "{victim} was destroyed by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.Bloodbending.HorizontalVelocityDeath","{victim} experienced kinetic damage by {attacker}'s {ability}");
-			config.addDefault("Abilities.Water.HealingWaters.Description", "To use, the bender must be at least partially submerged in water. " + "If the user is not sneaking, this ability will automatically begin " + "working provided the user has it selected. If the user is sneaking, " + "he/she is channeling the healing to their target in front of them. " + "In order for this channel to be successful, the user and the target must " + "be at least partially submerged in water.");
+			config.addDefault("Abilities.Water.HealingWaters.Description", "To use, the bender must be at least partially submerged in water or have a water bottle. " + "Hold shift to begin using the ability. " + "This will default to healing the user. To heal somebody else, right click while looking at them. Right click them again to begin healing yourself again. " + "This will channel the healing to their target in front of them. " + "In order for this channel to be successful, the target is in reach of the bender and the bender must continue to look at them.");
 			config.addDefault("Abilities.Water.IceBlast.Description", "This ability offers a powerful ice utility for Waterbenders. It can be used to fire an explosive burst of ice at an opponent, spraying ice and snow around it. To use, simply tap sneak (Default: Shift) while targeting a block of ice to select it as a source. From there, you can just left click to send the blast off at your opponent.");
 			config.addDefault("Abilities.Water.IceBlast.DeathMessage", "{victim} was shattered by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.IceSpike.Description", "This ability has many functions. Clicking while targetting ice, or an entity over some ice, " + "will raise a spike of ice up, damaging and slowing the target. Tapping sneak (shift) while" + " selecting a water source will select that source that can then be fired with a click. Firing" + " this will launch a spike of ice at your target, dealing a bit of damage and slowing the target. " + "If you sneak (shift) while not selecting a source, many ice spikes will erupt from around you, " + "damaging and slowing those targets.");
@@ -280,10 +280,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Catapult.Description", "To use, left-click while looking in the direction you want to be launched. " + "A pillar of earth will jut up from under you and launch you in that direction - " + "if and only if there is enough earth behind where you're looking to launch you. " + "Skillful use of this ability takes much time and work, and it does result in the " + "death of certain gung-ho earthbenders. If you plan to use this ability, be sure " + "you've read about your passive ability you innately have as an earthbender.");
 			config.addDefault("Abilities.Earth.Collapse.Description", " To use, simply left-click on an earthbendable block. " + "That block and the earthbendable blocks above it will be shoved " + "back into the earth below them, if they can. " + "This ability does have the capacity to trap something inside of it, " + "although it is incredibly difficult to do so. " + "Additionally, press sneak with this ability to affect an area around your targetted location - " + "all earth that can be moved downwards will be moved downwards. " + "This ability is especially risky or deadly in caves, depending on the " + "earthbender's goal and technique.");
 			config.addDefault("Abilities.Earth.Collapse.DeathMessage", "{victim} was suffocated by {attacker}'s {ability}");
-			config.addDefault("Abilities.Earth.EarthArmor.Description", "This ability encases the earthbender in temporary armor. To use, click on a block that is earthbendable. If there is another block under it that is earthbendable, the block will fly to you and grant you temporary armor and damage reduction. This ability has a long cooldown.");
+			config.addDefault("Abilities.Earth.EarthArmor.Description", "This ability encases the Earthbender in temporary armor. To use, hold shift while looking at an earthbendable block and that block will travel towards you and grant you temporary armor and resistance. Shift and click while on the move's slot to manually remove it.");
 			config.addDefault("Abilities.Earth.EarthBlast.Description", "To use, place your cursor over an earthbendable object (dirt, rock, ores, etc) " + "and tap sneak (default: shift). The object will temporarily turn to stone, " + "indicating that you have it focused as the source for your ability. " + "After you have selected an origin (you no longer need to be sneaking), " + "simply left-click in any direction and you will see your object launch " + "off in that direction, smashing into any creature in its path. If you look " + "towards a creature when you use this ability, it will target that creature. " + "A collision from Earth Blast both knocks the target back and deals some damage. " + "You cannot have multiple of these abilities flying at the same time.");
 			config.addDefault("Abilities.Earth.EarthBlast.DeathMessage", "{victim} was broken apart by {attacker}'s {ability}");
-			config.addDefault("Abilities.Earth.EarthGrab.Description", "To use, simply left-click while targeting a creature within range. " + "This ability will erect a circle of earth to trap the creature in.");
+			config.addDefault("Abilities.Earth.EarthGrab.Description", "To use, simply hold shift and left click while targeting an entity. This ability will erect a circle of earth to trap the entity in. Alternatively, click the block below you to encase yourself.");
 			config.addDefault("Abilities.Earth.EarthTunnel.Description", "Earth Tunnel is a completely utility ability for earthbenders. To use, simply sneak (default: shift) in the direction you want to tunnel. You will slowly begin tunneling in the direction you're facing for as long as you sneak or if the tunnel has been dug long enough. This ability will be interrupted if it hits a block that cannot be earthbent.");
 			config.addDefault("Abilities.Earth.Extraction.Description", "This ability allows metalbenders to extract the minerals from ore blocks. To use, simply tap sneak while looking at an ore block with metal in it (iron, gold, quartz) and the ore will be extracted and drop in front of you. This ability has a small chance of doubling or tripling the loot. This ability has a short cooldown.");
 			config.addDefault("Abilities.Earth.LavaFlow.Description", "This ability allows an Earthbender to create lava using the Earth around them. To use, simply hold sneak (Default: Shift) to create a lava moat that surrounds you, press sneak again to remove the moat. Left click an Earthbendable block to create a pool of lava after a small delay. Additionally, you can left click at any time to turn lava back into its original state -- Earth.");
@@ -618,11 +618,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders", false);
 			
 			config.addDefault("Abilities.Water.HealingWaters.Enabled", true);
-			config.addDefault("Abilities.Water.HealingWaters.ShiftRequired", true);
-			config.addDefault("Abilities.Water.HealingWaters.Radius", 5);
+			config.addDefault("Abilities.Water.HealingWaters.Cooldown", 0);
+			config.addDefault("Abilities.Water.HealingWaters.Range", 5);
 			config.addDefault("Abilities.Water.HealingWaters.Interval", 750);
+			config.addDefault("Abilities.Water.HealingWaters.ChargeTime", 1000);
 			config.addDefault("Abilities.Water.HealingWaters.Power", 1);
 			config.addDefault("Abilities.Water.HealingWaters.Duration", 70);
+			config.addDefault("Abilities.Water.HealingWaters.EnableParticles", true);
 
 			config.addDefault("Abilities.Water.IceBlast.Enabled", true);
 			config.addDefault("Abilities.Water.IceBlast.Damage", 3);
@@ -829,8 +831,7 @@ public class ConfigManager {
 			
 			config.addDefault("Abilities.Earth.EarthArmor.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthArmor.SelectRange", 10);
-			config.addDefault("Abilities.Earth.EarthArmor.Duration", 10000);
-			config.addDefault("Abilities.Earth.EarthArmor.Strength", 2);
+			config.addDefault("Abilities.Earth.EarthArmor.GoldHearts", 4);
 			config.addDefault("Abilities.Earth.EarthArmor.Cooldown", 17500);
 
 			config.addDefault("Abilities.Earth.EarthBlast.Enabled", true);
@@ -846,9 +847,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthBlast.CollisionRadius", 2);
 
 			config.addDefault("Abilities.Earth.EarthGrab.Enabled", true);
-			config.addDefault("Abilities.Earth.EarthGrab.SelectRange", 14);
+			config.addDefault("Abilities.Earth.EarthGrab.SelectRange", 20);
 			config.addDefault("Abilities.Earth.EarthGrab.Height", 6);
-			config.addDefault("Abilities.Earth.EarthGrab.Cooldown", 500);
+			config.addDefault("Abilities.Earth.EarthGrab.Cooldown", 2000);
 
 			config.addDefault("Abilities.Earth.EarthTunnel.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthTunnel.MaxRadius", 1);

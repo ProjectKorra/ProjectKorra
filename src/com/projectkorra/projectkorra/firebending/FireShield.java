@@ -74,7 +74,7 @@ public class FireShield extends FireAbility {
 				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(fshield.discRadius));
 				if (!tempLoc.getWorld().equals(loc.getWorld())) {
 					return false;
-				} else if (tempLoc.distance(loc) <= fshield.discRadius * fshield.discRadius) {
+				} else if (tempLoc.getWorld().equals(loc.getWorld()) && tempLoc.distance(loc) <= fshield.discRadius * fshield.discRadius) {
 					return true;
 				}
 			}

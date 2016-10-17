@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,7 +29,7 @@ public class TorrentWave extends WaterAbility {
 	private Location origin;
 	private ArrayList<TempBlock> blocks;
 	private ArrayList<Entity> affectedEntities;
-	private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Double>> heights;
+	private Map<Integer, ConcurrentHashMap<Integer, Double>> heights;
 
 	public TorrentWave(Player player, double radius) {
 		this(player, player.getEyeLocation(), radius);
@@ -287,7 +288,7 @@ public class TorrentWave extends WaterAbility {
 		return affectedEntities;
 	}
 
-	public ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Double>> getHeights() {
+	public Map<Integer, ConcurrentHashMap<Integer, Double>> getHeights() {
 		return heights;
 	}
 

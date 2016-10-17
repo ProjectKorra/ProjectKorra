@@ -102,7 +102,7 @@ public class Tornado extends AirAbility {
 				if (y > origin.getY() && y < origin.getY() + currentHeight) {
 					factor = (y - origin.getY()) / currentHeight;
 					Location testloc = new Location(origin.getWorld(), origin.getX(), y, origin.getZ());
-					if (testloc.distance(entity.getLocation()) < currentRadius * factor) {
+					if (testloc.getWorld().equals(entity.getWorld()) && testloc.distance(entity.getLocation()) < currentRadius * factor) {
 						double x, z, vx, vz, mag;
 						double angle = 100;
 						double vy = 0.7 * npcPushFactor;

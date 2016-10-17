@@ -297,8 +297,8 @@ public class WaterSpout extends WaterAbility {
 				Location base = spout.getBase().getLocation();
 				double dist = top.getBlockY() - base.getBlockY();
 				for (double d = 0; d <= dist; d += 0.5) {
-					Location spoutl = base.clone().add(0, d, 0);
-					if (loc0.distance(spoutl) <= radius) {
+					Location spoutLoc = base.clone().add(0, d, 0);
+					if (loc0.getWorld().equals(spoutLoc.getWorld()) && loc0.distance(spoutLoc) <= radius) {
 						removed = true;
 						spout.remove();
 					}

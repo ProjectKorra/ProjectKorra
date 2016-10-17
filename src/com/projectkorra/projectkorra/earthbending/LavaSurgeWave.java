@@ -266,7 +266,7 @@ public class LavaSurgeWave extends LavaAbility {
 
 	public static boolean isBlockInWave(Block block) {
 		for (LavaSurgeWave lavaWave : getAbilities(LavaSurgeWave.class)) {
-			if (block.getLocation().distance(lavaWave.location) <= 2 * lavaWave.radius) {
+			if (block.getWorld().equals(lavaWave.location.getWorld()) && block.getLocation().distance(lavaWave.location) <= 2 * lavaWave.radius) {
 				return true;
 			}
 		}

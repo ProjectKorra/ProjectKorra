@@ -170,7 +170,7 @@ public class ComboManager {
 		startCleanupTask();
 	}
 
-	public static void addComboAbility(Player player, ClickType type) {
+	public static void addComboAbility(final Player player, ClickType type) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
@@ -183,27 +183,36 @@ public class ComboManager {
 		AbilityInformation info = new AbilityInformation(abilityName, type, System.currentTimeMillis());
 		addRecentAbility(player, info);
 
-		ComboAbilityInfo comboAbil = checkForValidCombo(player);
+		final ComboAbilityInfo comboAbil = checkForValidCombo(player);
 		if (comboAbil == null) {
 			return;
 		} else if (!player.hasPermission("bending.ability." + comboAbil.getName())) {
 			return;
 		}
 
-		if (comboAbil.getComboType().equals(FireCombo.class)) {
-			new FireCombo(player, comboAbil.getName());
-		} else if (comboAbil.getComboType().equals(AirCombo.class)) {
-			new AirCombo(player, comboAbil.getName());
-		} else if (comboAbil.getComboType().equals(WaterCombo.class)) {
-			new WaterCombo(player, comboAbil.getName());
-		} else if (comboAbil.getComboType().equals(ChiCombo.class)) {
-			new ChiCombo(player, comboAbil.getName());
-		} else {
-			if (comboAbil.getComboType() instanceof ComboAbility) {
-				((ComboAbility) comboAbil.getComboType()).createNewComboInstance(player);
-				return;
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				if (comboAbil.getComboType().equals(FireCombo.class)) {
+					new FireCombo(player, comboAbil.getName());
+				} else if (comboAbil.getComboType().equals(AirCombo.class)) {
+					new AirCombo(player, comboAbil.getName());
+				} else if (comboAbil.getComboType().equals(WaterCombo.class)) {
+					new WaterCombo(player, comboAbil.getName());
+				} else if (comboAbil.getComboType().equals(ChiCombo.class)) {
+					new ChiCombo(player, comboAbil.getName());
+				} else {
+					if (comboAbil.getComboType() instanceof ComboAbility) {
+						((ComboAbility) comboAbil.getComboType()).createNewComboInstance(player);
+						return;
+					}
+				}
 			}
-		}
+			
+		}.runTaskLater(ProjectKorra.plugin, 1L);
+		
+		
 	}
 
 	/**

@@ -20,12 +20,13 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.util.Vector;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FireBlastCharged extends FireAbility {
 
-	private static final ConcurrentHashMap<Entity, FireBlastCharged> EXPLOSIONS = new ConcurrentHashMap<>();
+	private static final Map<Entity, FireBlastCharged> EXPLOSIONS = new ConcurrentHashMap<>();
 
 	private boolean charged;
 	private boolean launched;
@@ -134,7 +135,10 @@ public class FireBlastCharged extends FireAbility {
 			return;
 		}
 		
-		double distance = entity.getLocation().distance(explosion.getLocation());
+		double distance = 0;
+		if(entity.getWorld().equals(explosion.getWorld())) {
+				distance = entity.getLocation().distance(explosion.getLocation());
+		}
 		if (distance > damageRadius) {
 			return;
 		} else if (distance < innerRadius) {
@@ -176,7 +180,10 @@ public class FireBlastCharged extends FireAbility {
 				for (Entity entity : entities) {
 					if (entity instanceof LivingEntity) {
 						double slope = -(maxDamage * .5) / (damageRadius - innerRadius);
-						double damage = slope * (entity.getLocation().distance(location) - innerRadius) + maxDamage;
+						double damage = 0;
+						if(entity.getWorld().equals(location.getWorld())) {
+							damage = slope * (entity.getLocation().distance(location) - innerRadius) + maxDamage;
+						}
 						DamageHandler.damageEntity(entity, damage, this);
 					}
 				}
@@ -450,7 +457,7 @@ public class FireBlastCharged extends FireAbility {
 		this.direction = direction;
 	}
 
-	public static ConcurrentHashMap<Entity, FireBlastCharged> getExplosions() {
+	public static Map<Entity, FireBlastCharged> getExplosions() {
 		return EXPLOSIONS;
 	}
 

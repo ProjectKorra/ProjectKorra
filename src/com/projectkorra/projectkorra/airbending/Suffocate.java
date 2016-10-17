@@ -170,7 +170,10 @@ public class Suffocate extends AirAbility {
 		}
 
 		if (requireConstantAim) {
-			double dist = player.getEyeLocation().distance(targets.get(0).getEyeLocation());
+			double dist = 0;
+			if(player.getWorld().equals(targets.get(0).getWorld())) {
+				dist = player.getEyeLocation().distance(targets.get(0).getEyeLocation());
+			}
 			Location targetLoc = player.getEyeLocation().clone()
 					.add(player.getEyeLocation().getDirection().normalize().multiply(dist));
 			List<Entity> ents = GeneralMethods.getEntitiesAroundPoint(targetLoc, constantAimRadius);

@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -43,7 +44,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.FallingSand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
@@ -110,7 +110,10 @@ import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.ReflectionHandler;
+import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -142,9 +145,20 @@ public class GeneralMethods {
 	private static final Map<String, Map<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
 	private static final ArrayList<Ability> INVINCIBLE = new ArrayList<>();
 	private static ProjectKorra plugin;
+	
+	private static Method getAbsorption;
+	private static Method setAbsorption;
 
 	public GeneralMethods(ProjectKorra plugin) {
 		GeneralMethods.plugin = plugin;
+		
+		try {
+			getAbsorption = ReflectionHandler.getMethod("EntityPlayer", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
+			setAbsorption = ReflectionHandler.getMethod("EntityPlayer", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -586,6 +600,30 @@ public class GeneralMethods {
 			ActionBar.sendActionBar(displayedMessage, player);
 		}
 	}
+	
+	public static float getAbsorbationHealth(Player player) {
+		
+		try {
+			Object entityplayer = ActionBar.getHandle.invoke(player);
+			Object hearts = getAbsorption.invoke(entityplayer);
+			//player.sendMessage(hearts.toString());
+			return (float) hearts;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public static void setAbsorbationHealth(Player player, float hearts) {
+		
+		try {
+			Object entityplayer = ActionBar.getHandle.invoke(player);
+			setAbsorption.invoke(entityplayer, hearts);
+			//player.sendMessage(hearts.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static List<Block> getBlocksAlongLine(Location ploc, Location tloc, World w) {
 		List<Block> blocks = new ArrayList<Block>();
@@ -789,19 +827,34 @@ public class GeneralMethods {
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(Location location, double radius) {
-		List<Entity> entities = location.getWorld().getEntities();
-		List<Entity> list = location.getWorld().getEntities();
+		List<Entity> entities = new ArrayList<Entity>();
+		World world = location.getWorld();
 
-		for (Entity entity : entities) {
-			if (entity.getWorld() != location.getWorld()) {
-				list.remove(entity);
-			} else if (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
-				list.remove(entity);
-			} else if (entity.getLocation().distanceSquared(location) > radius * radius) {
-				list.remove(entity);
-			}
-		}
-		return list;
+	    // To find chunks we use chunk coordinates (not block coordinates!)
+	    int smallX = (int) (location.getX() - radius) >> 4;
+	    int bigX = (int) (location.getX() + radius) >> 4;
+	    int smallZ = (int) (location.getZ() - radius) >> 4;
+	    int bigZ = (int) (location.getZ() + radius) >> 4;
+
+	    for (int x = smallX; x <= bigX; x++) {
+	        for (int z = smallZ; z <= bigZ; z++) {
+	            if (world.isChunkLoaded(x, z)) {
+	                entities.addAll(Arrays.asList(world.getChunkAt(x, z).getEntities()));
+	            }
+	        }
+	    }
+
+	    Iterator<Entity> entityIterator = entities.iterator(); 
+	    while (entityIterator.hasNext()) {
+	    	Entity e = entityIterator.next();
+	        if (e.getLocation().distanceSquared(location) > radius * radius) {
+	            entityIterator.remove(); 
+	        } else if (e instanceof Player && ((Player)e).getGameMode().equals(GameMode.SPECTATOR)) {
+	        	entityIterator.remove();
+	        }
+	    }
+		
+		return entities;
 	}
 
 	public static long getGlobalCooldown() {
@@ -957,7 +1010,8 @@ public class GeneralMethods {
 					&& getDistanceFromLine(direction, origin, entity.getLocation()) < 2 
 					&& (entity instanceof LivingEntity) 
 					&& entity.getEntityId() != player.getEntityId() 
-					&& entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))) {
+					&& entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))
+					&& entity.getWorld().equals(origin.getWorld())) {
 				target = entity;
 				longestr = entity.getLocation().distance(origin);
 			}
@@ -995,7 +1049,10 @@ public class GeneralMethods {
 		}
 
 		Block block = player.getTargetBlock(trans, (int) originselectrange + 1);
-		double distance = block.getLocation().distance(origin) - 1.5;
+		double distance = originselectrange;
+		if(block.getWorld().equals(origin.getWorld())) {
+			distance = block.getLocation().distance(origin) - 1.5;
+		}
 		Location location = origin.add(direction.multiply(distance));
 
 		return location;
@@ -1088,7 +1145,9 @@ public class GeneralMethods {
 
 		Location loc;
 
-		double max = location1.distance(location2);
+		double max = 0;
+		if(location1.getWorld().equals(location2.getWorld()))
+			max = location1.distance(location2);
 
 		for (double i = 0; i <= max; i++) {
 			loc = location1.clone().add(direction.clone().multiply(i));
@@ -1737,7 +1796,7 @@ public class GeneralMethods {
 			}
 			return;
 		}
-		if (entity instanceof FallingSand) {
+		if (entity instanceof FallingBlock) {
 			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.Normal")) {
 				entity.setVelocity(velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
 			}
@@ -1794,6 +1853,7 @@ public class GeneralMethods {
 
 		Flight.removeAll();
 		TempBlock.removeAll();
+		TempArmor.revertAll();
 		MultiAbilityManager.removeAll();
 		if (!INVINCIBLE.isEmpty()) {
 			INVINCIBLE.clear();

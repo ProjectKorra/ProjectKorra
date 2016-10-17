@@ -178,8 +178,9 @@ public class AirSuction extends AirAbility {
 						push.setY(max);
 					}
 				}
-
-				factor *= 1 - location.distance(origin) / (2 * range);
+				if(location.getWorld().equals(origin.getWorld())) {
+					factor *= 1 - location.distance(origin) / (2 * range);
+				}
 
 				double comp = velocity.dot(push.clone().normalize());
 				if (comp > factor) {

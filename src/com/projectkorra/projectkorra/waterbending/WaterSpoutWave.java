@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -33,7 +34,7 @@ public class WaterSpoutWave extends WaterAbility {
 		RISE, TOWARD_PLAYER, CIRCLE, SHRINK
 	}
 
-	private static final ConcurrentHashMap<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 	
 	private double radius;
 	private boolean charging;
@@ -284,7 +285,7 @@ public class WaterSpoutWave extends WaterAbility {
 					}
 					for (Block block : FROZEN_BLOCKS.keySet()) {
 						TempBlock tBlock = FROZEN_BLOCKS.get(block);
-						if (tBlock.getLocation().distance(player.getLocation()) >= thawRadius) {
+						if (tBlock.getBlock().getWorld().equals(player.getWorld()) && tBlock.getLocation().distance(player.getLocation()) >= thawRadius) {
 							tBlock.revertBlock();
 							FROZEN_BLOCKS.remove(block);
 						}
@@ -621,7 +622,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.origin = origin;
 	}
 
-	public static ConcurrentHashMap<Block, TempBlock> getFrozenBlocks() {
+	public static Map<Block, TempBlock> getFrozenBlocks() {
 		return FROZEN_BLOCKS;
 	}
 
