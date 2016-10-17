@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,7 +37,7 @@ public class WhoCommand extends PKCommand {
 	/**
 	 * Map storage of all ProjectKorra staffs' UUIDs and titles
 	 */
-	Map<String, String> staff = new HashMap<String, String>(), playerInfoWords = new HashMap<String, String>();
+	final Map<String, String> staff = new HashMap<String, String>(), playerInfoWords = new HashMap<String, String>();
 	
 	private String databaseOverload, noPlayersOnline, playerOffline;
 	
@@ -43,31 +48,37 @@ public class WhoCommand extends PKCommand {
 		noPlayersOnline = ConfigManager.languageConfig.get().getString("Commands.Who.NoPlayersOnline");
 		playerOffline = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerOffline");
 		
-		staff.put("8621211e-283b-46f5-87bc-95a66d68880e", ChatColor.RED + "ProjectKorra Founder"); // MistPhizzle
+		new BukkitRunnable()
+		{
+			public void run()
+			{
+				try {
+					// Create a URL for the desired page
+					URL url = new URL("http://www.projectkorra.com/internals/staff.html");       
 
-		staff.put("a197291a-cd78-43bb-aa38-52b7c82bc68c", ChatColor.DARK_PURPLE + "ProjectKorra Lead Developer"); // OmniCypher
-
-		staff.put("15d1a5a7-76ef-49c3-b193-039b27c47e30", ChatColor.GREEN + "ProjectKorra Administrator"); // Kiam
-		
-		staff.put("1553482a-5e86-4270-9262-b57c11151074", ChatColor.GOLD + "ProjectKorra Head Community Moderator"); // Pickle9775
-
-		staff.put("96f40c81-dd5d-46b6-9afe-365114d4a082", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Coolade
-		staff.put("833a7132-a9ec-4f0a-ad9c-c3d6b8a1c7eb", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Jacklin213
-		staff.put("d7757be8-86de-4898-ab4f-2b1b2fbc3dfa", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // StrangeOne101
-		staff.put("3b5bdfab-8ae1-4794-b160-4f33f31fde99", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // kingbirdy
-		staff.put("dedf335b-d282-47ab-8ffc-a80121661cd1", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // grasshopperMatt
-		staff.put("679a6396-6a31-4898-8130-044f34bef743", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // savior67
-		staff.put("1c30007f-f8ef-4b4e-aff0-787aa1bc09a3", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Sorin
-		staff.put("dd578a4f-d35e-4fed-94db-9d5a627ff962", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Sobki
-		staff.put("9636d66a-bff8-48e4-993e-68f0e7891c3b", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // runefist
-
-		staff.put("623df34e-9cd4-438d-b07c-1905e1fc46b6", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Loony
-		staff.put("3c484e61-7876-46c0-98c9-88c7834dc96c", ChatColor.GREEN + "ProjectKorra Concept Designer"); // SamuraiSnowman (Zmeduna)
-		
-		staff.put("3d5bc713-ab8b-4125-b5ba-a1c1c2400b2c", ChatColor.GOLD + "ProjectKorra Community Moderator"); // Gold
-		staff.put("38217173-8a32-4ba7-9fe1-dd4fed031a74", ChatColor.GOLD + "ProjectKorra Community Moderator"); // Easte
-
-		staff.put("f2868ba3-e2fc-4731-8e36-56de2f3e6471", ChatColor.BLUE + "ProjectKorra Graphic Designer"); // paliate
+					// Read all the text returned by the server
+					BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+					String unparsed = in.readLine(); // Read first line
+					if (unparsed != null)
+					{
+						String[] staffUUIDS = unparsed.split("\\|");
+						for (String s : staffUUIDS)
+						{
+							String[] parts = s.split("/");
+							if (parts.length == 2)
+							{
+								staff.put(parts[0], parts[1]);
+							}
+						}
+					}
+					in.close();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}.runTaskTimerAsynchronously(ProjectKorra.plugin, 0, 20 * 60);
 	}
 
 	@Override
