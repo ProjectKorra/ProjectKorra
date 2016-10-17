@@ -464,6 +464,7 @@ public enum ParticleEffect {
 			NAME_MAP.put(effect.name, effect);
 			ID_MAP.put(effect.id, effect);
 		}
+		ParticlePacket.initialize();
 	}
 
 	/**
