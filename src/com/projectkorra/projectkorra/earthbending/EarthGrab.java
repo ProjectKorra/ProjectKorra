@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.earthbending;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -56,7 +57,7 @@ public class EarthGrab extends EarthAbility {
 		} else {
 			Location targetLocation = GeneralMethods.getTargetedLocation(player, 1);
 			Block block = GeneralMethods.getTopBlock(targetLocation, 1, 1);
-			if(isEarthbendable(block) && block.getWorld().equals(player.getLocation()) && block.getLocation().distance(player.getLocation()) <= 1.3) {
+			if(isEarthbendable(block) && block.getWorld().equals(player.getWorld()) && block.getLocation().distance(player.getLocation()) <= 1.6) {
 				earthGrabSelf();
 				remove();
 			}

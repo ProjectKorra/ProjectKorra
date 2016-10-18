@@ -1136,7 +1136,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
-		if (TempBlock.isTempBlock(block)) {
+		if (TempBlock.isTempBlock(block) || block.equals(null)) {
 			return false;
 		}
 		int sources = 0;
@@ -1828,6 +1828,26 @@ public class GeneralMethods {
 			}
 			return;
 		}
+		
+		// Attempt to stop velocity from going over the packet cap.
+		if(velocity.getX() > 4){
+            velocity.setX(4);
+        } else if(velocity.getX() < -4){
+            velocity.setX(-4);
+        }
+		
+        if(velocity.getY() > 4){
+            velocity.setY(4);
+        } else if(velocity.getY() < -4){
+            velocity.setY(-4);
+        }
+        
+        if(velocity.getZ() > 4){
+            velocity.setZ(4);
+        } else if(velocity.getZ() < -4){
+            velocity.setZ(-4);
+        }
+        
 		entity.setVelocity(velocity);
 	}
 
