@@ -1,0 +1,37 @@
+<project name="ProjectKorra" basedir="." default="main">
+    <property name="dir.src"     value="src"/>
+    <property name="dir.build"   value="build"/>
+    <property name="dir.classes" value="${dir.build}/classes"/>
+    <property name="dir.jar"     value="${dir.build}/jar"/>
+	<property name="dir.lib"     value="lib"/>
+
+    <property name="main-class"  value="com.projectkorra.projectkorra.ProjectKorra"/>
+
+    <target name="clean">
+        <delete dir="${dir.build}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${dir.classes}"/>
+        <javac srcdir="${dir.src}" destdir="${dir.classes}" debug="true">
+    		<classpath>
+    			<fileset dir="${dir.lib}">
+    				<include name="*.jar"/>
+    			</fileset>
+    		</classpath>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${dir.jar}"/>
+        <jar destfile="${dir.jar}/${ant.project.name}.jar" basedir="${dir.classes}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+            <fileset file="${dir.src}/plugin.yml"/>
+        </jar>
+    </target>
+
+    <target name="clean-build" depends="clean,jar"/>
+    <target name="main" depends="clean,jar"/>
+</project>

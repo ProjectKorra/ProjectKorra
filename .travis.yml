@@ -1,0 +1,11 @@
+language: java
+script: ant main
+sudo: false
+jdk:
+  - oraclejdk7
+  - oraclejdk8
+notifications:
+  slack:
+    rooms:
+      - projectkorra:h9WFZqQ2o6fuCkI69ko28XgF#general
+      - projectkorra:h9WFZqQ2o6fuCkI69ko28XgF#development

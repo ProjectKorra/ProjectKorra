@@ -1,8 +1,8 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.6.0 BETA 15
-main: com.projectkorra.ProjectKorra.ProjectKorra
-softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC]
+version: 1.8.0
+main: com.projectkorra.projectkorra.ProjectKorra
+softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC, Residence]
 commands:
   projectkorra:
     aliases: [b,bending,mtla,tla,korra,pk,bend]
@@ -21,12 +21,22 @@ permissions:
       bending.command.rechoose: true
       bending.admin.choose: true
       bending.ability.AvatarState: true
-      bending.ability.Bloodbending: true
+      bending.water.bloodbending.anytime: true
+      bending.water.bloodbending: true
       bending.ability.Flight: true
+      bending.ability.MetalClips.loot: true
+      bending.ability.MetalClips.4clips: true
+      bending.ability.MetalClips.throw: true
       bending.command.import: true
       bending.command.toggle.all: true
+      bending.admin.toggle: true
       bending.command.give: true
       bending.command.invincible: true
+      bending.command.check: true
+      bending.command.preset.bind.assign: true
+      bending.command.preset.bind.external: true
+      bending.command.preset.bind.external.other: true
+      bending.command.copy.assign: true
       bending.admin.debug: true
       bending.admin.remove: true
   bending.player:
@@ -36,6 +46,7 @@ permissions:
       bending.command.bind: true
       bending.command.display: true
       bending.command.toggle: true
+      bending.command.copy: true
       bending.command.choose: true
       bending.command.version: true
       bending.command.help: true
@@ -55,6 +66,8 @@ permissions:
     default: true
     description: Grants access to all airbending abilities.
     children:
+      bending.command.add.air: true
+      bending.command.choose.air: true
       bending.ability.AirBlast: true
       bending.ability.AirBubble: true
       bending.ability.AirBurst: true
@@ -72,6 +85,9 @@ permissions:
     default: true
     description: Grants access to most waterbending abilities.
     children:
+      bending.command.add.water: true
+      bending.command.choose.water: true
+      bending.ability.Bloodbending: true
       bending.ability.HealingWaters: true
       bending.ability.IceBlast: true
       bending.ability.IceSpike: true
@@ -84,15 +100,26 @@ permissions:
       bending.ability.WaterSpout: true
       bending.ability.WaterSpout.Wave: true
       bending.ability.WaterCombo: true
+      bending.ability.PlantArmor: true
       bending.water.plantbending: true
       bending.message.nightmessage: true
       bending.water.passive: true
       bending.water.icebending: true
       bending.water.healing: true
+      bending.ability.WaterArms: true
+      bending.ability.WaterArms.Pull: true
+      bending.ability.WaterArms.Punch: true
+      bending.ability.WaterArms.Grapple: true
+      bending.ability.WaterArms.Grab: true
+      bending.ability.WaterArms.Freeze: true
+      bending.ability.WaterArms.Spear: true
+      bending.ability.Bottlebending: true
   bending.earth:
     default: true
     description: Grants access to all Earthbending abilities.
     children:
+      bending.command.add.earth: true
+      bending.command.choose.earth: true
       bending.ability.Catapult: true
       bending.ability.Collapse: true
       bending.ability.EarthArmor: true
@@ -104,20 +131,20 @@ permissions:
       bending.ability.Tremorsense: true
       bending.ability.Extraction: true
       bending.ability.MetalClips: true
-      bending.ability.MetalClips.loot: false
-      bending.ability.MetalClips.4clips: false
       bending.earth.passive: true
       bending.earth.metalbending: true
       bending.earth.lavabending: true
       bending.earth.sandbending: true
-      bending.earth.grapplinghook: true
       bending.ability.LavaSurge: true
       bending.ability.LavaFlow: true
       bending.ability.EarthSmash: true
+      bending.ability.SandSpout: true
   bending.fire:
     default: true
     description: Grants access to all firebending abilities.
     children:
+      bending.command.add.fire: true
+      bending.command.choose.fire: true
       bending.ability.Blaze: true
       bending.ability.FireBlast: true
       bending.ability.FireBurst: true
@@ -137,6 +164,8 @@ permissions:
     default: true
     description: Grants access to all ChiBlocking abilities.
     children:
+      bending.command.add.chi: true
+      bending.command.choose.chi: true
       bending.ability.HighJump: true
       bending.ability.Paralyze: true
       bending.ability.RapidPunch: true
@@ -147,10 +176,41 @@ permissions:
       bending.ability.SwiftKick: true
       bending.ability.ChiCombo: true
       bending.chi.passive: true
-      bending.chi.grapplinghook: true
   bending.avatar:
     default: false
     description: Grants the Avatar Color.
   bending.ability.MetalClips.loot:
     default: false
     description: Lets a Metalbender loot a player's inventory of its iron.
+  bending.ability.MetalClips.throw:
+    default: false
+    description: Lets a Metalbending throw a controlled entity.
+  bending.ability.AirCombo:
+    default: false
+    description: Grants access to all AirCombos.
+    children:
+        bending.ability.AirSweep: true
+        bending.ability.AirStream: true
+        bending.ability.Twister: true
+  bending.ability.WaterCombo:
+    default: false
+    description: Grants access to all WaterCombos.
+    children:
+        bending.ability.IceWave: true
+        bending.ability.IceBullet: true
+        bending.ability.IceBulletLeftClick: true
+        bending.ability.IceBulletRightClick: true
+  bending.ability.FireCombo:
+    default: false
+    description: Grants access to all FireCombos.
+    children:
+        bending.ability.FireKick: true
+        bending.ability.FireSpin: true
+        bending.ability.JetBlast: true
+        bending.ability.JetBlaze: true
+        bending.ability.FireWheel: true
+  bending.ability.ChiCombo:
+    default: false
+    description: Grants access to all ChiCombos.
+    children:
+        bending.ability.Immobilize: true
