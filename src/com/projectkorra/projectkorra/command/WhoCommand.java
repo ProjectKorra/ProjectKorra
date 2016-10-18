@@ -1,15 +1,17 @@
 package com.projectkorra.projectkorra.command;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +19,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
@@ -55,14 +59,17 @@ public class WhoCommand extends PKCommand {
 				try
 				{
 					// Create a URL for the desired page
-					URL url = new URL("http://www.projectkorra.com/staff.html");       
-
+					URLConnection url = new URL("http://www.projectkorra.com/staff.html").openConnection();
+					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+					
 					// Read all the text returned by the server
-					BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+					BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream(), Charset.forName("UTF-8")));
 					String unparsed;
 					while ((unparsed = in.readLine()) != null)
 					{
-						String[] staffEntry = unparsed.split("/");
+						Document doc = Jsoup.parse(unparsed);
+						String parsed = doc.body().text();
+						String[] staffEntry = parsed.split("/");
 						if (staffEntry.length >= 2)
 						{
 							staff.put(staffEntry[0], ChatColor.translateAlternateColorCodes('&', staffEntry[1]));
