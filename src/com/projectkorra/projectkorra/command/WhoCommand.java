@@ -52,29 +52,30 @@ public class WhoCommand extends PKCommand {
 		{
 			public void run()
 			{
-				try {
+				try
+				{
 					// Create a URL for the desired page
-					URL url = new URL("http://www.projectkorra.com/internals/staff.html");       
+					URL url = new URL("http://www.projectkorra.com/staff.html");       
 
 					// Read all the text returned by the server
 					BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-					String unparsed = in.readLine(); // Read first line
-					if (unparsed != null)
+					String unparsed;
+					while ((unparsed = in.readLine()) != null)
 					{
-						String[] staffUUIDS = unparsed.split("\\|");
-						for (String s : staffUUIDS)
+						String[] staffEntry = unparsed.split("/");
+						if (staffEntry.length >= 2)
 						{
-							String[] parts = s.split("/");
-							if (parts.length == 2)
-							{
-								staff.put(parts[0], parts[1]);
-							}
+							staff.put(staffEntry[0], ChatColor.translateAlternateColorCodes('&', staffEntry[1]));
 						}
 					}
 					in.close();
-				} catch (MalformedURLException e) {
+				}
+				catch (MalformedURLException e)
+				{
 					e.printStackTrace();
-				} catch (IOException e) {
+				}
+				catch (IOException e)
+				{
 					e.printStackTrace();
 				}
 			}
