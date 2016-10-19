@@ -81,6 +81,7 @@ public class AirFlight extends FlightAbility {
 			if (!HOVERING.containsKey(playername)) {
 				HOVERING.put(playername, new PlayerFlyData(player.getAllowFlight(), player.isFlying()));
 				player.setVelocity(new Vector(0, 0, 0));
+				player.setAllowFlight(true);
 				player.setFlying(true);
 			}
 		} else {

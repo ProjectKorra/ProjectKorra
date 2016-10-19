@@ -348,8 +348,10 @@ public class SurgeWave extends WaterAbility {
 		super.remove();
 		thaw();
 		returnWater();
-		for (Block block : waveBlocks.keySet()) {
-			finalRemoveWater(block);
+		if (waveBlocks != null) {
+			for (Block block : waveBlocks.keySet()) {
+				finalRemoveWater(block);
+			}
 		}
 	}
 
@@ -360,9 +362,11 @@ public class SurgeWave extends WaterAbility {
 	}
 
 	private void thaw() {
-		for (Block block : frozenBlocks.keySet()) {
-			TempBlock.revertBlock(block, frozenBlocks.get(block));
-			frozenBlocks.remove(block);
+		if (frozenBlocks != null) {
+			for (Block block : frozenBlocks.keySet()) {
+				TempBlock.revertBlock(block, frozenBlocks.get(block));
+				frozenBlocks.remove(block);
+			}
 		}
 	}
 

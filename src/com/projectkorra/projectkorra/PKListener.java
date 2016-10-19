@@ -984,7 +984,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 		}
 		
-		if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HealingWaters")) {
+		if (bPlayer.getBoundAbilityName().equalsIgnoreCase("HealingWaters") && event.getHand().equals(EquipmentSlot.HAND)) {
 			 HealingWaters instance = CoreAbility.getAbility(player, HealingWaters.class);
 			 if(instance != null && instance.charged) {
 				 instance.click();
@@ -1069,9 +1069,10 @@ public class PKListener implements Listener {
 			double distance1 = 0; 
 			double distance2 = 0;
 			Location loc = Bloodbending.getBloodbendingLocation(player);
-			if (event.getPlayer().getWorld().equals(loc.getWorld()))
-			distance1 = event.getFrom().distance(loc);
-			distance2 = event.getTo().distance(loc);
+			if (event.getPlayer().getWorld().equals(loc.getWorld())) {
+				distance1 = event.getFrom().distance(loc);
+				distance2 = event.getTo().distance(loc);
+			}
 			if (distance2 > distance1) {
 				player.setVelocity(new Vector(0, 0, 0));
 			}
