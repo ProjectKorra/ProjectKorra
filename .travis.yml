@@ -1,5 +1,5 @@
 language: java
-script: ant main
+script: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 sudo: false
 jdk:
   - oraclejdk7
