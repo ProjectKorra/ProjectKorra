@@ -58,6 +58,10 @@ public class LogFilter implements Filter {
 			// Logged records contains record 
 			return false;
 		}
+		
+		if(Bukkit.getServer().getPluginManager().isPluginEnabled(ProjectKorra.plugin.getName())) {
+			return false;
+		}
 
 		final String toRecord = recordString;
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {

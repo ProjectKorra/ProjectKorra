@@ -1093,6 +1093,32 @@ public class GeneralMethods {
 		return blockHolder;
 	}
 
+	public static Block getBottomBlock(Location loc, int positiveY, int negativeY) {
+		Block blockHolder = loc.getBlock();
+		int y = 0;
+		//Only one of these while statements will go
+		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(negativeY)) {
+			y--;
+			Block tempblock = loc.clone().add(0, y, 0).getBlock();
+			if (tempblock.getType() == Material.AIR) {
+				return blockHolder;
+			}
+
+			blockHolder = tempblock;
+		}
+
+		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY)) {
+			y++;
+			blockHolder = loc.clone().add(0, y, 0).getBlock();
+			if (blockHolder.getType() == Material.AIR) {
+				return blockHolder;
+			}
+		}
+
+
+		return blockHolder;
+	}
+
 	public static boolean hasItems() {
 		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null;
 	}
@@ -1110,7 +1136,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
-		if (TempBlock.isTempBlock(block)) {
+		if (TempBlock.isTempBlock(block) || block.equals(null)) {
 			return false;
 		}
 		int sources = 0;
@@ -1802,6 +1828,26 @@ public class GeneralMethods {
 			}
 			return;
 		}
+		
+		// Attempt to stop velocity from going over the packet cap.
+		if(velocity.getX() > 4){
+            velocity.setX(4);
+        } else if(velocity.getX() < -4){
+            velocity.setX(-4);
+        }
+		
+        if(velocity.getY() > 4){
+            velocity.setY(4);
+        } else if(velocity.getY() < -4){
+            velocity.setY(-4);
+        }
+        
+        if(velocity.getZ() > 4){
+            velocity.setZ(4);
+        } else if(velocity.getZ() < -4){
+            velocity.setZ(-4);
+        }
+        
 		entity.setVelocity(velocity);
 	}
 

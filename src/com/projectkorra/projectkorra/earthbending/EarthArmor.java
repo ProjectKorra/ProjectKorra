@@ -302,31 +302,33 @@ public class EarthArmor extends EarthAbility {
 	
 	/**Returns the color for the specified material.*/
 	public static int getColor(Material material, byte damage) {
-		if (material == Material.GRASS) return 0x29932C; //Dark dull green - Needs to be darker
-		if (material == Material.CLAY) return 0xBAC2D1; //Dull gray-brown - PERFECT
-		if (material == Material.STONE && damage == 0x0) return 0xCCCCCC; //Gray
-		if (material == Material.STONE && (damage == 0x1 || damage == 0x2)) return 0xC9705C; //Pink - Needs to be richer
-		if (material == Material.STONE && (damage == 0x3 || damage == 0x4)) return 0xF8F7FC; //White
-		if (material == Material.STONE && (damage == 0x5 || damage == 0x6)) return 0xBFBFBF; //Gray  - fine for now
+		if (material == Material.DIRT) return 0xa86e45; //Default dirt brown
+		if (material == Material.GRASS) return 0xa86e45; //Default dirt brown
+		if (material == Material.MYCEL) return 0xa86e45; //Default dirt brown
+		if (material == Material.CLAY) return 0xBAC2D1; //Dull gray-brown
+		if (material == Material.STONE && damage == 0x0) return 0x9e9e9e; //Gray
+		if (material == Material.STONE && (damage == 0x1 || damage == 0x2)) return 0xc69489; //Pink
+		if (material == Material.STONE && (damage == 0x3 || damage == 0x4)) return 0xe3e3e5; //White
+		if (material == Material.STONE && (damage == 0x5 || damage == 0x6)) return 0xa3a3a3; //Gray
 		if (material == Material.COBBLESTONE) return 0x6B6B6B; //Dark Gray
-		if (material == Material.SAND && damage == 0x0) return 0xFFFFCC; //Sand yellow - PERFECT
-		if (material == Material.SAND && damage == 0x1) return 0xB85F25; //Sand orange - Needs more red --------------
-		if (material == Material.SANDSTONE) return 0xFFF372; //Sand - Could be darker/more vibrant
-		if (material == Material.RED_SANDSTONE) return 0xB85F25; //Red sandstone - PERFECT
-		if (material == Material.GRAVEL) return 0xEDE4DC; //Dark Gray 
-		if (material == Material.GOLD_ORE) return 0xF2F204;
+		if (material == Material.SAND && damage == 0x0) return 0xffffaf; //Sand yellow
+		if (material == Material.SAND && damage == 0x1) return 0xb85f25; //Sand orange
+		if (material == Material.SANDSTONE) return 0xffffaf; //Sand
+		if (material == Material.RED_SANDSTONE) return 0xbc5a1a; //Red sandstone
+		if (material == Material.GRAVEL) return 0xaaa49e; //Dark Gray 
+		if (material == Material.GOLD_ORE) return 0xa2a38f; //Gray-yellow
 		if (material == Material.GOLD_BLOCK) return 0xF2F204; //Gold - Could be a tiny bit darker
-		if (material == Material.IRON_ORE) 	return 0xf4f4f4;
+		if (material == Material.IRON_ORE) 	return 0xa39d91; //Gray-brown
 		if (material == Material.IRON_BLOCK) return 0xf4f4f4; //Silver/Gray
-		if (material == Material.COAL_ORE) return 0x999999; //Stone gray
-		if (material == Material.DIRT) return 0x843700; //Default dirt brown - NEEDS SERIOUS CHANGING
-		if (material == Material.LAPIS_ORE) return 0x0060BA;
+		if (material == Material.COAL_ORE) return 0x7c7c7c; //Stone gray
+		if (material == Material.LAPIS_ORE) return 0x9198a3; //Gray-azure
 		if (material == Material.LAPIS_BLOCK) return 0x0060BA; //Dark blue
-		if (material == Material.NETHERRACK) return 0x13139A; //Pinkish-red - PERFECT
-		if (material == Material.QUARTZ_ORE) return 0x13139A; //Pinkish-red
-		if (material == Material.QUARTZ_BLOCK) return 0xFDFDFD; //White
+		if (material == Material.DIAMOND_ORE) return 0xa8bebf; //Gray-cyan
+		if (material == Material.NETHERRACK) return 0x9b3131; //Pinkish-red
+		if (material == Material.QUARTZ_ORE) return 0xb75656; //Pinkish-red
+		if (material == Material.QUARTZ_BLOCK) return 0xfff4f4; //White
 		
-		return 0xCCCCCC; //Stone
+		return 0x9e9e9e; //Stone
 	}
 	
 	@SuppressWarnings("deprecation")
