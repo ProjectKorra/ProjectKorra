@@ -1081,7 +1081,7 @@ public class PKListener implements Listener {
 		else if (AirFlight.isFlying(event.getPlayer())) {
 			if (AirFlight.isHovering(event.getPlayer())) {
 				Location loc = event.getFrom();
-				Location toLoc = player.getLocation();
+				Location toLoc = event.getTo();
 
 				if (loc.getX() != toLoc.getX() || loc.getY() != toLoc.getY() || loc.getZ() != toLoc.getZ()) {
 					event.setCancelled(true);

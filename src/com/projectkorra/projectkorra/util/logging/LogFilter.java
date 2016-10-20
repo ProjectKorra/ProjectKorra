@@ -59,7 +59,7 @@ public class LogFilter implements Filter {
 			return false;
 		}
 		
-		if(Bukkit.getServer().getPluginManager().isPluginEnabled(ProjectKorra.plugin.getName())) {
+		if (!Bukkit.getServer().getPluginManager().isPluginEnabled(ProjectKorra.plugin.getName())) {
 			return false;
 		}
 

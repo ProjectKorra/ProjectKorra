@@ -25,11 +25,8 @@ public class WarriorStance extends ChiAbility {
 		
 		ChiAbility stance = bPlayer.getStance();
 		if (stance != null) {
-			stance.remove();
 			if (stance instanceof WarriorStance) {
-				bPlayer.setStance(null);
-				GeneralMethods.displayMovePreview(player, this);
-				player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
+				remove();
 				return;
 			}
 		}
@@ -52,6 +49,16 @@ public class WarriorStance extends ChiAbility {
 		if (!player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 60, strength, true));
 		}
+	}
+	
+	@Override
+	public void remove() {
+		super.remove();
+		bPlayer.setStance(null);
+		GeneralMethods.displayMovePreview(player, this);
+		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
+		player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+		player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
 	}
 	
 	@Override
