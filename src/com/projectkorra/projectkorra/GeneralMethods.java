@@ -579,7 +579,7 @@ public class GeneralMethods {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		
 		if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview") == true) {
-			if (ability != null) {
+			if (ability != null && bPlayer != null) {
 				
 				if (bPlayer.isOnCooldown(ability)) {
 					displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
