@@ -139,7 +139,7 @@ import com.projectkorra.projectkorra.firebending.FireDamageTimer;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.HeatControl;
-import com.projectkorra.projectkorra.firebending.HeatControl.Function;
+import com.projectkorra.projectkorra.firebending.HeatControl.HeatControlType;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.firebending.Lightning;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
@@ -1345,7 +1345,7 @@ public class PKListener implements Listener {
 					new FireBlastCharged(player);
 				}
 				else if (abil.equalsIgnoreCase("HeatControl")) {
-					new HeatControl(player, Function.SOLIDIFY);
+					new HeatControl(player, HeatControlType.SOLIDIFY);
 				}
 				else if (abil.equalsIgnoreCase("FireBurst")) {
 					new FireBurst(player);
@@ -1578,7 +1578,7 @@ public class PKListener implements Listener {
 					new FireJet(player);
 				}
 				else if (abil.equalsIgnoreCase("HeatControl")) {
-					new HeatControl(player, Function.MELT);
+					new HeatControl(player, HeatControlType.MELT);
 				}
 				else if (abil.equalsIgnoreCase("Illumination")) {
 					if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
