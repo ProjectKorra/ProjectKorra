@@ -97,9 +97,7 @@ public class HeatControl extends FireAbility {
 				
 				if (isMeltable(block)) {
 					PhaseChangeMelt.melt(player, block);
-				}/* else if (isHeatable(block)) {
-					heat(block);
-				}*/
+				}
 			}
 		}
 		
@@ -304,27 +302,6 @@ public class HeatControl extends FireAbility {
 		}
 		return true;
 	}
-	
-	/*
-	 * 
-	 * 		MELT METHODS
-	 * 
-	 */
-	
-	@SuppressWarnings("deprecation")
-	public static void heat(Block block) {
-		if (block.getType() == Material.OBSIDIAN) {
-			block.setType(Material.LAVA);
-			block.setData((byte) 0x0);
-		}
-	}
-	
-	/*
-	public static boolean isHeatable(Block block) {
-		
-		return false;
-	}
-	*/
 	
 	/*
 	 * 
