@@ -26,8 +26,11 @@ public class WarriorStance extends ChiAbility {
 		ChiAbility stance = bPlayer.getStance();
 		if (stance != null) {
 			if (stance instanceof WarriorStance) {
-				remove();
+				stance.remove();
 				return;
+			}
+			if (stance instanceof AcrobatStance) {
+				stance.remove();
 			}
 		}
 		start();
