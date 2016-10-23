@@ -138,8 +138,8 @@ import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireDamageTimer;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.firebending.FireShield;
-import com.projectkorra.projectkorra.firebending.HeatControlExtinguish;
-import com.projectkorra.projectkorra.firebending.HeatControlSolidify;
+import com.projectkorra.projectkorra.firebending.HeatControl;
+import com.projectkorra.projectkorra.firebending.HeatControl.HeatControlType;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.firebending.Lightning;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
@@ -794,7 +794,7 @@ public class PKListener implements Listener {
 			}
 
 			if (bPlayer.canBendPassive(Element.FIRE) && bPlayer.hasElement(Element.FIRE) && (event.getCause() == DamageCause.FIRE || event.getCause() == DamageCause.FIRE_TICK)) {
-				event.setCancelled(!HeatControlExtinguish.canBurn(player));
+				event.setCancelled(!HeatControl.canBurn(player));
 			}
 
 			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.SUFFOCATION && TempBlock.isTempBlock(player.getEyeLocation().getBlock())) {
@@ -1345,7 +1345,7 @@ public class PKListener implements Listener {
 					new FireBlastCharged(player);
 				}
 				else if (abil.equalsIgnoreCase("HeatControl")) {
-					new HeatControlSolidify(player);
+					new HeatControl(player, HeatControlType.SOLIDIFY);
 				}
 				else if (abil.equalsIgnoreCase("FireBurst")) {
 					new FireBurst(player);
@@ -1578,7 +1578,7 @@ public class PKListener implements Listener {
 					new FireJet(player);
 				}
 				else if (abil.equalsIgnoreCase("HeatControl")) {
-					new HeatControlExtinguish(player);
+					new HeatControl(player, HeatControlType.MELT);
 				}
 				else if (abil.equalsIgnoreCase("Illumination")) {
 					if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
