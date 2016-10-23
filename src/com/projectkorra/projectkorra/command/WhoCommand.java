@@ -19,8 +19,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
@@ -58,8 +56,9 @@ public class WhoCommand extends PKCommand {
 			{
 				try
 				{
+					staff.clear();
 					// Create a URL for the desired page
-					URLConnection url = new URL("http://www.projectkorra.com/staff.html").openConnection();
+					URLConnection url = new URL("http://www.projectkorra.com/staff.txt").openConnection();
 					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 					
 					// Read all the text returned by the server
@@ -67,9 +66,7 @@ public class WhoCommand extends PKCommand {
 					String unparsed;
 					while ((unparsed = in.readLine()) != null)
 					{
-						Document doc = Jsoup.parse(unparsed);
-						String parsed = doc.body().text();
-						String[] staffEntry = parsed.split("/");
+						String[] staffEntry = unparsed.split("/");
 						if (staffEntry.length >= 2)
 						{
 							staff.put(staffEntry[0], ChatColor.translateAlternateColorCodes('&', staffEntry[1]));
