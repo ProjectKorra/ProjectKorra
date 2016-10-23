@@ -45,7 +45,7 @@ public class FireDamageTimer {
 	public static void dealFlameDamage(Entity entity) {
 		if (INSTANCES.containsKey(entity) && entity instanceof LivingEntity) {
 			if (entity instanceof Player) {
-				if (!HeatControlExtinguish.canBurn((Player) entity)) {
+				if (!HeatControl.canBurn((Player) entity)) {
 					return;
 				}
 			}
