@@ -78,20 +78,18 @@ public class HeatControl extends FireAbility {
 		this.heatControlType = heatControlType;
 		setFields();
 		
-		if (heatControlType == HeatControlType.COOK) {
+		if (this.heatControlType == HeatControlType.COOK) {
 			start();
-		}
-		
-		if (heatControlType == HeatControlType.EXTINGUISH) {
+			
+		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
 			if (bPlayer.isOnCooldown(getName() + "Extinguish")) {
 				remove();
 				return;
 			}
 			
 			start();
-		}
-		
-		if (heatControlType == HeatControlType.MELT) {
+			
+		} else if (this.heatControlType == HeatControlType.MELT) {
 			meltLocation = GeneralMethods.getTargetedLocation(player, meltRange);
 			for (Block block : GeneralMethods.getBlocksAroundPoint(meltLocation, meltRadius)) {
 				
@@ -99,9 +97,8 @@ public class HeatControl extends FireAbility {
 					PhaseChangeMelt.melt(player, block);
 				}
 			}
-		}
-		
-		if (heatControlType == HeatControlType.SOLIDIFY) {
+			
+		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
 			if (!bPlayer.canBend(this)) {
 				return;
 			} else if (EarthAbility.getLavaSourceBlock(player, solidifyRange) == null) {
@@ -216,12 +213,6 @@ public class HeatControl extends FireAbility {
 		
 	}
 	
-	/*
-	 * 
-	 * 		COOK METHODS
-	 * 
-	 */
-	
 	private void cook() {
 		ItemStack cooked = getCooked(player.getInventory().getItemInMainHand());
 		HashMap<Integer, ItemStack> cantFit = player.getInventory().addItem(cooked);
@@ -284,12 +275,6 @@ public class HeatControl extends FireAbility {
 		return Arrays.asList(COOKABLE_MATERIALS).contains(material);
 	}
 	
-	/*
-	 * 
-	 * 		EXTINGUISH METHODS
-	 * 
-	 */
-	
 	public static boolean canBurn(Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
@@ -302,12 +287,6 @@ public class HeatControl extends FireAbility {
 		}
 		return true;
 	}
-	
-	/*
-	 * 
-	 * 		SOLIDIFY METHODS
-	 * 
-	 */
 	
 	public void solidify(List<Location> area) {
 		if (System.currentTimeMillis() < solidifyLastBlockTime + solidifyDelay) {

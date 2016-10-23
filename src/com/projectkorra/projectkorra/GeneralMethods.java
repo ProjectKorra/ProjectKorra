@@ -1004,14 +1004,15 @@ public class GeneralMethods {
 			if (avoid.contains(entity)) {
 				continue;
 			}
-			if (entity.getLocation().distanceSquared(origin) < longestr * longestr 
-					&& getDistanceFromLine(direction, origin, entity.getLocation()) < 2 
-					&& (entity instanceof LivingEntity) 
-					&& entity.getEntityId() != player.getEntityId() 
-					&& entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))
-					&& entity.getWorld().equals(origin.getWorld())) {
-				target = entity;
-				longestr = entity.getLocation().distance(origin);
+			if (entity.getWorld().equals(origin.getWorld())) {
+				if (entity.getLocation().distanceSquared(origin) < longestr * longestr 
+						&& getDistanceFromLine(direction, origin, entity.getLocation()) < 2 
+						&& (entity instanceof LivingEntity) 
+						&& entity.getEntityId() != player.getEntityId() 
+						&& entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))) {
+					target = entity;
+					longestr = entity.getLocation().distance(origin);
+				}
 			}
 		}
 		if (target != null) {
