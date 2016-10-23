@@ -35,10 +35,6 @@ public class HeatControl extends FireAbility {
 	private static final Material[] COOKABLE_MATERIALS = { Material.RAW_BEEF, Material.RAW_CHICKEN, 
 			Material.RAW_FISH, Material.PORK, Material.POTATO_ITEM, Material.RABBIT, Material.MUTTON };
 	
-	public static ConcurrentHashMap<TempBlock, Long> SOLIDIFY_STONE = new ConcurrentHashMap<>();
-	public static ConcurrentHashMap<TempBlock, Long> SOLIDIFY_REVERT = new ConcurrentHashMap<>();
-	public static List<TempBlock> BLOCKS = new ArrayList<>();
-	
 	private Function function;
 	
 	/*
@@ -66,11 +62,14 @@ public class HeatControl extends FireAbility {
 	private int solidifyRadius;
 	private long solidifyDelay;
 	private long solidifyLastBlockTime;
-	private long solidifyLastParticleTime;
 	private double solidifyMaxRadius;
 	private double solidifyRange;
+	private boolean solidifying;
 	private Location solidifyLocation;
 	private Random randy;
+	private ConcurrentHashMap<TempBlock, Long> SOLIDIFY_STONE = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<TempBlock, Long> SOLIDIFY_REVERT = new ConcurrentHashMap<>();
+	private List<TempBlock> BLOCKS = new ArrayList<>();
 	
 
 	public HeatControl(Player player, Function function) {
@@ -154,7 +153,6 @@ public class HeatControl extends FireAbility {
 			this.solidifyRadius = 1;
 			this.solidifyDelay = 50;
 			this.solidifyLastBlockTime = 0;
-			this.solidifyLastParticleTime = 0;
 			this.solidifyMaxRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.MaxRadius");
 			this.solidifyRange = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
 			this.randy = new Random();
@@ -227,10 +225,13 @@ public class HeatControl extends FireAbility {
 				return;
 			}
 			
+			if (!solidifying) {
+				solidifying = true;
+			}
+			
 			Location targetLocation = GeneralMethods.getTargetedLocation(player, solidifyRange);
 			resetLocation(targetLocation);
 			List<Location> area = GeneralMethods.getCircle(solidifyLocation, solidifyRadius, 3, true, true, 0);
-			particles(area);
 			solidify(area);
 		}
 		
@@ -355,15 +356,15 @@ public class HeatControl extends FireAbility {
 	 * 
 	 */
 	
-	@SuppressWarnings("deprecation")
 	public void solidify(List<Location> area) {
+		
 		if (System.currentTimeMillis() < solidifyLastBlockTime + solidifyDelay) {
 			return;
 		}
 
 		List<Block> lava = new ArrayList<Block>();
 		for (Location l : area) {
-			if (isLava(l.getBlock()) && l.getBlock().getData() == (byte) 0) {
+			if (isLava(l.getBlock())) {
 				lava.add(l.getBlock());
 			}
 		}
@@ -383,12 +384,24 @@ public class HeatControl extends FireAbility {
 		} else {
 			tempBlock = new TempBlock(b, Material.MAGMA, (byte) 0);
 		}
-		
+
 		SOLIDIFY_STONE.put(tempBlock, System.currentTimeMillis());
+		SOLIDIFY_REVERT.put(tempBlock, System.currentTimeMillis() + 1000);
 		BLOCKS.add(tempBlock);
 	}
 	
-	public static void revert(TempBlock block) {
+	@Override
+	public void remove() {
+		
+		solidifying = false;
+	}
+	
+	public void removeInstance() {
+		
+		super.remove();
+	}
+	
+	public void revert(TempBlock block) {
 		
 		if (BLOCKS.contains(block)) {
 			block.revertBlock();
@@ -424,48 +437,48 @@ public class HeatControl extends FireAbility {
 		}
 	}
 	
-	public void particles(List<Location> area) {
-		if (System.currentTimeMillis() < solidifyLastParticleTime + 300) {
-			return;
-		}
-
-		solidifyLastParticleTime = System.currentTimeMillis();
-		for (Location l : area) {
-			if (isLava(l.getBlock())) {
-				ParticleEffect.SMOKE.display(l, 0, 0, 0, 0.1f, 2);
-			}
-		}
-	}
-	
 	public static void manageSolidify() {
-		
-		for (TempBlock tempBlock : SOLIDIFY_STONE.keySet()) {
+
+		for (HeatControl heatControl : getAbilities(HeatControl.class)) {
 			
-			if (System.currentTimeMillis() - SOLIDIFY_STONE.get(tempBlock) > 1000) {
+			for (TempBlock tempBlock : heatControl.SOLIDIFY_STONE.keySet()) {
 				
-				if (getConfig().getBoolean("Abilities.Fire.HeatControl.Solidify.Revert")) {
+				if (System.currentTimeMillis() - heatControl.SOLIDIFY_STONE.get(tempBlock) > 1000) {
 					
-					tempBlock.setType(Material.STONE, (byte) 0);
-					SOLIDIFY_REVERT.put(tempBlock, System.currentTimeMillis());
-				} else {
+					if (getConfig().getBoolean("Abilities.Fire.HeatControl.Solidify.Revert")) {
+						
+						tempBlock.setType(Material.STONE, (byte) 0);
+						heatControl.SOLIDIFY_REVERT.put(tempBlock, System.currentTimeMillis());
+					} else {
+						
+						tempBlock.revertBlock();
+						tempBlock.getBlock().setType(Material.STONE);
+					}
 					
-					tempBlock.revertBlock();
-					tempBlock.getBlock().setType(Material.STONE);
+					ParticleEffect.SMOKE.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 0.1F, 0.1F, 0.1F, 0.01F, 3);
+					
+					// TODO play the smoke in a line from the block to above the player's head.
+					
+					tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
+					heatControl.SOLIDIFY_STONE.remove(tempBlock);
 				}
+			}
+			
+			for (TempBlock tempBlock : heatControl.SOLIDIFY_REVERT.keySet()) {
 				
-				ParticleEffect.SMOKE.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 0.1F, 0.1F, 0.1F, 0.01F, 3);
-				tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 1, 1);
-				SOLIDIFY_STONE.remove(tempBlock);
+				if (System.currentTimeMillis() - heatControl.SOLIDIFY_REVERT.get(tempBlock) > getConfig().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime")) {
+					
+					heatControl.revert(tempBlock);
+					heatControl.SOLIDIFY_REVERT.remove(tempBlock);
+				}
+			}
+			
+			if (heatControl.SOLIDIFY_STONE.isEmpty() && heatControl.SOLIDIFY_REVERT.isEmpty() && !heatControl.solidifying) {
+				
+				heatControl.removeInstance();
 			}
 		}
-			
-		for (TempBlock tempBlock : SOLIDIFY_REVERT.keySet()) {
-			
-			if (System.currentTimeMillis() - SOLIDIFY_REVERT.get(tempBlock) > getConfig().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime")) {
-				
-				revert(tempBlock);
-			}
-		}
+		
 	}
 
 	@Override
@@ -497,7 +510,5 @@ public class HeatControl extends FireAbility {
 		
 		return player.getLocation();
 	}
-	
-	
 
 }
