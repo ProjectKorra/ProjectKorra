@@ -1,14 +1,8 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -19,12 +13,16 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthSmash extends EarthAbility {
-	
+
 	public static enum State {
 		START, LIFTING, LIFTED, GRABBED, SHOT, FLYING, REMOVED
 	}
@@ -64,7 +62,7 @@ public class EarthSmash extends EarthAbility {
 
 	public EarthSmash(Player player, ClickType type) {
 		super(player);
-		
+
 		this.state = State.START;
 		this.requiredBendableBlocks = getConfig().getInt("Abilities.Earth.EarthSmash.RequiredBendableBlocks");
 		this.maxBlocksToPassThrough = getConfig().getInt("Abilities.Earth.EarthSmash.MaxBlocksToPassThrough");
@@ -89,7 +87,7 @@ public class EarthSmash extends EarthAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.currentBlocks = new ArrayList<>();
 		this.affectedBlocks = new ArrayList<>();
-		
+
 		if (type == ClickType.SHIFT_DOWN || type == ClickType.SHIFT_UP && !player.isSneaking()) {
 			if (bPlayer.isAvatarState()) {
 				selectRange = AvatarState.getValue(selectRange);
@@ -119,17 +117,17 @@ public class EarthSmash extends EarthAbility {
 				}
 				grabbedSmash = aimingAtSmashCheck(player, State.SHOT);
 			}
-			
+
 			if (grabbedSmash != null) {
 				grabbedSmash.state = State.GRABBED;
 				grabbedSmash.grabbedDistance = 0;
-				if(grabbedSmash.location.getWorld().equals(player.getWorld())) {
+				if (grabbedSmash.location.getWorld().equals(player.getWorld())) {
 					grabbedSmash.grabbedDistance = grabbedSmash.location.distance(player.getEyeLocation());
 				}
 				grabbedSmash.player = player;
 				return;
 			}
-			
+
 			start();
 		} else if (type == ClickType.LEFT_CLICK && player.isSneaking()) {
 			for (EarthSmash smash : getAbilities(EarthSmash.class)) {
@@ -155,11 +153,11 @@ public class EarthSmash extends EarthAbility {
 	@Override
 	public void progress() {
 		progressCounter++;
-		if (state == State.LIFTED && removeTimer > 0 && System.currentTimeMillis() - startTime > removeTimer) {
+		if (state == State.LIFTED && removeTimer > 0 && System.currentTimeMillis() - getStartTime() > removeTimer) {
 			remove();
 			return;
 		}
-		
+
 		if (state == State.START) {
 			if (!bPlayer.canBend(this)) {
 				remove();
@@ -174,7 +172,7 @@ public class EarthSmash extends EarthAbility {
 
 		if (state == State.START && progressCounter > 1) {
 			if (!player.isSneaking()) {
-				if (System.currentTimeMillis() - startTime >= chargeTime) {
+				if (System.currentTimeMillis() - getStartTime() >= chargeTime) {
 					origin = getEarthSourceBlock(selectRange);
 					if (origin == null) {
 						remove();
@@ -187,7 +185,7 @@ public class EarthSmash extends EarthAbility {
 					remove();
 					return;
 				}
-			} else if (System.currentTimeMillis() - startTime > chargeTime) {
+			} else if (System.currentTimeMillis() - getStartTime() > chargeTime) {
 				Location tempLoc = player.getEyeLocation().add(player.getEyeLocation().getDirection().normalize().multiply(1.2));
 				tempLoc.add(0, 0.3, 0);
 				ParticleEffect.SMOKE.display(tempLoc, 0.3F, 0.1F, 0.3F, 0, 4);
@@ -210,10 +208,7 @@ public class EarthSmash extends EarthAbility {
 						break;
 					}
 				}
-				
-				WaterAbility.removeWaterSpouts(location, 2, player);
-				AirAbility.removeAirSpouts(location, 2, player);
-				EarthAbility.removeSandSpouts(location, player);
+
 				draw();
 				return;
 			} else {
@@ -227,20 +222,18 @@ public class EarthSmash extends EarthAbility {
 					remove();
 					return;
 				}
-				
+
 				revert();
 				location.add(GeneralMethods.getDirection(location, destination).normalize().multiply(1));
 				if (location.distanceSquared(destination) < 4) {
 					remove();
 					return;
 				}
-				
+
 				// If an earthsmash runs into too many blocks we should remove it
 				int badBlocksFound = 0;
 				for (Block block : getBlocks()) {
-					if (block.getType() != Material.AIR && (!isTransparent(block) 
-							|| block.getType() == Material.WATER 
-							|| block.getType() == Material.STATIONARY_WATER)) {
+					if (block.getType() != Material.AIR && (!isTransparent(block) || block.getType() == Material.WATER || block.getType() == Material.STATIONARY_WATER)) {
 						badBlocksFound++;
 					}
 				}
@@ -249,8 +242,6 @@ public class EarthSmash extends EarthAbility {
 					remove();
 					return;
 				}
-				WaterAbility.removeWaterSpouts(location, 2, player);
-				AirAbility.removeAirSpouts(location, 2, player);
 				shootingCollisionDetection();
 				draw();
 				smashToSmashCollisionDetection();
@@ -298,10 +289,10 @@ public class EarthSmash extends EarthAbility {
 
 	/**
 	 * Begins animating the EarthSmash from the ground. The lift animation
-	 * consists of 3 steps, and each one has to design the shape in the
-	 * ground that removes the Earthbendable material. We also need to make
-	 * sure that there is a clear path for the EarthSmash to rise, and that
-	 * there is enough Earthbendable material for it to be created.
+	 * consists of 3 steps, and each one has to design the shape in the ground
+	 * that removes the Earthbendable material. We also need to make sure that
+	 * there is a clear path for the EarthSmash to rise, and that there is
+	 * enough Earthbendable material for it to be created.
 	 */
 	@SuppressWarnings("deprecation")
 	public void animateLift() {
@@ -368,7 +359,7 @@ public class EarthSmash extends EarthAbility {
 						}
 					}
 				}
-				
+
 				/*
 				 * We needed to calculate all of the blocks based on the
 				 * location being 1 above the initial bending block, however we
@@ -424,14 +415,13 @@ public class EarthSmash extends EarthAbility {
 	}
 
 	/**
-	 * Checks to see which of the blocks are still attached to the
-	 * EarthSmash, remember that blocks can be broken or used in other
-	 * abilities so we need to double check and remove any that are not
-	 * still attached.
+	 * Checks to see which of the blocks are still attached to the EarthSmash,
+	 * remember that blocks can be broken or used in other abilities so we need
+	 * to double check and remove any that are not still attached.
 	 * 
-	 * Also when we remove the blocks from instances, movedearth, or tempair
-	 * we should do it on a delay because tempair takes a couple seconds
-	 * before the block shows up in that map.
+	 * Also when we remove the blocks from instances, movedearth, or tempair we
+	 * should do it on a delay because tempair takes a couple seconds before the
+	 * block shows up in that map.
 	 */
 	public void checkRemainingBlocks() {
 		for (int i = 0; i < currentBlocks.size(); i++) {
@@ -452,9 +442,8 @@ public class EarthSmash extends EarthAbility {
 	}
 
 	/**
-	 * Gets the blocks surrounding the EarthSmash's loc. This method ignores
-	 * the blocks that should be Air, and only returns the ones that are
-	 * dirt.
+	 * Gets the blocks surrounding the EarthSmash's loc. This method ignores the
+	 * blocks that should be Air, and only returns the ones that are dirt.
 	 */
 	public List<Block> getBlocks() {
 		List<Block> blocks = new ArrayList<Block>();
@@ -473,8 +462,8 @@ public class EarthSmash extends EarthAbility {
 	}
 
 	/**
-	 * Gets the blocks surrounding the EarthSmash's loc. This method returns
-	 * all the blocks surrounding the loc, including dirt and air.
+	 * Gets the blocks surrounding the EarthSmash's loc. This method returns all
+	 * the blocks surrounding the loc, including dirt and air.
 	 */
 	public List<Block> getBlocksIncludingInner() {
 		List<Block> blocks = new ArrayList<Block>();
@@ -489,7 +478,7 @@ public class EarthSmash extends EarthAbility {
 		}
 		return blocks;
 	}
-	
+
 	/**
 	 * Switches the Sand Material and Gravel to SandStone and stone
 	 * respectively, since gravel and sand cannot be bent due to gravity.
@@ -516,17 +505,16 @@ public class EarthSmash extends EarthAbility {
 		}
 		return tempMat;
 	}
-	
+
 	/**
 	 * Determines if a player is trying to grab an EarthSmash. A player is
-	 * trying to grab an EarthSmash if they are staring at it and holding
-	 * shift.
+	 * trying to grab an EarthSmash if they are staring at it and holding shift.
 	 */
 	private EarthSmash aimingAtSmashCheck(Player player, State reqState) {
 		if (!allowGrab) {
 			return null;
 		}
-		
+
 		List<Block> blocks = GeneralMethods.getBlocksAroundPoint(GeneralMethods.getTargetedLocation(player, grabRange, GeneralMethods.NON_OPAQUE), 1);
 		for (EarthSmash smash : getAbilities(EarthSmash.class)) {
 			if (reqState == null || smash.state == reqState) {
@@ -534,8 +522,7 @@ public class EarthSmash extends EarthAbility {
 					if (block == null || smash.getLocation() == null) {
 						continue;
 					}
-					if (block.getLocation().getWorld() == smash.location.getWorld() 
-							&& block.getLocation().distanceSquared(smash.location) <= Math.pow(grabDetectionRadius, 2)) {
+					if (block.getLocation().getWorld() == smash.location.getWorld() && block.getLocation().distanceSquared(smash.location) <= Math.pow(grabDetectionRadius, 2)) {
 						return smash;
 					}
 				}
@@ -546,8 +533,8 @@ public class EarthSmash extends EarthAbility {
 
 	/**
 	 * This method handles any collision between an EarthSmash and the
-	 * surrounding entities, the method only applies to earthsmashes that
-	 * have already been shot.
+	 * surrounding entities, the method only applies to earthsmashes that have
+	 * already been shot.
 	 */
 	public void shootingCollisionDetection() {
 		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, flightDetectionRadius);
@@ -561,28 +548,27 @@ public class EarthSmash extends EarthAbility {
 			}
 		}
 	}
-	
+
 	/**
 	 * EarthSmash to EarthSmash collision can only happen when one of the
-	 * Smashes have been shot by a player. If we find out that one of them
-	 * have collided then we want to return since a smash can only remove 1
-	 * at a time.
+	 * Smashes have been shot by a player. If we find out that one of them have
+	 * collided then we want to return since a smash can only remove 1 at a
+	 * time.
 	 */
 	public void smashToSmashCollisionDetection() {
 		for (EarthSmash smash : getAbilities(EarthSmash.class)) {
-			if (smash.location != null && smash != this && smash.location.getWorld() == location.getWorld() 
-					&& smash.location.distanceSquared(location) < Math.pow(flightDetectionRadius, 2)) {
+			if (smash.location != null && smash != this && smash.location.getWorld() == location.getWorld() && smash.location.distanceSquared(location) < Math.pow(flightDetectionRadius, 2)) {
 				smash.remove();
 				remove();
 				return;
 			}
 		}
 	}
-	
+
 	/**
 	 * Determines whether or not a player is trying to fly ontop of an
-	 * EarthSmash. A player is considered "flying" if they are standing
-	 * ontop of the earthsmash and holding shift.
+	 * EarthSmash. A player is considered "flying" if they are standing ontop of
+	 * the earthsmash and holding shift.
 	 */
 	private static EarthSmash flyingInSmashCheck(Player player) {
 		for (EarthSmash smash : getAbilities(EarthSmash.class)) {
@@ -591,8 +577,7 @@ public class EarthSmash extends EarthAbility {
 			}
 			//Check to see if the player is standing on top of the smash.
 			if (smash.state == State.LIFTED) {
-				if (smash.location.getWorld().equals(player.getWorld()) 
-						&& smash.location.clone().add(0, 2, 0).distanceSquared(player.getLocation()) <= Math.pow(smash.flightDetectionRadius, 2)) {
+				if (smash.location.getWorld().equals(player.getWorld()) && smash.location.clone().add(0, 2, 0).distanceSquared(player.getLocation()) <= Math.pow(smash.flightDetectionRadius, 2)) {
 					return smash;
 				}
 			}
@@ -601,12 +586,11 @@ public class EarthSmash extends EarthAbility {
 	}
 
 	/**
-	 * A BlockRepresenter is used to keep track of each of the individual
-	 * types of blocks that are attached to an EarthSmash. Without the
-	 * representer then an EarthSmash can only be made up of 1 material at a
-	 * time. For example, an ESmash that is entirely dirt, coalore, or
-	 * sandstone. Using the representer will allow all the materials to be
-	 * mixed together.
+	 * A BlockRepresenter is used to keep track of each of the individual types
+	 * of blocks that are attached to an EarthSmash. Without the representer
+	 * then an EarthSmash can only be made up of 1 material at a time. For
+	 * example, an ESmash that is entirely dirt, coalore, or sandstone. Using
+	 * the representer will allow all the materials to be mixed together.
 	 */
 	public class BlockRepresenter {
 		private int x, y, z;
@@ -706,7 +690,7 @@ public class EarthSmash extends EarthAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -715,6 +699,15 @@ public class EarthSmash extends EarthAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (TempBlock tblock : affectedBlocks) {
+			locations.add(tblock.getLocation());
+		}
+		return locations;
 	}
 
 	public boolean isAllowGrab() {
@@ -836,7 +829,7 @@ public class EarthSmash extends EarthAbility {
 	public void setGrabRange(double grabRange) {
 		this.grabRange = grabRange;
 	}
-	
+
 	public double getSelectRange() {
 		return selectRange;
 	}

@@ -25,18 +25,17 @@ public class AirScooter extends AirAbility {
 	private Block floorblock;
 	private Random random;
 	private ArrayList<Double> angles;
-	
+
 	private boolean canFly;
 	private boolean hadFly;
 	private double phi = 0;
-	
+
 	public AirScooter(Player player) {
 		super(player);
-		
-		if (check(player)) 
+
+		if (check(player))
 			return;
-		else if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())
-				|| player.getEyeLocation().getBlock().isLiquid()) 
+		else if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock()) || player.getEyeLocation().getBlock().isLiquid())
 			return;
 		else if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
 			return;
@@ -52,7 +51,7 @@ public class AirScooter extends AirAbility {
 		this.angles = new ArrayList<>();
 		canFly = player.getAllowFlight();
 		hadFly = player.isFlying();
-		
+
 		new Flight(player);
 		player.setAllowFlight(true);
 		player.setFlying(true);
@@ -82,8 +81,8 @@ public class AirScooter extends AirAbility {
 	}
 
 	/*
-	 * Looks for a block under the player and sets "floorBlock" to a block
-	 * under the player if it within the maximum height
+	 * Looks for a block under the player and sets "floorBlock" to a block under
+	 * the player if it within the maximum height
 	 */
 	private void getFloor() {
 		floorblock = null;
@@ -102,7 +101,7 @@ public class AirScooter extends AirAbility {
 			remove();
 			return;
 		}
-		
+
 		getFloor();
 		if (floorblock == null) {
 			remove();
@@ -114,7 +113,7 @@ public class AirScooter extends AirAbility {
 		/*
 		 * checks the players speed and ends the move if they are going too slow
 		 */
-		if (System.currentTimeMillis() > startTime + interval) {
+		if (System.currentTimeMillis() > getStartTime() + interval) {
 			if (player.getVelocity().length() < speed * 0.3) {
 				remove();
 				return;
@@ -122,8 +121,8 @@ public class AirScooter extends AirAbility {
 			spinScooter();
 		}
 		/*
-		 * Checks for how far the ground is away from the player
-		 * it elevates or lowers the player based on their distance from the ground.
+		 * Checks for how far the ground is away from the player it elevates or
+		 * lowers the player based on their distance from the ground.
 		 */
 		double distance = player.getLocation().getY() - (double) floorblock.getY();
 		double dx = Math.abs(distance - 2.4);
@@ -141,7 +140,7 @@ public class AirScooter extends AirAbility {
 		} else {
 			return;
 		}
-		
+
 		player.setSprinting(false);
 		player.removePotionEffect(PotionEffectType.SPEED);
 		player.setVelocity(velocity);
@@ -163,35 +162,32 @@ public class AirScooter extends AirAbility {
 	}
 
 	/*
-	 * The particles used for AirScooter
-	 * phi = how many rings of particles the sphere has.
-	 * theta = how dense the rings are.
-	 * r = Radius of the sphere
+	 * The particles used for AirScooter phi = how many rings of particles the
+	 * sphere has. theta = how dense the rings are. r = Radius of the sphere
 	 */
 	private void spinScooter() {
 		Location origin = player.getLocation();
 		Location origin2 = player.getLocation();
-		phi += Math.PI/10*4;
-		for(double theta = 0; theta <= 2*Math.PI; theta += Math.PI/10) {
+		phi += Math.PI / 10 * 4;
+		for (double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / 10) {
 			double r = 0.6;
-			double x = r*Math.cos(theta)*Math.sin(phi);
-			double y = r*Math.cos(phi);
-			double z = r*Math.sin(theta)*Math.sin(phi);
+			double x = r * Math.cos(theta) * Math.sin(phi);
+			double y = r * Math.cos(phi);
+			double z = r * Math.sin(theta) * Math.sin(phi);
 			origin.add(x, y, z);
 			playAirbendingParticles(origin, 1, 0F, 0F, 0F);
 			origin.subtract(x, y, z);
 		}
-		for(double theta = 0; theta <= 2*Math.PI; theta += Math.PI/10) {
+		for (double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / 10) {
 			double r = 0.6;
-			double x = r*Math.cos(theta)*Math.sin(phi);
-			double y = r*Math.cos(phi);
-			double z = r*Math.sin(theta)*Math.sin(phi);
+			double x = r * Math.cos(theta) * Math.sin(phi);
+			double y = r * Math.cos(phi);
+			double z = r * Math.sin(theta) * Math.sin(phi);
 			origin2.subtract(x, y, z);
 			playAirbendingParticles(origin2, 1, 0F, 0F, 0F);
 			origin2.add(x, y, z);
 		}
 	}
-
 
 	@Override
 	public String getName() {
@@ -207,7 +203,7 @@ public class AirScooter extends AirAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -218,6 +214,10 @@ public class AirScooter extends AirAbility {
 		return true;
 	}
 
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
+	}
 
 	public double getSpeed() {
 		return speed;
@@ -258,7 +258,7 @@ public class AirScooter extends AirAbility {
 	public void setFloorblock(Block floorblock) {
 		this.floorblock = floorblock;
 	}
-	
+
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}

@@ -3,8 +3,11 @@ package com.projectkorra.projectkorra.ability;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 import com.projectkorra.projectkorra.waterbending.PhaseChangeFreeze;
 import com.projectkorra.projectkorra.waterbending.PhaseChangeMelt;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
@@ -73,6 +76,15 @@ public abstract class WaterAbility extends ElementalAbility {
 	@Override
 	public boolean isIgniteAbility() {
 		return false;
+	}
+	
+	@Override
+	public void handleCollision(Collision collision) {
+		super.handleCollision(collision);
+		if (collision.isRemovingFirst()) {
+			ParticleData particleData = (ParticleEffect.ParticleData) new ParticleEffect.BlockData(Material.WATER, (byte) 0);
+			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+		}
 	}
 	
 	public boolean isIcebendable(Block block) {
@@ -301,22 +313,30 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 * <p>
 	 * Removes all water spouts in a location within a certain radius.
 	 * 
 	 * @param loc The location to use
 	 * @param radius The radius around the location to remove spouts in
 	 * @param source The player causing the removal
 	 */
+	@Deprecated
 	public static void removeWaterSpouts(Location loc, double radius, Player source) {
 		WaterSpout.removeSpouts(loc, radius, source);
 	}
 
 	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 * <p>
 	 * Removes all water spouts in a location with a radius of 1.5.
 	 * 
 	 * @param loc The location to use
 	 * @param source The player causing the removal
 	 */
+	@Deprecated
 	public static void removeWaterSpouts(Location loc, Player source) {
 		removeWaterSpouts(loc, 1.5, source);
 	}

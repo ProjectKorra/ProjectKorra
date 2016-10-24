@@ -283,7 +283,7 @@ public class Bloodbending extends BloodAbility {
 	@Override
 	public void remove() {
 		if (!bPlayer.isAvatarState() && target != null) {
-			if (System.currentTimeMillis() < this.startTime + 1200) {
+			if (System.currentTimeMillis() < getStartTime() + 1200) {
 				bPlayer.addCooldown(this); //Prevents spamming
 			}
 		}
@@ -311,6 +311,9 @@ public class Bloodbending extends BloodAbility {
 
 	@Override
 	public Location getLocation() {
+		if (target != null) {
+			return target.getLocation();
+		}
 		return player != null ? player.getLocation() : null;
 	}
 
@@ -327,6 +330,16 @@ public class Bloodbending extends BloodAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		// for collision purposes we only care about the player's location
+		ArrayList<Location> locations = new ArrayList<>();
+		if (player != null) {
+			locations.add(player.getLocation());
+		}
+		return locations;
 	}
 
 	public boolean isCanOnlyBeUsedAtNight() {

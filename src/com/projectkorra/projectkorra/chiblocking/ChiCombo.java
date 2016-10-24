@@ -192,7 +192,7 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 
 	public class Immobilize extends ChiCombo {
 
-		public Immobilize(Player player, String name) {
+		public Immobilize(Player player) {
 			super(player, "Immobilize");
 		}
 

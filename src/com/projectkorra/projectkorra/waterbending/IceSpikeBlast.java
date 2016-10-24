@@ -45,11 +45,11 @@ public class IceSpikeBlast extends IceAbility {
 
 	public IceSpikeBlast(Player player) {
 		super(player);
-		
+
 		if (bPlayer.isOnCooldown("IceSpikeBlast")) {
 			return;
 		}
-		
+
 		this.data = 0;
 		this.interval = getConfig().getLong("Abilities.Water.IceSpike.Blast.Interval");
 		this.slowCooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.SlowCooldown");
@@ -60,12 +60,12 @@ public class IceSpikeBlast extends IceAbility {
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.Cooldown");
 		this.slowPower = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowPower");
 		this.slowDuration = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowDuration");
-		
+
 		if (!bPlayer.canBend(this) || !bPlayer.canIcebend()) {
 			return;
 		}
 
-		block(player);	
+		block(player);
 		this.range = getNightFactor(range);
 		this.damage = getNightFactor(damage);
 		this.slowPower = (int) getNightFactor(slowPower);
@@ -109,7 +109,7 @@ public class IceSpikeBlast extends IceAbility {
 				iceSpike.remove();
 			}
 		}
-		
+
 		sourceBlock = block;
 		location = sourceBlock.getLocation();
 		prepared = true;
@@ -232,7 +232,7 @@ public class IceSpikeBlast extends IceAbility {
 		if (!prepared) {
 			return;
 		}
-		
+
 		LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range);
 		if (target == null) {
 			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterial());
@@ -247,14 +247,14 @@ public class IceSpikeBlast extends IceAbility {
 		if (destination.distanceSquared(location) < 1) {
 			return;
 		}
-		
+
 		firstDestination = location.clone();
 		if (destination.getY() - location.getY() > 2) {
 			firstDestination.setY(destination.getY() - 1);
 		} else {
 			firstDestination.add(0, 2, 0);
 		}
-		
+
 		destination = GeneralMethods.getPointOnLine(firstDestination, destination, range);
 		progressing = true;
 		settingUp = true;
@@ -265,22 +265,21 @@ public class IceSpikeBlast extends IceAbility {
 			sourceBlock.setType(Material.AIR);
 		}
 
-
 	}
 
 	public static void activate(Player player) {
 		redirect(player);
 		boolean activate = false;
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		
+
 		if (bPlayer == null) {
 			return;
 		}
-		
+
 		if (bPlayer.isOnCooldown("IceSpikeBlast")) {
 			return;
 		}
-		
+
 		for (IceSpikeBlast ice : getAbilities(player, IceSpikeBlast.class)) {
 			if (ice.prepared) {
 				ice.throwIce();
@@ -288,7 +287,7 @@ public class IceSpikeBlast extends IceAbility {
 				activate = true;
 			}
 		}
-		
+
 		if (!activate && !getPlayers(IceSpikeBlast.class).contains(player)) {
 			IceSpikePillar spike = new IceSpikePillar(player);
 			if (!spike.isStarted()) {
@@ -305,16 +304,15 @@ public class IceSpikeBlast extends IceAbility {
 				continue;
 			} else if (!iceSpike.progressing) {
 				continue;
-			} if (GeneralMethods.isRegionProtectedFromBuild(iceSpike, iceSpike.location)) {
+			}
+			if (GeneralMethods.isRegionProtectedFromBuild(iceSpike, iceSpike.location)) {
 				continue;
 			}
 
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = iceSpike.location;
-			if (mloc.distanceSquared(location) <= iceSpike.range * iceSpike.range 
-					&& GeneralMethods.getDistanceFromLine(vector, location, iceSpike.location) < iceSpike.deflectRange 
-					&& mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
+			if (mloc.distanceSquared(location) <= iceSpike.range * iceSpike.range && GeneralMethods.getDistanceFromLine(vector, location, iceSpike.location) < iceSpike.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				iceSpike.remove();
 			}
 		}
@@ -343,12 +341,10 @@ public class IceSpikeBlast extends IceAbility {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = iceSpike.location;
-			
+
 			if (GeneralMethods.isRegionProtectedFromBuild(iceSpike, mloc)) {
 				continue;
-			} else if (mloc.distanceSquared(location) <= iceSpike.range * iceSpike.range 
-					&& GeneralMethods.getDistanceFromLine(vector, location, iceSpike.location) < iceSpike.deflectRange 
-					&& mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
+			} else if (mloc.distanceSquared(location) <= iceSpike.range * iceSpike.range && GeneralMethods.getDistanceFromLine(vector, location, iceSpike.location) < iceSpike.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				Location loc;
 				Entity target = GeneralMethods.getTargetedEntity(player, iceSpike.range);
 				if (target == null) {
@@ -366,15 +362,15 @@ public class IceSpikeBlast extends IceAbility {
 	@SuppressWarnings("deprecation")
 	private static void waterBottle(Player player) {
 		long range = getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
-		
+
 		if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeLoc = player.getEyeLocation();
 			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
-			
+
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range);
 				Location destination;
-			
+
 				if (target == null) {
 					destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterial());
 				} else {
@@ -387,17 +383,17 @@ public class IceSpikeBlast extends IceAbility {
 
 				MaterialData data = block.getState().getData();
 				block.setType(Material.WATER);
-				block.setData((byte)0);
+				block.setData((byte) 0);
 				IceSpikeBlast iceSpike = new IceSpikeBlast(player);
 				iceSpike.throwIce();
 				iceSpike.sourceBlock = null;
 
 				if (iceSpike.progressing) {
 					WaterReturn.emptyWaterBottle(player);
-				} 
+				}
 				block.setType(data.getItemType());
 				block.setData(data.getData());
-				
+
 			}
 		}
 	}
@@ -421,7 +417,7 @@ public class IceSpikeBlast extends IceAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -430,6 +426,16 @@ public class IceSpikeBlast extends IceAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public boolean isCollidable() {
+		return progressing;
+	}
+
+	@Override
+	public double getCollisionRadius() {
+		return collisionRadius;
 	}
 
 	public boolean isPrepared() {
@@ -520,10 +526,6 @@ public class IceSpikeBlast extends IceAbility {
 		this.damage = damage;
 	}
 
-	public double getCollisionRadius() {
-		return collisionRadius;
-	}
-
 	public void setCollisionRadius(double collisionRadius) {
 		this.collisionRadius = collisionRadius;
 	}
@@ -575,5 +577,5 @@ public class IceSpikeBlast extends IceAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
+
 }

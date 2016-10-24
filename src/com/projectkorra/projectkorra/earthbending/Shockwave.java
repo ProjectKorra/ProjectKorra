@@ -64,7 +64,7 @@ public class Shockwave extends EarthAbility {
 			return;
 		}
 
-		if (System.currentTimeMillis() > startTime + chargeTime && !charged) {
+		if (System.currentTimeMillis() > getStartTime() + chargeTime && !charged) {
 			charged = true;
 		}
 

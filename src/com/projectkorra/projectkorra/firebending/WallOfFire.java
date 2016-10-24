@@ -173,22 +173,22 @@ public class WallOfFire extends FireAbility {
 	public void progress() {
 		time = System.currentTimeMillis();
 
-		if (time - startTime > cooldown) {
+		if (time - getStartTime() > cooldown) {
 			remove();
 			return;
 		} else if (!active) {
 			return;
-		} else if (time - startTime > duration) {
+		} else if (time - getStartTime() > duration) {
 			active = false;
 			return;
 		}
 
-		if (time - startTime > intervalTick * interval) {
+		if (time - getStartTime() > intervalTick * interval) {
 			intervalTick++;
 			display();
 		}
 
-		if (time - startTime > damageTick * damageInterval) {
+		if (time - getStartTime() > damageTick * damageInterval) {
 			damageTick++;
 			damage();
 		}
@@ -217,6 +217,15 @@ public class WallOfFire extends FireAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (Block block : blocks) {
+			locations.add(block.getLocation());
+		}
+		return locations;
 	}
 
 	public boolean isActive() {

@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CombustionAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -77,6 +78,11 @@ public class Combustion extends CombustionAbility {
 		}
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean removeAroundPoint(Location loc, double radius) {
 		for (Combustion combustion : getAbilities(Combustion.class)) {
 			if (combustion.location.getWorld().equals(loc.getWorld())) {
@@ -175,6 +181,11 @@ public class Combustion extends CombustionAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
 	}
 
 	public boolean isBreakBlocks() {

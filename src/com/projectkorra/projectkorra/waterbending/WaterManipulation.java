@@ -18,12 +18,9 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.firebending.Combustion;
-import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -230,27 +227,9 @@ public class WaterManipulation extends WaterAbility {
 						}
 					}
 				} else {
-					WaterAbility.removeWaterSpouts(location, player);
-					AirAbility.removeAirSpouts(location, player);
-					EarthAbility.removeSandSpouts(location, player);
-
 					if ((new Random()).nextInt(4) == 0) {
 						playWaterbendingSound(location);
 					}
-
-					double radius = collisionRadius;
-					Player source = player;
-					if (!(location == null)) {
-						if (EarthBlast.annihilateBlasts(location, radius, source)
-								|| WaterManipulation.annihilateBlasts(location, radius, source)
-								|| FireBlast.annihilateBlasts(location, radius, source)) {
-							remove();
-							new WaterReturn(player, sourceBlock);
-							return;
-						}
-						Combustion.removeAroundPoint(location, radius);
-					}
-
 					location = location.clone().add(direction);
 					block = location.getBlock();
 					if (block.getLocation().equals(sourceBlock.getLocation())) {
@@ -386,6 +365,11 @@ public class WaterManipulation extends WaterAbility {
 
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean annihilateBlasts(Location location, double radius, Player player) {
 		boolean broke = false;
 		for (WaterManipulation manip : getAbilities(WaterManipulation.class)) {
@@ -596,6 +580,24 @@ public class WaterManipulation extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isCollidable() {
+		return progressing;
+	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return collisionRadius;
+	}
+	
+	@Override
+	public void handleCollision(Collision collision) {
+		super.handleCollision(collision);
+		if (collision.isRemovingFirst()) {
+			new WaterReturn(player, sourceBlock);
+		}
+	}
 
 	public boolean isProgressing() {
 		return progressing;
@@ -779,10 +781,6 @@ public class WaterManipulation extends WaterAbility {
 
 	public void setLocation(Location location) {
 		this.location = location;
-	}
-
-	public double getCollisionRadius() {
-		return collisionRadius;
 	}
 
 	public void setCollisionRadius(double collisionRadius) {

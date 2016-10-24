@@ -1,8 +1,7 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -10,7 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 
 public class AirBurst extends AirAbility {
 
@@ -27,7 +28,7 @@ public class AirBurst extends AirAbility {
 	private double particlePercentage;
 	private ArrayList<AirBlast> blasts;
 	private ArrayList<Entity> affectedEntities;
-	
+
 	public AirBurst(Player player, boolean isFallBurst) {
 		super(player);
 		if (bPlayer.isOnCooldown(this)) {
@@ -76,7 +77,7 @@ public class AirBurst extends AirAbility {
 			return;
 		}
 
-		if (System.currentTimeMillis() > startTime + chargeTime && !isCharged) {
+		if (System.currentTimeMillis() > getStartTime() + chargeTime && !isCharged) {
 			isCharged = true;
 		}
 
@@ -99,7 +100,7 @@ public class AirBurst extends AirAbility {
 		if (bPlayer.isOnCooldown("AirBurst")) {
 			return;
 		}
-		
+
 		Location location = player.getLocation();
 		double x, y, z;
 		double r = 1;
@@ -109,11 +110,11 @@ public class AirBurst extends AirAbility {
 			for (double phi = 0; phi < 360; phi += dphi) {
 				double rphi = Math.toRadians(phi);
 				double rtheta = Math.toRadians(theta);
-				
+
 				x = r * Math.cos(rphi) * Math.sin(rtheta);
 				y = r * Math.sin(rphi) * Math.sin(rtheta);
 				z = r * Math.cos(rtheta);
-				
+
 				Vector direction = new Vector(x, z, y);
 				AirBlast blast = new AirBlast(player, location, direction.normalize(), pushFactor, this);
 				blast.setDamage(damage);
@@ -136,17 +137,17 @@ public class AirBurst extends AirAbility {
 			double angle = Math.toRadians(30);
 			double x, y, z;
 			double r = 1;
-			
+
 			for (double theta = 0; theta <= 180; theta += blastAngleTheta) {
 				double dphi = blastAnglePhi / Math.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
 					double rphi = Math.toRadians(phi);
 					double rtheta = Math.toRadians(theta);
-					
+
 					x = r * Math.cos(rphi) * Math.sin(rtheta);
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
-					
+
 					Vector direction = new Vector(x, z, y);
 					if (direction.angle(vector) <= angle) {
 						AirBlast blast = new AirBlast(player, location, direction.normalize(), pushFactor, this);
@@ -185,14 +186,14 @@ public class AirBurst extends AirAbility {
 				for (double phi = 0; phi < 360; phi += dphi) {
 					double rphi = Math.toRadians(phi);
 					double rtheta = Math.toRadians(theta);
-					
+
 					x = r * Math.cos(rphi) * Math.sin(rtheta);
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
-					
+
 					Vector direction = new Vector(x, z, y);
 					AirBlast blast = new AirBlast(player, location, direction.normalize(), pushFactor, this);
-					
+
 					blast.setDamage(damage);
 					blast.setShowParticles(false);
 					blasts.add(blast);
@@ -216,7 +217,7 @@ public class AirBurst extends AirAbility {
 	public long getCooldown() {
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -227,6 +228,14 @@ public class AirBurst extends AirAbility {
 		return false;
 	}
 
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (AirBlast blast : blasts) {
+			locations.add(blast.getLocation());
+		}
+		return locations;
+	}
 
 	public void addAffectedEntity(Entity entity) {
 		affectedEntities.add(entity);
