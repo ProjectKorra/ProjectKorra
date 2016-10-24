@@ -19,11 +19,13 @@ import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 import com.projectkorra.rpg.RPGMethods;
 
 public abstract class FireAbility extends ElementalAbility {
@@ -59,6 +61,15 @@ public abstract class FireAbility extends ElementalAbility {
 	@Override
 	public Element getElement() {
 		return Element.FIRE;
+	}
+	
+	@Override
+	public void handleCollision(Collision collision) {
+		super.handleCollision(collision);
+		if (collision.isRemovingFirst()) {
+			ParticleData particleData = (ParticleEffect.ParticleData) new ParticleEffect.BlockData(Material.FIRE, (byte) 0);
+			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+		}
 	}
 		
 	public double getDayFactor(double value) {
@@ -140,11 +151,15 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 	
 	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 * <p>
 	 * Checks whether a location is within a FireShield.
 	 * 
 	 * @param loc The location to check
 	 * @return true If the location is inside a FireShield.
 	 */
+	@Deprecated
 	public static boolean isWithinFireShield(Location loc) {
 		List<String> list = new ArrayList<String>();
 		list.add("FireShield");

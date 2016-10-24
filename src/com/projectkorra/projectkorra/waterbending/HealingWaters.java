@@ -105,7 +105,7 @@ public class HealingWaters extends HealingAbility {
 		}
 		
 		// If ability is is charged, set charged = true. If not, play charging particles.
-		if (System.currentTimeMillis() >= startTime + chargeTime) {
+		if (System.currentTimeMillis() >= getStartTime() + chargeTime) {
 			if (!charged) {
 				this.charged = true;
 				WaterReturn.emptyWaterBottle(player);

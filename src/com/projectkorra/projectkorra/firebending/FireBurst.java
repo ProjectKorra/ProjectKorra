@@ -117,7 +117,7 @@ public class FireBurst extends FireAbility {
 			return;
 		}
 
-		if (System.currentTimeMillis() > startTime + chargeTime && !charged) {
+		if (System.currentTimeMillis() > getStartTime() + chargeTime && !charged) {
 			charged = true;
 		}
 

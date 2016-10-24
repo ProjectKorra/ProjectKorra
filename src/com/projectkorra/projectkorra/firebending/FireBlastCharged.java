@@ -252,7 +252,7 @@ public class FireBlastCharged extends FireAbility {
 			return;
 		}
 		
-		if (System.currentTimeMillis() > startTime + chargeTime) {
+		if (System.currentTimeMillis() > getStartTime() + chargeTime) {
 			charged = true;
 		}
 		if (!player.isSneaking() && !launched) {
@@ -319,6 +319,16 @@ public class FireBlastCharged extends FireAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public boolean isCollidable() {
+		return this.launched;
+	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return collisionRadius;
 	}
 
 	public boolean isCharged() {
@@ -391,10 +401,6 @@ public class FireBlastCharged extends FireAbility {
 
 	public void setRange(double range) {
 		this.range = range;
-	}
-
-	public double getCollisionRadius() {
-		return collisionRadius;
 	}
 
 	public void setCollisionRadius(double collisionRadius) {

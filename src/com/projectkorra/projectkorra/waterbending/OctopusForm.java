@@ -475,6 +475,11 @@ public class OctopusForm extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
+	}
 
 	public boolean isSourceSelected() {
 		return sourceSelected;
