@@ -211,11 +211,15 @@ public class GeneralMethods {
 	}
 
 	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 * <p>
 	 * Cycles through a list of ability names to check if any instances of the
 	 * abilities exist at a specific location. If an instance of the ability is
 	 * found then it will be removed, with the exception FireShield, and
 	 * AirShield.
 	 */
+	@Deprecated
 	public static boolean blockAbilities(Player player, List<String> abilitiesToBlock, Location loc, double radius) {
 		boolean hasBlocked = false;
 		for (String ability : abilitiesToBlock) {

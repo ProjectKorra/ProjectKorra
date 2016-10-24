@@ -21,6 +21,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.LavaFlow;
@@ -30,6 +31,7 @@ import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public abstract class EarthAbility extends ElementalAbility {
@@ -80,6 +82,15 @@ public abstract class EarthAbility extends ElementalAbility {
 	@Override
 	public boolean isIgniteAbility() {
 		return false;
+	}
+	
+	@Override
+	public void handleCollision(Collision collision) {
+		super.handleCollision(collision);
+		if (collision.isRemovingFirst()) {
+			ParticleData particleData = (ParticleEffect.ParticleData) new ParticleEffect.BlockData(Material.DIRT, (byte) 0);
+			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+		}
 	}
 	
 	public static boolean isEarthbendable(Material material) {

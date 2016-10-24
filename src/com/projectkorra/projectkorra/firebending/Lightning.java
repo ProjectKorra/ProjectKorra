@@ -1,10 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.LightningAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.DamageHandler;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -15,7 +12,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.LightningAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class Lightning extends LightningAbility {
 
@@ -52,6 +53,7 @@ public class Lightning extends LightningAbility {
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<Arc> arcs;
 	private ArrayList<BukkitRunnable> tasks;
+	private ArrayList<Location> locations;
 	
 	public Lightning(Player player) {
 		super(player);
@@ -73,6 +75,7 @@ public class Lightning extends LightningAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.arcs = new ArrayList<>();
 		this.tasks = new ArrayList<>();
+		this.locations = new ArrayList<>();
 	
 		this.selfHitWater = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
 		this.selfHitClose = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitClose");
@@ -190,6 +193,8 @@ public class Lightning extends LightningAbility {
 			remove();
 			return;
 		}
+		
+		locations.clear();
 		
 		if (state == State.START) {
 			if (bPlayer.isOnCooldown(this)) {
@@ -504,6 +509,11 @@ public class Lightning extends LightningAbility {
 					return;
 				}
 				Block block = location.getBlock();
+				// We only want to consider this particle as part of the location
+				// on the its first tick, when it actually does the electrocution.
+				// The later ticks are just for visual purposes.
+				locations.add(block.getLocation());
+				
 				// Handle Water electrocution
 				if (!hitWater && (isWater(block) || (arcOnIce && isIce(block)))) {
 					hitWater = true;
@@ -634,6 +644,16 @@ public class Lightning extends LightningAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public boolean isCollidable() {
+		return arcs.size() > 0;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		return locations;
 	}
 	
 	public boolean isCharged() {

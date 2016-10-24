@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra.earthbending;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,15 +27,15 @@ public class Collapse extends EarthAbility {
 	private Vector direction;
 	private Block block;
 	private Map<Block, Block> affectedBlocks;
-	
+
 	public Collapse(Player player) {
 		super(player);
 		setFields();
-		
+
 		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("CollapsePillar")) {
 			return;
 		}
-		
+
 		block = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.LEFT_CLICK);
 		if (block == null) {
 			return;
@@ -83,7 +85,7 @@ public class Collapse extends EarthAbility {
 	private void loadAffectedBlocks() {
 		affectedBlocks.clear();
 		Block thisBlock;
-		
+
 		for (int i = 0; i <= distance; i++) {
 			thisBlock = block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(-i)));
 			affectedBlocks.put(thisBlock, thisBlock);
@@ -125,7 +127,7 @@ public class Collapse extends EarthAbility {
 		if (distance == 0) {
 			return false;
 		}
-		
+
 		moveEarth(block, direction, distance);
 		loadAffectedBlocks();
 		return location.distanceSquared(origin) < distance * distance;
@@ -154,6 +156,15 @@ public class Collapse extends EarthAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (Block block : affectedBlocks.values()) {
+			locations.add(block.getLocation());
+		}
+		return locations;
 	}
 
 	public Location getOrigin() {

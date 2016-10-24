@@ -1,9 +1,9 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.SandAbility;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,8 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Collection;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.SandAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.Flight;
 
 public class SandSpout extends SandAbility {
 
@@ -258,6 +260,20 @@ public class SandSpout extends SandAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		if (player == null) {
+			return locations;
+		}
+		Location top = player.getLocation();
+		double ySpacing = 2;
+		for (double i = 0; i < this.getHeight(); i += ySpacing) {
+			locations.add(top.clone().add(0, -i, 0));
+		}
+		return locations;
 	}
 
 	public boolean isCanSpiral() {

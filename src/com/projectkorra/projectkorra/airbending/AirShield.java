@@ -1,16 +1,8 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.earthbending.SandSpout;
-import com.projectkorra.projectkorra.firebending.BlazeArc;
-import com.projectkorra.projectkorra.firebending.Combustion;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.Set;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -20,9 +12,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Set;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
 
 public class AirShield extends AirAbility {
 
@@ -34,16 +28,16 @@ public class AirShield extends AirAbility {
 	private int particles;
 	private Random random;
 	private HashMap<Integer, Integer> angles;
-	
+
 	public AirShield(Player player) {
 		super(player);
 
 		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.Radius");
 		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
 		this.radius = this.maxRadius;
-		this.speed =  getConfig().getDouble("Abilities.Air.AirShield.Speed");
+		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");
 		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
-		this.particles =  getConfig().getInt("Abilities.Air.AirShield.Particles");
+		this.particles = getConfig().getInt("Abilities.Air.AirShield.Particles");
 		this.random = new Random();
 		this.angles = new HashMap<>();
 
@@ -61,10 +55,15 @@ public class AirShield extends AirAbility {
 				angle = 0;
 			}
 		}
-		
+
 		start();
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean isWithinShield(Location loc) {
 		for (AirShield ashield : getAbilities(AirShield.class)) {
 			if (!ashield.player.getWorld().equals(loc.getWorld())) {
@@ -96,16 +95,6 @@ public class AirShield extends AirAbility {
 
 	private void rotateShield() {
 		Location origin = player.getLocation();
-		FireBlast.removeFireBlastsAroundPoint(origin, radius);
-		Combustion.removeAroundPoint(origin, radius);
-		BlazeArc.removeAroundPoint(origin, radius);
-		AirBlast.removeAirBlastsAroundPoint(origin, radius);
-		AirSuction.removeAirSuctionsAroundPoint(origin, radius);
-		EarthBlast.removeAroundPoint(origin, radius);
-		SandSpout.removeSpouts(origin, radius, player);
-		WaterSpout.removeSpouts(origin, radius, player);
-		WaterManipulation.removeAroundPoint(origin, radius);
-
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, radius)) {
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "AirShield", entity.getLocation())) {
 				continue;
@@ -181,7 +170,7 @@ public class AirShield extends AirAbility {
 			radius = maxRadius;
 		}
 	}
-	
+
 	@Override
 	public String getName() {
 		return "AirShield";
@@ -196,7 +185,7 @@ public class AirShield extends AirAbility {
 	public long getCooldown() {
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -205,6 +194,11 @@ public class AirShield extends AirAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
 	}
 
 	public boolean isToggledByAvatarState() {

@@ -42,6 +42,7 @@ public class WaterSpoutWave extends WaterAbility {
 	private boolean iceOnly;
 	private boolean moving;
 	private boolean plant;
+	private boolean collidable;
 	private int progressCounter;
 	private long time;
 	private long cooldown;
@@ -68,6 +69,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.charging = false;
 		this.iceWave = false;
 		this.iceOnly = false;
+		this.collidable = false;
 		this.plant = getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AllowPlantSource");
 		this.radius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
 		this.waveRadius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
@@ -241,6 +243,7 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 			} else {
 				moving = true;
+				collidable = true;
 				if ((System.currentTimeMillis() - time > flightTime && !bPlayer.isAvatarState()) || player.isSneaking()) {
 					remove();
 					return;
@@ -472,6 +475,16 @@ public class WaterSpoutWave extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public boolean isCollidable() {
+		return collidable;
+	}
+
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
 	}
 
 	public double getRadius() {

@@ -1,7 +1,9 @@
 package com.projectkorra.projectkorra.waterbending;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,10 +19,11 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireCombo.FireComboStream;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -29,9 +32,9 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 /*
- * TODO: Combo classes should eventually be rewritten so that each combo is treated
- * as an individual ability. In the mean time, we will just place "fake"
- * classes so that CoreAbility will register each ability. 
+ * TODO: Combo classes should eventually be rewritten so that each combo is
+ * treated as an individual ability. In the mean time, we will just place "fake"
+ * classes so that CoreAbility will register each ability.
  */
 public class WaterCombo extends IceAbility implements ComboAbility {
 
@@ -76,12 +79,11 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 		}
 
 		if (name.equalsIgnoreCase("IceWave")) {
-			
 			if (bPlayer.isOnCooldown("IceWave") && !bPlayer.isAvatarState()) {
 				remove();
 				return;
 			}
-			
+
 			this.cooldown = getConfig().getLong("Abilities.Water.WaterCombo.IceWave.Cooldown");
 		} else if (name.equalsIgnoreCase("IceBullet")) {
 			this.damage = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Damage");
@@ -93,7 +95,7 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 			this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.AnimationSpeed");
 			this.speed = 1;
 		}
-		
+
 		double aug = getNightFactor(player.getWorld());
 		if (aug > 1) {
 			aug = 1 + (aug - 1) / 3;
@@ -115,7 +117,7 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 		}
 
 		if (name.equalsIgnoreCase("IceBulletLeftClick") || name.equalsIgnoreCase("IceBulletRightClick")) {
-			ArrayList<WaterCombo> bullets = getWaterCombo(player, "IceBullet");
+			Collection<IceBullet> bullets = CoreAbility.getAbilities(player, IceBullet.class);
 			if (bullets.size() == 0) {
 				return;
 			}
@@ -130,7 +132,7 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 			}
 			return;
 		}
-		
+
 		start();
 	}
 
@@ -149,13 +151,13 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 	public void drawWaterCircle(Location loc, double theta, double increment, double radius, Material mat, byte data) {
 		double rotateSpeed = theta;
 		direction = GeneralMethods.rotateXZ(direction, rotateSpeed);
-		
+
 		for (double i = 0; i < theta; i += increment) {
 			Vector dir = GeneralMethods.rotateXZ(direction, i - theta / 2).normalize().multiply(radius);
 			dir.setY(0);
 			Block block = loc.clone().add(dir).getBlock();
 			location = block.getLocation();
-			
+
 			if (block.getType() == Material.AIR && !GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
 				createBlock(block, mat, data);
 			}
@@ -169,7 +171,7 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 				i--;
 			}
 		}
-		
+
 		for (int i = 0; i < tasks.size(); i++) {
 			FireComboStream fstream = (FireComboStream) tasks.get(i);
 			Location loc = fstream.getLocation();
@@ -197,10 +199,6 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 						}
 					}
 				}
-
-				if (GeneralMethods.blockAbilities(player, FireCombo.getBlockableAbilities(), loc, 1)) {
-					fstream.remove();
-				}
 			}
 		}
 	}
@@ -214,7 +212,7 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 			if (origin == null && WaterSpoutWave.containsType(player, WaterSpoutWave.AbilityType.RELEASE)) {
 				bPlayer.addCooldown("IceWave", cooldown);
 				origin = player.getLocation();
-				
+
 				WaterSpoutWave wave = WaterSpoutWave.getType(player, WaterSpoutWave.AbilityType.RELEASE).get(0);
 				wave.setIceWave(true);
 			} else if (!WaterSpoutWave.containsType(player, WaterSpoutWave.AbilityType.RELEASE)) {
@@ -226,19 +224,19 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 				remove();
 				return;
 			}
-			
+
 			if (origin == null) {
 				if (bPlayer.isOnCooldown("IceBullet") && !bPlayer.isAvatarState()) {
 					remove();
 					return;
 				}
-				
+
 				Block waterBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
 				if (waterBlock == null) {
 					remove();
 					return;
 				}
-				
+
 				time = 0;
 				origin = waterBlock.getLocation();
 				location = origin.clone();
@@ -253,7 +251,7 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 				if (this.time == 0) {
 					this.time = System.currentTimeMillis();
 				}
-				
+
 				long timeDiff = System.currentTimeMillis() - this.time;
 				if (this.state == AbilityState.ICE_BULLET_FORMING) {
 					if (timeDiff < 1000 * animationSpeed) {
@@ -277,7 +275,7 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 							Vector vec = player.getEyeLocation().getDirection().normalize();
 							Location loc = player.getEyeLocation().add(vec.clone().multiply(radius + 1.3));
 							FireComboStream fs = new FireComboStream(null, vec, loc, range, speed, "IceBullet");
-							
+
 							fs.setDensity(10);
 							fs.setSpread(0.1F);
 							fs.setUseNewParticles(true);
@@ -308,9 +306,9 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 		if (waterGrabber != null) {
 			waterGrabber.remove();
 		}
-		
+
 		bPlayer.addCooldown(this);
-		
+
 		if (name == "IceWave") {
 			bPlayer.addCooldown("WaterWave", getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown"));
 		}
@@ -363,12 +361,12 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isHiddenAbility() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -378,7 +376,13 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
+	@Override
+	public boolean isCollidable() {
+		// Override in subclasses
+		return false;
+	}
+
 	@Override
 	public String getInstructions() {
 		return null;
@@ -526,6 +530,10 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 		return tasks;
 	}
 
+	public void setTasks(ArrayList<BukkitRunnable> tasks) {
+		this.tasks = tasks;
+	}
+
 	public static Map<Block, TempBlock> getFrozenBlocks() {
 		return FROZEN_BLOCKS;
 	}
@@ -545,31 +553,99 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
-	public class IceWave extends WaterCombo {
 
-		public IceWave(Player player, String name) {
+	// Combo subclasses need to be static to be reflectively called in ComboManager
+	public static class IceWave extends WaterCombo {
+
+		public IceWave(Player player) {
 			super(player, "IceWave");
 		}
-		
+
 		@Override
 		public String getName() {
 			return "IceWave";
 		}
-		
-	}
-	
-	public class IceBullet extends WaterCombo {
 
-		public IceBullet(Player player, String name) {
+	}
+
+	public static class IceBullet extends WaterCombo {
+
+		public IceBullet(Player player) {
 			super(player, "IceBullet");
 		}
-		
+
 		@Override
 		public String getName() {
 			return "IceBullet";
 		}
-		
+
+		@Override
+		public boolean isCollidable() {
+			return true;
+		}
+
+		@Override
+		public void handleCollision(Collision collision) {
+			if (collision.isRemovingFirst()) {
+				ArrayList<BukkitRunnable> newTasks = new ArrayList<>();
+				double collisionDistanceSquared = Math.pow(getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
+				// Remove all of the streams that are by this specific ourLocation.
+				// Don't just do a single stream at a time or this algorithm becomes O(n^2) with
+				// Collision's detection algorithm.
+				for (BukkitRunnable task : getTasks()) {
+					if (task instanceof FireComboStream) {
+						FireComboStream stream = (FireComboStream) task;
+						if (stream.getLocation().distanceSquared(collision.getLocationSecond()) > collisionDistanceSquared) {
+							newTasks.add(stream);
+						} else {
+							stream.cancel();
+						}
+					} else {
+						newTasks.add(task);
+					}
+				}
+				setTasks(newTasks);
+			}
+		}
+
+		@Override
+		public List<Location> getLocations() {
+			ArrayList<Location> locations = new ArrayList<>();
+			for (BukkitRunnable task : getTasks()) {
+				if (task instanceof FireComboStream) {
+					FireComboStream stream = (FireComboStream) task;
+					locations.add(stream.getLocation());
+				}
+			}
+			return locations;
+		}
+
 	}
-	
+
+	public static class IceBulletLeftClick extends WaterCombo {
+
+		public IceBulletLeftClick(Player player) {
+			super(player, "IceBulletLeftClick");
+		}
+
+		@Override
+		public String getName() {
+			return "IceBullet";
+		}
+
+	}
+
+	public static class IceBulletRightClick extends WaterCombo {
+
+		public IceBulletRightClick(Player player) {
+			super(player, "IceBulletRightClick");
+		}
+
+		@Override
+		public String getName() {
+			return "IceBullet";
+		}
+
+	}
+
 }

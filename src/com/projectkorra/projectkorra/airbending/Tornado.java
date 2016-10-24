@@ -36,7 +36,7 @@ public class Tornado extends AirAbility {
 
 	public Tornado(Player player) {
 		super(player);
-		
+
 		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
 		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
 		this.origin.setY(origin.getY() - 1.0 / 10.0 * currentHeight);
@@ -77,7 +77,7 @@ public class Tornado extends AirAbility {
 		}
 		rotateTornado();
 	}
-	
+
 	@Override
 	public void remove() {
 		super.remove();
@@ -199,7 +199,7 @@ public class Tornado extends AirAbility {
 	public long getCooldown() {
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -208,6 +208,11 @@ public class Tornado extends AirAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
 	}
 
 	public Location getOrigin() {

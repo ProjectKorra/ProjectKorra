@@ -1,13 +1,11 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -16,11 +14,14 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class SurgeWall extends WaterAbility {
 
@@ -42,6 +43,7 @@ public class SurgeWall extends WaterAbility {
 	private Location location;
 	private Location firstDestination;
 	private Location targetDestination;
+	private ArrayList<Location> locations;
 	private Vector firstDirection;
 	private Vector targetDirection;
 
@@ -53,6 +55,7 @@ public class SurgeWall extends WaterAbility {
 		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown");
 		this.range = getConfig().getDouble(RANGE_CONFIG);
 		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
+		this.locations = new ArrayList<>();
 
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 		if (wave != null && !wave.isProgressing()) {
@@ -214,7 +217,8 @@ public class SurgeWall extends WaterAbility {
 			remove();
 			return;
 		}
-
+		locations.clear();
+		
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			boolean matchesName = bPlayer.getBoundAbilityName().equalsIgnoreCase(getName());
@@ -258,6 +262,7 @@ public class SurgeWall extends WaterAbility {
 							WALL_BLOCKS.put(block, player);
 							addWallBlock(block);
 							blocks.add(block);
+							locations.add(block.getLocation());
 							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 						}
 					}
@@ -482,6 +487,11 @@ public class SurgeWall extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		return locations;
 	}
 
 	public boolean isProgressing() {
