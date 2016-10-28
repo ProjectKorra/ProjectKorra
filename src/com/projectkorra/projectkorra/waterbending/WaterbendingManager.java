@@ -13,7 +13,6 @@ public class WaterbendingManager implements Runnable {
 	@Override
 	public void run() {
 		WaterPassive.handlePassive();
-		PhaseChangeFreeze.handleFrozenBlocks();
 		Torrent.progressAllCleanup();
 		WaterArms.progressAllCleanup();
 	}

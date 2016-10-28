@@ -372,8 +372,8 @@ public class WaterManipulation extends WaterAbility {
 			if (!AFFECTED_BLOCKS.containsKey(block)) {
 				AFFECTED_BLOCKS.put(block, block);
 			}
-			if (PhaseChangeFreeze.getFrozenBlocks().containsKey(block)) {
-				PhaseChangeFreeze.getFrozenBlocks().remove(block);
+			if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
+				PhaseChange.getFrozenBlocksAsBlock().remove(block);
 			}
 			block.setType(Material.STATIONARY_WATER);
 			block.setData((byte) 0);
