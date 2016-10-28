@@ -1,10 +1,8 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.DamageHandler;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,9 +14,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class Ripple extends EarthAbility {
 
@@ -328,6 +328,11 @@ public class Ripple extends EarthAbility {
 		return false;
 	}
 	
+	@Override
+	public ArrayList<Location> getLocations() {
+		return locations;
+	}
+	
 	public int getStep() {
 		return step;
 	}
@@ -414,10 +419,6 @@ public class Ripple extends EarthAbility {
 
 	public void setBlock4(Block block4) {
 		this.block4 = block4;
-	}
-
-	public ArrayList<Location> getLocations() {
-		return locations;
 	}
 
 	public ArrayList<Entity> getEntities() {

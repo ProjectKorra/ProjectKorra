@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -216,6 +217,15 @@ public class TorrentWave extends WaterAbility {
 		return false;
 	}
 
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (TempBlock tblock : blocks) {
+			locations.add(tblock.getLocation());
+		}
+		return locations;
+	}
+	
 	public long getTime() {
 		return time;
 	}

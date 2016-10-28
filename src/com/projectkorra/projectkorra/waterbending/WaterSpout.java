@@ -14,6 +14,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -289,6 +290,11 @@ public class WaterSpout extends WaterAbility {
 		return -1;
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean removeSpouts(Location loc0, double radius, Player sourcePlayer) {
 		boolean removed = false;
 		for (WaterSpout spout : getAbilities(WaterSpout.class)) {
@@ -331,6 +337,24 @@ public class WaterSpout extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return true;
+	}
+	
+	@Override
+	public boolean isCollidable() {
+		return true;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		Location top = this.getLocation();
+		Location iterLoc = getBase().getLocation();
+		double ySpacing = 2;
+		while (iterLoc.getY() <= top.getY()) {
+			locations.add(iterLoc.clone());
+			iterLoc.add(0, ySpacing, 0);
+		}
+		return locations;
 	}
 
 	public boolean isCanBendOnPackedIce() {
@@ -416,5 +440,5 @@ public class WaterSpout extends WaterAbility {
 	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
-
+	
 }

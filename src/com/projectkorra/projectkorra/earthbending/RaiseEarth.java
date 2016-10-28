@@ -13,6 +13,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -177,6 +179,15 @@ public class RaiseEarth extends EarthAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (Block block : affectedBlocks.values()) {
+			locations.add(block.getLocation());
+		}
+		return locations;
 	}
 
 	public int getDistance() {

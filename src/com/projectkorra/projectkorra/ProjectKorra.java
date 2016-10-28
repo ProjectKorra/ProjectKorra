@@ -11,6 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
+import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.airbending.AirbendingManager;
@@ -33,6 +35,7 @@ public class ProjectKorra extends JavaPlugin {
 	public static ProjectKorra plugin;
 	public static Logger log;
 	public static PKLogHandler handler;
+	public static CollisionManager collisionManager;
 	public static long time_step = 1;
 	public Updater updater;
 	
@@ -59,6 +62,9 @@ public class ProjectKorra extends JavaPlugin {
 		new MultiAbilityManager();
 		new ComboManager();
 		CoreAbility.registerAbilities();
+		collisionManager = new CollisionManager(); 
+		new CollisionInitializer(collisionManager).initializeCollisions();
+		collisionManager.startCollisionDetection();
 		
 		Preset.loadExternalPresets();
 		

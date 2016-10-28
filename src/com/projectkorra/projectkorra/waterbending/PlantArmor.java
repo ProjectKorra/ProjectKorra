@@ -23,6 +23,7 @@ public class PlantArmor extends PlantAbility {
 	private int resistance;
 	private long duration;
 	private long cooldown;
+	private long tickTime;
 	private double range;
 	private Material blockType;
 	private Block block;
@@ -39,6 +40,7 @@ public class PlantArmor extends PlantAbility {
 		
 		this.range = getNightFactor(range);
 		this.duration = (long) getNightFactor(duration);  
+		this.tickTime = System.currentTimeMillis();
 		
 		if (hasAbility(player, PlantArmor.class)) {
 			return;
@@ -97,7 +99,7 @@ public class PlantArmor extends PlantAbility {
 		new TempArmor(player, this, new ItemStack[] {boots, leggings, chestplate, helmet});
 
 		formed = true;
-		startTime = System.currentTimeMillis();
+		tickTime = System.currentTimeMillis();
 	}
 
 	private boolean inPosition() {
@@ -125,7 +127,7 @@ public class PlantArmor extends PlantAbility {
 
 		if (formed) {
 			PassiveHandler.checkArmorPassives(player);
-			if (System.currentTimeMillis() > startTime + duration) {
+			if (System.currentTimeMillis() > tickTime + duration) {
 				remove();
 				bPlayer.addCooldown(this);
 				return;
@@ -166,7 +168,7 @@ public class PlantArmor extends PlantAbility {
 	public static boolean canRemoveArmor(Player player) {
 		PlantArmor plantArmor = getAbility(player, PlantArmor.class);
 		if (plantArmor != null) {
-			if (System.currentTimeMillis() < plantArmor.startTime + plantArmor.duration) {
+			if (System.currentTimeMillis() < plantArmor.tickTime + plantArmor.duration) {
 				return false;
 			}
 		}
@@ -188,10 +190,8 @@ public class PlantArmor extends PlantAbility {
 
 	@Override
 	public Location getLocation() {
-		if (location != null) {
+		if (!formed) {
 			return location;
-		} else if (block != null) {
-			return block.getLocation();
 		}
 		return player != null ? player.getLocation() : null;
 	}

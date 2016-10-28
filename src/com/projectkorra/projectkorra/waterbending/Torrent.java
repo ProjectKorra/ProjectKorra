@@ -655,6 +655,23 @@ public class Torrent extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isCollidable() {
+		return forming || formed || launch || launching;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (TempBlock tblock : blocks) {
+			locations.add(tblock.getLocation());
+		}
+		for (TempBlock tblock : launchedBlocks) {
+			locations.add(tblock.getLocation());
+		}
+		return locations;
+	}
 
 	public boolean isSourceSelected() {
 		return sourceSelected;

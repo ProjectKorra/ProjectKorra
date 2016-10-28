@@ -1,6 +1,8 @@
 package com.projectkorra.projectkorra.earthbending;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,7 +18,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthTunnel extends EarthAbility {
-	
+
 	private long interval;
 	private long time;
 	private double depth;
@@ -32,10 +34,10 @@ public class EarthTunnel extends EarthAbility {
 	private Vector direction;
 
 	public static Map<TempBlock, Long> airBlocks = new ConcurrentHashMap<TempBlock, Long>();
-	
+
 	public EarthTunnel(Player player) {
 		super(player);
-		
+
 		this.maxRadius = getConfig().getDouble("Abilities.Earth.EarthTunnel.MaxRadius");
 		this.range = getConfig().getDouble("Abilities.Earth.EarthTunnel.Range");
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthTunnel.Radius");
@@ -43,21 +45,21 @@ public class EarthTunnel extends EarthAbility {
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.radiusIncrement = radius;
 		this.time = System.currentTimeMillis();
-		
+
 		this.location = player.getEyeLocation().clone();
 		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
 		this.block = origin.getBlock();
 		this.direction = location.getDirection().clone().normalize();
 		this.depth = 0;
-		if(origin.getWorld().equals(location.getWorld())) {
-				this.depth = Math.max(0, origin.distance(location) - 1);
+		if (origin.getWorld().equals(location.getWorld())) {
+			this.depth = Math.max(0, origin.distance(location) - 1);
 		}
 		this.angle = 0;
 
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		
+
 		start();
 	}
 
@@ -67,7 +69,7 @@ public class EarthTunnel extends EarthAbility {
 			remove();
 			return;
 		}
-		
+
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			if (Math.abs(Math.toDegrees(player.getEyeLocation().getDirection().angle(direction))) > 20 || !player.isSneaking()) {
@@ -79,7 +81,7 @@ public class EarthTunnel extends EarthAbility {
 						remove();
 						return;
 					}
-					
+
 					if (angle >= 360) {
 						angle = 0;
 						if (radius >= maxRadius) {
@@ -96,11 +98,11 @@ public class EarthTunnel extends EarthAbility {
 					} else {
 						angle += 20;
 					}
-					
+
 					Vector vec = GeneralMethods.getOrthogonalVector(direction, angle, radius);
 					block = location.clone().add(direction.clone().normalize().multiply(depth)).add(vec).getBlock();
 				}
-				
+
 				if (revert) {
 					if (getMovedEarth().containsKey(block)) {
 						block.setType(Material.AIR);
@@ -128,7 +130,7 @@ public class EarthTunnel extends EarthAbility {
 	public long getCooldown() {
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -137,6 +139,15 @@ public class EarthTunnel extends EarthAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (TempBlock tblock : airBlocks.keySet()) {
+			locations.add(tblock.getLocation());
+		}
+		return locations;
 	}
 
 	public long getInterval() {
@@ -230,7 +241,7 @@ public class EarthTunnel extends EarthAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
+
 	public static void revertAirBlocks() {
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Earth.EarthTunnel.Revert")) {
 			for (TempBlock tempBlock : EarthTunnel.airBlocks.keySet()) {
@@ -241,5 +252,5 @@ public class EarthTunnel extends EarthAbility {
 			}
 		}
 	}
-	
+
 }

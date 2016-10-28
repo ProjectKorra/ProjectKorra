@@ -338,6 +338,16 @@ public class IceBlast extends IceAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isCollidable() {
+		return progressing;
+	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return collisionRadius;
+	}
 
 	public boolean isPrepared() {
 		return prepared;
@@ -401,10 +411,6 @@ public class IceBlast extends IceAbility {
 
 	public void setDamage(double damage) {
 		this.damage = damage;
-	}
-
-	public double getCollisionRadius() {
-		return collisionRadius;
 	}
 
 	public void setCollisionRadius(double collisionRadius) {
