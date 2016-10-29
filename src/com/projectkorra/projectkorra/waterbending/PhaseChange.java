@@ -457,31 +457,26 @@ public class PhaseChange extends IceAbility {
 
 	@Override
 	public boolean isSneakAbility() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isHarmlessAbility() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public long getCooldown() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "PhaseChange";
 	}
 
 	@Override
 	public Location getLocation() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
