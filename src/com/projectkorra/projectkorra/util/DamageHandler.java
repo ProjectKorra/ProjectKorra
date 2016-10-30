@@ -52,10 +52,7 @@ public class DamageHandler {
 					Bukkit.getServer().getPluginManager().callEvent(event);
 				}
 				
-				DamageCause cause = DamageCause.CUSTOM;
-				if (ignoreArmor) {
-					cause = DamageCause.MAGIC;
-				}
+				DamageCause cause = DamageCause.CUSTOM;							
 				
 				EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, cause, damage);
 				Bukkit.getServer().getPluginManager().callEvent(finalEvent);
