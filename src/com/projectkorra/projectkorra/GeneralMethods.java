@@ -849,7 +849,7 @@ public class GeneralMethods {
 	    Iterator<Entity> entityIterator = entities.iterator(); 
 	    while (entityIterator.hasNext()) {
 	    	Entity e = entityIterator.next();
-	        if (e.getLocation().distanceSquared(location) > radius * radius) {
+	        if (e.getWorld() != location.getWorld() || e.getLocation().distanceSquared(location) > radius * radius) {
 	            entityIterator.remove(); 
 	        } else if (e instanceof Player && ((Player)e).getGameMode().equals(GameMode.SPECTATOR)) {
 	        	entityIterator.remove();
