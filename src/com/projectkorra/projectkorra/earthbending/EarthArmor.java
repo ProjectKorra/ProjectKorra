@@ -327,6 +327,23 @@ public class EarthArmor extends EarthAbility {
 		if (material == Material.NETHERRACK) return 0x9b3131; //Pinkish-red
 		if (material == Material.QUARTZ_ORE) return 0xb75656; //Pinkish-red
 		if (material == Material.QUARTZ_BLOCK) return 0xfff4f4; //White
+		if (material == Material.STAINED_CLAY && damage == 0x0) return 0xCFAFA0; //White Stained Clay
+		if (material == Material.STAINED_CLAY && damage == 0x1) return 0xA75329; //Orange
+		if (material == Material.STAINED_CLAY && damage == 0x2) return 0x95596E; //Magenta
+		if (material == Material.STAINED_CLAY && damage == 0x3) return 0x736E8A; //Light blue
+		if (material == Material.STAINED_CLAY && damage == 0x4) return 0xBA8825; //Yellow
+		if (material == Material.STAINED_CLAY && damage == 0x5) return 0x6B7736; //Lime
+		if (material == Material.STAINED_CLAY && damage == 0x6) return 0xA24D4F; //Pink
+		if (material == Material.STAINED_CLAY && damage == 0x7) return 0x3A2923; //Gray
+		if (material == Material.STAINED_CLAY && damage == 0x8) return 0x876A61; //Light Gray
+		if (material == Material.STAINED_CLAY && damage == 0x9) return 0x575B5B; //Cyan
+		if (material == Material.STAINED_CLAY && damage == 0xA) return 0x734453; //Purple
+		if (material == Material.STAINED_CLAY && damage == 0xB) return 0x493A5A; //Blue
+		if (material == Material.STAINED_CLAY && damage == 0xC) return 0x4C3223; //Brown
+		if (material == Material.STAINED_CLAY && damage == 0xD) return 0x4B522A; //Green
+		if (material == Material.STAINED_CLAY && damage == 0xE) return 0x8D3B2E; //Red
+		if (material == Material.STAINED_CLAY && damage == 0xF) return 0x251610; //Black
+		
 		
 		return 0x9e9e9e; //Stone
 	}

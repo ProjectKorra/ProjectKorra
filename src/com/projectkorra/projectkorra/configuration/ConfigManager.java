@@ -361,6 +361,7 @@ public class ConfigManager {
 			earthBlocks.add("QUARTZ_ORE");
 			earthBlocks.add("COBBLESTONE");
 			earthBlocks.add("STEP");
+			earthBlocks.add("GRASS_PATH");
 
 			ArrayList<String> metalBlocks = new ArrayList<String>();
 			metalBlocks.add("IRON_BLOCK");
