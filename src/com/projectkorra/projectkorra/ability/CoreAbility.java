@@ -60,7 +60,8 @@ import sun.reflect.ReflectionFactory;
  */
 public abstract class CoreAbility implements Ability {
 
-	private static final Map<Class<? extends CoreAbility>, Map<UUID, Map<Integer, CoreAbility>>> INSTANCES = new ConcurrentHashMap<>();
+	private static final Set<CoreAbility> INSTANCES = Collections.newSetFromMap(new ConcurrentHashMap<CoreAbility, Boolean>());
+	private static final Map<Class<? extends CoreAbility>, Map<UUID, Map<Integer, CoreAbility>>> INSTANCES_BY_PLAYER = new ConcurrentHashMap<>();
 	private static final Map<Class<? extends CoreAbility>, Set<CoreAbility>> INSTANCES_BY_CLASS = new ConcurrentHashMap<>();
 	private static final Map<String, CoreAbility> ABILITIES_BY_NAME = new ConcurrentSkipListMap<>(); // preserves ordering
 	private static final Map<Class<? extends CoreAbility>, CoreAbility> ABILITIES_BY_CLASS = new ConcurrentHashMap<>();
@@ -145,18 +146,19 @@ public abstract class CoreAbility implements Ability {
 		Class<? extends CoreAbility> clazz = getClass();
 		UUID uuid = player.getUniqueId();
 
-		if (!INSTANCES.containsKey(clazz)) {
-			INSTANCES.put(clazz, new ConcurrentHashMap<UUID, Map<Integer, CoreAbility>>());
+		if (!INSTANCES_BY_PLAYER.containsKey(clazz)) {
+			INSTANCES_BY_PLAYER.put(clazz, new ConcurrentHashMap<UUID, Map<Integer, CoreAbility>>());
 		}
-		if (!INSTANCES.get(clazz).containsKey(uuid)) {
-			INSTANCES.get(clazz).put(uuid, new ConcurrentHashMap<Integer, CoreAbility>());
+		if (!INSTANCES_BY_PLAYER.get(clazz).containsKey(uuid)) {
+			INSTANCES_BY_PLAYER.get(clazz).put(uuid, new ConcurrentHashMap<Integer, CoreAbility>());
 		}
 		if (!INSTANCES_BY_CLASS.containsKey(clazz)) {
 			INSTANCES_BY_CLASS.put(clazz, Collections.newSetFromMap(new ConcurrentHashMap<CoreAbility, Boolean>()));
 		}
 
-		INSTANCES.get(clazz).get(uuid).put(this.id, this);
+		INSTANCES_BY_PLAYER.get(clazz).get(uuid).put(this.id, this);
 		INSTANCES_BY_CLASS.get(clazz).add(this);
+		INSTANCES.add(this);
 	}
 
 	/**
@@ -177,7 +179,7 @@ public abstract class CoreAbility implements Ability {
 		Bukkit.getServer().getPluginManager().callEvent(new AbilityEndEvent(this));
 		removed = true;
 
-		Map<UUID, Map<Integer, CoreAbility>> classMap = INSTANCES.get(getClass());
+		Map<UUID, Map<Integer, CoreAbility>> classMap = INSTANCES_BY_PLAYER.get(getClass());
 		if (classMap != null) {
 			Map<Integer, CoreAbility> playerMap = classMap.get(player.getUniqueId());
 			if (playerMap != null) {
@@ -188,13 +190,14 @@ public abstract class CoreAbility implements Ability {
 			}
 
 			if (classMap.size() == 0) {
-				INSTANCES.remove(getClass());
+				INSTANCES_BY_PLAYER.remove(getClass());
 			}
 		}
 
 		if (INSTANCES_BY_CLASS.containsKey(getClass())) {
 			INSTANCES_BY_CLASS.get(getClass()).remove(this);
 		}
+		INSTANCES.remove(this);
 	}
 
 	/**
@@ -311,10 +314,18 @@ public abstract class CoreAbility implements Ability {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends CoreAbility> Collection<T> getAbilities(Player player, Class<T> clazz) {
-		if (player == null || clazz == null || INSTANCES.get(clazz) == null || INSTANCES.get(clazz).get(player.getUniqueId()) == null) {
+		if (player == null || clazz == null || INSTANCES_BY_PLAYER.get(clazz) == null || INSTANCES_BY_PLAYER.get(clazz).get(player.getUniqueId()) == null) {
 			return Collections.emptySet();
 		}
-		return (Collection<T>) INSTANCES.get(clazz).get(player.getUniqueId()).values();
+		return (Collection<T>) INSTANCES_BY_PLAYER.get(clazz).get(player.getUniqueId()).values();
+	}
+
+	/**
+	 * @return a Collection of all of the CoreAbilities that are currently
+	 *         alive. Do not modify this Collection.
+	 */
+	public static Collection<CoreAbility> getAbilitiesByInstances() {
+		return INSTANCES;
 	}
 
 	/**
@@ -360,7 +371,7 @@ public abstract class CoreAbility implements Ability {
 	public static Set<Player> getPlayers(Class<? extends CoreAbility> clazz) {
 		HashSet<Player> players = new HashSet<>();
 		if (clazz != null) {
-			Map<UUID, Map<Integer, CoreAbility>> uuidMap = INSTANCES.get(clazz);
+			Map<UUID, Map<Integer, CoreAbility>> uuidMap = INSTANCES_BY_PLAYER.get(clazz);
 			if (uuidMap != null) {
 				for (UUID uuid : uuidMap.keySet()) {
 					Player uuidPlayer = Bukkit.getPlayer(uuid);
@@ -682,7 +693,7 @@ public abstract class CoreAbility implements Ability {
 		int playerCounter = 0;
 		HashMap<String, Integer> classCounter = new HashMap<>();
 
-		for (Map<UUID, Map<Integer, CoreAbility>> map1 : INSTANCES.values()) {
+		for (Map<UUID, Map<Integer, CoreAbility>> map1 : INSTANCES_BY_PLAYER.values()) {
 			playerCounter++;
 			for (Map<Integer, CoreAbility> map2 : map1.values()) {
 				for (CoreAbility coreAbil : map2.values()) {
