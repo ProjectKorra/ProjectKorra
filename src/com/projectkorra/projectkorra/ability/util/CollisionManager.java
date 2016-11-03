@@ -16,16 +16,12 @@ import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
 
 /**
  * A CollisionManager is used to monitor possible collisions between all
-<<<<<<< HEAD
- * CoreAbilities. Use {@link #add(Collision)} to begin monitoring for collision
- * between two abilities, as shown in {@link CollisionInitializer}.
-=======
  * CoreAbilities. Use {@link #addCollision(Collision)} to begin monitoring for
  * collision between two abilities, as shown in {@link CollisionInitializer}.
  * <p>
- * Addon developers should use
+ * Addon developers should use:<br>
  * ProjectKorra.getCollisionInitializer().addCollision(myCoreAbility)
->>>>>>> collidable_final
+ * ProjectKorra.getCollisionInitializer().addSmallAbility(myCoreAbility)
  * <p>
  * For a CoreAbility to collide properly, the {@link CoreAbility#isCollidable()}
  * , {@link CoreAbility#getCollisionRadius()},
