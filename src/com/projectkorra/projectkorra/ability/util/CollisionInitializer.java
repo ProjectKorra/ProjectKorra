@@ -1,5 +1,7 @@
 package com.projectkorra.projectkorra.ability.util;
 
+import java.util.ArrayList;
+
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.AirBlast;
 import com.projectkorra.projectkorra.airbending.AirBubble;
@@ -63,14 +65,22 @@ import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
  */
 public class CollisionInitializer {
 
-	private CollisionManager cm;
+	private CollisionManager collisionManager;
+	private ArrayList<CoreAbility> smallAbilities;
+	private ArrayList<CoreAbility> largeAbilities;
+	private ArrayList<CoreAbility> comboAbilities;
+	private ArrayList<CoreAbility> removeSpoutAbilities;
 
-	public CollisionInitializer(CollisionManager cm) {
-		this.cm = cm;
+	public CollisionInitializer(CollisionManager collisionManager) {
+		this.collisionManager = collisionManager;
+		this.smallAbilities = new ArrayList<>();
+		this.comboAbilities = new ArrayList<>();
+		this.largeAbilities = new ArrayList<>();
+		this.removeSpoutAbilities = new ArrayList<>();
 	}
 
 	@SuppressWarnings("unused")
-	public void initializeCollisions() {
+	public void initializeDefaultCollisions() {
 		CoreAbility airBlast = CoreAbility.getAbility(AirBlast.class);
 		CoreAbility airBubble = CoreAbility.getAbility(AirBubble.class);
 		CoreAbility airCombo = CoreAbility.getAbility(AirCombo.class);
@@ -127,50 +137,143 @@ public class CollisionInitializer {
 		CoreAbility waterSpout = CoreAbility.getAbility(WaterSpout.class);
 		CoreAbility waterSpoutWave = CoreAbility.getAbility(WaterSpoutWave.class);
 
-		CoreAbility[] smallDamageAbils = { airSwipe, earthBlast, waterManipulation, fireBlast, combustion, blazeArc };
-		CoreAbility[] abilitiesThatRemoveSmall = { earthSmash, airShield, airCombo, fireCombo, waterCombo, fireBlastCharged };
-		CoreAbility[] abilsThatRemoveSpouts = { airSwipe, earthBlast, waterManipulation, fireBlast, fireBlastCharged, earthSmash, fireCombo, airCombo, waterCombo };
-		CoreAbility[] damageComboAbils = { fireKick, fireSpin, fireWheel, airSweep, iceBullet };
+		CoreAbility[] smallAbils = { airSwipe, earthBlast, waterManipulation, fireBlast, combustion, blazeArc };
+		CoreAbility[] largeAbils = { earthSmash, airShield, fireBlastCharged, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
+		CoreAbility[] comboAbils = { fireKick, fireSpin, fireWheel, airSweep, iceBullet };
+		CoreAbility[] removeSpoutAbils = { airSwipe, earthBlast, waterManipulation, fireBlast, fireBlastCharged, earthSmash, fireCombo, airCombo, waterCombo };
 
-		// All small damaging abilities block each other
-		for (int i = 0; i < smallDamageAbils.length; i++) {
-			for (int j = i; j < smallDamageAbils.length; j++) {
-				cm.add(new Collision(smallDamageAbils[i], smallDamageAbils[j], true, true));
-			}
+		for (CoreAbility smallAbil : smallAbils) {
+			addSmallAbility(smallAbil);
+		}
+		for (CoreAbility largeAbil : largeAbils) {
+			addLargeAbility(largeAbil);
+		}
+		for (CoreAbility comboAbil : comboAbils) {
+			addComboAbility(comboAbil);
+		}
+		for (CoreAbility removeSpoutAbil : removeSpoutAbils) {
+			addRemoveSpoutAbility(removeSpoutAbil);
 		}
 
-		// All combos block each other
-		for (int i = 0; i < damageComboAbils.length; i++) {
-			for (int j = i; j < damageComboAbils.length; j++) {
-				cm.add(new Collision(damageComboAbils[i], damageComboAbils[j], true, true));
-			}
+		collisionManager.addCollision(new Collision(airShield, airBlast, false, true));
+		collisionManager.addCollision(new Collision(airShield, airSuction, false, true));
+		collisionManager.addCollision(new Collision(airShield, airStream, false, true));
+		for (CoreAbility comboAbil : comboAbils) {
+			collisionManager.addCollision(new Collision(airShield, comboAbil, false, true));
 		}
 
-		// These abilities remove all small damaging abilities
-		for (CoreAbility abilThatRemoves : abilitiesThatRemoveSmall) {
-			for (CoreAbility smallDamageAbil : smallDamageAbils) {
-				cm.add(new Collision(abilThatRemoves, smallDamageAbil, false, true));
-			}
+		collisionManager.addCollision(new Collision(fireShield, fireBlast, false, true));
+		collisionManager.addCollision(new Collision(fireShield, fireBlastCharged, false, true));
+		collisionManager.addCollision(new Collision(fireShield, waterManipulation, false, true));
+		collisionManager.addCollision(new Collision(fireShield, earthBlast, false, true));
+		collisionManager.addCollision(new Collision(fireShield, airSweep, false, true));
+	}
+
+	/**
+	 * An ability that collides with other small abilities. (EarthBlast,
+	 * FireBlast). Two colliding small abilities will remove each other. A small
+	 * ability is removed when it collides with a large ability.
+	 * 
+	 * @param smallAbility the small CoreAbility
+	 */
+	public void addSmallAbility(CoreAbility smallAbility) {
+		if (smallAbility == null) {
+			return;
+		}
+		smallAbilities.add(smallAbility);
+		for (CoreAbility otherSmallAbility : smallAbilities) {
+			collisionManager.addCollision(new Collision(smallAbility, otherSmallAbility, true, true));
 		}
 
-		for (CoreAbility spoutDestroyAbil : abilsThatRemoveSpouts) {
-			cm.add(new Collision(spoutDestroyAbil, airSpout, false, true));
-			cm.add(new Collision(spoutDestroyAbil, waterSpout, false, true));
-			cm.add(new Collision(spoutDestroyAbil, sandSpout, false, true));
+		for (CoreAbility largeAbility : largeAbilities) {
+			collisionManager.addCollision(new Collision(largeAbility, smallAbility, false, true));
 		}
 
-		cm.add(new Collision(airShield, airBlast, false, true));
-		cm.add(new Collision(airShield, airSuction, false, true));
-		cm.add(new Collision(airShield, airStream, false, true));
-		for (CoreAbility comboAbil : damageComboAbils) {
-			cm.add(new Collision(airShield, comboAbil, false, true));
-		}
+	}
 
-		cm.add(new Collision(fireShield, fireBlast, false, true));
-		cm.add(new Collision(fireShield, fireBlastCharged, false, true));
-		cm.add(new Collision(fireShield, waterManipulation, false, true));
-		cm.add(new Collision(fireShield, earthBlast, false, true));
-		cm.add(new Collision(fireShield, airSweep, false, true));
+	/**
+	 * A large ability that removes small abilities (EarthSmash, Charged
+	 * FireBlast). The large ability remains while the small ability is
+	 * destroyed.
+	 * 
+	 * @param largeAbility the large CoreAbility
+	 */
+	public void addLargeAbility(CoreAbility largeAbility) {
+		if (largeAbility == null) {
+			return;
+		}
+		largeAbilities.add(largeAbility);
+		for (CoreAbility smallAbility : smallAbilities) {
+			collisionManager.addCollision(new Collision(largeAbility, smallAbility, false, true));
+		}
+	}
+
+	/**
+	 * A combo ability that collides with all other combo abilities. Both
+	 * colliding combo abilities are destroyed.
+	 * 
+	 * @param comboAbility the combo CoreAbility
+	 */
+	public void addComboAbility(CoreAbility comboAbility) {
+		if (comboAbility == null) {
+			return;
+		}
+		comboAbilities.add(comboAbility);
+		for (CoreAbility otherComboAbility : smallAbilities) {
+			collisionManager.addCollision(new Collision(comboAbility, otherComboAbility, true, true));
+		}
+	}
+
+	/**
+	 * An ability that destroys WaterSpout, AirSpout, and SandSpout upon
+	 * contact. The spout is destroyed and this ability remains.
+	 * 
+	 * @param ability the ability that removes spouts
+	 */
+	public void addRemoveSpoutAbility(CoreAbility ability) {
+		if (ability == null) {
+			return;
+		}
+		removeSpoutAbilities.add(ability);
+		collisionManager.addCollision(new Collision(ability, CoreAbility.getAbility(AirSpout.class), false, true));
+		collisionManager.addCollision(new Collision(ability, CoreAbility.getAbility(WaterSpout.class), false, true));
+		collisionManager.addCollision(new Collision(ability, CoreAbility.getAbility(SandSpout.class), false, true));
+	}
+
+	public CollisionManager getCollisionManager() {
+		return collisionManager;
+	}
+
+	public ArrayList<CoreAbility> getSmallAbilities() {
+		return smallAbilities;
+	}
+
+	public void setSmallAbilities(ArrayList<CoreAbility> smallAbilities) {
+		this.smallAbilities = smallAbilities;
+	}
+
+	public ArrayList<CoreAbility> getLargeAbilities() {
+		return largeAbilities;
+	}
+
+	public void setLargeAbilities(ArrayList<CoreAbility> largeAbilities) {
+		this.largeAbilities = largeAbilities;
+	}
+
+	public ArrayList<CoreAbility> getComboAbilities() {
+		return comboAbilities;
+	}
+
+	public void setComboAbilities(ArrayList<CoreAbility> comboAbilities) {
+		this.comboAbilities = comboAbilities;
+	}
+
+	public ArrayList<CoreAbility> getRemoveSpoutAbilities() {
+		return removeSpoutAbilities;
+	}
+
+	public void setRemoveSpoutAbilities(ArrayList<CoreAbility> removeSpoutAbilities) {
+		this.removeSpoutAbilities = removeSpoutAbilities;
 	}
 
 }

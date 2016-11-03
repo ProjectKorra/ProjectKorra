@@ -36,6 +36,7 @@ public class ProjectKorra extends JavaPlugin {
 	public static Logger log;
 	public static PKLogHandler handler;
 	public static CollisionManager collisionManager;
+	public static CollisionInitializer collisionInitializer;
 	public static long time_step = 1;
 	public Updater updater;
 	
@@ -61,9 +62,10 @@ public class ProjectKorra extends JavaPlugin {
 		new Commands(this);
 		new MultiAbilityManager();
 		new ComboManager();
-		CoreAbility.registerAbilities();
-		collisionManager = new CollisionManager(); 
-		new CollisionInitializer(collisionManager).initializeCollisions();
+		collisionManager = new CollisionManager();
+		collisionInitializer = new CollisionInitializer(collisionManager);
+		CoreAbility.registerAbilities();	
+		collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered
 		collisionManager.startCollisionDetection();
 		
 		Preset.loadExternalPresets();
@@ -119,6 +121,22 @@ public class ProjectKorra extends JavaPlugin {
 			DBConnection.sql.close();
 		}
 		handler.close();
+	}
+
+	public static CollisionManager getCollisionManager() {
+		return collisionManager;
+	}
+
+	public static void setCollisionManager(CollisionManager collisionManager) {
+		ProjectKorra.collisionManager = collisionManager;
+	}
+
+	public static CollisionInitializer getCollisionInitializer() {
+		return collisionInitializer;
+	}
+
+	public static void setCollisionInitializer(CollisionInitializer collisionInitializer) {
+		ProjectKorra.collisionInitializer = collisionInitializer;
 	}
 
 }
