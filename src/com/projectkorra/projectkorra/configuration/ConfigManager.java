@@ -631,7 +631,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceBlast.Damage", 3);
 			config.addDefault("Abilities.Water.IceBlast.Range", 20);
 			config.addDefault("Abilities.Water.IceBlast.DeflectRange", 3);
-			config.addDefault("Abilities.Water.IceBlast.CollisionRadius", 0.5);
+			config.addDefault("Abilities.Water.IceBlast.CollisionRadius", 1.5);
 			config.addDefault("Abilities.Water.IceBlast.Interval", 20);
 			config.addDefault("Abilities.Water.IceBlast.Cooldown", 1500);
 
@@ -651,7 +651,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.IceSpike.Field.Cooldown", 2000);
 			config.addDefault("Abilities.Water.IceSpike.Blast.Range", 20);
 			config.addDefault("Abilities.Water.IceSpike.Blast.Damage", 1);
-			config.addDefault("Abilities.Water.IceSpike.Blast.CollisionRadius", 0.5);
+			config.addDefault("Abilities.Water.IceSpike.Blast.CollisionRadius", 1.5);
 			config.addDefault("Abilities.Water.IceSpike.Blast.DeflectRange", 3);
 			config.addDefault("Abilities.Water.IceSpike.Blast.Cooldown", 500);
 			config.addDefault("Abilities.Water.IceSpike.Blast.SlowCooldown", 5000);
@@ -776,7 +776,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterManipulation.Damage", 3.0);
 			config.addDefault("Abilities.Water.WaterManipulation.Range", 25);
 			config.addDefault("Abilities.Water.WaterManipulation.SelectRange", 16);
-			config.addDefault("Abilities.Water.WaterManipulation.CollisionRadius", 0.5);
+			config.addDefault("Abilities.Water.WaterManipulation.CollisionRadius", 1.5);
 			config.addDefault("Abilities.Water.WaterManipulation.DeflectRange", 3);
 			config.addDefault("Abilities.Water.WaterManipulation.Speed", 35);
 			config.addDefault("Abilities.Water.WaterManipulation.Push", 0.3);
@@ -845,7 +845,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthBlast.Push", 0.3);
 			config.addDefault("Abilities.Earth.EarthBlast.Cooldown", 500);
 			config.addDefault("Abilities.Earth.EarthBlast.DeflectRange", 3);
-			config.addDefault("Abilities.Earth.EarthBlast.CollisionRadius", 0.5);
+			config.addDefault("Abilities.Earth.EarthBlast.CollisionRadius", 1.5);
 
 			config.addDefault("Abilities.Earth.EarthGrab.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthGrab.SelectRange", 20);
@@ -975,7 +975,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireBlast.Enabled", true);
 			config.addDefault("Abilities.Fire.FireBlast.Speed", 20);
 			config.addDefault("Abilities.Fire.FireBlast.Range", 20);
-			config.addDefault("Abilities.Fire.FireBlast.CollisionRadius", 0.5);
+			config.addDefault("Abilities.Fire.FireBlast.CollisionRadius", 1.5);
 			config.addDefault("Abilities.Fire.FireBlast.Push", 0.3);
 			config.addDefault("Abilities.Fire.FireBlast.Damage", 3);
 			config.addDefault("Abilities.Fire.FireBlast.Cooldown", 1500);

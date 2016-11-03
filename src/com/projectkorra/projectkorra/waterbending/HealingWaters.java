@@ -208,7 +208,7 @@ public class HealingWaters extends HealingAbility {
 	
 	private void applyHealing(LivingEntity livingEntity) {
 		if (livingEntity.getHealth() < livingEntity.getMaxHealth()) {
-			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, 1));
+			livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, power));
 			AirAbility.breakBreathbendingHold(livingEntity);
 			healing = true;
 			healingSelf = false;
