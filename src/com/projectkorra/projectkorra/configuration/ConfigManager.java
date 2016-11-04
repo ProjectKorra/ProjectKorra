@@ -715,6 +715,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Torrent.Wave.GrowSpeed", 0.5);
 			config.addDefault("Abilities.Water.Torrent.Wave.Interval", 30);
 			config.addDefault("Abilities.Water.Torrent.Wave.Cooldown", 0);
+			config.addDefault("Abilities.Water.Torrent.Wave.Revert", true);
+			config.addDefault("Abilities.Water.Torrent.Wave.RevertTime", 60000);
 
 			config.addDefault("Abilities.Water.Plantbending.RegrowTime", 180000);
 
