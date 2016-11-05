@@ -60,7 +60,11 @@ public class BindCommand extends PKCommand {
 
 		// bending bind [ability] [#]
 		if (args.size() == 2) {
-			bind(sender, args.get(0), Integer.parseInt(args.get(1)));
+			try {
+				bind(sender, args.get(0), Integer.parseInt(args.get(1)));
+			} catch (NumberFormatException ex) {
+				sender.sendMessage(ChatColor.RED + wrongNumber);
+			}
 		}
 	}
 

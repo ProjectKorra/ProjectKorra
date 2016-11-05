@@ -120,7 +120,7 @@ public class Torrent extends WaterAbility {
 			if (isTransparent(player, block) && block.getType() != Material.ICE) {
 				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
 				FROZEN_BLOCKS.put(tblock, player);
-				FROZEN_BLOCKS_DELAY.put(tblock, System.currentTimeMillis());
+				FROZEN_BLOCKS_DELAY.put(tblock, System.currentTimeMillis() + (new Random().nextInt((500 + 500) + 1) - 500));
 				playIcebendingSound(block.getLocation());
 			}
 		}
