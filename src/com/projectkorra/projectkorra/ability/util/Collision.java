@@ -8,6 +8,10 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
  * A Collision is used to represent the collision between two CoreAbility
  * objects.
  * 
+ * To register Collisions Addon developers should use:<br>
+ * ProjectKorra.getCollisionInitializer().addCollision(myCoreAbility)
+ * ProjectKorra.getCollisionInitializer().addSmallAbility(myCoreAbility)
+ * 
  * @see CollisionManager
  */
 public class Collision {
