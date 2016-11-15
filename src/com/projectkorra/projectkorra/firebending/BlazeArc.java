@@ -13,6 +13,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BlazeArc extends FireAbility {
@@ -21,9 +22,9 @@ public class BlazeArc extends FireAbility {
 	private static final Material[] OVERWRITABLE_MATERIALS = { Material.SAPLING, Material.LONG_GRASS, Material.DEAD_BUSH, 
 			Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, 
 			Material.FIRE, Material.SNOW, Material.TORCH };
-	private static final ConcurrentHashMap<Block, Player> IGNITED_BLOCKS = new ConcurrentHashMap<Block, Player>();
-	private static final ConcurrentHashMap<Block, Long> IGNITED_TIMES = new ConcurrentHashMap<Block, Long>();
-	private static final ConcurrentHashMap<Location, MaterialData> REPLACED_BLOCKS = new ConcurrentHashMap<Location, MaterialData>();
+	private static final Map<Block, Player> IGNITED_BLOCKS = new ConcurrentHashMap<Block, Player>();
+	private static final Map<Block, Long> IGNITED_TIMES = new ConcurrentHashMap<Block, Long>();
+	private static final Map<Location, MaterialData> REPLACED_BLOCKS = new ConcurrentHashMap<Location, MaterialData>();
 	
 	private long time;
 	private long interval;
@@ -53,7 +54,7 @@ public class BlazeArc extends FireAbility {
 	private void ignite(Block block) {
 		if (block.getType() != Material.FIRE && block.getType() != Material.AIR) {
 			if (canFireGrief()) {
-				if (isPlant(block)) {
+				if (isPlant(block) || isSnow(block)) {
 					new PlantRegrowth(player, block);
 				}
 			} else if (block.getType() != Material.FIRE) {
@@ -254,15 +255,15 @@ public class BlazeArc extends FireAbility {
 		return OVERWRITABLE_MATERIALS;
 	}
 
-	public static ConcurrentHashMap<Block, Player> getIgnitedBlocks() {
+	public static Map<Block, Player> getIgnitedBlocks() {
 		return IGNITED_BLOCKS;
 	}
 
-	public static ConcurrentHashMap<Block, Long> getIgnitedTimes() {
+	public static Map<Block, Long> getIgnitedTimes() {
 		return IGNITED_TIMES;
 	}
 
-	public static ConcurrentHashMap<Location, MaterialData> getReplacedBlocks() {
+	public static Map<Location, MaterialData> getReplacedBlocks() {
 		return REPLACED_BLOCKS;
 	}
 

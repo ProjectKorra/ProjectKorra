@@ -161,8 +161,13 @@ public class HelpCommand extends PKCommand {
 		}
 		List<String> abils = new ArrayList<String>();
 		for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
-			if ((!(sender instanceof Player) || BendingPlayer.getBendingPlayer(sender.getName()).canBind(coreAbil)) && !coreAbil.isHiddenAbility() && coreAbil.isEnabled()) {
+			if (!(sender instanceof Player) && (!coreAbil.isHiddenAbility() || coreAbil instanceof ComboAbility) && coreAbil.isEnabled()) {
 				abils.add(coreAbil.getName());
+			} else if (sender instanceof Player) {
+				BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
+				if (bPlayer.canBind(coreAbil) || ((coreAbil instanceof ComboAbility) && bPlayer.hasElement(coreAbil.getElement()))) {
+					abils.add(coreAbil.getName());
+				}
 			}
 		}
 

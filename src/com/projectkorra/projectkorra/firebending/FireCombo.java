@@ -1,6 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -16,11 +17,11 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
@@ -29,26 +30,11 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 /*
- * TODO: Combo classes should eventually be rewritten so that each combo is treated
- * as an individual ability. In the mean time, we will just place "fake"
- * classes so that CoreAbility will register each ability. 
+ * TODO: Combo classes should eventually be rewritten so that each combo is
+ * treated as an individual ability. In the mean time, we will just place "fake"
+ * classes so that CoreAbility will register each ability.
  */
 public class FireCombo extends FireAbility implements ComboAbility {
-	
-	private static final ArrayList<String> BLOCKABLE_ABILITIES = new ArrayList<String>() {
-		private static final long serialVersionUID = 0; {
-			add("AirShield");
-			add("FireShield");
-			add("AirSwipe");
-			add("FireBlast");
-			add("EarthBlast");
-			add("WaterManipulation");
-			add("Combustion");
-			add("FireKick");
-			add("FireSpin");
-			add("AirSweep");
-		}
-	};
 
 	private boolean firstTime;
 	private int progressCounter;
@@ -69,20 +55,20 @@ public class FireCombo extends FireAbility implements ComboAbility {
 	private Vector direction;
 	private ArrayList<LivingEntity> affectedEntities;
 	private ArrayList<FireComboStream> tasks;
-	
+
 	public FireCombo(Player player, String ability) {
 		super(player);
 		this.ability = ability;
-		
+
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
-		
+
 		this.firstTime = true;
 		this.time = System.currentTimeMillis();
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
-		
+
 		if (ability.equalsIgnoreCase("FireKick")) {
 			this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.FireKick.Damage");
 			this.range = getConfig().getDouble("Abilities.Fire.FireCombo.FireKick.Range");
@@ -111,7 +97,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 			this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.JetBlaze.Cooldown");
 			this.fireTicks = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.FireTicks");
 		}
-		
+
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 			this.damage = AvatarState.getValue(damage);
@@ -120,10 +106,9 @@ public class FireCombo extends FireAbility implements ComboAbility {
 		start();
 	}
 
-
 	/**
-	 * Returns all of the FireCombos created by a specific player but filters the abilities based on
-	 * shift or click.
+	 * Returns all of the FireCombos created by a specific player but filters
+	 * the abilities based on shift or click.
 	 */
 	public static ArrayList<FireCombo> getFireCombo(Player player, ClickType type) {
 		ArrayList<FireCombo> list = new ArrayList<FireCombo>();
@@ -135,6 +120,11 @@ public class FireCombo extends FireAbility implements ComboAbility {
 		return list;
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean removeAroundPoint(Player player, String ability, Location loc, double radius) {
 		boolean removed = false;
 		for (FireCombo combo : getAbilities(FireCombo.class)) {
@@ -144,8 +134,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 
 			if (ability.equalsIgnoreCase("FireKick") && combo.ability.equalsIgnoreCase("FireKick")) {
 				for (FireComboStream fs : combo.tasks) {
-					if (fs.getLocation() != null && fs.getLocation().getWorld() == loc.getWorld()
-							&& Math.abs(fs.getLocation().distanceSquared(loc)) <= radius * radius) {
+					if (fs.getLocation() != null && fs.getLocation().getWorld() == loc.getWorld() && Math.abs(fs.getLocation().distanceSquared(loc)) <= radius * radius) {
 						fs.remove();
 						removed = true;
 					}
@@ -159,9 +148,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 						}
 					}
 				}
-			}
-
-			else if (ability.equalsIgnoreCase("FireWheel") && combo.ability.equalsIgnoreCase("FireWheel")) {
+			} else if (ability.equalsIgnoreCase("FireWheel") && combo.ability.equalsIgnoreCase("FireWheel")) {
 				if (combo.location != null && Math.abs(combo.location.distanceSquared(loc)) <= radius * radius) {
 					combo.remove();
 					removed = true;
@@ -175,7 +162,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze", entity.getLocation())) {
 			return;
 		}
-		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.VILLAGER_HIT, 0.3f, 0.3f);
+		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.ENTITY_VILLAGER_HURT, 0.3f, 0.3f);
 
 		if (ability.equalsIgnoreCase("FireKick")) {
 			if (!affectedEntities.contains(entity)) {
@@ -226,7 +213,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				}
 			}
 		}
-		
+
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
@@ -238,13 +225,13 @@ public class FireCombo extends FireAbility implements ComboAbility {
 					remove();
 					return;
 				}
-				
+
 				bPlayer.addCooldown("FireKick", cooldown);
 				Vector eyeDir = player.getEyeLocation().getDirection().normalize().multiply(range);
 				destination = player.getEyeLocation().add(eyeDir);
 
-				player.getWorld().playSound(player.getLocation(), Sound.HORSE_JUMP, 0.5f, 0f);
-				player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 0.5f, 1f);
+				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_HORSE_JUMP, 0.5f, 0f);
+				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 1f);
 				for (int i = -30; i <= 30; i += 5) {
 					Vector vec = GeneralMethods.getDirection(player.getLocation(), destination.clone());
 					vec = GeneralMethods.rotateXZ(vec, i);
@@ -258,14 +245,9 @@ public class FireCombo extends FireAbility implements ComboAbility {
 					}
 					fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 					tasks.add(fs);
-					player.getWorld().playSound(player.getLocation(), Sound.FIRE_IGNITE, 0.5f, 1f);
+					player.getWorld().playSound(player.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 0.5f, 1f);
 				}
 				location = tasks.get(0).getLocation();
-				for (FireComboStream stream : tasks) {
-					if (GeneralMethods.blockAbilities(player, BLOCKABLE_ABILITIES, stream.location, 2)) {
-						stream.remove();
-					}
-				}
 			} else if (tasks.size() == 0) {
 				remove();
 				return;
@@ -278,7 +260,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				}
 				bPlayer.addCooldown("FireSpin", cooldown);
 				destination = player.getEyeLocation().add(range, 0, range);
-				player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 0.5f, 0.5f);
+				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 0.5f, 0.5f);
 
 				for (int i = 0; i <= 360; i += 5) {
 					Vector vec = GeneralMethods.getDirection(player.getLocation(), destination.clone());
@@ -296,19 +278,10 @@ public class FireCombo extends FireAbility implements ComboAbility {
 					tasks.add(fs);
 				}
 			}
-			
+
 			if (tasks.size() == 0) {
 				remove();
 				return;
-			}
-			
-			for (FireComboStream stream : tasks) {
-				if (isWithinFireShield(stream.getLocation())) {
-					stream.remove();
-				}
-				if (AirAbility.isWithinAirShield(stream.getLocation())) {
-					stream.remove();
-				}
 			}
 		} else if (ability.equalsIgnoreCase("JetBlast")) {
 			if (System.currentTimeMillis() - time > 5000) {
@@ -320,18 +293,17 @@ public class FireCombo extends FireAbility implements ComboAbility {
 						remove();
 						return;
 					}
-					
+
 					bPlayer.addCooldown("JetBlast", cooldown);
 					firstTime = false;
 					float spread = 0F;
 					ParticleEffect.LARGE_EXPLODE.display(player.getLocation(), spread, spread, spread, 0, 1);
-					player.getWorld().playSound(player.getLocation(), Sound.EXPLODE, 15, 0F);
+					player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 15, 0F);
 				}
 				FireJet fj = getAbility(player, FireJet.class);
 				fj.setSpeed(speed);
-				FireComboStream fs = new FireComboStream(this, 
-						player.getVelocity().clone().multiply(-1), player.getLocation(), 3, 0.5, "JetBlast");
-				
+				FireComboStream fs = new FireComboStream(this, player.getVelocity().clone().multiply(-1), player.getLocation(), 3, 0.5, "JetBlast");
+
 				fs.setDensity(1);
 				fs.setSpread(0.9F);
 				fs.setUseNewParticles(true);
@@ -367,7 +339,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 				fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
 				tasks.add(fs);
 				if (progressCounter % 4 == 0) {
-					player.getWorld().playSound(player.getLocation(), Sound.FIZZ, 1, 0F);
+					player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0F);
 				}
 			}
 		} else if (ability.equalsIgnoreCase("FireWheel")) {
@@ -401,7 +373,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 			}
 			location.setY(topBlock.getY() + height);
 			FireComboStream fs = new FireComboStream(this, direction, location.clone().add(0, -1, 0), 5, 1, "FireWheel");
-			
+
 			fs.setDensity(0);
 			fs.setSinglePoint(true);
 			fs.setCollisionRadius(1.5);
@@ -418,17 +390,13 @@ public class FireCombo extends FireAbility implements ComboAbility {
 			}
 
 			location = location.add(direction.clone().multiply(speed));
-			location.getWorld().playSound(location, Sound.FIRE, 1, 1);
-			if (GeneralMethods.blockAbilities(player, BLOCKABLE_ABILITIES, location, 2)) {
-				remove();
-				return;
-			}
+			location.getWorld().playSound(location, Sound.BLOCK_FIRE_AMBIENT, 1, 1);
 		}
 	}
 
 	/**
-	 * Removes this instance of FireCombo, cleans up any blocks that are remaining in totalBlocks,
-	 * and cancels any remaining tasks.
+	 * Removes this instance of FireCombo, cleans up any blocks that are
+	 * remaining in totalBlocks, and cancels any remaining tasks.
 	 */
 	@Override
 	public void remove() {
@@ -467,7 +435,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 			this.checkCollisionCounter = 0;
 			this.spread = 0;
 			this.collisionRadius = 2;
-			this.particleEffect = ParticleEffect.FLAME;			
+			this.particleEffect = ParticleEffect.FLAME;
 			this.fireCombo = fireCombo;
 			this.direction = direction;
 			this.speed = speed;
@@ -476,7 +444,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 			this.distance = distance;
 			this.ability = ability;
 		}
-		
+
 		@Override
 		public void run() {
 			Block block = location.getBlock();
@@ -503,7 +471,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 					}
 				}
 			}
-			
+
 			checkCollisionCounter++;
 			if (singlePoint) {
 				remove();
@@ -583,7 +551,7 @@ public class FireCombo extends FireAbility implements ComboAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -593,7 +561,22 @@ public class FireCombo extends FireAbility implements ComboAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
+	@Override
+	public boolean isCollidable() {
+		// Override in subclasses
+		return false;
+	}
+
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (FireComboStream stream : tasks) {
+			locations.add(stream.getLocation());
+		}
+		return locations;
+	}
+
 	@Override
 	public String getInstructions() {
 		return null;
@@ -608,7 +591,25 @@ public class FireCombo extends FireAbility implements ComboAbility {
 	public ArrayList<AbilityInformation> getCombination() {
 		return null;
 	}
-	
+
+	public void handleCollisionFireStreams(Collision collision) {
+		if (collision.isRemovingFirst()) {
+			ArrayList<FireComboStream> newTasks = new ArrayList<>();
+			double collisionDistanceSquared = Math.pow(getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
+			// Remove all of the streams that are by this specific ourLocation.
+			// Don't just do a single stream at a time or this algorithm becomes O(n^2) with
+			// Collision's detection algorithm.
+			for (FireComboStream stream : tasks) {
+				if (stream.getLocation().distanceSquared(collision.getLocationSecond()) > collisionDistanceSquared) {
+					newTasks.add(stream);
+				} else {
+					stream.cancel();
+				}
+			}
+			tasks = newTasks;
+		}
+	}
+
 	public boolean isHiddenAbility() {
 		return true;
 	}
@@ -733,16 +734,16 @@ public class FireCombo extends FireAbility implements ComboAbility {
 		this.direction = direction;
 	}
 
-	public static ArrayList<String> getBlockableAbilities() {
-		return BLOCKABLE_ABILITIES;
-	}
-
 	public ArrayList<LivingEntity> getAffectedEntities() {
 		return affectedEntities;
 	}
 
 	public ArrayList<FireComboStream> getTasks() {
 		return tasks;
+	}
+
+	public void setTasks(ArrayList<FireComboStream> tasks) {
+		this.tasks = tasks;
 	}
 
 	public void setCooldown(long cooldown) {
@@ -752,65 +753,91 @@ public class FireCombo extends FireAbility implements ComboAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
-	public class FireKick extends FireCombo {
 
-		public FireKick(Player player, String name) {
+	// Combo subclasses need to be static to be reflectively called in ComboManager
+	public static class FireKick extends FireCombo {
+
+		public FireKick(Player player) {
 			super(player, "FireKick");
 		}
-		
+
 		@Override
 		public String getName() {
 			return "FireKick";
 		}
-		
-	}
-		
-	public class FireSpin extends FireCombo {
 
-		public FireSpin(Player player, String name) {
+		@Override
+		public boolean isCollidable() {
+			return true;
+		}
+
+		@Override
+		public void handleCollision(Collision collision) {
+			handleCollisionFireStreams(collision);
+		}
+
+	}
+
+	public static class FireSpin extends FireCombo {
+
+		public FireSpin(Player player) {
 			super(player, "FireSpin");
 		}
-		
+
 		@Override
 		public String getName() {
 			return "FireSpin";
 		}
-		
-	}
-	
-	public class FireWheel extends FireCombo {
 
-		public FireWheel(Player player, String name) {
+		@Override
+		public boolean isCollidable() {
+			return true;
+		}
+
+		@Override
+		public void handleCollision(Collision collision) {
+			handleCollisionFireStreams(collision);
+		}
+
+	}
+
+	public static class FireWheel extends FireCombo {
+
+		public FireWheel(Player player) {
 			super(player, "FireWheel");
 		}
-		
+
 		@Override
 		public String getName() {
 			return "FireWheel";
 		}
-		
-	}
-	
-	public class JetBlast extends FireCombo {
 
-		public JetBlast(Player player, String name) {
+		@Override
+		public boolean isCollidable() {
+			return true;
+		}
+
+	}
+
+	public static class JetBlast extends FireCombo {
+
+		public JetBlast(Player player) {
 			super(player, "JetBlast");
 		}
-		
+
 		@Override
 		public String getName() {
 			return "JetBlast";
 		}
-		
-	}
-	
-	public class JetBlaze extends FireCombo {
 
-		public JetBlaze(Player player, String name) {
+	}
+
+	public static class JetBlaze extends FireCombo {
+
+		public JetBlaze(Player player) {
 			super(player, "JetBlaze");
 		}
-		
+
 		@Override
 		public String getName() {
 			return "JetBlaze";

@@ -11,6 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
+import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.airbending.AirbendingManager;
@@ -33,6 +35,8 @@ public class ProjectKorra extends JavaPlugin {
 	public static ProjectKorra plugin;
 	public static Logger log;
 	public static PKLogHandler handler;
+	public static CollisionManager collisionManager;
+	public static CollisionInitializer collisionInitializer;
 	public static long time_step = 1;
 	public Updater updater;
 	
@@ -54,11 +58,15 @@ public class ProjectKorra extends JavaPlugin {
 		
 		new ConfigManager();
 		new GeneralMethods(this);
-		CoreAbility.registerAbilities();
-		updater = new Updater(this, "http://projectkorra.com/forum/forums/dev-builds.16/index.rss");
+		updater = new Updater(this, "http://projectkorra.com/forums/dev-builds.16/index.rss");
 		new Commands(this);
 		new MultiAbilityManager();
 		new ComboManager();
+		collisionManager = new CollisionManager();
+		collisionInitializer = new CollisionInitializer(collisionManager);
+		CoreAbility.registerAbilities();	
+		collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered
+		collisionManager.startCollisionDetection();
 		
 		Preset.loadExternalPresets();
 		
@@ -113,6 +121,22 @@ public class ProjectKorra extends JavaPlugin {
 			DBConnection.sql.close();
 		}
 		handler.close();
+	}
+
+	public static CollisionManager getCollisionManager() {
+		return collisionManager;
+	}
+
+	public static void setCollisionManager(CollisionManager collisionManager) {
+		ProjectKorra.collisionManager = collisionManager;
+	}
+
+	public static CollisionInitializer getCollisionInitializer() {
+		return collisionInitializer;
+	}
+
+	public static void setCollisionInitializer(CollisionInitializer collisionInitializer) {
+		ProjectKorra.collisionInitializer = collisionInitializer;
 	}
 
 }

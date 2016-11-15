@@ -1,17 +1,7 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.ComboAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.firebending.FireCombo;
-import com.projectkorra.projectkorra.firebending.FireCombo.FireComboStream;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -21,12 +11,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.firebending.FireCombo.FireComboStream;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.Flight;
 
 /*
- * TODO: Combo classes should eventually be rewritten so that each combo is treated
- * as an individual ability. In the mean time, we will just place "fake"
- * classes so that CoreAbility will register each ability. 
+ * TODO: Combo classes should eventually be rewritten so that each combo is
+ * treated as an individual ability. In the mean time, we will just place "fake"
+ * classes so that CoreAbility will register each ability.
  */
 public class AirCombo extends AirAbility implements ComboAbility {
 
@@ -60,7 +60,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 
 	public AirCombo(Player player, String ability) {
 		super(player);
-		
+
 		this.abilityName = ability;
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
@@ -69,7 +69,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
-		
+
 		if (bPlayer.isOnCooldown(ability)) {
 			return;
 		}
@@ -96,7 +96,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 			this.knockback = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
 			this.cooldown = getConfig().getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
 		}
-		
+
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
 			this.damage = AvatarState.getValue(damage);
@@ -199,14 +199,14 @@ public class AirCombo extends AirAbility implements ComboAbility {
 
 			direction = GeneralMethods.getDirection(currentLoc, destination).normalize();
 			currentLoc.add(direction.clone().multiply(speed));
-			
+
 			if (player.getWorld() != currentLoc.getWorld()) {
 				remove();
 				return;
 			} else if (!player.isSneaking()) {
 				remove();
 				return;
-			} else if (Math.abs(player.getLocation().distanceSquared(currentLoc)) > range * range) {
+			} else if (player.getWorld().equals(currentLoc.getWorld()) && Math.abs(player.getLocation().distanceSquared(currentLoc)) > range * range) {
 				remove();
 				return;
 			} else if (affectedEntities.size() > 0 && System.currentTimeMillis() - time >= airStreamEntityCarryDuration) {
@@ -219,12 +219,6 @@ public class AirCombo extends AirAbility implements ComboAbility {
 				remove();
 				return;
 			} else if (GeneralMethods.isRegionProtectedFromBuild(this, currentLoc)) {
-				remove();
-				return;
-			} else if (FireAbility.isWithinFireShield(currentLoc)) {
-				remove();
-				return;
-			} else if (isWithinAirShield(currentLoc)) {
 				remove();
 				return;
 			} else if (!isTransparent(currentLoc.getBlock())) {
@@ -278,8 +272,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 				destination = player.getLocation().add(player.getEyeLocation().getDirection().normalize().multiply(10));
 				Vector origToDest = GeneralMethods.getDirection(origin, destination);
 				for (double i = 0; i < 30; i++) {
-					Vector vec = GeneralMethods.getDirection(player.getLocation(),
-							origin.clone().add(origToDest.clone().multiply(i / 30)));
+					Vector vec = GeneralMethods.getDirection(player.getLocation(), origin.clone().add(origToDest.clone().multiply(i / 30)));
 
 					FireComboStream fs = new FireComboStream(null, vec, player.getLocation(), range, speed, "AirSweep");
 					fs.setDensity(1);
@@ -314,7 +307,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 				fstream.remove();
 				return;
 			}
-			
+
 			if (!isTransparent(loc.getBlock())) {
 				if (!isTransparent(loc.clone().add(0, 0.2, 0).getBlock())) {
 					fstream.remove();
@@ -344,10 +337,6 @@ public class AirCombo extends AirAbility implements ComboAbility {
 						}
 					}
 				}
-
-				if (GeneralMethods.blockAbilities(player, FireCombo.getBlockableAbilities(), loc, 1)) {
-					fstream.remove();
-				}
 			}
 		}
 	}
@@ -364,26 +353,30 @@ public class AirCombo extends AirAbility implements ComboAbility {
 		}
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean removeAroundPoint(Player player, String ability, Location loc, double radius) {
 		boolean removed = false;
 		for (AirCombo combo : getAbilities(AirCombo.class)) {
 			if (combo.getPlayer().equals(player)) {
 				continue;
 			} else if (ability.equalsIgnoreCase("Twister") && combo.abilityName.equalsIgnoreCase("Twister")) {
-				if (combo.currentLoc != null && Math.abs(combo.currentLoc.distance(loc)) <= radius) {
+				if (combo.currentLoc != null && combo.currentLoc.getWorld().equals(loc.getWorld()) && Math.abs(combo.currentLoc.distance(loc)) <= radius) {
 					combo.remove();
 					removed = true;
 				}
 			} else if (ability.equalsIgnoreCase("AirStream") && combo.abilityName.equalsIgnoreCase("AirStream")) {
-				if (combo.currentLoc != null && Math.abs(combo.currentLoc.distance(loc)) <= radius) {
+				if (combo.currentLoc != null && combo.currentLoc.getWorld().equals(loc.getWorld()) && Math.abs(combo.currentLoc.distance(loc)) <= radius) {
 					combo.remove();
 					removed = true;
 				}
 			} else if (ability.equalsIgnoreCase("AirSweep") && combo.abilityName.equalsIgnoreCase("AirSweep")) {
 				for (int j = 0; j < combo.tasks.size(); j++) {
 					FireComboStream fs = (FireComboStream) combo.tasks.get(j);
-					if (fs.getLocation() != null && fs.getLocation().getWorld().equals(loc.getWorld())
-							&& Math.abs(fs.getLocation().distance(loc)) <= radius) {
+					if (fs.getLocation() != null && fs.getLocation().getWorld().equals(loc.getWorld()) && Math.abs(fs.getLocation().distance(loc)) <= radius) {
 						fs.remove();
 						removed = true;
 					}
@@ -419,7 +412,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 	public boolean isHiddenAbility() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -429,7 +422,13 @@ public class AirCombo extends AirAbility implements ComboAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
+	@Override
+	public boolean isCollidable() {
+		// Override in subclasses
+		return false;
+	}
+
 	@Override
 	public String getInstructions() {
 		return null;
@@ -445,7 +444,6 @@ public class AirCombo extends AirAbility implements ComboAbility {
 		return null;
 	}
 
-	
 	public String getAbilityName() {
 		return abilityName;
 	}
@@ -605,6 +603,10 @@ public class AirCombo extends AirAbility implements ComboAbility {
 	public ArrayList<BukkitRunnable> getTasks() {
 		return tasks;
 	}
+	
+	public void setTasks(ArrayList<BukkitRunnable> tasks) {
+		this.tasks = tasks;
+	}
 
 	public ArrayList<Flight> getFlights() {
 		return flights;
@@ -613,44 +615,91 @@ public class AirCombo extends AirAbility implements ComboAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
-	public class AirStream extends AirCombo {
 
-		public AirStream(Player player, String name) {
+	// Combo subclasses need to be static to be reflectively called in ComboManager
+	public static class AirStream extends AirCombo {
+
+		public AirStream(Player player) {
 			super(player, "AirStream");
 		}
-		
+
 		@Override
 		public String getName() {
 			return "AirStream";
 		}
-		
-	}
-	
-	public class AirSweep extends AirCombo {
 
-		public AirSweep(Player player, String name) {
+		@Override
+		public boolean isCollidable() {
+			return true;
+		}
+
+	}
+
+	public static class AirSweep extends AirCombo {
+
+		public AirSweep(Player player) {
 			super(player, "AirSweep");
 		}
-		
+
 		@Override
 		public String getName() {
 			return "AirSweep";
 		}
-		
-	}
-	
-	public class Twister extends AirCombo {
 
-		public Twister(Player player, String name) {
-			super(player, "Twister");
+		@Override
+		public boolean isCollidable() {
+			return true;
 		}
 		
+		@Override
+		public void handleCollision(Collision collision) {
+			if (collision.isRemovingFirst()) {
+				ArrayList<BukkitRunnable> newTasks = new ArrayList<>();
+				double collisionDistanceSquared = Math.pow(getCollisionRadius() + collision.getAbilitySecond().getCollisionRadius(), 2);
+				// Remove all of the streams that are by this specific ourLocation.
+				// Don't just do a single stream at a time or this algorithm becomes O(n^2) with
+				// Collision's detection algorithm.
+				for (BukkitRunnable task : getTasks()) {
+					if (task instanceof FireComboStream) {
+						FireComboStream stream = (FireComboStream) task;
+						if (stream.getLocation().distanceSquared(collision.getLocationSecond()) > collisionDistanceSquared) {
+							newTasks.add(stream);
+						} else {
+							stream.cancel();
+						}
+					} else {
+						newTasks.add(task);
+					}
+				}
+				setTasks(newTasks);
+			}
+		}
+		
+		@Override
+		public List<Location> getLocations() {
+			ArrayList<Location> locations = new ArrayList<>();
+			for (BukkitRunnable task : getTasks()) {
+				if (task instanceof FireComboStream) {
+					FireComboStream stream = (FireComboStream) task;
+					locations.add(stream.getLocation());
+				}
+			}
+			return locations;
+		}
+
+	}
+
+	public static class Twister extends AirCombo {
+
+		public Twister(Player player) {
+			super(player, "Twister");
+		}
+
 		@Override
 		public String getName() {
 			return "Twister";
 		}
-		
+
 	}
-		
+
 }

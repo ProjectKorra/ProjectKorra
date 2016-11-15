@@ -3,9 +3,13 @@ package com.projectkorra.projectkorra.ability;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 import com.projectkorra.projectkorra.waterbending.PhaseChangeFreeze;
+import com.projectkorra.projectkorra.waterbending.PhaseChangeMelt;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.WaterArms;
@@ -72,6 +76,15 @@ public abstract class WaterAbility extends ElementalAbility {
 	@Override
 	public boolean isIgniteAbility() {
 		return false;
+	}
+	
+	@Override
+	public void handleCollision(Collision collision) {
+		super.handleCollision(collision);
+		if (collision.isRemovingFirst()) {
+			ParticleData particleData = (ParticleEffect.ParticleData) new ParticleEffect.BlockData(Material.WATER, (byte) 0);
+			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+		}
 	}
 	
 	public boolean isIcebendable(Block block) {
@@ -192,13 +205,13 @@ public abstract class WaterAbility extends ElementalAbility {
 		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), range > 3 ? 3 : (int) range);
 		if (bPlayer == null) {
 			return null;
-		} else if (isWaterbendable(testBlock.getType())) {
+		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
 			return testBlock;
 		}
 		
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
+			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block)) {
@@ -283,45 +296,54 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static void playIcebendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.FIRE_IGNITE, 2, 10);
+			loc.getWorld().playSound(loc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 10);
 		}
 	}
 
 	public static void playPlantbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.STEP_GRASS, 1, 10);
+			loc.getWorld().playSound(loc, Sound.BLOCK_GRASS_STEP, 1, 10);
 		}
 	}
 
 	public static void playWaterbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.WATER, 1, 10);
+			loc.getWorld().playSound(loc, Sound.BLOCK_WATER_AMBIENT, 1, 10);
 		}
 	}
 
 	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 * <p>
 	 * Removes all water spouts in a location within a certain radius.
 	 * 
 	 * @param loc The location to use
 	 * @param radius The radius around the location to remove spouts in
 	 * @param source The player causing the removal
 	 */
+	@Deprecated
 	public static void removeWaterSpouts(Location loc, double radius, Player source) {
 		WaterSpout.removeSpouts(loc, radius, source);
 	}
 
 	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 * <p>
 	 * Removes all water spouts in a location with a radius of 1.5.
 	 * 
 	 * @param loc The location to use
 	 * @param source The player causing the removal
 	 */
+	@Deprecated
 	public static void removeWaterSpouts(Location loc, Player source) {
 		removeWaterSpouts(loc, 1.5, source);
 	}
 	
 	public static void stopBending() {
 		PhaseChangeFreeze.removeAllCleanup();
+		PhaseChangeMelt.removeAllCleanup();
 		SurgeWall.removeAllCleanup();
 		SurgeWave.removeAllCleanup();
 		WaterArms.removeAllCleanup();

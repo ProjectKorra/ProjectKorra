@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.ability.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
@@ -14,17 +15,27 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.airbending.AirCombo;
-import com.projectkorra.projectkorra.chiblocking.ChiCombo;
+import com.projectkorra.projectkorra.airbending.AirCombo.AirStream;
+import com.projectkorra.projectkorra.airbending.AirCombo.AirSweep;
+import com.projectkorra.projectkorra.airbending.AirCombo.Twister;
+import com.projectkorra.projectkorra.chiblocking.ChiCombo.Immobilize;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.firebending.FireCombo;
+import com.projectkorra.projectkorra.firebending.FireCombo.FireKick;
+import com.projectkorra.projectkorra.firebending.FireCombo.FireSpin;
+import com.projectkorra.projectkorra.firebending.FireCombo.FireWheel;
+import com.projectkorra.projectkorra.firebending.FireCombo.JetBlast;
+import com.projectkorra.projectkorra.firebending.FireCombo.JetBlaze;
 import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.waterbending.WaterCombo;
+import com.projectkorra.projectkorra.util.ReflectionHandler;
+import com.projectkorra.projectkorra.waterbending.WaterCombo.IceBullet;
+import com.projectkorra.projectkorra.waterbending.WaterCombo.IceBulletLeftClick;
+import com.projectkorra.projectkorra.waterbending.WaterCombo.IceBulletRightClick;
+import com.projectkorra.projectkorra.waterbending.WaterCombo.IceWave;
 
 public class ComboManager {
 
 	private static final long CLEANUP_DELAY = 20 * 600;
-	private static final ConcurrentHashMap<String, ArrayList<AbilityInformation>> RECENTLY_USED = new ConcurrentHashMap<>();
+	private static final Map<String, ArrayList<AbilityInformation>> RECENTLY_USED = new ConcurrentHashMap<>();
 	private static final HashMap<String, ComboAbilityInfo> COMBO_ABILITIES = new HashMap<>();
 	private static final HashMap<String, String> AUTHORS = new HashMap<>();
 	private static final HashMap<String, String> DESCRIPTIONS = new HashMap<>();
@@ -41,7 +52,7 @@ public class ComboManager {
 			fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
 			fireKick.add(new AbilityInformation("FireBlast", ClickType.SHIFT_DOWN));
 			fireKick.add(new AbilityInformation("FireBlast", ClickType.LEFT_CLICK));
-			COMBO_ABILITIES.put("FireKick", new ComboAbilityInfo("FireKick", fireKick, FireCombo.class));
+			COMBO_ABILITIES.put("FireKick", new ComboAbilityInfo("FireKick", fireKick, FireKick.class));
 			DESCRIPTIONS.put("FireKick", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireKick.Description"));
 			INSTRUCTIONS.put("FireKick", "FireBlast > FireBlast > (Hold Shift) > FireBlast.");
 		}
@@ -53,7 +64,7 @@ public class ComboManager {
 			fireSpin.add(new AbilityInformation("FireShield", ClickType.LEFT_CLICK));
 			fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
 			fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
-			COMBO_ABILITIES.put("FireSpin", new ComboAbilityInfo("FireSpin", fireSpin, FireCombo.class));
+			COMBO_ABILITIES.put("FireSpin", new ComboAbilityInfo("FireSpin", fireSpin, FireSpin.class));
 			DESCRIPTIONS.put("FireSpin", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireSpin.Description"));
 			INSTRUCTIONS.put("FireSpin", "FireBlast > FireBlast > FireShield > (Tap Shift).");
 		}
@@ -67,7 +78,7 @@ public class ComboManager {
 			jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
 			jetBlast.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
 			jetBlast.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
-			COMBO_ABILITIES.put("JetBlast", new ComboAbilityInfo("JetBlast", jetBlast, FireCombo.class));
+			COMBO_ABILITIES.put("JetBlast", new ComboAbilityInfo("JetBlast", jetBlast, JetBlast.class));
 			DESCRIPTIONS.put("JetBlast", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.JetBlast.Description"));
 			INSTRUCTIONS.put("JetBlast", "FireJet (Tap Shift) > FireJet (Tap Shift) > FireShield (Tap Shift) > FireJet.");
 		}
@@ -81,7 +92,7 @@ public class ComboManager {
 			jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_DOWN));
 			jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
 			jetBlaze.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
-			COMBO_ABILITIES.put("JetBlaze", new ComboAbilityInfo("JetBlaze", jetBlaze, FireCombo.class));
+			COMBO_ABILITIES.put("JetBlaze", new ComboAbilityInfo("JetBlaze", jetBlaze, JetBlaze.class));
 			DESCRIPTIONS.put("JetBlaze", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.JetBlaze.Description"));
 			INSTRUCTIONS.put("JetBlaze", "FireJet (Tap Shift) > FireJet (Tap Shift) > Blaze (Tap Shift) > FireJet.");
 		}
@@ -92,7 +103,7 @@ public class ComboManager {
 			fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
 			fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
 			fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
-			COMBO_ABILITIES.put("FireWheel", new ComboAbilityInfo("FireWheel", fireWheel, FireCombo.class));
+			COMBO_ABILITIES.put("FireWheel", new ComboAbilityInfo("FireWheel", fireWheel, FireWheel.class));
 			DESCRIPTIONS.put("FireWheel", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireWheel.Description"));
 			INSTRUCTIONS.put("FireWheel", "FireShield (Hold Shift) > Right Click a block in front of you twice > Switch to Blaze > Release Shift.");
 		}
@@ -103,7 +114,7 @@ public class ComboManager {
 			twister.add(new AbilityInformation("AirShield", ClickType.SHIFT_UP));
 			twister.add(new AbilityInformation("Tornado", ClickType.SHIFT_DOWN));
 			twister.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
-			COMBO_ABILITIES.put("Twister", new ComboAbilityInfo("Twister", twister, AirCombo.class));
+			COMBO_ABILITIES.put("Twister", new ComboAbilityInfo("Twister", twister, Twister.class));
 			DESCRIPTIONS.put("Twister", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.Twister.Description"));
 			INSTRUCTIONS.put("Twister", "AirShield (Tap Shift) > Tornado (Hold Shift) > AirBlast (Left Click)");
 		}
@@ -113,7 +124,7 @@ public class ComboManager {
 			airStream.add(new AbilityInformation("AirShield", ClickType.SHIFT_DOWN));
 			airStream.add(new AbilityInformation("AirSuction", ClickType.LEFT_CLICK));
 			airStream.add(new AbilityInformation("AirBlast", ClickType.LEFT_CLICK));
-			COMBO_ABILITIES.put("AirStream", new ComboAbilityInfo("AirStream", airStream, AirCombo.class));
+			COMBO_ABILITIES.put("AirStream", new ComboAbilityInfo("AirStream", airStream, AirStream.class));
 			DESCRIPTIONS.put("AirStream", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.AirStream.Description"));
 			INSTRUCTIONS.put("AirStream", "AirShield (Hold Shift) > AirSuction (Left Click) > AirBlast (Left Click)");
 		}
@@ -124,7 +135,7 @@ public class ComboManager {
 			airSweep.add(new AbilityInformation("AirSwipe", ClickType.LEFT_CLICK));
 			airSweep.add(new AbilityInformation("AirBurst", ClickType.SHIFT_DOWN));
 			airSweep.add(new AbilityInformation("AirBurst", ClickType.LEFT_CLICK));
-			COMBO_ABILITIES.put("AirSweep", new ComboAbilityInfo("AirSweep", airSweep, AirCombo.class));
+			COMBO_ABILITIES.put("AirSweep", new ComboAbilityInfo("AirSweep", airSweep, AirSweep.class));
 			DESCRIPTIONS.put("AirSweep", ConfigManager.languageConfig.get().getString("Abilities.Air.Combo.AirSweep.Description"));
 			INSTRUCTIONS.put("AirSweep", "AirSwipe (Left Click) > AirSwipe (Left Click) > AirBurst (Hold Shift) > AirBurst (Left Click)");
 		}
@@ -133,7 +144,7 @@ public class ComboManager {
 			ArrayList<AbilityInformation> iceWave = new ArrayList<>();
 			iceWave.add(new AbilityInformation("WaterSpout", ClickType.SHIFT_UP));
 			iceWave.add(new AbilityInformation("PhaseChange", ClickType.LEFT_CLICK));
-			COMBO_ABILITIES.put("IceWave", new ComboAbilityInfo("IceWave", iceWave, WaterCombo.class));
+			COMBO_ABILITIES.put("IceWave", new ComboAbilityInfo("IceWave", iceWave, IceWave.class));
 			DESCRIPTIONS.put("IceWave", ConfigManager.languageConfig.get().getString("Abilities.Water.Combo.IceWave.Description"));
 			INSTRUCTIONS.put("IceWave", "Create a WaterSpout Wave > PhaseChange (Left Click)");
 		}
@@ -143,16 +154,16 @@ public class ComboManager {
 			iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_DOWN));
 			iceBullet.add(new AbilityInformation("WaterBubble", ClickType.SHIFT_UP));
 			iceBullet.add(new AbilityInformation("IceBlast", ClickType.SHIFT_DOWN));
-			COMBO_ABILITIES.put("IceBullet", new ComboAbilityInfo("IceBullet", iceBullet, WaterCombo.class));
+			COMBO_ABILITIES.put("IceBullet", new ComboAbilityInfo("IceBullet", iceBullet, IceBullet.class));
 			DESCRIPTIONS.put("IceBullet", ConfigManager.languageConfig.get().getString("Abilities.Water.Combo.IceBullet.Description"));
 			INSTRUCTIONS.put("IceBullet", "WaterBubble (Tap Shift) > IceBlast (Hold Shift) > Wait for ice to Form > Then alternate between Left and Right click with IceBlast");
 
 			ArrayList<AbilityInformation> iceBulletLeft = new ArrayList<>();
 			iceBulletLeft.add(new AbilityInformation("IceBlast", ClickType.LEFT_CLICK));
-			COMBO_ABILITIES.put("IceBulletLeftClick", new ComboAbilityInfo("IceBulletLeftClick", iceBulletLeft, WaterCombo.class));
+			COMBO_ABILITIES.put("IceBulletLeftClick", new ComboAbilityInfo("IceBulletLeftClick", iceBulletLeft, IceBulletLeftClick.class));
 			ArrayList<AbilityInformation> iceBulletRight = new ArrayList<>();
 			iceBulletRight.add(new AbilityInformation("IceBlast", ClickType.RIGHT_CLICK_BLOCK));
-			COMBO_ABILITIES.put("IceBulletRightClick", new ComboAbilityInfo("IceBulletRightClick", iceBulletRight, WaterCombo.class));
+			COMBO_ABILITIES.put("IceBulletRightClick", new ComboAbilityInfo("IceBulletRightClick", iceBulletRight, IceBulletRightClick.class));
 		}
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Chi.ChiCombo.Immobilize.Enabled")) {
@@ -161,7 +172,7 @@ public class ComboManager {
 			immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK_ENTITY));
 			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
 			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
-			COMBO_ABILITIES.put("Immobilize", new ComboAbilityInfo("Immobilize", immobilize, ChiCombo.class));
+			COMBO_ABILITIES.put("Immobilize", new ComboAbilityInfo("Immobilize", immobilize, Immobilize.class));
 			DESCRIPTIONS.put("Immobilize", ConfigManager.languageConfig.get().getString("Abilities.Chi.Combo.Immobilize.Description"));
 			INSTRUCTIONS.put("Immobilize", "QuickStrike (Left Click) > SwiftKick (Left Click) > QuickStrike (Left Click) > QuickStrike (Left Click)");
 		}
@@ -169,7 +180,7 @@ public class ComboManager {
 		startCleanupTask();
 	}
 
-	public static void addComboAbility(Player player, ClickType type) {
+	public static void addComboAbility(final Player player, ClickType type) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
@@ -182,27 +193,32 @@ public class ComboManager {
 		AbilityInformation info = new AbilityInformation(abilityName, type, System.currentTimeMillis());
 		addRecentAbility(player, info);
 
-		ComboAbilityInfo comboAbil = checkForValidCombo(player);
+		final ComboAbilityInfo comboAbil = checkForValidCombo(player);
 		if (comboAbil == null) {
 			return;
 		} else if (!player.hasPermission("bending.ability." + comboAbil.getName())) {
 			return;
 		}
 
-		if (comboAbil.getComboType().equals(FireCombo.class)) {
-			new FireCombo(player, comboAbil.getName());
-		} else if (comboAbil.getComboType().equals(AirCombo.class)) {
-			new AirCombo(player, comboAbil.getName());
-		} else if (comboAbil.getComboType().equals(WaterCombo.class)) {
-			new WaterCombo(player, comboAbil.getName());
-		} else if (comboAbil.getComboType().equals(ChiCombo.class)) {
-			new ChiCombo(player, comboAbil.getName());
-		} else {
-			if (comboAbil.getComboType() instanceof ComboAbility) {
-				((ComboAbility) comboAbil.getComboType()).createNewComboInstance(player);
-				return;
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				if (comboAbil.getComboType() instanceof Class) {
+					Class<?> clazz = (Class<?>) comboAbil.getComboType();
+					try {
+						ReflectionHandler.instantiateObject(clazz, player);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					if (comboAbil.getComboType() instanceof ComboAbility) {
+						((ComboAbility) comboAbil.getComboType()).createNewComboInstance(player);
+						return;
+					}
+				}
 			}
-		}
+
+		}.runTaskLater(ProjectKorra.plugin, 1L);
 	}
 
 	/**

@@ -8,6 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FireDamageTimer {
@@ -15,18 +16,15 @@ public class FireDamageTimer {
 	private static final int MAX_TICKS = 90;
 	private static final int DAMAGE = 1;
 	private static final long BUFFER = 30;
-	private static final ConcurrentHashMap<Entity, Player> INSTANCES = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Entity, Long> TIMES = new ConcurrentHashMap<>();
+	private static final Map<Entity, Player> INSTANCES = new ConcurrentHashMap<>();
+	private static final Map<Entity, Long> TIMES = new ConcurrentHashMap<>();
 
 	public FireDamageTimer(Entity entity, Player source) {
 		if (entity.getEntityId() == source.getEntityId()) {
 			return;
 		}
-		if (INSTANCES.containsKey(entity)) {
-			INSTANCES.replace(entity, source);
-		} else {
-			INSTANCES.put(entity, source);
-		}
+		
+		INSTANCES.put(entity, source);
 	}
 
 	public static boolean isEnflamed(Entity entity) {
@@ -47,7 +45,7 @@ public class FireDamageTimer {
 	public static void dealFlameDamage(Entity entity) {
 		if (INSTANCES.containsKey(entity) && entity instanceof LivingEntity) {
 			if (entity instanceof Player) {
-				if (!HeatControlExtinguish.canBurn((Player) entity)) {
+				if (!HeatControl.canBurn((Player) entity)) {
 					return;
 				}
 			}

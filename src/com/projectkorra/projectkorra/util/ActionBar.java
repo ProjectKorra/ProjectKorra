@@ -13,7 +13,7 @@ public class ActionBar {
 	private static boolean initialised = false;
 	private static Constructor<?> chatSer;
 	private static Constructor<?> packetChat;
-	private static Method getHandle;
+	public static Method getHandle;
 	private static Field playerConnection;
 	private static Method sendPacket;
 

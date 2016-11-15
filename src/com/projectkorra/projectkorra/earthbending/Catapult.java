@@ -116,7 +116,7 @@ public class Catapult extends EarthAbility {
 	private boolean moveEarth() {
 		location = location.clone().add(direction);
 		if (catapult) {
-			if (location.distance(origin) < 0.5) {
+			if (location.getWorld().equals(origin.getWorld()) && location.distance(origin) < 0.5) {
 				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, 2)) {
 					if (entity instanceof Player) {
 						Player target = (Player) entity;

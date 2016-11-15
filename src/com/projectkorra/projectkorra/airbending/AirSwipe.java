@@ -1,18 +1,11 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.firebending.Combustion;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.firebending.Illumination;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.Flight;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,18 +16,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.firebending.Illumination;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.Flight;
 
 public class AirSwipe extends AirAbility {
 
 	// Limiting the entities reduces the risk of crashing
 	private static final int MAX_AFFECTABLE_ENTITIES = 10;
-	private static final Integer[] BREAKABLES = {6, 31, 32, 37, 38, 39, 40, 59, 81, 83, 106, 175};
-	
+	private static final Integer[] BREAKABLES = { 6, 31, 32, 37, 38, 39, 40, 59, 81, 83, 106, 175 };
+
 	private boolean charging;
 	private int arc;
 	private int particles;
@@ -49,18 +48,26 @@ public class AirSwipe extends AirAbility {
 	private double maxChargeFactor;
 	private Location origin;
 	private Random random;
-	private AirSwipe ability;
-	private ConcurrentHashMap<Vector, Location> elements;
+	private Map<Vector, Location> elements;
 	private ArrayList<Entity> affectedEntities;
-	
+
 	public AirSwipe(Player player) {
 		this(player, false);
 	}
 
 	public AirSwipe(Player player, boolean charging) {
 		super(player);
-		
-		ability = this;
+
+		if (CoreAbility.hasAbility(player, AirSwipe.class)) {
+			for (AirSwipe ability : CoreAbility.getAbilities(player, AirSwipe.class)) {
+				if (ability.charging) {
+					ability.launch();
+					ability.charging = false;
+					return;
+				}
+			}
+		}
+
 		this.charging = charging;
 		this.origin = player.getEyeLocation();
 		this.particles = getConfig().getInt("Abilities.Air.AirSwipe.Particles");
@@ -77,23 +84,28 @@ public class AirSwipe extends AirAbility {
 		this.random = new Random();
 		this.elements = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
-		
+
 		if (bPlayer.isOnCooldown(this) || player.getEyeLocation().getBlock().isLiquid()) {
 			remove();
 			return;
 		}
-		
+
 		if (!bPlayer.canBend(this)) {
 			remove();
 			return;
 		}
-		
+
 		if (!charging) {
 			launch();
 		}
 		start();
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean removeSwipesAroundPoint(Location loc, double radius) {
 		boolean removed = false;
 		for (AirSwipe aswipe : getAbilities(AirSwipe.class)) {
@@ -117,26 +129,17 @@ public class AirSwipe extends AirAbility {
 			Location location = elements.get(direction);
 			if (direction != null && location != null) {
 				location = location.clone().add(direction.clone().multiply(speed));
-				elements.replace(direction, location);
+				elements.put(direction, location);
 
-				if (location.distanceSquared(origin) > range * range
-						|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+				if (location.distanceSquared(origin) > range * range || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 					elements.remove(direction);
 				} else {
-					removeAirSpouts(location, player);
-					WaterAbility.removeWaterSpouts(location, player);
-					
-					if (EarthBlast.annihilateBlasts(location, radius, player)
-							|| WaterManipulation.annihilateBlasts(location, radius, player)
-							|| FireBlast.annihilateBlasts(location, radius, player)
-							|| Combustion.removeAroundPoint(location, radius)) {
-						elements.remove(direction);
-						damage = 0;
+					Block block = location.getBlock();
+					if (!EarthAbility.isTransparent(player, block)) {
 						remove();
-						continue;
+						return;
 					}
 
-					Block block = location.getBlock();
 					for (Block testblock : GeneralMethods.getBlocksAroundPoint(location, radius)) {
 						if (testblock.getType() == Material.FIRE) {
 							testblock.setType(Material.AIR);
@@ -175,13 +178,12 @@ public class AirSwipe extends AirAbility {
 	}
 
 	private void affectPeople(Location location, Vector direction) {
-		WaterAbility.removeWaterSpouts(location, player);
-		removeAirSpouts(location, player);
 		final List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, radius);
 		final Vector fDirection = direction;
 
 		for (int i = 0; i < entities.size(); i++) {
 			final Entity entity = entities.get(i);
+			final AirSwipe abil = this;
 			new BukkitRunnable() {
 				public void run() {
 					if (GeneralMethods.isRegionProtectedFromBuild(AirSwipe.this, entity.getLocation())) {
@@ -202,7 +204,7 @@ public class AirSwipe extends AirAbility {
 						}
 						if (entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 							if (damage != 0) {
-								DamageHandler.damageEntity(entity, damage, ability);
+								DamageHandler.damageEntity(entity, damage, abil);
 							}
 							affectedEntities.add(entity);
 						}
@@ -256,10 +258,16 @@ public class AirSwipe extends AirAbility {
 	}
 
 	public void progress() {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			remove();
+			return;
+		}
+
 		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
 		}
+
 		if (!charging) {
 			if (elements.isEmpty()) {
 				remove();
@@ -269,12 +277,12 @@ public class AirSwipe extends AirAbility {
 		} else {
 			if (!player.isSneaking()) {
 				double factor = 1;
-				if (System.currentTimeMillis() >= startTime + maxChargeTime) {
+				if (System.currentTimeMillis() >= getStartTime() + maxChargeTime) {
 					factor = maxChargeFactor;
 				} else if (bPlayer.isAvatarState()) {
 					factor = AvatarState.getValue(factor);
 				} else {
-					factor = maxChargeFactor * (double) (System.currentTimeMillis() - startTime) / (double) maxChargeTime;
+					factor = maxChargeFactor * (double) (System.currentTimeMillis() - getStartTime()) / (double) maxChargeTime;
 				}
 
 				charging = false;
@@ -282,7 +290,7 @@ public class AirSwipe extends AirAbility {
 				factor = Math.max(1, factor);
 				damage *= factor;
 				pushFactor *= factor;
-			} else if (System.currentTimeMillis() >= startTime + maxChargeTime) {
+			} else if (System.currentTimeMillis() >= getStartTime() + maxChargeTime) {
 				playAirbendingParticles(player.getEyeLocation(), particles);
 			}
 		}
@@ -302,7 +310,7 @@ public class AirSwipe extends AirAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -311,6 +319,25 @@ public class AirSwipe extends AirAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public boolean isCollidable() {
+		return origin != null;
+	}
+
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
+	}
+
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (Location swipeLoc : elements.values()) {
+			locations.add(swipeLoc);
+		}
+		return locations;
 	}
 
 	public Location getOrigin() {
@@ -409,7 +436,7 @@ public class AirSwipe extends AirAbility {
 		this.maxChargeFactor = maxChargeFactor;
 	}
 
-	public ConcurrentHashMap<Vector, Location> getElements() {
+	public Map<Vector, Location> getElements() {
 		return elements;
 	}
 
@@ -428,5 +455,5 @@ public class AirSwipe extends AirAbility {
 	public void setStepSize(int stepSize) {
 		this.stepSize = stepSize;
 	}
-	
+
 }

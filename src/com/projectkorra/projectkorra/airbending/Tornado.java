@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,11 +32,11 @@ public class Tornado extends AirAbility {
 	private Flight flight;
 	private Location origin;
 	private Random random;
-	private ConcurrentHashMap<Integer, Integer> angles;
+	private Map<Integer, Integer> angles;
 
 	public Tornado(Player player) {
 		super(player);
-		
+
 		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
 		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
 		this.origin.setY(origin.getY() - 1.0 / 10.0 * currentHeight);
@@ -76,7 +77,7 @@ public class Tornado extends AirAbility {
 		}
 		rotateTornado();
 	}
-	
+
 	@Override
 	public void remove() {
 		super.remove();
@@ -89,7 +90,7 @@ public class Tornado extends AirAbility {
 		double timefactor = currentHeight / maxHeight;
 		currentRadius = timefactor * radius;
 
-		if (origin.getBlock().getType() != Material.AIR) {
+		if (origin.getBlock().getType() != Material.AIR && origin.getBlock().getType() != Material.BARRIER) {
 			origin.setY(origin.getY() - 1. / 10. * currentHeight);
 
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, currentHeight)) {
@@ -101,7 +102,7 @@ public class Tornado extends AirAbility {
 				if (y > origin.getY() && y < origin.getY() + currentHeight) {
 					factor = (y - origin.getY()) / currentHeight;
 					Location testloc = new Location(origin.getWorld(), origin.getX(), y, origin.getZ());
-					if (testloc.distance(entity.getLocation()) < currentRadius * factor) {
+					if (testloc.getWorld().equals(entity.getWorld()) && testloc.distance(entity.getLocation()) < currentRadius * factor) {
 						double x, z, vx, vz, mag;
 						double angle = 100;
 						double vy = 0.7 * npcPushFactor;
@@ -198,7 +199,7 @@ public class Tornado extends AirAbility {
 	public long getCooldown() {
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -207,6 +208,11 @@ public class Tornado extends AirAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
 	}
 
 	public Location getOrigin() {
@@ -297,7 +303,7 @@ public class Tornado extends AirAbility {
 		this.currentRadius = currentRadius;
 	}
 
-	public ConcurrentHashMap<Integer, Integer> getAngles() {
+	public Map<Integer, Integer> getAngles() {
 		return angles;
 	}
 }

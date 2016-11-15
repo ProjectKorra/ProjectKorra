@@ -20,10 +20,11 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 /**
  * Suffocate
  * 
- * Suffocate is an air ability that causes entities to be surrounded by a sphere air that causes
- * constant damage after a configurable delay. Suffocate also causes Blinding and Slowing affects to
- * entities depending on how the ability is configured. While in AvatarState this ability can be
- * used on multiple entities within a large radius. If the user is damaged while performing this
+ * Suffocate is an air ability that causes entities to be surrounded by a sphere
+ * air that causes constant damage after a configurable delay. Suffocate also
+ * causes Blinding and Slowing affects to entities depending on how the ability
+ * is configured. While in AvatarState this ability can be used on multiple
+ * entities within a large radius. If the user is damaged while performing this
  * ability then the ability is removed.
  */
 public class Suffocate extends AirAbility {
@@ -54,7 +55,7 @@ public class Suffocate extends AirAbility {
 	private Suffocate ability;
 	private ArrayList<BukkitRunnable> tasks;
 	private ArrayList<LivingEntity> targets;
-	
+
 	public Suffocate(Player player) {
 		super(player);
 		ability = this;
@@ -131,7 +132,7 @@ public class Suffocate extends AirAbility {
 				targets.add((LivingEntity) target);
 			}
 		}
-		
+
 		if (!canSuffocateUndead) {
 			for (int i = 0; i < targets.size(); i++) {
 				LivingEntity target = targets.get(i);
@@ -150,10 +151,7 @@ public class Suffocate extends AirAbility {
 	public void progress() {
 		for (int i = 0; i < targets.size(); i++) {
 			LivingEntity target = targets.get(i);
-			if (target.isDead() 
-					|| !target.getWorld().equals(player.getWorld())
-					|| target.getLocation().distanceSquared(player.getEyeLocation()) > range * range
-					|| GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())) {
+			if (target.isDead() || !target.getWorld().equals(player.getWorld()) || target.getLocation().distanceSquared(player.getEyeLocation()) > range * range || GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation())) {
 				breakSuffocateLocal(target);
 				i--;
 			} else if (target instanceof Player) {
@@ -170,9 +168,11 @@ public class Suffocate extends AirAbility {
 		}
 
 		if (requireConstantAim) {
-			double dist = player.getEyeLocation().distance(targets.get(0).getEyeLocation());
-			Location targetLoc = player.getEyeLocation().clone()
-					.add(player.getEyeLocation().getDirection().normalize().multiply(dist));
+			double dist = 0;
+			if (player.getWorld().equals(targets.get(0).getWorld())) {
+				dist = player.getEyeLocation().distance(targets.get(0).getEyeLocation());
+			}
+			Location targetLoc = player.getEyeLocation().clone().add(player.getEyeLocation().getDirection().normalize().multiply(dist));
 			List<Entity> ents = GeneralMethods.getEntitiesAroundPoint(targetLoc, constantAimRadius);
 
 			for (int i = 0; i < targets.size(); i++) {
@@ -188,7 +188,7 @@ public class Suffocate extends AirAbility {
 			}
 		}
 
-		if (System.currentTimeMillis() - startTime < chargeTime) {
+		if (System.currentTimeMillis() - getStartTime() < chargeTime) {
 			return;
 		} else if (!started) {
 			started = true;
@@ -254,7 +254,8 @@ public class Suffocate extends AirAbility {
 	}
 
 	/**
-	 * Removes an instance of Suffocate if player is the one suffocating entities
+	 * Removes an instance of Suffocate if player is the one suffocating
+	 * entities
 	 **/
 	public static void remove(Player player) {
 		Suffocate suff = getAbility(player, Suffocate.class);
@@ -264,9 +265,9 @@ public class Suffocate extends AirAbility {
 	}
 
 	/**
-	 * Removes all instances of Suffocate at loc within the radius threshold. The location of a
-	 * Suffocate is defined at the benders location, not the location of the entities being
-	 * suffocated.
+	 * Removes all instances of Suffocate at loc within the radius threshold.
+	 * The location of a Suffocate is defined at the benders location, not the
+	 * location of the entities being suffocated.
 	 * 
 	 * @param causer The player causing this instance to be removed
 	 **/
@@ -287,13 +288,14 @@ public class Suffocate extends AirAbility {
 	}
 
 	/**
-	 * Animates this instance of the Suffocate ability. Depending on the specific time (dt) the
-	 * ability will create a different set of SuffocationSpirals.
+	 * Animates this instance of the Suffocate ability. Depending on the
+	 * specific time (dt) the ability will create a different set of
+	 * SuffocationSpirals.
 	 */
 	public void animate() {
 		int steps = 8 * particleCount;
 		long curTime = System.currentTimeMillis();
-		long dt = curTime - startTime - chargeTime;
+		long dt = curTime - getStartTime() - chargeTime;
 		long delay = 2 / particleCount;
 		long t1 = (long) (1500 * animationSpeed);
 		long t2 = (long) (2500 * animationSpeed);
@@ -302,10 +304,8 @@ public class Suffocate extends AirAbility {
 		for (LivingEntity lent : targets) {
 			final LivingEntity target = lent;
 			if (dt < t1) {
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double) dt / (double) t1), 0,
-						SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double) dt / (double) t1), 0,
-						SpiralType.HORIZONTAL2);
+				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double) dt / (double) t1), 0, SpiralType.HORIZONTAL1);
+				new SuffocateSpiral(target, steps, radius, delay, 0, 0.25 - (0.25 * (double) dt / (double) t1), 0, SpiralType.HORIZONTAL2);
 			} else if (dt < t2) {
 				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.HORIZONTAL1);
 				new SuffocateSpiral(target, steps * 2, radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
@@ -315,15 +315,9 @@ public class Suffocate extends AirAbility {
 				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.VERTICAL1);
 				new SuffocateSpiral(target, steps, radius, delay, 0, 0, 0, SpiralType.VERTICAL2);
 			} else if (dt < t4) {
-				new SuffocateSpiral(target, steps, radius
-						- Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0,
-						0, SpiralType.HORIZONTAL1);
-				new SuffocateSpiral(target, steps, radius
-						- Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0,
-						0, SpiralType.VERTICAL1);
-				new SuffocateSpiral(target, steps, radius
-						- Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0,
-						0, SpiralType.VERTICAL2);
+				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
+				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL1);
+				new SuffocateSpiral(target, steps, radius - Math.min(radius * 3 / 4, (radius * 3.0 / 4 * ((double) (dt - t3) / (double) (t4 - t3)))), delay, 0, 0, 0, SpiralType.VERTICAL2);
 			} else {
 				new SuffocateSpiral(target, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.HORIZONTAL1);
 				new SuffocateSpiral(target, steps, radius - (radius * 3.0 / 4.0), delay, 0, 0, 0, SpiralType.VERTICAL1);
@@ -351,9 +345,9 @@ public class Suffocate extends AirAbility {
 	}
 
 	/**
-	 * ** Animates a Spiral of air particles around a location or a targetted entity. The direction
-	 * of the spiral is determined by SpiralType, and each type is calculated independently from one
-	 * another.
+	 * Animates a Spiral of air particles around a location or a targetted
+	 * entity. The direction of the spiral is determined by SpiralType, and each
+	 * type is calculated independently from one another.
 	 */
 	public class SuffocateSpiral extends BukkitRunnable {
 		private Location startLoc;
@@ -375,8 +369,7 @@ public class Suffocate extends AirAbility {
 		 * @param dz z offset
 		 * @param type Spiral animation direction
 		 */
-		public SuffocateSpiral(LivingEntity lent, int totalSteps, double radius, long interval, double dx, double dy, double dz,
-				SpiralType type) {
+		public SuffocateSpiral(LivingEntity lent, int totalSteps, double radius, long interval, double dx, double dy, double dz, SpiralType type) {
 			this.target = lent;
 			this.totalSteps = totalSteps;
 			this.radius = radius;
@@ -400,8 +393,7 @@ public class Suffocate extends AirAbility {
 		 * @param dz z offset
 		 * @param type Spiral animation direction
 		 */
-		public SuffocateSpiral(Location startLoc, int totalSteps, double radius, long interval, double dx, double dy, double dz,
-				SpiralType type) {
+		public SuffocateSpiral(Location startLoc, int totalSteps, double radius, long interval, double dx, double dy, double dz, SpiralType type) {
 			this.startLoc = startLoc;
 			this.totalSteps = totalSteps;
 			this.radius = radius;
@@ -480,7 +472,7 @@ public class Suffocate extends AirAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -489,6 +481,13 @@ public class Suffocate extends AirAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		locations.add(player.getLocation());
+		return locations;
 	}
 
 	public boolean isStarted() {

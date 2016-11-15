@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -17,6 +18,9 @@ import org.bukkit.entity.Player;
 public class WaterPassive {
 
 	public static boolean applyNoFall(Player player) {
+		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+			return false;
+		}
 		Block block = player.getLocation().getBlock();
 		Block fallBlock = block.getRelative(BlockFace.DOWN);
 		if (TempBlock.isTempBlock(fallBlock) && (fallBlock.getType().equals(Material.ICE))) {
@@ -32,6 +36,10 @@ public class WaterPassive {
 	}
 
 	public static void handlePassive() {
+		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+			return;
+		}
+		
 		double swimSpeed = getSwimSpeed();
 		
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
@@ -44,6 +52,8 @@ public class WaterPassive {
 			CoreAbility coreAbil = CoreAbility.getAbility(ability);
 			if (bPlayer.canBendPassive(Element.WATER)) {
 				if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, EarthArmor.class)) {
+					continue;
+				} else if (CoreAbility.getAbility(player, WaterArms.class) != null) {
 					continue;
 				} else if (coreAbil == null || (coreAbil != null && !coreAbil.isSneakAbility())) {
 					if (player.isSneaking() && WaterAbility.isWater(player.getLocation().getBlock())) {

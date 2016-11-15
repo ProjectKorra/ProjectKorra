@@ -20,12 +20,13 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.util.Vector;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FireBlastCharged extends FireAbility {
 
-	private static final ConcurrentHashMap<Entity, FireBlastCharged> EXPLOSIONS = new ConcurrentHashMap<>();
+	private static final Map<Entity, FireBlastCharged> EXPLOSIONS = new ConcurrentHashMap<>();
 
 	private boolean charged;
 	private boolean launched;
@@ -70,16 +71,18 @@ public class FireBlastCharged extends FireAbility {
 		
 		if (isDay(player.getWorld())) {
 			this.chargeTime = (long) (chargeTime / getDayFactor());
+			this.maxDamage = getDayFactor(maxDamage);
+			this.range = getDayFactor(range);
 		}
 		if (bPlayer.isAvatarState()) {
 			this.chargeTime = 0;
 			this.maxDamage = AvatarState.getValue(maxDamage);
 		}
 		
-		this.range = getDayFactor(range);
+		
 		if (!player.getEyeLocation().getBlock().isLiquid()) {
 			start();
-		}
+		} 
 	}
 
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
@@ -132,7 +135,10 @@ public class FireBlastCharged extends FireAbility {
 			return;
 		}
 		
-		double distance = entity.getLocation().distance(explosion.getLocation());
+		double distance = 0;
+		if(entity.getWorld().equals(explosion.getWorld())) {
+				distance = entity.getLocation().distance(explosion.getLocation());
+		}
 		if (distance > damageRadius) {
 			return;
 		} else if (distance < innerRadius) {
@@ -156,7 +162,7 @@ public class FireBlastCharged extends FireAbility {
 		}
 		
 		if (explode) {
-			if (canDamageBlocks && explosionRadius > 0) {
+			if (canDamageBlocks && explosionRadius > 0 && canFireGrief()) {
 				explosion = player.getWorld().spawn(location, TNTPrimed.class);
 				explosion.setFuseTicks(0);
 				double yield = explosionRadius;
@@ -174,12 +180,15 @@ public class FireBlastCharged extends FireAbility {
 				for (Entity entity : entities) {
 					if (entity instanceof LivingEntity) {
 						double slope = -(maxDamage * .5) / (damageRadius - innerRadius);
-						double damage = slope * (entity.getLocation().distance(location) - innerRadius) + maxDamage;
+						double damage = 0;
+						if(entity.getWorld().equals(location.getWorld())) {
+							damage = slope * (entity.getLocation().distance(location) - innerRadius) + maxDamage;
+						}
 						DamageHandler.damageEntity(entity, damage, this);
 					}
 				}
-				location.getWorld().playSound(location, Sound.EXPLODE, 5, 1);
-				ParticleEffect.EXPLOSION_HUGE.display(new Vector(0, 0, 0), 0, location, 256);
+				location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 5, 1);
+				ParticleEffect.EXPLOSION_HUGE.display(new Vector(0, 0, 0), 0, location, 255.0D);
 			}
 		}
 
@@ -243,7 +252,7 @@ public class FireBlastCharged extends FireAbility {
 			return;
 		}
 		
-		if (System.currentTimeMillis() > startTime + chargeTime) {
+		if (System.currentTimeMillis() > getStartTime() + chargeTime) {
 			charged = true;
 		}
 		if (!player.isSneaking() && !launched) {
@@ -310,6 +319,16 @@ public class FireBlastCharged extends FireAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public boolean isCollidable() {
+		return this.launched;
+	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return collisionRadius;
 	}
 
 	public boolean isCharged() {
@@ -384,10 +403,6 @@ public class FireBlastCharged extends FireAbility {
 		this.range = range;
 	}
 
-	public double getCollisionRadius() {
-		return collisionRadius;
-	}
-
 	public void setCollisionRadius(double collisionRadius) {
 		this.collisionRadius = collisionRadius;
 	}
@@ -448,7 +463,7 @@ public class FireBlastCharged extends FireAbility {
 		this.direction = direction;
 	}
 
-	public static ConcurrentHashMap<Entity, FireBlastCharged> getExplosions() {
+	public static Map<Entity, FireBlastCharged> getExplosions() {
 		return EXPLOSIONS;
 	}
 

@@ -1,9 +1,57 @@
 package com.projectkorra.projectkorra;
 
-import me.ryanhamshire.GriefPrevention.Claim;
-import me.ryanhamshire.GriefPrevention.GriefPrevention;
-import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
-import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
@@ -44,6 +92,8 @@ import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
+import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
+import com.projectkorra.projectkorra.chiblocking.WarriorStance;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthBlast;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
@@ -56,67 +106,23 @@ import com.projectkorra.projectkorra.firebending.FireCombo;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
+import com.projectkorra.projectkorra.util.ActionBar;
 import com.projectkorra.projectkorra.util.BlockCacheElement;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.ReflectionHandler;
+import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.FallingSand;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
+import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
 @SuppressWarnings("deprecation")
 public class GeneralMethods {
@@ -124,24 +130,33 @@ public class GeneralMethods {
 	public static final Integer[] NON_OPAQUE = { 0, 6, 8, 9, 10, 11, 27, 28, 30, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 68, 
 			69, 70, 72, 75, 76, 77, 78, 83, 90, 93, 94, 104, 105, 106, 111, 115, 119, 127, 131, 132, 175 };
 	public static final Material[] INTERACTABLE_MATERIALS = { Material.ACACIA_DOOR, Material.ACACIA_FENCE_GATE, Material.ANVIL, 
-			Material.ARMOR_STAND, Material.BEACON, Material.BED, Material.BED_BLOCK, Material.BIRCH_DOOR,
-			Material.BIRCH_FENCE_GATE, Material.BOAT, Material.BREWING_STAND, Material.BURNING_FURNACE, 
-			Material.CAKE_BLOCK, Material.CHEST, Material.COMMAND, Material.DARK_OAK_DOOR, 
-			Material.DARK_OAK_FENCE_GATE, Material.DISPENSER, Material.DRAGON_EGG, Material.DROPPER, 
+			Material.BEACON, Material.BED_BLOCK, Material.BIRCH_DOOR, Material.BIRCH_FENCE_GATE, Material.BOAT,
+			Material.BREWING_STAND, Material.BURNING_FURNACE, Material.CAKE_BLOCK, Material.CHEST, Material.COMMAND,
+			Material.DARK_OAK_DOOR, Material.DARK_OAK_FENCE_GATE, Material.DISPENSER, Material.DRAGON_EGG, Material.DROPPER, 
 			Material.ENCHANTMENT_TABLE, Material.ENDER_CHEST, Material.ENDER_PORTAL_FRAME, Material.FENCE_GATE, 
 			Material.FURNACE, Material.HOPPER, Material.HOPPER_MINECART, Material.COMMAND_MINECART, 
-			Material.ITEM_FRAME, Material.JUKEBOX, Material.JUNGLE_DOOR, Material.JUNGLE_FENCE_GATE, 
-			Material.LEVER, Material.MINECART, Material.NOTE_BLOCK, Material.PAINTING, Material.SPRUCE_DOOR, 
-			Material.SPRUCE_FENCE_GATE, Material.STONE_BUTTON, Material.TRAPPED_CHEST, Material.TRAP_DOOR, 
-			Material.WOOD_BUTTON, Material.WOOD_DOOR, Material.WORKBENCH };
+			Material.JUKEBOX, Material.JUNGLE_DOOR, Material.JUNGLE_FENCE_GATE, Material.LEVER, Material.MINECART,
+			Material.NOTE_BLOCK, Material.SPRUCE_DOOR, Material.SPRUCE_FENCE_GATE, Material.STONE_BUTTON,
+			Material.TRAPPED_CHEST, Material.TRAP_DOOR, Material.WOOD_BUTTON, Material.WOOD_DOOR, Material.WORKBENCH };
 	
 	// Represents PlayerName, previously checked blocks, and whether they were true or false
-	private static final ConcurrentHashMap<String, ConcurrentHashMap<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
+	private static final Map<String, Map<Block, BlockCacheElement>> BLOCK_CACHE = new ConcurrentHashMap<>();
 	private static final ArrayList<Ability> INVINCIBLE = new ArrayList<>();
 	private static ProjectKorra plugin;
+	
+	private static Method getAbsorption;
+	private static Method setAbsorption;
 
 	public GeneralMethods(ProjectKorra plugin) {
 		GeneralMethods.plugin = plugin;
+		
+		try {
+			getAbsorption = ReflectionHandler.getMethod("EntityPlayer", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
+			setAbsorption = ReflectionHandler.getMethod("EntityPlayer", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -196,11 +211,15 @@ public class GeneralMethods {
 	}
 
 	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 * <p>
 	 * Cycles through a list of ability names to check if any instances of the
 	 * abilities exist at a specific location. If an instance of the ability is
 	 * found then it will be removed, with the exception FireShield, and
 	 * AirShield.
 	 */
+	@Deprecated
 	public static boolean blockAbilities(Player player, List<String> abilitiesToBlock, Location loc, double radius) {
 		boolean hasBlocked = false;
 		for (String ability : abilitiesToBlock) {
@@ -265,12 +284,13 @@ public class GeneralMethods {
 	 * @throws SQLException
 	 */
 	public static void createBendingPlayer(final UUID uuid, final String player) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				createBendingPlayerAsynchronously(uuid, player);
-			}
-		}.runTaskAsynchronously(ProjectKorra.plugin);
+//		new BukkitRunnable() {
+//			@Override
+//			public void run() {
+//				createBendingPlayerAsynchronously(uuid, player);
+//			}
+//		}.runTaskAsynchronously(ProjectKorra.plugin);
+		createBendingPlayerAsynchronously(uuid, player); // "async"
 	}
 
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
@@ -463,13 +483,13 @@ public class GeneralMethods {
 		loc.setZ(loc.getZ() + Math.random() * (zOffset / 2 - -(zOffset / 2)));
 
 		if (type == ParticleEffect.RED_DUST || type == ParticleEffect.REDSTONE) {
-			ParticleEffect.RED_DUST.display(R, G, B, 0.004F, 0, loc, 257D);
+			ParticleEffect.RED_DUST.display(R, G, B, 0.004F, 0, loc, 255.0);
 		} else if (type == ParticleEffect.SPELL_MOB || type == ParticleEffect.MOB_SPELL) {
-			ParticleEffect.SPELL_MOB.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 257D);
+			ParticleEffect.SPELL_MOB.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 255.0);
 		} else if (type == ParticleEffect.SPELL_MOB_AMBIENT || type == ParticleEffect.MOB_SPELL_AMBIENT) {
-			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 257D);
+			ParticleEffect.SPELL_MOB_AMBIENT.display((float) 255 - R, (float) 255 - G, (float) 255 - B, 1, 0, loc, 255.0);
 		} else {
-			ParticleEffect.RED_DUST.display(0, 0, 0, 0.004F, 0, loc, 257D);
+			ParticleEffect.RED_DUST.display(0, 0, 0, 0.004F, 0, loc, 255.0D);
 		}
 	}
 
@@ -555,6 +575,55 @@ public class GeneralMethods {
 	public static void dropItems(Block block, Collection<ItemStack> items) {
 		for (ItemStack item : items) {
 			block.getWorld().dropItem(block.getLocation(), item);
+		}
+	}
+	
+	public static void displayMovePreview(Player player, CoreAbility ability) {
+		String displayedMessage = null;
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		
+		if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview") == true) {
+			if (ability != null && bPlayer != null) {
+				
+				if (bPlayer.isOnCooldown(ability)) {
+					displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
+				} else {
+					if (bPlayer.getStance() instanceof AcrobatStance && ability.getName().equals("AcrobatStance") ||
+							bPlayer.getStance() instanceof WarriorStance && ability.getName().equals("WarriorStance")) {
+						displayedMessage = ability.getElement().getColor() + "" + ChatColor.UNDERLINE + ability.getName();
+					} else {
+						displayedMessage = ability.getElement().getColor() + ability.getName();
+					}
+				}
+			} else {
+				displayedMessage = "";
+			}
+		
+			ActionBar.sendActionBar(displayedMessage, player);
+		}
+	}
+	
+	public static float getAbsorbationHealth(Player player) {
+		
+		try {
+			Object entityplayer = ActionBar.getHandle.invoke(player);
+			Object hearts = getAbsorption.invoke(entityplayer);
+			//player.sendMessage(hearts.toString());
+			return (float) hearts;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public static void setAbsorbationHealth(Player player, float hearts) {
+		
+		try {
+			Object entityplayer = ActionBar.getHandle.invoke(player);
+			setAbsorption.invoke(entityplayer, hearts);
+			//player.sendMessage(hearts.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -760,19 +829,34 @@ public class GeneralMethods {
 	 * @return A list of entities around a point
 	 */
 	public static List<Entity> getEntitiesAroundPoint(Location location, double radius) {
-		List<Entity> entities = location.getWorld().getEntities();
-		List<Entity> list = location.getWorld().getEntities();
+		List<Entity> entities = new ArrayList<Entity>();
+		World world = location.getWorld();
 
-		for (Entity entity : entities) {
-			if (entity.getWorld() != location.getWorld()) {
-				list.remove(entity);
-			} else if (entity instanceof Player && ((Player) entity).getGameMode().equals(GameMode.SPECTATOR)) {
-				list.remove(entity);
-			} else if (entity.getLocation().distanceSquared(location) > radius * radius) {
-				list.remove(entity);
-			}
-		}
-		return list;
+	    // To find chunks we use chunk coordinates (not block coordinates!)
+	    int smallX = (int) (location.getX() - radius) >> 4;
+	    int bigX = (int) (location.getX() + radius) >> 4;
+	    int smallZ = (int) (location.getZ() - radius) >> 4;
+	    int bigZ = (int) (location.getZ() + radius) >> 4;
+
+	    for (int x = smallX; x <= bigX; x++) {
+	        for (int z = smallZ; z <= bigZ; z++) {
+	            if (world.isChunkLoaded(x, z)) {
+	                entities.addAll(Arrays.asList(world.getChunkAt(x, z).getEntities()));
+	            }
+	        }
+	    }
+
+	    Iterator<Entity> entityIterator = entities.iterator(); 
+	    while (entityIterator.hasNext()) {
+	    	Entity e = entityIterator.next();
+	        if (e.getWorld().equals(location.getWorld()) && e.getLocation().distanceSquared(location) > radius * radius) {
+	            entityIterator.remove(); 
+	        } else if (e instanceof Player && ((Player)e).getGameMode().equals(GameMode.SPECTATOR)) {
+	        	entityIterator.remove();
+	        }
+	    }
+		
+		return entities;
 	}
 
 	public static long getGlobalCooldown() {
@@ -892,7 +976,14 @@ public class GeneralMethods {
 		float angle = location.getYaw() / 60;
 		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
-
+	
+	public static Plugin getProbending() {
+		if (hasProbending()) {
+			return Bukkit.getServer().getPluginManager().getPlugin("Probending");
+		}
+		return null;
+	}
+	
 	public static Plugin getRPG() {
 		if (hasRPG()) {
 			return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraRPG");
@@ -917,13 +1008,15 @@ public class GeneralMethods {
 			if (avoid.contains(entity)) {
 				continue;
 			}
-			if (entity.getLocation().distanceSquared(origin) < longestr * longestr 
-					&& getDistanceFromLine(direction, origin, entity.getLocation()) < 2 
-					&& (entity instanceof LivingEntity) 
-					&& entity.getEntityId() != player.getEntityId() 
-					&& entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))) {
-				target = entity;
-				longestr = entity.getLocation().distance(origin);
+			if (entity.getWorld().equals(origin.getWorld())) {
+				if (entity.getLocation().distanceSquared(origin) < longestr * longestr 
+						&& getDistanceFromLine(direction, origin, entity.getLocation()) < 2 
+						&& (entity instanceof LivingEntity) 
+						&& entity.getEntityId() != player.getEntityId() 
+						&& entity.getLocation().distanceSquared(origin.clone().add(direction)) < entity.getLocation().distanceSquared(origin.clone().add(direction.clone().multiply(-1)))) {
+					target = entity;
+					longestr = entity.getLocation().distance(origin);
+				}
 			}
 		}
 		if (target != null) {
@@ -959,7 +1052,10 @@ public class GeneralMethods {
 		}
 
 		Block block = player.getTargetBlock(trans, (int) originselectrange + 1);
-		double distance = block.getLocation().distance(origin) - 1.5;
+		double distance = originselectrange;
+		if(block.getWorld().equals(origin.getWorld())) {
+			distance = block.getLocation().distance(origin) - 1.5;
+		}
 		Location location = origin.add(direction.multiply(distance));
 
 		return location;
@@ -997,11 +1093,41 @@ public class GeneralMethods {
 				return blockHolder;
 			}
 		}
-		return null;
+		return blockHolder;
+	}
+
+	public static Block getBottomBlock(Location loc, int positiveY, int negativeY) {
+		Block blockHolder = loc.getBlock();
+		int y = 0;
+		//Only one of these while statements will go
+		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(negativeY)) {
+			y--;
+			Block tempblock = loc.clone().add(0, y, 0).getBlock();
+			if (tempblock.getType() == Material.AIR) {
+				return blockHolder;
+			}
+
+			blockHolder = tempblock;
+		}
+
+		while (blockHolder.getType() != Material.AIR && Math.abs(y) < Math.abs(positiveY)) {
+			y++;
+			blockHolder = loc.clone().add(0, y, 0).getBlock();
+			if (blockHolder.getType() == Material.AIR) {
+				return blockHolder;
+			}
+		}
+
+
+		return blockHolder;
 	}
 
 	public static boolean hasItems() {
 		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null;
+	}
+	
+	public static boolean hasProbending() {
+		return Bukkit.getServer().getPluginManager().getPlugin("Probending") != null;
 	}
 
 	public static boolean hasRPG() {
@@ -1013,7 +1139,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
-		if (TempBlock.isTempBlock(block)) {
+		if (TempBlock.isTempBlock(block) || block.equals(null)) {
 			return false;
 		}
 		int sources = 0;
@@ -1048,7 +1174,9 @@ public class GeneralMethods {
 
 		Location loc;
 
-		double max = location1.distance(location2);
+		double max = 0;
+		if(location1.getWorld().equals(location2.getWorld()))
+			max = location1.distance(location2);
 
 		for (double i = 0; i <= max; i++) {
 			loc = location1.clone().add(direction.clone().multiply(i));
@@ -1073,7 +1201,7 @@ public class GeneralMethods {
 			BLOCK_CACHE.put(player.getName(), new ConcurrentHashMap<Block, BlockCacheElement>());
 		}
 
-		ConcurrentHashMap<Block, BlockCacheElement> blockMap = BLOCK_CACHE.get(player.getName());
+		Map<Block, BlockCacheElement> blockMap = BLOCK_CACHE.get(player.getName());
 		Block block = loc.getBlock();
 		if (blockMap.containsKey(block)) {
 			BlockCacheElement elem = blockMap.get(block);
@@ -1425,57 +1553,35 @@ public class GeneralMethods {
 		writeToDebug("");
 		writeToDebug("");
 		writeToDebug("Date Created: " + getCurrentDate());
+		writeToDebug("Java Version: " + Runtime.class.getPackage().getImplementationVersion());
 		writeToDebug("Bukkit Version: " + Bukkit.getServer().getVersion());
 		writeToDebug("");
 		writeToDebug("ProjectKorra (Core) Information");
 		writeToDebug("====================");
 		writeToDebug("Version: " + plugin.getDescription().getVersion());
 		writeToDebug("Author: " + plugin.getDescription().getAuthors());
+		List<String> officialSidePlugins = new ArrayList<String>();
 		if (hasRPG()) {
-			writeToDebug("");
-			writeToDebug("ProjectKorra (RPG) Information");
-			writeToDebug("====================");
-			writeToDebug("Version: " + getRPG().getDescription().getVersion());
-			writeToDebug("Author: " + getRPG().getDescription().getAuthors());
+			officialSidePlugins.add("ProjectKorra RPG v" + getRPG().getDescription().getVersion());
 		}
 		if (hasItems()) {
-			writeToDebug("");
-			writeToDebug("ProjectKorra (Items) Information");
-			writeToDebug("====================");
-			writeToDebug("Version: " + getItems().getDescription().getVersion());
-			writeToDebug("Author: " + getItems().getDescription().getAuthors());
+			officialSidePlugins.add("ProjectKorra Items v" + getItems().getDescription().getVersion());
 		}
 		if (hasSpirits()) {
+			officialSidePlugins.add("ProjectKorra Spirits v" + getSpirits().getDescription().getVersion());
+		}
+		if (hasProbending()) {
+			officialSidePlugins.add("Probending v" + getProbending().getDescription().getVersion());
+		}
+		if (!officialSidePlugins.isEmpty()) {
 			writeToDebug("");
-			writeToDebug("ProjectKorra (Spirits) Information");
+			writeToDebug("ProjectKorra (Side Plugin) Information");
 			writeToDebug("====================");
-			writeToDebug("Version: " + getSpirits().getDescription().getVersion());
-			writeToDebug("Author: " + getSpirits().getDescription().getAuthors());
-		}
-		writeToDebug("");
-		writeToDebug("Ability Information");
-		writeToDebug("====================");
-		ArrayList<String> stockAbils = new ArrayList<String>();
-		ArrayList<String> unofficialAbils = new ArrayList<String>();
-		for (CoreAbility ability : CoreAbility.getAbilities()) {
-			if (ability.getClass().getPackage().getName().startsWith("com.projectkorra")) {
-				stockAbils.add(ability.getName());
-			} else {
-				unofficialAbils.add(ability.getName());
+			for (String line : officialSidePlugins) {
+				writeToDebug(line);
 			}
 		}
-		if (!stockAbils.isEmpty()) {
-			Collections.sort(stockAbils);
-			for (String ability : stockAbils) {
-				writeToDebug(ability + " - STOCK");
-			}
-		}
-		if (!unofficialAbils.isEmpty()) {
-			Collections.sort(unofficialAbils);
-			for (String ability : unofficialAbils) {
-				writeToDebug(ability + " - UNOFFICAL");
-			}
-		}
+		
 		writeToDebug("");
 		writeToDebug("Supported Plugins");
 		writeToDebug("====================");
@@ -1521,9 +1627,37 @@ public class GeneralMethods {
 		writeToDebug("");
 		writeToDebug("Plugins Hooking Into ProjectKorra (Core)");
 		writeToDebug("====================");
+		
+		String[] pkPlugins = new String[] {"projectkorrarpg", "projectkorraitems", "projectkorraspirits", "probending"};
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-			if (plugin.getDescription().getDepend() != null && plugin.getDescription().getDepend().contains("ProjectKorra")) {
+			if (plugin.getDescription().getDepend() != null && plugin.getDescription().getDepend().contains("ProjectKorra") 
+					&& !Arrays.asList(pkPlugins).contains(plugin.getName().toLowerCase())) {
 				writeToDebug(plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion());
+			}
+		}
+		
+		writeToDebug("");
+		writeToDebug("Ability Information");
+		writeToDebug("====================");
+		ArrayList<String> stockAbils = new ArrayList<String>();
+		ArrayList<String> unofficialAbils = new ArrayList<String>();
+		for (CoreAbility ability : CoreAbility.getAbilities()) {
+			if (ability.getClass().getPackage().getName().startsWith("com.projectkorra")) {
+				stockAbils.add(ability.getName());
+			} else {
+				unofficialAbils.add(ability.getName());
+			}
+		}
+		if (!stockAbils.isEmpty()) {
+			Collections.sort(stockAbils);
+			for (String ability : stockAbils) {
+				writeToDebug(ability + " - STOCK");
+			}
+		}
+		if (!unofficialAbils.isEmpty()) {
+			Collections.sort(unofficialAbils);
+			for (String ability : unofficialAbils) {
+				writeToDebug(ability + " - UNOFFICAL");
 			}
 		}
 		
@@ -1558,7 +1692,10 @@ public class GeneralMethods {
 		writeToDebug("");
 		writeToDebug("CoreAbility Debugger");
 		writeToDebug("====================");
-		writeToDebug(CoreAbility.getDebugString());
+		for (String line : CoreAbility.getDebugString().split("\\n")) {
+			writeToDebug(line);
+		}
+		
 	}
 
 	public static void saveAbility(BendingPlayer bPlayer, int slot, String ability) {
@@ -1688,12 +1825,32 @@ public class GeneralMethods {
 			}
 			return;
 		}
-		if (entity instanceof FallingSand) {
+		if (entity instanceof FallingBlock) {
 			if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingAffectFallingSand.Normal")) {
 				entity.setVelocity(velocity.multiply(ConfigManager.defaultConfig.get().getDouble("Properties.BendingAffectFallingSand.NormalStrengthMultiplier")));
 			}
 			return;
 		}
+		
+		// Attempt to stop velocity from going over the packet cap.
+		if(velocity.getX() > 4){
+            velocity.setX(4);
+        } else if(velocity.getX() < -4){
+            velocity.setX(-4);
+        }
+		
+        if(velocity.getY() > 4){
+            velocity.setY(4);
+        } else if(velocity.getY() < -4){
+            velocity.setY(-4);
+        }
+        
+        if(velocity.getZ() > 4){
+            velocity.setZ(4);
+        } else if(velocity.getZ() < -4){
+            velocity.setZ(-4);
+        }
+        
 		entity.setVelocity(velocity);
 	}
 
@@ -1717,7 +1874,7 @@ public class GeneralMethods {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				for (ConcurrentHashMap<Block, BlockCacheElement> map : BLOCK_CACHE.values()) {
+				for (Map<Block, BlockCacheElement> map : BLOCK_CACHE.values()) {
 					for (Iterator<Block> i = map.keySet().iterator(); i.hasNext();) {
 						Block key = i.next();
 						BlockCacheElement value = map.get(key);
@@ -1745,6 +1902,7 @@ public class GeneralMethods {
 
 		Flight.removeAll();
 		TempBlock.removeAll();
+		TempArmor.revertAll();
 		MultiAbilityManager.removeAll();
 		if (!INVINCIBLE.isEmpty()) {
 			INVINCIBLE.clear();

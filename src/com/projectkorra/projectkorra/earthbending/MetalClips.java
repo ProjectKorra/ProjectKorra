@@ -1,9 +1,10 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.MetalAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.DamageHandler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,15 +17,17 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.MetalAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempArmor;
 
 public class MetalClips extends MetalAbility {
 	
-	private static final ConcurrentHashMap<Entity, Integer> ENTITY_CLIPS_COUNT = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Entity, MetalClips> TARGET_TO_ABILITY = new ConcurrentHashMap<>();
+	private static final Map<Entity, Integer> ENTITY_CLIPS_COUNT = new ConcurrentHashMap<>();
+	private static final Map<Entity, MetalClips> TARGET_TO_ABILITY = new ConcurrentHashMap<>();
 	private static final Material[] METAL_ITEMS = { 
 		Material.IRON_INGOT, Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, 
 		Material.IRON_BOOTS, Material.IRON_BLOCK, Material.IRON_AXE, Material.IRON_PICKAXE, 
@@ -37,20 +40,21 @@ public class MetalClips extends MetalAbility {
 	private boolean isMagnetized;
 	private boolean canUse4Clips;
 	private boolean canLoot;
+	private boolean hasSnuck;
 	private int metalClipsCount;
 	private int abilityType;
 	private int armorTime;
-	private int crushInterval;
-	private int crushDamage;
 	private int magnetRange;
 	private long armorStartTime;
-	private long time;
 	private long cooldown;
-	private double lastDistanceCheck;
+	private long shootCooldown;
+	private long crushCooldown;
 	private double magnetPower;
 	private double range;
+	private double crushDamage;
+	private double damage;
 	private LivingEntity targetEntity;
-	private ItemStack[] oldArmor;
+	//private ItemStack[] oldArmor;
 	private List<Item> trackedIngots;
 	
 	public MetalClips(Player player, int abilityType) {
@@ -63,12 +67,14 @@ public class MetalClips extends MetalAbility {
 		this.canLoot = player.hasPermission("bending.ability.MetalClips.loot");
 		this.canUse4Clips = player.hasPermission("bending.ability.MetalClips.4clips");
 		this.armorTime = getConfig().getInt("Abilities.Earth.MetalClips.Duration");
-		this.crushInterval = getConfig().getInt("Abilities.Earth.MetalClips.DamageInterval");;
 		this.range = getConfig().getDouble("Abilities.Earth.MetalClips.Range");
-		this.cooldown = getConfig().getInt("Abilities.Earth.MetalClips.Cooldown");
-		this.crushDamage = getConfig().getInt("Abilities.Earth.MetalClips.Damage");
+		this.cooldown = getConfig().getLong("Abilities.Earth.MetalClips.Cooldown");
+		this.shootCooldown = getConfig().getLong("Abilities.Earth.MetalClips.ShootCooldown");
+		this.crushCooldown = getConfig().getLong("Abilities.Earth.MetalClips.CrushCooldown");
 		this.magnetRange = getConfig().getInt("Abilities.Earth.MetalClips.MagnetRange");
 		this.magnetPower = getConfig().getDouble("Abilities.Earth.MetalClips.MagnetPower");
+		this.crushDamage = getConfig().getDouble("Abilities.Earth.MetalClips.CrushDamage");
+		this.damage = getConfig().getDouble("Abilities.Earth.MetalClips.Damage");
 		this.canThrow = (getConfig().getBoolean("Abilities.Earth.MetalClips.ThrowEnabled") && player.hasPermission("bending.ability.metalclips.throw"));
 		this.trackedIngots = new ArrayList<>();		
 		
@@ -93,7 +99,7 @@ public class MetalClips extends MetalAbility {
 		start();
 	}
 	
-	public static ItemStack getOriginalHelmet(LivingEntity ent) {
+	/*public static ItemStack getOriginalHelmet(LivingEntity ent) {
 		MetalClips clips = TARGET_TO_ABILITY.get(ent);
 		if (clips != null) {
 			return clips.oldArmor[3];
@@ -124,8 +130,20 @@ public class MetalClips extends MetalAbility {
 		}
 		return null;
 	}
+	
+	public static ItemStack[] getOriginalArmor(LivingEntity ent) {
+		MetalClips clips = TARGET_TO_ABILITY.get(ent);
+		if (clips != null) {
+			return clips.oldArmor;
+		}
+		return null;
+	}*/
 
 	public void shootMetal() {
+		if (bPlayer.isOnCooldown("MetalClips Shoot")) {
+			return;
+		}
+		bPlayer.addCooldown("MetalClips Shoot", shootCooldown);
 		ItemStack is = new ItemStack(Material.IRON_INGOT, 1);
 
 		if (!player.getInventory().containsAtLeast(is, 1)) {
@@ -146,8 +164,6 @@ public class MetalClips extends MetalAbility {
 		item.setVelocity(vector.normalize().add(new Vector(0, 0.1, 0).multiply(1.2)));
 		trackedIngots.add(item);
 		player.getInventory().removeItem(is);
-
-		bPlayer.addCooldown(this);
 	}
 
 	public void formArmor() {
@@ -163,58 +179,56 @@ public class MetalClips extends MetalAbility {
 
 		if (targetEntity instanceof Player) {
 			Player target = (Player) targetEntity;
-			if (oldArmor == null) {
-				oldArmor = target.getInventory().getArmorContents();
-			}
 
 			ItemStack[] metalArmor = new ItemStack[4];
 
-			metalArmor[2] = (metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE, 1) : oldArmor[2];
-			metalArmor[0] = (metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS, 1) : oldArmor[0];
-			metalArmor[1] = (metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS, 1) : oldArmor[1];
-			metalArmor[3] = (metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET, 1) : oldArmor[3];
+			metalArmor[2] = (metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : new ItemStack(Material.AIR);
+			metalArmor[0] = (metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : new ItemStack(Material.AIR);
+			metalArmor[1] = (metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : new ItemStack(Material.AIR);
+			metalArmor[3] = (metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : new ItemStack(Material.AIR);
 			ENTITY_CLIPS_COUNT.put(target, metalClipsCount);
-			target.getInventory().setArmorContents(metalArmor);
+			
+			TempArmor armor = TempArmor.getTempArmor(target);
+			if (armor != null) armor.revert();
+			
+			new TempArmor(target, this, metalArmor);
 		} else {
-			if (oldArmor == null) {
-				oldArmor = targetEntity.getEquipment().getArmorContents();
-			}
 
 			ItemStack[] metalarmor = new ItemStack[4];
 
-			metalarmor[2] = (metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE, 1) : oldArmor[2];
-			metalarmor[0] = (metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS, 1) : oldArmor[0];
-			metalarmor[1] = (metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS, 1) : oldArmor[1];
-			metalarmor[3] = (metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET, 1) : oldArmor[3];
+			metalarmor[2] = (metalClipsCount >= 1) ? new ItemStack(Material.IRON_CHESTPLATE) : new ItemStack(Material.AIR);
+			metalarmor[0] = (metalClipsCount >= 2) ? new ItemStack(Material.IRON_BOOTS) : new ItemStack(Material.AIR);
+			metalarmor[1] = (metalClipsCount >= 3) ? new ItemStack(Material.IRON_LEGGINGS) : new ItemStack(Material.AIR);
+			metalarmor[3] = (metalClipsCount >= 4) ? new ItemStack(Material.IRON_HELMET) : new ItemStack(Material.AIR);
 			ENTITY_CLIPS_COUNT.put(targetEntity, metalClipsCount);
-			targetEntity.getEquipment().setArmorContents(metalarmor);
-		}
-
-		if (metalClipsCount == 4) {
-			time = System.currentTimeMillis();
-			lastDistanceCheck = player.getLocation().distance(targetEntity.getLocation());
+			
+			TempArmor armor = TempArmor.getTempArmor(targetEntity);
+			if (armor != null) armor.revert();
+			
+			new TempArmor(targetEntity, this, metalarmor);
 		}
 		armorStartTime = System.currentTimeMillis();
 		isBeingWorn = true;
 	}
 
 	public void resetArmor() {
-		if (targetEntity == null || oldArmor == null || targetEntity.isDead()) {
+		if (targetEntity == null || !TempArmor.hasTempArmor(targetEntity) || targetEntity.isDead()) {
 			return;
 		}
-
-		if (targetEntity instanceof Player) {
-			((Player) targetEntity).getInventory().setArmorContents(oldArmor);
-		} else {
-			targetEntity.getEquipment().setArmorContents(oldArmor);
-		}
+		
+		TempArmor.getTempArmor(targetEntity).revert();
 
 		player.getWorld().dropItem(targetEntity.getLocation(), new ItemStack(Material.IRON_INGOT, metalClipsCount));
 		isBeingWorn = false;
+		bPlayer.addCooldown(this);
 	}
 
 	public void launch() {
 		if (!canThrow) {
+			return;
+		}
+		
+		if (targetEntity == null) {
 			return;
 		}
 
@@ -226,8 +240,16 @@ public class MetalClips extends MetalAbility {
 		dz = target.getZ() - location.getZ();
 		Vector vector = new Vector(dx, dy, dz);
 		vector.normalize();
-		targetEntity.setVelocity(vector.multiply(2));
+		targetEntity.setVelocity(vector.multiply(metalClipsCount/2).normalize());
 		remove();
+	}
+	
+	public void crush() {
+		if (bPlayer.isOnCooldown("MetalClips Crush")) {
+			return;
+		}
+		bPlayer.addCooldown("MetalClips Crush", crushCooldown);
+		DamageHandler.damageEntity(targetEntity, player, crushDamage, this);
 	}
 
 	@Override
@@ -243,10 +265,17 @@ public class MetalClips extends MetalAbility {
 				return;
 			}
 		}
+		
+		if (player.isSneaking()) {
+			hasSnuck = true;
+		}
 
 		if (!player.isSneaking()) {
 			isControlling = false;
 			isMagnetized = false;
+			if (metalClipsCount < 4 && hasSnuck && abilityType == 0) {
+				launch();
+			}
 		}
 
 		if (isMagnetized) {
@@ -256,7 +285,7 @@ public class MetalClips extends MetalAbility {
 			}
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), magnetRange)) {
 				Vector vector = GeneralMethods.getDirection(entity.getLocation(), player.getLocation());
-				ItemStack itemInHand = player.getInventory().getItemInHand();
+				ItemStack itemInHand = player.getInventory().getItemInMainHand();
 				
 				if (entity instanceof Player && canLoot && itemInHand.getType() == Material.IRON_INGOT && itemInHand.getItemMeta().getDisplayName().equalsIgnoreCase("Magnet")) {
 					Player targetPlayer = (Player) entity;
@@ -290,9 +319,9 @@ public class MetalClips extends MetalAbility {
 					}
 
 					targetPlayer.getInventory().setArmorContents(armor);
-					if (Arrays.asList(METAL_ITEMS).contains(targetPlayer.getInventory().getItemInHand().getType())) {
-						targetPlayer.getWorld().dropItem(targetPlayer.getLocation(), targetPlayer.getEquipment().getItemInHand());
-						targetPlayer.getEquipment().setItemInHand(new ItemStack(Material.AIR, 1));
+					if (Arrays.asList(METAL_ITEMS).contains(targetPlayer.getInventory().getItemInMainHand().getType())) {
+						targetPlayer.getWorld().dropItem(targetPlayer.getLocation(), targetPlayer.getEquipment().getItemInMainHand());
+						targetPlayer.getEquipment().setItemInMainHand(new ItemStack(Material.AIR, 1));
 					}
 				}
 
@@ -313,9 +342,9 @@ public class MetalClips extends MetalAbility {
 
 					livingEntity.getEquipment().setArmorContents(armor);
 
-					if (Arrays.asList(METAL_ITEMS).contains(livingEntity.getEquipment().getItemInHand().getType())) {
-						livingEntity.getWorld().dropItem(livingEntity.getLocation(), livingEntity.getEquipment().getItemInHand());
-						livingEntity.getEquipment().setItemInHand(new ItemStack(Material.AIR, 1));
+					if (Arrays.asList(METAL_ITEMS).contains(livingEntity.getEquipment().getItemInMainHand().getType())) {
+						livingEntity.getWorld().dropItem(livingEntity.getLocation(), livingEntity.getEquipment().getItemInMainHand());
+						livingEntity.getEquipment().setItemInMainHand(new ItemStack(Material.AIR, 1));
 					}
 				}
 
@@ -337,8 +366,14 @@ public class MetalClips extends MetalAbility {
 		if (isControlling && player.isSneaking()) {
 			if (metalClipsCount == 1) {
 				Location oldLocation = targetEntity.getLocation();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
-				double distance = loc.distance(oldLocation);
+				Location loc = oldLocation;
+				if(player.getWorld().equals(oldLocation.getWorld())) {
+						loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
+				}
+				double distance = 0;
+				if(loc.getWorld().equals(oldLocation.getWorld())) {
+					distance = loc.distance(oldLocation);
+				}
 				Vector vector = GeneralMethods.getDirection(targetEntity.getLocation(), player.getLocation());
 
 				if (distance > 0.5) {
@@ -348,9 +383,14 @@ public class MetalClips extends MetalAbility {
 
 			if (metalClipsCount == 2) {
 				Location oldLocation = targetEntity.getLocation();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
-				double distance = loc.distance(oldLocation);
-
+				Location loc = oldLocation;
+				if(player.getWorld().equals(oldLocation.getWorld())) {
+						loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
+				}
+				double distance = 0;
+				if(loc.getWorld().equals(oldLocation.getWorld())) {
+					distance = loc.distance(oldLocation);
+				}
 				Vector vector = GeneralMethods.getDirection(targetEntity.getLocation(), GeneralMethods.getTargetedLocation(player, 10));
 
 				if (distance > 1.2) {
@@ -360,8 +400,14 @@ public class MetalClips extends MetalAbility {
 
 			if (metalClipsCount >= 3) {
 				Location oldLocation = targetEntity.getLocation();
-				Location loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
-				double distance = loc.distance(oldLocation);
+				Location loc = oldLocation;
+				if(player.getWorld().equals(oldLocation.getWorld())) {
+						loc = GeneralMethods.getTargetedLocation(player, (int) player.getLocation().distance(oldLocation));
+				}
+				double distance = 0;
+				if(loc.getWorld().equals(oldLocation.getWorld())) {
+					distance = loc.distance(oldLocation);
+				}
 				Vector vector = GeneralMethods.getDirection(oldLocation, GeneralMethods.getTargetedLocation(player, 10));
 				
 				if (distance > 1.2) {
@@ -371,21 +417,6 @@ public class MetalClips extends MetalAbility {
 				}
 
 				targetEntity.setFallDistance(0);
-			}
-
-			if (metalClipsCount == 4 && canUse4Clips) {
-				double distance = player.getLocation().distance(targetEntity.getLocation());
-				if (distance < lastDistanceCheck - 0.3) {
-					double height = targetEntity.getLocation().getY();
-					if (height > player.getEyeLocation().getY()) {
-						lastDistanceCheck = distance;
-
-						if (System.currentTimeMillis() > time + crushInterval) {
-							time = System.currentTimeMillis();
-							DamageHandler.damageEntity(targetEntity, (crushDamage + (crushDamage * 1.2)), this);
-						}
-					}
-				}
 			}
 		}
 
@@ -404,17 +435,25 @@ public class MetalClips extends MetalAbility {
 
 				for (Entity e : GeneralMethods.getEntitiesAroundPoint(ii.getLocation(), 2)) {
 					if (e instanceof LivingEntity && e.getEntityId() != player.getEntityId()) {
-						if (e instanceof Player || e instanceof Zombie || e instanceof Skeleton) {
-							targetEntity = (LivingEntity) e;
-							TARGET_TO_ABILITY.put(targetEntity, this);
-							formArmor();
+						if ((e instanceof Player || e instanceof Zombie || e instanceof Skeleton)) {
+							if (targetEntity == null) {
+								targetEntity = (LivingEntity) e;
+								TARGET_TO_ABILITY.put(targetEntity, this);
+								formArmor();
+							} else if (targetEntity == e) {
+								formArmor();
+							} else {
+								TARGET_TO_ABILITY.get(targetEntity).remove();
+								player.getWorld().dropItemNaturally(e.getLocation(), new ItemStack(Material.IRON_INGOT, 1));
+							}
 						} else {
-							DamageHandler.damageEntity(e, 5, this);
+							DamageHandler.damageEntity(e, player, damage, this);
 							ii.getWorld().dropItem(ii.getLocation(), ii.getItemStack());
 							remove();
 						}
 
 						ii.remove();
+						break;
 					}
 				}
 			}
@@ -435,9 +474,6 @@ public class MetalClips extends MetalAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		for (Item i : trackedIngots) {
-			i.remove();
-		}
 		
 		resetArmor();
 		trackedIngots.clear();
@@ -449,7 +485,7 @@ public class MetalClips extends MetalAbility {
 		}
 	}
 
-	public static boolean isControlled(Player player) {
+	public static boolean isControlled(LivingEntity player) {
 		return TARGET_TO_ABILITY.containsKey(player);
 	}
 	
@@ -458,12 +494,23 @@ public class MetalClips extends MetalAbility {
 		return clips != null && player.isSneaking() && clips.targetEntity != null;
 	}
 	
-	public static ConcurrentHashMap<Entity, Integer> getEntityClipsCount() {
+	public static Map<Entity, Integer> getEntityClipsCount() {
 		return ENTITY_CLIPS_COUNT;
 	}
 	
-	public static ConcurrentHashMap<Entity, MetalClips> getTargetToAbility() {
+	public static Map<Entity, MetalClips> getTargetToAbility() {
 		return TARGET_TO_ABILITY;
+	}
+	
+	public static boolean removeControlledEnitity(LivingEntity entity) {
+		if (entity == null) return false;
+		for (MetalClips metalclips : CoreAbility.getAbilities(MetalClips.class)) {
+			if (metalclips.targetEntity == entity) {
+				metalclips.remove();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -484,6 +531,14 @@ public class MetalClips extends MetalAbility {
 	@Override
 	public long getCooldown() {
 		return cooldown;
+	}
+	
+	public long getShootCooldown() {
+		return shootCooldown;
+	}
+	
+	public long getCrushCooldown() {
+		return crushCooldown;
 	}
 	
 	@Override
@@ -568,19 +623,11 @@ public class MetalClips extends MetalAbility {
 		this.armorTime = armorTime;
 	}
 
-	public int getCrushInterval() {
-		return crushInterval;
-	}
-
-	public void setCrushInterval(int crushInterval) {
-		this.crushInterval = crushInterval;
-	}
-
-	public int getCrushDamage() {
+	public double getCrushDamage() {
 		return crushDamage;
 	}
 
-	public void setCrushDamage(int crushDamage) {
+	public void setCrushDamage(double crushDamage) {
 		this.crushDamage = crushDamage;
 	}
 
@@ -598,22 +645,6 @@ public class MetalClips extends MetalAbility {
 
 	public void setArmorStartTime(long armorStartTime) {
 		this.armorStartTime = armorStartTime;
-	}
-
-	public long getTime() {
-		return time;
-	}
-
-	public void setTime(long time) {
-		this.time = time;
-	}
-
-	public double getLastDistanceCheck() {
-		return lastDistanceCheck;
-	}
-
-	public void setLastDistanceCheck(double lastDistanceCheck) {
-		this.lastDistanceCheck = lastDistanceCheck;
 	}
 
 	public double getMagnetPower() {
@@ -638,10 +669,6 @@ public class MetalClips extends MetalAbility {
 
 	public void setTargetEntity(LivingEntity targetEntity) {
 		this.targetEntity = targetEntity;
-	}
-
-	public ItemStack[] getOldArmor() {
-		return oldArmor;
 	}
 
 	public List<Item> getTrackedIngots() {

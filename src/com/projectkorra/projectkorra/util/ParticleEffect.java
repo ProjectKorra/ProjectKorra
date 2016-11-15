@@ -446,7 +446,7 @@ public enum ParticleEffect {
 	 * <li>Has a downwards motion by default
 	 * </ul>
 	 */
-	FALLING_DUST("fallingDust", 46, 10);
+	FALLING_DUST("fallingDust", 46, 10, true);
 
 	private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<String, ParticleEffect>();
 	private static final Map<Integer, ParticleEffect> ID_MAP = new HashMap<Integer, ParticleEffect>();
@@ -464,6 +464,7 @@ public enum ParticleEffect {
 			NAME_MAP.put(effect.name, effect);
 			ID_MAP.put(effect.id, effect);
 		}
+		ParticlePacket.initialize();
 	}
 
 	/**
@@ -626,7 +627,7 @@ public enum ParticleEffect {
 	 */
 	private static boolean isLongDistance(Location location, List<Player> players) {
 		for (Player player : players) {
-			if (player.getLocation().distance(location) < 256) {
+			if (player.getWorld().equals(location.getWorld()) && player.getLocation().distance(location) < 256) {
 				continue;
 			}
 			return true;
@@ -925,7 +926,7 @@ public enum ParticleEffect {
 	public static abstract class ParticleData {
 		private final Material material;
 		private final byte data;
-		private final int[] packetData;
+		private int[] packetData;
 
 		/**
 		 * Construct a new particle data
@@ -975,6 +976,15 @@ public enum ParticleEffect {
 		public String getPacketDataString() {
 			return "_" + packetData[0] + "_" + packetData[1];
 		}
+		
+		/**Sets the packet data. Should be an integer array. For ITEM_CRACK
+		 *  and BLOCK_DUST, it should be [id, meta] but for BLOCK_CRACK it 
+		 *  should be [id + (meta * 4096)] 
+		 * 
+		 * @param data The packet data.*/
+		public void setPacketData(int[] data) {
+			packetData = data;
+		}
 	}
 
 	/**
@@ -1018,11 +1028,14 @@ public enum ParticleEffect {
 		 * @throws IllegalArgumentException If the material is not a block
 		 * @see ParticleData#ParticleData(Material, byte)
 		 */
+		@SuppressWarnings("deprecation")
 		public BlockData(Material material, byte data) throws IllegalArgumentException {
 			super(material, data);
 			if (!material.isBlock()) {
 				throw new IllegalArgumentException("The material is not a block");
 			}
+			
+			this.setPacketData(new int[] {material.getId() + (data * 4096)});
 		}
 	}
 

@@ -1,12 +1,11 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.DamageHandler;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -15,12 +14,15 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class Ripple extends EarthAbility {
 
-	private static final ConcurrentHashMap<Integer[], Block> BLOCKS = new ConcurrentHashMap<Integer[], Block>();
+	private static final Map<Integer[], Block> BLOCKS = new ConcurrentHashMap<Integer[], Block>();
 
 	private int step;
 	private int maxStep;
@@ -208,7 +210,7 @@ public class Ripple extends EarthAbility {
 				Block topblock = loc.getBlock();
 				Block botblock = loc.clone().add(0, -1, 0).getBlock();
 
-				if (isTransparent(topblock) && !topblock.isLiquid() && isEarthbendable(botblock)) {
+				if (isTransparent(topblock) && !topblock.isLiquid() && isEarthbendable(botblock) && botblock.getType() != Material.STATIONARY_LAVA) {
 					location = loc.clone().add(0, -1, 0);
 					locations.add(location);
 					break;
@@ -297,7 +299,7 @@ public class Ripple extends EarthAbility {
 		BLOCKS.clear();
 	}
 
-	public static ConcurrentHashMap<Integer[], Block> getBlocks() {
+	public static Map<Integer[], Block> getBlocks() {
 		return BLOCKS;
 	}
 
@@ -324,6 +326,11 @@ public class Ripple extends EarthAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public ArrayList<Location> getLocations() {
+		return locations;
 	}
 	
 	public int getStep() {
@@ -412,10 +419,6 @@ public class Ripple extends EarthAbility {
 
 	public void setBlock4(Block block4) {
 		this.block4 = block4;
-	}
-
-	public ArrayList<Location> getLocations() {
-		return locations;
 	}
 
 	public ArrayList<Entity> getEntities() {

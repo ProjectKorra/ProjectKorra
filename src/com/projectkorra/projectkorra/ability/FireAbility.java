@@ -1,12 +1,12 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.firebending.BlazeArc;
-import com.projectkorra.projectkorra.util.Information;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.rpg.RPGMethods;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -17,16 +17,20 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.firebending.BlazeArc;
+import com.projectkorra.projectkorra.firebending.HeatControl;
+import com.projectkorra.projectkorra.util.Information;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
+import com.projectkorra.rpg.RPGMethods;
 
 public abstract class FireAbility extends ElementalAbility {
 	
-	private static final ConcurrentHashMap<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
+	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
 	private static final Material[] IGNITABLE_MATERIALS = { Material.BEDROCK, Material.BOOKSHELF, Material.BRICK, Material.CLAY, Material.CLAY_BRICK,
 			Material.COAL_ORE, Material.COBBLESTONE, Material.DIAMOND_ORE, Material.DIAMOND_BLOCK, Material.DIRT,
 			Material.ENDER_STONE, Material.GLOWING_REDSTONE_ORE, Material.GOLD_BLOCK, Material.GRAVEL, Material.GRASS,
@@ -57,6 +61,15 @@ public abstract class FireAbility extends ElementalAbility {
 	@Override
 	public Element getElement() {
 		return Element.FIRE;
+	}
+	
+	@Override
+	public void handleCollision(Collision collision) {
+		super.handleCollision(collision);
+		if (collision.isRemovingFirst()) {
+			ParticleData particleData = (ParticleEffect.ParticleData) new ParticleEffect.BlockData(Material.FIRE, (byte) 0);
+			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+		}
 	}
 		
 	public double getDayFactor(double value) {
@@ -138,11 +151,15 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 	
 	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 * <p>
 	 * Checks whether a location is within a FireShield.
 	 * 
 	 * @param loc The location to check
 	 * @return true If the location is inside a FireShield.
 	 */
+	@Deprecated
 	public static boolean isWithinFireShield(Location loc) {
 		List<String> list = new ArrayList<String>();
 		list.add("FireShield");
@@ -151,7 +168,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playCombustionSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.FIREWORK_BLAST, 1, -1);
+			loc.getWorld().playSound(loc, Sound.ENTITY_FIREWORK_BLAST, 1, -1);
 		}
 	}
 
@@ -161,7 +178,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playFirebendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.FIRE, 1, 10);
+			loc.getWorld().playSound(loc, Sound.BLOCK_FIRE_AMBIENT, 1, 10);
 		}
 	}
 
@@ -216,6 +233,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void stopBending() {
 		BlazeArc.removeAllCleanup();
+		HeatControl.revertAllInstances();
 		for (Location loc : TEMP_FIRE.keySet()) {
 			revertTempFire(loc);
 		}

@@ -38,12 +38,14 @@ public class RaiseEarthWall extends EarthAbility {
 
 		Vector direction = player.getEyeLocation().getDirection().normalize();
 		double ox, oy, oz;
+		direction.setY(0);
 		ox = -direction.getZ();
 		oy = 0;
 		oz = direction.getX();
-
+		
 		Vector orth = new Vector(ox, oy, oz);
 		orth = orth.normalize();
+		orth = getDegreeRoundedVector(orth, 0.25);
 
 		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.SHIFT_DOWN);
 		
@@ -56,8 +58,9 @@ public class RaiseEarthWall extends EarthAbility {
 		World world = location.getWorld();
 		boolean shouldAddCooldown = false;
 
-		for (int i = -width / 2; i <= width / 2; i++) {
-			Block block = world.getBlockAt(location.clone().add(orth.clone().multiply((double) i)));
+		for (int i = 0; i < width; i++) {
+			double adjustedI = i - width / 2.0;
+			Block block = world.getBlockAt(location.clone().add(orth.clone().multiply(adjustedI)));
 
 			if (isTransparent(block)) {
 				for (int j = 1; j < height; j++) {
@@ -88,6 +91,30 @@ public class RaiseEarthWall extends EarthAbility {
 		if (shouldAddCooldown) {
 			bPlayer.addCooldown("RaiseEarthWall", cooldown);
 		}
+	}
+	
+	private static Vector getDegreeRoundedVector(Vector vec, double degreeIncrement) {
+		if (vec == null) {
+			return null;
+		}
+		vec = vec.normalize();
+		double[] dims = {vec.getX(), vec.getY(), vec.getZ()};
+		
+		for (int i = 0; i < dims.length; i++) {
+			double dim = dims[i];
+			int sign = dim >= 0 ? 1 : -1;
+			int dimDivIncr = (int)(dim / degreeIncrement);
+			
+			double lowerBound = dimDivIncr * degreeIncrement;
+			double upperBound = (dimDivIncr + (1 * sign))  * degreeIncrement;
+			
+			if (Math.abs(dim - lowerBound) < Math.abs(dim - upperBound)) {
+				dims[i] = lowerBound;
+			} else {
+				dims[i] = upperBound;
+			}
+		}
+		return new Vector(dims[0], dims[1], dims[2]);
 	}
 
 	@Override

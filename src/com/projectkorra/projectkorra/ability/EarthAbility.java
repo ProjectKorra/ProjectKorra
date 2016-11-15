@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.ability;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
@@ -20,20 +21,24 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
+import com.projectkorra.projectkorra.earthbending.SandSpout;
+import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public abstract class EarthAbility extends ElementalAbility {
 	
 	private static final HashSet<Block> PREVENT_EARTHBENDING = new HashSet<Block>();
-	private static final ConcurrentHashMap<Block, Information> MOVED_EARTH = new ConcurrentHashMap<Block, Information>();
-	private static final ConcurrentHashMap<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<Integer, Information>();
+	private static final Map<Block, Information> MOVED_EARTH = new ConcurrentHashMap<Block, Information>();
+	private static final Map<Integer, Information> TEMP_AIR_LOCATIONS = new ConcurrentHashMap<Integer, Information>();
 	private static final ArrayList<Block> PREVENT_PHYSICS = new ArrayList<Block>();
 
 	public EarthAbility(Player player) {
@@ -77,6 +82,15 @@ public abstract class EarthAbility extends ElementalAbility {
 	@Override
 	public boolean isIgniteAbility() {
 		return false;
+	}
+	
+	@Override
+	public void handleCollision(Collision collision) {
+		super.handleCollision(collision);
+		if (collision.isRemovingFirst()) {
+			ParticleData particleData = (ParticleEffect.ParticleData) new ParticleEffect.BlockData(Material.DIRT, (byte) 0);
+			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
+		}
 	}
 	
 	public static boolean isEarthbendable(Material material) {
@@ -141,6 +155,9 @@ public abstract class EarthAbility extends ElementalAbility {
 			Block affectedblock = location.clone().add(norm).getBlock();
 			if (EarthPassive.isPassiveSand(block)) {
 				EarthPassive.revertSand(block);
+			}
+			if (Illumination.isIlluminationTorch(affectedblock) && TempBlock.isTempBlock(affectedblock)) {
+				TempBlock.get(affectedblock).revertBlock();
 			}
 
 			if (affectedblock == null) {
@@ -266,11 +283,11 @@ public abstract class EarthAbility extends ElementalAbility {
 
 		for (int x = 0; x < amount; x++) {
 			if (!red) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
 			} else if (red) {
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 1), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
-				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.RED_SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 257.0D);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.SAND, (byte) 1), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
+				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.RED_SANDSTONE, (byte) 0), new Vector(((Math.random() - 0.5) * xOffset), ((Math.random() - 0.5) * yOffset), ((Math.random() - 0.5) * zOffset)), speed, loc, 255.0);
 			}
 
 		}
@@ -352,7 +369,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		return value * getConfig().getDouble("Properties.Earth.MetalPowerFactor");
 	}
 	
-	public static ConcurrentHashMap<Block, Information> getMovedEarth() {
+	public static Map<Block, Information> getMovedEarth() {
 		return MOVED_EARTH;
 	}
 	
@@ -403,7 +420,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		return player.getTargetBlock(getTransparentMaterialSet(), range);
 	}
 	
-	public static ConcurrentHashMap<Integer, Information> getTempAirLocations() {
+	public static Map<Integer, Information> getTempAirLocations() {
 		return TEMP_AIR_LOCATIONS;
 	}
 
@@ -431,7 +448,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		byte full = 0x0;
 		if (TempBlock.isTempBlock(block)) {
 			TempBlock tblock = TempBlock.instances.get(block);
-			if (tblock == null || !LavaFlow.getTempLavaBlocks().contains(tblock)) {
+			if (tblock == null || !LavaFlow.getTempLavaBlocks().values().contains(tblock)) {
 				return false;
 			}
 		}
@@ -453,7 +470,6 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	@SuppressWarnings("deprecation")
 	public static void moveEarthBlock(Block source, Block target) {
-		byte full = 0x0;
 		Information info;
 
 		if (MOVED_EARTH.containsKey(source)) {
@@ -468,18 +484,16 @@ public abstract class EarthAbility extends ElementalAbility {
 		info.setTime(System.currentTimeMillis());
 		MOVED_EARTH.put(target, info);
 
-		if (GeneralMethods.isAdjacentToThreeOrMoreSources(source)) {
-			source.setType(Material.WATER);
-			source.setData(full);
-		} else {
-			source.setType(Material.AIR);
-		}
+		source.setType(Material.AIR);
+		
 		if (info.getState().getType() == Material.SAND) {
 			if (info.getState().getRawData() == (byte) 0x1) {
 				target.setType(Material.RED_SANDSTONE);
 			} else {
 				target.setType(Material.SANDSTONE);
 			}
+		} else if (info.getState().getType() == Material.GRAVEL) {
+			target.setType(Material.STONE);
 		} else {
 			target.setType(info.getState().getType());
 			target.setData(info.getState().getRawData());
@@ -494,13 +508,13 @@ public abstract class EarthAbility extends ElementalAbility {
 	
 	public static void playMetalbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.IRONGOLEM_HIT, 1, 10);
+			loc.getWorld().playSound(loc, Sound.ENTITY_IRONGOLEM_HURT, 1, 10);
 		}
 	}
 
 	public static void playSandBendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.DIG_SAND, 1.5f, 5);
+			loc.getWorld().playSound(loc, Sound.BLOCK_SAND_BREAK, 1.5f, 5);
 		}
 	}
 
@@ -609,7 +623,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			MOVED_EARTH.remove(block);
 		}
 		return true;
-	}
+	} 
 	
 	public static void stopBending() {
 		EarthPassive.removeAll();
@@ -617,5 +631,12 @@ public abstract class EarthAbility extends ElementalAbility {
 		if (isEarthRevertOn()) {
 			removeAllEarthbendedBlocks();
 		}
+	}
+
+	public static void removeSandSpouts(Location loc, double radius, Player source) {
+		SandSpout.removeSpouts(loc, radius, source);
+	}
+	public static void removeSandSpouts(Location loc, Player source) {
+		removeSandSpouts(loc, 1.5, source);
 	}
 }

@@ -1,5 +1,19 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
@@ -9,24 +23,12 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class SurgeWall extends WaterAbility {
 
 	private static final byte FULL = 0x0;
 	private static final String RANGE_CONFIG = "Abilities.Water.Surge.Wall.Range";
-	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<>();	
+	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<>();	
 
 	private boolean progressing;
 	private boolean settingUp;
@@ -41,6 +43,7 @@ public class SurgeWall extends WaterAbility {
 	private Location location;
 	private Location firstDestination;
 	private Location targetDestination;
+	private ArrayList<Location> locations;
 	private Vector firstDirection;
 	private Vector targetDirection;
 
@@ -52,6 +55,7 @@ public class SurgeWall extends WaterAbility {
 		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown");
 		this.range = getConfig().getDouble(RANGE_CONFIG);
 		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
+		this.locations = new ArrayList<>();
 
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 		if (wave != null && !wave.isProgressing()) {
@@ -67,6 +71,7 @@ public class SurgeWall extends WaterAbility {
 		if (wall != null) {
 			if (wall.progressing) {
 				wall.freezeThaw();
+				return;
 			} else if (prepare()) {
 				wall.remove();
 				start();
@@ -173,7 +178,7 @@ public class SurgeWall extends WaterAbility {
 				firstDirection = getDirection(sourceBlock.getLocation(), firstDestination);
 				targetDirection = getDirection(firstDestination, targetDestination);
 				
-				if (isPlant(sourceBlock)) {
+				if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 					new PlantRegrowth(player, sourceBlock);
 				}
 				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
@@ -212,7 +217,8 @@ public class SurgeWall extends WaterAbility {
 			remove();
 			return;
 		}
-
+		locations.clear();
+		
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			boolean matchesName = bPlayer.getBoundAbilityName().equalsIgnoreCase(getName());
@@ -256,6 +262,7 @@ public class SurgeWall extends WaterAbility {
 							WALL_BLOCKS.put(block, player);
 							addWallBlock(block);
 							blocks.add(block);
+							locations.add(block.getLocation());
 							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 						}
 					}
@@ -445,6 +452,9 @@ public class SurgeWall extends WaterAbility {
 
 	private void returnWater() {
 		if (location != null) {
+			if (frozen) {
+				location.getBlock().setType(Material.WATER);
+			}
 			new WaterReturn(player, location.getBlock());
 		}
 	}
@@ -477,6 +487,11 @@ public class SurgeWall extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		return locations;
 	}
 
 	public boolean isProgressing() {
@@ -583,11 +598,11 @@ public class SurgeWall extends WaterAbility {
 		this.targetDirection = targetDirection;
 	}
 
-	public static ConcurrentHashMap<Block, Block> getAffectedBlocks() {
+	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
 
-	public static ConcurrentHashMap<Block, Player> getWallBlocks() {
+	public static Map<Block, Player> getWallBlocks() {
 		return WALL_BLOCKS;
 	}
 

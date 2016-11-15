@@ -25,8 +25,10 @@ public class AddCommand extends PKCommand {
 
 	private String playerNotFound;
 	private String invalidElement;
-	private String addedOther;
-	private String added;
+	private String addedOtherCFW;
+	private String addedOtherAE;
+	private String addedCFW;
+	private String addedAE;
 	private String alreadyHasElementOther;
 	private String alreadyHasElement;
 	private String alreadyHasSubElementOther;
@@ -37,8 +39,10 @@ public class AddCommand extends PKCommand {
 		
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Add.PlayerNotFound");
 		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Add.InvalidElement");
-		this.addedOther = ConfigManager.languageConfig.get().getString("Commands.Add.Other.SuccessfullyAdded");
-		this.added = ConfigManager.languageConfig.get().getString("Commands.Add.SuccessfullyAdded");
+		this.addedOtherCFW = ConfigManager.languageConfig.get().getString("Commands.Add.Other.SuccessfullyAddedCFW");
+		this.addedOtherAE = ConfigManager.languageConfig.get().getString("Commands.Add.Other.SuccessfullyAddedAE");
+		this.addedCFW = ConfigManager.languageConfig.get().getString("Commands.Add.SuccessfullyAddedCFW");
+		this.addedAE = ConfigManager.languageConfig.get().getString("Commands.Add.SuccessfullyAddedAE");
 		this.alreadyHasElementOther = ConfigManager.languageConfig.get().getString("Commands.Add.Other.AlreadyHasElement");
 		this.alreadyHasElement = ConfigManager.languageConfig.get().getString("Commands.Add.AlreadyHasElement");
 		this.alreadyHasSubElementOther = ConfigManager.languageConfig.get().getString("Commands.Add.Other.AlreadyHasSubElement");
@@ -109,9 +113,19 @@ public class AddCommand extends PKCommand {
 			ChatColor color = e.getColor();
 			
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				sender.sendMessage(color + addedOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
+				if (e != Element.AIR && e != Element.EARTH) {
+					sender.sendMessage(color + addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
+					target.sendMessage(color + addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
+				} else {
+					sender.sendMessage(color + addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
+					target.sendMessage(color + addedAE.replace("{element}", e.getName() + e.getType().getBender()));
+				}
 			} else {
-				target.sendMessage(color + added.replace("{element}", e.getName() + e.getType().getBender()));
+				if (e != Element.AIR && e != Element.EARTH)
+					target.sendMessage(color + addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
+				else
+					target.sendMessage(color + addedAE.replace("{element}", e.getName() + e.getType().getBender()));
+				
 			}
 			GeneralMethods.saveElements(bPlayer);
 			GeneralMethods.saveSubElements(bPlayer);
@@ -131,9 +145,16 @@ public class AddCommand extends PKCommand {
 			ChatColor color = e.getColor();
 			
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				sender.sendMessage(color + addedOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+				if (e != Element.AIR && e != Element.EARTH)
+					sender.sendMessage(color + addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+				else
+					sender.sendMessage(color + addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+				
 			} else {
-				target.sendMessage(color + added.replace("{element}", sub.getName() + sub.getType().getBender()));
+				if (e != Element.AIR && e != Element.EARTH)
+					target.sendMessage(color + addedCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
+				else
+					target.sendMessage(color + addedAE.replace("{element}", sub.getName() + sub.getType().getBender()));
 			}
 			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD));

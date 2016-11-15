@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,11 +41,12 @@ public class BendingPlayer {
 	/**
 	 * ConcurrentHashMap that contains all instances of BendingPlayer, with UUID key.
 	 */
-	private static final ConcurrentHashMap<UUID, BendingPlayer> PLAYERS = new ConcurrentHashMap<>();
+	private static final Map<UUID, BendingPlayer> PLAYERS = new ConcurrentHashMap<>();
 
 	private boolean permaRemoved;
 	private boolean toggled;
 	private boolean tremorSense;
+	private boolean illumination;
 	private boolean chiBlocked;
 	private long slowTime;
 	private Player player;
@@ -54,8 +56,8 @@ public class BendingPlayer {
 	private ArrayList<Element> elements;
 	private ArrayList<SubElement> subelements;
 	private HashMap<Integer, String> abilities;
-	private ConcurrentHashMap<String, Long> cooldowns;
-	private ConcurrentHashMap<Element, Boolean> toggledElements;	
+	private Map<String, Long> cooldowns;
+	private Map<Element, Boolean> toggledElements;	
 
 	/**
 	 * Creates a new {@link BendingPlayer}.
@@ -77,6 +79,7 @@ public class BendingPlayer {
 		this.player = Bukkit.getPlayer(uuid);
 		this.toggled = true;
 		this.tremorSense = true;
+		this.illumination = true;
 		this.chiBlocked = false;
 		cooldowns = new ConcurrentHashMap<String, Long>();
 		toggledElements = new ConcurrentHashMap<Element, Boolean>();
@@ -109,6 +112,15 @@ public class BendingPlayer {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
+			
+			Player player = event.getPlayer();
+			int slot = player.getInventory().getHeldItemSlot() + 1;
+			String abilityName = event.getAbility();
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+
+			if (bPlayer.getBoundAbility()!= null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
+				GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
+			}
 		}
 	}
 
@@ -170,6 +182,8 @@ public class BendingPlayer {
 		
 		if (!player.isOnline() || player.isDead()) {
 			return false;
+		} else if (!canBind(ability)) {
+			return false;
 		} else if (ability.getPlayer() != null && ability.getLocation() != null && !ability.getLocation().getWorld().equals(player.getWorld())) {
 			return false;
 		} else if (!ignoreCooldowns && isOnCooldown(ability.getName())) {
@@ -220,6 +234,10 @@ public class BendingPlayer {
 	}
 	
 	public boolean canBendPassive(Element element) {
+		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+			return false;
+		}
+		
 		List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 		
 		if (element == null || player == null) {
@@ -423,7 +441,7 @@ public class BendingPlayer {
 	 * 
 	 * @return map of cooldowns
 	 */
-	public ConcurrentHashMap<String, Long> getCooldowns() {
+	public Map<String, Long> getCooldowns() {
 		return cooldowns;
 	}
 
@@ -595,6 +613,15 @@ public class BendingPlayer {
 	public boolean isTremorSensing() {
 		return this.tremorSense;
 	}
+	
+	/**
+	 * Checks if the {@link BendingPlayer} is using illumination.
+	 * 
+	 * @return true if player is using illumination
+	 */
+	public boolean isIlluminating() {
+		return this.illumination;
+	}
 
 	public void removeCooldown(CoreAbility ability) {
 		if (ability != null) {
@@ -608,10 +635,22 @@ public class BendingPlayer {
 	 * @param ability The ability's cooldown to remove
 	 */
 	public void removeCooldown(String ability) {
+		if (Bukkit.getPlayer(uuid) == null) {
+			return;
+		}
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
+			
+			Player player = event.getPlayer();
+			int slot = player.getInventory().getHeldItemSlot() + 1;
+			String abilityName = event.getAbility();
+			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+			
+			if (bPlayer.getBoundAbility()!= null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
+				GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
+			}
 		}
 	}
 
@@ -686,6 +725,13 @@ public class BendingPlayer {
 	public void toggleTremorSense() {
 		tremorSense = !tremorSense;
 	}
+	
+	/**
+	 * Toggles the {@link BendingPlayer}'s illumination.
+	 */
+	public void toggleIllumination() {
+		illumination = !illumination;
+	}
 
 	/**
 	 * Sets the {@link BendingPlayer}'s chi blocked to false.
@@ -735,7 +781,7 @@ public class BendingPlayer {
 	 * 
 	 * @return {@link #PLAYERS}
 	 */
-	public static ConcurrentHashMap<UUID, BendingPlayer> getPlayers() {
+	public static Map<UUID, BendingPlayer> getPlayers() {
 		return PLAYERS;
 	}
 }

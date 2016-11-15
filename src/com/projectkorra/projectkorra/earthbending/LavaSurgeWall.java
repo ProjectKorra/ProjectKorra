@@ -18,12 +18,13 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LavaSurgeWall extends LavaAbility {
 	
-	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
-	private static final ConcurrentHashMap<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<Block, Player>();
+	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
+	private static final Map<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<Block, Player>();
 	private static final int SURGE_WAVE_RANGE = 20; // TODO: remove this
 	
 	private boolean progressing;
@@ -320,11 +321,11 @@ public class LavaSurgeWall extends LavaAbility {
 		return false;
 	}
 	
-	public static ConcurrentHashMap<Block, Block> getAffectedBlocks() {
+	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
 
-	public static ConcurrentHashMap<Block, Player> getWallBlocks() {
+	public static Map<Block, Player> getWallBlocks() {
 		return WALL_BLOCKS;
 	}
 

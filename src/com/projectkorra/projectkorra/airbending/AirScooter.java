@@ -1,9 +1,7 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -12,8 +10,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.Flight;
 
 public class AirScooter extends AirAbility {
 
@@ -25,17 +25,17 @@ public class AirScooter extends AirAbility {
 	private Block floorblock;
 	private Random random;
 	private ArrayList<Double> angles;
-	
+
 	private boolean canFly;
 	private boolean hadFly;
+	private double phi = 0;
 
 	public AirScooter(Player player) {
 		super(player);
-		
-		if (check(player)) 
+
+		if (check(player))
 			return;
-		else if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock())
-				|| player.getEyeLocation().getBlock().isLiquid()) 
+		else if (!player.isSprinting() || GeneralMethods.isSolid(player.getEyeLocation().getBlock()) || player.getEyeLocation().getBlock().isLiquid())
 			return;
 		else if (GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock()))
 			return;
@@ -51,11 +51,13 @@ public class AirScooter extends AirAbility {
 		this.angles = new ArrayList<>();
 		canFly = player.getAllowFlight();
 		hadFly = player.isFlying();
-		
+
 		new Flight(player);
 		player.setAllowFlight(true);
 		player.setFlying(true);
+
 		player.setSprinting(false);
+		player.setSneaking(false);
 
 		for (int i = 0; i < 5; i++) {
 			angles.add((double) (60 * i));
@@ -78,6 +80,10 @@ public class AirScooter extends AirAbility {
 		return false;
 	}
 
+	/*
+	 * Looks for a block under the player and sets "floorBlock" to a block under
+	 * the player if it within the maximum height
+	 */
 	private void getFloor() {
 		floorblock = null;
 		for (int i = 0; i <= maxHeightFromGround; i++) {
@@ -95,31 +101,35 @@ public class AirScooter extends AirAbility {
 			remove();
 			return;
 		}
-		
+
 		getFloor();
 		if (floorblock == null) {
 			remove();
 			return;
 		}
 
-		Vector velocity = player.getEyeLocation().getDirection().clone();
-		velocity.setY(0);
+		Vector velocity = player.getEyeLocation().getDirection().clone().normalize();
 		velocity = velocity.clone().normalize().multiply(speed);
-
-		if (System.currentTimeMillis() > startTime + interval) {
-			if (player.getVelocity().length() < speed * .5) {
+		/*
+		 * checks the players speed and ends the move if they are going too slow
+		 */
+		if (System.currentTimeMillis() > getStartTime() + interval) {
+			if (player.getVelocity().length() < speed * 0.3) {
 				remove();
 				return;
 			}
 			spinScooter();
 		}
-
+		/*
+		 * Checks for how far the ground is away from the player it elevates or
+		 * lowers the player based on their distance from the ground.
+		 */
 		double distance = player.getLocation().getY() - (double) floorblock.getY();
 		double dx = Math.abs(distance - 2.4);
 		if (distance > 2.75) {
-			velocity.setY(-.25 * dx * dx);
+			velocity.setY(-.40 * dx * dx);
 		} else if (distance < 2) {
-			velocity.setY(.25 * dx * dx);
+			velocity.setY(.40 * dx * dx);
 		} else {
 			velocity.setY(0);
 		}
@@ -134,31 +144,48 @@ public class AirScooter extends AirAbility {
 		player.setSprinting(false);
 		player.removePotionEffect(PotionEffectType.SPEED);
 		player.setVelocity(velocity);
+
 		if (random.nextInt(4) == 0) {
 			playAirbendingSound(player.getLocation());
 		}
 	}
 
+	/*
+	 * Updates the players flight, also adds the cooldown.
+	 */
 	@Override
 	public void remove() {
 		super.remove();
-		bPlayer.addCooldown(this);
 		player.setAllowFlight(canFly);
 		player.setFlying(hadFly);
+		bPlayer.addCooldown(this);
 	}
 
+	/*
+	 * The particles used for AirScooter phi = how many rings of particles the
+	 * sphere has. theta = how dense the rings are. r = Radius of the sphere
+	 */
 	private void spinScooter() {
-		Location origin = player.getLocation().clone();
-		origin.add(0, -radius, 0);
-
-		for (int i = 0; i < 5; i++) {
-			double x = Math.cos(Math.toRadians(angles.get(i))) * radius;
-			double y = ((double) i) / 2 * radius - radius;
-			double z = Math.sin(Math.toRadians(angles.get(i))) * radius;
-			playAirbendingParticles(origin.clone().add(x, y, z), 7);
+		Location origin = player.getLocation();
+		Location origin2 = player.getLocation();
+		phi += Math.PI / 10 * 4;
+		for (double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / 10) {
+			double r = 0.6;
+			double x = r * Math.cos(theta) * Math.sin(phi);
+			double y = r * Math.cos(phi);
+			double z = r * Math.sin(theta) * Math.sin(phi);
+			origin.add(x, y, z);
+			playAirbendingParticles(origin, 1, 0F, 0F, 0F);
+			origin.subtract(x, y, z);
 		}
-		for (int i = 0; i < 5; i++) {
-			angles.set(i, angles.get(i) + 10);
+		for (double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / 10) {
+			double r = 0.6;
+			double x = r * Math.cos(theta) * Math.sin(phi);
+			double y = r * Math.cos(phi);
+			double z = r * Math.sin(theta) * Math.sin(phi);
+			origin2.subtract(x, y, z);
+			playAirbendingParticles(origin2, 1, 0F, 0F, 0F);
+			origin2.add(x, y, z);
 		}
 	}
 
@@ -176,7 +203,7 @@ public class AirScooter extends AirAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -187,6 +214,10 @@ public class AirScooter extends AirAbility {
 		return true;
 	}
 
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
+	}
 
 	public double getSpeed() {
 		return speed;
@@ -227,7 +258,7 @@ public class AirScooter extends AirAbility {
 	public void setFloorblock(Block floorblock) {
 		this.floorblock = floorblock;
 	}
-	
+
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}

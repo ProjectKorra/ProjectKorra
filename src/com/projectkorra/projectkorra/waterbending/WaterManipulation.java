@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,10 +19,8 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.firebending.Combustion;
-import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -30,7 +29,7 @@ import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterManipulation extends WaterAbility {
 
-	private static final ConcurrentHashMap<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 
 	private boolean progressing;
 	private boolean falling;
@@ -150,8 +149,9 @@ public class WaterManipulation extends WaterAbility {
 					targetDestination = GeneralMethods.getPointOnLine(firstDestination, targetDestination, range);
 					targetDirection = GeneralMethods.getDirection(firstDestination, targetDestination).normalize();
 
-					if (isPlant(sourceBlock)) {
+					if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 						new PlantRegrowth(player, sourceBlock);
+						sourceBlock.setType(Material.AIR);
 					} else if (!isIce(sourceBlock)) {
 						addWater(sourceBlock);
 					}
@@ -227,26 +227,9 @@ public class WaterManipulation extends WaterAbility {
 						}
 					}
 				} else {
-					WaterAbility.removeWaterSpouts(location, player);
-					AirAbility.removeAirSpouts(location, player);
-
 					if ((new Random()).nextInt(4) == 0) {
 						playWaterbendingSound(location);
 					}
-
-					double radius = collisionRadius;
-					Player source = player;
-					if (!(location == null)) {
-						if (EarthBlast.annihilateBlasts(location, radius, source)
-								|| WaterManipulation.annihilateBlasts(location, radius, source)
-								|| FireBlast.annihilateBlasts(location, radius, source)) {
-							remove();
-							new WaterReturn(player, sourceBlock);
-							return;
-						}
-						Combustion.removeAroundPoint(location, radius);
-					}
-
 					location = location.clone().add(direction);
 					block = location.getBlock();
 					if (block.getLocation().equals(sourceBlock.getLocation())) {
@@ -256,14 +239,14 @@ public class WaterManipulation extends WaterAbility {
 				}
 
 				if (trail2 != null) {
-					if (trail2.getBlock().equals(block)) {
+					if (!TempBlock.isTempBlock(block) && (trail2.getBlock().equals(block))) {
 						trail2.revertBlock();
 						trail2 = null;
 					}
 				}
 
 				if (trail != null) {
-					if (trail.getBlock().equals(block)) {
+					if (!TempBlock.isTempBlock(block) && trail.getBlock().equals(block)) {
 						trail.revertBlock();
 						trail = null;
 						if (trail2 != null) {
@@ -376,12 +359,17 @@ public class WaterManipulation extends WaterAbility {
 		} else {
 			if (isWater(block) && !AFFECTED_BLOCKS.containsKey(block)) {
 				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f,
-						5, block.getLocation().clone().add(.5, .5, .5), 257D);
+						5, block.getLocation().clone().add(.5, .5, .5), 255.0);
 			} 
 		}
 
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean annihilateBlasts(Location location, double radius, Player player) {
 		boolean broke = false;
 		for (WaterManipulation manip : getAbilities(WaterManipulation.class)) {
@@ -592,6 +580,24 @@ public class WaterManipulation extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isCollidable() {
+		return progressing;
+	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return collisionRadius;
+	}
+	
+	@Override
+	public void handleCollision(Collision collision) {
+		super.handleCollision(collision);
+		if (collision.isRemovingFirst()) {
+			new WaterReturn(player, sourceBlock);
+		}
+	}
 
 	public boolean isProgressing() {
 		return progressing;
@@ -761,7 +767,7 @@ public class WaterManipulation extends WaterAbility {
 		this.targetDirection = targetDirection;
 	}
 
-	public static ConcurrentHashMap<Block, Block> getAffectedBlocks() {
+	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
 
@@ -775,10 +781,6 @@ public class WaterManipulation extends WaterAbility {
 
 	public void setLocation(Location location) {
 		this.location = location;
-	}
-
-	public double getCollisionRadius() {
-		return collisionRadius;
 	}
 
 	public void setCollisionRadius(double collisionRadius) {

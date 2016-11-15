@@ -63,7 +63,7 @@ public class ClearCommand extends PKCommand {
 				if (bPlayer.getAbilities().get(slot) != null) {
 					bPlayer.getAbilities().remove(slot);
 					GeneralMethods.saveAbility(bPlayer, slot, null);
-					sender.sendMessage(clearedSlot.replace("{slot}", String.valueOf(slot)));
+					sender.sendMessage(ChatColor.YELLOW + clearedSlot.replace("{slot}",  String.valueOf(slot)));
 				} else {
 					sender.sendMessage(ChatColor.YELLOW + alreadyEmpty);
 				}

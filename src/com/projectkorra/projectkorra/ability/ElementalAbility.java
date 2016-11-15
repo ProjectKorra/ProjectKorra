@@ -99,6 +99,10 @@ public abstract class ElementalAbility extends CoreAbility {
 		return material == Material.LAVA || material == Material.STATIONARY_LAVA;
 	}
 	
+	public static boolean isSnow(Block block) {
+		return block != null ? isSnow(block.getType()) : false;
+	}
+	
 	public static boolean isSnow(Material material) {
 		return getConfig().getStringList("Properties.Water.SnowBlocks").contains(material.toString());
 	}

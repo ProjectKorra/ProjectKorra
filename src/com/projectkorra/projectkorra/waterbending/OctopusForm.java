@@ -88,7 +88,9 @@ public class OctopusForm extends WaterAbility {
 		this.blocks = new ArrayList<TempBlock>();
 		this.newBlocks = new ArrayList<TempBlock>();
 		this.time = System.currentTimeMillis();
-		this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
+		if(!player.isSneaking()) {
+			this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
+		}
 		
 		if (sourceBlock != null) {
 			sourceLocation = sourceBlock.getLocation();
@@ -139,7 +141,7 @@ public class OctopusForm extends WaterAbility {
 
 	private void form() {
 		incrementStep();
-		if (isPlant(sourceBlock)) {
+		if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 			new PlantRegrowth(player, sourceBlock);
 			sourceBlock.setType(Material.AIR);
 		} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
@@ -383,13 +385,13 @@ public class OctopusForm extends WaterAbility {
 					tblock.setType(Material.WATER, FULL);
 				}
 				if (isWater(block) && !TempBlock.isTempBlock(block)) {
-					ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(0.5, 0.5, 0.5), 257D);
+					ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(0.5, 0.5, 0.5), 255.0);
 				} 
 				newBlocks.add(tblock);
 			}
 		} else if (isWaterbendable(player, block) || block.getType() == Material.FIRE || block.getType() == Material.AIR) {
 			if (isWater(block) && !TempBlock.isTempBlock(block)) {
-				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(0.5, 0.5, 0.5), 257D);
+				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(0.5, 0.5, 0.5), 255.0);
 			} 
 			newBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 		}
@@ -472,6 +474,11 @@ public class OctopusForm extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
 	}
 
 	public boolean isSourceSelected() {

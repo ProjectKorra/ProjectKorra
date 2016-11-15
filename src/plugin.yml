@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: 1.8.0 BETA 12
+version: 1.8.1
 main: com.projectkorra.projectkorra.ProjectKorra
 softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC, Residence]
 commands:
@@ -113,6 +113,7 @@ permissions:
       bending.ability.WaterArms.Grab: true
       bending.ability.WaterArms.Freeze: true
       bending.ability.WaterArms.Spear: true
+      bending.ability.Bottlebending: true
   bending.earth:
     default: true
     description: Grants access to all Earthbending abilities.

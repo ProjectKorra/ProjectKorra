@@ -1,12 +1,10 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,10 +16,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterSpoutWave extends WaterAbility {
 	
@@ -33,7 +34,7 @@ public class WaterSpoutWave extends WaterAbility {
 		RISE, TOWARD_PLAYER, CIRCLE, SHRINK
 	}
 
-	private static final ConcurrentHashMap<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
 	
 	private double radius;
 	private boolean charging;
@@ -41,6 +42,7 @@ public class WaterSpoutWave extends WaterAbility {
 	private boolean iceOnly;
 	private boolean moving;
 	private boolean plant;
+	private boolean collidable;
 	private int progressCounter;
 	private long time;
 	private long cooldown;
@@ -67,6 +69,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.charging = false;
 		this.iceWave = false;
 		this.iceOnly = false;
+		this.collidable = false;
 		this.plant = getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AllowPlantSource");
 		this.radius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
 		this.waveRadius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
@@ -174,8 +177,9 @@ public class WaterSpoutWave extends WaterAbility {
 				animation = AnimateState.RISE;
 				location = origin.clone();
 					
-				if (isPlant(origin.getBlock())) {
+				if (isPlant(origin.getBlock()) || isSnow(origin.getBlock())) {
 					new PlantRegrowth(player, origin.getBlock());
+					origin.getBlock().setType(Material.AIR);
 				}
 			}
 
@@ -239,6 +243,7 @@ public class WaterSpoutWave extends WaterAbility {
 				}
 			} else {
 				moving = true;
+				collidable = true;
 				if ((System.currentTimeMillis() - time > flightTime && !bPlayer.isAvatarState()) || player.isSneaking()) {
 					remove();
 					return;
@@ -283,7 +288,7 @@ public class WaterSpoutWave extends WaterAbility {
 					}
 					for (Block block : FROZEN_BLOCKS.keySet()) {
 						TempBlock tBlock = FROZEN_BLOCKS.get(block);
-						if (tBlock.getLocation().distance(player.getLocation()) >= thawRadius) {
+						if (tBlock.getBlock().getWorld().equals(player.getWorld()) && tBlock.getLocation().distance(player.getLocation()) >= thawRadius) {
 							tBlock.revertBlock();
 							FROZEN_BLOCKS.remove(block);
 						}
@@ -448,7 +453,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return this.isIceWave() ? "IceWave" : "WaterSpout";
+		return "WaterSpout";
 	}
 	
 	@Override
@@ -470,6 +475,16 @@ public class WaterSpoutWave extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public boolean isCollidable() {
+		return collidable;
+	}
+
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
 	}
 
 	public double getRadius() {
@@ -620,7 +635,7 @@ public class WaterSpoutWave extends WaterAbility {
 		this.origin = origin;
 	}
 
-	public static ConcurrentHashMap<Block, TempBlock> getFrozenBlocks() {
+	public static Map<Block, TempBlock> getFrozenBlocks() {
 		return FROZEN_BLOCKS;
 	}
 

@@ -1,16 +1,8 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.waterbending.PlantRegrowth;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,9 +14,15 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.waterbending.PlantRegrowth;
 
 public class FireBlast extends FireAbility {
 	
@@ -34,6 +32,7 @@ public class FireBlast extends FireAbility {
 	private boolean showParticles;
 	private boolean dissipate;
 	private boolean isFireBurst = false;
+	private boolean fireBurstIgnite;
 	private int ticks;
 	private long cooldown;
 	private double speedFactor;
@@ -96,6 +95,7 @@ public class FireBlast extends FireAbility {
 		this.isFireBurst = true;
 		this.powerFurnace = true;
 		this.showParticles = true;
+		this.fireBurstIgnite = getConfig().getBoolean("Abilities.Fire.FireBurst.Ignite");
 		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
 		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Range");
@@ -126,7 +126,7 @@ public class FireBlast extends FireAbility {
 			}
 			if (entity instanceof LivingEntity) {
 				entity.setFireTicks((int) (fireTicks * 20));
-				DamageHandler.damageEntity(entity, (int) getDayFactor(damage), this);
+				DamageHandler.damageEntity(entity, damage, this);
 				AirAbility.breakBreathbendingHold(entity);
 				new FireDamageTimer(entity, player);
 				remove();
@@ -140,7 +140,7 @@ public class FireBlast extends FireAbility {
 					&& !safeBlocks.contains(block)
 					&& !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				if (canFireGrief()) {
-					if (WaterAbility.isPlantbendable(player, block.getType(), false)) {
+					if (isPlant(block) || isSnow(block)) {
 						new PlantRegrowth(player, block);
 					}
 					block.setType(Material.FIRE);
@@ -158,7 +158,7 @@ public class FireBlast extends FireAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)
 				|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 			remove();
 			return;
@@ -180,24 +180,15 @@ public class FireBlast extends FireAbility {
 				furnace.setCookTime((short) 800);
 				furnace.update();
 			} else if (BlazeArc.isIgnitable(player, block.getRelative(BlockFace.UP))) {
-				ignite(location);
+				if((isFireBurst && fireBurstIgnite) || !isFireBurst) {
+					ignite(location);
+				}
 			}
 			remove();
 			return;
 		}
 
 		if (location.distanceSquared(origin) > range * range) {
-			remove();
-			return;
-		}
-
-		WaterAbility.removeWaterSpouts(location, player);
-		AirAbility.removeAirSpouts(location, player);
-
-		Player source = player;
-		if (EarthBlast.annihilateBlasts(location, collisionRadius, source) 
-				|| WaterManipulation.annihilateBlasts(location, collisionRadius, source)
-				|| FireBlast.annihilateBlasts(location, collisionRadius, source)) {
 			remove();
 			return;
 		}
@@ -212,6 +203,11 @@ public class FireBlast extends FireAbility {
 		advanceLocation();
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
 		boolean broke = false;
 		for (FireBlast blast : getAbilities(FireBlast.class)) {
@@ -278,6 +274,11 @@ public class FireBlast extends FireAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return collisionRadius;
+	}
 
 	public boolean isPowerFurnace() {
 		return powerFurnace;
@@ -341,10 +342,6 @@ public class FireBlast extends FireAbility {
 
 	public void setSpeed(double speed) {
 		this.speed = speed;
-	}
-
-	public double getCollisionRadius() {
-		return collisionRadius;
 	}
 
 	public void setCollisionRadius(double collisionRadius) {

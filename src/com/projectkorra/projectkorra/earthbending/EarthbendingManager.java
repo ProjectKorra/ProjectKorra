@@ -19,5 +19,6 @@ public class EarthbendingManager implements Runnable {
 		RevertChecker.revertEarthBlocks();
 		Shockwave.progressAll();
 		Tremorsense.manage(Bukkit.getServer());
+		EarthTunnel.revertAirBlocks();
 	}
 }

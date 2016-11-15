@@ -1,5 +1,6 @@
 package com.projectkorra.projectkorra.airbending;
 
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,6 +14,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
@@ -22,8 +24,8 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 public class AirSuction extends AirAbility {
 
 	private static final int MAX_TICKS = 10000;
-	private static final ConcurrentHashMap<Player, Location> ORIGINS = new ConcurrentHashMap<>();
-	
+	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
+
 	private boolean hasOtherOrigin;
 	private int ticks;
 	private int particleCount;
@@ -36,10 +38,10 @@ public class AirSuction extends AirAbility {
 	private Location location;
 	private Location origin;
 	private Vector direction;
-	
+
 	public AirSuction(Player player) {
 		super(player);
-		
+
 		if (bPlayer.isOnCooldown(this)) {
 			return;
 		} else if (player.getEyeLocation().getBlock().isLiquid()) {
@@ -114,8 +116,6 @@ public class AirSuction extends AirAbility {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
 			return;
-		} else if (ORIGINS.containsKey(player)) {
-			ORIGINS.replace(player, location);
 		} else {
 			ORIGINS.put(player, location);
 		}
@@ -134,8 +134,7 @@ public class AirSuction extends AirAbility {
 		Location location = origin.clone();
 		for (double i = 1; i <= range; i++) {
 			location = origin.clone().add(direction.clone().multiply(i));
-			if (!isTransparent(location.getBlock())
-					|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+			if (!isTransparent(location.getBlock()) || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 				return origin.clone().add(direction.clone().multiply(i - 1));
 			}
 		}
@@ -179,8 +178,9 @@ public class AirSuction extends AirAbility {
 						push.setY(max);
 					}
 				}
-
-				factor *= 1 - location.distance(origin) / (2 * range);
+				if (location.getWorld().equals(origin.getWorld())) {
+					factor *= 1 - location.distance(origin) / (2 * range);
+				}
 
 				double comp = velocity.dot(push.clone().normalize());
 				if (comp > factor) {
@@ -216,6 +216,11 @@ public class AirSuction extends AirAbility {
 		advanceLocation();
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean removeAirSuctionsAroundPoint(Location location, double radius) {
 		boolean removed = false;
 		for (AirSuction airSuction : getAbilities(AirSuction.class)) {
@@ -244,7 +249,7 @@ public class AirSuction extends AirAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -253,6 +258,11 @@ public class AirSuction extends AirAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
 	}
 
 	public Location getOrigin() {
@@ -335,7 +345,7 @@ public class AirSuction extends AirAbility {
 		this.cooldown = cooldown;
 	}
 
-	public static ConcurrentHashMap<Player, Location> getOrigins() {
+	public static Map<Player, Location> getOrigins() {
 		return ORIGINS;
 	}
 
@@ -346,5 +356,5 @@ public class AirSuction extends AirAbility {
 	public static double getSelectRange() {
 		return getConfig().getDouble("Abilities.Air.AirSuction.SelectRange");
 	}
-	
+
 }

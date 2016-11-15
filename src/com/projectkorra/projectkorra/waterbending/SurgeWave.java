@@ -1,13 +1,10 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.firebending.FireBlast;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -18,9 +15,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.firebending.FireBlast;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class SurgeWave extends WaterAbility {
 
@@ -43,8 +45,8 @@ public class SurgeWave extends WaterAbility {
 	private Location targetDestination;
 	private Location frozenLocation;
 	private Vector targetDirection;
-	private ConcurrentHashMap<Block, Block> waveBlocks;
-	private ConcurrentHashMap<Block, Block> frozenBlocks;
+	private Map<Block, Block> waveBlocks;
+	private Map<Block, Material> frozenBlocks;
 	
 	public SurgeWave(Player player) {
 		super(player);
@@ -137,17 +139,15 @@ public class SurgeWave extends WaterAbility {
 				continue;
 			}
 			
-			if (block.getType() == Material.AIR || block.getType() == Material.SNOW) {
+			Block oldBlock = block;
+			if (block.getType() == Material.AIR || block.getType() == Material.SNOW || isWater(block)) {
 				new TempBlock(block, Material.ICE, (byte) 0);
-				frozenBlocks.put(block, block);
-			}
-			if (isWater(block)) {
-				PhaseChangeFreeze.freeze(player, block);
+				frozenBlocks.put(block, oldBlock.getType());
 			}
 			if (isPlant(block) && block.getType() != Material.LEAVES) {
 				block.breakNaturally();
 				new TempBlock(block, Material.ICE, (byte) 0);
-				frozenBlocks.put(block, block);
+				frozenBlocks.put(block, oldBlock.getType());
 			}
 			for (Block sound : frozenBlocks.keySet()) {
 				if ((new Random()).nextInt(4) == 0) {
@@ -204,7 +204,7 @@ public class SurgeWave extends WaterAbility {
 				targetDirection = getDirection(sourceBlock.getLocation(), targetDestination).normalize();
 				targetDestination = location.clone().add(targetDirection.clone().multiply(range));
 				
-				if (isPlant(sourceBlock)) {
+				if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 					new PlantRegrowth(player, sourceBlock);
 				}
 				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
@@ -349,21 +349,25 @@ public class SurgeWave extends WaterAbility {
 		super.remove();
 		thaw();
 		returnWater();
-		for (Block block : waveBlocks.keySet()) {
-			finalRemoveWater(block);
+		if (waveBlocks != null) {
+			for (Block block : waveBlocks.keySet()) {
+				finalRemoveWater(block);
+			}
 		}
 	}
 
 	public void returnWater()  {
-		if (location != null) {
+		if (location != null && player.isOnline()) {
 			new WaterReturn(player, location.getBlock());
 		}
 	}
 
 	private void thaw() {
-		for (Block block : frozenBlocks.keySet()) {
-			TempBlock.revertBlock(block, Material.AIR);
-			frozenBlocks.remove(block);
+		if (frozenBlocks != null) {
+			for (Block block : frozenBlocks.keySet()) {
+				TempBlock.revertBlock(block, frozenBlocks.get(block));
+				frozenBlocks.remove(block);
+			}
 		}
 	}
 
@@ -435,6 +439,23 @@ public class SurgeWave extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public boolean isCollidable() {
+		return progressing || activateFreeze;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (Block block : waveBlocks.keySet()) {
+			locations.add(block.getLocation());
+		}
+		for (Block block : frozenBlocks.keySet()) {
+			locations.add(block.getLocation());
+		}
+		return locations;
 	}
 
 	public boolean isFreezing() {
@@ -565,11 +586,11 @@ public class SurgeWave extends WaterAbility {
 		this.targetDirection = targetDirection;
 	}
 
-	public ConcurrentHashMap<Block, Block> getWaveBlocks() {
+	public Map<Block, Block> getWaveBlocks() {
 		return waveBlocks;
 	}
 
-	public ConcurrentHashMap<Block, Block> getFrozenBlocks() {
+	public Map<Block, Material> getFrozenBlocks() {
 		return frozenBlocks;
 	}
 

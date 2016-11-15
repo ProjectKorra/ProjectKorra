@@ -1,11 +1,7 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,7 +10,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
 public class AirBubble extends AirAbility {
 
@@ -22,11 +22,11 @@ public class AirBubble extends AirAbility {
 	private double radius;
 	private double airRadius;
 	private double waterRadius;
-	private ConcurrentHashMap<Block, BlockState> waterOrigins;
+	private Map<Block, BlockState> waterOrigins;
 
 	public AirBubble(Player player) {
 		super(player);
-		
+
 		this.radius = 0;
 		this.airRadius = getConfig().getDouble("Abilities.Air.AirBubble.Radius");
 		this.waterRadius = getConfig().getDouble("Abilities.Water.WaterBubble.Radius");
@@ -49,7 +49,7 @@ public class AirBubble extends AirAbility {
 			if (bPlayer == null) {
 				continue;
 			}
-			
+
 			String name = bPlayer.getBoundAbilityName();
 			if (name.equalsIgnoreCase("AirBubble") | name.equalsIgnoreCase("WaterBubble")) {
 				if (!hasAbility(player, AirBubble.class) && player.isSneaking()) {
@@ -93,10 +93,7 @@ public class AirBubble extends AirAbility {
 		} else {
 			radius = waterRadius;
 		}
-		
-		if (bPlayer.hasElement(Element.WATER) && isNight(player.getWorld())) {
-			radius = WaterAbility.getNightFactor(waterRadius, player.getWorld());
-		}
+
 		if (airRadius > radius && bPlayer.hasElement(Element.AIR)) {
 			radius = airRadius;
 		}
@@ -157,7 +154,7 @@ public class AirBubble extends AirAbility {
 	public long getCooldown() {
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -166,6 +163,11 @@ public class AirBubble extends AirAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
 	}
 
 	public boolean isWaterBubble() {
@@ -200,7 +202,7 @@ public class AirBubble extends AirAbility {
 		this.waterRadius = waterRadius;
 	}
 
-	public ConcurrentHashMap<Block, BlockState> getWaterOrigins() {
+	public Map<Block, BlockState> getWaterOrigins() {
 		return waterOrigins;
 	}
 

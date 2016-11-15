@@ -1,5 +1,12 @@
 package com.projectkorra.projectkorra.command;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +39,7 @@ public class WhoCommand extends PKCommand {
 	/**
 	 * Map storage of all ProjectKorra staffs' UUIDs and titles
 	 */
-	Map<String, String> staff = new HashMap<String, String>(), playerInfoWords = new HashMap<String, String>();
+	final Map<String, String> staff = new HashMap<String, String>(), playerInfoWords = new HashMap<String, String>();
 	
 	private String databaseOverload, noPlayersOnline, playerOffline;
 	
@@ -43,30 +50,40 @@ public class WhoCommand extends PKCommand {
 		noPlayersOnline = ConfigManager.languageConfig.get().getString("Commands.Who.NoPlayersOnline");
 		playerOffline = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerOffline");
 		
-		staff.put("8621211e-283b-46f5-87bc-95a66d68880e", ChatColor.RED + "ProjectKorra Founder"); // MistPhizzle
-
-		staff.put("a197291a-cd78-43bb-aa38-52b7c82bc68c", ChatColor.DARK_PURPLE + "ProjectKorra Lead Developer"); // OmniCypher
-
-		staff.put("15d1a5a7-76ef-49c3-b193-039b27c47e30", ChatColor.GREEN + "ProjectKorra Administrator"); // Kiam
-		
-		staff.put("1553482a-5e86-4270-9262-b57c11151074", ChatColor.GOLD + "ProjectKorra Head Community Moderator"); // Pickle9775
-
-		staff.put("96f40c81-dd5d-46b6-9afe-365114d4a082", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Coolade
-		staff.put("833a7132-a9ec-4f0a-ad9c-c3d6b8a1c7eb", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Jacklin213
-		staff.put("4eb6315e-9dd1-49f7-b582-c1170e497ab0", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // jedk1
-		staff.put("d7757be8-86de-4898-ab4f-2b1b2fbc3dfa", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // StrangeOne101
-		staff.put("3b5bdfab-8ae1-4794-b160-4f33f31fde99", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // kingbirdy
-		staff.put("dedf335b-d282-47ab-8ffc-a80121661cd1", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // grasshopperMatt
-		staff.put("679a6396-6a31-4898-8130-044f34bef743", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // savior67
-		staff.put("7bb267eb-cf0b-4fb9-a697-27c2a913ed92", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Finn
-		staff.put("1c30007f-f8ef-4b4e-aff0-787aa1bc09a3", ChatColor.DARK_PURPLE + "ProjectKorra Developer"); // Sorin
-
-		staff.put("623df34e-9cd4-438d-b07c-1905e1fc46b6", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Loony
-		staff.put("3c484e61-7876-46c0-98c9-88c7834dc96c", ChatColor.GREEN + "ProjectKorra Concept Designer"); // SamuraiSnowman (Zmeduna)
-		staff.put("1d4a8a47-1f3b-40a6-b412-c15d874491b8", ChatColor.GREEN + "ProjectKorra Concept Designer"); // Fyf 
-		
-		staff.put("3d5bc713-ab8b-4125-b5ba-a1c1c2400b2c", ChatColor.GOLD + "ProjectKorra Community Moderator"); // Gold
-		staff.put("38217173-8a32-4ba7-9fe1-dd4fed031a74", ChatColor.GOLD + "ProjectKorra Community Moderator"); // Easte
+		new BukkitRunnable()
+		{
+			public void run()
+			{
+				try
+				{
+					staff.clear();
+					// Create a URL for the desired page
+					URLConnection url = new URL("http://www.projectkorra.com/staff.txt").openConnection();
+					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+					
+					// Read all the text returned by the server
+					BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream(), Charset.forName("UTF-8")));
+					String unparsed;
+					while ((unparsed = in.readLine()) != null)
+					{
+						String[] staffEntry = unparsed.split("/");
+						if (staffEntry.length >= 2)
+						{
+							staff.put(staffEntry[0], ChatColor.translateAlternateColorCodes('&', staffEntry[1]));
+						}
+					}
+					in.close();
+				}
+				catch (MalformedURLException e)
+				{
+					e.printStackTrace();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}.runTaskTimerAsynchronously(ProjectKorra.plugin, 0, 20 * 60);
 	}
 
 	@Override

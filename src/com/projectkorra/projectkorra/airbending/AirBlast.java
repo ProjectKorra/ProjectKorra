@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.airbending;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,6 +26,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
@@ -34,7 +36,7 @@ import com.projectkorra.projectkorra.util.Flight;
 public class AirBlast extends AirAbility {
 
 	private static final int MAX_TICKS = 10000;
-	private static final ConcurrentHashMap<Player, Location> ORIGINS = new ConcurrentHashMap<>();
+	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
 
 	private boolean canFlickLevers;
 	private boolean canOpenDoors;
@@ -79,7 +81,7 @@ public class AirBlast extends AirAbility {
 			if (entity != null) {
 				this.direction = GeneralMethods.getDirection(origin, entity.getLocation()).normalize();
 			} else {
-				this.direction = GeneralMethods.getDirection(origin, GeneralMethods.getTargetedLocation(player, range)) .normalize();
+				this.direction = GeneralMethods.getDirection(origin, GeneralMethods.getTargetedLocation(player, range)).normalize();
 			}
 		} else {
 			origin = player.getEyeLocation();
@@ -125,7 +127,7 @@ public class AirBlast extends AirAbility {
 		this.canOpenDoors = getConfig().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
 		this.canPressButtons = getConfig().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
 		this.canCoolLava = getConfig().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
-		
+
 		this.isFromOtherOrigin = false;
 		this.showParticles = true;
 		this.random = new Random();
@@ -170,11 +172,8 @@ public class AirBlast extends AirAbility {
 			return;
 		}
 
-		if (ORIGINS.containsKey(player)) {
-			ORIGINS.replace(player, location);
-		} else {
-			ORIGINS.put(player, location);
-		}
+		ORIGINS.put(player, location);
+
 	}
 
 	private void advanceLocation() {
@@ -209,8 +208,9 @@ public class AirBlast extends AirAbility {
 					push.setY(max);
 				}
 			}
-
-			factor *= 1 - location.distance(origin) / (2 * range);
+			if (location.getWorld().equals(origin.getWorld())) {
+				factor *= 1 - location.distance(origin) / (2 * range);
+			}
 
 			if (isUser && GeneralMethods.isSolid(player.getLocation().add(0, -.5, 0).getBlock())) {
 				factor *= .5;
@@ -292,8 +292,7 @@ public class AirBlast extends AirAbility {
 				continue;
 			}
 
-			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR,
-					Material.ACACIA_DOOR, Material.DARK_OAK_DOOR };
+			Material doorTypes[] = { Material.WOODEN_DOOR, Material.SPRUCE_DOOR, Material.BIRCH_DOOR, Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR };
 			if (Arrays.asList(doorTypes).contains(block.getType()) && canOpenDoors) {
 				if (block.getData() >= 8) {
 					block = block.getRelative(BlockFace.DOWN);
@@ -301,10 +300,10 @@ public class AirBlast extends AirAbility {
 
 				if (block.getData() < 4) {
 					block.setData((byte) (block.getData() + 4));
-					block.getWorld().playSound(block.getLocation(), Sound.DOOR_CLOSE, 10, 1);
+					block.getWorld().playSound(block.getLocation(), Sound.BLOCK_WOODEN_DOOR_CLOSE, 10, 1);
 				} else {
 					block.setData((byte) (block.getData() - 4));
-					block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
+					block.getWorld().playSound(block.getLocation(), Sound.BLOCK_WOODEN_DOOR_OPEN, 10, 1);
 				}
 			}
 			if ((block.getType() == Material.LEVER) && !affectedLevers.contains(block) && canFlickLevers) {
@@ -401,11 +400,15 @@ public class AirBlast extends AirAbility {
 		}
 
 		/*
-		 * If a player presses shift and AirBlasts straight down then the AirBlast's location gets
-		 * messed up and reading the distance returns Double.NaN. If we don't remove this instance
-		 * then the AirBlast will never be removed.
+		 * If a player presses shift and AirBlasts straight down then the
+		 * AirBlast's location gets messed up and reading the distance returns
+		 * Double.NaN. If we don't remove this instance then the AirBlast will
+		 * never be removed.
 		 */
-		double dist = location.distance(origin);
+		double dist = 0;
+		if (location.getWorld().equals(origin.getWorld())) {
+			dist = location.distance(origin);
+		}
 		if (Double.isNaN(dist) || dist > range) {
 			remove();
 			return;
@@ -419,6 +422,11 @@ public class AirBlast extends AirAbility {
 		return;
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean removeAirBlastsAroundPoint(Location location, double radius) {
 		boolean removed = false;
 		for (AirBlast airBlast : getAbilities(AirBlast.class)) {
@@ -447,7 +455,7 @@ public class AirBlast extends AirAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -456,6 +464,11 @@ public class AirBlast extends AirAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+
+	@Override
+	public double getCollisionRadius() {
+		return getRadius();
 	}
 
 	public Location getOrigin() {
@@ -617,13 +630,13 @@ public class AirBlast extends AirAbility {
 	public void setParticles(int particles) {
 		this.particles = particles;
 	}
-	
+
 	public static int getSelectParticles() {
 		return getConfig().getInt("Abilities.Air.AirBlast.SelectParticles");
 	}
-	
+
 	public static double getSelectRange() {
 		return getConfig().getInt("Abilities.Air.AirBlast.SelectRange");
 	}
-	
+
 }

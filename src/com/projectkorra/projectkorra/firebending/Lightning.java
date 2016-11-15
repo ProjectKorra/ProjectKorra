@@ -1,10 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.LightningAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.DamageHandler;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -15,7 +12,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.LightningAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class Lightning extends LightningAbility {
 
@@ -52,6 +53,7 @@ public class Lightning extends LightningAbility {
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<Arc> arcs;
 	private ArrayList<BukkitRunnable> tasks;
+	private ArrayList<Location> locations;
 	
 	public Lightning(Player player) {
 		super(player);
@@ -73,6 +75,7 @@ public class Lightning extends LightningAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.arcs = new ArrayList<>();
 		this.tasks = new ArrayList<>();
+		this.locations = new ArrayList<>();
 	
 		this.selfHitWater = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
 		this.selfHitClose = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitClose");
@@ -122,8 +125,8 @@ public class Lightning extends LightningAbility {
 	 * @param lent The LivingEntity that is being damaged
 	 */
 	public void electrocute(LivingEntity lent) {
-		lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
-		player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
+		lent.getWorld().playSound(lent.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
+		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
 		DamageHandler.damageEntity(lent, damage, this);
 		
 		if (Math.random() < stunChance) {
@@ -190,6 +193,8 @@ public class Lightning extends LightningAbility {
 			remove();
 			return;
 		}
+		
+		locations.clear();
 		
 		if (state == State.START) {
 			if (bPlayer.isOnCooldown(this)) {
@@ -401,7 +406,11 @@ public class Lightning extends LightningAbility {
 				for (int j = 0; j < points.size() - 1; j += 2) {
 					Location loc1 = points.get(j);
 					Location loc2 = points.get(j + 1);
-					double adjac = loc1.distance(loc2) / 2;
+					double adjac = 0;
+					if (loc1.getWorld().equals(loc2.getWorld())) {
+						adjac = loc1.distance(loc2) / 2;
+					}
+					
 					double angle = (Math.random() - 0.5) * maxArcAngle;
 					
 					angle += angle >= 0 ? 10 : -10;
@@ -500,6 +509,11 @@ public class Lightning extends LightningAbility {
 					return;
 				}
 				Block block = location.getBlock();
+				// We only want to consider this particle as part of the location
+				// on the its first tick, when it actually does the electrocution.
+				// The later ticks are just for visual purposes.
+				locations.add(block.getLocation());
+				
 				// Handle Water electrocution
 				if (!hitWater && (isWater(block) || (arcOnIce && isIce(block)))) {
 					hitWater = true;
@@ -532,8 +546,8 @@ public class Lightning extends LightningAbility {
 						affectedEntities.add(entity);
 						LivingEntity lent = (LivingEntity) entity;
 						if (lent instanceof Player) {
-							lent.getWorld().playSound(lent.getLocation(), Sound.CREEPER_HISS, 1, 0);
-							player.getWorld().playSound(player.getLocation(), Sound.CREEPER_HISS, 1, 0);
+							lent.getWorld().playSound(lent.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
+							player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
 							Player p = (Player) lent;
 							Lightning light = getAbility(p, Lightning.class);
 							if (light != null && light.state == State.START) {
@@ -630,6 +644,16 @@ public class Lightning extends LightningAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public boolean isCollidable() {
+		return arcs.size() > 0;
+	}
+	
+	@Override
+	public List<Location> getLocations() {
+		return locations;
 	}
 	
 	public boolean isCharged() {

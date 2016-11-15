@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterArms extends WaterAbility {
@@ -33,8 +34,8 @@ public class WaterArms extends WaterAbility {
 		RIGHT, LEFT;
 	}
 
-	private static final ConcurrentHashMap<Block, Long> BLOCK_REVERT_TIMES = new ConcurrentHashMap<Block, Long>();
-	private static final Integer[] UNBREAKABLES = { 7, 8, 9, 10, 11, 49, 54, 90, 119, 120, 130, 146 };
+	private static final Map<Block, Long> BLOCK_REVERT_TIMES = new ConcurrentHashMap<Block, Long>();
+	private static final Integer[] UNBREAKABLES = { 7, 10, 11, 49, 54, 90, 119, 120, 130, 146 };
 
 	private boolean cooldownLeft;
 	private boolean cooldownRight;
@@ -146,10 +147,12 @@ public class WaterArms extends WaterAbility {
 	private boolean prepare() {
 		Block sourceBlock = getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource);
 		if (sourceBlock != null) {
-			if (isPlant(sourceBlock)) {
+			if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 				fullSource = false;
 			}
 			ParticleEffect.LARGE_SMOKE.display(getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource).getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
+			new PlantRegrowth(player, sourceBlock);
+			sourceBlock.setType(Material.AIR);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			WaterReturn.emptyWaterBottle(player);
@@ -358,7 +361,7 @@ public class WaterArms extends WaterAbility {
 			for (Lightning.Arc arc : lightning.getArcs()) {
 				for (Block arm : BLOCK_REVERT_TIMES.keySet()) {
 					for (Location loc : arc.getPoints()) {
-						if (arm.getLocation().getWorld() == loc.getWorld() && loc.distance(arm.getLocation()) <= 2.5) {
+						if (arm.getLocation().getWorld().equals(loc.getWorld()) && loc.distance(arm.getLocation()) <= 2.5) {
 							for (Location l1 : getOffsetLocations(4, arm.getLocation(), 1.25)) {
 								FireAbility.playLightningbendingParticle(l1);
 							}
@@ -720,7 +723,7 @@ public class WaterArms extends WaterAbility {
 		this.sneakMsg = sneakMsg;
 	}
 
-	public static ConcurrentHashMap<Block, Long> getBlockRevertTimes() {
+	public static Map<Block, Long> getBlockRevertTimes() {
 		return BLOCK_REVERT_TIMES;
 	}
 

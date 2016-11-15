@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /*
@@ -23,7 +24,7 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 	 * a Map containing every entity which is paralyzed, and the time in
 	 * milliseconds at which they will be unparalyzed.
 	 */
-	private static final ConcurrentHashMap<Entity, Long> PARALYZED_ENTITIES = new ConcurrentHashMap<>();
+	private static final Map<Entity, Long> PARALYZED_ENTITIES = new ConcurrentHashMap<>();
 
 	private long duration;
 	private long cooldown;
@@ -177,7 +178,7 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 		this.target = target;
 	}
 
-	public static ConcurrentHashMap<Entity, Long> getParalyzedEntities() {
+	public static Map<Entity, Long> getParalyzedEntities() {
 		return PARALYZED_ENTITIES;
 	}
 
@@ -191,7 +192,7 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 
 	public class Immobilize extends ChiCombo {
 
-		public Immobilize(Player player, String name) {
+		public Immobilize(Player player) {
 			super(player, "Immobilize");
 		}
 

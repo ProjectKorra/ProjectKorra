@@ -1,8 +1,7 @@
 package com.projectkorra.projectkorra.airbending;
 
-import com.projectkorra.projectkorra.ability.FlightAbility;
-import com.projectkorra.projectkorra.object.PlayerFlyData;
-import com.projectkorra.projectkorra.util.Flight;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -10,23 +9,32 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.ability.FlightAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.object.PlayerFlyData;
+import com.projectkorra.projectkorra.util.Flight;
 
 public class AirFlight extends FlightAbility {
 	
-	private static final ConcurrentHashMap<String, Integer> HITS = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<String, PlayerFlyData> HOVERING = new ConcurrentHashMap<>();
+	private static final Map<String, Integer> HITS = new ConcurrentHashMap<>();
+	private static final Map<String, PlayerFlyData> HOVERING = new ConcurrentHashMap<>();
 	
 	private boolean firstProgressIteration;
 	private int maxHitsBeforeRemoval;
 	private double speed;
 	private Flight flight;
+	private double hoverY;
 
 	public AirFlight(Player player) {
-		super(player);		
+		super(player);
+		
+		if (CoreAbility.getAbility(player, AirFlight.class) != null)
+			return;
+			
 		this.maxHitsBeforeRemoval = getConfig().getInt("Abilities.Air.Flight.MaxHits");
 		this.speed = getConfig().getDouble("Abilities.Air.Flight.Speed");
 		this.firstProgressIteration = true;
+		hoverY = player.getLocation().getBlockY();
 		start();
 	}
 
@@ -64,12 +72,16 @@ public class AirFlight extends FlightAbility {
 	}
 
 	public static void setHovering(Player player, boolean bool) {
+		AirFlight flight = CoreAbility.getAbility(player, AirFlight.class);
+		flight.hoverY = player.getLocation().getBlockY();
+		
 		String playername = player.getName();
 
 		if (bool) {
 			if (!HOVERING.containsKey(playername)) {
 				HOVERING.put(playername, new PlayerFlyData(player.getAllowFlight(), player.isFlying()));
 				player.setVelocity(new Vector(0, 0, 0));
+				player.setAllowFlight(true);
 				player.setFlying(true);
 			}
 		} else {
@@ -107,6 +119,15 @@ public class AirFlight extends FlightAbility {
 			Vector vec = player.getVelocity().clone();
 			vec.setY(0);
 			player.setVelocity(vec);
+			if (player.getLocation().getBlockY() != hoverY) {
+				Location loc = new Location(player.getWorld(), 
+						player.getLocation().getX(), 
+						hoverY + 0.5,
+						player.getLocation().getZ(), 
+						player.getLocation().getYaw(), 
+						player.getLocation().getPitch());
+				player.teleport(loc);
+			}
 		} else {
 			player.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(speed));
 		}

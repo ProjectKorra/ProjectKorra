@@ -1,10 +1,7 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.earthbending.EarthBlast;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -16,11 +13,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class FireShield extends FireAbility {
-	
+
 	private boolean shield;
 	private boolean ignite;
 	private long time;
@@ -30,6 +29,7 @@ public class FireShield extends FireAbility {
 	private double radius;
 	private double discRadius;
 	private double fireTicks;
+	private Location location;
 	private Random random;
 
 	public FireShield(Player player) {
@@ -38,7 +38,7 @@ public class FireShield extends FireAbility {
 
 	public FireShield(Player player, boolean shield) {
 		super(player);
-		
+
 		this.shield = shield;
 		this.ignite = true;
 		this.interval = getConfig().getLong("Abilities.Fire.FireShield.Interval");
@@ -48,7 +48,7 @@ public class FireShield extends FireAbility {
 		this.discRadius = getConfig().getDouble("Abilities.Fire.FireShield.DiscRadius");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireShield.FireTicks");
 		this.random = new Random();
-		
+
 		if (hasAbility(player, FireShield.class) || bPlayer.isOnCooldown("FireShield")) {
 			return;
 		} else if (!player.getEyeLocation().getBlock().isLiquid()) {
@@ -60,6 +60,11 @@ public class FireShield extends FireAbility {
 		}
 	}
 
+	/**
+	 * This method was used for the old collision detection system. Please see
+	 * {@link Collision} for the new system.
+	 */
+	@Deprecated
 	public static boolean isWithinShield(Location loc) {
 		for (FireShield fshield : getAbilities(FireShield.class)) {
 			Location playerLoc = fshield.player.getLocation();
@@ -74,7 +79,8 @@ public class FireShield extends FireAbility {
 				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(fshield.discRadius));
 				if (!tempLoc.getWorld().equals(loc.getWorld())) {
 					return false;
-				} else if (tempLoc.distance(loc) <= fshield.discRadius * fshield.discRadius) {
+				} else if (tempLoc.getWorld().equals(loc.getWorld())
+						&& tempLoc.distance(loc) <= fshield.discRadius * fshield.discRadius) {
 					return true;
 				}
 			}
@@ -90,7 +96,7 @@ public class FireShield extends FireAbility {
 		} else if (!player.isSneaking() && shield) {
 			remove();
 			return;
-		} else if (System.currentTimeMillis() > startTime + duration && !shield) {
+		} else if (System.currentTimeMillis() > getStartTime() + duration && !shield) {
 			remove();
 			return;
 		}
@@ -100,15 +106,15 @@ public class FireShield extends FireAbility {
 
 			if (shield) {
 				ArrayList<Block> blocks = new ArrayList<>();
-				Location location = player.getEyeLocation().clone();
+				location = player.getEyeLocation().clone();
 
 				for (double theta = 0; theta < 180; theta += 20) {
 					for (double phi = 0; phi < 360; phi += 20) {
 						double rphi = Math.toRadians(phi);
 						double rtheta = Math.toRadians(theta);
-						
-						Block block = location .clone() .add(radius * Math.cos(rphi) * Math.sin(rtheta), radius * Math.cos(rtheta),
-										radius * Math.sin(rphi) * Math.sin(rtheta)).getBlock();
+
+						Block block = location.clone().add(radius * Math.cos(rphi) * Math.sin(rtheta), radius * Math.cos(rtheta),
+								radius * Math.sin(rphi) * Math.sin(rtheta)).getBlock();
 						if (!blocks.contains(block) && !GeneralMethods.isSolid(block) && !block.isLiquid()) {
 							blocks.add(block);
 						}
@@ -142,13 +148,9 @@ public class FireShield extends FireAbility {
 						new FireDamageTimer(entity, player);
 					}
 				}
-
-				FireBlast.removeFireBlastsAroundPoint(location, radius + 1);
-				BlazeArc.removeAroundPoint(location, radius + 1);
-				Combustion.removeAroundPoint(location, radius + 1);
 			} else {
 				ArrayList<Block> blocks = new ArrayList<>();
-				Location location = player.getEyeLocation().clone();
+				location = player.getEyeLocation().clone();
 				Vector direction = location.getDirection();
 				location = location.clone().add(direction.multiply(radius));
 
@@ -184,11 +186,6 @@ public class FireShield extends FireAbility {
 					}
 				}
 
-				FireBlast.removeFireBlastsAroundPoint(location, discRadius);
-				WaterManipulation.removeAroundPoint(location, discRadius);
-				EarthBlast.removeAroundPoint(location, discRadius);
-				BlazeArc.removeAroundPoint(location, discRadius);
-				Combustion.removeAroundPoint(location, discRadius);
 				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, discRadius)) {
 					if (entity instanceof Projectile) {
 						entity.remove();
@@ -205,14 +202,14 @@ public class FireShield extends FireAbility {
 
 	@Override
 	public Location getLocation() {
-		return player != null ? player.getLocation() : null;
+		return location;
 	}
 
 	@Override
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -221,6 +218,11 @@ public class FireShield extends FireAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return shield ? radius : discRadius;
 	}
 
 	public boolean isShield() {
@@ -290,5 +292,5 @@ public class FireShield extends FireAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-		
+
 }

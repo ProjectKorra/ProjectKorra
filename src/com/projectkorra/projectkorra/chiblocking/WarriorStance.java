@@ -1,11 +1,14 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.ability.ChiAbility;
-
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ChiAbility;
 
 public class WarriorStance extends ChiAbility {
 
@@ -22,19 +25,23 @@ public class WarriorStance extends ChiAbility {
 		
 		ChiAbility stance = bPlayer.getStance();
 		if (stance != null) {
-			stance.remove();
 			if (stance instanceof WarriorStance) {
-				bPlayer.setStance(null);
+				stance.remove();
 				return;
+			}
+			if (stance instanceof AcrobatStance) {
+				stance.remove();
 			}
 		}
 		start();
 		bPlayer.setStance(this);
+		GeneralMethods.displayMovePreview(player, this);
+		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 0.5F, 2F);
 	}
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || !bPlayer.hasElement(Element.CHI)) {
 			remove();
 			return;
 		}
@@ -45,6 +52,16 @@ public class WarriorStance extends ChiAbility {
 		if (!player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 60, strength, true));
 		}
+	}
+	
+	@Override
+	public void remove() {
+		super.remove();
+		bPlayer.setStance(null);
+		GeneralMethods.displayMovePreview(player, this);
+		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
+		player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+		player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
 	}
 	
 	@Override

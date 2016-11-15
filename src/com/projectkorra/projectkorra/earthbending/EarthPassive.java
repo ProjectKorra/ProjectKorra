@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
@@ -17,15 +18,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EarthPassive {
 
-	private static final ConcurrentHashMap<Block, Long> SAND_BLOCKS = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Block, MaterialData> SAND_ID_ENTITIES = new ConcurrentHashMap<>();
+	private static final Map<Block, Long> SAND_BLOCKS = new ConcurrentHashMap<>();
+	private static final Map<Block, MaterialData> SAND_ID_ENTITIES = new ConcurrentHashMap<>();
 
 	@SuppressWarnings("deprecation")
 	public static boolean softenLanding(Player player) {
+		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
+			return false;
+		}
+		
 		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
@@ -64,7 +70,7 @@ public class EarthPassive {
 							affectedBlock.setType(Material.SAND);
 						}
 						if (!SAND_BLOCKS.containsKey(affectedBlock)) {
-							SAND_ID_ENTITIES.putIfAbsent(affectedBlock, type);
+							SAND_ID_ENTITIES.put(affectedBlock, type);
 							SAND_BLOCKS.put(affectedBlock, System.currentTimeMillis());
 						}
 					}
@@ -112,10 +118,10 @@ public class EarthPassive {
 
 						if (block.getData() < 4) {
 							block.setData((byte) (block.getData() + 4));
-							block.getWorld().playSound(block.getLocation(), Sound.DOOR_CLOSE, 10, 1);
+							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, 10, 1);
 						} else {
 							block.setData((byte) (block.getData() - 4));
-							block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 10, 1);
+							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 10, 1);
 						}
 
 						bPlayer.addCooldown("MetalPassive", 200);
@@ -171,11 +177,11 @@ public class EarthPassive {
 		return true;
 	}
 	
-	public static ConcurrentHashMap<Block, Long> getSandBlocks() {
+	public static Map<Block, Long> getSandBlocks() {
 		return SAND_BLOCKS;
 	}
 
-	public static ConcurrentHashMap<Block, MaterialData> getSandIdEntities() {
+	public static Map<Block, MaterialData> getSandIdEntities() {
 		return SAND_ID_ENTITIES;
 	}
 

@@ -10,7 +10,6 @@ import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.ChiPassive;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.earthbending.EarthPassive;
 import com.projectkorra.projectkorra.waterbending.PlantArmor;
 
@@ -20,11 +19,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PassiveHandler implements Runnable {
 	
-	private static final ConcurrentHashMap<Player, Float> FOOD = new ConcurrentHashMap<>();
+	private static final Map<Player, Float> FOOD = new ConcurrentHashMap<>();
 	
 	public static float getExhaustion(Player player, float level, double factor) {
 		if (!FOOD.keySet().contains(player)) {
@@ -37,7 +37,7 @@ public class PassiveHandler implements Runnable {
 			} else {
 				level = (float) ((level - oldlevel) * factor + oldlevel);
 			}
-			FOOD.replace(player, level);
+			FOOD.put(player, level);
 			return level;
 		}
 	}
@@ -54,18 +54,18 @@ public class PassiveHandler implements Runnable {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		
 		if (bPlayer == null) return;
-		if (CoreAbility.hasAbility(player, EarthArmor.class)) {
+		/*if (CoreAbility.hasAbility(player, EarthArmor.class)) {
 			EarthArmor abil = CoreAbility.getAbility(player, EarthArmor.class);
 			if (abil.isFormed()) {
 				int strength = abil.getStrength();
-				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 3, strength - 1), false);
+				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, strength - 1), false);
 			}
-		}
+		}*/
 		if (CoreAbility.hasAbility(player, PlantArmor.class)) {
 			PlantArmor abil = CoreAbility.getAbility(player, PlantArmor.class);
 			if (abil.isFormed()) {
 				int strength = abil.getResistance();
-				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 3, strength - 1), false);
+				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, strength - 1), false);
 			}
 		}
 	}
@@ -151,7 +151,7 @@ public class PassiveHandler implements Runnable {
 			}
 		}
 		if (b) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3, max-1, true, false), false);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 15, max-1, true, false), false);
 		}
 	}
 	
@@ -192,7 +192,7 @@ public class PassiveHandler implements Runnable {
 			}
 		}
 		if (b) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 3, max-1, true, false), false);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 15, max-1, true, false), false);
 		}
 	}
 

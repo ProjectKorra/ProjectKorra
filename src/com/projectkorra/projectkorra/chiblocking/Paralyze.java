@@ -1,21 +1,21 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.airbending.Suffocate;
-import com.projectkorra.projectkorra.command.Commands;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.airbending.Suffocate;
+import com.projectkorra.projectkorra.command.Commands;
 
 public class Paralyze extends ChiAbility {
 
-	private static final ConcurrentHashMap<Entity, Long> ENTITIES = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Entity, Long> COOLDOWNS = new ConcurrentHashMap<>();
+	private static final Map<Entity, Long> ENTITIES = new ConcurrentHashMap<>();
 
 	private long cooldown;
 	private Entity target;
@@ -32,14 +32,7 @@ public class Paralyze extends ChiAbility {
 	
 	@Override
 	public void progress() {
-		if (bPlayer.canBendIgnoreCooldowns(this)) {
-			if (COOLDOWNS.containsKey(target)) {
-				if (System.currentTimeMillis() < COOLDOWNS.get(target) + cooldown) {
-					return;
-				} else {
-					COOLDOWNS.remove(target);
-				}
-			}
+		if (bPlayer.canBend(this)) {
 			if (target instanceof Player) {
 				if (Commands.invincible.contains(((Player) target).getName())) {
 					remove();
@@ -47,7 +40,7 @@ public class Paralyze extends ChiAbility {
 				}
 			}
 			paralyze(target);
-			COOLDOWNS.put(target, System.currentTimeMillis());
+			bPlayer.addCooldown(this);
 		} else {
 			remove();
 		}
@@ -121,16 +114,8 @@ public class Paralyze extends ChiAbility {
 		this.target = target;
 	}
 
-	public static ConcurrentHashMap<Entity, Long> getEntities() {
+	public static Map<Entity, Long> getEntities() {
 		return ENTITIES;
-	}
-
-	public static ConcurrentHashMap<Entity, Long> getCooldowns() {
-		return COOLDOWNS;
-	}
-
-	public void setCooldown(long cooldown) {
-		this.cooldown = cooldown;
 	}
 	
 }
