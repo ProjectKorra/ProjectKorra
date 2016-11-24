@@ -229,3 +229,4 @@ test/server/*.yml
 test/server/*.properties
 test/server/plugins/*/
 target/
+/dependency-reduced-pom.xml
