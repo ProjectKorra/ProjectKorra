@@ -26,6 +26,7 @@ import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.MetricsLite;
 import com.projectkorra.projectkorra.util.PassiveHandler;
 import com.projectkorra.projectkorra.util.RevertChecker;
+import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.Updater;
 import com.projectkorra.projectkorra.util.logging.PKLogHandler;
 import com.projectkorra.projectkorra.waterbending.WaterbendingManager;
@@ -90,6 +91,7 @@ public class ProjectKorra extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new PassiveHandler(), 0, 1);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
+		TempBlock.startReversion();
 		
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
