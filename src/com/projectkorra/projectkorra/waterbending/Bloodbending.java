@@ -258,7 +258,7 @@ public class Bloodbending extends BloodAbility {
 			Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
 			double distance = 0;
 			if(location.getWorld().equals(target.getWorld())) {
-				location.distance(target.getLocation());
+				distance = location.distance(target.getLocation());
 			}
 			double dx, dy, dz;
 			dx = location.getX() - target.getLocation().getX();

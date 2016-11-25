@@ -35,7 +35,7 @@ public class BindCommand extends PKCommand {
 		this.abilityDoesntExist = ConfigManager.languageConfig.get().getString("Commands.Bind.AbilityDoesntExist");
 		this.wrongNumber = ConfigManager.languageConfig.get().getString("Commands.Bind.WrongNumber");
 		this.loadingInfo = ConfigManager.languageConfig.get().getString("Commands.Bind.LoadingInfo");
-		this.toggledElementOff = ConfigManager.languageConfig.get().getString("Commands.Bind.ToggledElementOff");
+		this.toggledElementOff = ConfigManager.languageConfig.get().getString("Commands.Bind.ElementToggledOff");
 		this.noElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElement");
 		this.noElementAE = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElementAE");
 		this.noSubElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoSubElement");
