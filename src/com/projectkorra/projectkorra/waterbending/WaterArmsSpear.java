@@ -37,7 +37,6 @@ public class WaterArmsSpear extends WaterAbility {
 	private int spearSphereNight;
 	private int spearSphereFullMoon;
 	private int distanceTravelled;
-	private int layer;
 	private long spearDuration;
 	private long spearDurationNight;
 	private long spearDurationFullMoon;
@@ -158,10 +157,7 @@ public class WaterArmsSpear extends WaterAbility {
 			remove();
 		}
 		
-		if (layer >= spearSphere) {
-			remove();
-			return;
-		} else if (!canPlaceBlock(location.getBlock())) {
+		if (!canPlaceBlock(location.getBlock())) {
 			if (canFreeze) {
 				createSpear();
 			}
@@ -230,6 +226,12 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	private void createIceBall() {
+		if (spearSphere <= 0) {
+			if (canFreeze) {
+				createSpear();
+			}
+			return;
+		}
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, spearSphere)) {
 			if (isTransparent(player, block) && block.getType() != Material.ICE && !WaterArms.isUnbreakable(block)) {
 				playIcebendingSound(block.getLocation());
@@ -387,14 +389,6 @@ public class WaterArmsSpear extends WaterAbility {
 
 	public void setDistanceTravelled(int distanceTravelled) {
 		this.distanceTravelled = distanceTravelled;
-	}
-
-	public int getLayer() {
-		return layer;
-	}
-
-	public void setLayer(int layer) {
-		this.layer = layer;
 	}
 
 	public long getSpearDuration() {
