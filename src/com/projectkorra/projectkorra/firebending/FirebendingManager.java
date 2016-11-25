@@ -17,6 +17,5 @@ public class FirebendingManager implements Runnable {
 		FirePassive.handlePassive();
 		BlazeArc.dissipateAll();
 		FireAbility.removeFire();
-		HeatControl.manageSolidify();
 	}
 }

@@ -1345,7 +1345,7 @@ public class PKListener implements Listener {
 					new FireBlastCharged(player);
 				}
 				else if (abil.equalsIgnoreCase("HeatControl")) {
-					new HeatControl(player, HeatControlType.SOLIDIFY);
+					new HeatControl(player, HeatControlType.COOK);
 				}
 				else if (abil.equalsIgnoreCase("FireBurst")) {
 					new FireBurst(player);

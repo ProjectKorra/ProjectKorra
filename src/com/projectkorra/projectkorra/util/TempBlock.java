@@ -1,24 +1,36 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 
 public class TempBlock {
 
 	public static Map<Block, TempBlock> instances = new ConcurrentHashMap<Block, TempBlock>();
+	public static final PriorityQueue<TempBlock> REVERT_QUEUE = new PriorityQueue<>(100, new Comparator<TempBlock>() {
+		@Override
+		public int compare(TempBlock t1, TempBlock t2) {
+			return (int) (t1.revertTime - t2.revertTime);
+		}
+	});
 
 	private Block block;
 	private Material newtype;
 	private byte newdata;
 	private BlockState state;
+	private long revertTime;
+	private boolean inRevertQueue;
 
 	@SuppressWarnings("deprecation")
 	public TempBlock(Block block, Material newtype, byte newdata) {
@@ -105,6 +117,19 @@ public class TempBlock {
 	public BlockState getState() {
 		return state;
 	}
+	
+	public long getRevertTime() {
+		return revertTime;
+	}
+	
+	public void setRevertTime(long revertTime) {
+		if (inRevertQueue) {
+			REVERT_QUEUE.remove(this);
+		}
+		this.inRevertQueue = true;
+		this.revertTime = revertTime + System.currentTimeMillis();
+		REVERT_QUEUE.add(this);
+	}
 
 	public void revertBlock() {
 		state.update(true);
@@ -125,6 +150,27 @@ public class TempBlock {
 		newdata = data;
 		block.setType(material);
 		block.setData(data);
+	}
+	
+	public static void startReversion() {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				long currentTime = System.currentTimeMillis();
+				while (!REVERT_QUEUE.isEmpty()) {
+					TempBlock tempBlock = REVERT_QUEUE.peek();
+					if (currentTime >= tempBlock.revertTime) {
+						REVERT_QUEUE.poll();
+						tempBlock.revertBlock();
+						//long finish = System.currentTimeMillis();
+						//Bukkit.broadcastMessage(String.valueOf(finish - currentTime));
+					} else {
+						break;
+					}
+				}
+			}
+		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
+		
 	}
 
 }
