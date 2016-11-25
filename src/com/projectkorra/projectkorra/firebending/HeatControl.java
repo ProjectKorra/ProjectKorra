@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -16,10 +15,12 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -37,40 +38,30 @@ public class HeatControl extends FireAbility {
 	
 	private HeatControlType heatControlType;
 	
-	/*
-	 * HeatControl Cook variables
-	 */
+	// HeatControl Cook variables
 	private long cookTime;
 	private long cookInterval;
 	
-	/*
-	 * HeatControl Extinguish variables
-	 */
+	//HeatControl Extinguish variables
 	private long extinguishCooldown;
 	private double extinguishRadius;
 	
-	/*
-	 * HeatControl Melt variables
-	 */
+	//HeatControl Melt variables
 	private double meltRange;
 	private double meltRadius;
 	private Location meltLocation;
 	
-	/*
-	 * HeatControl Solidify variables
-	 */
+	//HeatControl Solidify variables
 	private int solidifyRadius;
 	private long solidifyDelay;
 	private long solidifyLastBlockTime;
+	private long solidifyRevertTime;
 	private double solidifyMaxRadius;
 	private double solidifyRange;
+	private boolean solidifyRevert;
 	private boolean solidifying;
 	private Location solidifyLocation;
 	private Random randy;
-	private ConcurrentHashMap<TempBlock, Long> solidifyStone = new ConcurrentHashMap<>();
-	private ConcurrentHashMap<TempBlock, Long> solidifyRevert = new ConcurrentHashMap<>();
-	private List<TempBlock> blocks = new ArrayList<>();
-	
 
 	public HeatControl(Player player, HeatControlType heatControlType) {
 		super(player);
@@ -79,6 +70,11 @@ public class HeatControl extends FireAbility {
 		setFields();
 		
 		if (this.heatControlType == HeatControlType.COOK) {
+			if (!isCookable(player.getInventory().getItemInMainHand().getType())) {
+				remove();
+				new HeatControl(player, HeatControlType.SOLIDIFY);
+				return;
+			}
 			start();
 			
 		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
@@ -103,7 +99,7 @@ public class HeatControl extends FireAbility {
 				return;
 			} else if (EarthAbility.getLavaSourceBlock(player, solidifyRange) == null) {
 				remove();
-				new HeatControl(player, HeatControlType.COOK);
+				new HeatControl(player, HeatControlType.EXTINGUISH);
 				return;
 			}
 			
@@ -117,7 +113,6 @@ public class HeatControl extends FireAbility {
 		if (this.heatControlType == HeatControlType.COOK) {
 			this.cookTime = System.currentTimeMillis();
 			this.cookInterval = getConfig().getLong("Abilities.Fire.HeatControl.Cook.Interval");
-			this.heatControlType = HeatControlType.COOK;
 		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
 			this.extinguishCooldown = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Cooldown");
 			this.extinguishRadius = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Radius");
@@ -133,6 +128,8 @@ public class HeatControl extends FireAbility {
 			this.solidifyLastBlockTime = 0;
 			this.solidifyMaxRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.MaxRadius");
 			this.solidifyRange = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
+			this.solidifyRevert = getConfig().getBoolean("Abilities.Fire.HeatControl.Solidify.Revert");
+			this.solidifyRevertTime = getConfig().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime");
 			this.randy = new Random();
 		}
 	}
@@ -147,7 +144,7 @@ public class HeatControl extends FireAbility {
 		}
 		
 		if (this.heatControlType == HeatControlType.COOK) {
-			
+
 			if (!player.isSneaking()) {
 				remove();
 				return;
@@ -155,7 +152,6 @@ public class HeatControl extends FireAbility {
 			
 			if (!isCookable(player.getInventory().getItemInMainHand().getType())) {
 				remove();
-				new HeatControl(player, HeatControlType.EXTINGUISH);
 				return;
 			}
 			
@@ -206,6 +202,10 @@ public class HeatControl extends FireAbility {
 			}
 			
 			Location targetLocation = GeneralMethods.getTargetedLocation(player, solidifyRange);
+			//if (isLava(targetLocation.getBlock())) {
+			//	remove();
+			//	new HeatControl(player, HeatControlType.EXTINGUISH);
+			//}
 			resetLocation(targetLocation);
 			List<Location> area = GeneralMethods.getCircle(solidifyLocation, solidifyRadius, 3, true, true, 0);
 			solidify(area);
@@ -308,7 +308,7 @@ public class HeatControl extends FireAbility {
 
 		Block b = lava.get(randy.nextInt(lava.size()));
 		
-		TempBlock tempBlock;
+		final TempBlock tempBlock;
 		if (TempBlock.isTempBlock(b)) {
 			tempBlock = TempBlock.get(b);
 			tempBlock.setType(Material.MAGMA, (byte) 0);
@@ -316,39 +316,25 @@ public class HeatControl extends FireAbility {
 			tempBlock = new TempBlock(b, Material.MAGMA, (byte) 0);
 		}
 
-		solidifyStone.put(tempBlock, System.currentTimeMillis());
-		solidifyRevert.put(tempBlock, System.currentTimeMillis() + 1000);
-		blocks.add(tempBlock);
-	}
-	
-	@Override
-	public void remove() {
-		solidifying = false;
-	}
-	
-	public void removeInstance() {
-		super.remove();
-	}
-	
-	public void revert(TempBlock block) {
-		if (blocks.contains(block)) {
-			block.revertBlock();
-			blocks.remove(block);
-		}
-	}
-	
-	public void revertAll() {
-		for (TempBlock tempBlock : blocks) {
-			tempBlock.revertBlock();
-		}
-		
-		blocks.clear();
-	}
-	
-	public static void revertAllInstances() {
-		for (HeatControl heatControl : getAbilities(HeatControl.class)) {
-			heatControl.revertAll();
-		}
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				if (tempBlock != null) {
+					if (solidifyRevert) {
+						tempBlock.setType(Material.STONE, (byte) 0);
+						tempBlock.setRevertTime(solidifyRevertTime);
+					} else {
+						tempBlock.revertBlock();
+						tempBlock.getBlock().setType(Material.STONE);
+					}
+					
+					ParticleEffect.SMOKE.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 0.1F, 0.1F, 0.1F, 0.01F, 3);
+					if (randy.nextInt(3) == 0) {
+						tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
+					}
+				}
+			}
+		}.runTaskLater(ProjectKorra.plugin, 20);
 	}
 	
 	public void resetLocation(Location loc) {
@@ -361,49 +347,6 @@ public class HeatControl extends FireAbility {
 			solidifyRadius = 1;
 			solidifyLocation = loc;
 		}
-	}
-	
-	public static void manageSolidify() {
-		for (HeatControl heatControl : getAbilities(HeatControl.class)) {
-			
-			for (TempBlock tempBlock : heatControl.solidifyStone.keySet()) {
-				
-				if (System.currentTimeMillis() - heatControl.solidifyStone.get(tempBlock) > 1000) {
-					
-					if (getConfig().getBoolean("Abilities.Fire.HeatControl.Solidify.Revert")) {
-						
-						tempBlock.setType(Material.STONE, (byte) 0);
-						heatControl.solidifyRevert.put(tempBlock, System.currentTimeMillis());
-					} else {
-						
-						tempBlock.revertBlock();
-						tempBlock.getBlock().setType(Material.STONE);
-					}
-					
-					ParticleEffect.SMOKE.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 0.1F, 0.1F, 0.1F, 0.01F, 3);
-					
-					// TODO play the smoke in a line from the block to above the player's head.
-					
-					tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
-					heatControl.solidifyStone.remove(tempBlock);
-				}
-			}
-			
-			for (TempBlock tempBlock : heatControl.solidifyRevert.keySet()) {
-				
-				if (System.currentTimeMillis() - heatControl.solidifyRevert.get(tempBlock) > getConfig().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime")) {
-					
-					heatControl.revert(tempBlock);
-					heatControl.solidifyRevert.remove(tempBlock);
-				}
-			}
-			
-			if (heatControl.solidifyStone.isEmpty() && heatControl.solidifyRevert.isEmpty() && !heatControl.solidifying) {
-				
-				heatControl.removeInstance();
-			}
-		}
-		
 	}
 
 	@Override

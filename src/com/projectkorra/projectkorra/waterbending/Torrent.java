@@ -29,7 +29,6 @@ public class Torrent extends WaterAbility {
 
 	private static final double CLEANUP_RANGE = 50;
 	private static final Map<TempBlock, Player> FROZEN_BLOCKS = new ConcurrentHashMap<>();
-	private static final Map<TempBlock, Long> FROZEN_BLOCKS_DELAY = new ConcurrentHashMap<>();
 
 	private boolean sourceSelected;
 	private boolean settingUp;
@@ -38,6 +37,7 @@ public class Torrent extends WaterAbility {
 	private boolean launch;
 	private boolean launching;
 	private boolean freeze;
+	private boolean revert;
 	private int layer;
 	private int maxLayer;
 	private int maxHits;
@@ -45,6 +45,7 @@ public class Torrent extends WaterAbility {
 	private long time;
 	private long interval;
 	private long cooldown;
+	private long revertTime;
 	private double startAngle;
 	private double angle;
 	private double radius;
@@ -80,6 +81,8 @@ public class Torrent extends WaterAbility {
 		this.range = getConfig().getDouble("Abilities.Water.Torrent.Range");
 		this.selectRange = getConfig().getDouble("Abilities.Water.Torrent.SelectRange");
 		this.cooldown = getConfig().getLong("Abilities.Water.Torrent.Cooldown");
+		this.revert = getConfig().getBoolean("Abilities.Water.Torrent.Revert");
+		this.revertTime = getConfig().getLong("Abilities.Water.Torrent.RevertTime");
 		this.blocks = new ArrayList<>();
 		this.launchedBlocks = new ArrayList<>();
 		this.hurtEntities = new ArrayList<>();
@@ -120,7 +123,9 @@ public class Torrent extends WaterAbility {
 			if (isTransparent(player, block) && block.getType() != Material.ICE) {
 				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
 				FROZEN_BLOCKS.put(tblock, player);
-				FROZEN_BLOCKS_DELAY.put(tblock, System.currentTimeMillis() + (new Random().nextInt((500 + 500) + 1) - 500));
+				if (revert) {
+					tblock.setRevertTime(revertTime + (new Random().nextInt((500 + 500) + 1) - 500));
+				}
 				playIcebendingSound(block.getLocation());
 			}
 		}
@@ -588,10 +593,6 @@ public class Torrent extends WaterAbility {
 				return;
 			} else if (block.getBlock().getType() != Material.ICE) {
 				FROZEN_BLOCKS.remove(block);
-				continue;
-			} else if (getConfig().getBoolean("Abilities.Water.Torrent.Revert") && System.currentTimeMillis()
-					- FROZEN_BLOCKS_DELAY.get(block) > getConfig().getLong("Abilities.Water.Torrent.RevertTime")) {
-				thaw(block);
 				continue;
 			} else if (!player.isOnline()) {
 				thaw(block);
