@@ -58,13 +58,9 @@ public class DamageHandler {
 				}
 				
 				EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, cause, damage);
-				Bukkit.getServer().getPluginManager().callEvent(finalEvent);
-				if (!finalEvent.isCancelled()) {
-					damage = finalEvent.getDamage();
-					((LivingEntity) entity).damage(damage, source);
-					entity.setLastDamageCause(finalEvent);
-				}
-				
+				((LivingEntity) entity).damage(damage, source);
+				entity.setLastDamageCause(finalEvent);
+								
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
 					NCPExemptionManager.unexempt(source);
 				}
