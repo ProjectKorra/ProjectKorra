@@ -28,7 +28,6 @@ public class Tornado extends AirAbility {
 	private double npcPushFactor;
 	private double currentHeight;
 	private double currentRadius;
-	private boolean couldFly;
 	private Flight flight;
 	private Location origin;
 	private Random random;
@@ -61,7 +60,7 @@ public class Tornado extends AirAbility {
 		}
 
 		this.flight = new Flight(player);
-		this.couldFly = player.getAllowFlight();
+		
 		player.setAllowFlight(true);
 		start();
 	}
@@ -82,7 +81,7 @@ public class Tornado extends AirAbility {
 	public void remove() {
 		super.remove();
 		flight.remove();
-		player.setAllowFlight(couldFly);
+		player.setAllowFlight(false);
 	}
 
 	private void rotateTornado() {

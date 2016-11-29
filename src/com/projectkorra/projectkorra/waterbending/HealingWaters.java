@@ -109,9 +109,13 @@ public class HealingWaters extends HealingAbility {
 			if (!charged) {
 				this.charged = true;
 				WaterReturn.emptyWaterBottle(player);
+				
 			}
 		} else {
+			
 			GeneralMethods.displayColoredParticle(origin, hex);
+			
+			
 		}
 		
 		// If the ability is charged, try healing.
@@ -311,8 +315,10 @@ public class HealingWaters extends HealingAbility {
 	
 	@Override
 	public void remove() {
+		if(charged) {
 		if(bottle) {
 			fillBottle();
+		}
 		}
 		HealingWaters.super.remove();
 	}
