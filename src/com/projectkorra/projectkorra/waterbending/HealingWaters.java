@@ -311,10 +311,10 @@ public class HealingWaters extends HealingAbility {
 	
 	@Override
 	public void remove() {
-		if(bottle) {
+		if (bottle && charged) {
 			fillBottle();
 		}
-		HealingWaters.super.remove();
+		super.remove();
 	}
 
 	@Override
