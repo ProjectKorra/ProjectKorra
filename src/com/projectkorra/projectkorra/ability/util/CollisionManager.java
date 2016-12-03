@@ -131,7 +131,10 @@ public class CollisionManager {
 							if (locationSecond == null) {
 								continue;
 							}
-
+							
+							if (locationFirst.getWorld() != locationSecond.getWorld()) {
+								return;
+							}
 							double distSquared = locationFirst.distanceSquared(locationSecond);
 							if (distSquared <= requiredDistSquared) {
 								collided = true;

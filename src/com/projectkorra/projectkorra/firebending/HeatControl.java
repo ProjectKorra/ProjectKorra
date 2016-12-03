@@ -320,12 +320,21 @@ public class HeatControl extends FireAbility {
 			@Override
 			public void run() {
 				if (tempBlock != null) {
+					boolean bool = Math.random() > .5 ? true : false;
 					if (solidifyRevert) {
-						tempBlock.setType(Material.STONE, (byte) 0);
+						if (bool) {
+							tempBlock.setType(Material.STONE, (byte) 0);
+						} else {
+							tempBlock.setType(Material.COBBLESTONE, (byte) 0);
+						}
 						tempBlock.setRevertTime(solidifyRevertTime);
 					} else {
 						tempBlock.revertBlock();
-						tempBlock.getBlock().setType(Material.STONE);
+						if (bool) {
+							tempBlock.getBlock().setType(Material.STONE);
+						} else {
+							tempBlock.getBlock().setType(Material.COBBLESTONE);
+						}
 					}
 					
 					ParticleEffect.SMOKE.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 0.1F, 0.1F, 0.1F, 0.01F, 3);
