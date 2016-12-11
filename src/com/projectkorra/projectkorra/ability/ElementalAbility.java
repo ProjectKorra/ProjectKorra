@@ -115,7 +115,7 @@ public abstract class ElementalAbility extends CoreAbility {
 	}
 	
 	public static boolean isSolarEclipse(World world) {
-		if (world == null || !GeneralMethods.hasRPG()) {
+		if (world == null || !GeneralMethods.hasRPG() || !EventManager.marker.containsKey(world)) {
 			return false;
 		}
 		return EventManager.marker.get(world).equalsIgnoreCase("SolarEclipse");
