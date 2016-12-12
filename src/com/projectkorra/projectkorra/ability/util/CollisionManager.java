@@ -16,8 +16,12 @@ import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
 
 /**
  * A CollisionManager is used to monitor possible collisions between all
- * CoreAbilities. Use {@link #add(Collision)} to begin monitoring for collision
- * between two abilities, as shown in {@link CollisionInitializer}.
+ * CoreAbilities. Use {@link #addCollision(Collision)} to begin monitoring for
+ * collision between two abilities, as shown in {@link CollisionInitializer}.
+ * <p>
+ * Addon developers should use:<br>
+ * ProjectKorra.getCollisionInitializer().addCollision(myCoreAbility)
+ * ProjectKorra.getCollisionInitializer().addSmallAbility(myCoreAbility)
  * <p>
  * For a CoreAbility to collide properly, the {@link CoreAbility#isCollidable()}
  * , {@link CoreAbility#getCollisionRadius()},
@@ -67,10 +71,13 @@ public class CollisionManager {
 		this.detectionDelay = 1;
 		this.minAbilityTickAlive = 3;
 		this.certainNoCollisionDistance = 100;
-		collisions = new ArrayList<>();
+		this.collisions = new ArrayList<>();
 	}
 
 	private void detectCollisions() {
+		if (CoreAbility.getAbilitiesByInstances().size() <= 1) {
+			return;
+		}
 		HashMap<CoreAbility, List<Location>> locationsCache = new HashMap<>();
 
 		for (Collision collision : collisions) {
@@ -161,12 +168,16 @@ public class CollisionManager {
 	}
 
 	/**
-	 * Adds a new Collision to the CollisionManager so that two abilities can be
-	 * checked for collisions.
+	 * Adds a "fake" Collision to the CollisionManager so that two abilities can
+	 * be checked for collisions. This Collision only needs to define the
+	 * abilityFirst, abilitySecond, removeFirst, and removeSecond.
 	 * 
 	 * @param collision a Collision containing two CoreAbility classes
 	 */
-	public void add(Collision collision) {
+	public void addCollision(Collision collision) {
+		if (collision == null || collision.getAbilityFirst() == null || collision.getAbilitySecond() == null) {
+			return;
+		}
 		collisions.add(collision);
 	}
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Creature;
@@ -88,7 +89,7 @@ public class Bloodbending extends BloodAbility {
 		} else {
 			//Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
 			//List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(location, 1.5);
-			List<Entity> entities = new ArrayList<Entity>();
+			List<Entity> entities = new CopyOnWriteArrayList<Entity>();
 			for (int i = 0; i < range; i++) {
 				Location location = GeneralMethods.getTargetedLocation(player, i, getTransparentMaterial());
 				entities = GeneralMethods.getEntitiesAroundPoint(location, 1.7);
