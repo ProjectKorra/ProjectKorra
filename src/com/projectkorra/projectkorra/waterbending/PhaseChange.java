@@ -36,7 +36,7 @@ public class PhaseChange extends IceAbility {
 	}
 	
 	private List<PhaseChangeType> active_types = new ArrayList<>();
-	private static Map<Player, List<TempBlock>> BLOCKS_BY_PLAYER = new HashMap<>();
+	private static Map<TempBlock, Player> PLAYER_BY_BLOCK = new HashMap<>();
 	private CopyOnWriteArrayList<TempBlock> blocks = new CopyOnWriteArrayList<>();
 	private Random r = new Random();
 	
@@ -51,7 +51,7 @@ public class PhaseChange extends IceAbility {
 	//Melt Variables
 	private Location meltLoc;
 	private long meltCooldown = 7000;
-	private int meltRadius = 1;
+	private int meltRadius;
 	private int meltMaxRadius = 7;
 	private int meltDelay = 50;
 	private long lastBlockTime = 0;
@@ -87,11 +87,11 @@ public class PhaseChange extends IceAbility {
 				if (tb.getLocation().getWorld() != player.getWorld()) {
 					tb.revertBlock();
 					blocks.remove(tb);
-					BLOCKS_BY_PLAYER.get(player).remove(tb);
+					PLAYER_BY_BLOCK.remove(tb);
 				} else if (tb.getLocation().distanceSquared(player.getLocation()) > (controlRadius*controlRadius)) {
 					tb.revertBlock();
 					blocks.remove(tb);
-					BLOCKS_BY_PLAYER.get(player).remove(tb);
+					PLAYER_BY_BLOCK.remove(tb);
 				}
 			}
 		} 
@@ -103,12 +103,11 @@ public class PhaseChange extends IceAbility {
 			}
 			if (!player.isSneaking()) {
 				active_types.remove(PhaseChangeType.MELT);
+				bPlayer.addCooldown("PhaseChangeMelt", meltCooldown);
 				return;
 			}
 			if (meltRadius >= meltMaxRadius) {
-				active_types.remove(PhaseChangeType.MELT);
-				bPlayer.addCooldown("PhaseChangeMelt", meltCooldown);
-				return;
+				meltRadius = 1;
 			}
 			
 			Location l = GeneralMethods.getTargetedLocation(player, sourceRange);
@@ -164,12 +163,9 @@ public class PhaseChange extends IceAbility {
 			freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
 			freezeRadius = night*getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
 			
-			if (!BLOCKS_BY_PLAYER.containsKey(player)) {
-				BLOCKS_BY_PLAYER.put(player, blocks);
-			}
-			
 			freezeArea(player.getTargetBlock((Set<Material>)null, sourceRange).getLocation());
 		} else if (type == PhaseChangeType.MELT) {
+			meltRadius = 1;
 			meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
 			meltDelay = getConfig().getInt("Abilities.Water.PhaseChange.Melt.Delay")/night;
 			meltMaxRadius = night*getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
@@ -201,7 +197,6 @@ public class PhaseChange extends IceAbility {
 		}
 
 		if (!loc.equals(meltLoc)) {
-			meltRadius = 1;
 			meltLoc = loc;
 		}
 	}
@@ -262,7 +257,7 @@ public class PhaseChange extends IceAbility {
 		
 		TempBlock tb = new TempBlock(b, Material.ICE, (byte)0);
 		blocks.add(tb);
-		BLOCKS_BY_PLAYER.get(player).add(tb);
+		PLAYER_BY_BLOCK.put(tb, player);
 	}
 	
 	public void meltArea(Location center, int radius) {
@@ -291,15 +286,14 @@ public class PhaseChange extends IceAbility {
 			if (blocks.contains(tb)) {
 				blocks.remove(tb);
 			}
-			tb.setType(Material.WATER);
-			
+			tb.revertBlock();
 		} else {
 			tb = new TempBlock(b, Material.WATER, (byte)0);
+			if (!melted_blocks.contains(tb)) {
+				melted_blocks.add(tb);
+			}
 		}
 
-		if (!melted_blocks.contains(tb)) {
-			melted_blocks.add(tb);
-		}
 	}
 	
 	public void meltArea(Location center) {
@@ -331,7 +325,7 @@ public class PhaseChange extends IceAbility {
 			
 			tb.revertBlock();
 			blocks.remove(tb);
-			BLOCKS_BY_PLAYER.get(player).remove(tb);
+			PLAYER_BY_BLOCK.remove(tb);
 		} else if (isWater(b)) {
 			//Figure out what to do here also
 		} else if (isIce(b)) {
@@ -341,14 +335,14 @@ public class PhaseChange extends IceAbility {
 	}
 	
 	public static void thaw(TempBlock tb) {
-		for (Player p : BLOCKS_BY_PLAYER.keySet()) {
-			if (!BLOCKS_BY_PLAYER.get(p).contains(tb)) {
-				continue;
-			}
-			tb.revertBlock();
-			BLOCKS_BY_PLAYER.get(p).remove(tb);
-			getAbility(p, PhaseChange.class).getFrozenBlocks().remove(tb);
+		if (!PLAYER_BY_BLOCK.containsKey(tb)) {
 			return;
+		} else {
+			Player p = PLAYER_BY_BLOCK.get(tb);
+			PhaseChange pc = getAbility(p, PhaseChange.class);
+			PLAYER_BY_BLOCK.remove(tb);
+			pc.getFrozenBlocks().remove(tb);
+			tb.revertBlock();
 		}
 	}
 	
@@ -360,25 +354,21 @@ public class PhaseChange extends IceAbility {
 		thaw(tb);
 	}
 	
-	public static Map<Player, List<TempBlock>> getFrozenBlocksMap() {
-		return BLOCKS_BY_PLAYER;
+	public static Map<TempBlock, Player> getFrozenBlocksMap() {
+		return PLAYER_BY_BLOCK;
 	}
 	
 	public static List<TempBlock> getFrozenBlocksAsTempBlock() {
 		List<TempBlock> list = new ArrayList<>();
-		for (Player p : BLOCKS_BY_PLAYER.keySet()) {
-			list.addAll(BLOCKS_BY_PLAYER.get(p));			
-		}
+		list.addAll(PLAYER_BY_BLOCK.keySet());
 		return list;
 	}
 	
 	public static List<Block> getFrozenBlocksAsBlock() {
 		List<Block> list = new ArrayList<>();
-		for (Player p : BLOCKS_BY_PLAYER.keySet()) {
-			for (TempBlock tb : BLOCKS_BY_PLAYER.get(p)) {
-				Block b = tb.getBlock();
-				list.add(b);
-			}
+		for (TempBlock tb : PLAYER_BY_BLOCK.keySet()) {
+			Block b = tb.getBlock();
+			list.add(b);
 		}
 		return list;
 	}
@@ -389,7 +379,7 @@ public class PhaseChange extends IceAbility {
 				tb.revertBlock();
 			}
 			blocks.clear();
-			BLOCKS_BY_PLAYER.remove(player);
+			PLAYER_BY_BLOCK.remove(player);
 		}
 	}
 	
