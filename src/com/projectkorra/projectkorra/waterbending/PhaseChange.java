@@ -12,15 +12,17 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class PhaseChange extends IceAbility {
 	
 	public static enum PhaseChangeType {
-		FREEZE, MELT, SKATE;
+		FREEZE, MELT, SKATE, PASSIVE;
 		
 		@Override
 		public String toString() {
@@ -30,6 +32,8 @@ public class PhaseChange extends IceAbility {
 				return "Melt";
 			} else if (this == SKATE) {
 				return "Skate";
+			} else if (this == PASSIVE) {
+				return "Passive";
 			}
 			return "";
 		}
@@ -63,6 +67,9 @@ public class PhaseChange extends IceAbility {
 	private long duration = 7000;
 	private double speed = 0.335;
 	*/
+	
+	//Passive Variables
+	private CopyOnWriteArrayList<TempBlock> passive_blocks = new CopyOnWriteArrayList<>();
 	
 	public PhaseChange(Player player, PhaseChangeType type) {
 		super(player);
@@ -135,6 +142,15 @@ public class PhaseChange extends IceAbility {
 				displaySkateParticles();
 			}
 		}*/
+		
+		if (active_types.contains(PhaseChangeType.PASSIVE)) {
+			if (!bPlayer.getBoundAbilityName().equals("PhaseChange")) {
+				active_types.remove(PhaseChangeType.PASSIVE);
+				return;
+			}
+			checkPassive();
+		}
+		
 		if (active_types.isEmpty()) {
 			remove();
 		}
@@ -186,13 +202,49 @@ public class PhaseChange extends IceAbility {
 		}
 	}
 	
-	/*public void displaySkateParticles() {
+	public void checkPassive() {
+		Location feet = player.getLocation().clone();
+		Location head = feet.clone().add(0, 1, 0);
+		Vector direction = new Vector(player.getLocation().getDirection().getX(), 0, player.getLocation().getDirection().getZ());
+		Location f1 = feet.clone().add(direction.multiply(1));
+		Location f2 = head.clone().add(direction.multiply(1));
+		Location[] checks = {feet, head, f1, f2};
+		
+		if (!passive_blocks.isEmpty()) {
+			for (TempBlock tb : passive_blocks) {
+				for (Location l : checks) {
+					if (tb.getLocation() != l.getBlock().getLocation()) {
+						tb.revertBlock();
+						passive_blocks.remove(tb);
+					}
+				}
+			}
+		}
+		
+		for (Location l : checks) {
+			if (TempBlock.isTempBlock(l.getBlock())) {
+				TempBlock tb = TempBlock.get(l.getBlock());
+				if (isIce(l.getBlock())) {
+					tb.revertBlock();
+				}
+				if (blocks.contains(tb)) {
+					blocks.remove(tb);
+					BLOCKS_BY_PLAYER.get(player).remove(tb);
+				}
+			} else if (isIce(l.getBlock())) {
+				TempBlock tb = new TempBlock(l.getBlock(), Material.AIR, (byte)0);
+				passive_blocks.add(tb);
+			}
+		}
+	}
+	
+	public void displaySkateParticles() {
 		Location right = GeneralMethods.getRightSide(player.getLocation(), 0.3);
 		Location left = GeneralMethods.getLeftSide(player.getLocation(), 0.3);
 		
 		ParticleEffect.SNOW_SHOVEL.display(right, 0, 0, 0, 0.00012F, 1);
 		ParticleEffect.SNOW_SHOVEL.display(left, 0, 0, 0, 0.00012F, 1);
-	}*/
+	}
 	
 	public void resetMeltLocation(Location loc) {
 		if (meltLoc == null) {
@@ -386,11 +438,21 @@ public class PhaseChange extends IceAbility {
 		} 
 	}
 	
+	public void revertPassiveBlocks() {
+		if (active_types.contains(PhaseChangeType.PASSIVE)) {
+			for (TempBlock tb : passive_blocks) {
+				tb.revertBlock();
+			}
+			passive_blocks.clear();
+		}
+	}
+	
 	@Override
 	public void remove() {
 		super.remove();
 		revertFrozenBlocks();
 		revertMeltedBlocks();
+		revertPassiveBlocks();
 	}
 
 	@Override
@@ -456,6 +518,10 @@ public class PhaseChange extends IceAbility {
 	
 	public CopyOnWriteArrayList<TempBlock> getMeltedBlocks() {
 		return melted_blocks;
+	}
+	
+	public CopyOnWriteArrayList<TempBlock> getPassiveBlocks() {
+		return passive_blocks;
 	}
 	
 	public List<PhaseChangeType> getActiveTypes() {

@@ -1102,6 +1102,17 @@ public class PKListener implements Listener {
 				}
 			}
 		}
+		
+		if (bPlayer.getBoundAbilityName().equals("PhaseChange")) {
+			if (bPlayer.canIcebend()) {
+				if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
+					new PhaseChange(player, PhaseChangeType.PASSIVE);
+				} else {
+					PhaseChange pc = CoreAbility.getAbility(player, PhaseChange.class);
+					pc.startNewType(PhaseChangeType.PASSIVE);
+				}
+			}
+		}
 
 		if (event.getTo().getY() > event.getFrom().getY()) {
 			if (!(player.getLocation().getBlock().getType() == Material.VINE) && !(player.getLocation().getBlock().getType() == Material.LADDER)) {
