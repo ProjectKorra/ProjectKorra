@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,23 +16,15 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.PhaseChange;
-import com.projectkorra.projectkorra.waterbending.SurgeWave;
-import com.projectkorra.projectkorra.waterbending.Torrent;
-import com.projectkorra.projectkorra.waterbending.WaterArmsSpear;
-import com.projectkorra.projectkorra.waterbending.WaterCombo;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
+import com.projectkorra.projectkorra.waterbending.PhaseChangeMelt;
 
 public class HeatControl extends FireAbility {
 	
@@ -64,7 +55,6 @@ public class HeatControl extends FireAbility {
 	private double meltRange;
 	private double meltRadius;
 	private Location meltLocation;
-	private static final Map<Block, TempBlock> MELTED_BLOCKS = new HashMap<>();
 	
 	/*
 	 * HeatControl Solidify variables
@@ -104,7 +94,7 @@ public class HeatControl extends FireAbility {
 			for (Block block : GeneralMethods.getBlocksAroundPoint(meltLocation, meltRadius)) {
 				
 				if (isMeltable(block)) {
-					melt(player, block);
+					PhaseChangeMelt.melt(player, block);
 				}
 			}
 			
@@ -297,44 +287,6 @@ public class HeatControl extends FireAbility {
 		}
 		return true;
 	}
-	
-	public static void melt(Player player, final Block block) {
-		if (GeneralMethods.isRegionProtectedFromBuild(player, "HeatControl", block.getLocation())) {
-			return;
-		} else if (!SurgeWave.canThaw(block)) {
-			SurgeWave.thaw(block);
-			return;
-		} else if (!Torrent.canThaw(block)) {
-			Torrent.thaw(block);
-			return;
-		} else if (WaterArmsSpear.canThaw(block)) {
-			WaterArmsSpear.thaw(block);
-			return;
-		}
-		
-		WaterSpoutWave.thaw(block);
-		WaterCombo.thaw(block);
-		
-		if (isMeltable(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
-			if (block.getType() == Material.SNOW) {
-				block.setType(Material.AIR);
-				return;
-			} else if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
-				PhaseChange.thaw(block);
-			} else {
-				TempBlock tb = new TempBlock(block, Material.WATER, (byte)0);
-				MELTED_BLOCKS.put(block, tb);
-				
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						MELTED_BLOCKS.get(block).revertBlock();
-						MELTED_BLOCKS.remove(block);
-					}
-				}.runTaskLater(ProjectKorra.plugin, 5 * 20 * 60);
-			}
-		}
-}
 	
 	public void solidify(List<Location> area) {
 		if (System.currentTimeMillis() < solidifyLastBlockTime + solidifyDelay) {
