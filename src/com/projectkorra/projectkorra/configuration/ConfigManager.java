@@ -670,10 +670,18 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.OctopusForm.AngleIncrement", 45);
 
 			config.addDefault("Abilities.Water.PhaseChange.Enabled", true);
-			config.addDefault("Abilities.Water.PhaseChange.Range", 16);
-			config.addDefault("Abilities.Water.PhaseChange.Radius", 4);
-			config.addDefault("Abilities.Water.PhaseChange.Freeze.Cooldown", 0);
-			config.addDefault("Abilities.Water.PhaseChange.Melt.Cooldown", 0);
+			config.addDefault("Abilities.Water.PhaseChange.SourceRange", 7);
+			config.addDefault("Abilities.Water.PhaseChange.Freeze.Cooldown", 500);
+			config.addDefault("Abilities.Water.PhaseChange.Freeze.Radius", 3);
+			config.addDefault("Abilities.Water.PhaseChange.Freeze.Depth", 1);
+			config.addDefault("Abilities.Water.PhaseChange.Freeze.ControlRadius", 25);
+			config.addDefault("Abilities.Water.PhaseChange.Melt.Cooldown", 2000);
+			config.addDefault("Abilities.Water.PhaseChange.Melt.Delay", 50);
+			config.addDefault("Abilities.Water.PhaseChange.Melt.Radius", 7);
+			config.addDefault("Abilities.Water.PhaseChange.Skate.Cooldown", 7000);
+			config.addDefault("Abilities.Water.PhaseChange.Skate.Duration", 7000);
+			config.addDefault("Abilities.Water.PhaseChange.Skate.Radius", 1);
+			config.addDefault("Abilities.Water.PhaseChange.Skate.Speed", 0.335);
 
 			config.addDefault("Abilities.Water.PlantArmor.Enabled", true);
 			config.addDefault("Abilities.Water.PlantArmor.Duration", 7500);
