@@ -79,6 +79,7 @@ public class WaterSpout extends WaterAbility {
 
 		new Flight(player);
 		player.setAllowFlight(true);
+		spoutableWaterHeight(player.getLocation()); //Sets base
 		start();
 	}
 

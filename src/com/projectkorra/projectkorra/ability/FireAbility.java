@@ -22,7 +22,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
-import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.Information;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
@@ -233,7 +232,6 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void stopBending() {
 		BlazeArc.removeAllCleanup();
-		HeatControl.revertAllInstances();
 		for (Location loc : TEMP_FIRE.keySet()) {
 			revertTempFire(loc);
 		}

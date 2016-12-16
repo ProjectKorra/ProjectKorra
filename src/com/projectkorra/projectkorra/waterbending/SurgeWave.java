@@ -33,6 +33,7 @@ public class SurgeWave extends WaterAbility {
 	private long time;
 	private long cooldown;
 	private long interval;
+	private long iceRevertTime;
 	private double currentRadius;
 	private double maxRadius;
 	private double range;
@@ -67,6 +68,7 @@ public class SurgeWave extends WaterAbility {
 		this.pushFactor = getConfig().getDouble("Abilities.Water.Surge.Wave.HorizontalPush");
 		this.verticalFactor = getConfig().getDouble("Abilities.Water.Surge.Wave.VerticalPush");
 		this.maxFreezeRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius");
+		this.iceRevertTime = getConfig().getLong("Abilities.Water.Surge.Wave.IceRevertTime");
 		this.range = getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
 		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange");
 		this.waveBlocks = new ConcurrentHashMap<>();
@@ -141,12 +143,14 @@ public class SurgeWave extends WaterAbility {
 			
 			Block oldBlock = block;
 			if (block.getType() == Material.AIR || block.getType() == Material.SNOW || isWater(block)) {
-				new TempBlock(block, Material.ICE, (byte) 0);
+				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
+				tblock.setRevertTime(iceRevertTime + (new Random().nextInt(1000)));
 				frozenBlocks.put(block, oldBlock.getType());
 			}
 			if (isPlant(block) && block.getType() != Material.LEAVES) {
 				block.breakNaturally();
-				new TempBlock(block, Material.ICE, (byte) 0);
+				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
+				tblock.setRevertTime(iceRevertTime + (new Random().nextInt(1000)));
 				frozenBlocks.put(block, oldBlock.getType());
 			}
 			for (Block sound : frozenBlocks.keySet()) {
@@ -387,7 +391,7 @@ public class SurgeWave extends WaterAbility {
 				surgeWave.waveBlocks.remove(block);
 			}
 			for (Block block : surgeWave.frozenBlocks.keySet()) {
-				block.setType(Material.AIR);
+				TempBlock.revertBlock(block, Material.AIR);
 				surgeWave.frozenBlocks.remove(block);
 			}
 		}
