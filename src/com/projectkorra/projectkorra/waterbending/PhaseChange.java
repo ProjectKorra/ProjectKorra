@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -198,6 +199,7 @@ public class PhaseChange extends IceAbility {
 
 		if (!loc.equals(meltLoc)) {
 			meltLoc = loc;
+			meltRadius = 1;
 		}
 	}
 	
@@ -215,6 +217,7 @@ public class PhaseChange extends IceAbility {
 		for (Location l : GeneralMethods.getCircle(center, radius, depth, false, false, 0)) {
 			freeze(l.getBlock());
 		}
+		
 		if (!blocks.isEmpty()) {
 			if (type == PhaseChangeType.FREEZE) {
 				bPlayer.addCooldown("PhaseChangeFreeze", freezeCooldown);
@@ -251,11 +254,20 @@ public class PhaseChange extends IceAbility {
 			return;
 		}
 		
-		if (TempBlock.isTempBlock(b)) {
-			return;
-		}
+		TempBlock tb = null;
 		
-		TempBlock tb = new TempBlock(b, Material.ICE, (byte)0);
+		if (TempBlock.isTempBlock(b)) {
+			tb = TempBlock.get(b);
+			if (melted_blocks.contains(tb)) {
+				melted_blocks.remove(tb);
+			}
+			tb.revertBlock();
+		}
+		if (tb == null) {
+			tb = new TempBlock(b, Material.ICE, (byte)0);
+		} else {
+			tb.setType(Material.ICE);
+		}
 		blocks.add(tb);
 		PLAYER_BY_BLOCK.put(tb, player);
 	}
@@ -279,20 +291,7 @@ public class PhaseChange extends IceAbility {
 		}
 
 		Block b = ice.get(r.nextInt(ice.size()));
-		TempBlock tb;
-
-		if (TempBlock.isTempBlock(b)) {
-			tb = TempBlock.get(b);
-			if (blocks.contains(tb)) {
-				blocks.remove(tb);
-			}
-			tb.revertBlock();
-		} else {
-			tb = new TempBlock(b, Material.WATER, (byte)0);
-			if (!melted_blocks.contains(tb)) {
-				melted_blocks.add(tb);
-			}
-		}
+		melt(b);
 
 	}
 	
@@ -316,16 +315,16 @@ public class PhaseChange extends IceAbility {
 		if (TempBlock.isTempBlock(b)) {
 			TempBlock tb = TempBlock.get(b);
 			
-			if (!blocks.contains(tb)) {
-				if (isWater(tb.getBlock())) {
-					//Figure out what to do here
-				}
+			if (!isIce(tb.getBlock())) {
 				return;
 			}
 			
 			tb.revertBlock();
-			blocks.remove(tb);
-			PLAYER_BY_BLOCK.remove(tb);
+			if (blocks.contains(tb)) {
+				blocks.remove(tb);
+				PLAYER_BY_BLOCK.remove(tb);
+			}
+			melted_blocks.add(tb);
 		} else if (isWater(b)) {
 			//Figure out what to do here also
 		} else if (isIce(b)) {
