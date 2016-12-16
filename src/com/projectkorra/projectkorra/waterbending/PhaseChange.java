@@ -160,10 +160,10 @@ public class PhaseChange extends IceAbility {
 		}
 		
 		active_types.add(type);
-		setFields(type);
+		loadVariables(type);
 	}
 	
-	public void setFields(PhaseChangeType type) {
+	public void loadVariables(PhaseChangeType type) {
 		int night = 1;
 		if (isNight(player.getWorld())) {
 			night = (int) Math.round(getNightFactor());
@@ -289,10 +289,6 @@ public class PhaseChange extends IceAbility {
 	
 	public void freeze(Block b) {
 		if (!isWater(b)) {
-			return;
-		}
-		
-		if (TempBlock.isTempBlock(b)) {
 			return;
 		}
 		
