@@ -91,11 +91,7 @@ public class PhaseChange extends IceAbility {
 			}
 			
 			for (TempBlock tb : blocks) {
-				if (tb.getLocation().getWorld() != player.getWorld()) {
-					tb.revertBlock();
-					blocks.remove(tb);
-					BLOCKS_BY_PLAYER.get(player).remove(tb);
-				} else if (tb.getLocation().distanceSquared(player.getLocation()) > (controlRadius*controlRadius)) {
+				if (tb.getLocation().distanceSquared(player.getLocation()) > (controlRadius*controlRadius)) {
 					tb.revertBlock();
 					blocks.remove(tb);
 					BLOCKS_BY_PLAYER.get(player).remove(tb);
@@ -292,10 +288,6 @@ public class PhaseChange extends IceAbility {
 	}
 	
 	public void freeze(Block b) {
-		if (b.getWorld() != player.getWorld()) {
-			return;
-		}
-		
 		if (b.getLocation().distanceSquared(player.getLocation()) >= controlRadius*controlRadius) {
 			return;
 		}
