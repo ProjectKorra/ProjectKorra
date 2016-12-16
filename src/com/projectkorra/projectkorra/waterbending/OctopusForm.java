@@ -9,6 +9,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.PhaseChange.PhaseChangeType;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -404,7 +405,16 @@ public class OctopusForm extends WaterAbility {
 
 	private void freezeBellow(Block block) {
 		if (isWater(block.getRelative(BlockFace.DOWN)) && !GeneralMethods.isSolid(block) && !isWater(block)) {//&& !TempBlock.isTempBlock(block)) {
-			PhaseChangeFreeze.freeze(player, block.getRelative(BlockFace.DOWN));
+			if (hasAbility(player, PhaseChange.class)) {
+				getAbility(player, PhaseChange.class).freeze(block);
+			} else {
+				PhaseChange pc = new PhaseChange(player, PhaseChangeType.FREEZE);
+				for (TempBlock tb : pc.getFrozenBlocks()) {
+					tb.revertBlock();
+				}
+				pc.getFrozenBlocks().clear();
+				pc.freeze(block);
+			}
 		}
 	}
 

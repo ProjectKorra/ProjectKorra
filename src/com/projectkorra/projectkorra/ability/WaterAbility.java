@@ -1,21 +1,5 @@
 package com.projectkorra.projectkorra.ability;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.PhaseChangeFreeze;
-import com.projectkorra.projectkorra.waterbending.PhaseChangeMelt;
-import com.projectkorra.projectkorra.waterbending.SurgeWall;
-import com.projectkorra.projectkorra.waterbending.SurgeWave;
-import com.projectkorra.projectkorra.waterbending.WaterArms;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import com.projectkorra.rpg.RPGMethods;
-
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +9,21 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.PhaseChange;
+import com.projectkorra.projectkorra.waterbending.SurgeWall;
+import com.projectkorra.projectkorra.waterbending.SurgeWave;
+import com.projectkorra.projectkorra.waterbending.WaterArms;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import com.projectkorra.rpg.RPGMethods;
 
 public abstract class WaterAbility extends ElementalAbility {
 
@@ -233,7 +232,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		BlockFace[] faces = { BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH };
 		boolean adjacent = false;
 		for (BlockFace face : faces) {
-			if (PhaseChangeFreeze.getFrozenBlocks().containsKey((block.getRelative(face)))) {
+			if (PhaseChange.getFrozenBlocksAsBlock().contains((block.getRelative(face)))) {
 				adjacent = true;
 			}
 		}
@@ -342,8 +341,6 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 	
 	public static void stopBending() {
-		PhaseChangeFreeze.removeAllCleanup();
-		PhaseChangeMelt.removeAllCleanup();
 		SurgeWall.removeAllCleanup();
 		SurgeWave.removeAllCleanup();
 		WaterArms.removeAllCleanup();
