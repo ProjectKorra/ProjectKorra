@@ -244,11 +244,7 @@ public class PhaseChange extends IceAbility {
 			return;
 		}
 		
-		if (b.getLocation().distanceSquared(player.getLocation()) > controlRadius*controlRadius) {
-			return;
-		}
-		
-		if (GeneralMethods.isRegionProtectedFromBuild(player, b.getLocation())) {
+		if (b.getLocation().distanceSquared(player.getLocation()) >= controlRadius*controlRadius) {
 			return;
 		}
 		
@@ -307,18 +303,6 @@ public class PhaseChange extends IceAbility {
 	}
 	
 	public void melt(Block b) {
-		if (b.getWorld() != player.getWorld()) {
-			return;
-		}
-		
-		if (b.getLocation().distanceSquared(player.getLocation()) > controlRadius*controlRadius) {
-			return;
-		}
-		
-		if (GeneralMethods.isRegionProtectedFromBuild(player, b.getLocation())) {
-			return;
-		}
-		
 		if (TempBlock.isTempBlock(b)) {
 			TempBlock tb = TempBlock.get(b);
 			
