@@ -288,10 +288,6 @@ public class PhaseChange extends IceAbility {
 	}
 	
 	public void freeze(Block b) {
-		if (b.getLocation().distanceSquared(player.getLocation()) >= controlRadius*controlRadius) {
-			return;
-		}
-		
 		if (!isWater(b)) {
 			return;
 		}
