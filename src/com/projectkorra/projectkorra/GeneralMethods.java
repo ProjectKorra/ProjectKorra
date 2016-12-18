@@ -862,6 +862,18 @@ public class GeneralMethods {
 	public static long getGlobalCooldown() {
 		return ConfigManager.defaultConfig.get().getLong("Properties.GlobalCooldown");
 	}
+	
+	/**
+	 * 
+	 * @param one One location being tested
+	 * @param two Another location being tested
+	 * @return The horizontal distance between two locations
+	 */
+	public static double getHorizontalDistance(Location one, Location two) {
+		double x = one.getX() - two.getX();
+		double z = one.getZ() - two.getZ();
+		return Math.sqrt((x*x) + (z*z));
+	}
 
 	@SuppressWarnings("incomplete-switch")
 	public static int getIntCardinalDirection(Vector vector) {

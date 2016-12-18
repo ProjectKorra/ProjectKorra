@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -55,8 +54,9 @@ public class PhaseChange extends IceAbility {
 	private int meltRadius;
 	private int meltMaxRadius = 7;
 	private int meltDelay = 50;
+	private boolean allowMeltFlow;
 	private long lastBlockTime = 0;
-	private CopyOnWriteArrayList<TempBlock> melted_blocks = new CopyOnWriteArrayList<>();
+	private CopyOnWriteArrayList<Block> melted_blocks = new CopyOnWriteArrayList<>();
 	
 	/*Skate Variables
 	private long skateCooldown = 7000;
@@ -170,6 +170,7 @@ public class PhaseChange extends IceAbility {
 			meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
 			meltDelay = getConfig().getInt("Abilities.Water.PhaseChange.Melt.Delay")/night;
 			meltMaxRadius = night*getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
+			allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
 		/*} else if (type == PhaseChangeType.SKATE) {
 			if (bPlayer.isOnCooldown("PhaseChangeSkate")) {
 				return;
@@ -194,6 +195,10 @@ public class PhaseChange extends IceAbility {
 	public void resetMeltLocation(Location loc) {
 		if (meltLoc == null) {
 			meltLoc = loc;
+			return;
+		}
+		
+		if (meltLoc.distance(loc) < 1) {
 			return;
 		}
 
@@ -258,8 +263,8 @@ public class PhaseChange extends IceAbility {
 		
 		if (TempBlock.isTempBlock(b)) {
 			tb = TempBlock.get(b);
-			if (melted_blocks.contains(tb)) {
-				melted_blocks.remove(tb);
+			if (melted_blocks.contains(tb.getBlock())) {
+				melted_blocks.remove(tb.getBlock());
 			}
 			tb.revertBlock();
 		}
@@ -324,33 +329,43 @@ public class PhaseChange extends IceAbility {
 				blocks.remove(tb);
 				PLAYER_BY_BLOCK.remove(tb);
 			}
-			melted_blocks.add(tb);
 		} else if (isWater(b)) {
 			//Figure out what to do here also
 		} else if (isIce(b)) {
-			TempBlock tb = new TempBlock(b, Material.WATER, (byte)0);
-			melted_blocks.add(tb);
+			Material m = allowMeltFlow ? Material.WATER : Material.STATIONARY_WATER;
+			b.setType(m);
+			melted_blocks.add(b);
 		}
 	}
-	
-	public static void thaw(TempBlock tb) {
+	/**
+	 * Only works with PhaseChange frozen blocks!
+	 * @param tb TempBlock being thawed
+	 * @return true when it is thawed successfully
+	 */
+	public static boolean thaw(TempBlock tb) {
 		if (!PLAYER_BY_BLOCK.containsKey(tb)) {
-			return;
+			return false;
 		} else {
 			Player p = PLAYER_BY_BLOCK.get(tb);
 			PhaseChange pc = getAbility(p, PhaseChange.class);
 			PLAYER_BY_BLOCK.remove(tb);
 			pc.getFrozenBlocks().remove(tb);
 			tb.revertBlock();
+			return true;
 		}
 	}
 	
-	public static void thaw(Block b) {
+	/**
+	 * Only works if the block is a {#link TempBlock} and PhaseChange frozen!
+	 * @param b Block being thawed
+	 * @return false if not a {#link TempBlock}
+	 */
+	public static boolean thaw(Block b) {
 		if (!TempBlock.isTempBlock(b)) {
-			return;
+			return false;
 		}
 		TempBlock tb = TempBlock.get(b);
-		thaw(tb);
+		return thaw(tb);
 	}
 	
 	public static Map<TempBlock, Player> getFrozenBlocksMap() {
@@ -384,8 +399,12 @@ public class PhaseChange extends IceAbility {
 	
 	public void revertMeltedBlocks() {
 		if (active_types.contains(PhaseChangeType.MELT)) {
-			for (TempBlock tb : melted_blocks) {
-				tb.revertBlock();
+			for (Block b : melted_blocks) {
+				if (TempBlock.isTempBlock(b)) {
+					TempBlock.get(b).revertBlock();
+				} else {
+					b.setType(Material.ICE);
+				}
 			}
 			melted_blocks.clear();
 		} 
@@ -459,7 +478,7 @@ public class PhaseChange extends IceAbility {
 		return blocks;
 	}
 	
-	public CopyOnWriteArrayList<TempBlock> getMeltedBlocks() {
+	public CopyOnWriteArrayList<Block> getMeltedBlocks() {
 		return melted_blocks;
 	}
 	

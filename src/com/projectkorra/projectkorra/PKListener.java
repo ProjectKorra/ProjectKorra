@@ -201,8 +201,9 @@ public class PKListener implements Listener {
 		}
 
 		if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
-			PhaseChange.thaw(block);
-			event.setCancelled(true);
+			if (PhaseChange.thaw(block)) {
+				event.setCancelled(true);
+			}
 		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
 			SurgeWall.thaw(block);
 			event.setCancelled(true);
@@ -788,7 +789,7 @@ public class PKListener implements Listener {
 
 			if (!event.isCancelled() && event.getCause() == DamageCause.FALL) {
 				Player source = Flight.getLaunchedBy(player);
-				if (source != null) {
+				if (source == player) {
 					event.setCancelled(true);
 				}
 			}
