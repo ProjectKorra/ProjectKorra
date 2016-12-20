@@ -210,7 +210,7 @@ public class IceSpikeBlast extends IceAbility {
 
 	private void redirect(Location destination, Player player) {
 		this.destination = destination;
-		this.player = player;
+		this.setPlayer(player);
 	}
 
 	@Override
