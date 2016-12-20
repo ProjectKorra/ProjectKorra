@@ -17,7 +17,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class EarthGrab extends EarthAbility {
-	
+
 	private long cooldown;
 	private double lowestDistance;
 	private double selectRange;
@@ -35,7 +35,7 @@ public class EarthGrab extends EarthAbility {
 
 	public EarthGrab(Player player) {
 		super(player);
-		
+
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthGrab.SelectRange");
 		this.height = getConfig().getDouble("Abilities.Earth.EarthGrab.Height");
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthGrab.Cooldown");
@@ -47,24 +47,24 @@ public class EarthGrab extends EarthAbility {
 		this.loc = player.getLocation();
 		this.dir = player.getLocation().getDirection().clone().normalize().multiply(1.5);
 		this.random = new Random();
-		
+
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		if(player.isSneaking()) {
+		
+		if (player.isSneaking()) {
 			start();
 		} else {
 			Location targetLocation = GeneralMethods.getTargetedLocation(player, 1);
 			Block block = GeneralMethods.getTopBlock(targetLocation, 1, 1);
-			if(isEarthbendable(block) && block.getWorld().equals(player.getWorld()) && block.getLocation().distance(player.getLocation()) <= 1.6) {
+			if (isEarthbendable(block) && block.getWorld().equals(player.getWorld()) && block.getLocation().distance(player.getLocation()) <= 1.6) {
 				earthGrabSelf();
 				remove();
 			}
 		}
 	}
-	
-	public void formDome() {
 
+	public void formDome() {
 		if (closestEntity != null) {
 			ArrayList<Block> blocks = new ArrayList<Block>();
 			Location location = closestEntity.getLocation();
@@ -75,15 +75,11 @@ public class EarthGrab extends EarthAbility {
 			double factor2 = 4;
 			int height1 = 3;
 			int height2 = 2;
-			
+
 			for (double angle = 0; angle <= 360; angle += 20) {
-				testLoc = loc1.clone().add(
-						factor * Math.cos(Math.toRadians(angle)), 1,
-						factor * Math.sin(Math.toRadians(angle)));
-				testloc2 = loc2.clone().add(
-						factor2 * Math.cos(Math.toRadians(angle)), 1,
-						factor2 * Math.sin(Math.toRadians(angle)));
-				
+				testLoc = loc1.clone().add(factor * Math.cos(Math.toRadians(angle)), 1, factor * Math.sin(Math.toRadians(angle)));
+				testloc2 = loc2.clone().add(factor2 * Math.cos(Math.toRadians(angle)), 1, factor2 * Math.sin(Math.toRadians(angle)));
+
 				for (int y = 0; y < height - height1; y++) {
 					testLoc = testLoc.clone().add(0, -1, 0);
 					if (isEarthbendable(testLoc.getBlock())) {
@@ -94,7 +90,7 @@ public class EarthGrab extends EarthAbility {
 						break;
 					}
 				}
-				
+
 				for (int y = 0; y < height - height2; y++) {
 					testloc2 = testloc2.clone().add(0, -1, 0);
 					if (isEarthbendable(testloc2.getBlock())) {
@@ -111,12 +107,10 @@ public class EarthGrab extends EarthAbility {
 		}
 	}
 
-	public void earthGrabSelf() {		
+	public void earthGrabSelf() {
 		closestEntity = player;
 		getGround();
-		ParticleEffect.BLOCK_CRACK.display(
-				(ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, blockByte), 1F, 1F, 1F,
-				0.1F, 100, player.getLocation(), 500);
+		ParticleEffect.BLOCK_CRACK.display((ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, blockByte), 1F, 1F, 1F, 0.1F, 100, player.getLocation(), 500);
 		if (closestEntity != null) {
 			ArrayList<Block> blocks = new ArrayList<Block>();
 			Location location = closestEntity.getLocation();
@@ -127,15 +121,11 @@ public class EarthGrab extends EarthAbility {
 			double factor2 = 4;
 			int height1 = 3;
 			int height2 = 2;
-			
+
 			for (double angle = 0; angle <= 360; angle += 20) {
-				testLoc = loc1.clone().add(
-						factor * Math.cos(Math.toRadians(angle)), 1,
-						factor * Math.sin(Math.toRadians(angle)));
-				testLoc2 = loc2.clone().add(
-						factor2 * Math.cos(Math.toRadians(angle)), 1,
-						factor2 * Math.sin(Math.toRadians(angle)));
-				
+				testLoc = loc1.clone().add(factor * Math.cos(Math.toRadians(angle)), 1, factor * Math.sin(Math.toRadians(angle)));
+				testLoc2 = loc2.clone().add(factor2 * Math.cos(Math.toRadians(angle)), 1, factor2 * Math.sin(Math.toRadians(angle)));
+
 				for (int y = 0; y < height - height1; y++) {
 					testLoc = testLoc.clone().add(0, -1, 0);
 					if (isEarthbendable(testLoc.getBlock())) {
@@ -146,7 +136,7 @@ public class EarthGrab extends EarthAbility {
 						break;
 					}
 				}
-				
+
 				for (int y = 0; y < height - height2; y++) {
 					testLoc2 = testLoc2.clone().add(0, -1, 0);
 					if (isEarthbendable(testLoc2.getBlock())) {
@@ -167,28 +157,36 @@ public class EarthGrab extends EarthAbility {
 	public String getName() {
 		return "EarthGrab";
 	}
-	
+
 	@SuppressWarnings("deprecation")
-	private void getGround() {
-		for (int i = 0; i <= 5; i++) {
-			Block block = loc.getBlock().getRelative(BlockFace.DOWN, i);
-			if (isEarthbendable(block)) {
-				groundBlock = block;
-				blockType = block.getType();
-				blockByte = block.getData();
-				return;
+	private Block getGround() {
+		Block b = GeneralMethods.getTopBlock(loc, 3);
+		if (isEarthbendable(b)) {
+			blockType = b.getType();
+			blockByte = b.getData();
+			return b;
+		} else {
+			while (!isEarthbendable(b)) {
+				b = b.getRelative(BlockFace.DOWN);
+				if (player.getLocation().getBlockY() - b.getY() > 5) {
+					break;
+				}
+			}
+			if (isEarthbendable(b)) {
+				return b;
 			}
 		}
+		return null;
 	}
 
 	@Override
 	public void progress() {
-		getGround();
-		bPlayer.addCooldown(this);
-		if(groundBlock == null) {
+		groundBlock = getGround();
+		if (groundBlock == null) {
 			remove();
 			return;
 		}
+		bPlayer.addCooldown(this);
 		dir = dir.clone().normalize().multiply(1.5);
 		dir.setY(0);
 		double distance = loc.getY() - (double) groundBlock.getY();
@@ -201,33 +199,31 @@ public class EarthGrab extends EarthAbility {
 			dir.setY(0);
 		}
 		loc.add(dir);
-		ParticleEffect.BLOCK_CRACK.display(
-				(ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, blockByte), 1F, 0.1F, 1F,
-				0.1F, 100, loc.add(0, -1, 0), 500);
-		if(player.isDead() || !player.isOnline()) {
+		ParticleEffect.BLOCK_CRACK.display((ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, blockByte), 1F, 0.1F, 1F, 0.1F, 100, loc.add(0, -1, 0), 500);
+		if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
 		}
-		if(!player.isSneaking()) {
+		if (!player.isSneaking()) {
 			remove();
 			return;
 		}
-		if(loc.getWorld().equals(startLoc.getWorld()) && loc.distance(startLoc) >= selectRange) {
+		if (loc.getWorld().equals(startLoc.getWorld()) && loc.distance(startLoc) >= selectRange) {
 			remove();
 			return;
 		}
-		for(Entity e : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
-			if(e.getEntityId() != player.getEntityId() && e instanceof LivingEntity) {
+		for (Entity e : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
+			if (e.getEntityId() != player.getEntityId() && e instanceof LivingEntity) {
 				closestEntity = e;
 				formDome();
 				remove();
 				return;
 			}
 		}
-		if(random.nextInt(2) == 0) {
+		if (random.nextInt(2) == 0) {
 			playEarthbendingSound(loc);
 		}
-		
+
 	}
 
 	@Override
@@ -239,7 +235,7 @@ public class EarthGrab extends EarthAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -301,5 +297,5 @@ public class EarthGrab extends EarthAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
+
 }

@@ -157,8 +157,7 @@ import com.projectkorra.projectkorra.waterbending.HealingWaters;
 import com.projectkorra.projectkorra.waterbending.IceBlast;
 import com.projectkorra.projectkorra.waterbending.IceSpikeBlast;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
-import com.projectkorra.projectkorra.waterbending.PhaseChangeFreeze;
-import com.projectkorra.projectkorra.waterbending.PhaseChangeMelt;
+import com.projectkorra.projectkorra.waterbending.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.PlantArmor;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -168,6 +167,7 @@ import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterPassive;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
+import com.projectkorra.projectkorra.waterbending.PhaseChange.PhaseChangeType;
 import com.projectkorra.rpg.RPGMethods;
 
 public class PKListener implements Listener {
@@ -200,9 +200,10 @@ public class PKListener implements Listener {
 			blast.remove();
 		}
 
-		if (PhaseChangeFreeze.getFrozenBlocks().containsKey(block)) {
-			PhaseChangeFreeze.thaw(block);
-			event.setCancelled(true);
+		if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
+			if (PhaseChange.thaw(block)) {
+				event.setCancelled(true);
+			}
 		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
 			SurgeWall.thaw(block);
 			event.setCancelled(true);
@@ -282,7 +283,7 @@ public class PKListener implements Listener {
 			event.setCancelled(!EarthPassive.canPhysicsChange(block));
 		}
 		if (!event.isCancelled()) {
-			event.setCancelled(PhaseChangeFreeze.getFrozenBlocks().containsKey(block));
+			event.setCancelled(PhaseChange.getFrozenBlocksAsBlock().contains(block));
 		}
 		if (!event.isCancelled()) {
 			event.setCancelled(!SurgeWave.canThaw(block));
@@ -511,8 +512,8 @@ public class PKListener implements Listener {
 			if (blast != null) {
 				blast.remove();
 			}
-			if (PhaseChangeFreeze.getFrozenBlocks().containsKey(block)) {
-				PhaseChangeFreeze.thaw(block);
+			if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
+				PhaseChange.thaw(block);
 			}
 			if (SurgeWall.getWallBlocks().containsKey(block)) {
 				block.setType(Material.AIR);
@@ -788,7 +789,7 @@ public class PKListener implements Listener {
 
 			if (!event.isCancelled() && event.getCause() == DamageCause.FALL) {
 				Player source = Flight.getLaunchedBy(player);
-				if (source != null) {
+				if (source == player) {
 					event.setCancelled(true);
 				}
 			}
@@ -1040,6 +1041,7 @@ public class PKListener implements Listener {
 		}
 
 		Player player = event.getPlayer();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (Paralyze.isParalyzed(player)) {
 			event.setCancelled(true);
 			return;
@@ -1091,7 +1093,6 @@ public class PKListener implements Listener {
 		}
 
 		else {
-			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer != null) {
 				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI) || bPlayer.hasElement(Element.EARTH)) {
 					PassiveHandler.checkSpeedPassives(player);
@@ -1266,7 +1267,12 @@ public class PKListener implements Listener {
 					OctopusForm.form(player);
 				}
 				else if (abil.equalsIgnoreCase("PhaseChange")) {
-					new PhaseChangeMelt(player);
+					if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
+						new PhaseChange(player, PhaseChangeType.MELT);
+					} else {
+						PhaseChange pc = CoreAbility.getAbility(player, PhaseChange.class);
+						pc.startNewType(PhaseChangeType.MELT);
+					}
 				}
 				else if (abil.equalsIgnoreCase("WaterManipulation")) {
 					new WaterManipulation(player);
@@ -1487,7 +1493,12 @@ public class PKListener implements Listener {
 					new OctopusForm(player);
 				}
 				else if (abil.equalsIgnoreCase("PhaseChange")) {
-					new PhaseChangeFreeze(player);
+					if (!CoreAbility.hasAbility(player, PhaseChange.class)) {
+						new PhaseChange(player, PhaseChangeType.FREEZE);
+					} else {
+						PhaseChange pc = CoreAbility.getAbility(player, PhaseChange.class);
+						pc.startNewType(PhaseChangeType.FREEZE);
+					}
 				}
 				else if (abil.equalsIgnoreCase("PlantArmor")) {
 					new PlantArmor(player);
