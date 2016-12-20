@@ -317,7 +317,7 @@ public class WaterManipulation extends WaterAbility {
 				targetDirection = GeneralMethods.getDirection(location, targetlocation).normalize();
 			}
 			targetDestination = targetlocation;
-			this.player = player;
+			this.setPlayer(player);
 		}
 	}
 

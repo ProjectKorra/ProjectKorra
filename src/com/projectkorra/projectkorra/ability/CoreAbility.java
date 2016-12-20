@@ -286,7 +286,7 @@ public abstract class CoreAbility implements Ability {
 	 *         {@link #registerAbilities()}
 	 */
 	public static ArrayList<CoreAbility> getAbilities() {
-		return new ArrayList<CoreAbility>(ABILITIES_BY_NAME.values());
+		return new ArrayList<CoreAbility>(ABILITIES_BY_CLASS.values());
 	}
 
 	/**
@@ -606,6 +606,19 @@ public abstract class CoreAbility implements Ability {
 	@Override
 	public Player getPlayer() {
 		return player;
+	}
+	
+	/**
+	 * Changes the player that owns this ability instance. Used for redirection 
+	 * and other abilities that change the player object.
+	 * 
+	 * @param player The player who now controls the ability
+	 */
+	public void setPlayer(Player player) {
+		INSTANCES_BY_PLAYER.get(this.getClass()).get(this.player.getUniqueId()).remove(this.getId());
+		INSTANCES_BY_PLAYER.get(this.getClass()).get(player.getUniqueId()).put(this.getId(), this);
+		
+		this.player = player;
 	}
 
 	/**
