@@ -615,7 +615,30 @@ public abstract class CoreAbility implements Ability {
 	 * @param player The player who now controls the ability
 	 */
 	public void setPlayer(Player player) {
-		INSTANCES_BY_PLAYER.get(this.getClass()).get(this.player.getUniqueId()).remove(this.getId());
+		Map<UUID, Map<Integer, CoreAbility>> classMap = INSTANCES_BY_PLAYER.get(getClass());
+		if (classMap != null) {
+			Map<Integer, CoreAbility> playerMap = classMap.get(player.getUniqueId());
+			if (playerMap != null) {
+				playerMap.remove(this.id);
+				if (playerMap.size() == 0) {
+					classMap.remove(player.getUniqueId());
+				}
+			}
+
+			if (classMap.size() == 0) {
+				INSTANCES_BY_PLAYER.remove(getClass());
+			}
+		}
+		
+		
+		if (!INSTANCES_BY_PLAYER.containsKey(this.getClass())) {
+			INSTANCES_BY_PLAYER.put(this.getClass(), new ConcurrentHashMap<UUID, Map<Integer, CoreAbility>>());
+		}
+		
+		if (!INSTANCES_BY_PLAYER.get(this.getClass()).containsKey(player.getUniqueId())) {
+			INSTANCES_BY_PLAYER.get(this.getClass()).put(player.getUniqueId(), new ConcurrentHashMap<Integer, CoreAbility>());
+		}
+		
 		INSTANCES_BY_PLAYER.get(this.getClass()).get(player.getUniqueId()).put(this.getId(), this);
 		
 		this.player = player;
