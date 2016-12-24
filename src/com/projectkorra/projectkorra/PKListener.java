@@ -903,7 +903,15 @@ public class PKListener implements Listener {
 							if (sourceBPlayer.isElementToggled(Element.CHI) == true) {
 								if (boundAbil.equalsIgnoreCase("Paralyze")) {
 									new Paralyze(sourcePlayer, targetPlayer);
-								} else {
+								} else if (boundAbil.equalsIgnoreCase("QuickStrike")) {
+									new QuickStrike(sourcePlayer);
+								} else if (boundAbil.equalsIgnoreCase("SwiftKick")) {
+									new SwiftKick(sourcePlayer);
+								}
+								else if (boundAbil.equalsIgnoreCase("RapidPunch")) {
+									new RapidPunch(sourcePlayer);
+								}
+								else {
 									if (ChiPassive.willChiBlock(sourcePlayer, targetPlayer)) {
 										ChiPassive.blockChi(targetPlayer);
 									}
@@ -1640,19 +1648,13 @@ public class PKListener implements Listener {
 				}
 				if (abil.equalsIgnoreCase("HighJump")) {
 					new HighJump(player);
-				} else if (abil.equalsIgnoreCase("RapidPunch")) {
-					new RapidPunch(player);
-				} else if (abil.equalsIgnoreCase("Smokescreen")) {
+				}  else if (abil.equalsIgnoreCase("Smokescreen")) {
 					new Smokescreen(player);
 				} else if (abil.equalsIgnoreCase("WarriorStance")) {
 					new WarriorStance(player);
 				} else if (abil.equalsIgnoreCase("AcrobatStance")) {
 					new AcrobatStance(player);
-				} else if (abil.equalsIgnoreCase("QuickStrike")) {
-					new QuickStrike(player);
-				} else if (abil.equalsIgnoreCase("SwiftKick")) {
-					new SwiftKick(player);
-				}
+				} 
 			}
 
 			if (abil.equalsIgnoreCase("AvatarState")) {
