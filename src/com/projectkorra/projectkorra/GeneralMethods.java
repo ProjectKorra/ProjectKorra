@@ -1413,7 +1413,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isWeapon(Material mat) {
-		return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE);
+		return mat != null && (mat == Material.WOOD_AXE || mat == Material.WOOD_PICKAXE || mat == Material.WOOD_SPADE || mat == Material.WOOD_SWORD || mat == Material.STONE_AXE || mat == Material.STONE_PICKAXE || mat == Material.STONE_SPADE || mat == Material.STONE_SWORD || mat == Material.IRON_AXE || mat == Material.IRON_PICKAXE || mat == Material.IRON_SWORD || mat == Material.IRON_SPADE || mat == Material.DIAMOND_AXE || mat == Material.DIAMOND_PICKAXE || mat == Material.DIAMOND_SWORD || mat == Material.DIAMOND_SPADE ||  mat == Material.GOLD_AXE || mat == Material.GOLD_HOE || mat == Material.GOLD_SWORD || mat == Material.GOLD_PICKAXE || mat == Material.GOLD_SPADE);
 	}
 	
 	public static void loadBendingPlayer(BendingPlayer pl) {
