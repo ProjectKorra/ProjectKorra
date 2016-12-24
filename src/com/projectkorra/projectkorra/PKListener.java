@@ -904,12 +904,12 @@ public class PKListener implements Listener {
 								if (boundAbil.equalsIgnoreCase("Paralyze")) {
 									new Paralyze(sourcePlayer, targetPlayer);
 								} else if (boundAbil.equalsIgnoreCase("QuickStrike")) {
-									new QuickStrike(sourcePlayer);
+									new QuickStrike(sourcePlayer, targetPlayer);
 								} else if (boundAbil.equalsIgnoreCase("SwiftKick")) {
-									new SwiftKick(sourcePlayer);
+									new SwiftKick(sourcePlayer, targetPlayer);
 								}
 								else if (boundAbil.equalsIgnoreCase("RapidPunch")) {
-									new RapidPunch(sourcePlayer);
+									new RapidPunch(sourcePlayer, targetPlayer);
 								}
 								else {
 									if (ChiPassive.willChiBlock(sourcePlayer, targetPlayer)) {

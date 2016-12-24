@@ -1140,6 +1140,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Chi.QuickStrike.Enabled", true);
 			config.addDefault("Abilities.Chi.QuickStrike.Damage", 1);
+			config.addDefault("Abilities.Chi.QuickStrike.Cooldown", 3000);
 			config.addDefault("Abilities.Chi.QuickStrike.ChiBlockChance", 10);
 
 			config.addDefault("Abilities.Chi.SwiftKick.Enabled", true);
