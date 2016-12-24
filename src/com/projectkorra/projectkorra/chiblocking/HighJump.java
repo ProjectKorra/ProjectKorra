@@ -27,11 +27,13 @@ public class HighJump extends ChiAbility {
 
 	private void jump(Player p) {
 		if (!GeneralMethods.isSolid(p.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+			remove();
 			return;
 		}
 		Vector vec = p.getVelocity();
 		vec.setY(height);
 		p.setVelocity(vec);
+		bPlayer.addCooldown(this);
 		return;
 	}
 
@@ -47,7 +49,7 @@ public class HighJump extends ChiAbility {
 		if (waw != null) {
 			waw.setGrabbed(false);
 		}
-		bPlayer.addCooldown(this);
+		
 	}
 	
 	@Override
