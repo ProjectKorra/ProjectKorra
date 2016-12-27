@@ -310,6 +310,13 @@ public class HeatControl extends FireAbility {
 			return;
 		}
 		
+		if (TempBlock.isTempBlock(block)) {
+			TempBlock tb = TempBlock.get(block);
+			if (PhaseChange.getFrozenBlocksAsTempBlock().contains(tb)) {
+				PhaseChange.thaw(tb);
+			}
+		}
+		
 		WaterSpoutWave.thaw(block);
 		WaterCombo.thaw(block);
 		
@@ -317,8 +324,6 @@ public class HeatControl extends FireAbility {
 			if (block.getType() == Material.SNOW) {
 				block.setType(Material.AIR);
 				return;
-			} else if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
-				PhaseChange.thaw(block);
 			} else {
 				TempBlock tb = new TempBlock(block, Material.WATER, (byte)0);
 				MELTED_BLOCKS.put(block, tb);
