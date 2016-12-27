@@ -165,7 +165,7 @@ public class WaterManipulation extends WaterAbility {
 		Block block = BlockSource.getWaterSourceBlock(player, selectRange, ClickType.SHIFT_DOWN, true, true,
 				bPlayer.canPlantbend());
 		cancelPrevious();
-		block(player);
+		//block(player);
 
 		if (block != null) {
 			sourceBlock = block;
@@ -317,7 +317,7 @@ public class WaterManipulation extends WaterAbility {
 				targetDirection = GeneralMethods.getDirection(location, targetlocation).normalize();
 			}
 			targetDestination = targetlocation;
-			this.player = player;
+			this.setPlayer(player);
 		}
 	}
 
@@ -384,7 +384,7 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	/**Blocks other water manips*/
-	private static void block(Player player) {
+	public static void block(Player player) {
 		for (WaterManipulation manip : getAbilities(WaterManipulation.class)) {
 			if (!manip.location.getWorld().equals(player.getWorld())) {
 				continue;
@@ -462,7 +462,6 @@ public class WaterManipulation extends WaterAbility {
 		return location;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void moveWater(Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
@@ -493,15 +492,16 @@ public class WaterManipulation extends WaterAbility {
 
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				if (getTargetLocation(player, range).distanceSquared(block.getLocation()) > 1) {
-					block.setType(Material.WATER);
-					block.setData((byte) 0);
+					TempBlock tb = new TempBlock(block, Material.WATER, (byte)0);
 
 					WaterManipulation waterManip = new WaterManipulation(player);
 					waterManip.moveWater();
 					if (!waterManip.progressing) {
 						block.setType(Material.AIR);
+						tb.revertBlock();
 					} else {
 						WaterReturn.emptyWaterBottle(player);
+						tb.revertBlock();
 					}
 				}
 			}

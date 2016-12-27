@@ -262,7 +262,6 @@ public class PhaseChange extends IceAbility {
 		}
 		return blocks;
 	}
-	
 	public void freezeArea(Location center, int radius, PhaseChangeType type) {
 		if (type == PhaseChangeType.FREEZE) {
 			if (bPlayer.isOnCooldown("PhaseChangeFreeze")) {
@@ -412,7 +411,6 @@ public class PhaseChange extends IceAbility {
 			melted_blocks.add(b);
 		}
 	}
-	
 	/**
 	 * Only works with PhaseChange frozen blocks!
 	 * @param tb TempBlock being thawed

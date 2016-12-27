@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -121,16 +122,19 @@ public class DisplayCommand extends PKCommand {
 			sender.sendMessage(ChatColor.YELLOW + noAbilitiesAvailable.replace("{element}", Element.AVATAR.getColor() + "Avatar" + ChatColor.YELLOW));
 			return;
 		}
+		HashSet<String> abilitiesSent = new HashSet<String>(); //Some abilities have the same name. This prevents this from showing anything.
 		for (CoreAbility ability : abilities) {
-			if (ability.isHiddenAbility()) {
+			if (ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
 				continue;
 			}
 			if (sender instanceof Player) {
 				if (GeneralMethods.canView((Player) sender, ability.getName())) {
 					sender.sendMessage(ability.getElement().getColor() + ability.getName());
+					abilitiesSent.add(ability.getName());
 				}
 			} else {
 				sender.sendMessage(ability.getElement().getColor() + ability.getName());
+				abilitiesSent.add(ability.getName());
 			}
 		} 
 	}
@@ -151,12 +155,14 @@ public class DisplayCommand extends PKCommand {
 			sender.sendMessage(ChatColor.YELLOW + noAbilitiesAvailable.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW));
 		}
 
+		HashSet<String> abilitiesSent = new HashSet<String>(); //Some abilities have the same name. This prevents this from showing anything.
 		for (CoreAbility ability : abilities) {
-			if (ability instanceof SubAbility || ability.isHiddenAbility()) {
+			if (ability instanceof SubAbility || ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
 				continue;
 			}
 			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
 				sender.sendMessage(ability.getElement().getColor() + ability.getName());
+				abilitiesSent.add(ability.getName());
 			}
 		}
 
@@ -185,11 +191,14 @@ public class DisplayCommand extends PKCommand {
 			sender.sendMessage(ChatColor.YELLOW + noAbilitiesAvailable.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW));
 			return;
 		}
+		
+		HashSet<String> abilitiesSent = new HashSet<String>();
 		for (CoreAbility ability : abilities) {
-			if (ability.isHiddenAbility()) {
+			if (ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
 				continue;
 			} else if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
 				sender.sendMessage(element.getColor() + ability.getName());
+				abilitiesSent.add(ability.getName());
 			}
 		}
 	}

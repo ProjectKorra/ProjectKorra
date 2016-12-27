@@ -286,7 +286,7 @@ public abstract class CoreAbility implements Ability {
 	 *         {@link #registerAbilities()}
 	 */
 	public static ArrayList<CoreAbility> getAbilities() {
-		return new ArrayList<CoreAbility>(ABILITIES_BY_NAME.values());
+		return new ArrayList<CoreAbility>(ABILITIES_BY_CLASS.values());
 	}
 
 	/**
@@ -606,6 +606,42 @@ public abstract class CoreAbility implements Ability {
 	@Override
 	public Player getPlayer() {
 		return player;
+	}
+	
+	/**
+	 * Changes the player that owns this ability instance. Used for redirection 
+	 * and other abilities that change the player object.
+	 * 
+	 * @param player The player who now controls the ability
+	 */
+	public void setPlayer(Player player) {
+		Map<UUID, Map<Integer, CoreAbility>> classMap = INSTANCES_BY_PLAYER.get(getClass());
+		if (classMap != null) {
+			Map<Integer, CoreAbility> playerMap = classMap.get(player.getUniqueId());
+			if (playerMap != null) {
+				playerMap.remove(this.id);
+				if (playerMap.size() == 0) {
+					classMap.remove(player.getUniqueId());
+				}
+			}
+
+			if (classMap.size() == 0) {
+				INSTANCES_BY_PLAYER.remove(getClass());
+			}
+		}
+		
+		
+		if (!INSTANCES_BY_PLAYER.containsKey(this.getClass())) {
+			INSTANCES_BY_PLAYER.put(this.getClass(), new ConcurrentHashMap<UUID, Map<Integer, CoreAbility>>());
+		}
+		
+		if (!INSTANCES_BY_PLAYER.get(this.getClass()).containsKey(player.getUniqueId())) {
+			INSTANCES_BY_PLAYER.get(this.getClass()).put(player.getUniqueId(), new ConcurrentHashMap<Integer, CoreAbility>());
+		}
+		
+		INSTANCES_BY_PLAYER.get(this.getClass()).get(player.getUniqueId()).put(this.getId(), this);
+		
+		this.player = player;
 	}
 
 	/**
