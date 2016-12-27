@@ -19,8 +19,8 @@ public class RapidPunch extends ChiAbility {
 	private int numPunches;
 	private Entity target;
 	
-	public RapidPunch(Player player) {
-		super(player);
+	public RapidPunch(Player sourceplayer, Entity targetentity) {
+		super(sourceplayer);
 		if (!bPlayer.canBend(this)) {
 			return;
 		}

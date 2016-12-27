@@ -1,13 +1,12 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.util.DamageHandler;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class SwiftKick extends ChiAbility {
 	
@@ -16,15 +15,15 @@ public class SwiftKick extends ChiAbility {
 	private long cooldown;
 	private Entity target;
 	
-	public SwiftKick(Player player) {
-		super(player);
+	public SwiftKick(Player sourceplayer, Entity targetentity) {
+		super(sourceplayer);
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
 		this.damage = getConfig().getInt("Abilities.Chi.SwiftKick.Damage");
 		this.blockChance = getConfig().getInt("Abilities.Chi.SwiftKick.ChiBlockChance");
 		this.cooldown = getConfig().getInt("Abilities.Chi.SwiftKick.Cooldown");
-		this.target = GeneralMethods.getTargetedEntity(player, 4);
+		this.target = targetentity;
 		start();
 	}
 
