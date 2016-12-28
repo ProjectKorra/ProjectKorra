@@ -1,27 +1,28 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.util.DamageHandler;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class QuickStrike extends ChiAbility {
 
 	private int damage;
 	private int blockChance;
 	private Entity target;
+	private long cooldown;
 
-	public QuickStrike(Player player) {
-		super(player);
+	public QuickStrike(Player sourceplayer, Entity targetentity) {
+		super(sourceplayer);
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
 		this.damage = getConfig().getInt("Abilities.Chi.QuickStrike.Damage");
+		this.cooldown = getConfig().getLong("Abilities.Chi.QuickStrike.Cooldown");
 		this.blockChance = getConfig().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
-		target = GeneralMethods.getTargetedEntity(player, 2);
+		target = targetentity;
 		if (target == null) {
 			return;
 		}
@@ -30,15 +31,20 @@ public class QuickStrike extends ChiAbility {
 
 	@Override
 	public void progress() {
+		if (bPlayer.isOnCooldown(this)) {
+			return;
+		}
 		if (target == null) {
 			remove();
 			return;
 		}
 
 		DamageHandler.damageEntity(target, damage, this);
+		bPlayer.addCooldown(this);
 		if (target instanceof Player && ChiPassive.willChiBlock(player, (Player) target)) {
 			ChiPassive.blockChi((Player) target);
 		}
+		
 		remove();
 	}
 
@@ -54,7 +60,7 @@ public class QuickStrike extends ChiAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
 	}
 
 	@Override

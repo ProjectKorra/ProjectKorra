@@ -131,7 +131,8 @@ public class AirSwipe extends AirAbility {
 				location = location.clone().add(direction.clone().multiply(speed));
 				elements.put(direction, location);
 
-				if (location.distanceSquared(origin) > range * range || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+				if (location.distanceSquared(origin) > range * range
+						|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 					elements.remove(direction);
 				} else {
 					Block block = location.getBlock();
@@ -152,7 +153,11 @@ public class AirSwipe extends AirAbility {
 					if (block.getType() != Material.AIR) {
 						if (isBlockBreakable(block)) {
 							GeneralMethods.breakBlock(block);
+						}
+						if (block.getType().equals(Material.SNOW)) {
+							continue;
 						} else {
+
 							elements.remove(direction);
 						}
 						if (isLava(block)) {
@@ -197,7 +202,8 @@ public class AirSwipe extends AirAbility {
 						}
 						if (entities.size() < MAX_AFFECTABLE_ENTITIES) {
 							if (bPlayer.isAvatarState()) {
-								GeneralMethods.setVelocity(entity, fDirection.multiply(AvatarState.getValue(pushFactor)));
+								GeneralMethods.setVelocity(entity,
+										fDirection.multiply(AvatarState.getValue(pushFactor)));
 							} else {
 								GeneralMethods.setVelocity(entity, fDirection.multiply(pushFactor));
 							}
@@ -282,7 +288,8 @@ public class AirSwipe extends AirAbility {
 				} else if (bPlayer.isAvatarState()) {
 					factor = AvatarState.getValue(factor);
 				} else {
-					factor = maxChargeFactor * (double) (System.currentTimeMillis() - getStartTime()) / (double) maxChargeTime;
+					factor = maxChargeFactor * (double) (System.currentTimeMillis() - getStartTime())
+							/ (double) maxChargeTime;
 				}
 
 				charging = false;
