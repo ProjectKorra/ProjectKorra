@@ -358,7 +358,6 @@ public class PhaseChange extends IceAbility {
 		meltArea(center, meltRadius);
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void melt(Block b) {
 		if (b.getWorld() != player.getWorld()) {
 			return;
@@ -404,10 +403,7 @@ public class PhaseChange extends IceAbility {
 			b.setType(m);
 			melted_blocks.add(b);
 		} else if (isSnow(b)) {
-			byte data = b.getData();
-			Material m = allowMeltFlow ? Material.WATER : Material.STATIONARY_WATER;
-			b.setType(m);
-			b.setData(data);
+			new TempBlock(b, Material.AIR, (byte)0);
 			melted_blocks.add(b);
 		}
 	}
