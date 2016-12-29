@@ -52,6 +52,13 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.kingdoms.constants.StructureType;
+import org.kingdoms.constants.kingdom.Kingdom;
+import org.kingdoms.constants.land.Land;
+import org.kingdoms.constants.land.SimpleChunkLocation;
+import org.kingdoms.constants.land.SimpleLocation;
+import org.kingdoms.constants.player.KingdomPlayer;
+import org.kingdoms.manager.game.GameManagement;
 
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
@@ -154,7 +161,6 @@ public class GeneralMethods {
 			getAbsorption = ReflectionHandler.getMethod("EntityPlayer", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
 			setAbsorption = ReflectionHandler.getMethod("EntityPlayer", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -1246,6 +1252,7 @@ public class GeneralMethods {
 		boolean respectGriefPrevention = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectGriefPrevention");
 		boolean respectLWC = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.RespectLWC");
 		boolean respectResidence = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Residence.Respect");
+		boolean respectKingdoms = ConfigManager.defaultConfig.get().getBoolean("Properties.RegionProtection.Kingdoms");
 
 		boolean isIgnite = false;
 		boolean isExplosive = false;
@@ -1274,6 +1281,7 @@ public class GeneralMethods {
 		Plugin massivecore = pm.getPlugin("MassiveCore");
 		Plugin lwc = pm.getPlugin("LWC");
 		Plugin residence = pm.getPlugin("Residence");
+		Plugin kingdoms = pm.getPlugin("Kingdoms");
 
 		for (Location location : new Location[] { loc, player.getLocation() }) {
 			World world = location.getWorld();
@@ -1335,7 +1343,9 @@ public class GeneralMethods {
 			}
 
 			if (fcp != null && massivecore != null && respectFactions) {
-				return !EngineMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false);
+				if (!EngineMain.canPlayerBuildAt(player, PS.valueOf(loc.getBlock()), false)) {
+					return true;
+				}
 			}
 
 			if (twnp != null && respectTowny) {
@@ -1395,7 +1405,45 @@ public class GeneralMethods {
 				ClaimedResidence res = Residence.getResidenceManager().getByLoc(loc);
 				if (res != null) {
 					ResidencePermissions perms = res.getPermissions();
-					return perms.playerHas(player.getName(), ConfigManager.defaultConfig.get().getString("Properities.RegionProtection.Residence.Flag"), true);
+					if (perms.playerHas(player.getName(), ConfigManager.defaultConfig.get().getString("Properities.RegionProtection.Residence.Flag"), true)) {
+						return true;
+					}
+				}
+			}
+			
+			if (kingdoms != null && respectKingdoms) {
+			    SimpleLocation location_ = new SimpleLocation(loc);
+			    SimpleChunkLocation chunk = location_.toSimpleChunk();
+				Land land = GameManagement.getLandManager().getOrLoadLand(chunk);
+				
+				if (land.getOwner() != null) {
+					KingdomPlayer kp = GameManagement.getPlayerManager().getSession(player);
+
+					if (!kp.isAdminMode()) {
+						if (land.getOwner().equals("SafeZone")) {
+							return true;
+						} else if (kp.getKingdom() == null) { //If the player isn't in a kingdom but it's claimed land
+							return true;
+						}
+						else
+					    {
+							Kingdom kingdom = kp.getKingdom();
+							String kingdomName = kingdom.getKingdomName();
+							if (!kingdomName.equals(land.getOwner())) //If the player's kingdom doesn't match
+							{
+								return true;
+							}
+							
+							
+							//If it's within the nexus area, test for higher permission
+							if (land.getStructure() != null && land.getStructure().getType() == StructureType.NEXUS) {
+								if (!kp.getRank().isHigherOrEqualTo(kingdom.getPermissionsInfo().getBuildInNexus()))
+								{
+									return true;
+								}
+							}
+					    }
+					}
 				}
 			}
 		}
