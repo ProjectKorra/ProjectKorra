@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra.waterbending.passives;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -12,7 +11,6 @@ public class IceSkate extends IceAbility implements PassiveAbility {
 
 	public IceSkate(Player player) {
 		super(player);
-		Bukkit.broadcastMessage("IceSkate initiated!");
 	}
 
 	@Override

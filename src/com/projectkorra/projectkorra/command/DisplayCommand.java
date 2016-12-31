@@ -197,7 +197,8 @@ public class DisplayCommand extends PKCommand {
 		}
 
 		if (element.equals(Element.CHI)) {
-			sender.sendMessage(ChatColor.GOLD + "Combos: " + ChatColor.YELLOW + "/bending display ChiCombos");
+			sender.sendMessage(ChatColor.YELLOW + "Combos: " + ChatColor.GOLD + "/bending display ChiCombos");
+			sender.sendMessage(ChatColor.YELLOW + "Passives: " + ChatColor.GOLD + "/bending display ChiPassives");
 		} else {
 			sender.sendMessage(element.getSubColor() + "Combos: " + element.getColor() + "/bending display " + element.getName() + "Combos");
 			sender.sendMessage(element.getSubColor() + "Passives: " + element.getColor() + "/bending display " + element.getName() + "Passives");

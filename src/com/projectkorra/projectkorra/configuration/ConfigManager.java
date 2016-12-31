@@ -246,6 +246,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Combo.AirStream.Description", "Control a large stream of air that grabs onto enemies allowing you to direct them temporarily.");
 			config.addDefault("Abilities.Air.Combo.AirSweep.Description", "Sweep the air in front of you hitting multiple enemies, causing moderate damage and a large knockback. The radius and direction of AirSweep is controlled by moving your mouse in a sweeping motion. For example, if you want to AirSweep upward, then move your mouse upward right after you left click AirBurst");
 			config.addDefault("Abilities.Air.Combo.AirSweep.DeathMessage", "{victim} was swept away by {attacker}'s {ability}");
+			config.addDefault("Abilities.Air.Passive.AirAgility.Description", "AirAgility is a passive ability which enables airbenders to run faster and jump higher.");
 			
 			config.addDefault("Commands.Help.Elements.Water", "Water is the element of change. Waterbending focuses on using your opponents own force against them. Using redirection and various dodging tactics, you can be made practically untouchable by an opponent. Waterbending provides agility, along with strong offensive skills while in or near water.\nWaterbenders can chain their abilities into combos, type /b help WaterCombos for more information.");
 			config.addDefault("Abilities.Water.Bloodbending.Description", "This ability was made illegal for a reason. With this ability selected, sneak while " + "targetting something and you will bloodbend that target. Bloodbent targets cannot move, " + "bend or attack. You are free to control their actions by looking elsewhere - they will " + "be forced to move in that direction. Additionally, left clicking while bloodbending will " + "launch that target off in the direction you're looking. " + "People who are capable of bloodbending are immune to your technique, and you are immune to theirs.");
@@ -298,6 +299,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Shockwave.DeathMessage", "{victim} was blown away by {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.SandSpout.Description", "SandSpout is a core move for travelling, evasion, and mobility for sandbenders. To use, simply left click while over sand or sandstone, and a column of sand will form at your feet, enabling you to levitate. Any mobs or players that touch your column will receive damage and be blinded. Beware, as the spout will stop working when no longer over sand!");
 			config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
+			config.addDefault("Abilities.Earth.Passive.SandAgility.Description", "SandAgility is a passive ability which enables earthbenders to run faster while on sand.");
 			
 			config.addDefault("Commands.Help.Elements.Fire", "Fire is the element of power. Firebenders focus on destruction and incineration. Their abilities are pretty straight forward: set things on fire. They do have a bit of utility however, being able to make themselves un-ignitable, extinguish large areas, cook food in their hands, extinguish large areas, small bursts of flight, and then comes the abilities to shoot fire from your hands.\nFirebenders can chain their abilities into combos, type /b help FireCombos for more information.");
 			config.addDefault("Abilities.Fire.Blaze.Description", "To use, simply left-click in any direction. An arc of fire will flow from your location, igniting anything in its path. Additionally, tap sneak to engulf the area around you in roaring flames.");
@@ -340,6 +342,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.SwiftKick.Description", "SwiftKick allows a chiblocker to swiftly kick an enemy, potentially blocking their chi. The chiblocker must be in the air to use this ability.");
 			config.addDefault("Abilities.Chi.SwiftKick.DeathMessage", "{victim} was kicked to the floor by {attacker}'s {ability}");
 			config.addDefault("Abilities.Chi.Combo.Immobilize.Description", "Immobilizes the opponent for several seconds.");
+			config.addDefault("Abilities.Chi.Passive.ChiAgility.Description", "ChiAgility is a passive ability which enables chiblockers to run faster and jump higher.");
 			
 			languageConfig.save();
 		} else if (type == ConfigType.DEFAULT) {
@@ -481,8 +484,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power", 3);
 
 			config.addDefault("Abilities.Air.Passive.Factor", 0.3);
-			config.addDefault("Abilities.Air.Passive.Speed", 2);
-			config.addDefault("Abilities.Air.Passive.Jump", 3);
+			config.addDefault("Abilities.Air.Passive.AirAgility.Enabled", true);
+			config.addDefault("Abilities.Air.Passive.AirAgility.JumpPower", 3);
+			config.addDefault("Abilities.Air.Passive.AirAgility.SpeedPower", 2);
 
 			config.addDefault("Abilities.Air.AirBlast.Enabled", true);
 			config.addDefault("Abilities.Air.AirBlast.Speed", 25);
@@ -827,7 +831,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Cooldown", 10000);
 
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
-			config.addDefault("Abilities.Earth.Passive.SandRunSpeed", 2);
+			config.addDefault("Abilities.Earth.Passive.SandAgility.Enabled", true);
+			config.addDefault("Abilities.Earth.Passive.SandAgility.SpeedPower", 2);
 			
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
 			config.addDefault("Abilities.Earth.Catapult.Length", 6);
@@ -1103,8 +1108,9 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Chi.Passive.ExhaustionFactor", 0.3);
 			config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
-			config.addDefault("Abilities.Chi.Passive.Speed", 1);
-			config.addDefault("Abilities.Chi.Passive.Jump", 1);
+			config.addDefault("Abilities.Chi.Passive.ChiAgility.Enabled", true);
+			config.addDefault("Abilities.Chi.Passive.ChiAgility.JumpPower", 1);
+			config.addDefault("Abilities.Chi.Passive.ChiAgility.SpeedPower", 1);
 			config.addDefault("Abilities.Chi.Passive.BlockChi.Chance", 25);
 			config.addDefault("Abilities.Chi.Passive.BlockChi.Duration", 1000);
 

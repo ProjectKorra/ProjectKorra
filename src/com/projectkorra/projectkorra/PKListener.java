@@ -52,6 +52,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -1100,6 +1101,12 @@ public class PKListener implements Listener {
 				GeneralMethods.removeUnusableAbilities(player.getName());
 			}
 		}, 5);
+	}
+	
+	@EventHandler
+	public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
+		Player player = event.getPlayer();
+		PassiveManager.registerPassives(player);
 	}
 
 	@EventHandler

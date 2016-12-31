@@ -215,7 +215,6 @@ public abstract class CoreAbility implements Ability {
 						abil.remove();
 						return;
 					} else if (!bPlayer.canBendPassive(abil.getElement())) {
-						Bukkit.broadcastMessage("Passive '" + abil.getName() + "' removed.");
 						abil.remove();
 						return;
 					}
@@ -618,6 +617,8 @@ public abstract class CoreAbility implements Ability {
 		String tag = null;
 		if (this instanceof ComboAbility) {
 			tag = "Abilities." + elementName + "." + elementName + "Combo." + getName() + ".Enabled";
+		} else if (this instanceof PassiveAbility) {
+			tag = "Abilities." + elementName + ".Passive." + getName() + ".Enabled";
 		} else {
 			tag = "Abilities." + elementName + "." + getName() + ".Enabled";
 		}
@@ -634,6 +635,9 @@ public abstract class CoreAbility implements Ability {
 		String elementName = getElement().getName();
 		if (getElement() instanceof SubElement) {
 			elementName = ((SubElement) getElement()).getParentElement().getName();
+		}
+		if (this instanceof PassiveAbility) {
+			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Passive." + getName() + ".Description");
 		}
 		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Description");
 	}

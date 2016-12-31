@@ -27,10 +27,12 @@ public class PassiveManager {
 		}
 		for (CoreAbility ability : CoreAbility.getAbilities()) {
 			if (ability instanceof PassiveAbility) {
-				if (!bPlayer.canBendPassive(ability.getElement())) {
-					return;
+				if (!ability.isEnabled()) {
+					continue;
+				} else if (!bPlayer.canBendPassive(ability.getElement())) {
+					continue;
 				} else if (CoreAbility.hasAbility(player, ability.getClass())) {
-					return;
+					continue;
 				}
 				Class<?> clazz = null;
 				try {
@@ -51,7 +53,6 @@ public class PassiveManager {
 						| InvocationTargetException e) {
 					e.printStackTrace();
 				}
-
 				((CoreAbility) object).start();
 			}
 		}

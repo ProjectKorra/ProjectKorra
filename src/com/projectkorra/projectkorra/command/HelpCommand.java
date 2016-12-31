@@ -1,23 +1,24 @@
 package com.projectkorra.projectkorra.command;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import com.projectkorra.items.command.PKICommand;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.rpg.commands.RPGCommand;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Executor for /bending help. Extends {@link PKCommand}.
@@ -116,7 +117,9 @@ public class HelpCommand extends PKCommand {
 			instances.get(arg).help(sender, true);
 		} else if (Arrays.asList(Commands.comboaliases).contains(arg)) { //bending help elementcombo
 			sender.sendMessage(ChatColor.GOLD + properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Combo Name>" + ChatColor.GOLD));
-		} else if (CoreAbility.getAbility(arg) != null && !(CoreAbility.getAbility(arg) instanceof ComboAbility) && CoreAbility.getAbility(arg).isEnabled() && !CoreAbility.getAbility(arg).isHiddenAbility()) { //bending help ability
+		} else if (Arrays.asList(Commands.passivealiases).contains(arg)) {
+			sender.sendMessage(ChatColor.GOLD + properUsage.replace("{command1}", ChatColor.RED + "/bending display " + arg + ChatColor.GOLD).replace("{command2}", ChatColor.RED + "/bending help <Passive Name>" + ChatColor.RED));
+		} else if (CoreAbility.getAbility(arg) != null && !(CoreAbility.getAbility(arg) instanceof ComboAbility) && CoreAbility.getAbility(arg).isEnabled() && !CoreAbility.getAbility(arg).isHiddenAbility() || CoreAbility.getAbility(arg) instanceof PassiveAbility) { //bending help ability
 			CoreAbility ability = CoreAbility.getAbility(arg);
 			ChatColor color = ability.getElement().getColor();
 			sender.sendMessage(color + ability.getName() + " - ");
