@@ -1,5 +1,14 @@
 package com.projectkorra.projectkorra.command;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
@@ -7,16 +16,8 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.SubAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Executor for /bending display. Extends {@link PKCommand}.
@@ -24,6 +25,7 @@ import java.util.List;
 public class DisplayCommand extends PKCommand {
 
 	private String noCombosAvailable;
+	private String noPassivesAvailable;
 	private String invalidArgument;
 	private String playersOnly;
 	private String noAbilitiesAvailable;
@@ -31,8 +33,9 @@ public class DisplayCommand extends PKCommand {
 	
 	public DisplayCommand() {
 		super("display", "/bending display <Element>", ConfigManager.languageConfig.get().getString("Commands.Display.Description"), new String[] { "display", "dis", "d" });
-		
+
 		this.noCombosAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoCombosAvailable");
+		this.noPassivesAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoPassivesAvailable");
 		this.noAbilitiesAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoAbilitiesAvailable");
 		this.invalidArgument = ConfigManager.languageConfig.get().getString("Commands.Display.InvalidArgument");
 		this.playersOnly = ConfigManager.languageConfig.get().getString("Commands.Display.PlayersOnly");
@@ -54,7 +57,13 @@ public class DisplayCommand extends PKCommand {
 			else if (elementName.equalsIgnoreCase("fc")) elementName = "firecombo";
 			else if (elementName.equalsIgnoreCase("cc")) elementName = "chicombo";
 			else if (elementName.equalsIgnoreCase("avc")) elementName = "avatarcombo";
-			Element element = Element.fromString(elementName.replace("combos", "").replace("combo", ""));
+			else if (elementName.equalsIgnoreCase("wp")) elementName = "waterpassive";
+			else if (elementName.equalsIgnoreCase("ap")) elementName = "airpassive";
+			else if (elementName.equalsIgnoreCase("ep")) elementName = "earthpassive";
+			else if (elementName.equalsIgnoreCase("fp")) elementName = "firepassive";
+			else if (elementName.equalsIgnoreCase("cp")) elementName = "chipassive";
+			else if (elementName.equalsIgnoreCase("avp")) elementName = "avatarpassive";
+			Element element = Element.fromString(elementName.replace("combos", "").replace("combo", "").replace("passives", "").replace("passive", ""));
 			//combos
 			if (element != null && elementName.contains("combo")) {
 				ChatColor color = element != null ? element.getColor() : null;
@@ -77,13 +86,34 @@ public class DisplayCommand extends PKCommand {
 					sender.sendMessage(comboColor + comboMove);
 				}
 				return;
+			} else if (element != null && elementName.contains("passive")) {
+				ChatColor color = element != null ? element.getColor() : null;
+				List<String> passives = PassiveManager.getPassivesForElement(element);
+				
+				if (passives.isEmpty()) {
+					sender.sendMessage(color + noPassivesAvailable.replace("{element}", element.getName()));
+					return;
+				}
+				for (String passiveAbil : passives) {
+					ChatColor passiveColor = color;
+					if (!sender.hasPermission("bending.ability." + passiveAbil)) {
+						continue;
+					}
+					
+					CoreAbility coreAbil = CoreAbility.getAbility(passiveAbil);
+					if (coreAbil != null) {
+						passiveColor = coreAbil.getElement().getColor();
+					}
+					sender.sendMessage(passiveColor + passiveAbil);
+				}
+				return;
 			}
 			else if (element != null) {
 				if (!element.equals(Element.AVATAR)) {
 					if (!(element instanceof SubElement)) {
 						displayElement(sender, element);
 					} else {
-						displaySubElement(sender, element);
+						displaySubElement(sender, (SubElement) element);
 					}
 				} else {
 					displayAvatar(sender);
@@ -170,6 +200,7 @@ public class DisplayCommand extends PKCommand {
 			sender.sendMessage(ChatColor.GOLD + "Combos: " + ChatColor.YELLOW + "/bending display ChiCombos");
 		} else {
 			sender.sendMessage(element.getSubColor() + "Combos: " + element.getColor() + "/bending display " + element.getName() + "Combos");
+			sender.sendMessage(element.getSubColor() + "Passives: " + element.getColor() + "/bending display " + element.getName() + "Passives");
 			for (SubElement sub : Element.getSubElements(element)) {
 				if (sender.hasPermission("bending." + element.getName().toLowerCase() + "." + sub.getName().toLowerCase())) {
 					sender.sendMessage(sub.getColor() + sub.getName() + " abilities: " + element.getColor() + "/bending display " + sub.getName());
@@ -184,7 +215,7 @@ public class DisplayCommand extends PKCommand {
 	 * @param sender The CommandSender to show the moves to
 	 * @param element The subelement to show the moves for
 	 */
-	private void displaySubElement(CommandSender sender, Element element) {
+	private void displaySubElement(CommandSender sender, SubElement element) {
 		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(element);
 
 		if (abilities.isEmpty() && element != null) {
@@ -201,6 +232,7 @@ public class DisplayCommand extends PKCommand {
 				abilitiesSent.add(ability.getName());
 			}
 		}
+		sender.sendMessage(element.getParentElement().getColor() + "Passives: " + element.getColor() + "/bending display " + element.getName() + "Passives");
 	}
 
 	/**

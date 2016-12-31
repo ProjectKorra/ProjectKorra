@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.AirbendingManager;
 import com.projectkorra.projectkorra.chiblocking.ChiblockingManager;
 import com.projectkorra.projectkorra.command.Commands;
@@ -24,7 +25,6 @@ import com.projectkorra.projectkorra.firebending.FirebendingManager;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.MetricsLite;
-import com.projectkorra.projectkorra.util.PassiveHandler;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.Updater;
@@ -40,7 +40,7 @@ public class ProjectKorra extends JavaPlugin {
 	public static CollisionInitializer collisionInitializer;
 	public static long time_step = 1;
 	public Updater updater;
-	
+
 	@Override
 	public void onEnable() {
 		plugin = this;
@@ -52,11 +52,10 @@ public class ProjectKorra extends JavaPlugin {
 			}
 			handler = new PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
 			log.getParent().addHandler(handler);
-		}
-		catch (SecurityException | IOException e) {
+		} catch (SecurityException | IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		new ConfigManager();
 		new GeneralMethods(this);
 		updater = new Updater(this, "http://projectkorra.com/forums/dev-builds.16/index.rss");
@@ -65,12 +64,15 @@ public class ProjectKorra extends JavaPlugin {
 		new ComboManager();
 		collisionManager = new CollisionManager();
 		collisionInitializer = new CollisionInitializer(collisionManager);
-		CoreAbility.registerAbilities();	
-		collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered
+		CoreAbility.registerAbilities();
+		collisionInitializer.initializeDefaultCollisions(); // must be called
+															// after abilities
+															// have been
+															// registered
 		collisionManager.startCollisionDetection();
-		
+
 		Preset.loadExternalPresets();
-		
+
 		DBConnection.host = getConfig().getString("Storage.MySQL.host");
 		DBConnection.port = getConfig().getInt("Storage.MySQL.port");
 		DBConnection.pass = getConfig().getString("Storage.MySQL.pass");
@@ -78,7 +80,7 @@ public class ProjectKorra extends JavaPlugin {
 		DBConnection.user = getConfig().getString("Storage.MySQL.user");
 		DBConnection.init();
 		if (DBConnection.isOpen() == false) {
-			//Message is logged by DBConnection
+			// Message is logged by DBConnection
 			return;
 		}
 
@@ -89,28 +91,35 @@ public class ProjectKorra extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new PassiveHandler(), 0, 1);
+		// getServer().getScheduler().scheduleSyncRepeatingTask(this, new
+		// PassiveHandler(), 0, 1);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 		TempBlock.startReversion();
-		
-		for (Player player : Bukkit.getOnlinePlayers()) {
+
+		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
-			
+
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
-			GeneralMethods.removeUnusableAbilities(player.getName());
+			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
+				@Override
+				public void run() {
+					PassiveManager.registerPassives(player);
+					GeneralMethods.removeUnusableAbilities(player.getName());
+				}
+			}, 5);
 		}
 
 		try {
 			MetricsLite metrics = new MetricsLite(this);
 			metrics.start();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		double cacheTime = ConfigManager.getConfig().getDouble("Properties.RegionProtection.CacheBlockTime");
 		if (Bukkit.getPluginManager().getPlugin("Residence") != null)
-			FlagPermissions.addFlag(ConfigManager.defaultConfig.get().getString("Properties.RegionProtection.Residence.Flag"));
+			FlagPermissions
+					.addFlag(ConfigManager.defaultConfig.get().getString("Properties.RegionProtection.Residence.Flag"));
 		GeneralMethods.deserializeFile();
 		GeneralMethods.startCacheCleaner(cacheTime);
 		updater.checkUpdate();

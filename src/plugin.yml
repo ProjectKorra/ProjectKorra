@@ -1,6 +1,6 @@
 name: ProjectKorra
 author: ProjectKorra
-version: ${project.version}
+version: 1.8.2
 main: com.projectkorra.projectkorra.ProjectKorra
 softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, Kingdoms]
 commands:

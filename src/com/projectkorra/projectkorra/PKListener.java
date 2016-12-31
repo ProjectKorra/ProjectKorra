@@ -79,6 +79,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.AirBlast;
 import com.projectkorra.projectkorra.airbending.AirBubble;
 import com.projectkorra.projectkorra.airbending.AirBurst;
@@ -158,6 +159,7 @@ import com.projectkorra.projectkorra.waterbending.IceBlast;
 import com.projectkorra.projectkorra.waterbending.IceSpikeBlast;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.PhaseChange;
+import com.projectkorra.projectkorra.waterbending.PhaseChange.PhaseChangeType;
 import com.projectkorra.projectkorra.waterbending.PlantArmor;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -167,7 +169,6 @@ import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterPassive;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
-import com.projectkorra.projectkorra.waterbending.PhaseChange.PhaseChangeType;
 import com.projectkorra.rpg.RPGMethods;
 
 public class PKListener implements Listener {
@@ -351,6 +352,7 @@ public class PKListener implements Listener {
 	public void onElementChange(PlayerChangeElementEvent event) {
 		Player player = event.getTarget();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		PassiveManager.registerPassives(player);
 		boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
 		if (chatEnabled) {
 			Element element = event.getElement();
@@ -1094,6 +1096,7 @@ public class PKListener implements Listener {
 
 			@Override
 			public void run() {
+				PassiveManager.registerPassives(player);
 				GeneralMethods.removeUnusableAbilities(player.getName());
 			}
 		}, 5);

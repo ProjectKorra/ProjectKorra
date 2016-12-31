@@ -35,6 +35,7 @@ import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfo;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
@@ -74,6 +75,7 @@ public abstract class CoreAbility implements Ability {
 
 	private boolean started;
 	private boolean removed;
+	private boolean hidden;
 	private int id;
 	private long startTime;
 	private long startTick;
@@ -207,6 +209,17 @@ public abstract class CoreAbility implements Ability {
 	public static void progressAll() {
 		for (Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (CoreAbility abil : setAbils) {
+				if (abil instanceof PassiveAbility) {
+					BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(abil.getPlayer());
+					if (bPlayer == null || !abil.getPlayer().isOnline()) {
+						abil.remove();
+						return;
+					} else if (!bPlayer.canBendPassive(abil.getElement())) {
+						Bukkit.broadcastMessage("Passive '" + abil.getName() + "' removed.");
+						abil.remove();
+						return;
+					}
+				}
 				abil.progress();
 				Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
 			}
@@ -460,6 +473,15 @@ public abstract class CoreAbility implements Ability {
 						MultiAbility multiAbil = (MultiAbility) ability;
 						MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
 					}
+					
+					if (ability instanceof PassiveAbility) {
+						ability.setHiddenAbility(true);
+						PassiveManager.getPassives().put(name, ability);
+						if (PassiveManager.getPassivesByElement().get(ability.getElement()) == null) {
+							PassiveManager.getPassivesByElement().put(ability.getElement(), new HashSet<CoreAbility>());
+						}
+						PassiveManager.getPassivesByElement().get(ability.getElement()).add(ability);
+					}
 
 					if (ability instanceof AddonAbility) {
 						AddonAbility addon = (AddonAbility) ability;
@@ -526,6 +548,15 @@ public abstract class CoreAbility implements Ability {
 					MultiAbility multiAbil = (MultiAbility) coreAbil;
 					MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
 				}
+				
+				if (coreAbil instanceof PassiveAbility) {
+					coreAbil.setHiddenAbility(true);
+					PassiveManager.getPassives().put(name, coreAbil);
+					if (PassiveManager.getPassivesByElement().get(coreAbil.getElement()) == null) {
+						PassiveManager.getPassivesByElement().put(coreAbil.getElement(), new HashSet<CoreAbility>());
+					}
+					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(coreAbil);
+				}
 			}
 			catch (Exception | Error e) {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
@@ -566,7 +597,11 @@ public abstract class CoreAbility implements Ability {
 
 	@Override
 	public boolean isHiddenAbility() {
-		return false;
+		return hidden;
+	}
+	
+	public void setHiddenAbility(boolean hidden) {
+		this.hidden = hidden;
 	}
 
 	@Override

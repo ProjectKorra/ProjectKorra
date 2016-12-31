@@ -159,8 +159,9 @@ public class ConfigManager {
 			config.addDefault("Commands.Help.InvalidTopic", "That isn't a valid help topic. Use /bending help for more information.");
 			config.addDefault("Commands.Help.Usage", "Usage: ");
 			
-			config.addDefault("Commands.Display.Description", "This command will show you all of the elements you have bound if you do not specify an element. If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available abilities of that element installed on the server.");;
+			config.addDefault("Commands.Display.Description", "This command will show you all of the elements you have bound if you do not specify an element. If you do specify an element (Air, Water, Earth, Fire, or Chi), it will show you all of the available abilities of that element installed on the server.");
 			config.addDefault("Commands.Display.NoCombosAvailable", "There are no {element} combos available.");
+			config.addDefault("Commands.Display.NoPassivesAvailable", "There are no {element} passives available.");
 			config.addDefault("Commands.Display.NoAbilitiesAvailable", "There are no {element} abilities on this server!");
 			config.addDefault("Commands.Display.InvalidArgument", "Not a valid argument.");
 			config.addDefault("Commands.Display.PlayersOnly", "This command is only useable by players.");
