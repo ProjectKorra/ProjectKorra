@@ -141,7 +141,7 @@
       <artifactId>GLib</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/GL.jar</systemPath>
+      <systemPath>${project.basedir}/lib/GLib.jar</systemPath>
     </dependency>
   </dependencies>
 
