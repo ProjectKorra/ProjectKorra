@@ -43,7 +43,6 @@ public class HighJump extends ChiAbility {
 			remove();
 			return;
 		}
-
 		jump(player);
 		WaterArmsWhip waw = WaterArmsWhip.getGrabbedEntities().get(player);
 		if (waw != null) {

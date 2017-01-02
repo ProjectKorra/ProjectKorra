@@ -38,7 +38,6 @@ public class QuickStrike extends ChiAbility {
 			remove();
 			return;
 		}
-
 		DamageHandler.damageEntity(target, damage, this);
 		bPlayer.addCooldown(this);
 		if (target instanceof Player && ChiPassive.willChiBlock(player, (Player) target)) {
