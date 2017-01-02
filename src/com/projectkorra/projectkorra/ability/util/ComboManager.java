@@ -169,9 +169,9 @@ public class ComboManager {
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Chi.ChiCombo.Immobilize.Enabled")) {
 			ArrayList<AbilityInformation> immobilize = new ArrayList<>();
 			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
-			//immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK_ENTITY));
+			immobilize.add(new AbilityInformation("SwiftKick", ClickType.LEFT_CLICK_ENTITY));
 			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
-			//immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
+			immobilize.add(new AbilityInformation("QuickStrike", ClickType.LEFT_CLICK_ENTITY));
 			COMBO_ABILITIES.put("Immobilize", new ComboAbilityInfo("Immobilize", immobilize, Immobilize.class));
 			DESCRIPTIONS.put("Immobilize", ConfigManager.languageConfig.get().getString("Abilities.Chi.Combo.Immobilize.Description"));
 			INSTRUCTIONS.put("Immobilize", "QuickStrike (Left Click) > SwiftKick (Left Click) > QuickStrike (Left Click) > QuickStrike (Left Click)");
