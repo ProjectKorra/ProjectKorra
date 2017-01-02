@@ -1139,6 +1139,23 @@ public class GeneralMethods {
 
 		return blockHolder;
 	}
+	
+	public static ArrayList<Element> getElementsWithNoWeaponBending() {
+		ArrayList<Element> elements = new ArrayList<Element>();
+		
+		if (!plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons"))
+			elements.add(Element.AIR);
+		if (!plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons"))
+			elements.add(Element.WATER);
+		if (!plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons"))
+			elements.add(Element.EARTH);
+		if (!plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons"))
+			elements.add(Element.FIRE);
+		if (!plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons"))
+			elements.add(Element.CHI);
+		
+		return elements;
+	}
 
 	public static boolean hasItems() {
 		return Bukkit.getServer().getPluginManager().getPlugin("ProjectKorraItems") != null;

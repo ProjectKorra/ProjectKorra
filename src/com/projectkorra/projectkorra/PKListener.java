@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -1025,10 +1024,12 @@ public class PKListener implements Listener {
 			}.runTaskLater(plugin, 5);
 
 			if (event.getHand() == EquipmentSlot.HAND) {
-				if (event.getClickedBlock() != null) {
-					ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_BLOCK);
-				} else {
-					ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
+				if (!GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType()) && GeneralMethods.getElementsWithNoWeaponBending().contains(bPlayer.getBoundAbility().getElement())) {
+					if (event.getClickedBlock() != null) {
+						ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_BLOCK);
+					} else {
+						ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
+					}
 				}
 			}
 
@@ -1050,8 +1051,10 @@ public class PKListener implements Listener {
 
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-		ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
+		
+		if (!GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType()) && GeneralMethods.getElementsWithNoWeaponBending().contains(bPlayer.getBoundAbility().getElement())) {
+			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
+		}
 
 		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbent(player)
 				|| Suffocate.isBreathbent(player)) {
@@ -1258,11 +1261,13 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
-		if (player.isSneaking()) {
-			ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
-		} else {
+		
+		if (!GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType()) && GeneralMethods.getElementsWithNoWeaponBending().contains(bPlayer.getBoundAbility().getElement())) {
+			if (player.isSneaking()) {
+				ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
+			} else {
 			ComboManager.addComboAbility(player, ClickType.SHIFT_DOWN);
+			}
 		}
 
 		String abilName = bPlayer.getBoundAbilityName();
@@ -1460,11 +1465,14 @@ public class PKListener implements Listener {
 		}
 
 		Entity target = GeneralMethods.getTargetedEntity(player, 3);
-		if (target != null && !(target.equals(player)) && target instanceof LivingEntity) {
-			ComboManager.addComboAbility(player, ClickType.LEFT_CLICK_ENTITY);
+		
+		if(!GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType()) && GeneralMethods.getElementsWithNoWeaponBending().contains(bPlayer.getBoundAbility().getElement())) {
+			if (target != null && !(target.equals(player)) && target instanceof LivingEntity) {
+				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK_ENTITY);
 
-		} else {
-			ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
+			} else {
+				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
+			}
 		}
 
 		if (Suffocate.isBreathbent(player)) {

@@ -272,7 +272,6 @@ public class ComboManager {
 					break;
 				}
 			}
-
 			if (isValid) {
 				return customAbility;
 			}
