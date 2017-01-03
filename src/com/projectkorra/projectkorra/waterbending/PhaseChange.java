@@ -419,9 +419,12 @@ public class PhaseChange extends IceAbility {
 			Player p = PLAYER_BY_BLOCK.get(tb);
 			PhaseChange pc = getAbility(p, PhaseChange.class);
 			PLAYER_BY_BLOCK.remove(tb);
-			pc.getFrozenBlocks().remove(tb);
-			tb.revertBlock();
-			return true;
+			if (pc.getFrozenBlocks() != null) {
+				pc.getFrozenBlocks().remove(tb);
+				tb.revertBlock();
+				return true;
+			}
+			return false;
 		}
 	}
 	

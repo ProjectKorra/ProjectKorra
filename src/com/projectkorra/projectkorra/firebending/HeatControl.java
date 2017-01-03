@@ -137,7 +137,7 @@ public class HeatControl extends FireAbility {
 			this.solidifyMaxRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.MaxRadius");
 			this.solidifyRange = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
 			this.solidifyRevert = getConfig().getBoolean("Abilities.Fire.HeatControl.Solidify.Revert");
-			this.solidifyRevertTime = getConfig().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime");
+			this.solidifyRevertTime = 10000;//getConfig().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime");
 			this.randy = new Random();
 		}
 	}
