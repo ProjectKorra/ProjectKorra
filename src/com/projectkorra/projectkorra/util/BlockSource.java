@@ -7,6 +7,7 @@ import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -36,7 +37,7 @@ public class BlockSource {
 	private static FileConfiguration config = ConfigManager.defaultConfig.get();
 	// The player should never need to grab source blocks from farther than this.
 	private static double MAX_RANGE = config.getDouble("Abilities.Water.WaterManipulation.SelectRange");
-	private static boolean tempblock = config.getBoolean("Properties.Water.CanBendFromBentBlocks");
+	//private static boolean tempblock = config.getBoolean("Properties.Water.CanBendFromBentBlocks");
 
 	/**
 	 * Updates all of the player's sources.
@@ -57,7 +58,7 @@ public class BlockSource {
 		
 		if (coreAbil instanceof WaterAbility) {
 			Block waterBlock = WaterAbility.getWaterSourceBlock(player, MAX_RANGE, true);
-			if (waterBlock != null) {
+			if (waterBlock != null && !TempBlock.isTempBlock(waterBlock)) {
 				putSource(player, waterBlock, BlockSourceType.WATER, clickType);
 				if (WaterAbility.isPlant(waterBlock)) {
 					putSource(player, waterBlock, BlockSourceType.PLANT, clickType);
@@ -260,10 +261,10 @@ public class BlockSource {
 		if (allowSnow && sourceBlock == null) {
 			sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
 		}
-		if(sourceBlock != null && TempBlock.isTempBlock(sourceBlock) && !tempblock) {
-			return null;
+		if(sourceBlock != null && !sourceBlock.getType().equals(Material.AIR) && (WaterAbility.isWater(sourceBlock) || WaterAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || WaterAbility.isIce(sourceBlock)) && !TempBlock.isTempBlock(sourceBlock)) {
+			return sourceBlock;
 		}
-		return sourceBlock;
+		return null;
 	}
 
 	/**
