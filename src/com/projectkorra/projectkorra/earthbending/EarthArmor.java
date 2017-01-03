@@ -1,13 +1,5 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempArmor;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.PlantArmor;
-
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,6 +14,13 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempArmor;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class EarthArmor extends EarthAbility {
 
@@ -44,11 +43,6 @@ public class EarthArmor extends EarthAbility {
 		super(player);
 		if (hasAbility(player, EarthArmor.class) || !bPlayer.canBend(this)) {
 			return;
-		}
-		
-		if (hasAbility(player, PlantArmor.class)) {
-			PlantArmor abil = getAbility(player, PlantArmor.class);
-			abil.remove();
 		}
 		
 		this.formed = false;

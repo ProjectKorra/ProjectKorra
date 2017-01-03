@@ -3,26 +3,23 @@ package com.projectkorra.projectkorra.waterbending.passives;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
-import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.ability.WaterAbility;
 
-public class IceSkate extends IceAbility implements PassiveAbility {
+public class Hydrosink extends WaterAbility implements PassiveAbility {
 
-	public IceSkate(Player player) {
+	public Hydrosink(Player player) {
 		super(player);
 	}
 
 	@Override
 	public void progress() {
-		if (isIce(player.getLocation().clone().add(0, -1, 0).getBlock())) {
-			ParticleEffect.SNOW_SHOVEL.display(player.getLocation(), 0.2F, 0.2F, 0.2F, 0.01F, 10);
-		}
+
 	}
 
 	@Override
 	public boolean isSneakAbility() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -37,12 +34,17 @@ public class IceSkate extends IceAbility implements PassiveAbility {
 
 	@Override
 	public String getName() {
-		return "IceSkate";
+		return "Hydrosink";
 	}
 
 	@Override
 	public Location getLocation() {
 		return null;
+	}
+
+	@Override
+	public boolean isPlaceholder() {
+		return true;
 	}
 
 }

@@ -214,3 +214,33 @@ permissions:
     description: Grants access to all ChiCombos.
     children:
         bending.ability.Immobilize: true
+  bending.air.passive:
+    default:  false
+    description: Grants access to all air passives.
+    children:
+      bending.ability.AirAgility: true
+      bending.ability.AirSatiation: true
+      bending.ability.GracefulDescent: true
+  bending.chi.passive:
+    default:  false
+    description: Grants access to all chi passives.
+    children:
+      bending.ability.Acrobatics: true
+      bending.ability.ChiAgility: true
+      bending.ability.ChiSatiation: true
+  bending.earth.passive:
+    default:  false
+    description: Grants access to all earth passives.
+    children:
+      bending.ability.DensityShift: true
+      bending.ability.SandAgility: true
+  bending.fire.passive:
+    default:  false
+    description: Grants access to all fire passives.
+    children:
+  bending.water.passive:
+    default:  false
+    description: Grants access to all water passives.
+    children:
+      bending.ability.FastSwim: true
+      bending.ability.Hydrosink: true

@@ -2,9 +2,8 @@ package com.projectkorra.projectkorra.ability.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,9 +15,9 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 
 public class PassiveManager {
-	
+
 	private static final Map<String, CoreAbility> PASSIVES = new HashMap<>();
-	private static final Map<Element, Set<CoreAbility>> PASSIVES_BY_ELEMENT = new HashMap<>();
+	private static final Map<Element, Set<String>> PASSIVES_BY_ELEMENT = new HashMap<>(); // Parent elements INCLUDE subelement passives.
 
 	public static void registerPassives(Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -32,6 +31,14 @@ public class PassiveManager {
 				} else if (!bPlayer.canBendPassive(ability.getElement())) {
 					continue;
 				} else if (CoreAbility.hasAbility(player, ability.getClass())) {
+					continue;
+					/*
+					 * Passive's such as not taking fall damage are managed in
+					 * PKListener, so we do not want to create instances of them
+					 * here. This just enables the passive to be displayed in /b
+					 * d [element]passive
+					 */
+				} else if (((PassiveAbility) ability).isPlaceholder()) {
 					continue;
 				}
 				Class<?> clazz = null;
@@ -57,23 +64,19 @@ public class PassiveManager {
 			}
 		}
 	}
-	
-	public static List<String> getPassivesForElement(Element element) {
-		List<String> passives = new ArrayList<String>();
+
+	public static Set<String> getPassivesForElement(Element element) {
 		if (PASSIVES_BY_ELEMENT.get(element) == null) {
-			return passives;
+			return new HashSet<>();
 		}
-		for (CoreAbility ability : PASSIVES_BY_ELEMENT.get(element)) {
-			passives.add(ability.getName());
-		}
-		return passives;
+		return PASSIVES_BY_ELEMENT.get(element);
 	}
-	
+
 	public static Map<String, CoreAbility> getPassives() {
 		return PASSIVES;
 	}
-	
-	public static Map<Element, Set<CoreAbility>> getPassivesByElement() {
+
+	public static Map<Element, Set<String>> getPassivesByElement() {
 		return PASSIVES_BY_ELEMENT;
 	}
 

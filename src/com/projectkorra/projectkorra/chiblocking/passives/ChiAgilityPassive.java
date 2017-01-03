@@ -84,7 +84,7 @@ public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
 
 	@Override
 	public boolean isHarmlessAbility() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -100,6 +100,11 @@ public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
 	@Override
 	public Location getLocation() {
 		return null;
+	}
+
+	@Override
+	public boolean isPlaceholder() {
+		return false;
 	}
 
 }

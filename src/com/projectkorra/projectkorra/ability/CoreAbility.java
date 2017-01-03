@@ -477,9 +477,12 @@ public abstract class CoreAbility implements Ability {
 						ability.setHiddenAbility(true);
 						PassiveManager.getPassives().put(name, ability);
 						if (PassiveManager.getPassivesByElement().get(ability.getElement()) == null) {
-							PassiveManager.getPassivesByElement().put(ability.getElement(), new HashSet<CoreAbility>());
+							PassiveManager.getPassivesByElement().put(ability.getElement(), new HashSet<String>());
 						}
-						PassiveManager.getPassivesByElement().get(ability.getElement()).add(ability);
+						PassiveManager.getPassivesByElement().get(ability.getElement()).add(name);
+						if (ability.getElement() instanceof SubElement) {
+							PassiveManager.getPassivesByElement().get(((SubElement) ability.getElement()).getParentElement()).add(name);
+						}
 					}
 
 					if (ability instanceof AddonAbility) {
@@ -552,9 +555,12 @@ public abstract class CoreAbility implements Ability {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
 					if (PassiveManager.getPassivesByElement().get(coreAbil.getElement()) == null) {
-						PassiveManager.getPassivesByElement().put(coreAbil.getElement(), new HashSet<CoreAbility>());
+						PassiveManager.getPassivesByElement().put(coreAbil.getElement(), new HashSet<String>());
 					}
-					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(coreAbil);
+					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);
+					if (coreAbil.getElement() instanceof SubElement) {
+						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
+					}
 				}
 			}
 			catch (Exception | Error e) {

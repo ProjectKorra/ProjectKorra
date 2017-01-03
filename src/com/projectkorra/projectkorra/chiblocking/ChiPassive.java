@@ -65,7 +65,7 @@ public class ChiPassive {
 	}
 	
 	public static double getFallReductionFactor() {
-		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.FallReductionFactor");
+		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.Acrobatics.FallReductionFactor");
 	}
 
 	public static int getJumpPower() {

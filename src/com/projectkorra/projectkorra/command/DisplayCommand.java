@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -86,9 +87,10 @@ public class DisplayCommand extends PKCommand {
 					sender.sendMessage(comboColor + comboMove);
 				}
 				return;
+			//passives
 			} else if (element != null && elementName.contains("passive")) {
 				ChatColor color = element != null ? element.getColor() : null;
-				List<String> passives = PassiveManager.getPassivesForElement(element);
+				Set<String> passives = PassiveManager.getPassivesForElement(element);
 				
 				if (passives.isEmpty()) {
 					sender.sendMessage(color + noPassivesAvailable.replace("{element}", element.getName()));

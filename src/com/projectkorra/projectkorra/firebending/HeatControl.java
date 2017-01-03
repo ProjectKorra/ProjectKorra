@@ -22,7 +22,6 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -105,7 +104,7 @@ public class HeatControl extends FireAbility {
 		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
 			if (!bPlayer.canBend(this)) {
 				return;
-			} else if (EarthAbility.getLavaSourceBlock(player, solidifyRange) == null) {
+			} else if (!isLava(GeneralMethods.getTargetedLocation(player, solidifyRange).getBlock())) {
 				remove();
 				new HeatControl(player, HeatControlType.EXTINGUISH);
 				return;
