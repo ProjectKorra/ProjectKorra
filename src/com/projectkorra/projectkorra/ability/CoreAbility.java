@@ -210,7 +210,7 @@ public abstract class CoreAbility implements Ability {
 		for (Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (CoreAbility abil : setAbils) {
 				if (abil instanceof PassiveAbility) {
-					BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(abil.getPlayer());
+					BendingPlayer bPlayer = abil.getBendingPlayer();
 					if (bPlayer == null || !abil.getPlayer().isOnline()) {
 						abil.remove();
 						return;
@@ -476,7 +476,7 @@ public abstract class CoreAbility implements Ability {
 					if (ability instanceof PassiveAbility) {
 						ability.setHiddenAbility(true);
 						PassiveManager.getPassives().put(name, ability);
-						if (PassiveManager.getPassivesByElement().get(ability.getElement()) == null) {
+						if (!PassiveManager.getPassivesByElement().containsKey(ability.getElement())) {
 							PassiveManager.getPassivesByElement().put(ability.getElement(), new HashSet<String>());
 						}
 						PassiveManager.getPassivesByElement().get(ability.getElement()).add(name);
@@ -554,7 +554,7 @@ public abstract class CoreAbility implements Ability {
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (PassiveManager.getPassivesByElement().get(coreAbil.getElement()) == null) {
+					if (!PassiveManager.getPassivesByElement().containsKey(coreAbil.getElement())) {
 						PassiveManager.getPassivesByElement().put(coreAbil.getElement(), new HashSet<String>());
 					}
 					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);

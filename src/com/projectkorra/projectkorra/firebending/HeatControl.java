@@ -17,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
@@ -104,7 +105,7 @@ public class HeatControl extends FireAbility {
 		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
 			if (!bPlayer.canBend(this)) {
 				return;
-			} else if (!isLava(GeneralMethods.getTargetedLocation(player, solidifyRange).getBlock())) {
+			} else if (getLavaBlock(player, solidifyRange) == null) {
 				remove();
 				new HeatControl(player, HeatControlType.EXTINGUISH);
 				return;
@@ -431,6 +432,30 @@ public class HeatControl extends FireAbility {
 	@Override
 	public Location getLocation() {
 		return player.getLocation();
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static Block getLavaBlock(Player player, double range) {
+		Location location = player.getEyeLocation();
+		Vector vector = location.getDirection().clone().normalize();
+
+		for (double i = 0; i <= range; i++) {
+			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
+			if (GeneralMethods.isRegionProtectedFromBuild(player, location)) {
+				continue;
+			}
+			if (isLava(block)) {
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock tb = TempBlock.get(block);
+					byte full = 0x0;
+					if (tb.getState().getRawData() != full && !isLava(tb.getState().getType())) {
+						continue;
+					}
+				}
+				return block;
+			}
+		}
+		return null;
 	}
 
 }
