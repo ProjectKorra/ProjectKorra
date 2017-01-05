@@ -117,12 +117,12 @@ public class LavaFlow extends LavaAbility {
 		this.allowNaturalFlow = getConfig().getBoolean("Abilities.Earth.LavaFlow.AllowNaturalFlow");
 
 		if (bPlayer.isAvatarState()) {
-			shiftCooldown = getConfig().getLong("Abilities.Avatar.Earth.LavaFlow.ShiftCooldown");
-			clickLavaCooldown = getConfig().getLong("Abilities.Avatar.Earth.LavaFlow.ClickLavaCooldown");
-			clickLandCooldown = getConfig().getLong("Abilities.Avatar.Earth.LavaFlow.ClickLandCooldown");
-			shiftPlatformRadius = getConfig().getDouble("Abilities.Avatar.Earth.LavaFlow.ShiftPlatformRadius");
-		    clickLavaRadius = getConfig().getDouble("Abilities.Avatar.Earth.LavaFlow.ClickRadius");
-			shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.LavaFlow.Earth.ShiftRadius");
+			shiftCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown");
+			clickLavaCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown");
+			clickLandCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown");
+			shiftPlatformRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius");
+		    clickLavaRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius");
+			shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.LavaFlow.Earth.ShiftRadius");
 		}
 
 		if (type == AbilityType.SHIFT) {

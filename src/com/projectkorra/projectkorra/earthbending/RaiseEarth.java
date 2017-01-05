@@ -1,10 +1,9 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,10 +12,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
 
 public class RaiseEarth extends EarthAbility {
 	
@@ -45,7 +44,7 @@ public class RaiseEarth extends EarthAbility {
 
 		try {
 			if (bPlayer.isAvatarState()) {
-				height = getConfig().getInt("Abilities.Avatar.Earth.RaiseEarth.Column.Height");
+				height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height");
 			}
 			block = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.LEFT_CLICK);
 			if (block == null) {

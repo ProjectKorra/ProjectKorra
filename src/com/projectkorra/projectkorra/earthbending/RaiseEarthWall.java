@@ -31,8 +31,8 @@ public class RaiseEarthWall extends EarthAbility {
 		}
 
 		if (bPlayer.isAvatarState()) {
-			height = getConfig().getInt("Abilities.Avatar.Earth.RaiseEarth.Wall.Height");
-			width = getConfig().getInt("Abilities.Avatar.Earth.RaiseEarth.Wall.Height");
+			height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
+			width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
 		}
 
 		Vector direction = player.getEyeLocation().getDirection().normalize();

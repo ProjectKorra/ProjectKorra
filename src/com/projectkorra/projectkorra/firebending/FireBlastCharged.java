@@ -75,8 +75,8 @@ public class FireBlastCharged extends FireAbility {
 			this.range = getDayFactor(range);
 		}
 		if (bPlayer.isAvatarState()) {
-			this.chargeTime = 0;
-			this.maxDamage = AvatarState.getValue(maxDamage);
+			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.ChargeTime");
+			this.maxDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.Damage");
 		}
 		
 		

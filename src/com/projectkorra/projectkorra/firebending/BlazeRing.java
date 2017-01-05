@@ -22,7 +22,7 @@ public class BlazeRing extends FireAbility {
 		this.location = player.getLocation();
 		
 		if (bPlayer.isAvatarState()) {
-		range = getConfig().getInt("Abilities.Avatar.Fire.Blaze.Ring.Range");
+		range = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range");
 		}
 		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("BlazeRing")) {
 			return;

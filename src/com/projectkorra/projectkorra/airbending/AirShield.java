@@ -33,7 +33,7 @@ public class AirShield extends AirAbility {
 		super(player);
 
 		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.Radius");
-		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Air.AirShield.IsAvatarStateToggle");
+		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
 		this.radius = this.maxRadius;
 		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");
 		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");

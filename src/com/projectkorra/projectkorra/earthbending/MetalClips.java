@@ -82,9 +82,9 @@ public class MetalClips extends MetalAbility {
 		}
 		
 		if (bPlayer.isAvatarState()) {
-			cooldown = getConfig().getLong("Abilities.Avatar.Earth.MetalClips.Cooldown");;
-			range = getConfig().getDouble("Abilities.Avatar.Earth.MetalClips.Range");
-			crushDamage = getConfig().getLong("Abilities.Avatar.Earth.MetalClips.CrushDamage");
+			cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.MetalClips.Cooldown");;
+			range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.MetalClips.Range");
+			crushDamage = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.MetalClips.CrushDamage");
 		}
 
 		if (abilityType == 0) {

@@ -11,7 +11,6 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 
 public class AirBurst extends AirAbility {
 
@@ -56,8 +55,8 @@ public class AirBurst extends AirAbility {
 		this.affectedEntities = new ArrayList<>();
 
 		if (bPlayer.isAvatarState()) {
-			this.chargeTime = 0;
-			this.damage = AvatarState.getValue(this.damage);
+			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime");
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBurst.Damage");
 		}
 		start();
 	}

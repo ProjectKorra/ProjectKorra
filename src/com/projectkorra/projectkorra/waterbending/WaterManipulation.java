@@ -20,7 +20,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -272,7 +271,7 @@ public class WaterManipulation extends WaterAbility {
 							entity.setVelocity(vector.normalize().multiply(pushFactor));
 
 							if (bPlayer.isAvatarState()) {
-								damage = getConfig().getDouble("Abilities.Avatar.Water.WaterManipulation.Damage");
+								damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");
 							}
 							damage = getNightFactor(damage);
 							DamageHandler.damageEntity(entity, damage, this);
