@@ -896,7 +896,7 @@ public class PKListener implements Listener {
 				if (sourceBPlayer.canBendPassive(Element.CHI)) {
 					if (e.getCause() == DamageCause.ENTITY_ATTACK && e.getDamage() == 1) {
 						if (sourceBPlayer.getBoundAbility() instanceof ChiAbility) {
-							if (sourceBPlayer.getBoundAbility() != null && sourcePlayer.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(sourcePlayer.getInventory().getItemInMainHand().getType())
+							if (GeneralMethods.isWeapon(sourcePlayer.getInventory().getItemInMainHand().getType())
 									&& !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 								return;
 							}
@@ -921,7 +921,7 @@ public class PKListener implements Listener {
 					}
 				}
 				if (sourceBPlayer.canBendPassive(Element.CHI)) {
-					if (sourcePlayer.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(sourcePlayer.getInventory().getItemInMainHand().getType())
+					if (GeneralMethods.isWeapon(sourcePlayer.getInventory().getItemInMainHand().getType())
 							&& !ProjectKorra.plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 						return;
 					}
@@ -1025,12 +1025,10 @@ public class PKListener implements Listener {
 			}.runTaskLater(plugin, 5);
 
 			if (event.getHand() == EquipmentSlot.HAND) {
-				if (bPlayer.getBoundAbility() != null && player.getInventory().getItemInMainHand() != null && !GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType()) && GeneralMethods.getElementsWithNoWeaponBending().contains(bPlayer.getBoundAbility().getElement())) {
-					if (event.getClickedBlock() != null) {
-						ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_BLOCK);
-					} else {
-						ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
-					}
+				if (event.getClickedBlock() != null) {
+					ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_BLOCK);
+				} else {
+					ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK);
 				}
 			}
 
@@ -1052,10 +1050,8 @@ public class PKListener implements Listener {
 
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		
-		if (bPlayer.getBoundAbility() != null && player.getInventory().getItemInMainHand() != null && !GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType()) && GeneralMethods.getElementsWithNoWeaponBending().contains(bPlayer.getBoundAbility().getElement())) {
-			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
-		}
+
+		ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
 
 		if (Paralyze.isParalyzed(player) || ChiCombo.isParalyzed(player) || Bloodbending.isBloodbent(player)
 				|| Suffocate.isBreathbent(player)) {
@@ -1262,13 +1258,11 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
-		if (bPlayer.getBoundAbility() != null && player.getInventory().getItemInMainHand() != null && !GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType()) && GeneralMethods.getElementsWithNoWeaponBending().contains(bPlayer.getBoundAbility().getElement())) {
-			if (player.isSneaking()) {
-				ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
-			} else {
+
+		if (player.isSneaking()) {
+			ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
+		} else {
 			ComboManager.addComboAbility(player, ClickType.SHIFT_DOWN);
-			}
 		}
 
 		String abilName = bPlayer.getBoundAbilityName();
@@ -1308,7 +1302,7 @@ public class PKListener implements Listener {
 				return;
 			}
 			if (coreAbil instanceof AirAbility && bPlayer.isElementToggled(Element.AIR) == true) {
-				if (player.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
+				if (GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
 						&& !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
 				}
@@ -1335,7 +1329,7 @@ public class PKListener implements Listener {
 			}
 
 			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER) == true) {
-				if (player.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
+				if (GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
 						&& !plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons")) {
 					return;
 				}
@@ -1369,7 +1363,7 @@ public class PKListener implements Listener {
 			}
 
 			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
-				if (player.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
+				if (GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
 						&& !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
 					return;
 				}
@@ -1410,7 +1404,7 @@ public class PKListener implements Listener {
 			}
 
 			if (coreAbil instanceof FireAbility && bPlayer.isElementToggled(Element.FIRE) == true) {
-				if (player.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
+				if (GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
 						&& !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
 				}
@@ -1466,14 +1460,11 @@ public class PKListener implements Listener {
 		}
 
 		Entity target = GeneralMethods.getTargetedEntity(player, 3);
-		
-		if(bPlayer.getBoundAbility() != null && player.getInventory().getItemInMainHand() != null && !GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType()) && GeneralMethods.getElementsWithNoWeaponBending().contains(bPlayer.getBoundAbility().getElement())) {
-			if (target != null && !(target.equals(player)) && target instanceof LivingEntity) {
-				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK_ENTITY);
+		if (target != null && !(target.equals(player)) && target instanceof LivingEntity) {
+			ComboManager.addComboAbility(player, ClickType.LEFT_CLICK_ENTITY);
 
-			} else {
-				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
-			}
+		} else {
+			ComboManager.addComboAbility(player, ClickType.LEFT_CLICK);
 		}
 
 		if (Suffocate.isBreathbent(player)) {
@@ -1506,7 +1497,7 @@ public class PKListener implements Listener {
 			}
 
 			if (coreAbil instanceof AirAbility && bPlayer.isElementToggled(Element.AIR) == true) {
-				if (bPlayer.getBoundAbility() != null && player.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
+				if (GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
 						&& !plugin.getConfig().getBoolean("Properties.Air.CanBendWithWeapons")) {
 					return;
 				}
@@ -1539,7 +1530,7 @@ public class PKListener implements Listener {
 			}
 
 			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER) == true) {
-				if (bPlayer.getBoundAbility() != null && player.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
+				if (GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
 						&& !plugin.getConfig().getBoolean("Properties.Water.CanBendWithWeapons")) {
 					return;
 				}
@@ -1572,7 +1563,7 @@ public class PKListener implements Listener {
 			}
 
 			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
-				if (bPlayer.getBoundAbility() != null && player.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
+				if (GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
 						&& !plugin.getConfig().getBoolean("Properties.Earth.CanBendWithWeapons")) {
 					return;
 				}
@@ -1620,7 +1611,7 @@ public class PKListener implements Listener {
 			}
 
 			if (coreAbil instanceof FireAbility && bPlayer.isElementToggled(Element.FIRE) == true) {
-				if (bPlayer.getBoundAbility() != null && player.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
+				if (GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
 						&& !plugin.getConfig().getBoolean("Properties.Fire.CanBendWithWeapons")) {
 					return;
 				}
@@ -1651,7 +1642,7 @@ public class PKListener implements Listener {
 			}
 
 			if (coreAbil instanceof ChiAbility && bPlayer.isElementToggled(Element.CHI) == true) {
-				if (bPlayer.getBoundAbility() != null && player.getInventory().getItemInMainHand() != null && GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
+				if (GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType())
 						&& !plugin.getConfig().getBoolean("Properties.Chi.CanBendWithWeapons")) {
 					return;
 				}

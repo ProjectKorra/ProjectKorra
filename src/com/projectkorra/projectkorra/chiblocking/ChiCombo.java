@@ -190,7 +190,7 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 		this.name = name;
 	}
 
-	public static class Immobilize extends ChiCombo {
+	public class Immobilize extends ChiCombo {
 
 		public Immobilize(Player player) {
 			super(player, "Immobilize");

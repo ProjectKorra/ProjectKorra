@@ -2,7 +2,7 @@ name: ProjectKorra
 author: ProjectKorra
 version: ${project.version}
 main: com.projectkorra.projectkorra.ProjectKorra
-softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC, Residence, Kingdoms]
+softdepend: [PreciousStones, WorldGuard, WorldEdit, Factions, MassiveCore, GriefPrevention, Towny, NoCheatPlus, LWC, Residence]
 commands:
   projectkorra:
     aliases: [b,bending,mtla,tla,korra,pk,bend]

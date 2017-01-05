@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -77,7 +76,7 @@ public class EarthTunnel extends EarthAbility {
 				remove();
 				return;
 			} else {
-				while ((!isEarth(block) && !isSand(block))) {
+				while (!isEarthbendable(block)) {
 					if (!isTransparent(block)) {
 						remove();
 						return;
@@ -109,16 +108,6 @@ public class EarthTunnel extends EarthAbility {
 						block.setType(Material.AIR);
 					} else {
 						airBlocks.put(new TempBlock(block, Material.AIR, (byte) 0), System.currentTimeMillis());
-						if(isPlant(block.getRelative(BlockFace.UP)) || isSnow(block.getRelative(BlockFace.UP))){
-							Block above = block.getRelative(BlockFace.UP);
-							Block above2 = above.getRelative(BlockFace.UP);
-							if (isPlant(above) || isSnow(above)) {
-								airBlocks.put(new TempBlock(above, Material.AIR, (byte) 0), System.currentTimeMillis());
-								if (isPlant(above2) && above2.getType().equals(Material.DOUBLE_PLANT)) {
-									airBlocks.put(new TempBlock(above2, Material.AIR, (byte) 0), System.currentTimeMillis());
-								}
-							}
-						}
 					}
 				} else {
 					block.setType(Material.AIR);

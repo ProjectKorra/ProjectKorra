@@ -82,9 +82,6 @@ public class TempBlock {
 		for (Block block : instances.keySet()) {
 			revertBlock(block, Material.AIR);
 		}
-		for (TempBlock tempblock : REVERT_QUEUE) {
-			tempblock.revertBlock();
-		}
 	}
 
 	public static void removeBlock(Block block) {
