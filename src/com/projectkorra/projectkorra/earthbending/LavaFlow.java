@@ -1,14 +1,10 @@
 package com.projectkorra.projectkorra.earthbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.LavaAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,11 +13,14 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.LavaAbility;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class LavaFlow extends LavaAbility {
 
@@ -118,22 +117,12 @@ public class LavaFlow extends LavaAbility {
 		this.allowNaturalFlow = getConfig().getBoolean("Abilities.Earth.LavaFlow.AllowNaturalFlow");
 
 		if (bPlayer.isAvatarState()) {
-			shiftCooldown = 0;
-			clickLavaCooldown = 0;
-			clickLandCooldown = 0;
-			shiftPlatformRadius = AvatarState.getValue(shiftPlatformRadius);
-			shiftMaxRadius = AvatarState.getValue(shiftMaxRadius);
-			shiftFlowSpeed = AvatarState.getValue(shiftFlowSpeed);
-			shiftRemoveDelay = AvatarState.getValue(shiftRemoveDelay);
-			clickRange = AvatarState.getValue(clickRange);
-			clickLavaRadius = AvatarState.getValue(clickLavaRadius);
-			clickLandRadius = AvatarState.getValue(clickLandRadius);
-			clickLavaCleanupDelay = (long) AvatarState.getValue(clickLavaCleanupDelay);
-			clickLandCleanupDelay = (long) AvatarState.getValue(clickLandCleanupDelay);
-			lavaCreateSpeed = AvatarState.getValue(lavaCreateSpeed);
-			landCreateSpeed = AvatarState.getValue(landCreateSpeed);
-			upwardFlow = AvatarState.getValue(upwardFlow);
-			downwardFlow = AvatarState.getValue(downwardFlow);
+			shiftCooldown = getConfig().getLong("Abilities.Avatar.Earth.LavaFlow.ShiftCooldown");
+			clickLavaCooldown = getConfig().getLong("Abilities.Avatar.Earth.LavaFlow.ClickLavaCooldown");
+			clickLandCooldown = getConfig().getLong("Abilities.Avatar.Earth.LavaFlow.ClickLandCooldown");
+			shiftPlatformRadius = getConfig().getDouble("Abilities.Avatar.Earth.LavaFlow.ShiftPlatformRadius");
+		    clickLavaRadius = getConfig().getDouble("Abilities.Avatar.Earth.LavaFlow.ClickRadius");
+			shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.LavaFlow.Earth.ShiftRadius");
 		}
 
 		if (type == AbilityType.SHIFT) {

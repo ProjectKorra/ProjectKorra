@@ -20,7 +20,6 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.MetalAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempArmor;
 
@@ -83,11 +82,9 @@ public class MetalClips extends MetalAbility {
 		}
 		
 		if (bPlayer.isAvatarState()) {
-			cooldown = 0;
-			range = AvatarState.getValue(range);
-			crushDamage = AvatarState.getValue(crushDamage);
-			magnetRange = AvatarState.getValue(magnetRange);
-			magnetPower = AvatarState.getValue(magnetPower);
+			cooldown = getConfig().getLong("Abilities.Avatar.Earth.MetalClips.Cooldown");;
+			range = getConfig().getDouble("Abilities.Avatar.Earth.MetalClips.Range");
+			crushDamage = getConfig().getLong("Abilities.Avatar.Earth.MetalClips.CrushDamage");
 		}
 
 		if (abilityType == 0) {

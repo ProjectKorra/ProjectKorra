@@ -47,7 +47,9 @@ public class FireBurst extends FireAbility {
 			chargeTime /= getDayFactor();
 		}
 		if (bPlayer.isAvatarState() || isSozinsComet(player.getWorld())) {
-			chargeTime = 0;
+			chargeTime = getConfig().getLong("Abilities.Avatar.Fire.FireBurst.ChargeTime");
+			damage = getConfig().getInt("Abilities.Avatar.Fire.FireBurst.Damage");
+			cooldown = getConfig().getLong("Abilities.Avatar.Fire.FireBurst.Cooldown");
 		}
 
 		start();

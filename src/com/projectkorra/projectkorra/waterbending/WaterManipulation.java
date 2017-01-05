@@ -272,7 +272,7 @@ public class WaterManipulation extends WaterAbility {
 							entity.setVelocity(vector.normalize().multiply(pushFactor));
 
 							if (bPlayer.isAvatarState()) {
-								damage = AvatarState.getValue(damage);
+								damage = getConfig().getDouble("Abilities.Avatar.Water.WaterManipulation.Damage");
 							}
 							damage = getNightFactor(damage);
 							DamageHandler.damageEntity(entity, damage, this);

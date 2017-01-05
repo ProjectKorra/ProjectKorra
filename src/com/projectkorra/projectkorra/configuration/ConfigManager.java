@@ -279,7 +279,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Surge.Description", "Surge offers great utility and is one of the most important defence abilities for waterbender's. It can be used to push entities back, used to push yourself in a direction, trap entities and protect yourself with a shield.");
 			config.addDefault("Abilities.Water.Surge.Instructions",  "\n" + "(Shield) Left click on a water source and then hold sneak while looking up to create a water shield that will move wherever you look. Additionally, you can left click to turn this shield into ice. If you let go of sneak at any point, this ability will cancel." + "\n" + "(Surge) Tap sneak at a water source and click in a direction to fire a surge of water that will knock entities back. Additionally, if you tap sneak again before the surge reaches an entity, when it hits them it will freeze them in ice.");
 			config.addDefault("Abilities.Water.Torrent.Description", "Torrent is one of the strongest moves in a waterbender's arsenal. It has the potential to do immense damage and to be comboed with other abilities to perform a deal a large damage burst. Torrent is fundamental for waterbender's. ");
-			config.addDefault("Abilities.Water.Torrent.Instructions",  "\n" + "(Torrent) Left click at a water source and hold sneak to form the torrent. Then, left click and the torrent will shoot out, moving in the direction you're looking. If the torrent hits an entity, it can drag them and deal damage. Additionally, if you click before the torrent hits a surface or entity it will freeze on impact." + "\n" + "(Wave) Left click a water source and hold sneak to form a torrent around you. Then, left go of sneak to release a wave of water expanding outwards you that will push entities back.");
+			config.addDefault("Abilities.Water.Torrent.Instructions",  "\n" + "(Torrent) Left click at a water source and hold sneak to form the torrent. Then, left click and the torrent will shoot out, moving in the direction you're looking. If the torrent hits an entity, it can drag them and deal damage. Additionally, if you click before the torrent hits a surface or entity it will freeze on impact." + "\n" + "(Wave) Left click a water source and hold sneak to form a torrent around you. Then, let go of sneak to release a wave of water expanding outwards you that will push entities back.");
 			config.addDefault("Abilities.Water.Torrent.DeathMessage", "{victim} was taken down by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.WaterArms.Description", "One of the most diverse moves in a Waterbender's arsenal, this move creates tendrils " + "of water from the players arms to emulate their actual arms. It has the potential to do a variety of things that can either do mass amounts of damage, or used for mobility.");
 			config.addDefault("Abilities.Water.WaterArms.Instructions",  "To activate this ability, tap sneak at a water source. Additionally, to de-activate this ability, hold sneak and left click." + "\n" + "(Pull) Left click at a target and your arms will expand outwards, pulling entities towards you if they're in range." + "\n" + "(Punch) Left click and your arms will expand outwards, punching anyone who comes into contact with them and dealing damage." + "\n" + "(Grapple) Left click to send your arms forward, pulling you to whatever surface they land on." + "\n" + "(Grab) Left click to grab an entity that's in range. They will then be controlled and moved in whatever direction you look. Additionally, if you left click again you can throw the target that you're controlling." + "\n" + "(Freeze) Left click to rapidly fire ice blasts at a target, damaging the target and giving them slowness." + "\n" + "(Spear) Left click to send an ice spear out, damaging and freezing whoever it hits in ice blocks.");
@@ -522,6 +522,36 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Power", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Enabled", true);
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power", 3);
+			
+			config.addDefault("Abilities.Avatar.Earth.LavaFlow.ShiftCooldown", 1500);
+			config.addDefault("Abilities.Avatar.Earth.LavaFlow.ClickLavaCooldown", 1500);
+			config.addDefault("Abilities.Avatar.Earth.LavaFlow.ClickLandCooldown", 1500);
+			config.addDefault("Abilities.Avatar.Earth.LavaFlow.ShiftPlatformRadius", 18);
+			config.addDefault("Abilities.Avatar.Earth.LavaFlow.ClickRadius", 18);
+			config.addDefault("Abilities.Avatar.Earth.LavaFlow.ShiftRadius", 18);
+			config.addDefault("Abilities.Avatar.Earth.MetalClips.Cooldown", 2000);
+			config.addDefault("Abilities.Avatar.Earth.MetalClips.Range", 20);
+			config.addDefault("Abilities.Avatar.Earth.MetalClips.CrushDamage", 3);
+			config.addDefault("Abilities.Avatar.Earth.RaiseEarth.Wall.Height", 20);
+			config.addDefault("Abilities.Avatar.Earth.RaiseEarth.Column.Width", 16);
+			config.addDefault("Abilities.Avatar.Earth.Shockwave.Range", 20);
+			config.addDefault("Abilities.Avatar.Earth.Shockwave.Cooldown", 0);
+			config.addDefault("Abilities.Avatar.Earth.Shockwave.ChargeTime", 1500);
+			config.addDefault("Abilities.Avatar.Earth.Shockwave.Damage", 5);
+			config.addDefault("Abilities.Avatar.Earth.Shockwave.Knockback", 2);
+			
+			config.addDefault("Abilities.Avatar.Fire.Blaze.Ring.Range", 14);
+			config.addDefault("Abilities.Avatar.Fire.FireJet.IsAvatarStateToggle", true);
+			config.addDefault("Abilities.Avatar.Fire.Lightning.ChargeTime", 1500);
+			config.addDefault("Abilities.Avatar.Fire.Lightning.Damage", 6);
+			config.addDefault("Abilities.Avatar.Fire.Lightning.Cooldown", 1000);
+			config.addDefault("Abilities.Avatar.Fire.FireBurst.ChargeTime", 1);
+			config.addDefault("Abilities.Avatar.Fire.FireBurst.Damage", 3);
+			config.addDefault("Abilities.Avatar.Fire.FireBurst.Cooldown", 0);
+			
+			config.addDefault("Abilities.Avatar.Water.Surge.Wall.Radius", 4);
+			config.addDefault("Abilities.Avatar.Water.Surge.Wave.Radius", 20);
+			config.addDefault("Abilities.Avatar.Water.WaterManipulation.Damage", 5);
 
 			config.addDefault("Abilities.Air.Passive.Factor", 0.3);
 			config.addDefault("Abilities.Air.Passive.Speed", 2);
@@ -1063,7 +1093,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireJet.Speed", 0.8);
 			config.addDefault("Abilities.Fire.FireJet.Duration", 2000);
 			config.addDefault("Abilities.Fire.FireJet.Cooldown", 7000);
-			config.addDefault("Abilities.Fire.FireJet.IsAvatarStateToggle", true);
 
 			config.addDefault("Abilities.Fire.FireShield.Enabled", true);
 			config.addDefault("Abilities.Fire.FireShield.Radius", 3);

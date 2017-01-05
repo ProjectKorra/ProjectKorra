@@ -1,11 +1,10 @@
 package com.projectkorra.projectkorra.firebending;
 
-import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.projectkorra.ability.FireAbility;
 
 public class BlazeRing extends FireAbility {
 	
@@ -22,8 +21,9 @@ public class BlazeRing extends FireAbility {
 		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
 		this.location = player.getLocation();
 		
-		this.range = (int) AvatarState.getValue(this.range, player);
-		
+		if (bPlayer.isAvatarState()) {
+		range = getConfig().getInt("Abilities.Avatar.Fire.Blaze.Ring.Range");
+		}
 		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("BlazeRing")) {
 			return;
 		}		

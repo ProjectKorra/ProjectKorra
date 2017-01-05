@@ -27,8 +27,9 @@ public class Shockwave extends EarthAbility {
 		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
 		
 		if (bPlayer.isAvatarState()) {
-			chargeTime = 0;
-			cooldown = 0;
+			range = getConfig().getDouble("Abilities.Avatar.Earth.Shockwave.Range");
+			cooldown = getConfig().getLong("Abilities.Avatar.Earth.Shockwave.Cooldown");
+			chargeTime = getConfig().getLong("Abilities.Avatar.Earth.Shockwave.ChargeTime");
 		}
 		
 		if (!bPlayer.canBend(this) || hasAbility(player, Shockwave.class)) {
