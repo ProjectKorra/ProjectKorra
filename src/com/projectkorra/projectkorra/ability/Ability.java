@@ -111,6 +111,18 @@ public interface Ability {
 	 * @see HelpCommand
 	 * @see CoreAbility#getDescription()
 	 */
+	
+	public String getInstructions();
+	 
+	 	/**
+	 	 * Return's the instructions of an ability.
+	 	 * ProjectKorra's help command will then use this method to display the instructions of an ability when the command is run.
+	 	 *
+	 	 * @return A new instance of the ability.
+	 	 * @param player The player using the combo.
+	 	 */
+	 
+	 
 	public String getDescription();
 
 	/**
