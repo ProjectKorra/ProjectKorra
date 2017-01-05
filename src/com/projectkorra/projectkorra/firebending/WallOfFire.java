@@ -37,10 +37,10 @@ public class WallOfFire extends FireAbility {
 	private Random random;
 	private Location origin;
 	private List<Block> blocks;
-
+	
 	public WallOfFire(Player player) {
 		super(player);
-
+		
 		this.active = true;
 		this.maxAngle = getConfig().getDouble("Abilities.Fire.WallOfFire.MaxAngle");
 		this.interval = getConfig().getLong("Abilities.Fire.WallOfFire.Interval");
@@ -60,7 +60,7 @@ public class WallOfFire extends FireAbility {
 		} else if (bPlayer.isOnCooldown(this)) {
 			return;
 		}
-
+		
 		origin = GeneralMethods.getTargetedLocation(player, range);
 
 		if (isDay(player.getWorld())) {
@@ -107,7 +107,7 @@ public class WallOfFire extends FireAbility {
 		if (radius < width) {
 			radius = width;
 		}
-
+		
 		radius = radius + 1;
 		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(origin, radius);
 		if (entities.contains(player)) {
@@ -139,6 +139,7 @@ public class WallOfFire extends FireAbility {
 			}
 		}
 	}
+
 
 	private void initializeBlocks() {
 		Vector direction = player.getEyeLocation().getDirection();
@@ -207,7 +208,7 @@ public class WallOfFire extends FireAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -217,7 +218,7 @@ public class WallOfFire extends FireAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public List<Location> getLocations() {
 		ArrayList<Location> locations = new ArrayList<>();

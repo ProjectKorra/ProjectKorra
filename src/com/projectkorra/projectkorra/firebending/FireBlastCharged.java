@@ -34,7 +34,7 @@ public class FireBlastCharged extends FireAbility {
 	private boolean dissipate;
 	private long time;
 	private long chargeTime;
-	private long interval;
+	private long interval;	
 	private double maxDamage;
 	private double range;
 	private double collisionRadius;
@@ -46,14 +46,14 @@ public class FireBlastCharged extends FireAbility {
 	private Location origin;
 	private Location location;
 	private Vector direction;
-
+	
 	public FireBlastCharged(Player player) {
 		super(player);
-
+		
 		if (!bPlayer.canBend(this) || hasAbility(player, FireBlastCharged.class)) {
 			return;
 		}
-
+		
 		this.charged = false;
 		this.launched = false;
 		this.canDamageBlocks = getConfig().getBoolean("Abilities.Fire.FireBlast.Charged.DamageBlocks");
@@ -68,7 +68,7 @@ public class FireBlastCharged extends FireAbility {
 		this.explosionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.ExplosionRadius");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.FireTicks");
 		this.innerRadius = damageRadius / 2;
-
+		
 		if (isDay(player.getWorld())) {
 			this.chargeTime = (long) (chargeTime / getDayFactor());
 			this.maxDamage = getDayFactor(maxDamage);
@@ -78,10 +78,11 @@ public class FireBlastCharged extends FireAbility {
 			this.chargeTime = 0;
 			this.maxDamage = AvatarState.getValue(maxDamage);
 		}
-
+		
+		
 		if (!player.getEyeLocation().getBlock().isLiquid()) {
 			start();
-		}
+		} 
 	}
 
 	public static boolean annihilateBlasts(Location location, double radius, Player source) {
@@ -90,7 +91,7 @@ public class FireBlastCharged extends FireAbility {
 			if (!chargedBlast.launched) {
 				continue;
 			}
-
+			
 			Location fireBlastLocation = chargedBlast.location;
 			if (location.getWorld().equals(fireBlastLocation.getWorld()) && !source.equals(chargedBlast.player)) {
 				if (location.distanceSquared(fireBlastLocation) <= radius * radius) {
@@ -133,10 +134,10 @@ public class FireBlastCharged extends FireAbility {
 		if (explosion == null) {
 			return;
 		}
-
+		
 		double distance = 0;
-		if (entity.getWorld().equals(explosion.getWorld())) {
-			distance = entity.getLocation().distance(explosion.getLocation());
+		if(entity.getWorld().equals(explosion.getWorld())) {
+				distance = entity.getLocation().distance(explosion.getLocation());
 		}
 		if (distance > damageRadius) {
 			return;
@@ -144,7 +145,7 @@ public class FireBlastCharged extends FireAbility {
 			DamageHandler.damageEntity(entity, maxDamage, this);
 			return;
 		}
-
+		
 		double slope = -(maxDamage * .5) / (damageRadius - innerRadius);
 		double damage = slope * (distance - innerRadius) + maxDamage;
 		DamageHandler.damageEntity(entity, damage, this);
@@ -159,19 +160,19 @@ public class FireBlastCharged extends FireAbility {
 				break;
 			}
 		}
-
+		
 		if (explode) {
 			if (canDamageBlocks && explosionRadius > 0 && canFireGrief()) {
 				explosion = player.getWorld().spawn(location, TNTPrimed.class);
 				explosion.setFuseTicks(0);
 				double yield = explosionRadius;
-
+				
 				if (!bPlayer.isAvatarState()) {
 					yield = getDayFactor(yield, player.getWorld());
 				} else {
 					yield = AvatarState.getValue(yield);
 				}
-
+				
 				explosion.setYield((float) yield);
 				EXPLOSIONS.put(explosion, this);
 			} else {
@@ -180,7 +181,7 @@ public class FireBlastCharged extends FireAbility {
 					if (entity instanceof LivingEntity) {
 						double slope = -(maxDamage * .5) / (damageRadius - innerRadius);
 						double damage = 0;
-						if (entity.getWorld().equals(location.getWorld())) {
+						if(entity.getWorld().equals(location.getWorld())) {
 							damage = slope * (entity.getLocation().distance(location) - innerRadius) + maxDamage;
 						}
 						DamageHandler.damageEntity(entity, damage, this);
@@ -207,7 +208,8 @@ public class FireBlastCharged extends FireAbility {
 
 		boolean exploded = false;
 		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * collisionRadius)) {
-			if (entity.getEntityId() == player.getEntityId() || GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
+			if (entity.getEntityId() == player.getEntityId()
+					|| GeneralMethods.isRegionProtectedFromBuild(this, entity.getLocation())) {
 				continue;
 			}
 			entity.setFireTicks((int) (fireTicks * 20));
@@ -244,11 +246,12 @@ public class FireBlastCharged extends FireAbility {
 		} else if (!bPlayer.canBend(CoreAbility.getAbility("FireBlast")) && !launched) {
 			remove();
 			return;
-		} else if (!player.isSneaking() && !charged) {
+		}
+		else if (!player.isSneaking() && !charged) {
 			remove();
 			return;
 		}
-
+		
 		if (System.currentTimeMillis() > getStartTime() + chargeTime) {
 			charged = true;
 		}
@@ -307,7 +310,7 @@ public class FireBlastCharged extends FireAbility {
 	public long getCooldown() {
 		return 0;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -317,12 +320,12 @@ public class FireBlastCharged extends FireAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean isCollidable() {
 		return this.launched;
 	}
-
+	
 	@Override
 	public double getCollisionRadius() {
 		return collisionRadius;

@@ -39,41 +39,47 @@ public class WhoCommand extends PKCommand {
 	/**
 	 * Map storage of all ProjectKorra staffs' UUIDs and titles
 	 */
-	final Map<String, String> staff = new HashMap<String, String>(),
-			playerInfoWords = new HashMap<String, String>();
-
+	final Map<String, String> staff = new HashMap<String, String>(), playerInfoWords = new HashMap<String, String>();
+	
 	private String databaseOverload, noPlayersOnline, playerOffline;
-
+	
 	public WhoCommand() {
 		super("who", "/bending who [Page/Player]", ConfigManager.languageConfig.get().getString("Commands.Who.Description"), new String[] { "who", "w" });
-
+		
 		databaseOverload = ConfigManager.languageConfig.get().getString("Commands.Who.DatabaseOverload");
 		noPlayersOnline = ConfigManager.languageConfig.get().getString("Commands.Who.NoPlayersOnline");
 		playerOffline = ConfigManager.languageConfig.get().getString("Commands.Who.PlayerOffline");
-
-		new BukkitRunnable() {
-			public void run() {
-				try {
+		
+		new BukkitRunnable()
+		{
+			public void run()
+			{
+				try
+				{
 					staff.clear();
 					// Create a URL for the desired page
 					URLConnection url = new URL("http://www.projectkorra.com/staff.txt").openConnection();
 					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-
+					
 					// Read all the text returned by the server
 					BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream(), Charset.forName("UTF-8")));
 					String unparsed;
-					while ((unparsed = in.readLine()) != null) {
+					while ((unparsed = in.readLine()) != null)
+					{
 						String[] staffEntry = unparsed.split("/");
-						if (staffEntry.length >= 2) {
+						if (staffEntry.length >= 2)
+						{
 							staff.put(staffEntry[0], ChatColor.translateAlternateColorCodes('&', staffEntry[1]));
 						}
 					}
 					in.close();
 				}
-				catch (MalformedURLException e) {
+				catch (MalformedURLException e)
+				{
 					e.printStackTrace();
 				}
-				catch (IOException e) {
+				catch (IOException e)
+				{
 					e.printStackTrace();
 				}
 			}
@@ -96,7 +102,7 @@ public class WhoCommand extends PKCommand {
 				String playerName = player.getName();
 				String result = "";
 				BendingPlayer bp = BendingPlayer.getBendingPlayer(playerName);
-
+				
 				if (bp == null) {
 					GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 					bp = BendingPlayer.getBendingPlayer(player.getName());
@@ -133,8 +139,10 @@ public class WhoCommand extends PKCommand {
 	/**
 	 * Sends information on the given player to the CommandSender.
 	 * 
-	 * @param sender The CommandSender to display the information to
-	 * @param playerName The Player to look up
+	 * @param sender
+	 *            The CommandSender to display the information to
+	 * @param playerName
+	 *            The Player to look up
 	 */
 	private void whoPlayer(final CommandSender sender, final String playerName) {
 		//Player player = Bukkit.getPlayer(playerName);
@@ -145,9 +153,10 @@ public class WhoCommand extends PKCommand {
 			return;
 		}
 		if (!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
-			sender.sendMessage(ChatColor.GRAY + playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
+			sender.sendMessage(ChatColor.GRAY + playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY)
+			.replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
 		}
-
+		
 		Player player_ = (Player) (player.isOnline() ? player : null);
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
@@ -179,17 +188,17 @@ public class WhoCommand extends PKCommand {
 			runnable.runTaskAsynchronously(ProjectKorra.plugin);
 			return;
 		}
-
+		
 		bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer != null) {
 			sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : "") + " - ");
 			if (bPlayer.hasElement(Element.AIR)) {
-				if (bPlayer.isElementToggled(Element.AIR)) {
+				if(bPlayer.isElementToggled(Element.AIR)) {
 					sender.sendMessage(Element.AIR.getColor() + "- Airbender");
 				} else {
 					sender.sendMessage(Element.AIR.getColor() + "" + ChatColor.STRIKETHROUGH + "- Airbender");
 				}
-
+				
 				if (player_ != null) {
 					if (bPlayer.canUseFlight()) {
 						sender.sendMessage(Element.FLIGHT.getColor() + "    Can Fly");
@@ -205,12 +214,12 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (bPlayer.hasElement(Element.WATER)) {
-				if (bPlayer.isElementToggled(Element.WATER)) {
+				if(bPlayer.isElementToggled(Element.WATER)) {
 					sender.sendMessage(Element.WATER.getColor() + "- Waterbender");
 				} else {
 					sender.sendMessage(Element.WATER.getColor() + "" + ChatColor.STRIKETHROUGH + "- Waterbender");
 				}
-
+				
 				if (player_ != null) {
 					if (bPlayer.canPlantbend()) {
 						sender.sendMessage(Element.PLANT.getColor() + "    Can Plantbend");
@@ -236,12 +245,12 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (bPlayer.hasElement(Element.EARTH)) {
-				if (bPlayer.isElementToggled(Element.EARTH)) {
+				if(bPlayer.isElementToggled(Element.EARTH)) {
 					sender.sendMessage(Element.EARTH.getColor() + "- Earthbender");
 				} else {
 					sender.sendMessage(Element.EARTH.getColor() + "" + ChatColor.STRIKETHROUGH + "- Earthbender");
 				}
-
+				
 				if (player_ != null) {
 					if (bPlayer.canMetalbend()) {
 						sender.sendMessage(Element.METAL.getColor() + "    Can Metalbend");
@@ -260,12 +269,12 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (bPlayer.hasElement(Element.FIRE)) {
-				if (bPlayer.isElementToggled(Element.FIRE)) {
+				if(bPlayer.isElementToggled(Element.FIRE)) {
 					sender.sendMessage(Element.FIRE.getColor() + "- Firebender");
 				} else {
 					sender.sendMessage(Element.FIRE.getColor() + "" + ChatColor.STRIKETHROUGH + "- Firebender");
 				}
-
+				
 				if (player_ != null) {
 					if (bPlayer.canCombustionbend()) {
 						sender.sendMessage(Element.COMBUSTION.getColor() + "    Can Combustionbend");
@@ -281,7 +290,7 @@ public class WhoCommand extends PKCommand {
 				}
 			}
 			if (bPlayer.hasElement(Element.CHI)) {
-				if (bPlayer.isElementToggled(Element.CHI)) {
+				if(bPlayer.isElementToggled(Element.CHI)) {
 					sender.sendMessage(Element.CHI.getColor() + "- Chiblocker");
 				} else {
 					sender.sendMessage(Element.CHI.getColor() + "" + ChatColor.STRIKETHROUGH + "- Chiblocker");
@@ -311,7 +320,7 @@ public class WhoCommand extends PKCommand {
 					}
 				}
 			}
-
+			
 			UUID uuid = player.getUniqueId();
 			if (bPlayer != null) {
 				sender.sendMessage("Abilities: ");
@@ -338,13 +347,12 @@ public class WhoCommand extends PKCommand {
 				sender.sendMessage(staff.get(uuid.toString()));
 			}
 		}
-
+		
 	}
-
+	
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 1 || !sender.hasPermission("bending.command.who"))
-			return new ArrayList<String>();
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.who")) return new ArrayList<String>();
 		List<String> l = new ArrayList<String>();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			l.add(p.getName());

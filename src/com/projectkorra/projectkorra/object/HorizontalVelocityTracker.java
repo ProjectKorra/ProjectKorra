@@ -24,7 +24,7 @@ import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
  * Created by Carbogen on 2/2/2015.
  */
 public class HorizontalVelocityTracker {
-
+	
 	public static Map<Entity, HorizontalVelocityTracker> instances = new ConcurrentHashMap<Entity, HorizontalVelocityTracker>();
 	public boolean hasBeenDamaged = false;
 	public boolean barrier = ConfigManager.defaultConfig.get().getBoolean("Properties.HorizontalCollisionPhysics.DamageOnBarrierBlock");
@@ -37,8 +37,8 @@ public class HorizontalVelocityTracker {
 	private Location launchLocation;
 	private Location impactLocation;
 	private Ability abil;
-
-	public static String[] abils = { "AirBlast", "AirBurst", "AirSuction", "Bloodbending" };
+	
+	public static String[] abils = {"AirBlast", "AirBurst", "AirSuction", "Bloodbending"};
 
 	public HorizontalVelocityTracker(Entity e, Player instigator, long delay, Ability ability) {
 		if (!ProjectKorra.plugin.getConfig().getBoolean("Properties.HorizontalCollisionPhysics.Enabled"))
@@ -62,7 +62,7 @@ public class HorizontalVelocityTracker {
 		if (System.currentTimeMillis() < fireTime + delay) {
 			return;
 		}
-
+		
 		if (entity.isOnGround()) {
 			remove();
 			return;
@@ -81,13 +81,12 @@ public class HorizontalVelocityTracker {
 				return;
 			}
 		}
-
+		
 		if (thisVelocity.length() < lastVelocity.length()) {
 			if ((diff.getX() > 1 || diff.getX() < -1) || (diff.getZ() > 1 || diff.getZ() < -1)) {
 				impactLocation = entity.getLocation();
 				for (Block b : blocks) {
-					if (b.getType() == Material.BARRIER && barrier == false)
-						return;
+					if (b.getType() == Material.BARRIER && barrier == false) return;
 					if (GeneralMethods.isSolid(b) && (entity.getLocation().getBlock().getRelative(BlockFace.EAST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.NORTH, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.WEST, 1).equals(b) || entity.getLocation().getBlock().getRelative(BlockFace.SOUTH, 1).equals(b))) {
 						if (!ElementalAbility.isTransparent(instigator, b)) {
 							hasBeenDamaged = true;
@@ -118,7 +117,7 @@ public class HorizontalVelocityTracker {
 		if (instances.containsKey(e))
 			instances.remove(e);
 	}
-
+	
 	public static boolean hasBeenDamagedByHorizontalVelocity(Entity e) {
 		if (instances.containsKey(e)) {
 			return instances.get(e).hasBeenDamaged;

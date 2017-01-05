@@ -23,10 +23,10 @@ public class ClearCommand extends PKCommand {
 	private String wrongNumber;
 	private String clearedSlot;
 	private String alreadyEmpty;
-
+	
 	public ClearCommand() {
 		super("clear", "/bending clear [Slot]", ConfigManager.languageConfig.get().getString("Commands.Clear.Description"), new String[] { "clear", "cl", "c" });
-
+		
 		this.cantEditBinds = ConfigManager.languageConfig.get().getString("Commands.Clear.CantEditBinds");
 		this.cleared = ConfigManager.languageConfig.get().getString("Commands.Clear.Cleared");
 		this.wrongNumber = ConfigManager.languageConfig.get().getString("Commands.Clear.WrongNumber");
@@ -63,21 +63,19 @@ public class ClearCommand extends PKCommand {
 				if (bPlayer.getAbilities().get(slot) != null) {
 					bPlayer.getAbilities().remove(slot);
 					GeneralMethods.saveAbility(bPlayer, slot, null);
-					sender.sendMessage(ChatColor.YELLOW + clearedSlot.replace("{slot}", String.valueOf(slot)));
+					sender.sendMessage(ChatColor.YELLOW + clearedSlot.replace("{slot}",  String.valueOf(slot)));
 				} else {
 					sender.sendMessage(ChatColor.YELLOW + alreadyEmpty);
 				}
-			}
-			catch (NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				sender.sendMessage(ChatColor.RED + wrongNumber);
 			}
 		}
 	}
-
+	
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 1 || !sender.hasPermission("bending.command.clear"))
-			return new ArrayList<String>();
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.clear")) return new ArrayList<String>();
 		return Arrays.asList("123456789".split(""));
 	}
 

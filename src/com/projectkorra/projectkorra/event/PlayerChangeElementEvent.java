@@ -23,8 +23,7 @@ public class PlayerChangeElementEvent extends Event {
 	 * @param sender the {@link CommandSender} who changed the player's bending
 	 * @param target the {@link Player player} who's bending was changed
 	 * @param element the {@link Element element} that was affected
-	 * @param result whether the element was chosen, added, removed, or
-	 *            permaremoved
+	 * @param result whether the element was chosen, added, removed, or permaremoved
 	 */
 	public PlayerChangeElementEvent(CommandSender sender, Player target, Element element, Result result) {
 		this.sender = sender;

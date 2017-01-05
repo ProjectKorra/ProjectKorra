@@ -28,10 +28,10 @@ public class DisplayCommand extends PKCommand {
 	private String playersOnly;
 	private String noAbilitiesAvailable;
 	private String noBinds;
-
+	
 	public DisplayCommand() {
 		super("display", "/bending display <Element>", ConfigManager.languageConfig.get().getString("Commands.Display.Description"), new String[] { "display", "dis", "d" });
-
+		
 		this.noCombosAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoCombosAvailable");
 		this.noAbilitiesAvailable = ConfigManager.languageConfig.get().getString("Commands.Display.NoAbilitiesAvailable");
 		this.invalidArgument = ConfigManager.languageConfig.get().getString("Commands.Display.InvalidArgument");
@@ -48,18 +48,12 @@ public class DisplayCommand extends PKCommand {
 		//bending display [Element]
 		if (args.size() == 1) {
 			String elementName = args.get(0).toLowerCase().replace("bending", "");
-			if (elementName.equalsIgnoreCase("wc"))
-				elementName = "watercombo";
-			else if (elementName.equalsIgnoreCase("ac"))
-				elementName = "aircombo";
-			else if (elementName.equalsIgnoreCase("ec"))
-				elementName = "earthcombo";
-			else if (elementName.equalsIgnoreCase("fc"))
-				elementName = "firecombo";
-			else if (elementName.equalsIgnoreCase("cc"))
-				elementName = "chicombo";
-			else if (elementName.equalsIgnoreCase("avc"))
-				elementName = "avatarcombo";
+			if (elementName.equalsIgnoreCase("wc")) elementName = "watercombo";
+			else if (elementName.equalsIgnoreCase("ac")) elementName = "aircombo";
+			else if (elementName.equalsIgnoreCase("ec")) elementName = "earthcombo";
+			else if (elementName.equalsIgnoreCase("fc")) elementName = "firecombo";
+			else if (elementName.equalsIgnoreCase("cc")) elementName = "chicombo";
+			else if (elementName.equalsIgnoreCase("avc")) elementName = "avatarcombo";
 			Element element = Element.fromString(elementName.replace("combos", "").replace("combo", ""));
 			//combos
 			if (element != null && elementName.contains("combo")) {
@@ -83,7 +77,8 @@ public class DisplayCommand extends PKCommand {
 					sender.sendMessage(comboColor + comboMove);
 				}
 				return;
-			} else if (element != null) {
+			}
+			else if (element != null) {
 				if (!element.equals(Element.AVATAR)) {
 					if (!(element instanceof SubElement)) {
 						displayElement(sender, element);
@@ -141,7 +136,7 @@ public class DisplayCommand extends PKCommand {
 				sender.sendMessage(ability.getElement().getColor() + ability.getName());
 				abilitiesSent.add(ability.getName());
 			}
-		}
+		} 
 	}
 
 	/**
@@ -196,7 +191,7 @@ public class DisplayCommand extends PKCommand {
 			sender.sendMessage(ChatColor.YELLOW + noAbilitiesAvailable.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW));
 			return;
 		}
-
+		
 		HashSet<String> abilitiesSent = new HashSet<String>();
 		for (CoreAbility ability : abilities) {
 			if (ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
@@ -233,22 +228,21 @@ public class DisplayCommand extends PKCommand {
 				sender.sendMessage(i + " - " + coreAbil.getElement().getColor() + ability);
 		}
 	}
-
+	
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 1 || !sender.hasPermission("bending.command.display"))
-			return new ArrayList<String>();
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.display")) return new ArrayList<String>();
 		List<String> list = new ArrayList<String>();
 		list.add("Air");
 		list.add("Earth");
 		list.add("Fire");
 		list.add("Water");
 		list.add("Chi");
-
+		
 		for (Element e : Element.getAddonElements()) {
 			list.add(e.getName());
 		}
-
+		
 		list.add("Bloodbending");
 		list.add("Combustion");
 		list.add("Flight");
@@ -260,18 +254,18 @@ public class DisplayCommand extends PKCommand {
 		list.add("Plantbending");
 		list.add("Sand");
 		list.add("SpiritualProjection");
-
+		
 		for (SubElement se : Element.getAddonSubElements()) {
 			list.add(se.getName());
 		}
-
+		
 		list.add("AirCombos");
 		list.add("EarthCombos");
 		list.add("FireCombos");
 		list.add("WaterCombos");
 		list.add("ChiCombos");
 		list.add("Avatar");
-
+		
 		return list;
 	}
 }

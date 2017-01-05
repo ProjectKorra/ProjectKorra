@@ -18,42 +18,45 @@ import java.util.List;
 import java.util.Random;
 
 public class IceSpikePillarField extends IceAbility {
-
+	
 	private double damage;
 	private double radius;
 	private int numberOfSpikes;
 	private long cooldown;
 	private Vector thrownForce;
-
+	
 	public IceSpikePillarField(Player player) {
 		super(player);
-
+		
 		if (bPlayer.isOnCooldown("IceSpikePillarField")) {
 			return;
 		}
-
+		
 		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Field.Damage");
 		this.radius = getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius");
 		this.numberOfSpikes = (int) (((radius * 2) * (radius * 2)) / 16);
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
 		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Field.Push"), 0);
-
+		
 		Random random = new Random();
 		int locX = player.getLocation().getBlockX();
 		int locY = player.getLocation().getBlockY();
 		int locZ = player.getLocation().getBlockZ();
 		List<Block> iceBlocks = new ArrayList<Block>();
-
+		
 		for (int x = (int) -(radius - 1); x <= (radius - 1); x++) {
 			for (int z = (int) -(radius - 1); z <= (radius - 1); z++) {
 				for (int y = -1; y <= 1; y++) {
 					Block testBlock = player.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
-
-					if (WaterAbility.isIcebendable(player, testBlock.getType(), false) && testBlock.getRelative(BlockFace.UP).getType() == Material.AIR && !(testBlock.getX() == player.getEyeLocation().getBlock().getX() && testBlock.getZ() == player.getEyeLocation().getBlock().getZ())) {
+					
+					if (WaterAbility.isIcebendable(player, testBlock.getType(), false)
+							&& testBlock.getRelative(BlockFace.UP).getType() == Material.AIR
+							&& !(testBlock.getX() == player.getEyeLocation().getBlock().getX() 
+								&& testBlock.getZ() == player.getEyeLocation().getBlock().getZ())) {
 						iceBlocks.add(testBlock);
 						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
 							Random rand = new Random();
-							if (rand.nextInt(5) == 0) {
+							if(rand.nextInt(5)==0) {
 								playIcebendingSound(iceBlocks.get(i).getLocation());
 							}
 						}
@@ -62,7 +65,7 @@ public class IceSpikePillarField extends IceAbility {
 			}
 		}
 
-		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getLocation(), radius);
+		List<Entity> entities = GeneralMethods.getEntitiesAroundPoint(player.getLocation(),	radius);
 		for (int i = 0; i < numberOfSpikes; i++) {
 			if (iceBlocks.isEmpty()) {
 				return;
@@ -89,7 +92,7 @@ public class IceSpikePillarField extends IceAbility {
 			} else {
 				targetBlock = iceBlocks.get(random.nextInt(iceBlocks.size()));
 			}
-
+			
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
 				IceSpikePillar pillar = new IceSpikePillar(player, targetBlock.getLocation(), (int) damage, thrownForce, cooldown);
 				pillar.inField = true;
@@ -105,8 +108,7 @@ public class IceSpikePillarField extends IceAbility {
 	}
 
 	@Override
-	public void progress() {
-	}
+	public void progress() {}
 
 	@Override
 	public Location getLocation() {
@@ -117,7 +119,7 @@ public class IceSpikePillarField extends IceAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return true;

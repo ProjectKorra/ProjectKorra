@@ -59,10 +59,10 @@ public class WaterArms extends WaterAbility {
 	private World world;
 	private String sneakMsg;
 	private Arm activeArm;
-
+		
 	public WaterArms(Player player) {
 		super(player);
-
+		
 		this.fullSource = true;
 		this.leftArmConsumed = false;
 		this.rightArmConsumed = false;
@@ -83,9 +83,9 @@ public class WaterArms extends WaterAbility {
 		this.lastClickTime = 0;
 		this.world = player.getWorld();
 		this.activeArm = Arm.RIGHT;
-
+		
 		WaterArms oldArms = getAbility(player, WaterArms.class);
-
+		
 		if (oldArms != null) {
 			if (player.isSneaking()) {
 				oldArms.prepareCancel();
@@ -132,10 +132,11 @@ public class WaterArms extends WaterAbility {
 			return;
 		}
 
+
 		if (bPlayer.canBend(this) && prepare()) {
 			start();
 			MultiAbilityManager.bindMultiAbility(player, "WaterArms");
-
+			
 			if (ChatColor.stripColor(bPlayer.getBoundAbilityName()) == null) {
 				remove();
 				return;
@@ -343,7 +344,7 @@ public class WaterArms extends WaterAbility {
 				BLOCK_REVERT_TIMES.remove(block);
 			}
 		}
-
+		
 		for (Block block : WaterArmsSpear.getIceBlocks().keySet()) {
 			long time = WaterArmsSpear.getIceBlocks().get(block);
 			if (System.currentTimeMillis() > time || ignoreTime) {
@@ -404,10 +405,10 @@ public class WaterArms extends WaterAbility {
 	public static void progressAllCleanup() {
 		progressRevert(false);
 		/*
-		 * There is currently a bug where waterArms will display the arms and
-		 * then progressRevert will revert the same blocks in the same tick
-		 * before the user is able to see them, thus causing invisible arms.
-		 * Simple fix is just to display the arms again.
+		 * There is currently a bug where waterArms will display the arms and then
+		 * progressRevert will revert the same blocks in the same tick before the user is
+		 * able to see them, thus causing invisible arms. Simple fix is just to display the arms
+		 * again.
 		 */
 		for (WaterArms waterArms : getAbilities(WaterArms.class)) {
 			waterArms.displayLeftArm();
@@ -433,7 +434,7 @@ public class WaterArms extends WaterAbility {
 
 	public void displayBoundMsg(int slot) {
 		String name = bPlayer.getAbilities().get(slot);
-		if (name != null) {
+		if(name != null) {
 			player.sendMessage(getElement().getColor() + sneakMsg + " " + name);
 		}
 	}
@@ -615,7 +616,7 @@ public class WaterArms extends WaterAbility {
 	public Location getLocation() {
 		return player != null ? player.getLocation() : null;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return true;

@@ -29,10 +29,10 @@ public class AvatarState extends AvatarAbility {
 	private long duration;
 	private long cooldown;
 	private double factor;
-
+	
 	public AvatarState(Player player) {
 		super(player);
-
+		
 		AvatarState oldAbil = getAbility(player, AvatarState.class);
 		if (oldAbil != null) {
 			oldAbil.remove();
@@ -42,7 +42,7 @@ public class AvatarState extends AvatarAbility {
 		} else if (GLOBAL_COOLDOWNS.containsKey(player.getUniqueId())) {
 			return;
 		}
-
+		
 		this.regenEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Regeneration.Enabled");
 		this.speedEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.Speed.Enabled");
 		this.resistanceEnabled = getConfig().getBoolean("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Enabled");
@@ -52,12 +52,12 @@ public class AvatarState extends AvatarAbility {
 		this.resistancePower = getConfig().getInt("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Power") - 1;
 		this.fireResistancePower = getConfig().getInt("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power") - 1;
 		this.duration = getConfig().getLong("Abilities.Avatar.AvatarState.Duration");
-		this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Cooldown");
+		this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Cooldown");	
 		this.factor = getConfig().getDouble("Abilities.Avatar.AvatarState.PowerMultiplier");
-
+		
 		new Flight(player);
 		playAvatarSound(player.getLocation());
-
+		
 		start();
 		bPlayer.addCooldown(this);
 		if (duration != 0) {
@@ -69,7 +69,7 @@ public class AvatarState extends AvatarAbility {
 				public void run() {
 					GLOBAL_COOLDOWNS.remove(id);
 				}
-			}, cooldown / 50);
+			}, cooldown/50);
 		}
 	}
 
@@ -120,7 +120,7 @@ public class AvatarState extends AvatarAbility {
 	public static int getValue(int value) {
 		return (int) getValue((double) value);
 	}
-
+	
 	public static double getValue(double value, Player player) {
 		AvatarState astate = getAbility(player, AvatarState.class);
 		if (astate != null) {
@@ -143,7 +143,7 @@ public class AvatarState extends AvatarAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return false;

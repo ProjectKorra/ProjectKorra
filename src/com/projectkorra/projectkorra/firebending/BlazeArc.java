@@ -17,13 +17,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BlazeArc extends FireAbility {
-
+	
 	private static final long DISSIPATE_REMOVE_TIME = 400;
-	private static final Material[] OVERWRITABLE_MATERIALS = { Material.SAPLING, Material.LONG_GRASS, Material.DEAD_BUSH, Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.FIRE, Material.SNOW, Material.TORCH };
+	private static final Material[] OVERWRITABLE_MATERIALS = { Material.SAPLING, Material.LONG_GRASS, Material.DEAD_BUSH, 
+			Material.YELLOW_FLOWER, Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, 
+			Material.FIRE, Material.SNOW, Material.TORCH };
 	private static final Map<Block, Player> IGNITED_BLOCKS = new ConcurrentHashMap<Block, Player>();
 	private static final Map<Block, Long> IGNITED_TIMES = new ConcurrentHashMap<Block, Long>();
 	private static final Map<Location, MaterialData> REPLACED_BLOCKS = new ConcurrentHashMap<Location, MaterialData>();
-
+	
 	private long time;
 	private long interval;
 	private double range;
@@ -31,7 +33,7 @@ public class BlazeArc extends FireAbility {
 	private Location origin;
 	private Location location;
 	private Vector direction;
-
+	
 	public BlazeArc(Player player, Location location, Vector direction, double range) {
 		super(player);
 		this.range = getDayFactor(range);
@@ -39,12 +41,12 @@ public class BlazeArc extends FireAbility {
 		this.interval = (long) (1000. / speed);
 		this.origin = location.clone();
 		this.location = origin.clone();
-
+		
 		this.direction = direction.clone();
 		this.direction.setY(0);
 		this.direction = this.direction.clone().normalize();
 		this.location = this.location.clone().add(this.direction);
-
+		
 		this.time = System.currentTimeMillis();
 		start();
 	}
@@ -59,33 +61,33 @@ public class BlazeArc extends FireAbility {
 				REPLACED_BLOCKS.put(block.getLocation(), block.getState().getData());
 			}
 		}
-
+		
 		block.setType(Material.FIRE);
 		IGNITED_BLOCKS.put(block, this.player);
 		IGNITED_TIMES.put(block, System.currentTimeMillis());
 	}
 
 	@Override
-	public void progress() {
+	public void progress() {		
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
 		} else if (System.currentTimeMillis() - time >= interval) {
 			location = location.clone().add(direction);
 			time = System.currentTimeMillis();
-
+			
 			Block block = location.getBlock();
 			if (block.getType() == Material.FIRE) {
 				return;
 			}
-
+			
 			if (location.distanceSquared(origin) > range * range) {
 				remove();
 				return;
 			} else if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 				return;
 			}
-
+			
 			if (isIgnitable(player, block)) {
 				ignite(block);
 			} else if (isIgnitable(player, block.getRelative(BlockFace.DOWN))) {
@@ -186,7 +188,7 @@ public class BlazeArc extends FireAbility {
 	public long getCooldown() {
 		return 0;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -268,5 +270,5 @@ public class BlazeArc extends FireAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-
+	
 }

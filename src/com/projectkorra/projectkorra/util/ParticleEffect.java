@@ -735,8 +735,8 @@ public enum ParticleEffect {
 
 	/**
 	 * Displays a single particle which flies into a determined direction and is
-	 * only visible for all players within a certain range in the world
-	 * of @param center
+	 * only visible for all players within a certain range in the world of @param
+	 * center
 	 * 
 	 * @param direction Direction of the particle
 	 * @param speed Display speed of the particle
@@ -976,14 +976,12 @@ public enum ParticleEffect {
 		public String getPacketDataString() {
 			return "_" + packetData[0] + "_" + packetData[1];
 		}
-
-		/**
-		 * Sets the packet data. Should be an integer array. For ITEM_CRACK and
-		 * BLOCK_DUST, it should be [id, meta] but for BLOCK_CRACK it should be
-		 * [id + (meta * 4096)]
+		
+		/**Sets the packet data. Should be an integer array. For ITEM_CRACK
+		 *  and BLOCK_DUST, it should be [id, meta] but for BLOCK_CRACK it 
+		 *  should be [id + (meta * 4096)] 
 		 * 
-		 * @param data The packet data.
-		 */
+		 * @param data The packet data.*/
 		public void setPacketData(int[] data) {
 			packetData = data;
 		}
@@ -1036,8 +1034,8 @@ public enum ParticleEffect {
 			if (!material.isBlock()) {
 				throw new IllegalArgumentException("The material is not a block");
 			}
-
-			this.setPacketData(new int[] { material.getId() + (data * 4096) });
+			
+			this.setPacketData(new int[] {material.getId() + (data * 4096)});
 		}
 	}
 

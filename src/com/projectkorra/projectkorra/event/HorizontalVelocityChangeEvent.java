@@ -14,7 +14,7 @@ import com.projectkorra.projectkorra.ability.Ability;
  * Created by Carbogen on 2/2/2015.
  */
 public class HorizontalVelocityChangeEvent extends Event implements Cancellable {
-
+	
 	private static final HandlerList handlers = new HandlerList();
 
 	private boolean isCancelled;
@@ -82,11 +82,11 @@ public class HorizontalVelocityChangeEvent extends Event implements Cancellable 
 	public Vector getDifference() {
 		return difference;
 	}
-
+	
 	public Ability getAbility() {
 		return abil;
 	}
-
+	
 	@Override
 	public HandlerList getHandlers() {
 		return handlers;

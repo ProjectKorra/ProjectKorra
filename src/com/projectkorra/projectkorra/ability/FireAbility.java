@@ -28,19 +28,30 @@ import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 import com.projectkorra.rpg.RPGMethods;
 
 public abstract class FireAbility extends ElementalAbility {
-
+	
 	private static final Map<Location, Information> TEMP_FIRE = new ConcurrentHashMap<Location, Information>();
-	private static final Material[] IGNITABLE_MATERIALS = { Material.BEDROCK, Material.BOOKSHELF, Material.BRICK, Material.CLAY, Material.CLAY_BRICK, Material.COAL_ORE, Material.COBBLESTONE, Material.DIAMOND_ORE, Material.DIAMOND_BLOCK, Material.DIRT, Material.ENDER_STONE, Material.GLOWING_REDSTONE_ORE, Material.GOLD_BLOCK, Material.GRAVEL, Material.GRASS, Material.HUGE_MUSHROOM_1, Material.HUGE_MUSHROOM_2, Material.LAPIS_BLOCK, Material.LAPIS_ORE, Material.LOG, Material.MOSSY_COBBLESTONE, Material.MYCEL, Material.NETHER_BRICK, Material.NETHERRACK, Material.OBSIDIAN, Material.REDSTONE_ORE, Material.SAND, Material.SANDSTONE, Material.SMOOTH_BRICK, Material.STONE, Material.SOUL_SAND, Material.WOOD, Material.WOOL, Material.LEAVES, Material.LEAVES_2, Material.MELON_BLOCK, Material.PUMPKIN, Material.JACK_O_LANTERN, Material.NOTE_BLOCK, Material.GLOWSTONE, Material.IRON_BLOCK, Material.DISPENSER, Material.SPONGE, Material.IRON_ORE, Material.GOLD_ORE, Material.COAL_BLOCK, Material.WORKBENCH, Material.HAY_BLOCK, Material.REDSTONE_LAMP_OFF, Material.REDSTONE_LAMP_ON, Material.EMERALD_ORE, Material.EMERALD_BLOCK, Material.REDSTONE_BLOCK, Material.QUARTZ_BLOCK, Material.QUARTZ_ORE, Material.STAINED_CLAY, Material.HARD_CLAY };
-
+	private static final Material[] IGNITABLE_MATERIALS = { Material.BEDROCK, Material.BOOKSHELF, Material.BRICK, Material.CLAY, Material.CLAY_BRICK,
+			Material.COAL_ORE, Material.COBBLESTONE, Material.DIAMOND_ORE, Material.DIAMOND_BLOCK, Material.DIRT,
+			Material.ENDER_STONE, Material.GLOWING_REDSTONE_ORE, Material.GOLD_BLOCK, Material.GRAVEL, Material.GRASS,
+			Material.HUGE_MUSHROOM_1, Material.HUGE_MUSHROOM_2, Material.LAPIS_BLOCK, Material.LAPIS_ORE, Material.LOG,
+			Material.MOSSY_COBBLESTONE, Material.MYCEL, Material.NETHER_BRICK, Material.NETHERRACK, Material.OBSIDIAN,
+			Material.REDSTONE_ORE, Material.SAND, Material.SANDSTONE, Material.SMOOTH_BRICK, Material.STONE, Material.SOUL_SAND,
+			Material.WOOD, Material.WOOL, Material.LEAVES, Material.LEAVES_2, Material.MELON_BLOCK, Material.PUMPKIN,
+			Material.JACK_O_LANTERN, Material.NOTE_BLOCK, Material.GLOWSTONE, Material.IRON_BLOCK, Material.DISPENSER,
+			Material.SPONGE, Material.IRON_ORE, Material.GOLD_ORE, Material.COAL_BLOCK, Material.WORKBENCH,
+			Material.HAY_BLOCK, Material.REDSTONE_LAMP_OFF, Material.REDSTONE_LAMP_ON, Material.EMERALD_ORE,
+			Material.EMERALD_BLOCK, Material.REDSTONE_BLOCK, Material.QUARTZ_BLOCK, Material.QUARTZ_ORE,
+			Material.STAINED_CLAY, Material.HARD_CLAY };
+		
 	public FireAbility(Player player) {
 		super(player);
 	}
-
+	
 	@Override
 	public boolean isIgniteAbility() {
 		return true;
 	}
-
+	
 	@Override
 	public boolean isExplosiveAbility() {
 		return true;
@@ -50,7 +61,7 @@ public abstract class FireAbility extends ElementalAbility {
 	public Element getElement() {
 		return Element.FIRE;
 	}
-
+	
 	@Override
 	public void handleCollision(Collision collision) {
 		super.handleCollision(collision);
@@ -59,22 +70,22 @@ public abstract class FireAbility extends ElementalAbility {
 			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
 		}
 	}
-
+		
 	public double getDayFactor(double value) {
 		return player != null ? getDayFactor(value, player.getWorld()) : 1;
 	}
-
+		
 	/**
-	 * Returns if fire is allowed to completely replace blocks or if it should
-	 * place a temp fire block.
+	 * Returns if fire is allowed to completely replace blocks or if it should place a temp fire
+	 * block.
 	 */
 	public static boolean canFireGrief() {
 		return getConfig().getBoolean("Properties.Fire.FireGriefing");
 	}
 
 	/**
-	 * Creates a fire block meant to replace other blocks but reverts when the
-	 * fire dissipates or is destroyed.
+	 * Creates a fire block meant to replace other blocks but reverts when the fire dissipates or is
+	 * destroyed.
 	 */
 	public static void createTempFire(Location loc) {
 		if (loc.getBlock().getType() == Material.AIR) {
@@ -82,7 +93,8 @@ public abstract class FireAbility extends ElementalAbility {
 			return;
 		}
 		Information info = new Information();
-		long time = getConfig().getLong("Properties.Fire.RevertTicks") + (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks"));
+		long time = getConfig().getLong("Properties.Fire.RevertTicks") 
+				+ (long) ((new Random()).nextDouble() * getConfig().getLong("Properties.Fire.RevertTicks"));
 		if (TEMP_FIRE.containsKey(loc)) {
 			info = TEMP_FIRE.get(loc);
 		} else {
@@ -98,15 +110,13 @@ public abstract class FireAbility extends ElementalAbility {
 	public static double getDayFactor() {
 		return getConfig().getDouble("Properties.Fire.DayFactor");
 	}
-
+	
 	/**
-	 * Gets the firebending dayfactor from the config multiplied by a specific
-	 * value if it is day.
+	 * Gets the firebending dayfactor from the config multiplied by a specific value if it is day.
 	 * 
 	 * @param value The value
 	 * @param world The world to pass into {@link #isDay(World)}
-	 * @return value DayFactor multiplied by specified value when
-	 *         {@link #isDay(World)} is true <br />
+	 * @return value DayFactor multiplied by specified value when {@link #isDay(World)} is true <br />
 	 *         else <br />
 	 *         value The specified value in the parameters
 	 */
@@ -126,7 +136,7 @@ public abstract class FireAbility extends ElementalAbility {
 		}
 		return value;
 	}
-
+	
 	public static ChatColor getSubChatColor() {
 		return ChatColor.valueOf(ConfigManager.getConfig().getString("Properties.Chat.Colors.FireSub"));
 	}
@@ -134,11 +144,11 @@ public abstract class FireAbility extends ElementalAbility {
 	public static boolean isIgnitable(Block block) {
 		return block != null ? isIgnitable(block.getType()) : false;
 	}
-
+	
 	public static boolean isIgnitable(Material material) {
 		return Arrays.asList(IGNITABLE_MATERIALS).contains(material);
 	}
-
+	
 	/**
 	 * This method was used for the old collision detection system. Please see
 	 * {@link Collision} for the new system.
@@ -188,7 +198,8 @@ public abstract class FireAbility extends ElementalAbility {
 		while (it.hasNext()) {
 			Location loc = it.next();
 			Information info = TEMP_FIRE.get(loc);
-			if (info.getLocation().getBlock().getType() != Material.FIRE && info.getLocation().getBlock().getType() != Material.AIR) {
+			if (info.getLocation().getBlock().getType() != Material.FIRE
+					&& info.getLocation().getBlock().getType() != Material.AIR) {
 				revertTempFire(loc);
 			} else if (info.getBlock().getType() == Material.AIR || System.currentTimeMillis() > info.getTime()) {
 				revertTempFire(loc);
@@ -200,7 +211,7 @@ public abstract class FireAbility extends ElementalAbility {
 	 * Revert the temp fire at the location if any is there.
 	 * 
 	 * @param location The Location
-	 */
+	 * */
 	@SuppressWarnings("deprecation")
 	public static void revertTempFire(Location location) {
 		if (!TEMP_FIRE.containsKey(location)) {
@@ -225,5 +236,5 @@ public abstract class FireAbility extends ElementalAbility {
 			revertTempFire(loc);
 		}
 	}
-
+	
 }

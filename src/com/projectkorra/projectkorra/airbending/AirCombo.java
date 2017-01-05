@@ -603,7 +603,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 	public ArrayList<BukkitRunnable> getTasks() {
 		return tasks;
 	}
-
+	
 	public void setTasks(ArrayList<BukkitRunnable> tasks) {
 		this.tasks = tasks;
 	}
@@ -650,7 +650,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 		public boolean isCollidable() {
 			return true;
 		}
-
+		
 		@Override
 		public void handleCollision(Collision collision) {
 			if (collision.isRemovingFirst()) {
@@ -674,7 +674,7 @@ public class AirCombo extends AirAbility implements ComboAbility {
 				setTasks(newTasks);
 			}
 		}
-
+		
 		@Override
 		public List<Location> getLocations() {
 			ArrayList<Location> locations = new ArrayList<>();

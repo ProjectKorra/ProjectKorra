@@ -13,26 +13,26 @@ import java.util.List;
  * Completes tabbing for the bending command/subcommands.
  * 
  * @author StrangeOne101
- */
+ * */
 public class BendingTabComplete implements TabCompleter {
-
+	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		if (args.length == 0 || args.length == 1)
 			return getPossibleCompletions(args, getCommandsForUser(sender));
-		else if (args.length > 1) {
+		else if (args.length > 1){
 			for (PKCommand cmd : PKCommand.instances.values()) {
 				if (Arrays.asList(cmd.getAliases()).contains(args[0].toLowerCase()) && sender.hasPermission("bending.command." + cmd.getName())) {
 					List<String> newargs = new ArrayList<String>();
 					for (int i = 1; i < args.length - 1; i++) {
 						if (!(args[i].equals("") || args[i].equals(" ")) && args.length >= 1)
-							newargs.add(args[i]);
+						newargs.add(args[i]);
 					}
 					return getPossibleCompletions(args, cmd.getTabCompletion(sender, newargs));
 				}
 			}
 		}
-
+		
 		return new ArrayList<String>();
 	}
 
@@ -41,7 +41,7 @@ public class BendingTabComplete implements TabCompleter {
 	 * what the user has currently typed.
 	 * 
 	 * @author D4rKDeagle<br>
-	 *         <br>
+	 * <br>
 	 *         (Found at
 	 *         <a>https://bukkit.org/threads/help-with-bukkit-tab-completion
 	 *         -api.166436</a>)

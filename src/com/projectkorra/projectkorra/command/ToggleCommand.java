@@ -19,22 +19,21 @@ import java.util.List;
  * Executor for /bending toggle. Extends {@link PKCommand}.
  */
 public class ToggleCommand extends PKCommand {
-
-	private String toggledOffForAll, toggleOffSelf, toggleOnSelf, toggleOffAll, toggleOnAll,
-			toggledOffSingleElement, toggledOnSingleElement, wrongElementOther,
-			toggledOnOtherElementConfirm, toggledOffOtherElementConfirm, toggledOnOtherElement,
-			toggledOffOtherElement, wrongElement, notFound;
-
+	
+	private String toggledOffForAll, toggleOffSelf, toggleOnSelf, toggleOffAll, toggleOnAll, 
+	toggledOffSingleElement, toggledOnSingleElement, wrongElementOther, toggledOnOtherElementConfirm, 
+	toggledOffOtherElementConfirm, toggledOnOtherElement, toggledOffOtherElement, wrongElement, notFound;
+	
 	//config.addDefault("Commands.Toggle.Other.ToggledOnElementConfirm", "You've toggled on {target}'s {element}");
 	//config.addDefault("Commands.Toggle.Other.ToggledOffElementConfirm", "You've toggled off {target}'s {element}");
 	//config.addDefault("Commands.Toggle.Other.ToggledOnElementConfirm", "Your {element} has been toggled on by {sender}.");
 	//config.addDefault("Commands.Toggle.Other.ToggledOffElementConfirm", "Your {element} has been toggled off by {sender}.");
-
+	
 	public ToggleCommand() {
 		super("toggle", "/bending toggle <All/Element/Player> [Player]", ConfigManager.languageConfig.get().getString("Commands.Toggle.Description"), new String[] { "toggle", "t" });
-
+		
 		FileConfiguration c = ConfigManager.languageConfig.get();
-
+		
 		this.toggledOffForAll = c.getString("Commands.Toggle.All.ToggledOffForAll");
 		this.toggleOffSelf = c.getString("Commands.Toggle.ToggledOff");
 		this.toggleOnSelf = c.getString("Commands.Toggle.ToggledOn");
@@ -75,7 +74,7 @@ public class ToggleCommand extends PKCommand {
 				sender.sendMessage(ChatColor.GREEN + toggleOnSelf);
 				bPlayer.toggleBending();
 			}
-		} else if (args.size() == 1) {
+		} else if (args.size() == 1 ) { 
 			if (args.size() == 1 && args.get(0).equalsIgnoreCase("all") && hasPermission(sender, "all")) { //bending toggle all
 				if (Commands.isToggledForAll) { // Bending is toggled off for all players.
 					Commands.isToggledForAll = false;
@@ -92,7 +91,8 @@ public class ToggleCommand extends PKCommand {
 					if (!(sender instanceof Player))
 						sender.sendMessage(ChatColor.RED + toggleOffAll);
 				}
-			} else if (sender instanceof Player && args.size() == 1 && Element.fromString(args.get(0)) != null) {
+			} else if (sender instanceof Player && args.size() == 1 
+					&& Element.fromString(args.get(0)) != null) {
 				if (!BendingPlayer.getBendingPlayer(sender.getName()).hasElement(Element.fromString(args.get(0)))) {
 					sender.sendMessage(ChatColor.RED + wrongElement);
 					return;
@@ -108,10 +108,10 @@ public class ToggleCommand extends PKCommand {
 					sender.sendMessage(color + toggledOffSingleElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				}
 			}
-		} else if (sender instanceof Player && args.size() == 2 && Element.fromString(args.get(0)) != null) {
+		} else if (sender instanceof Player && args.size() == 2 
+				&& Element.fromString(args.get(0)) != null) {
 			Player target = Bukkit.getPlayer(args.get(1));
-			if (!hasAdminPermission(sender))
-				return;
+			if (!hasAdminPermission(sender)) return;
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + notFound);
 				return;
@@ -144,11 +144,10 @@ public class ToggleCommand extends PKCommand {
 		}
 		return true;
 	}
-
+	
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 2 || !sender.hasPermission("bending.command.toggle.others"))
-			return new ArrayList<String>();
+		if (args.size() >= 2 || !sender.hasPermission("bending.command.toggle.others")) return new ArrayList<String>();
 		List<String> l = new ArrayList<String>();
 		if (args.size() == 0) {
 			List<String> elements = new ArrayList<String>();

@@ -6,10 +6,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
- * WaterBubble is currently implemented in AirBubble
+ *  WaterBubble is currently implemented in AirBubble
  */
 public class WaterBubble extends WaterAbility {
-
+		
 	public WaterBubble(Player player) {
 		super(player);
 	}
@@ -32,7 +32,7 @@ public class WaterBubble extends WaterAbility {
 	public long getCooldown() {
 		return 0;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return true;

@@ -14,7 +14,7 @@ public class HighJump extends ChiAbility {
 
 	private int height;
 	private long cooldown;
-
+	
 	public HighJump(Player player) {
 		super(player);
 		if (!bPlayer.canBend(this)) {
@@ -48,9 +48,9 @@ public class HighJump extends ChiAbility {
 		if (waw != null) {
 			waw.setGrabbed(false);
 		}
-
+		
 	}
-
+	
 	@Override
 	public String getName() {
 		return "HighJump";
@@ -75,7 +75,7 @@ public class HighJump extends ChiAbility {
 	public boolean isHarmlessAbility() {
 		return true;
 	}
-
+	
 	public int getHeight() {
 		return height;
 	}
@@ -87,5 +87,5 @@ public class HighJump extends ChiAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-
+	
 }

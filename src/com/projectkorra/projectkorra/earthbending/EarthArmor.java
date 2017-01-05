@@ -39,18 +39,18 @@ public class EarthArmor extends EarthAbility {
 	private PotionEffect oldAbsorbtion = null;
 	private float goldHearts;
 	private int maxGoldHearts;
-
+	
 	public EarthArmor(Player player) {
 		super(player);
 		if (hasAbility(player, EarthArmor.class) || !bPlayer.canBend(this)) {
 			return;
 		}
-
+		
 		if (hasAbility(player, PlantArmor.class)) {
 			PlantArmor abil = getAbility(player, PlantArmor.class);
 			abil.remove();
 		}
-
+		
 		this.formed = false;
 		this.active = true;
 		this.interval = 2000;
@@ -58,9 +58,10 @@ public class EarthArmor extends EarthAbility {
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthArmor.SelectRange");
 		this.maxGoldHearts = getConfig().getInt("Abilities.Earth.EarthArmor.GoldHearts");
-
+		
 		headBlock = getTargetEarthBlock((int) selectRange);
-		if (!GeneralMethods.isRegionProtectedFromBuild(this, headBlock.getLocation()) && getEarthbendableBlocksLength(headBlock, new Vector(0, -1, 0), 2) >= 2) {
+		if (!GeneralMethods.isRegionProtectedFromBuild(this, headBlock.getLocation()) 
+				&& getEarthbendableBlocksLength(headBlock, new Vector(0, -1, 0), 2) >= 2) {			
 			this.legsBlock = headBlock.getRelative(BlockFace.DOWN);
 			this.headData = headBlock.getState().getData();
 			this.legsData = legsBlock.getState().getData();
@@ -80,10 +81,10 @@ public class EarthArmor extends EarthAbility {
 				GeneralMethods.removeBlock(oldHeadBlock);
 				GeneralMethods.removeBlock(oldLegsBlock);
 			}
-
+			
 			playEarthbendingSound(headBlock.getLocation());
 			bPlayer.addCooldown(this, getCooldown() / 2); //Prevents spamming of the move to remove blocks
-
+			
 			start();
 		}
 	}
@@ -96,32 +97,32 @@ public class EarthArmor extends EarthAbility {
 		if (TempBlock.isTempBlock(legsBlock)) {
 			TempBlock.revertBlock(legsBlock, Material.AIR);
 		}
-
+		
 		ItemStack head = new ItemStack(Material.LEATHER_HELMET, 1);
 		ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
 		ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS, 1);
 		ItemStack boots = new ItemStack(Material.LEATHER_BOOTS, 1);
-
+		
 		LeatherArmorMeta metaHead = (LeatherArmorMeta) head.getItemMeta();
 		LeatherArmorMeta metaChest = (LeatherArmorMeta) chestplate.getItemMeta();
 		LeatherArmorMeta metaLegs = (LeatherArmorMeta) leggings.getItemMeta();
 		LeatherArmorMeta metaBottom = (LeatherArmorMeta) boots.getItemMeta();
-
+		
 		metaHead.setColor(Color.fromRGB(getColor(headData.getItemType(), headData.getData())));
 		metaChest.setColor(Color.fromRGB(getColor(headData.getItemType(), headData.getData())));
 		metaLegs.setColor(Color.fromRGB(getColor(legsData.getItemType(), legsData.getData())));
 		metaBottom.setColor(Color.fromRGB(getColor(legsData.getItemType(), legsData.getData())));
-
+		
 		head.setItemMeta(metaHead);
 		chestplate.setItemMeta(metaChest);
 		leggings.setItemMeta(metaLegs);
 		boots.setItemMeta(metaBottom);
-
+		
 		ItemStack armors[] = { boots, leggings, chestplate, head };
 		TempArmor armor = new TempArmor(player, 72000000L, this, armors); //Duration of 2 hours
 		armor.setRemovesAbilityOnForceRevert(true);
 		formed = true;
-
+		
 		for (PotionEffect effect : player.getActivePotionEffects()) {
 			if (effect.getType() == PotionEffectType.ABSORPTION) {
 				this.oldAbsorbtion = effect;
@@ -131,11 +132,11 @@ public class EarthArmor extends EarthAbility {
 		}
 		int level = (int) (maxGoldHearts / 2 - 1 + (maxGoldHearts % 2));
 		player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, level, true, false));
-
+		
 		this.goldHearts = maxGoldHearts * 2;
 		GeneralMethods.setAbsorbationHealth(player, goldHearts);
 	}
-
+	
 	private boolean inPosition() {
 		return headBlock.equals(player.getEyeLocation().getBlock()) && legsBlock.equals(player.getLocation().getBlock());
 	}
@@ -146,22 +147,22 @@ public class EarthArmor extends EarthAbility {
 			remove();
 			return false;
 		}
-
+		
 		Location headLocation = player.getEyeLocation();
 		Location legsLocation = player.getLocation();
 		Vector headDirection = headLocation.toVector().subtract(headBlockLocation.toVector()).normalize().multiply(.5);
 		//Vector legsDirection = legsLocation.toVector().subtract(legsBlockLocation.toVector()).normalize().multiply(.5);
 		Block newHeadBlock = headBlock;
 		Block newLegsBlock = legsBlock;
-
+		
 		int yDiff = player.getEyeLocation().getBlockY() - headBlock.getY();
-
+		
 		if (yDiff != 0) {
 			Block checkBlock = yDiff > 0 ? headBlock.getRelative(BlockFace.UP) : legsBlock.getRelative(BlockFace.DOWN);
-
+			
 			if (isTransparent(checkBlock) && !checkBlock.isLiquid()) {
 				GeneralMethods.breakBlock(checkBlock); //Destroy any minor blocks that are in the way
-
+				
 				headDirection = new Vector(0, yDiff > 0 ? 0.5 : -0.5, 0);
 			}
 		}
@@ -216,7 +217,7 @@ public class EarthArmor extends EarthAbility {
 	}
 
 	@Override
-	public void progress() {
+	public void progress() {		
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
@@ -228,13 +229,13 @@ public class EarthArmor extends EarthAbility {
 				player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, 1, true, false));
 				GeneralMethods.setAbsorbationHealth(player, goldHearts);
 			}
-
+			
 			if (!active) {
 				bPlayer.addCooldown(this);
 				remove();
 				return;
 			}
-
+			
 			player.setFireTicks(0);
 		} else {
 			if (!moveBlocks()) {
@@ -260,17 +261,17 @@ public class EarthArmor extends EarthAbility {
 			headBlock.breakNaturally();
 			legsBlock.breakNaturally();
 		}
-
+		
 		if (TempArmor.hasTempArmor(player) && TempArmor.getTempArmor(player).getAbility().equals(this)) {
 			TempArmor.getTempArmor(player).revert();
 		}
-
+		
 		player.removePotionEffect(PotionEffectType.ABSORPTION);
-
+		
 		if (oldAbsorbtion != null) {
 			player.addPotionEffect(oldAbsorbtion);
 		}
-
+		
 	}
 
 	public void updateAbsorbtion() {
@@ -281,129 +282,87 @@ public class EarthArmor extends EarthAbility {
 				goldHearts = GeneralMethods.getAbsorbationHealth(player);
 				if (formed && goldHearts < 0.9F) {
 					bPlayer.addCooldown(abil);
-
+					
 					player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 					player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 					player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-
+					
 					ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(headData.getItemType(), headData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getEyeLocation(), 128);
 					ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(legsData.getItemType(), legsData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getLocation(), 128);
-
+				
 					remove();
 				}
 			}
 		}.runTaskLater(ProjectKorra.plugin, 1L);
-
+		
 	}
-
 	public static int getColor(Material material) {
 		return getColor(material, (byte) 0x0);
 	}
-
-	/** Returns the color for the specified material. */
+	
+	/**Returns the color for the specified material.*/
 	public static int getColor(Material material, byte damage) {
-		if (material == Material.DIRT)
-			return 0xa86e45; //Default dirt brown
-		if (material == Material.GRASS)
-			return 0xa86e45; //Default dirt brown
-		if (material == Material.MYCEL)
-			return 0xa86e45; //Default dirt brown
-		if (material == Material.CLAY)
-			return 0xBAC2D1; //Dull gray-brown
-		if (material == Material.STONE && damage == 0x0)
-			return 0x9e9e9e; //Gray
-		if (material == Material.STONE && (damage == 0x1 || damage == 0x2))
-			return 0xc69489; //Pink
-		if (material == Material.STONE && (damage == 0x3 || damage == 0x4))
-			return 0xe3e3e5; //White
-		if (material == Material.STONE && (damage == 0x5 || damage == 0x6))
-			return 0xa3a3a3; //Gray
-		if (material == Material.COBBLESTONE)
-			return 0x6B6B6B; //Dark Gray
-		if (material == Material.SAND && damage == 0x0)
-			return 0xffffaf; //Sand yellow
-		if (material == Material.SAND && damage == 0x1)
-			return 0xb85f25; //Sand orange
-		if (material == Material.SANDSTONE)
-			return 0xffffaf; //Sand
-		if (material == Material.RED_SANDSTONE)
-			return 0xbc5a1a; //Red sandstone
-		if (material == Material.GRAVEL)
-			return 0xaaa49e; //Dark Gray 
-		if (material == Material.GOLD_ORE)
-			return 0xa2a38f; //Gray-yellow
-		if (material == Material.GOLD_BLOCK)
-			return 0xF2F204; //Gold - Could be a tiny bit darker
-		if (material == Material.IRON_ORE)
-			return 0xa39d91; //Gray-brown
-		if (material == Material.IRON_BLOCK)
-			return 0xf4f4f4; //Silver/Gray
-		if (material == Material.COAL_ORE)
-			return 0x7c7c7c; //Stone gray
-		if (material == Material.LAPIS_ORE)
-			return 0x9198a3; //Gray-azure
-		if (material == Material.LAPIS_BLOCK)
-			return 0x0060BA; //Dark blue
-		if (material == Material.DIAMOND_ORE)
-			return 0xa8bebf; //Gray-cyan
-		if (material == Material.NETHERRACK)
-			return 0x9b3131; //Pinkish-red
-		if (material == Material.QUARTZ_ORE)
-			return 0xb75656; //Pinkish-red
-		if (material == Material.QUARTZ_BLOCK)
-			return 0xfff4f4; //White
-		if (material == Material.STAINED_CLAY && damage == 0x0)
-			return 0xCFAFA0; //White Stained Clay
-		if (material == Material.STAINED_CLAY && damage == 0x1)
-			return 0xA75329; //Orange
-		if (material == Material.STAINED_CLAY && damage == 0x2)
-			return 0x95596E; //Magenta
-		if (material == Material.STAINED_CLAY && damage == 0x3)
-			return 0x736E8A; //Light blue
-		if (material == Material.STAINED_CLAY && damage == 0x4)
-			return 0xBA8825; //Yellow
-		if (material == Material.STAINED_CLAY && damage == 0x5)
-			return 0x6B7736; //Lime
-		if (material == Material.STAINED_CLAY && damage == 0x6)
-			return 0xA24D4F; //Pink
-		if (material == Material.STAINED_CLAY && damage == 0x7)
-			return 0x3A2923; //Gray
-		if (material == Material.STAINED_CLAY && damage == 0x8)
-			return 0x876A61; //Light Gray
-		if (material == Material.STAINED_CLAY && damage == 0x9)
-			return 0x575B5B; //Cyan
-		if (material == Material.STAINED_CLAY && damage == 0xA)
-			return 0x734453; //Purple
-		if (material == Material.STAINED_CLAY && damage == 0xB)
-			return 0x493A5A; //Blue
-		if (material == Material.STAINED_CLAY && damage == 0xC)
-			return 0x4C3223; //Brown
-		if (material == Material.STAINED_CLAY && damage == 0xD)
-			return 0x4B522A; //Green
-		if (material == Material.STAINED_CLAY && damage == 0xE)
-			return 0x8D3B2E; //Red
-		if (material == Material.STAINED_CLAY && damage == 0xF)
-			return 0x251610; //Black
-
+		if (material == Material.DIRT) return 0xa86e45; //Default dirt brown
+		if (material == Material.GRASS) return 0xa86e45; //Default dirt brown
+		if (material == Material.MYCEL) return 0xa86e45; //Default dirt brown
+		if (material == Material.CLAY) return 0xBAC2D1; //Dull gray-brown
+		if (material == Material.STONE && damage == 0x0) return 0x9e9e9e; //Gray
+		if (material == Material.STONE && (damage == 0x1 || damage == 0x2)) return 0xc69489; //Pink
+		if (material == Material.STONE && (damage == 0x3 || damage == 0x4)) return 0xe3e3e5; //White
+		if (material == Material.STONE && (damage == 0x5 || damage == 0x6)) return 0xa3a3a3; //Gray
+		if (material == Material.COBBLESTONE) return 0x6B6B6B; //Dark Gray
+		if (material == Material.SAND && damage == 0x0) return 0xffffaf; //Sand yellow
+		if (material == Material.SAND && damage == 0x1) return 0xb85f25; //Sand orange
+		if (material == Material.SANDSTONE) return 0xffffaf; //Sand
+		if (material == Material.RED_SANDSTONE) return 0xbc5a1a; //Red sandstone
+		if (material == Material.GRAVEL) return 0xaaa49e; //Dark Gray 
+		if (material == Material.GOLD_ORE) return 0xa2a38f; //Gray-yellow
+		if (material == Material.GOLD_BLOCK) return 0xF2F204; //Gold - Could be a tiny bit darker
+		if (material == Material.IRON_ORE) 	return 0xa39d91; //Gray-brown
+		if (material == Material.IRON_BLOCK) return 0xf4f4f4; //Silver/Gray
+		if (material == Material.COAL_ORE) return 0x7c7c7c; //Stone gray
+		if (material == Material.LAPIS_ORE) return 0x9198a3; //Gray-azure
+		if (material == Material.LAPIS_BLOCK) return 0x0060BA; //Dark blue
+		if (material == Material.DIAMOND_ORE) return 0xa8bebf; //Gray-cyan
+		if (material == Material.NETHERRACK) return 0x9b3131; //Pinkish-red
+		if (material == Material.QUARTZ_ORE) return 0xb75656; //Pinkish-red
+		if (material == Material.QUARTZ_BLOCK) return 0xfff4f4; //White
+		if (material == Material.STAINED_CLAY && damage == 0x0) return 0xCFAFA0; //White Stained Clay
+		if (material == Material.STAINED_CLAY && damage == 0x1) return 0xA75329; //Orange
+		if (material == Material.STAINED_CLAY && damage == 0x2) return 0x95596E; //Magenta
+		if (material == Material.STAINED_CLAY && damage == 0x3) return 0x736E8A; //Light blue
+		if (material == Material.STAINED_CLAY && damage == 0x4) return 0xBA8825; //Yellow
+		if (material == Material.STAINED_CLAY && damage == 0x5) return 0x6B7736; //Lime
+		if (material == Material.STAINED_CLAY && damage == 0x6) return 0xA24D4F; //Pink
+		if (material == Material.STAINED_CLAY && damage == 0x7) return 0x3A2923; //Gray
+		if (material == Material.STAINED_CLAY && damage == 0x8) return 0x876A61; //Light Gray
+		if (material == Material.STAINED_CLAY && damage == 0x9) return 0x575B5B; //Cyan
+		if (material == Material.STAINED_CLAY && damage == 0xA) return 0x734453; //Purple
+		if (material == Material.STAINED_CLAY && damage == 0xB) return 0x493A5A; //Blue
+		if (material == Material.STAINED_CLAY && damage == 0xC) return 0x4C3223; //Brown
+		if (material == Material.STAINED_CLAY && damage == 0xD) return 0x4B522A; //Green
+		if (material == Material.STAINED_CLAY && damage == 0xE) return 0x8D3B2E; //Red
+		if (material == Material.STAINED_CLAY && damage == 0xF) return 0x251610; //Black
+		
+		
 		return 0x9e9e9e; //Stone
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	public void click() {
-		if (!this.player.isSneaking())
-			return;
-
+		if (!this.player.isSneaking()) return;
+		
 		player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 		player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
 		player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
-
+		
 		ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(headData.getItemType(), headData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getEyeLocation(), 128);
 		ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(legsData.getItemType(), legsData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getLocation(), 128);
-
+		
 		bPlayer.addCooldown(this);
 		remove();
 	}
-
+	
 	@Override
 	public String getName() {
 		return "EarthArmor";
@@ -428,7 +387,7 @@ public class EarthArmor extends EarthAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
+	
 	public boolean isFormed() {
 		return formed;
 	}
@@ -452,7 +411,7 @@ public class EarthArmor extends EarthAbility {
 	public void setLegsData(MaterialData materialdata) {
 		this.legsData = materialdata;
 	}
-
+	
 	public double getSelectRange() {
 		return selectRange;
 	}
@@ -504,21 +463,21 @@ public class EarthArmor extends EarthAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-
+	
 	public float getGoldHearts() {
 		return goldHearts;
 	}
-
+	
 	public int getMaxGoldHearts() {
 		return maxGoldHearts;
 	}
-
+	
 	public void setGoldHearts(float goldHearts) {
 		this.goldHearts = goldHearts;
 	}
-
+	
 	public void setMaxGoldHearts(int maxGoldHearts) {
 		this.maxGoldHearts = maxGoldHearts;
 	}
-
+	
 }

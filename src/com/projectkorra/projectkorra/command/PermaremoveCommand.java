@@ -18,16 +18,16 @@ import java.util.List;
  * Executor for /bending permaremove. Extends {@link PKCommand}.
  */
 public class PermaremoveCommand extends PKCommand {
-
+	
 	private String playerIsOffline;
 	private String restored;
 	private String restoredConfirm;
 	private String removed;
 	private String removedConfirm;
-
+	
 	public PermaremoveCommand() {
 		super("permaremove", "/bending permaremove <Player>", ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Description"), new String[] { "permaremove", "premove", "permremove", "pr" });
-
+	
 		this.playerIsOffline = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.PlayerOffline");
 		this.restored = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.Restored");
 		this.restoredConfirm = ConfigManager.languageConfig.get().getString("Commands.PermaRemove.RestoredConfirm");
@@ -99,11 +99,10 @@ public class PermaremoveCommand extends PKCommand {
 		}
 		return true;
 	}
-
+	
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 1 || !sender.hasPermission("bending.command.permaremove"))
-			return new ArrayList<String>();
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.permaremove")) return new ArrayList<String>();
 		List<String> players = new ArrayList<String>();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			players.add(p.getName());

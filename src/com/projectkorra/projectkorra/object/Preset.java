@@ -34,7 +34,7 @@ public class Preset {
 	 */
 	public static Map<UUID, List<Preset>> presets = new ConcurrentHashMap<UUID, List<Preset>>();
 	public static FileConfiguration config = ConfigManager.presetConfig.get();
-	public static HashMap<String, ArrayList<String>> externalPresets = new HashMap<String, ArrayList<String>>();
+	public static HashMap<String, ArrayList<String>> externalPresets = new HashMap<String, ArrayList<String>>(); 
 	static String loadQuery = "SELECT * FROM pk_presets WHERE uuid = ?";
 	static String loadNameQuery = "SELECT * FROM pk_presets WHERE uuid = ? AND name = ?";
 	static String deleteQuery = "DELETE FROM pk_presets WHERE uuid = ? AND name = ?";
@@ -112,7 +112,7 @@ public class Preset {
 			}
 		}.runTaskAsynchronously(ProjectKorra.plugin);
 	}
-
+	
 	/**
 	 * Reload a Player's Presets from those stored in memory.
 	 * 
@@ -135,7 +135,7 @@ public class Preset {
 		if (bPlayer == null) {
 			return false;
 		}
-
+		
 		@SuppressWarnings("unchecked")
 		HashMap<Integer, String> abilities = (HashMap<Integer, String>) preset.abilities.clone();
 		boolean boundAll = true;
@@ -188,18 +188,17 @@ public class Preset {
 		}
 		return null;
 	}
-
+	
 	public static void loadExternalPresets() {
 		HashMap<String, ArrayList<String>> presets = new HashMap<String, ArrayList<String>>();
-		for (String name : config.getKeys(false)) {
-			if (!presets.containsKey(name))
-				if (!config.getStringList(name).isEmpty() && config.getStringList(name).size() <= 9) {
-					presets.put(name.toLowerCase(), (ArrayList<String>) config.getStringList(name));
-				}
+		for(String name : config.getKeys(false)) {
+			if (!presets.containsKey(name)) if (!config.getStringList(name).isEmpty() && config.getStringList(name).size() <= 9) {
+				presets.put(name.toLowerCase(), (ArrayList<String>) config.getStringList(name));
+			}
 		}
 		externalPresets = presets;
 	}
-
+	
 	public static boolean externalPresetExists(String name) {
 		for (String preset : externalPresets.keySet()) {
 			if (name.equalsIgnoreCase(preset)) {
@@ -227,7 +226,7 @@ public class Preset {
 		}
 		return null;
 	}
-
+	
 	public static boolean bindExternalPreset(Player player, String name) {
 		boolean boundAll = true;
 		int slot = 0;
@@ -235,7 +234,7 @@ public class Preset {
 		if (bPlayer == null) {
 			return false;
 		}
-
+		
 		HashMap<Integer, String> abilities = new HashMap<Integer, String>();
 
 		if (externalPresetExists(name.toLowerCase())) {
@@ -323,7 +322,7 @@ public class Preset {
 				}
 			}.runTaskAsynchronously(ProjectKorra.plugin);
 		}
-
+		
 		new BukkitRunnable() {
 
 			@Override

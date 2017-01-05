@@ -39,15 +39,15 @@ public class WaterPassive {
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return;
 		}
-
+		
 		double swimSpeed = getSwimSpeed();
-
+		
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null) {
 				continue;
 			}
-
+			
 			String ability = bPlayer.getBoundAbilityName();
 			CoreAbility coreAbil = CoreAbility.getAbility(ability);
 			if (bPlayer.canBendPassive(Element.WATER)) {
@@ -63,7 +63,7 @@ public class WaterPassive {
 			}
 		}
 	}
-
+	
 	public static double getSwimSpeed() {
 		return ConfigManager.getConfig().getDouble("Abilities.Water.Passive.SwimSpeedFactor");
 	}

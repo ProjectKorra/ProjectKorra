@@ -24,26 +24,26 @@ public class Tremorsense extends EarthAbility {
 	private int radius;
 	private long cooldown;
 	private Block block;
-
+	
 	public Tremorsense(Player player, boolean clicked) {
 		super(player);
 
 		if (!bPlayer.canBendIgnoreBinds(this)) {
 			return;
 		}
-
+		
 		setFields();
 		byte lightLevel = player.getLocation().getBlock().getLightLevel();
-
+		
 		if (lightLevel < this.lightThreshold && isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
-			if (clicked) {
+			if(clicked) {
 				bPlayer.addCooldown(this);
 				activate();
 			}
 			start();
 		}
 	}
-
+	
 	private void setFields() {
 		this.maxDepth = getConfig().getInt("Abilities.Earth.Tremorsense.MaxDepth");
 		this.radius = getConfig().getInt("Abilities.Earth.Tremorsense.Radius");
@@ -58,7 +58,7 @@ public class Tremorsense extends EarthAbility {
 				boolean earth = false;
 				boolean foundAir = false;
 				Block smokeBlock = null;
-
+				
 				for (int k = 0; k <= maxDepth; k++) {
 					Block blocki = block.getRelative(BlockFace.EAST, i).getRelative(BlockFace.NORTH, j).getRelative(BlockFace.DOWN, k);
 					if (GeneralMethods.isRegionProtectedFromBuild(this, blocki.getLocation())) {
@@ -90,7 +90,7 @@ public class Tremorsense extends EarthAbility {
 			}
 			return;
 		}
-
+		
 		boolean isBendable = isEarthbendable(standBlock);
 
 		if (isBendable && block == null) {
@@ -117,16 +117,16 @@ public class Tremorsense extends EarthAbility {
 			player.sendBlockChange(block.getLocation(), block.getTypeId(), block.getData());
 		}
 	}
-
+	
 	@Override
 	public void remove() {
 		super.remove();
 		revertGlowBlock();
 	}
-
+	
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || player.getLocation().getBlock().getLightLevel() > lightThreshold) {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || player.getLocation().getBlock().getLightLevel() > lightThreshold) { 
 			remove();
 			return;
 		} else {
@@ -136,23 +136,23 @@ public class Tremorsense extends EarthAbility {
 
 	public static void manage(Server server) {
 		for (Player player : server.getOnlinePlayers()) {
-
+			
 			if (canTremorSense(player) && !hasAbility(player, Tremorsense.class)) {
 				new Tremorsense(player, false);
 			}
 		}
 	}
-
+	
 	public static boolean canTremorSense(Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
+		
 		if (bPlayer != null && bPlayer.canBendIgnoreBindsCooldowns(getAbility("Tremorsense"))) {
 			return true;
 		}
-
+		
 		return false;
 	}
-
+	
 	public static Map<Block, Player> getBlocks() {
 		return BLOCKS;
 	}
@@ -171,7 +171,7 @@ public class Tremorsense extends EarthAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -217,5 +217,5 @@ public class Tremorsense extends EarthAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-
+	
 }

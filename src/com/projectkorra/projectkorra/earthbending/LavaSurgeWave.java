@@ -35,15 +35,15 @@ public class LavaSurgeWave extends LavaAbility {
 	private double verticalPush;
 	private double interval;
 	private Location location;
-	private Block sourceBlock;
+	private Block sourceBlock ;
 	private Location targetDestination;
 	private Vector targetDirection;
 	private ConcurrentHashMap<Block, Block> waveBlocks;
 	private ConcurrentHashMap<Block, Block> frozenBlocks;
-
+	
 	public LavaSurgeWave(Player player) {
 		super(player);
-
+		
 		this.progressing = false;
 		this.canHitSelf = true;
 		this.range = 20;
@@ -62,7 +62,7 @@ public class LavaSurgeWave extends LavaAbility {
 			horizontalPush = AvatarState.getValue(horizontalPush);
 			verticalPush = AvatarState.getValue(verticalPush);
 		}
-
+		
 		if (prepare()) {
 			LavaSurgeWave wave = getAbility(player, LavaSurgeWave.class);
 			if (wave != null) {
@@ -76,7 +76,7 @@ public class LavaSurgeWave extends LavaAbility {
 	public boolean prepare() {
 		cancelPrevious();
 		Block block = BlockSource.getSourceBlock(player, range, BlockSourceType.LAVA, ClickType.SHIFT_DOWN);
-
+		
 		if (block != null) {
 			sourceBlock = block;
 			focusBlock();
@@ -117,7 +117,7 @@ public class LavaSurgeWave extends LavaAbility {
 			} else {
 				targetDestination = ((LivingEntity) target).getEyeLocation();
 			}
-
+			
 			if (targetDestination.distanceSquared(location) <= 1) {
 				progressing = false;
 				targetDestination = null;
@@ -125,7 +125,7 @@ public class LavaSurgeWave extends LavaAbility {
 				progressing = true;
 				targetDirection = getDirection(sourceBlock.getLocation(), targetDestination).normalize();
 				targetDestination = location.clone().add(targetDirection.clone().multiply(range));
-
+				
 				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
 					sourceBlock.setType(Material.AIR);
 				}
@@ -152,33 +152,39 @@ public class LavaSurgeWave extends LavaAbility {
 			breakBlock();
 			return;
 		}
-
+		
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			if (!progressing) {
 				sourceBlock.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
 				return;
 			}
-
+			
 			Vector direction = targetDirection;
 			location = location.clone().add(direction);
 			Block blockl = location.getBlock();
 			ArrayList<Block> blocks = new ArrayList<Block>();
-
-			if (!GeneralMethods.isRegionProtectedFromBuild(this, location) && blockl.getType() != Material.LEAVES && (blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || WaterAbility.isPlant(blockl) || isLava(blockl))) {
+			
+			if (!GeneralMethods.isRegionProtectedFromBuild(this, location) && blockl.getType() != Material.LEAVES
+					&& (blockl.getType() == Material.AIR 
+						|| blockl.getType() == Material.FIRE 
+						|| WaterAbility.isPlant(blockl) 
+						|| isLava(blockl)))  {
 				for (double i = 0; i <= radius; i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
 						Vector vec = GeneralMethods.getOrthogonalVector(targetDirection, angle, i);
 						Block block = location.clone().add(vec).getBlock();
-
-						if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || isLavabendable(block)) {
+						
+						if (!blocks.contains(block) && (block.getType() == Material.AIR 
+								|| block.getType() == Material.FIRE) 
+								|| isLavabendable(block)) {
 							blocks.add(block);
 							FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 						}
 					}
 				}
 			}
-
+			
 			for (Block block : waveBlocks.keySet()) {
 				if (!blocks.contains(block)) {
 					finalRemoveLava(block);
@@ -194,7 +200,7 @@ public class LavaSurgeWave extends LavaAbility {
 				progressing = false;
 				return;
 			}
-
+			
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2 * radius)) {
 				boolean knockback = false;
 				for (Block block : waveBlocks.keySet()) {
@@ -209,14 +215,14 @@ public class LavaSurgeWave extends LavaAbility {
 					dir.setY(dir.getY() * verticalPush);
 					entity.setVelocity(entity.getVelocity().clone().add(dir.clone().multiply(horizontalPush)));
 					entity.setFallDistance(0);
-
+					
 					if (entity.getFireTicks() > 0) {
 						entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
 					}
 					entity.setFireTicks(0);
 				}
 			}
-
+			
 			if (!progressing) {
 				breakBlock();
 				return;
@@ -300,7 +306,7 @@ public class LavaSurgeWave extends LavaAbility {
 	public String getName() {
 		return null;
 	}
-
+	
 	@Override
 	public Location getLocation() {
 		return location;
@@ -310,7 +316,7 @@ public class LavaSurgeWave extends LavaAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -432,5 +438,5 @@ public class LavaSurgeWave extends LavaAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-
+		
 }

@@ -231,7 +231,7 @@ public class Ripple extends EarthAbility {
 		setMoved(block);
 		Block botBlock = block.getRelative(BlockFace.DOWN);
 		int length = 1;
-
+		
 		if (isEarthbendable(botBlock)) {
 			length = 2;
 			block = botBlock;
@@ -327,12 +327,12 @@ public class Ripple extends EarthAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public ArrayList<Location> getLocations() {
 		return locations;
 	}
-
+	
 	public int getStep() {
 		return step;
 	}

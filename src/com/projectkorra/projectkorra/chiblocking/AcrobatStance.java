@@ -11,23 +11,23 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 
 public class AcrobatStance extends ChiAbility {
-
+	
 	private int speed;
 	private int jump;
 	private double chiBlockBoost;
 	private double paralyzeDodgeBoost;
-
+	
 	public AcrobatStance(Player player) {
 		super(player);
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-
+		
 		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") + 1;
 		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") + 1;
 		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
 		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
-
+		
 		ChiAbility stance = bPlayer.getStance();
 		if (stance != null) {
 			if (stance instanceof AcrobatStance) {
@@ -50,7 +50,7 @@ public class AcrobatStance extends ChiAbility {
 			remove();
 			return;
 		}
-
+		
 		if (!player.hasPotionEffect(PotionEffectType.SPEED)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 60, speed, true));
 		}
@@ -58,7 +58,7 @@ public class AcrobatStance extends ChiAbility {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 60, jump, true));
 		}
 	}
-
+	
 	@Override
 	public void remove() {
 		super.remove();
@@ -68,7 +68,7 @@ public class AcrobatStance extends ChiAbility {
 		player.removePotionEffect(PotionEffectType.SPEED);
 		player.removePotionEffect(PotionEffectType.JUMP);
 	}
-
+	
 	@Override
 	public String getName() {
 		return "AcrobatStance";
@@ -93,7 +93,7 @@ public class AcrobatStance extends ChiAbility {
 	public boolean isHarmlessAbility() {
 		return true;
 	}
-
+	
 	public int getSpeed() {
 		return speed;
 	}
@@ -125,5 +125,5 @@ public class AcrobatStance extends ChiAbility {
 	public void setParalyzeDodgeBoost(double paralyzeDodgeBoost) {
 		this.paralyzeDodgeBoost = paralyzeDodgeBoost;
 	}
-
+	
 }

@@ -25,7 +25,7 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterSpoutWave extends WaterAbility {
-
+	
 	public static enum AbilityType {
 		CLICK, SHIFT, RELEASE
 	}
@@ -35,7 +35,7 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	private static final Map<Block, TempBlock> FROZEN_BLOCKS = new ConcurrentHashMap<>();
-
+	
 	private double radius;
 	private boolean charging;
 	private boolean iceWave;
@@ -62,10 +62,10 @@ public class WaterSpoutWave extends WaterAbility {
 	private ArrayList<Entity> affectedEntities;
 	private ArrayList<BukkitRunnable> tasks;
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks;
-
+		
 	public WaterSpoutWave(Player player, AbilityType type) {
 		super(player);
-
+		
 		this.charging = false;
 		this.iceWave = false;
 		this.iceOnly = false;
@@ -84,16 +84,16 @@ public class WaterSpoutWave extends WaterAbility {
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
-
+		
 		this.damage = getNightFactor(this.damage);
-
+		
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
 
 		this.time = System.currentTimeMillis();
 		this.type = type;
-
+		
 		if (type == AbilityType.CLICK && CoreAbility.getAbility(player, WaterSpoutWave.class) != null) {
 			WaterSpoutWave wave = CoreAbility.getAbility(player, WaterSpoutWave.class);
 			if (wave.charging || wave.moving) {
@@ -101,11 +101,11 @@ public class WaterSpoutWave extends WaterAbility {
 				return;
 			}
 		}
-
+		
 		start();
-
+		
 		if (type == AbilityType.CLICK) {
-			// Need to progress immediately for the WaterSpout check
+			 // Need to progress immediately for the WaterSpout check
 			progress();
 		}
 	}
@@ -132,18 +132,18 @@ public class WaterSpoutWave extends WaterAbility {
 			if (origin == null) {
 				removeOldType(player, AbilityType.CLICK);
 				Block block = getWaterSourceBlock(player, selectRange, plant);
-
+				
 				if (block == null) {
 					remove();
 					return;
 				}
-
+				
 				Block blockAbove = block.getRelative(BlockFace.UP);
 				if (blockAbove.getType() != Material.AIR && !isWaterbendable(blockAbove)) {
 					remove();
 					return;
 				}
-
+				
 				origin = block.getLocation();
 				if (!isWaterbendable(block) || GeneralMethods.isRegionProtectedFromBuild(this, origin)) {
 					remove();
@@ -153,7 +153,7 @@ public class WaterSpoutWave extends WaterAbility {
 					return;
 				}
 			}
-
+			
 			if (player.getLocation().distanceSquared(origin) > selectRange * selectRange) {
 				remove();
 				return;
@@ -172,11 +172,11 @@ public class WaterSpoutWave extends WaterAbility {
 					remove();
 					return;
 				}
-
+				
 				charging = true;
 				animation = AnimateState.RISE;
 				location = origin.clone();
-
+					
 				if (isPlant(origin.getBlock()) || isSnow(origin.getBlock())) {
 					new PlantRegrowth(player, origin.getBlock());
 					origin.getBlock().setType(Material.AIR);
@@ -198,7 +198,7 @@ public class WaterSpoutWave extends WaterAbility {
 				revertBlocks();
 				location.add(0, animationSpeed, 0);
 				Block block = location.getBlock();
-
+				
 				if (!(isWaterbendable(block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 					remove();
 					return;
@@ -214,7 +214,7 @@ public class WaterSpoutWave extends WaterAbility {
 				Vector vec = GeneralMethods.getDirection(location, eyeLoc);
 				location.add(vec.normalize().multiply(animationSpeed));
 				Block block = location.getBlock();
-
+				
 				if (!(isWaterbendable(block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 					remove();
 					return;
@@ -235,7 +235,7 @@ public class WaterSpoutWave extends WaterAbility {
 			if (animation == AnimateState.SHRINK) {
 				radius -= 0.20;
 				drawCircle(360, 15);
-
+				
 				if (radius < 1) {
 					revertBlocks();
 					time = System.currentTimeMillis();
@@ -248,7 +248,7 @@ public class WaterSpoutWave extends WaterAbility {
 					remove();
 					return;
 				}
-
+				
 				player.setFallDistance(0f);
 				double currentSpeed = speed - (speed * (System.currentTimeMillis() - time) / flightTime);
 				double nightSpeed = getNightFactor(currentSpeed * 0.9);
@@ -277,7 +277,7 @@ public class WaterSpoutWave extends WaterAbility {
 							DamageHandler.damageEntity(entity, damage, this);
 							final Player fplayer = this.player;
 							final Entity fent = entity;
-
+							
 							new BukkitRunnable() {
 								@Override
 								public void run() {
@@ -359,7 +359,7 @@ public class WaterSpoutWave extends WaterAbility {
 			final Block block = keys.nextElement();
 			final TempBlock tblock = affectedBlocks.get(block);
 			affectedBlocks.remove(block);
-
+			
 			new BukkitRunnable() {
 				@Override
 				public void run() {
@@ -455,9 +455,10 @@ public class WaterSpoutWave extends WaterAbility {
 	public String getName() {
 		return "WaterSpout";
 	}
-
+	
 	@Override
-	public Element getElement() {
+	public Element getElement() 
+	{
 		return this.isIceWave() ? Element.ICE : Element.WATER;
 	}
 
@@ -465,7 +466,7 @@ public class WaterSpoutWave extends WaterAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return this.isIceWave() ? true : false;
@@ -475,7 +476,7 @@ public class WaterSpoutWave extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean isCollidable() {
 		return collidable;
@@ -657,5 +658,5 @@ public class WaterSpoutWave extends WaterAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-
+		
 }

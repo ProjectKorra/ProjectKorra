@@ -23,7 +23,7 @@ public class FireDamageTimer {
 		if (entity.getEntityId() == source.getEntityId()) {
 			return;
 		}
-
+		
 		INSTANCES.put(entity, source);
 	}
 
@@ -51,7 +51,7 @@ public class FireDamageTimer {
 			}
 			LivingEntity Lentity = (LivingEntity) entity;
 			Player source = INSTANCES.get(entity);
-
+			
 			//damages the entity
 			DamageHandler.damageEntity(Lentity, source, DAMAGE, CoreAbility.getAbilitiesByElement(Element.FIRE).get(0));
 

@@ -21,8 +21,9 @@ public class FirePassive {
 				if (player.getFireTicks() > 80) {
 					player.setFireTicks(80);
 				}
-
-				if (bPlayer != null && !CoreAbility.hasAbility(player, Illumination.class) && bPlayer.canBendIgnoreBinds(CoreAbility.getAbility("Illumination")) && ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
+				
+				if (bPlayer != null && !CoreAbility.hasAbility(player, Illumination.class) 
+						&& bPlayer.canBendIgnoreBinds(CoreAbility.getAbility("Illumination")) && ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
 					if (!bPlayer.isTremorSensing()) {
 						new Illumination(player);
 					}

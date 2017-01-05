@@ -14,7 +14,7 @@ public class WarriorStance extends ChiAbility {
 
 	private int strength;
 	private int resistance;
-
+	
 	public WarriorStance(Player player) {
 		super(player);
 		if (!bPlayer.canBend(this)) {
@@ -22,7 +22,7 @@ public class WarriorStance extends ChiAbility {
 		}
 		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
 		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
-
+		
 		ChiAbility stance = bPlayer.getStance();
 		if (stance != null) {
 			if (stance instanceof WarriorStance) {
@@ -45,7 +45,7 @@ public class WarriorStance extends ChiAbility {
 			remove();
 			return;
 		}
-
+		
 		if (!player.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, resistance, true));
 		}
@@ -53,7 +53,7 @@ public class WarriorStance extends ChiAbility {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 60, strength, true));
 		}
 	}
-
+	
 	@Override
 	public void remove() {
 		super.remove();
@@ -63,7 +63,7 @@ public class WarriorStance extends ChiAbility {
 		player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 		player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
 	}
-
+	
 	@Override
 	public String getName() {
 		return "WarriorStance";
@@ -78,7 +78,7 @@ public class WarriorStance extends ChiAbility {
 	public long getCooldown() {
 		return 0;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -104,5 +104,5 @@ public class WarriorStance extends ChiAbility {
 	public void setResistance(int resistance) {
 		this.resistance = resistance;
 	}
-
+	
 }

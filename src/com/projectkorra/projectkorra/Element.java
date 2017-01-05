@@ -11,35 +11,37 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Element {
-
+	
 	public enum ElementType {
-		BENDING("bending", "bender", "bend"), BLOCKING("blocking", "blocker", "block"), NO_SUFFIX("", "", "");
-
+		BENDING("bending", "bender", "bend"),
+		BLOCKING("blocking", "blocker", "block"),
+		NO_SUFFIX("", "", "");
+		
 		private String bending;
 		private String bender;
 		private String bend;
-
+		
 		ElementType(String bending, String bender, String bend) {
 			this.bending = bending;
 			this.bender = bender;
 			this.bend = bend;
 		}
-
+		
 		public String getBending() {
 			return bending;
 		}
-
+		
 		public String getBender() {
 			return bender;
 		}
-
+		
 		public String getBend() {
 			return bend;
 		}
 	}
-
+	
 	private static final HashMap<String, Element> ALL_ELEMENTS = new HashMap<>(); // Must be initialized first
-
+	
 	public static final Element AIR = new Element("Air");
 	public static final Element WATER = new Element("Water");
 	public static final Element EARTH = new Element("Earth");
@@ -57,44 +59,39 @@ public class Element {
 	public static final SubElement SAND = new SubElement("Sand", EARTH);
 	public static final SubElement LIGHTNING = new SubElement("Lightning", FIRE);
 	public static final SubElement COMBUSTION = new SubElement("Combustion", FIRE);
-
-	private static final Element[] ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI, FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION };
-	private static final Element[] MAIN_ELEMENTS = { AIR, WATER, EARTH, FIRE, CHI };
-	private static final SubElement[] SUB_ELEMENTS = { FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION };
-
+	
+	private static final Element[] ELEMENTS = {AIR, WATER, EARTH, FIRE, CHI, FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION};
+	private static final Element[] MAIN_ELEMENTS = {AIR, WATER, EARTH, FIRE, CHI};
+	private static final SubElement[] SUB_ELEMENTS = {FLIGHT, SPIRITUAL, BLOOD, HEALING, ICE, PLANT, LAVA, METAL, SAND, LIGHTNING, COMBUSTION};
+	
 	private String name;
 	private ElementType type;
 	private Plugin plugin;
 
 	/**
-	 * To be used when creating a new Element. Do not use for comparing
-	 * Elements.
-	 * 
+	 * To be used when creating a new Element.
+	 * Do not use for comparing Elements.
 	 * @param name Name of the new Element.
 	 */
 	public Element(String name) {
 		this(name, ElementType.BENDING, ProjectKorra.plugin);
 	}
-
+	
 	/**
-	 * To be used when creating a new Element. Do not use for comparing
-	 * Elements.
-	 * 
+	 * To be used when creating a new Element.
+	 * Do not use for comparing Elements.
 	 * @param name Name of the new Element.
-	 * @param type ElementType specifies if its a regular element or chi style
-	 *            element.
+	 * @param type ElementType specifies if its a regular element or chi style element.
 	 */
 	public Element(String name, ElementType type) {
 		this(name, type, ProjectKorra.plugin);
 	}
-
+	
 	/**
-	 * To be used when creating a new Element. Do not use for comparing
-	 * Elements.
-	 * 
+	 * To be used when creating a new Element.
+	 * Do not use for comparing Elements.
 	 * @param name Name of the new Element.
-	 * @param type ElementType specifies if its a regular element or chi style
-	 *            element.
+	 * @param type ElementType specifies if its a regular element or chi style element.
 	 * @param plugin The plugin that is adding the element.
 	 */
 	public Element(String name, ElementType type, Plugin plugin) {
@@ -103,54 +100,50 @@ public class Element {
 		this.plugin = plugin;
 		ALL_ELEMENTS.put(name.toLowerCase(), this);
 	}
-
+	
 	public String getPrefix() {
 		String name_ = name;
-		if (this instanceof SubElement)
-			name_ = ((SubElement) this).parentElement.name;
+		if (this instanceof SubElement) name_ = ((SubElement)this).parentElement.name;
 		return getColor() + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Prefixes." + name_)) + " ";
 	}
-
+	
 	public ChatColor getColor() {
 		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name) : plugin.getConfig().getString("Chat.Colors." + name);
 		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 	}
-
+	
 	public ChatColor getSubColor() {
 		String color = this.plugin.getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + name + "Sub") : plugin.getConfig().getString("Chat.Colors." + name + "Sub");
 		return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
-
+	
 	public Plugin getPlugin() {
 		return plugin;
 	}
-
+	
 	public ElementType getType() {
-		if (type == null)
-			return ElementType.NO_SUFFIX;
+		if (type == null) return ElementType.NO_SUFFIX;
 		return type;
 	}
-
+	
 	@Override
 	public String toString() {
 		return getColor() + getName();
 	}
-
+	
 	public static Element getElement(String name) {
 		if (name == null) {
 			return null;
 		}
 		return ALL_ELEMENTS.get(name.toLowerCase());
 	}
-
+	
 	/**
-	 * Returns an array of all official and addon elements excluding
-	 * subelements.
-	 * 
+	 * Returns an array of all official and addon elements excluding subelements.
 	 * @return Array of all official and addon elements.
 	 */
 	public static Element[] getAllElements() {
@@ -163,28 +156,25 @@ public class Element {
 		}
 		return ae.toArray(new Element[ae.size()]);
 	}
-
+	
 	/**
 	 * Returns an array of all the official elements and subelements.
-	 * 
 	 * @return Array of all official elements and subelements.
 	 */
 	public static Element[] getElements() {
 		return ELEMENTS;
 	}
-
+	
 	/**
 	 * Returns an array of all the official elements.
-	 * 
 	 * @return Array of all official elements.
 	 */
 	public static Element[] getMainElements() {
 		return MAIN_ELEMENTS;
 	}
-
+	
 	/**
 	 * Returns an array of all the addon elements.
-	 * 
 	 * @return Array of all addon elements.
 	 */
 	public static Element[] getAddonElements() {
@@ -197,10 +187,9 @@ public class Element {
 		ae.remove(Element.AVATAR);
 		return ae.toArray(new Element[ae.size()]);
 	}
-
+	
 	/**
 	 * Returns all subelements, official and addon.
-	 * 
 	 * @return Array of all the subelements.
 	 */
 	public static SubElement[] getAllSubElements() {
@@ -213,19 +202,17 @@ public class Element {
 		}
 		return se.toArray(new SubElement[se.size()]);
 	}
-
+	
 	/**
 	 * Return official subelements.
-	 * 
 	 * @return Array of official subelements.
 	 */
 	public static SubElement[] getSubElements() {
 		return SUB_ELEMENTS;
 	}
-
+	
 	/**
 	 * Return all subelements belonging to a parent element.
-	 * 
 	 * @param element
 	 * @return Array of all subelements belonging to a parent element.
 	 */
@@ -238,10 +225,9 @@ public class Element {
 		}
 		return se.toArray(new SubElement[se.size()]);
 	}
-
+	
 	/**
 	 * Returns an array of all the addon subelements.
-	 * 
 	 * @return Array of all addon subelements.
 	 */
 	public static SubElement[] getAddonSubElements() {
@@ -253,10 +239,9 @@ public class Element {
 		}
 		return ae.toArray(new SubElement[ae.size()]);
 	}
-
+	
 	/**
 	 * Returns array of addon subelements belonging to a parent element.
-	 * 
 	 * @param element
 	 * @return Array of addon subelements belonging to a parent element.
 	 */
@@ -269,7 +254,7 @@ public class Element {
 		}
 		return se.toArray(new SubElement[se.size()]);
 	}
-
+	
 	public static Element fromString(String element) {
 		if (getElement(element) != null) {
 			return getElement(element);
@@ -286,56 +271,51 @@ public class Element {
 		}
 		return null;
 	}
-
+	
 	public static class SubElement extends Element {
-
+		
 		private Element parentElement;
-
+		
 		/**
-		 * To be used when creating a new SubElement. Do not use for comparing
-		 * SubElements.
-		 * 
+		 * To be used when creating a new SubElement.
+		 * Do not use for comparing SubElements.
 		 * @param name Name of the new SubElement.
 		 * @param parentElement ParentElement of the SubElement.
 		 */
 		public SubElement(String name, Element parentElement) {
 			this(name, parentElement, ElementType.BENDING, ProjectKorra.plugin);
 		}
-
+		
 		/**
-		 * To be used when creating a new SubElement. Do not use for comparing
-		 * SubElements.
-		 * 
+		 * To be used when creating a new SubElement.
+		 * Do not use for comparing SubElements.
 		 * @param name Name of the new SubElement.
 		 * @param parentElement ParentElement of the SubElement.
-		 * @param type ElementType specifies if its a regular element or chi
-		 *            style element.
+		 * @param type ElementType specifies if its a regular element or chi style element.
 		 */
 		public SubElement(String name, Element parentElement, ElementType type) {
 			this(name, parentElement, type, ProjectKorra.plugin);
 		}
-
+		
 		/**
-		 * To be used when creating a new SubElement. Do not use for comparing
-		 * SubElements.
-		 * 
+		 * To be used when creating a new SubElement.
+		 * Do not use for comparing SubElements.
 		 * @param name Name of the new SubElement.
 		 * @param parentElement ParentElement of the SubElement.
-		 * @param type ElementType specifies if its a regular element or chi
-		 *            style element.
+		 * @param type ElementType specifies if its a regular element or chi style element.
 		 * @param plugin The plugin that is adding the element.
 		 */
 		public SubElement(String name, Element parentElement, ElementType type, Plugin plugin) {
 			super(name, type, plugin);
 			this.parentElement = parentElement;
 		}
-
+		
 		@Override
 		public ChatColor getColor() {
 			String color = getPlugin().getName().equalsIgnoreCase("ProjectKorra") ? ConfigManager.languageConfig.get().getString("Chat.Colors." + parentElement.name + "Sub") : getPlugin().getConfig().getString("Chat.Colors." + parentElement.name + "Sub");
 			return color != null ? ChatColor.valueOf(color) : ChatColor.WHITE;
 		}
-
+		
 		public Element getParentElement() {
 			return this.parentElement;
 		}

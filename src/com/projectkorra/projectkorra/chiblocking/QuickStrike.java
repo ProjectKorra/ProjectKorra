@@ -43,7 +43,7 @@ public class QuickStrike extends ChiAbility {
 		if (target instanceof Player && ChiPassive.willChiBlock(player, (Player) target)) {
 			ChiPassive.blockChi((Player) target);
 		}
-
+		
 		remove();
 	}
 

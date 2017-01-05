@@ -79,7 +79,8 @@ public class FireShield extends FireAbility {
 				Location tempLoc = playerLoc.clone().add(playerLoc.multiply(fshield.discRadius));
 				if (!tempLoc.getWorld().equals(loc.getWorld())) {
 					return false;
-				} else if (tempLoc.getWorld().equals(loc.getWorld()) && tempLoc.distance(loc) <= fshield.discRadius * fshield.discRadius) {
+				} else if (tempLoc.getWorld().equals(loc.getWorld())
+						&& tempLoc.distance(loc) <= fshield.discRadius * fshield.discRadius) {
 					return true;
 				}
 			}
@@ -112,7 +113,8 @@ public class FireShield extends FireAbility {
 						double rphi = Math.toRadians(phi);
 						double rtheta = Math.toRadians(theta);
 
-						Block block = location.clone().add(radius * Math.cos(rphi) * Math.sin(rtheta), radius * Math.cos(rtheta), radius * Math.sin(rphi) * Math.sin(rtheta)).getBlock();
+						Block block = location.clone().add(radius * Math.cos(rphi) * Math.sin(rtheta), radius * Math.cos(rtheta),
+								radius * Math.sin(rphi) * Math.sin(rtheta)).getBlock();
 						if (!blocks.contains(block) && !GeneralMethods.isSolid(block) && !block.isLiquid()) {
 							blocks.add(block);
 						}
@@ -217,7 +219,7 @@ public class FireShield extends FireAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public double getCollisionRadius() {
 		return shield ? radius : discRadius;

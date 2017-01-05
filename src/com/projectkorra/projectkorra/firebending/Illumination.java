@@ -14,7 +14,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class Illumination extends FireAbility {
-
+	
 	private static final Map<TempBlock, Player> BLOCKS = new ConcurrentHashMap<>();
 
 	private byte normalData;
@@ -24,26 +24,26 @@ public class Illumination extends FireAbility {
 	private Material normalType;
 	private TempBlock block;
 	private int oldLevel;
-
+	
 	public Illumination(Player player) {
 		super(player);
-
+		
 		this.range = getConfig().getDouble("Abilities.Fire.Illumination.Range");
 		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
 		this.range = getDayFactor(this.range);
 		this.lightThreshold = getConfig().getInt("Abilities.Fire.Illumination.LightThreshold");
-
+		
 		Illumination oldIllumination = getAbility(player, Illumination.class);
 		if (oldIllumination != null) {
 			oldIllumination.remove();
 			return;
 		}
-
+		
 		if (!bPlayer.isIlluminating()) {
 			remove();
 			return;
 		}
-
+		
 		if (bPlayer.isOnCooldown(this)) {
 			return;
 		}
@@ -54,7 +54,7 @@ public class Illumination extends FireAbility {
 			set();
 			start();
 		}
-
+		
 	}
 
 	@Override
@@ -63,22 +63,22 @@ public class Illumination extends FireAbility {
 			remove();
 			return;
 		}
-
+		
 		if (!bPlayer.isIlluminating()) {
 			remove();
 			return;
 		}
-
+		
 		if (bPlayer.isTremorSensing()) {
 			remove();
 			return;
 		}
-
+		
 		if (oldLevel > this.lightThreshold) {
 			remove();
 			return;
 		}
-
+		
 		set();
 	}
 
@@ -86,13 +86,13 @@ public class Illumination extends FireAbility {
 	public void remove() {
 		super.remove();
 		revert();
-	}
+	}	
 
 	private void revert() {
 		if (block != null) {
 			TempBlock.removeBlock(block.getBlock());
 			BLOCKS.remove(block);
-
+			
 			block.revertBlock();
 			oldLevel = player.getLocation().getBlock().getLightLevel();
 		}
@@ -101,17 +101,23 @@ public class Illumination extends FireAbility {
 	private void set() {
 		Block standingBlock = player.getLocation().getBlock();
 		Block standBlock = standingBlock.getRelative(BlockFace.DOWN);
-
+		
 		if (standBlock.getType() == Material.GLOWSTONE) {
 			revert();
-		} else if ((BlazeArc.isIgnitable(player, standingBlock) && standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2) && block == null && !BLOCKS.containsKey(standBlock)) {
-
-			this.block = new TempBlock(standingBlock, Material.TORCH, (byte) 0);
+		} else if ((BlazeArc.isIgnitable(player, standingBlock) 
+				&& standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2) 
+				&& block == null && !BLOCKS.containsKey(standBlock)) {
+			
+			this.block = new TempBlock(standingBlock, Material.TORCH, (byte)0);
 			BLOCKS.put(block, player);
-		} else if ((BlazeArc.isIgnitable(player, standingBlock) && standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2) && !block.equals(standBlock) && !BLOCKS.containsKey(standBlock) && GeneralMethods.isSolid(standBlock)) {
+		} else if ((BlazeArc.isIgnitable(player, standingBlock) 
+				&& standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2)
+				&& !block.equals(standBlock)
+				&& !BLOCKS.containsKey(standBlock)
+				&& GeneralMethods.isSolid(standBlock)) {
 			revert();
-
-			this.block = new TempBlock(standingBlock, Material.TORCH, (byte) 0);
+			
+			this.block = new TempBlock(standingBlock, Material.TORCH, (byte)0);
 			BLOCKS.put(block, player);
 		} else if (block == null) {
 			return;
@@ -136,7 +142,7 @@ public class Illumination extends FireAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -182,12 +188,10 @@ public class Illumination extends FireAbility {
 	public static Map<TempBlock, Player> getBlocks() {
 		return BLOCKS;
 	}
-
-	/**
-	 * Returns whether the block provided is a torch created by Illumination
+	
+	/**Returns whether the block provided is a torch created by Illumination
 	 * 
-	 * @param block The block being tested
-	 */
+	 * @param block The block being tested*/
 	public static boolean isIlluminationTorch(Block block) {
 		for (TempBlock b : BLOCKS.keySet()) {
 			if (b.getBlock().equals(block)) {
@@ -200,5 +204,5 @@ public class Illumination extends FireAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-
+	
 }

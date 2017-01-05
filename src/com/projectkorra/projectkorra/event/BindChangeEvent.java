@@ -10,7 +10,7 @@ import org.bukkit.event.HandlerList;
  * @author savior67
  */
 public class BindChangeEvent extends Event {
-
+	
 	private static final HandlerList handlers = new HandlerList();
 	private Player player;
 	private String ability;
@@ -28,7 +28,7 @@ public class BindChangeEvent extends Event {
 		this.cancelled = false;
 		this.isMultiAbility = false;
 	}
-
+	
 	//used for multi abilities
 	public BindChangeEvent(Player player, String ability, boolean isBinding) {
 		this.player = player;
@@ -38,16 +38,16 @@ public class BindChangeEvent extends Event {
 		this.cancelled = false;
 		this.isMultiAbility = true;
 	}
-
+	
 	public String getAbility() {
 		return ability;
 	}
-
+	
 	@Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}
-
+	
 	public static HandlerList getHandlerList() {
 		return handlers;
 	}
@@ -55,23 +55,23 @@ public class BindChangeEvent extends Event {
 	public Player getPlayer() {
 		return player;
 	}
-
+	
 	public int getSlot() {
 		return slot;
 	}
-
+	
 	public boolean isBinding() {
 		return isBinding;
 	}
-
+	
 	public boolean isCancelled() {
 		return cancelled;
 	}
-
+	
 	public boolean isMultiAbility() {
 		return isMultiAbility;
 	}
-
+	
 	public void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
 	}

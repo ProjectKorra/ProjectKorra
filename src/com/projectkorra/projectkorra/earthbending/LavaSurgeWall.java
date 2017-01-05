@@ -22,11 +22,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LavaSurgeWall extends LavaAbility {
-
+	
 	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<Block, Block>();
 	private static final Map<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<Block, Player>();
 	private static final int SURGE_WAVE_RANGE = 20; // TODO: remove this
-
+	
 	private boolean progressing;
 	private boolean settingUp;
 	private boolean forming;
@@ -41,15 +41,15 @@ public class LavaSurgeWall extends LavaAbility {
 	private Location targetDestination;
 	private Vector firstDirection;
 	private Vector targetDirection;
-
+	
 	public LavaSurgeWall(Player player) {
 		super(player);
-
+		
 		this.interval = 30;
 		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
 		this.range = getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
 		this.cooldown = GeneralMethods.getGlobalCooldown();
-
+		
 		LavaSurgeWave wave = getAbility(player, LavaSurgeWave.class);
 		if (wave != null && wave.isProgressing()) {
 			LavaSurgeWave.launch(player);
@@ -99,7 +99,7 @@ public class LavaSurgeWall extends LavaAbility {
 	public void moveLava() {
 		if (sourceBlock != null) {
 			targetDestination = getTargetEarthBlock((int) range).getLocation();
-
+			
 			if (targetDestination.distanceSquared(location) <= 1) {
 				progressing = false;
 				targetDestination = null;
@@ -145,19 +145,19 @@ public class LavaSurgeWall extends LavaAbility {
 			remove();
 			return;
 		}
-
+		
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			if (progressing && !player.isSneaking()) {
 				remove();
 				return;
-			}
-
+			} 
+			
 			if (!progressing) {
 				sourceBlock.getWorld().playEffect(location, Effect.SMOKE, 4, (int) range);
 				return;
 			}
-
+			
 			if (forming) {
 				ArrayList<Block> blocks = new ArrayList<Block>();
 				Location loc = GeneralMethods.getTargetedLocation(player, (int) range, 8, 9, 79);
@@ -165,18 +165,19 @@ public class LavaSurgeWall extends LavaAbility {
 				Vector dir = player.getEyeLocation().getDirection();
 				Vector vec;
 				Block block;
-
+				
 				for (double i = 0; i <= radius; i += 0.5) {
 					for (double angle = 0; angle < 360; angle += 10) {
 						vec = GeneralMethods.getOrthogonalVector(dir.clone(), angle, i);
 						block = loc.clone().add(vec).getBlock();
-
+						
 						if (GeneralMethods.isRegionProtectedFromBuild(player, "LavaSurge", block.getLocation())) {
 							continue;
 						}
 						if (WALL_BLOCKS.containsKey(block)) {
 							blocks.add(block);
-						} else if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE || isLavabendable(block))) {
+						} else if (!blocks.contains(block) 
+								&& (block.getType() == Material.AIR || block.getType() == Material.FIRE || isLavabendable(block))) {
 							WALL_BLOCKS.put(block, player);
 							addWallBlock(block);
 							blocks.add(block);
@@ -184,34 +185,34 @@ public class LavaSurgeWall extends LavaAbility {
 						}
 					}
 				}
-
+				
 				for (Block blocki : WALL_BLOCKS.keySet()) {
 					if (WALL_BLOCKS.get(blocki) == player && !blocks.contains(blocki)) {
 						finalRemoveLava(blocki);
 					}
 				}
-
+				
 				return;
 			}
-
+			
 			if (sourceBlock.getLocation().distanceSquared(firstDestination) < 0.5 * 0.5 && settingUp) {
 				settingUp = false;
 			}
-
+			
 			Vector direction;
 			if (settingUp) {
 				direction = firstDirection;
 			} else {
 				direction = targetDirection;
 			}
-
+			
 			location = location.clone().add(direction);
 			Block block = location.getBlock();
 			if (block.getLocation().equals(sourceBlock.getLocation())) {
 				location = location.clone().add(direction);
 				block = location.getBlock();
 			}
-
+			
 			if (block.getType() != Material.AIR) {
 				breakBlock();
 				return;
@@ -219,7 +220,7 @@ public class LavaSurgeWall extends LavaAbility {
 				breakBlock();
 				return;
 			}
-
+			
 			addLava(block);
 			removeLava(sourceBlock);
 			sourceBlock = block;
@@ -319,7 +320,7 @@ public class LavaSurgeWall extends LavaAbility {
 		}
 		return false;
 	}
-
+	
 	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
@@ -352,7 +353,7 @@ public class LavaSurgeWall extends LavaAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
+	
 	public boolean isProgressing() {
 		return progressing;
 	}
@@ -456,5 +457,5 @@ public class LavaSurgeWall extends LavaAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-
+	
 }

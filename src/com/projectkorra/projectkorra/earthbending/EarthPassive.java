@@ -31,7 +31,7 @@ public class EarthPassive {
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return false;
 		}
-
+		
 		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
@@ -39,7 +39,7 @@ public class EarthPassive {
 		} else if (bPlayer.canMetalbend() && ElementalAbility.isMetalBlock(block)) {
 			return true;
 		}
-
+		
 		if (EarthAbility.isEarthbendable(player, block) || ElementalAbility.isTransparent(player, block)) {
 			if (!ElementalAbility.isTransparent(player, block)) {
 				MaterialData type = block.getState().getData();
@@ -79,7 +79,8 @@ public class EarthPassive {
 			return true;
 		}
 
-		return (TempBlock.isTempBlock(block) && EarthAbility.isEarthbendable(TempBlock.get(block).getBlock().getType())) || EarthAbility.isEarthbendable(player, block) || EarthAbility.isTransparent(player, block);
+		return (TempBlock.isTempBlock(block) && EarthAbility.isEarthbendable(TempBlock.get(block).getBlock().getType())) 
+				|| EarthAbility.isEarthbendable(player, block) || EarthAbility.isTransparent(player, block);
 	}
 
 	public static boolean isPassiveSand(Block block) {
@@ -91,7 +92,7 @@ public class EarthPassive {
 		MaterialData materialdata = SAND_ID_ENTITIES.get(block);
 		SAND_ID_ENTITIES.remove(block);
 		SAND_BLOCKS.remove(block);
-
+		
 		if (block.getType() == Material.SAND) {
 			block.setType(materialdata.getItemType());
 			block.setData(materialdata.getData());
@@ -102,14 +103,14 @@ public class EarthPassive {
 	public static void handleMetalPassives() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
+			
 			if (bPlayer != null && bPlayer.canBendPassive(Element.EARTH) && bPlayer.canMetalbend()) {
 				if (player.isSneaking() && !bPlayer.isOnCooldown("MetalPassive")) {
 					Block block = player.getTargetBlock((HashSet<Material>) null, 5);
 					if (block == null) {
 						continue;
 					}
-
+					
 					if (block.getType() == Material.IRON_DOOR_BLOCK && !GeneralMethods.isRegionProtectedFromBuild(player, block.getLocation())) {
 						if (block.getData() >= 8) {
 							block = block.getRelative(BlockFace.DOWN);
@@ -175,7 +176,7 @@ public class EarthPassive {
 		}
 		return true;
 	}
-
+	
 	public static Map<Block, Long> getSandBlocks() {
 		return SAND_BLOCKS;
 	}

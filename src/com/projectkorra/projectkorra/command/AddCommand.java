@@ -36,7 +36,7 @@ public class AddCommand extends PKCommand {
 
 	public AddCommand() {
 		super("add", "/bending add <Element/SubElement> [Player]", ConfigManager.languageConfig.get().getString("Commands.Add.Description"), new String[] { "add", "a" });
-
+		
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Add.PlayerNotFound");
 		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Add.InvalidElement");
 		this.addedOtherCFW = ConfigManager.languageConfig.get().getString("Commands.Add.Other.SuccessfullyAddedCFW");
@@ -78,12 +78,12 @@ public class AddCommand extends PKCommand {
 	 * @param element The element to add
 	 */
 	private void add(CommandSender sender, Player target, String element) {
-
+		
 		Element e = Element.fromString(element);
 		if (e == null) {
 			e = SubElement.fromString(element);
 		}
-
+		
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
 		if (bPlayer == null) {
 			GeneralMethods.createBendingPlayer(target.getUniqueId(), target.getName());
@@ -103,15 +103,15 @@ public class AddCommand extends PKCommand {
 				return;
 			}
 			bPlayer.addElement(e);
-
+			
 			for (SubElement sub : Element.getAllSubElements()) {
 				if (sub.getParentElement() == e && bPlayer.hasSubElementPermission(sub)) {
 					bPlayer.addSubElement(sub);
 				}
 			}
-
+			
 			ChatColor color = e.getColor();
-
+			
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 				if (e != Element.AIR && e != Element.EARTH) {
 					sender.sendMessage(color + addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
@@ -125,7 +125,7 @@ public class AddCommand extends PKCommand {
 					target.sendMessage(color + addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
 				else
 					target.sendMessage(color + addedAE.replace("{element}", e.getName() + e.getType().getBender()));
-
+				
 			}
 			GeneralMethods.saveElements(bPlayer);
 			GeneralMethods.saveSubElements(bPlayer);
@@ -143,13 +143,13 @@ public class AddCommand extends PKCommand {
 			}
 			bPlayer.addSubElement(sub);
 			ChatColor color = e.getColor();
-
+			
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 				if (e != Element.AIR && e != Element.EARTH)
 					sender.sendMessage(color + addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
 				else
 					sender.sendMessage(color + addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
-
+				
 			} else {
 				if (e != Element.AIR && e != Element.EARTH)
 					target.sendMessage(color + addedCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
@@ -163,18 +163,17 @@ public class AddCommand extends PKCommand {
 			sender.sendMessage(ChatColor.RED + invalidElement);
 		}
 	}
-
+	
 	public static boolean isVowel(char c) {
 		return "AEIOUaeiou".indexOf(c) != -1;
 	}
-
+	
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 2 || !sender.hasPermission("bending.command.add"))
-			return new ArrayList<String>();
+		if (args.size() >= 2 || !sender.hasPermission("bending.command.add")) return new ArrayList<String>();
 		List<String> l = new ArrayList<String>();
 		if (args.size() == 0) {
-
+			
 			l.add("Air");
 			l.add("Earth");
 			l.add("Fire");
@@ -183,7 +182,7 @@ public class AddCommand extends PKCommand {
 			for (Element e : Element.getAddonElements()) {
 				l.add(e.getName());
 			}
-
+			
 			l.add("Blood");
 			l.add("Combustion");
 			l.add("Flight");

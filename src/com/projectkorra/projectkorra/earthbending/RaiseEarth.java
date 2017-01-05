@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RaiseEarth extends EarthAbility {
-
+	
 	private static final Map<Block, Block> ALL_AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 
 	private int distance;
@@ -34,11 +34,11 @@ public class RaiseEarth extends EarthAbility {
 	private Location origin;
 	private Location location;
 	private ConcurrentHashMap<Block, Block> affectedBlocks;
-
+	
 	public RaiseEarth(Player player) {
 		super(player);
 		setFields();
-
+		
 		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("RaiseEarthPillar")) {
 			return;
 		}
@@ -51,7 +51,7 @@ public class RaiseEarth extends EarthAbility {
 			if (block == null) {
 				return;
 			}
-
+			
 			origin = block.getLocation();
 			location = origin.clone();
 			distance = getEarthbendableBlocksLength(block, direction.clone().multiply(-1), height);
@@ -76,7 +76,7 @@ public class RaiseEarth extends EarthAbility {
 	public RaiseEarth(Player player, Location origin, int height) {
 		super(player);
 		setFields();
-
+		
 		this.height = height;
 		this.origin = origin;
 		this.location = origin.clone();
@@ -90,7 +90,7 @@ public class RaiseEarth extends EarthAbility {
 			start();
 		}
 	}
-
+	
 	private void setFields() {
 		this.speed = getConfig().getDouble("Abilities.Earth.RaiseEarth.Speed");
 		this.height = getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
@@ -100,12 +100,12 @@ public class RaiseEarth extends EarthAbility {
 		this.interval = (long) (1000.0 / speed);
 		this.affectedBlocks = new ConcurrentHashMap<>();
 	}
-
+	
 	private boolean canInstantiate() {
 		if (location.getBlock().getRelative(BlockFace.UP).getType() == Material.STATIONARY_LAVA) {
 			return false;
 		}
-
+		
 		for (Block block : affectedBlocks.keySet()) {
 			if (!isEarthbendable(block) || ALL_AFFECTED_BLOCKS.containsKey(block)) {
 				return false;
@@ -125,7 +125,7 @@ public class RaiseEarth extends EarthAbility {
 			}
 		}
 	}
-
+	
 	@Override
 	public void progress() {
 		if (System.currentTimeMillis() - time >= interval) {
@@ -135,7 +135,7 @@ public class RaiseEarth extends EarthAbility {
 			if (!block.isLiquid()) {
 				moveEarth(block, direction, distance);
 			}
-
+			
 			loadAffectedBlocks();
 
 			if (location.distanceSquared(origin) >= distance * distance) {
@@ -170,7 +170,7 @@ public class RaiseEarth extends EarthAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -180,7 +180,7 @@ public class RaiseEarth extends EarthAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public List<Location> getLocations() {
 		ArrayList<Location> locations = new ArrayList<>();
@@ -273,5 +273,5 @@ public class RaiseEarth extends EarthAbility {
 	public void setSelectRange(double selectRange) {
 		this.selectRange = selectRange;
 	}
-
+		
 }

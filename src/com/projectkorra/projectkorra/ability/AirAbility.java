@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AirAbility extends ElementalAbility {
-
+	
 	public AirAbility(Player player) {
 		super(player);
 	}
@@ -27,17 +27,17 @@ public abstract class AirAbility extends ElementalAbility {
 	public boolean isIgniteAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean isExplosiveAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public Element getElement() {
 		return Element.AIR;
 	}
-
+	
 	@Override
 	public void handleCollision(Collision collision) {
 		super.handleCollision(collision);
@@ -46,10 +46,10 @@ public abstract class AirAbility extends ElementalAbility {
 			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
 		}
 	}
+		
 
 	/**
-	 * Breaks a breathbendng hold on an entity or one a player is inflicting on
-	 * an entity.
+	 * Breaks a breathbendng hold on an entity or one a player is inflicting on an entity.
 	 * 
 	 * @param entity The entity to be acted upon
 	 */
@@ -66,7 +66,7 @@ public abstract class AirAbility extends ElementalAbility {
 			}
 		}
 	}
-
+	
 	/**
 	 * Gets the Air Particles from the config.
 	 * 
@@ -88,7 +88,7 @@ public abstract class AirAbility extends ElementalAbility {
 			return ParticleEffect.CLOUD;
 		}
 	}
-
+	
 	/**
 	 * This method was used for the old collision detection system. Please see
 	 * {@link Collision} for the new system.
@@ -116,8 +116,8 @@ public abstract class AirAbility extends ElementalAbility {
 	}
 
 	/**
-	 * Plays an integer amount of air particles in a location with a given
-	 * xOffset, yOffset, and zOffset.
+	 * Plays an integer amount of air particles in a location with a given xOffset, yOffset, and
+	 * zOffset.
 	 * 
 	 * @param loc The location to use
 	 * @param amount The amount of particles

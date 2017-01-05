@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CopyCommand extends PKCommand {
-
+	
 	private String playerNotFound;
 	private String copied;
 	private String failedToBindAll;
@@ -24,7 +24,7 @@ public class CopyCommand extends PKCommand {
 
 	public CopyCommand() {
 		super("copy", "/bending copy <Player> [Player]", ConfigManager.languageConfig.get().getString("Commands.Copy.Description"), new String[] { "copy", "co" });
-
+		
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Copy.PlayerNotFound");
 		this.copied = ConfigManager.languageConfig.get().getString("Commands.Copy.SuccessfullyCopied");
 		this.failedToBindAll = ConfigManager.languageConfig.get().getString("Commands.Copy.FailedToBindAll");
@@ -46,6 +46,7 @@ public class CopyCommand extends PKCommand {
 				sender.sendMessage(ChatColor.RED + playerNotFound);
 				return;
 			}
+
 
 			boolean boundAll = assignAbilities(sender, orig, (Player) sender, true);
 			sender.sendMessage(ChatColor.GREEN + copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
@@ -74,7 +75,7 @@ public class CopyCommand extends PKCommand {
 			}
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	private boolean assignAbilities(CommandSender sender, Player player, Player player2, boolean self) {
 
@@ -97,7 +98,7 @@ public class CopyCommand extends PKCommand {
 			}
 			return false;
 		}
-
+		
 		HashMap<Integer, String> abilities = (HashMap<Integer, String>) orig.getAbilities().clone();
 		boolean boundAll = true;
 		for (int i = 1; i <= 9; i++) {
@@ -110,11 +111,10 @@ public class CopyCommand extends PKCommand {
 		target.setAbilities(abilities);
 		return boundAll;
 	}
-
+	
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (!sender.hasPermission("bending.command.copy") || args.size() >= 2 || (args.size() >= 1 && !sender.hasPermission("bending.command.copy.assign")))
-			return new ArrayList<String>(); //Return nothing
+		if (!sender.hasPermission("bending.command.copy") || args.size() >= 2 || (args.size() >= 1 && !sender.hasPermission("bending.command.copy.assign"))) return new ArrayList<String>(); //Return nothing
 		List<String> l = new ArrayList<String>();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			l.add(p.getName());

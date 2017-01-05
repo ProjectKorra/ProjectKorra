@@ -30,15 +30,15 @@ public abstract class WaterAbility extends ElementalAbility {
 	public WaterAbility(Player player) {
 		super(player);
 	}
-
+	
 	public boolean canAutoSource() {
 		return getConfig().getBoolean("Abilities." + getElement() + "." + getName() + ".CanAutoSource");
 	}
-
+	
 	public boolean canDynamicSource() {
 		return getConfig().getBoolean("Abilities." + getElement() + "." + getName() + ".CanDynamicSource");
 	}
-
+	
 	@Override
 	public Element getElement() {
 		return Element.WATER;
@@ -47,14 +47,14 @@ public abstract class WaterAbility extends ElementalAbility {
 	public Block getIceSourceBlock(double range) {
 		return getIceSourceBlock(player, range);
 	}
-
+	
 	public double getNightFactor() {
 		if (getLocation() != null) {
 			return getNightFactor(getLocation().getWorld());
 		}
 		return player != null ? getNightFactor(player.getLocation().getWorld()) : 1;
 	}
-
+	
 	public double getNightFactor(double value) {
 		return player != null ? getNightFactor(value, player.getWorld()) : value;
 	}
@@ -62,21 +62,21 @@ public abstract class WaterAbility extends ElementalAbility {
 	public Block getPlantSourceBlock(double range) {
 		return getPlantSourceBlock(range, false);
 	}
-
+	
 	public Block getPlantSourceBlock(double range, boolean onlyLeaves) {
 		return getPlantSourceBlock(player, range, onlyLeaves);
 	}
-
+	
 	@Override
 	public boolean isExplosiveAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean isIgniteAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public void handleCollision(Collision collision) {
 		super.handleCollision(collision);
@@ -85,7 +85,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
 		}
 	}
-
+	
 	public boolean isIcebendable(Block block) {
 		return isIcebendable(block.getType());
 	}
@@ -93,35 +93,35 @@ public abstract class WaterAbility extends ElementalAbility {
 	public boolean isIcebendable(Material material) {
 		return isIcebendable(player, material);
 	}
-
+	
 	public boolean isIcebendable(Player player, Material material) {
 		return isIcebendable(player, material, false);
 	}
-
-	public boolean isPlantbendable(Block block) {
+	
+	public boolean isPlantbendable (Block block) {
 		return isPlantbendable(block.getType());
 	}
-
-	public boolean isPlantbendable(Material material) {
+	
+	public boolean isPlantbendable (Material material) {
 		return isPlantbendable(player, material);
 	}
-
-	public boolean isPlantbendable(Player player, Material material) {
+	
+	public boolean isPlantbendable (Player player, Material material) {
 		return isPlantbendable(player, material, false);
 	}
 
 	public boolean isWaterbendable(Block block) {
 		return isWaterbendable(player, block);
 	}
-
+	
 	public boolean isWaterbendable(Player player, Block block) {
 		return isWaterbendable(player, null, block);
 	}
-
+	
 	public static boolean isWaterbendable(Material material) {
 		return isWater(material) || isIce(material) || isPlant(material) || isSnow(material);
 	}
-
+	
 	public static Block getIceSourceBlock(Player player, double range) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
@@ -161,7 +161,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			return value;
 		}
 	}
-
+		
 	public static double getNightFactor(World world) {
 		return getNightFactor(1, world);
 	}
@@ -169,12 +169,12 @@ public abstract class WaterAbility extends ElementalAbility {
 	public static Block getPlantSourceBlock(Player player, double range, boolean onlyLeaves) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
-
+		
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location)) {
 				continue;
-			} else if (isPlantbendable(player, block.getType(), onlyLeaves)) {
+			} else if (isPlantbendable (player, block.getType(), onlyLeaves)) {
 				if (TempBlock.isTempBlock(block)) {
 					continue;
 				}
@@ -183,7 +183,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Finds a valid Water source for a Player. To use dynamic source selection,
 	 * use BlockSource.getWaterSourceBlock() instead of this method. Dynamic
@@ -199,7 +199,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	public static Block getWaterSourceBlock(Player player, double range, boolean plantbending) {
 		Location location = player.getEyeLocation();
 		Vector vector = location.getDirection().clone().normalize();
-
+		
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), range > 3 ? 3 : (int) range);
 		if (bPlayer == null) {
@@ -207,7 +207,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		} else if (isWaterbendable(player, null, testBlock) && (!isPlant(testBlock) || plantbending)) {
 			return testBlock;
 		}
-
+		
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
 			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
@@ -215,13 +215,12 @@ public abstract class WaterAbility extends ElementalAbility {
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block)) {
 					continue;
-					/*
-					 * TempBlock tb = TempBlock.get(block); byte full = 0x0; if
-					 * (tb.getState().getRawData() != full &&
-					 * (tb.getState().getType() != Material.WATER ||
-					 * tb.getState().getType() != Material.STATIONARY_WATER)) {
-					 * continue; }
-					 */
+					/*TempBlock tb = TempBlock.get(block);
+					byte full = 0x0;
+					if (tb.getState().getRawData() != full 
+							&& (tb.getState().getType() != Material.WATER || tb.getState().getType() != Material.STATIONARY_WATER)) {
+						continue;
+					}*/
 				}
 				return block;
 			}
@@ -239,21 +238,21 @@ public abstract class WaterAbility extends ElementalAbility {
 		}
 		return adjacent;
 	}
-
+	
 	public static boolean isIcebendable(Player player, Material material, boolean onlyIce) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		return bPlayer == null ? null : isIce(material) && bPlayer.canIcebend() && (!onlyIce || material == Material.ICE);
 	}
-
+	
 	public static boolean isPlantbendable(Player player, Material material, boolean onlyLeaves) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (onlyLeaves) {
+		if(onlyLeaves) {
 			return bPlayer == null ? null : isPlant(material) && bPlayer.canPlantbend() && isLeaves(material);
 		} else {
 			return bPlayer == null ? null : isPlant(material) && bPlayer.canPlantbend();
 		}
 	}
-
+	
 	public static boolean isLeaves(Block block) {
 		return block != null ? isLeaves(block.getType()) : false;
 	}
@@ -261,7 +260,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	public static boolean isLeaves(Material material) {
 		return material == Material.LEAVES || material == Material.LEAVES_2;
 	}
-
+	
 	public static boolean isSnow(Block block) {
 		return block != null ? isSnow(block.getType()) : false;
 	}
@@ -277,7 +276,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (bPlayer == null || !isWaterbendable(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		}
-
+		
 		if (TempBlock.isTempBlock(block)) {
 			return false;
 		} else if (isWater(block) && block.getData() == full) {
@@ -340,7 +339,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	public static void removeWaterSpouts(Location loc, Player source) {
 		removeWaterSpouts(loc, 1.5, source);
 	}
-
+	
 	public static void stopBending() {
 		SurgeWall.removeAllCleanup();
 		SurgeWave.removeAllCleanup();

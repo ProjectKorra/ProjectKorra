@@ -24,7 +24,7 @@ public class WaterReturn extends WaterAbility {
 	private double range;
 	private Location location;
 	private TempBlock block;
-
+	
 	public WaterReturn(Player player, Block block) {
 		super(player);
 		if (hasAbility(player, WaterReturn.class)) {
@@ -34,9 +34,9 @@ public class WaterReturn extends WaterAbility {
 		this.location = block.getLocation();
 		this.range = 30;
 		this.interval = 50;
-
+		
 		this.range = getNightFactor(range);
-
+		
 		if (bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			if (isTransparent(player, block) && ((TempBlock.isTempBlock(block) && block.isLiquid()) || !block.isLiquid()) && hasEmptyWaterBottle()) {
 				this.block = new TempBlock(block, Material.WATER, (byte) 0);
@@ -82,7 +82,7 @@ public class WaterReturn extends WaterAbility {
 			block = new TempBlock(newblock, Material.WATER, (byte) 0);
 		} else if (isTransparent(player, newblock)) {
 			if (isWater(newblock)) {
-				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, newblock.getLocation().clone().add(.5, .5, .5), 255.0);
+				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, newblock.getLocation().clone().add(.5,.5,.5), 255.0);
 			}
 		} else {
 			remove();
@@ -112,7 +112,7 @@ public class WaterReturn extends WaterAbility {
 		if (inventory.contains(Material.GLASS_BOTTLE)) {
 			int index = inventory.first(Material.GLASS_BOTTLE);
 			ItemStack item = inventory.getItem(index);
-
+			
 			if (item.getAmount() == 1) {
 				inventory.setItem(index, new ItemStack(Material.POTION));
 			} else {
@@ -128,9 +128,12 @@ public class WaterReturn extends WaterAbility {
 	}
 
 	private static boolean isBending(Player player) {
-		if (hasAbility(player, WaterManipulation.class) || hasAbility(player, WaterManipulation.class) || hasAbility(player, OctopusForm.class)
-		// || hasAbility(player, SurgeWave.class) NOTE: ONLY DISABLED TO PREVENT BOTTLEBENDING FROM BEING DISABLED FOREVER. ONCE BOTTLEBENDING HAS BEEN RECODED IN 1.9, THIS NEEDS TO BE READDED TO THE NEW SYSTEM.
-				|| hasAbility(player, SurgeWall.class) || hasAbility(player, IceSpikeBlast.class)) {
+		if (hasAbility(player, WaterManipulation.class)
+				|| hasAbility(player, WaterManipulation.class)
+				|| hasAbility(player, OctopusForm.class)
+				// || hasAbility(player, SurgeWave.class) NOTE: ONLY DISABLED TO PREVENT BOTTLEBENDING FROM BEING DISABLED FOREVER. ONCE BOTTLEBENDING HAS BEEN RECODED IN 1.9, THIS NEEDS TO BE READDED TO THE NEW SYSTEM.
+				|| hasAbility(player, SurgeWall.class)
+				|| hasAbility(player, IceSpikeBlast.class)) {
 			return true;
 		}
 		return false;
@@ -152,9 +155,9 @@ public class WaterReturn extends WaterAbility {
 	public static void emptyWaterBottle(Player player) {
 		PlayerInventory inventory = player.getInventory();
 		int index = inventory.first(Material.POTION);
-
+		
 		//Check that the first one found is actually a WATER bottle. We aren't implementing potion bending just yet ;)
-		if (index != -1 && !((PotionMeta) inventory.getItem(index).getItemMeta()).getBasePotionData().getType().equals(PotionType.WATER)) {
+		if (index != -1 && !((PotionMeta)inventory.getItem(index).getItemMeta()).getBasePotionData().getType().equals(PotionType.WATER)) {
 			for (int i = 0; i < inventory.getSize(); i++) {
 				if (inventory.getItem(i).getType() == Material.POTION) {
 					PotionMeta meta = (PotionMeta) inventory.getItem(i).getItemMeta();
@@ -165,7 +168,7 @@ public class WaterReturn extends WaterAbility {
 				}
 			}
 		}
-
+		
 		if (index != -1) {
 			ItemStack item = inventory.getItem(index);
 			if (item.getAmount() == 1) {
@@ -174,7 +177,7 @@ public class WaterReturn extends WaterAbility {
 				item.setAmount(item.getAmount() - 1);
 				inventory.setItem(index, item);
 				HashMap<Integer, ItemStack> leftover = inventory.addItem(new ItemStack(Material.GLASS_BOTTLE));
-
+				
 				for (int left : leftover.keySet()) {
 					player.getWorld().dropItemNaturally(player.getLocation(), leftover.get(left));
 				}
@@ -210,7 +213,7 @@ public class WaterReturn extends WaterAbility {
 	public Location getLocation() {
 		return location;
 	}
-
+	
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -242,10 +245,10 @@ public class WaterReturn extends WaterAbility {
 	public long getCooldown() {
 		return 0;
 	}
-
+	
 	@Override
 	public boolean isHiddenAbility() {
 		return true;
 	}
-
+	
 }
