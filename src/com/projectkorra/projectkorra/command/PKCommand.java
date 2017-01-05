@@ -16,16 +16,15 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
- * Abstract representation of a command executor. Implements
- * {@link SubCommand}.
+ * Abstract representation of a command executor. Implements {@link SubCommand}.
  * 
  * @author kingbirdy
  *
  */
 public abstract class PKCommand implements SubCommand {
-	
+
 	protected String noPermissionMessage, mustBePlayerMessage;
-	
+
 	/**
 	 * The full name of the command.
 	 */
@@ -53,10 +52,10 @@ public abstract class PKCommand implements SubCommand {
 		this.properUse = properUse;
 		this.description = description;
 		this.aliases = aliases;
-		
+
 		this.noPermissionMessage = ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.NoPermission");
 		this.mustBePlayerMessage = ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.MustBePlayer");
-		
+
 		instances.put(name, this);
 	}
 
@@ -170,7 +169,7 @@ public abstract class PKCommand implements SubCommand {
 		else if (Arrays.asList(Commands.lightningaliases).contains(element))
 			return "lightning";
 		else if (Arrays.asList(Commands.earthaliases).contains(element) || Arrays.asList(Commands.earthcomboaliases).contains(element))
-				return "earth";	
+			return "earth";
 		else if (Arrays.asList(Commands.metalbendingaliases).contains(element))
 			return "metal";
 		else if (Arrays.asList(Commands.sandbendingaliases).contains(element))
@@ -178,18 +177,18 @@ public abstract class PKCommand implements SubCommand {
 		else if (Arrays.asList(Commands.lavabendingaliases).contains(element))
 			return "lava";
 		else if (Arrays.asList(Commands.airaliases).contains(element) || Arrays.asList(Commands.aircomboaliases).contains(element))
-			return "air";	
+			return "air";
 		else if (Arrays.asList(Commands.spiritualprojectionaliases).contains(element))
 			return "spiritual";
 		else if (Arrays.asList(Commands.flightaliases).contains(element))
 			return "flight";
 		else if (Arrays.asList(Commands.wateraliases).contains(element) || Arrays.asList(Commands.watercomboaliases).contains(element))
-			return "water";	
-		else if (Arrays.asList(Commands.healingaliases).contains(element)) 
+			return "water";
+		else if (Arrays.asList(Commands.healingaliases).contains(element))
 			return "healing";
-		else if (Arrays.asList(Commands.bloodaliases).contains(element)) 
+		else if (Arrays.asList(Commands.bloodaliases).contains(element))
 			return "blood";
-		else if (Arrays.asList(Commands.icealiases).contains(element)) 
+		else if (Arrays.asList(Commands.icealiases).contains(element))
 			return "ice";
 		else if (Arrays.asList(Commands.plantaliases).contains(element))
 			return "plant";
@@ -197,9 +196,10 @@ public abstract class PKCommand implements SubCommand {
 			return "chi";
 		return null;
 	}
-	
+
 	/**
 	 * Returns a boolean if the string provided is numerical.
+	 * 
 	 * @param id
 	 * @return boolean
 	 */
@@ -209,9 +209,10 @@ public abstract class PKCommand implements SubCommand {
 		formatter.parse(id, pos);
 		return id.length() == pos.getIndex();
 	}
-	
+
 	/**
 	 * Returns a list for of commands for a page.
+	 * 
 	 * @param entries
 	 * @param title
 	 * @param page
@@ -222,7 +223,7 @@ public abstract class PKCommand implements SubCommand {
 		if (sort) {
 			Collections.sort(entries);
 		}
-		
+
 		if (page < 1) {
 			page = 1;
 		}
@@ -232,25 +233,24 @@ public abstract class PKCommand implements SubCommand {
 				page = 1;
 			}
 		}
-		strings.add(ChatColor.GOLD + "ProjectKorra " + ChatColor.DARK_GRAY + "- [" + ChatColor.GRAY + page + "/" + (int) Math.ceil((entries.size()+.0)/(8+.0)) + ChatColor.DARK_GRAY + "]");
+		strings.add(ChatColor.GOLD + "ProjectKorra " + ChatColor.DARK_GRAY + "- [" + ChatColor.GRAY + page + "/" + (int) Math.ceil((entries.size() + .0) / (8 + .0)) + ChatColor.DARK_GRAY + "]");
 		strings.add(title);
 		if (entries.size() > ((page * 8) - 8)) {
 			for (int i = ((page * 8) - 8); i < entries.size(); i++) {
 				if (entries.get(i) != null) {
 					strings.add(entries.get(i).toString());
 				}
-				if (i >= (page * 8)-1) {
+				if (i >= (page * 8) - 1) {
 					break;
 				}
 			}
 		}
 		return strings;
 	}
-	
-	/**Gets a list of valid arguments that can be used in tabbing.*/
-	protected List<String> getTabCompletion(CommandSender sender, List<String> args)
-	{
+
+	/** Gets a list of valid arguments that can be used in tabbing. */
+	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
 		return new ArrayList<String>();
 	}
-	
+
 }

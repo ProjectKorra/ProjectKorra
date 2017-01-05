@@ -25,7 +25,8 @@ import java.util.HashMap;
  */
 public class BlockSource {
 	/**
-	 * An enum representation of the source types available for bending abilities.
+	 * An enum representation of the source types available for bending
+	 * abilities.
 	 * 
 	 * @author kingbirdy
 	 */
@@ -43,7 +44,8 @@ public class BlockSource {
 	 * Updates all of the player's sources.
 	 * 
 	 * @param player the player performing the bending.
-	 * @param clickType either {@link ClickType}.SHIFT_DOWN or ClickType.LEFT_CLICK
+	 * @param clickType either {@link ClickType}.SHIFT_DOWN or
+	 *            ClickType.LEFT_CLICK
 	 */
 	public static void update(Player player, ClickType clickType) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -55,7 +57,7 @@ public class BlockSource {
 		if (coreAbil == null) {
 			return;
 		}
-		
+
 		if (coreAbil instanceof WaterAbility) {
 			Block waterBlock = WaterAbility.getWaterSourceBlock(player, MAX_RANGE, true);
 			if (waterBlock != null && !TempBlock.isTempBlock(waterBlock)) {
@@ -111,7 +113,8 @@ public class BlockSource {
 	}
 
 	/**
-	 * Access a block's source information, depending on a {@link BlockSourceType} and {@link ClickType}.
+	 * Access a block's source information, depending on a
+	 * {@link BlockSourceType} and {@link ClickType}.
 	 * 
 	 * @param player the player that is trying to bend.
 	 * @param clickType the action that was performed to access the source,
@@ -119,7 +122,7 @@ public class BlockSource {
 	 * @return a valid bendable block, or null if none was found.
 	 */
 	public static BlockSourceInformation getBlockSourceInformation(Player player, BlockSourceType sourceType, ClickType clickType) {
-		
+
 		if (!playerSources.containsKey(player)) {
 			return null;
 		} else if (!playerSources.get(player).containsKey(sourceType)) {
@@ -131,7 +134,8 @@ public class BlockSource {
 	}
 
 	/**
-	 * Access a block source information depending on a range, {@link BlockSourceType}, and {@link ClickType}.
+	 * Access a block source information depending on a range,
+	 * {@link BlockSourceType}, and {@link ClickType}.
 	 * 
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
@@ -146,7 +150,8 @@ public class BlockSource {
 	}
 
 	/**
-	 * Access a specific type of source block depending on a range and {@link ClickType}.
+	 * Access a specific type of source block depending on a range and
+	 * {@link ClickType}.
 	 * 
 	 * @param player the player that is trying to bend.
 	 * @param range the maximum range to access the block.
@@ -261,7 +266,7 @@ public class BlockSource {
 		if (allowSnow && sourceBlock == null) {
 			sourceBlock = getSourceBlock(player, range, BlockSourceType.SNOW, clickType);
 		}
-		if(sourceBlock != null && !sourceBlock.getType().equals(Material.AIR) && (WaterAbility.isWater(sourceBlock) || WaterAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || WaterAbility.isIce(sourceBlock)) && !TempBlock.isTempBlock(sourceBlock)) {
+		if (sourceBlock != null && !sourceBlock.getType().equals(Material.AIR) && (WaterAbility.isWater(sourceBlock) || WaterAbility.isPlant(sourceBlock) || WaterAbility.isSnow(sourceBlock) || WaterAbility.isIce(sourceBlock)) && !TempBlock.isTempBlock(sourceBlock)) {
 			return sourceBlock;
 		}
 		return null;
@@ -296,7 +301,7 @@ public class BlockSource {
 	 */
 	public static Block getEarthSourceBlock(Player player, double range, ClickType clickType, boolean allowNearbySubstitute) {
 		Block sourceBlock = getSourceBlock(player, range, BlockSourceType.EARTH, clickType);
-		
+
 		if (sourceBlock == null && allowNearbySubstitute) {
 			BlockSourceInformation blockInfo = getBlockSourceInformation(player, BlockSourceType.EARTH, clickType);
 

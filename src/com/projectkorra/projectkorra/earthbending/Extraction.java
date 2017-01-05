@@ -19,15 +19,15 @@ public class Extraction extends MetalAbility {
 	private int selectRange;
 	private long cooldown;
 	private Block originBlock;
-	
+
 	public Extraction(Player player) {
 		super(player);
-		
+
 		this.doubleChance = getConfig().getInt("Abilities.Earth.Extraction.DoubleLootChance");
 		this.tripleChance = getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Extraction.Cooldown");
 		this.selectRange = getConfig().getInt("Abilities.Earth.Extraction.SelectRange");
-		
+
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
@@ -91,7 +91,8 @@ public class Extraction extends MetalAbility {
 	}
 
 	@Override
-	public void progress() {}
+	public void progress() {
+	}
 
 	@Override
 	public Location getLocation() {
@@ -107,7 +108,7 @@ public class Extraction extends MetalAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -153,5 +154,5 @@ public class Extraction extends MetalAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
+
 }

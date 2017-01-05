@@ -25,10 +25,10 @@ public class FireBurst extends FireAbility {
 	private double anglePhi;
 	private double particlesPercentage;
 	private ArrayList<FireBlast> blasts;
-	
+
 	public FireBurst(Player player) {
 		super(player);
-		
+
 		this.charged = false;
 		this.damage = getConfig().getInt("Abilities.Fire.FireBurst.Damage");
 		this.chargeTime = getConfig().getLong("Abilities.Fire.FireBurst.ChargeTime");
@@ -38,7 +38,7 @@ public class FireBurst extends FireAbility {
 		this.anglePhi = getConfig().getDouble("Abilities.Fire.FireBurst.AnglePhi");
 		this.particlesPercentage = getConfig().getDouble("Abilities.Fire.FireBurst.ParticlesPercentage");
 		this.blasts = new ArrayList<>();
-		
+
 		if (!bPlayer.canBend(this) || hasAbility(player, FireBurst.class)) {
 			return;
 		}
@@ -65,22 +65,22 @@ public class FireBurst extends FireAbility {
 			Location location = player.getEyeLocation();
 			List<Block> safeBlocks = GeneralMethods.getBlocksAroundPoint(player.getLocation(), 2);
 			Vector vector = location.getDirection();
-			
+
 			double angle = Math.toRadians(30);
 			double x, y, z;
 			double r = 1;
-			
+
 			for (double theta = 0; theta <= 180; theta += angleTheta) {
 				double dphi = anglePhi / Math.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
 					double rphi = Math.toRadians(phi);
 					double rtheta = Math.toRadians(theta);
-					
+
 					x = r * Math.cos(rphi) * Math.sin(rtheta);
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
 					Vector direction = new Vector(x, z, y);
-					
+
 					if (direction.angle(vector) <= angle) {
 						FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeBlocks);
 						fblast.setRange(this.range);
@@ -93,9 +93,9 @@ public class FireBurst extends FireAbility {
 	}
 
 	/**
-	 * To combat the sphere FireBurst lag we are only going to show a certain percentage of
-	 * FireBurst particles at a time per tick. As the bursts spread out then we can show more at a
-	 * time.
+	 * To combat the sphere FireBurst lag we are only going to show a certain
+	 * percentage of FireBurst particles at a time per tick. As the bursts
+	 * spread out then we can show more at a time.
 	 */
 	public void handleSmoothParticles() {
 		for (int i = 0; i < blasts.size(); i++) {
@@ -139,20 +139,20 @@ public class FireBurst extends FireAbility {
 			List<Block> safeblocks = GeneralMethods.getBlocksAroundPoint(player.getLocation(), 2);
 			double x, y, z;
 			double r = 1;
-			
+
 			for (double theta = 0; theta <= 180; theta += angleTheta) {
 				double dphi = anglePhi / Math.sin(Math.toRadians(theta));
 				for (double phi = 0; phi < 360; phi += dphi) {
 					double rphi = Math.toRadians(phi);
 					double rtheta = Math.toRadians(theta);
-					
+
 					x = r * Math.cos(rphi) * Math.sin(rtheta);
 					y = r * Math.sin(rphi) * Math.sin(rtheta);
 					z = r * Math.cos(rtheta);
-					
+
 					Vector direction = new Vector(x, z, y);
 					FireBlast fblast = new FireBlast(location, direction.normalize(), player, damage, safeblocks);
-					
+
 					fblast.setRange(this.range);
 					fblast.setShowParticles(false);
 					blasts.add(fblast);
@@ -178,7 +178,7 @@ public class FireBurst extends FireAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;

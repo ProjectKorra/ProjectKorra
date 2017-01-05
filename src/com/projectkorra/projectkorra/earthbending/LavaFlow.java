@@ -297,10 +297,9 @@ public class LavaFlow extends LavaAbility {
 						Location loc = origin.clone().add(x, 0, z);
 						Block tempBlock = GeneralMethods.getTopBlock(loc, upwardFlow, downwardFlow);
 						if (!isWater(tempBlock)) {
-							if (tempBlock != null && !isLava(tempBlock) && Math.random() < particleDensity && tempBlock
-									.getLocation().distanceSquared(origin) <= Math.pow(clickLavaRadius, 2)) {
+							if (tempBlock != null && !isLava(tempBlock) && Math.random() < particleDensity && tempBlock.getLocation().distanceSquared(origin) <= Math.pow(clickLavaRadius, 2)) {
 								if (random.nextInt(3) == 0) {
-									ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(),(float) Math.random(), 0, 1);
+									ParticleEffect.LAVA.display(loc, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 1);
 								}
 							}
 						}

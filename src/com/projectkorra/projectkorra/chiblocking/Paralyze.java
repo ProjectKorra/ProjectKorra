@@ -29,7 +29,7 @@ public class Paralyze extends ChiAbility {
 		this.cooldown = getConfig().getLong("Abilities.Chi.Paralyze.Cooldown");
 		start();
 	}
-	
+
 	@Override
 	public void progress() {
 		if (bPlayer.canBend(this)) {
@@ -81,7 +81,7 @@ public class Paralyze extends ChiAbility {
 	public String getName() {
 		return "Paralyze";
 	}
-	
+
 	@Override
 	public Location getLocation() {
 		return target != null ? target.getLocation() : null;
@@ -91,7 +91,7 @@ public class Paralyze extends ChiAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -101,7 +101,7 @@ public class Paralyze extends ChiAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	public static long getDuration() {
 		return getConfig().getLong("Abilities.Chi.Paralyze.Duration");
 	}
@@ -117,5 +117,5 @@ public class Paralyze extends ChiAbility {
 	public static Map<Entity, Long> getEntities() {
 		return ENTITIES;
 	}
-	
+
 }

@@ -18,7 +18,7 @@ import org.bukkit.util.Vector;
 import java.util.Random;
 
 public class PlantArmor extends PlantAbility {
-	
+
 	private boolean formed;
 	private int resistance;
 	private long duration;
@@ -29,51 +29,49 @@ public class PlantArmor extends PlantAbility {
 	private Block block;
 	private Location location;
 	private PlantRegrowth plantbending;
-	
+
 	public PlantArmor(Player player) {
 		super(player);
-		
+
 		this.resistance = getConfig().getInt("Abilities.Water.PlantArmor.Resistance");
 		this.range = getConfig().getInt("Abilities.Water.PlantArmor.Range");
 		this.duration = getConfig().getLong("Abilities.Water.PlantArmor.Duration");
 		this.cooldown = getConfig().getLong("Abilities.Water.PlantArmor.Cooldown");
-		
+
 		this.range = getNightFactor(range);
-		this.duration = (long) getNightFactor(duration);  
+		this.duration = (long) getNightFactor(duration);
 		this.tickTime = System.currentTimeMillis();
-		
+
 		if (hasAbility(player, PlantArmor.class)) {
 			return;
 		} else if (!bPlayer.canBend(this)) {
 			return;
 		}
-		
+
 		if (hasAbility(player, EarthArmor.class)) {
 			EarthArmor abil = getAbility(player, EarthArmor.class);
 			abil.remove();
 		}
-		
+
 		block = getPlantSourceBlock(player, range, true);
 		if (block == null) {
 			return;
 		}
-		
+
 		location = block.getLocation();
 		if (!canUse()) {
 			return;
 		}
-		
+
 		plantbending = new PlantRegrowth(player, block);
 		blockType = block.getType();
 		block.setType(Material.AIR);
-		
+
 		start();
 	}
 
 	private boolean canUse() {
-		if (!bPlayer.canPlantbend() 
-				|| !bPlayer.canBend(this) 
-				|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+		if (!bPlayer.canPlantbend() || !bPlayer.canBend(this) || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 			remove();
 			return false;
 		} else if (location.distanceSquared(player.getEyeLocation()) > range * range) {
@@ -86,17 +84,17 @@ public class PlantArmor extends PlantAbility {
 	private void formArmor() {
 		ItemStack helmet = new ItemStack(blockType);
 		ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
-		
+
 		LeatherArmorMeta itemMeta = (LeatherArmorMeta) chestplate.getItemMeta();
 		itemMeta.setColor(Color.GREEN);
 		chestplate.setItemMeta(itemMeta);
-		
+
 		ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS);
 		ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
 		leggings.setItemMeta(itemMeta);
 		boots.setItemMeta(itemMeta);
-		
-		new TempArmor(player, this, new ItemStack[] {boots, leggings, chestplate, helmet});
+
+		new TempArmor(player, this, new ItemStack[] { boots, leggings, chestplate, helmet });
 
 		formed = true;
 		tickTime = System.currentTimeMillis();
@@ -111,7 +109,7 @@ public class PlantArmor extends PlantAbility {
 			if ((new Random()).nextInt(4) == 0) {
 				playPlantbendingSound(location);
 			}
-			
+
 			GeneralMethods.displayColoredParticle(location, "009933");
 			Vector vector = player.getEyeLocation().toVector().subtract(location.toVector());
 			location = location.add(vector.normalize());
@@ -135,7 +133,7 @@ public class PlantArmor extends PlantAbility {
 		} else if (!canUse()) {
 			return;
 		}
-		
+
 		playEffect();
 		if (inPosition() && !formed) {
 			formArmor();
@@ -145,16 +143,16 @@ public class PlantArmor extends PlantAbility {
 	@Override
 	public void remove() {
 		super.remove();
-		
+
 		if (TempArmor.hasTempArmor(player) && TempArmor.getTempArmor(player).getAbility().equals(this)) {
 			TempArmor.getTempArmor(player).revert();
 		}
-		
+
 		if (plantbending != null) {
 			plantbending.remove();
 		}
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -174,11 +172,11 @@ public class PlantArmor extends PlantAbility {
 		}
 		return true;
 	}
-	
+
 	public void setResistance(int resistance) {
 		this.resistance = resistance;
 	}
-	
+
 	public int getResistance() {
 		return resistance;
 	}
@@ -256,5 +254,5 @@ public class PlantArmor extends PlantAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-		
+
 }

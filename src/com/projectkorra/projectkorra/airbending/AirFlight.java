@@ -15,10 +15,10 @@ import com.projectkorra.projectkorra.object.PlayerFlyData;
 import com.projectkorra.projectkorra.util.Flight;
 
 public class AirFlight extends FlightAbility {
-	
+
 	private static final Map<String, Integer> HITS = new ConcurrentHashMap<>();
 	private static final Map<String, PlayerFlyData> HOVERING = new ConcurrentHashMap<>();
-	
+
 	private boolean firstProgressIteration;
 	private int maxHitsBeforeRemoval;
 	private double speed;
@@ -27,10 +27,10 @@ public class AirFlight extends FlightAbility {
 
 	public AirFlight(Player player) {
 		super(player);
-		
+
 		if (CoreAbility.getAbility(player, AirFlight.class) != null)
 			return;
-			
+
 		this.maxHitsBeforeRemoval = getConfig().getInt("Abilities.Air.Flight.MaxHits");
 		this.speed = getConfig().getDouble("Abilities.Air.Flight.Speed");
 		this.firstProgressIteration = true;
@@ -74,7 +74,7 @@ public class AirFlight extends FlightAbility {
 	public static void setHovering(Player player, boolean bool) {
 		AirFlight flight = CoreAbility.getAbility(player, AirFlight.class);
 		flight.hoverY = player.getLocation().getBlockY();
-		
+
 		String playername = player.getName();
 
 		if (bool) {
@@ -109,7 +109,7 @@ public class AirFlight extends FlightAbility {
 		}
 
 		player.setAllowFlight(true);
-		
+
 		if (flight == null) {
 			flight = new Flight(player);
 			player.setFlying(true);
@@ -120,12 +120,7 @@ public class AirFlight extends FlightAbility {
 			vec.setY(0);
 			player.setVelocity(vec);
 			if (player.getLocation().getBlockY() != hoverY) {
-				Location loc = new Location(player.getWorld(), 
-						player.getLocation().getX(), 
-						hoverY + 0.5,
-						player.getLocation().getZ(), 
-						player.getLocation().getYaw(), 
-						player.getLocation().getPitch());
+				Location loc = new Location(player.getWorld(), player.getLocation().getX(), hoverY + 0.5, player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
 				player.teleport(loc);
 			}
 		} else {

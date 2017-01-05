@@ -14,10 +14,10 @@ public abstract class FlightAbility extends AirAbility implements SubAbility {
 	public Class<? extends Ability> getParentAbility() {
 		return AirAbility.class;
 	}
-	
+
 	@Override
 	public Element getElement() {
 		return Element.FLIGHT;
 	}
-	
+
 }

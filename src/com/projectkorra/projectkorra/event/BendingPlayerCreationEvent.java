@@ -4,6 +4,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import com.projectkorra.projectkorra.BendingPlayer;
+
 /**
  * Called when a new BendingPlayer is created
  */
@@ -12,7 +13,7 @@ public class BendingPlayerCreationEvent extends Event {
 
 	private static final HandlerList handlers = new HandlerList();
 	private BendingPlayer bPlayer;
-	
+
 	public BendingPlayerCreationEvent(BendingPlayer bPlayer) {
 		this.bPlayer = bPlayer;
 	}
@@ -32,4 +33,3 @@ public class BendingPlayerCreationEvent extends Event {
 		return bPlayer;
 	}
 }
-

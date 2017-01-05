@@ -20,7 +20,7 @@ public class CheckCommand extends PKCommand {
 
 	public CheckCommand() {
 		super("check", "/bending check", ConfigManager.languageConfig.get().getString("Commands.Check.Description"), new String[] { "check", "chk" });
-		
+
 		this.newVersionAvailable = ConfigManager.languageConfig.get().getString("Commands.Check.NewVersionAvailable");
 		this.curVersion = ConfigManager.languageConfig.get().getString("Commands.Check.CurrentVersion");
 		this.newVersion = ConfigManager.languageConfig.get().getString("Commands.Check.LatestVersion");

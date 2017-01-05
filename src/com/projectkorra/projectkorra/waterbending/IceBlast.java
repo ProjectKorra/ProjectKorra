@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class IceBlast extends IceAbility {
-	
+
 	private boolean prepared;
 	private boolean settingUp;
 	private boolean progressing;
@@ -43,10 +43,10 @@ public class IceBlast extends IceAbility {
 	private Location firstDestination;
 	private Location destination;
 	public TempBlock source;
-	
+
 	public IceBlast(Player player) {
 		super(player);
-		
+
 		this.data = 0;
 		this.interval = getConfig().getLong("Abilities.Water.IceBlast.Interval");
 		this.collisionRadius = getConfig().getDouble("Abilities.Water.IceBlast.CollisionRadius");
@@ -54,9 +54,9 @@ public class IceBlast extends IceAbility {
 		this.range = getConfig().getDouble("Abilities.Water.IceBlast.Range");
 		this.damage = getConfig().getInt("Abilities.Water.IceBlast.Damage");
 		this.cooldown = getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
-		
+
 		this.damage = getNightFactor(damage, player.getWorld());
-		
+
 		if (!bPlayer.canBend(this) || !bPlayer.canIcebend()) {
 			return;
 		}
@@ -84,7 +84,7 @@ public class IceBlast extends IceAbility {
 		sourceBlock = block;
 		location = sourceBlock.getLocation();
 		prepared = true;
-		
+
 		if (getAbilities(player, IceBlast.class).isEmpty()) {
 			start();
 		}
@@ -105,10 +105,8 @@ public class IceBlast extends IceAbility {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = iceBlast.location;
-			
-			if (mloc.distanceSquared(location) <= iceBlast.range * iceBlast.range
-					&& GeneralMethods.getDistanceFromLine(vector, location, iceBlast.location) < iceBlast.deflectRange 
-					&& mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
+
+			if (mloc.distanceSquared(location) <= iceBlast.range * iceBlast.range && GeneralMethods.getDistanceFromLine(vector, location, iceBlast.location) < iceBlast.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				iceBlast.remove();
 			}
 		}
@@ -136,7 +134,7 @@ public class IceBlast extends IceAbility {
 			}
 			progressing = false;
 		}
-		
+
 		if (player.isOnline()) {
 			if (bPlayer != null) {
 				bPlayer.addCooldown(this);
@@ -172,7 +170,7 @@ public class IceBlast extends IceAbility {
 		if (!prepared) {
 			return;
 		}
-		
+
 		LivingEntity target = (LivingEntity) GeneralMethods.getTargetedEntity(player, range, new ArrayList<Entity>());
 		if (target == null) {
 			destination = GeneralMethods.getTargetedLocation(player, range, getTransparentMaterial());
@@ -184,14 +182,14 @@ public class IceBlast extends IceAbility {
 		if (destination.distanceSquared(location) < 1) {
 			return;
 		}
-		
+
 		firstDestination = location.clone();
 		if (destination.getY() - location.getY() > 2) {
 			firstDestination.setY(destination.getY() - 1);
 		} else {
 			firstDestination.add(0, 2, 0);
 		}
-		
+
 		destination = GeneralMethods.getPointOnLine(firstDestination, destination, range);
 		progressing = true;
 		settingUp = true;
@@ -328,7 +326,7 @@ public class IceBlast extends IceAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -338,12 +336,12 @@ public class IceBlast extends IceAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isCollidable() {
 		return progressing;
 	}
-	
+
 	@Override
 	public double getCollisionRadius() {
 		return collisionRadius;
@@ -464,5 +462,5 @@ public class IceBlast extends IceAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
+
 }

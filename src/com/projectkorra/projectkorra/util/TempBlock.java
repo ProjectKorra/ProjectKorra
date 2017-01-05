@@ -120,11 +120,11 @@ public class TempBlock {
 	public BlockState getState() {
 		return state;
 	}
-	
+
 	public long getRevertTime() {
 		return revertTime;
 	}
-	
+
 	public void setRevertTime(long revertTime) {
 		if (inRevertQueue) {
 			REVERT_QUEUE.remove(this);
@@ -154,7 +154,7 @@ public class TempBlock {
 		block.setType(material);
 		block.setData(data);
 	}
-	
+
 	public static void startReversion() {
 		new BukkitRunnable() {
 			@Override
@@ -173,7 +173,7 @@ public class TempBlock {
 				}
 			}
 		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
-		
+
 	}
 
 }
