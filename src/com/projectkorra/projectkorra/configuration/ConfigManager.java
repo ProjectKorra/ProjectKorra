@@ -384,6 +384,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.SwiftKick.Instructions", "Jump up and left click on a player to swift kick them.");
 			config.addDefault("Abilities.Chi.SwiftKick.DeathMessage", "{victim} was kicked to the floor by {attacker}'s {ability}");
 			config.addDefault("Abilities.Chi.Combo.Immobilize.Description", "Immobilizes the opponent for several seconds.");
+			languageConfig.save();
 		} else if (type == ConfigType.DEFAULT) {
 			config = defaultConfig.get();
 
