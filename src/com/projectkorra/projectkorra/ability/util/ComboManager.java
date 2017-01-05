@@ -15,22 +15,22 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.airbending.AirCombo.AirStream;
-import com.projectkorra.projectkorra.airbending.AirCombo.AirSweep;
-import com.projectkorra.projectkorra.airbending.AirCombo.Twister;
-import com.projectkorra.projectkorra.chiblocking.ChiCombo.Immobilize;
+import com.projectkorra.projectkorra.airbending.combo.AirCombo.AirStream;
+import com.projectkorra.projectkorra.airbending.combo.AirCombo.AirSweep;
+import com.projectkorra.projectkorra.airbending.combo.AirCombo.Twister;
+import com.projectkorra.projectkorra.chiblocking.combo.ChiCombo.Immobilize;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.firebending.FireCombo.FireKick;
-import com.projectkorra.projectkorra.firebending.FireCombo.FireSpin;
-import com.projectkorra.projectkorra.firebending.FireCombo.FireWheel;
-import com.projectkorra.projectkorra.firebending.FireCombo.JetBlast;
-import com.projectkorra.projectkorra.firebending.FireCombo.JetBlaze;
+import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireKick;
+import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireSpin;
+import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireWheel;
+import com.projectkorra.projectkorra.firebending.combo.FireCombo.JetBlast;
+import com.projectkorra.projectkorra.firebending.combo.FireCombo.JetBlaze;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
-import com.projectkorra.projectkorra.waterbending.WaterCombo.IceBullet;
-import com.projectkorra.projectkorra.waterbending.WaterCombo.IceBulletLeftClick;
-import com.projectkorra.projectkorra.waterbending.WaterCombo.IceBulletRightClick;
-import com.projectkorra.projectkorra.waterbending.WaterCombo.IceWave;
+import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBullet;
+import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBulletLeftClick;
+import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBulletRightClick;
+import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceWave;
 
 public class ComboManager {
 

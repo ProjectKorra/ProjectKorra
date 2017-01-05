@@ -3,7 +3,7 @@ package com.projectkorra.projectkorra.chiblocking;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.waterbending.WaterArmsWhip;
+import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
