@@ -101,8 +101,18 @@ public interface Ability {
 	 * @return Returns the name of the ability
 	 */
 	public String getName();
-
-	/**
+	
+         /**
+	 * Return's the instructions of an ability.
+	 * ProjectKorra's help command will then use this method to display the instructions of an ability when the command is run.
+	 *
+	 * @return the instructions for this ability
+	 * @see HelpCommand
+	 * @see CoreAbility#getInstructions()
+	 */
+	public String getInstructions();
+	 
+	 /**
 	 * The description of an ability is a few sentences used to describe how the player can fully
 	 * utilize the ability. In most cases the description will be specified in the config.yml file
 	 * and will be retrieved by accessing the FileConfiguration via {@link CoreAbility#getConfig}.
@@ -111,18 +121,6 @@ public interface Ability {
 	 * @see HelpCommand
 	 * @see CoreAbility#getDescription()
 	 */
-	
-	public String getInstructions();
-	 
-	 	/**
-	 	 * Return's the instructions of an ability.
-	 	 * ProjectKorra's help command will then use this method to display the instructions of an ability when the command is run.
-	 	 *
-	 	 * @return A new instance of the ability.
-	 	 * @param player The player using the combo.
-	 	 */
-	 
-	 
 	public String getDescription();
 
 	/**
