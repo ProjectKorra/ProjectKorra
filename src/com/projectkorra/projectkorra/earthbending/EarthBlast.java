@@ -503,7 +503,7 @@ public class EarthBlast extends EarthAbility {
 	public boolean isCollidable() {
 		return isProgressing;
 	}
-	
+
 	@Override
 	public double getCollisionRadius() {
 		return collisionRadius;

@@ -51,7 +51,7 @@ public class EarthGrab extends EarthAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		
+
 		if (player.isSneaking()) {
 			start();
 		} else {

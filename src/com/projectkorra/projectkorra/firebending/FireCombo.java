@@ -365,12 +365,12 @@ public class FireCombo extends FireAbility implements ComboAbility {
 			}
 
 			Block topBlock = GeneralMethods.getTopBlock(location, 2, -4);
-			if (topBlock.getType().equals(Material.SNOW)){
-				
+			if (topBlock.getType().equals(Material.SNOW)) {
+
 				topBlock = topBlock.getLocation().add(0, -1, 0).getBlock();
 			}
 			if (topBlock == null || (WaterAbility.isWaterbendable(player, ability, topBlock) && !isPlant(topBlock))) {
-				
+
 				remove();
 				return;
 			} else if (topBlock.getType() == Material.FIRE || ElementalAbility.isPlant(topBlock)) {

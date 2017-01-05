@@ -53,20 +53,18 @@ public class IceSpikePillar extends IceAbility {
 	public IceSpikePillar(Player player) {
 		super(player);
 		setFields();
-		
+
 		if (bPlayer.isOnCooldown("IceSpikePillar")) {
 			return;
 		}
-		
+
 		try {
 			double lowestDistance = range + 1;
 			Entity closestEntity = null;
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), range)) {
-				if (GeneralMethods.getDistanceFromLine(player.getLocation().getDirection(), player.getLocation(), entity.getLocation()) <= 2 
-						&& (entity instanceof LivingEntity) 
-						&& (entity.getEntityId() != player.getEntityId())) {
+				if (GeneralMethods.getDistanceFromLine(player.getLocation().getDirection(), player.getLocation(), entity.getLocation()) <= 2 && (entity instanceof LivingEntity) && (entity.getEntityId() != player.getEntityId())) {
 					double distance = 0;
-					if(player.getWorld().equals(entity.getWorld())) {
+					if (player.getWorld().equals(entity.getWorld())) {
 						distance = player.getLocation().distance(entity.getLocation());
 					}
 					if (distance < lowestDistance) {
@@ -75,7 +73,7 @@ public class IceSpikePillar extends IceAbility {
 					}
 				}
 			}
-			
+
 			if (closestEntity != null) {
 				Block tempTestingBlock = closestEntity.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
 				this.block = tempTestingBlock;
@@ -84,7 +82,8 @@ public class IceSpikePillar extends IceAbility {
 			}
 			origin = block.getLocation();
 			location = origin.clone();
-		} catch (IllegalStateException e) {
+		}
+		catch (IllegalStateException e) {
 			return;
 		}
 
@@ -102,7 +101,7 @@ public class IceSpikePillar extends IceAbility {
 	public IceSpikePillar(Player player, Location origin, int damage, Vector throwing, long aoecooldown) {
 		super(player);
 		setFields();
-		
+
 		this.cooldown = aoecooldown;
 		this.player = player;
 		this.origin = origin;
@@ -120,7 +119,7 @@ public class IceSpikePillar extends IceAbility {
 			}
 		}
 	}
-	
+
 	private void setFields() {
 		this.direction = new Vector(0, 1, 0);
 		this.speed = getConfig().getDouble("Abilities.Water.IceSpike.Speed");
@@ -134,7 +133,7 @@ public class IceSpikePillar extends IceAbility {
 		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Push"), 0);
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.damaged = new ArrayList<>();
-		
+
 		this.interval = (long) (1000. / speed);
 	}
 
@@ -171,9 +170,7 @@ public class IceSpikePillar extends IceAbility {
 			return false;
 		}
 		for (Block block : affectedBlocks.keySet()) {
-			if (blockInAllAffectedBlocks(block) || ALREADY_DONE_BLOCKS.containsKey(block) 
-					|| block.getType() != Material.AIR 
-					|| (block.getX() == player.getEyeLocation().getBlock().getX() && block.getZ() == player.getEyeLocation().getBlock().getZ())) {
+			if (blockInAllAffectedBlocks(block) || ALREADY_DONE_BLOCKS.containsKey(block) || block.getType() != Material.AIR || (block.getX() == player.getEyeLocation().getBlock().getX() && block.getZ() == player.getEyeLocation().getBlock().getZ())) {
 				return false;
 			}
 		}
@@ -203,18 +200,18 @@ public class IceSpikePillar extends IceAbility {
 		progress++;
 		Block affectedBlock = location.clone().add(direction).getBlock();
 		location = location.add(direction);
-		
+
 		if (GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 			return false;
 		}
-		
+
 		for (Entity en : GeneralMethods.getEntitiesAroundPoint(location, 1.4)) {
 			if (en instanceof LivingEntity && en != player && !damaged.contains((en))) {
 				LivingEntity le = (LivingEntity) en;
 				affect(le);
 			}
 		}
-		
+
 		affectedBlock.setType(Material.ICE);
 		if (!inField || new Random().nextInt((int) ((height + 1) * 1.5)) == 0) {
 			playIcebendingSound(block.getLocation());
@@ -259,18 +256,18 @@ public class IceSpikePillar extends IceAbility {
 		Vector direction = new Vector(0, -1, 0);
 		location.getBlock().setType(Material.AIR);
 		location.add(direction);
-		
+
 		if (blockIsBase(location.getBlock())) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "IceSpike";
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -434,5 +431,5 @@ public class IceSpikePillar extends IceAbility {
 	public static Map<Block, Integer> getBaseBlocks() {
 		return BASE_BLOCKS;
 	}
-		
+
 }

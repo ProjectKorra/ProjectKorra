@@ -25,7 +25,7 @@ public class PresetCommand extends PKCommand {
 	private static final String[] deletealiases = { "delete", "d", "del" };
 	private static final String[] listaliases = { "list", "l" };
 	private static final String[] bindaliases = { "bind", "b" };
-	
+
 	private String noPresets;
 	private String noPresetName;
 	private String deletePreset;
@@ -40,10 +40,10 @@ public class PresetCommand extends PKCommand {
 	private String alreadyExists;
 	private String createdNewPreset;
 	private String cantEditBinds;
-	
+
 	public PresetCommand() {
 		super("preset", "/bending preset <Bind/Create/Delete/List> [Preset]", ConfigManager.languageConfig.get().getString("Commands.Preset.Description"), new String[] { "preset", "presets", "pre", "set", "p" });
-		
+
 		this.noPresets = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresets");
 		this.noPresetName = ConfigManager.languageConfig.get().getString("Commands.Preset.NoPresetName");
 		this.deletePreset = ConfigManager.languageConfig.get().getString("Commands.Preset.Delete");
@@ -218,7 +218,7 @@ public class PresetCommand extends PKCommand {
 			help(sender, false);
 		}
 	}
-	
+
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
 		if (args.size() >= 3 || !sender.hasPermission("bending.command.preset") || !(sender instanceof Player))
@@ -245,7 +245,8 @@ public class PresetCommand extends PKCommand {
 					}
 				}
 			}
-			if (presetNames.size() == 0) return new ArrayList<String>();
+			if (presetNames.size() == 0)
+				return new ArrayList<String>();
 		}
 		return l;
 	}

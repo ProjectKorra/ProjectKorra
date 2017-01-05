@@ -9,12 +9,12 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class SwiftKick extends ChiAbility {
-	
+
 	private int damage;
 	private int blockChance;
 	private long cooldown;
 	private Entity target;
-	
+
 	public SwiftKick(Player sourceplayer, Entity targetentity) {
 		super(sourceplayer);
 		if (!bPlayer.canBend(this)) {
@@ -44,7 +44,7 @@ public class SwiftKick extends ChiAbility {
 		bPlayer.addCooldown(this);
 		remove();
 	}
-	
+
 	@Override
 	public String getName() {
 		return "SwiftKick";
@@ -59,7 +59,7 @@ public class SwiftKick extends ChiAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -97,5 +97,5 @@ public class SwiftKick extends ChiAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
+
 }

@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterSourceGrabber {
-	
+
 	/*
 	 * Using an initial WaterSource block, this class animates the block up to a
 	 * specific height and then toward the players location.
@@ -36,7 +36,7 @@ public class WaterSourceGrabber {
 	public WaterSourceGrabber(Player player, Location origin) {
 		this(player, origin, 1);
 	}
-	
+
 	public WaterSourceGrabber(Player player, Location origin, double animationSpeed) {
 		this.player = player;
 		this.animimationSpeed = animationSpeed;
@@ -55,13 +55,12 @@ public class WaterSourceGrabber {
 			double locDiff = player.getEyeLocation().getY() - currentLoc.getY();
 			currentLoc.add(0, animimationSpeed * Math.signum(locDiff), 0);
 			Block block = currentLoc.getBlock();
-			
-			if (!(WaterAbility.isWaterbendable(player, null, block) || block.getType() == Material.AIR) 
-					|| GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
+
+			if (!(WaterAbility.isWaterbendable(player, null, block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterSpout", block.getLocation())) {
 				remove();
 				return;
 			}
-			
+
 			createBlock(block, material, data);
 			if (Math.abs(locDiff) < 1) {
 				state = AnimationState.TOWARD;
@@ -74,8 +73,7 @@ public class WaterSourceGrabber {
 			currentLoc.add(vec.normalize().multiply(animimationSpeed));
 
 			Block block = currentLoc.getBlock();
-			if (!(WaterAbility.isWaterbendable(player, null, block) || block.getType() == Material.AIR)
-					|| GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
+			if (!(WaterAbility.isWaterbendable(player, null, block) || block.getType() == Material.AIR) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", block.getLocation())) {
 				remove();
 				return;
 			}
@@ -160,5 +158,5 @@ public class WaterSourceGrabber {
 	public void setState(AnimationState state) {
 		this.state = state;
 	}
-	
+
 }

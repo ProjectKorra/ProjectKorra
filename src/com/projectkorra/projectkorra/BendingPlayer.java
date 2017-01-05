@@ -34,12 +34,14 @@ import com.projectkorra.spirits.SpiritElement;
 import com.projectkorra.spirits.SpiritPlayer;
 
 /**
- * Class that presents a player and stores all bending information about the player.
+ * Class that presents a player and stores all bending information about the
+ * player.
  */
 public class BendingPlayer {
 
 	/**
-	 * ConcurrentHashMap that contains all instances of BendingPlayer, with UUID key.
+	 * ConcurrentHashMap that contains all instances of BendingPlayer, with UUID
+	 * key.
 	 */
 	private static final Map<UUID, BendingPlayer> PLAYERS = new ConcurrentHashMap<>();
 
@@ -57,7 +59,7 @@ public class BendingPlayer {
 	private ArrayList<SubElement> subelements;
 	private HashMap<Integer, String> abilities;
 	private Map<String, Long> cooldowns;
-	private Map<Element, Boolean> toggledElements;	
+	private Map<Element, Boolean> toggledElements;
 
 	/**
 	 * Creates a new {@link BendingPlayer}.
@@ -68,8 +70,7 @@ public class BendingPlayer {
 	 * @param abilities The known abilities
 	 * @param permaRemoved The permanent removed status
 	 */
-	public BendingPlayer(UUID uuid, String playerName, ArrayList<Element> elements, ArrayList<SubElement> subelements, HashMap<Integer, String> abilities,
-			boolean permaRemoved) {
+	public BendingPlayer(UUID uuid, String playerName, ArrayList<Element> elements, ArrayList<SubElement> subelements, HashMap<Integer, String> abilities, boolean permaRemoved) {
 		this.uuid = uuid;
 		this.name = playerName;
 		this.elements = elements;
@@ -92,7 +93,7 @@ public class BendingPlayer {
 		PLAYERS.put(uuid, this);
 		GeneralMethods.loadBendingPlayer(this);
 	}
-	
+
 	public void addCooldown(Ability ability, long cooldown) {
 		addCooldown(ability.getName(), cooldown);
 	}
@@ -102,7 +103,8 @@ public class BendingPlayer {
 	}
 
 	/**
-	 * Adds an ability to the cooldowns map while firing a {@link PlayerCooldownChangeEvent}.
+	 * Adds an ability to the cooldowns map while firing a
+	 * {@link PlayerCooldownChangeEvent}.
 	 * 
 	 * @param ability Name of the ability
 	 * @param cooldown The cooldown time
@@ -112,13 +114,13 @@ public class BendingPlayer {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
-			
+
 			Player player = event.getPlayer();
 			int slot = player.getInventory().getHeldItemSlot() + 1;
 			String abilityName = event.getAbility();
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
-			if (bPlayer.getBoundAbility()!= null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
+			if (bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
 				GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
 			}
 		}
@@ -132,7 +134,7 @@ public class BendingPlayer {
 	public void addElement(Element element) {
 		this.elements.add(element);
 	}
-	
+
 	/**
 	 * Adds a subelement to the {@link BendingPlayer}'s known list.
 	 * 
@@ -153,8 +155,8 @@ public class BendingPlayer {
 	 * Checks to see if a Player is effected by BloodBending.
 	 * 
 	 * @return true If {@link ChiMethods#isChiBlocked(String)} is true <br />
-	 *         false If player is BloodBender and Bending is toggled on, or if player is in
-	 *         AvatarState
+	 *         false If player is BloodBender and Bending is toggled on, or if
+	 *         player is in AvatarState
 	 */
 	public boolean canBeBloodbent() {
 		if (isAvatarState()) {
@@ -176,10 +178,10 @@ public class BendingPlayer {
 		if (ability == null) {
 			return false;
 		}
-		
+
 		List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
 		Location playerLoc = player.getLocation();
-		
+
 		if (!player.isOnline() || player.isDead()) {
 			return false;
 		} else if (!canBind(ability)) {
@@ -197,7 +199,7 @@ public class BendingPlayer {
 		} else if (player.getGameMode() == GameMode.SPECTATOR) {
 			return false;
 		}
-		
+
 		if (!ignoreCooldowns && cooldowns.containsKey(name)) {
 			if (cooldowns.get(name) + getConfig().getLong("Properties.GlobalCooldown") >= System.currentTimeMillis()) {
 				return false;
@@ -213,8 +215,8 @@ public class BendingPlayer {
 			return false;
 		} else if (ability instanceof WaterAbility && WaterAbility.isLunarEclipse(player.getWorld())) {
 			return false;
-		} 
-		
+		}
+
 		if (!ignoreBinds && !canBind(ability)) {
 			return false;
 		}
@@ -232,14 +234,14 @@ public class BendingPlayer {
 	public boolean canBendIgnoreCooldowns(CoreAbility ability) {
 		return canBend(ability, false, true);
 	}
-	
+
 	public boolean canBendPassive(Element element) {
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return false;
 		}
-		
+
 		List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
-		
+
 		if (element == null || player == null) {
 			return false;
 		} else if (!player.hasPermission("bending." + element.getName() + ".passive")) {
@@ -252,7 +254,7 @@ public class BendingPlayer {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, player.getLocation())) {
 			return false;
-		} 
+		}
 		return true;
 	}
 
@@ -270,7 +272,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!player.hasPermission("bending.ability." + ability.getName())) {
 			return false;
-		} else if (!hasElement(ability.getElement()) && !(ability instanceof AvatarAbility && !((AvatarAbility)ability).requireAvatar())) {
+		} else if (!hasElement(ability.getElement()) && !(ability instanceof AvatarAbility && !((AvatarAbility) ability).requireAvatar())) {
 			return false;
 		} else if (ability.getElement() instanceof SubElement) {
 			SubElement subElement = (SubElement) ability.getElement();
@@ -303,7 +305,7 @@ public class BendingPlayer {
 	public boolean canBloodbend() {
 		return subelements.contains(SubElement.BLOOD);
 	}
-	
+
 	public boolean canBloodbendAtAnytime() {
 		return canBloodbend() && player.hasPermission("bending.water.bloodbending.anytime");
 	}
@@ -373,7 +375,8 @@ public class BendingPlayer {
 	 * Checks to see if a player can use SpiritualProjection.
 	 * 
 	 * @param player The player to check
-	 * @return true If player has permission node "bending.air.spiritualprojection"
+	 * @return true If player has permission node
+	 *         "bending.air.spiritualprojection"
 	 */
 	public boolean canUseSpiritualProjection() {
 		return subelements.contains(SubElement.SPIRITUAL);
@@ -381,14 +384,17 @@ public class BendingPlayer {
 
 	/**
 	 * Checks to see if a player can use Water Healing.
+	 * 
 	 * @return true If player has permission node "bending.water.healing"
 	 */
 	public boolean canWaterHeal() {
 		return subelements.contains(SubElement.HEALING);
 	}
-	
+
 	/**
-	 * Checks to see if a player can bend a specific sub element. Used when checking addon sub elements.
+	 * Checks to see if a player can bend a specific sub element. Used when
+	 * checking addon sub elements.
+	 * 
 	 * @param sub SubElement to check for.
 	 * @return true If the player has permission to bend that subelement.
 	 */
@@ -435,7 +441,7 @@ public class BendingPlayer {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Gets the map of cooldowns of the {@link BendingPlayer}.
 	 * 
@@ -480,7 +486,7 @@ public class BendingPlayer {
 	public List<SubElement> getSubElements() {
 		return this.subelements;
 	}
-	
+
 	/**
 	 * Gets the unique identifier of the {@link BendingPlayer}.
 	 * 
@@ -498,7 +504,7 @@ public class BendingPlayer {
 	public String getUUIDString() {
 		return this.uuid.toString();
 	}
-	
+
 	/**
 	 * Checks to see if the {@link BendingPlayer} knows a specific element.
 	 * 
@@ -515,10 +521,10 @@ public class BendingPlayer {
 		} else if (!(element instanceof SubElement)) {
 			return this.elements.contains(element);
 		} else {
-			return hasSubElement((SubElement)element);
+			return hasSubElement((SubElement) element);
 		}
 	}
-	
+
 	public boolean hasSubElement(SubElement sub) {
 		if (sub == null) {
 			return false;
@@ -526,9 +532,10 @@ public class BendingPlayer {
 			return this.subelements.contains(sub);
 		}
 	}
-	
+
 	/**
 	 * Returns whether the player has permission to bend the subelement
+	 * 
 	 * @param sub The SubElement
 	 */
 	public boolean hasSubElementPermission(SubElement sub) {
@@ -613,7 +620,7 @@ public class BendingPlayer {
 	public boolean isTremorSensing() {
 		return this.tremorSense;
 	}
-	
+
 	/**
 	 * Checks if the {@link BendingPlayer} is using illumination.
 	 * 
@@ -628,7 +635,7 @@ public class BendingPlayer {
 			removeCooldown(ability.getName());
 		}
 	}
-	
+
 	/**
 	 * Removes the cooldown of an ability.
 	 * 
@@ -642,21 +649,21 @@ public class BendingPlayer {
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
-			
+
 			Player player = event.getPlayer();
 			int slot = player.getInventory().getHeldItemSlot() + 1;
 			String abilityName = event.getAbility();
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			
-			if (bPlayer.getBoundAbility()!= null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
+
+			if (bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
 				GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
 			}
 		}
 	}
 
 	/**
-	 * Sets the {@link BendingPlayer}'s abilities. This method also saves the abilities to the
-	 * database.
+	 * Sets the {@link BendingPlayer}'s abilities. This method also saves the
+	 * abilities to the database.
 	 * 
 	 * @param abilities The abilities to set/save
 	 */
@@ -668,8 +675,8 @@ public class BendingPlayer {
 	}
 
 	/**
-	 * Sets the {@link BendingPlayer}'s element. If the player had elements before they will be
-	 * overwritten.
+	 * Sets the {@link BendingPlayer}'s element. If the player had elements
+	 * before they will be overwritten.
 	 * 
 	 * @param e The element to set
 	 */
@@ -686,7 +693,7 @@ public class BendingPlayer {
 	public void setPermaRemoved(boolean permaRemoved) {
 		this.permaRemoved = permaRemoved;
 	}
-	
+
 	/**
 	 * Sets the player's {@link ChiAbility Chi stance}
 	 * 
@@ -704,7 +711,7 @@ public class BendingPlayer {
 	public void slow(long cooldown) {
 		slowTime = System.currentTimeMillis() + cooldown;
 	}
-	
+
 	/**
 	 * Toggles the {@link BendingPlayer}'s bending.
 	 */
@@ -718,14 +725,14 @@ public class BendingPlayer {
 		}
 		toggledElements.put(element, !toggledElements.get(element));
 	}
-	
+
 	/**
 	 * Toggles the {@link BendingPlayer}'s tremor sensing.
 	 */
 	public void toggleTremorSense() {
 		tremorSense = !tremorSense;
 	}
-	
+
 	/**
 	 * Toggles the {@link BendingPlayer}'s illumination.
 	 */
@@ -739,27 +746,29 @@ public class BendingPlayer {
 	public void unblockChi() {
 		chiBlocked = false;
 	}
-	
+
 	public static BendingPlayer getBendingPlayer(OfflinePlayer oPlayer) {
 		if (oPlayer == null) {
 			return null;
 		}
 		return BendingPlayer.getPlayers().get(oPlayer.getUniqueId());
 	}
-	
+
 	public static BendingPlayer getBendingPlayer(Player player) {
 		if (player == null) {
 			return null;
 		}
 		return getBendingPlayer(player.getName());
 	}
-	
+
 	/**
-	 * Attempts to get a {@link BendingPlayer} from specified player name. this method tries to get
-	 * a {@link Player} object and gets the uuid and then calls {@link #getBendingPlayer(UUID)}
+	 * Attempts to get a {@link BendingPlayer} from specified player name. this
+	 * method tries to get a {@link Player} object and gets the uuid and then
+	 * calls {@link #getBendingPlayer(UUID)}
 	 * 
 	 * @param playerName The name of the Player
-	 * @return The BendingPlayer object if {@link BendingPlayer#PLAYERS} contains the player name
+	 * @return The BendingPlayer object if {@link BendingPlayer#PLAYERS}
+	 *         contains the player name
 	 * 
 	 * @see #getBendingPlayer(UUID)
 	 */
@@ -775,7 +784,7 @@ public class BendingPlayer {
 	private static FileConfiguration getConfig() {
 		return ConfigManager.getConfig();
 	}
-	
+
 	/**
 	 * Gets the map of {@link BendingPlayer}s.
 	 * 

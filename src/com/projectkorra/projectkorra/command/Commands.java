@@ -38,7 +38,7 @@ public class Commands {
 	public static String[] wateraliases = { "water", "w", "waterbending", "waterbender" };
 	public static String[] elementaliases = { "air", "a", "airbending", "airbender", "chi", "c", "chiblocking", "chiblocker", "earth", "e", "earthbending", "earthbender", "fire", "f", "firebending", "firebender", "water", "w", "waterbending", "waterbender" };
 	public static String[] avataraliases = { "avatar", "av", "avy", "aang", "korra" };
-	
+
 	/*
 	 * Combo Aliases
 	 */
@@ -73,12 +73,12 @@ public class Commands {
 	//Firebending
 	public static String[] combustionaliases = { "combustionbending", "combustion", "cb" };
 	public static String[] lightningaliases = { "lightningbending", "lightning" };
-	
+
 	//Miscellaneous
 	public static String[] commandaliases = { "b", "pk", "projectkorra", "bending", "mtla", "tla", "korra", "bend" };
 
 	private List<String> help;
-	
+
 	private void init() {
 		PluginCommand projectkorra = plugin.getCommand("projectkorra");
 		new AddCommand();
@@ -101,7 +101,7 @@ public class Commands {
 		new WhoCommand();
 
 		help = ConfigManager.languageConfig.get().getStringList("Commands.GeneralHelpLines");
-		
+
 		/**
 		 * Set of all of the Classes which extend Command
 		 */
@@ -111,7 +111,7 @@ public class Commands {
 		exe = new CommandExecutor() {
 			@Override
 			public boolean onCommand(CommandSender s, Command c, String label, String[] args) {
-				
+
 				if (args.length == 0 && Arrays.asList(commandaliases).contains(label.toLowerCase())) {
 					for (String line : help)
 						s.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
@@ -125,10 +125,10 @@ public class Commands {
 						return true;
 					}
 				}
-				
+
 				for (String line : help)
 					s.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
-				
+
 				return true;
 			}
 		};

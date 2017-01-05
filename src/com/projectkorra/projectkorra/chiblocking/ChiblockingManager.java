@@ -13,7 +13,7 @@ public class ChiblockingManager implements Runnable {
 	public ChiblockingManager(ProjectKorra plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	@Override
 	public void run() {
 		for (Player player : Bukkit.getOnlinePlayers()) {

@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WaterArmsSpear extends WaterAbility {
 
 	private static final Map<Block, Long> ICE_BLOCKS = new ConcurrentHashMap<Block, Long>();
-	
+
 	private boolean hitEntity;
 	private boolean canFreeze;
 	private boolean usageCooldownEnabled;
@@ -51,7 +51,7 @@ public class WaterArmsSpear extends WaterAbility {
 	public WaterArmsSpear(Player player, boolean freeze) {
 		super(player);
 		this.canFreeze = freeze;
-		
+
 		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
 		this.spearDamageEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Spear.DamageEnabled");
 		this.spearLength = getConfig().getInt("Abilities.Water.WaterArms.Spear.Length");
@@ -67,7 +67,7 @@ public class WaterArmsSpear extends WaterAbility {
 		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
 		this.spearDamage = getConfig().getDouble("Abilities.Water.WaterArms.Spear.Damage");
 		this.spearLocations = new ArrayList<>();
-		
+
 		getNightAugments();
 		createInstance();
 	}
@@ -108,7 +108,7 @@ public class WaterArmsSpear extends WaterAbility {
 		if (waterArms != null) {
 			waterArms.switchPreferredArm();
 			arm = waterArms.getActiveArm();
-			
+
 			if (arm.equals(Arm.LEFT)) {
 				if (waterArms.isLeftArmCooldown() || bPlayer.isOnCooldown("WaterArms_LEFT") || !waterArms.displayLeftArm()) {
 					return;
@@ -149,14 +149,14 @@ public class WaterArmsSpear extends WaterAbility {
 			remove();
 			return;
 		}
-		
+
 		if (!hitEntity) {
 			progressSpear();
 		} else {
 			createIceBall();
 			remove();
 		}
-		
+
 		if (!canPlaceBlock(location.getBlock())) {
 			if (canFreeze) {
 				createSpear();
@@ -180,14 +180,14 @@ public class WaterArmsSpear extends WaterAbility {
 					return;
 				}
 			}
-			
+
 			new TempBlock(location.getBlock(), Material.STATIONARY_WATER, (byte) 8);
 			getIceBlocks().put(location.getBlock(), System.currentTimeMillis() + 600L);
 			Vector direction = GeneralMethods.getDirection(initLocation, GeneralMethods.getTargetedLocation(player, spearRange, new Integer[] { 8, 9, 79, 174 })).normalize();
-			
+
 			location = location.add(direction.clone().multiply(1));
 			spearLocations.add(location.clone());
-			
+
 			if (!canPlaceBlock(location.getBlock())) {
 				return;
 			}
@@ -204,20 +204,20 @@ public class WaterArmsSpear extends WaterAbility {
 					if (getIceBlocks().containsKey(block)) {
 						getIceBlocks().remove(block);
 					}
-					
+
 					TempBlock tempBlock = new TempBlock(block, Material.AIR, (byte) 0);
 					tempBlock.setType(Material.ICE);
-					
+
 					getIceBlocks().put(block, System.currentTimeMillis() + spearDuration + (long) (Math.random() * 500));
 				}
 			}
 		}
 	}
-	
+
 	public static boolean canThaw(Block block) {
 		return getIceBlocks().containsKey(block) && block.getType() == Material.ICE;
 	}
-	
+
 	public static void thaw(Block block) {
 		if (canThaw(block)) {
 			getIceBlocks().remove(block);
@@ -242,8 +242,7 @@ public class WaterArmsSpear extends WaterAbility {
 	}
 
 	private boolean canPlaceBlock(Block block) {
-		if (!isTransparent(player, block) 
-				&& !((isWater(block) || isIcebendable(block)) && (TempBlock.isTempBlock(block) && !getIceBlocks().containsKey(block)))) {
+		if (!isTransparent(player, block) && !((isWater(block) || isIcebendable(block)) && (TempBlock.isTempBlock(block) && !getIceBlocks().containsKey(block)))) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return false;
@@ -284,7 +283,7 @@ public class WaterArmsSpear extends WaterAbility {
 	public long getCooldown() {
 		return usageCooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -466,5 +465,5 @@ public class WaterArmsSpear extends WaterAbility {
 	public static Map<Block, Long> getIceBlocks() {
 		return ICE_BLOCKS;
 	}
-	
+
 }

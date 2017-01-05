@@ -27,7 +27,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LavaSurge extends LavaAbility {
-	
+
 	private static final HashSet<FallingBlock> ALL_FALLING_BLOCKS = new HashSet<>();
 
 	private boolean hasSurgeStarted;
@@ -49,15 +49,15 @@ public class LavaSurge extends LavaAbility {
 	private Vector direction;
 	private Location startLocation;
 	private ArrayList<FallingBlock> fallingBlocks;
-	private ArrayList<Block> fracture;	
+	private ArrayList<Block> fracture;
 	private ArrayList<TempBlock> fractureTempBlocks;
 	private ArrayList<TempBlock> movingLava;
 	private Map<FallingBlock, TempBlock> lavaBlocks;
 	private ListIterator<Block> listIterator;
-	
+
 	public LavaSurge(Player player) {
 		super(player);
-		
+
 		this.impactDamage = getConfig().getInt("Abilities.Earth.LavaSurge.Damage");
 		this.cooldown = getConfig().getLong("Abilities.Earth.LavaSurge.Cooldown");
 		this.fractureRadius = getConfig().getDouble("Abilities.Earth.LavaSurge.FractureRadius");
@@ -67,198 +67,196 @@ public class LavaSurge extends LavaAbility {
 		this.canSourceBeEarth = getConfig().getBoolean("Abilities.Earth.LavaSurge.SourceCanBeEarth");
 		this.particleInterval = 100;
 		this.fallingBlockInterval = 100;
-		
+
 		this.random = new Random();
 		this.fallingBlocks = new ArrayList<>();
 		this.fracture = new ArrayList<>();
 		this.fractureTempBlocks = new ArrayList<>();
-		this.movingLava =  new ArrayList<>();
+		this.movingLava = new ArrayList<>();
 		this.lavaBlocks = new ConcurrentHashMap<>();
-		
-		if(!isEligible()) {
+
+		if (!isEligible()) {
 			return;
-		} else if(bPlayer.isOnCooldown(this)) {
+		} else if (bPlayer.isOnCooldown(this)) {
 			return;
 		}
-		
+
 		lastTime = System.currentTimeMillis();
-	
-		if(prepare()) {
+
+		if (prepare()) {
 			start();
 		}
 	}
-	
+
 	public boolean isEligible() {
 		return bPlayer.canBend(this) && bPlayer.canLavabend();
 	}
-	
+
 	public boolean prepare() {
 		Block targetBlock = BlockSource.getEarthSourceBlock(player, prepareRange, ClickType.SHIFT_DOWN);
-		
-		if(targetBlock == null 
-				|| !(targetBlock.getRelative(BlockFace.UP).getType() == Material.AIR) 
-				&& !isLava(targetBlock.getRelative(BlockFace.UP))) {
+
+		if (targetBlock == null || !(targetBlock.getRelative(BlockFace.UP).getType() == Material.AIR) && !isLava(targetBlock.getRelative(BlockFace.UP))) {
 			return false;
 		}
-		
+
 		LavaSurge otherSurge = getAbility(player, this.getClass());
 		if (otherSurge != null) {
 			otherSurge.revertFracture();
 		}
-		
-		if((canSourceBeEarth && isEarthbendable(targetBlock)) || isLavabendable(targetBlock)) {
+
+		if ((canSourceBeEarth && isEarthbendable(targetBlock)) || isLavabendable(targetBlock)) {
 			startLocation = targetBlock.getLocation().add(0, 1, 0);
 			sourceBlock = targetBlock;
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	public void launch() {
-		Location targetLocation = GeneralMethods.getTargetedLocation(player, travelRange*2);
 
-		try { 
-			targetLocation = GeneralMethods.getTargetedEntity(player, travelRange*2, null).getLocation(); 
-		} catch(NullPointerException e) {}
-		
-		if(targetLocation == null) {
+	public void launch() {
+		Location targetLocation = GeneralMethods.getTargetedLocation(player, travelRange * 2);
+
+		try {
+			targetLocation = GeneralMethods.getTargetedEntity(player, travelRange * 2, null).getLocation();
+		}
+		catch (NullPointerException e) {
+		}
+
+		if (targetLocation == null) {
 			remove();
 			return;
 		}
-		
+
 		time = System.currentTimeMillis();
 		direction = GeneralMethods.getDirection(startLocation, targetLocation).multiply(0.07);
-		
-		if(direction.getY() < 0) {
+
+		if (direction.getY() < 0) {
 			direction.setY(0);
 		}
-		
-		if(canSourceBeEarth) {
+
+		if (canSourceBeEarth) {
 			openFracture();
 		} else {
 			skipFracture();
 		}
 	}
-	
+
 	public void openFracture() {
 		List<Block> affectedBlocks = GeneralMethods.getBlocksAroundPoint(sourceBlock.getLocation(), fractureRadius);
-		
-		for(Block b : affectedBlocks) {
-			if(isEarthbendable(b)) {
+
+		for (Block b : affectedBlocks) {
+			if (isEarthbendable(b)) {
 				fracture.add(b);
 			}
 		}
-	
+
 		listIterator = fracture.listIterator();
 		isFractureOpen = true;
 		bPlayer.addCooldown(this);
 	}
-	
+
 	public void skipFracture() {
 		listIterator = fracture.listIterator();
 		isFractureOpen = true;
 	}
-	
+
 	public void revertFracture() {
-		for(TempBlock tb : fractureTempBlocks) {
+		for (TempBlock tb : fractureTempBlocks) {
 			tb.revertBlock();
 		}
 		fracture.clear();
 	}
-	
+
 	@Override
 	public void remove() {
 		super.remove();
 		revertFracture();
 	}
-	
+
 	public boolean canMoveThrough(Block block) {
-		if(isTransparent(startLocation.getBlock()) ||
-				isEarthbendable(startLocation.getBlock()) ||
-				isLavabendable(startLocation.getBlock())) {
+		if (isTransparent(startLocation.getBlock()) || isEarthbendable(startLocation.getBlock()) || isLavabendable(startLocation.getBlock())) {
 			return true;
 		}
 		return false;
 	}
 
 	public void removeLava() {
-		for(TempBlock tb : lavaBlocks.values()) {
+		for (TempBlock tb : lavaBlocks.values()) {
 			tb.revertBlock();
 		}
 		movingLava.clear();
 	}
-	
+
 	@Override
 	public void progress() {
 		long curTime = System.currentTimeMillis();
-		if(!player.isOnline() || player.isDead()) {
+		if (!player.isOnline() || player.isDead()) {
 			remove();
 			return;
-		} else if(!hasSurgeStarted && !bPlayer.getBoundAbilityName().equals(getName())) {
+		} else if (!hasSurgeStarted && !bPlayer.getBoundAbilityName().equals(getName())) {
 			remove();
 			return;
 		}
-		
-		if(!hasSurgeStarted && sourceBlock != null && curTime > lastTime + particleInterval) {
+
+		if (!hasSurgeStarted && sourceBlock != null && curTime > lastTime + particleInterval) {
 			lastTime = curTime;
 			ParticleEffect.LAVA.display(sourceBlock.getLocation(), 0, 0, 0, 0, 1);
-		} else if(hasSurgeStarted && curTime > lastTime + particleInterval) {
+		} else if (hasSurgeStarted && curTime > lastTime + particleInterval) {
 			lastTime = curTime;
-			for(FallingBlock fblock : fallingBlocks) {
+			for (FallingBlock fblock : fallingBlocks) {
 				ParticleEffect.LAVA.display(fblock.getLocation(), 0, 0, 0, 0, 1);
 			}
 		}
-		
-		if(isFractureOpen && !hasSurgeStarted) {
-			if(!listIterator.hasNext()) {
+
+		if (isFractureOpen && !hasSurgeStarted) {
+			if (!listIterator.hasNext()) {
 				hasSurgeStarted = true;
 			} else {
 				Block b = listIterator.next();
 				playEarthbendingSound(b.getLocation());
-				
-				for(int i = 0; i < 2; i++) {
+
+				for (int i = 0; i < 2; i++) {
 					TempBlock tb = new TempBlock(b, Material.STATIONARY_LAVA, (byte) 0);
 					fractureTempBlocks.add(tb);
 				}
 			}
 		}
 
-		if(hasSurgeStarted) {	
-			if(fallingBlocksCount >= maxBlocks) {
+		if (hasSurgeStarted) {
+			if (fallingBlocksCount >= maxBlocks) {
 				return;
 			}
-			
-			if(curTime > time + (fallingBlockInterval * fallingBlocksCount)) {
+
+			if (curTime > time + (fallingBlockInterval * fallingBlocksCount)) {
 				FallingBlock fbs = GeneralMethods.spawnFallingBlock(sourceBlock.getLocation().add(0, 1, 0), 11, (byte) 0);
 				fallingBlocks.add(fbs);
 				ALL_FALLING_BLOCKS.add(fbs);
-				double x = random.nextDouble()/5;
-				double z = random.nextDouble()/5;
-				
+				double x = random.nextDouble() / 5;
+				double z = random.nextDouble() / 5;
+
 				x = (random.nextBoolean()) ? -x : x;
 				z = (random.nextBoolean()) ? -z : z;
-				
+
 				fbs.setVelocity(direction.clone().add(new Vector(x, 0.2, z)).multiply(1.2));
 				fbs.setDropItem(false);
-				
-				for(Block b : fracture) {
-					if(random.nextBoolean() && b != sourceBlock) {
+
+				for (Block b : fracture) {
+					if (random.nextBoolean() && b != sourceBlock) {
 						FallingBlock fb = GeneralMethods.spawnFallingBlock(b.getLocation().add(new Vector(0, 1, 0)), 11, (byte) 0);
 						ALL_FALLING_BLOCKS.add(fb);
 						fallingBlocks.add(fb);
-						fb.setVelocity(direction.clone().add(new Vector(random.nextDouble()/10, 0.1, random.nextDouble()/10)).multiply(1.2));
+						fb.setVelocity(direction.clone().add(new Vector(random.nextDouble() / 10, 0.1, random.nextDouble() / 10)).multiply(1.2));
 						fb.setDropItem(false);
 					}
 				}
 
 				fallingBlocksCount++;
 			}
-			
-			for(FallingBlock fb : fallingBlocks) {
-				for(Entity e : GeneralMethods.getEntitiesAroundPoint(fb.getLocation(), 2)) {
-					if(e instanceof LivingEntity) {
-						if(e.getEntityId() != player.getEntityId()) {
+
+			for (FallingBlock fb : fallingBlocks) {
+				for (Entity e : GeneralMethods.getEntitiesAroundPoint(fb.getLocation(), 2)) {
+					if (e instanceof LivingEntity) {
+						if (e.getEntityId() != player.getEntityId()) {
 							DamageHandler.damageEntity(e, impactDamage, this);
 							e.setFireTicks(100);
 							GeneralMethods.setVelocity(e, direction.clone());
@@ -283,7 +281,7 @@ public class LavaSurge extends LavaAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -293,11 +291,11 @@ public class LavaSurge extends LavaAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	public static HashSet<FallingBlock> getAllFallingBlocks() {
 		return ALL_FALLING_BLOCKS;
 	}
-	
+
 	public boolean isHasSurgeStarted() {
 		return hasSurgeStarted;
 	}
@@ -465,5 +463,5 @@ public class LavaSurge extends LavaAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
+
 }

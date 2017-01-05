@@ -18,7 +18,7 @@ public class RapidPunch extends ChiAbility {
 	private long cooldown;
 	private int numPunches;
 	private Entity target;
-	
+
 	public RapidPunch(Player sourceplayer, Entity targetentity) {
 		super(sourceplayer);
 		if (!bPlayer.canBend(this)) {
@@ -38,10 +38,10 @@ public class RapidPunch extends ChiAbility {
 			remove();
 			return;
 		}
-		
+
 		LivingEntity lt = (LivingEntity) target;
 		DamageHandler.damageEntity(target, damage, this);
-		
+
 		if (target instanceof Player) {
 			if (ChiPassive.willChiBlock(player, (Player) target)) {
 				ChiPassive.blockChi((Player) target);
@@ -50,12 +50,12 @@ public class RapidPunch extends ChiAbility {
 				Suffocate.remove((Player) target);
 			}
 		}
-		
+
 		lt.setNoDamageTicks(0);
 		bPlayer.addCooldown(this);
 		numPunches++;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "RapidPunch";
@@ -70,7 +70,7 @@ public class RapidPunch extends ChiAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -124,5 +124,5 @@ public class RapidPunch extends ChiAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
+
 }

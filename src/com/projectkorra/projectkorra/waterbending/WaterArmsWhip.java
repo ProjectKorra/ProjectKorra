@@ -56,12 +56,12 @@ public class WaterArmsWhip extends WaterAbility {
 	private Arm arm;
 	private Whip ability;
 	private LivingEntity grabbedEntity;
-	private Location end;	
+	private Location end;
 	private WaterArms waterArms;
-	
+
 	public WaterArmsWhip(Player player, Whip ability) {
 		super(player);
-		
+
 		this.ability = ability;
 		this.reverting = false;
 		this.hasDamaged = false;
@@ -83,7 +83,7 @@ public class WaterArmsWhip extends WaterAbility {
 		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
 		this.pullMultiplier = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Pull.Multiplier");
 		this.punchDamage = getConfig().getDouble("Abilities.Water.WaterArms.Whip.Punch.PunchDamage");
-		
+
 		WaterArmsWhip waw = getAbility(player, WaterArmsWhip.class);
 		if (waw != null) {
 			if (waw.grabbed) {
@@ -98,7 +98,7 @@ public class WaterArmsWhip extends WaterAbility {
 				return;
 			}
 		}
-		
+
 		getAugments();
 		createInstance();
 	}
@@ -154,7 +154,7 @@ public class WaterArmsWhip extends WaterAbility {
 			arm = waterArms.getActiveArm();
 			time = System.currentTimeMillis() + holdTime;
 			playerHealth = player.getHealth();
-			
+
 			if (arm.equals(Arm.LEFT)) {
 				if (waterArms.isLeftArmCooldown() || bPlayer.isOnCooldown("WaterArms_LEFT")) {
 					return;
@@ -165,7 +165,7 @@ public class WaterArmsWhip extends WaterAbility {
 					waterArms.setLeftArmCooldown(true);
 				}
 			}
-			
+
 			if (arm.equals(Arm.RIGHT)) {
 				if (waterArms.isRightArmCooldown() || bPlayer.isOnCooldown("WaterArms_RIGHT")) {
 					return;
@@ -179,7 +179,7 @@ public class WaterArmsWhip extends WaterAbility {
 		} else {
 			return;
 		}
-		
+
 		if (!waterArms.isFullSource()) {
 			whipLength = whipLengthWeak;
 		}
@@ -194,7 +194,8 @@ public class WaterArmsWhip extends WaterAbility {
 		} else if (player.isDead() || !player.isOnline()) {
 			remove();
 			return;
-		} if (!MultiAbilityManager.hasMultiAbilityBound(player, "WaterArms")) {
+		}
+		if (!MultiAbilityManager.hasMultiAbilityBound(player, "WaterArms")) {
 			remove();
 			return;
 		}
@@ -235,13 +236,13 @@ public class WaterArmsWhip extends WaterAbility {
 	private void useArm() {
 		if (waterArms.canDisplayActiveArm()) {
 			Location l1 = null;
-			
+
 			if (arm.equals(Arm.LEFT)) {
 				l1 = waterArms.getLeftArmEnd().clone();
 			} else {
 				l1 = waterArms.getRightArmEnd().clone();
 			}
-			
+
 			Vector dir = player.getLocation().getDirection();
 			for (int i = 1; i <= activeLength; i++) {
 				Location l2 = l1.clone().add(dir.normalize().multiply(i));
@@ -264,7 +265,7 @@ public class WaterArmsWhip extends WaterAbility {
 					} else {
 						l3 = GeneralMethods.getLeftSide(l2, 1);
 					}
-					
+
 					end = l3.clone();
 					if (canPlaceBlock(l3.getBlock())) {
 						new TempBlock(l3.getBlock(), Material.STATIONARY_WATER, (byte) 3);
@@ -298,7 +299,7 @@ public class WaterArmsWhip extends WaterAbility {
 					if (entity instanceof Player && Commands.invincible.contains(((Player) entity).getName())) {
 						continue;
 					}
-					
+
 					Vector vector = entity.getLocation().toVector().subtract(endOfArm.toVector());
 					entity.setVelocity(vector.multiply(0.15));
 					if (entity instanceof LivingEntity) {
@@ -346,25 +347,25 @@ public class WaterArmsWhip extends WaterAbility {
 					return;
 				}
 			}
-			
+
 			Location newLocation = grabbedEntity.getLocation();
 			double distance = 0;
-			if(location.getWorld().equals(newLocation.getWorld())) {
+			if (location.getWorld().equals(newLocation.getWorld())) {
 				distance = location.distance(newLocation);
 			}
-			
+
 			double dx, dy, dz;
 			dx = location.getX() - newLocation.getX();
 			dy = location.getY() - newLocation.getY();
 			dz = location.getZ() - newLocation.getZ();
 			Vector vector = new Vector(dx, dy, dz);
-			
+
 			if (distance > 0.5) {
 				grabbedEntity.setVelocity(vector.normalize().multiply(.65));
 			} else {
 				grabbedEntity.setVelocity(new Vector(0, 0, 0));
 			}
-			
+
 			grabbedEntity.setFallDistance(0);
 			if (grabbedEntity instanceof Creature) {
 				((Creature) grabbedEntity).setTarget(null);
@@ -434,7 +435,7 @@ public class WaterArmsWhip extends WaterAbility {
 	public long getCooldown() {
 		return usageCooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
