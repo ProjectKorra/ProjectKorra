@@ -75,7 +75,7 @@ public class SandAgilityPassive extends SandAbility implements PassiveAbility {
 	}
 
 	@Override
-	public boolean isPlaceholder() {
+	public boolean isInstantiable() {
 		return false;
 	}
 

@@ -43,7 +43,7 @@ public class GracefulDescent extends AirAbility implements PassiveAbility {
 	}
 
 	@Override
-	public boolean isPlaceholder() {
+	public boolean isInstantiable() {
 		return true;
 	}
 

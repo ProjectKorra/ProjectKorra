@@ -38,7 +38,7 @@ public class PassiveManager {
 					 * here. This just enables the passive to be displayed in /b
 					 * d [element]passive
 					 */
-				} else if (((PassiveAbility) ability).isPlaceholder()) {
+				} else if (((PassiveAbility) ability).isInstantiable()) {
 					continue;
 				}
 				Class<?> clazz = null;

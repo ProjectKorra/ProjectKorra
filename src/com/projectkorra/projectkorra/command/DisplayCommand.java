@@ -300,6 +300,12 @@ public class DisplayCommand extends PKCommand {
 		list.add("WaterCombos");
 		list.add("ChiCombos");
 		list.add("Avatar");
+
+		list.add("AirPassives");
+		list.add("EarthPassives");
+		list.add("FirePassives");
+		list.add("WaterPassives");
+		list.add("ChiPassives");
 		
 		return list;
 	}

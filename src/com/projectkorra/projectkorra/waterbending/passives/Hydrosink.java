@@ -43,7 +43,7 @@ public class Hydrosink extends WaterAbility implements PassiveAbility {
 	}
 
 	@Override
-	public boolean isPlaceholder() {
+	public boolean isInstantiable() {
 		return true;
 	}
 

@@ -43,7 +43,7 @@ public class ChiSatiation extends ChiAbility implements PassiveAbility {
 	}
 
 	@Override
-	public boolean isPlaceholder() {
+	public boolean isInstantiable() {
 		return true;
 	}
 

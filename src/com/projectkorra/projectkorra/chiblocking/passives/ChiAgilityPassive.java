@@ -103,7 +103,7 @@ public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
 	}
 
 	@Override
-	public boolean isPlaceholder() {
+	public boolean isInstantiable() {
 		return false;
 	}
 

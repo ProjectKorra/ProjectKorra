@@ -43,7 +43,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 	}
 
 	@Override
-	public boolean isPlaceholder() {
+	public boolean isInstantiable() {
 		return true;
 	}
 
