@@ -127,6 +127,22 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/worldguard-6.1.jar</systemPath>
     </dependency>
+    <!-- Kingdoms -->
+    <dependency>
+      <groupId>org.kingdoms</groupId>
+      <artifactId>Kingdoms</artifactId>
+      <version>LATEST</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/Kingdoms.jar</systemPath>
+    </dependency>
+    <!-- GLib -->
+    <dependency>
+      <groupId>org.generallib</groupId>
+      <artifactId>GLib</artifactId>
+      <version>LATEST</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/GLib.jar</systemPath>
+    </dependency>
   </dependencies>
 
   <build>
