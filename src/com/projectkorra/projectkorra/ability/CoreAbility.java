@@ -447,7 +447,7 @@ public abstract class CoreAbility implements Ability {
 						if (combo.getCombination() != null) {
 							ComboManager.getComboAbilities().put(name, new ComboManager.ComboAbilityInfo(name, combo.getCombination(), combo));
 							ComboManager.getDescriptions().put(name, ability.getDescription());
-							ComboManager.getInstructions().put(name, combo.getInstructions());
+							ComboManager.getInstructions().put(name, ability.getInstructions());
 							String author = "";
 							if (ability instanceof AddonAbility) {
 								author = ((AddonAbility) ability).getAuthor();
@@ -517,7 +517,7 @@ public abstract class CoreAbility implements Ability {
 					if (combo.getCombination() != null) {
 						ComboManager.getComboAbilities().put(name, new ComboManager.ComboAbilityInfo(name, combo.getCombination(), combo));
 						ComboManager.getDescriptions().put(name, coreAbil.getDescription());
-						ComboManager.getInstructions().put(name, combo.getInstructions());
+						ComboManager.getInstructions().put(name, coreAbil.getInstructions());
 						ComboManager.getAuthors().put(name, addon.getAuthor());
 					}
 				}
@@ -594,6 +594,16 @@ public abstract class CoreAbility implements Ability {
 		}
 	}
 
+	@Override
+	 	public String getInstructions() {
+	 		
+	 	String elementName = getElement().getName();
+	 	if (getElement() instanceof SubElement) {
+	 		elementName = ((SubElement) getElement()).getParentElement().getName();
+	 	}
+	 	return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Instructions");
+	 	}
+	
 	@Override
 	public String getDescription() {
 		String elementName = getElement().getName();
