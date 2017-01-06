@@ -21,6 +21,7 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
 import com.projectkorra.projectkorra.command.Commands;
@@ -254,24 +255,6 @@ public class BendingPlayer {
 			return false;
 		} 
 		return true;
-	}
-	
-	public boolean canCurrentlyBendWithWeapons() {
-		if (getBoundAbility() != null && player.getInventory().getItemInMainHand() != null) {
-			boolean hasWeapon = GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType());
-			boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(getBoundAbility().getElement());
-			
-			if (hasWeapon) {
-				if(noWeaponElement) {
-					return false;
-				} else {
-					return true;
-				}
-			}
-			
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -728,6 +711,7 @@ public class BendingPlayer {
 	 */
 	public void toggleBending() {
 		toggled = !toggled;
+		PassiveManager.registerPassives(player);
 	}
 
 	public void toggleElement(Element element) {

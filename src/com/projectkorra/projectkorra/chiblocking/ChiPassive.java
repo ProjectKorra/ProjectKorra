@@ -61,19 +61,19 @@ public class ChiPassive {
 	}
 
 	public static double getExhaustionFactor() {
-		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.ExhaustionFactor");
+		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.ChiSaturation.ExhaustionFactor");
 	}
 	
 	public static double getFallReductionFactor() {
-		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.FallReductionFactor");
+		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.Acrobatics.FallReductionFactor");
 	}
 
 	public static int getJumpPower() {
-		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.Jump");
+		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.ChiAgility.JumpPower");
 	}
 
 	public static int getSpeedPower() {
-		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.Speed");
+		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.ChiAgility.SpeedPower");
 	}
 
 	public static double getChance() {

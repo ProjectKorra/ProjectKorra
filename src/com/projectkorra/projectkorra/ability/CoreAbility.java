@@ -35,6 +35,7 @@ import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager.MultiAbilityInfo;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
@@ -74,6 +75,7 @@ public abstract class CoreAbility implements Ability {
 
 	private boolean started;
 	private boolean removed;
+	private boolean hidden;
 	private int id;
 	private long startTime;
 	private long startTick;
@@ -207,6 +209,16 @@ public abstract class CoreAbility implements Ability {
 	public static void progressAll() {
 		for (Set<CoreAbility> setAbils : INSTANCES_BY_CLASS.values()) {
 			for (CoreAbility abil : setAbils) {
+				if (abil instanceof PassiveAbility) {
+					BendingPlayer bPlayer = abil.getBendingPlayer();
+					if (bPlayer == null || !abil.getPlayer().isOnline()) {
+						abil.remove();
+						return;
+					} else if (!bPlayer.canBendPassive(abil.getElement())) {
+						abil.remove();
+						return;
+					}
+				}
 				abil.progress();
 				Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
 			}
@@ -460,6 +472,18 @@ public abstract class CoreAbility implements Ability {
 						MultiAbility multiAbil = (MultiAbility) ability;
 						MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
 					}
+					
+					if (ability instanceof PassiveAbility) {
+						ability.setHiddenAbility(true);
+						PassiveManager.getPassives().put(name, ability);
+						if (!PassiveManager.getPassivesByElement().containsKey(ability.getElement())) {
+							PassiveManager.getPassivesByElement().put(ability.getElement(), new HashSet<String>());
+						}
+						PassiveManager.getPassivesByElement().get(ability.getElement()).add(name);
+						if (ability.getElement() instanceof SubElement) {
+							PassiveManager.getPassivesByElement().get(((SubElement) ability.getElement()).getParentElement()).add(name);
+						}
+					}
 
 					if (ability instanceof AddonAbility) {
 						AddonAbility addon = (AddonAbility) ability;
@@ -526,6 +550,18 @@ public abstract class CoreAbility implements Ability {
 					MultiAbility multiAbil = (MultiAbility) coreAbil;
 					MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
 				}
+				
+				if (coreAbil instanceof PassiveAbility) {
+					coreAbil.setHiddenAbility(true);
+					PassiveManager.getPassives().put(name, coreAbil);
+					if (!PassiveManager.getPassivesByElement().containsKey(coreAbil.getElement())) {
+						PassiveManager.getPassivesByElement().put(coreAbil.getElement(), new HashSet<String>());
+					}
+					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);
+					if (coreAbil.getElement() instanceof SubElement) {
+						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
+					}
+				}
 			}
 			catch (Exception | Error e) {
 				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
@@ -566,7 +602,11 @@ public abstract class CoreAbility implements Ability {
 
 	@Override
 	public boolean isHiddenAbility() {
-		return false;
+		return hidden;
+	}
+	
+	public void setHiddenAbility(boolean hidden) {
+		this.hidden = hidden;
 	}
 
 	@Override
@@ -583,6 +623,8 @@ public abstract class CoreAbility implements Ability {
 		String tag = null;
 		if (this instanceof ComboAbility) {
 			tag = "Abilities." + elementName + "." + elementName + "Combo." + getName() + ".Enabled";
+		} else if (this instanceof PassiveAbility) {
+			tag = "Abilities." + elementName + ".Passive." + getName() + ".Enabled";
 		} else {
 			tag = "Abilities." + elementName + "." + getName() + ".Enabled";
 		}
@@ -609,6 +651,9 @@ public abstract class CoreAbility implements Ability {
 		String elementName = getElement().getName();
 		if (getElement() instanceof SubElement) {
 			elementName = ((SubElement) getElement()).getParentElement().getName();
+		}
+		if (this instanceof PassiveAbility) {
+			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Passive." + getName() + ".Description");
 		}
 		return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Description");
 	}

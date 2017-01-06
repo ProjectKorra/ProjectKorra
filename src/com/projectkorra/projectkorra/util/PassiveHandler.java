@@ -1,28 +1,18 @@
 package com.projectkorra.projectkorra.util;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.Element.SubElement;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.airbending.AirPassive;
-import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
-import com.projectkorra.projectkorra.chiblocking.ChiPassive;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.EarthPassive;
-import com.projectkorra.projectkorra.waterbending.PlantArmor;
-
-import org.bukkit.Bukkit;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PassiveHandler implements Runnable {
+import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.BendingPlayer;
+import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.airbending.AirPassive;
+import com.projectkorra.projectkorra.chiblocking.ChiPassive;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+
+public class PassiveHandler {
 	
 	private static final Map<Player, Float> FOOD = new ConcurrentHashMap<>();
 	
@@ -39,34 +29,6 @@ public class PassiveHandler implements Runnable {
 			}
 			FOOD.put(player, level);
 			return level;
-		}
-	}
-	
-	public static void checkArmorPassives(Player player) {
-		if (ConfigManager.defaultConfig.get().getStringList("Properties.DisabledWorlds").contains(player.getWorld().getName())) {
-			return;
-		}
-		
-		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
-			return;
-		}
-		
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		
-		if (bPlayer == null) return;
-		/*if (CoreAbility.hasAbility(player, EarthArmor.class)) {
-			EarthArmor abil = CoreAbility.getAbility(player, EarthArmor.class);
-			if (abil.isFormed()) {
-				int strength = abil.getStrength();
-				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, strength - 1), false);
-			}
-		}*/
-		if (CoreAbility.hasAbility(player, PlantArmor.class)) {
-			PlantArmor abil = CoreAbility.getAbility(player, PlantArmor.class);
-			if (abil.isFormed()) {
-				int strength = abil.getResistance();
-				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, strength - 1), false);
-			}
 		}
 	}
 	
@@ -95,7 +57,8 @@ public class PassiveHandler implements Runnable {
 			player.setExhaustion(getExhaustion(player, player.getExhaustion(), max));
 		}
 	}
-
+	
+	/*
 	public static void checkSpeedPassives(Player player) {
 		if (!player.isSprinting()) return;
 		int air = AirPassive.getSpeedPower();
@@ -195,13 +158,5 @@ public class PassiveHandler implements Runnable {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 15, max-1, true, false), false);
 		}
 	}
-
-	@Override
-	public void run() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			checkSpeedPassives(player);
-			checkJumpPassives(player);
-		}
-		
-	}
+	*/
 }

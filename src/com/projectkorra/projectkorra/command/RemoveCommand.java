@@ -77,6 +77,9 @@ public class RemoveCommand extends PKCommand {
 						} else if (e instanceof Element) {
 							if (senderBPlayer.hasElement(e)) {
 								senderBPlayer.getElements().remove(e);
+								for (SubElement sub : SubElement.getSubElements(e)) {
+									senderBPlayer.getSubElements().remove(sub);
+								}
 								GeneralMethods.saveElements(senderBPlayer);
 								GeneralMethods.removeUnusableAbilities(sender.getName());
 
