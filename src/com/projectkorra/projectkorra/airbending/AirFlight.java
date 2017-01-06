@@ -19,11 +19,14 @@ public class AirFlight extends FlightAbility {
 	private static final Map<String, Integer> HITS = new ConcurrentHashMap<>();
 	private static final Map<String, PlayerFlyData> HOVERING = new ConcurrentHashMap<>();
 	
+	private long cooldown;
 	private boolean firstProgressIteration;
 	private int maxHitsBeforeRemoval;
 	private double speed;
 	private Flight flight;
 	private double hoverY;
+	private double maxDuration;
+	private boolean ignoreDuration;
 
 	public AirFlight(Player player) {
 		super(player);
@@ -31,8 +34,11 @@ public class AirFlight extends FlightAbility {
 		if (CoreAbility.getAbility(player, AirFlight.class) != null)
 			return;
 			
+		this.cooldown = getConfig().getInt("Abilities.Air.Flight.Cooldown");
 		this.maxHitsBeforeRemoval = getConfig().getInt("Abilities.Air.Flight.MaxHits");
 		this.speed = getConfig().getDouble("Abilities.Air.Flight.Speed");
+		this.maxDuration = getConfig().getDouble("Abilities.Air.Flight.MaxDuration");
+		this.ignoreDuration = maxDuration == 0;
 		this.firstProgressIteration = true;
 		hoverY = player.getLocation().getBlockY();
 		start();
@@ -106,6 +112,10 @@ public class AirFlight extends FlightAbility {
 		} else if (player.getLocation().subtract(0, 0.5, 0).getBlock().getType() != Material.AIR) {
 			remove();
 			return;
+		} else if (System.currentTimeMillis() - getStartTime() > maxDuration && !ignoreDuration) {
+			bPlayer.addCooldown(this);
+			remove();
+			return;
 		}
 
 		player.setAllowFlight(true);
@@ -158,7 +168,7 @@ public class AirFlight extends FlightAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
 	}
 
 	@Override

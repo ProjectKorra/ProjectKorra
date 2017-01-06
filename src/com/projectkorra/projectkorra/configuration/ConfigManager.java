@@ -612,8 +612,10 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Air.Flight.Enabled", true);
 			config.addDefault("Abilities.Air.Flight.HoverEnabled", true);
+			config.addDefault("Abilities.Air.Flight.Cooldown", 5000);
 			config.addDefault("Abilities.Air.Flight.Speed", 1);
 			config.addDefault("Abilities.Air.Flight.MaxHits", 4);
+			config.addDefault("Abilities.Air.Flight.MaxDuration", 0);
 
 			config.addDefault("Abilities.Air.Suffocate.Enabled", true);
 			config.addDefault("Abilities.Air.Suffocate.ChargeTime", 500);
