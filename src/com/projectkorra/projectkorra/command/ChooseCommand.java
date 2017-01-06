@@ -133,10 +133,10 @@ public class ChooseCommand extends PKCommand {
 			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.CHOOSE));
 		} else {
-			bPlayer.setElement(element);
-			
+			bPlayer.addElement(element);
+			bPlayer.getSubElements().clear();
 			for (SubElement sub : Element.getAllSubElements()) {
-				if (sub.getParentElement() == element && bPlayer.hasSubElementPermission(sub)) {
+				if (bPlayer.hasElement(sub.getParentElement()) && bPlayer.hasSubElementPermission(sub)) {
 					bPlayer.addSubElement(sub);
 				}
 			}

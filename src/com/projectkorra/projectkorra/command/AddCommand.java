@@ -103,9 +103,9 @@ public class AddCommand extends PKCommand {
 				return;
 			}
 			bPlayer.addElement(e);
-			
+			bPlayer.getSubElements().clear();
 			for (SubElement sub : Element.getAllSubElements()) {
-				if (sub.getParentElement() == e && bPlayer.hasSubElementPermission(sub)) {
+				if (bPlayer.hasElement(sub.getParentElement()) && bPlayer.hasSubElementPermission(sub)) {
 					bPlayer.addSubElement(sub);
 				}
 			}

@@ -13,10 +13,10 @@ public class AirPassive {
 	}
 
 	public static int getJumpPower() {
-		return ConfigManager.getConfig().getInt("Abilities.Air.Passive.Jump");
+		return ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.JumpPower");
 	}
 
 	public static int getSpeedPower() {
-		return ConfigManager.getConfig().getInt("Abilities.Air.Passive.Speed");
+		return ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.SpeedPower");
 	}
 }

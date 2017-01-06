@@ -13,7 +13,7 @@ public class WaterbendingManager implements Runnable {
 
 	@Override
 	public void run() {
-		WaterPassive.handlePassive();
+		//WaterPassive.handlePassive(); # Fast Swim is now managed in FastSwim.java
 		Torrent.progressAllCleanup();
 		WaterArms.progressAllCleanup();
 	}

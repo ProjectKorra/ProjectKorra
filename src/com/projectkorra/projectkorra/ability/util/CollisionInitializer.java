@@ -121,7 +121,6 @@ public class CollisionInitializer {
 		CoreAbility iceWave = CoreAbility.getAbility(IceWave.class);
 		CoreAbility iceSpikeBlast = CoreAbility.getAbility(IceSpikeBlast.class);
 		CoreAbility octopusForm = CoreAbility.getAbility(OctopusForm.class);
-		CoreAbility plantArmor = CoreAbility.getAbility(PlantArmor.class);
 		CoreAbility surgeWall = CoreAbility.getAbility(SurgeWall.class);
 		CoreAbility surgeWave = CoreAbility.getAbility(SurgeWave.class);
 		CoreAbility torrent = CoreAbility.getAbility(Torrent.class);

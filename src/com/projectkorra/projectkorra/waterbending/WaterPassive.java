@@ -1,20 +1,14 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
-import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.command.Commands;
-import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.EarthArmor;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class WaterPassive {
 
@@ -36,6 +30,10 @@ public class WaterPassive {
 		return false;
 	}
 
+	/**
+	 *  Fast Swim is now managed in FastSwim.java
+	 */
+	/*
 	public static void handlePassive() {
 		if (Commands.isToggledForAll && ConfigManager.defaultConfig.get().getBoolean("Properties.TogglePassivesWithAllBending")) {
 			return;
@@ -64,8 +62,9 @@ public class WaterPassive {
 			}
 		}
 	}
+	*/
 	
 	public static double getSwimSpeed() {
-		return ConfigManager.getConfig().getDouble("Abilities.Water.Passive.SwimSpeedFactor");
+		return ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
 	}
 }
