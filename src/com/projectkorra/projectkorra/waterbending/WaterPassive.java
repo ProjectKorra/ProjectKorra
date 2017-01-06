@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

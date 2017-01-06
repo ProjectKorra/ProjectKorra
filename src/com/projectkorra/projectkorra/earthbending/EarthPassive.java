@@ -7,6 +7,8 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.lava.LavaSurgeWall;
+import com.projectkorra.projectkorra.earthbending.lava.LavaSurgeWave;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Bukkit;

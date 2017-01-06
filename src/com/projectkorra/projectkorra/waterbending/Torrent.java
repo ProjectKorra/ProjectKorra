@@ -10,6 +10,7 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -2,7 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.waterbending.PlantRegrowth;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

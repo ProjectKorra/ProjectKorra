@@ -20,12 +20,13 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class WaterManipulation extends WaterAbility {
 
@@ -272,7 +273,7 @@ public class WaterManipulation extends WaterAbility {
 							entity.setVelocity(vector.normalize().multiply(pushFactor));
 
 							if (bPlayer.isAvatarState()) {
-								damage = AvatarState.getValue(damage);
+								damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");
 							}
 							damage = getNightFactor(damage);
 							DamageHandler.damageEntity(entity, damage, this);

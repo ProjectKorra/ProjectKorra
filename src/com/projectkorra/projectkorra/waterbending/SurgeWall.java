@@ -17,11 +17,11 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class SurgeWall extends WaterAbility {
 
@@ -64,7 +64,7 @@ public class SurgeWall extends WaterAbility {
 		}
 
 		if (bPlayer.isAvatarState()) {
-			radius = AvatarState.getValue(radius);
+			radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wall.Radius");
 		}
 		
 		SurgeWall wall = getAbility(player, SurgeWall.class);

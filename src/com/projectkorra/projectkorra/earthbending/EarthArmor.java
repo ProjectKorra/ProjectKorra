@@ -6,7 +6,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.PlantArmor;
+import com.projectkorra.projectkorra.waterbending.plant.PlantArmor;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
