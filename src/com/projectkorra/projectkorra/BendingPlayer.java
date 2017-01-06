@@ -255,6 +255,24 @@ public class BendingPlayer {
 		} 
 		return true;
 	}
+	
+	public boolean canCurrentlyBendWithWeapons() {
+		if (getBoundAbility() != null && player.getInventory().getItemInMainHand() != null) {
+			boolean hasWeapon = GeneralMethods.isWeapon(player.getInventory().getItemInMainHand().getType());
+			boolean noWeaponElement = GeneralMethods.getElementsWithNoWeaponBending().contains(getBoundAbility().getElement());
+			
+			if (hasWeapon) {
+				if(noWeaponElement) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+			
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Checks to see if {@link BendingPlayer} can be slowed.
