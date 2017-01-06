@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.AirbendingManager;
 import com.projectkorra.projectkorra.chiblocking.ChiblockingManager;
 import com.projectkorra.projectkorra.command.Commands;
@@ -24,7 +25,6 @@ import com.projectkorra.projectkorra.firebending.FirebendingManager;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.MetricsLite;
-import com.projectkorra.projectkorra.util.PassiveHandler;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.Updater;
@@ -89,15 +89,22 @@ public class ProjectKorra extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new PassiveHandler(), 0, 1);
+		//getServer().getScheduler().scheduleSyncRepeatingTask(this, new PassiveHandler(), 0, 1);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 		TempBlock.startReversion();
 		
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (final Player player : Bukkit.getOnlinePlayers()) {
 			PKListener.getJumpStatistics().put(player, player.getStatistic(Statistic.JUMP));
 			
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 			GeneralMethods.removeUnusableAbilities(player.getName());
+			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
+				@Override
+				public void run() {
+					PassiveManager.registerPassives(player);
+					GeneralMethods.removeUnusableAbilities(player.getName());
+				}
+			}, 5);
 		}
 
 		try {

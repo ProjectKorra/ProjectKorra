@@ -52,6 +52,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -80,6 +81,7 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.AirBlast;
 import com.projectkorra.projectkorra.airbending.AirBubble;
 import com.projectkorra.projectkorra.airbending.AirBurst;
@@ -91,6 +93,7 @@ import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.airbending.Tornado;
+import com.projectkorra.projectkorra.airbending.passive.GracefulDescent;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.ChiCombo;
@@ -102,6 +105,7 @@ import com.projectkorra.projectkorra.chiblocking.RapidPunch;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
 import com.projectkorra.projectkorra.chiblocking.SwiftKick;
 import com.projectkorra.projectkorra.chiblocking.WarriorStance;
+import com.projectkorra.projectkorra.chiblocking.passive.Acrobatics;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.Catapult;
@@ -123,6 +127,7 @@ import com.projectkorra.projectkorra.earthbending.RaiseEarthWall;
 import com.projectkorra.projectkorra.earthbending.SandSpout;
 import com.projectkorra.projectkorra.earthbending.Shockwave;
 import com.projectkorra.projectkorra.earthbending.Tremorsense;
+import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
@@ -159,7 +164,7 @@ import com.projectkorra.projectkorra.waterbending.IceBlast;
 import com.projectkorra.projectkorra.waterbending.IceSpikeBlast;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.PhaseChange;
-import com.projectkorra.projectkorra.waterbending.PlantArmor;
+import com.projectkorra.projectkorra.waterbending.PhaseChange.PhaseChangeType;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
@@ -168,29 +173,16 @@ import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterPassive;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
-import com.projectkorra.projectkorra.waterbending.PhaseChange.PhaseChangeType;
+import com.projectkorra.projectkorra.waterbending.passive.Hydrosink;
 import com.projectkorra.rpg.RPGMethods;
 
 public class PKListener implements Listener {
 
 	ProjectKorra plugin;
 
-	private static final HashMap<Player, String> BENDING_PLAYER_DEATH = new HashMap<>(); // Player
-																							// killed
-																							// by
-																							// Bending
-	private static final List<UUID> RIGHT_CLICK_INTERACT = new ArrayList<UUID>(); // Player
-																					// right
-																					// click
-																					// block
-	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands
-																			// for
-																			// toggled
-																			// =
-																			// false
-																			// while
-																			// logging
-																			// out
+	private static final HashMap<Player, String> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending.
+	private static final List<UUID> RIGHT_CLICK_INTERACT = new ArrayList<UUID>(); // Player right click block.
+	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
 
 	public PKListener(ProjectKorra plugin) {
@@ -325,8 +317,7 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 		}
 
-		// If there is a TempBlock of Air bellow FallingSand blocks, prevent it
-		// from updating.
+		// If there is a TempBlock of Air bellow FallingSand blocks, prevent it from updating.
 		if (!event.isCancelled()
 				&& (block.getType() == Material.SAND || block.getType() == Material.GRAVEL
 						|| block.getType() == Material.ANVIL)
@@ -352,6 +343,7 @@ public class PKListener implements Listener {
 	public void onElementChange(PlayerChangeElementEvent event) {
 		Player player = event.getTarget();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		PassiveManager.registerPassives(player);
 		boolean chatEnabled = ConfigManager.languageConfig.get().getBoolean("Chat.Enable");
 		if (chatEnabled) {
 			Element element = event.getElement();
@@ -706,9 +698,6 @@ public class PKListener implements Listener {
 				&& CoreAbility.hasAbility((Player) event.getWhoClicked(), EarthArmor.class)) {
 			event.setCancelled(true);
 		}
-		if (event.getSlotType() == SlotType.ARMOR && !PlantArmor.canRemoveArmor((Player) event.getWhoClicked())) {
-			event.setCancelled(true);
-		}
 
 		if (event.getSlotType() == SlotType.ARMOR && TempArmor.hasTempArmor((Player) event.getWhoClicked())) {
 			event.setCancelled(true);
@@ -801,12 +790,14 @@ public class PKListener implements Listener {
 			if (!event.isCancelled() && bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL
 					&& bPlayer.canBendPassive(Element.AIR)) {
 				new AirBurst(player, true);
-				event.setDamage(0D);
-				event.setCancelled(true);
+				if (CoreAbility.getAbility(GracefulDescent.class).isEnabled()) {
+					event.setDamage(0D);
+					event.setCancelled(true);
+				}
 			}
 
 			if (!event.isCancelled() && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL
-					&& bPlayer.canBendPassive(Element.WATER)) {
+					&& bPlayer.canBendPassive(Element.WATER) && CoreAbility.getAbility(Hydrosink.class).isEnabled()) {
 				if (WaterPassive.applyNoFall(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
@@ -814,7 +805,8 @@ public class PKListener implements Listener {
 			}
 
 			if (!event.isCancelled() && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL
-					&& bPlayer.canBendPassive(Element.EARTH)) {
+					&& bPlayer.canBendPassive(Element.EARTH)
+					&& CoreAbility.getAbility(DensityShift.class).isEnabled()) {
 				if (EarthPassive.softenLanding(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
@@ -822,7 +814,7 @@ public class PKListener implements Listener {
 			}
 
 			if (!event.isCancelled() && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL
-					&& bPlayer.canBendPassive(Element.CHI)) {
+					&& bPlayer.canBendPassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled()) {
 				double initdamage = event.getDamage();
 				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
@@ -883,8 +875,7 @@ public class PKListener implements Listener {
 
 		Entity en = e.getEntity();
 		if (en instanceof Player) {
-			if (e.getDamager() instanceof Player) { // This is the player
-													// hitting someone.
+			if (e.getDamager() instanceof Player) { // This is the player hitting someone.
 				Player sourcePlayer = (Player) e.getDamager();
 				Player targetPlayer = (Player) e.getEntity();
 				BendingPlayer sourceBPlayer = BendingPlayer.getBendingPlayer(sourcePlayer);
@@ -932,8 +923,7 @@ public class PKListener implements Listener {
 				TempArmor.getTempArmor(event.getEntity()).revert();
 			}
 		} else {
-			// Do nothing. TempArmor drops are handled by the EntityDeath event
-			// and not PlayerDeath
+			// Do nothing. TempArmor drops are handled by the EntityDeath event and not PlayerDeath.
 		}
 
 		if (event.getEntity().getKiller() != null) {
@@ -1034,7 +1024,7 @@ public class PKListener implements Listener {
 
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		
+
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
 			ComboManager.addComboAbility(player, ClickType.RIGHT_CLICK_ENTITY);
 		}
@@ -1080,9 +1070,15 @@ public class PKListener implements Listener {
 
 			@Override
 			public void run() {
+				PassiveManager.registerPassives(player);
 				GeneralMethods.removeUnusableAbilities(player.getName());
 			}
 		}, 5);
+	}
+
+	@EventHandler
+	public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
+		PassiveManager.registerPassives(event.getPlayer());
 	}
 
 	@EventHandler
@@ -1156,12 +1152,7 @@ public class PKListener implements Listener {
 
 		else {
 			if (bPlayer != null) {
-				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)
-						|| bPlayer.hasElement(Element.EARTH)) {
-					PassiveHandler.checkSpeedPassives(player);
-				}
 				if (bPlayer.hasElement(Element.AIR) || bPlayer.hasElement(Element.CHI)) {
-					PassiveHandler.checkJumpPassives(player);
 					PassiveHandler.checkExhaustionPassives(player);
 				}
 			}
@@ -1244,12 +1235,12 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
 			if (player.isSneaking()) {
 				ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
 			} else {
-			ComboManager.addComboAbility(player, ClickType.SHIFT_DOWN);
+				ComboManager.addComboAbility(player, ClickType.SHIFT_DOWN);
 			}
 		}
 
@@ -1372,16 +1363,16 @@ public class PKListener implements Listener {
 							} else {
 								clips.setControlling(true);
 							}
-						} else {
-							new MetalClips(player, 1);
 						}
+					} else {
+						new MetalClips(player, 1);
 					}
+				}
 
-					else if (abil.equalsIgnoreCase("LavaFlow")) {
-						new LavaFlow(player, LavaFlow.AbilityType.SHIFT);
-					} else if (abil.equalsIgnoreCase("EarthSmash")) {
-						new EarthSmash(player, ClickType.SHIFT_DOWN);
-					}
+				else if (abil.equalsIgnoreCase("LavaFlow")) {
+					new LavaFlow(player, LavaFlow.AbilityType.SHIFT);
+				} else if (abil.equalsIgnoreCase("EarthSmash")) {
+					new EarthSmash(player, ClickType.SHIFT_DOWN);
 				}
 			}
 
@@ -1441,7 +1432,7 @@ public class PKListener implements Listener {
 
 		Entity target = GeneralMethods.getTargetedEntity(player, 3);
 
-		if(bPlayer.canCurrentlyBendWithWeapons()) {
+		if (bPlayer.canCurrentlyBendWithWeapons()) {
 			if (target != null && !(target.equals(player)) && target instanceof LivingEntity) {
 				ComboManager.addComboAbility(player, ClickType.LEFT_CLICK_ENTITY);
 
@@ -1527,8 +1518,6 @@ public class PKListener implements Listener {
 							PhaseChange pc = CoreAbility.getAbility(player, PhaseChange.class);
 							pc.startNewType(PhaseChangeType.FREEZE);
 						}
-					} else if (abil.equalsIgnoreCase("PlantArmor")) {
-						new PlantArmor(player);
 					} else if (abil.equalsIgnoreCase("WaterSpout")) {
 						new WaterSpout(player);
 					} else if (abil.equalsIgnoreCase("WaterManipulation")) {
@@ -1604,7 +1593,6 @@ public class PKListener implements Listener {
 						} else {
 							new Illumination(player);
 						}
-
 					} else if (abil.equalsIgnoreCase("FireBurst")) {
 						FireBurst.coneBurst(player);
 					} else if (abil.equalsIgnoreCase("FireShield")) {
@@ -1630,18 +1618,18 @@ public class PKListener implements Listener {
 					}
 				}
 			}
-			
+
 			if (coreAbil instanceof AvatarAbility) {
 				if (abil.equalsIgnoreCase("AvatarState")) {
 					new AvatarState(player);
 				}
 			}
-		}
 
-		if (MultiAbilityManager.hasMultiAbilityBound(player)) {
-			abil = MultiAbilityManager.getBoundMultiAbility(player);
-			if (abil.equalsIgnoreCase("WaterArms")) {
-				new WaterArms(player);
+			if (MultiAbilityManager.hasMultiAbilityBound(player)) {
+				abil = MultiAbilityManager.getBoundMultiAbility(player);
+				if (abil.equalsIgnoreCase("WaterArms")) {
+					new WaterArms(player);
+				}
 			}
 		}
 	}

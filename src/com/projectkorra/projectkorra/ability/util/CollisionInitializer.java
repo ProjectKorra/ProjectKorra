@@ -41,7 +41,6 @@ import com.projectkorra.projectkorra.waterbending.HealingWaters;
 import com.projectkorra.projectkorra.waterbending.IceBlast;
 import com.projectkorra.projectkorra.waterbending.IceSpikeBlast;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
-import com.projectkorra.projectkorra.waterbending.PlantArmor;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
@@ -121,7 +120,6 @@ public class CollisionInitializer {
 		CoreAbility iceWave = CoreAbility.getAbility(IceWave.class);
 		CoreAbility iceSpikeBlast = CoreAbility.getAbility(IceSpikeBlast.class);
 		CoreAbility octopusForm = CoreAbility.getAbility(OctopusForm.class);
-		CoreAbility plantArmor = CoreAbility.getAbility(PlantArmor.class);
 		CoreAbility surgeWall = CoreAbility.getAbility(SurgeWall.class);
 		CoreAbility surgeWave = CoreAbility.getAbility(SurgeWave.class);
 		CoreAbility torrent = CoreAbility.getAbility(Torrent.class);
