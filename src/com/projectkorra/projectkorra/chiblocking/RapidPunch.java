@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.chiblocking;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
+import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 import org.bukkit.Location;
