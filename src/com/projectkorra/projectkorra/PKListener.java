@@ -1630,12 +1630,12 @@ public class PKListener implements Listener {
 					new AvatarState(player);
 				}
 			}
-
+		}
 			if (MultiAbilityManager.hasMultiAbilityBound(player)) {
 				abil = MultiAbilityManager.getBoundMultiAbility(player);
 				if (abil.equalsIgnoreCase("WaterArms")) {
 					new WaterArms(player);
-				}
+				
 			}
 		}
 	}
