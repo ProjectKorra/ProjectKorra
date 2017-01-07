@@ -26,11 +26,11 @@ import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.MetalClips;
+import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerCooldownChangeEvent.Result;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.waterbending.Bloodbending;
+import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.spirits.SpiritElement;
 import com.projectkorra.spirits.SpiritPlayer;
 

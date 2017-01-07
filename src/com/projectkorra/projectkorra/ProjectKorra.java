@@ -16,12 +16,12 @@ import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
-import com.projectkorra.projectkorra.airbending.AirbendingManager;
-import com.projectkorra.projectkorra.chiblocking.ChiblockingManager;
+import com.projectkorra.projectkorra.airbending.util.AirbendingManager;
+import com.projectkorra.projectkorra.chiblocking.util.ChiblockingManager;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.earthbending.EarthbendingManager;
-import com.projectkorra.projectkorra.firebending.FirebendingManager;
+import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
+import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
 import com.projectkorra.projectkorra.util.MetricsLite;
@@ -29,7 +29,7 @@ import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.Updater;
 import com.projectkorra.projectkorra.util.logging.PKLogHandler;
-import com.projectkorra.projectkorra.waterbending.WaterbendingManager;
+import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
 
 public class ProjectKorra extends JavaPlugin {
 

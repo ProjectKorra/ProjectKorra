@@ -6,6 +6,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class SwiftKick extends ChiAbility {

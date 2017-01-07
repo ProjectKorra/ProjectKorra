@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

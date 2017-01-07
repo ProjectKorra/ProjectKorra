@@ -14,7 +14,7 @@ import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
 import com.projectkorra.projectkorra.firebending.FireBurst;
 import com.projectkorra.projectkorra.waterbending.TorrentWave;
-import com.projectkorra.projectkorra.waterbending.WaterPassive;
+import com.projectkorra.projectkorra.waterbending.passive.WaterPassive;
 
 /**
  * The Ability interface defines the set of methods that any CoreAbility, AddonAbility, ComboAbility, or
