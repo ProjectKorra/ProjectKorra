@@ -15,7 +15,6 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.LightningAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class Lightning extends LightningAbility {
@@ -105,13 +104,10 @@ public class Lightning extends LightningAbility {
 		this.stunDuration = getDayFactor(this.stunDuration);
 
 		if (bPlayer.isAvatarState()) {
-			this.chargeTime = 0;
-			this.cooldown = 0;
-			this.damage = AvatarState.getValue(damage);
-			this.maxChainArcs = AvatarState.getValue(maxChainArcs);
-			this.chainArcChance = AvatarState.getValue(chainArcChance);
-			this.chainRange = AvatarState.getValue(chainRange);
-			this.stunChance = AvatarState.getValue(stunChance);
+			this.chargeTime = getConfig().getLong("Abilities.Avatar.Fire.Lightning.ChargeTime");
+			this.cooldown = getConfig().getLong("Abilities.Avatar.Fire.Lightning.Cooldown");
+			this.damage = getConfig().getDouble("Abilities.Avatar.Fire.Lightning.Damage");
+			
 		} else if (isSozinsComet(player.getWorld())) {
 			this.chargeTime = 0;
 			this.cooldown = 0;

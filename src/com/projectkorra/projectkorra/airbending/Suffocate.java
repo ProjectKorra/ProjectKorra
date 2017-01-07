@@ -14,7 +14,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 /**
@@ -88,15 +87,11 @@ public class Suffocate extends AirAbility {
 		this.tasks = new ArrayList<>();
 
 		if (bPlayer.isAvatarState()) {
-			cooldown = 0;
-			chargeTime = 0;
-			requireConstantAim = false;
-			damage = AvatarState.getValue(damage);
-			range *= 2;
-			slow = AvatarState.getValue(slow);
-			slowRepeat = AvatarState.getValue(slowRepeat);
-			blind = AvatarState.getValue(blind);
-			blindRepeat = AvatarState.getValue(blindRepeat);
+			cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.Cooldown");
+			chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.ChargeTime");
+			damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Damage");
+			range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Range");
+			
 		}
 
 		if (particleCount < 1) {

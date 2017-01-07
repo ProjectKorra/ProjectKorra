@@ -64,9 +64,9 @@ public class Ripple extends EarthAbility {
 		this.entities = new ArrayList<>();
 
 		if (bPlayer.isAvatarState()) {
-			range = AvatarState.getValue(range);
-			damage = AvatarState.getValue(damage);
-			knockback = AvatarState.getValue(knockback);
+			range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
+			damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Damage");
+			knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Knockback");
 		}
 
 		initializeLocations();
