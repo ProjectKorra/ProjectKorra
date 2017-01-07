@@ -13,6 +13,10 @@
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
+	<repository>
+	  <id>inventive-repo</id>
+	  <url>https://repo.inventivetalent.org/content/groups/public/</url>
+	</repository>
   </repositories>
 
   <dependencies>
@@ -143,6 +147,11 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/GLib.jar</systemPath>
     </dependency>
+	<dependency>
+	  <groupId>org.inventivetalent</groupId>
+	  <artifactId>glowapi</artifactId>
+	  <version>1.4.4</version>
+	</dependency>
   </dependencies>
 
   <build>
