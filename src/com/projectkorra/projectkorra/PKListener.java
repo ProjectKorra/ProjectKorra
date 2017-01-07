@@ -1065,8 +1065,6 @@ public class PKListener implements Listener {
 		final Player player = event.getPlayer();
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
 		
-		player.sendMessage(ChatColor.GREEN + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
-		
 		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
 
@@ -1076,6 +1074,12 @@ public class PKListener implements Listener {
 				GeneralMethods.removeUnusableAbilities(player.getName());
 			}
 		}, 5);
+		
+		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
+			public void run() {
+				player.sendMessage(ChatColor.GREEN + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+			}
+		}, 20 * 5);
 	}
 
 	@EventHandler
