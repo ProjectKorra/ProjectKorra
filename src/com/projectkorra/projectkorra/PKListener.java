@@ -1064,7 +1064,9 @@ public class PKListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 		JUMPS.put(player, player.getStatistic(Statistic.JUMP));
-
+		
+		player.sendMessage(ChatColor.GREEN + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+		
 		GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
 
