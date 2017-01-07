@@ -1361,6 +1361,10 @@ public class PKListener implements Listener {
 						bPlayer.toggleTremorSense();
 					} else if (abil.equalsIgnoreCase("Extraction")) {
 						new Extraction(player);
+					} else if (abil.equalsIgnoreCase("LavaFlow")) {
+						new LavaFlow(player, LavaFlow.AbilityType.SHIFT);
+					} else if (abil.equalsIgnoreCase("EarthSmash")) {
+						new EarthSmash(player, ClickType.SHIFT_DOWN);
 					} else if (abil.equalsIgnoreCase("MetalClips")) {
 						MetalClips clips = CoreAbility.getAbility(player, MetalClips.class);
 						if (clips != null) {
@@ -1375,11 +1379,7 @@ public class PKListener implements Listener {
 					}
 				}
 
-				else if (abil.equalsIgnoreCase("LavaFlow")) {
-					new LavaFlow(player, LavaFlow.AbilityType.SHIFT);
-				} else if (abil.equalsIgnoreCase("EarthSmash")) {
-					new EarthSmash(player, ClickType.SHIFT_DOWN);
-				}
+				
 			}
 
 			if (coreAbil instanceof FireAbility && bPlayer.isElementToggled(Element.FIRE) == true) {
