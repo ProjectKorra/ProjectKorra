@@ -22,7 +22,6 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -98,6 +97,13 @@ public class AirSwipe extends AirAbility {
 		if (!charging) {
 			launch();
 		}
+
+		if (bPlayer.isAvatarState()) {
+			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Air.AirSwipe.Cooldown");
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage");
+			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Push");
+		}
+		
 		start();
 	}
 
@@ -201,12 +207,9 @@ public class AirSwipe extends AirAbility {
 							}
 						}
 						if (entities.size() < MAX_AFFECTABLE_ENTITIES) {
-							if (bPlayer.isAvatarState()) {
-								GeneralMethods.setVelocity(entity,
-										fDirection.multiply(AvatarState.getValue(pushFactor)));
-							} else {
-								GeneralMethods.setVelocity(entity, fDirection.multiply(pushFactor));
-							}
+
+							GeneralMethods.setVelocity(entity, fDirection.multiply(pushFactor));
+
 						}
 						if (entity instanceof LivingEntity && !affectedEntities.contains(entity)) {
 							if (damage != 0) {
@@ -222,11 +225,9 @@ public class AirSwipe extends AirAbility {
 							elements.remove(fDirection);
 						}
 					} else if (entity.getEntityId() != player.getEntityId() && !(entity instanceof LivingEntity)) {
-						if (bPlayer.isAvatarState()) {
-							GeneralMethods.setVelocity(entity, fDirection.multiply(AvatarState.getValue(pushFactor)));
-						} else {
+						
 							GeneralMethods.setVelocity(entity, fDirection.multiply(pushFactor));
-						}
+						
 					}
 				}
 			}.runTaskLater(ProjectKorra.plugin, i / MAX_AFFECTABLE_ENTITIES);
@@ -285,9 +286,7 @@ public class AirSwipe extends AirAbility {
 				double factor = 1;
 				if (System.currentTimeMillis() >= getStartTime() + maxChargeTime) {
 					factor = maxChargeFactor;
-				} else if (bPlayer.isAvatarState()) {
-					factor = AvatarState.getValue(factor);
-				} else {
+				}  else {
 					factor = maxChargeFactor * (double) (System.currentTimeMillis() - getStartTime())
 							/ (double) maxChargeTime;
 				}

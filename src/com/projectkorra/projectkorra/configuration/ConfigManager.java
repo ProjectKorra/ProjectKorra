@@ -533,6 +533,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Enabled", true);
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power", 3);
 			
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities", 4.5);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self", 4.0);
+			config.addDefault("Abilities.Avatar.AvatarState.AirSpout.Height", 26);
+			config.addDefault("Abilities.Avatar.AvatarState.AirSuction.Push", 3.5);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Cooldown", 1000);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage", 4.5);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Push", 1.0);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime", 1000);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBurst.Damage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle", true);
@@ -541,7 +548,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Damage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Range", 16);
 			
-			
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.Length", 10);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.Push", 8);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown", 0);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown", 1500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown", 1500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown", 1500);
@@ -553,11 +562,30 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.CrushDamage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height", 20);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Width", 16);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height", 20);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.Collapse.Wall.Height", 20);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthArmor.Cooldown", 2000);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthArmor.GoldHearts", 6);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthBlast.Cooldown", 500);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthBlast.Damage", 5);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthGrab.Cooldown", 0);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height", 10);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.Range", 20);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown", 0);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime", 1500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.Damage", 5);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.Knockback", 2);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.SelectRange", 16);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.GrabRange", 16);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.ChargeTime", 1500);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.Cooldown", 0);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.Damage", 7);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.Knockback", 4.5);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightSpeed", 1.0);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer", 10000);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.ShootRange", 30);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius", 0.05);
+			
 			
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range", 14);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireJet.IsAvatarStateToggle", true);

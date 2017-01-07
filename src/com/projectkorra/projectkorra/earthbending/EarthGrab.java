@@ -52,6 +52,12 @@ public class EarthGrab extends EarthAbility {
 			return;
 		}
 		
+		if (bPlayer.isAvatarState()) {
+			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthGrab.Cooldown");
+			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height");
+			
+		}
+		
 		if (player.isSneaking()) {
 			start();
 		} else {

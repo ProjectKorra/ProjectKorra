@@ -27,7 +27,6 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -111,6 +110,13 @@ public class AirBlast extends AirAbility {
 		this.canOpenDoors = false;
 		this.canPressButtons = false;
 		this.canFlickLevers = false;
+		
+		if (bPlayer.isAvatarState()) {
+			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities");
+			this.pushFactorForOthers = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self");
+		}
+
+		
 		start();
 	}
 
@@ -195,11 +201,7 @@ public class AirBlast extends AirAbility {
 			double max = speed / speedFactor;
 			double factor = pushFactor;
 
-			if (bPlayer.isAvatarState()) {
-				max = AvatarState.getValue(max);
-				factor = AvatarState.getValue(factor);
-			}
-
+			
 			Vector push = direction.clone();
 			if (Math.abs(push.getY()) > max && !isUser) {
 				if (push.getY() < 0) {

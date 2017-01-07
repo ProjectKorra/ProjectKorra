@@ -57,6 +57,13 @@ public class Catapult extends EarthAbility {
 			}
 
 			moving = true;
+			
+			if (bPlayer.isAvatarState()) {
+				this.length = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Catapult.Length");
+				this.push = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Catapult.Push");
+				this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown");
+				
+			}
 			start();
 			bPlayer.addCooldown(this);
 		}

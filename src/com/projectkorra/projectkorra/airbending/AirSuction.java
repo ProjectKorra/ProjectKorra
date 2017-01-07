@@ -15,7 +15,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.Flight;
@@ -78,6 +77,9 @@ public class AirSuction extends AirAbility {
 		}
 
 		bPlayer.addCooldown(this);
+		if (bPlayer.isAvatarState()) {
+			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.AirSuction.Push");
+		}
 		start();
 	}
 
@@ -165,10 +167,6 @@ public class AirSuction extends AirAbility {
 				Vector velocity = entity.getVelocity();
 				double max = speed;
 				double factor = pushFactor;
-				if (bPlayer.isAvatarState()) {
-					max = AvatarState.getValue(max);
-					factor = AvatarState.getValue(factor);
-				}
 
 				Vector push = direction.clone();
 				if (Math.abs(push.getY()) > max && entity.getEntityId() != player.getEntityId()) {
