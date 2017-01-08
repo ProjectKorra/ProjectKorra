@@ -14,6 +14,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -43,16 +44,16 @@ public class WallOfFire extends FireAbility {
 		super(player);
 		
 		this.active = true;
-		this.maxAngle = getConfig().getDouble("Abilities.Fire.WallOfFire.MaxAngle");
-		this.interval = getConfig().getLong("Abilities.Fire.WallOfFire.Interval");
-		this.range = getConfig().getInt("Abilities.Fire.WallOfFire.Range");
-		this.height = getConfig().getInt("Abilities.Fire.WallOfFire.Height");
-		this.width = getConfig().getInt("Abilities.Fire.WallOfFire.Width");
-		this.damage = getConfig().getInt("Abilities.Fire.WallOfFire.Damage");
-		this.cooldown = getConfig().getLong("Abilities.Fire.WallOfFire.Cooldown");
-		this.damageInterval = getConfig().getLong("Abilities.Fire.WallOfFire.DamageInterval");
-		this.duration = getConfig().getLong("Abilities.Fire.WallOfFire.Duration");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.WallOfFire.FireTicks");
+		this.maxAngle = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.WallOfFire.MaxAngle");
+		this.interval = ConfigManager.fireConfig.get().getLong("Abilities.Fire.WallOfFire.Interval");
+		this.range = ConfigManager.fireConfig.get().getInt("Abilities.Fire.WallOfFire.Range");
+		this.height = ConfigManager.fireConfig.get().getInt("Abilities.Fire.WallOfFire.Height");
+		this.width = ConfigManager.fireConfig.get().getInt("Abilities.Fire.WallOfFire.Width");
+		this.damage = ConfigManager.fireConfig.get().getInt("Abilities.Fire.WallOfFire.Damage");
+		this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.WallOfFire.Cooldown");
+		this.damageInterval = ConfigManager.fireConfig.get().getLong("Abilities.Fire.WallOfFire.DamageInterval");
+		this.duration = ConfigManager.fireConfig.get().getLong("Abilities.Fire.WallOfFire.Duration");
+		this.fireTicks = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.WallOfFire.FireTicks");
 		this.random = new Random();
 		this.blocks = new ArrayList<>();
 

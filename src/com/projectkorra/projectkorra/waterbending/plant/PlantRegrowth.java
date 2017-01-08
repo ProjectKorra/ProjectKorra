@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending.plant;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.PlantAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,7 +22,7 @@ public class PlantRegrowth extends PlantAbility {
 	public PlantRegrowth(Player player, Block block) {
 		super(player);
 		
-		this.regrowTime = getConfig().getLong("Abilities.Water.Plantbending.RegrowTime");
+		this.regrowTime = ConfigManager.waterConfig.get().getLong("Abilities.Water.Plantbending.RegrowTime");
 		if (regrowTime != 0) {
 			this.block = block;
 			this.type = block.getType();

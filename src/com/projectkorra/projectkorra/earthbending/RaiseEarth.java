@@ -44,7 +44,7 @@ public class RaiseEarth extends EarthAbility {
 
 		try {
 			if (bPlayer.isAvatarState()) {
-				height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height");
+				height = ConfigManager.avatarConfig.get().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height");
 			}
 			block = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.LEFT_CLICK);
 			if (block == null) {
@@ -69,7 +69,7 @@ public class RaiseEarth extends EarthAbility {
 	}
 
 	public RaiseEarth(Player player, Location origin) {
-		this(player, origin, ConfigManager.getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height"));
+		this(player, origin, ConfigManager.earthConfig.get().getInt("Abilities.Earth.RaiseEarth.Column.Height"));
 	}
 
 	public RaiseEarth(Player player, Location origin, int height) {
@@ -91,10 +91,10 @@ public class RaiseEarth extends EarthAbility {
 	}
 	
 	private void setFields() {
-		this.speed = getConfig().getDouble("Abilities.Earth.RaiseEarth.Speed");
-		this.height = getConfig().getInt("Abilities.Earth.RaiseEarth.Column.Height");
-		this.selectRange = getConfig().getDouble("Abilities.Earth.RaiseEarth.Column.SelectRange");
-		this.cooldown = getConfig().getLong("Abilities.Earth.RaiseEarth.Column.Cooldown");
+		this.speed = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.RaiseEarth.Speed");
+		this.height = ConfigManager.earthConfig.get().getInt("Abilities.Earth.RaiseEarth.Column.Height");
+		this.selectRange = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.RaiseEarth.Column.SelectRange");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.RaiseEarth.Column.Cooldown");
 		this.direction = new Vector(0, 1, 0);
 		this.interval = (long) (1000.0 / speed);
 		this.affectedBlocks = new ConcurrentHashMap<>();

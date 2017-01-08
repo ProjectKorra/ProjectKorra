@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -42,10 +43,10 @@ public class FireJet extends FireAbility {
 			abil.remove();
 		}
 		
-		this.avatarStateToggled = getConfig().getBoolean("Abilities.Avatar.Fire.FireJet.IsAvatarStateToggle");
-		this.duration = getConfig().getLong("Abilities.Fire.FireJet.Duration");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireJet.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireJet.Cooldown");
+		this.avatarStateToggled = ConfigManager.avatarConfig.get().getBoolean("Abilities.Avatar.Fire.FireJet.IsAvatarStateToggle");
+		this.duration = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireJet.Duration");
+		this.speed = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireJet.Speed");
+		this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireJet.Cooldown");
 		this.random = new Random();
 
 		this.speed = getDayFactor(speed);

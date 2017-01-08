@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.Location;
@@ -37,14 +38,14 @@ public class Tornado extends AirAbility {
 	public Tornado(Player player) {
 		super(player);
 
-		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
+		this.range = ConfigManager.airConfig.get().getDouble("Abilities.Air.Tornado.Range");
 		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
 		this.origin.setY(origin.getY() - 1.0 / 10.0 * currentHeight);
-		this.maxHeight = getConfig().getDouble("Abilities.Air.Tornado.Height");
-		this.playerPushFactor = getConfig().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
-		this.radius = getConfig().getDouble("Abilities.Air.Tornado.Radius");
-		this.npcPushFactor = getConfig().getDouble("Abilities.Air.Tornado.NpcPushFactor");
-		this.speed = getConfig().getDouble("Abilities.Air.Tornado.Speed");
+		this.maxHeight = ConfigManager.airConfig.get().getDouble("Abilities.Air.Tornado.Height");
+		this.playerPushFactor = ConfigManager.airConfig.get().getDouble("Abilities.Air.Tornado.PlayerPushFactor");
+		this.radius = ConfigManager.airConfig.get().getDouble("Abilities.Air.Tornado.Radius");
+		this.npcPushFactor = ConfigManager.airConfig.get().getDouble("Abilities.Air.Tornado.NpcPushFactor");
+		this.speed = ConfigManager.airConfig.get().getDouble("Abilities.Air.Tornado.Speed");
 		this.numberOfStreams = (int) (.3 * (double) maxHeight);
 		this.currentHeight = 2;
 		this.currentRadius = currentHeight / maxHeight * radius;

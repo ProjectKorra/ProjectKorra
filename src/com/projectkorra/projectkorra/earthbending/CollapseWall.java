@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
@@ -31,15 +32,15 @@ public class CollapseWall extends EarthAbility {
 			return;
 		}
 
-		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
-		this.height = getConfig().getInt("Abilities.Earth.Collapse.Wall.Height");
-		this.radius = getConfig().getDouble("Abilities.Earth.Collapse.Radius");
-		this.cooldown = getConfig().getLong("Abilities.Earth.Collapse.Wall.Cooldown");
+		this.selectRange = ConfigManager.earthConfig.get().getInt("Abilities.Earth.Collapse.SelectRange");
+		this.height = ConfigManager.earthConfig.get().getInt("Abilities.Earth.Collapse.Wall.Height");
+		this.radius = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.Collapse.Radius");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.Collapse.Wall.Cooldown");
 		this.blocks = new ConcurrentHashMap<>();
 		this.baseBlocks = new ConcurrentHashMap<>();
 
 		if (bPlayer.isAvatarState()) {
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Wall.Height");
+			this.height = ConfigManager.avatarConfig.get().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Wall.Height");
 		}
 		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.SHIFT_DOWN);
 		if (sblock == null) {

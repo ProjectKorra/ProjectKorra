@@ -39,11 +39,11 @@ public class EarthTunnel extends EarthAbility {
 	public EarthTunnel(Player player) {
 		super(player);
 
-		this.maxRadius = getConfig().getDouble("Abilities.Earth.EarthTunnel.MaxRadius");
-		this.range = getConfig().getDouble("Abilities.Earth.EarthTunnel.Range");
-		this.radius = getConfig().getDouble("Abilities.Earth.EarthTunnel.Radius");
-		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
-		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
+		this.maxRadius = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthTunnel.MaxRadius");
+		this.range = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthTunnel.Range");
+		this.radius = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthTunnel.Radius");
+		this.interval = ConfigManager.earthConfig.get().getLong("Abilities.Earth.EarthTunnel.Interval");
+		this.revert = ConfigManager.earthConfig.get().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.radiusIncrement = radius;
 		this.time = System.currentTimeMillis();
 
@@ -61,7 +61,7 @@ public class EarthTunnel extends EarthAbility {
 			return;
 		}
 		if (bPlayer.isAvatarState()) {
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
+			this.radius = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
 		}
 
 		start();

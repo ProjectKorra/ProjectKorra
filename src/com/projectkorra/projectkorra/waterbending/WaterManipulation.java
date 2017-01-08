@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -65,14 +66,14 @@ public class WaterManipulation extends WaterAbility {
 		this.falling = false;
 		this.settingUp = false;
 		this.displacing = false;
-		this.collisionRadius = getConfig().getDouble("Abilities.Water.WaterManipulation.CollisionRadius");
-		this.cooldown = getConfig().getLong("Abilities.Water.WaterManipulation.Cooldown");
-		this.selectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.SelectRange");
-		this.range = getConfig().getDouble("Abilities.Water.WaterManipulation.Range");
-		this.pushFactor = getConfig().getDouble("Abilities.Water.WaterManipulation.Push");
-		this.damage = getConfig().getDouble("Abilities.Water.WaterManipulation.Damage");
-		this.speed = getConfig().getDouble("Abilities.Water.WaterManipulation.Speed");
-		this.deflectRange = getConfig().getDouble("Abilities.Water.WaterManipulation.DeflectRange");
+		this.collisionRadius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterManipulation.CollisionRadius");
+		this.cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterManipulation.Cooldown");
+		this.selectRange = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterManipulation.SelectRange");
+		this.range = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterManipulation.Range");
+		this.pushFactor = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterManipulation.Push");
+		this.damage = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterManipulation.Damage");
+		this.speed = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterManipulation.Speed");
+		this.deflectRange = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterManipulation.DeflectRange");
 		this.waterTypes = new HashSet<Byte>();
 
 		this.interval = (long) (1000. / speed);
@@ -274,7 +275,7 @@ public class WaterManipulation extends WaterAbility {
 							entity.setVelocity(vector.normalize().multiply(pushFactor));
 
 							if (bPlayer.isAvatarState()) {
-								damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");
+								damage = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage");
 							}
 							damage = getNightFactor(damage);
 							DamageHandler.damageEntity(entity, damage, this);

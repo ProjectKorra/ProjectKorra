@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class QuickStrike extends ChiAbility {
@@ -20,9 +21,9 @@ public class QuickStrike extends ChiAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		this.damage = getConfig().getInt("Abilities.Chi.QuickStrike.Damage");
-		this.cooldown = getConfig().getLong("Abilities.Chi.QuickStrike.Cooldown");
-		this.blockChance = getConfig().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
+		this.damage = ConfigManager.chiConfig.get().getInt("Abilities.Chi.QuickStrike.Damage");
+		this.cooldown = ConfigManager.chiConfig.get().getLong("Abilities.Chi.QuickStrike.Cooldown");
+		this.blockChance = ConfigManager.chiConfig.get().getInt("Abilities.Chi.QuickStrike.ChiBlockChance");
 		target = targetentity;
 		if (target == null) {
 			return;

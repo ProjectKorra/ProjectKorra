@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.HealingAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.chiblocking.Smokescreen;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
@@ -73,13 +74,13 @@ public class HealingWaters extends HealingAbility {
 	
 	public void setFields() {
 		
-		cooldown = getConfig().getLong("Abilities.Water.HealingWaters.Cooldown");
-		range = getConfig().getDouble("Abilities.Water.HealingWaters.Range");
-		interval = getConfig().getLong("Abilities.Water.HealingWaters.Interval");
-		chargeTime = getConfig().getLong("Abilities.Water.HealingWaters.ChargeTime");
-		power = getConfig().getInt("Abilities.Water.HealingWaters.Power");
-		duration = getConfig().getInt("Abilities.Water.HealingWaters.Duration");
-		enableParticles = getConfig().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
+		cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.HealingWaters.Cooldown");
+		range = ConfigManager.waterConfig.get().getDouble("Abilities.Water.HealingWaters.Range");
+		interval = ConfigManager.waterConfig.get().getLong("Abilities.Water.HealingWaters.Interval");
+		chargeTime = ConfigManager.waterConfig.get().getLong("Abilities.Water.HealingWaters.ChargeTime");
+		power = ConfigManager.waterConfig.get().getInt("Abilities.Water.HealingWaters.Power");
+		duration = ConfigManager.waterConfig.get().getInt("Abilities.Water.HealingWaters.Duration");
+		enableParticles = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.HealingWaters.EnableParticles");
 		hex = "00ffff";
 	}
 

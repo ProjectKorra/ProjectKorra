@@ -9,14 +9,14 @@ public class AirPassive {
 	}
 
 	public static double getFactor() {
-		return ConfigManager.getConfig().getDouble("Abilities.Air.Passive.Factor");
+		return ConfigManager.airConfig.get().getDouble("Abilities.Air.Passive.Factor");
 	}
 
 	public static int getJumpPower() {
-		return ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.JumpPower");
+		return ConfigManager.airConfig.get().getInt("Abilities.Air.Passive.AirAgility.JumpPower");
 	}
 
 	public static int getSpeedPower() {
-		return ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.SpeedPower");
+		return ConfigManager.airConfig.get().getInt("Abilities.Air.Passive.AirAgility.SpeedPower");
 	}
 }

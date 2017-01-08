@@ -10,14 +10,35 @@ public class ConfigManager {
 	public static Config presetConfig;
 	public static Config defaultConfig;
 	public static Config languageConfig;
+	public static Config avatarConfig;
+	public static Config waterConfig;
+	public static Config earthConfig;
+	public static Config fireConfig;
+	public static Config airConfig;
+	public static Config chiConfig;
+	public static Config addonConfig;
 
 	public ConfigManager() {
 		presetConfig = new Config(new File("presets.yml"));
 		defaultConfig = new Config(new File("config.yml"));
 		languageConfig = new Config(new File("language.yml"));
+		avatarConfig = new Config(new File("Avatar.yml"));
+		waterConfig = new Config(new File("Water.yml"));
+		earthConfig = new Config(new File("Earth.yml"));
+		fireConfig = new Config(new File("Fire.yml"));
+		airConfig = new Config(new File("Air.yml"));
+		chiConfig = new Config(new File("Chi.yml"));
+		addonConfig = new Config(new File("AddonAbilities.yml"));
 		configCheck(ConfigType.DEFAULT);
 		configCheck(ConfigType.LANGUAGE);
 		configCheck(ConfigType.PRESETS);
+		configCheck(ConfigType.AVATAR);
+		configCheck(ConfigType.WATER);
+		configCheck(ConfigType.EARTH);
+		configCheck(ConfigType.FIRE);
+		configCheck(ConfigType.AIR);
+		configCheck(ConfigType.CHI);
+		configCheck(ConfigType.ADDONS);
 	}
 
 	public static void configCheck(ConfigType type) {
@@ -520,7 +541,21 @@ public class ConfigManager {
 			disabledWorlds.add("TestWorld");
 			disabledWorlds.add("TestWorld2");
 			config.addDefault("Properties.DisabledWorlds", disabledWorlds);
+			
+			config.addDefault("Storage.engine", "sqlite");
 
+			config.addDefault("Storage.MySQL.host", "localhost");
+			config.addDefault("Storage.MySQL.port", 3306);
+			config.addDefault("Storage.MySQL.pass", "");
+			config.addDefault("Storage.MySQL.db", "minecraft");
+			config.addDefault("Storage.MySQL.user", "root");
+
+			config.addDefault("debug", false);
+
+			defaultConfig.save();
+		}
+			else if (type == ConfigType.AVATAR) {
+				config = avatarConfig.get();
 			config.addDefault("Abilities.Avatar.AvatarState.Enabled", true);
 			config.addDefault("Abilities.Avatar.AvatarState.Cooldown", 7200000);
 			config.addDefault("Abilities.Avatar.AvatarState.Duration", 480000);
@@ -585,7 +620,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer", 10000);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.ShootRange", 30);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius", 0.05);
-			
+	
 			
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range", 14);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireJet.IsAvatarStateToggle", true);
@@ -601,6 +636,12 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Water.Surge.Wall.Radius", 4);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius", 20);
 			config.addDefault("Abilities.Avatar.AvatarState.Water.WaterManipulation.Damage", 5);
+			
+			avatarConfig.save();
+			}
+		
+			else if (type == ConfigType.AIR) {
+				config = airConfig.get();
 
 			config.addDefault("Abilities.Air.Passive.Factor", 0.3);
 			config.addDefault("Abilities.Air.Passive.AirAgility.Enabled", true);
@@ -733,7 +774,12 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirCombo.AirSweep.Damage", 3);
 			config.addDefault("Abilities.Air.AirCombo.AirSweep.Knockback", 3.5);
 			config.addDefault("Abilities.Air.AirCombo.AirSweep.Cooldown", 6000);
+			
+			airConfig.save();
+			}
 
+			else if (type == ConfigType.WATER) {
+				config = waterConfig.get();
 			config.addDefault("Abilities.Water.Passive.FastSwim.Enabled", true);
 			config.addDefault("Abilities.Water.Passive.FastSwim.SpeedFactor", 0.7);
 			config.addDefault("Abilities.Water.Passive.Hydrosink.Enabled", true);
@@ -959,6 +1005,11 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.ShootTime", 10000);
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Cooldown", 10000);
 
+			waterConfig.save();
+			}
+		
+			else if (type == ConfigType.EARTH) {
+				config = earthConfig.get();
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Enabled", true);
 
@@ -1101,6 +1152,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Tremorsense.LightThreshold", 7);
 			config.addDefault("Abilities.Earth.Tremorsense.Cooldown", 1000);
 
+			earthConfig.save();
+			}
+			else if (type == ConfigType.FIRE) {
+				config = fireConfig.get();
 			config.addDefault("Abilities.Fire.Blaze.Enabled", true);
 			config.addDefault("Abilities.Fire.Blaze.Arc", 14);
 			config.addDefault("Abilities.Fire.Blaze.Range", 7);
@@ -1233,6 +1288,11 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.FireTicks", 2.5);
 
+			fireConfig.save();
+			}
+		
+			else if (type == ConfigType.CHI) {
+				config = chiConfig.get();
 			config.addDefault("Abilities.Chi.Passive.Acrobatics.Enabled", true);
 			config.addDefault("Abilities.Chi.Passive.Acrobatics.FallReductionFactor", 0.5);
 			config.addDefault("Abilities.Chi.Passive.FallReductionFactor", 0.5);
@@ -1285,19 +1345,12 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.SwiftKick.Damage", 2);
 			config.addDefault("Abilities.Chi.SwiftKick.ChiBlockChance", 15);
 			config.addDefault("Abilities.Chi.SwiftKick.Cooldown", 4000);
+			
+			chiConfig.save();
+			}
 
-			config.addDefault("Storage.engine", "sqlite");
-
-			config.addDefault("Storage.MySQL.host", "localhost");
-			config.addDefault("Storage.MySQL.port", 3306);
-			config.addDefault("Storage.MySQL.pass", "");
-			config.addDefault("Storage.MySQL.db", "minecraft");
-			config.addDefault("Storage.MySQL.user", "root");
-
-			config.addDefault("debug", false);
-
-			defaultConfig.save();
-		}
+			
+		
 	}
 
 	public static FileConfiguration getConfig() {

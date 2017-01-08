@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AirShield extends AirAbility {
 
@@ -32,12 +33,12 @@ public class AirShield extends AirAbility {
 	public AirShield(Player player) {
 		super(player);
 
-		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.Radius");
-		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
+		this.maxRadius = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirShield.Radius");
+		this.isToggledByAvatarState = ConfigManager.avatarConfig.get().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
 		this.radius = this.maxRadius;
-		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");
-		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
-		this.particles = getConfig().getInt("Abilities.Air.AirShield.Particles");
+		this.speed = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirShield.Speed");
+		this.streams = ConfigManager.airConfig.get().getInt("Abilities.Air.AirShield.Streams");
+		this.particles = ConfigManager.airConfig.get().getInt("Abilities.Air.AirShield.Particles");
 		this.random = new Random();
 		this.angles = new HashMap<>();
 

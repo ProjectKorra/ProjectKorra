@@ -6,6 +6,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CombustionAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -42,13 +43,13 @@ public class Combustion extends CombustionAbility {
 		}
 		
 		this.ticks = 0;
-		this.breakBlocks = getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
-		this.power = (float) getConfig().getDouble("Abilities.Fire.Combustion.Power");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Combustion.Cooldown");
-		this.damage = getConfig().getDouble("Abilities.Fire.Combustion.Damage");
-		this.radius = getConfig().getDouble("Abilities.Fire.Combustion.Radius");
-		this.speed = getConfig().getDouble("Abilities.Fire.Combustion.Speed");
-		this.range = getConfig().getDouble("Abilities.Fire.Combustion.Range");
+		this.breakBlocks = ConfigManager.fireConfig.get().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
+		this.power = (float) ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Combustion.Power");
+		this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.Combustion.Cooldown");
+		this.damage = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Combustion.Damage");
+		this.radius = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Combustion.Radius");
+		this.speed = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Combustion.Speed");
+		this.range = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Combustion.Range");
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = origin.clone();

@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -37,8 +38,8 @@ public class ChiCombo extends ChiAbility implements ComboAbility {
 		this.name = ability;
 
 		if (ability.equalsIgnoreCase("Immobilize")) {
-			this.cooldown = getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.Cooldown");
-			this.duration = getConfig().getLong("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration");
+			this.cooldown = ConfigManager.chiConfig.get().getLong("Abilities.Chi.ChiCombo.Immobilize.Cooldown");
+			this.duration = ConfigManager.chiConfig.get().getLong("Abilities.Chi.ChiCombo.Immobilize.ParalyzeDuration");
 			target = GeneralMethods.getTargetedEntity(player, 5);
 			if (!bPlayer.canBendIgnoreBinds(this)) {
 				return;

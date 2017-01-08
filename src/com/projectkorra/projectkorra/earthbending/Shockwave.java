@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -20,16 +21,16 @@ public class Shockwave extends EarthAbility {
 	public Shockwave(Player player, boolean fall) {
 		super(player);
 				
-		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Shockwave.Angle"));
-		this.cooldown = getConfig().getLong("Abilities.Earth.Shockwave.Cooldown");
-		this.chargeTime = getConfig().getLong("Abilities.Earth.Shockwave.ChargeTime");
-		this.threshold = getConfig().getDouble("Abilities.Earth.Shockwave.FallThreshold");
-		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
+		this.angle = Math.toRadians(ConfigManager.earthConfig.get().getDouble("Abilities.Earth.Shockwave.Angle"));
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.Shockwave.Cooldown");
+		this.chargeTime = ConfigManager.earthConfig.get().getLong("Abilities.Earth.Shockwave.ChargeTime");
+		this.threshold = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.Shockwave.FallThreshold");
+		this.range = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.Shockwave.Range");
 		
 		if (bPlayer.isAvatarState()) {
-			range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
-			cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown");
-			chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime");
+			range = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
+			cooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown");
+			chargeTime = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime");
 		}
 		
 		if (!bPlayer.canBend(this) || hasAbility(player, Shockwave.class)) {

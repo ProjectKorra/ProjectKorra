@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.firebending;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -30,13 +31,13 @@ public class FireBurst extends FireAbility {
 		super(player);
 		
 		this.charged = false;
-		this.damage = getConfig().getInt("Abilities.Fire.FireBurst.Damage");
-		this.chargeTime = getConfig().getLong("Abilities.Fire.FireBurst.ChargeTime");
-		this.range = getConfig().getLong("Abilities.Fire.FireBurst.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireBurst.Cooldown");
-		this.angleTheta = getConfig().getDouble("Abilities.Fire.FireBurst.AngleTheta");
-		this.anglePhi = getConfig().getDouble("Abilities.Fire.FireBurst.AnglePhi");
-		this.particlesPercentage = getConfig().getDouble("Abilities.Fire.FireBurst.ParticlesPercentage");
+		this.damage = ConfigManager.fireConfig.get().getInt("Abilities.Fire.FireBurst.Damage");
+		this.chargeTime = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireBurst.ChargeTime");
+		this.range = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireBurst.Range");
+		this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireBurst.Cooldown");
+		this.angleTheta = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBurst.AngleTheta");
+		this.anglePhi = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBurst.AnglePhi");
+		this.particlesPercentage = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBurst.ParticlesPercentage");
 		this.blasts = new ArrayList<>();
 		
 		if (!bPlayer.canBend(this) || hasAbility(player, FireBurst.class)) {
@@ -47,9 +48,9 @@ public class FireBurst extends FireAbility {
 			chargeTime /= getDayFactor();
 		}
 		if (bPlayer.isAvatarState() || isSozinsComet(player.getWorld())) {
-			chargeTime = getConfig().getLong("Abilities.Avatar.Fire.FireBurst.ChargeTime");
-			damage = getConfig().getInt("Abilities.Avatar.Fire.FireBurst.Damage");
-			cooldown = getConfig().getLong("Abilities.Avatar.Fire.FireBurst.Cooldown");
+			chargeTime = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.Fire.FireBurst.ChargeTime");
+			damage = ConfigManager.avatarConfig.get().getInt("Abilities.Avatar.Fire.FireBurst.Damage");
+			cooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.Fire.FireBurst.Cooldown");
 		}
 
 		start();

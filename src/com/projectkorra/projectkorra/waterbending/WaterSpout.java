@@ -15,6 +15,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -47,11 +48,11 @@ public class WaterSpout extends WaterAbility {
 			return;
 		}
 
-		this.canBendOnPackedIce = getConfig().getBoolean("Properties.Water.CanBendPackedIce");
-		this.useParticles = getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
-		this.useBlockSpiral = getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
-		this.height = getConfig().getDouble("Abilities.Water.WaterSpout.Height");
-		this.interval = getConfig().getLong("Abilities.Water.WaterSpout.Interval");
+		this.canBendOnPackedIce = ConfigManager.waterConfig.get().getBoolean("Properties.Water.CanBendPackedIce");
+		this.useParticles = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.WaterSpout.Particles");
+		this.useBlockSpiral = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
+		this.height = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterSpout.Height");
+		this.interval = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterSpout.Interval");
 
 		hadFly = player.isFlying();
 		canFly = player.getAllowFlight();

@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.Flight;
 
 public class AirSpout extends AirAbility {
@@ -41,8 +42,8 @@ public class AirSpout extends AirAbility {
 		this.angle = 0;
 		this.cooldown = 0;
 		this.animTime = System.currentTimeMillis();
-		this.interval = getConfig().getLong("Abilities.Air.AirSpout.Interval");
-		this.height = getConfig().getDouble("Abilities.Air.AirSpout.Height");
+		this.interval = ConfigManager.airConfig.get().getLong("Abilities.Air.AirSpout.Interval");
+		this.height = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirSpout.Height");
 
 		double heightRemoveThreshold = 2;
 		if (!isWithinMaxSpoutHeight(heightRemoveThreshold)) {
@@ -52,7 +53,7 @@ public class AirSpout extends AirAbility {
 		new Flight(player);
 		
 		if (bPlayer.isAvatarState()) {
-			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.AirSpout.Height");
+			this.height = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.AirSpout.Height");
 		}
 		
 		start();

@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -120,24 +121,24 @@ public class HeatControl extends FireAbility {
 	public void setFields() {
 		if (this.heatControlType == HeatControlType.COOK) {
 			this.cookTime = System.currentTimeMillis();
-			this.cookInterval = getConfig().getLong("Abilities.Fire.HeatControl.Cook.Interval");
+			this.cookInterval = ConfigManager.fireConfig.get().getLong("Abilities.Fire.HeatControl.Cook.Interval");
 		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
-			this.extinguishCooldown = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Cooldown");
-			this.extinguishRadius = getConfig().getLong("Abilities.Fire.HeatControl.Extinguish.Radius");
+			this.extinguishCooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.HeatControl.Extinguish.Cooldown");
+			this.extinguishRadius = ConfigManager.fireConfig.get().getLong("Abilities.Fire.HeatControl.Extinguish.Radius");
 			this.extinguishRadius = getDayFactor(this.extinguishRadius);
 		} else if (this.heatControlType == HeatControlType.MELT) {
-			this.meltRange = getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Range");
-			this.meltRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Melt.Radius");
+			this.meltRange = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.HeatControl.Melt.Range");
+			this.meltRadius = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.HeatControl.Melt.Radius");
 			this.meltRange = getDayFactor(this.meltRange);
 			this.meltRadius = getDayFactor(this.meltRadius);
 		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
 			this.solidifyRadius = 1;
 			this.solidifyDelay = 50;
 			this.solidifyLastBlockTime = 0;
-			this.solidifyMaxRadius = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.MaxRadius");
-			this.solidifyRange = getConfig().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
-			this.solidifyRevert = getConfig().getBoolean("Abilities.Fire.HeatControl.Solidify.Revert");
-			this.solidifyRevertTime = getConfig().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime");
+			this.solidifyMaxRadius = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.HeatControl.Solidify.MaxRadius");
+			this.solidifyRange = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.HeatControl.Solidify.Range");
+			this.solidifyRevert = ConfigManager.fireConfig.get().getBoolean("Abilities.Fire.HeatControl.Solidify.Revert");
+			this.solidifyRevertTime = ConfigManager.fireConfig.get().getLong("Abilities.Fire.HeatControl.Solidify.RevertTime");
 			this.randy = new Random();
 		}
 	}

@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -64,20 +65,20 @@ public class SurgeWave extends WaterAbility {
 		
 		this.canHitSelf = true;
 		this.currentRadius = 1;
-		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown");
-		this.interval = getConfig().getLong("Abilities.Water.Surge.Wave.Interval");
-		this.maxRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.Radius");
-		this.pushFactor = getConfig().getDouble("Abilities.Water.Surge.Wave.HorizontalPush");
-		this.verticalFactor = getConfig().getDouble("Abilities.Water.Surge.Wave.VerticalPush");
-		this.maxFreezeRadius = getConfig().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius");
-		this.iceRevertTime = getConfig().getLong("Abilities.Water.Surge.Wave.IceRevertTime");
-		this.range = getConfig().getDouble("Abilities.Water.Surge.Wave.Range");
-		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange");
+		this.cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.Surge.Wave.Cooldown");
+		this.interval = ConfigManager.waterConfig.get().getLong("Abilities.Water.Surge.Wave.Interval");
+		this.maxRadius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Surge.Wave.Radius");
+		this.pushFactor = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Surge.Wave.HorizontalPush");
+		this.verticalFactor = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Surge.Wave.VerticalPush");
+		this.maxFreezeRadius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Surge.Wave.MaxFreezeRadius");
+		this.iceRevertTime = ConfigManager.waterConfig.get().getLong("Abilities.Water.Surge.Wave.IceRevertTime");
+		this.range = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Surge.Wave.Range");
+		this.selectRange = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Surge.Wave.SelectRange");
 		this.waveBlocks = new ConcurrentHashMap<>();
 		this.frozenBlocks = new ConcurrentHashMap<>();
 		
 		if (bPlayer.isAvatarState()) {
-			maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius");
+			maxRadius = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius");
 		}
 		maxRadius = getNightFactor(maxRadius);
 				

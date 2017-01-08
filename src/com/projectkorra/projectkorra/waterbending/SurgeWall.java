@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -52,10 +53,10 @@ public class SurgeWall extends WaterAbility {
 	public SurgeWall(Player player) {
 		super(player);
 		
-		this.interval = getConfig().getLong("Abilities.Water.Surge.Wall.Interval");
-		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wall.Cooldown");
-		this.range = getConfig().getDouble(RANGE_CONFIG);
-		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
+		this.interval = ConfigManager.waterConfig.get().getLong("Abilities.Water.Surge.Wall.Interval");
+		this.cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.Surge.Wall.Cooldown");
+		this.range = ConfigManager.waterConfig.get().getDouble(RANGE_CONFIG);
+		this.radius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Surge.Wall.Radius");
 		this.locations = new ArrayList<>();
 
 		SurgeWave wave = getAbility(player, SurgeWave.class);
@@ -65,7 +66,7 @@ public class SurgeWall extends WaterAbility {
 		}
 
 		if (bPlayer.isAvatarState()) {
-			radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wall.Radius");
+			radius = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wall.Radius");
 		}
 		
 		SurgeWall wall = getAbility(player, SurgeWall.class);
@@ -377,7 +378,7 @@ public class SurgeWall extends WaterAbility {
 			return;
 		}
 		
-		int range = getConfig().getInt(RANGE_CONFIG);
+		int range = ConfigManager.waterConfig.get().getInt(RANGE_CONFIG);
 		SurgeWall wall = getAbility(player, SurgeWall.class);
 		SurgeWave wave = getAbility(player, SurgeWave.class);
 		

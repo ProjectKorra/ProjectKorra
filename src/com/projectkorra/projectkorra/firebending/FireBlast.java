@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -80,7 +81,7 @@ public class FireBlast extends FireAbility {
 
 		setFields();
 		this.isFireBurst = false;
-		this.damage = getDayFactor(getConfig().getDouble("Abilities.Fire.FireBlast.Damage"));
+		this.damage = getDayFactor(ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.Damage"));
 		this.safeBlocks = new ArrayList<>();
 		this.range = getDayFactor(this.range);
 		this.location = player.getEyeLocation();
@@ -96,14 +97,14 @@ public class FireBlast extends FireAbility {
 		this.isFireBurst = true;
 		this.powerFurnace = true;
 		this.showParticles = true;
-		this.fireBurstIgnite = getConfig().getBoolean("Abilities.Fire.FireBurst.Ignite");
-		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireBlast.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Range");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireBlast.Speed");
-		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.CollisionRadius");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.FireTicks");
-		this.pushFactor = getConfig().getDouble("Abilities.Fire.FireBlast.Push");
+		this.fireBurstIgnite = ConfigManager.fireConfig.get().getBoolean("Abilities.Fire.FireBurst.Ignite");
+		this.dissipate = ConfigManager.fireConfig.get().getBoolean("Abilities.Fire.FireBlast.Dissipate");
+		this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireBlast.Cooldown");
+		this.range = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.Range");
+		this.speed = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.Speed");
+		this.collisionRadius = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.CollisionRadius");
+		this.fireTicks = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.FireTicks");
+		this.pushFactor = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.Push");
 		this.random = new Random();
 	}
 

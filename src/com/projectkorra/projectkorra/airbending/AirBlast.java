@@ -28,6 +28,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
@@ -112,8 +113,8 @@ public class AirBlast extends AirAbility {
 		this.canFlickLevers = false;
 		
 		if (bPlayer.isAvatarState()) {
-			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities");
-			this.pushFactorForOthers = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self");
+			this.pushFactor = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities");
+			this.pushFactorForOthers = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self");
 		}
 
 		
@@ -121,18 +122,18 @@ public class AirBlast extends AirAbility {
 	}
 
 	private void setFields() {
-		this.particles = getConfig().getInt("Abilities.Air.AirBlast.Particles");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirBlast.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
-		this.speed = getConfig().getDouble("Abilities.Air.AirBlast.Speed");
-		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
-		this.radius = getConfig().getDouble("Abilities.Air.AirBlast.Radius");
-		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBlast.Push.Entities");
-		this.pushFactorForOthers = getConfig().getDouble("Abilities.Air.AirBlast.Push.Self");
-		this.canFlickLevers = getConfig().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
-		this.canOpenDoors = getConfig().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
-		this.canPressButtons = getConfig().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
-		this.canCoolLava = getConfig().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
+		this.particles = ConfigManager.airConfig.get().getInt("Abilities.Air.AirBlast.Particles");
+		this.cooldown = ConfigManager.airConfig.get().getLong("Abilities.Air.AirBlast.Cooldown");
+		this.range = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBlast.Range");
+		this.speed = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBlast.Speed");
+		this.range = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBlast.Range");
+		this.radius = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBlast.Radius");
+		this.pushFactor = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBlast.Push.Entities");
+		this.pushFactorForOthers = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBlast.Push.Self");
+		this.canFlickLevers = ConfigManager.airConfig.get().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
+		this.canOpenDoors = ConfigManager.airConfig.get().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
+		this.canPressButtons = ConfigManager.airConfig.get().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
+		this.canCoolLava = ConfigManager.airConfig.get().getBoolean("Abilities.Air.AirBlast.CanCoolLava");
 
 		this.isFromOtherOrigin = false;
 		this.showParticles = true;
@@ -634,11 +635,11 @@ public class AirBlast extends AirAbility {
 	}
 
 	public static int getSelectParticles() {
-		return getConfig().getInt("Abilities.Air.AirBlast.SelectParticles");
+		return ConfigManager.airConfig.get().getInt("Abilities.Air.AirBlast.SelectParticles");
 	}
 
 	public static double getSelectRange() {
-		return getConfig().getInt("Abilities.Air.AirBlast.SelectRange");
+		return ConfigManager.airConfig.get().getInt("Abilities.Air.AirBlast.SelectRange");
 	}
 
 }

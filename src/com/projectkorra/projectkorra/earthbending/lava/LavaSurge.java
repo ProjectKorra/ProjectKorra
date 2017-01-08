@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.earthbending.lava;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.LavaAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -58,13 +59,13 @@ public class LavaSurge extends LavaAbility {
 	public LavaSurge(Player player) {
 		super(player);
 		
-		this.impactDamage = getConfig().getInt("Abilities.Earth.LavaSurge.Damage");
-		this.cooldown = getConfig().getLong("Abilities.Earth.LavaSurge.Cooldown");
-		this.fractureRadius = getConfig().getDouble("Abilities.Earth.LavaSurge.FractureRadius");
-		this.prepareRange = getConfig().getInt("Abilities.Earth.LavaSurge.PrepareRange");
-		this.travelRange = getConfig().getInt("Abilities.Earth.LavaSurge.TravelRange");
-		this.maxBlocks = getConfig().getInt("Abilities.Earth.LavaSurge.MaxLavaWaves");
-		this.canSourceBeEarth = getConfig().getBoolean("Abilities.Earth.LavaSurge.SourceCanBeEarth");
+		this.impactDamage = ConfigManager.earthConfig.get().getInt("Abilities.Earth.LavaSurge.Damage");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.LavaSurge.Cooldown");
+		this.fractureRadius = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaSurge.FractureRadius");
+		this.prepareRange = ConfigManager.earthConfig.get().getInt("Abilities.Earth.LavaSurge.PrepareRange");
+		this.travelRange = ConfigManager.earthConfig.get().getInt("Abilities.Earth.LavaSurge.TravelRange");
+		this.maxBlocks = ConfigManager.earthConfig.get().getInt("Abilities.Earth.LavaSurge.MaxLavaWaves");
+		this.canSourceBeEarth = ConfigManager.earthConfig.get().getBoolean("Abilities.Earth.LavaSurge.SourceCanBeEarth");
 		this.particleInterval = 100;
 		this.fallingBlockInterval = 100;
 		

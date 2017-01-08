@@ -18,7 +18,7 @@ public class FastSwim extends WaterAbility implements PassiveAbility {
 	public FastSwim(Player player) {
 		super(player);
 		
-		this.swimSpeed = ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
+		this.swimSpeed = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
 	}
 
 	@Override

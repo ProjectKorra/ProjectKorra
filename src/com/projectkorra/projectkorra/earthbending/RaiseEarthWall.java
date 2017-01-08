@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
@@ -21,18 +22,18 @@ public class RaiseEarthWall extends EarthAbility {
 	
 	public RaiseEarthWall(Player player) {
 		super(player);
-		this.selectRange = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.SelectRange");
-		this.height = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Height");
-		this.width = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.Width");
-		this.cooldown = getConfig().getLong("Abilities.Earth.RaiseEarth.Wall.Cooldown");
+		this.selectRange = ConfigManager.earthConfig.get().getInt("Abilities.Earth.RaiseEarth.Wall.SelectRange");
+		this.height = ConfigManager.earthConfig.get().getInt("Abilities.Earth.RaiseEarth.Wall.Height");
+		this.width = ConfigManager.earthConfig.get().getInt("Abilities.Earth.RaiseEarth.Wall.Width");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.RaiseEarth.Wall.Cooldown");
 
 		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("RaiseEarthWall")) {
 			return;
 		}
 
 		if (bPlayer.isAvatarState()) {
-			height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
-			width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
+			height = ConfigManager.avatarConfig.get().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
+			width = ConfigManager.avatarConfig.get().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
 		}
 
 		Vector direction = player.getEyeLocation().getDirection().normalize();

@@ -16,6 +16,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
@@ -51,12 +52,12 @@ public class AirSuction extends AirAbility {
 
 		this.hasOtherOrigin = false;
 		this.ticks = 0;
-		this.particleCount = getConfig().getInt("Abilities.Air.AirSuction.Particles");
-		this.speed = getConfig().getDouble("Abilities.Air.AirSuction.Speed");
-		this.range = getConfig().getDouble("Abilities.Air.AirSuction.Range");
-		this.radius = getConfig().getDouble("Abilities.Air.AirSuction.Radius");
-		this.pushFactor = getConfig().getDouble("Abilities.Air.AirSuction.Push");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirSuction.Cooldown");
+		this.particleCount = ConfigManager.airConfig.get().getInt("Abilities.Air.AirSuction.Particles");
+		this.speed = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirSuction.Speed");
+		this.range = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirSuction.Range");
+		this.radius = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirSuction.Radius");
+		this.pushFactor = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirSuction.Push");
+		this.cooldown = ConfigManager.airConfig.get().getLong("Abilities.Air.AirSuction.Cooldown");
 		this.random = new Random();
 
 		if (ORIGINS.containsKey(player)) {
@@ -78,7 +79,7 @@ public class AirSuction extends AirAbility {
 
 		bPlayer.addCooldown(this);
 		if (bPlayer.isAvatarState()) {
-			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.AirSuction.Push");
+			this.pushFactor = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.AirSuction.Push");
 		}
 		start();
 	}
@@ -348,11 +349,11 @@ public class AirSuction extends AirAbility {
 	}
 
 	public static int getSelectParticles() {
-		return getConfig().getInt("Abilities.Air.AirSuction.SelectParticles");
+		return ConfigManager.airConfig.get().getInt("Abilities.Air.AirSuction.SelectParticles");
 	}
 
 	public static double getSelectRange() {
-		return getConfig().getDouble("Abilities.Air.AirSuction.SelectRange");
+		return ConfigManager.airConfig.get().getDouble("Abilities.Air.AirSuction.SelectRange");
 	}
 
 }

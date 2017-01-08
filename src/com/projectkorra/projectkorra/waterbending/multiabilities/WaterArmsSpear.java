@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms.Arm;
@@ -52,20 +53,20 @@ public class WaterArmsSpear extends WaterAbility {
 		super(player);
 		this.canFreeze = freeze;
 		
-		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
-		this.spearDamageEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Spear.DamageEnabled");
-		this.spearLength = getConfig().getInt("Abilities.Water.WaterArms.Spear.Length");
-		this.spearRange = getConfig().getInt("Abilities.Water.WaterArms.Spear.Range");
-		this.spearRangeNight = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.Normal");
-		this.spearRangeFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.FullMoon");
-		this.spearSphere = getConfig().getInt("Abilities.Water.WaterArms.Spear.Sphere");
-		this.spearSphereNight = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.Normal");
-		this.spearSphereFullMoon = getConfig().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.FullMoon");
-		this.spearDuration = getConfig().getLong("Abilities.Water.WaterArms.Spear.Duration");
-		this.spearDurationNight = getConfig().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal");
-		this.spearDurationFullMoon = getConfig().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon");
-		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
-		this.spearDamage = getConfig().getDouble("Abilities.Water.WaterArms.Spear.Damage");
+		this.usageCooldownEnabled = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
+		this.spearDamageEnabled = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.WaterArms.Spear.DamageEnabled");
+		this.spearLength = ConfigManager.waterConfig.get().getInt("Abilities.Water.WaterArms.Spear.Length");
+		this.spearRange = ConfigManager.waterConfig.get().getInt("Abilities.Water.WaterArms.Spear.Range");
+		this.spearRangeNight = ConfigManager.waterConfig.get().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.Normal");
+		this.spearRangeFullMoon = ConfigManager.waterConfig.get().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Range.FullMoon");
+		this.spearSphere = ConfigManager.waterConfig.get().getInt("Abilities.Water.WaterArms.Spear.Sphere");
+		this.spearSphereNight = ConfigManager.waterConfig.get().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.Normal");
+		this.spearSphereFullMoon = ConfigManager.waterConfig.get().getInt("Abilities.Water.WaterArms.Spear.NightAugments.Sphere.FullMoon");
+		this.spearDuration = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterArms.Spear.Duration");
+		this.spearDurationNight = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.Normal");
+		this.spearDurationFullMoon = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon");
+		this.usageCooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
+		this.spearDamage = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterArms.Spear.Damage");
 		this.spearLocations = new ArrayList<>();
 		
 		getNightAugments();

@@ -1,14 +1,14 @@
 package com.projectkorra.projectkorra.chiblocking;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
-import com.projectkorra.projectkorra.ability.ChiAbility;
-import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip;
-
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip;
 
 public class HighJump extends ChiAbility {
 
@@ -20,8 +20,8 @@ public class HighJump extends ChiAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		this.height = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Height");
-		this.cooldown = ProjectKorra.plugin.getConfig().getInt("Abilities.Chi.HighJump.Cooldown");
+		this.height = ConfigManager.chiConfig.get().getInt("Abilities.Chi.HighJump.Height");
+		this.cooldown = ConfigManager.chiConfig.get().getInt("Abilities.Chi.HighJump.Cooldown");
 		start();
 	}
 

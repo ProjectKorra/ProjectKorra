@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
@@ -161,29 +162,29 @@ public class PhaseChange extends IceAbility {
 		if (isNight(player.getWorld())) {
 			night = (int) Math.round(getNightFactor());
 		}
-		sourceRange = night*getConfig().getInt("Abilities.Water.PhaseChange.SourceRange");
+		sourceRange = night*ConfigManager.waterConfig.get().getInt("Abilities.Water.PhaseChange.SourceRange");
 		
 		if (type == PhaseChangeType.FREEZE) {
-			depth = night*getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
-			controlRadius = night*getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
-			freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
-			freezeRadius = night*getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
+			depth = night*ConfigManager.waterConfig.get().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
+			controlRadius = night*ConfigManager.waterConfig.get().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
+			freezeCooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
+			freezeRadius = night*ConfigManager.waterConfig.get().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
 			
 			freezeArea(GeneralMethods.getTargetedLocation(player, sourceRange));
 		} else if (type == PhaseChangeType.MELT) {
 			meltRadius = 1;
-			meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
-			meltDelay = getConfig().getInt("Abilities.Water.PhaseChange.Melt.Delay")/night;
-			meltMaxRadius = night*getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
-			allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
+			meltCooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
+			meltDelay = ConfigManager.waterConfig.get().getInt("Abilities.Water.PhaseChange.Melt.Delay")/night;
+			meltMaxRadius = night*ConfigManager.waterConfig.get().getInt("Abilities.Water.PhaseChange.Melt.Radius");
+			allowMeltFlow = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
 		/*} else if (type == PhaseChangeType.SKATE) {
 			if (bPlayer.isOnCooldown("PhaseChangeSkate")) {
 				return;
 			}
-			duration = night*getConfig().getLong("Abilities.Water.PhaseChange.Skate.Duration");
-			speed = night*getConfig().getDouble("Abilities.Water.PhaseChange.Skate.Speed");
-			skateCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Skate.Cooldown");
-			skateRadius = night*getConfig().getInt("Abilities.Water.PhaseChange.Skate.Radius");
+			duration = night*ConfigManager.waterConfig.get().getLong("Abilities.Water.PhaseChange.Skate.Duration");
+			speed = night*ConfigManager.waterConfig.get().getDouble("Abilities.Water.PhaseChange.Skate.Speed");
+			skateCooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.PhaseChange.Skate.Cooldown");
+			skateRadius = night*ConfigManager.waterConfig.get().getInt("Abilities.Water.PhaseChange.Skate.Radius");
 			
 			freezeArea(player.getLocation().clone().subtract(0, 1, 0), skateRadius, PhaseChangeType.SKATE);*/
 		}

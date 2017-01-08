@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
 public class AirBubble extends AirAbility {
@@ -28,8 +29,8 @@ public class AirBubble extends AirAbility {
 		super(player);
 
 		this.radius = 0;
-		this.airRadius = getConfig().getDouble("Abilities.Air.AirBubble.Radius");
-		this.waterRadius = getConfig().getDouble("Abilities.Water.WaterBubble.Radius");
+		this.airRadius = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBubble.Radius");
+		this.waterRadius = ConfigManager.airConfig.get().getDouble("Abilities.Water.WaterBubble.Radius");
 		this.waterOrigins = new ConcurrentHashMap<>();
 		start();
 	}

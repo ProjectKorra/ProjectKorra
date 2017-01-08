@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.FlightAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.object.PlayerFlyData;
 import com.projectkorra.projectkorra.util.Flight;
@@ -33,10 +34,10 @@ public class AirFlight extends FlightAbility {
 		if (CoreAbility.getAbility(player, AirFlight.class) != null)
 			return;
 			
-		this.cooldown = getConfig().getInt("Abilities.Air.Flight.Cooldown");
-		this.maxHitsBeforeRemoval = getConfig().getInt("Abilities.Air.Flight.MaxHits");
-		this.speed = getConfig().getDouble("Abilities.Air.Flight.Speed");
-		this.maxDuration = getConfig().getDouble("Abilities.Air.Flight.MaxDuration");
+		this.cooldown = ConfigManager.airConfig.get().getInt("Abilities.Air.Flight.Cooldown");
+		this.maxHitsBeforeRemoval = ConfigManager.airConfig.get().getInt("Abilities.Air.Flight.MaxHits");
+		this.speed = ConfigManager.airConfig.get().getDouble("Abilities.Air.Flight.Speed");
+		this.maxDuration = ConfigManager.airConfig.get().getDouble("Abilities.Air.Flight.MaxDuration");
 		this.firstProgressIteration = true;
 		hoverY = player.getLocation().getBlockY();
 		start();

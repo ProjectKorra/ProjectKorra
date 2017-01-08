@@ -1491,7 +1491,7 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("AirSwipe")) {
 						new AirSwipe(player);
 					} else if (abil.equalsIgnoreCase("Flight")) {
-						if (!ProjectKorra.plugin.getConfig().getBoolean("Abilities.Air.Flight.HoverEnabled")
+						if (!ConfigManager.airConfig.get().getBoolean("Abilities.Air.Flight.HoverEnabled")
 								|| !bPlayer.canUseFlight()) {
 							return;
 						}
@@ -1594,7 +1594,7 @@ public class PKListener implements Listener {
 					} else if (abil.equalsIgnoreCase("HeatControl")) {
 						new HeatControl(player, HeatControlType.MELT);
 					} else if (abil.equalsIgnoreCase("Illumination")) {
-						if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
+						if (ConfigManager.fireConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
 							bPlayer.toggleIllumination();
 						} else {
 							new Illumination(player);

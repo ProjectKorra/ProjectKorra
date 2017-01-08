@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.earthbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -59,9 +60,9 @@ public class Catapult extends EarthAbility {
 			moving = true;
 			
 			if (bPlayer.isAvatarState()) {
-				this.length = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Catapult.Length");
-				this.push = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Catapult.Push");
-				this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown");
+				this.length = ConfigManager.avatarConfig.get().getInt("Abilities.Avatar.AvatarState.Earth.Catapult.Length");
+				this.push = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Earth.Catapult.Push");
+				this.cooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown");
 				
 			}
 			start();
@@ -84,11 +85,11 @@ public class Catapult extends EarthAbility {
 	}
 	
 	private void setFields() {
-		this.length = getConfig().getInt("Abilities.Earth.Catapult.Length");
-		this.push = getConfig().getDouble("Abilities.Earth.Catapult.Push");
-		this.shiftModifier = getConfig().getDouble("Abilities.Earth.Catapult.ShiftModifier");
+		this.length = ConfigManager.earthConfig.get().getInt("Abilities.Earth.Catapult.Length");
+		this.push = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.Catapult.Push");
+		this.shiftModifier = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.Catapult.ShiftModifier");
 		this.distance = 0;
-		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.Catapult.Cooldown");
 		this.catapult = false;
 		this.moving = false;
 		this.flying = false;

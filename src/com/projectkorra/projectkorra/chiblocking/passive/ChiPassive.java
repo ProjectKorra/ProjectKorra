@@ -64,27 +64,27 @@ public class ChiPassive {
 	}
 
 	public static double getExhaustionFactor() {
-		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.ChiSaturation.ExhaustionFactor");
+		return ConfigManager.chiConfig.get().getDouble("Abilities.Chi.Passive.ChiSaturation.ExhaustionFactor");
 	}
 	
 	public static double getFallReductionFactor() {
-		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.Acrobatics.FallReductionFactor");
+		return ConfigManager.chiConfig.get().getDouble("Abilities.Chi.Passive.Acrobatics.FallReductionFactor");
 	}
 
 	public static int getJumpPower() {
-		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.ChiAgility.JumpPower");
+		return ConfigManager.chiConfig.get().getInt("Abilities.Chi.Passive.ChiAgility.JumpPower");
 	}
 
 	public static int getSpeedPower() {
-		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.ChiAgility.SpeedPower");
+		return ConfigManager.chiConfig.get().getInt("Abilities.Chi.Passive.ChiAgility.SpeedPower");
 	}
 
 	public static double getChance() {
-		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.BlockChi.Chance");
+		return ConfigManager.chiConfig.get().getDouble("Abilities.Chi.Passive.BlockChi.Chance");
 	}
 
 	public static int getDuration() {
-		return ConfigManager.getConfig().getInt("Abilities.Chi.Passive.BlockChi.Duration");
+		return ConfigManager.chiConfig.get().getInt("Abilities.Chi.Passive.BlockChi.Duration");
 	}
 
 	public static long getTicks() {

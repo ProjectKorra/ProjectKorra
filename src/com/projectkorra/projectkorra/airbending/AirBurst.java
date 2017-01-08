@@ -11,6 +11,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AirBurst extends AirAbility {
 
@@ -43,20 +44,20 @@ public class AirBurst extends AirAbility {
 		this.isFallBurst = isFallBurst;
 		this.isCharged = false;
 		this.playerFallDistance = player.getFallDistance();
-		this.chargeTime = getConfig().getLong("Abilities.Air.AirBurst.ChargeTime");
-		this.fallThreshold = getConfig().getDouble("Abilities.Air.AirBurst.FallThreshold");
-		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBurst.PushFactor");
-		this.damage = getConfig().getDouble("Abilities.Air.AirBurst.Damage");
-		this.blastAnglePhi = getConfig().getDouble("Abilities.Air.AirBurst.AnglePhi");
-		this.blastAngleTheta = getConfig().getDouble("Abilities.Air.AirBurst.AngleTheta");
-		this.sneakParticles = getConfig().getInt("Abilities.Air.AirBurst.SneakParticles");
-		this.particlePercentage = getConfig().getDouble("Abilities.Air.AirBurst.ParticlePercentage");
+		this.chargeTime = ConfigManager.airConfig.get().getLong("Abilities.Air.AirBurst.ChargeTime");
+		this.fallThreshold = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBurst.FallThreshold");
+		this.pushFactor = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBurst.PushFactor");
+		this.damage = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBurst.Damage");
+		this.blastAnglePhi = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBurst.AnglePhi");
+		this.blastAngleTheta = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBurst.AngleTheta");
+		this.sneakParticles = ConfigManager.airConfig.get().getInt("Abilities.Air.AirBurst.SneakParticles");
+		this.particlePercentage = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirBurst.ParticlePercentage");
 		this.blasts = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
 
 		if (bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBurst.Damage");
+			this.chargeTime = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime");
+			this.damage = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Air.AirBurst.Damage");
 		}
 		start();
 	}

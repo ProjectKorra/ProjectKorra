@@ -25,6 +25,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -72,32 +73,32 @@ public class FireCombo extends FireAbility implements ComboAbility {
 		this.tasks = new ArrayList<>();
 
 		if (ability.equalsIgnoreCase("FireKick")) {
-			this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.FireKick.Damage");
-			this.range = getConfig().getDouble("Abilities.Fire.FireCombo.FireKick.Range");
-			this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.FireKick.Cooldown");
+			this.damage = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.FireKick.Damage");
+			this.range = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.FireKick.Range");
+			this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireCombo.FireKick.Cooldown");
 			this.speed = 1;
 		} else if (ability.equalsIgnoreCase("FireSpin")) {
-			this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Damage");
-			this.range = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Range");
-			this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.FireSpin.Cooldown");
-			this.knockback = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Knockback");
+			this.damage = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.FireSpin.Damage");
+			this.range = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.FireSpin.Range");
+			this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireCombo.FireSpin.Cooldown");
+			this.knockback = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.FireSpin.Knockback");
 			this.speed = 0.3;
 		} else if (ability.equalsIgnoreCase("FireWheel")) {
-			this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.Damage");
-			this.range = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.Range");
-			this.speed = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.Speed");
-			this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.FireWheel.Cooldown");
-			this.fireTicks = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.FireTicks");
+			this.damage = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.FireWheel.Damage");
+			this.range = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.FireWheel.Range");
+			this.speed = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.FireWheel.Speed");
+			this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireCombo.FireWheel.Cooldown");
+			this.fireTicks = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.FireWheel.FireTicks");
 			this.height = 2;
 			this.radius = 1;
 		} else if (ability.equalsIgnoreCase("JetBlast")) {
-			this.speed = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlast.Speed");
-			this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.JetBlast.Cooldown");
+			this.speed = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.JetBlast.Speed");
+			this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireCombo.JetBlast.Cooldown");
 		} else if (ability.equalsIgnoreCase("JetBlaze")) {
-			this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.Damage");
-			this.speed = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.Speed");
-			this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.JetBlaze.Cooldown");
-			this.fireTicks = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.FireTicks");
+			this.damage = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.JetBlaze.Damage");
+			this.speed = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.JetBlaze.Speed");
+			this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireCombo.JetBlaze.Cooldown");
+			this.fireTicks = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireCombo.JetBlaze.FireTicks");
 		}
 
 		if (bPlayer.isAvatarState()) {

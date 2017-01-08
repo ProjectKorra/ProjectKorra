@@ -9,6 +9,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AcrobatStance extends ChiAbility {
 	
@@ -23,10 +24,10 @@ public class AcrobatStance extends ChiAbility {
 			return;
 		}
 		
-		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") + 1;
-		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") + 1;
-		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
-		this.paralyzeDodgeBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
+		this.speed = ConfigManager.chiConfig.get().getInt("Abilities.Chi.AcrobatStance.Speed") + 1;
+		this.jump = ConfigManager.chiConfig.get().getInt("Abilities.Chi.AcrobatStance.Jump") + 1;
+		this.chiBlockBoost = ConfigManager.chiConfig.get().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
+		this.paralyzeDodgeBoost = ConfigManager.chiConfig.get().getDouble("Abilities.Chi.AcrobatStance.ParalyzeChanceDecrease");
 		
 		ChiAbility stance = bPlayer.getStance();
 		if (stance != null) {

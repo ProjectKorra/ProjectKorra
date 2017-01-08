@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.earthbending;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -45,10 +46,10 @@ public class Tremorsense extends EarthAbility {
 	}
 	
 	private void setFields() {
-		this.maxDepth = getConfig().getInt("Abilities.Earth.Tremorsense.MaxDepth");
-		this.radius = getConfig().getInt("Abilities.Earth.Tremorsense.Radius");
-		this.lightThreshold = (byte) getConfig().getInt("Abilities.Earth.Tremorsense.LightThreshold");
-		this.cooldown = getConfig().getLong("Abilities.Earth.Tremorsense.Cooldown");
+		this.maxDepth = ConfigManager.earthConfig.get().getInt("Abilities.Earth.Tremorsense.MaxDepth");
+		this.radius = ConfigManager.earthConfig.get().getInt("Abilities.Earth.Tremorsense.Radius");
+		this.lightThreshold = (byte) ConfigManager.earthConfig.get().getInt("Abilities.Earth.Tremorsense.LightThreshold");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.Tremorsense.Cooldown");
 	}
 
 	private void activate() {

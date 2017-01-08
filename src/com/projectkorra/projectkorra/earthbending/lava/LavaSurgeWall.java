@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.earthbending.lava;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.BlockSource.BlockSourceType;
@@ -46,8 +47,8 @@ public class LavaSurgeWall extends LavaAbility {
 		super(player);
 		
 		this.interval = 30;
-		this.radius = getConfig().getDouble("Abilities.Water.Surge.Wall.Radius");
-		this.range = getConfig().getDouble("Abilities.Water.Surge.Wall.Range");
+		this.radius = ConfigManager.earthConfig.get().getDouble("Abilities.Water.Surge.Wall.Radius");
+		this.range = ConfigManager.earthConfig.get().getDouble("Abilities.Water.Surge.Wall.Range");
 		this.cooldown = GeneralMethods.getGlobalCooldown();
 		
 		LavaSurgeWave wave = getAbility(player, LavaSurgeWave.class);

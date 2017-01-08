@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 
@@ -47,7 +48,7 @@ public class Collapse extends EarthAbility {
 		loadAffectedBlocks();
 
 		if (bPlayer.isAvatarState()) {
-			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height");
+			this.height = ConfigManager.avatarConfig.get().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height");
 		}
 		if (distance != 0) {
 			start();
@@ -77,10 +78,10 @@ public class Collapse extends EarthAbility {
 	}
 
 	private void setFields() {
-		this.height = getConfig().getInt("Abilities.Earth.Collapse.Column.Height");
-		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
-		this.speed = getConfig().getDouble("Abilities.Earth.Collapse.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Earth.Collapse.Column.Cooldown");
+		this.height = ConfigManager.earthConfig.get().getInt("Abilities.Earth.Collapse.Column.Height");
+		this.selectRange = ConfigManager.earthConfig.get().getInt("Abilities.Earth.Collapse.SelectRange");
+		this.speed = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.Collapse.Speed");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.Collapse.Column.Cooldown");
 		this.direction = new Vector(0, -1, 0);
 		this.affectedBlocks = new ConcurrentHashMap<>();
 	}

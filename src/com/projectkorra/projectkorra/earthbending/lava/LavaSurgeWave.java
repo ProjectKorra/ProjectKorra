@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.LavaAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.BlockSource.BlockSourceType;
@@ -50,9 +51,9 @@ public class LavaSurgeWave extends LavaAbility {
 		this.radius = 1;
 		this.interval = 30;
 		this.cooldown = GeneralMethods.getGlobalCooldown();
-		this.maxRadius = getConfig().getDouble("Abilities.Earth.LavaSurge.Radius");
-		this.horizontalPush = getConfig().getDouble("Abilities.Earth.LavaSurge.HorizontalPush");
-		this.verticalPush = getConfig().getDouble("Abilities.Earth.LavaSurge.VerticalPush");
+		this.maxRadius = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaSurge.Radius");
+		this.horizontalPush = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaSurge.HorizontalPush");
+		this.verticalPush = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaSurge.VerticalPush");
 		this.waveBlocks = new ConcurrentHashMap<Block, Block>();
 		this.frozenBlocks = new ConcurrentHashMap<Block, Block>();
 

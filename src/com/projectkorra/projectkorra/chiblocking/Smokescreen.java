@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.chiblocking;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -30,9 +31,9 @@ public class Smokescreen extends ChiAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		this.cooldown = getConfig().getLong("Abilities.Chi.Smokescreen.Cooldown");
-		this.duration = getConfig().getInt("Abilities.Chi.Smokescreen.Duration");
-		this.radius = getConfig().getDouble("Abilities.Chi.Smokescreen.Radius");
+		this.cooldown = ConfigManager.chiConfig.get().getLong("Abilities.Chi.Smokescreen.Cooldown");
+		this.duration = ConfigManager.chiConfig.get().getInt("Abilities.Chi.Smokescreen.Duration");
+		this.radius = ConfigManager.chiConfig.get().getDouble("Abilities.Chi.Smokescreen.Radius");
 		start();
 	}
 	

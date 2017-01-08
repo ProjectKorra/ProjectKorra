@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.MetalAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class Extraction extends MetalAbility {
 
@@ -23,10 +24,10 @@ public class Extraction extends MetalAbility {
 	public Extraction(Player player) {
 		super(player);
 		
-		this.doubleChance = getConfig().getInt("Abilities.Earth.Extraction.DoubleLootChance");
-		this.tripleChance = getConfig().getInt("Abilities.Earth.Extraction.TripleLootChance");
-		this.cooldown = getConfig().getLong("Abilities.Earth.Extraction.Cooldown");
-		this.selectRange = getConfig().getInt("Abilities.Earth.Extraction.SelectRange");
+		this.doubleChance = ConfigManager.earthConfig.get().getInt("Abilities.Earth.Extraction.DoubleLootChance");
+		this.tripleChance = ConfigManager.earthConfig.get().getInt("Abilities.Earth.Extraction.TripleLootChance");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.Extraction.Cooldown");
+		this.selectRange = ConfigManager.earthConfig.get().getInt("Abilities.Earth.Extraction.SelectRange");
 		
 		if (!bPlayer.canBend(this)) {
 			return;

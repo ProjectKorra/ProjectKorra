@@ -65,6 +65,6 @@ public class WaterPassive {
 	*/
 	
 	public static double getSwimSpeed() {
-		return ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
+		return ConfigManager.waterConfig.get().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
 	}
 }

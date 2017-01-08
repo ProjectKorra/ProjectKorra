@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -49,12 +50,12 @@ public class IceBlast extends IceAbility {
 		super(player);
 		
 		this.data = 0;
-		this.interval = getConfig().getLong("Abilities.Water.IceBlast.Interval");
-		this.collisionRadius = getConfig().getDouble("Abilities.Water.IceBlast.CollisionRadius");
-		this.deflectRange = getConfig().getDouble("Abilities.Water.IceBlast.DeflectRange");
-		this.range = getConfig().getDouble("Abilities.Water.IceBlast.Range");
-		this.damage = getConfig().getInt("Abilities.Water.IceBlast.Damage");
-		this.cooldown = getConfig().getInt("Abilities.Water.IceBlast.Cooldown");
+		this.interval = ConfigManager.waterConfig.get().getLong("Abilities.Water.IceBlast.Interval");
+		this.collisionRadius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceBlast.CollisionRadius");
+		this.deflectRange = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceBlast.DeflectRange");
+		this.range = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceBlast.Range");
+		this.damage = ConfigManager.waterConfig.get().getInt("Abilities.Water.IceBlast.Damage");
+		this.cooldown = ConfigManager.waterConfig.get().getInt("Abilities.Water.IceBlast.Cooldown");
 		
 		this.damage = getNightFactor(damage, player.getWorld());
 		

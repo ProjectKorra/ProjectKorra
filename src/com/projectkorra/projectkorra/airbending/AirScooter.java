@@ -13,6 +13,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.Flight;
 
 public class AirScooter extends AirAbility {
@@ -42,11 +43,11 @@ public class AirScooter extends AirAbility {
 		else if (bPlayer.isOnCooldown(this))
 			return;
 
-		this.speed = getConfig().getDouble("Abilities.Air.AirScooter.Speed");
-		this.interval = getConfig().getDouble("Abilities.Air.AirScooter.Interval");
-		this.radius = getConfig().getDouble("Abilities.Air.AirScooter.Radius");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirScooter.Cooldown");
-		this.maxHeightFromGround = getConfig().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
+		this.speed = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirScooter.Speed");
+		this.interval = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirScooter.Interval");
+		this.radius = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirScooter.Radius");
+		this.cooldown = ConfigManager.airConfig.get().getLong("Abilities.Air.AirScooter.Cooldown");
+		this.maxHeightFromGround = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirScooter.MaxHeightFromGround");
 		this.random = new Random();
 		this.angles = new ArrayList<>();
 		canFly = player.getAllowFlight();

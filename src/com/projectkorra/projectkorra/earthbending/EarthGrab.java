@@ -14,6 +14,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class EarthGrab extends EarthAbility {
@@ -36,9 +37,9 @@ public class EarthGrab extends EarthAbility {
 	public EarthGrab(Player player) {
 		super(player);
 
-		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthGrab.SelectRange");
-		this.height = getConfig().getDouble("Abilities.Earth.EarthGrab.Height");
-		this.cooldown = getConfig().getLong("Abilities.Earth.EarthGrab.Cooldown");
+		this.selectRange = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthGrab.SelectRange");
+		this.height = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthGrab.Height");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.EarthGrab.Cooldown");
 		this.origin = player.getEyeLocation();
 		this.direction = origin.getDirection();
 		this.lowestDistance = selectRange + 1;
@@ -53,8 +54,8 @@ public class EarthGrab extends EarthAbility {
 		}
 		
 		if (bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthGrab.Cooldown");
-			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height");
+			this.cooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Earth.EarthGrab.Cooldown");
+			this.height = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height");
 			
 		}
 		

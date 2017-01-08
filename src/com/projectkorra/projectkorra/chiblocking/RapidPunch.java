@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 import org.bukkit.Location;
@@ -25,10 +26,10 @@ public class RapidPunch extends ChiAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		this.damage = getConfig().getInt("Abilities.Chi.RapidPunch.Damage");
-		this.punches = getConfig().getInt("Abilities.Chi.RapidPunch.Punches");
-		this.distance = getConfig().getInt("Abilities.Chi.RapidPunch.Distance");
-		this.cooldown = getConfig().getLong("Abilities.Chi.RapidPunch.Cooldown");
+		this.damage = ConfigManager.chiConfig.get().getInt("Abilities.Chi.RapidPunch.Damage");
+		this.punches = ConfigManager.chiConfig.get().getInt("Abilities.Chi.RapidPunch.Punches");
+		this.distance = ConfigManager.chiConfig.get().getInt("Abilities.Chi.RapidPunch.Distance");
+		this.cooldown = ConfigManager.chiConfig.get().getLong("Abilities.Chi.RapidPunch.Cooldown");
 		this.target = GeneralMethods.getTargetedEntity(player, distance);
 		start();
 	}

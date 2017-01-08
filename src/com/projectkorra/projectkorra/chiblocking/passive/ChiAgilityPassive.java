@@ -26,8 +26,8 @@ public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
 	}
 	
 	public void setFields() {
-		this.jumpPower = ConfigManager.getConfig().getInt("Abilities.Chi.Passive.ChiAgility.JumpPower");
-		this.speedPower = ConfigManager.getConfig().getInt("Abilities.Chi.Passive.ChiAgility.SpeedPower");
+		this.jumpPower = ConfigManager.chiConfig.get().getInt("Abilities.Chi.Passive.ChiAgility.JumpPower");
+		this.speedPower = ConfigManager.chiConfig.get().getInt("Abilities.Chi.Passive.ChiAgility.SpeedPower");
 	}
 
 	@Override

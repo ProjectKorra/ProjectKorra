@@ -21,6 +21,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
@@ -71,17 +72,17 @@ public class WaterSpoutWave extends WaterAbility {
 		this.iceWave = false;
 		this.iceOnly = false;
 		this.collidable = false;
-		this.plant = getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AllowPlantSource");
-		this.radius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
-		this.waveRadius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
-		this.thawRadius = getConfig().getDouble("Abilities.Water.WaterCombo.IceWave.ThawRadius");
-		this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.AnimationSpeed");
-		this.selectRange = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.SelectRange");
-		this.speed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Speed");
-		this.damage = getConfig().getDouble("Abilities.Water.WaterCombo.IceWave.Damage");
-		this.chargeTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.ChargeTime");
-		this.flightTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.FlightTime");
-		this.cooldown = getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown");
+		this.plant = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.WaterSpout.Wave.AllowPlantSource");
+		this.radius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
+		this.waveRadius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
+		this.thawRadius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterCombo.IceWave.ThawRadius");
+		this.animationSpeed = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterSpout.Wave.AnimationSpeed");
+		this.selectRange = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterSpout.Wave.SelectRange");
+		this.speed = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterSpout.Wave.Speed");
+		this.damage = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterCombo.IceWave.Damage");
+		this.chargeTime = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterSpout.Wave.ChargeTime");
+		this.flightTime = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterSpout.Wave.FlightTime");
+		this.cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterSpout.Wave.Cooldown");
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
@@ -521,7 +522,7 @@ public class WaterSpoutWave extends WaterAbility {
 	}
 
 	public boolean isEnabled() {
-		return getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.Enabled");
+		return ConfigManager.waterConfig.get().getBoolean("Abilities.Water.WaterSpout.Wave.Enabled");
 	}
 
 	public boolean isMoving() {

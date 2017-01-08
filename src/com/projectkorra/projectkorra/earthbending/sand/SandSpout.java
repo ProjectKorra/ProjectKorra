@@ -15,6 +15,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.SandAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
@@ -38,11 +39,11 @@ public class SandSpout extends SandAbility {
 		
 		this.currentHeight = 0;
 		this.angle = 0;
-		this.interval = getConfig().getLong("Abilities.Earth.SandSpout.Interval");
-		this.canSpiral = getConfig().getBoolean("Abilities.Earth.SandSpout.Spiral");
-		this.height = getConfig().getDouble("Abilities.Earth.SandSpout.Height");
-		this.blindnessTime = getConfig().getInt("Abilities.Earth.SandSpout.BlindnessTime");
-		this.damage = getConfig().getInt("Abilities.Earth.SandSpout.SpoutDamage");
+		this.interval = ConfigManager.earthConfig.get().getLong("Abilities.Earth.SandSpout.Interval");
+		this.canSpiral = ConfigManager.earthConfig.get().getBoolean("Abilities.Earth.SandSpout.Spiral");
+		this.height = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.SandSpout.Height");
+		this.blindnessTime = ConfigManager.earthConfig.get().getInt("Abilities.Earth.SandSpout.BlindnessTime");
+		this.damage = ConfigManager.earthConfig.get().getInt("Abilities.Earth.SandSpout.SpoutDamage");
 		
 		this.couldFly = player.getAllowFlight();
 		this.wasFlying = player.isFlying();

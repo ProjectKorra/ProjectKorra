@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
@@ -45,12 +46,12 @@ public class TorrentWave extends WaterAbility {
 		}
 		
 		this.radius = radius;
-		this.interval = getConfig().getLong("Abilities.Water.Torrent.Wave.Interval");
-		this.maxHeight = getConfig().getDouble("Abilities.Water.Torrent.Wave.Height");
-		this.maxRadius = getConfig().getDouble("Abilities.Water.Torrent.Wave.Radius");
-		this.knockback = getConfig().getDouble("Abilities.Water.Torrent.Wave.Knockback");
-		this.cooldown = getConfig().getLong("Abilities.Water.Torrent.Wave.Cooldown");
-		this.growSpeed = getConfig().getDouble("Abilities.Water.Torrent.Wave.GrowSpeed");
+		this.interval = ConfigManager.waterConfig.get().getLong("Abilities.Water.Torrent.Wave.Interval");
+		this.maxHeight = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Torrent.Wave.Height");
+		this.maxRadius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Torrent.Wave.Radius");
+		this.knockback = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Torrent.Wave.Knockback");
+		this.cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.Torrent.Wave.Cooldown");
+		this.growSpeed = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Torrent.Wave.GrowSpeed");
 		this.origin = location.clone();
 		this.time = System.currentTimeMillis();
 		this.heights = new ConcurrentHashMap<>();

@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -42,12 +43,12 @@ public class FireShield extends FireAbility {
 
 		this.shield = shield;
 		this.ignite = true;
-		this.interval = getConfig().getLong("Abilities.Fire.FireShield.Interval");
-		this.cooldown = shield ? 0 : getConfig().getLong("Abilities.Fire.FireShield.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Fire.FireShield.Duration");
-		this.radius = getConfig().getDouble("Abilities.Fire.FireShield.Radius");
-		this.discRadius = getConfig().getDouble("Abilities.Fire.FireShield.DiscRadius");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireShield.FireTicks");
+		this.interval = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireShield.Interval");
+		this.cooldown = shield ? 0 : ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireShield.Cooldown");
+		this.duration = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireShield.Duration");
+		this.radius = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireShield.Radius");
+		this.discRadius = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireShield.DiscRadius");
+		this.fireTicks = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireShield.FireTicks");
 		this.random = new Random();
 
 		if (hasAbility(player, FireShield.class) || bPlayer.isOnCooldown("FireShield")) {

@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 import org.bukkit.Location;
@@ -37,7 +38,7 @@ public class BlazeArc extends FireAbility {
 	public BlazeArc(Player player, Location location, Vector direction, double range) {
 		super(player);
 		this.range = getDayFactor(range);
-		this.speed = getConfig().getLong("Abilities.Fire.Blaze.Speed");
+		this.speed = ConfigManager.fireConfig.get().getLong("Abilities.Fire.Blaze.Speed");
 		this.interval = (long) (1000. / speed);
 		this.origin = location.clone();
 		this.location = origin.clone();

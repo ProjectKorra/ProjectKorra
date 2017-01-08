@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class BlazeRing extends FireAbility {
 	
@@ -16,13 +17,13 @@ public class BlazeRing extends FireAbility {
 	public BlazeRing(Player player) {
 		super(player);
 		
-		this.range = getConfig().getInt("Abilities.Fire.Blaze.Ring.Range");
-		this.angleIncrement = getConfig().getDouble("Abilities.Fire.Blaze.Ring.Angle");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
+		this.range = ConfigManager.fireConfig.get().getInt("Abilities.Fire.Blaze.Ring.Range");
+		this.angleIncrement = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Blaze.Ring.Angle");
+		this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
 		this.location = player.getLocation();
 		
 		if (bPlayer.isAvatarState()) {
-		range = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range");
+		range = ConfigManager.avatarConfig.get().getInt("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range");
 		}
 		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("BlazeRing")) {
 			return;

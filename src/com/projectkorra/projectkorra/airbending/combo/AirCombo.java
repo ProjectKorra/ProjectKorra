@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireComboStream;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
@@ -75,26 +76,26 @@ public class AirCombo extends AirAbility implements ComboAbility {
 		}
 
 		if (ability.equalsIgnoreCase("Twister")) {
-			this.range = getConfig().getDouble("Abilities.Air.AirCombo.Twister.Range");
-			this.speed = getConfig().getDouble("Abilities.Air.AirCombo.Twister.Speed");
-			this.cooldown = getConfig().getLong("Abilities.Air.AirCombo.Twister.Cooldown");
-			this.twisterHeight = getConfig().getDouble("Abilities.Air.AirCombo.Twister.Height");
-			this.twisterRadius = getConfig().getDouble("Abilities.Air.AirCombo.Twister.Radius");
-			this.twisterDegreeParticles = getConfig().getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
-			this.twisterHeightParticles = getConfig().getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
-			this.twisterRemoveDelay = getConfig().getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");
+			this.range = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.Twister.Range");
+			this.speed = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.Twister.Speed");
+			this.cooldown = ConfigManager.airConfig.get().getLong("Abilities.Air.AirCombo.Twister.Cooldown");
+			this.twisterHeight = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.Twister.Height");
+			this.twisterRadius = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.Twister.Radius");
+			this.twisterDegreeParticles = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.Twister.DegreesPerParticle");
+			this.twisterHeightParticles = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.Twister.HeightPerParticle");
+			this.twisterRemoveDelay = ConfigManager.airConfig.get().getLong("Abilities.Air.AirCombo.Twister.RemoveDelay");
 		} else if (ability.equalsIgnoreCase("AirStream")) {
-			this.range = getConfig().getDouble("Abilities.Air.AirCombo.AirStream.Range");
-			this.speed = getConfig().getDouble("Abilities.Air.AirCombo.AirStream.Speed");
-			this.cooldown = getConfig().getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
-			this.airStreamMaxEntityHeight = getConfig().getDouble("Abilities.Air.AirCombo.AirStream.EntityHeight");
-			this.airStreamEntityCarryDuration = getConfig().getLong("Abilities.Air.AirCombo.AirStream.EntityDuration");
+			this.range = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.AirStream.Range");
+			this.speed = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.AirStream.Speed");
+			this.cooldown = ConfigManager.airConfig.get().getLong("Abilities.Air.AirCombo.AirStream.Cooldown");
+			this.airStreamMaxEntityHeight = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.AirStream.EntityHeight");
+			this.airStreamEntityCarryDuration = ConfigManager.airConfig.get().getLong("Abilities.Air.AirCombo.AirStream.EntityDuration");
 		} else if (ability.equalsIgnoreCase("AirSweep")) {
-			this.damage = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
-			this.range = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Range");
-			this.speed = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Speed");
-			this.knockback = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
-			this.cooldown = getConfig().getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
+			this.damage = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
+			this.range = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.AirSweep.Range");
+			this.speed = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.AirSweep.Speed");
+			this.knockback = ConfigManager.airConfig.get().getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
+			this.cooldown = ConfigManager.airConfig.get().getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
 		}
 
 		if (bPlayer.isAvatarState()) {

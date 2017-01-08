@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.LightningAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class Lightning extends LightningAbility {
@@ -76,22 +77,22 @@ public class Lightning extends LightningAbility {
 		this.tasks = new ArrayList<>();
 		this.locations = new ArrayList<>();
 	
-		this.selfHitWater = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
-		this.selfHitClose = getConfig().getBoolean("Abilities.Fire.Lightning.SelfHitClose");
-		this.arcOnIce = getConfig().getBoolean("Abilities.Fire.Lightning.ArcOnIce");
-		this.range = getConfig().getDouble("Abilities.Fire.Lightning.Range");
-		this.damage = getConfig().getDouble("Abilities.Fire.Lightning.Damage");
-		this.maxArcAngle = getConfig().getDouble("Abilities.Fire.Lightning.MaxArcAngle");
-		this.subArcChance = getConfig().getDouble("Abilities.Fire.Lightning.SubArcChance");
-		this.chainRange = getConfig().getDouble("Abilities.Fire.Lightning.ChainArcRange");
-		this.chainArcChance = getConfig().getDouble("Abilities.Fire.Lightning.ChainArcChance");
-		this.waterArcRange = getConfig().getDouble("Abilities.Fire.Lightning.WaterArcRange");
-		this.stunChance = getConfig().getDouble("Abilities.Fire.Lightning.StunChance");
-		this.stunDuration = getConfig().getDouble("Abilities.Fire.Lightning.StunDuration");
-		this.maxChainArcs = getConfig().getInt("Abilities.Fire.Lightning.MaxChainArcs");
-		this.waterArcs = getConfig().getInt("Abilities.Fire.Lightning.WaterArcs");
-		this.chargeTime = getConfig().getLong("Abilities.Fire.Lightning.ChargeTime");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Lightning.Cooldown");
+		this.selfHitWater = ConfigManager.fireConfig.get().getBoolean("Abilities.Fire.Lightning.SelfHitWater");
+		this.selfHitClose = ConfigManager.fireConfig.get().getBoolean("Abilities.Fire.Lightning.SelfHitClose");
+		this.arcOnIce = ConfigManager.fireConfig.get().getBoolean("Abilities.Fire.Lightning.ArcOnIce");
+		this.range = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Lightning.Range");
+		this.damage = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Lightning.Damage");
+		this.maxArcAngle = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Lightning.MaxArcAngle");
+		this.subArcChance = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Lightning.SubArcChance");
+		this.chainRange = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Lightning.ChainArcRange");
+		this.chainArcChance = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Lightning.ChainArcChance");
+		this.waterArcRange = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Lightning.WaterArcRange");
+		this.stunChance = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Lightning.StunChance");
+		this.stunDuration = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Lightning.StunDuration");
+		this.maxChainArcs = ConfigManager.fireConfig.get().getInt("Abilities.Fire.Lightning.MaxChainArcs");
+		this.waterArcs = ConfigManager.fireConfig.get().getInt("Abilities.Fire.Lightning.WaterArcs");
+		this.chargeTime = ConfigManager.fireConfig.get().getLong("Abilities.Fire.Lightning.ChargeTime");
+		this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.Lightning.Cooldown");
 		
 		this.range = getDayFactor(this.range);
 		this.subArcChance = getDayFactor(this.subArcChance);
@@ -104,9 +105,9 @@ public class Lightning extends LightningAbility {
 		this.stunDuration = getDayFactor(this.stunDuration);
 
 		if (bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.Fire.Lightning.ChargeTime");
-			this.cooldown = getConfig().getLong("Abilities.Avatar.Fire.Lightning.Cooldown");
-			this.damage = getConfig().getDouble("Abilities.Avatar.Fire.Lightning.Damage");
+			this.chargeTime = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.Fire.Lightning.ChargeTime");
+			this.cooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.Fire.Lightning.Cooldown");
+			this.damage = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.Fire.Lightning.Damage");
 			
 		} else if (isSozinsComet(player.getWorld())) {
 			this.chargeTime = 0;

@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.TempBlock;
 
 public class Illumination extends FireAbility {
@@ -28,10 +29,10 @@ public class Illumination extends FireAbility {
 	public Illumination(Player player) {
 		super(player);
 		
-		this.range = getConfig().getDouble("Abilities.Fire.Illumination.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
+		this.range = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Illumination.Range");
+		this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.Illumination.Cooldown");
 		this.range = getDayFactor(this.range);
-		this.lightThreshold = getConfig().getInt("Abilities.Fire.Illumination.LightThreshold");
+		this.lightThreshold = ConfigManager.fireConfig.get().getInt("Abilities.Fire.Illumination.LightThreshold");
 		
 		Illumination oldIllumination = getAbility(player, Illumination.class);
 		if (oldIllumination != null) {

@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -49,13 +50,13 @@ public class EarthArmor extends EarthAbility {
 		this.active = true;
 		this.interval = 2000;
 		this.goldHearts = 0;
-		this.cooldown = getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
-		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthArmor.SelectRange");
-		this.maxGoldHearts = getConfig().getInt("Abilities.Earth.EarthArmor.GoldHearts");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.EarthArmor.Cooldown");
+		this.selectRange = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthArmor.SelectRange");
+		this.maxGoldHearts = ConfigManager.earthConfig.get().getInt("Abilities.Earth.EarthArmor.GoldHearts");
 		
 		if (bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthArmor.Cooldown");
-			this.maxGoldHearts = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.EarthArmor.GoldHearts");
+			this.cooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Earth.EarthArmor.Cooldown");
+			this.maxGoldHearts = ConfigManager.avatarConfig.get().getInt("Abilities.Avatar.AvatarState.Earth.EarthArmor.GoldHearts");
 		}
 		
 		headBlock = getTargetEarthBlock((int) selectRange);

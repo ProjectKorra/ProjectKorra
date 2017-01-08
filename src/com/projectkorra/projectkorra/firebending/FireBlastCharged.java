@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -56,17 +57,17 @@ public class FireBlastCharged extends FireAbility {
 		
 		this.charged = false;
 		this.launched = false;
-		this.canDamageBlocks = getConfig().getBoolean("Abilities.Fire.FireBlast.Charged.DamageBlocks");
-		this.dissipate = getConfig().getBoolean("Abilities.Fire.FireBlast.Dissipate");
-		this.chargeTime = getConfig().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
+		this.canDamageBlocks = ConfigManager.fireConfig.get().getBoolean("Abilities.Fire.FireBlast.Charged.DamageBlocks");
+		this.dissipate = ConfigManager.fireConfig.get().getBoolean("Abilities.Fire.FireBlast.Dissipate");
+		this.chargeTime = ConfigManager.fireConfig.get().getLong("Abilities.Fire.FireBlast.Charged.ChargeTime");
 		this.time = System.currentTimeMillis();
 		this.interval = 25;
-		this.collisionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.CollisionRadius");
-		this.maxDamage = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.Range");
-		this.damageRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
-		this.explosionRadius = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.ExplosionRadius");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireBlast.Charged.FireTicks");
+		this.collisionRadius = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.Charged.CollisionRadius");
+		this.maxDamage = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.Charged.Damage");
+		this.range = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.Charged.Range");
+		this.damageRadius = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.Charged.DamageRadius");
+		this.explosionRadius = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.Charged.ExplosionRadius");
+		this.fireTicks = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.FireBlast.Charged.FireTicks");
 		this.innerRadius = damageRadius / 2;
 		
 		if (isDay(player.getWorld())) {
@@ -75,8 +76,8 @@ public class FireBlastCharged extends FireAbility {
 			this.range = getDayFactor(range);
 		}
 		if (bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.ChargeTime");
-			this.maxDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.Damage");
+			this.chargeTime = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.ChargeTime");
+			this.maxDamage = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Fire.FireBlast.Charged.Damage");
 		}
 		
 		

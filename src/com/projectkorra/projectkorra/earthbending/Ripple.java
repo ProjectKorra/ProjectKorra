@@ -18,6 +18,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class Ripple extends EarthAbility {
@@ -54,9 +55,9 @@ public class Ripple extends EarthAbility {
 			return;
 		}
 
-		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
-		this.damage = getConfig().getDouble("Abilities.Earth.Shockwave.Damage");
-		this.knockback = getConfig().getDouble("Abilities.Earth.Shockwave.Knockback");
+		this.range = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.Shockwave.Range");
+		this.damage = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.Shockwave.Damage");
+		this.knockback = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.Shockwave.Knockback");
 		this.direction = direction.clone().normalize();
 		this.origin = origin.clone();
 		this.location = origin.clone();
@@ -64,9 +65,9 @@ public class Ripple extends EarthAbility {
 		this.entities = new ArrayList<>();
 
 		if (bPlayer.isAvatarState()) {
-			range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
-			damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Damage");
-			knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Knockback");
+			range = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
+			damage = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Damage");
+			knockback = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Knockback");
 		}
 
 		initializeLocations();

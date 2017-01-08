@@ -9,6 +9,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class WarriorStance extends ChiAbility {
 
@@ -20,8 +21,8 @@ public class WarriorStance extends ChiAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
-		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
+		this.strength = ConfigManager.chiConfig.get().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
+		this.resistance = ConfigManager.chiConfig.get().getInt("Abilities.Chi.WarriorStance.Resistance");
 		
 		ChiAbility stance = bPlayer.getStance();
 		if (stance != null) {

@@ -12,6 +12,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class Paralyze extends ChiAbility {
 
@@ -26,7 +27,7 @@ public class Paralyze extends ChiAbility {
 			return;
 		}
 		this.target = targetentity;
-		this.cooldown = getConfig().getLong("Abilities.Chi.Paralyze.Cooldown");
+		this.cooldown = ConfigManager.chiConfig.get().getLong("Abilities.Chi.Paralyze.Cooldown");
 		start();
 	}
 	
@@ -103,7 +104,7 @@ public class Paralyze extends ChiAbility {
 	}
 	
 	public static long getDuration() {
-		return getConfig().getLong("Abilities.Chi.Paralyze.Duration");
+		return ConfigManager.chiConfig.get().getLong("Abilities.Chi.Paralyze.Duration");
 	}
 
 	public Entity getTarget() {

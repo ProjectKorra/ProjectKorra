@@ -36,7 +36,7 @@ public class BlockSource {
 	private static HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>> playerSources = new HashMap<Player, HashMap<BlockSourceType, HashMap<ClickType, BlockSourceInformation>>>();
 	private static FileConfiguration config = ConfigManager.defaultConfig.get();
 	// The player should never need to grab source blocks from farther than this.
-	private static double MAX_RANGE = config.getDouble("Abilities.Water.WaterManipulation.SelectRange");
+	private static double MAX_RANGE = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterManipulation.SelectRange");
 	//private static boolean tempblock = config.getBoolean("Properties.Water.CanBendFromBentBlocks");
 
 	/**

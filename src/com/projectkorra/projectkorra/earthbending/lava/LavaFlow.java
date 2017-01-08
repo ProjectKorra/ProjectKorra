@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.LavaAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -92,37 +93,37 @@ public class LavaFlow extends LavaAbility {
 		this.clickIsFinished = false;
 		this.affectedBlocks = new ArrayList<TempBlock>();
 		this.tasks = new ArrayList<BukkitRunnable>();
-		this.revertMaterial = Material.getMaterial(getConfig().getString("Abilities.Earth.LavaFlow.RevertMaterial"));
+		this.revertMaterial = Material.getMaterial(ConfigManager.earthConfig.get().getString("Abilities.Earth.LavaFlow.RevertMaterial"));
 
-		this.shiftCooldown = getConfig().getLong("Abilities.Earth.LavaFlow.ShiftCooldown");
-		this.shiftPlatformRadius = getConfig().getDouble("Abilities.Earth.LavaFlow.ShiftPlatformRadius");
-		this.shiftMaxRadius = getConfig().getDouble("Abilities.Earth.LavaFlow.ShiftRadius");
-		this.shiftFlowSpeed = getConfig().getDouble("Abilities.Earth.LavaFlow.ShiftFlowSpeed");
-		this.shiftRemoveSpeed = getConfig().getDouble("Abilities.Earth.LavaFlow.ShiftRemoveSpeed");
-		this.shiftRemoveDelay = getConfig().getLong("Abilities.Earth.LavaFlow.ShiftCleanupDelay");
-		this.particleDensity = getConfig().getDouble("Abilities.Earth.LavaFlow.ParticleDensity");
-		this.clickRange = getConfig().getDouble("Abilities.Earth.LavaFlow.ClickRange");
-		this.clickLavaRadius = getConfig().getDouble("Abilities.Earth.LavaFlow.ClickRadius");
-		this.clickLandRadius = getConfig().getDouble("Abilities.Earth.LavaFlow.ClickRadius");
-		this.clickLavaDelay = getConfig().getLong("Abilities.Earth.LavaFlow.ClickLavaStartDelay");
-		this.clickLandDelay = getConfig().getLong("Abilities.Earth.LavaFlow.ClickLandStartDelay");
-		this.clickLavaCooldown = getConfig().getLong("Abilities.Earth.LavaFlow.ClickLavaCooldown");
-		this.clickLandCooldown = getConfig().getLong("Abilities.Earth.LavaFlow.ClickLandCooldown");
-		this.clickLavaCleanupDelay = getConfig().getLong("Abilities.Earth.LavaFlow.ClickLavaCleanupDelay");
-		this.clickLandCleanupDelay = getConfig().getLong("Abilities.Earth.LavaFlow.ClickLandCleanupDelay");
-		this.lavaCreateSpeed = getConfig().getDouble("Abilities.Earth.LavaFlow.ClickLavaCreateSpeed");
-		this.landCreateSpeed = getConfig().getDouble("Abilities.Earth.LavaFlow.ClickLandCreateSpeed");
-		this.upwardFlow = getConfig().getInt("Abilities.Earth.LavaFlow.UpwardFlow");
-		this.downwardFlow = getConfig().getInt("Abilities.Earth.LavaFlow.DownwardFlow");
-		this.allowNaturalFlow = getConfig().getBoolean("Abilities.Earth.LavaFlow.AllowNaturalFlow");
+		this.shiftCooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.LavaFlow.ShiftCooldown");
+		this.shiftPlatformRadius = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaFlow.ShiftPlatformRadius");
+		this.shiftMaxRadius = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaFlow.ShiftRadius");
+		this.shiftFlowSpeed = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaFlow.ShiftFlowSpeed");
+		this.shiftRemoveSpeed = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaFlow.ShiftRemoveSpeed");
+		this.shiftRemoveDelay = ConfigManager.earthConfig.get().getLong("Abilities.Earth.LavaFlow.ShiftCleanupDelay");
+		this.particleDensity = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaFlow.ParticleDensity");
+		this.clickRange = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaFlow.ClickRange");
+		this.clickLavaRadius = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaFlow.ClickRadius");
+		this.clickLandRadius = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaFlow.ClickRadius");
+		this.clickLavaDelay = ConfigManager.earthConfig.get().getLong("Abilities.Earth.LavaFlow.ClickLavaStartDelay");
+		this.clickLandDelay = ConfigManager.earthConfig.get().getLong("Abilities.Earth.LavaFlow.ClickLandStartDelay");
+		this.clickLavaCooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.LavaFlow.ClickLavaCooldown");
+		this.clickLandCooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.LavaFlow.ClickLandCooldown");
+		this.clickLavaCleanupDelay = ConfigManager.earthConfig.get().getLong("Abilities.Earth.LavaFlow.ClickLavaCleanupDelay");
+		this.clickLandCleanupDelay = ConfigManager.earthConfig.get().getLong("Abilities.Earth.LavaFlow.ClickLandCleanupDelay");
+		this.lavaCreateSpeed = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaFlow.ClickLavaCreateSpeed");
+		this.landCreateSpeed = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.LavaFlow.ClickLandCreateSpeed");
+		this.upwardFlow = ConfigManager.earthConfig.get().getInt("Abilities.Earth.LavaFlow.UpwardFlow");
+		this.downwardFlow = ConfigManager.earthConfig.get().getInt("Abilities.Earth.LavaFlow.DownwardFlow");
+		this.allowNaturalFlow = ConfigManager.earthConfig.get().getBoolean("Abilities.Earth.LavaFlow.AllowNaturalFlow");
 
 		if (bPlayer.isAvatarState()) {
-			shiftCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown");
-			clickLavaCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown");
-			clickLandCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown");
-			shiftPlatformRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius");
-		    clickLavaRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius");
-			shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.LavaFlow.Earth.ShiftRadius");
+			shiftCooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown");
+			clickLavaCooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown");
+			clickLandCooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown");
+			shiftPlatformRadius = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius");
+		    clickLavaRadius = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius");
+			shiftMaxRadius = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.LavaFlow.Earth.ShiftRadius");
 		}
 
 		if (type == AbilityType.SHIFT) {

@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -53,15 +54,15 @@ public class IceSpikeBlast extends IceAbility {
 		}
 
 		this.data = 0;
-		this.interval = getConfig().getLong("Abilities.Water.IceSpike.Blast.Interval");
-		this.slowCooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.SlowCooldown");
-		this.collisionRadius = getConfig().getDouble("Abilities.Water.IceSpike.Blast.CollisionRadius");
-		this.deflectRange = getConfig().getDouble("Abilities.Water.IceSpike.Blast.DeflectRange");
-		this.range = getConfig().getDouble("Abilities.Water.IceSpike.Blast.Range");
-		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Blast.Damage");
-		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Blast.Cooldown");
-		this.slowPower = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowPower");
-		this.slowDuration = getConfig().getInt("Abilities.Water.IceSpike.Blast.SlowDuration");
+		this.interval = ConfigManager.waterConfig.get().getLong("Abilities.Water.IceSpike.Blast.Interval");
+		this.slowCooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.IceSpike.Blast.SlowCooldown");
+		this.collisionRadius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Blast.CollisionRadius");
+		this.deflectRange = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Blast.DeflectRange");
+		this.range = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Blast.Range");
+		this.damage = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Blast.Damage");
+		this.cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.IceSpike.Blast.Cooldown");
+		this.slowPower = ConfigManager.waterConfig.get().getInt("Abilities.Water.IceSpike.Blast.SlowPower");
+		this.slowDuration = ConfigManager.waterConfig.get().getInt("Abilities.Water.IceSpike.Blast.SlowDuration");
 
 		if (!bPlayer.canBend(this) || !bPlayer.canIcebend()) {
 			return;
@@ -363,7 +364,7 @@ public class IceSpikeBlast extends IceAbility {
 
 	@SuppressWarnings("deprecation")
 	private static void waterBottle(Player player) {
-		long range = getConfig().getLong("Abilities.Water.IceSpike.Projectile.Range");
+		long range = ConfigManager.waterConfig.get().getLong("Abilities.Water.IceSpike.Projectile.Range");
 
 		if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeLoc = player.getEyeLocation();

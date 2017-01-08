@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -49,21 +50,21 @@ public class EarthBlast extends EarthAbility {
 		this.isProgressing = false;
 		this.isAtDestination = false;
 		this.isSettingUp = true;
-		this.deflectRange = getConfig().getDouble("Abilities.Earth.EarthBlast.DeflectRange");
-		this.collisionRadius = getConfig().getDouble("Abilities.Earth.EarthBlast.CollisionRadius");
-		this.cooldown = getConfig().getLong("Abilities.Earth.EarthBlast.Cooldown");
-		this.canHitSelf = getConfig().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
-		this.range = getConfig().getDouble("Abilities.Earth.EarthBlast.Range");
-		this.damage = getConfig().getDouble("Abilities.Earth.EarthBlast.Damage");
-		this.speed = getConfig().getDouble("Abilities.Earth.EarthBlast.Speed");
-		this.pushFactor = getConfig().getDouble("Abilities.Earth.EarthBlast.Push");
-		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthBlast.SelectRange");
+		this.deflectRange = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthBlast.DeflectRange");
+		this.collisionRadius = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthBlast.CollisionRadius");
+		this.cooldown = ConfigManager.earthConfig.get().getLong("Abilities.Earth.EarthBlast.Cooldown");
+		this.canHitSelf = ConfigManager.earthConfig.get().getBoolean("Abilities.Earth.EarthBlast.CanHitSelf");
+		this.range = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthBlast.Range");
+		this.damage = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthBlast.Damage");
+		this.speed = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthBlast.Speed");
+		this.pushFactor = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthBlast.Push");
+		this.selectRange = ConfigManager.earthConfig.get().getDouble("Abilities.Earth.EarthBlast.SelectRange");
 		this.time = System.currentTimeMillis();
 		this.interval = (long) (1000.0 / speed);
 		
 		if (bPlayer.isAvatarState()) {
-			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthBlast.Cooldown");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthBlast.Damage");
+			this.cooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Earth.EarthBlast.Cooldown");
+			this.damage = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Earth.EarthBlast.Damage");
 			
 		}
 

@@ -24,6 +24,7 @@ import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireComboStream;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
@@ -86,15 +87,15 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 				return;
 			}
 
-			this.cooldown = getConfig().getLong("Abilities.Water.WaterCombo.IceWave.Cooldown");
+			this.cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterCombo.IceWave.Cooldown");
 		} else if (name.equalsIgnoreCase("IceBullet")) {
-			this.damage = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Damage");
-			this.range = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Range");
-			this.radius = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Radius");
-			this.cooldown = getConfig().getLong("Abilities.Water.WaterCombo.IceBullet.Cooldown");
-			this.shootTime = getConfig().getLong("Abilities.Water.WaterCombo.IceBullet.ShootTime");
-			this.maxShots = getConfig().getInt("Abilities.Water.WaterCombo.IceBullet.MaxShots");
-			this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.AnimationSpeed");
+			this.damage = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterCombo.IceBullet.Damage");
+			this.range = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterCombo.IceBullet.Range");
+			this.radius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterCombo.IceBullet.Radius");
+			this.cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterCombo.IceBullet.Cooldown");
+			this.shootTime = ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterCombo.IceBullet.ShootTime");
+			this.maxShots = ConfigManager.waterConfig.get().getInt("Abilities.Water.WaterCombo.IceBullet.MaxShots");
+			this.animationSpeed = ConfigManager.waterConfig.get().getDouble("Abilities.Water.WaterCombo.IceBullet.AnimationSpeed");
 			this.speed = 1;
 		}
 
@@ -312,7 +313,7 @@ public class WaterCombo extends IceAbility implements ComboAbility {
 		bPlayer.addCooldown(this);
 
 		if (name == "IceWave") {
-			bPlayer.addCooldown("WaterWave", getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown"));
+			bPlayer.addCooldown("WaterWave", ConfigManager.waterConfig.get().getLong("Abilities.Water.WaterSpout.Wave.Cooldown"));
 		}
 	}
 

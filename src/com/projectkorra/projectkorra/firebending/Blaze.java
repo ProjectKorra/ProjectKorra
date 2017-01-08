@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.firebending;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -18,9 +19,9 @@ public class Blaze extends FireAbility {
 		super(player);
 		
 		this.speed = 2;
-		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Cooldown");
-		this.arc = getConfig().getInt("Abilities.Fire.Blaze.Arc");
-		this.range = getConfig().getDouble("Abilities.Fire.Blaze.Range");
+		this.cooldown = ConfigManager.fireConfig.get().getLong("Abilities.Fire.Blaze.Cooldown");
+		this.arc = ConfigManager.fireConfig.get().getInt("Abilities.Fire.Blaze.Arc");
+		this.range = ConfigManager.fireConfig.get().getDouble("Abilities.Fire.Blaze.Range");
 		
 		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("BlazeArc")) {
 			return;

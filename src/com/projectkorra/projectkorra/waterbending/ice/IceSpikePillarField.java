@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending.ice;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,11 +33,11 @@ public class IceSpikePillarField extends IceAbility {
 			return;
 		}
 		
-		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Field.Damage");
-		this.radius = getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius");
+		this.damage = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Field.Damage");
+		this.radius = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Field.Radius");
 		this.numberOfSpikes = (int) (((radius * 2) * (radius * 2)) / 16);
-		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
-		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Field.Push"), 0);
+		this.cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.IceSpike.Field.Cooldown");
+		this.thrownForce = new Vector(0, ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Field.Push"), 0);
 		
 		Random random = new Random();
 		int locX = player.getLocation().getBlockX();

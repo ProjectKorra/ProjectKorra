@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 /**
@@ -65,32 +66,32 @@ public class Suffocate extends AirAbility {
 		}
 
 		this.started = false;
-		this.requireConstantAim = getConfig().getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
-		this.canSuffocateUndead = getConfig().getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
-		this.particleCount = getConfig().getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
-		this.animationSpeed = getConfig().getDouble("Abilities.Air.Suffocate.AnimationSpeed");
-		this.chargeTime = getConfig().getLong("Abilities.Air.Suffocate.ChargeTime");
-		this.cooldown = getConfig().getLong("Abilities.Air.Suffocate.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Air.Suffocate.Range");
-		this.radius = getConfig().getDouble("Abilities.Air.Suffocate.AnimationRadius");
-		this.constantAimRadius = getConfig().getDouble("Abilities.Air.Suffocate.RequireConstantAimRadius");
-		this.damage = getConfig().getDouble("Abilities.Air.Suffocate.Damage");
-		this.damageDelay = getConfig().getDouble("Abilities.Air.Suffocate.DamageInitialDelay");
-		this.damageRepeat = getConfig().getDouble("Abilities.Air.Suffocate.DamageInterval");
-		this.slow = getConfig().getInt("Abilities.Air.Suffocate.SlowPotency");
-		this.slowRepeat = getConfig().getDouble("Abilities.Air.Suffocate.SlowInterval");
-		this.slowDelay = getConfig().getDouble("Abilities.Air.Suffocate.SlowDelay");
-		this.blind = getConfig().getInt("Abilities.Air.Suffocate.BlindPotentcy");
-		this.blindDelay = getConfig().getDouble("Abilities.Air.Suffocate.BlindDelay");
-		this.blindRepeat = getConfig().getDouble("Abilities.Air.Suffocate.BlindInterval");
+		this.requireConstantAim = ConfigManager.airConfig.get().getBoolean("Abilities.Air.Suffocate.RequireConstantAim");
+		this.canSuffocateUndead = ConfigManager.airConfig.get().getBoolean("Abilities.Air.Suffocate.CanBeUsedOnUndeadMobs");
+		this.particleCount = ConfigManager.airConfig.get().getInt("Abilities.Air.Suffocate.AnimationParticleAmount");
+		this.animationSpeed = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.AnimationSpeed");
+		this.chargeTime = ConfigManager.airConfig.get().getLong("Abilities.Air.Suffocate.ChargeTime");
+		this.cooldown = ConfigManager.airConfig.get().getLong("Abilities.Air.Suffocate.Cooldown");
+		this.range = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.Range");
+		this.radius = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.AnimationRadius");
+		this.constantAimRadius = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.RequireConstantAimRadius");
+		this.damage = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.Damage");
+		this.damageDelay = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.DamageInitialDelay");
+		this.damageRepeat = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.DamageInterval");
+		this.slow = ConfigManager.airConfig.get().getInt("Abilities.Air.Suffocate.SlowPotency");
+		this.slowRepeat = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.SlowInterval");
+		this.slowDelay = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.SlowDelay");
+		this.blind = ConfigManager.airConfig.get().getInt("Abilities.Air.Suffocate.BlindPotentcy");
+		this.blindDelay = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.BlindDelay");
+		this.blindRepeat = ConfigManager.airConfig.get().getDouble("Abilities.Air.Suffocate.BlindInterval");
 		this.targets = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
 		if (bPlayer.isAvatarState()) {
-			cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.Cooldown");
-			chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.ChargeTime");
-			damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Damage");
-			range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Range");
+			cooldown = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.Cooldown");
+			chargeTime = ConfigManager.avatarConfig.get().getLong("Abilities.Avatar.AvatarState.Air.Suffocate.ChargeTime");
+			damage = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Damage");
+			range = ConfigManager.avatarConfig.get().getDouble("Abilities.Avatar.AvatarState.Air.Suffocate.Range");
 			
 		}
 

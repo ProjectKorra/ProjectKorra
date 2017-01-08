@@ -12,7 +12,14 @@ public class ConfigType {
 	public static final ConfigType DEFAULT = new ConfigType("Default");
 	public static final ConfigType PRESETS = new ConfigType("Presets");
 	public static final ConfigType LANGUAGE = new ConfigType("Language");
-	public static final ConfigType[] CORE_TYPES = {DEFAULT, PRESETS, LANGUAGE};
+	public static final ConfigType AVATAR = new ConfigType("Avatar");
+	public static final ConfigType WATER = new ConfigType("Water");
+	public static final ConfigType EARTH = new ConfigType("Earth");
+	public static final ConfigType FIRE = new ConfigType("Fire");
+	public static final ConfigType AIR = new ConfigType("Air");
+	public static final ConfigType CHI = new ConfigType("Chi");
+	public static final ConfigType ADDONS = new ConfigType("AddonAbilities");
+	public static final ConfigType[] CORE_TYPES = {DEFAULT, PRESETS, LANGUAGE, AVATAR, WATER, EARTH, FIRE, AIR, CHI, ADDONS};
 	
 	private String string;
 	

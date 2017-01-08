@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending.ice;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 
@@ -123,15 +124,15 @@ public class IceSpikePillar extends IceAbility {
 	
 	private void setFields() {
 		this.direction = new Vector(0, 1, 0);
-		this.speed = getConfig().getDouble("Abilities.Water.IceSpike.Speed");
-		this.slowCooldown = getConfig().getLong("Abilities.Water.IceSpike.SlowCooldown");
-		this.slowPower = getConfig().getInt("Abilities.Water.IceSpike.SlowPower");
-		this.slowDuration = getConfig().getInt("Abilities.Water.IceSpike.SlowDuration");
-		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Damage");
-		this.range = getConfig().getDouble("Abilities.Water.IceSpike.Range");
-		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
-		this.height = getConfig().getInt("Abilities.Water.IceSpike.Height");
-		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Push"), 0);
+		this.speed = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Speed");
+		this.slowCooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.IceSpike.SlowCooldown");
+		this.slowPower = ConfigManager.waterConfig.get().getInt("Abilities.Water.IceSpike.SlowPower");
+		this.slowDuration = ConfigManager.waterConfig.get().getInt("Abilities.Water.IceSpike.SlowDuration");
+		this.damage = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Damage");
+		this.range = ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Range");
+		this.cooldown = ConfigManager.waterConfig.get().getLong("Abilities.Water.IceSpike.Cooldown");
+		this.height = ConfigManager.waterConfig.get().getInt("Abilities.Water.IceSpike.Height");
+		this.thrownForce = new Vector(0, ConfigManager.waterConfig.get().getDouble("Abilities.Water.IceSpike.Push"), 0);
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.damaged = new ArrayList<>();
 		

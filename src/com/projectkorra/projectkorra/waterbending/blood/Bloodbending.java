@@ -20,6 +20,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BloodAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -48,14 +49,14 @@ public class Bloodbending extends BloodAbility {
 			return;
 		}
 
-		this.canOnlyBeUsedAtNight = getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
-		this.canBeUsedOnUndeadMobs = getConfig().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
-		this.onlyUsableDuringMoon = getConfig().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
-		this.canBloodbendOtherBloodbenders = getConfig().getBoolean("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders");
-		this.range = getConfig().getInt("Abilities.Water.Bloodbending.Range");
-		this.holdTime = getConfig().getInt("Abilities.Water.Bloodbending.HoldTime");
-		this.cooldown = getConfig().getInt("Abilities.Water.Bloodbending.Cooldown");
-		this.throwFactor = getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
+		this.canOnlyBeUsedAtNight = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedAtNight");
+		this.canBeUsedOnUndeadMobs = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.Bloodbending.CanBeUsedOnUndeadMobs");
+		this.onlyUsableDuringMoon = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.Bloodbending.CanOnlyBeUsedDuringFullMoon");
+		this.canBloodbendOtherBloodbenders = ConfigManager.waterConfig.get().getBoolean("Abilities.Water.Bloodbending.CanBloodbendOtherBloodbenders");
+		this.range = ConfigManager.waterConfig.get().getInt("Abilities.Water.Bloodbending.Range");
+		this.holdTime = ConfigManager.waterConfig.get().getInt("Abilities.Water.Bloodbending.HoldTime");
+		this.cooldown = ConfigManager.waterConfig.get().getInt("Abilities.Water.Bloodbending.Cooldown");
+		this.throwFactor = ConfigManager.waterConfig.get().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
 
 		if (canOnlyBeUsedAtNight && !isNight(player.getWorld()) && !bPlayer.canBloodbendAtAnytime()) {
 			return;
