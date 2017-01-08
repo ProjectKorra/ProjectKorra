@@ -15,7 +15,6 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -90,16 +89,15 @@ public class EarthSmash extends EarthAbility {
 
 		if (type == ClickType.SHIFT_DOWN || type == ClickType.SHIFT_UP && !player.isSneaking()) {
 			if (bPlayer.isAvatarState()) {
-				selectRange = AvatarState.getValue(selectRange);
-				grabRange = AvatarState.getValue(grabRange);
-				chargeTime = 0;
-				cooldown = 0;
-				damage = AvatarState.getValue(damage);
-				knockback = AvatarState.getValue(knockback);
-				knockup = AvatarState.getValue(knockup);
-				flightSpeed = AvatarState.getValue(flightSpeed);
-				flightRemoveTimer = Integer.MAX_VALUE;
-				shootRange = AvatarState.getValue(shootRange);
+				this.selectRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.SelectRange");
+				this.grabRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.GrabRange");
+				this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.ChargeTime");
+				this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.Cooldown");
+				this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Damage");
+				this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.Knockback");
+				this.flightSpeed = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightSpeed");
+				this.flightRemoveTimer = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer");
+				this.shootRange = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthSmash.ShootRange");
 			}
 
 			EarthSmash flySmash = flyingInSmashCheck(player);

@@ -60,6 +60,12 @@ public class EarthBlast extends EarthAbility {
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthBlast.SelectRange");
 		this.time = System.currentTimeMillis();
 		this.interval = (long) (1000.0 / speed);
+		
+		if (bPlayer.isAvatarState()) {
+			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthBlast.Cooldown");
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthBlast.Damage");
+			
+		}
 
 		if (prepare()) {
 			start();

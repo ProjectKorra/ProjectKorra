@@ -46,6 +46,9 @@ public class Collapse extends EarthAbility {
 		this.distance = getEarthbendableBlocksLength(block, direction.clone().multiply(-1), height);
 		loadAffectedBlocks();
 
+		if (bPlayer.isAvatarState()) {
+			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height");
+		}
 		if (distance != 0) {
 			start();
 			bPlayer.addCooldown("CollapsePillar", cooldown);

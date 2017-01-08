@@ -38,6 +38,9 @@ public class CollapseWall extends EarthAbility {
 		this.blocks = new ConcurrentHashMap<>();
 		this.baseBlocks = new ConcurrentHashMap<>();
 
+		if (bPlayer.isAvatarState()) {
+			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Wall.Height");
+		}
 		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.SHIFT_DOWN);
 		if (sblock == null) {
 			location = getTargetEarthBlock(selectRange).getLocation();

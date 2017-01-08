@@ -60,6 +60,9 @@ public class EarthTunnel extends EarthAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
+		if (bPlayer.isAvatarState()) {
+			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
+		}
 
 		start();
 	}
