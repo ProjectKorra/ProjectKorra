@@ -152,12 +152,32 @@
 	  <artifactId>apimanager</artifactId>
 	  <version>1.0.1</version>
 	  <scope>compile</scope>
+	  <exclusions>
+      	    <exclusion>
+              <groupId>org.bukkit</groupId>
+              <artifactId>bukkit</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.bukkit</groupId>
+              <artifactId>craftbukkit</artifactId>
+            </exclusion>
+          </exclusions>
 	</dependency>
 	<dependency>
 	  <groupId>org.inventivetalent</groupId>
 	  <artifactId>reflectionhelper</artifactId>
 	  <version>1.10.4</version>
 	  <scope>compile</scope>
+          <exclusions>
+      	    <exclusion>
+              <groupId>org.bukkit</groupId>
+              <artifactId>bukkit</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>junit</groupId>
+              <artifactId>junit</artifactId>
+            </exclusion>
+          </exclusions>
 	</dependency>
   </dependencies>
 
