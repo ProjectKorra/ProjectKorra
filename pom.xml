@@ -149,8 +149,15 @@
     </dependency>
 	<dependency>
 	  <groupId>org.inventivetalent</groupId>
-	  <artifactId>glowapi</artifactId>
-	  <version>1.4.4</version>
+	  <artifactId>apimanager</artifactId>
+	  <version>1.0.1</version>
+	  <scope>compile</scope>
+	</dependency>
+	<dependency>
+	  <groupId>org.inventivetalent</groupId>
+	  <artifactId>reflectionhelper</artifactId>
+	  <version>1.10.4</version>
+	  <scope>compile</scope>
 	</dependency>
   </dependencies>
 
