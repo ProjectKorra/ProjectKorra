@@ -13,10 +13,6 @@
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
-	<repository>
-	  <id>inventive-repo</id>
-	  <url>https://repo.inventivetalent.org/content/groups/public/</url>
-	</repository>
   </repositories>
 
   <dependencies>
@@ -24,8 +20,9 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.10.2-R0.1-SNAPSHOT</version>
-      <scope>provided</scope>
+      <version>LATEST</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/spigot-1.10.2.jar</systemPath>
     </dependency>
     <!-- Factions -->
     <dependency>
@@ -147,38 +144,6 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/GLib.jar</systemPath>
     </dependency>
-	<dependency>
-	  <groupId>org.inventivetalent</groupId>
-	  <artifactId>apimanager</artifactId>
-	  <version>1.0.1</version>
-	  <scope>compile</scope>
-	  <exclusions>
-      	    <exclusion>
-              <groupId>org.bukkit</groupId>
-              <artifactId>bukkit</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.bukkit</groupId>
-              <artifactId>craftbukkit</artifactId>
-            </exclusion>
-          </exclusions>
-	</dependency>
-	<dependency>
-	  <groupId>org.inventivetalent</groupId>
-	  <artifactId>reflectionhelper</artifactId>
-	  <version>1.10.4</version>
-	  <scope>compile</scope>
-          <exclusions>
-      	    <exclusion>
-              <groupId>org.bukkit</groupId>
-              <artifactId>bukkit</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>junit</groupId>
-              <artifactId>junit</artifactId>
-            </exclusion>
-          </exclusions>
-	</dependency>
   </dependencies>
 
   <build>
