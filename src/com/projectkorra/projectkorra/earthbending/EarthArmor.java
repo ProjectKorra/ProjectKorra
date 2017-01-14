@@ -29,6 +29,7 @@ public class EarthArmor extends EarthAbility {
 	private MaterialData legsData;
 	private long cooldown;
 	private long interval;
+	private long maxDuration;
 	private double selectRange;
 	private Block headBlock;
 	private Block legsBlock;
@@ -50,6 +51,7 @@ public class EarthArmor extends EarthAbility {
 		this.interval = 2000;
 		this.goldHearts = 0;
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthArmor.Cooldown");
+		this.maxDuration = getConfig().getLong("Abilities.Earth.EarthArmor.MaxDuration");
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthArmor.SelectRange");
 		this.maxGoldHearts = getConfig().getInt("Abilities.Earth.EarthArmor.GoldHearts");
 		
@@ -215,9 +217,24 @@ public class EarthArmor extends EarthAbility {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void progress() {		
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			remove();
+			return;
+		}
+		
+		if (System.currentTimeMillis() - getStartTime() > maxDuration) {
+			player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+			player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+			player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
+			
+			ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(headData.getItemType(), headData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getEyeLocation(), 128);
+			ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(legsData.getItemType(), legsData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getLocation(), 128);
+			
+			bPlayer.addCooldown(this);
+			remove();
 			remove();
 			return;
 		}
