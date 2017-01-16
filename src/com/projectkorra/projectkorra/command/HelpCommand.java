@@ -24,7 +24,7 @@ import com.projectkorra.rpg.commands.RPGCommand;
  * Executor for /bending help. Extends {@link PKCommand}.
  */
 public class HelpCommand extends PKCommand {
-	
+
 	private String required;
 	private String optional;
 	private String properUsage;
@@ -39,7 +39,7 @@ public class HelpCommand extends PKCommand {
 
 	public HelpCommand() {
 		super("help", "/bending help <Page/Topic>", ConfigManager.languageConfig.get().getString("Commands.Help.Description"), new String[] { "help", "h" });
-		
+
 		this.required = ConfigManager.languageConfig.get().getString("Commands.Help.Required");
 		this.optional = ConfigManager.languageConfig.get().getString("Commands.Help.Optional");
 		this.properUsage = ConfigManager.languageConfig.get().getString("Commands.Help.ProperUsage");
@@ -155,10 +155,11 @@ public class HelpCommand extends PKCommand {
 			sender.sendMessage(ChatColor.RED + invalidTopic);
 		}
 	}
-	
+
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 1 || !sender.hasPermission("bending.command.help")) return new ArrayList<String>();
+		if (args.size() >= 1 || !sender.hasPermission("bending.command.help"))
+			return new ArrayList<String>();
 		List<String> list = new ArrayList<String>();
 		for (Element e : Element.getAllElements()) {
 			list.add(e.getName());

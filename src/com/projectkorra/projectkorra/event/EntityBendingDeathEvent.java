@@ -9,7 +9,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Called when an entity is killed by {@link GeneralMethods#damageEntity(Player player, Entity entity, double damage, String ability) GeneralMethods.damageEntity}
+ * Called when an entity is killed by
+ * {@link GeneralMethods#damageEntity(Player player, Entity entity, double damage, String ability)
+ * GeneralMethods.damageEntity}
  */
 
 public class EntityBendingDeathEvent extends Event {
@@ -23,7 +25,8 @@ public class EntityBendingDeathEvent extends Event {
 	 * Creates a new EntityBendingDeathEvent
 	 * 
 	 * @param entity the entity who died
-	 * @param damage the amount of damage done in the attack that killed the victim
+	 * @param damage the amount of damage done in the attack that killed the
+	 *            victim
 	 * @param ability the ability used to kill the entity
 	 */
 	public EntityBendingDeathEvent(Entity entity, double damage, Ability ability) {
@@ -63,7 +66,7 @@ public class EntityBendingDeathEvent extends Event {
 	public double getDamage() {
 		return damage;
 	}
-	
+
 	public HandlerList getHandlers() {
 		return handlers;
 	}

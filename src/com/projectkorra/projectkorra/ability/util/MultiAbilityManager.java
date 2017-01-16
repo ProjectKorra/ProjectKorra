@@ -45,9 +45,9 @@ public class MultiAbilityManager {
 	public static void bindMultiAbility(Player player, String multiAbility) {
 		BindChangeEvent event = new BindChangeEvent(player, multiAbility, true);
 		Bukkit.getServer().getPluginManager().callEvent(event);
-		if(event.isCancelled())
+		if (event.isCancelled())
 			return;
-		
+
 		if (playerAbilities.containsKey(player))
 			unbindMultiAbility(player);
 		playerSlot.put(player, player.getInventory().getHeldItemSlot());
@@ -117,8 +117,9 @@ public class MultiAbilityManager {
 	}
 
 	/**
-	 * MultiAbility equivalent of {@link GeneralMethods#getBoundAbility(Player)}. Returns a
-	 * boolean based on whether a player has a specific MultiAbility active.
+	 * MultiAbility equivalent of
+	 * {@link GeneralMethods#getBoundAbility(Player)}. Returns a boolean based
+	 * on whether a player has a specific MultiAbility active.
 	 * 
 	 * @param player The player to check
 	 * @param multiAbility The multiability name
@@ -129,7 +130,7 @@ public class MultiAbilityManager {
 		if (bPlayer == null) {
 			return false;
 		}
-		
+
 		if (playerAbilities.containsKey(player)) {
 			if (!playerBoundAbility.get(player).equals(multiAbility) && bPlayer.getBoundAbility() != null)
 				return false;
@@ -195,14 +196,14 @@ public class MultiAbilityManager {
 	 * 
 	 * @param player
 	 */
-	public static void unbindMultiAbility(Player player) {	
+	public static void unbindMultiAbility(Player player) {
 		if (playerAbilities.containsKey(player)) {
 			HashMap<Integer, String> prevBinds = playerAbilities.get(player);
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null) {
 				return;
 			}
-			
+
 			int lastNonNull = -1;
 			for (int i = 1; i < 10; i++) {
 				if (prevBinds.get(i) != null)

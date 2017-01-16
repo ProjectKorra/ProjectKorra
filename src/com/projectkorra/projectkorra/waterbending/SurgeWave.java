@@ -50,7 +50,7 @@ public class SurgeWave extends WaterAbility {
 	private Vector targetDirection;
 	private Map<Block, Block> waveBlocks;
 	private Map<Block, Material> frozenBlocks;
-	
+
 	public SurgeWave(Player player) {
 		super(player);
 
@@ -61,7 +61,7 @@ public class SurgeWave extends WaterAbility {
 				return;
 			}
 		}
-		
+
 		this.canHitSelf = true;
 		this.currentRadius = 1;
 		this.cooldown = getConfig().getLong("Abilities.Water.Surge.Wave.Cooldown");
@@ -75,12 +75,12 @@ public class SurgeWave extends WaterAbility {
 		this.selectRange = getConfig().getDouble("Abilities.Water.Surge.Wave.SelectRange");
 		this.waveBlocks = new ConcurrentHashMap<>();
 		this.frozenBlocks = new ConcurrentHashMap<>();
-		
+
 		if (bPlayer.isAvatarState()) {
 			maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Surge.Wave.Radius");
 		}
 		maxRadius = getNightFactor(maxRadius);
-				
+
 		if (prepare()) {
 			wave = getAbility(player, SurgeWave.class);
 			if (wave != null) {
@@ -142,7 +142,7 @@ public class SurgeWave extends WaterAbility {
 			} else if (TempBlock.isTempBlock(block)) {
 				continue;
 			}
-			
+
 			Block oldBlock = block;
 			if (block.getType() == Material.AIR || block.getType() == Material.SNOW || isWater(block)) {
 				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
@@ -184,24 +184,24 @@ public class SurgeWave extends WaterAbility {
 			return;
 		}
 		bPlayer.addCooldown("SurgeWave", cooldown);
-		
+
 		if (sourceBlock != null) {
 			if (!sourceBlock.getWorld().equals(player.getWorld())) {
 				return;
 			}
-			
+
 			range = getNightFactor(range);
 			if (bPlayer.isAvatarState()) {
 				pushFactor = AvatarState.getValue(pushFactor);
 			}
-			
+
 			Entity target = GeneralMethods.getTargetedEntity(player, range);
 			if (target == null) {
 				targetDestination = player.getTargetBlock(getTransparentMaterialSet(), (int) range).getLocation();
 			} else {
 				targetDestination = ((LivingEntity) target).getEyeLocation();
 			}
-			
+
 			if (targetDestination.distanceSquared(location) <= 1) {
 				progressing = false;
 				targetDestination = null;
@@ -209,7 +209,7 @@ public class SurgeWave extends WaterAbility {
 				progressing = true;
 				targetDirection = getDirection(sourceBlock.getLocation(), targetDestination).normalize();
 				targetDestination = location.clone().add(targetDirection.clone().multiply(range));
-				
+
 				if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 					new PlantRegrowth(player, sourceBlock);
 				}
@@ -261,19 +261,13 @@ public class SurgeWave extends WaterAbility {
 				Block blockl = location.getBlock();
 				ArrayList<Block> blocks = new ArrayList<Block>();
 
-				if (!GeneralMethods.isRegionProtectedFromBuild(this, location) 
-						&& (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE 
-							|| isPlant(blockl) || isWater(blockl) 
-							|| isWaterbendable(player, blockl))) 
-						&& blockl.getType() != Material.LEAVES)) {
+				if (!GeneralMethods.isRegionProtectedFromBuild(this, location) && (((blockl.getType() == Material.AIR || blockl.getType() == Material.FIRE || isPlant(blockl) || isWater(blockl) || isWaterbendable(player, blockl))) && blockl.getType() != Material.LEAVES)) {
 					for (double i = 0; i <= currentRadius; i += .5) {
 						for (double angle = 0; angle < 360; angle += 10) {
 							Vector vec = GeneralMethods.getOrthogonalVector(targetDirection, angle, i);
 							Block block = location.clone().add(vec).getBlock();
-							
-							if (!blocks.contains(block) 
-									&& (block.getType() == Material.AIR || block.getType() == Material.FIRE) 
-									|| isWaterbendable(block)) {
+
+							if (!blocks.contains(block) && (block.getType() == Material.AIR || block.getType() == Material.FIRE) || isWaterbendable(block)) {
 								blocks.add(block);
 								FireBlast.removeFireBlastsAroundPoint(block.getLocation(), 2);
 							}
@@ -322,7 +316,7 @@ public class SurgeWave extends WaterAbility {
 						Vector dir = direction.clone();
 						dir.setY(dir.getY() * verticalFactor);
 						GeneralMethods.setVelocity(entity, entity.getVelocity().clone().add(dir.clone().multiply(getNightFactor(pushFactor))));
-						
+
 						entity.setFallDistance(0);
 						if (entity.getFireTicks() > 0) {
 							entity.getWorld().playEffect(entity.getLocation(), Effect.EXTINGUISH, 0);
@@ -362,7 +356,7 @@ public class SurgeWave extends WaterAbility {
 		}
 	}
 
-	public void returnWater()  {
+	public void returnWater() {
 		if (location != null && player.isOnline()) {
 			new WaterReturn(player, location.getBlock());
 		}
@@ -436,7 +430,7 @@ public class SurgeWave extends WaterAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -446,12 +440,12 @@ public class SurgeWave extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isCollidable() {
 		return progressing || activateFreeze;
 	}
-	
+
 	@Override
 	public List<Location> getLocations() {
 		ArrayList<Location> locations = new ArrayList<>();
@@ -607,5 +601,5 @@ public class SurgeWave extends WaterAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
+
 }

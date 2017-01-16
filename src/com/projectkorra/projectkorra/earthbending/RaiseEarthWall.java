@@ -18,7 +18,7 @@ public class RaiseEarthWall extends EarthAbility {
 	private int width;
 	private long cooldown;
 	private Location location;
-	
+
 	public RaiseEarthWall(Player player) {
 		super(player);
 		this.selectRange = getConfig().getInt("Abilities.Earth.RaiseEarth.Wall.SelectRange");
@@ -41,19 +41,19 @@ public class RaiseEarthWall extends EarthAbility {
 		ox = -direction.getZ();
 		oy = 0;
 		oz = direction.getX();
-		
+
 		Vector orth = new Vector(ox, oy, oz);
 		orth = orth.normalize();
 		orth = getDegreeRoundedVector(orth, 0.25);
 
 		Block sblock = BlockSource.getEarthSourceBlock(player, selectRange, ClickType.SHIFT_DOWN);
-		
+
 		if (sblock == null) {
 			location = getTargetEarthBlock(selectRange).getLocation();
 		} else {
 			location = sblock.getLocation();
 		}
-		
+
 		World world = location.getWorld();
 		boolean shouldAddCooldown = false;
 
@@ -91,22 +91,22 @@ public class RaiseEarthWall extends EarthAbility {
 			bPlayer.addCooldown("RaiseEarthWall", cooldown);
 		}
 	}
-	
+
 	private static Vector getDegreeRoundedVector(Vector vec, double degreeIncrement) {
 		if (vec == null) {
 			return null;
 		}
 		vec = vec.normalize();
-		double[] dims = {vec.getX(), vec.getY(), vec.getZ()};
-		
+		double[] dims = { vec.getX(), vec.getY(), vec.getZ() };
+
 		for (int i = 0; i < dims.length; i++) {
 			double dim = dims[i];
 			int sign = dim >= 0 ? 1 : -1;
-			int dimDivIncr = (int)(dim / degreeIncrement);
-			
+			int dimDivIncr = (int) (dim / degreeIncrement);
+
 			double lowerBound = dimDivIncr * degreeIncrement;
-			double upperBound = (dimDivIncr + (1 * sign))  * degreeIncrement;
-			
+			double upperBound = (dimDivIncr + (1 * sign)) * degreeIncrement;
+
 			if (Math.abs(dim - lowerBound) < Math.abs(dim - upperBound)) {
 				dims[i] = lowerBound;
 			} else {
@@ -122,7 +122,8 @@ public class RaiseEarthWall extends EarthAbility {
 	}
 
 	@Override
-	public void progress() {}
+	public void progress() {
+	}
 
 	@Override
 	public Location getLocation() {
@@ -133,7 +134,7 @@ public class RaiseEarthWall extends EarthAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -183,5 +184,5 @@ public class RaiseEarthWall extends EarthAbility {
 	public void setSelectRange(int selectRange) {
 		this.selectRange = selectRange;
 	}
-	
+
 }

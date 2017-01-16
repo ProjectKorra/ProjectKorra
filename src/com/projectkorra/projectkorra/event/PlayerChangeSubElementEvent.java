@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class PlayerChangeSubElementEvent extends Event{
+public class PlayerChangeSubElementEvent extends Event {
 
 	private static final HandlerList handlers = new HandlerList();
 	private CommandSender sender;
@@ -21,7 +21,8 @@ public class PlayerChangeSubElementEvent extends Event{
 	 * @param sender the {@link CommandSender} who changed the player's bending
 	 * @param target the {@link Player} who's bending was changed
 	 * @param sub the {@link SubElement} that was changed to
-	 * @param result whether the element was chosen, added, removed, or permaremoved
+	 * @param result whether the element was chosen, added, removed, or
+	 *            permaremoved
 	 */
 	public PlayerChangeSubElementEvent(CommandSender sender, Player target, SubElement sub, Result result) {
 		this.sender = sender;
@@ -69,7 +70,7 @@ public class PlayerChangeSubElementEvent extends Event{
 	public Result getResult() {
 		return result;
 	}
-	
+
 	public static enum Result {
 		CHOOSE, REMOVE, ADD, PERMAREMOVE;
 		private Result() {

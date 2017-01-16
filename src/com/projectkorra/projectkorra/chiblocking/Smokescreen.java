@@ -24,7 +24,7 @@ public class Smokescreen extends ChiAbility {
 	private int duration;
 	private long cooldown;
 	private double radius;
-	
+
 	public Smokescreen(Player player) {
 		super(player);
 		if (!bPlayer.canBend(this)) {
@@ -35,7 +35,7 @@ public class Smokescreen extends ChiAbility {
 		this.radius = getConfig().getDouble("Abilities.Chi.Smokescreen.Radius");
 		start();
 	}
-	
+
 	@Override
 	public void progress() {
 		SNOWBALLS.put(player.launchProjectile(Snowball.class).getEntityId(), this);
@@ -47,7 +47,7 @@ public class Smokescreen extends ChiAbility {
 		int z = -2;
 		int x = -2;
 		int y = 0;
-		
+
 		for (int i = 0; i < 125; i++) {
 			Location newLoc = new Location(loc.getWorld(), loc.getX() + x, loc.getY() + y, loc.getZ() + z);
 			for (int direction = 0; direction < 8; direction++) {
@@ -90,7 +90,6 @@ public class Smokescreen extends ChiAbility {
 			}
 		}
 	}
-	
 
 	@Override
 	public String getName() {
@@ -106,7 +105,7 @@ public class Smokescreen extends ChiAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -116,7 +115,7 @@ public class Smokescreen extends ChiAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}

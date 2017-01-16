@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-
 public class MySQL extends Database {
 
 	private String host = "localhost";

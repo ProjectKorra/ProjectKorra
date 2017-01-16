@@ -40,7 +40,7 @@ public class ImportCommand extends PKCommand {
 
 	public ImportCommand() {
 		super("import", "/bending import", ConfigManager.languageConfig.get().getString("Commands.Import.Description"), new String[] { "import", "i" });
-		
+
 		this.disabled = ConfigManager.languageConfig.get().getString("Commands.Import.Description");
 		this.preparingData = ConfigManager.languageConfig.get().getString("Commands.Import.PreparingData");
 		this.importStarted = ConfigManager.languageConfig.get().getString("Commands.Import.ImportStarted");
@@ -74,13 +74,13 @@ public class ImportCommand extends PKCommand {
 			boolean permaremoved = bendingPlayers.getBoolean(string + ".Permaremoved");
 			Element[] mainElements = Element.getMainElements();
 			Element[] allElements = Element.getAllElements();
-			
+
 			for (int i : bendingTypes) {
 				if (i < mainElements.length) {
 					elements.add(mainElements[i]);
 				}
 			}
-			
+
 			for (Element e : allElements) {
 				if (e instanceof SubElement) {
 					SubElement s = (SubElement) e;

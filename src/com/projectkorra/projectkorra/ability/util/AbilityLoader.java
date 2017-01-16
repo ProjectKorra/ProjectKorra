@@ -33,7 +33,7 @@ public class AbilityLoader<T> implements Listener {
 		this.plugin = plugin;
 		this.directory = directory;
 		this.files = new ArrayList<File>();
-		
+
 		if (plugin == null || directory == null) {
 			return;
 		}
@@ -53,40 +53,43 @@ public class AbilityLoader<T> implements Listener {
 		}
 		this.loader = URLClassLoader.newInstance(urls.toArray(new URL[0]), plugin.getClass().getClassLoader());
 	}
-	
+
 	/**
 	 * @param classType
-	 * @param parentClass a parent of classType that has a visible default constructor
-	 * @return A list of all of the T objects that were loaded from the jar files within @param directory
+	 * @param parentClass a parent of classType that has a visible default
+	 *            constructor
+	 * @return A list of all of the T objects that were loaded from the jar
+	 *         files within @param directory
 	 */
 	@SuppressWarnings("unchecked")
 	public List<T> load(Class<?> classType, Class<?> parentClass) {
 		ArrayList<T> loadables = new ArrayList<>();
-		
+
 		for (File file : files) {
 			JarFile jarFile = null;
 			try {
 				jarFile = new JarFile(file);
 				Enumeration<JarEntry> entries = jarFile.entries();
-				
+
 				while (entries.hasMoreElements()) {
 					JarEntry entry = entries.nextElement();
 					if (!entry.getName().endsWith(".class")) {
 						continue;
 					}
-					
-			        String className = entry.getName().replace('/', '.').substring(0, entry.getName().length() - 6);
+
+					String className = entry.getName().replace('/', '.').substring(0, entry.getName().length() - 6);
 					Class<?> clazz = null;
 					try {
 						clazz = Class.forName(className, true, loader);
-					} catch (Exception | Error e) {
+					}
+					catch (Exception | Error e) {
 						continue;
 					}
 
 					if (!classType.isAssignableFrom(clazz) || clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
 						continue;
 					}
-					
+
 					ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
 					Constructor<?> objDef = parentClass.getDeclaredConstructor();
 					Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
@@ -96,16 +99,19 @@ public class AbilityLoader<T> implements Listener {
 					AbilityLoadEvent<T> event = new AbilityLoadEvent<T>(plugin, loadable, jarFile);
 					plugin.getServer().getPluginManager().callEvent(event);
 				}
-		
-			} catch (Exception | Error e) {
+
+			}
+			catch (Exception | Error e) {
 				e.printStackTrace();
 				plugin.getLogger().log(Level.WARNING, "Unknown cause");
 				plugin.getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " failed to load");
-			} finally {
+			}
+			finally {
 				if (jarFile != null) {
 					try {
 						jarFile.close();
-					} catch (IOException e) {
+					}
+					catch (IOException e) {
 						e.printStackTrace();
 					}
 				}

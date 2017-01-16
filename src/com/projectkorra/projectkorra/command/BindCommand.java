@@ -30,8 +30,8 @@ public class BindCommand extends PKCommand {
 	private String noSubElement;
 
 	public BindCommand() {
-		super("bind", "/bending bind <Ability> [Slot]", ConfigManager.languageConfig.get().getString("Commands.Bind.Description"), new String[]{ "bind", "b" });
-		
+		super("bind", "/bending bind <Ability> [Slot]", ConfigManager.languageConfig.get().getString("Commands.Bind.Description"), new String[] { "bind", "b" });
+
 		this.abilityDoesntExist = ConfigManager.languageConfig.get().getString("Commands.Bind.AbilityDoesntExist");
 		this.wrongNumber = ConfigManager.languageConfig.get().getString("Commands.Bind.WrongNumber");
 		this.loadingInfo = ConfigManager.languageConfig.get().getString("Commands.Bind.LoadingInfo");
@@ -52,17 +52,18 @@ public class BindCommand extends PKCommand {
 			sender.sendMessage(ChatColor.RED + abilityDoesntExist.replace("{ability}", args.get(0)));
 			return;
 		}
-		
+
 		// bending bind [Ability]
 		if (args.size() == 1) {
-			bind(sender, args.get(0), ((Player) sender).getInventory().getHeldItemSlot()+1);
+			bind(sender, args.get(0), ((Player) sender).getInventory().getHeldItemSlot() + 1);
 		}
 
 		// bending bind [ability] [#]
 		if (args.size() == 2) {
 			try {
 				bind(sender, args.get(0), Integer.parseInt(args.get(1)));
-			} catch (NumberFormatException ex) {
+			}
+			catch (NumberFormatException ex) {
 				sender.sendMessage(ChatColor.RED + wrongNumber);
 			}
 		}
@@ -100,15 +101,16 @@ public class BindCommand extends PKCommand {
 		} else if (!bPlayer.isElementToggled(coreAbil.getElement())) {
 			sender.sendMessage(ChatColor.RED + toggledElementOff);
 		}
-		
+
 		String name = coreAbil != null ? coreAbil.getName() : null;
 		GeneralMethods.bindAbility((Player) sender, name, slot);
 	}
-	
+
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 2 || !sender.hasPermission("bending.command.bind") || !(sender instanceof Player)) return new ArrayList<String>();
-		
+		if (args.size() >= 2 || !sender.hasPermission("bending.command.bind") || !(sender instanceof Player))
+			return new ArrayList<String>();
+
 		List<String> abilities = new ArrayList<String>();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 		if (args.size() == 0) {

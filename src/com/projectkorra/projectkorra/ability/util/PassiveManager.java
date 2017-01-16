@@ -44,20 +44,22 @@ public class PassiveManager {
 				Class<?> clazz = null;
 				try {
 					clazz = Class.forName(ability.getClass().getName());
-				} catch (ClassNotFoundException e) {
+				}
+				catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}
 				Constructor<?> constructor = null;
 				try {
 					constructor = clazz.getConstructor(Player.class);
-				} catch (NoSuchMethodException | SecurityException e) {
+				}
+				catch (NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
 				}
 				Object object = null;
 				try {
 					object = constructor.newInstance(new Object[] { player });
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException e) {
+				}
+				catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					e.printStackTrace();
 				}
 				((CoreAbility) object).start();

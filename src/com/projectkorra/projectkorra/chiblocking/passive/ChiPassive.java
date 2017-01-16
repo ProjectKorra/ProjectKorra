@@ -20,22 +20,22 @@ public class ChiPassive {
 		if (bPlayer == null) {
 			return false;
 		}
-		
+
 		ChiAbility stance = bPlayer.getStance();
 		QuickStrike quickStrike = CoreAbility.getAbility(player, QuickStrike.class);
 		SwiftKick swiftKick = CoreAbility.getAbility(player, SwiftKick.class);
 		double newChance = 0;
-		
+
 		if (stance != null && stance instanceof AcrobatStance) {
 			newChance = getChance() + ((AcrobatStance) stance).getChiBlockBoost();
 		}
-		
+
 		if (quickStrike != null) {
 			newChance = getChance() + quickStrike.getBlockChance();
 		} else if (swiftKick != null) {
 			newChance = getChance() + swiftKick.getBlockChance();
 		}
-		
+
 		if (Math.random() > newChance / 100.0) {
 			return false;
 		} else if (bPlayer.isChiBlocked()) {
@@ -48,7 +48,7 @@ public class ChiPassive {
 		if (Suffocate.isChannelingSphere(player)) {
 			Suffocate.remove(player);
 		}
-		
+
 		final BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
 			return;
@@ -66,7 +66,7 @@ public class ChiPassive {
 	public static double getExhaustionFactor() {
 		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.ChiSaturation.ExhaustionFactor");
 	}
-	
+
 	public static double getFallReductionFactor() {
 		return ConfigManager.getConfig().getDouble("Abilities.Chi.Passive.Acrobatics.FallReductionFactor");
 	}
