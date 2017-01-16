@@ -809,15 +809,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.PhaseChange.Melt.Delay", 50);
 			config.addDefault("Abilities.Water.PhaseChange.Melt.Radius", 7);
 			config.addDefault("Abilities.Water.PhaseChange.Melt.AllowFlow", true);
-			/*
-			 * config.addDefault("Abilities.Water.PhaseChange.Skate.Cooldown",
-			 * 7000);
-			 * config.addDefault("Abilities.Water.PhaseChange.Skate.Duration",
-			 * 7000);
-			 * config.addDefault("Abilities.Water.PhaseChange.Skate.Radius", 1);
-			 * config.addDefault("Abilities.Water.PhaseChange.Skate.Speed",
-			 * 0.335);
-			 */
 
 			config.addDefault("Abilities.Water.PlantArmor.Enabled", true);
 			config.addDefault("Abilities.Water.PlantArmor.Duration", 7500);
