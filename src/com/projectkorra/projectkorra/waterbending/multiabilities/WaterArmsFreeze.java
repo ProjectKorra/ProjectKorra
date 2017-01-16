@@ -31,26 +31,26 @@ public class WaterArmsFreeze extends IceAbility {
 	private Location location;
 	private Vector direction;
 	private WaterArms waterArms;
-		
+
 	public WaterArmsFreeze(Player player) {
 		super(player);
-		
+
 		this.usageCooldownEnabled = getConfig().getBoolean("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled");
 		this.iceRange = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Range");
 		this.iceDamage = getConfig().getInt("Abilities.Water.WaterArms.Freeze.Damage");
 		this.usageCooldown = getConfig().getLong("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown");
 		this.direction = player.getEyeLocation().getDirection();
-		
+
 		createInstance();
 	}
 
 	private void createInstance() {
 		waterArms = getAbility(player, WaterArms.class);
-		
+
 		if (waterArms != null) {
 			waterArms.switchPreferredArm();
 			arm = waterArms.getActiveArm();
-			
+
 			if (arm.equals(Arm.LEFT)) {
 				if (waterArms.isLeftArmCooldown() || bPlayer.isOnCooldown("WaterArms_LEFT")) {
 					return;
@@ -61,7 +61,7 @@ public class WaterArmsFreeze extends IceAbility {
 					waterArms.setLeftArmCooldown(true);
 				}
 			}
-			
+
 			if (arm.equals(Arm.RIGHT)) {
 				if (waterArms.isRightArmCooldown() || bPlayer.isOnCooldown("WaterArms_RIGHT")) {
 					return;
@@ -72,7 +72,7 @@ public class WaterArmsFreeze extends IceAbility {
 					waterArms.setRightArmCooldown(true);
 				}
 			}
-			
+
 			Vector dir = player.getLocation().getDirection();
 			location = waterArms.getActiveArmEnd().add(dir.normalize().multiply(1));
 			direction = GeneralMethods.getDirection(location, GeneralMethods.getTargetedLocation(player, iceRange, new Integer[] { 8, 9, 79, 174 })).normalize();
@@ -91,7 +91,7 @@ public class WaterArmsFreeze extends IceAbility {
 			remove();
 			return;
 		}
-		
+
 		if (distanceTravelled >= 5 && !cancelled) {
 			cancelled = true;
 			if (hasAbility(player, WaterArms.class)) {
@@ -103,7 +103,7 @@ public class WaterArmsFreeze extends IceAbility {
 				waterArms.setMaxIceBlasts(waterArms.getMaxIceBlasts() - 1);
 			}
 		}
-		
+
 		if (!canPlaceBlock(location.getBlock())) {
 			remove();
 			return;
@@ -173,7 +173,7 @@ public class WaterArmsFreeze extends IceAbility {
 	public long getCooldown() {
 		return usageCooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;

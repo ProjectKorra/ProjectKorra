@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -291,6 +292,7 @@ public class WaterSpoutWave extends WaterAbility {
 					for (Block block : FROZEN_BLOCKS.keySet()) {
 						TempBlock tBlock = FROZEN_BLOCKS.get(block);
 						if (tBlock.getBlock().getWorld().equals(player.getWorld()) && tBlock.getLocation().distance(player.getLocation()) >= thawRadius) {
+							Bukkit.broadcastMessage("revert");
 							tBlock.revertBlock();
 							FROZEN_BLOCKS.remove(block);
 						}

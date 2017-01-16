@@ -14,7 +14,7 @@ public class AirSaturation extends AirAbility implements PassiveAbility {
 
 	@Override
 	public void progress() {
-		
+
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class AirSaturation extends AirAbility implements PassiveAbility {
 
 	@Override
 	public String getName() {
-		return "AirSaturation" ;
+		return "AirSaturation";
 	}
 
 	@Override

@@ -103,7 +103,7 @@ public class AirSwipe extends AirAbility {
 			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage");
 			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSwipe.Push");
 		}
-		
+
 		start();
 	}
 
@@ -137,8 +137,7 @@ public class AirSwipe extends AirAbility {
 				location = location.clone().add(direction.clone().multiply(speed));
 				elements.put(direction, location);
 
-				if (location.distanceSquared(origin) > range * range
-						|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+				if (location.distanceSquared(origin) > range * range || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 					elements.remove(direction);
 				} else {
 					Block block = location.getBlock();
@@ -225,9 +224,9 @@ public class AirSwipe extends AirAbility {
 							elements.remove(fDirection);
 						}
 					} else if (entity.getEntityId() != player.getEntityId() && !(entity instanceof LivingEntity)) {
-						
-							GeneralMethods.setVelocity(entity, fDirection.multiply(pushFactor));
-						
+
+						GeneralMethods.setVelocity(entity, fDirection.multiply(pushFactor));
+
 					}
 				}
 			}.runTaskLater(ProjectKorra.plugin, i / MAX_AFFECTABLE_ENTITIES);
@@ -286,9 +285,8 @@ public class AirSwipe extends AirAbility {
 				double factor = 1;
 				if (System.currentTimeMillis() >= getStartTime() + maxChargeTime) {
 					factor = maxChargeFactor;
-				}  else {
-					factor = maxChargeFactor * (double) (System.currentTimeMillis() - getStartTime())
-							/ (double) maxChargeTime;
+				} else {
+					factor = maxChargeFactor * (double) (System.currentTimeMillis() - getStartTime()) / (double) maxChargeTime;
 				}
 
 				charging = false;

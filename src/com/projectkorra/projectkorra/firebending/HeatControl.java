@@ -35,30 +35,29 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
 
 public class HeatControl extends FireAbility {
-	
+
 	public enum HeatControlType {
 		COOK, EXTINGUISH, MELT, SOLIDIFY
 	}
-	
-	private static final Material[] COOKABLE_MATERIALS = { Material.RAW_BEEF, Material.RAW_CHICKEN, 
-			Material.RAW_FISH, Material.PORK, Material.POTATO_ITEM, Material.RABBIT, Material.MUTTON };
-	
+
+	private static final Material[] COOKABLE_MATERIALS = { Material.RAW_BEEF, Material.RAW_CHICKEN, Material.RAW_FISH, Material.PORK, Material.POTATO_ITEM, Material.RABBIT, Material.MUTTON };
+
 	private HeatControlType heatControlType;
-	
+
 	// HeatControl Cook variables
 	private long cookTime;
 	private long cookInterval;
-	
+
 	//HeatControl Extinguish variables
 	private long extinguishCooldown;
 	private double extinguishRadius;
-	
+
 	//HeatControl Melt variables
 	private double meltRange;
 	private double meltRadius;
 	private Location meltLocation;
 	private static final Map<Block, TempBlock> MELTED_BLOCKS = new HashMap<>();
-	
+
 	//HeatControl Solidify variables
 	private int solidifyRadius;
 	private long solidifyDelay;
@@ -73,10 +72,10 @@ public class HeatControl extends FireAbility {
 
 	public HeatControl(Player player, HeatControlType heatControlType) {
 		super(player);
-		
+
 		this.heatControlType = heatControlType;
 		setFields();
-		
+
 		if (this.heatControlType == HeatControlType.COOK) {
 			if (!isCookable(player.getInventory().getItemInMainHand().getType())) {
 				remove();
@@ -84,24 +83,24 @@ public class HeatControl extends FireAbility {
 				return;
 			}
 			start();
-			
+
 		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
 			if (bPlayer.isOnCooldown(getName() + "Extinguish")) {
 				remove();
 				return;
 			}
-			
+
 			start();
-			
+
 		} else if (this.heatControlType == HeatControlType.MELT) {
 			meltLocation = GeneralMethods.getTargetedLocation(player, meltRange);
 			for (Block block : GeneralMethods.getBlocksAroundPoint(meltLocation, meltRadius)) {
-				
+
 				if (isMeltable(block)) {
 					melt(player, block);
 				}
 			}
-			
+
 		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
 			if (!bPlayer.canBend(this)) {
 				return;
@@ -110,13 +109,13 @@ public class HeatControl extends FireAbility {
 				new HeatControl(player, HeatControlType.EXTINGUISH);
 				return;
 			}
-			
+
 			solidifyLastBlockTime = System.currentTimeMillis();
 			start();
 		}
-		
+
 	}
-	
+
 	public void setFields() {
 		if (this.heatControlType == HeatControlType.COOK) {
 			this.cookTime = System.currentTimeMillis();
@@ -145,24 +144,24 @@ public class HeatControl extends FireAbility {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void progress() {
-		
+
 		if (!bPlayer.canBend(this)) {
 			remove();
 			return;
 		}
-		
+
 		if (this.heatControlType == HeatControlType.COOK) {
 
 			if (!player.isSneaking()) {
 				remove();
 				return;
 			}
-			
+
 			if (!isCookable(player.getInventory().getItemInMainHand().getType())) {
 				remove();
 				return;
 			}
-			
+
 			if (System.currentTimeMillis() - cookTime > cookInterval) {
 				cook();
 				cookTime = System.currentTimeMillis();
@@ -170,45 +169,45 @@ public class HeatControl extends FireAbility {
 			}
 
 			displayCookParticles();
-			
+
 		} else if (this.heatControlType == HeatControlType.EXTINGUISH) {
-			
+
 			if (!player.isSneaking()) {
 				bPlayer.addCooldown(getName() + "Extinguish", extinguishCooldown);
 				remove();
 				return;
 			}
-			
+
 			Set<Material> blocks = new HashSet<>();
 			for (int material : GeneralMethods.NON_OPAQUE) {
 				blocks.add(Material.getMaterial(material));
 			}
-			
+
 			for (Block block : GeneralMethods.getBlocksAroundPoint(player.getLocation(), extinguishRadius)) {
 				Material material = block.getType();
 				if (material == Material.FIRE && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
-					
+
 					block.setType(Material.AIR);
 					block.getWorld().playEffect(block.getLocation(), Effect.EXTINGUISH, 0);
 				}
 			}
-			
+
 		} else if (this.heatControlType == HeatControlType.SOLIDIFY) {
-			
+
 			if (solidifyRadius >= solidifyMaxRadius) {
 				remove();
 				return;
 			}
-			
+
 			if (!player.isSneaking()) {
 				remove();
 				return;
 			}
-			
+
 			if (!solidifying) {
 				solidifying = true;
 			}
-			
+
 			Location targetLocation = GeneralMethods.getTargetedLocation(player, solidifyRange);
 			//if (isLava(targetLocation.getBlock())) {
 			//	remove();
@@ -218,16 +217,16 @@ public class HeatControl extends FireAbility {
 			List<Location> area = GeneralMethods.getCircle(solidifyLocation, solidifyRadius, 3, true, true, 0);
 			solidify(area);
 		}
-		
+
 	}
-	
+
 	private void cook() {
 		ItemStack cooked = getCooked(player.getInventory().getItemInMainHand());
 		HashMap<Integer, ItemStack> cantFit = player.getInventory().addItem(cooked);
 		for (int id : cantFit.keySet()) {
 			player.getWorld().dropItem(player.getEyeLocation(), cantFit.get(id));
 		}
-		
+
 		int amount = player.getInventory().getItemInMainHand().getAmount();
 		if (amount == 1) {
 			player.getInventory().clear(player.getInventory().getHeldItemSlot());
@@ -235,11 +234,11 @@ public class HeatControl extends FireAbility {
 			player.getInventory().getItemInMainHand().setAmount(amount - 1);
 		}
 	}
-	
+
 	private ItemStack getCooked(ItemStack is) {
 		ItemStack cooked = new ItemStack(Material.AIR);
 		Material material = is.getType();
-		
+
 		switch (material) {
 			case RAW_BEEF:
 				cooked = new ItemStack(Material.COOKED_BEEF, 1);
@@ -270,19 +269,19 @@ public class HeatControl extends FireAbility {
 			default:
 				break;
 		}
-		
+
 		return cooked;
 	}
-	
+
 	public void displayCookParticles() {
 		ParticleEffect.FLAME.display(player.getLocation().clone().add(0, 1, 0), 0.5F, 0.5F, 0.5F, 0, 3);
 		ParticleEffect.SMOKE.display(player.getLocation().clone().add(0, 1, 0), 0.5F, 0.5F, 0.5F, 0, 2);
 	}
-	
+
 	public static boolean isCookable(Material material) {
 		return Arrays.asList(COOKABLE_MATERIALS).contains(material);
 	}
-	
+
 	public static boolean canBurn(Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
@@ -295,7 +294,7 @@ public class HeatControl extends FireAbility {
 		}
 		return true;
 	}
-	
+
 	public static void melt(Player player, final Block block) {
 		if (GeneralMethods.isRegionProtectedFromBuild(player, "HeatControl", block.getLocation())) {
 			return;
@@ -309,25 +308,25 @@ public class HeatControl extends FireAbility {
 			WaterArmsSpear.thaw(block);
 			return;
 		}
-		
+
 		if (TempBlock.isTempBlock(block)) {
 			TempBlock tb = TempBlock.get(block);
 			if (PhaseChange.getFrozenBlocksAsTempBlock().contains(tb)) {
 				PhaseChange.thaw(tb);
 			}
 		}
-		
+
 		WaterSpoutWave.thaw(block);
 		WaterCombo.thaw(block);
-		
+
 		if (isMeltable(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
 			if (block.getType() == Material.SNOW) {
 				block.setType(Material.AIR);
 				return;
 			} else {
-				TempBlock tb = new TempBlock(block, Material.WATER, (byte)0);
+				TempBlock tb = new TempBlock(block, Material.WATER, (byte) 0);
 				MELTED_BLOCKS.put(block, tb);
-				
+
 				new BukkitRunnable() {
 					@Override
 					public void run() {
@@ -337,8 +336,8 @@ public class HeatControl extends FireAbility {
 				}.runTaskLater(ProjectKorra.plugin, 5 * 20 * 60);
 			}
 		}
-}
-	
+	}
+
 	public void solidify(List<Location> area) {
 		if (System.currentTimeMillis() < solidifyLastBlockTime + solidifyDelay) {
 			return;
@@ -358,7 +357,7 @@ public class HeatControl extends FireAbility {
 		}
 
 		Block b = lava.get(randy.nextInt(lava.size()));
-		
+
 		final TempBlock tempBlock;
 		if (TempBlock.isTempBlock(b)) {
 			tempBlock = TempBlock.get(b);
@@ -387,7 +386,7 @@ public class HeatControl extends FireAbility {
 							tempBlock.getBlock().setType(Material.COBBLESTONE);
 						}
 					}
-					
+
 					ParticleEffect.SMOKE.display(tempBlock.getBlock().getLocation().clone().add(0.5, 1, 0.5), 0.1F, 0.1F, 0.1F, 0.01F, 3);
 					if (randy.nextInt(3) == 0) {
 						tempBlock.getBlock().getWorld().playSound(tempBlock.getBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.5F, 1);
@@ -396,7 +395,7 @@ public class HeatControl extends FireAbility {
 			}
 		}.runTaskLater(ProjectKorra.plugin, 20);
 	}
-	
+
 	public void resetLocation(Location loc) {
 		if (solidifyLocation == null) {
 			solidifyLocation = loc;
@@ -433,7 +432,7 @@ public class HeatControl extends FireAbility {
 	public Location getLocation() {
 		return player.getLocation();
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public static Block getLavaBlock(Player player, double range) {
 		Location location = player.getEyeLocation();

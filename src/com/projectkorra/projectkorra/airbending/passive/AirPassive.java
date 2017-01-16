@@ -3,7 +3,7 @@ package com.projectkorra.projectkorra.airbending.passive;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AirPassive {
-	
+
 	public static double getExhaustionFactor() {
 		return getFactor();
 	}

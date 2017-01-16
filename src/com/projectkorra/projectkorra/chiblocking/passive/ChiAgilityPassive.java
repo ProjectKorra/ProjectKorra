@@ -15,7 +15,7 @@ public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
 	// Configurable variables
 	private int jumpPower;
 	private int speedPower;
-	
+
 	// Instance related variables
 	private boolean jumpActivate;
 	private boolean speedActivate;
@@ -24,7 +24,7 @@ public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
 		super(player);
 		setFields();
 	}
-	
+
 	public void setFields() {
 		this.jumpPower = ConfigManager.getConfig().getInt("Abilities.Chi.Passive.ChiAgility.JumpPower");
 		this.speedPower = ConfigManager.getConfig().getInt("Abilities.Chi.Passive.ChiAgility.SpeedPower");
@@ -35,7 +35,7 @@ public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
 		if (!player.isSprinting()) {
 			return;
 		}
-		
+
 		// Jump Buff
 		int jMax = jumpPower;
 		if (hasAbility(player, AcrobatStance.class)) {

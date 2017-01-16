@@ -146,8 +146,7 @@ public class WaterManipulation extends WaterAbility {
 					progressing = true;
 					settingUp = true;
 					firstDestination = getToEyeLevel();
-					firstDirection = GeneralMethods.getDirection(sourceBlock.getLocation(), firstDestination)
-							.normalize();
+					firstDirection = GeneralMethods.getDirection(sourceBlock.getLocation(), firstDestination).normalize();
 					targetDestination = GeneralMethods.getPointOnLine(firstDestination, targetDestination, range);
 					targetDirection = GeneralMethods.getDirection(firstDestination, targetDestination).normalize();
 
@@ -164,8 +163,7 @@ public class WaterManipulation extends WaterAbility {
 	}
 
 	public boolean prepare() {
-		Block block = BlockSource.getWaterSourceBlock(player, selectRange, ClickType.SHIFT_DOWN, true, true,
-				bPlayer.canPlantbend());
+		Block block = BlockSource.getWaterSourceBlock(player, selectRange, ClickType.SHIFT_DOWN, true, true, bPlayer.canPlantbend());
 		cancelPrevious();
 		//block(player);
 
@@ -304,8 +302,7 @@ public class WaterManipulation extends WaterAbility {
 				trail = new TempBlock(sourceBlock, Material.STATIONARY_WATER, (byte) 1);
 				sourceBlock = block;
 
-				if (location.distanceSquared(targetDestination) <= 1
-						|| location.distanceSquared(firstDestination) > range * range) {
+				if (location.distanceSquared(targetDestination) <= 1 || location.distanceSquared(firstDestination) > range * range) {
 					falling = true;
 					progressing = false;
 				}
@@ -355,12 +352,11 @@ public class WaterManipulation extends WaterAbility {
 			if (PhaseChange.getFrozenBlocksAsBlock().contains(block)) {
 				PhaseChange.getFrozenBlocksAsBlock().remove(block);
 			}
-			new TempBlock(block, Material.WATER, (byte)0);
+			new TempBlock(block, Material.WATER, (byte) 0);
 		} else {
 			if (isWater(block) && !AFFECTED_BLOCKS.containsKey(block)) {
-				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f,
-						5, block.getLocation().clone().add(.5, .5, .5), 255.0);
-			} 
+				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(.5, .5, .5), 255.0);
+			}
 		}
 
 	}
@@ -383,7 +379,7 @@ public class WaterManipulation extends WaterAbility {
 		return broke;
 	}
 
-	/**Blocks other water manips*/
+	/** Blocks other water manips */
 	public static void block(Player player) {
 		for (WaterManipulation manip : getAbilities(WaterManipulation.class)) {
 			if (!manip.location.getWorld().equals(player.getWorld())) {
@@ -399,10 +395,7 @@ public class WaterManipulation extends WaterAbility {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
-			if (mloc.distanceSquared(location) <= manip.selectRange * manip.selectRange
-					&& GeneralMethods.getDistanceFromLine(vector, location, manip.location) < manip.deflectRange
-					&& mloc.distanceSquared(location.clone().add(vector)) < mloc
-							.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
+			if (mloc.distanceSquared(location) <= manip.selectRange * manip.selectRange && GeneralMethods.getDistanceFromLine(vector, location, manip.location) < manip.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.remove();
 			}
 		}
@@ -492,7 +485,7 @@ public class WaterManipulation extends WaterAbility {
 
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				if (getTargetLocation(player, range).distanceSquared(block.getLocation()) > 1) {
-					TempBlock tb = new TempBlock(block, Material.WATER, (byte)0);
+					TempBlock tb = new TempBlock(block, Material.WATER, (byte) 0);
 
 					WaterManipulation waterManip = new WaterManipulation(player);
 					waterManip.moveWater();
@@ -526,10 +519,7 @@ public class WaterManipulation extends WaterAbility {
 			Location location = player.getEyeLocation();
 			Vector vector = location.getDirection();
 			Location mloc = manip.location;
-			if (mloc.distanceSquared(location) <= manip.selectRange * manip.selectRange
-					&& GeneralMethods.getDistanceFromLine(vector, location, manip.location) < manip.deflectRange
-					&& mloc.distanceSquared(location.clone().add(vector)) < mloc
-							.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
+			if (mloc.distanceSquared(location) <= manip.selectRange * manip.selectRange && GeneralMethods.getDistanceFromLine(vector, location, manip.location) < manip.deflectRange && mloc.distanceSquared(location.clone().add(vector)) < mloc.distanceSquared(location.clone().add(vector.clone().multiply(-1)))) {
 				manip.redirect(player, getTargetLocation(player, manip.selectRange));
 			}
 		}
@@ -580,17 +570,17 @@ public class WaterManipulation extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isCollidable() {
 		return progressing;
 	}
-	
+
 	@Override
 	public double getCollisionRadius() {
 		return collisionRadius;
 	}
-	
+
 	@Override
 	public void handleCollision(Collision collision) {
 		super.handleCollision(collision);

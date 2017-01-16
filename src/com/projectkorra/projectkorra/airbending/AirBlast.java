@@ -110,13 +110,12 @@ public class AirBlast extends AirAbility {
 		this.canOpenDoors = false;
 		this.canPressButtons = false;
 		this.canFlickLevers = false;
-		
+
 		if (bPlayer.isAvatarState()) {
 			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities");
 			this.pushFactorForOthers = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self");
 		}
 
-		
 		start();
 	}
 
@@ -201,7 +200,6 @@ public class AirBlast extends AirAbility {
 			double max = speed / speedFactor;
 			double factor = pushFactor;
 
-			
 			Vector push = direction.clone();
 			if (Math.abs(push.getY()) > max && !isUser) {
 				if (push.getY() < 0) {

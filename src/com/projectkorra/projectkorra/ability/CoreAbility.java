@@ -472,7 +472,7 @@ public abstract class CoreAbility implements Ability {
 						MultiAbility multiAbil = (MultiAbility) ability;
 						MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
 					}
-					
+
 					if (ability instanceof PassiveAbility) {
 						ability.setHiddenAbility(true);
 						PassiveManager.getPassives().put(name, ability);
@@ -550,7 +550,7 @@ public abstract class CoreAbility implements Ability {
 					MultiAbility multiAbil = (MultiAbility) coreAbil;
 					MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
 				}
-				
+
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
@@ -604,7 +604,7 @@ public abstract class CoreAbility implements Ability {
 	public boolean isHiddenAbility() {
 		return hidden;
 	}
-	
+
 	public void setHiddenAbility(boolean hidden) {
 		this.hidden = hidden;
 	}
@@ -637,15 +637,15 @@ public abstract class CoreAbility implements Ability {
 	}
 
 	@Override
-	 	public String getInstructions() {
-	 		
-	 	String elementName = getElement().getName();
-	 	if (getElement() instanceof SubElement) {
-	 		elementName = ((SubElement) getElement()).getParentElement().getName();
-	 	}
-	 	return ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Instructions");
-	 	}
-	
+	public String getInstructions() {
+
+		String elementName = getElement().getName();
+		if (getElement() instanceof SubElement) {
+			elementName = ((SubElement) getElement()).getParentElement().getName();
+		}
+		return ConfigManager.languageConfig.get().contains("Abilities." + elementName + "." + getName() + ".Instructions") ? ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Instructions") : "";
+	}
+
 	@Override
 	public String getDescription() {
 		String elementName = getElement().getName();
@@ -662,9 +662,9 @@ public abstract class CoreAbility implements Ability {
 	public Player getPlayer() {
 		return player;
 	}
-	
+
 	/**
-	 * Changes the player that owns this ability instance. Used for redirection 
+	 * Changes the player that owns this ability instance. Used for redirection
 	 * and other abilities that change the player object.
 	 * 
 	 * @param player The player who now controls the ability
@@ -684,18 +684,17 @@ public abstract class CoreAbility implements Ability {
 				INSTANCES_BY_PLAYER.remove(getClass());
 			}
 		}
-		
-		
+
 		if (!INSTANCES_BY_PLAYER.containsKey(this.getClass())) {
 			INSTANCES_BY_PLAYER.put(this.getClass(), new ConcurrentHashMap<UUID, Map<Integer, CoreAbility>>());
 		}
-		
+
 		if (!INSTANCES_BY_PLAYER.get(this.getClass()).containsKey(player.getUniqueId())) {
 			INSTANCES_BY_PLAYER.get(this.getClass()).put(player.getUniqueId(), new ConcurrentHashMap<Integer, CoreAbility>());
 		}
-		
+
 		INSTANCES_BY_PLAYER.get(this.getClass()).get(player.getUniqueId()).put(this.getId(), this);
-		
+
 		this.player = player;
 	}
 

@@ -27,14 +27,14 @@ public class DamageHandler {
 	 */
 	@SuppressWarnings("deprecation")
 	public static void damageEntity(Entity entity, Player source, double damage, Ability ability, boolean ignoreArmor) {
-		
+
 		if (ability == null) {
 			return;
 		}
 		if (source == null) {
 			source = ability.getPlayer();
 		}
-		
+
 		AbilityDamageEntityEvent damageEvent = new AbilityDamageEntityEvent(entity, ability, damage, ignoreArmor);
 		Bukkit.getServer().getPluginManager().callEvent(damageEvent);
 		if (entity instanceof LivingEntity) {
@@ -46,21 +46,21 @@ public class DamageHandler {
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
 					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_REACH);
 				}
-				
-				if(((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {
+
+				if (((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {
 					EntityBendingDeathEvent event = new EntityBendingDeathEvent(entity, damage, ability);
 					Bukkit.getServer().getPluginManager().callEvent(event);
 				}
-				
+
 				DamageCause cause = DamageCause.CUSTOM;
 				if (ignoreArmor) {
 					cause = DamageCause.MAGIC;
 				}
-				
+
 				EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, cause, damage);
 				((LivingEntity) entity).damage(damage, source);
 				entity.setLastDamageCause(finalEvent);
-								
+
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
 					NCPExemptionManager.unexempt(source);
 				}
@@ -68,11 +68,11 @@ public class DamageHandler {
 		}
 
 	}
-	
+
 	public static void damageEntity(Entity entity, Player source, double damage, Ability ability) {
 		damageEntity(entity, source, damage, ability, true);
 	}
-	
+
 	public static void damageEntity(Entity entity, double damage, Ability ability) {
 		damageEntity(entity, ability.getPlayer(), damage, ability);
 	}

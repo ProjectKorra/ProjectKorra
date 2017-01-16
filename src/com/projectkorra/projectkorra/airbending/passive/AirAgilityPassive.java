@@ -10,11 +10,11 @@ import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 public class AirAgilityPassive extends AirAbility implements PassiveAbility {
-	
+
 	// Configurable variables
 	private int jumpPower;
 	private int speedPower;
-	
+
 	// Instance related variables
 	private boolean jumpActivate;
 	private boolean speedActivate;
@@ -23,7 +23,7 @@ public class AirAgilityPassive extends AirAbility implements PassiveAbility {
 		super(player);
 		setFields();
 	}
-	
+
 	public void setFields() {
 		this.jumpPower = ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.JumpPower");
 		this.speedPower = ConfigManager.getConfig().getInt("Abilities.Air.Passive.AirAgility.SpeedPower");
@@ -34,7 +34,7 @@ public class AirAgilityPassive extends AirAbility implements PassiveAbility {
 		if (!player.isSprinting()) {
 			return;
 		}
-		
+
 		// Jump Buff
 		jumpActivate = true;
 		if (player.hasPotionEffect(PotionEffectType.JUMP)) {

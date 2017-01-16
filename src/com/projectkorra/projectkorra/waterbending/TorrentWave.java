@@ -39,11 +39,11 @@ public class TorrentWave extends WaterAbility {
 
 	public TorrentWave(Player player, Location location, double radius) {
 		super(player);
-		
+
 		if (bPlayer.isOnCooldown("TorrentWave")) {
 			return;
 		}
-		
+
 		this.radius = radius;
 		this.interval = getConfig().getLong("Abilities.Water.Torrent.Wave.Interval");
 		this.maxHeight = getConfig().getDouble("Abilities.Water.Torrent.Wave.Height");
@@ -56,10 +56,10 @@ public class TorrentWave extends WaterAbility {
 		this.heights = new ConcurrentHashMap<>();
 		this.blocks = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
-		
+
 		this.knockback = getNightFactor(knockback);
 		this.maxRadius = getNightFactor(maxRadius);
-		
+
 		initializeHeightsMap();
 		start();
 		bPlayer.addCooldown("TorrentWave", cooldown);
@@ -70,7 +70,7 @@ public class TorrentWave extends WaterAbility {
 			ConcurrentHashMap<Integer, Double> angles = new ConcurrentHashMap<>();
 			double dtheta = Math.toDegrees(1 / (maxRadius + 2));
 			int j = 0;
-			
+
 			for (double theta = 0; theta < 360; theta += dtheta) {
 				angles.put(j, theta);
 				j++;
@@ -84,7 +84,7 @@ public class TorrentWave extends WaterAbility {
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
-			
+
 		}
 
 		if (System.currentTimeMillis() > time + interval) {
@@ -107,7 +107,7 @@ public class TorrentWave extends WaterAbility {
 
 		blocks.clear();
 		affectedEntities.clear();
-		
+
 		ArrayList<Entity> indexList = new ArrayList<Entity>();
 		indexList.addAll(GeneralMethods.getEntitiesAroundPoint(origin, radius + 2));
 		ArrayList<Block> torrentBlocks = new ArrayList<Block>();
@@ -124,14 +124,14 @@ public class TorrentWave extends WaterAbility {
 				double dx = Math.cos(theta) * radius;
 				double dy = id;
 				double dz = Math.sin(theta) * radius;
-				
+
 				Location location = origin.clone().add(dx, dy, dz);
 				Block block = location.getBlock();
-				
+
 				if (torrentBlocks.contains(block)) {
 					continue;
 				}
-				
+
 				if (isTransparent(player, block)) {
 					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 8);
 					blocks.add(tempBlock);
@@ -140,7 +140,7 @@ public class TorrentWave extends WaterAbility {
 					angles.remove(index);
 					continue;
 				}
-				
+
 				for (Entity entity : indexList) {
 					if (!affectedEntities.contains(entity)) {
 						if (entity.getLocation().distanceSquared(location) <= 4) {
@@ -207,7 +207,7 @@ public class TorrentWave extends WaterAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -226,7 +226,7 @@ public class TorrentWave extends WaterAbility {
 		}
 		return locations;
 	}
-	
+
 	public long getTime() {
 		return time;
 	}

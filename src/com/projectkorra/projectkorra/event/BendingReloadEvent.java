@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
 /**
  * Called when the /bending reload command is executed.
  */
@@ -13,7 +14,7 @@ public class BendingReloadEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	private boolean cancelled = false;
 	private CommandSender sender;
-	
+
 	public BendingReloadEvent(CommandSender sender) {
 		this.sender = sender;
 	}
@@ -32,7 +33,7 @@ public class BendingReloadEvent extends Event implements Cancellable {
 	public CommandSender getSender() {
 		return sender;
 	}
-	
+
 	/**
 	 * @return Whether the event is cancelled
 	 */
@@ -43,7 +44,9 @@ public class BendingReloadEvent extends Event implements Cancellable {
 
 	/**
 	 * Sets if the event is cancelled
-	 * @param cancel boolean value indicating whether the event is cancelled or not
+	 * 
+	 * @param cancel boolean value indicating whether the event is cancelled or
+	 *            not
 	 */
 	@Override
 	public void setCancelled(boolean cancel) {
