@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class Shockwave extends EarthAbility {
-	
+
 	private boolean charged;
 	private long chargeTime;
 	private long cooldown;
@@ -19,28 +19,28 @@ public class Shockwave extends EarthAbility {
 
 	public Shockwave(Player player, boolean fall) {
 		super(player);
-				
+
 		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Shockwave.Angle"));
 		this.cooldown = getConfig().getLong("Abilities.Earth.Shockwave.Cooldown");
 		this.chargeTime = getConfig().getLong("Abilities.Earth.Shockwave.ChargeTime");
 		this.threshold = getConfig().getDouble("Abilities.Earth.Shockwave.FallThreshold");
 		this.range = getConfig().getDouble("Abilities.Earth.Shockwave.Range");
-		
+
 		if (bPlayer.isAvatarState()) {
 			range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Shockwave.Range");
 			cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown");
 			chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime");
 		}
-		
+
 		if (!bPlayer.canBend(this) || hasAbility(player, Shockwave.class)) {
 			return;
 		}
-		
+
 		if (fall) {
 			fallShockwave();
 			return;
 		}
-		
+
 		start();
 	}
 
@@ -52,7 +52,7 @@ public class Shockwave extends EarthAbility {
 		} else if (bPlayer.isOnCooldown("Shockwave")) {
 			return;
 		}
-		
+
 		areaShockwave();
 		bPlayer.addCooldown(this);
 		remove();
@@ -103,7 +103,7 @@ public class Shockwave extends EarthAbility {
 		if (shockWave != null) {
 			if (shockWave.charged) {
 				double dtheta = 360.0 / (2 * Math.PI * shockWave.range) - 1;
-				
+
 				for (double theta = 0; theta < 360; theta += dtheta) {
 					double rtheta = Math.toRadians(theta);
 					Vector vector = new Vector(Math.cos(rtheta), 0, Math.sin(rtheta));
@@ -131,7 +131,7 @@ public class Shockwave extends EarthAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -185,5 +185,5 @@ public class Shockwave extends EarthAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
+
 }

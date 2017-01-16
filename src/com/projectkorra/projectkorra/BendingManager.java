@@ -86,7 +86,7 @@ public class BendingManager implements Runnable {
 						if (bPlayer == null) {
 							continue;
 						}
-						
+
 						if (bPlayer.hasElement(Element.WATER) && player.hasPermission("bending.message.nightmessage")) {
 							player.sendMessage(Element.WATER.getColor() + getMoonsetMessage());
 						}
@@ -113,7 +113,8 @@ public class BendingManager implements Runnable {
 			ChiCombo.handleParalysis();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -133,5 +134,5 @@ public class BendingManager implements Runnable {
 	public static String getMoonsetMessage() {
 		return ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Extras.Water.DayMessage"));
 	}
-	
+
 }

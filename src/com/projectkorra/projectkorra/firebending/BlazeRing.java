@@ -7,32 +7,32 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.ability.FireAbility;
 
 public class BlazeRing extends FireAbility {
-	
+
 	private int range;
 	private long cooldown;
 	private double angleIncrement;
 	private Location location;
-	
+
 	public BlazeRing(Player player) {
 		super(player);
-		
+
 		this.range = getConfig().getInt("Abilities.Fire.Blaze.Ring.Range");
 		this.angleIncrement = getConfig().getDouble("Abilities.Fire.Blaze.Ring.Angle");
 		this.cooldown = getConfig().getLong("Abilities.Fire.Blaze.Ring.Cooldown");
 		this.location = player.getLocation();
-		
+
 		if (bPlayer.isAvatarState()) {
-		range = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range");
+			range = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range");
 		}
 		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("BlazeRing")) {
 			return;
-		}		
+		}
 
 		for (double degrees = 0; degrees < 360; degrees += angleIncrement) {
 			double angle = Math.toRadians(degrees);
 			Vector direction = player.getEyeLocation().getDirection().clone();
 			double x, z, vx, vz;
-			
+
 			x = direction.getX();
 			z = direction.getZ();
 
@@ -41,10 +41,10 @@ public class BlazeRing extends FireAbility {
 
 			direction.setX(vx);
 			direction.setZ(vz);
-			
+
 			new BlazeArc(player, location, direction, range);
 		}
-		
+
 		start();
 		bPlayer.addCooldown("BlazeRing", cooldown);
 		remove();
@@ -56,7 +56,8 @@ public class BlazeRing extends FireAbility {
 	}
 
 	@Override
-	public void progress() {}
+	public void progress() {
+	}
 
 	@Override
 	public Location getLocation() {
@@ -67,7 +68,7 @@ public class BlazeRing extends FireAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;

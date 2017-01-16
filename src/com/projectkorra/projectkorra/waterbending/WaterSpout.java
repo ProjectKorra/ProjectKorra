@@ -339,12 +339,12 @@ public class WaterSpout extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isCollidable() {
 		return true;
 	}
-	
+
 	@Override
 	public List<Location> getLocations() {
 		ArrayList<Location> locations = new ArrayList<>();
@@ -441,5 +441,5 @@ public class WaterSpout extends WaterAbility {
 	public static Map<Block, Block> getAffectedBlocks() {
 		return AFFECTED_BLOCKS;
 	}
-	
+
 }

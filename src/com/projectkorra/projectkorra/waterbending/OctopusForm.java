@@ -50,14 +50,14 @@ public class OctopusForm extends WaterAbility {
 	private double currentFormHeight;
 	private double angleIncrement;
 	private Block sourceBlock;
-	private TempBlock source;	
+	private TempBlock source;
 	private Location sourceLocation;
 	private ArrayList<TempBlock> blocks;
 	private ArrayList<TempBlock> newBlocks;
-	
+
 	public OctopusForm(Player player) {
 		super(player);
-		
+
 		OctopusForm oldOctopus = getAbility(player, OctopusForm.class);
 		if (oldOctopus != null) {
 			if (oldOctopus.formed) {
@@ -67,12 +67,12 @@ public class OctopusForm extends WaterAbility {
 				oldOctopus.remove();
 			}
 		}
-		
+
 		if (!bPlayer.canBend(this)) {
 			remove();
 			return;
 		}
-		
+
 		this.sourceSelected = false;
 		this.settingUp = false;
 		this.forming = false;
@@ -92,10 +92,10 @@ public class OctopusForm extends WaterAbility {
 		this.blocks = new ArrayList<TempBlock>();
 		this.newBlocks = new ArrayList<TempBlock>();
 		this.time = System.currentTimeMillis();
-		if(!player.isSneaking()) {
+		if (!player.isSneaking()) {
 			this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
 		}
-		
+
 		if (sourceBlock != null) {
 			sourceLocation = sourceBlock.getLocation();
 			sourceSelected = true;
@@ -121,19 +121,19 @@ public class OctopusForm extends WaterAbility {
 	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
 		OctopusForm oldForm = getAbility(player, OctopusForm.class);
-		
+
 		if (oldForm != null) {
 			oldForm.form();
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			Location eyeLoc = player.getEyeLocation();
 			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
-			
+
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
 				block.setType(Material.WATER);
 				block.setData(FULL);
 				OctopusForm form = new OctopusForm(player);
 				form.form();
-				
+
 				if (form.formed || form.forming || form.settingUp) {
 					WaterReturn.emptyWaterBottle(player);
 				} else {
@@ -175,10 +175,10 @@ public class OctopusForm extends WaterAbility {
 			} else if (GeneralMethods.isObstructed(location, entity.getLocation())) {
 				continue;
 			}
-			
+
 			double knock = bPlayer.isAvatarState() ? AvatarState.getValue(knockback) : knockback;
 			entity.setVelocity(GeneralMethods.getDirection(player.getLocation(), location).normalize().multiply(knock));
-			
+
 			if (entity instanceof LivingEntity) {
 				DamageHandler.damageEntity(entity, damage, this);
 			}
@@ -198,7 +198,7 @@ public class OctopusForm extends WaterAbility {
 			remove();
 			return;
 		}
-		
+
 		Random random = new Random();
 
 		if (System.currentTimeMillis() > time + interval) {
@@ -213,7 +213,7 @@ public class OctopusForm extends WaterAbility {
 					source = null;
 					Block newBlock = sourceBlock.getRelative(BlockFace.UP);
 					sourceLocation = newBlock.getLocation();
-					
+
 					if (!GeneralMethods.isSolid(newBlock)) {
 						source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
 						sourceBlock = newBlock;
@@ -226,7 +226,7 @@ public class OctopusForm extends WaterAbility {
 					source = null;
 					Block newBlock = sourceBlock.getRelative(BlockFace.DOWN);
 					sourceLocation = newBlock.getLocation();
-					
+
 					if (!GeneralMethods.isSolid(newBlock)) {
 						source = new TempBlock(newBlock, Material.STATIONARY_WATER, (byte) 8);
 						sourceBlock = newBlock;
@@ -238,7 +238,7 @@ public class OctopusForm extends WaterAbility {
 					Vector vector = GeneralMethods.getDirection(sourceLocation, location.getBlock().getLocation()).normalize();
 					sourceLocation.add(vector);
 					Block newBlock = sourceLocation.getBlock();
-					
+
 					if (!newBlock.equals(sourceBlock)) {
 						if (source != null) {
 							source.revertBlock();
@@ -253,7 +253,7 @@ public class OctopusForm extends WaterAbility {
 					if (source != null) {
 						source.revertBlock();
 					}
-					
+
 					source = null;
 					Vector vector = new Vector(1, 0, 0);
 					startAngle = vector.angle(GeneralMethods.getDirection(sourceBlock.getLocation(), location));
@@ -265,11 +265,11 @@ public class OctopusForm extends WaterAbility {
 				} else {
 					angle += 20;
 				}
-				
+
 				if (random.nextInt(4) == 0) {
 					playWaterbendingSound(player.getLocation());
 				}
-				
+
 				formOctopus();
 				if (currentFormHeight == 2) {
 					incrementStep();
@@ -278,7 +278,7 @@ public class OctopusForm extends WaterAbility {
 				if (random.nextInt(7) == 0) {
 					playWaterbendingSound(player.getLocation());
 				}
-				
+
 				stepCounter += 1;
 				if (stepCounter % totalStepCount == 0) {
 					currentAnimationStep += 1;
@@ -381,7 +381,7 @@ public class OctopusForm extends WaterAbility {
 		if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 			return;
 		}
-		
+
 		if (TempBlock.isTempBlock(block)) {
 			TempBlock tblock = TempBlock.get(block);
 			if (!newBlocks.contains(tblock)) {
@@ -390,17 +390,17 @@ public class OctopusForm extends WaterAbility {
 				}
 				if (isWater(block) && !TempBlock.isTempBlock(block)) {
 					ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(0.5, 0.5, 0.5), 255.0);
-				} 
+				}
 				newBlocks.add(tblock);
 			}
 		} else if (isWaterbendable(player, block) || block.getType() == Material.FIRE || block.getType() == Material.AIR) {
 			if (isWater(block) && !TempBlock.isTempBlock(block)) {
 				ParticleEffect.WATER_BUBBLE.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0f, 5, block.getLocation().clone().add(0.5, 0.5, 0.5), 255.0);
-			} 
+			}
 			newBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 		}
 	}
-	
+
 	private void addBaseWater(Block block) {
 		freezeBellow(block);
 		addWater(block);
@@ -437,7 +437,7 @@ public class OctopusForm extends WaterAbility {
 	public void remove() {
 		super.remove();
 		returnWater();
-		
+
 		if (source != null) {
 			source.revertBlock();
 		}
@@ -478,7 +478,7 @@ public class OctopusForm extends WaterAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -488,7 +488,7 @@ public class OctopusForm extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	@Override
 	public double getCollisionRadius() {
 		return getRadius();
@@ -673,5 +673,5 @@ public class OctopusForm extends WaterAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
+
 }

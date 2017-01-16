@@ -112,7 +112,7 @@ public class EarthTunnel extends EarthAbility {
 						block.setType(Material.AIR);
 					} else {
 						airBlocks.put(new TempBlock(block, Material.AIR, (byte) 0), System.currentTimeMillis());
-						if(isPlant(block.getRelative(BlockFace.UP)) || isSnow(block.getRelative(BlockFace.UP))){
+						if (isPlant(block.getRelative(BlockFace.UP)) || isSnow(block.getRelative(BlockFace.UP))) {
 							Block above = block.getRelative(BlockFace.UP);
 							Block above2 = above.getRelative(BlockFace.UP);
 							if (isPlant(above) || isSnow(above)) {

@@ -26,9 +26,9 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 
 public class FireBlast extends FireAbility {
-	
+
 	private static final int MAX_TICKS = 10000;
-	
+
 	private boolean powerFurnace;
 	private boolean showParticles;
 	private boolean dissipate;
@@ -48,14 +48,14 @@ public class FireBlast extends FireAbility {
 	private Location origin;
 	private Vector direction;
 	private List<Block> safeBlocks;
-	
+
 	public FireBlast(Location location, Vector direction, Player player, int damage, List<Block> safeBlocks) {
 		super(player);
-		
+
 		if (location.getBlock().isLiquid()) {
 			return;
 		}
-		
+
 		setFields();
 		this.safeBlocks = safeBlocks;
 		this.damage = damage;
@@ -68,10 +68,10 @@ public class FireBlast extends FireAbility {
 
 		start();
 	}
-	
+
 	public FireBlast(Player player) {
 		super(player);
-		
+
 		if (bPlayer.isOnCooldown("FireBlast")) {
 			return;
 		} else if (player.getEyeLocation().getBlock().isLiquid() || FireBlastCharged.isCharging(player)) {
@@ -87,11 +87,11 @@ public class FireBlast extends FireAbility {
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = location.add(direction.clone());
-		
+
 		start();
 		bPlayer.addCooldown("FireBlast", cooldown);
 	}
-	
+
 	private void setFields() {
 		this.isFireBurst = true;
 		this.powerFurnace = true;
@@ -137,9 +137,7 @@ public class FireBlast extends FireAbility {
 
 	private void ignite(Location location) {
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, collisionRadius)) {
-			if (BlazeArc.isIgnitable(player, block) 
-					&& !safeBlocks.contains(block)
-					&& !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
+			if (BlazeArc.isIgnitable(player, block) && !safeBlocks.contains(block) && !GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation())) {
 				if (canFireGrief()) {
 					if (isPlant(block) || isSnow(block)) {
 						new PlantRegrowth(player, block);
@@ -148,7 +146,7 @@ public class FireBlast extends FireAbility {
 				} else {
 					createTempFire(block.getLocation());
 				}
-				
+
 				if (dissipate) {
 					BlazeArc.getIgnitedBlocks().put(block, player);
 					BlazeArc.getIgnitedTimes().put(block, System.currentTimeMillis());
@@ -159,12 +157,11 @@ public class FireBlast extends FireAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)
-				|| GeneralMethods.isRegionProtectedFromBuild(this, location)) {
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
 			remove();
 			return;
 		}
-		
+
 		speedFactor = speed * (ProjectKorra.time_step / 1000.0);
 		ticks++;
 
@@ -181,7 +178,7 @@ public class FireBlast extends FireAbility {
 				furnace.setCookTime((short) 800);
 				furnace.update();
 			} else if (BlazeArc.isIgnitable(player, block.getRelative(BlockFace.UP))) {
-				if((isFireBurst && fireBurstIgnite) || !isFireBurst) {
+				if ((isFireBurst && fireBurstIgnite) || !isFireBurst) {
 					ignite(location);
 				}
 			}
@@ -265,7 +262,7 @@ public class FireBlast extends FireAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -275,7 +272,7 @@ public class FireBlast extends FireAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	@Override
 	public double getCollisionRadius() {
 		return collisionRadius;
@@ -412,5 +409,5 @@ public class FireBlast extends FireAbility {
 	public void setFireBurst(boolean isFireBurst) {
 		this.isFireBurst = isFireBurst;
 	}
-	
+
 }

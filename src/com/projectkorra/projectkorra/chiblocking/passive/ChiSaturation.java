@@ -14,7 +14,7 @@ public class ChiSaturation extends ChiAbility implements PassiveAbility {
 
 	@Override
 	public void progress() {
-		
+
 	}
 
 	@Override

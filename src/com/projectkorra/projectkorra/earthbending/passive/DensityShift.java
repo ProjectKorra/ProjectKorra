@@ -14,7 +14,7 @@ public class DensityShift extends EarthAbility implements PassiveAbility {
 
 	@Override
 	public void progress() {
-		
+
 	}
 
 	@Override

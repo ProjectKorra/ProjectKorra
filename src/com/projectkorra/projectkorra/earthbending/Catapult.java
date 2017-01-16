@@ -22,13 +22,13 @@ public class Catapult extends EarthAbility {
 	private Location origin;
 	private Location location;
 	private Vector direction;
-	
+
 	public Catapult(Player player) {
 		super(player);
 		setFields();
 		this.origin = player.getEyeLocation().clone();
 		this.direction = origin.getDirection().clone().normalize();
-		
+
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
@@ -36,7 +36,7 @@ public class Catapult extends EarthAbility {
 		Vector neg = direction.clone().multiply(-1);
 		Block block;
 		distance = 0;
-		
+
 		for (int i = 0; i <= length; i++) {
 			location = origin.clone().add(neg.clone().multiply((double) i));
 			block = location.getBlock();
@@ -57,12 +57,12 @@ public class Catapult extends EarthAbility {
 			}
 
 			moving = true;
-			
+
 			if (bPlayer.isAvatarState()) {
 				this.length = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Catapult.Length");
 				this.push = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Catapult.Push");
 				this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown");
-				
+
 			}
 			start();
 			bPlayer.addCooldown(this);
@@ -82,7 +82,7 @@ public class Catapult extends EarthAbility {
 		playEarthbendingSound(player.getLocation());
 		fly();
 	}
-	
+
 	private void setFields() {
 		this.length = getConfig().getInt("Abilities.Earth.Catapult.Length");
 		this.push = getConfig().getDouble("Abilities.Earth.Catapult.Push");
@@ -114,7 +114,7 @@ public class Catapult extends EarthAbility {
 				return;
 			}
 		}
-		
+
 		Vector vector = direction.clone().multiply(push * distance / length);
 		vector.setY(player.getVelocity().getY());
 		player.setVelocity(vector);
@@ -184,7 +184,7 @@ public class Catapult extends EarthAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return false;
@@ -266,5 +266,5 @@ public class Catapult extends EarthAbility {
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
+
 }

@@ -20,7 +20,7 @@ import org.bukkit.util.Vector;
 public class Combustion extends CombustionAbility {
 
 	private static final int MAX_TICKS = 10000;
-	
+
 	private boolean breakBlocks;
 	private int ticks;
 	private long cooldown;
@@ -36,11 +36,11 @@ public class Combustion extends CombustionAbility {
 
 	public Combustion(Player player) {
 		super(player);
-		
+
 		if (hasAbility(player, Combustion.class) || !bPlayer.canBend(this)) {
 			return;
 		}
-		
+
 		this.ticks = 0;
 		this.breakBlocks = getConfig().getBoolean("Abilities.Fire.Combustion.BreakBlocks");
 		this.power = (float) getConfig().getDouble("Abilities.Fire.Combustion.Power");
@@ -52,7 +52,7 @@ public class Combustion extends CombustionAbility {
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = origin.clone();
-		
+
 		if (bPlayer.isAvatarState()) {
 			range = AvatarState.getValue(range);
 			damage = AvatarState.getValue(damage);
@@ -73,8 +73,7 @@ public class Combustion extends CombustionAbility {
 		Combustion combustion = getAbility(player, Combustion.class);
 		if (combustion != null) {
 			combustion.createExplosion(combustion.location, combustion.power, combustion.breakBlocks);
-			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(),
-					(float) Math.random(), 0, 3);
+			ParticleEffect.EXPLODE.display(combustion.location, (float) Math.random(), (float) Math.random(), (float) Math.random(), 0, 3);
 		}
 	}
 
@@ -104,14 +103,14 @@ public class Combustion extends CombustionAbility {
 	}
 
 	private void createExplosion(Location block, float power, boolean canBreakBlocks) {
-			if(canFireGrief()) {
-				block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), power, true, canBreakBlocks);
-			}
-			for (Entity entity : block.getWorld().getEntities()) {
-				if (entity instanceof LivingEntity) {
-					if (entity.getLocation().distanceSquared(block) < radius * radius) { // They are close enough to the explosion.
-						DamageHandler.damageEntity((LivingEntity) entity, damage, this);
-						AirAbility.breakBreathbendingHold(entity);
+		if (canFireGrief()) {
+			block.getWorld().createExplosion(block.getX(), block.getY(), block.getZ(), power, true, canBreakBlocks);
+		}
+		for (Entity entity : block.getWorld().getEntities()) {
+			if (entity instanceof LivingEntity) {
+				if (entity.getLocation().distanceSquared(block) < radius * radius) { // They are close enough to the explosion.
+					DamageHandler.damageEntity((LivingEntity) entity, damage, this);
+					AirAbility.breakBreathbendingHold(entity);
 				}
 			}
 		}
@@ -172,7 +171,7 @@ public class Combustion extends CombustionAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -182,7 +181,7 @@ public class Combustion extends CombustionAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	@Override
 	public double getCollisionRadius() {
 		return getRadius();
@@ -279,5 +278,5 @@ public class Combustion extends CombustionAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
+
 }

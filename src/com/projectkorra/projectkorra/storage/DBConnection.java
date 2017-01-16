@@ -15,7 +15,7 @@ public class DBConnection {
 	public static String user;
 	public static String pass;
 	public static boolean isOpen = false;
-	
+
 	public static void init() {
 		if (ProjectKorra.plugin.getConfig().getString("Storage.engine").equalsIgnoreCase("mysql")) {
 			sql = new MySQL(ProjectKorra.log, "Establishing MySQL Connection...", host, port, user, pass, db);
@@ -32,7 +32,7 @@ public class DBConnection {
 				ProjectKorra.log.info("Creating pk_players table");
 				String query = "CREATE TABLE `pk_players` (" + "`uuid` varchar(36) NOT NULL," + "`player` varchar(16) NOT NULL," + "`element` varchar(255)," + "`subelement` varchar(255)," + "`permaremoved` varchar(5)," + "`slot1` varchar(255)," + "`slot2` varchar(255)," + "`slot3` varchar(255)," + "`slot4` varchar(255)," + "`slot5` varchar(255)," + "`slot6` varchar(255)," + "`slot7` varchar(255)," + "`slot8` varchar(255)," + "`slot9` varchar(255)," + " PRIMARY KEY (uuid));";
 				sql.modifyQuery(query, false);
-			} else {				
+			} else {
 				try {
 					DatabaseMetaData md = sql.connection.getMetaData();
 					if (!md.getColumns(null, null, "pk_players", "subelement").next()) {
@@ -44,7 +44,8 @@ public class DBConnection {
 						sql.getConnection().setAutoCommit(true);
 						ProjectKorra.log.info("Database Updated.");
 					}
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
@@ -53,7 +54,7 @@ public class DBConnection {
 				ProjectKorra.log.info("Creating pk_presets table");
 				String query = "CREATE TABLE `pk_presets` (" + "`uuid` varchar(36) NOT NULL," + "`name` varchar(255) NOT NULL," + "`slot1` varchar(255)," + "`slot2` varchar(255)," + "`slot3` varchar(255)," + "`slot4` varchar(255)," + "`slot5` varchar(255)," + "`slot6` varchar(255)," + "`slot7` varchar(255)," + "`slot8` varchar(255)," + "`slot9` varchar(255)," + " PRIMARY KEY (uuid, name));";
 				sql.modifyQuery(query, false);
-			} 
+			}
 		} else {
 			sql = new SQLite(ProjectKorra.log, "Establishing SQLite Connection.", "projectkorra.db", ProjectKorra.plugin.getDataFolder().getAbsolutePath());
 			if (((SQLite) sql).open() == null) {
@@ -70,7 +71,7 @@ public class DBConnection {
 			} else {
 				try {
 					DatabaseMetaData md = sql.connection.getMetaData();
-					if (!md.getColumns(null, null, "pk_players", "subelement").next()) {						
+					if (!md.getColumns(null, null, "pk_players", "subelement").next()) {
 						ProjectKorra.log.info("Updating Database with subelements...");
 						sql.getConnection().setAutoCommit(false);
 						sql.modifyQuery("ALTER TABLE `pk_players` ADD subelement TEXT(255);", false);
@@ -79,8 +80,9 @@ public class DBConnection {
 						sql.getConnection().setAutoCommit(true);
 						ProjectKorra.log.info("Database Updated.");
 					}
-						
-				} catch (SQLException e) {
+
+				}
+				catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}

@@ -12,12 +12,12 @@ import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 public class FastSwim extends WaterAbility implements PassiveAbility {
-	
+
 	private double swimSpeed;
 
 	public FastSwim(Player player) {
 		super(player);
-		
+
 		this.swimSpeed = ConfigManager.getConfig().getDouble("Abilities.Water.Passive.FastSwim.SpeedFactor");
 	}
 

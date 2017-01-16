@@ -14,7 +14,7 @@ public class Acrobatics extends ChiAbility implements PassiveAbility {
 
 	@Override
 	public void progress() {
-		
+
 	}
 
 	@Override

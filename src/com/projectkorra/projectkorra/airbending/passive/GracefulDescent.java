@@ -14,7 +14,7 @@ public class GracefulDescent extends AirAbility implements PassiveAbility {
 
 	@Override
 	public void progress() {
-		
+
 	}
 
 	@Override

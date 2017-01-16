@@ -23,10 +23,10 @@ public class CollapseWall extends EarthAbility {
 	private Location location;
 	private Map<Block, Block> blocks;
 	private Map<Block, Integer> baseBlocks;
-	
+
 	public CollapseWall(Player player) {
 		super(player);
-		
+
 		if (!bPlayer.canBend(this) || bPlayer.isOnCooldown("CollapseWall")) {
 			return;
 		}
@@ -47,7 +47,7 @@ public class CollapseWall extends EarthAbility {
 		} else {
 			location = sblock.getLocation();
 		}
-		
+
 		for (Block block : GeneralMethods.getBlocksAroundPoint(location, radius)) {
 			if (isEarthbendable(block) && !blocks.containsKey(block) && block.getY() >= location.getBlockY()) {
 				getAffectedBlocks(block);
@@ -78,7 +78,7 @@ public class CollapseWall extends EarthAbility {
 				break;
 			}
 		}
-		
+
 		baseBlocks.put(baseBlock, tall);
 		for (Block blocki : bendableBlocks) {
 			blocks.put(blocki, baseBlock);
@@ -91,7 +91,8 @@ public class CollapseWall extends EarthAbility {
 	}
 
 	@Override
-	public void progress() {}
+	public void progress() {
+	}
 
 	@Override
 	public Location getLocation() {
@@ -102,7 +103,7 @@ public class CollapseWall extends EarthAbility {
 	public long getCooldown() {
 		return cooldown;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;

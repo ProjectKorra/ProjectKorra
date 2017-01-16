@@ -33,7 +33,7 @@ public class ChooseCommand extends PKCommand {
 
 	public ChooseCommand() {
 		super("choose", "/bending choose <Element> [Player]", ConfigManager.languageConfig.get().getString("Commands.Choose.Description"), new String[] { "choose", "ch" });
-		
+
 		this.playerNotFound = ConfigManager.languageConfig.get().getString("Commands.Choose.PlayerNotFound");
 		this.invalidElement = ConfigManager.languageConfig.get().getString("Commands.Choose.InvalidElement");
 		this.chosenCFW = ConfigManager.languageConfig.get().getString("Commands.Choose.SuccessfullyChosenCFW");
@@ -66,11 +66,16 @@ public class ChooseCommand extends PKCommand {
 				return;
 			}
 			String element = args.get(0).toLowerCase();
-			if (element.equalsIgnoreCase("a")) element = "air";
-			else if (element.equalsIgnoreCase("e")) element = "earth";
-			else if (element.equalsIgnoreCase("f")) element = "fire";
-			else if (element.equalsIgnoreCase("w")) element = "water";
-			else if (element.equalsIgnoreCase("c")) element = "chi";
+			if (element.equalsIgnoreCase("a"))
+				element = "air";
+			else if (element.equalsIgnoreCase("e"))
+				element = "earth";
+			else if (element.equalsIgnoreCase("f"))
+				element = "fire";
+			else if (element.equalsIgnoreCase("w"))
+				element = "water";
+			else if (element.equalsIgnoreCase("c"))
+				element = "chi";
 			Element targetElement = Element.getElement(element);
 			if (Arrays.asList(Element.getAllElements()).contains(targetElement)) {
 				if (!hasPermission(sender, element)) {
@@ -93,11 +98,16 @@ public class ChooseCommand extends PKCommand {
 				return;
 			}
 			String element = args.get(0).toLowerCase();
-			if (element.equalsIgnoreCase("a")) element = "air";
-			else if (element.equalsIgnoreCase("e")) element = "earth";
-			else if (element.equalsIgnoreCase("f")) element = "fire";
-			else if (element.equalsIgnoreCase("w")) element = "water";
-			else if (element.equalsIgnoreCase("c")) element = "chi";
+			if (element.equalsIgnoreCase("a"))
+				element = "air";
+			else if (element.equalsIgnoreCase("e"))
+				element = "earth";
+			else if (element.equalsIgnoreCase("f"))
+				element = "fire";
+			else if (element.equalsIgnoreCase("w"))
+				element = "water";
+			else if (element.equalsIgnoreCase("c"))
+				element = "chi";
 			Element targetElement = Element.getElement(element);
 			if (Arrays.asList(Element.getAllElements()).contains(targetElement) && targetElement != Element.AVATAR) {
 				add(sender, target, targetElement);
@@ -117,7 +127,7 @@ public class ChooseCommand extends PKCommand {
 	 */
 	private void add(CommandSender sender, Player target, Element element) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(target);
-		
+
 		if (bPlayer == null) {
 			return;
 		}
@@ -140,7 +150,7 @@ public class ChooseCommand extends PKCommand {
 					bPlayer.addSubElement(sub);
 				}
 			}
-			
+
 			ChatColor color = element != null ? element.getColor() : ChatColor.WHITE;
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 				if (element != Element.AIR && element != Element.EARTH)
@@ -157,24 +167,23 @@ public class ChooseCommand extends PKCommand {
 			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, target, element, Result.CHOOSE));
 		}
-		
-		
+
 		GeneralMethods.removeUnusableAbilities(target.getName());
-		
-		
+
 	}
-	
+
 	public static boolean isVowel(char c) {
 		return "AEIOUaeiou".indexOf(c) != -1;
 	}
-	
+
 	@Override
 	protected List<String> getTabCompletion(CommandSender sender, List<String> args) {
-		if (args.size() >= 2 || !sender.hasPermission("bending.command.choose")) return new ArrayList<String>();
-		
+		if (args.size() >= 2 || !sender.hasPermission("bending.command.choose"))
+			return new ArrayList<String>();
+
 		List<String> l = new ArrayList<String>();
 		if (args.size() == 0) {
-			
+
 			l.add("Air");
 			l.add("Earth");
 			l.add("Fire");

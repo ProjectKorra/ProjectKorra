@@ -32,10 +32,10 @@ public class SandSpout extends SandAbility {
 	private boolean couldFly;
 	private boolean wasFlying;
 	private Flight flight;
-	
+
 	public SandSpout(Player player) {
 		super(player);
-		
+
 		this.currentHeight = 0;
 		this.angle = 0;
 		this.interval = getConfig().getLong("Abilities.Earth.SandSpout.Interval");
@@ -43,16 +43,16 @@ public class SandSpout extends SandAbility {
 		this.height = getConfig().getDouble("Abilities.Earth.SandSpout.Height");
 		this.blindnessTime = getConfig().getInt("Abilities.Earth.SandSpout.BlindnessTime");
 		this.damage = getConfig().getInt("Abilities.Earth.SandSpout.SpoutDamage");
-		
+
 		this.couldFly = player.getAllowFlight();
 		this.wasFlying = player.isFlying();
-		
+
 		SandSpout oldSandSpout = getAbility(player, SandSpout.class);
 		if (oldSandSpout != null) {
 			oldSandSpout.remove();
 			return;
 		}
-		
+
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
@@ -62,16 +62,16 @@ public class SandSpout extends SandAbility {
 		if (topBlock == null) {
 			topBlock = player.getLocation().getBlock();
 		}
-		
+
 		Material mat = topBlock.getType();
 		if (mat != Material.SAND && mat != Material.SANDSTONE && mat != Material.RED_SANDSTONE) {
 			return;
 		}
-		
+
 		if (EarthPassive.isPassiveSand(topBlock)) {
 			return;
 		}
-		
+
 		flight = new Flight(player);
 		start();
 		bPlayer.addCooldown(this);
@@ -90,14 +90,14 @@ public class SandSpout extends SandAbility {
 		if ((new Random()).nextInt(2) == 0) {
 			playSandBendingSound(player.getLocation());
 		}
-		
+
 		Block block = getGround();
-		
+
 		if (EarthPassive.isPassiveSand(block)) {
 			remove();
 			return;
 		}
-		
+
 		if (block != null && (block.getType() == Material.SAND || block.getType() == Material.SANDSTONE || block.getType() == Material.RED_SANDSTONE)) {
 			double dy = player.getLocation().getY() - block.getY();
 			if (dy > height) {
@@ -146,7 +146,7 @@ public class SandSpout extends SandAbility {
 			if (dy > height) {
 				dy = height;
 			}
-			
+
 			Integer[] directions = { 0, 1, 2, 3, 5, 6, 7, 8 };
 			int index = angle;
 
@@ -190,7 +190,7 @@ public class SandSpout extends SandAbility {
 		if (this.currentHeight >= player.getY() - location.getY()) {
 			this.currentHeight = 0D;
 		}
-		
+
 		for (int points = 0; points <= 5; points++) {
 			double x = Math.cos(currentHeight);
 			double z = Math.sin(currentHeight);
@@ -198,7 +198,7 @@ public class SandSpout extends SandAbility {
 			double nz = z * -1;
 			Location newLoc = new Location(player.getWorld(), location.getX() + x, location.getY() + currentHeight, location.getZ() + z);
 			Location secondLoc = new Location(player.getWorld(), location.getX() + nx, location.getY() + currentHeight, location.getZ() + nz);
-			
+
 			if (block != null && ((block.getType() == Material.SAND && block.getData() == (byte) 0) || block.getType() == Material.SANDSTONE)) {
 				displaySandParticle(newLoc.add(0.5, 0.5, 0.5), 0.1F, 0.1F, 0.1F, 2, 1, false);
 				displaySandParticle(secondLoc.add(0.5, 0.5, 0.5), 0.1F, 0.1F, 0.1F, 2, 1, false);
@@ -252,7 +252,7 @@ public class SandSpout extends SandAbility {
 	public long getCooldown() {
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isSneakAbility() {
 		return true;
@@ -262,7 +262,7 @@ public class SandSpout extends SandAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-	
+
 	@Override
 	public List<Location> getLocations() {
 		ArrayList<Location> locations = new ArrayList<>();
@@ -340,5 +340,5 @@ public class SandSpout extends SandAbility {
 	public void setCurrentHeight(double currentHeight) {
 		this.currentHeight = currentHeight;
 	}
-	
+
 }
