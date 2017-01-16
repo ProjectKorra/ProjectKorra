@@ -292,7 +292,6 @@ public class WaterSpoutWave extends WaterAbility {
 					for (Block block : FROZEN_BLOCKS.keySet()) {
 						TempBlock tBlock = FROZEN_BLOCKS.get(block);
 						if (tBlock.getBlock().getWorld().equals(player.getWorld()) && tBlock.getLocation().distance(player.getLocation()) >= thawRadius) {
-							Bukkit.broadcastMessage("revert");
 							tBlock.revertBlock();
 							FROZEN_BLOCKS.remove(block);
 						}
