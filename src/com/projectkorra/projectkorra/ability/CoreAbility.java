@@ -214,8 +214,10 @@ public abstract class CoreAbility implements Ability {
 					if (bPlayer == null || !abil.getPlayer().isOnline()) {
 						abil.remove();
 						return;
-					} else if (!bPlayer.canBendPassive(abil.getElement())) {
+					} else if (!bPlayer.canBendPassive(abil.getElement())) { // Check for if the passive should be removed
 						abil.remove();
+						return;
+					} else if (!bPlayer.canUsePassive(abil.getElement())) { // Check for if the passive should be prevented from happening, but not remove it
 						return;
 					}
 				}
