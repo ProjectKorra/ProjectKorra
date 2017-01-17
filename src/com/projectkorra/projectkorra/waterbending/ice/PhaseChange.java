@@ -465,7 +465,7 @@ public class PhaseChange extends IceAbility {
 
 	@Override
 	public boolean isHarmlessAbility() {
-		return true;
+		return false;
 	}
 
 	@Override

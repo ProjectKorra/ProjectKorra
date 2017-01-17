@@ -124,7 +124,9 @@ public class HelpCommand extends PKCommand {
 			ChatColor color = ability.getElement().getColor();
 			sender.sendMessage(color + ability.getName() + " - ");
 			sender.sendMessage(color + ability.getDescription());
-			sender.sendMessage(ChatColor.GOLD + usage + ability.getInstructions());
+			if (!ability.getInstructions().isEmpty()) {
+				sender.sendMessage(ChatColor.GOLD + usage + ability.getInstructions());
+			}
 		} else if (Arrays.asList(Commands.airaliases).contains(args.get(0))) {
 			sender.sendMessage(Element.AIR.getColor() + air.replace("/b help AirCombos", Element.AIR.getSubColor() + "/b help AirCombos" + Element.AIR.getColor()));
 			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/qffg9m3");
