@@ -100,7 +100,6 @@ permissions:
       bending.ability.WaterSpout: true
       bending.ability.WaterSpout.Wave: true
       bending.ability.WaterCombo: true
-      bending.ability.PlantArmor: true
       bending.water.plantbending: true
       bending.message.nightmessage: true
       bending.water.passive: true
