@@ -280,7 +280,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.OctopusForm.DeathMessage", "{victim} was slapped by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.PhaseChange.Description", "PhaseChange is one of the most useful utility moves that a waterbender possess. This ability is better used when fighting, allowing you to create a platform on water that you can fight on and being territorial by manipulating your environment. It's also useful for travelling across seas.");
 			config.addDefault("Abilities.Water.PhaseChange.Instructions", "\n" + "(Melt) To melt ice, hold sneak while looking at an ice block." + "\n" + "(Freeze) To freeze water and turn it into ice, simply left click at water. This ice will stay so long as you are in range, otherwise it will revert back to water. This only freezes the top layer of ice.");
-			config.addDefault("Abilities.Water.PlantArmor.Description", "PlantArmor is a defensive ability in the arsenal of the plantbender. Clicking on leaves with this ability will temporarily clad you in strong armor made out of plants! You can use this defensively, but you can also use the armor as a source for other plantbending skills.");
 			config.addDefault("Abilities.Water.Surge.Description", "Surge offers great utility and is one of the most important defence abilities for waterbender's. It can be used to push entities back, used to push yourself in a direction, trap entities and protect yourself with a shield.");
 			config.addDefault("Abilities.Water.Surge.Instructions", "\n" + "(Shield) Left click on a water source and then hold sneak while looking up to create a water shield that will move wherever you look. Additionally, you can left click to turn this shield into ice. If you let go of sneak at any point, this ability will cancel." + "\n" + "(Surge) Tap sneak at a water source and click in a direction to fire a surge of water that will knock entities back. Additionally, if you tap sneak again before the surge reaches an entity, when it hits them it will encase them in ice.");
 			config.addDefault("Abilities.Water.Torrent.Description", "Torrent is one of the strongest moves in a waterbender's arsenal. It has the potential to do immense damage and to be comboed with other abilities to perform a deal a large damage burst. Torrent is fundamental for waterbender's. ");
@@ -808,12 +807,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.PhaseChange.Melt.Delay", 50);
 			config.addDefault("Abilities.Water.PhaseChange.Melt.Radius", 7);
 			config.addDefault("Abilities.Water.PhaseChange.Melt.AllowFlow", true);
-
-			config.addDefault("Abilities.Water.PlantArmor.Enabled", true);
-			config.addDefault("Abilities.Water.PlantArmor.Duration", 7500);
-			config.addDefault("Abilities.Water.PlantArmor.Resistance", 1);
-			config.addDefault("Abilities.Water.PlantArmor.Cooldown", 15000);
-			config.addDefault("Abilities.Water.PlantArmor.Range", 10);
 
 			config.addDefault("Abilities.Water.Surge.Enabled", true);
 			config.addDefault("Abilities.Water.Surge.Wave.Radius", 3);
