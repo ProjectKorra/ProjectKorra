@@ -247,11 +247,20 @@ public class BendingPlayer {
 			return false;
 		} else if (!player.hasPermission("bending." + element.getName() + ".passive")) {
 			return false;
-		} else if (!isToggled() || !hasElement(element) || !isElementToggled(element)) {
+		} else if (!hasElement(element)) {
 			return false;
 		} else if (isChiBlocked() || isParalyzed() || isBloodbent()) {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean canUsePassive(Element element) {
+		if (!isToggled() || !isElementToggled(element)) {
+			return false;
+		} else if (isChiBlocked() || isParalyzed() || isBloodbent()) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, player.getLocation())) {
 			return false;

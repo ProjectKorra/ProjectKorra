@@ -1030,7 +1030,7 @@ public class PKListener implements Listener {
 
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
 			public void run() {
-				player.sendMessage(ChatColor.GREEN + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+				player.sendMessage(ChatColor.GOLD + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
 			}
 		}, 20 * 5);
 	}
