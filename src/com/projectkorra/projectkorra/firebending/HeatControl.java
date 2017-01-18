@@ -414,7 +414,7 @@ public class HeatControl extends FireAbility {
 
 	@Override
 	public boolean isHarmlessAbility() {
-		return this.heatControlType == HeatControlType.COOK;
+		return this.heatControlType.equals(HeatControlType.COOK);
 	}
 
 	@Override
