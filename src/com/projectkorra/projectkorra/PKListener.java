@@ -223,6 +223,8 @@ public class PKListener implements Listener {
 			EarthAbility.removeRevertIndex(block);
 		} else if (TempBlock.isTempBlock(block)) {
 			TempBlock.revertBlock(block, Material.AIR);
+		} else if (EarthPassive.isPassiveSand(block)) {
+			EarthPassive.revertSand(block);
 		}
 	}
 

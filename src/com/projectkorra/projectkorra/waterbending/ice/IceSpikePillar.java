@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
 
 import org.bukkit.Location;
@@ -18,16 +19,16 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class IceSpikePillar extends IceAbility {
-
-	private static final Map<Block, Block> ALREADY_DONE_BLOCKS = new ConcurrentHashMap<>();
-	private static final Map<Block, Integer> BASE_BLOCKS = new ConcurrentHashMap<>();
-
+	
+	/**The list of blocks IceSpike uses*/
+	private Map<Block, TempBlock> ice_blocks = new HashMap<Block, TempBlock>();
+	
 	private int height;
 	private int progress;
 	private int slowPower;
@@ -41,14 +42,14 @@ public class IceSpikePillar extends IceAbility {
 	private double damage;
 	private double range;
 	private double speed;
-	private Block block;
+	private Block source_block; //The block clicked on
+	private Block base_block; //The block at the bottom of the pillar
 	private Location origin;
 	private Location location;
 	private Vector thrownForce;
 	private Vector direction;
-	private ConcurrentHashMap<Block, Block> affectedBlocks;
 	private ArrayList<LivingEntity> damaged;
-	protected boolean inField = false;
+	protected boolean inField = false; //If it's part of a field or not. 
 
 	public IceSpikePillar(Player player) {
 		super(player);
@@ -76,18 +77,16 @@ public class IceSpikePillar extends IceAbility {
 
 			if (closestEntity != null) {
 				Block tempTestingBlock = closestEntity.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
-				this.block = tempTestingBlock;
+				this.source_block = tempTestingBlock;
 			} else {
-				this.block = player.getTargetBlock((HashSet<Material>) null, (int) range);
+				this.source_block = player.getTargetBlock((HashSet<Material>) null, (int) range);
 			}
-			origin = block.getLocation();
+			origin = source_block.getLocation();
 			location = origin.clone();
 		}
 		catch (IllegalStateException e) {
 			return;
 		}
-
-		loadAffectedBlocks();
 
 		if (height != 0) {
 			if (canInstantiate()) {
@@ -108,11 +107,9 @@ public class IceSpikePillar extends IceAbility {
 		this.damage = damage;
 		this.thrownForce = throwing;
 		this.location = origin.clone();
-		this.block = location.getBlock();
+		this.source_block = location.getBlock();
 
-		loadAffectedBlocks();
-
-		if (isIcebendable(block)) {
+		if (isIcebendable(source_block)) {
 			if (canInstantiate()) {
 				start();
 				time = System.currentTimeMillis() - interval;
@@ -131,46 +128,46 @@ public class IceSpikePillar extends IceAbility {
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Cooldown");
 		this.height = getConfig().getInt("Abilities.Water.IceSpike.Height");
 		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Push"), 0);
-		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.damaged = new ArrayList<>();
 
 		this.interval = (long) (1000. / speed);
 	}
 
-	private void loadAffectedBlocks() {
-		affectedBlocks.clear();
-		Block thisBlock;
-		for (int i = 1; i <= height; i++) {
-			thisBlock = block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(i)));
-			affectedBlocks.put(thisBlock, thisBlock);
-		}
-	}
-
-	private boolean blockInAffectedBlocks(Block block) {
-		return affectedBlocks.containsKey(block);
-	}
-
-	public static boolean blockInAllAffectedBlocks(Block block) {
+	/**
+	 * Reverts the block if it's part of IceSpike
+	 * @param block The Block
+	 * @return If the block was removed or not
+	 */
+	public static boolean revertBlock(Block block) {
 		for (IceSpikePillar iceSpike : getAbilities(IceSpikePillar.class)) {
-			if (iceSpike.blockInAffectedBlocks(block)) {
+			if (iceSpike.ice_blocks.containsKey(block)) {
+				iceSpike.ice_blocks.get(block).revertBlock();
+				iceSpike.ice_blocks.remove(block);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public static void revertBlock(Block block) {
-		for (IceSpikePillar iceSpike : getAbilities(IceSpikePillar.class)) {
-			iceSpike.affectedBlocks.remove(block);
-		}
-	}
-
+	/**Checks to see if this move can start. Checks things like if there is enough space to form, if the source isn't
+	 * a TempBlock, etc.*/
 	private boolean canInstantiate() {
-		if (!isIcebendable(block.getType())) {
+		if (!isIcebendable(source_block.getType())) {
 			return false;
 		}
-		for (Block block : affectedBlocks.keySet()) {
-			if (blockInAllAffectedBlocks(block) || ALREADY_DONE_BLOCKS.containsKey(block) || block.getType() != Material.AIR || (block.getX() == player.getEyeLocation().getBlock().getX() && block.getZ() == player.getEyeLocation().getBlock().getZ())) {
+		
+		if (TempBlock.isTempBlock(source_block)) {
+			return false;
+		}
+		
+		Block b;
+		for (int i = 1; i <= height; i++) {
+			b = source_block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(i)));
+			if (b.getType() != Material.AIR) {
+				return false;
+			}
+			
+			if (b.getX() == player.getEyeLocation().getBlock().getX() && b.getZ() == player.getEyeLocation().getBlock().getZ()) {
 				return false;
 			}
 		}
@@ -185,9 +182,9 @@ public class IceSpikePillar extends IceAbility {
 				risePillar();
 				removeTimestamp = System.currentTimeMillis();
 			} else {
+				//If it's time to remove
 				if (removeTimestamp != 0 && removeTimestamp + removeTimer <= System.currentTimeMillis()) {
-					BASE_BLOCKS.put(location.clone().add(direction.clone().multiply(-1 * (height))).getBlock(), (height - 1));
-					if (!revertblocks()) {
+					if (!sinkPillar()) {
 						remove();
 						return;
 					}
@@ -196,6 +193,10 @@ public class IceSpikePillar extends IceAbility {
 		}
 	}
 
+	/**
+	 * Makes the pillar rise by 1 block. 
+	 * 
+	 * @return If the block was placed successfully.*/
 	private boolean risePillar() {
 		progress++;
 		Block affectedBlock = location.clone().add(direction).getBlock();
@@ -211,16 +212,14 @@ public class IceSpikePillar extends IceAbility {
 				affect(le);
 			}
 		}
+		
+		TempBlock b = new TempBlock(affectedBlock, Material.ICE, (byte)0);
+		ice_blocks.put(affectedBlock, b);
 
-		affectedBlock.setType(Material.ICE);
 		if (!inField || new Random().nextInt((int) ((height + 1) * 1.5)) == 0) {
-			playIcebendingSound(block.getLocation());
+			playIcebendingSound(source_block.getLocation());
 		}
-		loadAffectedBlocks();
-
-		if (location.distanceSquared(origin) >= height * height) {
-			return false;
-		}
+		
 		return true;
 	}
 
@@ -241,24 +240,20 @@ public class IceSpikePillar extends IceAbility {
 		}
 		AirAbility.breakBreathbendingHold(entity);
 	}
+	
+	/**The reverse of risePillar(). Makes the pillar sink
+	 * 
+	 * @return If the move should continue progressing.*/
+	public boolean sinkPillar() {
+		Vector direction = this.direction.clone().multiply(-1);
+		if (ice_blocks.containsKey(location.getBlock())) {
+			ice_blocks.get(location.getBlock()).revertBlock();
+			ice_blocks.remove(location.getBlock());
+			location.add(direction);
 
-	public static boolean blockIsBase(Block block) {
-		return block != null ? BASE_BLOCKS.containsKey(block) : null;
-	}
-
-	public static void removeBlockBase(Block block) {
-		if (block != null) {
-			BASE_BLOCKS.remove(block);
-		}
-	}
-
-	public boolean revertblocks() {
-		Vector direction = new Vector(0, -1, 0);
-		location.getBlock().setType(Material.AIR);
-		location.add(direction);
-
-		if (blockIsBase(location.getBlock())) {
-			return false;
+			if (source_block == location.getBlock()) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -384,11 +379,11 @@ public class IceSpikePillar extends IceAbility {
 	}
 
 	public Block getBlock() {
-		return block;
+		return source_block;
 	}
 
 	public void setBlock(Block block) {
-		this.block = block;
+		this.source_block = block;
 	}
 
 	public Location getOrigin() {
@@ -424,12 +419,12 @@ public class IceSpikePillar extends IceAbility {
 		this.direction = direction;
 	}
 
-	public static Map<Block, Block> getAlreadyDoneBlocks() {
-		return ALREADY_DONE_BLOCKS;
+	public Map<Block, TempBlock> getIceBlocks() {
+		return ice_blocks;
 	}
 
-	public static Map<Block, Integer> getBaseBlocks() {
-		return BASE_BLOCKS;
+	public Block getBaseBlock() {
+		return base_block;
 	}
 
 }

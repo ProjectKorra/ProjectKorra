@@ -941,6 +941,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.AnimationSpeed", 1);
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.ShootTime", 10000);
 			config.addDefault("Abilities.Water.WaterCombo.IceBullet.Cooldown", 10000);
+			config.addDefault("Abilities.Water.WaterCombo.IceWave.RevertSphere", true);
+			config.addDefault("Abilities.Water.WaterCombo.IceWave.RevertSphereTime", 30000L);
 
 			config.addDefault("Abilities.Earth.Passive.Duration", 2500);
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Enabled", true);
