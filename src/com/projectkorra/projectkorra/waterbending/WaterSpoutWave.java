@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -45,9 +46,11 @@ public class WaterSpoutWave extends WaterAbility {
 	private boolean moving;
 	private boolean plant;
 	private boolean collidable;
+	private boolean revertIceSphere;
 	private int progressCounter;
 	private long time;
 	private long cooldown;
+	private long revertSphereTime;
 	private double selectRange;
 	private double speed;
 	private double chargeTime;
@@ -83,6 +86,8 @@ public class WaterSpoutWave extends WaterAbility {
 		this.chargeTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.ChargeTime");
 		this.flightTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.FlightTime");
 		this.cooldown = getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown");
+		this.revertSphereTime = getConfig().getLong("Abilities.Water.WaterCombo.IceWave.RevertSphereTime");
+		this.revertIceSphere = getConfig().getBoolean("Abilities.Water.WaterCombo.IceWave.RevertSphere");
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
@@ -386,6 +391,9 @@ public class WaterSpoutWave extends WaterAbility {
 						if (!FROZEN_BLOCKS.containsKey(block)) {
 							TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 1);
 							FROZEN_BLOCKS.put(block, tblock);
+							if (revertIceSphere) {
+								tblock.setRevertTime(revertSphereTime + (new Random().nextInt(1000) - 500));
+							}
 						}
 					}
 				}
@@ -431,6 +439,20 @@ public class WaterSpoutWave extends WaterAbility {
 			}
 		}
 		return false;
+	}
+	
+	public static void progressAllCleanup() {
+		for (Block block : FROZEN_BLOCKS.keySet()) {
+			TempBlock tb = FROZEN_BLOCKS.get(block);
+			if (block.getType() != Material.ICE) {
+				FROZEN_BLOCKS.remove(block);
+				continue;
+			} 
+			if (tb == null || !TempBlock.isTempBlock(block)) {
+				FROZEN_BLOCKS.remove(block);
+				continue;
+			}
+		}
 	}
 
 	public static boolean canThaw(Block block) {

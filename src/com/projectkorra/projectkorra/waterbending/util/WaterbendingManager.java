@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.waterbending.util;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.waterbending.Torrent;
+import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArms;
 
 public class WaterbendingManager implements Runnable {
@@ -17,6 +18,7 @@ public class WaterbendingManager implements Runnable {
 		//WaterPassive.handlePassive(); # Fast Swim is now managed in FastSwim.java
 		Torrent.progressAllCleanup();
 		WaterArms.progressAllCleanup();
+		WaterSpoutWave.progressAllCleanup();
 	}
 
 }
