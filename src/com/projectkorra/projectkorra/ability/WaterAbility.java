@@ -131,7 +131,7 @@ public abstract class WaterAbility extends ElementalAbility {
 				continue;
 			}
 			if (isIcebendable(player, block.getType(), false)) {
-				if (TempBlock.isTempBlock(block)) {
+				if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
 					continue;
 				}
 				return block;
@@ -175,7 +175,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location)) {
 				continue;
 			} else if (isPlantbendable(player, block.getType(), onlyLeaves)) {
-				if (TempBlock.isTempBlock(block)) {
+				if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
 					continue;
 				}
 				return block;
@@ -213,15 +213,8 @@ public abstract class WaterAbility extends ElementalAbility {
 			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
-				if (TempBlock.isTempBlock(block)) {
+				if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
 					continue;
-					/*
-					 * TempBlock tb = TempBlock.get(block); byte full = 0x0; if
-					 * (tb.getState().getRawData() != full &&
-					 * (tb.getState().getType() != Material.WATER ||
-					 * tb.getState().getType() != Material.STATIONARY_WATER)) {
-					 * continue; }
-					 */
 				}
 				return block;
 			}
@@ -278,7 +271,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			return false;
 		}
 
-		if (TempBlock.isTempBlock(block)) {
+		if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
 			return false;
 		} else if (isWater(block) && block.getData() == full) {
 			return true;

@@ -159,8 +159,6 @@ public class EarthPassive {
 			return false;
 		} else if (TempBlock.isTempBlock(block)) {
 			return false;
-		} else if (TempBlock.isTouchingTempBlock(block)) {
-			return false;
 		}
 		return true;
 	}
@@ -171,8 +169,6 @@ public class EarthPassive {
 		} else if (LavaSurgeWall.getWallBlocks().containsKey(to) || LavaSurgeWall.getWallBlocks().containsKey(from)) {
 			return false;
 		} else if (LavaSurgeWave.isBlockWave(to) || LavaSurgeWave.isBlockWave(from)) {
-			return false;
-		} else if (TempBlock.isTempBlock(to) || TempBlock.isTempBlock(from)) {
 			return false;
 		}
 		return true;

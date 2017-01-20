@@ -416,8 +416,6 @@ public class WaterManipulation extends WaterAbility {
 			return false;
 		} else if (SurgeWave.isBlockWave(to) || SurgeWave.isBlockWave(from)) {
 			return false;
-		} else if (TempBlock.isTempBlock(to) || TempBlock.isTempBlock(from)) {
-			return false;
 		} else if (isAdjacentToFrozenBlock(to) || isAdjacentToFrozenBlock(from)) {
 			return false;
 		}
@@ -435,9 +433,7 @@ public class WaterManipulation extends WaterAbility {
 			return false;
 		} else if (SurgeWave.isBlockWave(block)) {
 			return false;
-		} else if (TempBlock.isTempBlock(block)) {
-			return false;
-		} else if (TempBlock.isTouchingTempBlock(block)) {
+		} else if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
 			return false;
 		}
 		return true;
