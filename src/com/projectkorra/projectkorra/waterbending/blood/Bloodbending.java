@@ -19,6 +19,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.BloodAbility;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -284,6 +285,9 @@ public class Bloodbending extends BloodAbility {
 		for (Entity e : TARGETED_ENTITIES.keySet()) {
 			if (TARGETED_ENTITIES.get(e) == player) {
 				TARGETED_ENTITIES.remove(e);
+				if (e instanceof Player) {
+					PassiveManager.registerPassives((Player) e);
+				}
 			}
 		}
 
