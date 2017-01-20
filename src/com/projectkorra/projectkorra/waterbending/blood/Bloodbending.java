@@ -163,7 +163,6 @@ public class Bloodbending extends BloodAbility {
 			return;
 		} else if (holdTime > 0 && System.currentTimeMillis() - this.time > holdTime) {
 			remove();
-			bPlayer.addCooldown(this);
 			return;
 		}
 
