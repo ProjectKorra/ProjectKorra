@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending.ice;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.TempPotionEffect;
@@ -20,7 +21,6 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 
@@ -79,7 +79,7 @@ public class IceSpikePillar extends IceAbility {
 				Block tempTestingBlock = closestEntity.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
 				this.source_block = tempTestingBlock;
 			} else {
-				this.source_block = player.getTargetBlock((HashSet<Material>) null, (int) range);
+				this.source_block = WaterAbility.getIceSourceBlock(player, range);
 			}
 			origin = source_block.getLocation();
 			location = origin.clone();
@@ -153,10 +153,6 @@ public class IceSpikePillar extends IceAbility {
 	 * a TempBlock, etc.*/
 	private boolean canInstantiate() {
 		if (!isIcebendable(source_block.getType())) {
-			return false;
-		}
-		
-		if (TempBlock.isTempBlock(source_block)) {
 			return false;
 		}
 		

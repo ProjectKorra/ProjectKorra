@@ -433,7 +433,7 @@ public class WaterManipulation extends WaterAbility {
 			return false;
 		} else if (SurgeWave.isBlockWave(block)) {
 			return false;
-		} else if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
+		} else if (TempBlock.isTempBlock(block) && !WaterAbility.isBendableWaterTempBlock(block)) {
 			return false;
 		}
 		return true;

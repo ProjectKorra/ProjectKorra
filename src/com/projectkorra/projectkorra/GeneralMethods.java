@@ -123,7 +123,6 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
@@ -1160,7 +1159,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
-		if ((TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) || block.equals(null)) {
+		if (block.equals(null) || (TempBlock.isTempBlock(block) && WaterAbility.isBendableWaterTempBlock(block))) {
 			return false;
 		}
 		int sources = 0;

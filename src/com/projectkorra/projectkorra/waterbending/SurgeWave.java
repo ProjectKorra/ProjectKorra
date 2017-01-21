@@ -213,9 +213,6 @@ public class SurgeWave extends WaterAbility {
 				if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 					new PlantRegrowth(player, sourceBlock);
 				}
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
-					sourceBlock.setType(Material.AIR);
-				}
 				addWater(sourceBlock);
 			}
 		}
