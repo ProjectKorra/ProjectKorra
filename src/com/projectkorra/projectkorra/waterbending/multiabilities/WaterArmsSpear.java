@@ -221,7 +221,11 @@ public class WaterArmsSpear extends WaterAbility {
 	public static void thaw(Block block) {
 		if (canThaw(block)) {
 			getIceBlocks().remove(block);
-			block.setType(Material.AIR);
+			if (TempBlock.isTempBlock(block)) {
+				TempBlock.get(block).revertBlock();
+			} else {
+				block.setType(Material.AIR); 
+			}
 		}
 	}
 
