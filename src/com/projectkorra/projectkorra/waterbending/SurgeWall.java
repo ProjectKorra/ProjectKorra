@@ -90,19 +90,18 @@ public class SurgeWall extends WaterAbility {
 			Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 
 			if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
-				block.setType(Material.WATER);
-				block.setData(FULL);
+				TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 0);
 
 				wave = new SurgeWave(player);
 				wave.setCanHitSelf(false);
 				wave.moveWater();
 
 				if (!wave.isProgressing()) {
-					block.setType(Material.AIR);
 					wave.remove();
 				} else {
 					WaterReturn.emptyWaterBottle(player);
 				}
+				tempBlock.revertBlock();
 			}
 		}
 	}
@@ -181,9 +180,6 @@ public class SurgeWall extends WaterAbility {
 
 				if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 					new PlantRegrowth(player, sourceBlock);
-				}
-				if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
-					sourceBlock.setType(Material.AIR);
 				}
 				addWater(sourceBlock);
 			}
@@ -307,7 +303,6 @@ public class SurgeWall extends WaterAbility {
 
 			if (location.distanceSquared(targetDestination) < 1) {
 				removeWater(sourceBlock);
-				;
 				forming = true;
 			}
 		}
@@ -388,17 +383,17 @@ public class SurgeWall extends WaterAbility {
 				Location eyeLoc = player.getEyeLocation();
 				Block block = eyeLoc.add(eyeLoc.getDirection().normalize()).getBlock();
 				if (isTransparent(player, block) && isTransparent(player, eyeLoc.getBlock())) {
-					block.setType(Material.WATER);
-					block.setData(FULL);
+					TempBlock tempBlock = new TempBlock(block, Material.STATIONARY_WATER, (byte) 0);
 
 					wall = new SurgeWall(player);
 					wall.moveWater();
 					if (!wall.progressing) {
-						block.setType(Material.AIR);
+						tempBlock.revertBlock();
 						wall.remove();
 					} else {
 						WaterReturn.emptyWaterBottle(player);
 					}
+					tempBlock.revertBlock();
 					return;
 				}
 			}

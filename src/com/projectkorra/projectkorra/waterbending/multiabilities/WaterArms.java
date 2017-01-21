@@ -152,8 +152,6 @@ public class WaterArms extends WaterAbility {
 				fullSource = false;
 			}
 			ParticleEffect.LARGE_SMOKE.display(getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource).getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
-			new PlantRegrowth(player, sourceBlock);
-			sourceBlock.setType(Material.AIR);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			WaterReturn.emptyWaterBottle(player);

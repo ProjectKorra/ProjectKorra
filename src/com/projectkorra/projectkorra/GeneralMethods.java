@@ -1160,7 +1160,7 @@ public class GeneralMethods {
 	}
 
 	public static boolean isAdjacentToThreeOrMoreSources(Block block) {
-		if ((TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) || block.equals(null)) {
+		if (block.equals(null) || (TempBlock.isTempBlock(block) && WaterAbility.isBendableWaterTempBlock(block))) {
 			return false;
 		}
 		int sources = 0;

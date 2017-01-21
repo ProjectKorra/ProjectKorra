@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
@@ -85,6 +86,14 @@ public abstract class WaterAbility extends ElementalAbility {
 			ParticleEffect.BLOCK_CRACK.display(particleData, 1F, 1F, 1F, 0.1F, 10, collision.getLocationFirst(), 50);
 		}
 	}
+	
+	public static boolean isBendableWaterTempBlock(Block block) { // Will need to be done for earth as well.
+		return isBendableWaterTempBlock(TempBlock.get(block));
+	}
+	
+	public static boolean isBendableWaterTempBlock(TempBlock tempBlock) {
+		return PhaseChange.getFrozenBlocksAsTempBlock().contains(tempBlock) || HeatControl.getMeltedBlocks().contains(tempBlock);
+	}
 
 	public boolean isIcebendable(Block block) {
 		return isIcebendable(block.getType());
@@ -131,7 +140,7 @@ public abstract class WaterAbility extends ElementalAbility {
 				continue;
 			}
 			if (isIcebendable(player, block.getType(), false)) {
-				if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
+				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 					continue;
 				}
 				return block;
@@ -175,7 +184,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			if (GeneralMethods.isRegionProtectedFromBuild(player, "PlantDisc", location)) {
 				continue;
 			} else if (isPlantbendable(player, block.getType(), onlyLeaves)) {
-				if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
+				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 					continue;
 				}
 				return block;
@@ -213,7 +222,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
-				if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
+				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 					continue;
 				}
 				return block;
@@ -270,8 +279,7 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (bPlayer == null || !isWaterbendable(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		}
-
-		if (TempBlock.isTempBlock(block) && !PhaseChange.getFrozenBlocksAsTempBlock().contains(TempBlock.get(block))) {
+		if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 			return false;
 		} else if (isWater(block) && block.getData() == full) {
 			return true;
