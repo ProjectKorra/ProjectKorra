@@ -279,7 +279,6 @@ public abstract class WaterAbility extends ElementalAbility {
 		if (bPlayer == null || !isWaterbendable(block.getType()) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		}
-
 		if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
 			return false;
 		} else if (isWater(block) && block.getData() == full) {
