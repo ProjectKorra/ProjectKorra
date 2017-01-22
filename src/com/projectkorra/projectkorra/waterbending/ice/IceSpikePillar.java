@@ -80,6 +80,9 @@ public class IceSpikePillar extends IceAbility {
 				this.source_block = tempTestingBlock;
 			} else {
 				this.source_block = WaterAbility.getIceSourceBlock(player, range);
+				if (this.source_block == null) {
+					return;	
+				}
 			}
 			origin = source_block.getLocation();
 			location = origin.clone();
