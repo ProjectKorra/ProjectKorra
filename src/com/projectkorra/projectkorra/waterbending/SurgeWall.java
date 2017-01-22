@@ -26,7 +26,7 @@ import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 public class SurgeWall extends WaterAbility {
 
-	private static final byte FULL = 0x0;
+	// private static final byte FULL = 0x0;
 	private static final String RANGE_CONFIG = "Abilities.Water.Surge.Wall.Range";
 	private static final Map<Block, Block> AFFECTED_BLOCKS = new ConcurrentHashMap<>();
 	private static final Map<Block, Player> WALL_BLOCKS = new ConcurrentHashMap<>();
@@ -48,7 +48,6 @@ public class SurgeWall extends WaterAbility {
 	private Vector firstDirection;
 	private Vector targetDirection;
 
-	@SuppressWarnings("deprecation")
 	public SurgeWall(Player player) {
 		super(player);
 
@@ -363,7 +362,6 @@ public class SurgeWall extends WaterAbility {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void form(Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer == null) {
