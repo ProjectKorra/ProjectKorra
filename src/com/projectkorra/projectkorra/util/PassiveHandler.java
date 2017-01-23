@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.passive.AirPassive;
 import com.projectkorra.projectkorra.airbending.passive.AirSaturation;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
@@ -54,9 +55,9 @@ public class PassiveHandler {
 		if (bPlayer == null)
 			return;
 
-		if (!CoreAbility.hasAbility(player, AirSaturation.class))
+		if (!PassiveManager.hasPassive(player, CoreAbility.getAbility(AirSaturation.class)))
 			air = 0;
-		if (!CoreAbility.hasAbility(player, ChiSaturation.class))
+		if (!PassiveManager.hasPassive(player, CoreAbility.getAbility(ChiSaturation.class)))
 			chi = 0;
 
 		double max = Math.max(air, chi);
