@@ -6,9 +6,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.passive.AirPassive;
+import com.projectkorra.projectkorra.airbending.passive.AirSaturation;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
+import com.projectkorra.projectkorra.chiblocking.passive.ChiSaturation;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
@@ -33,6 +35,9 @@ public class PassiveHandler {
 	}
 
 	public static void checkExhaustionPassives(Player player) {
+		if (!CoreAbility.getAbility(AirSaturation.class).isEnabled() && !CoreAbility.getAbility(ChiSaturation.class).isEnabled()) {
+			return;
+		}
 		double air = AirPassive.getExhaustionFactor();
 		double chi = ChiPassive.getExhaustionFactor();
 
@@ -49,9 +54,9 @@ public class PassiveHandler {
 		if (bPlayer == null)
 			return;
 
-		if (!bPlayer.hasElement(Element.AIR))
+		if (!CoreAbility.hasAbility(player, AirSaturation.class))
 			air = 0;
-		if (!bPlayer.hasElement(Element.CHI))
+		if (!CoreAbility.hasAbility(player, ChiSaturation.class))
 			chi = 0;
 
 		double max = Math.max(air, chi);

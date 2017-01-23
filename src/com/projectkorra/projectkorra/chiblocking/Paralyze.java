@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.command.Commands;
 
@@ -72,6 +73,9 @@ public class Paralyze extends ChiAbility {
 				return true;
 			}
 			ENTITIES.remove(entity);
+			if (entity instanceof Player) {
+				PassiveManager.registerPassives((Player) entity);
+			}
 		}
 		return false;
 

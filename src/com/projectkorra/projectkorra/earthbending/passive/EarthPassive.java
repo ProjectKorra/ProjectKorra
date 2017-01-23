@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.earthbending.passive;
 
 import com.projectkorra.projectkorra.BendingPlayer;
-import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
@@ -11,15 +10,12 @@ import com.projectkorra.projectkorra.earthbending.lava.LavaSurgeWall;
 import com.projectkorra.projectkorra.earthbending.lava.LavaSurgeWave;
 import com.projectkorra.projectkorra.util.TempBlock;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -100,7 +96,7 @@ public class EarthPassive {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
+	/*@SuppressWarnings("deprecation")
 	public static void handleMetalPassives() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
@@ -130,7 +126,7 @@ public class EarthPassive {
 				}
 			}
 		}
-	}
+	}*/
 
 	public static void revertSands() {
 		for (Block block : SAND_BLOCKS.keySet()) {

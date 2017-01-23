@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -128,6 +130,7 @@ import com.projectkorra.projectkorra.earthbending.metal.Extraction;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
+import com.projectkorra.projectkorra.earthbending.passive.Hodor;
 import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
@@ -764,27 +767,27 @@ public class PKListener implements Listener {
 
 			if (!event.isCancelled() && bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR)) {
 				new AirBurst(player, true);
-				if (CoreAbility.getAbility(GracefulDescent.class).isEnabled()) {
+				if (CoreAbility.getAbility(GracefulDescent.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(GracefulDescent.class))) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && CoreAbility.getAbility(Hydrosink.class).isEnabled()) {
+			if (!event.isCancelled() && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && CoreAbility.getAbility(Hydrosink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Hydrosink.class))) {
 				if (WaterPassive.applyNoFall(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH) && CoreAbility.getAbility(DensityShift.class).isEnabled()) {
+			if (!event.isCancelled() && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
 				if (EarthPassive.softenLanding(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled()) {
+			if (!event.isCancelled() && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
 				double initdamage = event.getDamage();
 				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
@@ -1181,6 +1184,7 @@ public class PKListener implements Listener {
 		JUMPS.remove(player);
 	}
 
+	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerSneak(PlayerToggleSneakEvent event) {
 		Player player = event.getPlayer();
@@ -1219,6 +1223,28 @@ public class PKListener implements Listener {
 
 		if (!player.isSneaking()) {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
+		}
+
+		if (CoreAbility.getAbility(Hodor.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Hodor.class)) && !bPlayer.isOnCooldown("Hodor")) {
+			if (event.isSneaking()) {
+				Block block = player.getTargetBlock((HashSet<Material>) null, 5);
+				if (block != null) {
+					if (block.getType() == Material.IRON_DOOR_BLOCK && !GeneralMethods.isRegionProtectedFromBuild(player, block.getLocation())) {
+						if (block.getData() >= 8) {
+							block = block.getRelative(BlockFace.DOWN);
+						}
+						if (block.getData() < 4) {
+							block.setData((byte) (block.getData() + 4));
+							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, 10, 1);
+						} else {
+							block.setData((byte) (block.getData() - 4));
+							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 10, 1);
+						}
+						bPlayer.addCooldown("Hodor", 200);
+					}
+				}
+
+			}
 		}
 
 		AirScooter.check(player);
