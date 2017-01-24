@@ -19,7 +19,7 @@ public class EarthbendingManager implements Runnable {
 
 	public void run() {
 		EarthPassive.revertSands();
-		EarthPassive.handleMetalPassives();
+		//EarthPassive.handleMetalPassives();
 		RevertChecker.revertEarthBlocks();
 		Shockwave.progressAll();
 		Tremorsense.manage(Bukkit.getServer());

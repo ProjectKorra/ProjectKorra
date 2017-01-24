@@ -256,7 +256,7 @@ public class BendingPlayer {
 		}
 		return true;
 	}
-	
+
 	public boolean canUsePassive(Element element) {
 		if (!isToggled() || !isElementToggled(element)) {
 			return false;
