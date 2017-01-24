@@ -130,7 +130,7 @@ import com.projectkorra.projectkorra.earthbending.metal.Extraction;
 import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
-import com.projectkorra.projectkorra.earthbending.passive.Hodor;
+import com.projectkorra.projectkorra.earthbending.passive.FerroControl;
 import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
@@ -1225,7 +1225,7 @@ public class PKListener implements Listener {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
 
-		if (CoreAbility.getAbility(Hodor.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Hodor.class)) && !bPlayer.isOnCooldown("Hodor")) {
+		if (CoreAbility.getAbility(FerroControl.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class)) && !bPlayer.isOnCooldown("Hodor")) {
 			if (event.isSneaking()) {
 				Block block = player.getTargetBlock((HashSet<Material>) null, 5);
 				if (block != null) {

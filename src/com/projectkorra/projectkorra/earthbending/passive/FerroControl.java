@@ -6,15 +6,15 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.ability.MetalAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 
-public class Hodor extends MetalAbility implements PassiveAbility {
+public class FerroControl extends MetalAbility implements PassiveAbility {
 
-	public Hodor(Player player) {
+	public FerroControl(Player player) {
 		super(player);
 	}
 
 	@Override
 	public void progress() {
-		
+
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class Hodor extends MetalAbility implements PassiveAbility {
 
 	@Override
 	public String getName() {
-		return "Hodor";
+		return "FerroControl";
 	}
 
 	@Override
