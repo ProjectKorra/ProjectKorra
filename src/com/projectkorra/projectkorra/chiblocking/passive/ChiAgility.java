@@ -6,11 +6,13 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
+import com.projectkorra.projectkorra.airbending.passive.AirAgility;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
-public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
+public class ChiAgility extends ChiAbility implements PassiveAbility {
 
 	// Configurable variables
 	private int jumpPower;
@@ -20,7 +22,7 @@ public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
 	private boolean jumpActivate;
 	private boolean speedActivate;
 
-	public ChiAgilityPassive(Player player) {
+	public ChiAgility(Player player) {
 		super(player);
 		setFields();
 	}
@@ -34,6 +36,16 @@ public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
 	public void progress() {
 		if (!player.isSprinting()) {
 			return;
+		}
+
+		if (CoreAbility.hasAbility(player, AirAgility.class)) {
+			AirAgility airAgility = CoreAbility.getAbility(player, AirAgility.class);
+			if (airAgility.getJumpPower() > jumpPower) {
+				jumpPower = airAgility.getJumpPower();
+			}
+			if (airAgility.getSpeedPower() > speedPower) {
+				speedPower = airAgility.getSpeedPower();
+			}
 		}
 
 		// Jump Buff
@@ -105,6 +117,14 @@ public class ChiAgilityPassive extends ChiAbility implements PassiveAbility {
 	@Override
 	public boolean isInstantiable() {
 		return true;
+	}
+
+	public int getJumpPower() {
+		return jumpPower;
+	}
+
+	public int getSpeedPower() {
+		return speedPower;
 	}
 
 }

@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 
@@ -26,9 +27,7 @@ public class PassiveManager {
 		}
 		for (CoreAbility ability : CoreAbility.getAbilities()) {
 			if (ability instanceof PassiveAbility) {
-				if (!ability.isEnabled()) {
-					continue;
-				} else if (!bPlayer.canBendPassive(ability.getElement())) {
+				if (!hasPassive(player, ability)) {
 					continue;
 				} else if (CoreAbility.hasAbility(player, ability.getClass())) {
 					continue;
@@ -65,6 +64,28 @@ public class PassiveManager {
 				((CoreAbility) object).start();
 			}
 		}
+	}
+
+	public static boolean hasPassive(Player player, CoreAbility passive) {
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		Element element = passive.getElement();
+		if (passive.getElement() instanceof SubElement) {
+			element = ((SubElement) passive.getElement()).getParentElement();
+		}
+		if (bPlayer == null) {
+			return false;
+		} else if (!(passive instanceof PassiveAbility)) {
+			return false;
+		} else if (!passive.isEnabled()) {
+			return false;
+		} else if (!bPlayer.canBendPassive(passive.getElement())) {
+			return false;
+		} else if (!bPlayer.isToggled()) {
+			return false;
+		} else if (!bPlayer.isElementToggled(element)) {
+			return false;
+		}
+		return true;
 	}
 
 	public static Set<String> getPassivesForElement(Element element) {
