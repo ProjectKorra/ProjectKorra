@@ -11,6 +11,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.util.Attribute;
 
 public class AirBurst extends AirAbility {
 
@@ -27,6 +28,12 @@ public class AirBurst extends AirAbility {
 	private double particlePercentage;
 	private ArrayList<AirBlast> blasts;
 	private ArrayList<Entity> affectedEntities;
+	private Attribute<Long> chargeTimeA = new Attribute<Long>(this, "chargeTime", getConfig().getLong("Abilities.Air.AirBurst.ChargeTime"));
+	private Attribute<Double> fallThresholdA = new Attribute<Double>(this, "fallThreshold", getConfig().getDouble("Abilities.Air.AirBurst.FallThreshold"));
+	private Attribute<Double> pushFactorA = new Attribute<Double>(this, "pushFactor", getConfig().getDouble("Abilities.Air.AirBurst.PushFactor"));
+	private Attribute<Double> damageA = new Attribute<Double>(this, "damage", getConfig().getDouble("Abilities.Air.AirBurst.Damage"));
+	private Attribute<Double> blastAngleThetaA = new Attribute<Double>(this, "blastAngleTheta", getConfig().getDouble("Abilities.Air.AirBlast.AngleTheta"));
+	private Attribute<Double> blastAnglePhiA = new Attribute<Double>(this, "blastAnglePhi", getConfig().getDouble("Abilities.Air.AirBlast.AnglePhi"));
 
 	public AirBurst(Player player, boolean isFallBurst) {
 		super(player);
@@ -43,21 +50,17 @@ public class AirBurst extends AirAbility {
 		this.isFallBurst = isFallBurst;
 		this.isCharged = false;
 		this.playerFallDistance = player.getFallDistance();
-		this.chargeTime = getConfig().getLong("Abilities.Air.AirBurst.ChargeTime");
+		this.chargeTime = chargeTimeA.getModified(bPlayer);
 		this.fallThreshold = getConfig().getDouble("Abilities.Air.AirBurst.FallThreshold");
 		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBurst.PushFactor");
-		this.damage = getConfig().getDouble("Abilities.Air.AirBurst.Damage");
+		this.damage = damageA.getModified(bPlayer);
 		this.blastAnglePhi = getConfig().getDouble("Abilities.Air.AirBurst.AnglePhi");
 		this.blastAngleTheta = getConfig().getDouble("Abilities.Air.AirBurst.AngleTheta");
 		this.sneakParticles = getConfig().getInt("Abilities.Air.AirBurst.SneakParticles");
 		this.particlePercentage = getConfig().getDouble("Abilities.Air.AirBurst.ParticlePercentage");
 		this.blasts = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
-
-		if (bPlayer.isAvatarState()) {
-			this.chargeTime = getConfig().getLong("Abilities.Avatar.AvatarState.Air.AirBurst.ChargeTime");
-			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBurst.Damage");
-		}
+		
 		start();
 	}
 
