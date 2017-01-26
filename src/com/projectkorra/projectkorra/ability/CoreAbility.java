@@ -213,12 +213,12 @@ public abstract class CoreAbility implements Ability {
 					BendingPlayer bPlayer = abil.getBendingPlayer();
 					if (bPlayer == null || !abil.getPlayer().isOnline()) {
 						abil.remove();
-						return;
+						continue;
 					} else if (!bPlayer.canBendPassive(abil.getElement())) { // Check for if the passive should be removed
 						abil.remove();
-						return;
+						continue;
 					} else if (!bPlayer.canUsePassive(abil.getElement())) { // Check for if the passive should be prevented from happening, but not remove it
-						return;
+						continue;
 					}
 				}
 				abil.progress();
