@@ -67,6 +67,11 @@ public class PassiveManager {
 	}
 
 	public static boolean hasPassive(Player player, CoreAbility passive) {
+		if (player == null) {
+			return false;
+		} else if (passive == null) {
+			return false;
+		}
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 		Element element = passive.getElement();
 		if (passive.getElement() instanceof SubElement) {
