@@ -18,7 +18,7 @@ public class FirePassive {
 		}
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-			if (bPlayer != null && bPlayer.canBendPassive(Element.FIRE)) {
+			if (bPlayer != null && bPlayer.canBendPassive(Element.FIRE) && bPlayer.canUsePassive(Element.FIRE)) {
 				if (player.getFireTicks() > 80) {
 					player.setFireTicks(80);
 				}
