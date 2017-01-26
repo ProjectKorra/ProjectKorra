@@ -21,7 +21,6 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
 import com.projectkorra.projectkorra.command.Commands;
@@ -248,8 +247,6 @@ public class BendingPlayer {
 		} else if (!player.hasPermission("bending." + element.getName() + ".passive")) {
 			return false;
 		} else if (!hasElement(element)) {
-			return false;
-		} else if (isChiBlocked() || isParalyzed() || isBloodbent()) {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
@@ -745,7 +742,6 @@ public class BendingPlayer {
 	 */
 	public void toggleBending() {
 		toggled = !toggled;
-		PassiveManager.registerPassives(player);
 	}
 
 	public void toggleElement(Element element) {
