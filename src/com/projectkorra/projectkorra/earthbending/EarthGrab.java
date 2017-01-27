@@ -50,6 +50,8 @@ public class EarthGrab extends EarthAbility {
 
 		if (!bPlayer.canBend(this)) {
 			return;
+		} else if (player.getLocation().clone().add(0, -1, 0).getBlock().getType().isTransparent()) {
+			return;
 		}
 
 		if (bPlayer.isAvatarState()) {
@@ -217,8 +219,13 @@ public class EarthGrab extends EarthAbility {
 			remove();
 			return;
 		}
+		if (blockType == null) {
+			return;
+		} else if (blockByte == null) {
+			return;
+		}
 		ParticleEffect.BLOCK_CRACK.display((ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, blockByte), 1F, 0.1F, 1F, 0.1F, 100, loc.add(0, -1, 0), 500);
-		
+
 		for (Entity e : GeneralMethods.getEntitiesAroundPoint(loc, 2.5)) {
 			if (e.getEntityId() != player.getEntityId() && e instanceof LivingEntity) {
 				closestEntity = e;
