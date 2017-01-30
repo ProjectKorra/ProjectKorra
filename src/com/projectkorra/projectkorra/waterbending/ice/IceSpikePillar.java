@@ -1,12 +1,9 @@
 package com.projectkorra.projectkorra.waterbending.ice;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.IceAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.TempPotionEffect;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,16 +16,19 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.TempPotionEffect;
 
 public class IceSpikePillar extends IceAbility {
-	
-	/**The list of blocks IceSpike uses*/
+
+	/** The list of blocks IceSpike uses */
 	private Map<Block, TempBlock> ice_blocks = new HashMap<Block, TempBlock>();
-	
+
 	private int height;
 	private int progress;
 	private int slowPower;
@@ -81,7 +81,7 @@ public class IceSpikePillar extends IceAbility {
 			} else {
 				this.source_block = WaterAbility.getIceSourceBlock(player, range);
 				if (this.source_block == null) {
-					return;	
+					return;
 				}
 			}
 			origin = source_block.getLocation();
@@ -138,6 +138,7 @@ public class IceSpikePillar extends IceAbility {
 
 	/**
 	 * Reverts the block if it's part of IceSpike
+	 * 
 	 * @param block The Block
 	 * @return If the block was removed or not
 	 */
@@ -152,20 +153,22 @@ public class IceSpikePillar extends IceAbility {
 		return false;
 	}
 
-	/**Checks to see if this move can start. Checks things like if there is enough space to form, if the source isn't
-	 * a TempBlock, etc.*/
+	/**
+	 * Checks to see if this move can start. Checks things like if there is
+	 * enough space to form, if the source isn't a TempBlock, etc.
+	 */
 	private boolean canInstantiate() {
 		if (!isIcebendable(source_block.getType())) {
 			return false;
 		}
-		
+
 		Block b;
 		for (int i = 1; i <= height; i++) {
 			b = source_block.getWorld().getBlockAt(location.clone().add(direction.clone().multiply(i)));
 			if (b.getType() != Material.AIR) {
 				return false;
 			}
-			
+
 			if (b.getX() == player.getEyeLocation().getBlock().getX() && b.getZ() == player.getEyeLocation().getBlock().getZ()) {
 				return false;
 			}
@@ -193,9 +196,10 @@ public class IceSpikePillar extends IceAbility {
 	}
 
 	/**
-	 * Makes the pillar rise by 1 block. 
+	 * Makes the pillar rise by 1 block.
 	 * 
-	 * @return If the block was placed successfully.*/
+	 * @return If the block was placed successfully.
+	 */
 	private boolean risePillar() {
 		progress++;
 		Block affectedBlock = location.clone().add(direction).getBlock();
@@ -211,14 +215,14 @@ public class IceSpikePillar extends IceAbility {
 				affect(le);
 			}
 		}
-		
-		TempBlock b = new TempBlock(affectedBlock, Material.ICE, (byte)0);
+
+		TempBlock b = new TempBlock(affectedBlock, Material.ICE, (byte) 0);
 		ice_blocks.put(affectedBlock, b);
 
 		if (!inField || new Random().nextInt((int) ((height + 1) * 1.5)) == 0) {
 			playIcebendingSound(source_block.getLocation());
 		}
-		
+
 		return true;
 	}
 
@@ -239,10 +243,12 @@ public class IceSpikePillar extends IceAbility {
 		}
 		AirAbility.breakBreathbendingHold(entity);
 	}
-	
-	/**The reverse of risePillar(). Makes the pillar sink
+
+	/**
+	 * The reverse of risePillar(). Makes the pillar sink
 	 * 
-	 * @return If the move should continue progressing.*/
+	 * @return If the move should continue progressing.
+	 */
 	public boolean sinkPillar() {
 		Vector direction = this.direction.clone().multiply(-1);
 		if (ice_blocks.containsKey(location.getBlock())) {
@@ -250,7 +256,7 @@ public class IceSpikePillar extends IceAbility {
 			ice_blocks.remove(location.getBlock());
 			location.add(direction);
 
-			if (source_block == location.getBlock()) {
+			if (source_block.equals(location.getBlock())) {
 				return false;
 			}
 		}
