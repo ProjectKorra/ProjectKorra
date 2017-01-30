@@ -29,6 +29,7 @@ public class LavaFlow extends LavaAbility {
 	}
 
 	private static final Map<Block, TempBlock> TEMP_LAVA_BLOCKS = new ConcurrentHashMap<>();
+	public static final Map<TempBlock, Block> TEMP_LAVA_BLOCKS_BY_TEMPBLOCK = new ConcurrentHashMap<>();
 	private static final Map<Block, TempBlock> TEMP_LAND_BLOCKS = new ConcurrentHashMap<>();
 	private static final Map<Block, TempBlock> TEMP_AIR_BLOCKS = new ConcurrentHashMap<>();
 
@@ -397,6 +398,7 @@ public class LavaFlow extends LavaAbility {
 			}
 			TempBlock tblock = new TempBlock(block, Material.LAVA, (byte) 0);
 			TEMP_LAVA_BLOCKS.put(block, tblock);
+			TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.put(tblock, block);
 			affectedBlocks.add(tblock);
 
 			if (allowNaturalFlow) {
@@ -416,6 +418,7 @@ public class LavaFlow extends LavaAbility {
 			TempBlock tb = TEMP_LAVA_BLOCKS.get(testBlock);
 			tb.revertBlock();
 			TEMP_LAVA_BLOCKS.remove(testBlock);
+			TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tb);
 			affectedBlocks.remove(tb);
 			return;
 		}
@@ -468,7 +471,8 @@ public class LavaFlow extends LavaAbility {
 
 			if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
 				affectedBlocks.remove(tblock);
-				TEMP_LAVA_BLOCKS.remove(tblock);
+				TEMP_LAVA_BLOCKS.remove(TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.get(tblock));
+				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tblock);
 			}
 			if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
 				affectedBlocks.remove(tblock);
@@ -497,7 +501,8 @@ public class LavaFlow extends LavaAbility {
 			tblock.revertBlock();
 			if (TEMP_LAVA_BLOCKS.values().contains(tblock)) {
 				affectedBlocks.remove(tblock);
-				TEMP_LAVA_BLOCKS.remove(tblock);
+				TEMP_LAVA_BLOCKS.remove(TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.get(tblock));
+				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.remove(tblock);
 			}
 			if (TEMP_LAND_BLOCKS.values().contains(tblock)) {
 				affectedBlocks.remove(tblock);
