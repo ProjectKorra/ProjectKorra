@@ -49,6 +49,8 @@ public class ConfigManager {
 
 			config.addDefault("Chat.Enable", true);
 			config.addDefault("Chat.Format", "<name>: <message>");
+			config.addDefault("Chat.JoinMessage.Message", "&6This server is running the &cProjectKorra &6plugin for &cBending&6! Find out more at: &7http://www.projectkorra.com");
+            config.addDefault("Chat.JoinMessage.Enabled", true);
 			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
 			config.addDefault("Chat.Colors.Air", "GRAY");
 			config.addDefault("Chat.Colors.AirSub", "DARK_GRAY");
