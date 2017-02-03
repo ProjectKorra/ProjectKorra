@@ -535,8 +535,8 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self", 4.0);
-			config.addDefault("Abilities.Avatar.AvatarState.AirSpout.Height", 26);
-			config.addDefault("Abilities.Avatar.AvatarState.AirSuction.Push", 3.5);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSpout.Height", 26);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSuction.Push", 3.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Cooldown", 1000);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Push", 1.0);
