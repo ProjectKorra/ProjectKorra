@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.Random;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.Attribute;
 import com.projectkorra.projectkorra.util.Attribute.Attributable;
+
 import com.projectkorra.projectkorra.util.Flight;
 
 public class AirScooter extends AirAbility implements Attributable{
@@ -30,7 +32,7 @@ public class AirScooter extends AirAbility implements Attributable{
 	private static Attribute<Double> heightA;
 	private Block floorblock;
 	private Random random;
-	private double angle;
+	private double phi = 0;
 
 	private boolean canFly;
 	private boolean hadFly;
@@ -125,12 +127,20 @@ public class AirScooter extends AirAbility implements Attributable{
 		 * lowers the player based on their distance from the ground.
 		 */
 		double distance = player.getLocation().getY() - (double) floorblock.getY();
-		if (distance > 2.2) {
-			velocity.setY(-.30);
-		} else if (distance < 1.9) {
-			velocity.setY(.30);
+		if (distance > 2.3) {
+			velocity.setY(-0.15);
+		} else if (distance < 1.95) {
+			velocity.setY(0.15);
 		} else {
 			velocity.setY(0);
+		}
+		
+		Vector v = velocity.clone().setY(0);
+		Block b = floorblock.getLocation().clone().add(v.multiply(1.2)).getBlock();
+		if (!GeneralMethods.isSolid(b)) {
+			velocity.add(new Vector(0, -0.5, 0));
+		} else if (b.getRelative(BlockFace.UP).getType() != Material.AIR) {
+			velocity.add(new Vector(0, 0.5, 0));
 		}
 
 		Location loc = player.getLocation();
@@ -160,22 +170,27 @@ public class AirScooter extends AirAbility implements Attributable{
 	}
 	
 	private void spinScooter() {
-		Location loc = player.getLocation().clone().subtract(0, 0.5, 0);
-		double x = Math.cos(angle);
-		double y = Math.sin(angle);
-		double z = Math.sin(angle);
-		Location loc1 = loc.clone().add(x/2, y/2, z/2);
-		Location loc2 = loc.clone().add(-x/2, y/2, -z/2);
-		Location loc3 = loc.clone().add(0, y/2, z/2);
-		Location loc4 = loc.clone().add(x/2, y/2, 0);
-		Location loc5 = loc.clone().add(x/2, 0, z/2);
-		playAirbendingParticles(loc1, 1, 0f, 0f, 0f);
-		playAirbendingParticles(loc2, 1, 0f, 0f, 0f);
-		playAirbendingParticles(loc3, 1, 0f, 0f, 0f);
-		playAirbendingParticles(loc4, 1, 0f, 0f, 0f);
-		playAirbendingParticles(loc5, 1, 0f, 0f, 0f);
-		playAirbendingParticles(loc, 5, 0.4f, 0.4f, 0.4f);
-		angle += Math.PI/7;
+		Location origin = player.getLocation().clone();
+		Location origin2 = player.getLocation().clone();
+		phi += Math.PI / 10 * 4;
+		for (double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / 10) {
+			double r = 0.6;
+			double x = r * Math.cos(theta) * Math.sin(phi);
+			double y = r * Math.cos(phi);
+			double z = r * Math.sin(theta) * Math.sin(phi);
+			origin.add(x, y, z);
+			playAirbendingParticles(origin, 1, 0F, 0F, 0F);
+			origin.subtract(x, y, z);
+		}
+		for (double theta = 0; theta <= 2 * Math.PI; theta += Math.PI / 10) {
+			double r = 0.6;
+			double x = r * Math.cos(theta) * Math.sin(phi);
+			double y = r * Math.cos(phi);
+			double z = r * Math.sin(theta) * Math.sin(phi);
+			origin2.subtract(x, y, z);
+			playAirbendingParticles(origin2, 1, 0F, 0F, 0F);
+			origin2.add(x, y, z);
+}
 	}
 
 	@Override
