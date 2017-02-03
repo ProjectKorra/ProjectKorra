@@ -28,6 +28,7 @@ import com.projectkorra.projectkorra.util.MetricsLite;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.Updater;
+import com.projectkorra.projectkorra.util.attributes.AttributeModifiers;
 import com.projectkorra.projectkorra.util.logging.PKLogHandler;
 import com.projectkorra.projectkorra.waterbending.util.WaterbendingManager;
 
@@ -68,6 +69,7 @@ public class ProjectKorra extends JavaPlugin {
 		CoreAbility.registerAbilities();
 		collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered
 		collisionManager.startCollisionDetection();
+		new AttributeModifiers();
 
 		Preset.loadExternalPresets();
 

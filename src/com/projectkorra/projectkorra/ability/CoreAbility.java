@@ -40,6 +40,7 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.event.AbilityEndEvent;
 import com.projectkorra.projectkorra.event.AbilityProgressEvent;
 import com.projectkorra.projectkorra.event.AbilityStartEvent;
+import com.projectkorra.projectkorra.util.Attribute.Attributable;
 
 import sun.reflect.ReflectionFactory;
 
@@ -491,6 +492,11 @@ public abstract class CoreAbility implements Ability {
 						AddonAbility addon = (AddonAbility) ability;
 						addon.load();
 					}
+					
+					if (ability instanceof Attributable) {
+						Attributable att = (Attributable) ability;
+						att.registerAttributes();
+					}
 				}
 				catch (Exception e) {
 				}
@@ -563,6 +569,12 @@ public abstract class CoreAbility implements Ability {
 					if (coreAbil.getElement() instanceof SubElement) {
 						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
 					}
+				}
+				
+
+				if (coreAbil instanceof Attributable) {
+					Attributable att = (Attributable) coreAbil;
+					att.registerAttributes();
 				}
 			}
 			catch (Exception | Error e) {

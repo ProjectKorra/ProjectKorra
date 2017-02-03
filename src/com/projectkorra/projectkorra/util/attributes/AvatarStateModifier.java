@@ -15,9 +15,4 @@ public class AvatarStateModifier<TYPE> implements AttributeModifier<TYPE>{
 		return value;
 	}
 
-	@Override
-	public int getPriority() {
-		return 0;
-	}
-
 }

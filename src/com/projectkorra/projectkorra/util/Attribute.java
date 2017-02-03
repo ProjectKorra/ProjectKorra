@@ -10,8 +10,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 
 public class Attribute<TYPE> {
 
-	@SuppressWarnings("rawtypes")
-	private static Map<CoreAbility, Map<String, Attribute>> attributes = new HashMap<>();
+	private static Map<CoreAbility, Map<String, Attribute<? extends Object>>> attributes = new HashMap<>();
 
 	public List<AttributeModifier<TYPE>> modifiers;
 	public CoreAbility ability;
@@ -27,10 +26,10 @@ public class Attribute<TYPE> {
 		this.name = name;
 		this.value = value;
 		if (!attributes.containsKey(ability)) {
-			attributes.put(ability, new HashMap<>());
+			attributes.put(ability, new HashMap<String, Attribute<? extends Object>>());
 		}
 		attributes.get(ability).put(name.toLowerCase(), this);
-		this.modifiers = new ArrayList<>(modifiers);
+		this.modifiers = new ArrayList<AttributeModifier<TYPE>>(modifiers);
 	}
 	
 	public List<AttributeModifier<TYPE>> getModifiers() {
@@ -65,9 +64,8 @@ public class Attribute<TYPE> {
 		return modified;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public static Attribute get(CoreAbility ability, String name) {
-		Map<String, Attribute> map = attributes.containsKey(ability) ? attributes.get(ability) : new HashMap<>();
+	public static Attribute<? extends Object> get(CoreAbility ability, String name) {
+		Map<String, Attribute<? extends Object>> map = attributes.containsKey(ability) ? attributes.get(ability) : new HashMap<String, Attribute<? extends Object>>();
 		if (map.isEmpty()) {
 			return null;
 		}
@@ -80,6 +78,13 @@ public class Attribute<TYPE> {
 	public interface AttributeModifier<TYPE> {
 		public boolean canModify(BendingPlayer bPlayer);
 		public TYPE newValue(TYPE value);
-		public int getPriority();
+	}
+	
+	public interface Attributable {
+
+		/**
+		 * Registers the {@link Attribute} objects the ability has
+		 */
+		public void registerAttributes();
 	}
 }
