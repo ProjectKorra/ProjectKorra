@@ -1035,7 +1035,10 @@ public class PKListener implements Listener {
 
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
 			public void run() {
-				player.sendMessage(ChatColor.GOLD + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+				if (ConfigManager.languageConfig.get().getBoolean("Chat.JoinMessage.Enabled", true)) {
+                    String joinMessage = ConfigManager.languageConfig.get().getString("Chat.JoinMessage.Message").replace("&", "§");
+                    player.sendMessage(joinMessage);
+                }
 			}
 		}, 20 * 5);
 	}
