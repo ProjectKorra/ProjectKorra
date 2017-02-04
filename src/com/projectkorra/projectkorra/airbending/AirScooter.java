@@ -3,7 +3,6 @@ package com.projectkorra.projectkorra.airbending;
 import java.util.Random;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -15,7 +14,6 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.util.Attribute;
 import com.projectkorra.projectkorra.util.Attribute.Attributable;
-
 import com.projectkorra.projectkorra.util.Flight;
 
 public class AirScooter extends AirAbility implements Attributable{
@@ -127,9 +125,9 @@ public class AirScooter extends AirAbility implements Attributable{
 		 * lowers the player based on their distance from the ground.
 		 */
 		double distance = player.getLocation().getY() - (double) floorblock.getY();
-		if (distance > 2.3) {
+		if (distance > 2.355) {
 			velocity.setY(-0.15);
-		} else if (distance < 1.95) {
+		} else if (distance < 1.9) {
 			velocity.setY(0.15);
 		} else {
 			velocity.setY(0);
@@ -137,16 +135,14 @@ public class AirScooter extends AirAbility implements Attributable{
 		
 		Vector v = velocity.clone().setY(0);
 		Block b = floorblock.getLocation().clone().add(v.multiply(1.2)).getBlock();
-		if (!GeneralMethods.isSolid(b)) {
-			velocity.add(new Vector(0, -0.5, 0));
-		} else if (b.getRelative(BlockFace.UP).getType() != Material.AIR) {
-			velocity.add(new Vector(0, 0.5, 0));
+		if (!GeneralMethods.isSolid(b) && !b.isLiquid()) {
+			velocity.add(new Vector(0, -0.6, 0));
+		} else if (GeneralMethods.isSolid(b.getRelative(BlockFace.UP)) || b.getRelative(BlockFace.UP).isLiquid()) {
+			velocity.add(new Vector(0, 0.6, 0));
 		}
 
-		Location loc = player.getLocation();
-		if (!WaterAbility.isWater(loc.clone().add(0, 2, 0).getBlock())) {
-			loc.setY((double) floorblock.getY() + 1.5);
-		} else {
+		if (WaterAbility.isWater(player.getLocation().getBlock())) {
+			remove();
 			return;
 		}
 
