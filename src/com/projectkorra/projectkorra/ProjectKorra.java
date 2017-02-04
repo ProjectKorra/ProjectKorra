@@ -96,7 +96,8 @@ public class ProjectKorra extends JavaPlugin {
 			getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 				@Override
 				public void run() {
-					ChatColor color = ConfigManager.BRANDING_OPTIONS.getOrDefault(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase(), ChatColor.GOLD);
+					ChatColor color = ConfigManager.BRANDING_OPTIONS.get(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
+					color = color == null ? ChatColor.GOLD : color;
 					String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
 					String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
 					if (!topBorder.isEmpty()) {
