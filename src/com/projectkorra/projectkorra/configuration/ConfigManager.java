@@ -48,6 +48,7 @@ public class ConfigManager {
 			helpLines.add("&c/bending bind [Ability] # &eBind an ability.");
 
 			config.addDefault("Chat.Enable", true);
+			config.addDefault("Chat.Branding", false);
 			config.addDefault("Chat.Format", "<name>: <message>");
 			config.addDefault("Chat.Colors.Avatar", "DARK_PURPLE");
 			config.addDefault("Chat.Colors.Air", "GRAY");

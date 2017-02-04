@@ -1033,11 +1033,13 @@ public class PKListener implements Listener {
 			}
 		}, 5);
 
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
-			public void run() {
-				player.sendMessage(ChatColor.GOLD + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
-			}
-		}, 20 * 5);
+		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding")) {
+			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
+				public void run() {
+					player.sendMessage(ChatColor.GOLD + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+				}
+			}, 20 * 5);
+		}
 	}
 
 	@EventHandler
