@@ -17,31 +17,38 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.util.Attribute;
+import com.projectkorra.projectkorra.util.Attribute.Attributable;
 
-public class AirShield extends AirAbility {
+public class AirShield extends AirAbility implements Attributable {
 
-	private boolean isToggledByAvatarState;
+	private boolean toggle;
 	private double maxRadius;
 	private double radius;
 	private double speed;
 	private int streams;
 	private int particles;
+	private static Attribute<Boolean> toggleA;
+	private static Attribute<Double> maxRadiusA;
+	private static Attribute<Double> speedA;
+	private static Attribute<Integer> streamsA;
+	private static Attribute<Integer> particlesA;
 	private Random random;
 	private HashMap<Integer, Integer> angles;
 
 	public AirShield(Player player) {
 		super(player);
 
-		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.Radius");
-		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
+		this.maxRadius = maxRadiusA.getModified(bPlayer);
+		this.toggle = toggleA.getModified(bPlayer);
 		this.radius = this.maxRadius;
-		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");
-		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
-		this.particles = getConfig().getInt("Abilities.Air.AirShield.Particles");
+		this.speed = speedA.getModified(bPlayer);
+		this.streams = streamsA.getModified(bPlayer);
+		this.particles = particlesA.getModified(bPlayer);
 		this.random = new Random();
 		this.angles = new HashMap<>();
 
-		if (bPlayer.isAvatarState() && hasAbility(player, AirShield.class) && isToggledByAvatarState) {
+		if (hasAbility(player, AirShield.class) && toggle) {
 			getAbility(player, AirShield.class).remove();
 			return;
 		}
@@ -81,7 +88,7 @@ public class AirShield extends AirAbility {
 		if (player.getEyeLocation().getBlock().isLiquid()) {
 			remove();
 			return;
-		} else if (!bPlayer.isAvatarState() || !isToggledByAvatarState) {
+		} else if (!toggle) {
 			if (!player.isSneaking() || !bPlayer.canBend(this)) {
 				remove();
 				return;
@@ -201,12 +208,12 @@ public class AirShield extends AirAbility {
 		return getRadius();
 	}
 
-	public boolean isToggledByAvatarState() {
-		return isToggledByAvatarState;
+	public boolean isToggled() {
+		return toggle;
 	}
 
-	public void setToggledByAvatarState(boolean isToggledByAvatarState) {
-		this.isToggledByAvatarState = isToggledByAvatarState;
+	public void setToggled(boolean isToggled) {
+		this.toggle = isToggled;
 	}
 
 	public double getMaxRadius() {
@@ -251,5 +258,14 @@ public class AirShield extends AirAbility {
 
 	public HashMap<Integer, Integer> getAngles() {
 		return angles;
+	}
+
+	@Override
+	public void registerAttributes() {
+		toggleA = new Attribute<Boolean>(this, "toggle", false);
+		maxRadiusA = new Attribute<Double>(this, "maxRadius", getConfig().getDouble("Abilities.Air.AirShield.MaxRadius"));
+		speedA = new Attribute<Double>(this, "speed", getConfig().getDouble("Abilities.Air.AirShield.Speed"));
+		streamsA = new Attribute<Integer>(this, "streams", getConfig().getInt("Abilities.Air.AirShield.Streams"));
+		particlesA = new Attribute<Integer>(this, "particles", getConfig().getInt("Abilities.Air.AirShield.Particles"));
 	}
 }

@@ -17,10 +17,12 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.Attribute;
+import com.projectkorra.projectkorra.util.Attribute.Attributable;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 
-public class AirSuction extends AirAbility {
+public class AirSuction extends AirAbility implements Attributable{
 
 	private static final int MAX_TICKS = 10000;
 	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
@@ -37,6 +39,14 @@ public class AirSuction extends AirAbility {
 	private Location location;
 	private Location origin;
 	private Vector direction;
+	private static Attribute<Integer> particleCountA;
+	private static Attribute<Integer> selectParticlesA;
+	private static Attribute<Long> cooldownA;
+	private static Attribute<Double> speedA;
+	private static Attribute<Double> rangeA;
+	private static Attribute<Double> radiusA;
+	private static Attribute<Double> pushFactorA;
+	private static Attribute<Double> selectRangeA;
 
 	public AirSuction(Player player) {
 		super(player);
@@ -51,12 +61,12 @@ public class AirSuction extends AirAbility {
 
 		this.hasOtherOrigin = false;
 		this.ticks = 0;
-		this.particleCount = getConfig().getInt("Abilities.Air.AirSuction.Particles");
-		this.speed = getConfig().getDouble("Abilities.Air.AirSuction.Speed");
-		this.range = getConfig().getDouble("Abilities.Air.AirSuction.Range");
-		this.radius = getConfig().getDouble("Abilities.Air.AirSuction.Radius");
-		this.pushFactor = getConfig().getDouble("Abilities.Air.AirSuction.Push");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirSuction.Cooldown");
+		this.particleCount = particleCountA.getModified(bPlayer);
+		this.speed = speedA.getModified(bPlayer);
+		this.range = rangeA.getModified(bPlayer);
+		this.radius = radiusA.getModified(bPlayer);
+		this.pushFactor = pushFactorA.getModified(bPlayer);
+		this.cooldown = cooldownA.getModified(bPlayer);
 		this.random = new Random();
 
 		if (ORIGINS.containsKey(player)) {
@@ -98,12 +108,12 @@ public class AirSuction extends AirAbility {
 		} else if (!bPlayer.canBendIgnoreCooldowns(getAbility("AirSuction"))) {
 			ORIGINS.remove(player);
 			return;
-		} else if (origin.distanceSquared(player.getEyeLocation()) > getSelectRange() * getSelectRange()) {
+		} else if (origin.distanceSquared(player.getEyeLocation()) > getSelectRange(bPlayer) * getSelectRange(bPlayer)) {
 			ORIGINS.remove(player);
 			return;
 		}
 
-		playAirbendingParticles(origin, getSelectParticles());
+		playAirbendingParticles(origin, getSelectParticles(bPlayer));
 	}
 
 	public static void progressOrigins() {
@@ -113,7 +123,11 @@ public class AirSuction extends AirAbility {
 	}
 
 	public static void setOrigin(Player player) {
-		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(), GeneralMethods.NON_OPAQUE);
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		if (bPlayer == null) {
+			return;
+		}
+		Location location = GeneralMethods.getTargetedLocation(player, getSelectRange(bPlayer), GeneralMethods.NON_OPAQUE);
 		if (location.getBlock().isLiquid() || GeneralMethods.isSolid(location.getBlock())) {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, "AirSuction", location)) {
@@ -347,12 +361,24 @@ public class AirSuction extends AirAbility {
 		return ORIGINS;
 	}
 
-	public static int getSelectParticles() {
-		return getConfig().getInt("Abilities.Air.AirSuction.SelectParticles");
+	public static int getSelectParticles(BendingPlayer bPlayer) {
+		return selectParticlesA.getModified(bPlayer);
 	}
 
-	public static double getSelectRange() {
-		return getConfig().getDouble("Abilities.Air.AirSuction.SelectRange");
+	public static double getSelectRange(BendingPlayer bPlayer) {
+		return selectRangeA.getModified(bPlayer);
+	}
+
+	@Override
+	public void registerAttributes() {
+		particleCountA = new Attribute<Integer>(this, "particleCount", getConfig().getInt("Abilities.Air.AirSuction.Particles"));
+		selectParticlesA = new Attribute<Integer>(this, "selectParticles", getConfig().getInt("Abilities.Air.AirSuction.SelectParticles"));
+		cooldownA = new Attribute<Long>(this, "cooldown", getConfig().getLong("Abilities.Air.AirSuction.Cooldown"));
+		speedA = new Attribute<Double>(this, "speed", getConfig().getDouble("Abilities.Air.AirSuction.Speed"));
+		rangeA = new Attribute<Double>(this, "range", getConfig().getDouble("Abilities.Air.AirSuction.Range"));
+		radiusA = new Attribute<Double>(this, "radius", getConfig().getDouble("Abilities.Air.AirSuction.Radius"));
+		pushFactorA = new Attribute<Double>(this, "pushFactor", getConfig().getDouble("Abilities.Air.AirSuction.Push"));
+		selectRangeA = new Attribute<Double>(this, "selectRange", getConfig().getDouble("Abilities.Air.AirSuction.SelectRange"));
 	}
 
 }
