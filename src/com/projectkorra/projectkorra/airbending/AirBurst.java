@@ -326,7 +326,7 @@ public class AirBurst extends AirAbility implements Attributable{
 		fallThresholdA = new Attribute<Double>(this, "fallThreshold", getConfig().getDouble("Abilities.Air.AirBurst.FallThreshold"));
 		pushFactorA = new Attribute<Double>(this, "pushFactor", getConfig().getDouble("Abilities.Air.AirBurst.PushFactor"));
 		damageA = new Attribute<Double>(this, "damage", getConfig().getDouble("Abilities.Air.AirBurst.Damage"));
-		blastAngleThetaA = new Attribute<Double>(this, "blastAngleTheta", getConfig().getDouble("Abilities.Air.AirBlast.AngleTheta"));
-		blastAnglePhiA = new Attribute<Double>(this, "blastAnglePhi", getConfig().getDouble("Abilities.Air.AirBlast.AnglePhi"));
+		blastAngleThetaA = new Attribute<Double>(this, "blastAngleTheta", getConfig().getDouble("Abilities.Air.AirBurst.AngleTheta"));
+		blastAnglePhiA = new Attribute<Double>(this, "blastAnglePhi", getConfig().getDouble("Abilities.Air.AirBurst.AnglePhi"));
 	}
 }
