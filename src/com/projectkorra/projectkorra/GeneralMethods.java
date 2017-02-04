@@ -190,7 +190,7 @@ public class GeneralMethods {
 	 */
 	public static void bindAbility(Player player, String ability, int slot) {
 		if (MultiAbilityManager.playerAbilities.containsKey(player)) {
-			player.sendMessage(ChatColor.RED + "You can't edit your binds right now!");
+			player.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + "You can't edit your binds right now!");
 			return;
 		}
 
@@ -203,7 +203,7 @@ public class GeneralMethods {
 		bPlayer.getAbilities().put(slot, ability);
 
 		if (coreAbil != null) {
-			player.sendMessage(coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
+			player.sendMessage(ConfigManager.getBrandingPrefix() + coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
 		}
 		saveAbility(bPlayer, slot, ability);
 	}

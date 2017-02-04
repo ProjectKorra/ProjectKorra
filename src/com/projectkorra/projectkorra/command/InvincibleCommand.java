@@ -25,10 +25,10 @@ public class InvincibleCommand extends PKCommand {
 
 		if (!Commands.invincible.contains(sender.getName())) {
 			Commands.invincible.add(sender.getName());
-			sender.sendMessage(ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOn"));
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOn"));
 		} else {
 			Commands.invincible.remove(sender.getName());
-			sender.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOff"));
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOff"));
 		}
 	}
 

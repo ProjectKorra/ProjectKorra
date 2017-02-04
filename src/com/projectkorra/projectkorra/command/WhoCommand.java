@@ -121,7 +121,7 @@ public class WhoCommand extends PKCommand {
 				players.add(result);
 			}
 			if (players.isEmpty()) {
-				sender.sendMessage(ChatColor.RED + noPlayersOnline);
+				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + noPlayersOnline);
 			} else {
 				for (String s : getPage(players, ChatColor.GOLD + "Players:", page, true)) {
 					sender.sendMessage(s);
@@ -141,11 +141,11 @@ public class WhoCommand extends PKCommand {
 		@SuppressWarnings("deprecation")
 		final OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
 		if (player == null || !player.hasPlayedBefore() && !player.isOnline()) {
-			sender.sendMessage(ChatColor.RED + "Player not found!");
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + "Player not found!");
 			return;
 		}
 		if (!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
-			sender.sendMessage(ChatColor.GRAY + playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.GRAY + playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
 		}
 
 		Player player_ = (Player) (player.isOnline() ? player : null);
@@ -160,7 +160,7 @@ public class WhoCommand extends PKCommand {
 					final long delay = 200L;
 					while (!BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
 						if (count > 5 * (1000 / delay)) { //After 5 seconds of waiting, tell the user the database is busy and to try again in a few seconds.
-							sender.sendMessage(ChatColor.DARK_RED + databaseOverload);
+							sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.DARK_RED + databaseOverload);
 							break;
 						}
 						count++;
@@ -169,7 +169,7 @@ public class WhoCommand extends PKCommand {
 						}
 						catch (InterruptedException e) {
 							e.printStackTrace();
-							sender.sendMessage(ChatColor.DARK_RED + databaseOverload);
+							sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.DARK_RED + databaseOverload);
 							break;
 						}
 					}

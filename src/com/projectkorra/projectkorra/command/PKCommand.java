@@ -112,7 +112,7 @@ public abstract class PKCommand implements SubCommand {
 		if (sender.hasPermission("bending.command." + name + "." + extra)) {
 			return true;
 		} else {
-			sender.sendMessage(this.noPermissionMessage);
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + this.noPermissionMessage);
 			return false;
 		}
 	}
@@ -147,7 +147,7 @@ public abstract class PKCommand implements SubCommand {
 		if (sender instanceof Player) {
 			return true;
 		} else {
-			sender.sendMessage(this.mustBePlayerMessage);
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + this.mustBePlayerMessage);
 			return false;
 		}
 	}

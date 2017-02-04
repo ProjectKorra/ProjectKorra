@@ -56,7 +56,7 @@ public class PermaremoveCommand extends PKCommand {
 	private void permaremove(CommandSender sender, String target) {
 		Player player = Bukkit.getPlayer(target);
 		if (player == null) {
-			sender.sendMessage(ChatColor.RED + this.playerIsOffline);
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + this.playerIsOffline);
 			return;
 		}
 
@@ -69,18 +69,18 @@ public class PermaremoveCommand extends PKCommand {
 		if (bPlayer.isPermaRemoved()) {
 			bPlayer.setPermaRemoved(false);
 			GeneralMethods.savePermaRemoved(bPlayer);
-			player.sendMessage(ChatColor.GREEN + this.restored);
+			player.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.GREEN + this.restored);
 			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(target))
-				sender.sendMessage(ChatColor.GREEN + this.restoredConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN));
+				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.GREEN + this.restoredConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.GREEN));
 		} else {
 			bPlayer.getElements().clear();
 			GeneralMethods.saveElements(bPlayer);
 			bPlayer.setPermaRemoved(true);
 			GeneralMethods.savePermaRemoved(bPlayer);
 			GeneralMethods.removeUnusableAbilities(player.getName());
-			player.sendMessage(ChatColor.RED + this.removed);
+			player.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + this.removed);
 			if (!(sender instanceof Player) || !sender.getName().equalsIgnoreCase(target))
-				sender.sendMessage(ChatColor.RED + this.removedConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.RED));
+				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + this.removedConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.RED));
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.PERMAREMOVE));
 		}
 	}
@@ -94,7 +94,7 @@ public class PermaremoveCommand extends PKCommand {
 	@Override
 	public boolean hasPermission(CommandSender sender) {
 		if (!sender.hasPermission("bending.admin.permaremove")) {
-			sender.sendMessage(super.noPermissionMessage);
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + super.noPermissionMessage);
 			return false;
 		}
 		return true;

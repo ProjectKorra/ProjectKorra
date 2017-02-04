@@ -63,7 +63,7 @@ public class AddCommand extends PKCommand {
 			}
 			Player player = Bukkit.getPlayer(args.get(1));
 			if (player == null) {
-				sender.sendMessage(ChatColor.RED + playerNotFound);
+				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + playerNotFound);
 				return;
 			}
 			add(sender, player, args.get(0).toLowerCase());
@@ -90,15 +90,15 @@ public class AddCommand extends PKCommand {
 			bPlayer = BendingPlayer.getBendingPlayer(target);
 		}
 		if (bPlayer.isPermaRemoved()) {
-			sender.sendMessage(ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
 			return;
 		}
 		if (Arrays.asList(Element.getAllElements()).contains(e)) {
 			if (bPlayer.hasElement(e)) {
 				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-					sender.sendMessage(ChatColor.RED + alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+					sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + alreadyHasElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 				} else {
-					sender.sendMessage(ChatColor.RED + alreadyHasElement);
+					sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + alreadyHasElement);
 				}
 				return;
 			}
@@ -114,17 +114,17 @@ public class AddCommand extends PKCommand {
 
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 				if (e != Element.AIR && e != Element.EARTH) {
-					sender.sendMessage(color + addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
-					target.sendMessage(color + addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
+					sender.sendMessage(ConfigManager.getBrandingPrefix() + color + addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
+					target.sendMessage(ConfigManager.getBrandingPrefix() + color + addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
 				} else {
-					sender.sendMessage(color + addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
-					target.sendMessage(color + addedAE.replace("{element}", e.getName() + e.getType().getBender()));
+					sender.sendMessage(ConfigManager.getBrandingPrefix() + color + addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", e.getName() + e.getType().getBender()));
+					target.sendMessage(ConfigManager.getBrandingPrefix() + color + addedAE.replace("{element}", e.getName() + e.getType().getBender()));
 				}
 			} else {
 				if (e != Element.AIR && e != Element.EARTH)
-					target.sendMessage(color + addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
+					target.sendMessage(ConfigManager.getBrandingPrefix() + color + addedCFW.replace("{element}", e.getName() + e.getType().getBender()));
 				else
-					target.sendMessage(color + addedAE.replace("{element}", e.getName() + e.getType().getBender()));
+					target.sendMessage(ConfigManager.getBrandingPrefix() + color + addedAE.replace("{element}", e.getName() + e.getType().getBender()));
 
 			}
 			GeneralMethods.saveElements(bPlayer);
@@ -135,9 +135,9 @@ public class AddCommand extends PKCommand {
 			SubElement sub = (SubElement) e;
 			if (bPlayer.hasSubElement(sub)) {
 				if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-					sender.sendMessage(ChatColor.RED + alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
+					sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + alreadyHasSubElementOther.replace("{target}", ChatColor.DARK_AQUA + target.getName() + ChatColor.RED));
 				} else {
-					sender.sendMessage(ChatColor.RED + alreadyHasSubElement);
+					sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + alreadyHasSubElement);
 				}
 				return;
 			}
@@ -146,15 +146,15 @@ public class AddCommand extends PKCommand {
 
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 				if (e != Element.AIR && e != Element.EARTH)
-					sender.sendMessage(color + addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+					sender.sendMessage(ConfigManager.getBrandingPrefix() + color + addedOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
 				else
-					sender.sendMessage(color + addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+					sender.sendMessage(ConfigManager.getBrandingPrefix() + color + addedOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
 
 			} else {
 				if (e != Element.AIR && e != Element.EARTH)
-					target.sendMessage(color + addedCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
+					target.sendMessage(ConfigManager.getBrandingPrefix() + color + addedCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
 				else
-					target.sendMessage(color + addedAE.replace("{element}", sub.getName() + sub.getType().getBender()));
+					target.sendMessage(ConfigManager.getBrandingPrefix() + color + addedAE.replace("{element}", sub.getName() + sub.getType().getBender()));
 			}
 			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.ADD));
