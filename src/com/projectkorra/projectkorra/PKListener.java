@@ -188,9 +188,17 @@ public class PKListener implements Listener {
 	private static final List<UUID> RIGHT_CLICK_INTERACT = new ArrayList<UUID>(); // Player right click block.
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
 	private static final Map<Player, Integer> JUMPS = new HashMap<>();
+	private static final Map<String, ChatColor> BRANDING_OPTIONS = new HashMap<>();
 
 	public PKListener(ProjectKorra plugin) {
 		this.plugin = plugin;
+		BRANDING_OPTIONS.put("GOLD", ChatColor.GOLD);
+		BRANDING_OPTIONS.put("AQUA", ChatColor.AQUA);
+		BRANDING_OPTIONS.put("YELLOW", ChatColor.YELLOW);
+		BRANDING_OPTIONS.put("RED", ChatColor.RED);
+		BRANDING_OPTIONS.put("GREEN", ChatColor.GREEN);
+		BRANDING_OPTIONS.put("PINK", ChatColor.LIGHT_PURPLE);
+		BRANDING_OPTIONS.put("PURPLE", ChatColor.DARK_PURPLE);
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -1035,7 +1043,9 @@ public class PKListener implements Listener {
 
 		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
 			public void run() {
-				player.sendMessage(ChatColor.GOLD + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+				String option = ConfigManager.languageConfig.get().getString("Branding.ColorScheme");
+				ChatColor color = BRANDING_OPTIONS.getOrDefault(option.toUpperCase(), ChatColor.GOLD);
+				player.sendMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
 			}
 		}, 20 * 5);
 	}
