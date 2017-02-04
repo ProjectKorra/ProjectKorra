@@ -29,10 +29,12 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
+import com.projectkorra.projectkorra.util.Attribute;
+import com.projectkorra.projectkorra.util.Attribute.Attributable;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
 
-public class AirBlast extends AirAbility {
+public class AirBlast extends AirAbility implements Attributable{
 
 	private static final int MAX_TICKS = 10000;
 	private static final Map<Player, Location> ORIGINS = new ConcurrentHashMap<>();
@@ -44,15 +46,9 @@ public class AirBlast extends AirAbility {
 	private boolean isFromOtherOrigin;
 	private boolean showParticles;
 	private int ticks;
-	private int particles;
-	private long cooldown;
-	private double speedFactor;
-	private double range;
-	private double pushFactor;
-	private double pushFactorForOthers;
-	private double damage;
-	private double speed;
-	private double radius;
+	int particles;
+	long cooldown;
+	double speedFactor, range, pushFactor, pushFactorForOthers, damage, speed, radius;
 	private Location location;
 	private Location origin;
 	private Vector direction;
@@ -60,6 +56,14 @@ public class AirBlast extends AirAbility {
 	private Random random;
 	private ArrayList<Block> affectedLevers;
 	private ArrayList<Entity> affectedEntities;
+	private static Attribute<Integer> particlesA;
+	private static Attribute<Long> cooldownA;
+	private static Attribute<Double> rangeA;
+	private static Attribute<Double> pushFactorA;
+	private static Attribute<Double> pushFactorForOthersA;
+	private static Attribute<Double> damageA;
+	private static Attribute<Double> speedA;
+	private static Attribute<Double> radiusA;
 
 	public AirBlast(Player player) {
 		super(player);
@@ -111,23 +115,18 @@ public class AirBlast extends AirAbility {
 		this.canPressButtons = false;
 		this.canFlickLevers = false;
 
-		if (bPlayer.isAvatarState()) {
-			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities");
-			this.pushFactorForOthers = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self");
-		}
-
 		start();
 	}
 
 	private void setFields() {
-		this.particles = getConfig().getInt("Abilities.Air.AirBlast.Particles");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirBlast.Cooldown");
-		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
-		this.speed = getConfig().getDouble("Abilities.Air.AirBlast.Speed");
-		this.range = getConfig().getDouble("Abilities.Air.AirBlast.Range");
-		this.radius = getConfig().getDouble("Abilities.Air.AirBlast.Radius");
-		this.pushFactor = getConfig().getDouble("Abilities.Air.AirBlast.Push.Entities");
-		this.pushFactorForOthers = getConfig().getDouble("Abilities.Air.AirBlast.Push.Self");
+		this.particles = particlesA.getModified(bPlayer);
+		this.cooldown = cooldownA.getModified(bPlayer);
+		this.range = rangeA.getModified(bPlayer);
+		this.damage = damageA.getModified(bPlayer);
+		this.speed = speedA.getModified(bPlayer);
+		this.radius = radiusA.getModified(bPlayer);
+		this.pushFactor = pushFactorA.getModified(bPlayer);
+		this.pushFactorForOthers = pushFactorForOthersA.getModified(bPlayer);
 		this.canFlickLevers = getConfig().getBoolean("Abilities.Air.AirBlast.CanFlickLevers");
 		this.canOpenDoors = getConfig().getBoolean("Abilities.Air.AirBlast.CanOpenDoors");
 		this.canPressButtons = getConfig().getBoolean("Abilities.Air.AirBlast.CanPressButtons");
@@ -637,6 +636,18 @@ public class AirBlast extends AirAbility {
 
 	public static double getSelectRange() {
 		return getConfig().getInt("Abilities.Air.AirBlast.SelectRange");
+	}
+
+	@Override
+	public void registerAttributes() {
+		particlesA = new Attribute<Integer>(this, "particles", getConfig().getInt("Abilities.Air.AirBlast.Particles"));
+		cooldownA = new Attribute<Long>(this, "cooldown", getConfig().getLong("Abilities.Air.AirBlast.Cooldown"));
+		rangeA = new Attribute<Double>(this, "range", getConfig().getDouble("Abilities.Air.AirBlast.Range"));
+		pushFactorA = new Attribute<Double>(this, "pushFactor", getConfig().getDouble("Abilities.Air.AirBlast.Push.Self"));
+		pushFactorForOthersA = new Attribute<Double>(this, "pushFactorForOthers", getConfig().getDouble("Abilities.Air.AirBlast.Push.Entities"));
+		damageA = new Attribute<Double>(this, "damage", getConfig().getDouble("Abilities.Air.AirBlast.Damage"));
+		speedA = new Attribute<Double>(this, "speed", getConfig().getDouble("Abilities.Air.AirBlast.Speed"));
+		radiusA = new Attribute<Double>(this, "radius", getConfig().getDouble("Abilities.Air.AirBlast.Radius"));
 	}
 
 }
