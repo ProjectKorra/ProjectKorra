@@ -49,7 +49,7 @@ public class BindCommand extends PKCommand {
 
 		CoreAbility coreAbil = CoreAbility.getAbility(args.get(0));
 		if (coreAbil == null || coreAbil.isHiddenAbility() || !coreAbil.isEnabled()) {
-			sender.sendMessage(ChatColor.RED + abilityDoesntExist.replace("{ability}", args.get(0)));
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + abilityDoesntExist.replace("{ability}", args.get(0)));
 			return;
 		}
 
@@ -64,7 +64,7 @@ public class BindCommand extends PKCommand {
 				bind(sender, args.get(0), Integer.parseInt(args.get(1)));
 			}
 			catch (NumberFormatException ex) {
-				sender.sendMessage(ChatColor.RED + wrongNumber);
+				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + wrongNumber);
 			}
 		}
 	}
@@ -73,33 +73,33 @@ public class BindCommand extends PKCommand {
 		if (!(sender instanceof Player)) {
 			return;
 		} else if (slot < 1 || slot > 9) {
-			sender.sendMessage(ChatColor.RED + wrongNumber);
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + wrongNumber);
 			return;
 		}
 
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer((Player) sender);
 		CoreAbility coreAbil = CoreAbility.getAbility(ability);
 		if (bPlayer == null) {
-			sender.sendMessage(ChatColor.RED + loadingInfo);
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + loadingInfo);
 			return;
 		} else if (coreAbil == null || !bPlayer.canBind(coreAbil)) {
 			if (coreAbil != null && coreAbil.getElement() != Element.AVATAR && !bPlayer.hasElement(coreAbil.getElement())) {
 				if (coreAbil.getElement() instanceof SubElement) {
 					SubElement sub = (SubElement) coreAbil.getElement();
 					if (!bPlayer.hasElement(sub.getParentElement())) {
-						sender.sendMessage(ChatColor.RED + ("AEIOUaeiou".indexOf(sub.getParentElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
+						sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + ("AEIOUaeiou".indexOf(sub.getParentElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", sub.getParentElement().getName() + sub.getParentElement().getType().getBender()));
 					} else {
-						sender.sendMessage(ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
+						sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + this.noSubElement.replace("{subelement}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBending()));
 					}
 				} else {
-					sender.sendMessage(ChatColor.RED + ("AEIOUaeiou".indexOf(coreAbil.getElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
+					sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + ("AEIOUaeiou".indexOf(coreAbil.getElement().getName().charAt(0)) > -1 ? this.noElementAE : this.noElement).replace("{element}", coreAbil.getElement().getName() + coreAbil.getElement().getType().getBender()));
 				}
 			} else {
-				sender.sendMessage(ChatColor.RED + super.noPermissionMessage);
+				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + super.noPermissionMessage);
 			}
 			return;
 		} else if (!bPlayer.isElementToggled(coreAbil.getElement())) {
-			sender.sendMessage(ChatColor.RED + toggledElementOff);
+			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + toggledElementOff);
 		}
 
 		String name = coreAbil != null ? coreAbil.getName() : null;

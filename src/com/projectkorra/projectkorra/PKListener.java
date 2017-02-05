@@ -1033,11 +1033,23 @@ public class PKListener implements Listener {
 			}
 		}, 5);
 
-		Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
-			public void run() {
-				player.sendMessage(ChatColor.GOLD + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
-			}
-		}, 20 * 5);
+		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.JoinMessage.Enabled")) {
+			Bukkit.getScheduler().runTaskLater(ProjectKorra.plugin, new Runnable() {
+				public void run() {
+					ChatColor color = ConfigManager.BRANDING_OPTIONS.get(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
+					color = color == null ? ChatColor.GOLD : color;
+					String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
+					String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
+					if (!topBorder.isEmpty()) {
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
+					}
+					player.sendMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+					if (!bottomBorder.isEmpty()) {
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&', bottomBorder));
+					}
+				}
+			}, 20 * 4);
+		}
 	}
 
 	@EventHandler

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -93,6 +94,24 @@ public class ProjectKorra extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
 		//getServer().getScheduler().scheduleSyncRepeatingTask(this, new PassiveHandler(), 0, 1);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
+		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.AutoAnnouncer.Enabled")) {
+			getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+				@Override
+				public void run() {
+					ChatColor color = ConfigManager.BRANDING_OPTIONS.get(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
+					color = color == null ? ChatColor.GOLD : color;
+					String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
+					String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
+					if (!topBorder.isEmpty()) {
+						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
+					}
+					Bukkit.broadcastMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+					if (!bottomBorder.isEmpty()) {
+						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', bottomBorder));
+					}
+				}
+			}, (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20), (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20));
+		}
 		TempBlock.startReversion();
 
 		for (final Player player : Bukkit.getOnlinePlayers()) {

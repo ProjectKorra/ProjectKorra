@@ -1,11 +1,16 @@
 package com.projectkorra.projectkorra.configuration;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigManager {
+
+	public static final Map<String, ChatColor> BRANDING_OPTIONS = new HashMap<>();
 
 	public static Config presetConfig;
 	public static Config defaultConfig;
@@ -18,6 +23,14 @@ public class ConfigManager {
 		configCheck(ConfigType.DEFAULT);
 		configCheck(ConfigType.LANGUAGE);
 		configCheck(ConfigType.PRESETS);
+
+		BRANDING_OPTIONS.put("GOLD", ChatColor.GOLD);
+		BRANDING_OPTIONS.put("AQUA", ChatColor.AQUA);
+		BRANDING_OPTIONS.put("YELLOW", ChatColor.YELLOW);
+		BRANDING_OPTIONS.put("RED", ChatColor.RED);
+		BRANDING_OPTIONS.put("GREEN", ChatColor.GREEN);
+		BRANDING_OPTIONS.put("PINK", ChatColor.LIGHT_PURPLE);
+		BRANDING_OPTIONS.put("PURPLE", ChatColor.DARK_PURPLE);
 	}
 
 	public static void configCheck(ConfigType type) {
@@ -59,6 +72,14 @@ public class ConfigManager {
 			config.addDefault("Chat.Colors.Fire", "RED");
 			config.addDefault("Chat.Colors.FireSub", "DARK_RED");
 			config.addDefault("Chat.Colors.Chi", "GOLD");
+			config.addDefault("Chat.Branding.JoinMessage.Enabled", true);
+			config.addDefault("Chat.Branding.AutoAnnouncer.Enabled", true);
+			config.addDefault("Chat.Branding.AutoAnnouncer.Interval", 30);
+			config.addDefault("Chat.Branding.Color", "GOLD");
+			config.addDefault("Chat.Branding.Borders.TopBorder", "");
+			config.addDefault("Chat.Branding.Borders.BottomBorder", "");
+			config.addDefault("Chat.Branding.ChatPrefix.Prefix", "");
+			config.addDefault("Chat.Branding.ChatPrefix.Suffix", " ");
 
 			config.addDefault("Chat.Prefixes.Air", "[Air]");
 			config.addDefault("Chat.Prefixes.Earth", "[Earth]");
@@ -1290,5 +1311,11 @@ public class ConfigManager {
 
 	public static FileConfiguration getConfig() {
 		return ConfigManager.defaultConfig.get();
+	}
+
+	public static String getBrandingPrefix() {
+		ChatColor color = BRANDING_OPTIONS.get(languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
+		color = color == null ? ChatColor.GOLD : color;
+		return ChatColor.translateAlternateColorCodes('&', languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
 	}
 }
