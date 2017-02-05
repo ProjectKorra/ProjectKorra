@@ -1316,6 +1316,6 @@ public class ConfigManager {
 	public static String getBrandingPrefix() {
 		ChatColor color = BRANDING_OPTIONS.get(languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
 		color = color == null ? ChatColor.GOLD : color;
-		return ChatColor.translateAlternateColorCodes('&', languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
+		return ChatColor.translateAlternateColorCodes('&', languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + (ChatColor.DARK_GRAY + " >") + ChatColor.translateAlternateColorCodes('&', languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
 	}
 }
