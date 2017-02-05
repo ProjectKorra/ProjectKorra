@@ -628,8 +628,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Passive.AirAgility.SpeedPower", 2);
 			config.addDefault("Abilities.Air.Passive.AirSaturation.Enabled", true);
 			config.addDefault("Abilities.Air.Passive.GracefulDescent.Enabled", true);
-			config.addDefault("Abilities.Air.Passive.AirJump.Speed", 1.7);
-			config.addDefault("Abilities.Air.Passive.AirJump.Cooldown", 4000);
 
 			config.addDefault("Abilities.Air.AirBlast.Enabled", true);
 			config.addDefault("Abilities.Air.AirBlast.Speed", 25);
