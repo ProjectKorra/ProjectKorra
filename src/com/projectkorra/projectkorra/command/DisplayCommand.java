@@ -100,7 +100,27 @@ public class DisplayCommand extends PKCommand {
 				}
 				return;
 				//passives
-			} else if (element != null && elementName.contains("passive")) {
+			} else if (elementName.contains("passive")) {
+				if (element == null) {
+					for (Element e : Element.getAllElements()) {
+						ChatColor color = e != null ? e.getColor() : null;
+						Set<String> passives = PassiveManager.getPassivesForElement(e);
+						
+						for (String passiveAbil : passives) {
+							ChatColor passiveColor = color;
+							if (!sender.hasPermission("bending.ability." + passiveAbil)) {
+								continue;
+							}
+
+							CoreAbility coreAbil = CoreAbility.getAbility(passiveAbil);
+							if (coreAbil != null) {
+								passiveColor = coreAbil.getElement().getColor();
+							}
+							sender.sendMessage(passiveColor + passiveAbil);
+						}
+					}
+					return;
+				}
 				ChatColor color = element != null ? element.getColor() : null;
 				Set<String> passives = PassiveManager.getPassivesForElement(element);
 

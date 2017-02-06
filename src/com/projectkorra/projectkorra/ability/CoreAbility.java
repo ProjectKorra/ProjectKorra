@@ -543,6 +543,7 @@ public abstract class CoreAbility implements Ability {
 			try {
 				addon.load();
 				ABILITIES_BY_NAME.put(name.toLowerCase(), coreAbil);
+				ABILITIES_BY_CLASS.put(coreAbil.getClass(), coreAbil);
 
 				if (coreAbil instanceof ComboAbility) {
 					ComboAbility combo = (ComboAbility) coreAbil;
@@ -582,6 +583,7 @@ public abstract class CoreAbility implements Ability {
 				e.printStackTrace();
 				addon.stop();
 				ABILITIES_BY_NAME.remove(name.toLowerCase());
+				ABILITIES_BY_CLASS.remove(coreAbil.getClass());
 			}
 		}
 	}

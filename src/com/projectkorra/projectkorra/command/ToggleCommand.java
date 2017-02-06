@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.command;
 
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
+import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
@@ -92,7 +93,7 @@ public class ToggleCommand extends PKCommand {
 					if (!(sender instanceof Player))
 						sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + toggleOffAll);
 				}
-			} else if (sender instanceof Player && args.size() == 1 && Element.fromString(args.get(0)) != null) {
+			} else if (sender instanceof Player && args.size() == 1 && Element.fromString(args.get(0)) != null && !(Element.fromString(args.get(0)) instanceof SubElement)) {
 				if (!BendingPlayer.getBendingPlayer(sender.getName()).hasElement(Element.fromString(args.get(0)))) {
 					sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + wrongElement);
 					return;
@@ -107,8 +108,11 @@ public class ToggleCommand extends PKCommand {
 				} else {
 					sender.sendMessage(ConfigManager.getBrandingPrefix() + color + toggledOffSingleElement.replace("{element}", e.getName() + (e.getType() != null ? e.getType().getBending() : "")));
 				}
+			} else {
+				help(sender, false);
 			}
-		} else if (sender instanceof Player && args.size() == 2 && Element.fromString(args.get(0)) != null) {
+			
+		} else if (sender instanceof Player && args.size() == 2 && Element.fromString(args.get(0)) != null && !(Element.fromString(args.get(0)) instanceof SubElement)) {
 			Player target = Bukkit.getPlayer(args.get(1));
 			if (!hasAdminPermission(sender))
 				return;
