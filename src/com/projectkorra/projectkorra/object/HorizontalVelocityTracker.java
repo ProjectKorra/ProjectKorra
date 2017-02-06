@@ -103,7 +103,7 @@ public class HorizontalVelocityTracker {
 
 	public static void updateAll() {
 		for (Entity e : instances.keySet())
-			if (e != null) {
+			if (e != null && !e.isDead() && instances.get(e) != null) {
 				instances.get(e).update();
 			} else {
 				instances.remove(e);

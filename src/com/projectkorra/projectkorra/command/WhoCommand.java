@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -53,8 +54,9 @@ public class WhoCommand extends PKCommand {
 
 		new BukkitRunnable() {
 			public void run() {
+				Map<String, String> updatedstaff = new HashMap<String, String>();
 				try {
-					staff.clear();
+					
 					// Create a URL for the desired page
 					URLConnection url = new URL("http://www.projectkorra.com/staff.txt").openConnection();
 					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
@@ -65,10 +67,15 @@ public class WhoCommand extends PKCommand {
 					while ((unparsed = in.readLine()) != null) {
 						String[] staffEntry = unparsed.split("/");
 						if (staffEntry.length >= 2) {
-							staff.put(staffEntry[0], ChatColor.translateAlternateColorCodes('&', staffEntry[1]));
+							updatedstaff.put(staffEntry[0], ChatColor.translateAlternateColorCodes('&', staffEntry[1]));
 						}
 					}
 					in.close();
+					staff.clear();
+					staff.putAll(updatedstaff);
+				}
+				catch (SocketException e) {
+					ProjectKorra.log.info("Could not update staff list.");
 				}
 				catch (MalformedURLException e) {
 					e.printStackTrace();
@@ -77,7 +84,7 @@ public class WhoCommand extends PKCommand {
 					e.printStackTrace();
 				}
 			}
-		}.runTaskTimerAsynchronously(ProjectKorra.plugin, 0, 20 * 60);
+		}.runTaskTimerAsynchronously(ProjectKorra.plugin, 0, 20 * 60 * 60);
 	}
 
 	@Override

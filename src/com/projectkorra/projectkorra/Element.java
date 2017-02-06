@@ -271,6 +271,9 @@ public class Element {
 	}
 
 	public static Element fromString(String element) {
+		if (element == null || element.equals("")) {
+			return null;
+		}
 		if (getElement(element) != null) {
 			return getElement(element);
 		}
