@@ -673,6 +673,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirSpout.Enabled", true);
 			config.addDefault("Abilities.Air.AirSpout.Height", 16);
 			config.addDefault("Abilities.Air.AirSpout.Interval", 100);
+			config.addDefault("Abilities.Air.AirSpout.Cooldown", 0);
 
 			config.addDefault("Abilities.Air.AirSuction.Enabled", true);
 			config.addDefault("Abilities.Air.AirSuction.Speed", 25);

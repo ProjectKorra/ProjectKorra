@@ -1161,7 +1161,6 @@ public class PKListener implements Listener {
 		} else if (!(event.getNewGameMode() == GameMode.SPECTATOR) && Commands.invincible.contains(player.getName())) {
 			Commands.invincible.remove(player.getName());
 		}
-
 	}
 
 	@EventHandler
