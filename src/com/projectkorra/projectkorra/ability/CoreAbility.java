@@ -654,12 +654,10 @@ public abstract class CoreAbility implements Ability {
 
 	@Override
 	public String getInstructions() {
+
 		String elementName = getElement().getName();
 		if (getElement() instanceof SubElement) {
 			elementName = ((SubElement) getElement()).getParentElement().getName();
-		}
-		if (this instanceof PassiveAbility) {
-			return ConfigManager.languageConfig.get().getString("Abilities." + elementName + ".Passive." + getName() + ".Instructions");
 		}
 		return ConfigManager.languageConfig.get().contains("Abilities." + elementName + "." + getName() + ".Instructions") ? ConfigManager.languageConfig.get().getString("Abilities." + elementName + "." + getName() + ".Instructions") : "";
 	}
