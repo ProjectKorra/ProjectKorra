@@ -1941,10 +1941,41 @@ public class GeneralMethods {
 			sender.sendMessage(prefix + message);
 		} else {
 			TextComponent prefixComponent = new TextComponent(prefix);
-			TextComponent messageComponent = new TextComponent(message);
 			prefixComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://projectkorra.com/"));
 			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color + "Bending brought to you by ProjectKorra!\n" + color + "Click for more info.").create()));
+
+			/*
+			 * The commented code below does not work due to an issue with
+			 * Spigot. In the mean time, we'll have to use this incredibly
+			 * 'hacky' method to force the colour on the new line.
+			 */
+			String lastColor = "";
+			String newMessage = "";
+			for (int i = 0; i < message.split("").length; i++) {
+				String c = message.split("")[i];
+				if (c.equalsIgnoreCase("§")) {
+					lastColor = "§" + message.split("")[i + 1];
+					newMessage = newMessage + c;
+				} else if (c.equalsIgnoreCase(" ")) { //Add color every word
+					newMessage = newMessage + " " + lastColor;
+				} else {
+					newMessage = newMessage + c;
+				}
+			}
+
+			TextComponent messageComponent = new TextComponent(newMessage);
 			((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
+			/*boolean prefixSent = false;
+			for (String msg : message.split("\n")) {
+				if (!prefixSent) {
+					TextComponent messageComponent = new TextComponent(msg);
+					((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
+					prefixSent = true;
+				} else {
+					sender.sendMessage(msg);
+				}
+			}*/
+			
 		}
 	}
 
