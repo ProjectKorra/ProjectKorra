@@ -30,11 +30,11 @@ public enum ClickType {
 	 */
 	RIGHT_CLICK_BLOCK,
 	/**
-	 * The shift key being released.
+	 * The shift key being pressed.
 	 */
 	SHIFT_DOWN,
 	/**
-	 * The shift key being pressed.
+	 * The shift key being released.
 	 */
 	SHIFT_UP;
 }
