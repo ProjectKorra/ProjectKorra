@@ -14,26 +14,22 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.util.Attribute;
-import com.projectkorra.projectkorra.util.Attribute.Attributable;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 
-public class AirBubble extends AirAbility implements Attributable{
+public class AirBubble extends AirAbility {
 
 	private boolean waterBubble;
 	private double radius;
 	private double airRadius;
 	private double waterRadius;
 	private Map<Block, BlockState> waterOrigins;
-	private static Attribute<Double> airRadiusA;
-	private static Attribute<Double> waterRadiusA;
 
 	public AirBubble(Player player) {
 		super(player);
 
 		this.radius = 0;
-		this.airRadius = airRadiusA.getModified(bPlayer);
-		this.waterRadius = waterRadiusA.getModified(bPlayer);
+		this.airRadius = getConfig().getDouble("Abilities.Air.AirBubble.Radius");
+		this.waterRadius = getConfig().getDouble("Abilities.Water.WaterBubble.Radius");
 		this.waterOrigins = new ConcurrentHashMap<>();
 		start();
 	}
@@ -208,12 +204,6 @@ public class AirBubble extends AirAbility implements Attributable{
 
 	public Map<Block, BlockState> getWaterOrigins() {
 		return waterOrigins;
-	}
-
-	@Override
-	public void registerAttributes() {
-		airRadiusA = new Attribute<Double>(this, "airRadius", getConfig().getDouble("Abilities.Air.AirBubble.Radius"));
-		waterRadiusA = new Attribute<Double>(this, "waterRadius", getConfig().getDouble("Abilities.Water.WaterBubble.Radius"));
 	}
 
 }
