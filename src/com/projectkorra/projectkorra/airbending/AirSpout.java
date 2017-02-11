@@ -12,11 +12,9 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
-import com.projectkorra.projectkorra.util.Attribute;
-import com.projectkorra.projectkorra.util.Attribute.Attributable;
 import com.projectkorra.projectkorra.util.Flight;
 
-public class AirSpout extends AirAbility implements Attributable{
+public class AirSpout extends AirAbility {
 
 	private static final Integer[] DIRECTIONS = { 0, 1, 2, 3, 5, 6, 7, 8 };
 
@@ -25,10 +23,6 @@ public class AirSpout extends AirAbility implements Attributable{
 	private long interval;
 	private long cooldown;
 	private double height;
-	private static Attribute<Integer> angleA;
-	private static Attribute<Long> intervalA;
-	private static Attribute<Long> cooldownA;
-	private static Attribute<Double> heightA;
 
 	public AirSpout(Player player) {
 		super(player);
@@ -44,11 +38,11 @@ public class AirSpout extends AirAbility implements Attributable{
 			return;
 		}
 
-		this.angle = angleA.getModified(bPlayer);
-		this.cooldown = cooldownA.getModified(bPlayer);
+		this.angle = 0;
+		this.cooldown = 0;
 		this.animTime = System.currentTimeMillis();
-		this.interval = intervalA.getModified(bPlayer);
-		this.height = heightA.getModified(bPlayer);
+		this.interval = getConfig().getLong("Abilities.Air.AirSpout.Interval");
+		this.height = getConfig().getDouble("Abilities.Air.AirSpout.Height");
 
 		double heightRemoveThreshold = 2;
 		if (!isWithinMaxSpoutHeight(heightRemoveThreshold)) {
@@ -56,6 +50,10 @@ public class AirSpout extends AirAbility implements Attributable{
 		}
 
 		new Flight(player);
+
+		if (bPlayer.isAvatarState()) {
+			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.AirSpout.Height");
+		}
 
 		start();
 		bPlayer.addCooldown(this);
@@ -266,14 +264,6 @@ public class AirSpout extends AirAbility implements Attributable{
 
 	public void setCooldown(long cooldown) {
 		this.cooldown = cooldown;
-	}
-
-	@Override
-	public void registerAttributes() {
-		angleA = new Attribute<Integer>(this, "angle", 0);
-		intervalA = new Attribute<Long>(this, "interval", getConfig().getLong("Abilities.Air.AirSpout.Interval"));
-		cooldownA = new Attribute<Long>(this, "cooldown", getConfig().getLong("Abilities.Air.AirSpout.Cooldown"));
-		heightA = new Attribute<Double>(this, "height", getConfig().getDouble("Abilities.Air.AirSpout.Height"));
 	}
 
 }

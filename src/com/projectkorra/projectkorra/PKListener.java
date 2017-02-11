@@ -96,7 +96,6 @@ import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.airbending.flight.AirFlight;
-import com.projectkorra.projectkorra.airbending.passive.AirJump;
 import com.projectkorra.projectkorra.airbending.passive.GracefulDescent;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
@@ -1150,15 +1149,6 @@ public class PKListener implements Listener {
 				}
 			}
 		}
-		
-		if (player.getGameMode() != GameMode.CREATIVE && player.getGameMode() != GameMode.SPECTATOR) {
-			if (event.getTo().getY() == event.getFrom().getY()) {
-				if (AirJump.getJumped().contains(player)) {
-					AirJump.getJumped().remove(player);
-					player.setAllowFlight(false);
-				}
-			}
-		}
 	}
 
 	@EventHandler
@@ -1172,25 +1162,6 @@ public class PKListener implements Listener {
 			Commands.invincible.remove(player.getName());
 		}
 
-		if (AirJump.getJumped().contains(player)) {
-			AirJump.getJumped().remove(player);
-		}
-	}
-	
-	@EventHandler
-	public void onPlayerJump(PlayerJumpEvent event) {
-		Player player = event.getPlayer();
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null) {
-			return;
-		}
-		
-		if (player.getGameMode() != GameMode.CREATIVE && player.getGameMode() != GameMode.SPECTATOR) {
-			if (bPlayer.canBendIgnoreBinds(CoreAbility.getAbility(AirJump.class))) {
-				AirJump.getJumped().add(player);
-				player.setAllowFlight(true);
-			}
-		}
 	}
 
 	@EventHandler
@@ -1664,12 +1635,6 @@ public class PKListener implements Listener {
 		Player player = event.getPlayer();
 		if (CoreAbility.hasAbility(player, Tornado.class) || Bloodbending.isBloodbent(player) || Suffocate.isBreathbent(player) || CoreAbility.hasAbility(player, FireJet.class) || CoreAbility.hasAbility(player, AvatarState.class)) {
 			event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
-		}
-		
-		if (AirJump.getJumped().contains(player)) {
-			if (player.getGameMode() != GameMode.CREATIVE && player.getGameMode() != GameMode.SPECTATOR) {
-				new AirJump(player);
-			}
 		}
 	}
 
