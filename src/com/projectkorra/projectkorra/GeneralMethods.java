@@ -128,6 +128,10 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.sacredlabyrinth.Phaed.PreciousStones.FieldFlag;
 import net.sacredlabyrinth.Phaed.PreciousStones.PreciousStones;
 
@@ -190,7 +194,7 @@ public class GeneralMethods {
 	 */
 	public static void bindAbility(Player player, String ability, int slot) {
 		if (MultiAbilityManager.playerAbilities.containsKey(player)) {
-			player.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + "You can't edit your binds right now!");
+			GeneralMethods.sendBrandingMessage(player, ChatColor.RED + "You can't edit your binds right now!");
 			return;
 		}
 
@@ -203,7 +207,7 @@ public class GeneralMethods {
 		bPlayer.getAbilities().put(slot, ability);
 
 		if (coreAbil != null) {
-			player.sendMessage(ConfigManager.getBrandingPrefix() + coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
+			GeneralMethods.sendBrandingMessage(player, coreAbil.getElement().getColor() + ConfigManager.languageConfig.get().getString("Commands.Bind.SuccessfullyBound").replace("{ability}", ability).replace("{slot}", String.valueOf(slot)));
 		}
 		saveAbility(bPlayer, slot, ability);
 	}
@@ -1927,6 +1931,21 @@ public class GeneralMethods {
 
 	public static FallingBlock spawnFallingBlock(Location loc, Material type, byte data) {
 		return loc.getWorld().spawnFallingBlock(loc, type, data);
+	}
+
+	public static void sendBrandingMessage(CommandSender sender, String message) {
+		ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
+		color = color == null ? ChatColor.GOLD : color;
+		String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
+		if (!(sender instanceof Player)) {
+			sender.sendMessage(prefix + message);
+		} else {
+			TextComponent prefixComponent = new TextComponent(prefix);
+			TextComponent messageComponent = new TextComponent(message);
+			prefixComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://projectkorra.com/"));
+			prefixComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color + "Bending brought to you by ProjectKorra!\n" + color + "Click for more info.").create()));
+			((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
+		}
 	}
 
 	public static void startCacheCleaner(final double period) {

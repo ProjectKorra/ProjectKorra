@@ -39,7 +39,7 @@ public class ClearCommand extends PKCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1) || !isPlayer(sender)) {
 			return;
 		} else if (MultiAbilityManager.hasMultiAbilityBound((Player) sender)) {
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + cantEditBinds);
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + cantEditBinds);
 			return;
 		}
 
@@ -53,23 +53,23 @@ public class ClearCommand extends PKCommand {
 			for (int i = 1; i <= 9; i++) {
 				GeneralMethods.saveAbility(bPlayer, i, null);
 			}
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.YELLOW + cleared);
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + cleared);
 		} else if (args.size() == 1) {
 			try {
 				int slot = Integer.parseInt(args.get(0));
 				if (slot < 1 || slot > 9) {
-					sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + wrongNumber);
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + wrongNumber);
 				}
 				if (bPlayer.getAbilities().get(slot) != null) {
 					bPlayer.getAbilities().remove(slot);
 					GeneralMethods.saveAbility(bPlayer, slot, null);
-					sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.YELLOW + clearedSlot.replace("{slot}", String.valueOf(slot)));
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + clearedSlot.replace("{slot}", String.valueOf(slot)));
 				} else {
-					sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.YELLOW + alreadyEmpty);
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + alreadyEmpty);
 				}
 			}
 			catch (NumberFormatException e) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + wrongNumber);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + wrongNumber);
 			}
 		}
 	}
