@@ -53,11 +53,11 @@ public class ImportCommand extends PKCommand {
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 0)) {
 			return;
 		} else if (!GeneralMethods.isImportEnabled()) {
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + this.disabled);
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + this.disabled);
 			return;
 		}
 
-		sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.GREEN + this.preparingData);
+		sender.sendMessage(ChatColor.GREEN + this.preparingData);
 		File bendingPlayersFile = new File(".", "converted.yml");
 		FileConfiguration bendingPlayers = YamlConfiguration.loadConfiguration(bendingPlayersFile);
 

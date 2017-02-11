@@ -83,7 +83,7 @@ public class DisplayCommand extends PKCommand {
 				ArrayList<String> combos = ComboManager.getCombosForElement(element);
 
 				if (combos.isEmpty()) {
-					sender.sendMessage(ConfigManager.getBrandingPrefix() + color + noCombosAvailable.replace("{element}", element.getName()));
+					GeneralMethods.sendBrandingMessage(sender, color + noCombosAvailable.replace("{element}", element.getName()));
 					return;
 				}
 				for (String comboMove : combos) {
@@ -125,7 +125,7 @@ public class DisplayCommand extends PKCommand {
 				Set<String> passives = PassiveManager.getPassivesForElement(element);
 
 				if (passives.isEmpty()) {
-					sender.sendMessage(ConfigManager.getBrandingPrefix() + color + noPassivesAvailable.replace("{element}", element.getName()));
+					GeneralMethods.sendBrandingMessage(sender, color + noPassivesAvailable.replace("{element}", element.getName()));
 					return;
 				}
 				for (String passiveAbil : passives) {
@@ -172,7 +172,7 @@ public class DisplayCommand extends PKCommand {
 		if (args.size() == 0) {
 			//bending display
 			if (!(sender instanceof Player)) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + playersOnly);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + playersOnly);
 				return;
 			}
 			displayBinds(sender);

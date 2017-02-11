@@ -57,12 +57,12 @@ public class ChooseCommand extends PKCommand {
 				bPlayer = BendingPlayer.getBendingPlayer(sender.getName());
 			}
 			if (bPlayer.isPermaRemoved()) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
 				return;
 			}
 
 			if (!bPlayer.getElements().isEmpty() && !sender.hasPermission("bending.command.rechoose")) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + super.noPermissionMessage);
+				GeneralMethods.sendBrandingMessage(sender, super.noPermissionMessage);
 				return;
 			}
 			String element = args.get(0).toLowerCase();
@@ -84,17 +84,17 @@ public class ChooseCommand extends PKCommand {
 				add(sender, (Player) sender, targetElement);
 				return;
 			} else {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + invalidElement);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + invalidElement);
 				return;
 			}
 		} else if (args.size() == 2) {
 			if (!sender.hasPermission("bending.admin.choose")) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + super.noPermissionMessage);
+				GeneralMethods.sendBrandingMessage(sender, super.noPermissionMessage);
 				return;
 			}
 			Player target = ProjectKorra.plugin.getServer().getPlayer(args.get(1));
 			if (target == null || !target.isOnline()) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + playerNotFound);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + playerNotFound);
 				return;
 			}
 			String element = args.get(0).toLowerCase();
@@ -113,7 +113,7 @@ public class ChooseCommand extends PKCommand {
 				add(sender, target, targetElement);
 				return;
 			} else {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + invalidElement);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + invalidElement);
 			}
 		}
 	}
@@ -136,9 +136,9 @@ public class ChooseCommand extends PKCommand {
 			bPlayer.addSubElement(sub);
 			ChatColor color = sub != null ? sub.getColor() : ChatColor.WHITE;
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + color + chosenOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
+				GeneralMethods.sendBrandingMessage(sender, color + chosenOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", sub.getName() + sub.getType().getBender()));
 			} else {
-				target.sendMessage(ConfigManager.getBrandingPrefix() + color + chosenCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
+				GeneralMethods.sendBrandingMessage(target, color + chosenCFW.replace("{element}", sub.getName() + sub.getType().getBender()));
 			}
 			GeneralMethods.saveSubElements(bPlayer);
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, target, sub, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.CHOOSE));
@@ -154,14 +154,14 @@ public class ChooseCommand extends PKCommand {
 			ChatColor color = element != null ? element.getColor() : ChatColor.WHITE;
 			if (!(sender instanceof Player) || !((Player) sender).equals(target)) {
 				if (element != Element.AIR && element != Element.EARTH)
-					sender.sendMessage(ConfigManager.getBrandingPrefix() + color + chosenOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
+					GeneralMethods.sendBrandingMessage(sender, color + chosenOtherCFW.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
 				else
-					sender.sendMessage(ConfigManager.getBrandingPrefix() + color + chosenOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
+					GeneralMethods.sendBrandingMessage(sender, color + chosenOtherAE.replace("{target}", ChatColor.DARK_AQUA + target.getName() + color).replace("{element}", element.getName() + element.getType().getBender()));
 			} else {
 				if (element != Element.AIR && element != Element.EARTH)
-					target.sendMessage(ConfigManager.getBrandingPrefix() + color + chosenCFW.replace("{element}", element.getName() + element.getType().getBender()));
+					GeneralMethods.sendBrandingMessage(target, color + chosenCFW.replace("{element}", element.getName() + element.getType().getBender()));
 				else
-					target.sendMessage(ConfigManager.getBrandingPrefix() + color + chosenAE.replace("{element}", element.getName() + element.getType().getBender()));
+					GeneralMethods.sendBrandingMessage(target, color + chosenAE.replace("{element}", element.getName() + element.getType().getBender()));
 			}
 			GeneralMethods.saveElements(bPlayer);
 			GeneralMethods.saveSubElements(bPlayer);

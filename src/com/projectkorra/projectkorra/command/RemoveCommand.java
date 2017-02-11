@@ -61,10 +61,10 @@ public class RemoveCommand extends PKCommand {
 								senderBPlayer.getSubElements().remove(e);
 								GeneralMethods.saveSubElements(senderBPlayer);
 								GeneralMethods.removeUnusableAbilities(sender.getName());
-								sender.sendMessage(ConfigManager.getBrandingPrefix() + e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
+								GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementSelf.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
 								Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeSubElementEvent(sender, player, (SubElement) e, com.projectkorra.projectkorra.event.PlayerChangeSubElementEvent.Result.REMOVE));
 							} else
-								sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + wrongElementSelf);
+								GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + wrongElementSelf);
 							return;
 						} else if (e instanceof Element) {
 							if (senderBPlayer.hasElement(e)) {
@@ -75,22 +75,22 @@ public class RemoveCommand extends PKCommand {
 								GeneralMethods.saveElements(senderBPlayer);
 								GeneralMethods.removeUnusableAbilities(sender.getName());
 
-								sender.sendMessage(ConfigManager.getBrandingPrefix() + e.getColor() + succesfullyRemovedElementSelf.replace("{element}", e.getName() + e.getType().getBending()));
+								GeneralMethods.sendBrandingMessage(sender, e.getColor() + succesfullyRemovedElementSelf.replace("{element}", e.getName() + e.getType().getBending()));
 								Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, (Player) sender, e, Result.REMOVE));
 								return;
 							} else
-								sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + wrongElementSelf);
+								GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + wrongElementSelf);
 							{
 								return;
 							}
 						}
 					} else
-						sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + invalidElement);
+						GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + invalidElement);
 					{
 						return;
 					}
 				}
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + playerOffline);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + playerOffline);
 				return;
 			} else {
 				help(sender, false);
@@ -107,7 +107,7 @@ public class RemoveCommand extends PKCommand {
 			Element e = Element.fromString(args.get(1));
 			if (e != null) {
 				if (!bPlayer.hasElement(e)) {
-					sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.DARK_RED + wrongElementTarget.replace("{target}", player.getName()));
+					GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + wrongElementTarget.replace("{target}", player.getName()));
 					return;
 				}
 				if (e instanceof SubElement) {
@@ -119,8 +119,8 @@ public class RemoveCommand extends PKCommand {
 				}
 
 				GeneralMethods.removeUnusableAbilities(player.getName());
-				player.sendMessage(ConfigManager.getBrandingPrefix() + e.getColor() + this.succesfullyRemovedElementTarget.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.getName() + e.getType().getBending()).replace("{target}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
+				GeneralMethods.sendBrandingMessage(player, e.getColor() + this.succesfullyRemovedElementTarget.replace("{element}", e.getName() + e.getType().getBending()).replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + e.getColor()));
+				GeneralMethods.sendBrandingMessage(sender, e.getColor() + this.succesfullyRemovedElementTargetConfirm.replace("{element}", e.getName() + e.getType().getBending()).replace("{target}", ChatColor.DARK_AQUA + player.getName() + e.getColor()));
 				Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, e, Result.REMOVE));
 				return;
 			}
@@ -133,8 +133,9 @@ public class RemoveCommand extends PKCommand {
 			if (GeneralMethods.hasRPG())
 				RPGMethods.revokeAvatar(bPlayer.getUUID());
 			if (!player.getName().equalsIgnoreCase(sender.getName()))
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
-			player.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW));
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTargetConfirm.replace("{target}", ChatColor.DARK_AQUA + player.getName() + ChatColor.YELLOW));
+
+			GeneralMethods.sendBrandingMessage(player, ChatColor.YELLOW + this.succesfullyRemovedAllElementsTarget.replace("{sender}", ChatColor.DARK_AQUA + sender.getName() + ChatColor.YELLOW));
 			Bukkit.getServer().getPluginManager().callEvent(new PlayerChangeElementEvent(sender, player, null, Result.REMOVE));
 		}
 	}
@@ -150,7 +151,7 @@ public class RemoveCommand extends PKCommand {
 		if (sender.hasPermission("bending.admin." + getName())) {
 			return true;
 		}
-		sender.sendMessage(ConfigManager.getBrandingPrefix() + super.noPermissionMessage);
+		GeneralMethods.sendBrandingMessage(sender, super.noPermissionMessage);
 		return false;
 	}
 

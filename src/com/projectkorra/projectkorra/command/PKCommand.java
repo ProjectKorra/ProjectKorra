@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 /**
@@ -112,7 +113,7 @@ public abstract class PKCommand implements SubCommand {
 		if (sender.hasPermission("bending.command." + name + "." + extra)) {
 			return true;
 		} else {
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + this.noPermissionMessage);
+			GeneralMethods.sendBrandingMessage(sender, this.noPermissionMessage);
 			return false;
 		}
 	}
@@ -147,7 +148,7 @@ public abstract class PKCommand implements SubCommand {
 		if (sender instanceof Player) {
 			return true;
 		} else {
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + this.mustBePlayerMessage);
+			GeneralMethods.sendBrandingMessage(sender, this.mustBePlayerMessage);
 			return false;
 		}
 	}

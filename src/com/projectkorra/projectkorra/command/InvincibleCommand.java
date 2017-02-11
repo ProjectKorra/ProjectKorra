@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.command;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import java.util.List;
@@ -25,10 +26,10 @@ public class InvincibleCommand extends PKCommand {
 
 		if (!Commands.invincible.contains(sender.getName())) {
 			Commands.invincible.add(sender.getName());
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOn"));
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOn"));
 		} else {
 			Commands.invincible.remove(sender.getName());
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOff"));
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Invincible.ToggledOff"));
 		}
 	}
 

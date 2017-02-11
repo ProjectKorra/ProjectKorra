@@ -56,7 +56,7 @@ public class WhoCommand extends PKCommand {
 			public void run() {
 				Map<String, String> updatedstaff = new HashMap<String, String>();
 				try {
-					
+
 					// Create a URL for the desired page
 					URLConnection url = new URL("http://www.projectkorra.com/staff.txt").openConnection();
 					url.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
@@ -128,7 +128,7 @@ public class WhoCommand extends PKCommand {
 				players.add(result);
 			}
 			if (players.isEmpty()) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + noPlayersOnline);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + noPlayersOnline);
 			} else {
 				for (String s : getPage(players, ChatColor.GOLD + "Players:", page, true)) {
 					sender.sendMessage(s);
@@ -148,11 +148,11 @@ public class WhoCommand extends PKCommand {
 		@SuppressWarnings("deprecation")
 		final OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
 		if (player == null || !player.hasPlayedBefore() && !player.isOnline()) {
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + "Player not found!");
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + "Player not found!");
 			return;
 		}
 		if (!player.isOnline() && !BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.GRAY + playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.GRAY + playerOffline.replace("{player}", ChatColor.WHITE + player.getName() + ChatColor.GRAY).replace("{target}", ChatColor.WHITE + player.getName() + ChatColor.GRAY));
 		}
 
 		Player player_ = (Player) (player.isOnline() ? player : null);
@@ -167,7 +167,7 @@ public class WhoCommand extends PKCommand {
 					final long delay = 200L;
 					while (!BendingPlayer.getPlayers().containsKey(player.getUniqueId())) {
 						if (count > 5 * (1000 / delay)) { //After 5 seconds of waiting, tell the user the database is busy and to try again in a few seconds.
-							sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.DARK_RED + databaseOverload);
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + databaseOverload);
 							break;
 						}
 						count++;
@@ -176,7 +176,7 @@ public class WhoCommand extends PKCommand {
 						}
 						catch (InterruptedException e) {
 							e.printStackTrace();
-							sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.DARK_RED + databaseOverload);
+							GeneralMethods.sendBrandingMessage(sender, ChatColor.DARK_RED + databaseOverload);
 							break;
 						}
 					}

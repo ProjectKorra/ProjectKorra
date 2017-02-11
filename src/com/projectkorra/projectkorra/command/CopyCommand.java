@@ -43,18 +43,18 @@ public class CopyCommand extends PKCommand {
 			Player orig = Bukkit.getPlayer(args.get(0));
 
 			if (orig == null || !orig.isOnline()) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + playerNotFound);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + playerNotFound);
 				return;
 			}
 
 			boolean boundAll = assignAbilities(sender, orig, (Player) sender, true);
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.GREEN + copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
 			if (!boundAll) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + failedToBindAll);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + failedToBindAll);
 			}
 		} else if (args.size() == 2) {
 			if (!hasPermission(sender, "assign")) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + super.noPermissionMessage);
+				GeneralMethods.sendBrandingMessage(sender, super.noPermissionMessage);
 				return;
 			}
 
@@ -62,15 +62,15 @@ public class CopyCommand extends PKCommand {
 			Player target = ProjectKorra.plugin.getServer().getPlayer(args.get(1));
 
 			if ((orig == null || !orig.isOnline()) || (target == null || !target.isOnline())) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + playerNotFound);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + playerNotFound);
 				return;
 			}
 
 			boolean boundAll = assignAbilities(sender, orig, target, false);
-			sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.GREEN + copiedOther.replace("{target1}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{target2}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
-			target.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.GREEN + copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + copiedOther.replace("{target1}", ChatColor.YELLOW + target.getName() + ChatColor.GREEN).replace("{target2}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
+			GeneralMethods.sendBrandingMessage(target, ChatColor.GREEN + copied.replace("{target}", ChatColor.YELLOW + orig.getName() + ChatColor.GREEN));
 			if (!boundAll) {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + failedToBindAll);
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + failedToBindAll);
 			}
 		}
 	}
@@ -91,9 +91,9 @@ public class CopyCommand extends PKCommand {
 		}
 		if (orig.isPermaRemoved()) {
 			if (self) {
-				player.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
+				GeneralMethods.sendBrandingMessage(player, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.BendingPermanentlyRemoved"));
 			} else {
-				sender.sendMessage(ConfigManager.getBrandingPrefix() + ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
+				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + ConfigManager.languageConfig.get().getString("Commands.Preset.Other.BendingPermanentlyRemoved"));
 			}
 			return false;
 		}
