@@ -582,7 +582,8 @@ public class Torrent extends WaterAbility {
 			Player player = FROZEN_BLOCKS.get(block);
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer == null) {
-				return;
+				FROZEN_BLOCKS.remove(block);
+				continue;
 			} else if (block.getBlock().getType() != Material.ICE) {
 				FROZEN_BLOCKS.remove(block);
 				continue;
