@@ -229,6 +229,31 @@ public class PKListener implements Listener {
 		} else if (EarthPassive.isPassiveSand(block)) {
 			EarthPassive.revertSand(block);
 		}
+		
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		String abil = bPlayer.getBoundAbilityName();
+		CoreAbility coreAbil = bPlayer.getBoundAbility();
+
+		if (coreAbil == null && !MultiAbilityManager.hasMultiAbilityBound(player)) {
+			return;
+		} else if (bPlayer.canBendIgnoreCooldowns(coreAbil)) {
+			if (coreAbil instanceof AddonAbility) {
+				return;
+			}
+			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER) == true) {
+				if (bPlayer.canCurrentlyBendWithWeapons()) {
+					if (abil.equalsIgnoreCase("OctopusForm")) {
+						event.setCancelled(true);
+					} else if (abil.equalsIgnoreCase("WaterSpout")) {
+						event.setCancelled(true);
+					} else if (abil.equalsIgnoreCase("Surge")) {
+						event.setCancelled(true);
+					} else if (abil.equalsIgnoreCase("Torrent")) {
+						event.setCancelled(true);
+					}
+				}
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -865,10 +890,13 @@ public class PKListener implements Listener {
 										new Paralyze(sourcePlayer, targetPlayer);
 									} else if (boundAbil.equalsIgnoreCase("QuickStrike")) {
 										new QuickStrike(sourcePlayer, targetPlayer);
+										e.setCancelled(true);
 									} else if (boundAbil.equalsIgnoreCase("SwiftKick")) {
 										new SwiftKick(sourcePlayer, targetPlayer);
+										e.setCancelled(true);
 									} else if (boundAbil.equalsIgnoreCase("RapidPunch")) {
 										new RapidPunch(sourcePlayer, targetPlayer);
+										e.setCancelled(true);
 									} else {
 										if (ChiPassive.willChiBlock(sourcePlayer, targetPlayer)) {
 											ChiPassive.blockChi(targetPlayer);
@@ -1335,7 +1363,11 @@ public class PKListener implements Listener {
 
 			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
 				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("EarthBlast")) {
+					if (abil.equalsIgnoreCase("Catapult"))
+					{
+						new Catapult(player);
+					}
+					else if (abil.equalsIgnoreCase("EarthBlast")) {
 						new EarthBlast(player);
 					} else if (abil.equalsIgnoreCase("EarthArmor")) {
 						new EarthArmor(player);
