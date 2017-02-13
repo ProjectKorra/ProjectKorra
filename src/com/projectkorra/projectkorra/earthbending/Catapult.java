@@ -144,12 +144,12 @@ public class Catapult extends EarthAbility {
 			}
 			else
 			{
-				if ((System.currentTimeMillis() - this.stageStart) >= 2000)
+				if ((System.currentTimeMillis() - this.stageStart) >= ((Math.max(0, 2 * (this.stage - 1))) * 1000))
 				{
 					this.stage++;
 					this.stageStart = System.currentTimeMillis();
 					Random random = new Random();
-					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte)0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 5, player.getLocation(), 257);
+					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte)0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 15, player.getLocation(), 257);
 					player.getWorld().playEffect(player.getLocation(), Effect.GHAST_SHOOT, 0, 10);
 				}
 				return;
