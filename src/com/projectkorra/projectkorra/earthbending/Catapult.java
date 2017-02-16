@@ -18,6 +18,8 @@ import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 public class Catapult extends EarthAbility {
 	
 	private int maxDistance;
+	private double stageMult;
+	private double stageTimeMult;
 	private int distance;
 	private long cooldown;
 	private Location origin;
@@ -43,6 +45,8 @@ public class Catapult extends EarthAbility {
 
 	private void setFields() {
 		this.maxDistance = getConfig().getInt("Abilities.Earth.Catapult.MaxDistance");
+		this.stageMult = getConfig().getDouble("Abilities.Earth.Catapult.StageMult");
+		this.stageTimeMult = getConfig().getDouble("Abilities.Earth.Catapult.StageTimeMult");
 		this.distance = 0;
 		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
 		this.activationHandled = false;
@@ -57,7 +61,7 @@ public class Catapult extends EarthAbility {
 				entity.setVelocity(apply);
 			}
 		}
-		moveEarth(this.origin.clone().subtract(direction), direction, 2, false);
+		moveEarth(this.origin.clone().subtract(direction), direction, 3, false);
 	}
 
 	@Override
@@ -79,7 +83,7 @@ public class Catapult extends EarthAbility {
 			}
 			else
 			{
-				if ((System.currentTimeMillis() - this.stageStart) >= ((Math.max(0, 2 * (this.stage - 1))) * 1000))
+				if ((System.currentTimeMillis() - this.stageStart) >= ((Math.max(0, this.stageTimeMult * (this.stage - 1))) * 1000))
 				{
 					this.stage++;
 					this.stageStart = System.currentTimeMillis();
@@ -108,7 +112,7 @@ public class Catapult extends EarthAbility {
 				distance = this.maxDistance;
 			}
 			if (distance != 0) {
-				distance = (int) (distance * (0.25 * this.stage));
+				distance = (int) (distance * (this.stageMult * this.stage));
 				this.activationHandled = true;
 				bPlayer.addCooldown(this);
 			} else {
