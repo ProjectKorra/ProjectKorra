@@ -168,7 +168,6 @@ import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
 import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
@@ -201,10 +200,22 @@ public class PKListener implements Listener {
 
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
-		if (SurgeWall.wasBrokenFor(player, block) || OctopusForm.wasBrokenFor(player, block) || Torrent.wasBrokenFor(player, block) || WaterSpoutWave.wasBrokenFor(player, block)) {
+		String abil = BendingPlayer.getBendingPlayer(player).getBoundAbilityName();
+		CoreAbility ability = null;
+		if (abil != null && abil.equalsIgnoreCase("Surge")) {
+			ability = CoreAbility.getAbility(SurgeWall.class);
+		}
+		else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
+			ability = CoreAbility.getAbility(Torrent.class);
+		}
+		else {
+			ability = CoreAbility.getAbility(abil);
+		}
+		if (ability != null && ability instanceof WaterAbility && !((WaterAbility)ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
 			event.setCancelled(true);
 			return;
 		}
+		
 		EarthBlast blast = EarthBlast.getBlastFromSource(block);
 		if (blast != null) {
 			blast.remove();
@@ -228,31 +239,6 @@ public class PKListener implements Listener {
 			TempBlock.revertBlock(block, Material.AIR);
 		} else if (EarthPassive.isPassiveSand(block)) {
 			EarthPassive.revertSand(block);
-		}
-		
-		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		String abil = bPlayer.getBoundAbilityName();
-		CoreAbility coreAbil = bPlayer.getBoundAbility();
-
-		if (coreAbil == null && !MultiAbilityManager.hasMultiAbilityBound(player)) {
-			return;
-		} else if (bPlayer.canBendIgnoreCooldowns(coreAbil)) {
-			if (coreAbil instanceof AddonAbility) {
-				return;
-			}
-			if (coreAbil instanceof WaterAbility && bPlayer.isElementToggled(Element.WATER) == true) {
-				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("OctopusForm")) {
-						event.setCancelled(true);
-					} else if (abil.equalsIgnoreCase("WaterSpout")) {
-						event.setCancelled(true);
-					} else if (abil.equalsIgnoreCase("Surge")) {
-						event.setCancelled(true);
-					} else if (abil.equalsIgnoreCase("Torrent")) {
-						event.setCancelled(true);
-					}
-				}
-			}
 		}
 	}
 

@@ -5,7 +5,7 @@ import java.util.Random;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -16,18 +16,12 @@ import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 
 public class Catapult extends EarthAbility {
-
-	private boolean catapult;
-	private boolean moving;
-	private boolean flying;
-	private int length;
+	
+	private int maxDistance;
 	private int distance;
 	private long cooldown;
-	private double push;
-	//private double shiftModifier;
 	private Location origin;
-	private Location location;
-	private Vector direction;
+	private Location target;
 	
 	private int stage;
 	private long stageStart;
@@ -41,96 +35,37 @@ public class Catapult extends EarthAbility {
 			return;
 		}
 		if (bPlayer.isAvatarState()) {
-			this.length = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Catapult.Length");
-			this.push = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.Catapult.Push");
+			this.maxDistance = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Catapult.MaxDistance");
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown");
 		}
 		start();
 	}
 
-	public Catapult(Player player, Catapult source) {
-		super(player);
-		setFields();
-		this.charging = false;
-		this.activationHandled = true;
-		location = source.location.clone();
-		direction = source.direction.clone();
-		distance = source.distance;
-
-		start();
-		playEarthbendingSound(player.getLocation());
-		fly();
-	}
-
 	private void setFields() {
-		this.length = getConfig().getInt("Abilities.Earth.Catapult.Length");
-		this.push = getConfig().getDouble("Abilities.Earth.Catapult.Push");
-		//this.shiftModifier = getConfig().getDouble("Abilities.Earth.Catapult.ShiftModifier");
+		this.maxDistance = getConfig().getInt("Abilities.Earth.Catapult.MaxDistance");
 		this.distance = 0;
 		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
-		this.catapult = false;
-		this.moving = false;
-		this.flying = false;
 		this.activationHandled = false;
 		this.stage = 1;
 		this.stageStart = System.currentTimeMillis();
 		this.charging = true;
 	}
 
-	private void fly() {
-		if (player.isDead() || !player.isOnline()) {
-			remove();
-			return;
-		} else if (!player.getWorld().equals(location.getWorld())) {
-			remove();
-			return;
-		} else if (player.getLocation().distanceSquared(location) < 9) {
-			if (!moving) {
-				flying = false;
-			}
-			return;
-		}
-
-		for (Block block : GeneralMethods.getBlocksAroundPoint(player.getLocation(), 1.5)) {
-			if ((GeneralMethods.isSolid(block) || block.isLiquid())) {
-				flying = false;
-				return;
+	private void moveEarth(Vector apply, Vector direction) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, 2)) {
+			if (entity.getEntityId() != player.getEntityId()) {
+				entity.setVelocity(apply);
 			}
 		}
-
-		Vector vector = direction.clone().multiply(push * distance / length);
-		vector.setY(player.getVelocity().getY());
-		player.setVelocity(vector);
-	}
-
-	private boolean moveEarth() {
-		location = location.clone().add(direction);
-		if (catapult) {
-			if (location.getWorld().equals(origin.getWorld()) && location.distance(origin) < 0.5) {
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(origin, 2)) {
-					if (entity instanceof Player) {
-						Player target = (Player) entity;
-						new Catapult(target, this);
-					}
-					entity.setVelocity(direction.clone().multiply(push * distance / length));
-				}
-				return false;
-			}
-		} else {
-			double lengthSquared = (length - distance) * (length - distance);
-			if (location.distanceSquared(origin) <= lengthSquared) {
-				for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 2)) {
-					entity.setVelocity(direction.clone().multiply(push * distance / length));
-				}
-				return false;
-			}
-		}
-		moveEarth(location.clone().subtract(direction), direction, distance, false);
-		return true;
+		moveEarth(this.origin.clone().subtract(direction), direction, 2, false);
 	}
 
 	@Override
 	public void progress() {
+		if (player.getEyeLocation().getPitch() > -20f) {
+			remove();
+			return;
+		}
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
@@ -149,71 +84,48 @@ public class Catapult extends EarthAbility {
 					this.stage++;
 					this.stageStart = System.currentTimeMillis();
 					Random random = new Random();
-					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte)0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 15, player.getLocation(), 257);
+					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte)0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 20, player.getLocation(), 257);
+					ParticleEffect.BLOCK_DUST.display(new BlockData(Material.DIRT, (byte)0), random.nextFloat(), random.nextFloat(), random.nextFloat(), 0, 20, player.getLocation().add(0, 0.5, 0), 257);
 					player.getWorld().playEffect(player.getLocation(), Effect.GHAST_SHOOT, 0, 10);
 				}
 				return;
 			}
 		}
 		
+		Vector direction = null;
 		if (!this.activationHandled)
 		{
-			this.origin = player.getEyeLocation().clone();
-			this.direction = origin.getDirection().clone().normalize();
+			this.origin = player.getLocation().clone();
+			direction = player.getEyeLocation().getDirection().clone().normalize();
 
 			if (!bPlayer.canBend(this)) {
 				this.activationHandled = true;
 				remove();
 				return;
 			}
-
-			Vector neg = direction.clone().multiply(-1);
-			Block block;
-
-			for (int i = 0; i <= length; i++) {
-				location = origin.clone().add(neg.clone().multiply((double) i));
-				block = location.getBlock();
-				if (isEarthbendable(block)) {
-					distance = getEarthbendableBlocksLength(block, neg, length - i);
-					break;
-				} else if (!isTransparent(block)) {
-					break;
-				}
+			
+			if (isEarthbendable(player.getLocation().getBlock()) || isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+				distance = this.maxDistance;
 			}
-
 			if (distance != 0) {
-				if ((double) distance * distance >= location.distanceSquared(origin)) {
-					catapult = true;
-				}
-				
 				distance = (int) (distance * (0.25 * this.stage));
-				
-				moving = true;
-				
 				this.activationHandled = true;
-
 				bPlayer.addCooldown(this);
-			}
-			else
-			{
-				this.activationHandled = true;
+			} else {
 				remove();
 				return;
 			}
 		}
-
-		if (moving) {
-			if (!moveEarth()) {
-				moving = false;
-			}
+		Location tar = this.origin.clone();
+		while (tar.distanceSquared(this.origin) <= (this.distance^2))
+		{
+			tar.add(direction.clone().normalize());
 		}
-
-		if (flying) {
-			fly();
-		} else if (!moving) {
-			remove();
-			return;
-		}
+		this.target = tar;
+		Vector apply = this.target.clone().toVector().subtract(this.origin.clone().toVector());
+		player.setVelocity(apply);
+		moveEarth(apply, direction);
+		remove();
 	}
 
 	@Override
@@ -251,45 +163,13 @@ public class Catapult extends EarthAbility {
 	public void setOrigin(Location origin) {
 		this.origin = origin;
 	}
-
-	public Vector getDirection() {
-		return direction;
+	
+	public Location getTarget() {
+		return target;
 	}
-
-	public void setDirection(Vector direction) {
-		this.direction = direction;
-	}
-
-	public boolean isCatapult() {
-		return catapult;
-	}
-
-	public void setCatapult(boolean catapult) {
-		this.catapult = catapult;
-	}
-
-	public boolean isMoving() {
-		return moving;
-	}
-
-	public void setMoving(boolean moving) {
-		this.moving = moving;
-	}
-
-	public boolean isFlying() {
-		return flying;
-	}
-
-	public void setFlying(boolean flying) {
-		this.flying = flying;
-	}
-
-	public int getLength() {
-		return length;
-	}
-
-	public void setLength(int length) {
-		this.length = length;
+	
+	public void setTarget(Location target) {
+		this.target = target;
 	}
 
 	public int getDistance() {
@@ -298,18 +178,6 @@ public class Catapult extends EarthAbility {
 
 	public void setDistance(int distance) {
 		this.distance = distance;
-	}
-
-	public double getPush() {
-		return push;
-	}
-
-	public void setPush(double push) {
-		this.push = push;
-	}
-
-	public void setLocation(Location location) {
-		this.location = location;
 	}
 
 	public void setCooldown(long cooldown) {

@@ -556,8 +556,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Damage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Range", 16);
 
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.Length", 20);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.Push", 8);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.MaxDistance", 80);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown", 0);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown", 1500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown", 1500);
@@ -958,10 +957,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Passive.FerroControl.Enabled", true);
 
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
-			config.addDefault("Abilities.Earth.Catapult.Length", 6);
-			config.addDefault("Abilities.Earth.Catapult.Push", 4);
-			config.addDefault("Abilities.Earth.Catapult.ShiftModifier", 2);
-			config.addDefault("Abilities.Earth.Catapult.Cooldown", 1500);
+			config.addDefault("Abilities.Earth.Catapult.MaxDistance", 40);
+			config.addDefault("Abilities.Earth.Catapult.Cooldown", 7000);
 
 			config.addDefault("Abilities.Earth.Collapse.Enabled", true);
 			config.addDefault("Abilities.Earth.Collapse.SelectRange", 20);

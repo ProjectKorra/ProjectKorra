@@ -669,6 +669,12 @@ public class Torrent extends WaterAbility {
 	public boolean isCollidable() {
 		return forming || formed || launch || launching;
 	}
+	
+	@Override
+	public boolean allowBreakPlants()
+	{
+		return false;
+	}
 
 	@Override
 	public List<Location> getLocations() {
@@ -889,5 +895,4 @@ public class Torrent extends WaterAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-
 }

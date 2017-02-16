@@ -185,6 +185,11 @@ public class OctopusForm extends WaterAbility {
 			AirAbility.breakBreathbendingHold(entity);
 		}
 	}
+	
+	@Override
+	public boolean allowBreakPlants() {
+		return false;
+	}
 
 	@Override
 	public void progress() {
