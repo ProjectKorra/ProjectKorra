@@ -8,6 +8,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.earthbending.Tremorsense;
 import com.projectkorra.projectkorra.firebending.Illumination;
 
 public class FirePassive {
@@ -23,8 +24,8 @@ public class FirePassive {
 					player.setFireTicks(80);
 				}
 
-				if (bPlayer != null && !CoreAbility.hasAbility(player, Illumination.class) && bPlayer.canBendIgnoreBinds(CoreAbility.getAbility("Illumination")) && ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
-					if (!bPlayer.isTremorSensing()) {
+				if (bPlayer != null && !CoreAbility.hasAbility(player, Illumination.class) && !CoreAbility.hasAbility(player, Tremorsense.class) && bPlayer.canBendIgnoreBinds(CoreAbility.getAbility("Illumination")) && ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
+					if (bPlayer.isIlluminating()) {
 						new Illumination(player);
 					}
 				}

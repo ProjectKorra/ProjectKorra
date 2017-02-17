@@ -168,7 +168,6 @@ import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
 import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
@@ -201,10 +200,22 @@ public class PKListener implements Listener {
 
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
-		if (SurgeWall.wasBrokenFor(player, block) || OctopusForm.wasBrokenFor(player, block) || Torrent.wasBrokenFor(player, block) || WaterSpoutWave.wasBrokenFor(player, block)) {
+		String abil = BendingPlayer.getBendingPlayer(player).getBoundAbilityName();
+		CoreAbility ability = null;
+		if (abil != null && abil.equalsIgnoreCase("Surge")) {
+			ability = CoreAbility.getAbility(SurgeWall.class);
+		}
+		else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
+			ability = CoreAbility.getAbility(Torrent.class);
+		}
+		else {
+			ability = CoreAbility.getAbility(abil);
+		}
+		if (ability != null && ability instanceof WaterAbility && !((WaterAbility)ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
 			event.setCancelled(true);
 			return;
 		}
+		
 		EarthBlast blast = EarthBlast.getBlastFromSource(block);
 		if (blast != null) {
 			blast.remove();
@@ -865,10 +876,13 @@ public class PKListener implements Listener {
 										new Paralyze(sourcePlayer, targetPlayer);
 									} else if (boundAbil.equalsIgnoreCase("QuickStrike")) {
 										new QuickStrike(sourcePlayer, targetPlayer);
+										e.setCancelled(true);
 									} else if (boundAbil.equalsIgnoreCase("SwiftKick")) {
 										new SwiftKick(sourcePlayer, targetPlayer);
+										e.setCancelled(true);
 									} else if (boundAbil.equalsIgnoreCase("RapidPunch")) {
 										new RapidPunch(sourcePlayer, targetPlayer);
+										e.setCancelled(true);
 									} else {
 										if (ChiPassive.willChiBlock(sourcePlayer, targetPlayer)) {
 											ChiPassive.blockChi(targetPlayer);
@@ -1335,7 +1349,11 @@ public class PKListener implements Listener {
 
 			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
 				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("EarthBlast")) {
+					if (abil.equalsIgnoreCase("Catapult"))
+					{
+						new Catapult(player);
+					}
+					else if (abil.equalsIgnoreCase("EarthBlast")) {
 						new EarthBlast(player);
 					} else if (abil.equalsIgnoreCase("EarthArmor")) {
 						new EarthArmor(player);

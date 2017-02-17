@@ -96,5 +96,4 @@ public class QuickStrike extends ChiAbility {
 	public void setTarget(Entity target) {
 		this.target = target;
 	}
-
 }

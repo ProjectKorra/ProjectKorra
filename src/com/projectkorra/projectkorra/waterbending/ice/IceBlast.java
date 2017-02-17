@@ -68,7 +68,7 @@ public class IceBlast extends IceAbility {
 
 		if (sourceBlock == null) {
 			return;
-		} else if (TempBlock.isTempBlock(sourceBlock) || GeneralMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
+		} else if (GeneralMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
 			return;
 		} else {
 			prepare(sourceBlock);
@@ -195,9 +195,14 @@ public class IceBlast extends IceAbility {
 		progressing = true;
 		settingUp = true;
 		prepared = false;
-
-		new TempBlock(sourceBlock, Material.AIR, (byte) 0);
-		source = new TempBlock(sourceBlock, Material.PACKED_ICE, data);
+		
+		if (TempBlock.isTempBlock(sourceBlock)) {
+			TempBlock.get(sourceBlock).setType(Material.PACKED_ICE, data);
+			source = TempBlock.get(sourceBlock);
+		} else {
+			new TempBlock(sourceBlock, Material.AIR, (byte) 0);
+			source = new TempBlock(sourceBlock, Material.PACKED_ICE, data);
+		}
 	}
 
 	@Override
@@ -285,7 +290,12 @@ public class IceBlast extends IceAbility {
 			}
 
 			sourceBlock = block;
-			source = new TempBlock(sourceBlock, Material.PACKED_ICE, data);
+			if (TempBlock.isTempBlock(sourceBlock)) {
+				TempBlock.get(sourceBlock).setType(Material.PACKED_ICE, data);
+				source = TempBlock.get(sourceBlock);
+			} else {
+				source = new TempBlock(sourceBlock, Material.PACKED_ICE, data);
+			}
 
 			for (int x = 0; x < 10; x++) {
 				ParticleEffect.ITEM_CRACK.display(new ParticleEffect.ItemData(Material.ICE, (byte) 0), new Vector(((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5), ((Math.random() - 0.5) * .5)), .5f, location, 255.0);

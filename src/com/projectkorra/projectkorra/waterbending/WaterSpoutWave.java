@@ -681,5 +681,9 @@ public class WaterSpoutWave extends WaterAbility {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-
+	
+	@Override
+	public boolean allowBreakPlants() {
+		return false;
+	}
 }

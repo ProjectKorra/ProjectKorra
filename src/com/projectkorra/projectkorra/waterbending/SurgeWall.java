@@ -361,6 +361,11 @@ public class SurgeWall extends WaterAbility {
 			AFFECTED_BLOCKS.put(block, block);
 		}
 	}
+	
+	@Override
+	public boolean allowBreakPlants() {
+		return false;
+	}
 
 	public static void form(Player player) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);

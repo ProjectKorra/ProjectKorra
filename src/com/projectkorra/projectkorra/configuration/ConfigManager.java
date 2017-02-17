@@ -314,8 +314,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.Passive.Hydrosink.Description", "Hydrosink is a passive ability for waterbenders enabling them to softly land on any waterbendable surface, cancelling all damage.");
 
 			config.addDefault("Commands.Help.Elements.Earth", "Earth is the element of substance. Earthbenders share many of the same fundamental techniques as Waterbenders, but their domain is quite different and more readily accessible. Earthbenders dominate the ground and subterranean, having abilities to pull columns of rock straight up from the earth or drill their way through the mountain. They can also launch themselves through the air using pillars of rock, and will not hurt themselves assuming they land on something they can bend. The more skilled Earthbenders can even bend metal.");
-			config.addDefault("Abilities.Earth.Catapult.Description", "Catapult is the greatest mobility move in an earthbender's arsenal. It requires practice to be able to control yourself to land where you wish, but once mastered it's credibly useful for earthbenders.");
-			config.addDefault("Abilities.Earth.Catapult.Instructions", "Left click while looking in the direction you want to be launched to be propelled forward. Additionally, you can hold sneak and left click to be propelled with less power.");
+			config.addDefault("Abilities.Earth.Catapult.Description", "Catapult is an advanced earthbending ability that allows you to forcefully push yourself using earth, reaching great heights. This technique is best used when travelling, but it can also be used to quickly escape a battle.");
+			config.addDefault("Abilities.Earth.Catapult.Instructions", "Hold sneak until you see particles and hear a sound and then release to be propelled in the direction you're looking. Additionally, you can left-click to be propelled with less power.");
 			config.addDefault("Abilities.Earth.Collapse.Description", "This ability is a basic earthbending ability that allows the earthbender great utility. It allows them to control earth blocks by compressing earth. Players and mobs can be trapped and killed if earth is collapsed and they're stuck inside it, meaning this move is deadly when in cave systems.");
 			config.addDefault("Abilities.Earth.Collapse.Instructions", "Left click an earthbendable block. If there's space under that block, it will be collapsed. Alternatively, you can tap sneak to collapse multiple blocks at a time.");
 			config.addDefault("Abilities.Earth.Collapse.DeathMessage", "{victim} was suffocated by {attacker}'s {ability}");
@@ -556,8 +556,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Damage", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.Suffocate.Range", 16);
 
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.Length", 10);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.Push", 8);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.MaxDistance", 80);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown", 0);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown", 1500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown", 1500);
@@ -958,10 +957,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Passive.FerroControl.Enabled", true);
 
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
-			config.addDefault("Abilities.Earth.Catapult.Length", 6);
-			config.addDefault("Abilities.Earth.Catapult.Push", 4);
-			config.addDefault("Abilities.Earth.Catapult.ShiftModifier", 2);
-			config.addDefault("Abilities.Earth.Catapult.Cooldown", 1500);
+			config.addDefault("Abilities.Earth.Catapult.MaxDistance", 40);
+			config.addDefault("Abilities.Earth.Catapult.Cooldown", 7000);
+			config.addDefault("Abilities.Earth.Catapult.StageMult", 0.25);
+			config.addDefault("Abilities.Earth.Catapult.StageTimeMult", 2.0);
 
 			config.addDefault("Abilities.Earth.Collapse.Enabled", true);
 			config.addDefault("Abilities.Earth.Collapse.SelectRange", 20);
