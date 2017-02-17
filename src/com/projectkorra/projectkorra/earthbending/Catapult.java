@@ -121,7 +121,7 @@ public class Catapult extends EarthAbility {
 			}
 		}
 		Location tar = this.origin.clone();
-		while (tar.distanceSquared(this.origin) <= (this.distance^2))
+		while (tar.distanceSquared(this.origin) <= Math.pow(this.distance, 2))
 		{
 			tar.add(direction.clone().normalize());
 		}
