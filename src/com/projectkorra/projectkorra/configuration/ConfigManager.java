@@ -957,7 +957,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Passive.FerroControl.Enabled", true);
 
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
-			config.addDefault("Abilities.Earth.Catapult.MaxDistance", 40);
 			config.addDefault("Abilities.Earth.Catapult.Cooldown", 7000);
 			config.addDefault("Abilities.Earth.Catapult.StageTimeMult", 2.0);
 

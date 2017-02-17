@@ -5,6 +5,7 @@ import java.util.Random;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -16,9 +17,7 @@ import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 
 public class Catapult extends EarthAbility {
 
-	private int maxDistance;
 	private double stageTimeMult;
-	private int distance;
 	private long cooldown;
 	private Location origin;
 	private Location target;
@@ -31,11 +30,13 @@ public class Catapult extends EarthAbility {
 	public Catapult(Player player, boolean sneak) {
 		super(player);
 		setFields();
+		if (!isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+			return;
+		}
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
 		if (bPlayer.isAvatarState()) {
-			this.maxDistance = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Catapult.MaxDistance");
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.Catapult.Cooldown");
 		}
 		this.charging = sneak;
@@ -43,9 +44,7 @@ public class Catapult extends EarthAbility {
 	}
 
 	private void setFields() {
-		this.maxDistance = getConfig().getInt("Abilities.Earth.Catapult.MaxDistance");
 		this.stageTimeMult = getConfig().getDouble("Abilities.Earth.Catapult.StageTimeMult");
-		this.distance = this.maxDistance / 4;
 		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
 		this.activationHandled = false;
 		this.stage = 1;
@@ -98,14 +97,10 @@ public class Catapult extends EarthAbility {
 				remove();
 				return;
 			}
-			distance *= (0.15 * this.stage);
-			if (distance > this.maxDistance) {
-				distance = this.maxDistance;
-			}
 			this.activationHandled = true;
 			bPlayer.addCooldown(this);
 		}
-		Location tar = this.origin.clone().add(direction.clone().normalize().multiply(distance));
+		Location tar = this.origin.clone().add(direction.clone().normalize().multiply(this.stage + 0.5));
 		this.target = tar;
 		Vector apply = this.target.clone().toVector().subtract(this.origin.clone().toVector());
 		player.setVelocity(apply);
@@ -155,14 +150,6 @@ public class Catapult extends EarthAbility {
 
 	public void setTarget(Location target) {
 		this.target = target;
-	}
-
-	public int getDistance() {
-		return distance;
-	}
-
-	public void setDistance(int distance) {
-		this.distance = distance;
 	}
 
 	public void setCooldown(long cooldown) {

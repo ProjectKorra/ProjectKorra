@@ -313,7 +313,7 @@ public class OctopusForm extends WaterAbility {
 			}
 		}
 		for (int i = 0; i < 9; i++) {
-			freezeBellow(player.getLocation().add(i / 3 - 1, 0, i % 3 - 1).getBlock());
+			freezeBelow(player.getLocation().add(i / 3 - 1, 0, i / 3 - 1).getBlock());
 		}
 
 		Vector eyeDir = player.getEyeLocation().getDirection();
@@ -404,15 +404,16 @@ public class OctopusForm extends WaterAbility {
 			}
 			newBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 		}
+		freezeBelow(block);
 	}
 
 	private void addBaseWater(Block block) {
-		freezeBellow(block);
+		freezeBelow(block);
 		addWater(block);
 	}
 
-	private void freezeBellow(Block block) {
-		if (isWater(block.getRelative(BlockFace.DOWN)) && !GeneralMethods.isSolid(block) && !isWater(block)) {//&& !TempBlock.isTempBlock(block)) {
+	private void freezeBelow(Block block) {
+		if (isWater(block.getRelative(BlockFace.DOWN)) && !TempBlock.isTempBlock(block)) {
 			if (hasAbility(player, PhaseChange.class)) {
 				getAbility(player, PhaseChange.class).freeze(block);
 			} else {
