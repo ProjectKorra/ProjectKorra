@@ -26,7 +26,7 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
 public class PhaseChange extends IceAbility {
 
 	public static enum PhaseChangeType {
-		FREEZE, MELT;
+		FREEZE, MELT, CUSTOM;
 
 		@Override
 		public String toString() {
@@ -34,6 +34,8 @@ public class PhaseChange extends IceAbility {
 				return "Freeze";
 			} else if (this == MELT) {
 				return "Melt";
+			} else if (this == CUSTOM) {
+				return "Custom";
 			}
 			return "";
 		}
