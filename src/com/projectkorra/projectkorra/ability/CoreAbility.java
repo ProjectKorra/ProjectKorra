@@ -404,6 +404,7 @@ public abstract class CoreAbility implements Ability {
 	 */
 	public static void registerAbilities() {
 		ABILITIES_BY_NAME.clear();
+		ABILITIES_BY_CLASS.clear();
 		registerPluginAbilities(ProjectKorra.plugin, "com.projectkorra");
 		registerAddonAbilities("/Abilities/");
 	}

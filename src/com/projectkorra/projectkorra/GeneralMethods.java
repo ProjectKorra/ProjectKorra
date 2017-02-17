@@ -90,9 +90,12 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
+import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.AirBlast;
 import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
@@ -1533,9 +1536,13 @@ public class GeneralMethods {
 		ConfigManager.languageConfig.reload();
 		ConfigManager.presetConfig.reload();
 		Preset.loadExternalPresets();
-		CoreAbility.registerAbilities();
-		new ComboManager();
 		new MultiAbilityManager();
+		new ComboManager();
+		ProjectKorra.collisionManager = new CollisionManager();
+		ProjectKorra.collisionInitializer = new CollisionInitializer(ProjectKorra.collisionManager);
+		CoreAbility.registerAbilities();
+		ProjectKorra.collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered
+		ProjectKorra.collisionManager.startCollisionDetection();
 
 		DBConnection.host = ConfigManager.defaultConfig.get().getString("Storage.MySQL.host");
 		DBConnection.port = ConfigManager.defaultConfig.get().getInt("Storage.MySQL.port");
@@ -1551,6 +1558,7 @@ public class GeneralMethods {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			Preset.unloadPreset(player);
 			GeneralMethods.createBendingPlayer(player.getUniqueId(), player.getName());
+			PassiveManager.registerPassives(player);
 		}
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");
