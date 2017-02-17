@@ -204,18 +204,16 @@ public class PKListener implements Listener {
 		CoreAbility ability = null;
 		if (abil != null && abil.equalsIgnoreCase("Surge")) {
 			ability = CoreAbility.getAbility(SurgeWall.class);
-		}
-		else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
+		} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
 			ability = CoreAbility.getAbility(Torrent.class);
-		}
-		else {
+		} else {
 			ability = CoreAbility.getAbility(abil);
 		}
-		if (ability != null && ability instanceof WaterAbility && !((WaterAbility)ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
+		if (ability != null && ability instanceof WaterAbility && !((WaterAbility) ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
 			event.setCancelled(true);
 			return;
 		}
-		
+
 		EarthBlast blast = EarthBlast.getBlastFromSource(block);
 		if (blast != null) {
 			blast.remove();
@@ -1349,11 +1347,9 @@ public class PKListener implements Listener {
 
 			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
 				if (bPlayer.canCurrentlyBendWithWeapons()) {
-					if (abil.equalsIgnoreCase("Catapult"))
-					{
-						new Catapult(player);
-					}
-					else if (abil.equalsIgnoreCase("EarthBlast")) {
+					if (abil.equalsIgnoreCase("Catapult")) {
+						new Catapult(player, true);
+					} else if (abil.equalsIgnoreCase("EarthBlast")) {
 						new EarthBlast(player);
 					} else if (abil.equalsIgnoreCase("EarthArmor")) {
 						new EarthArmor(player);
@@ -1545,7 +1541,7 @@ public class PKListener implements Listener {
 			if (coreAbil instanceof EarthAbility && bPlayer.isElementToggled(Element.EARTH) == true) {
 				if (bPlayer.canCurrentlyBendWithWeapons()) {
 					if (abil.equalsIgnoreCase("Catapult")) {
-						new Catapult(player);
+						new Catapult(player, false);
 					} else if (abil.equalsIgnoreCase("EarthBlast")) {
 						EarthBlast.throwEarth(player);
 					} else if (abil.equalsIgnoreCase("RaiseEarth")) {

@@ -78,27 +78,48 @@ public class DisplayCommand extends PKCommand {
 				elementName = "avatarpassive";
 			Element element = Element.fromString(elementName.replace("combos", "").replace("combo", "").replace("passives", "").replace("passive", ""));
 			//combos
-			if (element != null && elementName.contains("combo")) {
-				ChatColor color = element != null ? element.getColor() : null;
-				ArrayList<String> combos = ComboManager.getCombosForElement(element);
+			if (elementName.contains("combo")) {
+				if (element == null) {
+					for (Element e : Element.getAllElements()) {
+						ChatColor color = e != null ? e.getColor() : null;
+						ArrayList<String> combos = ComboManager.getCombosForElement(e);
+						
+						for (String comboAbil : combos) {
+							ChatColor comboColor = color;
+							if (!sender.hasPermission("bending.ability." + comboAbil)) {
+								continue;
+							}
 
-				if (combos.isEmpty()) {
-					GeneralMethods.sendBrandingMessage(sender, color + noCombosAvailable.replace("{element}", element.getName()));
+							CoreAbility coreAbil = CoreAbility.getAbility(comboAbil);
+							if (coreAbil != null) {
+								comboColor = coreAbil.getElement().getColor();
+							}
+							sender.sendMessage(comboColor + comboAbil);
+						}
+					}
+					return;
+				} else {
+					ChatColor color = element != null ? element.getColor() : null;
+					ArrayList<String> combos = ComboManager.getCombosForElement(element);
+
+					if (combos.isEmpty()) {
+						GeneralMethods.sendBrandingMessage(sender, color + noCombosAvailable.replace("{element}", element.getName()));
+						return;
+					}
+					for (String comboMove : combos) {
+						ChatColor comboColor = color;
+						if (!sender.hasPermission("bending.ability." + comboMove)) {
+							continue;
+						}
+
+						CoreAbility coreAbil = CoreAbility.getAbility(comboMove);
+						if (coreAbil != null) {
+							comboColor = coreAbil.getElement().getColor();
+						}
+						sender.sendMessage(comboColor + comboMove);
+					}
 					return;
 				}
-				for (String comboMove : combos) {
-					ChatColor comboColor = color;
-					if (!sender.hasPermission("bending.ability." + comboMove)) {
-						continue;
-					}
-
-					CoreAbility coreAbil = CoreAbility.getAbility(comboMove);
-					if (coreAbil != null) {
-						comboColor = coreAbil.getElement().getColor();
-					}
-					sender.sendMessage(comboColor + comboMove);
-				}
-				return;
 				//passives
 			} else if (elementName.contains("passive")) {
 				if (element == null) {
