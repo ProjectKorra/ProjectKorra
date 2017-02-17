@@ -959,7 +959,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
 			config.addDefault("Abilities.Earth.Catapult.MaxDistance", 40);
 			config.addDefault("Abilities.Earth.Catapult.Cooldown", 7000);
-			config.addDefault("Abilities.Earth.Catapult.StageMult", 0.25);
 			config.addDefault("Abilities.Earth.Catapult.StageTimeMult", 2.0);
 
 			config.addDefault("Abilities.Earth.Collapse.Enabled", true);

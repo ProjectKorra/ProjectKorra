@@ -17,7 +17,6 @@ import com.projectkorra.projectkorra.util.ParticleEffect.BlockData;
 public class Catapult extends EarthAbility {
 
 	private int maxDistance;
-	private double stageMult;
 	private double stageTimeMult;
 	private int distance;
 	private long cooldown;
@@ -45,7 +44,6 @@ public class Catapult extends EarthAbility {
 
 	private void setFields() {
 		this.maxDistance = getConfig().getInt("Abilities.Earth.Catapult.MaxDistance");
-		this.stageMult = getConfig().getDouble("Abilities.Earth.Catapult.StageMult");
 		this.stageTimeMult = getConfig().getDouble("Abilities.Earth.Catapult.StageTimeMult");
 		this.distance = this.maxDistance / 4;
 		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
@@ -100,8 +98,7 @@ public class Catapult extends EarthAbility {
 				remove();
 				return;
 			}
-
-			distance *= (this.stageMult * this.stage);
+			distance *= (0.15 * this.stage);
 			if (distance > this.maxDistance) {
 				distance = this.maxDistance;
 			}
