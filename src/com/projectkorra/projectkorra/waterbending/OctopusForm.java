@@ -1,18 +1,7 @@
 package com.projectkorra.projectkorra.waterbending;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.AirAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.util.BlockSource;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
-import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
-import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeType;
-import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
-import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
+import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,8 +12,17 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.avatar.AvatarState;
+import com.projectkorra.projectkorra.util.BlockSource;
+import com.projectkorra.projectkorra.util.ClickType;
+import com.projectkorra.projectkorra.util.DamageHandler;
+import com.projectkorra.projectkorra.util.ParticleEffect;
+import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
+import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 public class OctopusForm extends WaterAbility {
 
@@ -54,6 +52,7 @@ public class OctopusForm extends WaterAbility {
 	private Location sourceLocation;
 	private ArrayList<TempBlock> blocks;
 	private ArrayList<TempBlock> newBlocks;
+	private ArrayList<TempBlock> frozen;
 
 	public OctopusForm(Player player) {
 		super(player);
@@ -91,6 +90,7 @@ public class OctopusForm extends WaterAbility {
 		this.currentFormHeight = 0;
 		this.blocks = new ArrayList<TempBlock>();
 		this.newBlocks = new ArrayList<TempBlock>();
+		this.frozen = new ArrayList<TempBlock>();
 		this.time = System.currentTimeMillis();
 		if (!player.isSneaking()) {
 			this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
@@ -404,7 +404,6 @@ public class OctopusForm extends WaterAbility {
 			}
 			newBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 		}
-		freezeBelow(block);
 	}
 
 	private void addBaseWater(Block block) {
@@ -413,17 +412,10 @@ public class OctopusForm extends WaterAbility {
 	}
 
 	private void freezeBelow(Block block) {
-		if (isWater(block.getRelative(BlockFace.DOWN)) && !TempBlock.isTempBlock(block)) {
-			if (hasAbility(player, PhaseChange.class)) {
-				getAbility(player, PhaseChange.class).freeze(block);
-			} else {
-				PhaseChange pc = new PhaseChange(player, PhaseChangeType.FREEZE);
-				for (TempBlock tb : pc.getFrozenBlocks()) {
-					tb.revertBlock();
-				}
-				pc.getFrozenBlocks().clear();
-				pc.freeze(block);
-			}
+		Block toFreeze = block.getRelative(BlockFace.DOWN);
+		if (isWater(toFreeze) && !TempBlock.isTempBlock(toFreeze)) {
+			TempBlock tb = new TempBlock(toFreeze, Material.ICE, (byte)0);
+			frozen.add(tb);
 		}
 	}
 
@@ -448,6 +440,9 @@ public class OctopusForm extends WaterAbility {
 			source.revertBlock();
 		}
 		for (TempBlock block : blocks) {
+			block.revertBlock();
+		}
+		for (TempBlock block : frozen) {
 			block.revertBlock();
 		}
 	}
