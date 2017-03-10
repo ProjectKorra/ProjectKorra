@@ -39,6 +39,7 @@ public class VersionCommand extends PKCommand {
 		}
 		sender.sendMessage(ChatColor.GREEN + "Founded by: " + ChatColor.RED + "MistPhizzle");
 		sender.sendMessage(ChatColor.GREEN + "Special thanks to " + ChatColor.RED + "Orion304 " + ChatColor.GREEN + "for establishing this great community.");
+		sender.sendMessage(ChatColor.GREEN + "Custom ProjectKorra build by " + ChatColor.RED + "Sobki" + ChatColor.GREEN + " for Benderscraft.");
 		sender.sendMessage(ChatColor.GREEN + "Learn More: " + ChatColor.RED + "http://projectkorra.com");
 	}
 
