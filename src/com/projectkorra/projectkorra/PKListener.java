@@ -1219,7 +1219,7 @@ public class PKListener implements Listener {
 		}
 
 		if (CoreAbility.hasAbility(event.getPlayer(), AirScooter.class)) {
-			event.setCancelled(true);
+			AirScooter.check(player);
 			return;
 		}
 
