@@ -10,11 +10,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -23,8 +21,6 @@ import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
-import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeType;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
@@ -56,7 +52,7 @@ public class OctopusForm extends WaterAbility {
 	private Location sourceLocation;
 	private ArrayList<TempBlock> blocks;
 	private ArrayList<TempBlock> newBlocks;
-	private PhaseChange pc;
+	private ArrayList<TempBlock> frozen;
 
 	public OctopusForm(Player player) {
 		super(player);
@@ -94,11 +90,7 @@ public class OctopusForm extends WaterAbility {
 		this.currentFormHeight = 0;
 		this.blocks = new ArrayList<TempBlock>();
 		this.newBlocks = new ArrayList<TempBlock>();
-		if (hasAbility(player, PhaseChange.class)) {
-			this.pc = getAbility(player, PhaseChange.class);
-		} else {
-			this.pc = new PhaseChange(player, PhaseChangeType.CUSTOM);
-		}
+		this.frozen = new ArrayList<TempBlock>();
 		this.time = System.currentTimeMillis();
 		if (!player.isSneaking()) {
 			this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
@@ -422,7 +414,8 @@ public class OctopusForm extends WaterAbility {
 	private void freezeBelow(Block block) {
 		Block toFreeze = block.getRelative(BlockFace.DOWN);
 		if (isWater(toFreeze) && !TempBlock.isTempBlock(toFreeze)) {
-			pc.freeze(toFreeze);
+			TempBlock tb = new TempBlock(toFreeze, Material.ICE, (byte)0);
+			frozen.add(tb);
 		}
 	}
 
@@ -449,14 +442,9 @@ public class OctopusForm extends WaterAbility {
 		for (TempBlock block : blocks) {
 			block.revertBlock();
 		}
-		new BukkitRunnable() {
-
-			@Override
-			public void run() {
-				pc.remove();
-			}
-			
-		}.runTaskLaterAsynchronously(ProjectKorra.plugin, 1000);
+		for (TempBlock block : frozen) {
+			block.revertBlock();
+		}
 	}
 
 	private void returnWater() {
