@@ -26,7 +26,7 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
 public class PhaseChange extends IceAbility {
 
 	public static enum PhaseChangeType {
-		FREEZE, MELT;
+		FREEZE, MELT, CUSTOM;
 
 		@Override
 		public String toString() {
@@ -34,6 +34,8 @@ public class PhaseChange extends IceAbility {
 				return "Freeze";
 			} else if (this == MELT) {
 				return "Melt";
+			} else if (this == CUSTOM) {
+				return "Custom";
 			}
 			return "";
 		}
@@ -108,6 +110,20 @@ public class PhaseChange extends IceAbility {
 			resetMeltLocation(l);
 			meltArea(l, meltRadius);
 		}
+		
+		if (active_types.contains(PhaseChangeType.CUSTOM)) {
+			for (TempBlock tb : blocks) {
+				if (tb.getLocation().getWorld() != player.getWorld()) {
+					tb.revertBlock();
+					blocks.remove(tb);
+					PLAYER_BY_BLOCK.remove(tb);
+				} else if (tb.getLocation().distanceSquared(player.getLocation()) > (controlRadius * controlRadius)) {
+					tb.revertBlock();
+					blocks.remove(tb);
+					PLAYER_BY_BLOCK.remove(tb);
+				}
+			}
+		}
 
 		if (active_types.isEmpty()) {
 			remove();
@@ -131,20 +147,32 @@ public class PhaseChange extends IceAbility {
 			night = (int) Math.round(getNightFactor());
 		}
 		sourceRange = night * getConfig().getInt("Abilities.Water.PhaseChange.SourceRange");
+		
+		switch (type) {
+			case FREEZE:
+				depth = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
+				controlRadius = night * getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
+				freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
+				freezeRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
 
-		if (type == PhaseChangeType.FREEZE) {
-			depth = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
-			controlRadius = night * getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
-			freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
-			freezeRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
-
-			freezeArea(GeneralMethods.getTargetedLocation(player, sourceRange));
-		} else if (type == PhaseChangeType.MELT) {
-			meltRadius = 1;
-			meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
-			meltDelay = getConfig().getInt("Abilities.Water.PhaseChange.Melt.Delay") / night;
-			meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
-			allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
+				freezeArea(GeneralMethods.getTargetedLocation(player, sourceRange));
+			case MELT:
+				meltRadius = 1;
+				meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
+				meltDelay = getConfig().getInt("Abilities.Water.PhaseChange.Melt.Delay") / night;
+				meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
+				allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
+			case CUSTOM:
+				depth = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
+				controlRadius = night * getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
+				freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
+				freezeRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
+				
+				meltRadius = 1;
+				meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
+				meltDelay = getConfig().getInt("Abilities.Water.PhaseChange.Melt.Delay") / night;
+				meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
+				allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
 		}
 	}
 
