@@ -72,7 +72,9 @@ public class OctopusForm extends WaterAbility {
 		}
 
 		if (!bPlayer.canBend(this)) {
-			remove();
+			if (oldOctopus != null) {
+				oldOctopus.remove();
+			}
 			return;
 		}
 
