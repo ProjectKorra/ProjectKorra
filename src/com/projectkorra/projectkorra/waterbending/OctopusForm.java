@@ -458,7 +458,7 @@ public class OctopusForm extends WaterAbility {
 				pc.remove();
 			}
 			
-		}.runTaskLaterAsynchronously(ProjectKorra.plugin, 1000);
+		}.runTaskLater(ProjectKorra.plugin, 1000);
 	}
 
 	private void returnWater() {
