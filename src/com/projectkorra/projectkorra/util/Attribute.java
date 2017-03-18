@@ -1,29 +1,57 @@
 package com.projectkorra.projectkorra.util;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Attribute {
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 
-	public String type();
+public class Attribute {
 
-	public class AttributeType {
+	public static boolean setField(CoreAbility ability, String field, Object value) {
+		try {
+			Field _field = ability.getClass().getDeclaredField(field);
+			boolean oldVisibility = _field.isAccessible();
+			_field.setAccessible(true);
+			try {
+				_field.set(ability, value);
+			}
+			catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+				ProjectKorra.log.warning(e.getClass().getName() + ": Failed to set field '" + _field.getName() + "' (" + _field.getType().getSimpleName() + ") in " + ability.getClass().getSimpleName() + " to '" + value.toString() + "' (" + value.getClass().getSimpleName() + ") at");
 
-		public static final String DAMAGE = "Damage";
-		public static final String COOLDOWN = "Cooldown";
-		public static final String DURATION = "Duration";
-		public static final String MAX_DURATION = "MaxDuration";
-		public static final String RANGE = "Range";
-		public static final String SPEED = "Speed";
-		public static final String RADIUS = "Radius";
-		public static final String PARTICLES = "Particles";
-		public static final String PUSH_FACTOR = "PushFactor";
-		public static final String COLLISION_RADIUS = "CollisionRadius";
+				return false;
+			}
+			_field.setAccessible(oldVisibility);
+		}
+		catch (NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+			ProjectKorra.log.warning(e.getClass().getName() + ": Failed to set field '" + field + "' in " + ability.getClass().getSimpleName() + " to '" + value.toString() + "' (" + value.getClass().getSimpleName() + ")");
+			return false;
+		}
+		return true;
+	}
 
+	public static Object getField(CoreAbility ability, String field) {
+		try {
+			Field _field = ability.getClass().getDeclaredField(field);
+			boolean oldVisibility = _field.isAccessible();
+			_field.setAccessible(true);
+			try {
+				Object object = _field.get(ability);
+				_field.setAccessible(oldVisibility);
+				return object;
+			}
+			catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+				ProjectKorra.log.warning(e.getClass().getName() + ": Failed to get field '" + _field.getName() + "' in " + ability.getClass().getSimpleName());
+				return null;
+			}
+		}
+		catch (NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+			ProjectKorra.log.warning(e.getClass().getName() + ": Failed to get field '" + field + "' in " + ability.getClass().getSimpleName());
+			return null;
+		}
 	}
 
 }
