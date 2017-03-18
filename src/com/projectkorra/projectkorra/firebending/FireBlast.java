@@ -21,9 +21,6 @@ import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
-import com.projectkorra.projectkorra.util.Attribute;
-import com.projectkorra.projectkorra.util.AttributeHandler;
-import com.projectkorra.projectkorra.util.Attribute.AttributeType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
@@ -32,33 +29,19 @@ public class FireBlast extends FireAbility {
 
 	private static final int MAX_TICKS = 10000;
 
-	@Attribute(type = "powerFurnace")
 	private boolean powerFurnace;
-	@Attribute(type = "showParticles")
 	private boolean showParticles;
-	@Attribute(type = "dissipate")
 	private boolean dissipate;
-	@Attribute(type = "isFireBurst")
 	private boolean isFireBurst = false;
-	@Attribute(type = "fireBurstIgnite")
 	private boolean fireBurstIgnite;
-	@Attribute(type = "ticks")
 	private int ticks;
-	@Attribute(type = AttributeType.COOLDOWN)
 	private long cooldown;
-	@Attribute(type = "speedFactor")
 	private double speedFactor;
-	@Attribute(type = AttributeType.RANGE)
 	private double range;
-	@Attribute(type = AttributeType.DAMAGE)
 	private double damage;
-	@Attribute(type = AttributeType.SPEED)
 	private double speed;
-	@Attribute(type = AttributeType.COLLISION_RADIUS)
 	private double collisionRadius;
-	@Attribute(type = "fireTicks")
 	private double fireTicks;
-	@Attribute(type = "pushFactor")
 	private double pushFactor;
 	private Random random;
 	private Location location;
@@ -104,8 +87,6 @@ public class FireBlast extends FireAbility {
 		this.origin = player.getEyeLocation();
 		this.direction = player.getEyeLocation().getDirection().normalize();
 		this.location = location.add(direction.clone());
-		
-		AttributeHandler.setField(this, AttributeType.RANGE, 10);
 
 		start();
 		bPlayer.addCooldown("FireBlast", cooldown);
