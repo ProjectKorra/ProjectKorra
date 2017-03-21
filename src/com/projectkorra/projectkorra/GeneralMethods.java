@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -90,6 +91,7 @@ import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.CollisionInitializer;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
@@ -121,9 +123,9 @@ import com.projectkorra.projectkorra.util.BlockCacheElement;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
+import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
-import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -338,11 +340,38 @@ public class GeneralMethods {
 							elements.add(Element.CHI);
 						}
 						if (hasAddon) {
-							for (String addon : split[split.length - 1].split(",")) {
-								if (Element.getElement(addon) != null) {
-									elements.add(Element.getElement(addon));
+							/*
+							 * Because plugins which depend on ProjectKorra
+							 * would be loaded after ProjectKorra, addon
+							 * elements would = null. To work around this, we
+							 * keep trying to load in the elements from the
+							 * database until it successfully loads everything
+							 * in, or it times out.
+							 */
+							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
+							final long startTime = System.currentTimeMillis();
+							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									if (addonClone.isEmpty()) {
+										ProjectKorra.log.info("Successfully loaded in all addon elements!");
+										cancel();
+									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
+										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon elements: " + addonClone.toString());
+										ProjectKorra.log.severe("These elements have taken too long to load in, resulting in users having lost these element.");
+										cancel();
+									} else {
+										ProjectKorra.log.info("Attempting to load in the following addon elements... " + addonClone.toString());
+										for (String addon : addonClone) {
+											if (Element.getElement(addon) != null) {
+												elements.add(Element.getElement(addon));
+												addonClone.remove(addon);
+											}
+										}
+									}
 								}
-							}
+							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
 						}
 					}
 				}
@@ -394,23 +423,67 @@ public class GeneralMethods {
 							subelements.add(Element.PLANT);
 						}
 						if (hasAddon) {
-							for (String addon : split[split.length - 1].split(",")) {
-								if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
-									subelements.add((SubElement) Element.getElement(addon));
+							final CopyOnWriteArrayList<String> addonClone = new CopyOnWriteArrayList<String>(Arrays.asList(split[split.length - 1].split(",")));
+							final long startTime = System.currentTimeMillis();
+							final long timeoutLength = 30000; // How long until it should time out attempting to load addons in
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									if (addonClone.isEmpty()) {
+										ProjectKorra.log.info("Successfully loaded in all addon subelements!");
+										cancel();
+									} else if (System.currentTimeMillis() - startTime > timeoutLength) {
+										ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following addon subelements: " + addonClone.toString());
+										ProjectKorra.log.severe("These subelements have taken too long to load in, resulting in users having lost these subelement.");
+										cancel();
+									} else {
+										ProjectKorra.log.info("Attempting to load in the following addon subelements... " + addonClone.toString());
+										for (String addon : addonClone) {
+											if (Element.getElement(addon) != null && Element.getElement(addon) instanceof SubElement) {
+												subelements.add((SubElement) Element.getElement(addon));
+												addonClone.remove(addon);
+											}
+										}
+									}
 								}
-							}
+							}.runTaskTimer(ProjectKorra.plugin, 0, 20);
 						}
 					}
 				}
 
 				final HashMap<Integer, String> abilities = new HashMap<Integer, String>();
+				final ConcurrentHashMap<Integer, String> abilitiesClone = new ConcurrentHashMap<Integer, String>(abilities);
 				for (int i = 1; i <= 9; i++) {
-					String slot = rs2.getString("slot" + i);
-
-					if (slot != null && !slot.equalsIgnoreCase("null") && CoreAbility.getAbility(slot) != null && CoreAbility.getAbility(slot).isEnabled()) {
-						abilities.put(i, slot);
-					}
+					String ability = rs2.getString("slot" + i);
+					abilitiesClone.put(i, ability);
 				}
+				final long startTime = System.currentTimeMillis();
+				final long timeoutLength = 30000; // How long until it should time out attempting to load addons in
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						if (abilitiesClone.isEmpty()) {
+							ProjectKorra.log.info("Successfully loaded in all external abilities!");
+							cancel();
+						} else if (System.currentTimeMillis() - startTime > timeoutLength) {
+							ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following external abilities: " + abilitiesClone.values().toString());
+							ProjectKorra.log.severe("These abilities have taken too long to load in, resulting in users having lost them if bound.");
+							cancel();
+						} else {
+							for (int slot : abilitiesClone.keySet()) {
+								String ability = abilitiesClone.get(slot);
+								if (ability.equalsIgnoreCase("null")) {
+									abilitiesClone.remove(slot);
+									continue;
+								} else if (CoreAbility.getAbility(ability) != null && CoreAbility.getAbility(ability).isEnabled()) {
+									abilities.put(slot, ability);
+									abilitiesClone.remove(slot);
+									continue;
+								}
+							}
+						}
+					}
+				}.runTaskTimer(ProjectKorra.plugin, 0, 20);
 
 				p = (permaremoved != null && (permaremoved.equals("true")));
 
@@ -1865,10 +1938,8 @@ public class GeneralMethods {
 			subs.append("p");
 		}
 		boolean hasAddon = false;
-		for (Element element : bPlayer.getElements()) {
-			if (!(element instanceof SubElement))
-				continue;
-			if (Arrays.asList(Element.getAddonElements()).contains(element)) {
+		for (Element element : bPlayer.getSubElements()) {
+			if (Arrays.asList(Element.getAddonSubElements()).contains(element)) {
 				if (!hasAddon) {
 					hasAddon = true;
 					subs.append(";");
@@ -1973,17 +2044,15 @@ public class GeneralMethods {
 
 			TextComponent messageComponent = new TextComponent(newMessage);
 			((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
-			/*boolean prefixSent = false;
-			for (String msg : message.split("\n")) {
-				if (!prefixSent) {
-					TextComponent messageComponent = new TextComponent(msg);
-					((Player) sender).spigot().sendMessage(new TextComponent(prefixComponent, messageComponent));
-					prefixSent = true;
-				} else {
-					sender.sendMessage(msg);
-				}
-			}*/
-			
+			/*
+			 * boolean prefixSent = false; for (String msg :
+			 * message.split("\n")) { if (!prefixSent) { TextComponent
+			 * messageComponent = new TextComponent(msg); ((Player)
+			 * sender).spigot().sendMessage(new TextComponent(prefixComponent,
+			 * messageComponent)); prefixSent = true; } else {
+			 * sender.sendMessage(msg); } }
+			 */
+
 		}
 	}
 
