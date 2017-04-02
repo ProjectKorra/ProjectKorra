@@ -15,6 +15,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.Flight;
@@ -28,10 +29,15 @@ public class AirSuction extends AirAbility {
 	private boolean hasOtherOrigin;
 	private int ticks;
 	private int particleCount;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
+	@Attribute(Attribute.POWER)
 	private double pushFactor;
 	private Random random;
 	private Location location;

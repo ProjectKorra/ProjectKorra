@@ -17,6 +17,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireComboStream;
@@ -37,13 +38,19 @@ public class AirCombo extends AirAbility implements ComboAbility {
 	private int progressCounter;
 	private long cooldown;
 	private long time;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.POWER)
 	private double knockback;
 	private double airStreamMaxEntityHeight;
 	private double airStreamEntityCarryDuration;
+	@Attribute(Attribute.HEIGHT)
 	private double twisterHeight;
+	@Attribute(Attribute.RADIUS)
 	private double twisterRadius;
 	private double twisterDegreeParticles;
 	private double twisterHeightParticles;

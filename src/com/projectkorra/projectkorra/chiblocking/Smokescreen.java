@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.chiblocking;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 
 import org.bukkit.Effect;
@@ -21,8 +22,11 @@ public class Smokescreen extends ChiAbility {
 	private static final Map<String, Long> BLINDED_TIMES = new ConcurrentHashMap<>();
 	private static final Map<String, Smokescreen> BLINDED_TO_ABILITY = new ConcurrentHashMap<>();
 
+	@Attribute(Attribute.DURATION)
 	private int duration;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
 
 	public Smokescreen(Player player) {

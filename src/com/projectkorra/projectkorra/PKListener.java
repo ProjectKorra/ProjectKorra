@@ -159,6 +159,7 @@ import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.Flight;
+import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.PassiveHandler;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -957,6 +958,20 @@ public class PKListener implements Listener {
 		}
 		Player player = event.getPlayer();
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		
+		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			if (event.getItem().getType() == Material.STICK) {
+				ItemStack stack = event.getItem();
+				
+				if (stack.hasItemMeta() && stack.getItemMeta().getDisplayName().contains("debug stuck")) {
+					if (stack.getItemMeta().getDisplayName().contains("1")) {
+						ParticleEffect.SPIT.display(0.5F, 0.5F, 0.5F, 0.1F, 10, player.getEyeLocation(), 100);
+					} else if (stack.getItemMeta().getDisplayName().contains("2")) {
+						ParticleEffect.TOTEM.display(0.5F, 0.5F, 0.5F, 0.1F, 10, player.getEyeLocation(), 100);
+					}
+				}
+			}
+		}
 
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			final UUID uuid = player.getUniqueId();
