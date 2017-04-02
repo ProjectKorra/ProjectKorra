@@ -27,6 +27,7 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -45,13 +46,20 @@ public class AirBlast extends AirAbility {
 	private boolean showParticles;
 	private int ticks;
 	private int particles;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double speedFactor;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.POWER)
 	private double pushFactor;
+	@Attribute(Attribute.POWER)
 	private double pushFactorForOthers;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
 	private Location location;
 	private Location origin;

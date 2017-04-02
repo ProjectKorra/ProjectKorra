@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.airbending;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.Flight;
 
@@ -20,10 +21,15 @@ public class Tornado extends AirAbility {
 
 	private int numberOfStreams;
 	private int particleCount;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.HEIGHT)
 	private double maxHeight;
+	@Attribute(Attribute.POWER)
 	private double playerPushFactor;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
+	@Attribute(Attribute.RANGE)
 	private double range;
 	private double npcPushFactor;
 	private double currentHeight;
