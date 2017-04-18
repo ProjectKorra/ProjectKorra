@@ -125,7 +125,7 @@ public class Commands {
 				}
 
 				List<String> sendingArgs = Arrays.asList(args).subList(1, args.length);
-				for (PKCommand command : PKCommand.instances.values()) {
+				for (SubCommand command : SubCommand.instances.values()) {
 					if (Arrays.asList(command.getAliases()).contains(args[0].toLowerCase())) {
 						command.execute(s, sendingArgs);
 						return true;

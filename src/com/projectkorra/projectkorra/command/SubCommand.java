@@ -2,12 +2,19 @@ package com.projectkorra.projectkorra.command;
 
 import org.bukkit.command.CommandSender;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface representation of a command executor.
  */
 public interface SubCommand {
+	/**
+	 * List of all command executors which implements SubCommand
+	 */
+	public static Map<String, SubCommand> instances = new HashMap<String, SubCommand>();
+	
 	/**
 	 * Gets the name of the command.
 	 * 
