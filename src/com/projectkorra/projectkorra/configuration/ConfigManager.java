@@ -218,15 +218,19 @@ public class ConfigManager {
 			config.addDefault("Commands.Add.Description", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
 			config.addDefault("Commands.Add.SuccessfullyAddedCFW", "You are now also a {element}.");
 			config.addDefault("Commands.Add.SuccessfullyAddedAE", "You are now also an {element}.");
+			config.addDefault("Commands.Add.SuccessfullyAddedAll", "You now also have: ");
 			config.addDefault("Commands.Add.PlayerNotFound", "That player could not be found.");
 			config.addDefault("Commands.Add.InvalidElement", "You must specify a valid element.");
 			config.addDefault("Commands.Add.AlreadyHasElement", "You already have that element!");
 			config.addDefault("Commands.Add.AlreadyHasSubElement", "You already have that subelement!");
+			config.addDefault("Commands.Add.AlreadyHasAllElements", "You already have all elements!");
 			config.addDefault("Commands.Add.Other.SuccessfullyAddedCFW", "{target} is now also a {element}.");
 			config.addDefault("Commands.Add.Other.SuccessfullyAddedAE", "{target} is now also an {element}.");
+			config.addDefault("Commands.Add.Other.SuccessfullyAddedAll", "{target} now also has: ");
 			config.addDefault("Commands.Add.Other.AlreadyHasElement", "{target} already has that element!");
 			config.addDefault("Commands.Add.Other.AlreadyHasSubElement", "{target} already has that subelement!");
-
+			config.addDefault("Commands.Add.Other.AlreadyHasAllElements", "{target} already has all elements!");
+			
 			config.addDefault("DeathMessages.Enabled", true);
 			config.addDefault("DeathMessages.Default", "{victim} was slain by {attacker}'s {ability}");
 
