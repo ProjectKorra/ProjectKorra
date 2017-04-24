@@ -297,22 +297,15 @@ public class PKListener implements Listener {
 		if (block.getType() == Material.FIRE) {
 			return;
 		}
-		event.setCancelled(Illumination.getBlocks().containsKey(block));
-		if (!event.isCancelled()) {
-			event.setCancelled(!WaterManipulation.canPhysicsChange(block));
-		}
-		if (!event.isCancelled()) {
-			event.setCancelled(!EarthPassive.canPhysicsChange(block));
-		}
-		if (!event.isCancelled()) {
-			event.setCancelled(PhaseChange.getFrozenBlocksAsBlock().contains(block));
-		}
-		if (!event.isCancelled()) {
-			event.setCancelled(!SurgeWave.canThaw(block));
-		}
-		if (!event.isCancelled()) {
-			event.setCancelled(!Torrent.canThaw(block));
-		}
+
+		event.setCancelled(
+				Illumination.getBlocks().containsKey(block)
+				&& !WaterManipulation.canPhysicsChange(block)
+				&& !EarthPassive.canPhysicsChange(block)
+				&& PhaseChange.getFrozenBlocksAsBlock().contains(block)
+				&& !SurgeWave.canThaw(block)
+				&& !Torrent.canThaw(block)
+				);
 		if (BlazeArc.getIgnitedBlocks().containsKey(block)) {
 			BlazeArc.removeBlock(block);
 		}
