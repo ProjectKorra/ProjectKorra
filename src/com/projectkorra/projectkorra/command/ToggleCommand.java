@@ -4,6 +4,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.Bukkit;
@@ -82,9 +83,11 @@ public class ToggleCommand extends PKCommand {
 					Commands.isToggledForAll = false;
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						GeneralMethods.sendBrandingMessage(player, ChatColor.GREEN + toggleOnAll);
+						PassiveManager.registerPassives(player); //these are only added on login and autoremoved.
 					}
 					if (!(sender instanceof Player))
 						GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + toggleOnAll);
+					
 				} else {
 					Commands.isToggledForAll = true;
 					for (Player player : Bukkit.getOnlinePlayers()) {
