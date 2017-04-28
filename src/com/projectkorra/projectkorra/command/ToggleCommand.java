@@ -83,7 +83,7 @@ public class ToggleCommand extends PKCommand {
 					Commands.isToggledForAll = false;
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						GeneralMethods.sendBrandingMessage(player, ChatColor.GREEN + toggleOnAll);
-						PassiveManager.registerPassives(player); //these are only added on login and autoremoved.
+						PassiveManager.registerPassives(player); // TODO: This is a temporary fix. Passives currently need to be re-registered in multiple places.
 					}
 					if (!(sender instanceof Player))
 						GeneralMethods.sendBrandingMessage(sender, ChatColor.GREEN + toggleOnAll);
