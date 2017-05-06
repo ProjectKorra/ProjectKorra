@@ -1093,6 +1093,11 @@ public class GeneralMethods {
 		Location origin = player.getEyeLocation();
 		Vector direction = player.getEyeLocation().getDirection().normalize();
 		for (Entity entity : origin.getWorld().getEntities()) {
+			if (entity instanceof Player) {
+				if (((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+					continue;
+				}
+			}
 			if (avoid.contains(entity)) {
 				continue;
 			}
