@@ -12,6 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.World;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -69,6 +70,7 @@ public class LavaFlow extends LavaAbility {
 	private ArrayList<TempBlock> affectedBlocks;
 	private ArrayList<BukkitRunnable> tasks;
 	private Material revertMaterial;
+	private World world;
 
 	/**
 	 * Creates a new LavaFlow ability and initializes all of the variables and
@@ -85,6 +87,7 @@ public class LavaFlow extends LavaAbility {
 			return;
 		}
 
+		this.world = player.getWorld();
 		this.time = System.currentTimeMillis();
 		this.type = type;
 		this.shiftCounter = 0;
@@ -174,7 +177,7 @@ public class LavaFlow extends LavaAbility {
 			return;
 		} else if (removing) {
 			return;
-		} else if (player.isDead() || !player.isOnline()) {
+		} else if (player.isDead() || !player.isOnline() || player.getWorld() != this.world) {
 			removeSlowly();
 			return;
 		}

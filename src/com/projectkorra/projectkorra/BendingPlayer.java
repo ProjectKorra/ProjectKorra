@@ -116,6 +116,11 @@ public class BendingPlayer {
 			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
 
 			Player player = event.getPlayer();
+			
+			if (player == null) {
+				return;
+			}
+			
 			int slot = player.getInventory().getHeldItemSlot() + 1;
 			String abilityName = event.getAbility();
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
