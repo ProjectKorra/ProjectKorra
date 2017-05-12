@@ -143,6 +143,11 @@ public class Torrent extends WaterAbility {
 			time = System.currentTimeMillis();
 
 			if (sourceSelected) {
+				if (sourceBlock.getLocation().getWorld() != this.player.getWorld()) {
+					remove();
+					return;
+				}
+				
 				if (sourceBlock.getLocation().distanceSquared(player.getLocation()) > selectRange * selectRange) {
 					return;
 				}

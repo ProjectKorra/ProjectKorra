@@ -1330,10 +1330,10 @@ public enum ParticleEffect {
 			if (range < 1) {
 				throw new IllegalArgumentException("The range is lower than 1");
 			}
-			String worldName = center.getWorld().getName();
+			
 			double squared = range * range;
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (!player.getWorld().getName().equals(worldName) || player.getLocation().distanceSquared(center) > squared) {
+				if (player.getWorld() != center.getWorld() || player.getLocation().distanceSquared(center) > squared) {
 					continue;
 				}
 				sendTo(center, player);
