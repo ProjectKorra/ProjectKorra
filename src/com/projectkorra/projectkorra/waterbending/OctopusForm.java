@@ -1,6 +1,20 @@
 package com.projectkorra.projectkorra.waterbending;
 
+import java.util.ArrayList;
+import java.util.Random;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
@@ -13,18 +27,6 @@ import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange.PhaseChangeType;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
-
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.Random;
 
 public class OctopusForm extends WaterAbility {
 
@@ -54,6 +56,7 @@ public class OctopusForm extends WaterAbility {
 	private Location sourceLocation;
 	private ArrayList<TempBlock> blocks;
 	private ArrayList<TempBlock> newBlocks;
+	private PhaseChange pc;
 
 	public OctopusForm(Player player) {
 		super(player);
@@ -69,7 +72,9 @@ public class OctopusForm extends WaterAbility {
 		}
 
 		if (!bPlayer.canBend(this)) {
-			remove();
+			if (oldOctopus != null) {
+				oldOctopus.remove();
+			}
 			return;
 		}
 
@@ -91,6 +96,11 @@ public class OctopusForm extends WaterAbility {
 		this.currentFormHeight = 0;
 		this.blocks = new ArrayList<TempBlock>();
 		this.newBlocks = new ArrayList<TempBlock>();
+		if (hasAbility(player, PhaseChange.class)) {
+			this.pc = getAbility(player, PhaseChange.class);
+		} else {
+			this.pc = new PhaseChange(player, PhaseChangeType.CUSTOM);
+		}
 		this.time = System.currentTimeMillis();
 		if (!player.isSneaking()) {
 			this.sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());
@@ -404,7 +414,6 @@ public class OctopusForm extends WaterAbility {
 			}
 			newBlocks.add(new TempBlock(block, Material.STATIONARY_WATER, (byte) 8));
 		}
-		freezeBelow(block);
 	}
 
 	private void addBaseWater(Block block) {
@@ -413,17 +422,9 @@ public class OctopusForm extends WaterAbility {
 	}
 
 	private void freezeBelow(Block block) {
-		if (isWater(block.getRelative(BlockFace.DOWN)) && !TempBlock.isTempBlock(block)) {
-			if (hasAbility(player, PhaseChange.class)) {
-				getAbility(player, PhaseChange.class).freeze(block);
-			} else {
-				PhaseChange pc = new PhaseChange(player, PhaseChangeType.FREEZE);
-				for (TempBlock tb : pc.getFrozenBlocks()) {
-					tb.revertBlock();
-				}
-				pc.getFrozenBlocks().clear();
-				pc.freeze(block);
-			}
+		Block toFreeze = block.getRelative(BlockFace.DOWN);
+		if (isWater(toFreeze) && !TempBlock.isTempBlock(toFreeze)) {
+			pc.freeze(toFreeze);
 		}
 	}
 
@@ -450,6 +451,14 @@ public class OctopusForm extends WaterAbility {
 		for (TempBlock block : blocks) {
 			block.revertBlock();
 		}
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				pc.remove();
+			}
+			
+		}.runTaskLater(ProjectKorra.plugin, 1000);
 	}
 
 	private void returnWater() {

@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.Flight;
 
 public class AirSpout extends AirAbility {
@@ -21,7 +22,9 @@ public class AirSpout extends AirAbility {
 	private int angle;
 	private long animTime;
 	private long interval;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.HEIGHT)
 	private double height;
 
 	public AirSpout(Player player) {

@@ -480,8 +480,6 @@ public abstract class EarthAbility extends ElementalAbility {
 		info.setTime(System.currentTimeMillis());
 		MOVED_EARTH.put(target, info);
 
-		source.setType(Material.AIR);
-
 		if (info.getState().getType() == Material.SAND) {
 			if (info.getState().getRawData() == (byte) 0x1) {
 				target.setType(Material.RED_SANDSTONE);
@@ -494,6 +492,8 @@ public abstract class EarthAbility extends ElementalAbility {
 			target.setType(info.getState().getType());
 			target.setData(info.getState().getRawData());
 		}
+		
+		source.setType(Material.AIR);
 	}
 
 	public static void playEarthbendingSound(Location loc) {

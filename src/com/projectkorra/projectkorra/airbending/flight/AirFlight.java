@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ability.FlightAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.object.PlayerFlyData;
 import com.projectkorra.projectkorra.util.Flight;
@@ -19,12 +20,15 @@ public class AirFlight extends FlightAbility {
 	private static final Map<String, Integer> HITS = new ConcurrentHashMap<>();
 	private static final Map<String, PlayerFlyData> HOVERING = new ConcurrentHashMap<>();
 
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private boolean firstProgressIteration;
 	private int maxHitsBeforeRemoval;
+	@Attribute(Attribute.SPEED)
 	private double speed;
 	private Flight flight;
 	private double hoverY;
+	@Attribute(Attribute.DURATION)
 	private double maxDuration;
 
 	public AirFlight(Player player) {

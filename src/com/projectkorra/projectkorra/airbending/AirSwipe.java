@@ -22,6 +22,7 @@ import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.EarthAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -37,12 +38,19 @@ public class AirSwipe extends AirAbility {
 	private int arc;
 	private int particles;
 	private int stepSize;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private long maxChargeTime;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
+	@Attribute(Attribute.POWER)
 	private double pushFactor;
+	@Attribute(Attribute.SPEED)
 	private double speed;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
 	private double maxChargeFactor;
 	private Location origin;

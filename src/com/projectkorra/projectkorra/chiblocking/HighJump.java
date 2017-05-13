@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.chiblocking;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip;
 
 import org.bukkit.Location;
@@ -12,7 +13,9 @@ import org.bukkit.util.Vector;
 
 public class HighJump extends ChiAbility {
 
+	@Attribute(Attribute.HEIGHT)
 	private int height;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 
 	public HighJump(Player player) {
