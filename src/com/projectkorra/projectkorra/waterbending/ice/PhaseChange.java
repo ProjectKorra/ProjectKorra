@@ -59,9 +59,9 @@ public class PhaseChange extends IceAbility {
 	private long meltCooldown = 7000;
 	private int meltRadius;
 	private int meltMaxRadius = 7;
-	private int meltDelay = 50;
+	private double meltSpeed = 8;
+	private double meltTicks = 0;
 	private boolean allowMeltFlow;
-	private long lastBlockTime = 0;
 	private CopyOnWriteArrayList<Block> melted_blocks = new CopyOnWriteArrayList<>();
 
 	public PhaseChange(Player player, PhaseChangeType type) {
@@ -101,6 +101,7 @@ public class PhaseChange extends IceAbility {
 				active_types.remove(PhaseChangeType.MELT);
 				bPlayer.addCooldown("PhaseChangeMelt", meltCooldown);
 				meltRadius = 1;
+				meltTicks = 0;
 				return;
 			}
 			if (meltRadius >= meltMaxRadius) {
@@ -159,7 +160,7 @@ public class PhaseChange extends IceAbility {
 			case MELT:
 				meltRadius = 1;
 				meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
-				meltDelay = getConfig().getInt("Abilities.Water.PhaseChange.Melt.Delay") / night;
+				meltSpeed = getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Speed") * night;
 				meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
 				allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
 			case CUSTOM:
@@ -170,7 +171,7 @@ public class PhaseChange extends IceAbility {
 				
 				meltRadius = 1;
 				meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
-				meltDelay = getConfig().getInt("Abilities.Water.PhaseChange.Melt.Delay") / night;
+				meltSpeed = getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Speed") * night;
 				meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
 				allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
 		}
@@ -318,25 +319,28 @@ public class PhaseChange extends IceAbility {
 	}
 
 	public void meltArea(Location center, int radius) {
-		if (System.currentTimeMillis() < lastBlockTime + meltDelay) {
-			return;
-		}
-
 		List<Block> ice = new ArrayList<Block>();
 		for (Location l : GeneralMethods.getCircle(center, radius, 3, true, true, 0)) {
 			if (isIce(l.getBlock()) || isSnow(l.getBlock())) {
 				ice.add(l.getBlock());
 			}
 		}
+		
+		meltTicks += meltSpeed / 20;
 
-		lastBlockTime = System.currentTimeMillis();
-		if (ice.size() == 0) {
-			meltRadius++;
-			return;
+		for (int i = 0; i < meltTicks % (meltSpeed); i++) {
+			if (ice.size() == 0) {
+				meltRadius++;
+				return;
+			}
+			
+			Block b = ice.get(r.nextInt(ice.size()));
+			melt(b);
+			ice.remove(b);
 		}
-
-		Block b = ice.get(r.nextInt(ice.size()));
-		melt(b);
+		
+		
+		
 	}
 
 	public void meltArea(Location center) {
