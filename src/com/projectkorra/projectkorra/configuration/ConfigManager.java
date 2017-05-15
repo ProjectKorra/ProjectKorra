@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.configuration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -826,7 +827,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.PhaseChange.Freeze.Depth", 1);
 			config.addDefault("Abilities.Water.PhaseChange.Freeze.ControlRadius", 25);
 			config.addDefault("Abilities.Water.PhaseChange.Melt.Cooldown", 2000);
-			config.addDefault("Abilities.Water.PhaseChange.Melt.Delay", 50);
+			config.addDefault("Abilities.Water.PhaseChange.Melt.Speed", 8.0);
 			config.addDefault("Abilities.Water.PhaseChange.Melt.Radius", 7);
 			config.addDefault("Abilities.Water.PhaseChange.Melt.AllowFlow", true);
 
@@ -1160,6 +1161,35 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireJet.Speed", 0.8);
 			config.addDefault("Abilities.Fire.FireJet.Duration", 2000);
 			config.addDefault("Abilities.Fire.FireJet.Cooldown", 7000);
+			
+			List<String> blockableAbilities = new ArrayList<String>();
+			blockableAbilities.add("WaterManipulation");
+			blockableAbilities.add("WaterArms");
+			blockableAbilities.add("Torrent");
+			blockableAbilities.add("IceSpike");
+			blockableAbilities.add("EarthBlast");
+			blockableAbilities.add("FireBlast");
+			blockableAbilities.add("FireWheel");
+			blockableAbilities.add("FireSpin");
+			blockableAbilities.add("FireStream");
+			blockableAbilities.add("FireBurst");
+			blockableAbilities.add("AirBlast");
+			blockableAbilities.add("AirSuction");
+			List<String> breakableAbilities = new ArrayList<String>();
+			breakableAbilities.add("AirBurst");
+			breakableAbilities.add("Shockwave");
+
+			config.addDefault("Abilities.Fire.FireManipulation.Stream.Cooldown", 12000);
+			config.addDefault("Abilities.Fire.FireManipulation.Stream.Range", 50);
+			config.addDefault("Abilities.Fire.FireManipulation.Stream.Damage", 2);
+			config.addDefault("Abilities.Fire.FireManipulation.Stream.Speed", 0.75);
+
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.Cooldown", 6000);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.Range", 4);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.Damage", 1);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.MaxDuration", 5000);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.BlockableAbilities", blockableAbilities);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.BreakableAbilities", breakableAbilities);
 
 			config.addDefault("Abilities.Fire.FireShield.Enabled", true);
 			config.addDefault("Abilities.Fire.FireShield.Radius", 3);

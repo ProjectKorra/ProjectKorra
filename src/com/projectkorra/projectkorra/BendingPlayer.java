@@ -221,10 +221,6 @@ public class BendingPlayer {
 		} else if (ability instanceof WaterAbility && WaterAbility.isLunarEclipse(player.getWorld())) {
 			return false;
 		}
-
-		if (!ignoreBinds && !canBind(ability)) {
-			return false;
-		}
 		return true;
 	}
 
