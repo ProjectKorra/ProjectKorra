@@ -17,13 +17,13 @@
 
   <dependencies>
     <!-- Spigot API -->
-    <dependency>
+    <!-- <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/spigot-1.10.2.jar</systemPath>
-    </dependency>
+    </dependency> -->
     <!-- Factions -->
     <dependency>
       <groupId>com.massivecraft</groupId>
@@ -143,6 +143,13 @@
       <version>LATEST</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/GLib.jar</systemPath>
+    </dependency>
+    <dependency>
+    	<groupId>org.spigotmc</groupId>
+    	<artifactId>spigot-1.12</artifactId>
+    	<version>LATEST</version>
+    	<scope>system</scope>
+    	<systemPath>${project.basedir}/lib/spigot-1.12-pre2-SNAPSHOT.jar</systemPath>
     </dependency>
   </dependencies>
 

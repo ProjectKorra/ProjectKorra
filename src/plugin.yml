@@ -68,8 +68,7 @@ permissions:
     children:
       bending.command.add.air: true
       bending.command.choose.air: true
-      bending.ability.AirBlast: true
-      bending.ability.AirBubble: true
+      bending.ability.AirBlast: true 
       bending.ability.AirBurst: true
       bending.ability.AirScooter: true
       bending.ability.AirShield: true

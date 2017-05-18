@@ -242,8 +242,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBlast.Instructions", "\n" + "(Push) " + "Left click while aiming at an entity to push them back." + "\n" + "(Throw) " + "Tap sneak to select a location and left click in a direction to throw entities away from the selected location.");
 			config.addDefault("Abilities.Air.AirBlast.DeathMessage", "{victim} was flung by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.AirBlast.HorizontalVelocityDeath", "{victim} experienced kinetic damage by {attacker}'s {ability}");
-			config.addDefault("Abilities.Air.AirBubble.Description", "To use, the bender must hold down sneak. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
-			config.addDefault("Abilities.Air.AirBubble.Instructions", "Hold sneak when in range of water to push the water back and create an air bubble.");
 			config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. It allows the bender to create space between them and whoever is close to them. AirBurst is extremely useful when you're surrounded by mobs, of if you're low in health and need to escape. It can also be useful for confusing your target also.");
 			config.addDefault("Abilities.Air.AirBurst.Instructions", "\n" + "(Sphere) Hold sneak until particles appear and then release shift to create air that expands outwards, pushing entities back. If you fall from great height while you are on this slot, the burst will automatically activate." + "\n" + "(Cone) While charging the move with shift, click to send the burst in a cone only going in one direction.");
 			config.addDefault("Abilities.Air.AirBurst.DeathMessage", "{victim} was thrown down by {attacker}'s {ability}");
@@ -305,7 +303,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Freeze.DeathMessage", "{victim} was frozen by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.WaterArms.Spear.DeathMessage", "{victim} was speared to death by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.WaterBubble.Description", "WaterBubble is a basic waterbending ability that allows the bender to create air pockets under water. This is increddibly useful for building under water.");
-			config.addDefault("Abilities.Water.WaterBubble.Instructions", "Hold sneak when in range of water to push the water back and create a water bubble.");
+			config.addDefault("Abilities.Water.WaterBubble.Instructions", "Hold sneak when in range of water to push the water back and create a water bubble. Alternatively, you can click to create a bubble for a short amount of time.");
 			config.addDefault("Abilities.Water.WaterManipulation.Description", "WaterManipulation is a fundamental ability for waterbenders. Although it is a basic move, it allows for fast damage due to its rapid fire nature, which is incredibly useful when wanting to finish off low health targets.");
 			config.addDefault("Abilities.Water.WaterManipulation.Instructions", "Tap sneak on a water source and left click to send a water manipulation to the point that you clicked. Additionally, you can left click again to change the direction of this move. This includes other players' WaterManipulations.");
 			config.addDefault("Abilities.Water.WaterManipulation.DeathMessage", "{victim} was taken down by {attacker}'s {ability}");
@@ -645,9 +643,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBlast.CanPressButtons", true);
 			config.addDefault("Abilities.Air.AirBlast.CanCoolLava", true);
 
-			config.addDefault("Abilities.Air.AirBubble.Enabled", true);
-			config.addDefault("Abilities.Air.AirBubble.Radius", 7);
-
 			config.addDefault("Abilities.Air.AirBurst.Enabled", true);
 			config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
 			config.addDefault("Abilities.Air.AirBurst.PushFactor", 1.5);
@@ -923,8 +918,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon", 12000);
 
 			config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
-			config.addDefault("Abilities.Water.WaterBubble.Radius", 6);
-
+			config.addDefault("Abilities.Water.WaterBubble.Radius", 4.0);
+			config.addDefault("Abilities.Water.WaterBubble.Speed", 0.5);
+			config.addDefault("Abilities.Water.WaterBubble.ClickDuration", 2000L);
+			
 			config.addDefault("Abilities.Water.WaterManipulation.Enabled", true);
 			config.addDefault("Abilities.Water.WaterManipulation.Damage", 3.0);
 			config.addDefault("Abilities.Water.WaterManipulation.Range", 25);

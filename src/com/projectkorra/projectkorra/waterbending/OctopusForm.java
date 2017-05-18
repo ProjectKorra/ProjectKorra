@@ -158,7 +158,7 @@ public class OctopusForm extends WaterAbility {
 		if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 			new PlantRegrowth(player, sourceBlock);
 			sourceBlock.setType(Material.AIR);
-		} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock)) {
+		} else if (!GeneralMethods.isAdjacentToThreeOrMoreSources(sourceBlock) && sourceBlock != null) {
 			sourceBlock.setType(Material.AIR);
 		}
 		source = new TempBlock(sourceBlock, Material.STATIONARY_WATER, (byte) 8);
