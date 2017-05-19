@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.AirBlast;
-import com.projectkorra.projectkorra.airbending.AirBubble;
 import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
@@ -15,6 +14,7 @@ import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.airbending.combo.AirCombo.AirStream;
 import com.projectkorra.projectkorra.airbending.combo.AirCombo.AirSweep;
 import com.projectkorra.projectkorra.airbending.flight.AirFlight;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.Catapult;
 import com.projectkorra.projectkorra.earthbending.Collapse;
 import com.projectkorra.projectkorra.earthbending.EarthArmor;
@@ -31,6 +31,7 @@ import com.projectkorra.projectkorra.firebending.FireBlastCharged;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.firebending.FireJet;
+import com.projectkorra.projectkorra.firebending.FireManipulation;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
 import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireKick;
@@ -78,7 +79,6 @@ public class CollisionInitializer {
 	@SuppressWarnings("unused")
 	public void initializeDefaultCollisions() {
 		CoreAbility airBlast = CoreAbility.getAbility(AirBlast.class);
-		CoreAbility airBubble = CoreAbility.getAbility(AirBubble.class);
 		CoreAbility airFlight = CoreAbility.getAbility(AirFlight.class);
 		CoreAbility airScooter = CoreAbility.getAbility(AirScooter.class);
 		CoreAbility airShield = CoreAbility.getAbility(AirShield.class);
@@ -110,6 +110,7 @@ public class CollisionInitializer {
 		CoreAbility fireSpin = CoreAbility.getAbility(FireSpin.class);
 		CoreAbility fireWheel = CoreAbility.getAbility(FireWheel.class);
 		CoreAbility fireShield = CoreAbility.getAbility(FireShield.class);
+		CoreAbility fireManipulation = CoreAbility.getAbility(FireManipulation.class);
 		CoreAbility lightning = CoreAbility.getAbility(Lightning.class);
 		CoreAbility wallOfFire = CoreAbility.getAbility(WallOfFire.class);
 
@@ -130,9 +131,9 @@ public class CollisionInitializer {
 		CoreAbility waterSpoutWave = CoreAbility.getAbility(WaterSpoutWave.class);
 
 		CoreAbility[] smallAbils = { airSwipe, earthBlast, waterManipulation, fireBlast, combustion, blazeArc };
-		CoreAbility[] largeAbils = { earthSmash, airShield, fireBlastCharged, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
+		CoreAbility[] largeAbils = { earthSmash, airShield, fireBlastCharged, fireKick, fireSpin, fireWheel, airSweep, iceBullet, fireManipulation };
 		CoreAbility[] comboAbils = { fireKick, fireSpin, fireWheel, airSweep, iceBullet };
-		CoreAbility[] removeSpoutAbils = { airSwipe, earthBlast, waterManipulation, fireBlast, fireBlastCharged, earthSmash, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
+		CoreAbility[] removeSpoutAbils = { airSwipe, earthBlast, waterManipulation, fireBlast, fireBlastCharged, earthSmash, fireKick, fireSpin, fireWheel, airSweep, iceBullet, fireManipulation };
 
 		for (CoreAbility smallAbil : smallAbils) {
 			addSmallAbility(smallAbil);
@@ -155,6 +156,22 @@ public class CollisionInitializer {
 		collisionManager.addCollision(new Collision(airShield, waterManipulation, false, true));
 		for (CoreAbility comboAbil : comboAbils) {
 			collisionManager.addCollision(new Collision(airShield, comboAbil, false, true));
+		}
+		
+		for (String string : ConfigManager.getConfig().getStringList("Abilities.Fire.FireManipulation.Shield.BlockableAbilities")) {
+			CoreAbility ability = CoreAbility.getAbility(string);
+			if (ability == null) {
+				continue;
+			}
+			collisionManager.addCollision(new Collision(fireManipulation, ability, false, true));
+		}
+
+		for (String string : ConfigManager.getConfig().getStringList("Abilities.Fire.FireManipulation.Shield.BreakableAbilities")) {
+			CoreAbility ability = CoreAbility.getAbility(string);
+			if (ability == null) {
+				continue;
+			}
+			collisionManager.addCollision(new Collision(ability, fireManipulation, false, true));
 		}
 
 		collisionManager.addCollision(new Collision(fireShield, fireBlast, false, true));

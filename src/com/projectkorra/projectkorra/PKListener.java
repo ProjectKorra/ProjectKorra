@@ -86,7 +86,6 @@ import com.projectkorra.projectkorra.ability.util.ComboManager;
 import com.projectkorra.projectkorra.ability.util.MultiAbilityManager;
 import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.airbending.AirBlast;
-import com.projectkorra.projectkorra.airbending.AirBubble;
 import com.projectkorra.projectkorra.airbending.AirBurst;
 import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirShield;
@@ -144,6 +143,8 @@ import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
 import com.projectkorra.projectkorra.firebending.FireBurst;
 import com.projectkorra.projectkorra.firebending.FireJet;
+import com.projectkorra.projectkorra.firebending.FireManipulation;
+import com.projectkorra.projectkorra.firebending.FireManipulation.FireManipulationType;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.firebending.HeatControl.HeatControlType;
@@ -166,6 +167,7 @@ import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
+import com.projectkorra.projectkorra.waterbending.WaterBubble;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
@@ -251,7 +253,7 @@ public class PKListener implements Listener {
 			event.setCancelled(!EarthPassive.canFlowFromTo(fromblock, toblock));
 		}
 		if (ElementalAbility.isWater(fromblock)) {
-			event.setCancelled(!AirBubble.canFlowTo(toblock));
+			event.setCancelled(!WaterBubble.isAir(toblock));
 			if (!event.isCancelled()) {
 				event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock, toblock));
 			}
@@ -655,6 +657,10 @@ public class PKListener implements Listener {
 		Entity entity = event.getEntity();
 		if (Paralyze.isParalyzed(entity) || ChiCombo.isParalyzed(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
 			event.setCancelled(true);
+		}
+		
+		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
+			TempArmor.getTempArmor((LivingEntity) entity).revert();
 		}
 	}
 
@@ -1332,6 +1338,8 @@ public class PKListener implements Listener {
 						}
 					} else if (abil.equalsIgnoreCase("WaterManipulation")) {
 						new WaterManipulation(player);
+					} else if (abil.equalsIgnoreCase("WaterBubble")) {
+						new WaterBubble(player, true);
 					} else if (abil.equalsIgnoreCase("Surge")) {
 						SurgeWall.form(player);
 					} else if (abil.equalsIgnoreCase("Torrent")) {
@@ -1401,7 +1409,9 @@ public class PKListener implements Listener {
 						new Lightning(player);
 					} else if (abil.equalsIgnoreCase("Combustion")) {
 						new Combustion(player);
-					}
+					} else if (abil.equalsIgnoreCase("FireManipulation")) {
+						new FireManipulation(player, FireManipulationType.SHIFT);
+					} 
 				}
 			}
 		}
@@ -1459,7 +1469,7 @@ public class PKListener implements Listener {
 		} else if (bPlayer.isChiBlocked()) {
 			event.setCancelled(true);
 			return;
-		} else if (GeneralMethods.isInteractable(player.getTargetBlock((Set<Material>) null, 5))) {
+		} else if (GeneralMethods.isInteractable(player.getTargetBlock(new HashSet<Material>(), 5))) {
 			event.setCancelled(true);
 			return;
 		} else if (player.getInventory().getItemInMainHand().getType() == Material.FISHING_ROD) {
@@ -1526,6 +1536,8 @@ public class PKListener implements Listener {
 							PhaseChange pc = CoreAbility.getAbility(player, PhaseChange.class);
 							pc.startNewType(PhaseChangeType.FREEZE);
 						}
+					} else if (abil.equalsIgnoreCase("WaterBubble")) {
+						new WaterBubble(player, false);
 					} else if (abil.equalsIgnoreCase("WaterSpout")) {
 						new WaterSpout(player);
 					} else if (abil.equalsIgnoreCase("WaterManipulation")) {
@@ -1607,6 +1619,15 @@ public class PKListener implements Listener {
 						new WallOfFire(player);
 					} else if (abil.equalsIgnoreCase("Combustion")) {
 						Combustion.explode(player);
+					} else if (abil.equalsIgnoreCase("FireManipulation")) {
+						if (CoreAbility.hasAbility(player, FireManipulation.class)) {
+							FireManipulation fireManip = CoreAbility.getAbility(player, FireManipulation.class);
+							if (fireManip.getFireManipulationType() == FireManipulationType.SHIFT) {
+								fireManip.click();
+							}
+						} else {
+							new FireManipulation(player, FireManipulationType.CLICK);
+						}
 					}
 				}
 			}
