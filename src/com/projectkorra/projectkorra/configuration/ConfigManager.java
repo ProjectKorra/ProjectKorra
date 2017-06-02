@@ -1009,6 +1009,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthTunnel.Range", 10);
 			config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
 			config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
+			config.addDefault("Abilities.Earth.EarthTunnel.DropLootIfNotRevert", false);
 			config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
 
 			config.addDefault("Abilities.Earth.Extraction.Enabled", true);

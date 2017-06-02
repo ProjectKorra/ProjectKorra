@@ -29,6 +29,7 @@ public class EarthTunnel extends EarthAbility {
 	private double range;
 	private double radiusIncrement;
 	private boolean revert;
+ 	private boolean dropLootIfNotRevert;
 	private Block block;
 	private Location origin;
 	private Location location;
@@ -44,6 +45,7 @@ public class EarthTunnel extends EarthAbility {
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthTunnel.Radius");
 		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
+		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
 		this.radiusIncrement = radius;
 		this.time = System.currentTimeMillis();
 
@@ -124,7 +126,11 @@ public class EarthTunnel extends EarthAbility {
 						}
 					}
 				} else {
-					block.setType(Material.AIR);
+					if (dropLootIfNotRevert) {
+						block.breakNaturally();
+					} else {
+						block.setType(Material.AIR);
+					}
 				}
 			}
 		}
