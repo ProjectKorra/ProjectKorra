@@ -145,8 +145,8 @@ public class Flight {
 		if (player == null) {
 			return;
 		}
-		player.setAllowFlight(couldFly);
-		player.setFlying(wasFlying);
+		player.setAllowFlight(couldFly && (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR));
+		player.setFlying(wasFlying && (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR));
 	}
 
 }
