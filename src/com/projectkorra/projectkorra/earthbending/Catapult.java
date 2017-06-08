@@ -27,6 +27,8 @@ public class Catapult extends EarthAbility {
 	private long stageStart;
 	private boolean charging;
 	private boolean activationHandled;
+	private Vector up;
+	private double angle;
 
 	public Catapult(Player player, boolean sneak) {
 		super(player);
@@ -48,9 +50,11 @@ public class Catapult extends EarthAbility {
 	private void setFields() {
 		this.stageTimeMult = getConfig().getDouble("Abilities.Earth.Catapult.StageTimeMult");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
+		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Catapult.Angle"));
 		this.activationHandled = false;
 		this.stage = 1;
 		this.stageStart = System.currentTimeMillis();
+		up = new Vector(0, 1, 0);
 	}
 
 	private void moveEarth(Vector apply, Vector direction) {
@@ -64,10 +68,6 @@ public class Catapult extends EarthAbility {
 
 	@Override
 	public void progress() {
-		if (player.getEyeLocation().getPitch() > -20f) {
-			remove();
-			return;
-		}
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
@@ -102,6 +102,11 @@ public class Catapult extends EarthAbility {
 			this.activationHandled = true;
 			bPlayer.addCooldown(this);
 		}
+		
+		if (up.angle(player.getEyeLocation().getDirection()) > angle) {
+			direction = up;
+		}
+		
 		Location tar = this.origin.clone().add(direction.clone().normalize().multiply(this.stage + 0.5));
 		this.target = tar;
 		Vector apply = this.target.clone().toVector().subtract(this.origin.clone().toVector());
