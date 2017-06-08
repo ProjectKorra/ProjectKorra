@@ -88,6 +88,12 @@ public class Catapult extends EarthAbility {
 			}
 			return;
 		}
+		
+		Block b = player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
+		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
+			remove();
+			return;
+		}
 
 		Vector direction = null;
 		if (!this.activationHandled) {
