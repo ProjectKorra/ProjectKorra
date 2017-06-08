@@ -78,6 +78,20 @@ public class Illumination extends FireAbility {
 			remove();
 			return;
 		}
+		
+		if (block == null) {
+			return;
+		}
+		
+		if (!player.getWorld().equals(block.getBlock().getWorld())) {
+			remove();
+			return;
+		} 
+		
+		if (player.getLocation().distanceSquared(block.getLocation()) > range * range) {
+			remove();
+			return;
+		}
 
 		set();
 	}
@@ -86,15 +100,13 @@ public class Illumination extends FireAbility {
 	public void remove() {
 		super.remove();
 		revert();
+		bPlayer.toggleIllumination();
 	}
 
 	private void revert() {
 		if (block != null) {
-			TempBlock.removeBlock(block.getBlock());
 			BLOCKS.remove(block);
-
 			block.revertBlock();
-			oldLevel = player.getLocation().getBlock().getLightLevel();
 		}
 	}
 
@@ -102,24 +114,16 @@ public class Illumination extends FireAbility {
 		Block standingBlock = player.getLocation().getBlock();
 		Block standBlock = standingBlock.getRelative(BlockFace.DOWN);
 
-		if (standBlock.getType() == Material.GLOWSTONE) {
-			revert();
-		} else if ((BlazeArc.isIgnitable(player, standingBlock) && standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2) && block == null && !BLOCKS.containsKey(standBlock)) {
-
-			this.block = new TempBlock(standingBlock, Material.TORCH, (byte) 0);
-			BLOCKS.put(block, player);
-		} else if ((BlazeArc.isIgnitable(player, standingBlock) && standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2) && !block.equals(standBlock) && !BLOCKS.containsKey(standBlock) && GeneralMethods.isSolid(standBlock)) {
-			revert();
-
-			this.block = new TempBlock(standingBlock, Material.TORCH, (byte) 0);
-			BLOCKS.put(block, player);
-		} else if (block == null) {
+		if (!BlazeArc.isIgnitable(player, standingBlock)) {
 			return;
-		} else if (!player.getWorld().equals(block.getBlock().getWorld())) {
-			revert();
-		} else if (player.getLocation().distanceSquared(block.getLocation()) > range * range) {
-			revert();
+		} else if (!GeneralMethods.isSolid(standBlock)) {
+			return;
+		} else if (block != null && standingBlock.equals(block.getBlock())) {
+			return;
 		}
+		
+		revert();
+		this.block = new TempBlock(standingBlock, Material.TORCH, (byte)0);
 	}
 
 	@Override

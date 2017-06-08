@@ -84,7 +84,7 @@ public class AirSuction extends AirAbility {
 
 		bPlayer.addCooldown(this);
 		if (bPlayer.isAvatarState()) {
-			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.AirSuction.Push");
+			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSuction.Push");
 		}
 		start();
 	}

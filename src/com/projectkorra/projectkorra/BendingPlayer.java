@@ -79,8 +79,8 @@ public class BendingPlayer {
 		this.permaRemoved = permaRemoved;
 		this.player = Bukkit.getPlayer(uuid);
 		this.toggled = true;
-		this.tremorSense = true;
-		this.illumination = true;
+		this.tremorSense = false;
+		this.illumination = false;
 		this.chiBlocked = false;
 		cooldowns = new ConcurrentHashMap<String, Long>();
 		toggledElements = new ConcurrentHashMap<Element, Boolean>();

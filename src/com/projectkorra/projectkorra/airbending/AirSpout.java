@@ -55,7 +55,7 @@ public class AirSpout extends AirAbility {
 		new Flight(player);
 
 		if (bPlayer.isAvatarState()) {
-			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.AirSpout.Height");
+			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSpout.Height");
 		}
 
 		start();

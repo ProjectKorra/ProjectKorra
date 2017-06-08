@@ -5,6 +5,7 @@ import java.util.Random;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -30,7 +31,8 @@ public class Catapult extends EarthAbility {
 	public Catapult(Player player, boolean sneak) {
 		super(player);
 		setFields();
-		if (!isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+		Block b = player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
+		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
 			return;
 		}
 		if (!bPlayer.canBend(this)) {
