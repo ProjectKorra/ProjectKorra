@@ -29,6 +29,7 @@ public class Catapult extends EarthAbility {
 	private boolean activationHandled;
 	private Vector up;
 	private double angle;
+	private boolean cancelWithAngle;
 
 	public Catapult(Player player, boolean sneak) {
 		super(player);
@@ -51,6 +52,7 @@ public class Catapult extends EarthAbility {
 		this.stageTimeMult = getConfig().getDouble("Abilities.Earth.Catapult.StageTimeMult");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
 		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Catapult.Angle"));
+		this.cancelWithAngle = getConfig().getBoolean("Abilities.Earth.Catapult.CancelWithAngle");
 		this.activationHandled = false;
 		this.stage = 1;
 		this.stageStart = System.currentTimeMillis();
@@ -110,6 +112,10 @@ public class Catapult extends EarthAbility {
 		}
 		
 		if (up.angle(player.getEyeLocation().getDirection()) > angle) {
+			if (cancelWithAngle) {
+				remove();
+				return;
+			}
 			direction = up;
 		}
 		
