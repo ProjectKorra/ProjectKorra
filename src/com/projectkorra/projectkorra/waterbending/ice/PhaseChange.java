@@ -338,15 +338,13 @@ public class PhaseChange extends IceAbility {
 			melt(b);
 			ice.remove(b);
 		}
-		
-		
-		
 	}
 
 	public void meltArea(Location center) {
 		meltArea(center, meltRadius);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void melt(Block b) {
 		if (b.getWorld() != player.getWorld()) {
 			return;
@@ -389,14 +387,30 @@ public class PhaseChange extends IceAbility {
 			if (PLAYER_BY_BLOCK.containsKey(tb)) {
 				thaw(tb);
 			}
+			
+			if (b.getType() == Material.SNOW) {
+				if (b.getData() == 0) {
+					tb.revertBlock();
+					new TempBlock(b, Material.AIR, (byte) 0).setRevertTime(120 * 1000L);
+				} else {
+					byte data = b.getData();
+					tb.revertBlock();
+					new TempBlock(b, Material.SNOW, (byte) (data - 1)).setRevertTime(120 * 1000L);
+				}
+			}
 		} else if (isWater(b)) {
 			//Figure out what to do here also
 		} else if (isIce(b)) {
 			Material m = allowMeltFlow ? Material.WATER : Material.STATIONARY_WATER;
 			b.setType(m);
 			melted_blocks.add(b);
-		} else if (isSnow(b)) {
-			new TempBlock(b, Material.AIR, (byte) 0);
+		} else if (b.getType() == Material.SNOW) {
+			if (b.getData() == 0) {
+				new TempBlock(b, Material.AIR, (byte) 0).setRevertTime(120 * 1000L);
+			} else {
+				new TempBlock(b, Material.SNOW, (byte) (b.getData() - 1)).setRevertTime(120 * 1000L);
+			}
+			
 			melted_blocks.add(b);
 		}
 		playWaterbendingSound(b.getLocation());

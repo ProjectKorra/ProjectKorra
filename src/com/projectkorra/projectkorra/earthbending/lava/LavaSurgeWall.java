@@ -330,7 +330,7 @@ public class LavaSurgeWall extends LavaAbility {
 
 	@Override
 	public String getName() {
-		return null;
+		return "LavaSurgeWall";
 	}
 
 	@Override
@@ -351,6 +351,11 @@ public class LavaSurgeWall extends LavaAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
 	}
 
 	public boolean isProgressing() {
