@@ -403,13 +403,22 @@ public class LavaFlow extends LavaAbility {
 				} else
 					return;
 			}
-			TempBlock tblock = new TempBlock(block, Material.LAVA, (byte) 0);
-			TEMP_LAVA_BLOCKS.put(block, tblock);
-			TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.put(tblock, block);
-			affectedBlocks.add(tblock);
+			TempBlock tblock;
+			if(allowNaturalFlow) {
+				tblock = new TempBlock(block, Material.LAVA, (byte) 0);
+			}
+			else {
+				tblock = new TempBlock(block, Material.STATIONARY_LAVA, (byte) 0);
+			}
+			
+			if(tblock!=null) {
+				TEMP_LAVA_BLOCKS.put(block, tblock);
+				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.put(tblock, block);
+				affectedBlocks.add(tblock);
 
-			if (allowNaturalFlow) {
-				TempBlock.removeBlock(block);
+				if (allowNaturalFlow) {
+					TempBlock.removeBlock(block);
+				}
 			}
 		}
 	}
