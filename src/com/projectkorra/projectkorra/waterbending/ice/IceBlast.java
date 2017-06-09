@@ -66,7 +66,7 @@ public class IceBlast extends IceAbility {
 		range = getNightFactor(range, player.getWorld());
 		Block sourceBlock = BlockSource.getWaterSourceBlock(player, range, ClickType.SHIFT_DOWN, false, true, false, false, false);
 
-		if (sourceBlock == null) {
+		if (sourceBlock == null || TempBlock.isTempBlock(sourceBlock)) {
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
 			return;

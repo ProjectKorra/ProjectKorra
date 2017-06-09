@@ -269,7 +269,7 @@ public class LavaSurge extends LavaAbility {
 
 	@Override
 	public String getName() {
-		return null; // disabled
+		return "LavaSurge";
 	}
 
 	@Override
@@ -292,6 +292,11 @@ public class LavaSurge extends LavaAbility {
 		return false;
 	}
 
+	@Override
+	public boolean isHiddenAbility() {
+		return true;  // disabled
+	}
+	
 	public static HashSet<FallingBlock> getAllFallingBlocks() {
 		return ALL_FALLING_BLOCKS;
 	}

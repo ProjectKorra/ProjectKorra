@@ -76,7 +76,7 @@ public class IceSpikeBlast extends IceAbility {
 			sourceBlock = getIceSourceBlock(player, range);
 		}
 
-		if (sourceBlock == null) {
+		if (sourceBlock == null || TempBlock.isTempBlock(sourceBlock)) {
 			new IceSpikePillarField(player);
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, sourceBlock.getLocation())) {
 			return;

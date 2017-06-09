@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ public class WaterBubble extends WaterAbility {
 	private static long clickDuration; //How long the click variant lasts
 	private static double maxRadius;
 	private static double speed;
+	private static boolean requireAir = false;
 	
 	private boolean isShift;
 	private double radius;
@@ -32,6 +34,8 @@ public class WaterBubble extends WaterAbility {
 	
 	public WaterBubble(Player player, boolean isShift) {
 		super(player);
+		
+		setFields();
 		
 		if (CoreAbility.hasAbility(player, this.getClass())) {
 			WaterBubble bubble = CoreAbility.getAbility(player, this.getClass());
@@ -49,13 +53,13 @@ public class WaterBubble extends WaterAbility {
 				}
 			}
 			bubble.removing = true;
+		} else if (requireAir && !(!player.getEyeLocation().getBlock().getType().isSolid() && !player.getEyeLocation().getBlock().isLiquid())) {
+			return;
 		}
 		
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		
-		setFields();
 		
 		this.radius = 0;
 		this.isShift = isShift;
@@ -69,6 +73,7 @@ public class WaterBubble extends WaterAbility {
 		clickDuration = ConfigManager.defaultConfig.get().getLong("Abilities.Water.WaterBubble.ClickDuration");
 		maxRadius = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Radius");
 		speed = ConfigManager.defaultConfig.get().getDouble("Abilities.Water.WaterBubble.Speed");
+		requireAir = ConfigManager.defaultConfig.get().getBoolean("Abilities.Water.WaterBubble.MustStartAboveWater");
 	}
 
 	@Override
@@ -114,7 +119,9 @@ public class WaterBubble extends WaterAbility {
 							
 							if (!waterOrigins.containsKey(b)) {
 								if (b.getType() == Material.STATIONARY_WATER || b.getType() == Material.WATER) {
-									waterOrigins.put(b, b.getState().getData());
+									if (!TempBlock.isTempBlock(b)) {
+										waterOrigins.put(b, b.getState().getData());
+									}
 									b.setType(Material.AIR);
 								}
 							}

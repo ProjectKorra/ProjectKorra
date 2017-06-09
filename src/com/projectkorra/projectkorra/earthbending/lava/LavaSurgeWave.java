@@ -298,7 +298,7 @@ public class LavaSurgeWave extends LavaAbility {
 
 	@Override
 	public String getName() {
-		return null;
+		return "LavaSurgeWave";
 	}
 
 	@Override
@@ -319,6 +319,11 @@ public class LavaSurgeWave extends LavaAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
+	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
 	}
 
 	public boolean isProgressing() {

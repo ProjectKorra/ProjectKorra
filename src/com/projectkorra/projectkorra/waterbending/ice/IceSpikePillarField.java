@@ -3,6 +3,7 @@ package com.projectkorra.projectkorra.waterbending.ice;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,7 +50,9 @@ public class IceSpikePillarField extends IceAbility {
 				for (int y = -1; y <= 1; y++) {
 					Block testBlock = player.getWorld().getBlockAt(locX + x, locY + y, locZ + z);
 
-					if (WaterAbility.isIcebendable(player, testBlock.getType(), false) && testBlock.getRelative(BlockFace.UP).getType() == Material.AIR && !(testBlock.getX() == player.getEyeLocation().getBlock().getX() && testBlock.getZ() == player.getEyeLocation().getBlock().getZ())) {
+					if (WaterAbility.isIcebendable(player, testBlock.getType(), false) && testBlock.getRelative(BlockFace.UP).getType() == Material.AIR 
+							&& !(testBlock.getX() == player.getEyeLocation().getBlock().getX() && testBlock.getZ() == player.getEyeLocation().getBlock().getZ())
+							&& !TempBlock.isTempBlock(testBlock)) {
 						iceBlocks.add(testBlock);
 						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
 							Random rand = new Random();
