@@ -114,6 +114,8 @@ public class Illumination extends FireAbility {
 			return;
 		} else if (block != null && standingBlock.equals(block.getBlock())) {
 			return;
+		} else if (standBlock.getType() == Material.LEAVES || standBlock.getType() == Material.LEAVES_2) {
+			return;
 		}
 		
 		revert();
