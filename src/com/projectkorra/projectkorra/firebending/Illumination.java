@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
+import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -28,19 +29,13 @@ public class Illumination extends FireAbility {
 	public Illumination(Player player) {
 		super(player);
 
-		this.range = getConfig().getDouble("Abilities.Fire.Illumination.Range");
+		this.range = getDayFactor(getConfig().getDouble("Abilities.Fire.Illumination.Range"));
 		this.cooldown = getConfig().getLong("Abilities.Fire.Illumination.Cooldown");
-		this.range = getDayFactor(this.range);
 		this.lightThreshold = getConfig().getInt("Abilities.Fire.Illumination.LightThreshold");
 
 		Illumination oldIllumination = getAbility(player, Illumination.class);
 		if (oldIllumination != null) {
 			oldIllumination.remove();
-			return;
-		}
-
-		if (!bPlayer.isIlluminating()) {
-			remove();
 			return;
 		}
 
@@ -69,12 +64,26 @@ public class Illumination extends FireAbility {
 			return;
 		}
 
-		if (bPlayer.isTremorSensing()) {
+		if (bPlayer.hasElement(Element.EARTH) && bPlayer.isTremorSensing()) {
 			remove();
 			return;
 		}
 
 		if (oldLevel > this.lightThreshold) {
+			remove();
+			return;
+		}
+		
+		if (block == null) {
+			return;
+		}
+		
+		if (!player.getWorld().equals(block.getBlock().getWorld())) {
+			remove();
+			return;
+		} 
+		
+		if (player.getLocation().distanceSquared(block.getLocation()) > range * range) {
 			remove();
 			return;
 		}
@@ -90,11 +99,8 @@ public class Illumination extends FireAbility {
 
 	private void revert() {
 		if (block != null) {
-			TempBlock.removeBlock(block.getBlock());
 			BLOCKS.remove(block);
-
 			block.revertBlock();
-			oldLevel = player.getLocation().getBlock().getLightLevel();
 		}
 	}
 
@@ -102,24 +108,19 @@ public class Illumination extends FireAbility {
 		Block standingBlock = player.getLocation().getBlock();
 		Block standBlock = standingBlock.getRelative(BlockFace.DOWN);
 
-		if (standBlock.getType() == Material.GLOWSTONE) {
-			revert();
-		} else if ((BlazeArc.isIgnitable(player, standingBlock) && standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2) && block == null && !BLOCKS.containsKey(standBlock)) {
-
-			this.block = new TempBlock(standingBlock, Material.TORCH, (byte) 0);
-			BLOCKS.put(block, player);
-		} else if ((BlazeArc.isIgnitable(player, standingBlock) && standBlock.getType() != Material.LEAVES && standBlock.getType() != Material.LEAVES_2) && !block.equals(standBlock) && !BLOCKS.containsKey(standBlock) && GeneralMethods.isSolid(standBlock)) {
-			revert();
-
-			this.block = new TempBlock(standingBlock, Material.TORCH, (byte) 0);
-			BLOCKS.put(block, player);
-		} else if (block == null) {
+		if (!BlazeArc.isIgnitable(player, standingBlock)) {
 			return;
-		} else if (!player.getWorld().equals(block.getBlock().getWorld())) {
-			revert();
-		} else if (player.getLocation().distanceSquared(block.getLocation()) > range * range) {
-			revert();
+		} else if (!GeneralMethods.isSolid(standBlock)) {
+			return;
+		} else if (block != null && standingBlock.equals(block.getBlock())) {
+			return;
+		} else if (standBlock.getType() == Material.LEAVES || standBlock.getType() == Material.LEAVES_2) {
+			return;
 		}
+		
+		revert();
+		this.block = new TempBlock(standingBlock, Material.TORCH, (byte)0);
+		BLOCKS.put(block, player);
 	}
 
 	@Override

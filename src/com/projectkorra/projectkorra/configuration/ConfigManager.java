@@ -372,6 +372,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireShield.Description", "FireShield is a basic defensive ability that allows a firebender to block projectiles or other bending abilities. It's useful while fighting off skeletons, or while trying to block bending abilities at low health.");
 			config.addDefault("Abilities.Fire.FireShield.Instructions", "Hold sneak to create a fire shield around you that will block projectiles and other bending abilities. Additionally, left click to create a temporary fire shield. If entities step inside this fire shield, they will be ignited.");
 			config.addDefault("Abilities.Fire.FireShield.DeathMessage", "{victim} scorched theirself on {attacker}'s {ability}");
+			config.addDefault("Abilities.Fire.FireManipulation.Description", "FireManipulation is an extremely advanced and unique Firebending technique that allows the bender to create fire and manipulate it to block incoming attacks. You can also manipulate the fire you create to be used as an offence ability.");
+			config.addDefault("Abilities.Fire.FireManipulation.Instructions", "Stream: Hold sneak and move your cursor around to create a fire where you look, blocking incoming attacks. Once you've created enough fire, left click to send the fire stream outwards, damaging anything it comes into contact with.");
+			config.addDefault("Abilities.Fire.FireManipulation.DeathMessage", "{victim} scorched theirself on {attacker}'s {ability}");
 			config.addDefault("Abilities.Fire.HeatControl.Description", "HeatControl is a fundamental firebending technique that allows the firebender to control and manipulate heat. This ability is extremely useful for ensuring that you're protected from your own fire and fire from that of other firebenders. It's also offers utility by melting ice or cooking food.");
 			config.addDefault("Abilities.Fire.HeatControl.Instructions", "\n" + "(Melt) To melt ice, simply left click while looking at ice." + "\n" + "(Solidify) To solidify lava, hold sneak while looking at lava while standing still and it will start to solidify the lava pool you're looking at." + "\n" + "(Extinguish) To extinguish nearby fire or yourself, simply tap sneak." + "\n" + "(Cook) To cook food, place the raw food on your HeatControl slot and hold sneak. The food will then begin to cook.");
 			config.addDefault("Abilities.Fire.Illumination.Description", "Illumination is a basic firebending technique that allows firebenders to manipulate their fire to create a light source. This ability will automatically activate when you're in low light.");
@@ -556,8 +559,8 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self", 4.0);
-			config.addDefault("Abilities.Avatar.AvatarState.AirSpout.Height", 26);
-			config.addDefault("Abilities.Avatar.AvatarState.AirSuction.Push", 3.5);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSpout.Height", 26);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSuction.Push", 3.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Cooldown", 1000);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Push", 1.0);
@@ -921,6 +924,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterBubble.Radius", 4.0);
 			config.addDefault("Abilities.Water.WaterBubble.Speed", 0.5);
 			config.addDefault("Abilities.Water.WaterBubble.ClickDuration", 2000L);
+			config.addDefault("Abilities.Water.WaterBubble.MustStartAboveWater", false);
 			
 			config.addDefault("Abilities.Water.WaterManipulation.Enabled", true);
 			config.addDefault("Abilities.Water.WaterManipulation.Damage", 3.0);
@@ -971,6 +975,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
 			config.addDefault("Abilities.Earth.Catapult.Cooldown", 7000);
 			config.addDefault("Abilities.Earth.Catapult.StageTimeMult", 2.0);
+			config.addDefault("Abilities.Earth.Catapult.Angle", 45);
+			config.addDefault("Abilities.Earth.Catapult.CancelWithAngle", false);
 
 			config.addDefault("Abilities.Earth.Collapse.Enabled", true);
 			config.addDefault("Abilities.Earth.Collapse.SelectRange", 20);
