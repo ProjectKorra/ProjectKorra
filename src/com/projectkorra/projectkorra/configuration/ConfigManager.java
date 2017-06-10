@@ -513,7 +513,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);
 			config.addDefault("Properties.Air.Particles", "spell");
 			config.addDefault("Properties.Air.PlaySound", true);
-			config.addDefault("Properties.Air.Sound", "UI_TOAST_OUT");
+			config.addDefault("Properties.Air.Sound", "ENTITY_CREEPER_HURT");
 
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
@@ -535,7 +535,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.SandBlocks", sandBlocks);
 			config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 			config.addDefault("Properties.Earth.PlaySound", true);
-			config.addDefault("Properties.Earth.EarthSound", "GHAST_SHOOT");
+			config.addDefault("Properties.Earth.EarthSound", "ENTITY_GHAST_SHOOT");
 			config.addDefault("Properties.Earth.MetalSound", "ENTITY_IRONGOLEM_HURT");
 			config.addDefault("Properties.Earth.SandSound", "BLOCK_SAND_BREAK");
 
@@ -673,12 +673,28 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirScooter.Radius", 1);
 			config.addDefault("Abilities.Air.AirScooter.Cooldown", 7000);
 			config.addDefault("Abilities.Air.AirScooter.MaxHeightFromGround", 7);
+			
+			List<String> blockableAbilities = new ArrayList<>();
+			blockableAbilities.add("WaterManipulation");
+			blockableAbilities.add("WaterArms");
+			blockableAbilities.add("Torrent");
+			blockableAbilities.add("IceSpike");
+			blockableAbilities.add("EarthBlast");
+			blockableAbilities.add("FireBlast");
+			blockableAbilities.add("FireWheel");
+			blockableAbilities.add("FireSpin");
+			blockableAbilities.add("FireStream");
+			blockableAbilities.add("FireBurst");
+			blockableAbilities.add("AirBlast");
+			blockableAbilities.add("AirSuction");
+			blockableAbilities.add("AirStream");
 
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
 			config.addDefault("Abilities.Air.AirShield.Radius", 7);
 			config.addDefault("Abilities.Air.AirShield.Streams", 5);
 			config.addDefault("Abilities.Air.AirShield.Speed", 10);
 			config.addDefault("Abilities.Air.AirShield.Particles", 5);
+			config.addDefault("Abilities.Air.AirShield.BlockableAbilities", blockableAbilities);
 
 			config.addDefault("Abilities.Air.AirSpout.Enabled", true);
 			config.addDefault("Abilities.Air.AirSpout.Height", 16);
@@ -1177,20 +1193,22 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireJet.Duration", 2000);
 			config.addDefault("Abilities.Fire.FireJet.Cooldown", 7000);
 			
-			List<String> blockableAbilities = new ArrayList<String>();
-			blockableAbilities.add("WaterManipulation");
-			blockableAbilities.add("WaterArms");
-			blockableAbilities.add("Torrent");
-			blockableAbilities.add("IceSpike");
-			blockableAbilities.add("EarthBlast");
-			blockableAbilities.add("FireBlast");
-			blockableAbilities.add("FireWheel");
-			blockableAbilities.add("FireSpin");
-			blockableAbilities.add("FireStream");
-			blockableAbilities.add("FireBurst");
-			blockableAbilities.add("AirBlast");
-			blockableAbilities.add("AirSuction");
-			List<String> breakableAbilities = new ArrayList<String>();
+			List<String> fireManipBlocks = new ArrayList<>();
+			fireManipBlocks.add("WaterManipulation");
+			fireManipBlocks.add("WaterArms");
+			fireManipBlocks.add("Torrent");
+			fireManipBlocks.add("IceSpike");
+			fireManipBlocks.add("EarthBlast");
+			fireManipBlocks.add("FireBlast");
+			fireManipBlocks.add("FireWheel");
+			fireManipBlocks.add("FireSpin");
+			fireManipBlocks.add("FireStream");
+			fireManipBlocks.add("FireBurst");
+			fireManipBlocks.add("AirBlast");
+			fireManipBlocks.add("AirSuction");
+			fireManipBlocks.add("AirStream");
+			fireManipBlocks.add("AirSwipe");
+			List<String> breakableAbilities = new ArrayList<>();
 			breakableAbilities.add("AirBurst");
 			breakableAbilities.add("Shockwave");
 
@@ -1203,8 +1221,15 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.Range", 4);
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.Damage", 1);
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.MaxDuration", 5000);
-			config.addDefault("Abilities.Fire.FireManipulation.Shield.BlockableAbilities", blockableAbilities);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.BlockableAbilities", fireManipBlocks);
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.BreakableAbilities", breakableAbilities);
+			
+			List<String> fireShieldBlocks = new ArrayList<>();
+			fireShieldBlocks.add("WaterManipulation");
+			fireShieldBlocks.add("EarthBlast");
+			fireShieldBlocks.add("FireBlast");
+			fireShieldBlocks.add("AirBlast");
+			fireShieldBlocks.add("AirSwipe");
 
 			config.addDefault("Abilities.Fire.FireShield.Enabled", true);
 			config.addDefault("Abilities.Fire.FireShield.Radius", 3);
@@ -1213,6 +1238,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireShield.Cooldown", 500);
 			config.addDefault("Abilities.Fire.FireShield.Interval", 100);
 			config.addDefault("Abilities.Fire.FireShield.FireTicks", 2);
+			config.addDefault("Abilities.Fire.FireShield.BlockableAbilities", fireShieldBlocks);
 
 			config.addDefault("Abilities.Fire.HeatControl.Enabled", true);
 			config.addDefault("Abilities.Fire.HeatControl.Cook.Interval", 1000);

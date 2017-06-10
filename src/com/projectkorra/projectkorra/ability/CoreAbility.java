@@ -60,7 +60,6 @@ import sun.reflect.ReflectionFactory;
  * @see #registerAddonAbilities(String)
  * @see #registerPluginAbilities(JavaPlugin, String)
  */
-@SuppressWarnings("restriction")
 public abstract class CoreAbility implements Ability {
 
 	private static final Set<CoreAbility> INSTANCES = Collections.newSetFromMap(new ConcurrentHashMap<CoreAbility, Boolean>());
@@ -514,10 +513,9 @@ public abstract class CoreAbility implements Ability {
 	
 	/**
 	 * Scans a JavaPlugin and registers CoreAbility class files.
-	 * Does not work.
 	 * 
 	 * @param plugin a JavaPlugin containing CoreAbility class files
-	 * @param packagePrefix a prefix of the package name, used to increase
+	 * @param packageBase a prefix of the package name, used to increase
 	 *            performance
 	 * @see #getAbilities()
 	 * @see #getAbility(String)

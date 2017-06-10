@@ -2,6 +2,8 @@ package com.projectkorra.projectkorra.ability.util;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
+
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.AirBlast;
 import com.projectkorra.projectkorra.airbending.AirScooter;
@@ -28,8 +30,6 @@ import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
-import com.projectkorra.projectkorra.firebending.combustion.Combustion;
-import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.firebending.FireManipulation;
 import com.projectkorra.projectkorra.firebending.FireShield;
@@ -37,21 +37,23 @@ import com.projectkorra.projectkorra.firebending.WallOfFire;
 import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireKick;
 import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireSpin;
 import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireWheel;
+import com.projectkorra.projectkorra.firebending.combustion.Combustion;
+import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.TorrentWave;
 import com.projectkorra.projectkorra.waterbending.WaterBubble;
+import com.projectkorra.projectkorra.waterbending.WaterManipulation;
+import com.projectkorra.projectkorra.waterbending.WaterSpout;
+import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
 import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBullet;
 import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceWave;
 import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
 import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
 import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
-import com.projectkorra.projectkorra.waterbending.WaterManipulation;
-import com.projectkorra.projectkorra.waterbending.WaterSpout;
-import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
 
 /**
  * CollisionInitializer is used to create the default Collisions for a given
@@ -147,15 +149,13 @@ public class CollisionInitializer {
 		for (CoreAbility removeSpoutAbil : removeSpoutAbils) {
 			addRemoveSpoutAbility(removeSpoutAbil);
 		}
-
-		collisionManager.addCollision(new Collision(airShield, airBlast, false, true));
-		collisionManager.addCollision(new Collision(airShield, airSuction, false, true));
-		collisionManager.addCollision(new Collision(airShield, airStream, false, true));
-		collisionManager.addCollision(new Collision(airShield, fireBlast, false, true));
-		collisionManager.addCollision(new Collision(airShield, earthBlast, false, true));
-		collisionManager.addCollision(new Collision(airShield, waterManipulation, false, true));
-		for (CoreAbility comboAbil : comboAbils) {
-			collisionManager.addCollision(new Collision(airShield, comboAbil, false, true));
+		
+		for (String string : ConfigManager.getConfig().getStringList("Abilities.Air.AirShield.BlockableAbilities")) {
+			CoreAbility ability = CoreAbility.getAbility(string);
+			if (ability == null) {
+				continue;
+			}
+			collisionManager.addCollision(new Collision(airShield, ability, false, true));
 		}
 		
 		for (String string : ConfigManager.getConfig().getStringList("Abilities.Fire.FireManipulation.Shield.BlockableAbilities")) {
@@ -173,12 +173,15 @@ public class CollisionInitializer {
 			}
 			collisionManager.addCollision(new Collision(ability, fireManipulation, false, true));
 		}
-
-		collisionManager.addCollision(new Collision(fireShield, fireBlast, false, true));
+		
+		for (String string : ConfigManager.getConfig().getStringList("Abilities.Fire.FireShield.BlockableAbilities")) {
+			CoreAbility ability = CoreAbility.getAbility(string);
+			if (ability == null) {
+				continue;
+			}
+			collisionManager.addCollision(new Collision(fireShield, ability, false, true));
+		}
 		collisionManager.addCollision(new Collision(fireShield, fireBlastCharged, false, true));
-		collisionManager.addCollision(new Collision(fireShield, waterManipulation, false, true));
-		collisionManager.addCollision(new Collision(fireShield, earthBlast, false, true));
-		collisionManager.addCollision(new Collision(fireShield, airSweep, false, true));
 	}
 
 	/**

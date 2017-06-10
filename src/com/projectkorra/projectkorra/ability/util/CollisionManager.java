@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.event.AbilityCollisionEvent;
 
 /**
@@ -48,14 +49,6 @@ public class CollisionManager {
 	private long detectionDelay;
 
 	/*
-	 * The amount of ticks that an ability must be alive before considered as
-	 * collidable. Some CoreAbilities are started even though they will be
-	 * removed on the next tick in progress, in these cases we do not want to
-	 * consider those abilities for collision.
-	 */
-	private long minAbilityTickAlive;
-
-	/*
 	 * Used for efficiency. The distance that we can guarantee that two
 	 * abilities will not collide so that we can stop comparing locations early.
 	 * For example, two Torrents that are thousands of blocks apart should not
@@ -69,25 +62,36 @@ public class CollisionManager {
 	public CollisionManager() {
 		this.removeMultipleInstances = true;
 		this.detectionDelay = 1;
-		this.minAbilityTickAlive = 3;
 		this.certainNoCollisionDistance = 100;
 		this.collisions = new ArrayList<>();
 	}
 
 	private void detectCollisions() {
-		if (CoreAbility.getAbilitiesByInstances().size() <= 1) {
+		List<CoreAbility> instances = new ArrayList<>();
+		for (CoreAbility ability : CoreAbility.getAbilitiesByInstances()) {
+			if (!(ability instanceof PassiveAbility)) {
+				instances.add(ability);
+			}
+		}
+		if (instances.size() <= 1) {
 			return;
 		}
 		HashMap<CoreAbility, List<Location>> locationsCache = new HashMap<>();
 
 		for (Collision collision : collisions) {
 			Collection<? extends CoreAbility> instancesFirst = CoreAbility.getAbilities(collision.getAbilityFirst().getClass());
+			if (instancesFirst.isEmpty()) {
+				continue;
+			}
 			Collection<? extends CoreAbility> instancesSecond = CoreAbility.getAbilities(collision.getAbilitySecond().getClass());
+			if (instancesSecond.isEmpty()) {
+				continue;
+			}
 			HashSet<CoreAbility> alreadyCollided = new HashSet<CoreAbility>();
 			double certainNoCollisionDistSquared = Math.pow(certainNoCollisionDistance, 2);
 
 			for (CoreAbility abilityFirst : instancesFirst) {
-				if (abilityFirst.getPlayer() == null || alreadyCollided.contains(abilityFirst) || !abilityFirst.isCollidable() || abilityFirst.getCurrentTick() - abilityFirst.getStartTick() < minAbilityTickAlive) {
+				if (abilityFirst.getPlayer() == null || alreadyCollided.contains(abilityFirst) || !abilityFirst.isCollidable()) {
 					continue;
 				}
 
@@ -95,22 +99,22 @@ public class CollisionManager {
 					locationsCache.put(abilityFirst, abilityFirst.getLocations());
 				}
 				List<Location> locationsFirst = locationsCache.get(abilityFirst);
-				if (locationsFirst == null) {
+				if (locationsFirst.isEmpty()) {
 					continue;
 				}
 
 				for (CoreAbility abilitySecond : instancesSecond) {
-					if (abilitySecond.getPlayer() == null || alreadyCollided.contains(abilitySecond) || !abilitySecond.isCollidable() || abilitySecond.getCurrentTick() - abilitySecond.getStartTick() < minAbilityTickAlive) {
+					if (abilitySecond.getPlayer() == null || alreadyCollided.contains(abilitySecond) || !abilitySecond.isCollidable()) {
 						continue;
 					} else if (abilityFirst.getPlayer().equals(abilitySecond.getPlayer())) {
 						continue;
-					}
+					} 
 
 					if (!locationsCache.containsKey(abilitySecond)) {
 						locationsCache.put(abilitySecond, abilitySecond.getLocations());
 					}
 					List<Location> locationsSecond = locationsCache.get(abilitySecond);
-					if (locationsSecond == null) {
+					if (locationsSecond.isEmpty()) {
 						continue;
 					}
 
@@ -150,6 +154,7 @@ public class CollisionManager {
 					}
 
 					if (collided) {
+						Bukkit.broadcastMessage("Collided");
 						Collision forwardCollision = new Collision(abilityFirst, abilitySecond, collision.isRemovingFirst(), collision.isRemovingSecond(), locationFirst, locationSecond);
 						Collision reverseCollision = new Collision(abilitySecond, abilityFirst, collision.isRemovingSecond(), collision.isRemovingFirst(), locationSecond, locationFirst);
 						AbilityCollisionEvent event = new AbilityCollisionEvent(forwardCollision);
@@ -222,14 +227,6 @@ public class CollisionManager {
 
 	public void setDetectionDelay(long detectionDelay) {
 		this.detectionDelay = detectionDelay;
-	}
-
-	public long getMinAbilityTickAlive() {
-		return minAbilityTickAlive;
-	}
-
-	public void setMinAbilityTickAlive(long minAbilityTickAlive) {
-		this.minAbilityTickAlive = minAbilityTickAlive;
 	}
 
 	public double getCertainNoCollisionDistance() {

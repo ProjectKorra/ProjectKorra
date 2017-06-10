@@ -158,8 +158,8 @@ public class GeneralMethods {
 		GeneralMethods.plugin = plugin;
 
 		try {
-			getAbsorption = ReflectionHandler.getMethod("EntityPlayer", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
-			setAbsorption = ReflectionHandler.getMethod("EntityPlayer", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
+			getAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "getAbsorptionHearts");
+			setAbsorption = ReflectionHandler.getMethod("EntityHuman", PackageType.MINECRAFT_SERVER, "setAbsorptionHearts", Float.class);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

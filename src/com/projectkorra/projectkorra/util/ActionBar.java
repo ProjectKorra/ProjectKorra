@@ -8,8 +8,6 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.util.ReflectionHandler.PackageType;
 
-import net.minecraft.server.v1_12_R1.ChatMessageType;
-
 public class ActionBar {
 
 	private static boolean initialised = false;
@@ -25,7 +23,7 @@ public class ActionBar {
 			version = Integer.parseInt(PackageType.getServerVersion().split("_")[1]);
 			chatSer = ReflectionHandler.getConstructor(PackageType.MINECRAFT_SERVER.getClass("ChatComponentText"), String.class);
 			if (version >= 12) {
-				packetChat = PackageType.MINECRAFT_SERVER.getClass("PacketPlayOutChat").getConstructor(PackageType.MINECRAFT_SERVER.getClass("IChatBaseComponent"), ChatMessageType.class);
+				packetChat = PackageType.MINECRAFT_SERVER.getClass("PacketPlayOutChat").getConstructor(PackageType.MINECRAFT_SERVER.getClass("IChatBaseComponent"), PackageType.MINECRAFT_SERVER.getClass("ChatMessageType"));
 			} else {
 				packetChat = PackageType.MINECRAFT_SERVER.getClass("PacketPlayOutChat").getConstructor(PackageType.MINECRAFT_SERVER.getClass("IChatBaseComponent"), byte.class);
 			}
@@ -51,7 +49,7 @@ public class ActionBar {
 			Object o = chatSer.newInstance(message);
 			Object packet;
 			if (version >= 12) {
-				packet = packetChat.newInstance(o, ChatMessageType.GAME_INFO);
+				packet = packetChat.newInstance(o, PackageType.MINECRAFT_SERVER.getClass("ChatMessageType").getEnumConstants()[2]);
 			} else {
 				packet = packetChat.newInstance(o, (byte)2);
 			}
