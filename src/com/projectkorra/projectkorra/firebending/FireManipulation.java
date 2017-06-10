@@ -209,4 +209,9 @@ public class FireManipulation extends FireAbility {
 	public FireManipulationType getFireManipulationType() {
 		return fireManipulationType;
 	}
+	
+	@Override
+	public double getCollisionRadius() {
+		return fireManipulationType == FireManipulationType.SHIFT ? 1.5 : 2;
+	}
 }
