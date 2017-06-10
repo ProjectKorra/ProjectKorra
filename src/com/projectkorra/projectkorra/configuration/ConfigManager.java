@@ -513,7 +513,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);
 			config.addDefault("Properties.Air.Particles", "spell");
 			config.addDefault("Properties.Air.PlaySound", true);
-			config.addDefault("Properties.Air.Sound", "UI_TOAST_OUT");
+			config.addDefault("Properties.Air.Sound", "ENTITY_CREEPER_HURT");
 
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
@@ -535,7 +535,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.SandBlocks", sandBlocks);
 			config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 			config.addDefault("Properties.Earth.PlaySound", true);
-			config.addDefault("Properties.Earth.EarthSound", "GHAST_SHOOT");
+			config.addDefault("Properties.Earth.EarthSound", "ENTITY_GHAST_SHOOT");
 			config.addDefault("Properties.Earth.MetalSound", "ENTITY_IRONGOLEM_HURT");
 			config.addDefault("Properties.Earth.SandSound", "BLOCK_SAND_BREAK");
 
