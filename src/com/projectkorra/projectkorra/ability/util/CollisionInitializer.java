@@ -2,6 +2,8 @@ package com.projectkorra.projectkorra.ability.util;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
+
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.AirBlast;
 import com.projectkorra.projectkorra.airbending.AirScooter;
@@ -147,15 +149,13 @@ public class CollisionInitializer {
 		for (CoreAbility removeSpoutAbil : removeSpoutAbils) {
 			addRemoveSpoutAbility(removeSpoutAbil);
 		}
-
-		collisionManager.addCollision(new Collision(airShield, airBlast, false, true));
-		collisionManager.addCollision(new Collision(airShield, airSuction, false, true));
-		collisionManager.addCollision(new Collision(airShield, airStream, false, true));
-		collisionManager.addCollision(new Collision(airShield, fireBlast, false, true));
-		collisionManager.addCollision(new Collision(airShield, earthBlast, false, true));
-		collisionManager.addCollision(new Collision(airShield, waterManipulation, false, true));
-		for (CoreAbility comboAbil : comboAbils) {
-			collisionManager.addCollision(new Collision(airShield, comboAbil, false, true));
+		
+		for (String string : ConfigManager.getConfig().getStringList("Abilities.Air.AirShield.BlockableAbilities")) {
+			CoreAbility ability = CoreAbility.getAbility(string);
+			if (ability == null) {
+				continue;
+			}
+			collisionManager.addCollision(new Collision(airShield, ability, false, true));
 		}
 		
 		for (String string : ConfigManager.getConfig().getStringList("Abilities.Fire.FireManipulation.Shield.BlockableAbilities")) {
@@ -173,12 +173,15 @@ public class CollisionInitializer {
 			}
 			collisionManager.addCollision(new Collision(ability, fireManipulation, false, true));
 		}
-
-		collisionManager.addCollision(new Collision(fireShield, fireBlast, false, true));
+		
+		for (String string : ConfigManager.getConfig().getStringList("Abilities.Fire.FireShield.BlockableAbilities")) {
+			CoreAbility ability = CoreAbility.getAbility(string);
+			if (ability == null) {
+				continue;
+			}
+			collisionManager.addCollision(new Collision(fireShield, ability, false, true));
+		}
 		collisionManager.addCollision(new Collision(fireShield, fireBlastCharged, false, true));
-		collisionManager.addCollision(new Collision(fireShield, waterManipulation, false, true));
-		collisionManager.addCollision(new Collision(fireShield, earthBlast, false, true));
-		collisionManager.addCollision(new Collision(fireShield, airSweep, false, true));
 	}
 
 	/**
