@@ -513,6 +513,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);
 			config.addDefault("Properties.Air.Particles", "spell");
 			config.addDefault("Properties.Air.PlaySound", true);
+			config.addDefault("Properties.Air.Sound", "UI_TOAST_OUT");
 
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
@@ -521,6 +522,9 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.NightFactor", 1.5);
 			config.addDefault("Properties.Water.FullMoonFactor", 1.75);
 			config.addDefault("Properties.Water.PlaySound", true);
+			config.addDefault("Properties.Water.WaterSound", "BLOCK_WATER_AMBIENT");
+			config.addDefault("Properties.Water.IceSound", "ITEM_FLINTANDSTEEL_USE");
+			config.addDefault("Properties.Water.PlantSound", "BLOCK_GRASS_STEP");
 
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
 			config.addDefault("Properties.Earth.SafeRevert", true);
@@ -531,12 +535,17 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.SandBlocks", sandBlocks);
 			config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 			config.addDefault("Properties.Earth.PlaySound", true);
+			config.addDefault("Properties.Earth.EarthSound", "GHAST_SHOOT");
+			config.addDefault("Properties.Earth.MetalSound", "ENTITY_IRONGOLEM_HURT");
+			config.addDefault("Properties.Earth.SandSound", "BLOCK_SAND_BREAK");
 
 			config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 			config.addDefault("Properties.Fire.DayFactor", 1.25);
 			config.addDefault("Properties.Fire.PlaySound", true);
 			config.addDefault("Properties.Fire.FireGriefing", false);
 			config.addDefault("Properties.Fire.RevertTicks", 12000L);
+			config.addDefault("Properties.Fire.FireSound", "BLOCK_FIRE_AMBIENT");
+			config.addDefault("Properties.Fire.CombustionSound", "ENTITY_FIREWORK_BLAST");
 
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
@@ -556,6 +565,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Power", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Enabled", true);
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power", 3);
+			config.addDefault("Abilities.Avatar.AvatarState.PowerMultiplier", 2);
+			config.addDefault("Abilities.Avatar.AvatarState.Sound", "BLOCK_ANVIL_LAND");
 
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self", 4.0);
@@ -577,9 +588,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown", 1500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown", 1500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown", 1500);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius", 18);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius", 18);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftRadius", 18);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius", 2);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius", 10);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftRadius", 12);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.Cooldown", 2000);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.Range", 20);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.CrushDamage", 3);

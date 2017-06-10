@@ -128,7 +128,7 @@ public class LavaFlow extends LavaAbility {
 			clickLandCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown");
 			shiftPlatformRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius");
 			clickLavaRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius");
-			shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.LavaFlow.Earth.ShiftRadius");
+			shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftRadius");
 		}
 
 		if (type == AbilityType.SHIFT) {
