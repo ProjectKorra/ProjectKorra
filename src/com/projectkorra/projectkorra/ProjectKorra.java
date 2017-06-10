@@ -1,6 +1,5 @@
 package com.projectkorra.projectkorra;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -46,7 +45,7 @@ public class ProjectKorra extends JavaPlugin {
 	public void onEnable() {
 		plugin = this;
 		ProjectKorra.log = this.getLogger();
-		try {
+		/*try {
 			File logFolder = new File(getDataFolder(), "Logs");
 			if (!logFolder.exists()) {
 				logFolder.mkdirs();
@@ -56,7 +55,7 @@ public class ProjectKorra extends JavaPlugin {
 		}
 		catch (SecurityException | IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 		new ConfigManager();
 		new GeneralMethods(this);

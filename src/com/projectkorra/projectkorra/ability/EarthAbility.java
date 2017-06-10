@@ -498,19 +498,19 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	public static void playEarthbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playEffect(loc, Effect.GHAST_SHOOT, 0, 10);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound")), 0, 10);
 		}
 	}
 
 	public static void playMetalbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.ENTITY_IRONGOLEM_HURT, 1, 10);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound")), 1, 10);
 		}
 	}
 
 	public static void playSandBendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.BLOCK_SAND_BREAK, 1.5f, 5);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.SandSound")), 1.5f, 5);
 		}
 	}
 
