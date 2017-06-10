@@ -463,7 +463,7 @@ public class GeneralMethods {
 					@Override
 					public void run() {
 						if (abilitiesClone.isEmpty()) {
-							ProjectKorra.log.info("Successfully loaded in all external abilities!");
+							//All abilities loaded.
 							cancel();
 						} else if (System.currentTimeMillis() - startTime > timeoutLength) {
 							ProjectKorra.log.severe("ProjectKorra has timed out after attempting to load in the following external abilities: " + abilitiesClone.values().toString());
