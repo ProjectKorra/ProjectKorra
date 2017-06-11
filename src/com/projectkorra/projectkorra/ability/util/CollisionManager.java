@@ -154,7 +154,6 @@ public class CollisionManager {
 					}
 
 					if (collided) {
-						Bukkit.broadcastMessage("Collided");
 						Collision forwardCollision = new Collision(abilityFirst, abilitySecond, collision.isRemovingFirst(), collision.isRemovingSecond(), locationFirst, locationSecond);
 						Collision reverseCollision = new Collision(abilitySecond, abilityFirst, collision.isRemovingSecond(), collision.isRemovingFirst(), locationSecond, locationFirst);
 						AbilityCollisionEvent event = new AbilityCollisionEvent(forwardCollision);
