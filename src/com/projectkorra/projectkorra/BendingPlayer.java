@@ -126,7 +126,7 @@ public class BendingPlayer {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 			if (bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
-				GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
+				GeneralMethods.displayMovePreview(player);
 			}
 		}
 	}
@@ -682,7 +682,7 @@ public class BendingPlayer {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 			if (bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
-				GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
+				GeneralMethods.displayMovePreview(player);
 			}
 		}
 	}

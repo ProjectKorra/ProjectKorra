@@ -32,7 +32,7 @@ public class RaiseEarthWall extends EarthAbility {
 
 		if (bPlayer.isAvatarState()) {
 			height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
-			width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height");
+			width = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width");
 		}
 
 		Vector direction = player.getEyeLocation().getDirection().normalize();

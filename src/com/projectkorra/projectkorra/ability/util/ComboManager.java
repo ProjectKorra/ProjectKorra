@@ -15,10 +15,10 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.airbending.combo.AirCombo.AirStream;
-import com.projectkorra.projectkorra.airbending.combo.AirCombo.AirSweep;
-import com.projectkorra.projectkorra.airbending.combo.AirCombo.Twister;
-import com.projectkorra.projectkorra.chiblocking.combo.ChiCombo.Immobilize;
+import com.projectkorra.projectkorra.airbending.combo.AirStream;
+import com.projectkorra.projectkorra.airbending.combo.AirSweep;
+import com.projectkorra.projectkorra.airbending.combo.Twister;
+import com.projectkorra.projectkorra.chiblocking.combo.Immobilize;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireKick;
 import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireSpin;
@@ -27,10 +27,10 @@ import com.projectkorra.projectkorra.firebending.combo.FireCombo.JetBlast;
 import com.projectkorra.projectkorra.firebending.combo.FireCombo.JetBlaze;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBullet;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBulletLeftClick;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBulletRightClick;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceWave;
+import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
+import com.projectkorra.projectkorra.waterbending.combo.IceBullet.IceBulletLeftClick;
+import com.projectkorra.projectkorra.waterbending.combo.IceBullet.IceBulletRightClick;
+import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 
 public class ComboManager {
 

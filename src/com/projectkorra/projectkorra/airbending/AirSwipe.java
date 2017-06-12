@@ -146,7 +146,7 @@ public class AirSwipe extends AirAbility {
 				elements.put(direction, location);
 
 				if (location.distanceSquared(origin) > range * range || GeneralMethods.isRegionProtectedFromBuild(this, location)) {
-					elements.remove(direction);
+					elements.clear();
 				} else {
 					Block block = location.getBlock();
 					if (!EarthAbility.isTransparent(player, block)) {
