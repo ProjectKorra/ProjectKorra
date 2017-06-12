@@ -5,7 +5,6 @@ import sun.reflect.ReflectionFactory;
 import com.projectkorra.projectkorra.event.AbilityLoadEvent;
 import com.projectkorra.projectkorra.util.FileExtensionFilter;
 
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
