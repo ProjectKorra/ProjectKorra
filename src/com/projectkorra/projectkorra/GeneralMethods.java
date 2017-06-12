@@ -103,7 +103,6 @@ import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
-import com.projectkorra.projectkorra.airbending.combo.AirCombo;
 import com.projectkorra.projectkorra.chiblocking.AcrobatStance;
 import com.projectkorra.projectkorra.chiblocking.WarriorStance;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
@@ -253,11 +252,11 @@ public class GeneralMethods {
 			} else if (ability.equalsIgnoreCase("AirSpout")) {
 				hasBlocked = AirSpout.removeSpouts(loc, radius, player) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("Twister")) {
-				hasBlocked = AirCombo.removeAroundPoint(player, "Twister", loc, radius) || hasBlocked;
+				//hasBlocked = AirCombo.removeAroundPoint(player, "Twister", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("AirStream")) {
-				hasBlocked = AirCombo.removeAroundPoint(player, "AirStream", loc, radius) || hasBlocked;
+				//hasBlocked = AirCombo.removeAroundPoint(player, "AirStream", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("AirSweep")) {
-				hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
+				//hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("FireKick")) {
 				hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("FireSpin")) {
@@ -653,28 +652,30 @@ public class GeneralMethods {
 		}
 	}
 
-	public static void displayMovePreview(Player player, CoreAbility ability) {
-		String displayedMessage = null;
+	public static void displayMovePreview(Player player) {
+		displayMovePreview(player, player.getInventory().getHeldItemSlot() + 1);
+	}
+	
+	public static void displayMovePreview(Player player, int slot) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-
-		if (ConfigManager.defaultConfig.get().getBoolean("Properties.BendingPreview") == true) {
-			if (ability != null && bPlayer != null) {
-
-				if (bPlayer.isOnCooldown(ability)) {
-					displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
-				} else {
-					if (bPlayer.getStance() instanceof AcrobatStance && ability.getName().equals("AcrobatStance") || bPlayer.getStance() instanceof WarriorStance && ability.getName().equals("WarriorStance")) {
-						displayedMessage = ability.getElement().getColor() + "" + ChatColor.UNDERLINE + ability.getName();
-					} else {
-						displayedMessage = ability.getElement().getColor() + ability.getName();
-					}
-				}
+		String displayedMessage = bPlayer.getAbilities().get(slot);
+		CoreAbility ability = CoreAbility.getAbility(displayedMessage);
+		
+		if (ability != null && bPlayer != null) {
+			if (bPlayer.isOnCooldown(ability)) {
+				displayedMessage = ability.getElement().getColor() + "" + ChatColor.STRIKETHROUGH + ability.getName();
 			} else {
-				displayedMessage = "";
+				if (bPlayer.getStance() instanceof AcrobatStance && ability.getName().equals("AcrobatStance") || bPlayer.getStance() instanceof WarriorStance && ability.getName().equals("WarriorStance")) {
+					displayedMessage = ability.getElement().getColor() + "" + ChatColor.UNDERLINE + ability.getName();
+				} else {
+					displayedMessage = ability.getElement().getColor() + ability.getName();
+				}
 			}
-
-			ActionBar.sendActionBar(displayedMessage, player);
+		} else if (displayedMessage == null || displayedMessage.isEmpty() || displayedMessage.equals("")) {
+			displayedMessage = "";
 		}
+
+		ActionBar.sendActionBar(displayedMessage, player);
 	}
 
 	public static float getAbsorbationHealth(Player player) {

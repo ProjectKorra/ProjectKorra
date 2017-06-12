@@ -46,7 +46,7 @@ public class EarthTunnel extends EarthAbility {
 		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
 		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
-		this.radiusIncrement = radius;
+		
 		this.time = System.currentTimeMillis();
 
 		this.location = player.getEyeLocation().clone();
@@ -63,9 +63,11 @@ public class EarthTunnel extends EarthAbility {
 			return;
 		}
 		if (bPlayer.isAvatarState()) {
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
+			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
 		}
 
+		this.radiusIncrement = radius;
+		
 		start();
 	}
 

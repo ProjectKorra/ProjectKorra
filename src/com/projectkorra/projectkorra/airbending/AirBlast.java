@@ -111,7 +111,7 @@ public class AirBlast extends AirAbility {
 		this.location = location.clone();
 
 		setFields();
-		this.pushFactor *= modifiedPushFactor;
+		
 		this.affectedLevers = new ArrayList<>();
 		this.affectedEntities = new ArrayList<>();
 		//prevent the airburst related airblasts from triggering doors/levers/buttons
@@ -120,9 +120,11 @@ public class AirBlast extends AirAbility {
 		this.canFlickLevers = false;
 
 		if (bPlayer.isAvatarState()) {
-			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities");
-			this.pushFactorForOthers = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self");
+			this.pushFactor = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self");
+			this.pushFactorForOthers = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities");
 		}
+		
+		this.pushFactor *= modifiedPushFactor;
 
 		start();
 	}
