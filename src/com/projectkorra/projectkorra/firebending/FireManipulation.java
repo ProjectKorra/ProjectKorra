@@ -28,6 +28,7 @@ public class FireManipulation extends FireAbility {
 	private double streamRange;
 	private double streamDamage;
 	private double streamSpeed;
+	private int streamParticles;
 	private boolean streamSneaking = true;
 	private long streamRemoveTime = 0;
 	private Vector streamSneakDirection;
@@ -35,6 +36,7 @@ public class FireManipulation extends FireAbility {
 	private long shieldCooldown;
 	private double shieldRange;
 	private double shieldDamage;
+	private int shieldParticles;
 	private long maxDuration;
 
 	// Instance related variables
@@ -64,10 +66,12 @@ public class FireManipulation extends FireAbility {
 			this.streamRange = getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Range");
 			this.streamDamage = getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Damage");
 			this.streamSpeed = getConfig().getDouble("Abilities.Fire.FireManipulation.Stream.Speed");
+			this.streamParticles = getConfig().getInt("Abilities.Fire.FireManipulation.Stream.Particles");
 
 			this.shieldCooldown = getConfig().getLong("Abilities.Fire.FireManipulation.Shield.Cooldown");
 			this.shieldRange = getConfig().getDouble("Abilities.Fire.FireManipulation.Shield.Range");
 			this.shieldDamage = getConfig().getDouble("Abilities.Fire.FireManipulation.Shield.Damage");
+			this.shieldParticles = getConfig().getInt("Abilities.Fire.FireManipulation.Shield.Particles");
 			this.maxDuration = getConfig().getLong("Abilities.Fire.FireManipulation.Shield.MaxDuration");
 			this.points = new ConcurrentHashMap<>();
 		} else if (this.fireManipulationType == FireManipulationType.CLICK) {
@@ -138,8 +142,8 @@ public class FireManipulation extends FireAbility {
 			for (Location point : points.keySet()) {
 				Vector direction = focalPoint.toVector().subtract(point.toVector());
 				point.add(direction.clone().multiply(streamSpeed / 5));
-				ParticleEffect.FLAME.display(point, 0.25F, 0.25F, 0.25F, 0, 12);
-				ParticleEffect.SMOKE.display(point, 0.25F, 0.25F, 0.25F, 0, 6);
+				ParticleEffect.FLAME.display(point, 0.25F, 0.25F, 0.25F, 0, shieldParticles);
+				ParticleEffect.SMOKE.display(point, 0.25F, 0.25F, 0.25F, 0, shieldParticles / 2);
 			}
 		} else {
 			Vector direction = player.getLocation().getDirection().clone();
@@ -161,8 +165,8 @@ public class FireManipulation extends FireAbility {
 				remove();
 				return;
 			}
-			ParticleEffect.FLAME.display(shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, 200);
-			ParticleEffect.SMOKE.display(shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, 100);
+			ParticleEffect.FLAME.display(shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, streamParticles);
+			ParticleEffect.SMOKE.display(shotPoint, 0.5F, 0.5F, 0.5F, 0.01F, streamParticles / 2);
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(shotPoint, 2)) {
 				if (entity instanceof LivingEntity && entity.getUniqueId() != player.getUniqueId()) {
 					DamageHandler.damageEntity(entity, streamDamage, this);

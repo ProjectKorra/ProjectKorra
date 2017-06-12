@@ -38,7 +38,7 @@ public class EarthPassive {
 			return true;
 		}
 
-		if (EarthAbility.isEarthbendable(player, block) || ElementalAbility.isTransparent(player, block)) {
+		if (EarthAbility.isEarth(block) || ElementalAbility.isTransparent(player, block)) {
 			if (!ElementalAbility.isTransparent(player, block)) {
 				MaterialData type = block.getState().getData();
 				if (GeneralMethods.isSolid(block.getRelative(BlockFace.DOWN))) {
@@ -57,7 +57,7 @@ public class EarthPassive {
 			}
 
 			for (Block affectedBlock : GeneralMethods.getBlocksAroundPoint(block.getLocation(), 2)) {
-				if (EarthAbility.isEarthbendable(player, affectedBlock)) {
+				if (EarthAbility.isEarth(affectedBlock)) {
 					if (GeneralMethods.isSolid(affectedBlock.getRelative(BlockFace.DOWN))) {
 						MaterialData type = affectedBlock.getState().getData();
 						if (type.getItemType() == Material.RED_SANDSTONE) {
@@ -77,7 +77,7 @@ public class EarthPassive {
 			return true;
 		}
 
-		return (TempBlock.isTempBlock(block) && EarthAbility.isEarthbendable(TempBlock.get(block).getBlock().getType())) || EarthAbility.isEarthbendable(player, block) || EarthAbility.isTransparent(player, block);
+		return (TempBlock.isTempBlock(block) && EarthAbility.isEarth(TempBlock.get(block).getBlock().getType())) || EarthAbility.isEarth(block) || EarthAbility.isTransparent(player, block);
 	}
 
 	public static boolean isPassiveSand(Block block) {

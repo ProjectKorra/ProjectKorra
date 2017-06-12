@@ -1216,11 +1216,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Range", 50);
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Damage", 2);
 			config.addDefault("Abilities.Fire.FireManipulation.Stream.Speed", 0.75);
-
+			config.addDefault("Abilities.Fire.FireManipulation.Stream.Particles", 50);
+			
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.Range", 4);
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.Damage", 1);
-			config.addDefault("Abilities.Fire.FireManipulation.Shield.MaxDuration", 5000);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.MaxDuration", 5000L);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.Particles", 12);
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.BlockableAbilities", fireManipBlocks);
 			config.addDefault("Abilities.Fire.FireManipulation.Shield.BreakableAbilities", breakableAbilities);
 			
