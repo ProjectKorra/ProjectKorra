@@ -113,7 +113,6 @@ import com.projectkorra.projectkorra.event.BendingReloadEvent;
 import com.projectkorra.projectkorra.event.BindChangeEvent;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireShield;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
@@ -258,11 +257,11 @@ public class GeneralMethods {
 			} else if (ability.equalsIgnoreCase("AirSweep")) {
 				//hasBlocked = AirCombo.removeAroundPoint(player, "AirSweep", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("FireKick")) {
-				hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
+				//hasBlocked = FireCombo.removeAroundPoint(player, "FireKick", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("FireSpin")) {
-				hasBlocked = FireCombo.removeAroundPoint(player, "FireSpin", loc, radius) || hasBlocked;
+				//hasBlocked = FireCombo.removeAroundPoint(player, "FireSpin", loc, radius) || hasBlocked;
 			} else if (ability.equalsIgnoreCase("FireWheel")) {
-				hasBlocked = FireCombo.removeAroundPoint(player, "FireWheel", loc, radius) || hasBlocked;
+				//hasBlocked = FireCombo.removeAroundPoint(player, "FireWheel", loc, radius) || hasBlocked;
 			}
 		}
 		return hasBlocked;

@@ -3,30 +3,33 @@ package com.projectkorra.projectkorra.firebending.combo;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
-import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.command.Commands;
+import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
+import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-@Deprecated
 /***
  * Is only here for legacy purposes. All fire combos
  * used to use a form of this stream for all their
  * progress methods. If someone else was reliant on
  * that, they can use this ability instead.
  */
-public class FireComboStream extends FireAbility {
-
-	public FireCombo baseAbility;
-	
+public class FireComboStream extends BukkitRunnable  {
 	private boolean useNewParticles;
+	private boolean cancelled;
 	private boolean collides;
 	private boolean singlePoint;
 	private int density;
@@ -36,19 +39,20 @@ public class FireComboStream extends FireAbility {
 	private double collisionRadius;
 	private double speed;
 	private double distance;
+	private double damage;
+	private double fireTicks;
+	private double knockback;
 	ParticleEffect particleEffect;
-	private FireComboLegacy fireCombo;
+	private Player player;
+	private BendingPlayer bPlayer;
+	private CoreAbility coreAbility;
 	private Vector direction;
 	private Location initialLocation;
 	private Location location;
-	private FireStreamCollision collision;
 	
-	public FireComboStream(Player player, FireCombo base, Vector direction, Location location, double distance, double speed) {
-		super(player);
-		
-		this.baseAbility = base;
-		
+	public FireComboStream(Player player, CoreAbility coreAbility, Vector direction, Location location, double distance, double speed) {
 		this.useNewParticles = false;
+		this.cancelled = false;
 		this.collides = true;
 		this.singlePoint = false;
 		this.density = 1;
@@ -57,15 +61,18 @@ public class FireComboStream extends FireAbility {
 		this.spread = 0;
 		this.collisionRadius = 2;
 		this.particleEffect = ParticleEffect.FLAME;
+		this.player = player;
+		this.bPlayer = BendingPlayer.getBendingPlayer(player);
+		this.coreAbility = coreAbility;
 		this.direction = direction;
 		this.speed = speed;
 		this.initialLocation = location.clone();
 		this.location = location.clone();
 		this.distance = distance;
 	}
-
+	
 	@Override
-	public void progress() {
+	public void run() {
 		Block block = location.getBlock();
 		if (block.getRelative(BlockFace.UP).getType() != Material.AIR && !ElementalAbility.isPlant(block)) {
 			remove();
@@ -85,10 +92,8 @@ public class FireComboStream extends FireAbility {
 			return;
 		} else if (collides && checkCollisionCounter % checkCollisionDelay == 0) {
 			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, collisionRadius)) {
-				if (entity instanceof LivingEntity && !entity.equals(fireCombo.getPlayer())) {
-					if (collision != null) {
-						collision.run();
-					}
+				if (entity instanceof LivingEntity && !entity.equals(coreAbility.getPlayer())) {
+					collision((LivingEntity) entity, direction, coreAbility);
 				}
 			}
 		}
@@ -98,43 +103,82 @@ public class FireComboStream extends FireAbility {
 			remove();
 		}
 	}
+	
+	public void collision(LivingEntity entity, Vector direction, CoreAbility coreAbility) {
+		if (GeneralMethods.isRegionProtectedFromBuild(player, "Blaze", entity.getLocation())) {
+			return;
+		}
+		entity.getLocation().getWorld().playSound(entity.getLocation(), Sound.ENTITY_VILLAGER_HURT, 0.3f, 0.3f);
 
-	@Override
-	public boolean isSneakAbility() {
-		return false;
-	}
-
-	@Override
-	public long getCooldown() {
-		return 0;
-	}
-
-	@Override
-	public String getName() {
-		return "FireComboStream";
-	}
-
-	@Override
-	public Location getLocation() {
-		return location;
+		if (coreAbility.getName().equalsIgnoreCase("FireKick")) {
+			FireKick fireKick = CoreAbility.getAbility(player, FireKick.class);
+			
+			if (!fireKick.getAffectedEntities().contains(entity)) {
+				fireKick.getAffectedEntities().add(entity);
+				DamageHandler.damageEntity(entity, damage, coreAbility);
+				coreAbility.remove();
+			}
+		} else if (coreAbility.getName().equalsIgnoreCase("FireSpin")) {
+			FireSpin fireSpin = (FireSpin) CoreAbility.getAbility(player, FireSpin.class);
+			
+			if (entity instanceof Player) {
+				if (Commands.invincible.contains(((Player) entity).getName())) {
+					return;
+				}
+			}
+			if (!fireSpin.getAffectedEntities().contains(entity)) {
+				fireSpin.getAffectedEntities().add(entity);
+				double newKnockback = bPlayer.isAvatarState() ? knockback + 0.5 : knockback;
+				DamageHandler.damageEntity(entity, damage, coreAbility);
+				entity.setVelocity(direction.normalize().multiply(newKnockback));
+				coreAbility.remove();
+			}
+		} else if (coreAbility.getName().equalsIgnoreCase("JetBlaze")) {
+			JetBlaze jetBlaze = (JetBlaze) CoreAbility.getAbility(player, JetBlaze.class);
+			
+			if (!jetBlaze.getAffectedEntities().contains(entity)) {
+				jetBlaze.getAffectedEntities().add(entity);
+				DamageHandler.damageEntity(entity, damage, coreAbility);
+				entity.setFireTicks((int) (fireTicks * 20));
+				new FireDamageTimer(entity, player);
+			}
+		} else if (coreAbility.getName().equalsIgnoreCase("FireWheel")) {
+			FireWheel fireWheel = (FireWheel) CoreAbility.getAbility(player, FireWheel.class);
+			
+			if (!fireWheel.getAffectedEntities().contains(entity)) {
+				fireWheel.getAffectedEntities().add(entity);
+				DamageHandler.damageEntity(entity, damage, coreAbility);
+				entity.setFireTicks((int) (fireTicks * 20));
+				new FireDamageTimer(entity, player);
+				this.remove();
+			}
+		}
 	}
 	
 	@Override
-	public boolean isHiddenAbility() {
-		return true;
+	public void cancel() {
+		remove();
 	}
 
-	@Override
-	public boolean isHarmlessAbility() {
-		return false;
-	}
-	
 	public Vector getDirection() {
 		return this.direction.clone();
 	}
 
-	public FireCombo getBaseAbility() {
-		return this.baseAbility;
+	public Location getLocation() {
+		return this.location;
+	}
+
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	public void remove() {
+		super.cancel();
+		this.cancelled = true;
+	}
+	
+	public CoreAbility getAbility() {
+		return coreAbility;
 	}
 
 	public void setCheckCollisionDelay(int delay) {
@@ -152,6 +196,18 @@ public class FireComboStream extends FireAbility {
 	public void setDensity(int density) {
 		this.density = density;
 	}
+	
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+	
+	public void setKnockback(double knockback) {
+		this.knockback = knockback;
+	}
+	
+	public void setFireTicks(double fireTicks) {
+		this.fireTicks = fireTicks;
+	}
 
 	public void setParticleEffect(ParticleEffect effect) {
 		this.particleEffect = effect;
@@ -167,24 +223,5 @@ public class FireComboStream extends FireAbility {
 
 	public void setUseNewParticles(boolean b) {
 		useNewParticles = b;
-	}
-	
-	public abstract class FireStreamCollision implements Runnable {
-		
-		protected FireComboStream stream;
-		public FireStreamCollision(FireComboStream stream) {
-			this.stream = stream;
-		}
-		@Override
-		public abstract void run();
-		
-	}
-	
-	public FireStreamCollision getCollision() {
-		return collision;
-	}
-	
-	public void setCollision(FireStreamCollision collision) {
-		this.collision = collision;
 	}
 }

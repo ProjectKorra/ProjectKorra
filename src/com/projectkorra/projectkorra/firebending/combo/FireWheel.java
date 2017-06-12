@@ -1,7 +1,6 @@
 package com.projectkorra.projectkorra.firebending.combo;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,16 +12,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
-import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class FireWheel extends FireCombo {
+public class FireWheel extends FireAbility implements ComboAbility {
 
 	private Location origin;
 	private Location location;
@@ -34,7 +34,7 @@ public class FireWheel extends FireCombo {
 	private double speed;
 	private double fireTicks;
 	private double damage;
-	private List<LivingEntity> affectedEntities;
+	private ArrayList<LivingEntity> affectedEntities;
 
 	public FireWheel(Player player) {
 		super(player);
@@ -49,8 +49,8 @@ public class FireWheel extends FireCombo {
 		this.speed = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.FireWheel.Cooldown");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.FireTicks");
-		this.height = 2;
-		this.radius = 1;
+		this.height = getConfig().getInt("Abilities.Fire.FireCombo.FireWheel.Height");
+		this.radius = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.Radius");
 		
 		bPlayer.addCooldown(this);
 		origin = player.getLocation();
@@ -70,22 +70,18 @@ public class FireWheel extends FireCombo {
 			this.damage = AvatarState.getValue(damage);
 			this.range = AvatarState.getValue(range);
 		}
+		
 		start();
 	}
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return new FireWheel(player);
+		return null;
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		ArrayList<AbilityInformation> fireWheel = new ArrayList<>();
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.SHIFT_DOWN));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
-		fireWheel.add(new AbilityInformation("FireShield", ClickType.RIGHT_CLICK_BLOCK));
-		fireWheel.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
-		return fireWheel;
+		return null;
 	}
 
 	@Override
@@ -146,4 +142,17 @@ public class FireWheel extends FireCombo {
 		return location;
 	}
 
+	@Override
+	public boolean isSneakAbility() {
+		return true;
+	}
+
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+
+	public ArrayList<LivingEntity> getAffectedEntities() {
+		return affectedEntities;
+	}
 }
