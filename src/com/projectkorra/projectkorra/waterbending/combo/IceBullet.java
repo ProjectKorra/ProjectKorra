@@ -24,7 +24,7 @@ import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireComboStream;
+import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.DamageHandler;
@@ -51,6 +51,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	private double animationSpeed;
 	private long cooldown;
 	private long time;
+	private String name;
 	private AbilityState state;
 	private Location origin;
 	private Location location;
@@ -59,7 +60,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	private ArrayList<BukkitRunnable> tasks;
 	private ConcurrentHashMap<Block, TempBlock> affectedBlocks;
 	
-	public IceBullet(Player player, String name) {
+	public IceBullet(Player player) {
 		super(player);
 		
 		this.time = System.currentTimeMillis();
@@ -78,6 +79,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 		this.maxShots = getConfig().getInt("Abilities.Water.WaterCombo.IceBullet.MaxShots");
 		this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.AnimationSpeed");
 		this.speed = 1;
+		this.name = getName();
 		
 		double aug = getNightFactor(player.getWorld());
 		if (aug > 1) {
@@ -97,23 +99,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			this.shootTime = AvatarState.getValue(shootTime);
 			this.maxShots = AvatarState.getValue(maxShots);
 			this.knockback = knockback * 1.3;
-		}
-
-		if (name.equalsIgnoreCase("IceBulletLeftClick") || name.equalsIgnoreCase("IceBulletRightClick")) {
-			Collection<IceBullet> bullets = CoreAbility.getAbilities(player, IceBullet.class);
-			if (bullets.size() == 0) {
-				return;
-			}
-			for (IceBullet bullet : bullets) {
-				if (name.equalsIgnoreCase("IceBulletLeftClick")) {
-					if (bullet.leftClicks <= bullet.rightClicks) {
-						bullet.leftClicks += 1;
-					}
-				} else if (bullet.leftClicks >= bullet.rightClicks) {
-					bullet.rightClicks += 1;
-				}
-			}
-			return;
 		}
 
 		start();
@@ -168,7 +153,8 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	public static class IceBulletLeftClick extends IceBullet {
 
 		public IceBulletLeftClick(Player player) {
-			super(player, "IceBulletLeftClick");
+			super(player);
+			setName("IceBulletLeftClick");
 		}
 
 		@Override
@@ -181,7 +167,8 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	public static class IceBulletRightClick extends IceBullet {
 
 		public IceBulletRightClick(Player player) {
-			super(player, "IceBulletRightClick");
+			super(player);
+			setName("IceBulletRightClick");
 		}
 
 		@Override
@@ -269,6 +256,24 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			remove();
 			return;
 		}
+		
+		if (name.equalsIgnoreCase("IceBulletLeftClick") || name.equalsIgnoreCase("IceBulletRightClick")) {
+			Collection<IceBullet> bullets = CoreAbility.getAbilities(player, IceBullet.class);
+			if (bullets.size() == 0) {
+				return;
+			}
+			for (IceBullet bullet : bullets) {
+				if (name.equalsIgnoreCase("IceBulletLeftClick")) {
+					if (bullet.leftClicks <= bullet.rightClicks) {
+						bullet.leftClicks += 1;
+					}
+				} else if (bullet.leftClicks >= bullet.rightClicks) {
+					bullet.rightClicks += 1;
+				}
+			}
+			return;
+		}
+
 
 		if (origin == null) {
 			if (bPlayer.isOnCooldown("IceBullet") && !bPlayer.isAvatarState()) {
@@ -319,7 +324,7 @@ public class IceBullet extends IceAbility implements ComboAbility {
 						shots++;
 						Vector vec = player.getEyeLocation().getDirection().normalize();
 						Location loc = player.getEyeLocation().add(vec.clone().multiply(radius + 1.3));
-						FireComboStream fs = new FireComboStream(null, vec, loc, range, speed, "IceBullet");
+						FireComboStream fs = new FireComboStream(player, this, vec, loc, range, speed);
 
 						fs.setDensity(10);
 						fs.setSpread(0.1F);
@@ -540,5 +545,9 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 }

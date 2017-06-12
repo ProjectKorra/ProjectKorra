@@ -18,7 +18,7 @@ import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireComboStream;
+import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class AirSweep extends AirAbility implements ComboAbility {
@@ -142,7 +142,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 			for (double i = 0; i < 30; i++) {
 				Vector vec = GeneralMethods.getDirection(player.getLocation(), origin.clone().add(origToDest.clone().multiply(i / 30)));
 
-				FireComboStream fs = new FireComboStream(null, vec, player.getLocation(), range, speed, "AirSweep");
+				FireComboStream fs = new FireComboStream(player, this, vec, player.getLocation(), range, speed);
 				fs.setDensity(1);
 				fs.setSpread(0F);
 				fs.setUseNewParticles(true);
@@ -195,7 +195,7 @@ public class AirSweep extends AirAbility implements ComboAbility {
 						}
 						if (damage != 0) {
 							if (entity instanceof LivingEntity) {
-								if (fstream.getAbility().equalsIgnoreCase("AirSweep")) {
+								if (fstream.getAbility().getName().equalsIgnoreCase("AirSweep")) {
 									DamageHandler.damageEntity(entity, damage, this);
 								} else {
 									DamageHandler.damageEntity(entity, damage, this);

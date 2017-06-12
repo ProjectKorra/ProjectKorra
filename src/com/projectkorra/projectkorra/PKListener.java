@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -150,7 +149,6 @@ import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.firebending.HeatControl.HeatControlType;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo;
 import com.projectkorra.projectkorra.firebending.combustion.Combustion;
 import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
@@ -185,6 +183,7 @@ public class PKListener implements Listener {
 
 	ProjectKorra plugin;
 
+	private static final HashMap<Entity, Ability> BENDING_ENTITY_DEATH = new HashMap<>(); // Entities killed by Bending.
 	private static final HashMap<Player, String> BENDING_PLAYER_DEATH = new HashMap<>(); // Player killed by Bending.
 	private static final List<UUID> RIGHT_CLICK_INTERACT = new ArrayList<UUID>(); // Player right click block.
 	private static final ArrayList<UUID> TOGGLED_OUT = new ArrayList<>(); // Stands for toggled = false while logging out.
@@ -479,46 +478,53 @@ public class PKListener implements Listener {
 			armor.revert();
 		}
 
-		for (FireCombo fc : CoreAbility.getAbilities(event.getEntity().getKiller(), FireCombo.class)) {
-			if (!fc.getAffectedEntities().contains(event.getEntity()))
-				continue;
-			List<ItemStack> drops = event.getDrops();
-			List<ItemStack> newDrops = new ArrayList<>();
-			for (int i = 0; i < drops.size(); i++) {
-				ItemStack cooked = drops.get(i);
-				Material material = drops.get(i).getType();
-				switch (material) {
-					case RAW_BEEF:
-						cooked = new ItemStack(Material.COOKED_BEEF, 1);
-						break;
-					case RAW_FISH:
-						ItemStack salmon = new ItemStack(Material.RAW_FISH, 1, (short) 1);
-						if (drops.get(i).getDurability() == salmon.getDurability()) {
-							cooked = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
-						} else {
-							cooked = new ItemStack(Material.COOKED_FISH, 1);
+		CoreAbility[] cookingFireCombos = { CoreAbility.getAbility("JetBlast"), CoreAbility.getAbility("FireWheel"), CoreAbility.getAbility("FireSpin"), CoreAbility.getAbility("FireKick") };
+		
+		if (BENDING_ENTITY_DEATH.containsKey(event.getEntity())) {
+			CoreAbility coreAbility = (CoreAbility) BENDING_ENTITY_DEATH.get(event.getEntity());
+			for (CoreAbility fireCombo : cookingFireCombos) {
+				if (coreAbility.getName().equalsIgnoreCase(fireCombo.getName())) {
+					List<ItemStack> drops = event.getDrops();
+					List<ItemStack> newDrops = new ArrayList<>();
+					for (int i = 0; i < drops.size(); i++) {
+						ItemStack cooked = drops.get(i);
+						Material material = drops.get(i).getType();
+						switch (material) {
+						case RAW_BEEF:
+							cooked = new ItemStack(Material.COOKED_BEEF, 1);
+							break;
+						case RAW_FISH:
+							ItemStack salmon = new ItemStack(Material.RAW_FISH, 1, (short) 1);
+							if (drops.get(i).getDurability() == salmon.getDurability()) {
+								cooked = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
+							} else {
+								cooked = new ItemStack(Material.COOKED_FISH, 1);
+							}
+							break;
+						case RAW_CHICKEN:
+							cooked = new ItemStack(Material.COOKED_CHICKEN, 1);
+							break;
+						case PORK:
+							cooked = new ItemStack(Material.GRILLED_PORK, 1);
+							break;
+						case MUTTON:
+							cooked = new ItemStack(Material.COOKED_MUTTON);
+							break;
+						case RABBIT:
+							cooked = new ItemStack(Material.COOKED_RABBIT);
+							break;
+						default:
+							break;
 						}
-						break;
-					case RAW_CHICKEN:
-						cooked = new ItemStack(Material.COOKED_CHICKEN, 1);
-						break;
-					case PORK:
-						cooked = new ItemStack(Material.GRILLED_PORK, 1);
-						break;
-					case MUTTON:
-						cooked = new ItemStack(Material.COOKED_MUTTON);
-						break;
-					case RABBIT:
-						cooked = new ItemStack(Material.COOKED_RABBIT);
-						break;
-					default:
-						break;
-				}
 
-				newDrops.add(cooked);
+						newDrops.add(cooked);
+					}
+					event.getDrops().clear();
+					event.getDrops().addAll(newDrops);
+
+					break;
+				}
 			}
-			event.getDrops().clear();
-			event.getDrops().addAll(newDrops);
 		}
 	}
 
@@ -705,7 +711,9 @@ public class PKListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerBendingDeath(EntityBendingDeathEvent event) {
+	public void onEntityBendingDeath(EntityBendingDeathEvent event) {
+		BENDING_ENTITY_DEATH.put(event.getEntity(), event.getAbility());
+		
 		if (ConfigManager.languageConfig.get().getBoolean("DeathMessages.Enabled") && event.getEntity() instanceof Player) {
 			Ability ability = event.getAbility();
 			if (ability == null) {
