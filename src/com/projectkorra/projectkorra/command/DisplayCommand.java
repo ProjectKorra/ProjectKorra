@@ -341,7 +341,7 @@ public class DisplayCommand extends PKCommand {
 		list.add("Metal");
 		list.add("Plantbending");
 		list.add("Sand");
-		list.add("SpiritualProjection");
+		list.add("Spiritual");
 
 		for (SubElement se : Element.getAddonSubElements()) {
 			list.add(se.getName());

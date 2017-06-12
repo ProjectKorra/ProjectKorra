@@ -42,7 +42,7 @@ public class FireJet extends FireAbility {
 			abil.remove();
 		}
 
-		this.avatarStateToggled = getConfig().getBoolean("Abilities.Avatar.Fire.FireJet.IsAvatarStateToggle");
+		this.avatarStateToggled = getConfig().getBoolean("Abilities.Avatar.AvatarState.Fire.FireJet.IsAvatarStateToggle");
 		this.duration = getConfig().getLong("Abilities.Fire.FireJet.Duration");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireJet.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireJet.Cooldown");

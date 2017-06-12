@@ -409,6 +409,7 @@ public class WaterArmsWhip extends WaterAbility {
 			if (hasDamaged) {
 				waterArms.setMaxPunches(waterArms.getMaxPunches() - 1);
 			}
+			
 			waterArms.setMaxUses(waterArms.getMaxUses() - 1);
 		}
 	}

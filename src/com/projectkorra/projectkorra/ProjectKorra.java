@@ -1,6 +1,6 @@
 package com.projectkorra.projectkorra;
 
-import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -24,7 +24,7 @@ import com.projectkorra.projectkorra.earthbending.util.EarthbendingManager;
 import com.projectkorra.projectkorra.firebending.util.FirebendingManager;
 import com.projectkorra.projectkorra.object.Preset;
 import com.projectkorra.projectkorra.storage.DBConnection;
-import com.projectkorra.projectkorra.util.MetricsLite;
+import com.projectkorra.projectkorra.util.Metrics;
 import com.projectkorra.projectkorra.util.RevertChecker;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.util.Updater;
@@ -45,17 +45,14 @@ public class ProjectKorra extends JavaPlugin {
 	public void onEnable() {
 		plugin = this;
 		ProjectKorra.log = this.getLogger();
-		/*try {
-			File logFolder = new File(getDataFolder(), "Logs");
-			if (!logFolder.exists()) {
-				logFolder.mkdirs();
-			}
-			handler = new PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
-			log.getParent().addHandler(handler);
-		}
-		catch (SecurityException | IOException e) {
-			e.printStackTrace();
-		}*/
+		
+		/*
+		 * try { File logFolder = new File(getDataFolder(), "Logs"); if
+		 * (!logFolder.exists()) { logFolder.mkdirs(); } handler = new
+		 * PKLogHandler(logFolder + File.separator + "ERROR.%g.log");
+		 * log.getParent().addHandler(handler); } catch (SecurityException |
+		 * IOException e) { e.printStackTrace(); }
+		 */
 
 		new ConfigManager();
 		new GeneralMethods(this);
@@ -66,7 +63,10 @@ public class ProjectKorra extends JavaPlugin {
 		collisionManager = new CollisionManager();
 		collisionInitializer = new CollisionInitializer(collisionManager);
 		CoreAbility.registerAbilities();
-		collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered
+		collisionInitializer.initializeDefaultCollisions(); // must be called
+															// after abilities
+															// have been
+															// registered
 		collisionManager.startCollisionDetection();
 
 		Preset.loadExternalPresets();
@@ -78,7 +78,7 @@ public class ProjectKorra extends JavaPlugin {
 		DBConnection.user = getConfig().getString("Storage.MySQL.user");
 		DBConnection.init();
 		if (DBConnection.isOpen() == false) {
-			//Message is logged by DBConnection
+			// Message is logged by DBConnection
 			return;
 		}
 
@@ -89,25 +89,32 @@ public class ProjectKorra extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new EarthbendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new FirebendingManager(this), 0, 1);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ChiblockingManager(this), 0, 1);
-		//getServer().getScheduler().scheduleSyncRepeatingTask(this, new PassiveHandler(), 0, 1);
+		// getServer().getScheduler().scheduleSyncRepeatingTask(this, new
+		// PassiveHandler(), 0, 1);
 		getServer().getScheduler().runTaskTimerAsynchronously(this, new RevertChecker(this), 0, 200);
 		if (ConfigManager.languageConfig.get().getBoolean("Chat.Branding.AutoAnnouncer.Enabled")) {
 			getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 				@Override
 				public void run() {
-					ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
+					ChatColor color = ChatColor
+							.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
 					color = color == null ? ChatColor.GOLD : color;
 					String topBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.TopBorder");
-					String bottomBorder = ConfigManager.languageConfig.get().getString("Chat.Branding.Borders.BottomBorder");
+					String bottomBorder = ConfigManager.languageConfig.get()
+							.getString("Chat.Branding.Borders.BottomBorder");
 					if (!topBorder.isEmpty()) {
 						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', topBorder));
 					}
-					Bukkit.broadcastMessage(color + "This server is running ProjectKorra version " + ProjectKorra.plugin.getDescription().getVersion() + " for bending! Find out more at http://www.projectkorra.com!");
+					Bukkit.broadcastMessage(color + "This server is running ProjectKorra version "
+							+ ProjectKorra.plugin.getDescription().getVersion()
+							+ " for bending! Find out more at http://www.projectkorra.com!");
 					if (!bottomBorder.isEmpty()) {
 						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', bottomBorder));
 					}
 				}
-			}, (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20), (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20));
+			}, (long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60 * 20),
+					(long) (ConfigManager.languageConfig.get().getDouble("Chat.Branding.AutoAnnouncer.Interval") * 60
+							* 20));
 		}
 		TempBlock.startReversion();
 
@@ -125,17 +132,36 @@ public class ProjectKorra extends JavaPlugin {
 			}, 5);
 		}
 
-		try {
-			MetricsLite metrics = new MetricsLite(this);
-			metrics.start();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+		Metrics metrics = new Metrics(this);
+		metrics.addCustomChart(new Metrics.AdvancedPie("Elements") {
+
+			@Override
+			public HashMap<String, Integer> getValues(HashMap<String, Integer> valueMap) {
+				for (Element element : Element.getMainElements()) {
+					valueMap.put(element.getName(), getPlayersWithElement(element));
+				}
+
+				return valueMap;
+			}
+
+			private int getPlayersWithElement(Element element) {
+				int counter = 0;
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+					if (bPlayer != null && bPlayer.hasElement(element)) {
+						counter++;
+					}
+				}
+
+				return counter;
+			}
+		});
 
 		double cacheTime = ConfigManager.getConfig().getDouble("Properties.RegionProtection.CacheBlockTime");
-		if (Bukkit.getPluginManager().getPlugin("Residence") != null)
+		if (Bukkit.getPluginManager().getPlugin("Residence") != null) {
 			FlagPermissions.addFlag(ConfigManager.defaultConfig.get().getString("Properties.RegionProtection.Residence.Flag"));
+		}
+		
 		GeneralMethods.deserializeFile();
 		GeneralMethods.startCacheCleaner(cacheTime);
 		updater.checkUpdate();
@@ -147,6 +173,7 @@ public class ProjectKorra extends JavaPlugin {
 		if (DBConnection.isOpen != false) {
 			DBConnection.sql.close();
 		}
+		
 		handler.close();
 	}
 
