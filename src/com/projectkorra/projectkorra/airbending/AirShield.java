@@ -15,14 +15,18 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.command.Commands;
 
 public class AirShield extends AirAbility {
 
 	private boolean isToggledByAvatarState;
+	@Attribute(Attribute.RADIUS)
 	private double maxRadius;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
+	@Attribute(Attribute.SPEED)
 	private double speed;
 	private int streams;
 	private int particles;

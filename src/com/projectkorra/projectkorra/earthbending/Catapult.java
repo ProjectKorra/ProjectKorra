@@ -5,6 +5,7 @@ import java.util.Random;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -26,11 +27,15 @@ public class Catapult extends EarthAbility {
 	private long stageStart;
 	private boolean charging;
 	private boolean activationHandled;
+	private Vector up;
+	private double angle;
+	private boolean cancelWithAngle;
 
 	public Catapult(Player player, boolean sneak) {
 		super(player);
 		setFields();
-		if (!isEarthbendable(player.getLocation().getBlock().getRelative(BlockFace.DOWN))) {
+		Block b = player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
+		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
 			return;
 		}
 		if (!bPlayer.canBend(this)) {
@@ -46,9 +51,12 @@ public class Catapult extends EarthAbility {
 	private void setFields() {
 		this.stageTimeMult = getConfig().getDouble("Abilities.Earth.Catapult.StageTimeMult");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Catapult.Cooldown");
+		this.angle = Math.toRadians(getConfig().getDouble("Abilities.Earth.Catapult.Angle"));
+		this.cancelWithAngle = getConfig().getBoolean("Abilities.Earth.Catapult.CancelWithAngle");
 		this.activationHandled = false;
 		this.stage = 1;
 		this.stageStart = System.currentTimeMillis();
+		up = new Vector(0, 1, 0);
 	}
 
 	private void moveEarth(Vector apply, Vector direction) {
@@ -62,10 +70,6 @@ public class Catapult extends EarthAbility {
 
 	@Override
 	public void progress() {
-		if (player.getEyeLocation().getPitch() > -20f) {
-			remove();
-			return;
-		}
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			remove();
 			return;
@@ -86,6 +90,12 @@ public class Catapult extends EarthAbility {
 			}
 			return;
 		}
+		
+		Block b = player.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
+		if (!(isEarth(b) || isSand(b) || isMetal(b))) {
+			remove();
+			return;
+		}
 
 		Vector direction = null;
 		if (!this.activationHandled) {
@@ -100,6 +110,15 @@ public class Catapult extends EarthAbility {
 			this.activationHandled = true;
 			bPlayer.addCooldown(this);
 		}
+		
+		if (up.angle(player.getEyeLocation().getDirection()) > angle) {
+			if (cancelWithAngle) {
+				remove();
+				return;
+			}
+			direction = up;
+		}
+		
 		Location tar = this.origin.clone().add(direction.clone().normalize().multiply(this.stage + 0.5));
 		this.target = tar;
 		Vector apply = this.target.clone().toVector().subtract(this.origin.clone().toVector());

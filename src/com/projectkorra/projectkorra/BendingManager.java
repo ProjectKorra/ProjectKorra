@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.chiblocking.combo.ChiCombo;
+import com.projectkorra.projectkorra.chiblocking.combo.Immobilize;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.object.HorizontalVelocityTracker;
 import com.projectkorra.projectkorra.util.Flight;
@@ -110,7 +110,7 @@ public class BendingManager implements Runnable {
 			handleDayNight();
 			Flight.handle();
 			RevertChecker.revertAirBlocks();
-			ChiCombo.handleParalysis();
+			Immobilize.handleParalysis();
 			HorizontalVelocityTracker.updateAll();
 			handleCooldowns();
 		}

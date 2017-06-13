@@ -31,7 +31,7 @@ import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo;
+import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 import com.projectkorra.projectkorra.waterbending.ice.PhaseChange;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
 
@@ -318,7 +318,7 @@ public class HeatControl extends FireAbility {
 		}
 
 		WaterSpoutWave.thaw(block);
-		WaterCombo.thaw(block);
+		IceWave.thaw(block);
 
 		if (isMeltable(block) && !TempBlock.isTempBlock(block) && WaterManipulation.canPhysicsChange(block)) {
 			if (block.getType() == Material.SNOW) {

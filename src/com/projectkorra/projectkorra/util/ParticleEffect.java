@@ -416,7 +416,7 @@ public enum ParticleEffect {
 	 * <li>Looks like a white twinkly star that rises
 	 * </ul>
 	 */
-	END_ROD("endRod", 42, 9),
+	END_ROD("endRod", 43, 9),
 	/**
 	 * A particle effect created by the Ender Dragon when it breathes acid:
 	 * <ul>
@@ -424,7 +424,7 @@ public enum ParticleEffect {
 	 * <li>A purple varaint of the cloud effect
 	 * </ul>
 	 */
-	DRAGON_BREATH("dragonBreath", 43, 9),
+	DRAGON_BREATH("dragonBreath", 42, 9),
 	/**
 	 * A particle effect which is displayed when mobs are damaged:
 	 * <ul>
@@ -446,7 +446,25 @@ public enum ParticleEffect {
 	 * <li>Has a downwards motion by default
 	 * </ul>
 	 */
-	FALLING_DUST("fallingDust", 46, 10, true);
+	FALLING_DUST("fallingDust", 46, 10, true),
+	/***
+	 * The particles given off when a totem of undying is used
+	 * <ul>
+	 * <li>Looks like endRod shaped particles
+	 * <li>Are between a yellow and green in color
+	 * <li>Has a downwards motion by default
+	 * </ul>
+	 */
+	TOTEM("talisman", 47, 11),
+	/***
+	 * A particle effect given off from llama spit entities
+	 * <ul>
+	 * <li>Looks like very large cloud
+	 * <li>Has a downwards motion by default
+	 * </ul>
+	 */
+	SPIT("spit", 48, 11);
+	
 
 	private static final Map<String, ParticleEffect> NAME_MAP = new HashMap<String, ParticleEffect>();
 	private static final Map<Integer, ParticleEffect> ID_MAP = new HashMap<Integer, ParticleEffect>();
@@ -1312,10 +1330,10 @@ public enum ParticleEffect {
 			if (range < 1) {
 				throw new IllegalArgumentException("The range is lower than 1");
 			}
-			String worldName = center.getWorld().getName();
+			
 			double squared = range * range;
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (!player.getWorld().getName().equals(worldName) || player.getLocation().distanceSquared(center) > squared) {
+				if (player.getWorld() != center.getWorld() || player.getLocation().distanceSquared(center) > squared) {
 					continue;
 				}
 				sendTo(center, player);

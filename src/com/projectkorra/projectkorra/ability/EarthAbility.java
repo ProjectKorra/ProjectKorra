@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -480,8 +479,6 @@ public abstract class EarthAbility extends ElementalAbility {
 		info.setTime(System.currentTimeMillis());
 		MOVED_EARTH.put(target, info);
 
-		source.setType(Material.AIR);
-
 		if (info.getState().getType() == Material.SAND) {
 			if (info.getState().getRawData() == (byte) 0x1) {
 				target.setType(Material.RED_SANDSTONE);
@@ -494,23 +491,25 @@ public abstract class EarthAbility extends ElementalAbility {
 			target.setType(info.getState().getType());
 			target.setData(info.getState().getRawData());
 		}
+		
+		source.setType(Material.AIR);
 	}
 
 	public static void playEarthbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playEffect(loc, Effect.GHAST_SHOOT, 0, 10);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound")), 0, 10);
 		}
 	}
 
 	public static void playMetalbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.ENTITY_IRONGOLEM_HURT, 1, 10);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound")), 1, 10);
 		}
 	}
 
 	public static void playSandBendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.BLOCK_SAND_BREAK, 1.5f, 5);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.SandSound")), 1.5f, 5);
 		}
 	}
 

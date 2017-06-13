@@ -29,6 +29,7 @@ public class EarthTunnel extends EarthAbility {
 	private double range;
 	private double radiusIncrement;
 	private boolean revert;
+ 	private boolean dropLootIfNotRevert;
 	private Block block;
 	private Location origin;
 	private Location location;
@@ -44,7 +45,8 @@ public class EarthTunnel extends EarthAbility {
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthTunnel.Radius");
 		this.interval = getConfig().getLong("Abilities.Earth.EarthTunnel.Interval");
 		this.revert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.Revert");
-		this.radiusIncrement = radius;
+		this.dropLootIfNotRevert = getConfig().getBoolean("Abilities.Earth.EarthTunnel.DropLootIfNotRevert");
+		
 		this.time = System.currentTimeMillis();
 
 		this.location = player.getEyeLocation().clone();
@@ -61,9 +63,11 @@ public class EarthTunnel extends EarthAbility {
 			return;
 		}
 		if (bPlayer.isAvatarState()) {
-			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
+			this.maxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius");
 		}
 
+		this.radiusIncrement = radius;
+		
 		start();
 	}
 
@@ -124,7 +128,11 @@ public class EarthTunnel extends EarthAbility {
 						}
 					}
 				} else {
-					block.setType(Material.AIR);
+					if (dropLootIfNotRevert) {
+						block.breakNaturally();
+					} else {
+						block.setType(Material.AIR);
+					}
 				}
 			}
 		}

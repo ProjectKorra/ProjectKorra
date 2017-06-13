@@ -13,13 +13,17 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.AirAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.Flight;
 
 public class AirScooter extends AirAbility {
 
+	@Attribute(Attribute.SPEED)
 	private double speed;
 	private double interval;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double maxHeightFromGround;
 	private Block floorblock;

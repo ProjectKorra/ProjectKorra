@@ -11,12 +11,14 @@ import org.bukkit.entity.Player;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.airbending.Suffocate;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.command.Commands;
 
 public class Paralyze extends ChiAbility {
 
 	private static final Map<Entity, Long> ENTITIES = new ConcurrentHashMap<>();
 
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Entity target;
 

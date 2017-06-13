@@ -1,139 +1,117 @@
 package com.projectkorra.projectkorra.ability.util;
 
-import sun.reflect.ReflectionFactory;
-
-import com.projectkorra.projectkorra.event.AbilityLoadEvent;
-import com.projectkorra.projectkorra.util.FileExtensionFilter;
-
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public class AbilityLoader<T> implements Listener {
+import com.projectkorra.projectkorra.ProjectKorra;
 
+import com.projectkorra.projectkorra.event.AbilityLoadEvent;
+
+import sun.reflect.ReflectionFactory;
+
+public class AbilityLoader<T> {
+	
 	private final Plugin plugin;
-	private final File directory;
-	private final ArrayList<File> files;
 	private ClassLoader loader;
-
-	public AbilityLoader(Plugin plugin, File directory) {
+	private JarFile jar;
+	private String path;
+	
+	public AbilityLoader(JavaPlugin plugin, String packageBase) {
 		this.plugin = plugin;
-		this.directory = directory;
-		this.files = new ArrayList<File>();
-
-		if (plugin == null || directory == null) {
+		this.loader = plugin.getClass().getClassLoader();
+		this.path = packageBase.replace('.', '/');
+		
+		if (plugin == null || loader == null) {
+			ProjectKorra.log.severe("Could not find classloader! Will not load abilities from " + packageBase);
 			return;
 		}
+		
+	   
+		try {
+			Enumeration<URL> resources = this.loader.getResources(path);
+			
+			String jarloc = resources.nextElement().getPath();
+			jarloc = jarloc.substring(5, jarloc.length() - path.length() - 2);
 
-		for (File f : directory.listFiles(new FileExtensionFilter(".jar"))) {
-			files.add(f);
+			String s = URLDecoder.decode(jarloc, "UTF-8");
+				
+	        jar = new JarFile(new File(s));
+	        
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
-		List<URL> urls = new ArrayList<URL>();
-		for (File file : files) {
-			try {
-				urls.add(file.toURI().toURL());
-			}
-			catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-		}
-		this.loader = URLClassLoader.newInstance(urls.toArray(new URL[0]), plugin.getClass().getClassLoader());
 	}
-
+	
 	/**
-	 * @param classType
-	 * @param parentClass a parent of classType that has a visible default
-	 *            constructor
-	 * @return A list of all of the T objects that were loaded from the jar
-	 *         files within @param directory
+	 * Returns a list of loaded objects of the provided classType.
+	 * 
+	 * @param classType Type of class to load
+	 * @param parentClass Type of class that the class must extend. Use {@code Object.class}
+	 * for classes without a type.
+	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public List<T> load(Class<?> classType, Class<?> parentClass) {
 		ArrayList<T> loadables = new ArrayList<>();
 
-		for (File file : files) {
-			JarFile jarFile = null;
+		if (loader == null || jar == null) {
+			return loadables;
+		}
+		
+		Enumeration<JarEntry> entries = jar.entries();
+
+	    while (entries.hasMoreElements()) {
+	    	
+	    	
+	    	JarEntry entry = entries.nextElement();
+	    	if (!entry.getName().endsWith(".class") || entry.getName().contains("$")) {
+				continue;
+			}
+
+			String className = entry.getName().replace('/', '.').substring(0, entry.getName().length() - 6);
+			if (!className.startsWith(path.replace('/', '.'))) {
+				continue;
+			}
+			
+			
+			Class<?> clazz = null;
 			try {
-				jarFile = new JarFile(file);
-				Enumeration<JarEntry> entries = jarFile.entries();
-
-				while (entries.hasMoreElements()) {
-					JarEntry entry = entries.nextElement();
-					if (!entry.getName().endsWith(".class")) {
-						continue;
-					}
-
-					String className = entry.getName().replace('/', '.').substring(0, entry.getName().length() - 6);
-					Class<?> clazz = null;
-					try {
-						clazz = Class.forName(className, true, loader);
-					}
-					catch (Exception | Error e) {
-						continue;
-					}
-
-					if (!classType.isAssignableFrom(clazz) || clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
-						continue;
-					}
-
-					ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
-					Constructor<?> objDef = parentClass.getDeclaredConstructor();
-					Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
-					T loadable = (T) clazz.cast(intConstr.newInstance());
-
-					loadables.add(loadable);
-					AbilityLoadEvent<T> event = new AbilityLoadEvent<T>(plugin, loadable, jarFile);
-					plugin.getServer().getPluginManager().callEvent(event);
+				clazz = Class.forName(className, true, loader);
+				
+				if (!classType.isAssignableFrom(clazz) || clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
+					continue;
+				}				
+			
+				ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
+				Constructor<?> objDef = parentClass.getDeclaredConstructor();
+				Constructor<?> intConstr = rf.newConstructorForSerialization(clazz, objDef);
+				T loadable = (T) clazz.cast(intConstr.newInstance());
+				
+				if (loadable == null) {
+					continue;
 				}
 
+				loadables.add(loadable);
+				AbilityLoadEvent<T> event = new AbilityLoadEvent<T>(plugin, loadable, jar);
+				plugin.getServer().getPluginManager().callEvent(event);
 			}
 			catch (Exception | Error e) {
-				e.printStackTrace();
-				plugin.getLogger().log(Level.WARNING, "Unknown cause");
-				plugin.getLogger().log(Level.WARNING, "The JAR file " + file.getName() + " failed to load");
+				continue;
 			}
-			finally {
-				if (jarFile != null) {
-					try {
-						jarFile.close();
-					}
-					catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
+	    }
+		
 		return loadables;
-	}
-
-	public ClassLoader getLoader() {
-		return loader;
-	}
-
-	public Plugin getPlugin() {
-		return plugin;
-	}
-
-	public File getDirectory() {
-		return directory;
-	}
-
-	public ArrayList<File> getFiles() {
-		return files;
 	}
 
 }

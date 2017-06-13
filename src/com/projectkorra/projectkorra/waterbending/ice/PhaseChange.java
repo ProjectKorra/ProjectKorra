@@ -26,7 +26,7 @@ import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsSpear;
 public class PhaseChange extends IceAbility {
 
 	public static enum PhaseChangeType {
-		FREEZE, MELT;
+		FREEZE, MELT, CUSTOM;
 
 		@Override
 		public String toString() {
@@ -34,6 +34,8 @@ public class PhaseChange extends IceAbility {
 				return "Freeze";
 			} else if (this == MELT) {
 				return "Melt";
+			} else if (this == CUSTOM) {
+				return "Custom";
 			}
 			return "";
 		}
@@ -57,9 +59,9 @@ public class PhaseChange extends IceAbility {
 	private long meltCooldown = 7000;
 	private int meltRadius;
 	private int meltMaxRadius = 7;
-	private int meltDelay = 50;
+	private double meltSpeed = 8;
+	private double meltTicks = 0;
 	private boolean allowMeltFlow;
-	private long lastBlockTime = 0;
 	private CopyOnWriteArrayList<Block> melted_blocks = new CopyOnWriteArrayList<>();
 
 	public PhaseChange(Player player, PhaseChangeType type) {
@@ -99,6 +101,7 @@ public class PhaseChange extends IceAbility {
 				active_types.remove(PhaseChangeType.MELT);
 				bPlayer.addCooldown("PhaseChangeMelt", meltCooldown);
 				meltRadius = 1;
+				meltTicks = 0;
 				return;
 			}
 			if (meltRadius >= meltMaxRadius) {
@@ -107,6 +110,20 @@ public class PhaseChange extends IceAbility {
 			Location l = GeneralMethods.getTargetedLocation(player, sourceRange);
 			resetMeltLocation(l);
 			meltArea(l, meltRadius);
+		}
+		
+		if (active_types.contains(PhaseChangeType.CUSTOM)) {
+			for (TempBlock tb : blocks) {
+				if (tb.getLocation().getWorld() != player.getWorld()) {
+					tb.revertBlock();
+					blocks.remove(tb);
+					PLAYER_BY_BLOCK.remove(tb);
+				} else if (tb.getLocation().distanceSquared(player.getLocation()) > (controlRadius * controlRadius)) {
+					tb.revertBlock();
+					blocks.remove(tb);
+					PLAYER_BY_BLOCK.remove(tb);
+				}
+			}
 		}
 
 		if (active_types.isEmpty()) {
@@ -131,20 +148,32 @@ public class PhaseChange extends IceAbility {
 			night = (int) Math.round(getNightFactor());
 		}
 		sourceRange = night * getConfig().getInt("Abilities.Water.PhaseChange.SourceRange");
+		
+		switch (type) {
+			case FREEZE:
+				depth = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
+				controlRadius = night * getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
+				freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
+				freezeRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
 
-		if (type == PhaseChangeType.FREEZE) {
-			depth = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
-			controlRadius = night * getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
-			freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
-			freezeRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
-
-			freezeArea(GeneralMethods.getTargetedLocation(player, sourceRange));
-		} else if (type == PhaseChangeType.MELT) {
-			meltRadius = 1;
-			meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
-			meltDelay = getConfig().getInt("Abilities.Water.PhaseChange.Melt.Delay") / night;
-			meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
-			allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
+				freezeArea(GeneralMethods.getTargetedLocation(player, sourceRange));
+			case MELT:
+				meltRadius = 1;
+				meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
+				meltSpeed = getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Speed") * night;
+				meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
+				allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
+			case CUSTOM:
+				depth = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Depth");
+				controlRadius = night * getConfig().getDouble("Abilities.Water.PhaseChange.Freeze.ControlRadius");
+				freezeCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Freeze.Cooldown");
+				freezeRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Freeze.Radius");
+				
+				meltRadius = 1;
+				meltCooldown = getConfig().getLong("Abilities.Water.PhaseChange.Melt.Cooldown");
+				meltSpeed = getConfig().getDouble("Abilities.Water.PhaseChange.Melt.Speed") * night;
+				meltMaxRadius = night * getConfig().getInt("Abilities.Water.PhaseChange.Melt.Radius");
+				allowMeltFlow = getConfig().getBoolean("Abilities.Water.PhaseChange.Melt.AllowFlow");
 		}
 	}
 
@@ -290,31 +319,32 @@ public class PhaseChange extends IceAbility {
 	}
 
 	public void meltArea(Location center, int radius) {
-		if (System.currentTimeMillis() < lastBlockTime + meltDelay) {
-			return;
-		}
-
 		List<Block> ice = new ArrayList<Block>();
 		for (Location l : GeneralMethods.getCircle(center, radius, 3, true, true, 0)) {
 			if (isIce(l.getBlock()) || isSnow(l.getBlock())) {
 				ice.add(l.getBlock());
 			}
 		}
+		
+		meltTicks += meltSpeed / 20;
 
-		lastBlockTime = System.currentTimeMillis();
-		if (ice.size() == 0) {
-			meltRadius++;
-			return;
+		for (int i = 0; i < meltTicks % (meltSpeed); i++) {
+			if (ice.size() == 0) {
+				meltRadius++;
+				return;
+			}
+			
+			Block b = ice.get(r.nextInt(ice.size()));
+			melt(b);
+			ice.remove(b);
 		}
-
-		Block b = ice.get(r.nextInt(ice.size()));
-		melt(b);
 	}
 
 	public void meltArea(Location center) {
 		meltArea(center, meltRadius);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void melt(Block b) {
 		if (b.getWorld() != player.getWorld()) {
 			return;
@@ -357,14 +387,30 @@ public class PhaseChange extends IceAbility {
 			if (PLAYER_BY_BLOCK.containsKey(tb)) {
 				thaw(tb);
 			}
+			
+			if (b.getType() == Material.SNOW) {
+				if (b.getData() == 0) {
+					tb.revertBlock();
+					new TempBlock(b, Material.AIR, (byte) 0).setRevertTime(120 * 1000L);
+				} else {
+					byte data = b.getData();
+					tb.revertBlock();
+					new TempBlock(b, Material.SNOW, (byte) (data - 1)).setRevertTime(120 * 1000L);
+				}
+			}
 		} else if (isWater(b)) {
 			//Figure out what to do here also
 		} else if (isIce(b)) {
 			Material m = allowMeltFlow ? Material.WATER : Material.STATIONARY_WATER;
 			b.setType(m);
 			melted_blocks.add(b);
-		} else if (isSnow(b)) {
-			new TempBlock(b, Material.AIR, (byte) 0);
+		} else if (b.getType() == Material.SNOW) {
+			if (b.getData() == 0) {
+				new TempBlock(b, Material.AIR, (byte) 0).setRevertTime(120 * 1000L);
+			} else {
+				new TempBlock(b, Material.SNOW, (byte) (b.getData() - 1)).setRevertTime(120 * 1000L);
+			}
+			
 			melted_blocks.add(b);
 		}
 		playWaterbendingSound(b.getLocation());

@@ -17,13 +17,13 @@
 
   <dependencies>
     <!-- Spigot API -->
-    <dependency>
+    <!-- <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
       <version>LATEST</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/spigot-1.10.2.jar</systemPath>
-    </dependency>
+      <systemPath>${project.basedir}/lib/spigot-1.12-R0.1-SNAPSHOT.jar</systemPath>
+    </dependency> -->
     <!-- Factions -->
     <dependency>
       <groupId>com.massivecraft</groupId>
@@ -47,14 +47,6 @@
       <version>LATEST</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/LWC.jar</systemPath>
-    </dependency>
-    <!-- MassiveCore -->
-    <dependency>
-      <groupId>com.massivecraft</groupId>
-      <artifactId>massivecore</artifactId>
-      <version>LATEST</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/MassiveCore 2.7.5.jar</systemPath>
     </dependency>
     <!-- MassiveCore -->
     <dependency>
@@ -143,6 +135,13 @@
       <version>LATEST</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/GLib.jar</systemPath>
+    </dependency>
+    <dependency>
+    	<groupId>org.spigotmc</groupId>
+    	<artifactId>Spigot-Server</artifactId>
+    	<version>LATEST</version>
+    	<scope>system</scope>
+    	<systemPath>${project.basedir}/lib/spigot-1.12-R0.1-SNAPSHOT.jar</systemPath>
     </dependency>
   </dependencies>
 

@@ -57,7 +57,6 @@ public class EarthGrab extends EarthAbility {
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthGrab.Cooldown");
 			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height");
-
 		}
 
 		if (player.isSneaking()) {
@@ -81,8 +80,8 @@ public class EarthGrab extends EarthAbility {
 			Location testLoc, testloc2;
 			double factor = 3;
 			double factor2 = 4;
-			int height1 = 3;
-			int height2 = 2;
+			int height1 = (int) height / 2;
+			int height2 = (int) height / 3;
 
 			for (double angle = 0; angle <= 360; angle += 20) {
 				testLoc = loc1.clone().add(factor * Math.cos(Math.toRadians(angle)), 1, factor * Math.sin(Math.toRadians(angle)));
@@ -127,8 +126,8 @@ public class EarthGrab extends EarthAbility {
 			Location testLoc, testLoc2;
 			double factor = 3;
 			double factor2 = 4;
-			int height1 = 3;
-			int height2 = 2;
+			int height1 = (int) height / 2;
+			int height2 = (int) height / 3;
 
 			for (double angle = 0; angle <= 360; angle += 20) {
 				testLoc = loc1.clone().add(factor * Math.cos(Math.toRadians(angle)), 1, factor * Math.sin(Math.toRadians(angle)));

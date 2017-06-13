@@ -1,6 +1,9 @@
 package com.projectkorra.projectkorra.earthbending;
 
+import java.util.List;
+
 import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -18,6 +21,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.EarthAbility;
+import com.projectkorra.projectkorra.command.Commands;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempArmor;
 import com.projectkorra.projectkorra.util.TempBlock;
@@ -42,7 +46,7 @@ public class EarthArmor extends EarthAbility {
 
 	public EarthArmor(Player player) {
 		super(player);
-		if (hasAbility(player, EarthArmor.class) || !bPlayer.canBend(this)) {
+		if (hasAbility(player, EarthArmor.class) || !canBend()) {
 			return;
 		}
 
@@ -219,7 +223,7 @@ public class EarthArmor extends EarthAbility {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+		if (!canBend()) {
 			remove();
 			return;
 		}
@@ -418,6 +422,32 @@ public class EarthArmor extends EarthAbility {
 
 		bPlayer.addCooldown(this);
 		remove();
+	}
+	
+	private boolean canBend() {
+
+		List<String> disabledWorlds = getConfig().getStringList("Properties.DisabledWorlds");
+		Location playerLoc = player.getLocation();
+
+		if (!player.isOnline() || player.isDead()) {
+			return false;
+		} else if (!bPlayer.canBind(this)) { 
+			return false; 
+		} else if (this.getPlayer() != null && this.getLocation() != null && !this.getLocation().getWorld().equals(player.getWorld())) {
+			return false;
+		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
+			return false;
+		} else if (Commands.isToggledForAll || !bPlayer.isToggled() || !bPlayer.isElementToggled(this.getElement())) {
+			return false;
+		} else if (player.getGameMode() == GameMode.SPECTATOR) {
+			return false;
+		}
+
+		if (GeneralMethods.isRegionProtectedFromBuild(player, this.getName(), playerLoc)) {
+			return false;
+		}
+		
+		return true;
 	}
 
 	@Override

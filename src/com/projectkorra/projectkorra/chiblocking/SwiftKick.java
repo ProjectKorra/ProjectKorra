@@ -6,13 +6,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.chiblocking.passive.ChiPassive;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 public class SwiftKick extends ChiAbility {
 
-	private int damage;
+	@Attribute(Attribute.DAMAGE)
+	private double damage;
 	private int blockChance;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private Entity target;
 
@@ -21,7 +24,7 @@ public class SwiftKick extends ChiAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-		this.damage = getConfig().getInt("Abilities.Chi.SwiftKick.Damage");
+		this.damage = getConfig().getDouble("Abilities.Chi.SwiftKick.Damage");
 		this.blockChance = getConfig().getInt("Abilities.Chi.SwiftKick.ChiBlockChance");
 		this.cooldown = getConfig().getInt("Abilities.Chi.SwiftKick.Cooldown");
 		this.target = targetentity;
@@ -71,11 +74,11 @@ public class SwiftKick extends ChiAbility {
 		return false;
 	}
 
-	public int getDamage() {
+	public double getDamage() {
 		return damage;
 	}
 
-	public void setDamage(int damage) {
+	public void setDamage(double damage) {
 		this.damage = damage;
 	}
 

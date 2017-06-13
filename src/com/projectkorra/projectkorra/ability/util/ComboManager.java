@@ -15,22 +15,22 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
-import com.projectkorra.projectkorra.airbending.combo.AirCombo.AirStream;
-import com.projectkorra.projectkorra.airbending.combo.AirCombo.AirSweep;
-import com.projectkorra.projectkorra.airbending.combo.AirCombo.Twister;
-import com.projectkorra.projectkorra.chiblocking.combo.ChiCombo.Immobilize;
+import com.projectkorra.projectkorra.airbending.combo.AirStream;
+import com.projectkorra.projectkorra.airbending.combo.AirSweep;
+import com.projectkorra.projectkorra.airbending.combo.Twister;
+import com.projectkorra.projectkorra.chiblocking.combo.Immobilize;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireKick;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireSpin;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireWheel;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo.JetBlast;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo.JetBlaze;
+import com.projectkorra.projectkorra.firebending.combo.FireKick;
+import com.projectkorra.projectkorra.firebending.combo.FireSpin;
+import com.projectkorra.projectkorra.firebending.combo.FireWheel;
+import com.projectkorra.projectkorra.firebending.combo.JetBlast;
+import com.projectkorra.projectkorra.firebending.combo.JetBlaze;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.ReflectionHandler;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBullet;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBulletLeftClick;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBulletRightClick;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceWave;
+import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
+import com.projectkorra.projectkorra.waterbending.combo.IceBullet.IceBulletLeftClick;
+import com.projectkorra.projectkorra.waterbending.combo.IceBullet.IceBulletRightClick;
+import com.projectkorra.projectkorra.waterbending.combo.IceWave;
 
 public class ComboManager {
 
@@ -66,7 +66,7 @@ public class ComboManager {
 			fireSpin.add(new AbilityInformation("FireShield", ClickType.SHIFT_UP));
 			COMBO_ABILITIES.put("FireSpin", new ComboAbilityInfo("FireSpin", fireSpin, FireSpin.class));
 			DESCRIPTIONS.put("FireSpin", ConfigManager.languageConfig.get().getString("Abilities.Fire.Combo.FireSpin.Description"));
-			INSTRUCTIONS.put("FireSpin", "FireBlast > FireBlast > FireShield > (Tap Shift).");
+			INSTRUCTIONS.put("FireSpin", "FireBlast > FireBlast > FireShield (Left Click) > FireShield (Tap Shift).");
 		}
 
 		if (ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.FireCombo.JetBlast.Enabled")) {

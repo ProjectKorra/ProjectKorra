@@ -12,6 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.World;
 
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
@@ -69,6 +70,7 @@ public class LavaFlow extends LavaAbility {
 	private ArrayList<TempBlock> affectedBlocks;
 	private ArrayList<BukkitRunnable> tasks;
 	private Material revertMaterial;
+	private World world;
 
 	/**
 	 * Creates a new LavaFlow ability and initializes all of the variables and
@@ -85,6 +87,7 @@ public class LavaFlow extends LavaAbility {
 			return;
 		}
 
+		this.world = player.getWorld();
 		this.time = System.currentTimeMillis();
 		this.type = type;
 		this.shiftCounter = 0;
@@ -125,7 +128,7 @@ public class LavaFlow extends LavaAbility {
 			clickLandCooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown");
 			shiftPlatformRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius");
 			clickLavaRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius");
-			shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.LavaFlow.Earth.ShiftRadius");
+			shiftMaxRadius = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftRadius");
 		}
 
 		if (type == AbilityType.SHIFT) {
@@ -174,7 +177,7 @@ public class LavaFlow extends LavaAbility {
 			return;
 		} else if (removing) {
 			return;
-		} else if (player.isDead() || !player.isOnline()) {
+		} else if (player.isDead() || !player.isOnline() || player.getWorld() != this.world) {
 			removeSlowly();
 			return;
 		}
@@ -400,13 +403,22 @@ public class LavaFlow extends LavaAbility {
 				} else
 					return;
 			}
-			TempBlock tblock = new TempBlock(block, Material.LAVA, (byte) 0);
-			TEMP_LAVA_BLOCKS.put(block, tblock);
-			TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.put(tblock, block);
-			affectedBlocks.add(tblock);
+			TempBlock tblock;
+			if(allowNaturalFlow) {
+				tblock = new TempBlock(block, Material.LAVA, (byte) 0);
+			}
+			else {
+				tblock = new TempBlock(block, Material.STATIONARY_LAVA, (byte) 0);
+			}
+			
+			if(tblock!=null) {
+				TEMP_LAVA_BLOCKS.put(block, tblock);
+				TEMP_LAVA_BLOCKS_BY_TEMPBLOCK.put(tblock, block);
+				affectedBlocks.add(tblock);
 
-			if (allowNaturalFlow) {
-				TempBlock.removeBlock(block);
+				if (allowNaturalFlow) {
+					TempBlock.removeBlock(block);
+				}
 			}
 		}
 	}

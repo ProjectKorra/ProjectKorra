@@ -157,7 +157,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playCombustionSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.ENTITY_FIREWORK_BLAST, 1, -1);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound")), 1, -1);
 		}
 	}
 
@@ -167,7 +167,7 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playFirebendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.BLOCK_FIRE_AMBIENT, 1, 10);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Fire.FireSound")), 1, 10);
 		}
 	}
 

@@ -230,3 +230,11 @@ test/server/*.properties
 test/server/plugins/*/
 target/
 /dependency-reduced-pom.xml
+
+#################
+## IntelliJ Idea
+#################
+
+.idea/
+classes/
+projectkorra.iml
