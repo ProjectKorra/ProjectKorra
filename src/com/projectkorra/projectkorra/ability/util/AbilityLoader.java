@@ -20,7 +20,6 @@ import com.projectkorra.projectkorra.event.AbilityLoadEvent;
 
 import sun.reflect.ReflectionFactory;
 
-@SuppressWarnings("restriction")
 public class AbilityLoader<T> {
 	
 	private final Plugin plugin;

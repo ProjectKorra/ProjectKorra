@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.configuration;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -215,6 +214,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Bind.NoElement", "You are not a {element}!");
 			config.addDefault("Commands.Bind.NoElementAE", "You are not an {element}!");
 			config.addDefault("Commands.Bind.NoSubElement", "You don't have access to {subelement}!");
+			config.addDefault("Commands.Bind.Unbindable", "{ability} cannot be bound!");
 
 			config.addDefault("Commands.Add.Description", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
 			config.addDefault("Commands.Add.SuccessfullyAddedCFW", "You are now also a {element}.");
@@ -1250,25 +1250,31 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Range", 7.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Cooldown", 6000);
+			config.addDefault("Abilities.Fire.FireCombo.FireKick.Speed", 1);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Range", 7);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Knockback", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Cooldown", 5000);
+			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Speed", 0.3);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Range", 20.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Damage", 4.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Speed", 0.55);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.FireTicks", 2.5);
+			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Height", 2);
+			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Radius", 1.0);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Speed", 1.2);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Cooldown", 6000);
+			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Duration", 5000);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Speed", 1.1);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Damage", 4);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.FireTicks", 2.5);
+			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Duration", 5000);
 
 			config.addDefault("Abilities.Chi.Passive.Acrobatics.Enabled", true);
 			config.addDefault("Abilities.Chi.Passive.Acrobatics.FallReductionFactor", 0.5);

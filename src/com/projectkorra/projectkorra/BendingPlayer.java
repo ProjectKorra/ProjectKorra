@@ -121,7 +121,6 @@ public class BendingPlayer {
 				return;
 			}
 			
-			int slot = player.getInventory().getHeldItemSlot() + 1;
 			String abilityName = event.getAbility();
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
@@ -671,13 +670,13 @@ public class BendingPlayer {
 		if (Bukkit.getPlayer(uuid) == null) {
 			return;
 		}
+		
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
 
 			Player player = event.getPlayer();
-			int slot = player.getInventory().getHeldItemSlot() + 1;
 			String abilityName = event.getAbility();
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 

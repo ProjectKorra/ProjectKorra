@@ -4,101 +4,100 @@ import java.util.ArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
-import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ProjectKorra;
+import com.projectkorra.projectkorra.ability.ComboAbility;
+import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
+import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireJet;
-import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
-import com.projectkorra.projectkorra.util.ClickType;
-import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
-public class JetBlaze extends FireCombo {
+public class JetBlaze extends FireAbility implements ComboAbility {
 
-	private double speed;
-	private long cooldown;
-	private long duration;
-	private ArrayList<LivingEntity> affectedEntities;
-	private double damage;
-	private double fireTicks;
+	private boolean firstTime;
 	private int progressCounter;
+	private long time;
+	private long cooldown;
+	private double damage;
+	private double speed;
+	private double range;
+	private double fireTicks;
+	private Vector direction;
+	private ArrayList<LivingEntity> affectedEntities;
+	private ArrayList<FireComboStream> tasks;
+	private long duration;
 	
 	public JetBlaze(Player player) {
 		super(player);
-		
-		if (bPlayer.isOnCooldown("JetBlaze") && !bPlayer.isAvatarState()) {
-			remove();
+
+		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
-		
-		this.affectedEntities = new ArrayList<LivingEntity>();
-		
+
+		this.firstTime = true;
+		this.time = System.currentTimeMillis();
+		this.affectedEntities = new ArrayList<>();
+		this.tasks = new ArrayList<>();
+
+		this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.Damage");
+		this.duration = getConfig().getLong("Abilities.Fire.FireCombo.JetBlaze.Duration");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.JetBlaze.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Fire.FireCombo.JetBlaze.Duration");
-		this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.Damage");
 		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.FireTicks");
 		
-		bPlayer.addCooldown(this);
+		if (bPlayer.isAvatarState()) {
+			this.cooldown = 0;
+			this.damage = AvatarState.getValue(damage);
+			this.range = AvatarState.getValue(range);
+		}
 		
 		start();
 	}
 
 	@Override
 	public Object createNewComboInstance(Player player) {
-		return new JetBlaze(player);
+		return null;
 	}
 
 	@Override
 	public ArrayList<AbilityInformation> getCombination() {
-		ArrayList<AbilityInformation> jetBlaze = new ArrayList<>();
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_DOWN));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.SHIFT_UP));
-		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_DOWN));
-		jetBlaze.add(new AbilityInformation("Blaze", ClickType.SHIFT_UP));
-		jetBlaze.add(new AbilityInformation("FireJet", ClickType.LEFT_CLICK));
-		return jetBlaze;
+		return null;
 	}
 
 	@Override
 	public void progress() {
-		if (System.currentTimeMillis() - getStartTime() > duration) {
+		if (firstTime) {
+			if (bPlayer.isOnCooldown("JetBlaze") && !bPlayer.isAvatarState()) {
+				remove();
+				return;
+			}
+			bPlayer.addCooldown("JetBlaze", cooldown);
+			firstTime = false;
+		} else if (System.currentTimeMillis() - time > duration) {
 			remove();
 			return;
-		}
-		
-		FireJet fireJet = getAbility(player, FireJet.class);
-		if (fireJet != null) {
-			fireJet.setSpeed(speed);
-			
-			ParticleEffect.SMOKE_LARGE.display(1.0F, 1.0F, 1.0F, 1.0F, 8, player.getLocation(), 80);
-			ParticleEffect.FLAME.display(1.0F, 1.0F, 1.0F, 1.0F, 8, player.getLocation(), 80);
-			
-			for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), 2)) {
-				if (entity instanceof LivingEntity && !entity.equals(player)) {
-					if (!affectedEntities.contains(entity)) {
-						affectedEntities.add((LivingEntity) entity);
-						DamageHandler.damageEntity(entity, damage, this);
-						entity.setFireTicks((int) (fireTicks * 20));
-						new FireDamageTimer(entity, player);
-					}
-				}
-			}
-			
+		} else if (hasAbility(player, FireJet.class)) {
+			direction = player.getVelocity().clone().multiply(-1);
+			FireJet fj = getAbility(player, FireJet.class);
+			fj.setSpeed(speed);
+
+			FireComboStream fs = new FireComboStream(player, this, direction, player.getLocation(), 5, 1);
+			fs.setDensity(8);
+			fs.setSpread(1.0F);
+			fs.setUseNewParticles(true);
+			fs.setCollisionRadius(3);
+			fs.setParticleEffect(ParticleEffect.LARGE_SMOKE);
+			fs.setDamage(damage);
+			fs.setFireTicks(fireTicks);
+			fs.runTaskTimer(ProjectKorra.plugin, 0, 1L);
+			tasks.add(fs);
 			if (progressCounter % 4 == 0) {
 				player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0F);
 			}
-			
-			progressCounter++;
-
-		} else {
-			remove();
-			return;
 		}
 	}
 
@@ -114,7 +113,7 @@ public class JetBlaze extends FireCombo {
 
 	@Override
 	public String getName() {
-		return "JetBlast";
+		return "JetBlaze";
 	}
 
 	@Override
@@ -122,4 +121,12 @@ public class JetBlaze extends FireCombo {
 		return player.getLocation();
 	}
 
+	@Override
+	public boolean isHarmlessAbility() {
+		return false;
+	}
+	
+	public ArrayList<LivingEntity> getAffectedEntities() {
+		return affectedEntities;
+	}
 }
