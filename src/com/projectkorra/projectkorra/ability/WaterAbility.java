@@ -223,7 +223,7 @@ public abstract class WaterAbility extends ElementalAbility {
 
 		for (double i = 0; i <= range; i++) {
 			Block block = location.clone().add(vector.clone().multiply(i)).getBlock();
-			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
+			if ((!isTransparent(player, block) && !isIce(block) && !isPlant(block) && !isSnow(block)) || GeneralMethods.isRegionProtectedFromBuild(player, "WaterManipulation", location)) {
 				continue;
 			} else if (isWaterbendable(player, null, block) && (!isPlant(block) || plantbending)) {
 				if (TempBlock.isTempBlock(block) && !isBendableWaterTempBlock(block)) {
@@ -301,19 +301,19 @@ public abstract class WaterAbility extends ElementalAbility {
 
 	public static void playIcebendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 10);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Water.IceSound")), 2, 10);
 		}
 	}
 
 	public static void playPlantbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.BLOCK_GRASS_STEP, 1, 10);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Water.PlantSound")), 1, 10);
 		}
 	}
 
 	public static void playWaterbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.BLOCK_WATER_AMBIENT, 1, 10);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Water.WaterSound")), 1, 10);
 		}
 	}
 

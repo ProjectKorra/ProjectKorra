@@ -11,6 +11,7 @@ import org.bukkit.util.Vector;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 
 public class AirBurst extends AirAbility {
 
@@ -18,9 +19,12 @@ public class AirBurst extends AirAbility {
 	private boolean isFallBurst;
 	private int sneakParticles;
 	private float playerFallDistance;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
 	private double fallThreshold;
+	@Attribute(Attribute.POWER)
 	private double pushFactor;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private double blastAngleTheta;
 	private double blastAnglePhi;

@@ -179,6 +179,7 @@ public class SurgeWall extends WaterAbility {
 
 				if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
 					new PlantRegrowth(player, sourceBlock);
+					sourceBlock.setType(Material.AIR);
 				}
 				addWater(sourceBlock);
 			}

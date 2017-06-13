@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.airbending.AirBlast;
-import com.projectkorra.projectkorra.airbending.AirBubble;
+import com.projectkorra.projectkorra.airbending.AirBurst;
 import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirShield;
 import com.projectkorra.projectkorra.airbending.AirSpout;
@@ -12,8 +12,8 @@ import com.projectkorra.projectkorra.airbending.AirSuction;
 import com.projectkorra.projectkorra.airbending.AirSwipe;
 import com.projectkorra.projectkorra.airbending.Suffocate;
 import com.projectkorra.projectkorra.airbending.Tornado;
-import com.projectkorra.projectkorra.airbending.combo.AirCombo.AirStream;
-import com.projectkorra.projectkorra.airbending.combo.AirCombo.AirSweep;
+import com.projectkorra.projectkorra.airbending.combo.AirStream;
+import com.projectkorra.projectkorra.airbending.combo.AirSweep;
 import com.projectkorra.projectkorra.airbending.flight.AirFlight;
 import com.projectkorra.projectkorra.earthbending.Catapult;
 import com.projectkorra.projectkorra.earthbending.Collapse;
@@ -28,29 +28,31 @@ import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
-import com.projectkorra.projectkorra.firebending.combustion.Combustion;
-import com.projectkorra.projectkorra.firebending.lightning.Lightning;
+import com.projectkorra.projectkorra.firebending.FireBurst;
 import com.projectkorra.projectkorra.firebending.FireJet;
+import com.projectkorra.projectkorra.firebending.FireManipulation;
 import com.projectkorra.projectkorra.firebending.FireShield;
 import com.projectkorra.projectkorra.firebending.WallOfFire;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireKick;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireSpin;
-import com.projectkorra.projectkorra.firebending.combo.FireCombo.FireWheel;
+import com.projectkorra.projectkorra.firebending.combo.FireKick;
+import com.projectkorra.projectkorra.firebending.combo.FireSpin;
+import com.projectkorra.projectkorra.firebending.combo.FireWheel;
+import com.projectkorra.projectkorra.firebending.combustion.Combustion;
+import com.projectkorra.projectkorra.firebending.lightning.Lightning;
 import com.projectkorra.projectkorra.waterbending.OctopusForm;
 import com.projectkorra.projectkorra.waterbending.SurgeWall;
 import com.projectkorra.projectkorra.waterbending.SurgeWave;
 import com.projectkorra.projectkorra.waterbending.Torrent;
 import com.projectkorra.projectkorra.waterbending.TorrentWave;
 import com.projectkorra.projectkorra.waterbending.WaterBubble;
-import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceBullet;
-import com.projectkorra.projectkorra.waterbending.combo.WaterCombo.IceWave;
-import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
-import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
-import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
 import com.projectkorra.projectkorra.waterbending.WaterManipulation;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.WaterSpoutWave;
+import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
+import com.projectkorra.projectkorra.waterbending.combo.IceBullet;
+import com.projectkorra.projectkorra.waterbending.combo.IceWave;
+import com.projectkorra.projectkorra.waterbending.healing.HealingWaters;
+import com.projectkorra.projectkorra.waterbending.ice.IceBlast;
+import com.projectkorra.projectkorra.waterbending.ice.IceSpikeBlast;
 
 /**
  * CollisionInitializer is used to create the default Collisions for a given
@@ -78,7 +80,7 @@ public class CollisionInitializer {
 	@SuppressWarnings("unused")
 	public void initializeDefaultCollisions() {
 		CoreAbility airBlast = CoreAbility.getAbility(AirBlast.class);
-		CoreAbility airBubble = CoreAbility.getAbility(AirBubble.class);
+		CoreAbility airBurst = CoreAbility.getAbility(AirBurst.class);
 		CoreAbility airFlight = CoreAbility.getAbility(AirFlight.class);
 		CoreAbility airScooter = CoreAbility.getAbility(AirScooter.class);
 		CoreAbility airShield = CoreAbility.getAbility(AirShield.class);
@@ -105,11 +107,13 @@ public class CollisionInitializer {
 		CoreAbility combustion = CoreAbility.getAbility(Combustion.class);
 		CoreAbility fireBlast = CoreAbility.getAbility(FireBlast.class);
 		CoreAbility fireBlastCharged = CoreAbility.getAbility(FireBlastCharged.class);
+		CoreAbility fireBurst = CoreAbility.getAbility(FireBurst.class);
 		CoreAbility fireJet = CoreAbility.getAbility(FireJet.class);
 		CoreAbility fireKick = CoreAbility.getAbility(FireKick.class);
 		CoreAbility fireSpin = CoreAbility.getAbility(FireSpin.class);
 		CoreAbility fireWheel = CoreAbility.getAbility(FireWheel.class);
 		CoreAbility fireShield = CoreAbility.getAbility(FireShield.class);
+		CoreAbility fireManipulation = CoreAbility.getAbility(FireManipulation.class);
 		CoreAbility lightning = CoreAbility.getAbility(Lightning.class);
 		CoreAbility wallOfFire = CoreAbility.getAbility(WallOfFire.class);
 
@@ -129,7 +133,7 @@ public class CollisionInitializer {
 		CoreAbility waterSpout = CoreAbility.getAbility(WaterSpout.class);
 		CoreAbility waterSpoutWave = CoreAbility.getAbility(WaterSpoutWave.class);
 
-		CoreAbility[] smallAbils = { airSwipe, earthBlast, waterManipulation, fireBlast, combustion, blazeArc };
+		CoreAbility[] smallAbils = { airBlast, airSwipe, earthBlast, waterManipulation, fireBlast, combustion, blazeArc };
 		CoreAbility[] largeAbils = { earthSmash, airShield, fireBlastCharged, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
 		CoreAbility[] comboAbils = { fireKick, fireSpin, fireWheel, airSweep, iceBullet };
 		CoreAbility[] removeSpoutAbils = { airSwipe, earthBlast, waterManipulation, fireBlast, fireBlastCharged, earthSmash, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
@@ -157,11 +161,21 @@ public class CollisionInitializer {
 			collisionManager.addCollision(new Collision(airShield, comboAbil, false, true));
 		}
 
+		collisionManager.addCollision(new Collision(fireShield, airBlast, false, true));
+		collisionManager.addCollision(new Collision(fireShield, airSuction, false, true));
 		collisionManager.addCollision(new Collision(fireShield, fireBlast, false, true));
 		collisionManager.addCollision(new Collision(fireShield, fireBlastCharged, false, true));
 		collisionManager.addCollision(new Collision(fireShield, waterManipulation, false, true));
 		collisionManager.addCollision(new Collision(fireShield, earthBlast, false, true));
 		collisionManager.addCollision(new Collision(fireShield, airSweep, false, true));
+		
+		collisionManager.addCollision(new Collision(fireManipulation, airBlast, false, true));
+		collisionManager.addCollision(new Collision(fireManipulation, airSuction, false, true));
+		collisionManager.addCollision(new Collision(fireManipulation, fireBlast, false, true));
+		collisionManager.addCollision(new Collision(fireManipulation, fireBlastCharged, false, true));
+		collisionManager.addCollision(new Collision(fireManipulation, waterManipulation, false, true));
+		collisionManager.addCollision(new Collision(fireManipulation, earthBlast, false, true));
+		collisionManager.addCollision(new Collision(fireManipulation, airSweep, false, true));
 	}
 
 	/**

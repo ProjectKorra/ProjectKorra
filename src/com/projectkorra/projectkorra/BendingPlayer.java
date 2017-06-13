@@ -116,12 +116,16 @@ public class BendingPlayer {
 			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
 
 			Player player = event.getPlayer();
-			int slot = player.getInventory().getHeldItemSlot() + 1;
+			
+			if (player == null) {
+				return;
+			}
+			
 			String abilityName = event.getAbility();
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 			if (bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
-				GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
+				GeneralMethods.displayMovePreview(player);
 			}
 		}
 	}
@@ -214,10 +218,6 @@ public class BendingPlayer {
 		} else if (ability instanceof FireAbility && FireAbility.isSolarEclipse(player.getWorld())) {
 			return false;
 		} else if (ability instanceof WaterAbility && WaterAbility.isLunarEclipse(player.getWorld())) {
-			return false;
-		}
-
-		if (!ignoreBinds && !canBind(ability)) {
 			return false;
 		}
 		return true;
@@ -670,18 +670,18 @@ public class BendingPlayer {
 		if (Bukkit.getPlayer(uuid) == null) {
 			return;
 		}
+		
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			this.cooldowns.remove(ability);
 
 			Player player = event.getPlayer();
-			int slot = player.getInventory().getHeldItemSlot() + 1;
 			String abilityName = event.getAbility();
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 			if (bPlayer.getBoundAbility() != null && bPlayer.getBoundAbility().equals(CoreAbility.getAbility(abilityName))) {
-				GeneralMethods.displayMovePreview(player, CoreAbility.getAbility(bPlayer.getAbilities().get(slot)));
+				GeneralMethods.displayMovePreview(player);
 			}
 		}
 	}

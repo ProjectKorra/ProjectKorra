@@ -47,7 +47,7 @@ public class WaterSpout extends WaterAbility {
 			return;
 		}
 
-		this.canBendOnPackedIce = getConfig().getBoolean("Properties.Water.CanBendPackedIce");
+		this.canBendOnPackedIce = getConfig().getStringList("Properties.Water.IceBlocks").contains(Material.PACKED_ICE.toString());
 		this.useParticles = getConfig().getBoolean("Abilities.Water.WaterSpout.Particles");
 		this.useBlockSpiral = getConfig().getBoolean("Abilities.Water.WaterSpout.BlockSpiral");
 		this.height = getConfig().getDouble("Abilities.Water.WaterSpout.Height");

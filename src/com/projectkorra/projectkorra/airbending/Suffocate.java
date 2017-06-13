@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AirAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
 /**
@@ -36,10 +37,15 @@ public class Suffocate extends AirAbility {
 	private boolean requireConstantAim;
 	private boolean canSuffocateUndead;
 	private int particleCount;
+	@Attribute(Attribute.CHARGE_DURATION)
 	private long chargeTime;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
+	@Attribute(Attribute.RANGE)
 	private double range;
+	@Attribute(Attribute.RADIUS)
 	private double radius;
+	@Attribute(Attribute.DAMAGE)
 	private double damage;
 	private double damageDelay;
 	private double damageRepeat;

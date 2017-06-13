@@ -2,6 +2,7 @@ package com.projectkorra.projectkorra.avatar;
 
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
+import com.projectkorra.projectkorra.attribute.Attribute;
 import com.projectkorra.projectkorra.util.Flight;
 
 import org.bukkit.Bukkit;
@@ -26,7 +27,9 @@ public class AvatarState extends AvatarAbility {
 	private int speedPower;
 	private int resistancePower;
 	private int fireResistancePower;
+	@Attribute(Attribute.DURATION)
 	private long duration;
+	@Attribute(Attribute.COOLDOWN)
 	private long cooldown;
 	private double factor;
 

@@ -4,7 +4,9 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 
 import org.bukkit.ChatColor;
@@ -28,6 +30,7 @@ public class BindCommand extends PKCommand {
 	private String noElement;
 	private String noElementAE;
 	private String noSubElement;
+	private String unbindable;
 
 	public BindCommand() {
 		super("bind", "/bending bind <Ability> [Slot]", ConfigManager.languageConfig.get().getString("Commands.Bind.Description"), new String[] { "bind", "b" });
@@ -39,6 +42,7 @@ public class BindCommand extends PKCommand {
 		this.noElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElement");
 		this.noElementAE = ConfigManager.languageConfig.get().getString("Commands.Bind.NoElementAE");
 		this.noSubElement = ConfigManager.languageConfig.get().getString("Commands.Bind.NoSubElement");
+		this.unbindable = ConfigManager.languageConfig.get().getString("Commands.Bind.Unbindable");
 	}
 
 	@Override
@@ -51,7 +55,10 @@ public class BindCommand extends PKCommand {
 		if (coreAbil == null || coreAbil.isHiddenAbility() || !coreAbil.isEnabled()) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + abilityDoesntExist.replace("{ability}", args.get(0)));
 			return;
-		}
+		} else if (coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility) {
+			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + unbindable.replace("{ability}", args.get(0)));
+			return;
+		} 
 
 		// bending bind [Ability]
 		if (args.size() == 1) {

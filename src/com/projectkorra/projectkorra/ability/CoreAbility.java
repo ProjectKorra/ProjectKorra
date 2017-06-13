@@ -30,6 +30,7 @@ import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.util.AbilityLoader;
+import com.projectkorra.projectkorra.ability.util.AddonAbilityLoader;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.CollisionManager;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
@@ -411,6 +412,8 @@ public abstract class CoreAbility implements Ability {
 
 	/**
 	 * Scans a JavaPlugin and registers CoreAbility class files.
+	 * Does not work. Use {@link CoreAbility.registerPluginAbilities}
+	 * instead! 
 	 * 
 	 * @param plugin a JavaPlugin containing CoreAbility class files
 	 * @param packagePrefix a prefix of the package name, used to increase
@@ -418,14 +421,16 @@ public abstract class CoreAbility implements Ability {
 	 * @see #getAbilities()
 	 * @see #getAbility(String)
 	 */
-	public static void registerPluginAbilities(JavaPlugin plugin, String packagePrefix) {
+	@Deprecated
+	public static void legacyRegisterPluginAbilities(JavaPlugin plugin, String packagePrefix) {
 		List<String> disabled = new ArrayList<String>(); //this way multiple classes with the same name only show once
 		if (plugin == null) {
 			return;
 		}
 
-		Class<?> pluginClass = plugin.getClass();
+		Class<? extends JavaPlugin> pluginClass = plugin.getClass();
 		ClassLoader loader = pluginClass.getClassLoader();
+		
 		ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
 
 		try {
@@ -494,13 +499,81 @@ public abstract class CoreAbility implements Ability {
 					}
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 				}
 				catch (Error e) {
+					e.printStackTrace();
 				}
 			}
 		}
 		catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Scans a JavaPlugin and registers CoreAbility class files.
+	 * 
+	 * @param plugin a JavaPlugin containing CoreAbility class files
+	 * @param packageBase a prefix of the package name, used to increase
+	 *            performance
+	 * @see #getAbilities()
+	 * @see #getAbility(String)
+	 */
+	public static void registerPluginAbilities(JavaPlugin plugin, String packageBase) {
+		
+		AbilityLoader<CoreAbility> abilityLoader = new AbilityLoader<CoreAbility>(plugin, packageBase);
+		List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
+		
+		for (CoreAbility coreAbil : loadedAbilities) {
+			if (!coreAbil.isEnabled()) {
+				plugin.getLogger().info(coreAbil.getName() + " is disabled");
+				continue;
+			}
+
+			String name = coreAbil.getName();
+			
+			if (name == null) {
+				plugin.getLogger().warning("Ability " + coreAbil.getClass().getName() + " has no name?");
+				continue;
+			}
+
+			try {
+				ABILITIES_BY_NAME.put(name.toLowerCase(), coreAbil);
+				ABILITIES_BY_CLASS.put(coreAbil.getClass(), coreAbil);
+
+				if (coreAbil instanceof ComboAbility) {
+					ComboAbility combo = (ComboAbility) coreAbil;
+					if (combo.getCombination() != null) {
+						ComboManager.getComboAbilities().put(name, new ComboManager.ComboAbilityInfo(name, combo.getCombination(), combo));
+						ComboManager.getDescriptions().put(name, coreAbil.getDescription());
+						ComboManager.getInstructions().put(name, coreAbil.getInstructions());
+					}
+				}
+
+				if (coreAbil instanceof MultiAbility) {
+					MultiAbility multiAbil = (MultiAbility) coreAbil;
+					MultiAbilityManager.multiAbilityList.add(new MultiAbilityInfo(name, multiAbil.getMultiAbilities()));
+				}
+
+				if (coreAbil instanceof PassiveAbility) {
+					coreAbil.setHiddenAbility(true);
+					PassiveManager.getPassives().put(name, coreAbil);
+					if (!PassiveManager.getPassivesByElement().containsKey(coreAbil.getElement())) {
+						PassiveManager.getPassivesByElement().put(coreAbil.getElement(), new HashSet<String>());
+					}
+					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);
+					if (coreAbil.getElement() instanceof SubElement) {
+						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
+					}
+				}
+			}
+			catch (Exception | Error e) {
+				plugin.getLogger().warning("The ability " + coreAbil.getName() + " was not able to load, if this message shows again please remove it!");
+				e.printStackTrace();
+				ABILITIES_BY_NAME.remove(name.toLowerCase());
+				ABILITIES_BY_CLASS.remove(coreAbil.getClass());
+			}
 		}
 	}
 
@@ -520,7 +593,7 @@ public abstract class CoreAbility implements Ability {
 			return;
 		}
 
-		AbilityLoader<CoreAbility> abilityLoader = new AbilityLoader<CoreAbility>(plugin, path);
+		AddonAbilityLoader<CoreAbility> abilityLoader = new AddonAbilityLoader<CoreAbility>(plugin, path);
 		List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
 
 		for (CoreAbility coreAbil : loadedAbilities) {

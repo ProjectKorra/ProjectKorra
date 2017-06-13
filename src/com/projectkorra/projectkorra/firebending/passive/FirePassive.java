@@ -20,10 +20,6 @@ public class FirePassive {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 			if (bPlayer != null && bPlayer.canBendPassive(Element.FIRE) && bPlayer.canUsePassive(Element.FIRE)) {
-				if (player.getFireTicks() > 80) {
-					player.setFireTicks(80);
-				}
-
 				if (bPlayer != null && !CoreAbility.hasAbility(player, Illumination.class) && !CoreAbility.hasAbility(player, Tremorsense.class) && bPlayer.canBendIgnoreBinds(CoreAbility.getAbility("Illumination")) && ConfigManager.defaultConfig.get().getBoolean("Abilities.Fire.Illumination.Passive")) {
 					if (bPlayer.isIlluminating()) {
 						new Illumination(player);

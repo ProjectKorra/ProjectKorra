@@ -11,6 +11,7 @@ import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip.Whip;
+import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
 import org.bukkit.ChatColor;
@@ -40,7 +41,7 @@ public class WaterArms extends WaterAbility {
 
 	private boolean cooldownLeft;
 	private boolean cooldownRight;
-	private boolean fullSource;
+	private boolean fullSource; // used to determine whip length in WhaterArmsWhip
 	private boolean leftArmConsumed;
 	private boolean rightArmConsumed;
 	private boolean canUsePlantSource;
@@ -91,6 +92,7 @@ public class WaterArms extends WaterAbility {
 			if (player.isSneaking()) {
 				oldArms.prepareCancel();
 			} else {
+				
 				switch (player.getInventory().getHeldItemSlot()) {
 					case 0:
 						if (player.hasPermission("bending.ability.WaterArms.Pull")) {
@@ -147,9 +149,13 @@ public class WaterArms extends WaterAbility {
 	private boolean prepare() {
 		Block sourceBlock = getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource);
 		if (sourceBlock != null) {
+			
 			if (isPlant(sourceBlock) || isSnow(sourceBlock)) {
+				new PlantRegrowth(player, sourceBlock);
+				sourceBlock.setType(Material.AIR);
 				fullSource = false;
-			}
+			} 
+			
 			ParticleEffect.LARGE_SMOKE.display(getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource).getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(player)) {

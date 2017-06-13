@@ -214,19 +214,24 @@ public class ConfigManager {
 			config.addDefault("Commands.Bind.NoElement", "You are not a {element}!");
 			config.addDefault("Commands.Bind.NoElementAE", "You are not an {element}!");
 			config.addDefault("Commands.Bind.NoSubElement", "You don't have access to {subelement}!");
+			config.addDefault("Commands.Bind.Unbindable", "{ability} cannot be bound!");
 
 			config.addDefault("Commands.Add.Description", "This command will allow the user to add an element to the targeted <Player>, or themselves if the target is not specified. This command is typically reserved for server administrators.");
 			config.addDefault("Commands.Add.SuccessfullyAddedCFW", "You are now also a {element}.");
 			config.addDefault("Commands.Add.SuccessfullyAddedAE", "You are now also an {element}.");
+			config.addDefault("Commands.Add.SuccessfullyAddedAll", "You now also have: ");
 			config.addDefault("Commands.Add.PlayerNotFound", "That player could not be found.");
 			config.addDefault("Commands.Add.InvalidElement", "You must specify a valid element.");
 			config.addDefault("Commands.Add.AlreadyHasElement", "You already have that element!");
 			config.addDefault("Commands.Add.AlreadyHasSubElement", "You already have that subelement!");
+			config.addDefault("Commands.Add.AlreadyHasAllElements", "You already have all elements!");
 			config.addDefault("Commands.Add.Other.SuccessfullyAddedCFW", "{target} is now also a {element}.");
 			config.addDefault("Commands.Add.Other.SuccessfullyAddedAE", "{target} is now also an {element}.");
+			config.addDefault("Commands.Add.Other.SuccessfullyAddedAll", "{target} now also has: ");
 			config.addDefault("Commands.Add.Other.AlreadyHasElement", "{target} already has that element!");
 			config.addDefault("Commands.Add.Other.AlreadyHasSubElement", "{target} already has that subelement!");
-
+			config.addDefault("Commands.Add.Other.AlreadyHasAllElements", "{target} already has all elements!");
+			
 			config.addDefault("DeathMessages.Enabled", true);
 			config.addDefault("DeathMessages.Default", "{victim} was slain by {attacker}'s {ability}");
 
@@ -237,8 +242,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBlast.Instructions", "\n" + "(Push) " + "Left click while aiming at an entity to push them back." + "\n" + "(Throw) " + "Tap sneak to select a location and left click in a direction to throw entities away from the selected location.");
 			config.addDefault("Abilities.Air.AirBlast.DeathMessage", "{victim} was flung by {attacker}'s {ability}");
 			config.addDefault("Abilities.Air.AirBlast.HorizontalVelocityDeath", "{victim} experienced kinetic damage by {attacker}'s {ability}");
-			config.addDefault("Abilities.Air.AirBubble.Description", "To use, the bender must hold down sneak. All water around the user in a small bubble will vanish, replacing itself once the user either gets too far away or selects a different ability.");
-			config.addDefault("Abilities.Air.AirBubble.Instructions", "Hold sneak when in range of water to push the water back and create an air bubble.");
 			config.addDefault("Abilities.Air.AirBurst.Description", "AirBurst is one of the most powerful abilities in the airbender's arsenal. It allows the bender to create space between them and whoever is close to them. AirBurst is extremely useful when you're surrounded by mobs, of if you're low in health and need to escape. It can also be useful for confusing your target also.");
 			config.addDefault("Abilities.Air.AirBurst.Instructions", "\n" + "(Sphere) Hold sneak until particles appear and then release shift to create air that expands outwards, pushing entities back. If you fall from great height while you are on this slot, the burst will automatically activate." + "\n" + "(Cone) While charging the move with shift, click to send the burst in a cone only going in one direction.");
 			config.addDefault("Abilities.Air.AirBurst.DeathMessage", "{victim} was thrown down by {attacker}'s {ability}");
@@ -300,7 +303,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Freeze.DeathMessage", "{victim} was frozen by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.WaterArms.Spear.DeathMessage", "{victim} was speared to death by {attacker}'s {ability}");
 			config.addDefault("Abilities.Water.WaterBubble.Description", "WaterBubble is a basic waterbending ability that allows the bender to create air pockets under water. This is increddibly useful for building under water.");
-			config.addDefault("Abilities.Water.WaterBubble.Instructions", "Hold sneak when in range of water to push the water back and create a water bubble.");
+			config.addDefault("Abilities.Water.WaterBubble.Instructions", "Hold sneak when in range of water to push the water back and create a water bubble. Alternatively, you can click to create a bubble for a short amount of time.");
 			config.addDefault("Abilities.Water.WaterManipulation.Description", "WaterManipulation is a fundamental ability for waterbenders. Although it is a basic move, it allows for fast damage due to its rapid fire nature, which is incredibly useful when wanting to finish off low health targets.");
 			config.addDefault("Abilities.Water.WaterManipulation.Instructions", "Tap sneak on a water source and left click to send a water manipulation to the point that you clicked. Additionally, you can left click again to change the direction of this move. This includes other players' WaterManipulations.");
 			config.addDefault("Abilities.Water.WaterManipulation.DeathMessage", "{victim} was taken down by {attacker}'s {ability}");
@@ -341,7 +344,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.MetalClips.DeathMessage", "{victim} was too slow for {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.RaiseEarth.Description", "RaiseEarth is a basic yet useful utility move. It has the potential to allow the earthbender to create great escape routes by raising earth underneath them to propell themselves upwards. It also offers synergy with other moves, such as shockwave. RaiseEarth is often used to block incoming abilities.");
 			config.addDefault("Abilities.Earth.RaiseEarth.Instructions", "\n" + "(Pillar) To raise a pillar of earth, left click on an earthbendable block." + "\n" + "(Wall) To raise a wall of earth, tap sneak on an earthbendable block.");
-			config.addDefault("Abilities.Earth.Shockwave.Description", "Shockwave is one of the most powerful earthbending abilitis. It allows the earthbender to deal mass damage to everyone around them and knock them back. It's extremely useful when fighting more than one target or if you're surrounded by mobs.");
+			config.addDefault("Abilities.Earth.Shockwave.Description", "Shockwave is one of the most powerful earthbending abilities. It allows the earthbender to deal mass damage to everyone around them and knock them back. It's extremely useful when fighting more than one target or if you're surrounded by mobs.");
 			config.addDefault("Abilities.Earth.Shockwave.Instructions", "Hold sneak until you see particles and then release sneak to send a wave of earth outwards, damaging and knocking entities back that it collides with. Additionally, instead of releasing sneak you can send a cone of earth forwards by left clicking. If you are on the Shockwave slot and you fall from a great height, your Shockwave will automatically activate.");
 			config.addDefault("Abilities.Earth.Shockwave.DeathMessage", "{victim} was blown away by {attacker}'s {ability}");
 			config.addDefault("Abilities.Earth.SandSpout.Description", "SandSpout is a core move for travelling, evasion, and mobility for sandbenders. It's extremely useful to gain a height advantage.");
@@ -369,6 +372,9 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireShield.Description", "FireShield is a basic defensive ability that allows a firebender to block projectiles or other bending abilities. It's useful while fighting off skeletons, or while trying to block bending abilities at low health.");
 			config.addDefault("Abilities.Fire.FireShield.Instructions", "Hold sneak to create a fire shield around you that will block projectiles and other bending abilities. Additionally, left click to create a temporary fire shield. If entities step inside this fire shield, they will be ignited.");
 			config.addDefault("Abilities.Fire.FireShield.DeathMessage", "{victim} scorched theirself on {attacker}'s {ability}");
+			config.addDefault("Abilities.Fire.FireManipulation.Description", "FireManipulation is an extremely advanced and unique Firebending technique that allows the bender to create fire and manipulate it to block incoming attacks. You can also manipulate the fire you create to be used as an offence ability.");
+			config.addDefault("Abilities.Fire.FireManipulation.Instructions", "Stream: Hold sneak and move your cursor around to create a fire where you look, blocking incoming attacks. Once you've created enough fire, left click to send the fire stream outwards, damaging anything it comes into contact with.");
+			config.addDefault("Abilities.Fire.FireManipulation.DeathMessage", "{victim} scorched theirself on {attacker}'s {ability}");
 			config.addDefault("Abilities.Fire.HeatControl.Description", "HeatControl is a fundamental firebending technique that allows the firebender to control and manipulate heat. This ability is extremely useful for ensuring that you're protected from your own fire and fire from that of other firebenders. It's also offers utility by melting ice or cooking food.");
 			config.addDefault("Abilities.Fire.HeatControl.Instructions", "\n" + "(Melt) To melt ice, simply left click while looking at ice." + "\n" + "(Solidify) To solidify lava, hold sneak while looking at lava while standing still and it will start to solidify the lava pool you're looking at." + "\n" + "(Extinguish) To extinguish nearby fire or yourself, simply tap sneak." + "\n" + "(Cook) To cook food, place the raw food on your HeatControl slot and hold sneak. The food will then begin to cook.");
 			config.addDefault("Abilities.Fire.Illumination.Description", "Illumination is a basic firebending technique that allows firebenders to manipulate their fire to create a light source. This ability will automatically activate when you're in low light.");
@@ -390,8 +396,19 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.Combo.FireWheel.DeathMessage", "{victim} was incinerated by {attacker}'s {ability}");
 
 			config.addDefault("Commands.Help.Elements.Chi", "Chiblockers focus on bare handed combat, utilizing their agility and speed to stop any bender right in their path. Although they lack the ability to bend any of the other elements, they are great in combat, and a serious threat to any bender. Chiblocking was first shown to be used by Ty Lee in Avatar: The Last Airbender, then later by members of the Equalists in The Legend of Korra.\nChiblockers can chain their abilities into combos, type /b help ChiCombos for more information.");
+			config.addDefault("Abilities.Chi.AcrobatStance.Description", "AcrobatStance gives a Chiblocker a higher probability of blocking a Bender's Chi while granting them a Speed and Jump Boost. It also increases the rate at which the hunger bar depletes.");
+			config.addDefault("Abilities.Chi.AcrobatStance.Instructions",  "To use, simply left click to activate this stance. Left click once more to deactivate it.");
+			config.addDefault("Abilities.Chi.HighJump.Description", "HighJump gives the Chiblocker the ability to leap into the air. This ability is used for mobility, and is often used to dodge incoming attacks.");
+			config.addDefault("Abilities.Chi.HighJump.Instructions", "To use, simply left click while standing on the ground.");
+			config.addDefault("Abilities.Chi.Smokescreen.Description", "Smokescreen, if used correctly, can serve as a defensive and offensive ability for Chiblockers. When used, a smoke bomb is fired which will blind anyone within a small radius of the explosion, allowing you to either get away, or move in for the kill.");
+			config.addDefault("Abiltiies.Chi.Smokescreen.Instructions", "Left click and a smoke bomb will be fired in the direction you're looking.");
 			config.addDefault("Abilities.Chi.WarriorStance.Description", "WariorStance is an advanced chiblocker technique that gives the chiblocker increased damage but makes them a tad more vulnerable. This ability is useful when finishing off weak targets.");
 			config.addDefault("Abilities.Chi.WarriorStance.Instructions", "Left click to activate the warrior stance mode. Additionally, left click to disable it.");
+			config.addDefault("Abilities.Chi.Paralyze.Description", "Paralyzes the target, making them unable to do anything for a short period of time as they will be paralyzed where they're stood. ");
+			config.addDefault("Abilities.Chi.Paralyze.Instructions", "Punch a player to paralyze them.");
+			config.addDefault("Abilities.Chi.RapidPunch.Description", "This ability allows the chiblocker to punch rapidly in a short period. To use, simply punch. This has a short cooldown.");
+			config.addDefault("Abilities.Chi.RapidPunch.Instructions", "Punch a player to deal massive damage.");
+			config.addDefault("Abilities.Chi.RapidPunch.DeathMessage", "{victim} took all the hits against {attacker}'s {ability}");
 			config.addDefault("Abilities.Chi.QuickStrike.Description", "QuickStrike enables a chiblocker to quickly strike an enemy, potentially blocking their chi.");
 			config.addDefault("Abilities.Chi.QuickStrike.Instructions", "Left click on a player to quick strike them.");
 			config.addDefault("Abilities.Chi.QuickStrike.DeathMessage", "{victim} was struck down by {attacker}'s {ability}");
@@ -497,6 +514,7 @@ public class ConfigManager {
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);
 			config.addDefault("Properties.Air.Particles", "spell");
 			config.addDefault("Properties.Air.PlaySound", true);
+			config.addDefault("Properties.Air.Sound", "ENTITY_CREEPER_HURT");
 
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
@@ -505,6 +523,9 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.NightFactor", 1.5);
 			config.addDefault("Properties.Water.FullMoonFactor", 1.75);
 			config.addDefault("Properties.Water.PlaySound", true);
+			config.addDefault("Properties.Water.WaterSound", "BLOCK_WATER_AMBIENT");
+			config.addDefault("Properties.Water.IceSound", "ITEM_FLINTANDSTEEL_USE");
+			config.addDefault("Properties.Water.PlantSound", "BLOCK_GRASS_STEP");
 
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
 			config.addDefault("Properties.Earth.SafeRevert", true);
@@ -515,12 +536,17 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.SandBlocks", sandBlocks);
 			config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 			config.addDefault("Properties.Earth.PlaySound", true);
+			config.addDefault("Properties.Earth.EarthSound", "ENTITY_GHAST_SHOOT");
+			config.addDefault("Properties.Earth.MetalSound", "ENTITY_IRONGOLEM_HURT");
+			config.addDefault("Properties.Earth.SandSound", "BLOCK_SAND_BREAK");
 
 			config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 			config.addDefault("Properties.Fire.DayFactor", 1.25);
 			config.addDefault("Properties.Fire.PlaySound", true);
 			config.addDefault("Properties.Fire.FireGriefing", false);
 			config.addDefault("Properties.Fire.RevertTicks", 12000L);
+			config.addDefault("Properties.Fire.FireSound", "BLOCK_FIRE_AMBIENT");
+			config.addDefault("Properties.Fire.CombustionSound", "ENTITY_FIREWORK_BLAST");
 
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
@@ -540,11 +566,13 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.DamageResistance.Power", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Enabled", true);
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power", 3);
+			config.addDefault("Abilities.Avatar.AvatarState.PowerMultiplier", 2);
+			config.addDefault("Abilities.Avatar.AvatarState.Sound", "BLOCK_ANVIL_LAND");
 
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self", 4.0);
-			config.addDefault("Abilities.Avatar.AvatarState.AirSpout.Height", 26);
-			config.addDefault("Abilities.Avatar.AvatarState.AirSuction.Push", 3.5);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSpout.Height", 26);
+			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSuction.Push", 3.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Cooldown", 1000);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Damage", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirSwipe.Push", 1.0);
@@ -561,14 +589,15 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftCooldown", 1500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLavaCooldown", 1500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickLandCooldown", 1500);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius", 18);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius", 18);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftRadius", 18);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftPlatformRadius", 2);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ClickRadius", 10);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.LavaFlow.ShiftRadius", 12);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.Cooldown", 2000);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.Range", 20);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.CrushDamage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height", 20);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Width", 16);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height", 20);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height", 16);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width", 16);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height", 20);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Collapse.Wall.Height", 20);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthArmor.Cooldown", 2000);
@@ -591,7 +620,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightSpeed", 1.0);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.FlightTimer", 10000);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthSmash.ShootRange", 30);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius", 0.05);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthTunnel.Radius", 0.5);
 
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.Blaze.Ring.Range", 14);
 			config.addDefault("Abilities.Avatar.AvatarState.Fire.FireJet.IsAvatarStateToggle", true);
@@ -629,9 +658,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirBlast.CanOpenDoors", true);
 			config.addDefault("Abilities.Air.AirBlast.CanPressButtons", true);
 			config.addDefault("Abilities.Air.AirBlast.CanCoolLava", true);
-
-			config.addDefault("Abilities.Air.AirBubble.Enabled", true);
-			config.addDefault("Abilities.Air.AirBubble.Radius", 7);
 
 			config.addDefault("Abilities.Air.AirBurst.Enabled", true);
 			config.addDefault("Abilities.Air.AirBurst.FallThreshold", 10);
@@ -812,7 +838,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.PhaseChange.Freeze.Depth", 1);
 			config.addDefault("Abilities.Water.PhaseChange.Freeze.ControlRadius", 25);
 			config.addDefault("Abilities.Water.PhaseChange.Melt.Cooldown", 2000);
-			config.addDefault("Abilities.Water.PhaseChange.Melt.Delay", 50);
+			config.addDefault("Abilities.Water.PhaseChange.Melt.Speed", 8.0);
 			config.addDefault("Abilities.Water.PhaseChange.Melt.Radius", 7);
 			config.addDefault("Abilities.Water.PhaseChange.Melt.AllowFlow", true);
 
@@ -908,8 +934,11 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon", 12000);
 
 			config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
-			config.addDefault("Abilities.Water.WaterBubble.Radius", 6);
-
+			config.addDefault("Abilities.Water.WaterBubble.Radius", 4.0);
+			config.addDefault("Abilities.Water.WaterBubble.Speed", 0.5);
+			config.addDefault("Abilities.Water.WaterBubble.ClickDuration", 2000L);
+			config.addDefault("Abilities.Water.WaterBubble.MustStartAboveWater", false);
+			
 			config.addDefault("Abilities.Water.WaterManipulation.Enabled", true);
 			config.addDefault("Abilities.Water.WaterManipulation.Damage", 3.0);
 			config.addDefault("Abilities.Water.WaterManipulation.Range", 25);
@@ -959,6 +988,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Catapult.Enabled", true);
 			config.addDefault("Abilities.Earth.Catapult.Cooldown", 7000);
 			config.addDefault("Abilities.Earth.Catapult.StageTimeMult", 2.0);
+			config.addDefault("Abilities.Earth.Catapult.Angle", 45);
+			config.addDefault("Abilities.Earth.Catapult.CancelWithAngle", false);
 
 			config.addDefault("Abilities.Earth.Collapse.Enabled", true);
 			config.addDefault("Abilities.Earth.Collapse.SelectRange", 20);
@@ -997,6 +1028,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthTunnel.Range", 10);
 			config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
 			config.addDefault("Abilities.Earth.EarthTunnel.Revert", true);
+			config.addDefault("Abilities.Earth.EarthTunnel.DropLootIfNotRevert", false);
 			config.addDefault("Abilities.Earth.EarthTunnel.Interval", 30);
 
 			config.addDefault("Abilities.Earth.Extraction.Enabled", true);
@@ -1147,6 +1179,18 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireJet.Duration", 2000);
 			config.addDefault("Abilities.Fire.FireJet.Cooldown", 7000);
 
+			config.addDefault("Abilities.Fire.FireManipulation.Stream.Cooldown", 12000);
+			config.addDefault("Abilities.Fire.FireManipulation.Stream.Range", 50);
+			config.addDefault("Abilities.Fire.FireManipulation.Stream.Damage", 2);
+			config.addDefault("Abilities.Fire.FireManipulation.Stream.Speed", 0.75);
+			config.addDefault("Abilities.Fire.FireManipulation.Stream.Particles", 50);
+			
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.Cooldown", 6000);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.Range", 4);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.Damage", 1);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.MaxDuration", 5000L);
+			config.addDefault("Abilities.Fire.FireManipulation.Shield.Particles", 12);
+
 			config.addDefault("Abilities.Fire.FireShield.Enabled", true);
 			config.addDefault("Abilities.Fire.FireShield.Radius", 3);
 			config.addDefault("Abilities.Fire.FireShield.DiscRadius", 1.5);
@@ -1206,25 +1250,31 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Range", 7.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireKick.Cooldown", 6000);
+			config.addDefault("Abilities.Fire.FireCombo.FireKick.Speed", 1);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Range", 7);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Damage", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Knockback", 3.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Cooldown", 5000);
+			config.addDefault("Abilities.Fire.FireCombo.FireSpin.Speed", 0.3);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Range", 20.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Damage", 4.0);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Speed", 0.55);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireCombo.FireWheel.FireTicks", 2.5);
+			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Height", 2);
+			config.addDefault("Abilities.Fire.FireCombo.FireWheel.Radius", 1.0);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Speed", 1.2);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Cooldown", 6000);
+			config.addDefault("Abilities.Fire.FireCombo.JetBlast.Duration", 5000);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Enabled", true);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Speed", 1.1);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Damage", 4);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Cooldown", 6000);
 			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.FireTicks", 2.5);
+			config.addDefault("Abilities.Fire.FireCombo.JetBlaze.Duration", 5000);
 
 			config.addDefault("Abilities.Chi.Passive.Acrobatics.Enabled", true);
 			config.addDefault("Abilities.Chi.Passive.Acrobatics.FallReductionFactor", 0.5);
