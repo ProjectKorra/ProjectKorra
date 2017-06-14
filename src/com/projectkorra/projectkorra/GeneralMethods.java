@@ -318,7 +318,7 @@ public class GeneralMethods {
 				String permaremoved = rs2.getString("permaremoved");
 				boolean p = false;
 				final ArrayList<Element> elements = new ArrayList<Element>();
-				if (element != null) {
+				if (element != null && !element.equals("NULL")) {
 					boolean hasAddon = element.contains(";");
 					String[] split = element.split(";");
 					if (split[0] != null) { // Player has an element.
@@ -375,7 +375,7 @@ public class GeneralMethods {
 				}
 				final ArrayList<SubElement> subelements = new ArrayList<SubElement>();
 				boolean shouldSave = false;
-				if (subelement != null) {
+				if (subelement != null && !subelement.equals("NULL")) {
 					boolean hasAddon = subelement.contains(";");
 					String[] split = subelement.split(";");
 					if (subelement.equals("-")) {
@@ -1898,8 +1898,12 @@ public class GeneralMethods {
 				elements.append(element.getName() + ",");
 			}
 		}
+		
+		if (elements.length() == 0) {
+			elements.append("NULL");
+		}
 
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements.toString() + "' WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void saveSubElements(BendingPlayer bPlayer) {
@@ -1952,8 +1956,12 @@ public class GeneralMethods {
 				subs.append(element.getName() + ",");
 			}
 		}
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs + "' WHERE uuid = '" + uuid + "'");
+		
+		if (subs.length() == 0) {
+			subs.append("NULL");
+		}
+		
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs.toString() + "' WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void savePermaRemoved(BendingPlayer bPlayer) {
