@@ -166,9 +166,11 @@ public class BendingPlayer {
 		if (isAvatarState()) {
 			if (isChiBlocked()) {
 				return true;
+			} else {
+				return false;
 			}
 		}
-		if (canBendIgnoreBindsCooldowns(CoreAbility.getAbility("Bloodbending")) && !isToggled()) {
+		if (canBendIgnoreBindsCooldowns(CoreAbility.getAbility("Bloodbending")) && isToggled()) {
 			return false;
 		}
 		return true;
@@ -211,7 +213,7 @@ public class BendingPlayer {
 			cooldowns.remove(name);
 		}
 
-		if (isChiBlocked() || isParalyzed() || isBloodbent() || isControlledByMetalClips()) {
+		if (isChiBlocked() || isParalyzed() || (isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || isControlledByMetalClips()) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, ability.getName(), playerLoc)) {
 			return false;
@@ -346,7 +348,6 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a player can LavaBend.
 	 * 
-	 * @param player The player to check
 	 * @return true If player has permission node "bending.earth.lavabending"
 	 */
 	public boolean canLavabend() {
