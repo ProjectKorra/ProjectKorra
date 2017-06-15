@@ -31,6 +31,7 @@ public class TempBlock {
 	private BlockState state;
 	private long revertTime;
 	private boolean inRevertQueue;
+	private RevertTask revertTask = null;
 
 	@SuppressWarnings("deprecation")
 	public TempBlock(Block block, Material newtype, byte newdata) {
@@ -120,6 +121,14 @@ public class TempBlock {
 	public BlockState getState() {
 		return state;
 	}
+	
+	public RevertTask getRevertTask() {
+		return revertTask;
+	}
+	
+	public void setRevertTask(RevertTask task) {
+		this.revertTask = task;
+	}
 
 	public long getRevertTime() {
 		return revertTime;
@@ -137,6 +146,9 @@ public class TempBlock {
 	public void revertBlock() {
 		state.update(true);
 		instances.remove(block);
+		if (revertTask != null) {
+			revertTask.run();
+		}
 	}
 
 	public void setState(BlockState newstate) {
@@ -173,6 +185,9 @@ public class TempBlock {
 				}
 			}
 		}.runTaskTimer(ProjectKorra.plugin, 0, 1);
-
+	}
+	
+	public interface RevertTask {
+		public void run();
 	}
 }
