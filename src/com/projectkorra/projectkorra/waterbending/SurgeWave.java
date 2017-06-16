@@ -373,8 +373,9 @@ public class SurgeWave extends WaterAbility {
 	private void thaw() {
 		if (frozenBlocks != null) {
 			for (Block block : frozenBlocks.keySet()) {
-				TempBlock.revertBlock(block, frozenBlocks.get(block));
-				frozenBlocks.remove(block);
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock.get(block).revertBlock();
+				}
 			}
 		}
 	}
@@ -395,8 +396,9 @@ public class SurgeWave extends WaterAbility {
 				surgeWave.waveBlocks.remove(block);
 			}
 			for (Block block : surgeWave.frozenBlocks.keySet()) {
-				TempBlock.revertBlock(block, Material.AIR);
-				surgeWave.frozenBlocks.remove(block);
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock.get(block).revertBlock();
+				}
 			}
 		}
 	}
@@ -413,8 +415,10 @@ public class SurgeWave extends WaterAbility {
 	public static void thaw(Block block) {
 		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			if (surgeWave.frozenBlocks.containsKey(block)) {
-				TempBlock.revertBlock(block, Material.AIR);
-				surgeWave.frozenBlocks.remove(block);
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock tb = TempBlock.get(block);
+					tb.revertBlock();
+				}
 			}
 		}
 	}

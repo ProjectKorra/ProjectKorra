@@ -146,6 +146,9 @@ public class TempBlock {
 	public void revertBlock() {
 		state.update(true);
 		instances.remove(block);
+		if (REVERT_QUEUE.contains(this)) {
+			REVERT_QUEUE.remove(this);
+		}
 		if (revertTask != null) {
 			revertTask.run();
 		}
