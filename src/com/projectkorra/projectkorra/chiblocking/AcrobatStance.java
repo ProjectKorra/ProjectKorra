@@ -40,7 +40,6 @@ public class AcrobatStance extends ChiAbility {
 			}
 		}
 		start();
-		
 		bPlayer.setStance(this);
 		GeneralMethods.displayMovePreview(player);
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_HURT, 0.5F, 2F);
@@ -48,7 +47,7 @@ public class AcrobatStance extends ChiAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBend(this) || !bPlayer.hasElement(Element.CHI)) {
+		if (!bPlayer.canBendIgnoreBinds(this) || !bPlayer.hasElement(Element.CHI)) {
 			remove();
 			return;
 		}

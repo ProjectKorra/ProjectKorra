@@ -43,7 +43,7 @@ public class WarriorStance extends ChiAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBend(this) || !bPlayer.hasElement(Element.CHI)) {
+		if (!bPlayer.canBendIgnoreBinds(this) || !bPlayer.hasElement(Element.CHI)) {
 			remove();
 			return;
 		}

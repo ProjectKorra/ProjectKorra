@@ -38,7 +38,6 @@ public class FireSpin extends FireAbility implements ComboAbility {
 		}
 		
 		if (player.getLocation().getBlock().getType() == Material.WATER || player.getLocation().getBlock().getType() == Material.STATIONARY_WATER){
-			bPlayer.addCooldown(this);
 			return;
 		}
 

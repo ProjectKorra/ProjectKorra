@@ -117,7 +117,7 @@ public class AirSpout extends AirAbility {
 
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline() || !bPlayer.canBend(this) || !bPlayer.canBind(this)) {
+		if (player.isDead() || !player.isOnline() || !bPlayer.canBendIgnoreBinds(this) || !bPlayer.canBind(this)) {
 			remove();
 			return;
 		}
@@ -150,8 +150,7 @@ public class AirSpout extends AirAbility {
 				allowFlight();
 			}
 			rotateAirColumn(block);
-		} else {
-			bPlayer.addCooldown(this);
+		} else {	
 			remove();
 		}
 	}
