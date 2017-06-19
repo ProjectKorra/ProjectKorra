@@ -45,6 +45,10 @@ public class DamageHandler {
 				damage = damageEvent.getDamage();
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
 					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_REACH);
+					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_DIRECTION);
+					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_NOSWING);
+					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_SPEED);
+					NCPExemptionManager.exemptPermanently(source, CheckType.COMBINED_IMPROBABLE);
 				}
 
 				if (((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {

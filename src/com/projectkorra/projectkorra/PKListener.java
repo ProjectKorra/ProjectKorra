@@ -1127,15 +1127,26 @@ public class PKListener implements Listener {
 		}
 
 		else if (Bloodbending.isBloodbent(player)) {
+			BendingPlayer bender = Bloodbending.getBloodbender(player);
+			if (bender.isAvatarState()) {
+				event.setCancelled(true);
+				return;
+			}
 			double distance1 = 0;
 			double distance2 = 0;
 			Location loc = Bloodbending.getBloodbendingLocation(player);
-			if (event.getPlayer().getWorld().equals(loc.getWorld())) {
-				distance1 = event.getFrom().distance(loc);
-				distance2 = event.getTo().distance(loc);
+			if (player.getWorld().equals(loc.getWorld())) {
+				distance1 = event.getFrom().distanceSquared(loc);
+				distance2 = event.getTo().distanceSquared(loc);
 			}
-			if (distance2 > distance1) {
-				player.setVelocity(new Vector(0, 0, 0));
+			
+			if (distance1 == 0 && distance2 == 0) {
+				return;
+			} else if (distance1 > distance2 || distance1 < distance2) {
+				if (!player.getVelocity().equals(Bloodbending.getBloodbendingVector(player))) {
+					player.setVelocity(Bloodbending.getBloodbendingVector(player));
+					return;
+				}
 			}
 		}
 
@@ -1472,7 +1483,7 @@ public class PKListener implements Listener {
 		if (Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 			return;
-		} else if (Bloodbending.isBloodbent(player) || Paralyze.isParalyzed(player) || Immobilize.isParalyzed(player)) {
+		} else if ((Bloodbending.isBloodbent(player) && !bPlayer.getBoundAbilityName().equalsIgnoreCase("AvatarState")) || Paralyze.isParalyzed(player) || Immobilize.isParalyzed(player)) {
 			event.setCancelled(true);
 			return;
 		} else if (bPlayer.isChiBlocked()) {
@@ -1665,7 +1676,6 @@ public class PKListener implements Listener {
 			abil = MultiAbilityManager.getBoundMultiAbility(player);
 			if (abil.equalsIgnoreCase("WaterArms")) {
 				new WaterArms(player);
-
 			}
 		}
 	}

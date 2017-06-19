@@ -87,8 +87,6 @@ public class EarthArmor extends EarthAbility {
 			}
 
 			playEarthbendingSound(headBlock.getLocation());
-			bPlayer.addCooldown(this, getCooldown() / 2); //Prevents spamming of the move to remove blocks
-
 			start();
 		}
 	}
@@ -237,7 +235,6 @@ public class EarthArmor extends EarthAbility {
 			ParticleEffect.BLOCK_CRACK.display(new ParticleEffect.BlockData(legsData.getItemType(), legsData.getData()), 0.1F, 0.1F, 0.1F, 1, 32, player.getLocation(), 128);
 
 			bPlayer.addCooldown(this);
-			remove();
 			remove();
 			return;
 		}
@@ -430,6 +427,9 @@ public class EarthArmor extends EarthAbility {
 		Location playerLoc = player.getLocation();
 
 		if (!player.isOnline() || player.isDead()) {
+			return false;
+
+		} else if (bPlayer.isOnCooldown("EarthArmor")){
 			return false;
 		} else if (!bPlayer.canBind(this)) { 
 			return false; 

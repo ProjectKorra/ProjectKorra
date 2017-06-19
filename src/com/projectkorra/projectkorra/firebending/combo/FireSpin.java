@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -33,6 +34,10 @@ public class FireSpin extends FireAbility implements ComboAbility {
 		super(player);
 
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
+			return;
+		}
+		
+		if (player.getLocation().getBlock().getType() == Material.WATER || player.getLocation().getBlock().getType() == Material.STATIONARY_WATER){
 			return;
 		}
 

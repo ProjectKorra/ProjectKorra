@@ -38,11 +38,12 @@ public class Bloodbending extends BloodAbility {
 	private long cooldown;
 	private double throwFactor;
 	private Entity target;
+	private Vector vector;
 
 	public Bloodbending(Player player) {
 		super(player);
 
-		Bloodbending ability = getAbility(player, getClass());
+		Bloodbending ability = getAbility(player, Bloodbending.class);
 		if (ability != null) {
 			ability.remove();
 			return;
@@ -56,6 +57,7 @@ public class Bloodbending extends BloodAbility {
 		this.holdTime = getConfig().getInt("Abilities.Water.Bloodbending.HoldTime");
 		this.cooldown = getConfig().getInt("Abilities.Water.Bloodbending.Cooldown");
 		this.throwFactor = getConfig().getDouble("Abilities.Water.Bloodbending.ThrowFactor");
+		vector = new Vector(0, 0, 0);
 
 		if (canOnlyBeUsedAtNight && !isNight(player.getWorld()) && !bPlayer.canBloodbendAtAnytime()) {
 			return;
@@ -108,12 +110,14 @@ public class Bloodbending extends BloodAbility {
 			if (target == null || !(target instanceof LivingEntity) || GeneralMethods.isRegionProtectedFromBuild(this, target.getLocation()) || target.getEntityId() == player.getEntityId()) {
 				return;
 			} else if (target instanceof Player) {
-				BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer(player);
+				BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer((Player) target);
 				if (targetBPlayer != null) {
-					if ((targetBPlayer.canBendIgnoreBindsCooldowns(ability) && !canBloodbendOtherBloodbenders) || targetBPlayer.isAvatarState()) {
-						if (!isDay(target.getWorld()) || targetBPlayer.canBloodbendAtAnytime()) {
-							return;
-						}
+					if (targetBPlayer.canBloodbend() && !canBloodbendOtherBloodbenders) {
+						return;
+					} else if (targetBPlayer.isAvatarState()) {
+						return;
+					} else if (targetBPlayer.canBloodbendAtAnytime() && !canBloodbendOtherBloodbenders) {
+						return;
 					}
 				}
 			} else if (!canBeUsedOnUndeadMobs && isUndead(target)) {
@@ -213,7 +217,7 @@ public class Bloodbending extends BloodAbility {
 					continue;
 				}
 				if (entity instanceof LivingEntity) {
-					entity.setVelocity(new Vector(0, 0, 0));
+					entity.setVelocity(vector);
 					new TempPotionEffect((LivingEntity) entity, effect);
 					entity.setFallDistance(0);
 					if (entity instanceof Creature) {
@@ -229,14 +233,13 @@ public class Bloodbending extends BloodAbility {
 				}
 			}
 		} else {
-			if (TARGETED_ENTITIES.get(target) != player) {
-				remove();
-				return;
-			}
 			for (Entity entity : TARGETED_ENTITIES.keySet()) {
 				if (entity instanceof Player) {
 					BendingPlayer targetBPlayer = BendingPlayer.getBendingPlayer((Player) entity);
 					if (targetBPlayer != null && !targetBPlayer.canBeBloodbent()) {
+						TARGETED_ENTITIES.remove(entity);
+						continue;
+					} else if (targetBPlayer.isAvatarState()) {
 						TARGETED_ENTITIES.remove(entity);
 						continue;
 					}
@@ -248,6 +251,16 @@ public class Bloodbending extends BloodAbility {
 					continue;
 				}
 			}
+			
+			if (!TARGETED_ENTITIES.containsKey(target)) {
+				remove();
+				return;
+			}
+			
+			if (TARGETED_ENTITIES.get(target) != player) {
+				remove();
+				return;
+			}
 
 			Location location = GeneralMethods.getTargetedLocation(player, 6, getTransparentMaterial());
 			double distance = 0;
@@ -258,13 +271,14 @@ public class Bloodbending extends BloodAbility {
 			dx = location.getX() - target.getLocation().getX();
 			dy = location.getY() - target.getLocation().getY();
 			dz = location.getZ() - target.getLocation().getZ();
-			Vector vector = new Vector(dx, dy, dz);
+			vector = new Vector(dx, dy, dz);
+			vector.normalize().multiply(.5);
 
-			if (distance > .5) {
-				target.setVelocity(vector.normalize().multiply(.5));
-			} else {
-				target.setVelocity(new Vector(0, 0, 0));
+			if (distance < .6) {
+				vector = new Vector(0, 0, 0);
 			}
+			
+			target.setVelocity(vector);
 
 			new TempPotionEffect((LivingEntity) target, effect);
 			target.setFallDistance(0);
@@ -297,6 +311,24 @@ public class Bloodbending extends BloodAbility {
 
 	public static Location getBloodbendingLocation(Entity entity) {
 		return entity != null ? TARGETED_ENTITIES.get(entity).getLocation() : null;
+	}
+	
+	public static Vector getBloodbendingVector(Entity entity) {
+		if (!TARGETED_ENTITIES.containsKey(entity)) {
+			return null;
+		}
+		
+		Bloodbending bb = getAbility(TARGETED_ENTITIES.get(entity), Bloodbending.class);
+		return bb.vector;
+	}
+	
+	public static BendingPlayer getBloodbender(Entity entity) {
+		if (!TARGETED_ENTITIES.containsKey(entity)) {
+			return null;
+		}
+		
+		Bloodbending bb = getAbility(TARGETED_ENTITIES.get(entity), Bloodbending.class);
+		return bb.getBendingPlayer();
 	}
 
 	@Override

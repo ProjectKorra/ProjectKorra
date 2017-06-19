@@ -18,7 +18,8 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Tornado extends AirAbility {
-
+	
+	private long cooldown;
 	private int numberOfStreams;
 	private int particleCount;
 	@Attribute(Attribute.SPEED)
@@ -42,7 +43,8 @@ public class Tornado extends AirAbility {
 
 	public Tornado(Player player) {
 		super(player);
-
+		
+		this.cooldown = getConfig().getLong("Abilities.Air.Tornado.Cooldown");
 		this.range = getConfig().getDouble("Abilities.Air.Tornado.Range");
 		this.origin = player.getTargetBlock((HashSet<Material>) null, (int) range).getLocation();
 		this.origin.setY(origin.getY() - 1.0 / 10.0 * currentHeight);
@@ -66,6 +68,7 @@ public class Tornado extends AirAbility {
 			}
 		}
 
+		
 		this.flight = new Flight(player);
 		this.couldFly = player.getAllowFlight();
 		player.setAllowFlight(true);
@@ -75,6 +78,7 @@ public class Tornado extends AirAbility {
 	@Override
 	public void progress() {
 		if (player.getEyeLocation().getBlock().isLiquid() || !player.isSneaking() || !bPlayer.canBendIgnoreCooldowns(this)) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(this, origin)) {
@@ -203,7 +207,7 @@ public class Tornado extends AirAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
 	}
 
 	@Override
