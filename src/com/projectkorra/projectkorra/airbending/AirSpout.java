@@ -42,7 +42,7 @@ public class AirSpout extends AirAbility {
 		}
 
 		this.angle = 0;
-		this.cooldown = 0;
+		this.cooldown = getConfig().getLong("Abilities.Air.AirSpout.Cooldown");
 		this.animTime = System.currentTimeMillis();
 		this.interval = getConfig().getLong("Abilities.Air.AirSpout.Interval");
 		this.height = getConfig().getDouble("Abilities.Air.AirSpout.Height");
@@ -59,7 +59,6 @@ public class AirSpout extends AirAbility {
 		}
 
 		start();
-		bPlayer.addCooldown(this);
 	}
 
 	/**
@@ -118,7 +117,7 @@ public class AirSpout extends AirAbility {
 
 	@Override
 	public void progress() {
-		if (player.isDead() || !player.isOnline() || !bPlayer.canBendIgnoreBindsCooldowns(this) || !bPlayer.canBind(this)) {
+		if (player.isDead() || !player.isOnline() || !bPlayer.canBendIgnoreBinds(this) || !bPlayer.canBind(this)) {
 			remove();
 			return;
 		}
@@ -129,10 +128,6 @@ public class AirSpout extends AirAbility {
 			return;
 		}
 
-		if (!bPlayer.canBind(this)) {
-			remove();
-			return;
-		}
 
 		Block eyeBlock = player.getEyeLocation().getBlock();
 		if (eyeBlock.isLiquid() || GeneralMethods.isSolid(eyeBlock)) {
@@ -155,7 +150,7 @@ public class AirSpout extends AirAbility {
 				allowFlight();
 			}
 			rotateAirColumn(block);
-		} else {
+		} else {	
 			remove();
 		}
 	}
@@ -163,6 +158,7 @@ public class AirSpout extends AirAbility {
 	public void remove() {
 		super.remove();
 		removeFlight();
+		bPlayer.addCooldown(this);
 	}
 
 	private void removeFlight() {

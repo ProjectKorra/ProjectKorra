@@ -25,6 +25,7 @@ public class SandSpout extends SandAbility {
 	private int angle;
 	private int blindnessTime;
 	private long time;
+	private long cooldown;
 	private long interval;
 	private double damage;
 	private double height;
@@ -38,6 +39,7 @@ public class SandSpout extends SandAbility {
 
 		this.currentHeight = 0;
 		this.angle = 0;
+		this.cooldown = getConfig().getLong("Abilities.Earth.SandSpout.Cooldown");
 		this.interval = getConfig().getLong("Abilities.Earth.SandSpout.Interval");
 		this.canSpiral = getConfig().getBoolean("Abilities.Earth.SandSpout.Spiral");
 		this.height = getConfig().getDouble("Abilities.Earth.SandSpout.Height");
@@ -107,6 +109,7 @@ public class SandSpout extends SandAbility {
 			}
 			rotateSandColumn(block);
 		} else {
+			bPlayer.addCooldown(this);
 			remove();
 		}
 	}
@@ -250,7 +253,7 @@ public class SandSpout extends SandAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
 	}
 
 	@Override
