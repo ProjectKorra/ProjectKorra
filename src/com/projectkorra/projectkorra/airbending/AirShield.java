@@ -29,16 +29,18 @@ public class AirShield extends AirAbility {
 	@Attribute(Attribute.SPEED)
 	private double speed;
 	private int streams;
+	private long cooldown;
 	private int particles;
 	private Random random;
 	private HashMap<Integer, Integer> angles;
 
 	public AirShield(Player player) {
 		super(player);
-
+		
 		this.maxRadius = getConfig().getDouble("Abilities.Air.AirShield.Radius");
 		this.isToggledByAvatarState = getConfig().getBoolean("Abilities.Avatar.AvatarState.Air.AirShield.IsAvatarStateToggle");
 		this.radius = this.maxRadius;
+		this.cooldown = getConfig().getLong("Abilities.Air.AirShield.Cooldown");
 		this.speed = getConfig().getDouble("Abilities.Air.AirShield.Speed");
 		this.streams = getConfig().getInt("Abilities.Air.AirShield.Streams");
 		this.particles = getConfig().getInt("Abilities.Air.AirShield.Particles");
@@ -59,7 +61,7 @@ public class AirShield extends AirAbility {
 				angle = 0;
 			}
 		}
-
+		
 		start();
 	}
 
@@ -87,6 +89,7 @@ public class AirShield extends AirAbility {
 			return;
 		} else if (!bPlayer.isAvatarState() || !isToggledByAvatarState) {
 			if (!player.isSneaking() || !bPlayer.canBend(this)) {
+				bPlayer.addCooldown(this);
 				remove();
 				return;
 			}
@@ -187,7 +190,7 @@ public class AirShield extends AirAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
 	}
 
 	@Override

@@ -92,11 +92,13 @@ public class HealingWaters extends HealingAbility {
 		}
 
 		if (!player.isSneaking()) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}
 
 		if (!inWater(player) && !WaterReturn.hasWaterBottle(player) && !charged) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}

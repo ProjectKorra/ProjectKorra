@@ -23,6 +23,7 @@ public class EarthTunnel extends EarthAbility {
 	private long interval;
 	private long time;
 	private double depth;
+	private long cooldown;
 	private double radius;
 	private double angle;
 	private double maxRadius;
@@ -40,6 +41,7 @@ public class EarthTunnel extends EarthAbility {
 	public EarthTunnel(Player player) {
 		super(player);
 
+		this.cooldown = getConfig().getLong("Abilities.Earth.EarthTunnel.Cooldown");
 		this.maxRadius = getConfig().getDouble("Abilities.Earth.EarthTunnel.MaxRadius");
 		this.range = getConfig().getDouble("Abilities.Earth.EarthTunnel.Range");
 		this.radius = getConfig().getDouble("Abilities.Earth.EarthTunnel.Radius");
@@ -73,7 +75,8 @@ public class EarthTunnel extends EarthAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreCooldowns(this)) {
+		if (!bPlayer.canBend(this)) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}
@@ -81,6 +84,7 @@ public class EarthTunnel extends EarthAbility {
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
 			if (Math.abs(Math.toDegrees(player.getEyeLocation().getDirection().angle(direction))) > 20 || !player.isSneaking()) {
+				bPlayer.addCooldown(this);
 				remove();
 				return;
 			} else {
@@ -95,6 +99,7 @@ public class EarthTunnel extends EarthAbility {
 						if (radius >= maxRadius) {
 							radius = radiusIncrement;
 							if (depth >= range) {
+								bPlayer.addCooldown(this);
 								remove();
 								return;
 							} else {
@@ -150,7 +155,7 @@ public class EarthTunnel extends EarthAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
 	}
 
 	@Override

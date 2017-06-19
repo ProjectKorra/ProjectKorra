@@ -677,12 +677,14 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirScooter.MaxHeightFromGround", 7);
 
 			config.addDefault("Abilities.Air.AirShield.Enabled", true);
+			config.addDefault("Abilities.Air.AirShield.Cooldown", 0);
 			config.addDefault("Abilities.Air.AirShield.Radius", 7);
 			config.addDefault("Abilities.Air.AirShield.Streams", 5);
 			config.addDefault("Abilities.Air.AirShield.Speed", 10);
 			config.addDefault("Abilities.Air.AirShield.Particles", 5);
 
 			config.addDefault("Abilities.Air.AirSpout.Enabled", true);
+			config.addDefault("Abilities.Air.AirSpout.Cooldown", 0);
 			config.addDefault("Abilities.Air.AirSpout.Height", 16);
 			config.addDefault("Abilities.Air.AirSpout.Interval", 100);
 
@@ -737,6 +739,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.Suffocate.AnimationSpeed", 1.0);
 
 			config.addDefault("Abilities.Air.Tornado.Enabled", true);
+			config.addDefault("Abilities.Air.Tornado.Cooldown", 0);
 			config.addDefault("Abilities.Air.Tornado.Radius", 10);
 			config.addDefault("Abilities.Air.Tornado.Height", 20);
 			config.addDefault("Abilities.Air.Tornado.Range", 25);
@@ -767,6 +770,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Air.AirCombo.AirSweep.Cooldown", 6000);
 
 			config.addDefault("Abilities.Water.Passive.FastSwim.Enabled", true);
+			config.addDefault("Abilities.Water.Passive.FastSwim.Cooldown", 0);
 			config.addDefault("Abilities.Water.Passive.FastSwim.SpeedFactor", 0.7);
 			config.addDefault("Abilities.Water.Passive.Hydrosink.Enabled", true);
 
@@ -898,7 +902,7 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldownEnabled", false);
 			config.addDefault("Abilities.Water.WaterArms.Arms.Cooldowns.UsageCooldown", 200);
-
+			
 			config.addDefault("Abilities.Water.WaterArms.Whip.MaxLength", 12);
 			config.addDefault("Abilities.Water.WaterArms.Whip.MaxLengthWeak", 8);
 
@@ -934,6 +938,8 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterArms.Spear.NightAugments.Duration.FullMoon", 12000);
 
 			config.addDefault("Abilities.Water.WaterBubble.Enabled", true);
+			config.addDefault("Abilities.Water.WaterBubble.Cooldown.Shift", 0);
+			config.addDefault("Abilities.Water.WaterBubble.Cooldown.Click", 0);
 			config.addDefault("Abilities.Water.WaterBubble.Radius", 4.0);
 			config.addDefault("Abilities.Water.WaterBubble.Speed", 0.5);
 			config.addDefault("Abilities.Water.WaterBubble.ClickDuration", 2000L);
@@ -950,6 +956,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Water.WaterManipulation.Cooldown", 1000);
 
 			config.addDefault("Abilities.Water.WaterSpout.Enabled", true);
+			config.addDefault("Abilities.Water.WaterSpout.Cooldown", 0);
 			config.addDefault("Abilities.Water.WaterSpout.Height", 16);
 			config.addDefault("Abilities.Water.WaterSpout.Interval", 50);
 			config.addDefault("Abilities.Water.WaterSpout.BlockSpiral", true);
@@ -1024,6 +1031,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.EarthGrab.Cooldown", 2000);
 
 			config.addDefault("Abilities.Earth.EarthTunnel.Enabled", true);
+			config.addDefault("Abilities.Earth.EarthTunnel.Cooldown", 0);
 			config.addDefault("Abilities.Earth.EarthTunnel.MaxRadius", 1);
 			config.addDefault("Abilities.Earth.EarthTunnel.Range", 10);
 			config.addDefault("Abilities.Earth.EarthTunnel.Radius", 0.25);
@@ -1114,6 +1122,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Shockwave.Angle", 40);
 
 			config.addDefault("Abilities.Earth.SandSpout.Enabled", true);
+			config.addDefault("Abilities.Earth.SandSpout.Cooldown", 0);
 			config.addDefault("Abilities.Earth.SandSpout.Height", 10);
 			config.addDefault("Abilities.Earth.SandSpout.BlindnessTime", 10);
 			config.addDefault("Abilities.Earth.SandSpout.SpoutDamage", 1);
@@ -1292,6 +1301,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.ChiCombo.Immobilize.Cooldown", 15000);
 
 			config.addDefault("Abilities.Chi.AcrobatStance.Enabled", true);
+			config.addDefault("Abilities.Chi.AcrobatStance.Cooldown", 0);
 			config.addDefault("Abilities.Chi.AcrobatStance.ChiBlockBoost", 3);
 			config.addDefault("Abilities.Chi.AcrobatStance.Speed", 1);
 			config.addDefault("Abilities.Chi.AcrobatStance.Jump", 1);
@@ -1316,6 +1326,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Chi.Smokescreen.Duration", 12);
 
 			config.addDefault("Abilities.Chi.WarriorStance.Enabled", true);
+			config.addDefault("Abilities.Chi.WarriorStance.Cooldown", 0);
 			config.addDefault("Abilities.Chi.WarriorStance.Strength", 1);
 			config.addDefault("Abilities.Chi.WarriorStance.Resistance", -1);
 

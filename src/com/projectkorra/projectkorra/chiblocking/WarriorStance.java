@@ -12,6 +12,7 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 
 public class WarriorStance extends ChiAbility {
 
+	private long cooldown;
 	private int strength;
 	private int resistance;
 
@@ -20,6 +21,7 @@ public class WarriorStance extends ChiAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
+		this.cooldown = getConfig().getLong("Abilities.Chi.WarriorStance.Cooldown");
 		this.strength = getConfig().getInt("Abilities.Chi.WarriorStance.Strength") - 1;
 		this.resistance = getConfig().getInt("Abilities.Chi.WarriorStance.Resistance");
 
@@ -41,7 +43,7 @@ public class WarriorStance extends ChiAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || !bPlayer.hasElement(Element.CHI)) {
+		if (!bPlayer.canBend(this) || !bPlayer.hasElement(Element.CHI)) {
 			remove();
 			return;
 		}
@@ -57,6 +59,7 @@ public class WarriorStance extends ChiAbility {
 	@Override
 	public void remove() {
 		super.remove();
+		bPlayer.addCooldown(this);
 		bPlayer.setStance(null);
 		GeneralMethods.displayMovePreview(player);
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
@@ -76,7 +79,7 @@ public class WarriorStance extends ChiAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
 	}
 
 	@Override
