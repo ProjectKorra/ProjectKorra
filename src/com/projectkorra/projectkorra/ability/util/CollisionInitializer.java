@@ -24,7 +24,6 @@ import com.projectkorra.projectkorra.earthbending.EarthTunnel;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.earthbending.Ripple;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
-import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.firebending.BlazeArc;
 import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.firebending.FireBlastCharged;
@@ -101,7 +100,6 @@ public class CollisionInitializer {
 		CoreAbility lavaFlow = CoreAbility.getAbility(LavaFlow.class);
 		CoreAbility raiseEarth = CoreAbility.getAbility(RaiseEarth.class);
 		CoreAbility ripple = CoreAbility.getAbility(Ripple.class);
-		CoreAbility sandSpout = CoreAbility.getAbility(SandSpout.class);
 
 		CoreAbility blazeArc = CoreAbility.getAbility(BlazeArc.class);
 		CoreAbility combustion = CoreAbility.getAbility(Combustion.class);
@@ -246,7 +244,6 @@ public class CollisionInitializer {
 		removeSpoutAbilities.add(ability);
 		collisionManager.addCollision(new Collision(ability, CoreAbility.getAbility(AirSpout.class), false, true));
 		collisionManager.addCollision(new Collision(ability, CoreAbility.getAbility(WaterSpout.class), false, true));
-		collisionManager.addCollision(new Collision(ability, CoreAbility.getAbility(SandSpout.class), false, true));
 	}
 
 	public CollisionManager getCollisionManager() {
