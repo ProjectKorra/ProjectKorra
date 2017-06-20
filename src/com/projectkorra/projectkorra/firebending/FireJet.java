@@ -2,7 +2,6 @@ package com.projectkorra.projectkorra.firebending;
 
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.airbending.AirSpout;
-import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.util.Flight;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -37,11 +36,8 @@ public class FireJet extends FireAbility {
 		if (hasAbility(player, AirSpout.class)) {
 			AirSpout abil = getAbility(player, AirSpout.class);
 			abil.remove();
-		} else if (hasAbility(player, SandSpout.class)) {
-			SandSpout abil = getAbility(player, SandSpout.class);
-			abil.remove();
 		}
-
+		
 		this.avatarStateToggled = getConfig().getBoolean("Abilities.Avatar.AvatarState.Fire.FireJet.IsAvatarStateToggle");
 		this.duration = getConfig().getLong("Abilities.Fire.FireJet.Duration");
 		this.speed = getConfig().getDouble("Abilities.Fire.FireJet.Speed");

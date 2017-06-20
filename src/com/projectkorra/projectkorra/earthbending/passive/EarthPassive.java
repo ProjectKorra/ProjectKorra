@@ -181,8 +181,4 @@ public class EarthPassive {
 	public static long getDuration() {
 		return ConfigManager.getConfig().getLong("Abilities.Earth.Passive.Duration");
 	}
-
-	public static int getSandRunSpeed() {
-		return ConfigManager.getConfig().getInt("Abilities.Earth.Passive.SandRunSpeed");
-	}
 }

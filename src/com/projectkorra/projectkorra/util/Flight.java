@@ -13,7 +13,6 @@ import com.projectkorra.projectkorra.airbending.AirScooter;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.Tornado;
 import com.projectkorra.projectkorra.earthbending.Catapult;
-import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.waterbending.WaterSpout;
 import com.projectkorra.projectkorra.waterbending.blood.Bloodbending;
@@ -69,8 +68,7 @@ public class Flight {
 		Set<Player> airScooterPlayers = CoreAbility.getPlayers(AirScooter.class);
 		Set<Player> waterSpoutPlayers = CoreAbility.getPlayers(WaterSpout.class);
 		Set<Player> airSpoutPlayers = CoreAbility.getPlayers(AirSpout.class);
-		Set<Player> sandSpoutPlayers = CoreAbility.getPlayers(SandSpout.class);
-
+		
 		players.addAll(CoreAbility.getPlayers(Tornado.class));
 		players.addAll(CoreAbility.getPlayers(FireJet.class));
 		players.addAll(CoreAbility.getPlayers(Catapult.class));
@@ -78,7 +76,7 @@ public class Flight {
 		for (Player player : instances.keySet()) {
 			Flight flight = instances.get(player);
 			if (System.currentTimeMillis() <= flight.time + duration) {
-				if (airScooterPlayers.contains(player) || waterSpoutPlayers.contains(player) || airSpoutPlayers.contains(player) || sandSpoutPlayers.contains(player)) {
+				if (airScooterPlayers.contains(player) || waterSpoutPlayers.contains(player) || airSpoutPlayers.contains(player)) {
 					continue;
 				}
 				if (Bloodbending.isBloodbent(player)) {
