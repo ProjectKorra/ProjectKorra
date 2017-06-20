@@ -61,8 +61,9 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		}
 
-		location = player.getLocation();
-		direction = player.getEyeLocation().getDirection().clone().normalize();
+		location = player.getLocation().clone();
+		location.setPitch(0);
+		direction = location.getDirection().clone().normalize();
 		direction.setY(0);
 		
 		if (bPlayer.isAvatarState()) {
@@ -112,7 +113,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			ParticleEffect.FLAME.display(tempLoc, 0, 0, 0, 0, 1);
 		}
 		
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), 2)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 1.5)) {
 			if (entity instanceof LivingEntity && !entity.equals(player)) {
 				if (!affectedEntities.contains(entity)) {
 					affectedEntities.add((LivingEntity) entity);
