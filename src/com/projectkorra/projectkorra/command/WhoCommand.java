@@ -130,8 +130,15 @@ public class WhoCommand extends PKCommand {
 			if (players.isEmpty()) {
 				GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + noPlayersOnline);
 			} else {
+				boolean firstMessage = true;
+				
 				for (String s : getPage(players, ChatColor.GOLD + "Players:", page, true)) {
-					sender.sendMessage(s);
+					if (firstMessage) {
+						GeneralMethods.sendBrandingMessage(sender, s);
+						firstMessage = false;
+					} else {
+						sender.sendMessage(s);
+					}
 				}
 			}
 		}

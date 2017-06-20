@@ -221,7 +221,10 @@ public class EarthArmor extends EarthAbility {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void progress() {
-		
+		if (!canBend()) {
+			remove();
+			return;
+		}
 
 		if (System.currentTimeMillis() - getStartTime() > maxDuration) {
 			player.getLocation().getWorld().playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 2, 1);
@@ -425,6 +428,7 @@ public class EarthArmor extends EarthAbility {
 
 		if (!player.isOnline() || player.isDead()) {
 			return false;
+
 		} else if (bPlayer.isOnCooldown("EarthArmor")){
 			return false;
 		} else if (!bPlayer.canBind(this)) { 

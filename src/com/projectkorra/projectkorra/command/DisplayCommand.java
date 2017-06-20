@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.SubAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager;
@@ -241,7 +242,7 @@ public class DisplayCommand extends PKCommand {
 
 		HashSet<String> abilitiesSent = new HashSet<String>(); //Some abilities have the same name. This prevents this from showing anything.
 		for (CoreAbility ability : abilities) {
-			if (ability instanceof SubAbility || ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
+			if (ability instanceof SubAbility || ability instanceof ComboAbility || ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
 				continue;
 			}
 			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {

@@ -55,6 +55,8 @@ public class HelpCommand extends PKCommand {
 
 	@Override
 	public void execute(CommandSender sender, List<String> args) {
+		boolean firstMessage = true;
+		
 		if (!hasPermission(sender) || !correctLength(sender, args.size(), 0, 1))
 			return;
 		else if (args.size() == 0) {
@@ -83,8 +85,14 @@ public class HelpCommand extends PKCommand {
 			Collections.reverse(strings);
 			strings.add(instances.get("help").getProperUse());
 			Collections.reverse(strings);
+			
 			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <" + required + "> [" + optional + "]", 1, false)) {
-				sender.sendMessage(ChatColor.YELLOW + s);
+				if (firstMessage) {
+					GeneralMethods.sendBrandingMessage(sender, s);
+					firstMessage = false;
+				} else {
+					sender.sendMessage(ChatColor.YELLOW + s);
+				}
 			}
 			return;
 		}
@@ -111,7 +119,12 @@ public class HelpCommand extends PKCommand {
 				//spirits commands being added (if needed)
 			}
 			for (String s : getPage(strings, ChatColor.GOLD + "Commands: <" + required + "> [" + optional + "]", Integer.valueOf(arg), true)) {
-				sender.sendMessage(ChatColor.YELLOW + s);
+				if (firstMessage) {
+					GeneralMethods.sendBrandingMessage(sender, s);
+					firstMessage = false;
+				} else {
+					sender.sendMessage(ChatColor.YELLOW + s);
+				}
 			}
 		} else if (instances.keySet().contains(arg.toLowerCase())) {//bending help command
 			instances.get(arg).help(sender, true);
