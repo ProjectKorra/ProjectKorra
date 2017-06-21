@@ -92,8 +92,8 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 	}
 
-	public static boolean isEarthbendable(Material material) {
-		return isEarth(material) || isMetal(material) || isSand(material) || isLava(material);
+	public static boolean isEarthbendable(Material material, boolean metal, boolean sand, boolean lava) {
+		return isEarth(material) || (metal && isMetal(material)) || (sand && isSand(material)) || (lava && isLava(material));
 	}
 
 	public boolean isEarthbendable(Block block) {
@@ -304,7 +304,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
 		if (bPlayer == null) {
 			return null;
-		} else if (isEarthbendable(testBlock.getType())) {
+		} else if (isEarthbendable(testBlock.getType(), true, true, true)) {
 			return testBlock;
 		} else if (!isTransparent(player, testBlock)) {
 			return null;
@@ -390,7 +390,7 @@ public abstract class EarthAbility extends ElementalAbility {
 				Location searchLoc = loc.clone().add(tracer);
 				Block block = GeneralMethods.getTopBlock(searchLoc, maxVertical);
 
-				if (block != null && isEarthbendable(block.getType())) {
+				if (block != null && isEarthbendable(block.getType(), true, true, true)) {
 					return block;
 				}
 				tracer = GeneralMethods.rotateXZ(tracer, rotation);
@@ -422,7 +422,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	public static boolean isEarthbendable(Player player, String abilityName, Block block) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null || !isEarthbendable(block.getType()) || PREVENT_EARTHBENDING.contains(block) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
+		if (bPlayer == null || !isEarthbendable(block.getType(), true, true, true) || PREVENT_EARTHBENDING.contains(block) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		} else if (isMetal(block) && !bPlayer.canMetalbend()) {
 			return false;
