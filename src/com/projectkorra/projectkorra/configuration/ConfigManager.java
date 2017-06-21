@@ -347,8 +347,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Shockwave.Description", "Shockwave is one of the most powerful earthbending abilities. It allows the earthbender to deal mass damage to everyone around them and knock them back. It's extremely useful when fighting more than one target or if you're surrounded by mobs.");
 			config.addDefault("Abilities.Earth.Shockwave.Instructions", "Hold sneak until you see particles and then release sneak to send a wave of earth outwards, damaging and knocking entities back that it collides with. Additionally, instead of releasing sneak you can send a cone of earth forwards by left clicking. If you are on the Shockwave slot and you fall from a great height, your Shockwave will automatically activate.");
 			config.addDefault("Abilities.Earth.Shockwave.DeathMessage", "{victim} was blown away by {attacker}'s {ability}");
-			config.addDefault("Abilities.Earth.SandSpout.Description", "SandSpout is a core move for travelling, evasion, and mobility for sandbenders. It's extremely useful to gain a height advantage.");
-			config.addDefault("Abilities.Earth.Sandspout.Instructions", "This ability will only work while you are on a sand block. Simply left click to create a sand spout underneath you. Then, hold spacebar to raise yourself upwards or hold sneak to go downwards. Left click again to disable this ability.");
 			config.addDefault("Abilities.Earth.Tremorsense.Description", "This is a pure utility ability for earthbenders. If you are in an area of low-light and are standing on top of an earthbendable block, this ability will automatically turn that block into glowstone, visible *only by you*. If you lose contact with a bendable block, the light will go out as you have lost contact with the earth and cannot 'see' until you can touch earth again. Additionally, if you click with this ability selected, smoke will appear above nearby earth with pockets of air beneath them.");
 			config.addDefault("Abilities.Earth.Tremorsense.Instructions", "Simply left click while on an earthbendable block.");
 			config.addDefault("Abilities.Earth.Passive.DensityShift.Description", "DensityShift is a passive ability which allows earthbenders to make a firm landing negating all fall damage on any earthbendable surface.");
@@ -373,7 +371,7 @@ public class ConfigManager {
 			config.addDefault("Abilities.Fire.FireShield.Instructions", "Hold sneak to create a fire shield around you that will block projectiles and other bending abilities. Additionally, left click to create a temporary fire shield. If entities step inside this fire shield, they will be ignited.");
 			config.addDefault("Abilities.Fire.FireShield.DeathMessage", "{victim} scorched theirself on {attacker}'s {ability}");
 			config.addDefault("Abilities.Fire.FireManipulation.Description", "FireManipulation is an extremely advanced and unique Firebending technique that allows the bender to create fire and manipulate it to block incoming attacks. You can also manipulate the fire you create to be used as an offence ability.");
-			config.addDefault("Abilities.Fire.FireManipulation.Instructions", "Stream: Hold sneak and move your cursor around to create a fire where you look, blocking incoming attacks. Once you've created enough fire, left click to send the fire stream outwards, damaging anything it comes into contact with.");
+			config.addDefault("Abilities.Fire.FireManipulation.Instructions", "\nStream: Hold sneak and move your cursor around to create a fire where you look, blocking incoming attacks. Once you've created enough fire, left click to send the fire stream outwards, damaging anything it comes into contact with.");
 			config.addDefault("Abilities.Fire.FireManipulation.DeathMessage", "{victim} scorched theirself on {attacker}'s {ability}");
 			config.addDefault("Abilities.Fire.HeatControl.Description", "HeatControl is a fundamental firebending technique that allows the firebender to control and manipulate heat. This ability is extremely useful for ensuring that you're protected from your own fire and fire from that of other firebenders. It's also offers utility by melting ice or cooking food.");
 			config.addDefault("Abilities.Fire.HeatControl.Instructions", "\n" + "(Melt) To melt ice, simply left click while looking at ice." + "\n" + "(Solidify) To solidify lava, hold sneak while looking at lava while standing still and it will start to solidify the lava pool you're looking at." + "\n" + "(Extinguish) To extinguish nearby fire or yourself, simply tap sneak." + "\n" + "(Cook) To cook food, place the raw food on your HeatControl slot and hold sneak. The food will then begin to cook.");
@@ -1123,14 +1121,6 @@ public class ConfigManager {
 			config.addDefault("Abilities.Earth.Shockwave.Knockback", 1.1);
 			config.addDefault("Abilities.Earth.Shockwave.Range", 15);
 			config.addDefault("Abilities.Earth.Shockwave.Angle", 40);
-
-			config.addDefault("Abilities.Earth.SandSpout.Enabled", true);
-			config.addDefault("Abilities.Earth.SandSpout.Cooldown", 0);
-			config.addDefault("Abilities.Earth.SandSpout.Height", 10);
-			config.addDefault("Abilities.Earth.SandSpout.BlindnessTime", 10);
-			config.addDefault("Abilities.Earth.SandSpout.SpoutDamage", 1);
-			config.addDefault("Abilities.Earth.SandSpout.Spiral", false);
-			config.addDefault("Abilities.Earth.SandSpout.Interval", 100);
 
 			config.addDefault("Abilities.Earth.Tremorsense.Enabled", true);
 			config.addDefault("Abilities.Earth.Tremorsense.MaxDepth", 10);
