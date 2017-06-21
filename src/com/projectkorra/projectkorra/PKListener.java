@@ -423,7 +423,7 @@ public class PKListener implements Listener {
 			return;
 
 		if (TempBlock.isTempBlock(block)) {
-			if (EarthAbility.isEarthbendable(block.getType()) && GeneralMethods.isSolid(block)) {
+			if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
 				event.setCancelled(true);
 				return;
 			}
@@ -1110,6 +1110,11 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		
+		else if (Lightning.isParalyzed(player)) {
+			event.setCancelled(true);
+			return;
+		}
 
 		else if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class) || CoreAbility.hasAbility(player, SandSpout.class)) {
 			Vector vel = new Vector();
@@ -1150,8 +1155,8 @@ public class PKListener implements Listener {
 			}
 		}
 
-		else if (AirFlight.isFlying(event.getPlayer())) {
-			if (AirFlight.isHovering(event.getPlayer())) {
+		else if (AirFlight.isFlying(player)) {
+			if (AirFlight.isHovering(player)) {
 				Location loc = event.getFrom();
 				Location toLoc = event.getTo();
 

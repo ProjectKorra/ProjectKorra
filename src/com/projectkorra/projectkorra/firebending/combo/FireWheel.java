@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,7 +16,6 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
@@ -61,8 +61,9 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		}
 
-		location = player.getLocation();
-		direction = player.getEyeLocation().getDirection().clone().normalize();
+		location = player.getLocation().clone();
+		location.setPitch(0);
+		direction = location.getDirection().clone().normalize();
 		direction.setY(0);
 		
 		if (bPlayer.isAvatarState()) {
@@ -91,16 +92,19 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		}
 
-		Block topBlock = GeneralMethods.getTopBlock(location, 2, -4);
+		Block topBlock = GeneralMethods.getTopBlock(location, 2, 4);
 		if (topBlock.getType().equals(Material.SNOW)) {
-
-			topBlock = topBlock.getLocation().add(0, -1, 0).getBlock();
+			topBlock.breakNaturally();
+			topBlock = topBlock.getRelative(BlockFace.DOWN);
 		}
-		if (topBlock == null || (WaterAbility.isWaterbendable(player, getName(), topBlock) && !isPlant(topBlock))) {
+		if (topBlock == null || isWater(topBlock)) {
 			remove();
 			return;
-		} else if (topBlock.getType() == Material.FIRE || ElementalAbility.isPlant(topBlock)) {
-			topBlock = topBlock.getLocation().add(0, -1, 0).getBlock();
+		} else if (topBlock.getType() == Material.FIRE) {
+			topBlock = topBlock.getRelative(BlockFace.DOWN);
+		} else if (ElementalAbility.isPlant(topBlock)) {
+			topBlock.breakNaturally();
+			topBlock = topBlock.getRelative(BlockFace.DOWN);
 		}
 		location.setY(topBlock.getY() + height);
 
@@ -112,7 +116,7 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			ParticleEffect.FLAME.display(tempLoc, 0, 0, 0, 0, 1);
 		}
 		
-		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(player.getLocation(), 2)) {
+		for (Entity entity : GeneralMethods.getEntitiesAroundPoint(location, 1.5)) {
 			if (entity instanceof LivingEntity && !entity.equals(player)) {
 				if (!affectedEntities.contains(entity)) {
 					affectedEntities.add((LivingEntity) entity);
