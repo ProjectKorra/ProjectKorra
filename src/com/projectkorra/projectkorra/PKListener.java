@@ -865,12 +865,11 @@ public class PKListener implements Listener {
 		if (entity instanceof Player) {
 			Suffocate.remove((Player) entity);
 		}
-
-		Entity en = e.getEntity();
-		if (en instanceof Player) {
-			if (e.getDamager() instanceof Player) { // This is the player hitting someone.
-				Player sourcePlayer = (Player) e.getDamager();
-				Player targetPlayer = (Player) e.getEntity();
+		
+		if (entity instanceof Player) {
+			if (source instanceof Player) { // This is the player hitting someone.
+				Player sourcePlayer = (Player) source;
+				Player targetPlayer = (Player) entity;
 				BendingPlayer sourceBPlayer = BendingPlayer.getBendingPlayer(sourcePlayer);
 				if (sourceBPlayer == null) {
 					return;
