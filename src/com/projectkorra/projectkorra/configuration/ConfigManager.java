@@ -596,17 +596,18 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.Cooldown", 2000);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.Range", 20);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.MetalClips.CrushDamage", 3);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height", 20);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height", 16);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width", 16);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height", 20);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.Collapse.Wall.Height", 20);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Column.Height", 8);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Height", 8);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.RaiseEarth.Wall.Width", 8);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height", 12);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.Collapse.Wall.Height", 12);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthArmor.Cooldown", 2000);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthArmor.GoldHearts", 6);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthBlast.Cooldown", 500);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthBlast.Damage", 5);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthGrab.Cooldown", 0);
-			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height", 10);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height", 6);
+			config.addDefault("Abilities.Avatar.AvatarState.Earth.EarthGrab.Radius", 6);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.Range", 20);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.Cooldown", 0);
 			config.addDefault("Abilities.Avatar.AvatarState.Earth.Shockwave.ChargeTime", 1500);
@@ -1028,8 +1029,9 @@ public class ConfigManager {
 
 			config.addDefault("Abilities.Earth.EarthGrab.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthGrab.SelectRange", 20);
-			config.addDefault("Abilities.Earth.EarthGrab.Height", 6);
+			config.addDefault("Abilities.Earth.EarthGrab.Height", 4);
 			config.addDefault("Abilities.Earth.EarthGrab.Cooldown", 2000);
+			config.addDefault("Abilities.Earth.EarthGrab.Radius", 4);
 
 			config.addDefault("Abilities.Earth.EarthTunnel.Enabled", true);
 			config.addDefault("Abilities.Earth.EarthTunnel.Cooldown", 0);
