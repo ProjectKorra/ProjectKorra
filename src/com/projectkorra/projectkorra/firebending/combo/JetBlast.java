@@ -79,6 +79,7 @@ public class JetBlast extends FireAbility implements ComboAbility {
 			}
 			FireJet fj = getAbility(player, FireJet.class);
 			fj.setSpeed(speed);
+			fj.setDuration(duration);
 			
 			FireComboStream fs = new FireComboStream(player, this, player.getVelocity().clone().multiply(-1), player.getLocation(), 3, 0.5);
 
