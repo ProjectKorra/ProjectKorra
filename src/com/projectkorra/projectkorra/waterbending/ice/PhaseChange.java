@@ -323,6 +323,7 @@ public class PhaseChange extends IceAbility {
 		for (Location l : GeneralMethods.getCircle(center, radius, 3, true, true, 0)) {
 			if (isIce(l.getBlock()) || isSnow(l.getBlock())) {
 				ice.add(l.getBlock());
+				
 			}
 		}
 		
@@ -404,7 +405,7 @@ public class PhaseChange extends IceAbility {
 			Material m = allowMeltFlow ? Material.WATER : Material.STATIONARY_WATER;
 			b.setType(m);
 			melted_blocks.add(b);
-		} else if (b.getType() == Material.SNOW) {
+		} else if (b.getType() == Material.SNOW_BLOCK || b.getType() == Material.SNOW) {
 			if (b.getData() == 0) {
 				new TempBlock(b, Material.AIR, (byte) 0).setRevertTime(120 * 1000L);
 			} else {
