@@ -1618,6 +1618,8 @@ public class GeneralMethods {
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
+		// Stop the previous collision detection task before creating new manager.
+		ProjectKorra.collisionManager.stopCollisionDetection();
 		ProjectKorra.collisionManager = new CollisionManager();
 		ProjectKorra.collisionInitializer = new CollisionInitializer(ProjectKorra.collisionManager);
 		CoreAbility.registerAbilities();
