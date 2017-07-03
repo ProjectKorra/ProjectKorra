@@ -85,6 +85,9 @@ public class MetalClips extends MetalAbility {
 			if (!bPlayer.canBend(this)) {
 				return;
 			}
+			if (!player.getInventory().containsAtLeast(new ItemStack(Material.IRON_INGOT), 1)) {
+				return;
+			}
 			shootMetal();
 		} else if (abilityType == 1) {
 			if (bPlayer.isOnCooldown("MetalClips Magnet")) {
