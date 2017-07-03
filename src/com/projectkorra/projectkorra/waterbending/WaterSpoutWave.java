@@ -78,16 +78,16 @@ public class WaterSpoutWave extends WaterAbility {
 		this.plant = getConfig().getBoolean("Abilities.Water.WaterSpout.Wave.AllowPlantSource");
 		this.radius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Radius");
 		this.waveRadius = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.WaveRadius");
-		this.thawRadius = getConfig().getDouble("Abilities.Water.WaterCombo.IceWave.ThawRadius");
+		this.thawRadius = getConfig().getDouble("Abilities.Water.IceWave.ThawRadius");
 		this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.AnimationSpeed");
 		this.selectRange = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.SelectRange");
 		this.speed = getConfig().getDouble("Abilities.Water.WaterSpout.Wave.Speed");
-		this.damage = getConfig().getDouble("Abilities.Water.WaterCombo.IceWave.Damage");
+		this.damage = getConfig().getDouble("Abilities.Water.IceWave.Damage");
 		this.chargeTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.ChargeTime");
 		this.flightTime = getConfig().getLong("Abilities.Water.WaterSpout.Wave.FlightTime");
 		this.cooldown = getConfig().getLong("Abilities.Water.WaterSpout.Wave.Cooldown");
-		this.revertSphereTime = getConfig().getLong("Abilities.Water.WaterCombo.IceWave.RevertSphereTime");
-		this.revertIceSphere = getConfig().getBoolean("Abilities.Water.WaterCombo.IceWave.RevertSphere");
+		this.revertSphereTime = getConfig().getLong("Abilities.Water.IceWave.RevertSphereTime");
+		this.revertIceSphere = getConfig().getBoolean("Abilities.Water.IceWave.RevertSphere");
 		this.affectedBlocks = new ConcurrentHashMap<>();
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
@@ -96,6 +96,13 @@ public class WaterSpoutWave extends WaterAbility {
 
 		if (!bPlayer.canBend(this)) {
 			return;
+		}
+		
+		if (bPlayer.isAvatarState()) {
+			this.chargeTime = 0;
+			this.flightTime = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.WaterWave.FlightTime");
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceWave.Damage");
+			this.cooldown = 0;
 		}
 
 		this.time = System.currentTimeMillis();

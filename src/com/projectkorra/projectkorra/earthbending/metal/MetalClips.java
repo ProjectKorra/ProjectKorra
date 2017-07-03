@@ -44,6 +44,7 @@ public class MetalClips extends MetalAbility {
 	private long cooldown;
 	private long shootCooldown;
 	private long crushCooldown;
+	private long magnetCooldown;
 	private double magnetPower;
 	private double range;
 	private double crushDamage;
@@ -64,8 +65,9 @@ public class MetalClips extends MetalAbility {
 		this.armorTime = getConfig().getInt("Abilities.Earth.MetalClips.Duration");
 		this.range = getConfig().getDouble("Abilities.Earth.MetalClips.Range");
 		this.cooldown = getConfig().getLong("Abilities.Earth.MetalClips.Cooldown");
-		this.shootCooldown = getConfig().getLong("Abilities.Earth.MetalClips.ShootCooldown");
+		this.shootCooldown = 600;
 		this.crushCooldown = getConfig().getLong("Abilities.Earth.MetalClips.CrushCooldown");
+		this.magnetCooldown = getConfig().getLong("Abilities.Earth.MetalClips.MagnetCooldown");
 		this.magnetRange = getConfig().getInt("Abilities.Earth.MetalClips.MagnetRange");
 		this.magnetPower = getConfig().getDouble("Abilities.Earth.MetalClips.MagnetPower");
 		this.crushDamage = getConfig().getDouble("Abilities.Earth.MetalClips.CrushDamage");
@@ -73,20 +75,21 @@ public class MetalClips extends MetalAbility {
 		this.canThrow = (getConfig().getBoolean("Abilities.Earth.MetalClips.ThrowEnabled") && player.hasPermission("bending.ability.metalclips.throw"));
 		this.trackedIngots = new ArrayList<>();
 
-		if (!bPlayer.canBend(this)) {
-			return;
-		}
-
 		if (bPlayer.isAvatarState()) {
 			cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.MetalClips.Cooldown");
-			;
 			range = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.MetalClips.Range");
 			crushDamage = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.MetalClips.CrushDamage");
 		}
 
 		if (abilityType == 0) {
+			if (!bPlayer.canBend(this)) {
+				return;
+			}
 			shootMetal();
 		} else if (abilityType == 1) {
+			if (bPlayer.isOnCooldown("MetalClips Magnet")) {
+				return;
+			}
 			isMagnetized = true;
 		}
 
@@ -123,7 +126,6 @@ public class MetalClips extends MetalAbility {
 		ItemStack is = new ItemStack(Material.IRON_INGOT, 1);
 
 		if (!player.getInventory().containsAtLeast(is, 1)) {
-			remove();
 			return;
 		}
 
@@ -190,15 +192,17 @@ public class MetalClips extends MetalAbility {
 	}
 
 	public void resetArmor() {
+		if (!isMagnetized) {
+			bPlayer.addCooldown(this);
+		}
 		if (targetEntity == null || !TempArmor.hasTempArmor(targetEntity) || targetEntity.isDead()) {
 			return;
 		}
 
 		TempArmor.getTempArmor(targetEntity).revert();
 
-		player.getWorld().dropItem(targetEntity.getLocation(), new ItemStack(Material.IRON_INGOT, metalClipsCount));
+		dropIngots(targetEntity.getLocation());
 		isBeingWorn = false;
-		bPlayer.addCooldown(this);
 	}
 
 	public void launch() {
@@ -249,6 +253,11 @@ public class MetalClips extends MetalAbility {
 		}
 
 		if (!player.isSneaking()) {
+			if (isMagnetized) {
+				bPlayer.addCooldown("MetalClips Magnet", magnetCooldown);
+				remove();
+				return;
+			}
 			isControlling = false;
 			isMagnetized = false;
 			if (metalClipsCount < 4 && hasSnuck && abilityType == 0) {
@@ -265,7 +274,7 @@ public class MetalClips extends MetalAbility {
 				Vector vector = GeneralMethods.getDirection(entity.getLocation(), player.getLocation());
 				ItemStack itemInHand = player.getInventory().getItemInMainHand();
 
-				if (entity instanceof Player && canLoot && itemInHand.getType() == Material.IRON_INGOT && itemInHand.getItemMeta().getDisplayName().equalsIgnoreCase("Magnet")) {
+				if (entity instanceof Player && canLoot && itemInHand.getType() == Material.IRON_INGOT && (itemInHand.hasItemMeta() && itemInHand.getItemMeta().getDisplayName().equalsIgnoreCase("Magnet"))) {
 					Player targetPlayer = (Player) entity;
 
 					if (targetPlayer.getEntityId() == player.getEntityId()) {
@@ -395,7 +404,7 @@ public class MetalClips extends MetalAbility {
 			}
 		}
 
-		for (int i = 0; i < trackedIngots.size(); i++) {
+		for (int i = trackedIngots.size() - 1; i >= 0; i--) {
 			Item ii = trackedIngots.get(i);
 			if (ii.isOnGround()) {
 				trackedIngots.remove(i);
@@ -418,12 +427,12 @@ public class MetalClips extends MetalAbility {
 							} else if (targetEntity == e) {
 								formArmor();
 							} else {
+								dropIngots(e.getLocation());
 								TARGET_TO_ABILITY.get(targetEntity).remove();
-								player.getWorld().dropItemNaturally(e.getLocation(), new ItemStack(Material.IRON_INGOT, 1));
 							}
 						} else {
 							DamageHandler.damageEntity(e, player, damage, this);
-							ii.getWorld().dropItem(ii.getLocation(), ii.getItemStack());
+							dropIngots(e.getLocation());
 							remove();
 						}
 
@@ -435,6 +444,11 @@ public class MetalClips extends MetalAbility {
 		}
 
 		removeDeadIngots();
+	}
+	
+	public void dropIngots(Location loc) {
+		Item i = player.getWorld().dropItem(loc, new ItemStack(Material.IRON_INGOT, metalClipsCount == 0 ? 1 : metalClipsCount));
+		i.setPickupDelay(61);
 	}
 
 	public void removeDeadIngots() {

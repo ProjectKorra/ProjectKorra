@@ -14,6 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 
 public class DamageHandler {
 
@@ -27,7 +28,9 @@ public class DamageHandler {
 	 */
 	@SuppressWarnings("deprecation")
 	public static void damageEntity(Entity entity, Player source, double damage, Ability ability, boolean ignoreArmor) {
-
+		if (TempArmor.hasTempArmor((LivingEntity) entity)) {
+			ignoreArmor = true;
+		}
 		if (ability == null) {
 			return;
 		}
@@ -56,14 +59,12 @@ public class DamageHandler {
 					Bukkit.getServer().getPluginManager().callEvent(event);
 				}
 
-				DamageCause cause = DamageCause.CUSTOM;
-				if (ignoreArmor) {
-					cause = DamageCause.MAGIC;
-				}
-
-				EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, cause, damage);
+				EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, DamageCause.CUSTOM, damage);
 				((LivingEntity) entity).damage(damage, source);
 				entity.setLastDamageCause(finalEvent);
+				if (ignoreArmor) {
+					finalEvent.setDamage(DamageModifier.ARMOR, 0);
+				}
 
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
 					NCPExemptionManager.unexempt(source);

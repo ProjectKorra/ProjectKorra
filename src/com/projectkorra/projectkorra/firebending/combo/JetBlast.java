@@ -10,7 +10,6 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -19,9 +18,7 @@ public class JetBlast extends FireAbility implements ComboAbility {
 	private boolean firstTime;
 	private long time;
 	private long cooldown;
-	private double damage;
 	private double speed;
-	private double range;
 	private ArrayList<FireComboStream> tasks;
 	private long duration;
 	
@@ -36,14 +33,12 @@ public class JetBlast extends FireAbility implements ComboAbility {
 		this.time = System.currentTimeMillis();
 		this.tasks = new ArrayList<>();
 
-		this.speed = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlast.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.JetBlast.Cooldown");
-		this.duration = getConfig().getLong("Abilities.Fire.FireCombo.JetBlast.Duration");
+		this.speed = getConfig().getDouble("Abilities.Fire.JetBlast.Speed");
+		this.cooldown = getConfig().getLong("Abilities.Fire.JetBlast.Cooldown");
+		this.duration = getConfig().getLong("Abilities.Fire.JetBlast.Duration");
 
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = AvatarState.getValue(damage);
-			this.range = AvatarState.getValue(range);
 		}
 		
 		start();

@@ -277,6 +277,24 @@ public class PKListener implements Listener {
 		if (!EarthPassive.canPhysicsChange(event.getBlock())) {
 			event.setCancelled(true);
 		}
+		if (event.getBlock().getType().toString().equals("CONCRETE_POWDER")) {
+			BlockFace[] faces = new BlockFace[] {BlockFace.UP, BlockFace.DOWN, BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
+			
+			boolean marked = true;
+			for (BlockFace face : faces) {
+				Block b = event.getBlock().getRelative(face);
+				if (b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER) {
+					if (!TempBlock.isTempBlock(b)) {
+						marked = false; //if there is any normal water around it, prevent it.
+						break;
+					}
+				}
+			}
+			
+			if (marked) {
+				event.setCancelled(true);	
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -471,8 +489,12 @@ public class PKListener implements Listener {
 			TempArmor armor = TempArmor.getTempArmor(event.getEntity());
 
 			List<ItemStack> newDrops = armor.filterArmor(event.getDrops());
+			
 			event.getDrops().clear();
 			event.getDrops().addAll(newDrops);
+			if (MetalClips.isControlled(event.getEntity())) {
+				event.getDrops().add(new ItemStack(Material.IRON_INGOT, MetalClips.getTargetToAbility().get(event.getEntity()).getMetalClipsCount()));
+			}
 
 			armor.revert();
 		}
@@ -1277,7 +1299,7 @@ public class PKListener implements Listener {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
 
-		if (CoreAbility.getAbility(FerroControl.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class)) && !bPlayer.isOnCooldown("Hodor")) {
+		if (CoreAbility.getAbility(FerroControl.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class)) && !bPlayer.isOnCooldown("FerroControl")) {
 			if (event.isSneaking()) {
 				Block block = player.getTargetBlock((HashSet<Material>) null, 5);
 				if (block != null) {
@@ -1292,7 +1314,7 @@ public class PKListener implements Listener {
 							block.setData((byte) (block.getData() - 4));
 							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 10, 1);
 						}
-						bPlayer.addCooldown("Hodor", 200);
+						bPlayer.addCooldown("FerroControl", 200);
 					}
 				}
 
@@ -1407,10 +1429,10 @@ public class PKListener implements Listener {
 							} else {
 								clips.setControlling(true);
 							}
+						} else {
+							new MetalClips(player, 1);
 						}
-					} else {
-						new MetalClips(player, 1);
-					}
+					} 
 				}
 
 			}

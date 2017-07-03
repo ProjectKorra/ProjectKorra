@@ -17,7 +17,6 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 
 public class FireSpin extends FireAbility implements ComboAbility {
 
@@ -44,16 +43,17 @@ public class FireSpin extends FireAbility implements ComboAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.FireSpin.Cooldown");
-		this.knockback = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Knockback");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Speed");
+		this.damage = getConfig().getDouble("Abilities.Fire.FireSpin.Damage");
+		this.range = getConfig().getDouble("Abilities.Fire.FireSpin.Range");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireSpin.Cooldown");
+		this.knockback = getConfig().getDouble("Abilities.Fire.FireSpin.Knockback");
+		this.speed = getConfig().getDouble("Abilities.Fire.FireSpin.Speed");
 
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = AvatarState.getValue(damage);
-			this.range = AvatarState.getValue(range);
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Damage");
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Range");
+			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Knockback");
 		}
 		
 		start();

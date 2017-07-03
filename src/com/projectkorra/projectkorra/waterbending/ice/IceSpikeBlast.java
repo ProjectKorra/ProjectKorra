@@ -66,6 +66,15 @@ public class IceSpikeBlast extends IceAbility {
 		if (!bPlayer.canBend(this) || !bPlayer.canIcebend()) {
 			return;
 		}
+		
+		if (bPlayer.isAvatarState()) {
+			this.cooldown = 0;
+			this.slowCooldown = 0;
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Range");
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.Damage");
+			this.slowPower = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowPower");
+			this.slowDuration = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceSpike.Blast.SlowDuration");
+		}
 
 		block(player);
 		this.range = getNightFactor(range);
