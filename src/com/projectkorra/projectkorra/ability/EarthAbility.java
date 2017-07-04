@@ -496,7 +496,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	public static void playEarthbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound")), 0, 10);
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound")), 1, 10);
 		}
 	}
 
