@@ -103,6 +103,13 @@ public class Torrent extends WaterAbility {
 		if (bPlayer.isOnCooldown("Torrent")) {
 			return;
 		}
+		
+		if (bPlayer.isAvatarState()) {
+			this.push = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.Push");
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.InitialDamage");
+			this.successiveDamage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.Torrent.SuccessiveDamage");
+			this.maxHits = getConfig().getInt("Abilities.Avatar.AvatarState.Water.Torrent.MaxHits");
+		}
 
 		time = System.currentTimeMillis();
 		sourceBlock = BlockSource.getWaterSourceBlock(player, selectRange, ClickType.LEFT_CLICK, true, true, bPlayer.canPlantbend());

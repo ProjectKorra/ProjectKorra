@@ -17,7 +17,6 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.ElementalAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.util.FireDamageTimer;
 import com.projectkorra.projectkorra.util.DamageHandler;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -44,13 +43,13 @@ public class FireWheel extends FireAbility implements ComboAbility {
 			return;
 		}
 		
-		this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.Range");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.FireWheel.Cooldown");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.FireTicks");
-		this.height = getConfig().getInt("Abilities.Fire.FireCombo.FireWheel.Height");
-		this.radius = getConfig().getDouble("Abilities.Fire.FireCombo.FireWheel.Radius");
+		this.damage = getConfig().getDouble("Abilities.Fire.FireWheel.Damage");
+		this.range = getConfig().getDouble("Abilities.Fire.FireWheel.Range");
+		this.speed = getConfig().getDouble("Abilities.Fire.FireWheel.Speed");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireWheel.Cooldown");
+		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireWheel.FireTicks");
+		this.height = getConfig().getInt("Abilities.Fire.FireWheel.Height");
+		this.radius = getConfig().getDouble("Abilities.Fire.FireWheel.Radius");
 		
 		bPlayer.addCooldown(this);
 		origin = player.getLocation();
@@ -68,8 +67,12 @@ public class FireWheel extends FireAbility implements ComboAbility {
 		
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = AvatarState.getValue(damage);
-			this.range = AvatarState.getValue(range);
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Damage");
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Range");
+			this.speed = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Speed");
+			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.FireTicks");
+			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.FireWheel.Height");
+			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireWheel.Radius");
 		}
 		
 		start();

@@ -77,7 +77,7 @@ public class Collapse extends EarthAbility {
 	}
 
 	private void setFields() {
-		this.height = getConfig().getInt("Abilities.Earth.Collapse.Column.Height");
+		this.height = bPlayer.isAvatarState() ? getConfig().getInt("Abilities.Avatar.AvatarState.Earth.Collapse.Column.Height") : getConfig().getInt("Abilities.Earth.Collapse.Column.Height");
 		this.selectRange = getConfig().getInt("Abilities.Earth.Collapse.SelectRange");
 		this.speed = getConfig().getDouble("Abilities.Earth.Collapse.Speed");
 		this.cooldown = getConfig().getLong("Abilities.Earth.Collapse.Column.Cooldown");
