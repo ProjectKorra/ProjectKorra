@@ -60,7 +60,6 @@ public class AirScooter extends AirAbility {
 		player.setAllowFlight(true);
 		player.setFlying(true);
 
-		player.setSprinting(false);
 		player.setSneaking(false);
 
 		for (int i = 0; i < 5; i++) {
@@ -113,13 +112,14 @@ public class AirScooter extends AirAbility {
 		}
 
 		Vector velocity = player.getEyeLocation().getDirection().clone().normalize();
+		velocity.setY(0);
 		velocity = velocity.clone().normalize().multiply(speed);
 		/*
 		 * checks the players speed and ends the move if they are going too slow
 		 */
 		if (System.currentTimeMillis() > getStartTime() + interval) {
 			if (player.getVelocity().length() < speed * 0.3) {
-				remove();
+			remove();
 				return;
 			}
 			spinScooter();
@@ -131,11 +131,9 @@ public class AirScooter extends AirAbility {
 		double distance = player.getLocation().getY() - (double) floorblock.getY();
 		double dx = Math.abs(distance - 2.4);
 		if (distance > 2.75) {
-			velocity.setY(-.40 * dx * dx);
+			velocity.setY(-.25 * dx * dx);
 		} else if (distance < 2) {
-			velocity.setY(.40 * dx * dx);
-		} else {
-			velocity.setY(0);
+			velocity.setY(.25 * dx * dx);
 		}
 		
 		Vector v = velocity.clone().setY(0);
@@ -153,7 +151,7 @@ public class AirScooter extends AirAbility {
 			return;
 		}
 
-		player.setSprinting(false);
+
 		player.removePotionEffect(PotionEffectType.SPEED);
 		player.setVelocity(velocity);
 

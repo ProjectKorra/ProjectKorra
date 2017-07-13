@@ -123,7 +123,6 @@ public class WaterSpout extends WaterAbility {
 		} else {
 			blocks.clear();
 			player.setFallDistance(0);
-			player.setSprinting(false);
 			if ((new Random()).nextInt(10) == 0) {
 				playWaterbendingSound(player.getLocation());
 			}

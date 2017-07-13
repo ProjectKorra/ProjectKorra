@@ -30,6 +30,7 @@ public class AirFlight extends FlightAbility {
 	private double hoverY;
 	@Attribute(Attribute.DURATION)
 	private double maxDuration;
+	
 
 	public AirFlight(Player player) {
 		super(player);
@@ -105,23 +106,6 @@ public class AirFlight extends FlightAbility {
 	@Override
 	public void progress() {
 		boolean isHovering = isHovering(player);
-		if (!bPlayer.canBend(this)) {
-			remove();
-			return;
-		} else if (!player.isSneaking() && !isHovering && !firstProgressIteration) {
-			bPlayer.addCooldown(this);
-			remove();
-			return;
-		} else if (player.getLocation().subtract(0, 0.5, 0).getBlock().getType() != Material.AIR) {
-			bPlayer.addCooldown(this);
-			remove();
-			return;
-		} else if (System.currentTimeMillis() - getStartTime() > maxDuration && maxDuration > 0) {
-			bPlayer.addCooldown(this);
-			remove();
-			return;
-		}
-
 		player.setAllowFlight(true);
 
 		if (flight == null) {
@@ -140,6 +124,25 @@ public class AirFlight extends FlightAbility {
 		} else {
 			player.setVelocity(player.getEyeLocation().getDirection().normalize().multiply(speed));
 		}
+		if (!bPlayer.canBend(this)) {
+			remove();
+			return;
+		}
+		else if (!player.isSneaking() && !isHovering && !firstProgressIteration) {
+			bPlayer.addCooldown(this);
+			remove();
+			return;
+		}
+		else if (player.getLocation().subtract(0, 0.3, 0).getBlock().getType() != Material.AIR) {
+			remove();
+			return;
+		}
+		else if (System.currentTimeMillis() - getStartTime() > maxDuration && maxDuration > 0) {
+			bPlayer.addCooldown(this);
+			remove();
+			return;
+		}
+		
 		firstProgressIteration = false;
 	}
 
