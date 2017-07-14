@@ -13,6 +13,7 @@ import com.projectkorra.items.command.PKICommand;
 import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
@@ -140,21 +141,22 @@ public class HelpCommand extends PKCommand {
 			if (!ability.getInstructions().isEmpty()) {
 				sender.sendMessage(ChatColor.GOLD + usage + ability.getInstructions());
 			}
+			if (ability instanceof AddonAbility) {
+				AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
+				sender.sendMessage(color + "* ADDON ABILITY *");
+				sender.sendMessage(ChatColor.GRAY + "- By " + abil.getAuthor());
+			}
+			
 		} else if (Arrays.asList(Commands.airaliases).contains(args.get(0))) {
 			sender.sendMessage(Element.AIR.getColor() + air.replace("/b help AirCombos", Element.AIR.getSubColor() + "/b help AirCombos" + Element.AIR.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/qffg9m3");
 		} else if (Arrays.asList(Commands.wateraliases).contains(args.get(0))) {
 			sender.sendMessage(Element.WATER.getColor() + water.replace("/b help WaterCombos", Element.WATER.getSubColor() + "/b h WaterCombos" + Element.WATER.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/lod3plv");
 		} else if (Arrays.asList(Commands.earthaliases).contains(args.get(0))) {
 			sender.sendMessage(Element.EARTH.getColor() + earth);
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/qaudl42");
 		} else if (Arrays.asList(Commands.firealiases).contains(args.get(0))) {
 			sender.sendMessage(Element.FIRE.getColor() + fire.replace("/b h FireCombos", Element.FIRE.getSubColor() + "/b h FireCombos" + Element.FIRE.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/k4fkjhb");
 		} else if (Arrays.asList(Commands.chialiases).contains(args.get(0))) {
 			sender.sendMessage(Element.CHI.getColor() + chi.replace("/b h ChiCombos", Element.CHI.getSubColor() + "/b h ChiCombos" + Element.CHI.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA + "http://tinyurl.com/mkp9n6y");
 		} else {
 			//combos - handled differently because they're stored in CamelCase in ComboManager
 			for (String combo : ComboManager.getDescriptions().keySet()) {

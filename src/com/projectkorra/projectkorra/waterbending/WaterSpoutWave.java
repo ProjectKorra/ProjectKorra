@@ -131,7 +131,10 @@ public class WaterSpoutWave extends WaterAbility {
 			remove();
 			return;
 		}
-
+		if (CoreAbility.hasAbility(player, WaterSpout.class)) {
+		    WaterSpout waterSpout = CoreAbility.getAbility(player, WaterSpout.class);
+		    waterSpout.remove();
+		}
 		if (type != AbilityType.RELEASE) {
 			if (!player.hasPermission("bending.ability.WaterSpout.Wave")) {
 				remove();

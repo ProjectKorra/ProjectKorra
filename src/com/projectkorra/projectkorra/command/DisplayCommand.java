@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.SubAbility;
@@ -241,12 +242,17 @@ public class DisplayCommand extends PKCommand {
 		}
 
 		HashSet<String> abilitiesSent = new HashSet<String>(); //Some abilities have the same name. This prevents this from showing anything.
+		
 		for (CoreAbility ability : abilities) {
 			if (ability instanceof SubAbility || ability instanceof ComboAbility || ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
 				continue;
 			}
 			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
-				sender.sendMessage(ability.getElement().getColor() + ability.getName());
+				String message = ability.getElement().getColor()+ ability.getName();
+				if (ability instanceof AddonAbility) {
+					message += ChatColor.WHITE +""+ ChatColor.BOLD + "*";
+				}
+				sender.sendMessage(message);
 				abilitiesSent.add(ability.getName());
 			}
 		}
