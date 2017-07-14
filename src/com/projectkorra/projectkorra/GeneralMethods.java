@@ -2031,12 +2031,13 @@ public class GeneralMethods {
 
 	public static void sendBrandingMessage(CommandSender sender, String message) {
 		ChatColor color;
-		try{
+		try {
 			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-		} catch(IllegalArgumentException error){
+		}
+		catch (IllegalArgumentException error) {
 			color = ChatColor.GOLD;
 		}
-		
+
 		String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(prefix + message);

@@ -143,26 +143,20 @@ public class HelpCommand extends PKCommand {
 			}
 			if (ability instanceof AddonAbility) {
 				AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
-				
 				sender.sendMessage(color + "* ADDON ABILITY *");
 				sender.sendMessage(ChatColor.GRAY + "- By " + abil.getAuthor());
 			}
 			
 		} else if (Arrays.asList(Commands.airaliases).contains(args.get(0))) {
 			sender.sendMessage(Element.AIR.getColor() + air.replace("/b help AirCombos", Element.AIR.getSubColor() + "/b help AirCombos" + Element.AIR.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA);
 		} else if (Arrays.asList(Commands.wateraliases).contains(args.get(0))) {
 			sender.sendMessage(Element.WATER.getColor() + water.replace("/b help WaterCombos", Element.WATER.getSubColor() + "/b h WaterCombos" + Element.WATER.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA);
 		} else if (Arrays.asList(Commands.earthaliases).contains(args.get(0))) {
 			sender.sendMessage(Element.EARTH.getColor() + earth);
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA);
 		} else if (Arrays.asList(Commands.firealiases).contains(args.get(0))) {
 			sender.sendMessage(Element.FIRE.getColor() + fire.replace("/b h FireCombos", Element.FIRE.getSubColor() + "/b h FireCombos" + Element.FIRE.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA);
 		} else if (Arrays.asList(Commands.chialiases).contains(args.get(0))) {
 			sender.sendMessage(Element.CHI.getColor() + chi.replace("/b h ChiCombos", Element.CHI.getSubColor() + "/b h ChiCombos" + Element.CHI.getColor()));
-			sender.sendMessage(ChatColor.YELLOW + learnMore + ChatColor.DARK_AQUA);
 		} else {
 			//combos - handled differently because they're stored in CamelCase in ComboManager
 			for (String combo : ComboManager.getDescriptions().keySet()) {

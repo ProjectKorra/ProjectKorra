@@ -82,7 +82,6 @@ public class AirScooter extends AirAbility {
 		}
 		return false;
 	}
-
 	/*
 	 * Looks for a block under the player and sets "floorBlock" to a block under
 	 * the player if it within the maximum height
@@ -104,13 +103,12 @@ public class AirScooter extends AirAbility {
 			remove();
 			return;
 		}
-
 		getFloor();
 		if (floorblock == null) {
 			remove();
 			return;
 		}
-
+		
 		Vector velocity = player.getEyeLocation().getDirection().clone().normalize();
 		velocity.setY(0);
 		velocity = velocity.clone().normalize().multiply(speed);
@@ -119,7 +117,7 @@ public class AirScooter extends AirAbility {
 		 */
 		if (System.currentTimeMillis() > getStartTime() + interval) {
 			if (player.getVelocity().length() < speed * 0.3) {
-			remove();
+				remove();
 				return;
 			}
 			spinScooter();
@@ -135,7 +133,7 @@ public class AirScooter extends AirAbility {
 		} else if (distance < 2) {
 			velocity.setY(.25 * dx * dx);
 		}
-		
+
 		Vector v = velocity.clone().setY(0);
 		Block b = floorblock.getLocation().clone().add(v.multiply(1.2)).getBlock();
 		if (!GeneralMethods.isSolid(b) && !b.isLiquid()) {
@@ -150,7 +148,6 @@ public class AirScooter extends AirAbility {
 		} else {
 			return;
 		}
-
 
 		player.removePotionEffect(PotionEffectType.SPEED);
 		player.setVelocity(velocity);
