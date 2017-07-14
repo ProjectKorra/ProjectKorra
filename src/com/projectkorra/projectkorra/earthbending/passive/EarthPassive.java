@@ -77,7 +77,7 @@ public class EarthPassive {
 			return true;
 		}
 
-		return (TempBlock.isTempBlock(block) && EarthAbility.isEarth(TempBlock.get(block).getBlock().getType())) || EarthAbility.isEarth(block) || EarthAbility.isTransparent(player, block);
+		return (TempBlock.isTempBlock(block) && EarthAbility.isEarthbendable(TempBlock.get(block).getBlock().getType(), true, true, false)) || EarthAbility.isEarthbendable(block.getType(), true, true, false) || EarthAbility.isTransparent(player, block);
 	}
 
 	public static boolean isPassiveSand(Block block) {
@@ -182,7 +182,4 @@ public class EarthPassive {
 		return ConfigManager.getConfig().getLong("Abilities.Earth.Passive.Duration");
 	}
 
-	public static int getSandRunSpeed() {
-		return ConfigManager.getConfig().getInt("Abilities.Earth.Passive.SandRunSpeed");
-	}
 }

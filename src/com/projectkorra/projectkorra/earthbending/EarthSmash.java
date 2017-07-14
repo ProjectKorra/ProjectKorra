@@ -494,7 +494,7 @@ public class EarthSmash extends EarthAbility {
 	public Material selectMaterialForRepresenter(Material mat) {
 		Material tempMat = selectMaterial(mat);
 		Random rand = new Random();
-		if (!isEarthbendable(tempMat) && !isMetalbendable(tempMat)) {
+		if (!isEarthbendable(tempMat, true, true, true) && !isMetalbendable(tempMat)) {
 			if (currentBlocks.size() < 1) {
 				return Material.DIRT;
 			} else {

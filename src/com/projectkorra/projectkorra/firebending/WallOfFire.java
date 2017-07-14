@@ -70,6 +70,14 @@ public class WallOfFire extends FireAbility {
 			duration = (long) getDayFactor(duration);
 			damage = (int) getDayFactor(damage);
 		}
+		
+		if (bPlayer.isAvatarState()) {
+			this.width = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Width");
+			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Height");
+			this.duration = getConfig().getLong("Abilities.Avatar.AvatarState.Fire.WallOfFire.Duration");
+			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Fire.WallOfFire.Damage");
+			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.WallOfFire.FireTicks");
+		}
 
 		time = System.currentTimeMillis();
 		Block block = origin.getBlock();

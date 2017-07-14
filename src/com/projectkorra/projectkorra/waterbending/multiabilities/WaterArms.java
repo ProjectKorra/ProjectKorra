@@ -1,5 +1,18 @@
 package com.projectkorra.projectkorra.waterbending.multiabilities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.FireAbility;
@@ -13,19 +26,6 @@ import com.projectkorra.projectkorra.util.TempBlock;
 import com.projectkorra.projectkorra.waterbending.multiabilities.WaterArmsWhip.Whip;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class WaterArms extends WaterAbility {
 
@@ -92,7 +92,6 @@ public class WaterArms extends WaterAbility {
 			if (player.isSneaking()) {
 				oldArms.prepareCancel();
 			} else {
-				
 				switch (player.getInventory().getHeldItemSlot()) {
 					case 0:
 						if (player.hasPermission("bending.ability.WaterArms.Pull")) {
@@ -156,7 +155,7 @@ public class WaterArms extends WaterAbility {
 				fullSource = false;
 			} 
 			
-			ParticleEffect.LARGE_SMOKE.display(getWaterSourceBlock(player, sourceGrabRange, canUsePlantSource).getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
+			ParticleEffect.LARGE_SMOKE.display(sourceBlock.getLocation().clone().add(0.5, 0.5, 0.5), 0, 0, 0, 0F, 4);
 			return true;
 		} else if (WaterReturn.hasWaterBottle(player)) {
 			WaterReturn.emptyWaterBottle(player);
@@ -396,6 +395,7 @@ public class WaterArms extends WaterAbility {
 		if (player.isOnline()) {
 			bPlayer.addCooldown("WaterArms", cooldown);
 		}
+		new WaterReturn(player, player.getLocation().getBlock());
 	}
 
 	public void prepareCancel() {

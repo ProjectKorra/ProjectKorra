@@ -40,6 +40,7 @@ public class RapidPunch extends ChiAbility {
 	@Override
 	public void progress() {
 		if (numPunches >= punches || target == null || !(target instanceof LivingEntity)) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
 		}
@@ -57,7 +58,6 @@ public class RapidPunch extends ChiAbility {
 		}
 
 		lt.setNoDamageTicks(0);
-		bPlayer.addCooldown(this);
 		numPunches++;
 	}
 

@@ -43,7 +43,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 	private double damage;
 	private double speed;
 	private double range;
-	private double knockback;
 	private double radius;
 	private double shootTime;
 	private double shots;
@@ -71,13 +70,13 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			return;
 		}
 		
-		this.damage = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Damage");
-		this.range = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Range");
-		this.radius = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.Radius");
-		this.cooldown = getConfig().getLong("Abilities.Water.WaterCombo.IceBullet.Cooldown");
-		this.shootTime = getConfig().getLong("Abilities.Water.WaterCombo.IceBullet.ShootTime");
-		this.maxShots = getConfig().getInt("Abilities.Water.WaterCombo.IceBullet.MaxShots");
-		this.animationSpeed = getConfig().getDouble("Abilities.Water.WaterCombo.IceBullet.AnimationSpeed");
+		this.damage = getConfig().getDouble("Abilities.Water.IceBullet.Damage");
+		this.range = getConfig().getDouble("Abilities.Water.IceBullet.Range");
+		this.radius = getConfig().getDouble("Abilities.Water.IceBullet.Radius");
+		this.cooldown = getConfig().getLong("Abilities.Water.IceBullet.Cooldown");
+		this.shootTime = getConfig().getLong("Abilities.Water.IceBullet.ShootTime");
+		this.maxShots = getConfig().getInt("Abilities.Water.IceBullet.MaxShots");
+		this.animationSpeed = getConfig().getDouble("Abilities.Water.IceBullet.AnimationSpeed");
 		this.speed = 1;
 		this.name = getName();
 		
@@ -98,7 +97,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 			this.range = AvatarState.getValue(range);
 			this.shootTime = AvatarState.getValue(shootTime);
 			this.maxShots = AvatarState.getValue(maxShots);
-			this.knockback = knockback * 1.3;
 		}
 
 		start();
@@ -202,10 +200,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 					}
 
 					if (!entity.equals(player)) {
-						if (knockback != 0) {
-							Vector force = fstream.getDirection();
-							entity.setVelocity(force.multiply(knockback));
-						}
 						if (damage != 0) {
 							if (entity instanceof LivingEntity) {
 								DamageHandler.damageEntity(entity, damage, this);
@@ -437,14 +431,6 @@ public class IceBullet extends IceAbility implements ComboAbility {
 
 	public void setRange(double range) {
 		this.range = range;
-	}
-
-	public double getKnockback() {
-		return knockback;
-	}
-
-	public void setKnockback(double knockback) {
-		this.knockback = knockback;
 	}
 
 	public double getRadius() {

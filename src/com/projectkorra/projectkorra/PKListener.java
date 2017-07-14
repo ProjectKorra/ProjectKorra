@@ -129,7 +129,6 @@ import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.passive.FerroControl;
-import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
@@ -278,6 +277,24 @@ public class PKListener implements Listener {
 		if (!EarthPassive.canPhysicsChange(event.getBlock())) {
 			event.setCancelled(true);
 		}
+		if (event.getBlock().getType().toString().equals("CONCRETE_POWDER")) {
+			BlockFace[] faces = new BlockFace[] {BlockFace.UP, BlockFace.DOWN, BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
+			
+			boolean marked = true;
+			for (BlockFace face : faces) {
+				Block b = event.getBlock().getRelative(face);
+				if (b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER) {
+					if (!TempBlock.isTempBlock(b)) {
+						marked = false; //if there is any normal water around it, prevent it.
+						break;
+					}
+				}
+			}
+			
+			if (marked) {
+				event.setCancelled(true);	
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -423,7 +440,7 @@ public class PKListener implements Listener {
 			return;
 
 		if (TempBlock.isTempBlock(block)) {
-			if (EarthAbility.isEarthbendable(block.getType()) && GeneralMethods.isSolid(block)) {
+			if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
 				event.setCancelled(true);
 				return;
 			}
@@ -472,8 +489,12 @@ public class PKListener implements Listener {
 			TempArmor armor = TempArmor.getTempArmor(event.getEntity());
 
 			List<ItemStack> newDrops = armor.filterArmor(event.getDrops());
+			
 			event.getDrops().clear();
 			event.getDrops().addAll(newDrops);
+			if (MetalClips.isControlled(event.getEntity())) {
+				event.getDrops().add(new ItemStack(Material.IRON_INGOT, MetalClips.getTargetToAbility().get(event.getEntity()).getMetalClipsCount()));
+			}
 
 			armor.revert();
 		}
@@ -866,12 +887,11 @@ public class PKListener implements Listener {
 		if (entity instanceof Player) {
 			Suffocate.remove((Player) entity);
 		}
-
-		Entity en = e.getEntity();
-		if (en instanceof Player) {
-			if (e.getDamager() instanceof Player) { // This is the player hitting someone.
-				Player sourcePlayer = (Player) e.getDamager();
-				Player targetPlayer = (Player) e.getEntity();
+		
+		if (entity instanceof Player) {
+			if (source instanceof Player) { // This is the player hitting someone.
+				Player sourcePlayer = (Player) source;
+				Player targetPlayer = (Player) entity;
 				BendingPlayer sourceBPlayer = BendingPlayer.getBendingPlayer(sourcePlayer);
 				if (sourceBPlayer == null) {
 					return;
@@ -1110,8 +1130,13 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		
+		else if (Lightning.isParalyzed(player)) {
+			event.setCancelled(true);
+			return;
+		}
 
-		else if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class) || CoreAbility.hasAbility(player, SandSpout.class)) {
+		else if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class) ) {
 			Vector vel = new Vector();
 			vel.setX(event.getTo().getX() - event.getFrom().getX());
 			vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
@@ -1150,8 +1175,8 @@ public class PKListener implements Listener {
 			}
 		}
 
-		else if (AirFlight.isFlying(event.getPlayer())) {
-			if (AirFlight.isHovering(event.getPlayer())) {
+		else if (AirFlight.isFlying(player)) {
+			if (AirFlight.isHovering(player)) {
 				Location loc = event.getFrom();
 				Location toLoc = event.getTo();
 
@@ -1274,7 +1299,7 @@ public class PKListener implements Listener {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
 
-		if (CoreAbility.getAbility(FerroControl.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class)) && !bPlayer.isOnCooldown("Hodor")) {
+		if (CoreAbility.getAbility(FerroControl.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class)) && !bPlayer.isOnCooldown("FerroControl")) {
 			if (event.isSneaking()) {
 				Block block = player.getTargetBlock((HashSet<Material>) null, 5);
 				if (block != null) {
@@ -1289,7 +1314,7 @@ public class PKListener implements Listener {
 							block.setData((byte) (block.getData() - 4));
 							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 10, 1);
 						}
-						bPlayer.addCooldown("Hodor", 200);
+						bPlayer.addCooldown("FerroControl", 200);
 					}
 				}
 
@@ -1404,10 +1429,10 @@ public class PKListener implements Listener {
 							} else {
 								clips.setControlling(true);
 							}
+						} else {
+							new MetalClips(player, 1);
 						}
-					} else {
-						new MetalClips(player, 1);
-					}
+					} 
 				}
 
 			}
@@ -1609,8 +1634,6 @@ public class PKListener implements Listener {
 						new LavaFlow(player, AbilityType.CLICK);
 					} else if (abil.equalsIgnoreCase("EarthSmash")) {
 						new EarthSmash(player, ClickType.LEFT_CLICK);
-					} else if (abil.equalsIgnoreCase("SandSpout")) {
-						new SandSpout(player);
 					}
 				}
 			}
