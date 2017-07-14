@@ -250,7 +250,7 @@ public class DisplayCommand extends PKCommand {
 			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
 				String message = ability.getElement().getColor()+ ability.getName();
 				if (ability instanceof AddonAbility) {
-					message = ability.getElement().getColor()+ability.getName() + ChatColor.BOLD + "*";
+					message += ChatColor.WHITE +""+ ChatColor.BOLD + "*";
 				}
 				sender.sendMessage(message);
 				abilitiesSent.add(ability.getName());
