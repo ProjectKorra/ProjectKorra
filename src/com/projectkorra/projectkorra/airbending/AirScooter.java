@@ -131,7 +131,7 @@ public class AirScooter extends AirAbility {
 		if (distance > 2.75) {
 			velocity.setY(-.25 * dx * dx);
 		} else if (distance < 2) {
-			velocity.setY(.25 * dx * dx);
+			velocity.setY(.4 * dx * dx);
 		}
 
 		Vector v = velocity.clone().setY(0);
