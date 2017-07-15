@@ -566,6 +566,10 @@ public abstract class CoreAbility implements Ability {
 					if (coreAbil.getElement() instanceof SubElement) {
 						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
 					}
+					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
+						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
+					}
+					PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 				}
 			}
 			catch (Exception | Error e) {
@@ -637,6 +641,9 @@ public abstract class CoreAbility implements Ability {
 					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);
 					if (coreAbil.getElement() instanceof SubElement) {
 						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
+					}
+					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
+						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
 				}
 			}
