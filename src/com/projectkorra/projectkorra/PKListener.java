@@ -200,18 +200,23 @@ public class PKListener implements Listener {
 
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
-		String abil = BendingPlayer.getBendingPlayer(player).getBoundAbilityName();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		String abil = bPlayer.getBoundAbilityName();
 		CoreAbility ability = null;
-		if (abil != null && abil.equalsIgnoreCase("Surge")) {
-			ability = CoreAbility.getAbility(SurgeWall.class);
-		} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
-			ability = CoreAbility.getAbility(Torrent.class);
-		} else {
-			ability = CoreAbility.getAbility(abil);
-		}
-		if (ability != null && ability instanceof WaterAbility && !((WaterAbility) ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
-			event.setCancelled(true);
-			return;
+		
+		if (!bPlayer.isElementToggled(Element.WATER)) {
+			if (abil != null && abil.equalsIgnoreCase("Surge")) {
+				ability = CoreAbility.getAbility(SurgeWall.class);
+			} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
+				ability = CoreAbility.getAbility(Torrent.class);
+			} else {
+				ability = CoreAbility.getAbility(abil);
+			}
+			
+			if (ability != null && ability instanceof WaterAbility && !((WaterAbility) ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
+				event.setCancelled(true);
+				return;
+			}
 		}
 
 		EarthBlast blast = EarthBlast.getBlastFromSource(block);

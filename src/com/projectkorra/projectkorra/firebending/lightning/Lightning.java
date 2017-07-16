@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -125,8 +124,8 @@ public class Lightning extends LightningAbility {
 	public void electrocute(LivingEntity lent) {
 		final UUID uuid = lent.getUniqueId();
 		final LivingEntity flent = lent;
-		lent.getWorld().playSound(lent.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
-		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
+		playLightningbendingSound(lent.getLocation());
+		playLightningbendingSound(player.getLocation());
 		DamageHandler.damageEntity(lent, damage, this);
 
 		if (Math.random() <= stunChance) {
@@ -542,8 +541,8 @@ public class Lightning extends LightningAbility {
 						affectedEntities.add(entity);
 						LivingEntity lent = (LivingEntity) entity;
 						if (lent instanceof Player) {
-							lent.getWorld().playSound(lent.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
-							player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_HURT, 1, 0.01F);
+							playLightningbendingSound(lent.getLocation());
+							playLightningbendingSound(player.getLocation());
 							Player p = (Player) lent;
 							Lightning light = getAbility(p, Lightning.class);
 							if (light != null && light.state == State.START) {

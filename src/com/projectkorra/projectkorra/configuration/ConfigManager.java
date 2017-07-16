@@ -163,7 +163,7 @@ public class ConfigManager {
 			config.addDefault("Commands.Help.Required", "Required");
 			config.addDefault("Commands.Help.Optional", "Optional");
 			config.addDefault("Commands.Help.ProperUsage", "Proper Usage: {command1} or {command2}");
-			config.addDefault("Commands.Help.Elements.LearnMore", "Learn more: ");
+			config.addDefault("Commands.Help.Elements.LearnMore", "Learn more at our website! ");
 			config.addDefault("Commands.Help.InvalidTopic", "That isn't a valid help topic. Use /bending help for more information.");
 			config.addDefault("Commands.Help.Usage", "Usage: ");
 
@@ -515,7 +515,9 @@ public class ConfigManager {
 			config.addDefault("Properties.Air.CanBendWithWeapons", false);
 			config.addDefault("Properties.Air.Particles", "spell");
 			config.addDefault("Properties.Air.PlaySound", true);
-			config.addDefault("Properties.Air.Sound", "ENTITY_CREEPER_HURT");
+			config.addDefault("Properties.Air.Sound.Sound", "ENTITY_CREEPER_HURT");
+			config.addDefault("Properties.Air.Sound.Volume", 1);
+			config.addDefault("Properties.Air.Sound.Pitch", 2);
 
 			config.addDefault("Properties.Water.CanBendWithWeapons", true);
 			config.addDefault("Properties.Water.IceBlocks", iceBlocks);
@@ -524,9 +526,15 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.NightFactor", 1.5);
 			config.addDefault("Properties.Water.FullMoonFactor", 1.75);
 			config.addDefault("Properties.Water.PlaySound", true);
-			config.addDefault("Properties.Water.WaterSound", "BLOCK_WATER_AMBIENT");
-			config.addDefault("Properties.Water.IceSound", "ITEM_FLINTANDSTEEL_USE");
-			config.addDefault("Properties.Water.PlantSound", "BLOCK_GRASS_STEP");
+			config.addDefault("Properties.Water.WaterSound.Sound", "BLOCK_WATER_AMBIENT");
+			config.addDefault("Properties.Water.WaterSound.Volume", 1);
+			config.addDefault("Properties.Water.WaterSound.Pitch", 1);
+			config.addDefault("Properties.Water.IceSound.Sound", "ITEM_FLINTANDSTEEL_USE");
+			config.addDefault("Properties.Water.IceSound.Volume", 1);
+			config.addDefault("Properties.Water.IceSound.Pitch", 1);
+			config.addDefault("Properties.Water.PlantSound.Sound", "BLOCK_GRASS_STEP");
+			config.addDefault("Properties.Water.IceSound.Volume", 1);
+			config.addDefault("Properties.Water.IceSound.Pitch", 1);
 
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
 			config.addDefault("Properties.Earth.SafeRevert", true);
@@ -537,18 +545,31 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.SandBlocks", sandBlocks);
 			config.addDefault("Properties.Earth.MetalPowerFactor", 1.5);
 			config.addDefault("Properties.Earth.PlaySound", true);
-			config.addDefault("Properties.Earth.EarthSound", "ENTITY_GHAST_SHOOT");
-			config.addDefault("Properties.Earth.MetalSound", "ENTITY_IRONGOLEM_HURT");
-			config.addDefault("Properties.Earth.SandSound", "BLOCK_SAND_BREAK");
+			config.addDefault("Properties.Earth.EarthSound.Sound", "ENTITY_GHAST_SHOOT");
+			config.addDefault("Properties.Earth.EarthSound.Volume", 1);
+			config.addDefault("Properties.Earth.EarthSound.Pitch", 1);
+			config.addDefault("Properties.Earth.MetalSound.Sound", "ENTITY_IRONGOLEM_HURT");
+			config.addDefault("Properties.Earth.MetalSound.Volume", 1);
+			config.addDefault("Properties.Earth.MetalSound.Pitch", 1.25);
+			config.addDefault("Properties.Earth.SandSound.Sound", "BLOCK_SAND_BREAK");
+			config.addDefault("Properties.Earth.SandSound.Volume", 1);
+			config.addDefault("Properties.Earth.SandSound.Pitch", 1);
 
 			config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 			config.addDefault("Properties.Fire.DayFactor", 1.25);
 			config.addDefault("Properties.Fire.PlaySound", true);
 			config.addDefault("Properties.Fire.FireGriefing", false);
 			config.addDefault("Properties.Fire.RevertTicks", 12000L);
-			config.addDefault("Properties.Fire.FireSound", "BLOCK_FIRE_AMBIENT");
-			config.addDefault("Properties.Fire.CombustionSound", "ENTITY_FIREWORK_BLAST");
-
+			config.addDefault("Properties.Fire.FireSound.Sound", "BLOCK_FIRE_AMBIENT");
+			config.addDefault("Properties.Fire.FireSound.Volume", 1);
+			config.addDefault("Properties.Fire.FireSound.Pitch", 1);
+			config.addDefault("Properties.Fire.CombustionSound.Sound", "ENTITY_FIREWORK_BLAST");
+			config.addDefault("Properties.Fire.CombustionSound.Volume", 1);
+			config.addDefault("Properties.Fire.CombustionSound.Pitch", 0);
+			config.addDefault("Properties.Fire.LightningSound.Sound", "ENTITY_CREEPER_HURT");
+			config.addDefault("Properties.Fire.LightningSound.Volume", 1);
+			config.addDefault("Properties.Fire.LightningSound.Pitch", 0);
+			
 			config.addDefault("Properties.Chi.CanBendWithWeapons", true);
 
 			ArrayList<String> disabledWorlds = new ArrayList<String>();
@@ -568,7 +589,10 @@ public class ConfigManager {
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Enabled", true);
 			config.addDefault("Abilities.Avatar.AvatarState.PotionEffects.FireResistance.Power", 3);
 			config.addDefault("Abilities.Avatar.AvatarState.PowerMultiplier", 2);
-			config.addDefault("Abilities.Avatar.AvatarState.Sound", "BLOCK_ANVIL_LAND");
+			config.addDefault("Abilities.Avatar.AvatarState.PlaySound", true);
+			config.addDefault("Abilities.Avatar.AvatarState.Sound.Sound", "BLOCK_ANVIL_LAND");
+			config.addDefault("Abilities.Avatar.AvatarState.Sound.Volume", 1);
+			config.addDefault("Abilities.Avatar.AvatarState.Sound.Pitch", 1.5);
 
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Entities", 4.5);
 			config.addDefault("Abilities.Avatar.AvatarState.Air.AirBlast.Push.Self", 4.0);
