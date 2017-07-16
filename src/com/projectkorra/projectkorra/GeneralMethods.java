@@ -2033,7 +2033,7 @@ public class GeneralMethods {
 		ChatColor color;
 		try {
 			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-		} catch (IllegalArgumentException error) {
+		} catch (IllegalArgumentException exception) {
 			color = ChatColor.GOLD;
 		}
 		
