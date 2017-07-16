@@ -358,7 +358,8 @@ public class WhoCommand extends PKCommand {
 			}
 			
 			if (player_.hasPermission("bending.donator")) {
-				sender.sendMessage(Element.AVATAR.getColor() + "ProjectKorra Donor");
+				// Requires Servers to define `server-name` in their server.properties file. Example: server-name=My Server
+				sender.sendMessage(Element.AVATAR.getColor() + ProjectKorra.plugin.getServer().getServerName() + " Donor");
 			}
 		}
 
