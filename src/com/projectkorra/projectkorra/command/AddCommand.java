@@ -107,8 +107,8 @@ public class AddCommand extends PKCommand {
 					bPlayer.addElement(e);
 					
 					if (elements.length() > 1)
-						elements.append(",");
-					elements.append(e.getName());
+						elements.append(ChatColor.YELLOW + ", ");
+					elements.append(e.getColor() + e.getName());
 					
 					bPlayer.getSubElements().clear();
 					for (SubElement sub : Element.getAllSubElements()) {

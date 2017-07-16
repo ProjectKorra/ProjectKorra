@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.SubAbility;
@@ -95,7 +96,13 @@ public class DisplayCommand extends PKCommand {
 							if (coreAbil != null) {
 								comboColor = coreAbil.getElement().getColor();
 							}
-							sender.sendMessage(comboColor + comboAbil);
+							String message = (comboColor + comboAbil);
+							
+							if (coreAbil instanceof AddonAbility) {
+								message += ChatColor.WHITE + (ChatColor.BOLD + "*");
+							}
+							
+							sender.sendMessage(message);
 						}
 					}
 					return;
@@ -117,7 +124,14 @@ public class DisplayCommand extends PKCommand {
 						if (coreAbil != null) {
 							comboColor = coreAbil.getElement().getColor();
 						}
-						sender.sendMessage(comboColor + comboMove);
+						
+						String message = (comboColor + comboMove);
+						
+						if (coreAbil instanceof AddonAbility) {
+							message += ChatColor.WHITE + (ChatColor.BOLD + "*");
+						}
+						
+						sender.sendMessage(message);
 					}
 					return;
 				}
@@ -138,7 +152,13 @@ public class DisplayCommand extends PKCommand {
 							if (coreAbil != null) {
 								passiveColor = coreAbil.getElement().getColor();
 							}
-							sender.sendMessage(passiveColor + passiveAbil);
+							String message = (passiveColor + passiveAbil);
+							
+							if (coreAbil instanceof AddonAbility) {
+								message += ChatColor.WHITE + (ChatColor.BOLD + "*");
+							}
+							
+							sender.sendMessage(message);
 						}
 					}
 					return;
@@ -214,7 +234,14 @@ public class DisplayCommand extends PKCommand {
 			}
 			if (sender instanceof Player) {
 				if (GeneralMethods.canView((Player) sender, ability.getName())) {
-					sender.sendMessage(ability.getElement().getColor() + ability.getName());
+					String message = ability.getElement().getColor() + ability.getName();
+					
+					if (ability instanceof AddonAbility) {
+						message += ChatColor.WHITE + (ChatColor.BOLD + "*");
+					}
+					
+					sender.sendMessage(message);
+					
 					abilitiesSent.add(ability.getName());
 				}
 			} else {
@@ -245,8 +272,14 @@ public class DisplayCommand extends PKCommand {
 			if (ability instanceof SubAbility || ability instanceof ComboAbility || ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
 				continue;
 			}
+			
 			if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
-				sender.sendMessage(ability.getElement().getColor() + ability.getName());
+				String message = ability.getElement().getColor()+ ability.getName();
+				if (ability instanceof AddonAbility) {
+					message += ChatColor.WHITE + (ChatColor.BOLD + "*");
+				}
+				
+				sender.sendMessage(message);
 				abilitiesSent.add(ability.getName());
 			}
 		}
@@ -284,7 +317,12 @@ public class DisplayCommand extends PKCommand {
 			if (ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
 				continue;
 			} else if (!(sender instanceof Player) || GeneralMethods.canView((Player) sender, ability.getName())) {
-				sender.sendMessage(element.getColor() + ability.getName());
+				String message = element.getColor() + ability.getName();
+				if (ability instanceof AddonAbility) {
+					message += ChatColor.WHITE + (ChatColor.BOLD + "*");
+				}
+				
+				sender.sendMessage(message);
 				abilitiesSent.add(ability.getName());
 			}
 		}
@@ -312,8 +350,15 @@ public class DisplayCommand extends PKCommand {
 		for (int i = 1; i <= 9; i++) {
 			String ability = abilities.get(i);
 			CoreAbility coreAbil = CoreAbility.getAbility(ability);
-			if (coreAbil != null && !ability.equalsIgnoreCase("null"))
-				sender.sendMessage(i + " - " + coreAbil.getElement().getColor() + ability);
+			if (coreAbil != null && !ability.equalsIgnoreCase("null")) {
+				String message = i + ". " + coreAbil.getElement().getColor() + ability;
+				
+				if (coreAbil instanceof AddonAbility) {
+					message += ChatColor.WHITE + (ChatColor.BOLD + "*");
+				}
+				
+				sender.sendMessage(message);
+			}
 		}
 	}
 

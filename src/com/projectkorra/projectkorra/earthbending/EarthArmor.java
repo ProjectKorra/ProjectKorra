@@ -467,7 +467,7 @@ public class EarthArmor extends EarthAbility {
 
 	@Override
 	public boolean isSneakAbility() {
-		return false;
+		return player != null;
 	}
 
 	@Override

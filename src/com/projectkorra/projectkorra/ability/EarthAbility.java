@@ -496,19 +496,28 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	public static void playEarthbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound")), 1, 10);
+			float volume = (float) getConfig().getDouble("Properties.Earth.EarthSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Earth.EarthSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound.Sound")), volume, pitch);
 		}
 	}
 
 	public static void playMetalbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound")), 1, 10);
+			float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound")), volume, pitch);
 		}
 	}
 
 	public static void playSandBendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.SandSound")), 1.5f, 5);
+			float volume = (float) getConfig().getDouble("Properties.Earth.SandSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Earth.SandSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.SandSound.Sound")), volume, pitch);
 		}
 	}
 
