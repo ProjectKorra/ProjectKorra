@@ -18,8 +18,10 @@ import com.projectkorra.projectkorra.Element.SubElement;
 import com.projectkorra.projectkorra.ability.Ability;
 import com.projectkorra.projectkorra.ability.AvatarAbility;
 import com.projectkorra.projectkorra.ability.ChiAbility;
+import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
+import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
@@ -300,6 +302,8 @@ public class BendingPlayer {
 		} else if (!player.hasPermission("bending.ability." + ability.getName())) {
 			return false;
 		} else if (!hasElement(ability.getElement()) && !(ability instanceof AvatarAbility && !((AvatarAbility) ability).requireAvatar())) {
+			return false;
+		} else if (ability instanceof ComboAbility || ability instanceof PassiveAbility) {
 			return false;
 		} else if (ability.getElement() instanceof SubElement) {
 			SubElement subElement = (SubElement) ability.getElement();
