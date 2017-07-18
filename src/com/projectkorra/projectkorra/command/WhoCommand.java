@@ -196,7 +196,7 @@ public class WhoCommand extends PKCommand {
 
 		bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer != null) {
-			sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : "") + " - ");
+			sender.sendMessage(ChatColor.BOLD + player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : ""));
 			if (bPlayer.hasElement(Element.AIR)) {
 				if (bPlayer.isElementToggled(Element.AIR)) {
 					sender.sendMessage(Element.AIR.getColor() + "- Airbender");
@@ -357,7 +357,7 @@ public class WhoCommand extends PKCommand {
 				sender.sendMessage(staff.get(uuid.toString()));
 			}
 			
-			if (player_.hasPermission("bending.donator")) {
+			if (player_.hasPermission("bending.donor")) {
 				// Requires Servers to define `server-name` in their server.properties file. Example: server-name=My Server
 				sender.sendMessage(Element.AVATAR.getColor() + ProjectKorra.plugin.getServer().getServerName() + " Donor");
 			}

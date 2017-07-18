@@ -446,6 +446,11 @@ public class WaterArmsWhip extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	public boolean isReverting() {
 		return reverting;

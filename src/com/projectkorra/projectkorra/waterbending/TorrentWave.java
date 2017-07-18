@@ -217,6 +217,11 @@ public class TorrentWave extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	@Override
 	public List<Location> getLocations() {

@@ -183,6 +183,11 @@ public class WaterArmsFreeze extends IceAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	public boolean isCancelled() {
 		return cancelled;

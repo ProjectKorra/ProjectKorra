@@ -286,6 +286,11 @@ public class IceSpikePillar extends IceAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	public int getHeight() {
 		return height;
