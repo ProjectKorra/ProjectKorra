@@ -261,10 +261,8 @@ public class DisplayCommand extends PKCommand {
 		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(element);
 
 		if (abilities.isEmpty()) {
-			sender.sendMessage(ChatColor.RED + invalidArgument);
-			return;
-		} else if (abilities.isEmpty()) {
 			sender.sendMessage(ChatColor.YELLOW + noAbilitiesAvailable.replace("{element}", element.getColor() + element.getName() + ChatColor.YELLOW));
+			return;
 		}
 
 		HashSet<String> abilitiesSent = new HashSet<String>(); //Some abilities have the same name. This prevents this from showing anything.

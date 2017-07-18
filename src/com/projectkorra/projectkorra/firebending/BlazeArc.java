@@ -196,6 +196,11 @@ public class BlazeArc extends FireAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	public long getTime() {
 		return time;

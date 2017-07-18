@@ -438,6 +438,11 @@ public class IceSpikeBlast extends IceAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	@Override
 	public boolean isCollidable() {

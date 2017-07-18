@@ -506,6 +506,11 @@ public class WaterSpoutWave extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	@Override
 	public boolean isCollidable() {

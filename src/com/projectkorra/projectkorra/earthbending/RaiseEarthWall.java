@@ -144,6 +144,11 @@ public class RaiseEarthWall extends EarthAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	public int getRange() {
 		return selectRange;

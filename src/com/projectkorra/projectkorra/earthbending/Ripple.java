@@ -327,6 +327,11 @@ public class Ripple extends EarthAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	@Override
 	public ArrayList<Location> getLocations() {

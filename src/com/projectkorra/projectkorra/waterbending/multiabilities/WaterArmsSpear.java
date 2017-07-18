@@ -297,6 +297,11 @@ public class WaterArmsSpear extends WaterAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	public boolean isHitEntity() {
 		return hitEntity;

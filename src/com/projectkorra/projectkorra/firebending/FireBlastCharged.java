@@ -319,6 +319,11 @@ public class FireBlastCharged extends FireAbility {
 	}
 
 	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
+	
+	@Override
 	public boolean isCollidable() {
 		return this.launched;
 	}

@@ -114,6 +114,11 @@ public class CollapseWall extends EarthAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
+	
+	@Override
+	public boolean isHiddenAbility() {
+		return true;
+	}
 
 	public int getSelectRange() {
 		return selectRange;
