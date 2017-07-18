@@ -131,9 +131,9 @@ public class AirScooter extends AirAbility {
 		double distance = player.getLocation().getY() - (double) floorblock.getY();
 		double dx = Math.abs(distance - 2.4);
 		if (distance > 2.75) {
-			velocity.setY(-.40 * dx * dx);
+			velocity.setY(-.25 * dx * dx);
 		} else if (distance < 2) {
-			velocity.setY(.40 * dx * dx);
+			velocity.setY(.25 * dx * dx);
 		} else {
 			velocity.setY(0);
 		}
@@ -143,7 +143,7 @@ public class AirScooter extends AirAbility {
 		if (!GeneralMethods.isSolid(b) && !b.isLiquid()) {
 			velocity.add(new Vector(0, -0.6, 0));
 		} else if (GeneralMethods.isSolid(b.getRelative(BlockFace.UP)) || b.getRelative(BlockFace.UP).isLiquid()) {
-			velocity.add(new Vector(0, 0.6, 0));
+			velocity.add(new Vector(0, 1.0, 0));
 		}
 
 		Location loc = player.getLocation();
