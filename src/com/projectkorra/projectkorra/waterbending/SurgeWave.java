@@ -249,7 +249,7 @@ public class SurgeWave extends WaterAbility {
 
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
-			if (!progressing && !bPlayer.getBoundAbilityName().equalsIgnoreCase(getName())) {
+			if (!progressing && !bPlayer.getBoundAbilityName().contains(getName())) {
 				remove();
 				return;
 			} else if (!progressing) {

@@ -198,7 +198,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!ignoreCooldowns && isOnCooldown(ability.getName())) {
 			return false;
-		} else if (!ignoreBinds && !ability.getName().equals(getBoundAbilityName())) {
+		} else if (!ignoreBinds && (!ability.getName().equals(getBoundAbilityName()) && !ability.getName().contains(getBoundAbilityName()))) {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;

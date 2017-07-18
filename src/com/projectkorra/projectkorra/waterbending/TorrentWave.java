@@ -195,7 +195,7 @@ public class TorrentWave extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return "Torrent";
+		return "TorrentWave";
 	}
 
 	@Override

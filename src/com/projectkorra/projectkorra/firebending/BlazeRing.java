@@ -52,7 +52,7 @@ public class BlazeRing extends FireAbility {
 
 	@Override
 	public String getName() {
-		return "Blaze";
+		return "BlazeRing";
 	}
 
 	@Override

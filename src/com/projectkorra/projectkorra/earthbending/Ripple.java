@@ -305,7 +305,7 @@ public class Ripple extends EarthAbility {
 
 	@Override
 	public String getName() {
-		return "Shockwave";
+		return "Ripple";
 	}
 
 	@Override

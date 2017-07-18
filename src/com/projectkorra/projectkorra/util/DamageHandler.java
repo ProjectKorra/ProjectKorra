@@ -63,7 +63,9 @@ public class DamageHandler {
 				((LivingEntity) entity).damage(damage, source);
 				entity.setLastDamageCause(finalEvent);
 				if (ignoreArmor) {
-					finalEvent.setDamage(DamageModifier.ARMOR, 0);
+				    if (finalEvent.isApplicable(DamageModifier.ARMOR)) {
+				        finalEvent.setDamage(DamageModifier.ARMOR, 0);
+				    }
 				}
 
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {

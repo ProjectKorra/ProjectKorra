@@ -88,7 +88,7 @@ public class CollapseWall extends EarthAbility {
 
 	@Override
 	public String getName() {
-		return "Collapse";
+		return "CollapseWall";
 	}
 
 	@Override

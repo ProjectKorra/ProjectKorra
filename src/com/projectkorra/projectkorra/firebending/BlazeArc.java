@@ -171,7 +171,7 @@ public class BlazeArc extends FireAbility {
 
 	@Override
 	public String getName() {
-		return "Blaze";
+		return "BlazeArc";
 	}
 
 	@Override
