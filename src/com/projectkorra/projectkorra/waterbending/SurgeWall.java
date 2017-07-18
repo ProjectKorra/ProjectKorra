@@ -218,7 +218,7 @@ public class SurgeWall extends WaterAbility {
 
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
-			boolean matchesName = bPlayer.getBoundAbilityName().equalsIgnoreCase(getName());
+			boolean matchesName = getName().contains(bPlayer.getBoundAbilityName());
 
 			if (!progressing && !matchesName) {
 				remove();
@@ -456,7 +456,7 @@ public class SurgeWall extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return "Surge";
+		return "SurgeWall";
 	}
 
 	@Override

@@ -271,7 +271,7 @@ public class WaterArmsSpear extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return "WaterArms";
+		return "WaterArmsSpear";
 	}
 
 	@Override

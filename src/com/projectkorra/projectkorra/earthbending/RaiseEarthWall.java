@@ -118,7 +118,7 @@ public class RaiseEarthWall extends EarthAbility {
 
 	@Override
 	public String getName() {
-		return "RaiseEarth";
+		return "RaiseEarthWall";
 	}
 
 	@Override

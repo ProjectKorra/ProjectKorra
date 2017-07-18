@@ -274,7 +274,7 @@ public class IceSpikePillar extends IceAbility {
 
 	@Override
 	public String getName() {
-		return "IceSpike";
+		return "IceSpikePillar";
 	}
 
 	@Override

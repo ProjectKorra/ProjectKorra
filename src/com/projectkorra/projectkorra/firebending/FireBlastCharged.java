@@ -295,7 +295,7 @@ public class FireBlastCharged extends FireAbility {
 
 	@Override
 	public String getName() {
-		return "FireBlast";
+		return "FireBlastCharged";
 	}
 
 	@Override

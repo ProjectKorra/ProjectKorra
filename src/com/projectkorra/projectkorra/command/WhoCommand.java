@@ -196,7 +196,7 @@ public class WhoCommand extends PKCommand {
 
 		bPlayer = BendingPlayer.getBendingPlayer(player);
 		if (bPlayer != null) {
-			sender.sendMessage(ChatColor.BOLD + player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : ""));
+			sender.sendMessage(player.getName() + (!player.isOnline() ? ChatColor.RESET + " (Offline)" : ""));
 			if (bPlayer.hasElement(Element.AIR)) {
 				if (bPlayer.isElementToggled(Element.AIR)) {
 					sender.sendMessage(Element.AIR.getColor() + "- Airbender");

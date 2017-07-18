@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.IceAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class IceSpikePillarField extends IceAbility {
 
@@ -58,7 +59,7 @@ public class IceSpikePillarField extends IceAbility {
 
 					if (WaterAbility.isIcebendable(player, testBlock.getType(), false) && testBlock.getRelative(BlockFace.UP).getType() == Material.AIR 
 							&& !(testBlock.getX() == player.getEyeLocation().getBlock().getX() && testBlock.getZ() == player.getEyeLocation().getBlock().getZ())
-							&& WaterAbility.isBendableWaterTempBlock(testBlock)) {
+							|| (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) {
 						iceBlocks.add(testBlock);
 						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
 							Random rand = new Random();
@@ -100,6 +101,7 @@ public class IceSpikePillarField extends IceAbility {
 			}
 
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
+				
 				IceSpikePillar pillar = new IceSpikePillar(player, targetBlock.getLocation(), (int) damage, thrownForce, cooldown);
 				pillar.inField = true;
 				bPlayer.addCooldown("IceSpikePillarField", cooldown);

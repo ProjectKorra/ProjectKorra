@@ -123,7 +123,7 @@ public class BindCommand extends PKCommand {
 		if (args.size() == 0) {
 			if (bPlayer != null) {
 				for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
-					if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil)) {
+					if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil) && !(coreAbil instanceof CoreAbility && coreAbil instanceof ComboAbility)) {
 						abilities.add(coreAbil.getName());
 					}
 				}
