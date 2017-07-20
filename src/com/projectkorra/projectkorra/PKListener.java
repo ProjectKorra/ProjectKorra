@@ -814,7 +814,10 @@ public class PKListener implements Listener {
 				new Shockwave(player, true);
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR) && bPlayer.canUsePassive(Element.AIR)) {
+			if (event.isCancelled())
+				return;
+
+			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR) && bPlayer.canUsePassive(Element.AIR)) {
 				new AirBurst(player, true);
 				if (CoreAbility.getAbility(GracefulDescent.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(GracefulDescent.class))) {
 					event.setDamage(0D);
@@ -822,21 +825,21 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && bPlayer.canUsePassive(Element.WATER) && CoreAbility.getAbility(Hydrosink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Hydrosink.class))) {
+			if (bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && bPlayer.canUsePassive(Element.WATER) && CoreAbility.getAbility(Hydrosink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Hydrosink.class))) {
 				if (WaterPassive.applyNoFall(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH) && bPlayer.canUsePassive(Element.EARTH) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
+			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH) && bPlayer.canUsePassive(Element.EARTH) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
 				if (EarthPassive.softenLanding(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI) && bPlayer.canUsePassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
+			if (bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI) && bPlayer.canUsePassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
 				double initdamage = event.getDamage();
 				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
@@ -845,7 +848,7 @@ public class PKListener implements Listener {
 					event.setCancelled(true);
 			}
 
-			if (!event.isCancelled() && event.getCause() == DamageCause.FALL) {
+			if (event.getCause() == DamageCause.FALL) {
 				Player source = Flight.getLaunchedBy(player);
 				if (source == player) {
 					event.setCancelled(true);
@@ -861,7 +864,7 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 
-			if (!event.isCancelled() && CoreAbility.getAbility(player, EarthArmor.class) != null) {
+			if (CoreAbility.getAbility(player, EarthArmor.class) != null) {
 				EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
 				eartharmor.updateAbsorbtion();
 			}
