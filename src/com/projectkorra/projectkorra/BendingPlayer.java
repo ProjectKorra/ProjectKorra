@@ -198,7 +198,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!ignoreCooldowns && isOnCooldown(ability.getName())) {
 			return false;
-		} else if (!ignoreBinds && (!ability.getName().equals(getBoundAbilityName()) && !ability.getName().contains(getBoundAbilityName()))) {
+		} else if (!ignoreBinds && (!ability.getName().equals(getBoundAbilityName()))) {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
@@ -302,8 +302,6 @@ public class BendingPlayer {
 		} else if (!player.hasPermission("bending.ability." + ability.getName())) {
 			return false;
 		} else if (!hasElement(ability.getElement()) && !(ability instanceof AvatarAbility && !((AvatarAbility) ability).requireAvatar())) {
-			return false;
-		} else if (ability instanceof ComboAbility || ability instanceof PassiveAbility) {
 			return false;
 		} else if (ability.getElement() instanceof SubElement) {
 			SubElement subElement = (SubElement) ability.getElement();

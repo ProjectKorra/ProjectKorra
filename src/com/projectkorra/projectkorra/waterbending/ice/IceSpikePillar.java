@@ -274,7 +274,7 @@ public class IceSpikePillar extends IceAbility {
 
 	@Override
 	public String getName() {
-		return "IceSpikePillar";
+		return "IceSpike";
 	}
 
 	@Override
@@ -285,11 +285,6 @@ public class IceSpikePillar extends IceAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	public int getHeight() {

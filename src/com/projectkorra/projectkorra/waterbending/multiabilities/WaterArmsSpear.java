@@ -271,7 +271,7 @@ public class WaterArmsSpear extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return "WaterArmsSpear";
+		return "WaterArms";
 	}
 
 	@Override
@@ -296,11 +296,6 @@ public class WaterArmsSpear extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	public boolean isHitEntity() {
