@@ -52,7 +52,7 @@ public class BlazeRing extends FireAbility {
 
 	@Override
 	public String getName() {
-		return "BlazeRing";
+		return "Blaze";
 	}
 
 	@Override
@@ -77,11 +77,6 @@ public class BlazeRing extends FireAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	public int getRange() {

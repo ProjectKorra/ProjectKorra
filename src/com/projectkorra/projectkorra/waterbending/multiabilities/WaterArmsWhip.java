@@ -424,7 +424,7 @@ public class WaterArmsWhip extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return "WaterArmsWhip";
+		return "WaterArms";
 	}
 
 	@Override
@@ -445,11 +445,6 @@ public class WaterArmsWhip extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	public boolean isReverting() {

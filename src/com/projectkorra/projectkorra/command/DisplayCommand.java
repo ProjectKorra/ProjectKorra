@@ -82,10 +82,12 @@ public class DisplayCommand extends PKCommand {
 			//combos
 			if (elementName.contains("combo")) {
 				if (element == null) {
+					sender.sendMessage(ChatColor.BOLD + "Combos");
+					
 					for (Element e : Element.getAllElements()) {
 						ChatColor color = e != null ? e.getColor() : null;
 						ArrayList<String> combos = ComboManager.getCombosForElement(e);
-						
+
 						for (String comboAbil : combos) {
 							ChatColor comboColor = color;
 							if (!sender.hasPermission("bending.ability." + comboAbil)) {
@@ -114,6 +116,9 @@ public class DisplayCommand extends PKCommand {
 						GeneralMethods.sendBrandingMessage(sender, color + noCombosAvailable.replace("{element}", element.getName()));
 						return;
 					}
+					
+					sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending() + ChatColor.WHITE + (ChatColor.BOLD + " Combos"));
+					
 					for (String comboMove : combos) {
 						ChatColor comboColor = color;
 						if (!sender.hasPermission("bending.ability." + comboMove)) {
@@ -138,10 +143,12 @@ public class DisplayCommand extends PKCommand {
 				//passives
 			} else if (elementName.contains("passive")) {
 				if (element == null) {
+					sender.sendMessage(ChatColor.BOLD + "Passives");
+					
 					for (Element e : Element.getAllElements()) {
 						ChatColor color = e != null ? e.getColor() : null;
 						Set<String> passives = PassiveManager.getPassivesForElement(e);
-						
+
 						for (String passiveAbil : passives) {
 							ChatColor passiveColor = color;
 							if (!sender.hasPermission("bending.ability." + passiveAbil)) {
@@ -170,6 +177,9 @@ public class DisplayCommand extends PKCommand {
 					GeneralMethods.sendBrandingMessage(sender, color + noPassivesAvailable.replace("{element}", element.getName()));
 					return;
 				}
+				
+				sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending() + ChatColor.WHITE + (ChatColor.BOLD + " Passives"));
+				
 				for (String passiveAbil : passives) {
 					ChatColor passiveColor = color;
 					if (!sender.hasPermission("bending.ability." + passiveAbil)) {
@@ -184,14 +194,10 @@ public class DisplayCommand extends PKCommand {
 				}
 				return;
 			} else if (element != null) {
-				if (!element.equals(Element.AVATAR)) {
-					if (!(element instanceof SubElement)) {
-						displayElement(sender, element);
-					} else {
-						displaySubElement(sender, (SubElement) element);
-					}
+				if (!(element instanceof SubElement)) {
+					displayElement(sender, element);
 				} else {
-					displayAvatar(sender);
+					displaySubElement(sender, (SubElement) element);
 				}
 			}
 
@@ -221,36 +227,6 @@ public class DisplayCommand extends PKCommand {
 		}
 	}
 
-	private void displayAvatar(CommandSender sender) {
-		List<CoreAbility> abilities = CoreAbility.getAbilitiesByElement(Element.AVATAR);
-		if (abilities.isEmpty()) {
-			sender.sendMessage(ChatColor.YELLOW + noAbilitiesAvailable.replace("{element}", Element.AVATAR.getColor() + "Avatar" + ChatColor.YELLOW));
-			return;
-		}
-		HashSet<String> abilitiesSent = new HashSet<String>(); //Some abilities have the same name. This prevents this from showing anything.
-		for (CoreAbility ability : abilities) {
-			if (ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
-				continue;
-			}
-			if (sender instanceof Player) {
-				if (GeneralMethods.canView((Player) sender, ability.getName())) {
-					String message = ability.getElement().getColor() + ability.getName();
-					
-					if (ability instanceof AddonAbility) {
-						message += ChatColor.WHITE + (ChatColor.BOLD + "*");
-					}
-					
-					sender.sendMessage(message);
-					
-					abilitiesSent.add(ability.getName());
-				}
-			} else {
-				sender.sendMessage(ability.getElement().getColor() + ability.getName());
-				abilitiesSent.add(ability.getName());
-			}
-		}
-	}
-
 	/**
 	 * Displays the enabled moves for the given element to the CommandSender.
 	 * 
@@ -265,6 +241,8 @@ public class DisplayCommand extends PKCommand {
 			return;
 		}
 
+		sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending());
+		
 		HashSet<String> abilitiesSent = new HashSet<String>(); //Some abilities have the same name. This prevents this from showing anything.
 		for (CoreAbility ability : abilities) {
 			if (ability instanceof SubAbility || ability instanceof ComboAbility || ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
@@ -310,6 +288,8 @@ public class DisplayCommand extends PKCommand {
 			return;
 		}
 
+		sender.sendMessage(element.getColor() + (ChatColor.BOLD + element.getName()) + element.getType().getBending());
+		
 		HashSet<String> abilitiesSent = new HashSet<String>();
 		for (CoreAbility ability : abilities) {
 			if (ability.isHiddenAbility() || abilitiesSent.contains(ability.getName())) {
@@ -345,6 +325,8 @@ public class DisplayCommand extends PKCommand {
 			return;
 		}
 
+		sender.sendMessage(ChatColor.WHITE + (ChatColor.BOLD + "Abilities"));
+		
 		for (int i = 1; i <= 9; i++) {
 			String ability = abilities.get(i);
 			CoreAbility coreAbil = CoreAbility.getAbility(ability);

@@ -88,7 +88,7 @@ public class CollapseWall extends EarthAbility {
 
 	@Override
 	public String getName() {
-		return "CollapseWall";
+		return "Collapse";
 	}
 
 	@Override
@@ -113,11 +113,6 @@ public class CollapseWall extends EarthAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	public int getSelectRange() {

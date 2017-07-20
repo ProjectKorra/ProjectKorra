@@ -140,7 +140,7 @@ public class IceSpikeBlast extends IceAbility {
 				remove();
 			}
 			return;
-		} else if (!getName().contains(bPlayer.getBoundAbilityName()) && prepared) {
+		} else if (!bPlayer.getBoundAbilityName().equals(getName()) && prepared) {
 			remove();
 			return;
 		}
@@ -411,7 +411,7 @@ public class IceSpikeBlast extends IceAbility {
 
 	@Override
 	public String getName() {
-		return "IceSpikeBlast";
+		return "IceSpike";
 	}
 
 	@Override
@@ -437,11 +437,6 @@ public class IceSpikeBlast extends IceAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	@Override

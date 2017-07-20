@@ -305,7 +305,7 @@ public class Ripple extends EarthAbility {
 
 	@Override
 	public String getName() {
-		return "Ripple";
+		return "Shockwave";
 	}
 
 	@Override
@@ -326,11 +326,6 @@ public class Ripple extends EarthAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	@Override
