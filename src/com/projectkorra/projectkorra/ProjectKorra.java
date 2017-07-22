@@ -174,7 +174,7 @@ public class ProjectKorra extends JavaPlugin {
 			DBConnection.sql.close();
 		}
 		
-		handler.close();
+		// handler.close();
 	}
 
 	public static CollisionManager getCollisionManager() {
