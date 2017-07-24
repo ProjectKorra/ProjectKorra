@@ -84,7 +84,7 @@ public class EarthGrab extends EarthAbility {
 				loc.setYaw(theta);
 				Vector dir = loc.getDirection();
 				Block a = GeneralMethods.getTopBlock(loc.add(dir.clone().multiply(radius)), height/2);
-				while (!GeneralMethods.isSolid(a) && !isEarthbendable(a.getType(), true, true, false)) {
+				while (!GeneralMethods.isSolid(a) && !isEarthbendable(a.getType(), true, true, false) && a.getY() > 0 && a.getY() < 256) {
 					a = a.getRelative(BlockFace.DOWN);
 				}
 				if (!blocks.contains(a)) {
@@ -93,7 +93,7 @@ public class EarthGrab extends EarthAbility {
 				}
 				
 				Block b = GeneralMethods.getTopBlock(loc.add(dir.clone().multiply(1)), height/2);
-				while (!GeneralMethods.isSolid(b) && !isEarthbendable(b.getType(), true, true, false)) {
+				while (!GeneralMethods.isSolid(b) && !isEarthbendable(b.getType(), true, true, false) && b.getY() > 0 && b.getY() < 256) {
 					b = b.getRelative(BlockFace.DOWN);
 				}
 				if (!blocks.contains(b)) {
