@@ -554,6 +554,9 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.SandSound.Sound", "BLOCK_SAND_BREAK");
 			config.addDefault("Properties.Earth.SandSound.Volume", 1);
 			config.addDefault("Properties.Earth.SandSound.Pitch", 1);
+			config.addDefault("Properties.Earth.LavaSound.Sound", "LIQUID_LAVA");
+			config.addDefault("Properties.Earth.LavaSound.Volume", 1);
+			config.addDefault("Properties.Earth.LavaSound.Pitch", 1);
 
 			config.addDefault("Properties.Fire.CanBendWithWeapons", true);
 			config.addDefault("Properties.Fire.DayFactor", 1.25);
