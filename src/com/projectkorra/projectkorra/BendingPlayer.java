@@ -23,6 +23,7 @@ import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.PassiveAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
 import com.projectkorra.projectkorra.command.Commands;
@@ -118,11 +119,11 @@ public class BendingPlayer {
 			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
 
 			Player player = event.getPlayer();
-			
+
 			if (player == null) {
 				return;
 			}
-			
+
 			String abilityName = event.getAbility();
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
@@ -198,7 +199,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!ignoreCooldowns && isOnCooldown(ability.getName())) {
 			return false;
-		} else if (!ignoreBinds && (!ability.getName().equals(getBoundAbilityName()) && !ability.getName().contains(getBoundAbilityName()))) {
+		} else if (!ignoreBinds && (!ability.getName().equals(getBoundAbilityName()))) {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
@@ -303,8 +304,6 @@ public class BendingPlayer {
 			return false;
 		} else if (!hasElement(ability.getElement()) && !(ability instanceof AvatarAbility && !((AvatarAbility) ability).requireAvatar())) {
 			return false;
-		} else if (ability instanceof ComboAbility || ability instanceof PassiveAbility) {
-			return false;
 		} else if (ability.getElement() instanceof SubElement) {
 			SubElement subElement = (SubElement) ability.getElement();
 			if (!hasElement(subElement.getParentElement())) {
@@ -319,7 +318,7 @@ public class BendingPlayer {
 					if (subElement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
 						return false;
 					}
-					
+
 					if (subElement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
 						return false;
 					}
@@ -676,7 +675,7 @@ public class BendingPlayer {
 		if (Bukkit.getPlayer(uuid) == null) {
 			return;
 		}
-		
+
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
@@ -748,6 +747,7 @@ public class BendingPlayer {
 	 */
 	public void toggleBending() {
 		toggled = !toggled;
+		PassiveManager.registerPassives(player);
 	}
 
 	public void toggleElement(Element element) {
@@ -755,6 +755,7 @@ public class BendingPlayer {
 			return;
 		}
 		toggledElements.put(element, !toggledElements.get(element));
+		PassiveManager.registerPassives(player);
 	}
 
 	/**

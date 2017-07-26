@@ -231,7 +231,7 @@ public class PKListener implements Listener {
 		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
 			SurgeWall.thaw(block);
 			event.setCancelled(true);
-		} else if (Illumination.getBlocks().containsKey(block)) {
+		} else if (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) {
 			event.setCancelled(true);
 		} else if (!SurgeWave.canThaw(block)) {
 			SurgeWave.thaw(block);
@@ -261,7 +261,7 @@ public class PKListener implements Listener {
 				event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock, toblock));
 			}
 			if (!event.isCancelled()) {
-				if (Illumination.getBlocks().containsKey(toblock)) {
+				if (TempBlock.isTempBlock(toblock) && Illumination.getBlocks().containsKey(TempBlock.get(toblock))) {
 					toblock.setType(Material.AIR);
 				}
 			}
@@ -319,7 +319,7 @@ public class PKListener implements Listener {
 		if (block.getType() == Material.FIRE) {
 			return;
 		}
-		event.setCancelled(Illumination.getBlocks().containsKey(block));
+		event.setCancelled(TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block)));
 		if (!event.isCancelled()) {
 			event.setCancelled(!WaterManipulation.canPhysicsChange(block));
 		}
@@ -348,7 +348,7 @@ public class PKListener implements Listener {
 
 		Block block = event.getBlock();
 
-		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || Illumination.getBlocks().containsKey(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
 			event.setCancelled(true);
 		}
 
@@ -687,12 +687,20 @@ public class PKListener implements Listener {
 		}
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Immobilize.isParalyzed(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
+		if (Paralyze.isParalyzed(entity) || Immobilize.isParalyzed(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity) || MetalClips.isControlled((LivingEntity)entity)) {
 			event.setCancelled(true);
 		}
 		
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
 			TempArmor.getTempArmor((LivingEntity) entity).revert();
+		}
+		
+		if (entity instanceof Player) {
+			Player player = (Player) entity;
+			if (CoreAbility.hasAbility(player, EarthArmor.class)) {
+				EarthArmor abil = CoreAbility.getAbility(player, EarthArmor.class);
+				abil.remove();
+			}
 		}
 	}
 
@@ -814,7 +822,10 @@ public class PKListener implements Listener {
 				new Shockwave(player, true);
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR) && bPlayer.canUsePassive(Element.AIR)) {
+			if (event.isCancelled())
+				return;
+
+			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR) && bPlayer.canUsePassive(Element.AIR)) {
 				new AirBurst(player, true);
 				if (CoreAbility.getAbility(GracefulDescent.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(GracefulDescent.class))) {
 					event.setDamage(0D);
@@ -822,21 +833,21 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && bPlayer.canUsePassive(Element.WATER) && CoreAbility.getAbility(Hydrosink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Hydrosink.class))) {
+			if (bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && bPlayer.canUsePassive(Element.WATER) && CoreAbility.getAbility(Hydrosink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Hydrosink.class))) {
 				if (WaterPassive.applyNoFall(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH) && bPlayer.canUsePassive(Element.EARTH) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
+			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH) && bPlayer.canUsePassive(Element.EARTH) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
 				if (EarthPassive.softenLanding(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI) && bPlayer.canUsePassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
+			if (bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI) && bPlayer.canUsePassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
 				double initdamage = event.getDamage();
 				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
@@ -845,7 +856,7 @@ public class PKListener implements Listener {
 					event.setCancelled(true);
 			}
 
-			if (!event.isCancelled() && event.getCause() == DamageCause.FALL) {
+			if (event.getCause() == DamageCause.FALL) {
 				Player source = Flight.getLaunchedBy(player);
 				if (source == player) {
 					event.setCancelled(true);
@@ -861,7 +872,7 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 
-			if (!event.isCancelled() && CoreAbility.getAbility(player, EarthArmor.class) != null) {
+			if (CoreAbility.getAbility(player, EarthArmor.class) != null) {
 				EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
 				eartharmor.updateAbsorbtion();
 			}

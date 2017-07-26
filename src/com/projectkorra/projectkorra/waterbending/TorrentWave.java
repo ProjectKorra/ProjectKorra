@@ -195,7 +195,7 @@ public class TorrentWave extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return "TorrentWave";
+		return "Torrent";
 	}
 
 	@Override
@@ -216,11 +216,6 @@ public class TorrentWave extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	@Override

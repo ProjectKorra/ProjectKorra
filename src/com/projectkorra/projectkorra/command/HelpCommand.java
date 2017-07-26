@@ -224,10 +224,10 @@ public class HelpCommand extends PKCommand {
 		
 		List<String> abils = new ArrayList<String>();
 		for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
-			if (!(sender instanceof Player) && (!coreAbil.isHiddenAbility() || coreAbil instanceof ComboAbility || coreAbil instanceof PassiveAbility) && coreAbil.isEnabled()) {
+			if (!(sender instanceof Player) && (!coreAbil.isHiddenAbility()) && coreAbil.isEnabled() && !abils.contains(coreAbil.getName())) {
 				abils.add(coreAbil.getName());
 			} else if (sender instanceof Player) {
-				if ((!coreAbil.isHiddenAbility() || coreAbil instanceof ComboAbility || coreAbil instanceof PassiveAbility) && coreAbil.isEnabled()) {
+				if ((!coreAbil.isHiddenAbility()) && coreAbil.isEnabled() && !abils.contains(coreAbil.getName())) {
 					abils.add(coreAbil.getName());
 				}
 			}

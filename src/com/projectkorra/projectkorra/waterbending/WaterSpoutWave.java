@@ -141,7 +141,7 @@ public class WaterSpoutWave extends WaterAbility {
 			if (!player.hasPermission("bending.ability.WaterSpout.Wave")) {
 				remove();
 				return;
-			} else if (!getName().contains(bPlayer.getBoundAbilityName())) {
+			} else if (!bPlayer.getBoundAbilityName().equals(getName())) {
 				remove();
 				return;
 			}
@@ -489,7 +489,7 @@ public class WaterSpoutWave extends WaterAbility {
 
 	@Override
 	public String getName() {
-		return "WaterSpoutWave";
+		return "WaterSpout";
 	}
 
 	@Override
@@ -510,11 +510,6 @@ public class WaterSpoutWave extends WaterAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	@Override

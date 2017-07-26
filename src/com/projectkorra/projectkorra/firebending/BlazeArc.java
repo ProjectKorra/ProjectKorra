@@ -171,7 +171,7 @@ public class BlazeArc extends FireAbility {
 
 	@Override
 	public String getName() {
-		return "BlazeArc";
+		return "Blaze";
 	}
 
 	@Override
@@ -195,11 +195,6 @@ public class BlazeArc extends FireAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	public long getTime() {

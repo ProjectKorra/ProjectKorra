@@ -118,7 +118,7 @@ public class RaiseEarthWall extends EarthAbility {
 
 	@Override
 	public String getName() {
-		return "RaiseEarthWall";
+		return "RaiseEarth";
 	}
 
 	@Override
@@ -143,11 +143,6 @@ public class RaiseEarthWall extends EarthAbility {
 	@Override
 	public boolean isHarmlessAbility() {
 		return false;
-	}
-	
-	@Override
-	public boolean isHiddenAbility() {
-		return true;
 	}
 
 	public int getRange() {

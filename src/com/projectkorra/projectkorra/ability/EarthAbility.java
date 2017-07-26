@@ -558,7 +558,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			}
 		}
 		}
-	
+
 
 	public static void removeAllEarthbendedBlocks() {
 		for (Block block : MOVED_EARTH.keySet()) {

@@ -52,6 +52,7 @@ public class DamageHandler {
 					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_NOSWING);
 					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_SPEED);
 					NCPExemptionManager.exemptPermanently(source, CheckType.COMBINED_IMPROBABLE);
+					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_SELFHIT);
 				}
 
 				if (((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {
@@ -69,7 +70,12 @@ public class DamageHandler {
 				}
 
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
-					NCPExemptionManager.unexempt(source);
+					NCPExemptionManager.unexempt(source, CheckType.FIGHT_REACH);
+					NCPExemptionManager.unexempt(source, CheckType.FIGHT_DIRECTION);
+					NCPExemptionManager.unexempt(source, CheckType.FIGHT_NOSWING);
+					NCPExemptionManager.unexempt(source, CheckType.FIGHT_SPEED);
+					NCPExemptionManager.unexempt(source, CheckType.COMBINED_IMPROBABLE);
+					NCPExemptionManager.unexempt(source, CheckType.FIGHT_SELFHIT);
 				}
 			}
 		}
