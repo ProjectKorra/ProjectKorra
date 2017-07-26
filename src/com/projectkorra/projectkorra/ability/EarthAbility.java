@@ -495,39 +495,70 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static void playEarthbendingSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			float volume = (float) getConfig().getDouble("Properties.Earth.EarthSound.Volume");
-			float pitch = (float) getConfig().getDouble("Properties.Earth.EarthSound.Pitch");
-			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound.Sound")), volume, pitch);
+        if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
+		float volume = (float) getConfig().getDouble("Properties.Earth.EarthSound.Volume");
+		float pitch = (float) getConfig().getDouble("Properties.Earth.EarthSound.Pitch");
+
+		Sound sound = Sound.ENTITY_GHAST_SHOOT;
+		try {
+		    sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Earth.EarthSound.Sound").toUpperCase());
+		} catch (IllegalArgumentException exception) {
+		    sound = Sound.ENTITY_GHAST_SHOOT;
+		} finally {        
+		        loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
+	}
 	}
 
 	public static void playMetalbendingSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
-			float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
-			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound")), volume, pitch);
+        if (getConfig().getBoolean("Properties.Earth.MetalSound.PlaySound")) {
+	
+		float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
+		float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
+		
+		Sound sound = Sound.ENTITY_IRONGOLEM_HURT;
+		try {
+			sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Earth.MetalSound.Sound").toUpperCase());
+		}	catch (IllegalArgumentException exception) {
+			sound = Sound.ENTITY_IRONGOLEM_HURT;
+		}	finally {
+			loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
+	}
 
-	public static void playSandBendingSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
+	public static void playSandbendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Earth.SandSound.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Earth.SandSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Earth.SandSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.SandSound.Sound")), volume, pitch);
+			Sound sound = Sound.BLOCK_SAND_BREAK;
+			try {
+				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Earth.SandSound.Sound").toUpperCase());
+			}	catch (IllegalArgumentException exception) {
+				sound = Sound.BLOCK_SAND_BREAK;
+			}	finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
-	public static void playLavaBendingSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
+	}
+
+	public static void playLavabendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Earth.LavaSound.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Earth.LavaSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Earth.LavaSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.LavaSound.Sound")), volume, pitch);
+			Sound sound = Sound.BLOCK_LAVA_POP;
+			try {
+				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Earth.LavaSound.Sound").toUpperCase());
+			}	catch (IllegalArgumentException exception) {
+				sound = Sound.BLOCK_LAVA_POP;
+			}	finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
+			}
 		}
-	}
+		}
+
 
 	public static void removeAllEarthbendedBlocks() {
 		for (Block block : MOVED_EARTH.keySet()) {

@@ -529,12 +529,14 @@ public class ConfigManager {
 			config.addDefault("Properties.Water.WaterSound.Sound", "BLOCK_WATER_AMBIENT");
 			config.addDefault("Properties.Water.WaterSound.Volume", 1);
 			config.addDefault("Properties.Water.WaterSound.Pitch", 1);
+			config.addDefault("Properties.Water.IceSound.PlaySound", true);
 			config.addDefault("Properties.Water.IceSound.Sound", "ITEM_FLINTANDSTEEL_USE");
 			config.addDefault("Properties.Water.IceSound.Volume", 1);
 			config.addDefault("Properties.Water.IceSound.Pitch", 1);
+			config.addDefault("Properties.Water.PlantSound.PlaySound", true);
 			config.addDefault("Properties.Water.PlantSound.Sound", "BLOCK_GRASS_STEP");
-			config.addDefault("Properties.Water.IceSound.Volume", 1);
-			config.addDefault("Properties.Water.IceSound.Pitch", 1);
+			config.addDefault("Properties.Water.PlatSound.Volume", 1);
+			config.addDefault("Properties.Water.PlantSound.Pitch", 1);
 
 			config.addDefault("Properties.Earth.RevertEarthbending", true);
 			config.addDefault("Properties.Earth.SafeRevert", true);
@@ -548,12 +550,15 @@ public class ConfigManager {
 			config.addDefault("Properties.Earth.EarthSound.Sound", "ENTITY_GHAST_SHOOT");
 			config.addDefault("Properties.Earth.EarthSound.Volume", 1);
 			config.addDefault("Properties.Earth.EarthSound.Pitch", 1);
+			config.addDefault("Properties.Earth.MetalSound.PlaySound", true);
 			config.addDefault("Properties.Earth.MetalSound.Sound", "ENTITY_IRONGOLEM_HURT");
 			config.addDefault("Properties.Earth.MetalSound.Volume", 1);
 			config.addDefault("Properties.Earth.MetalSound.Pitch", 1.25);
+			config.addDefault("Properties.Earth.SandSound.PlaySound", true);
 			config.addDefault("Properties.Earth.SandSound.Sound", "BLOCK_SAND_BREAK");
 			config.addDefault("Properties.Earth.SandSound.Volume", 1);
 			config.addDefault("Properties.Earth.SandSound.Pitch", 1);
+			config.addDefault("Properties.Earth.LavaSound.PlaySound", true);
 			config.addDefault("Properties.Earth.LavaSound.Sound", "LIQUID_LAVA");
 			config.addDefault("Properties.Earth.LavaSound.Volume", 1);
 			config.addDefault("Properties.Earth.LavaSound.Pitch", 1);
@@ -566,9 +571,11 @@ public class ConfigManager {
 			config.addDefault("Properties.Fire.FireSound.Sound", "BLOCK_FIRE_AMBIENT");
 			config.addDefault("Properties.Fire.FireSound.Volume", 1);
 			config.addDefault("Properties.Fire.FireSound.Pitch", 1);
+			config.addDefault("Properties.Fire.CombustionSound.PlaySound", true);
 			config.addDefault("Properties.Fire.CombustionSound.Sound", "ENTITY_FIREWORK_BLAST");
 			config.addDefault("Properties.Fire.CombustionSound.Volume", 1);
 			config.addDefault("Properties.Fire.CombustionSound.Pitch", 0);
+			config.addDefault("Properties.Fire.LightningSound.PlaySound", true);
 			config.addDefault("Properties.Fire.LightningSound.Sound", "ENTITY_CREEPER_HURT");
 			config.addDefault("Properties.Fire.LightningSound.Volume", 1);
 			config.addDefault("Properties.Fire.LightningSound.Pitch", 0);

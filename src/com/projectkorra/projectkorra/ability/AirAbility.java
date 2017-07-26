@@ -5,6 +5,7 @@ import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.airbending.AirSpout;
 import com.projectkorra.projectkorra.airbending.Suffocate;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 import com.projectkorra.projectkorra.util.ParticleEffect.ParticleData;
 
@@ -135,12 +136,19 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @param loc The location to play the sound at
 	 */
 	public static void playAirbendingSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Air.PlaySound")) {
+        if (getConfig().getBoolean("Properties.Air.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Air.Sound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Air.Sound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Air.Sound.Sound")), volume, pitch);
+			Sound sound = Sound.ENTITY_CREEPER_HURT;
+			try {
+				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Air.Sound.Sound").toUpperCase());
+			}	catch (IllegalArgumentException exception) {
+				sound = Sound.ENTITY_CREEPER_HURT;
+			}	finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
+	}
 	}
 
 	/**
