@@ -305,11 +305,11 @@ public abstract class WaterAbility extends ElementalAbility {
 			float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
 			
-			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
+			Sound sound = Sound.BLOCK_GRASS_BREAK;
 			try {
 				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Water.IceSound.Sound").toUpperCase());
 			}	catch (IllegalArgumentException exception) {
-				sound = Sound.ITEM_FLINTANDSTEEL_USE;
+				sound = Sound.BLOCK_GRASS_BREAK;
 			}	finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
@@ -321,11 +321,11 @@ public abstract class WaterAbility extends ElementalAbility {
 			float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
 			
-			Sound sound = Sound.BLOCK_GRASS_STEP;
+			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
 			try {
 				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Water.PlantSound.Sound").toUpperCase());
 			}	catch (IllegalArgumentException exception) {
-				sound = Sound.BLOCK_GRASS_STEP;
+				sound = Sound.ITEM_FLINTANDSTEEL_USE;
 			}	finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}

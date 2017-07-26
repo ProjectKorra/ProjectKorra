@@ -29,7 +29,7 @@ public abstract class AvatarAbility extends ElementalAbility {
 	}
 
 	public static void playAvatarSound(Location loc) {
-        if (getConfig().getBoolean("Properties.Avatar.AvatarState.PlaySound")) {
+        if (getConfig().getBoolean("Abilities.Avatar.AvatarState.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Volume");
 			float pitch = (float) getConfig().getDouble("Abilities.Avatar.AvatarState.Sound.Pitch");
 			
