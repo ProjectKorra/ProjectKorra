@@ -136,6 +136,7 @@ public abstract class AirAbility extends ElementalAbility {
 	 * @param loc The location to play the sound at
 	 */
 	public static void playAirbendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Air.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Air.Sound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Air.Sound.Pitch");
 			
@@ -147,6 +148,7 @@ public abstract class AirAbility extends ElementalAbility {
 			}	finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
+	}
 	}
 
 	/**
