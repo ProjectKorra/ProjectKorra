@@ -14,6 +14,7 @@ import com.projectkorra.projectkorra.BendingPlayer;
 import com.projectkorra.projectkorra.Element;
 import com.projectkorra.projectkorra.GeneralMethods;
 import com.projectkorra.projectkorra.ability.util.Collision;
+import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.firebending.HeatControl;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ParticleEffect;
@@ -300,29 +301,44 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playIcebendingSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Water.IceSound.Sound")), volume, pitch);
+			Sound sound = Sound.ITEM_FLINTANDSTEEL_USE;
+			try {
+				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Water.IceSound.Sound").toUpperCase());
+			}	catch (IllegalArgumentException exception) {
+				sound = Sound.ITEM_FLINTANDSTEEL_USE;
+			}	finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
 
 	public static void playPlantbendingSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Water.PlantSound.Sound")), volume, pitch);
+			Sound sound = Sound.BLOCK_GRASS_STEP;
+			try {
+				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Water.PlantSound.Sound").toUpperCase());
+			}	catch (IllegalArgumentException exception) {
+				sound = Sound.BLOCK_GRASS_STEP;
+			}	finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
 
 	public static void playWaterbendingSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Water.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Water.WaterSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.WaterSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Water.WaterSound.Sound")), volume, pitch);
+			Sound sound = Sound.BLOCK_WATER_AMBIENT;
+			try {
+				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Water.WaterSound.Sound").toUpperCase());
+			}	catch (IllegalArgumentException exception) {
+				sound = Sound.BLOCK_WATER_AMBIENT;
+			}	finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
 
