@@ -156,6 +156,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playCombustionSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Fire.CombustionSound.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
 			
@@ -168,12 +169,15 @@ public abstract class FireAbility extends ElementalAbility {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
+	}
 
 	public static void playFirebendingParticles(Location loc, int amount, float xOffset, float yOffset, float zOffset) {
 		ParticleEffect.FLAME.display(loc, xOffset, yOffset, zOffset, 0, amount);
 	}
 
 	public static void playFirebendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+	}
 			float volume = (float) getConfig().getDouble("Properties.Fire.FireSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
 			
@@ -199,6 +203,7 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 	
 	public static void playLightningbendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Fire.LightningSound.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
 			
@@ -210,6 +215,7 @@ public abstract class FireAbility extends ElementalAbility {
 			} finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
+	}
 	}
 
 	/** Removes all temp fire that no longer needs to be there */

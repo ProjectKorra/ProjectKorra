@@ -495,6 +495,7 @@ public abstract class EarthAbility extends ElementalAbility {
 	}
 
 	public static void playEarthbendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
 		float volume = (float) getConfig().getDouble("Properties.Earth.EarthSound.Volume");
 		float pitch = (float) getConfig().getDouble("Properties.Earth.EarthSound.Pitch");
 
@@ -507,8 +508,11 @@ public abstract class EarthAbility extends ElementalAbility {
 		        loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
+	}
 
 	public static void playMetalbendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Earth.MetalSound.PlaySound")) {
+	
 		float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
 		float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
 		
@@ -521,8 +525,10 @@ public abstract class EarthAbility extends ElementalAbility {
 			loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
+	}
 
 	public static void playSandbendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Earth.SandSound.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Earth.SandSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Earth.SandSound.Pitch");
 			
@@ -535,8 +541,10 @@ public abstract class EarthAbility extends ElementalAbility {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
+	}
 
 	public static void playLavabendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Earth.LavaSound.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Earth.LavaSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Earth.LavaSound.Pitch");
 			
@@ -548,6 +556,7 @@ public abstract class EarthAbility extends ElementalAbility {
 			}	finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 			}
+		}
 		}
 	
 

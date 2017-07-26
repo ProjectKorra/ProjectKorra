@@ -301,6 +301,7 @@ public abstract class WaterAbility extends ElementalAbility {
 	}
 
 	public static void playIcebendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Water.IceSound.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Water.IceSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.IceSound.Pitch");
 			
@@ -313,8 +314,10 @@ public abstract class WaterAbility extends ElementalAbility {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
+	}
 
 	public static void playPlantbendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Water.PlantSound.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Water.PlantSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.PlantSound.Pitch");
 			
@@ -327,8 +330,10 @@ public abstract class WaterAbility extends ElementalAbility {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
+	}
 
 	public static void playWaterbendingSound(Location loc) {
+        if (getConfig().getBoolean("Properties.Water.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Water.WaterSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Water.WaterSound.Pitch");
 			
@@ -340,6 +345,7 @@ public abstract class WaterAbility extends ElementalAbility {
 			}	finally {
 				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
+	}
 	}
 
 	/**
