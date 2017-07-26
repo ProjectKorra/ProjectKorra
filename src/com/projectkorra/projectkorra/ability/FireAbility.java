@@ -156,11 +156,16 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playCombustionSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound")), volume, pitch);
+			Sound sound = Sound.ENTITY_FIREWORK_BLAST;
+			try {
+				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Fire.CombustionSound.Sound").toUpperCase());
+			}	catch (IllegalArgumentException exception) {
+				sound = Sound.ENTITY_FIREWORK_BLAST;
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
 
@@ -169,11 +174,16 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 
 	public static void playFirebendingSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Fire.FireSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound")), volume, pitch);
+			Sound sound = Sound.BLOCK_FIRE_AMBIENT;
+			try {
+				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Fire.FireSound.Sound").toUpperCase());
+			}	catch (IllegalArgumentException exception) {
+				sound = Sound.BLOCK_FIRE_AMBIENT;
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
 
@@ -189,11 +199,16 @@ public abstract class FireAbility extends ElementalAbility {
 	}
 	
 	public static void playLightningbendingSound(Location loc) {
-		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
 			float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
 			float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
 			
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound")), volume, pitch);
+			Sound sound = Sound.ENTITY_CREEPER_HURT;
+			try {
+				sound = Sound.valueOf(ConfigManager.languageConfig.get().getString("Properties.Fire.LightningSound.Sound").toUpperCase());
+			}	catch (IllegalArgumentException exception) {
+				sound = Sound.ENTITY_CREEPER_HURT;
+			} finally {
+				loc.getWorld().playSound(loc, sound, volume, pitch);
 		}
 	}
 
