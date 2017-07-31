@@ -573,7 +573,11 @@ public abstract class CoreAbility implements Ability {
 					}
 					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);
 					if (coreAbil.getElement() instanceof SubElement) {
-						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
+						if (PassiveManager.getPassivesByElement().containsKey(((SubElement) coreAbil.getElement()).getParentElement())) {
+							PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
+						} else {
+							PassiveManager.getPassivesByElement().put(((SubElement) coreAbil.getElement()).getParentElement(), new HashSet<>(Collections.singletonList(name)));
+						}
 					}
 					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
@@ -649,7 +653,11 @@ public abstract class CoreAbility implements Ability {
 					}
 					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);
 					if (coreAbil.getElement() instanceof SubElement) {
-						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
+						if (PassiveManager.getPassivesByElement().containsKey(((SubElement) coreAbil.getElement()).getParentElement())) {
+							PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
+						} else {
+							PassiveManager.getPassivesByElement().put(((SubElement) coreAbil.getElement()).getParentElement(), new HashSet<>(Collections.singletonList(name)));
+						}
 					}
 					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
