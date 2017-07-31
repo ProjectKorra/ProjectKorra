@@ -222,8 +222,17 @@ public abstract class CoreAbility implements Ability {
 						continue;
 					}
 				}
-				abil.progress();
-				Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
+				try{
+					abil.progress();
+					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
+				} catch(Exception e) {
+					e.printStackTrace();
+					try{
+						abil.remove();
+					} catch(Exception re) {
+						re.printStackTrace();
+					}
+				}
 			}
 		}
 	}
