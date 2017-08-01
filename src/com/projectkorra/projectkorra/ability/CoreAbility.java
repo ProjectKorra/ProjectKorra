@@ -68,6 +68,7 @@ public abstract class CoreAbility implements Ability {
 	private static final Map<String, CoreAbility> ABILITIES_BY_NAME = new ConcurrentSkipListMap<>(); // preserves ordering
 	private static final Map<Class<? extends CoreAbility>, CoreAbility> ABILITIES_BY_CLASS = new ConcurrentHashMap<>();
 	private static final double DEFAULT_COLLISION_RADIUS = 0.3;
+	private static final List<String> ADDON_PLUGINS = new ArrayList<>();
 
 	private static int idCounter;
 
@@ -375,6 +376,16 @@ public abstract class CoreAbility implements Ability {
 		}
 		return abilities;
 	}
+	
+	/**
+	 * CoreAbility keeps track of plugins that have registered abilities
+	 * to use for bending reload purposes
+	 * <br><b>This isn't a simple list, external use isn't recommended</b>
+	 * @return a list of entrys with the plugin name and path abilities can be found at
+	 */
+	public static List<String> getAddonPlugins() {
+		return ADDON_PLUGINS;
+	}
 
 	/**
 	 * Returns true if the player has an active CoreAbility instance of type T.
@@ -384,6 +395,22 @@ public abstract class CoreAbility implements Ability {
 	 */
 	public static <T extends CoreAbility> boolean hasAbility(Player player, Class<T> clazz) {
 		return getAbility(player, clazz) != null;
+	}
+	
+	/**
+	 * Unloads the ability
+	 * @param clazz Ability class to unload
+	 */
+	public static <T extends CoreAbility> void unloadAbility(Class<T> clazz) {
+		String name = ABILITIES_BY_CLASS.get(clazz).getName();
+		for (CoreAbility abil : INSTANCES) {
+			if (abil.getName() == name) {
+				abil.remove();
+			}
+		}
+		ABILITIES_BY_CLASS.remove(clazz);
+		ABILITIES_BY_NAME.remove(name);
+		ProjectKorra.log.info("Unloaded ability: " + name);
 	}
 
 	/**
@@ -530,9 +557,9 @@ public abstract class CoreAbility implements Ability {
 	 * @see #getAbility(String)
 	 */
 	public static void registerPluginAbilities(JavaPlugin plugin, String packageBase) {
-		
 		AbilityLoader<CoreAbility> abilityLoader = new AbilityLoader<CoreAbility>(plugin, packageBase);
 		List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
+		ADDON_PLUGINS.add(plugin.getName() + "::" + packageBase);
 		
 		for (CoreAbility coreAbil : loadedAbilities) {
 			if (!coreAbil.isEnabled()) {
@@ -575,7 +602,7 @@ public abstract class CoreAbility implements Ability {
 					if (coreAbil.getElement() instanceof SubElement) {
 						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
 					}
-					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
+					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility)coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
 					PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
@@ -651,7 +678,7 @@ public abstract class CoreAbility implements Ability {
 					if (coreAbil.getElement() instanceof SubElement) {
 						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
 					}
-					if (!PassiveManager.getPassiveClasses().containsKey(coreAbil)) {
+					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility)coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
 				}

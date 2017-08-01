@@ -51,6 +51,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.kingdoms.constants.StructureType;
@@ -1623,6 +1624,7 @@ public class GeneralMethods {
 		ProjectKorra.collisionManager = new CollisionManager();
 		ProjectKorra.collisionInitializer = new CollisionInitializer(ProjectKorra.collisionManager);
 		CoreAbility.registerAbilities();
+		reloadAddonPlugins();
 		ProjectKorra.collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered
 		ProjectKorra.collisionManager.startCollisionDetection();
 
@@ -1644,6 +1646,18 @@ public class GeneralMethods {
 		}
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");
+	}
+	
+	public static void reloadAddonPlugins() {
+		for (int i = CoreAbility.getAddonPlugins().size()-1; i > -1; i--) {
+			String entry = CoreAbility.getAddonPlugins().get(i);
+			String[] split = entry.split("::");
+			if (Bukkit.getServer().getPluginManager().isPluginEnabled(split[0])) {
+				CoreAbility.registerPluginAbilities((JavaPlugin)Bukkit.getServer().getPluginManager().getPlugin(split[0]), split[1]);
+			} else {
+				CoreAbility.getAddonPlugins().remove(i);
+			}
+		}
 	}
 
 	public static void removeBlock(Block block) {
