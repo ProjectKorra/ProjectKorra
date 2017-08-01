@@ -402,6 +402,9 @@ public abstract class CoreAbility implements Ability {
 	 * @param clazz Ability class to unload
 	 */
 	public static <T extends CoreAbility> void unloadAbility(Class<T> clazz) {
+		if (!ABILITIES_BY_CLASS.containsKey(clazz)) {
+			return;
+		}
 		String name = ABILITIES_BY_CLASS.get(clazz).getName();
 		for (CoreAbility abil : INSTANCES) {
 			if (abil.getName() == name) {
