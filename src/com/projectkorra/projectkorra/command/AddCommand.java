@@ -146,6 +146,14 @@ public class AddCommand extends PKCommand {
 				e = SubElement.fromString(element);
 			}
 			
+			if (e == Element.AVATAR) {
+				add(sender, target, Element.AIR.getName());
+				add(sender, target, Element.EARTH.getName());
+				add(sender, target, Element.FIRE.getName());
+				add(sender, target, Element.WATER.getName());
+				return;
+			}
+			
 			//if it's an element:
 			if (Arrays.asList(Element.getAllElements()).contains(e)) {
 				if (bPlayer.hasElement(e)) { // if already had, determine who to send the error message to

@@ -131,7 +131,7 @@ public class CollisionInitializer {
 		CoreAbility waterSpout = CoreAbility.getAbility(WaterSpout.class);
 		CoreAbility waterSpoutWave = CoreAbility.getAbility(WaterSpoutWave.class);
 
-		CoreAbility[] smallAbils = { airBlast, airSwipe, earthBlast, waterManipulation, fireBlast, combustion, blazeArc };
+		CoreAbility[] smallAbils = { airSwipe, earthBlast, waterManipulation, fireBlast, combustion, blazeArc };
 		CoreAbility[] largeAbils = { earthSmash, airShield, fireBlastCharged, fireKick, fireSpin, fireWheel, airSweep, iceBullet };
 		CoreAbility[] comboAbils = { fireKick, fireSpin, fireWheel, airSweep, iceBullet };
 		CoreAbility[] removeSpoutAbils = { airSwipe, earthBlast, waterManipulation, fireBlast, fireBlastCharged, earthSmash, fireKick, fireSpin, fireWheel, airSweep, iceBullet };

@@ -204,7 +204,7 @@ public class PKListener implements Listener {
 		String abil = bPlayer.getBoundAbilityName();
 		CoreAbility ability = null;
 		
-		if (!bPlayer.isElementToggled(Element.WATER)) {
+		if (bPlayer.isElementToggled(Element.WATER)) {
 			if (abil != null && abil.equalsIgnoreCase("Surge")) {
 				ability = CoreAbility.getAbility(SurgeWall.class);
 			} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
