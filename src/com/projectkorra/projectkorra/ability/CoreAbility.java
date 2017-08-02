@@ -523,13 +523,6 @@ public abstract class CoreAbility implements Ability {
 					if (ability instanceof PassiveAbility) {
 						ability.setHiddenAbility(true);
 						PassiveManager.getPassives().put(name, ability);
-						if (!PassiveManager.getPassivesByElement().containsKey(ability.getElement())) {
-							PassiveManager.getPassivesByElement().put(ability.getElement(), new HashSet<String>());
-						}
-						PassiveManager.getPassivesByElement().get(ability.getElement()).add(name);
-						if (ability.getElement() instanceof SubElement) {
-							PassiveManager.getPassivesByElement().get(((SubElement) ability.getElement()).getParentElement()).add(name);
-						}
 					}
 
 					if (ability instanceof AddonAbility) {
@@ -598,13 +591,6 @@ public abstract class CoreAbility implements Ability {
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassivesByElement().containsKey(coreAbil.getElement())) {
-						PassiveManager.getPassivesByElement().put(coreAbil.getElement(), new HashSet<String>());
-					}
-					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);
-					if (coreAbil.getElement() instanceof SubElement) {
-						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
-					}
 					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility)coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
@@ -674,13 +660,6 @@ public abstract class CoreAbility implements Ability {
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassivesByElement().containsKey(coreAbil.getElement())) {
-						PassiveManager.getPassivesByElement().put(coreAbil.getElement(), new HashSet<String>());
-					}
-					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);
-					if (coreAbil.getElement() instanceof SubElement) {
-						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
-					}
 					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility)coreAbil)) {
 						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}

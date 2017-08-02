@@ -146,6 +146,11 @@ public class AddCommand extends PKCommand {
 				e = SubElement.fromString(element);
 			}
 			
+			if (e == Element.AVATAR) {
+				sender.sendMessage(ChatColor.RED + invalidElement);
+				return;
+			}
+			
 			//if it's an element:
 			if (Arrays.asList(Element.getAllElements()).contains(e)) {
 				if (bPlayer.hasElement(e)) { // if already had, determine who to send the error message to
