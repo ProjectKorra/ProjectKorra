@@ -112,6 +112,12 @@ public class AirScooter extends AirAbility {
 			return;
 		}
 
+		if (player.isSneaking()) {
+			bPlayer.addCooldown(this);
+			remove();
+			return;
+		}
+
 		Vector velocity = player.getEyeLocation().getDirection().clone().normalize();
 		velocity = velocity.clone().normalize().multiply(speed);
 		/*
