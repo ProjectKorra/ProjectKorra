@@ -147,7 +147,10 @@ public class AddCommand extends PKCommand {
 			}
 			
 			if (e == Element.AVATAR) {
-				sender.sendMessage(ChatColor.RED + invalidElement);
+				add(sender, target, Element.AIR.getName());
+				add(sender, target, Element.EARTH.getName());
+				add(sender, target, Element.FIRE.getName());
+				add(sender, target, Element.WATER.getName());
 				return;
 			}
 			
