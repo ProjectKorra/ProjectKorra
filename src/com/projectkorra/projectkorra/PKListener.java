@@ -204,7 +204,7 @@ public class PKListener implements Listener {
 		String abil = bPlayer.getBoundAbilityName();
 		CoreAbility ability = null;
 		
-		if (bPlayer.isElementToggled(Element.WATER)) {
+		if (bPlayer.isElementToggled(Element.WATER) && bPlayer.isToggled()) {
 			if (abil != null && abil.equalsIgnoreCase("Surge")) {
 				ability = CoreAbility.getAbility(SurgeWall.class);
 			} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
@@ -1281,11 +1281,6 @@ public class PKListener implements Listener {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
 		if (event.isCancelled() || bPlayer == null) {
-			return;
-		}
-
-		if (CoreAbility.hasAbility(event.getPlayer(), AirScooter.class)) {
-			event.setCancelled(true);
 			return;
 		}
 

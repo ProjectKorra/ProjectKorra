@@ -152,6 +152,7 @@ public class HelpCommand extends PKCommand {
 				
 				AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
 				sender.sendMessage(color + "- By: " + ChatColor.WHITE + abil.getAuthor());
+				sender.sendMessage(color + "- Version: " + ChatColor.WHITE + abil.getVersion());
 			} else {
 				if (ability instanceof PassiveAbility) {
 					sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Passive)");
@@ -197,6 +198,7 @@ public class HelpCommand extends PKCommand {
 						
 						AddonAbility abil = (AddonAbility) CoreAbility.getAbility(arg);
 						sender.sendMessage(color + "- By: " + ChatColor.WHITE + abil.getAuthor());
+						sender.sendMessage(color + "- Version: " + ChatColor.WHITE + abil.getVersion());
 					} else {
 						sender.sendMessage(color + (ChatColor.BOLD + ability.getName()) + ChatColor.WHITE + " (Combo)");
 						sender.sendMessage(color + ComboManager.getDescriptions().get(combo));
