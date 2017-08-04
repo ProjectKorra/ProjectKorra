@@ -129,7 +129,6 @@ import com.projectkorra.projectkorra.earthbending.metal.MetalClips;
 import com.projectkorra.projectkorra.earthbending.passive.DensityShift;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
 import com.projectkorra.projectkorra.earthbending.passive.FerroControl;
-import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.event.EntityBendingDeathEvent;
 import com.projectkorra.projectkorra.event.HorizontalVelocityChangeEvent;
 import com.projectkorra.projectkorra.event.PlayerChangeElementEvent;
@@ -201,18 +200,23 @@ public class PKListener implements Listener {
 
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
-		String abil = BendingPlayer.getBendingPlayer(player).getBoundAbilityName();
+		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
+		String abil = bPlayer.getBoundAbilityName();
 		CoreAbility ability = null;
-		if (abil != null && abil.equalsIgnoreCase("Surge")) {
-			ability = CoreAbility.getAbility(SurgeWall.class);
-		} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
-			ability = CoreAbility.getAbility(Torrent.class);
-		} else {
-			ability = CoreAbility.getAbility(abil);
-		}
-		if (ability != null && ability instanceof WaterAbility && !((WaterAbility) ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
-			event.setCancelled(true);
-			return;
+		
+		if (bPlayer.isElementToggled(Element.WATER) && bPlayer.isToggled()) {
+			if (abil != null && abil.equalsIgnoreCase("Surge")) {
+				ability = CoreAbility.getAbility(SurgeWall.class);
+			} else if (abil != null && abil.equalsIgnoreCase("Torrent")) {
+				ability = CoreAbility.getAbility(Torrent.class);
+			} else {
+				ability = CoreAbility.getAbility(abil);
+			}
+			
+			if (ability != null && ability instanceof WaterAbility && !((WaterAbility) ability).allowBreakPlants() && WaterAbility.isPlantbendable(player, block.getType(), false)) {
+				event.setCancelled(true);
+				return;
+			}
 		}
 
 		EarthBlast blast = EarthBlast.getBlastFromSource(block);
@@ -227,7 +231,7 @@ public class PKListener implements Listener {
 		} else if (SurgeWall.getWallBlocks().containsKey(block)) {
 			SurgeWall.thaw(block);
 			event.setCancelled(true);
-		} else if (Illumination.getBlocks().containsKey(block)) {
+		} else if (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) {
 			event.setCancelled(true);
 		} else if (!SurgeWave.canThaw(block)) {
 			SurgeWave.thaw(block);
@@ -257,7 +261,7 @@ public class PKListener implements Listener {
 				event.setCancelled(!WaterManipulation.canFlowFromTo(fromblock, toblock));
 			}
 			if (!event.isCancelled()) {
-				if (Illumination.getBlocks().containsKey(toblock)) {
+				if (TempBlock.isTempBlock(toblock) && Illumination.getBlocks().containsKey(TempBlock.get(toblock))) {
 					toblock.setType(Material.AIR);
 				}
 			}
@@ -278,6 +282,24 @@ public class PKListener implements Listener {
 		if (!EarthPassive.canPhysicsChange(event.getBlock())) {
 			event.setCancelled(true);
 		}
+		if (event.getBlock().getType().toString().equals("CONCRETE_POWDER")) {
+			BlockFace[] faces = new BlockFace[] {BlockFace.UP, BlockFace.DOWN, BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
+			
+			boolean marked = true;
+			for (BlockFace face : faces) {
+				Block b = event.getBlock().getRelative(face);
+				if (b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER) {
+					if (!TempBlock.isTempBlock(b)) {
+						marked = false; //if there is any normal water around it, prevent it.
+						break;
+					}
+				}
+			}
+			
+			if (marked) {
+				event.setCancelled(true);	
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -297,7 +319,7 @@ public class PKListener implements Listener {
 		if (block.getType() == Material.FIRE) {
 			return;
 		}
-		event.setCancelled(Illumination.getBlocks().containsKey(block));
+		event.setCancelled(TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block)));
 		if (!event.isCancelled()) {
 			event.setCancelled(!WaterManipulation.canPhysicsChange(block));
 		}
@@ -326,7 +348,7 @@ public class PKListener implements Listener {
 
 		Block block = event.getBlock();
 
-		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || Illumination.getBlocks().containsKey(block) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
+		if (!WaterManipulation.canPhysicsChange(block) || !EarthPassive.canPhysicsChange(block) || (TempBlock.isTempBlock(block) && Illumination.getBlocks().containsKey(TempBlock.get(block))) || EarthAbility.getPreventPhysicsBlocks().contains(block)) {
 			event.setCancelled(true);
 		}
 
@@ -423,7 +445,7 @@ public class PKListener implements Listener {
 			return;
 
 		if (TempBlock.isTempBlock(block)) {
-			if (EarthAbility.isEarthbendable(block.getType()) && GeneralMethods.isSolid(block)) {
+			if (EarthAbility.isEarthbendable(block.getType(), true, true, true) && GeneralMethods.isSolid(block)) {
 				event.setCancelled(true);
 				return;
 			}
@@ -472,8 +494,12 @@ public class PKListener implements Listener {
 			TempArmor armor = TempArmor.getTempArmor(event.getEntity());
 
 			List<ItemStack> newDrops = armor.filterArmor(event.getDrops());
+			
 			event.getDrops().clear();
 			event.getDrops().addAll(newDrops);
+			if (MetalClips.isControlled(event.getEntity())) {
+				event.getDrops().add(new ItemStack(Material.IRON_INGOT, MetalClips.getTargetToAbility().get(event.getEntity()).getMetalClipsCount()));
+			}
 
 			armor.revert();
 		}
@@ -661,12 +687,20 @@ public class PKListener implements Listener {
 		}
 
 		Entity entity = event.getEntity();
-		if (Paralyze.isParalyzed(entity) || Immobilize.isParalyzed(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity)) {
+		if (Paralyze.isParalyzed(entity) || Immobilize.isParalyzed(entity) || Bloodbending.isBloodbent(entity) || Suffocate.isBreathbent(entity) || MetalClips.isControlled((LivingEntity)entity)) {
 			event.setCancelled(true);
 		}
 		
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
 			TempArmor.getTempArmor((LivingEntity) entity).revert();
+		}
+		
+		if (entity instanceof Player) {
+			Player player = (Player) entity;
+			if (CoreAbility.hasAbility(player, EarthArmor.class)) {
+				EarthArmor abil = CoreAbility.getAbility(player, EarthArmor.class);
+				abil.remove();
+			}
 		}
 	}
 
@@ -788,7 +822,10 @@ public class PKListener implements Listener {
 				new Shockwave(player, true);
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR) && bPlayer.canUsePassive(Element.AIR)) {
+			if (event.isCancelled())
+				return;
+
+			if (bPlayer.hasElement(Element.AIR) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.AIR) && bPlayer.canUsePassive(Element.AIR)) {
 				new AirBurst(player, true);
 				if (CoreAbility.getAbility(GracefulDescent.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(GracefulDescent.class))) {
 					event.setDamage(0D);
@@ -796,21 +833,21 @@ public class PKListener implements Listener {
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && bPlayer.canUsePassive(Element.WATER) && CoreAbility.getAbility(Hydrosink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Hydrosink.class))) {
+			if (bPlayer.hasElement(Element.WATER) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.WATER) && bPlayer.canUsePassive(Element.WATER) && CoreAbility.getAbility(Hydrosink.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Hydrosink.class))) {
 				if (WaterPassive.applyNoFall(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH) && bPlayer.canUsePassive(Element.EARTH) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
+			if (bPlayer.hasElement(Element.EARTH) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.EARTH) && bPlayer.canUsePassive(Element.EARTH) && CoreAbility.getAbility(DensityShift.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(DensityShift.class))) {
 				if (EarthPassive.softenLanding(player)) {
 					event.setDamage(0D);
 					event.setCancelled(true);
 				}
 			}
 
-			if (!event.isCancelled() && bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI) && bPlayer.canUsePassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
+			if (bPlayer.hasElement(Element.CHI) && event.getCause() == DamageCause.FALL && bPlayer.canBendPassive(Element.CHI) && bPlayer.canUsePassive(Element.CHI) && CoreAbility.getAbility(Acrobatics.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(Acrobatics.class))) {
 				double initdamage = event.getDamage();
 				double newdamage = event.getDamage() * ChiPassive.getFallReductionFactor();
 				double finaldamage = initdamage - newdamage;
@@ -819,7 +856,7 @@ public class PKListener implements Listener {
 					event.setCancelled(true);
 			}
 
-			if (!event.isCancelled() && event.getCause() == DamageCause.FALL) {
+			if (event.getCause() == DamageCause.FALL) {
 				Player source = Flight.getLaunchedBy(player);
 				if (source == player) {
 					event.setCancelled(true);
@@ -835,7 +872,7 @@ public class PKListener implements Listener {
 				event.setCancelled(true);
 			}
 
-			if (!event.isCancelled() && CoreAbility.getAbility(player, EarthArmor.class) != null) {
+			if (CoreAbility.getAbility(player, EarthArmor.class) != null) {
 				EarthArmor eartharmor = CoreAbility.getAbility(player, EarthArmor.class);
 				eartharmor.updateAbsorbtion();
 			}
@@ -866,12 +903,11 @@ public class PKListener implements Listener {
 		if (entity instanceof Player) {
 			Suffocate.remove((Player) entity);
 		}
-
-		Entity en = e.getEntity();
-		if (en instanceof Player) {
-			if (e.getDamager() instanceof Player) { // This is the player hitting someone.
-				Player sourcePlayer = (Player) e.getDamager();
-				Player targetPlayer = (Player) e.getEntity();
+		
+		if (entity instanceof Player) {
+			if (source instanceof Player) { // This is the player hitting someone.
+				Player sourcePlayer = (Player) source;
+				Player targetPlayer = (Player) entity;
 				BendingPlayer sourceBPlayer = BendingPlayer.getBendingPlayer(sourcePlayer);
 				if (sourceBPlayer == null) {
 					return;
@@ -1110,8 +1146,13 @@ public class PKListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		
+		else if (Lightning.isParalyzed(player)) {
+			event.setCancelled(true);
+			return;
+		}
 
-		else if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class) || CoreAbility.hasAbility(player, SandSpout.class)) {
+		else if (CoreAbility.hasAbility(player, WaterSpout.class) || CoreAbility.hasAbility(player, AirSpout.class) ) {
 			Vector vel = new Vector();
 			vel.setX(event.getTo().getX() - event.getFrom().getX());
 			vel.setZ(event.getTo().getZ() - event.getFrom().getZ());
@@ -1127,20 +1168,31 @@ public class PKListener implements Listener {
 		}
 
 		else if (Bloodbending.isBloodbent(player)) {
+			BendingPlayer bender = Bloodbending.getBloodbender(player);
+			if (bender.isAvatarState()) {
+				event.setCancelled(true);
+				return;
+			}
 			double distance1 = 0;
 			double distance2 = 0;
 			Location loc = Bloodbending.getBloodbendingLocation(player);
-			if (event.getPlayer().getWorld().equals(loc.getWorld())) {
-				distance1 = event.getFrom().distance(loc);
-				distance2 = event.getTo().distance(loc);
+			if (player.getWorld().equals(loc.getWorld())) {
+				distance1 = event.getFrom().distanceSquared(loc);
+				distance2 = event.getTo().distanceSquared(loc);
 			}
-			if (distance2 > distance1) {
-				player.setVelocity(new Vector(0, 0, 0));
+			
+			if (distance1 == 0 && distance2 == 0) {
+				return;
+			} else if (distance1 > distance2 || distance1 < distance2) {
+				if (!player.getVelocity().equals(Bloodbending.getBloodbendingVector(player))) {
+					player.setVelocity(Bloodbending.getBloodbendingVector(player));
+					return;
+				}
 			}
 		}
 
-		else if (AirFlight.isFlying(event.getPlayer())) {
-			if (AirFlight.isHovering(event.getPlayer())) {
+		else if (AirFlight.isFlying(player)) {
+			if (AirFlight.isHovering(player)) {
 				Location loc = event.getFrom();
 				Location toLoc = event.getTo();
 
@@ -1232,11 +1284,6 @@ public class PKListener implements Listener {
 			return;
 		}
 
-		if (CoreAbility.hasAbility(event.getPlayer(), AirScooter.class)) {
-			event.setCancelled(true);
-			return;
-		}
-
 		if (bPlayer.canCurrentlyBendWithWeapons()) {
 			if (player.isSneaking()) {
 				ComboManager.addComboAbility(player, ClickType.SHIFT_UP);
@@ -1263,7 +1310,7 @@ public class PKListener implements Listener {
 			BlockSource.update(player, ClickType.SHIFT_DOWN);
 		}
 
-		if (CoreAbility.getAbility(FerroControl.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class)) && !bPlayer.isOnCooldown("Hodor")) {
+		if (CoreAbility.getAbility(FerroControl.class).isEnabled() && PassiveManager.hasPassive(player, CoreAbility.getAbility(FerroControl.class)) && !bPlayer.isOnCooldown("FerroControl")) {
 			if (event.isSneaking()) {
 				Block block = player.getTargetBlock((HashSet<Material>) null, 5);
 				if (block != null) {
@@ -1278,7 +1325,7 @@ public class PKListener implements Listener {
 							block.setData((byte) (block.getData() - 4));
 							block.getWorld().playSound(block.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 10, 1);
 						}
-						bPlayer.addCooldown("Hodor", 200);
+						bPlayer.addCooldown("FerroControl", 200);
 					}
 				}
 
@@ -1393,10 +1440,10 @@ public class PKListener implements Listener {
 							} else {
 								clips.setControlling(true);
 							}
+						} else {
+							new MetalClips(player, 1);
 						}
-					} else {
-						new MetalClips(player, 1);
-					}
+					} 
 				}
 
 			}
@@ -1472,7 +1519,7 @@ public class PKListener implements Listener {
 		if (Suffocate.isBreathbent(player)) {
 			event.setCancelled(true);
 			return;
-		} else if (Bloodbending.isBloodbent(player) || Paralyze.isParalyzed(player) || Immobilize.isParalyzed(player)) {
+		} else if ((Bloodbending.isBloodbent(player) && !bPlayer.getBoundAbilityName().equalsIgnoreCase("AvatarState")) || Paralyze.isParalyzed(player) || Immobilize.isParalyzed(player)) {
 			event.setCancelled(true);
 			return;
 		} else if (bPlayer.isChiBlocked()) {
@@ -1598,8 +1645,6 @@ public class PKListener implements Listener {
 						new LavaFlow(player, AbilityType.CLICK);
 					} else if (abil.equalsIgnoreCase("EarthSmash")) {
 						new EarthSmash(player, ClickType.LEFT_CLICK);
-					} else if (abil.equalsIgnoreCase("SandSpout")) {
-						new SandSpout(player);
 					}
 				}
 			}
@@ -1665,7 +1710,6 @@ public class PKListener implements Listener {
 			abil = MultiAbilityManager.getBoundMultiAbility(player);
 			if (abil.equalsIgnoreCase("WaterArms")) {
 				new WaterArms(player);
-
 			}
 		}
 	}

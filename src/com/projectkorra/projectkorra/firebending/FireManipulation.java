@@ -98,6 +98,7 @@ public class FireManipulation extends FireAbility {
 
 		if (!firing && !charging) {
 			if (!player.isSneaking()) {
+				bPlayer.addCooldown(this, shieldCooldown);
 				remove();
 				return;
 			} else if (System.currentTimeMillis() - getStartTime() > maxDuration) {
@@ -155,6 +156,7 @@ public class FireManipulation extends FireAbility {
 			if (!streamSneaking) {
 				direction = streamSneakDirection;
 				if (System.currentTimeMillis() - streamRemoveTime > 1000) {
+					bPlayer.addCooldown(this, streamCooldown);
 					remove();
 					return;
 				}

@@ -14,6 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 
 public class DamageHandler {
 
@@ -27,7 +28,9 @@ public class DamageHandler {
 	 */
 	@SuppressWarnings("deprecation")
 	public static void damageEntity(Entity entity, Player source, double damage, Ability ability, boolean ignoreArmor) {
-
+		if (TempArmor.hasTempArmor((LivingEntity) entity)) {
+			ignoreArmor = true;
+		}
 		if (ability == null) {
 			return;
 		}
@@ -45,6 +48,11 @@ public class DamageHandler {
 				damage = damageEvent.getDamage();
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
 					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_REACH);
+					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_DIRECTION);
+					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_NOSWING);
+					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_SPEED);
+					NCPExemptionManager.exemptPermanently(source, CheckType.COMBINED_IMPROBABLE);
+					NCPExemptionManager.exemptPermanently(source, CheckType.FIGHT_SELFHIT);
 				}
 
 				if (((LivingEntity) entity).getHealth() - damage <= 0 && !entity.isDead()) {
@@ -52,17 +60,22 @@ public class DamageHandler {
 					Bukkit.getServer().getPluginManager().callEvent(event);
 				}
 
-				DamageCause cause = DamageCause.CUSTOM;
-				if (ignoreArmor) {
-					cause = DamageCause.MAGIC;
-				}
-
-				EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, cause, damage);
+				EntityDamageByEntityEvent finalEvent = new EntityDamageByEntityEvent(source, entity, DamageCause.CUSTOM, damage);
 				((LivingEntity) entity).damage(damage, source);
 				entity.setLastDamageCause(finalEvent);
+				if (ignoreArmor) {
+				    if (finalEvent.isApplicable(DamageModifier.ARMOR)) {
+				        finalEvent.setDamage(DamageModifier.ARMOR, 0);
+				    }
+				}
 
 				if (Bukkit.getPluginManager().isPluginEnabled("NoCheatPlus") && source != null) {
-					NCPExemptionManager.unexempt(source);
+					NCPExemptionManager.unexempt(source, CheckType.FIGHT_REACH);
+					NCPExemptionManager.unexempt(source, CheckType.FIGHT_DIRECTION);
+					NCPExemptionManager.unexempt(source, CheckType.FIGHT_NOSWING);
+					NCPExemptionManager.unexempt(source, CheckType.FIGHT_SPEED);
+					NCPExemptionManager.unexempt(source, CheckType.COMBINED_IMPROBABLE);
+					NCPExemptionManager.unexempt(source, CheckType.FIGHT_SELFHIT);
 				}
 			}
 		}

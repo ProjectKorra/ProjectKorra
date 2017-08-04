@@ -39,4 +39,7 @@ public class AbilityCollisionEvent extends Event implements Cancellable {
 		return HANDLERS;
 	}
 
+	public static HandlerList getHandlerList() {
+		return HANDLERS;
+	}
 }

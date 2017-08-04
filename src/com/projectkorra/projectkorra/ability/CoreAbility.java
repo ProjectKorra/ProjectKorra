@@ -68,6 +68,7 @@ public abstract class CoreAbility implements Ability {
 	private static final Map<String, CoreAbility> ABILITIES_BY_NAME = new ConcurrentSkipListMap<>(); // preserves ordering
 	private static final Map<Class<? extends CoreAbility>, CoreAbility> ABILITIES_BY_CLASS = new ConcurrentHashMap<>();
 	private static final double DEFAULT_COLLISION_RADIUS = 0.3;
+	private static final List<String> ADDON_PLUGINS = new ArrayList<>();
 
 	private static int idCounter;
 
@@ -222,8 +223,17 @@ public abstract class CoreAbility implements Ability {
 						continue;
 					}
 				}
-				abil.progress();
-				Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
+				try {
+					abil.progress();
+					Bukkit.getServer().getPluginManager().callEvent(new AbilityProgressEvent(abil));
+				} catch (Exception e) {
+					e.printStackTrace();
+					try {
+						abil.remove();
+					} catch (Exception re) {
+						re.printStackTrace();
+					}
+				}
 			}
 		}
 	}
@@ -366,6 +376,16 @@ public abstract class CoreAbility implements Ability {
 		}
 		return abilities;
 	}
+	
+	/**
+	 * CoreAbility keeps track of plugins that have registered abilities
+	 * to use for bending reload purposes
+	 * <br><b>This isn't a simple list, external use isn't recommended</b>
+	 * @return a list of entrys with the plugin name and path abilities can be found at
+	 */
+	public static List<String> getAddonPlugins() {
+		return ADDON_PLUGINS;
+	}
 
 	/**
 	 * Returns true if the player has an active CoreAbility instance of type T.
@@ -375,6 +395,25 @@ public abstract class CoreAbility implements Ability {
 	 */
 	public static <T extends CoreAbility> boolean hasAbility(Player player, Class<T> clazz) {
 		return getAbility(player, clazz) != null;
+	}
+	
+	/**
+	 * Unloads the ability
+	 * @param clazz Ability class to unload
+	 */
+	public static <T extends CoreAbility> void unloadAbility(Class<T> clazz) {
+		if (!ABILITIES_BY_CLASS.containsKey(clazz)) {
+			return;
+		}
+		String name = ABILITIES_BY_CLASS.get(clazz).getName();
+		for (CoreAbility abil : INSTANCES) {
+			if (abil.getName() == name) {
+				abil.remove();
+			}
+		}
+		ABILITIES_BY_CLASS.remove(clazz);
+		ABILITIES_BY_NAME.remove(name);
+		ProjectKorra.log.info("Unloaded ability: " + name);
 	}
 
 	/**
@@ -484,13 +523,6 @@ public abstract class CoreAbility implements Ability {
 					if (ability instanceof PassiveAbility) {
 						ability.setHiddenAbility(true);
 						PassiveManager.getPassives().put(name, ability);
-						if (!PassiveManager.getPassivesByElement().containsKey(ability.getElement())) {
-							PassiveManager.getPassivesByElement().put(ability.getElement(), new HashSet<String>());
-						}
-						PassiveManager.getPassivesByElement().get(ability.getElement()).add(name);
-						if (ability.getElement() instanceof SubElement) {
-							PassiveManager.getPassivesByElement().get(((SubElement) ability.getElement()).getParentElement()).add(name);
-						}
 					}
 
 					if (ability instanceof AddonAbility) {
@@ -521,9 +553,9 @@ public abstract class CoreAbility implements Ability {
 	 * @see #getAbility(String)
 	 */
 	public static void registerPluginAbilities(JavaPlugin plugin, String packageBase) {
-		
 		AbilityLoader<CoreAbility> abilityLoader = new AbilityLoader<CoreAbility>(plugin, packageBase);
 		List<CoreAbility> loadedAbilities = abilityLoader.load(CoreAbility.class, CoreAbility.class);
+		ADDON_PLUGINS.add(plugin.getName() + "::" + packageBase);
 		
 		for (CoreAbility coreAbil : loadedAbilities) {
 			if (!coreAbil.isEnabled()) {
@@ -559,13 +591,10 @@ public abstract class CoreAbility implements Ability {
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassivesByElement().containsKey(coreAbil.getElement())) {
-						PassiveManager.getPassivesByElement().put(coreAbil.getElement(), new HashSet<String>());
+					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility)coreAbil)) {
+						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
-					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);
-					if (coreAbil.getElement() instanceof SubElement) {
-						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
-					}
+					PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 				}
 			}
 			catch (Exception | Error e) {
@@ -631,12 +660,8 @@ public abstract class CoreAbility implements Ability {
 				if (coreAbil instanceof PassiveAbility) {
 					coreAbil.setHiddenAbility(true);
 					PassiveManager.getPassives().put(name, coreAbil);
-					if (!PassiveManager.getPassivesByElement().containsKey(coreAbil.getElement())) {
-						PassiveManager.getPassivesByElement().put(coreAbil.getElement(), new HashSet<String>());
-					}
-					PassiveManager.getPassivesByElement().get(coreAbil.getElement()).add(name);
-					if (coreAbil.getElement() instanceof SubElement) {
-						PassiveManager.getPassivesByElement().get(((SubElement) coreAbil.getElement()).getParentElement()).add(name);
+					if (!PassiveManager.getPassiveClasses().containsKey((PassiveAbility)coreAbil)) {
+						PassiveManager.getPassiveClasses().put((PassiveAbility) coreAbil, coreAbil.getClass());
 					}
 				}
 			}

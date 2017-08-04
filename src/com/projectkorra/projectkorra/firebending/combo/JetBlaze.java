@@ -12,7 +12,6 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.FireJet;
 import com.projectkorra.projectkorra.util.ParticleEffect;
 
@@ -24,7 +23,6 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 	private long cooldown;
 	private double damage;
 	private double speed;
-	private double range;
 	private double fireTicks;
 	private Vector direction;
 	private ArrayList<LivingEntity> affectedEntities;
@@ -43,16 +41,16 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.Damage");
-		this.duration = getConfig().getLong("Abilities.Fire.FireCombo.JetBlaze.Duration");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.Speed");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.JetBlaze.Cooldown");
-		this.fireTicks = getConfig().getDouble("Abilities.Fire.FireCombo.JetBlaze.FireTicks");
+		this.damage = getConfig().getDouble("Abilities.Fire.JetBlaze.Damage");
+		this.duration = getConfig().getLong("Abilities.Fire.JetBlaze.Duration");
+		this.speed = getConfig().getDouble("Abilities.Fire.JetBlaze.Speed");
+		this.cooldown = getConfig().getLong("Abilities.Fire.JetBlaze.Cooldown");
+		this.fireTicks = getConfig().getDouble("Abilities.Fire.JetBlaze.FireTicks");
 		
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = AvatarState.getValue(damage);
-			this.range = AvatarState.getValue(range);
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.JetBlaze.Damage");
+			this.fireTicks = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.JetBlaze.FireTicks");
 		}
 		
 		start();
@@ -84,6 +82,7 @@ public class JetBlaze extends FireAbility implements ComboAbility {
 			direction = player.getVelocity().clone().multiply(-1);
 			FireJet fj = getAbility(player, FireJet.class);
 			fj.setSpeed(speed);
+			fj.setDuration(duration);
 
 			FireComboStream fs = new FireComboStream(player, this, direction, player.getLocation(), 5, 1);
 			fs.setDensity(8);

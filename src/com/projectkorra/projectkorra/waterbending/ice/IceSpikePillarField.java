@@ -1,9 +1,8 @@
 package com.projectkorra.projectkorra.waterbending.ice;
 
-import com.projectkorra.projectkorra.GeneralMethods;
-import com.projectkorra.projectkorra.ability.IceAbility;
-import com.projectkorra.projectkorra.ability.WaterAbility;
-import com.projectkorra.projectkorra.util.TempBlock;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,9 +13,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.projectkorra.projectkorra.GeneralMethods;
+import com.projectkorra.projectkorra.ability.IceAbility;
+import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.util.TempBlock;
 
 public class IceSpikePillarField extends IceAbility {
 
@@ -35,9 +35,16 @@ public class IceSpikePillarField extends IceAbility {
 
 		this.damage = getConfig().getDouble("Abilities.Water.IceSpike.Field.Damage");
 		this.radius = getConfig().getDouble("Abilities.Water.IceSpike.Field.Radius");
-		this.numberOfSpikes = (int) (((radius * 2) * (radius * 2)) / 16);
 		this.cooldown = getConfig().getLong("Abilities.Water.IceSpike.Field.Cooldown");
 		this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Water.IceSpike.Field.Push"), 0);
+		
+		if (bPlayer.isAvatarState()) {
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Damage");
+			this.radius = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Radius");
+			this.thrownForce = new Vector(0, getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceSpike.Field.Push"), 0);
+		}
+		
+		this.numberOfSpikes = (int) (((radius * 2) * (radius * 2)) / 16);
 
 		Random random = new Random();
 		int locX = player.getLocation().getBlockX();
@@ -52,7 +59,7 @@ public class IceSpikePillarField extends IceAbility {
 
 					if (WaterAbility.isIcebendable(player, testBlock.getType(), false) && testBlock.getRelative(BlockFace.UP).getType() == Material.AIR 
 							&& !(testBlock.getX() == player.getEyeLocation().getBlock().getX() && testBlock.getZ() == player.getEyeLocation().getBlock().getZ())
-							&& !TempBlock.isTempBlock(testBlock)) {
+							|| (TempBlock.isTempBlock(testBlock) && WaterAbility.isBendableWaterTempBlock(testBlock))) {
 						iceBlocks.add(testBlock);
 						for (int i = 0; i < iceBlocks.size() / 2 + 1; i++) {
 							Random rand = new Random();
@@ -94,6 +101,7 @@ public class IceSpikePillarField extends IceAbility {
 			}
 
 			if (targetBlock.getRelative(BlockFace.UP).getType() != Material.ICE) {
+				
 				IceSpikePillar pillar = new IceSpikePillar(player, targetBlock.getLocation(), (int) damage, thrownForce, cooldown);
 				pillar.inField = true;
 				bPlayer.addCooldown("IceSpikePillarField", cooldown);

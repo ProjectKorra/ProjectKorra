@@ -138,8 +138,10 @@ public class WaterBubble extends WaterAbility {
 			set.removeAll(list);
 				
 			for (Block b : set) {
-				b.setType(waterOrigins.get(b).getItemType());
-				b.setData(waterOrigins.get(b).getData());
+				if (b.getType() == Material.AIR) {
+					b.setType(waterOrigins.get(b).getItemType());
+					b.setData(waterOrigins.get(b).getData());
+				}
 				waterOrigins.remove(b);
 			}
 		}
@@ -173,8 +175,10 @@ public class WaterBubble extends WaterAbility {
 		super.remove();
 		
 		for (Block b : waterOrigins.keySet()) {
-			b.setType(waterOrigins.get(b).getItemType());
-			b.setData(waterOrigins.get(b).getData());
+			if (b.getType() == Material.AIR) {
+				b.setType(waterOrigins.get(b).getItemType());
+				b.setData(waterOrigins.get(b).getData());
+			}
 		}
 	}
 	

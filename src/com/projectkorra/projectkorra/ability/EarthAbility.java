@@ -25,7 +25,6 @@ import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.earthbending.RaiseEarth;
 import com.projectkorra.projectkorra.earthbending.lava.LavaFlow;
 import com.projectkorra.projectkorra.earthbending.passive.EarthPassive;
-import com.projectkorra.projectkorra.earthbending.sand.SandSpout;
 import com.projectkorra.projectkorra.firebending.Illumination;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.Information;
@@ -92,8 +91,8 @@ public abstract class EarthAbility extends ElementalAbility {
 		}
 	}
 
-	public static boolean isEarthbendable(Material material) {
-		return isEarth(material) || isMetal(material) || isSand(material) || isLava(material);
+	public static boolean isEarthbendable(Material material, boolean metal, boolean sand, boolean lava) {
+		return isEarth(material) || (metal && isMetal(material)) || (sand && isSand(material)) || (lava && isLava(material));
 	}
 
 	public boolean isEarthbendable(Block block) {
@@ -304,7 +303,7 @@ public abstract class EarthAbility extends ElementalAbility {
 		Block testBlock = player.getTargetBlock(getTransparentMaterialSet(), (int) range);
 		if (bPlayer == null) {
 			return null;
-		} else if (isEarthbendable(testBlock.getType())) {
+		} else if (isEarthbendable(testBlock.getType(), true, true, true)) {
 			return testBlock;
 		} else if (!isTransparent(player, testBlock)) {
 			return null;
@@ -390,7 +389,7 @@ public abstract class EarthAbility extends ElementalAbility {
 				Location searchLoc = loc.clone().add(tracer);
 				Block block = GeneralMethods.getTopBlock(searchLoc, maxVertical);
 
-				if (block != null && isEarthbendable(block.getType())) {
+				if (block != null && isEarthbendable(block.getType(), true, true, true)) {
 					return block;
 				}
 				tracer = GeneralMethods.rotateXZ(tracer, rotation);
@@ -422,7 +421,7 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	public static boolean isEarthbendable(Player player, String abilityName, Block block) {
 		BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
-		if (bPlayer == null || !isEarthbendable(block.getType()) || PREVENT_EARTHBENDING.contains(block) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
+		if (bPlayer == null || !isEarthbendable(block.getType(), true, true, true) || PREVENT_EARTHBENDING.contains(block) || GeneralMethods.isRegionProtectedFromBuild(player, abilityName, block.getLocation())) {
 			return false;
 		} else if (isMetal(block) && !bPlayer.canMetalbend()) {
 			return false;
@@ -497,19 +496,36 @@ public abstract class EarthAbility extends ElementalAbility {
 
 	public static void playEarthbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound")), 0, 10);
+			float volume = (float) getConfig().getDouble("Properties.Earth.EarthSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Earth.EarthSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.EarthSound.Sound")), volume, pitch);
 		}
 	}
 
 	public static void playMetalbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound")), 1, 10);
+			float volume = (float) getConfig().getDouble("Properties.Earth.MetalSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Earth.MetalSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.MetalSound.Sound")), volume, pitch);
 		}
 	}
 
-	public static void playSandBendingSound(Location loc) {
+	public static void playSandbendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.SandSound")), 1.5f, 5);
+			float volume = (float) getConfig().getDouble("Properties.Earth.SandSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Earth.SandSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.SandSound.Sound")), volume, pitch);
+		}
+	}
+	public static void playLavabendingSound(Location loc) {
+		if (getConfig().getBoolean("Properties.Earth.PlaySound")) {
+			float volume = (float) getConfig().getDouble("Properties.Earth.LavaSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Earth.LavaSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Earth.LavaSound.Sound")), volume, pitch);
 		}
 	}
 
@@ -626,13 +642,5 @@ public abstract class EarthAbility extends ElementalAbility {
 		if (isEarthRevertOn()) {
 			removeAllEarthbendedBlocks();
 		}
-	}
-
-	public static void removeSandSpouts(Location loc, double radius, Player source) {
-		SandSpout.removeSpouts(loc, radius, source);
-	}
-
-	public static void removeSandSpouts(Location loc, Player source) {
-		removeSandSpouts(loc, 1.5, source);
 	}
 }

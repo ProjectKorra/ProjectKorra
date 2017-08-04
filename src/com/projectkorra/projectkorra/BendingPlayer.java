@@ -21,6 +21,7 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.WaterAbility;
+import com.projectkorra.projectkorra.ability.util.PassiveManager;
 import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.chiblocking.Paralyze;
 import com.projectkorra.projectkorra.command.Commands;
@@ -116,11 +117,11 @@ public class BendingPlayer {
 			this.cooldowns.put(ability, cooldown + System.currentTimeMillis());
 
 			Player player = event.getPlayer();
-			
+
 			if (player == null) {
 				return;
 			}
-			
+
 			String abilityName = event.getAbility();
 			BendingPlayer bPlayer = BendingPlayer.getBendingPlayer(player);
 
@@ -166,9 +167,11 @@ public class BendingPlayer {
 		if (isAvatarState()) {
 			if (isChiBlocked()) {
 				return true;
+			} else {
+				return false;
 			}
 		}
-		if (canBendIgnoreBindsCooldowns(CoreAbility.getAbility("Bloodbending")) && !isToggled()) {
+		if (canBendIgnoreBindsCooldowns(CoreAbility.getAbility("Bloodbending")) && isToggled()) {
 			return false;
 		}
 		return true;
@@ -194,7 +197,7 @@ public class BendingPlayer {
 			return false;
 		} else if (!ignoreCooldowns && isOnCooldown(ability.getName())) {
 			return false;
-		} else if (!ignoreBinds && !ability.getName().equals(getBoundAbilityName())) {
+		} else if (!ignoreBinds && (!ability.getName().equals(getBoundAbilityName()))) {
 			return false;
 		} else if (disabledWorlds != null && disabledWorlds.contains(player.getWorld().getName())) {
 			return false;
@@ -211,7 +214,7 @@ public class BendingPlayer {
 			cooldowns.remove(name);
 		}
 
-		if (isChiBlocked() || isParalyzed() || isBloodbent() || isControlledByMetalClips()) {
+		if (isChiBlocked() || isParalyzed() || (isBloodbent() && !ability.getName().equalsIgnoreCase("AvatarState")) || isControlledByMetalClips()) {
 			return false;
 		} else if (GeneralMethods.isRegionProtectedFromBuild(player, ability.getName(), playerLoc)) {
 			return false;
@@ -313,6 +316,7 @@ public class BendingPlayer {
 					if (subElement.equals(SpiritElement.DARK) && sPlayer.isLightSpirit()) {
 						return false;
 					}
+
 					if (subElement.equals(SpiritElement.LIGHT) && sPlayer.isDarkSpirit()) {
 						return false;
 					}
@@ -346,7 +350,6 @@ public class BendingPlayer {
 	/**
 	 * Checks to see if a player can LavaBend.
 	 * 
-	 * @param player The player to check
 	 * @return true If player has permission node "bending.earth.lavabending"
 	 */
 	public boolean canLavabend() {
@@ -670,7 +673,7 @@ public class BendingPlayer {
 		if (Bukkit.getPlayer(uuid) == null) {
 			return;
 		}
-		
+
 		PlayerCooldownChangeEvent event = new PlayerCooldownChangeEvent(Bukkit.getPlayer(uuid), ability, 0, Result.REMOVED);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
@@ -742,6 +745,7 @@ public class BendingPlayer {
 	 */
 	public void toggleBending() {
 		toggled = !toggled;
+		PassiveManager.registerPassives(player);
 	}
 
 	public void toggleElement(Element element) {
@@ -749,6 +753,7 @@ public class BendingPlayer {
 			return;
 		}
 		toggledElements.put(element, !toggledElements.get(element));
+		PassiveManager.registerPassives(player);
 	}
 
 	/**

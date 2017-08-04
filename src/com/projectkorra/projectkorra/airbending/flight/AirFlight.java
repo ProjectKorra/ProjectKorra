@@ -109,9 +109,13 @@ public class AirFlight extends FlightAbility {
 			remove();
 			return;
 		} else if (!player.isSneaking() && !isHovering && !firstProgressIteration) {
+			bPlayer.addCooldown(this);
 			remove();
 			return;
-		} else if (player.getLocation().subtract(0, 0.5, 0).getBlock().getType() != Material.AIR) {
+		} else if (player.getLocation().subtract(0, 0.4, 0).getBlock().getType() != Material.AIR) {
+			if (!firstProgressIteration) {
+				bPlayer.addCooldown(this);
+			}
 			remove();
 			return;
 		} else if (System.currentTimeMillis() - getStartTime() > maxDuration && maxDuration > 0) {

@@ -107,8 +107,8 @@ public class AddCommand extends PKCommand {
 					bPlayer.addElement(e);
 					
 					if (elements.length() > 1)
-						elements.append(",");
-					elements.append(e.getName());
+						elements.append(ChatColor.YELLOW + ", ");
+					elements.append(e.getColor() + e.getName());
 					
 					bPlayer.getSubElements().clear();
 					for (SubElement sub : Element.getAllSubElements()) {
@@ -144,6 +144,14 @@ public class AddCommand extends PKCommand {
 			Element e = Element.fromString(element);
 			if (e == null) {
 				e = SubElement.fromString(element);
+			}
+			
+			if (e == Element.AVATAR) {
+				add(sender, target, Element.AIR.getName());
+				add(sender, target, Element.EARTH.getName());
+				add(sender, target, Element.FIRE.getName());
+				add(sender, target, Element.WATER.getName());
+				return;
 			}
 			
 			//if it's an element:

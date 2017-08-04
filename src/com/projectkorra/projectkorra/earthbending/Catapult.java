@@ -147,7 +147,7 @@ public class Catapult extends EarthAbility {
 
 	@Override
 	public boolean isSneakAbility() {
-		return false;
+		return true;
 	}
 
 	@Override

@@ -61,6 +61,12 @@ public class IceBlast extends IceAbility {
 		if (!bPlayer.canBend(this) || !bPlayer.canIcebend()) {
 			return;
 		}
+		
+		if (bPlayer.isAvatarState()) {
+			this.cooldown = 0;
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Water.IceBlast.Range");
+			this.damage = getConfig().getInt("Abilities.Avatar.AvatarState.Water.IceBlast.Damage");
+		}
 
 		block(player);
 		range = getNightFactor(range, player.getWorld());

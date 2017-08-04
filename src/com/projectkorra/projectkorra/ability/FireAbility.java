@@ -157,7 +157,10 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playCombustionSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound")), 1, -1);
+			float volume = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Fire.CombustionSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Fire.CombustionSound.Sound")), volume, pitch);
 		}
 	}
 
@@ -167,7 +170,10 @@ public abstract class FireAbility extends ElementalAbility {
 
 	public static void playFirebendingSound(Location loc) {
 		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
-			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Fire.FireSound")), 1, 10);
+			float volume = (float) getConfig().getDouble("Properties.Fire.FireSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Fire.FireSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Fire.FireSound.Sound")), volume, pitch);
 		}
 	}
 
@@ -180,6 +186,15 @@ public abstract class FireAbility extends ElementalAbility {
 		loc.setY(loc.getY() + Math.random() * (yOffset / 2 - -(yOffset / 2)));
 		loc.setZ(loc.getZ() + Math.random() * (zOffset / 2 - -(zOffset / 2)));
 		GeneralMethods.displayColoredParticle(loc, "#01E1FF");
+	}
+	
+	public static void playLightningbendingSound(Location loc) {
+		if (getConfig().getBoolean("Properties.Fire.PlaySound")) {
+			float volume = (float) getConfig().getDouble("Properties.Fire.LightningSound.Volume");
+			float pitch = (float) getConfig().getDouble("Properties.Fire.LightningSound.Pitch");
+			
+			loc.getWorld().playSound(loc, Sound.valueOf(getConfig().getString("Properties.Fire.LightningSound.Sound")), volume, pitch);
+		}
 	}
 
 	/** Removes all temp fire that no longer needs to be there */

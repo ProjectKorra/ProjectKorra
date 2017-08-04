@@ -52,10 +52,10 @@ public class BindCommand extends PKCommand {
 		}
 
 		CoreAbility coreAbil = CoreAbility.getAbility(args.get(0));
-		if (coreAbil == null || coreAbil.isHiddenAbility() || !coreAbil.isEnabled()) {
+		if (coreAbil == null || !coreAbil.isEnabled()) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + abilityDoesntExist.replace("{ability}", args.get(0)));
 			return;
-		} else if (coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility) {
+		} else if (coreAbil instanceof PassiveAbility || coreAbil instanceof ComboAbility || coreAbil.isHiddenAbility()) {
 			GeneralMethods.sendBrandingMessage(sender, ChatColor.RED + unbindable.replace("{ability}", args.get(0)));
 			return;
 		} 
@@ -123,7 +123,7 @@ public class BindCommand extends PKCommand {
 		if (args.size() == 0) {
 			if (bPlayer != null) {
 				for (CoreAbility coreAbil : CoreAbility.getAbilities()) {
-					if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil)) {
+					if (!coreAbil.isHiddenAbility() && bPlayer.canBind(coreAbil) && !(coreAbil instanceof PassiveAbility && coreAbil instanceof ComboAbility)  && !abilities.contains(coreAbil.getName())) {
 						abilities.add(coreAbil.getName());
 					}
 				}

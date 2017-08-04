@@ -21,7 +21,8 @@ public class EarthGrab extends EarthAbility {
 	private long cooldown;
 	private double lowestDistance;
 	private double selectRange;
-	private double height;
+	private int height;
+	private int radius;
 	private Location origin;
 	private Vector direction;
 	private Entity closestEntity;
@@ -37,8 +38,9 @@ public class EarthGrab extends EarthAbility {
 		super(player);
 
 		this.selectRange = getConfig().getDouble("Abilities.Earth.EarthGrab.SelectRange");
-		this.height = getConfig().getDouble("Abilities.Earth.EarthGrab.Height");
+		this.height = getConfig().getInt("Abilities.Earth.EarthGrab.Height");
 		this.cooldown = getConfig().getLong("Abilities.Earth.EarthGrab.Cooldown");
+		this.radius = getConfig().getInt("Abilities.Earth.EarthGrab.Radius");
 		this.origin = player.getEyeLocation();
 		this.direction = origin.getDirection();
 		this.lowestDistance = selectRange + 1;
@@ -56,7 +58,8 @@ public class EarthGrab extends EarthAbility {
 
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = getConfig().getLong("Abilities.Avatar.AvatarState.Earth.EarthGrab.Cooldown");
-			this.height = getConfig().getDouble("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height");
+			this.height = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.EarthGrab.Height");
+			this.radius = getConfig().getInt("Abilities.Avatar.AvatarState.Earth.EarthGrab.Radius");
 		}
 
 		if (player.isSneaking()) {
@@ -74,39 +77,28 @@ public class EarthGrab extends EarthAbility {
 	public void formDome() {
 		if (closestEntity != null) {
 			ArrayList<Block> blocks = new ArrayList<Block>();
-			Location location = closestEntity.getLocation();
-			Location loc1 = location.clone();
-			Location loc2 = location.clone();
-			Location testLoc, testloc2;
-			double factor = 3;
-			double factor2 = 4;
-			int height1 = (int) height / 2;
-			int height2 = (int) height / 3;
-
-			for (double angle = 0; angle <= 360; angle += 20) {
-				testLoc = loc1.clone().add(factor * Math.cos(Math.toRadians(angle)), 1, factor * Math.sin(Math.toRadians(angle)));
-				testloc2 = loc2.clone().add(factor2 * Math.cos(Math.toRadians(angle)), 1, factor2 * Math.sin(Math.toRadians(angle)));
-
-				for (int y = 0; y < height - height1; y++) {
-					testLoc = testLoc.clone().add(0, -1, 0);
-					if (isEarthbendable(testLoc.getBlock())) {
-						if (!blocks.contains(testLoc.getBlock())) {
-							new RaiseEarth(player, testLoc, height1 + y - 1);
-						}
-						blocks.add(testLoc.getBlock());
-						break;
-					}
+			Location location = closestEntity.getLocation().clone().subtract(0, 1, 0);
+			location.setPitch(0);
+			for (float theta = -180; theta < 180; theta += 1) {
+				Location loc = location.clone();
+				loc.setYaw(theta);
+				Vector dir = loc.getDirection();
+				Block a = GeneralMethods.getTopBlock(loc.add(dir.clone().multiply(radius)), height/2);
+				while (!GeneralMethods.isSolid(a) && !isEarthbendable(a.getType(), true, true, false) && a.getY() > 0 && a.getY() < 256) {
+					a = a.getRelative(BlockFace.DOWN);
 				}
-
-				for (int y = 0; y < height - height2; y++) {
-					testloc2 = testloc2.clone().add(0, -1, 0);
-					if (isEarthbendable(testloc2.getBlock())) {
-						if (!blocks.contains(testloc2.getBlock())) {
-							new RaiseEarth(player, testloc2, height2 + y - 1);
-						}
-						blocks.add(testloc2.getBlock());
-						break;
-					}
+				if (!blocks.contains(a)) {
+					blocks.add(a);
+					new RaiseEarth(player, a.getLocation(), (int) height);
+				}
+				
+				Block b = GeneralMethods.getTopBlock(loc.add(dir.clone().multiply(1)), height/2);
+				while (!GeneralMethods.isSolid(b) && !isEarthbendable(b.getType(), true, true, false) && b.getY() > 0 && b.getY() < 256) {
+					b = b.getRelative(BlockFace.DOWN);
+				}
+				if (!blocks.contains(b)) {
+					blocks.add(b);
+					new RaiseEarth(player, b.getLocation(), (int) height/2);
 				}
 			}
 
@@ -118,46 +110,7 @@ public class EarthGrab extends EarthAbility {
 		closestEntity = player;
 		getGround();
 		ParticleEffect.BLOCK_CRACK.display((ParticleEffect.ParticleData) new ParticleEffect.BlockData(blockType, blockByte), 1F, 1F, 1F, 0.1F, 100, player.getLocation(), 500);
-		if (closestEntity != null) {
-			ArrayList<Block> blocks = new ArrayList<Block>();
-			Location location = closestEntity.getLocation();
-			Location loc1 = location.clone();
-			Location loc2 = location.clone();
-			Location testLoc, testLoc2;
-			double factor = 3;
-			double factor2 = 4;
-			int height1 = (int) height / 2;
-			int height2 = (int) height / 3;
-
-			for (double angle = 0; angle <= 360; angle += 20) {
-				testLoc = loc1.clone().add(factor * Math.cos(Math.toRadians(angle)), 1, factor * Math.sin(Math.toRadians(angle)));
-				testLoc2 = loc2.clone().add(factor2 * Math.cos(Math.toRadians(angle)), 1, factor2 * Math.sin(Math.toRadians(angle)));
-
-				for (int y = 0; y < height - height1; y++) {
-					testLoc = testLoc.clone().add(0, -1, 0);
-					if (isEarthbendable(testLoc.getBlock())) {
-						if (!blocks.contains(testLoc.getBlock())) {
-							new RaiseEarth(player, testLoc, height1 + y - 1);
-						}
-						blocks.add(testLoc.getBlock());
-						break;
-					}
-				}
-
-				for (int y = 0; y < height - height2; y++) {
-					testLoc2 = testLoc2.clone().add(0, -1, 0);
-					if (isEarthbendable(testLoc2.getBlock())) {
-						if (!blocks.contains(testLoc2.getBlock())) {
-							new RaiseEarth(player, testLoc2, height2 + y - 1);
-						}
-						blocks.add(testLoc2.getBlock());
-						break;
-					}
-				}
-			}
-
-			bPlayer.addCooldown(this);
-		}
+		formDome();
 	}
 
 	@Override
@@ -180,6 +133,8 @@ public class EarthGrab extends EarthAbility {
 				}
 			}
 			if (isEarthbendable(b)) {
+				blockType = b.getType();
+				blockByte = b.getData();
 				return b;
 			}
 		}
@@ -275,11 +230,11 @@ public class EarthGrab extends EarthAbility {
 		this.selectRange = range;
 	}
 
-	public double getHeight() {
+	public int getHeight() {
 		return height;
 	}
 
-	public void setHeight(double height) {
+	public void setHeight(int height) {
 		this.height = height;
 	}
 

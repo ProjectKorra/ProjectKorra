@@ -51,6 +51,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.kingdoms.constants.StructureType;
@@ -289,21 +290,23 @@ public class GeneralMethods {
 	 * @throws SQLException
 	 */
 	public static void createBendingPlayer(final UUID uuid, final String player) {
-		//		new BukkitRunnable() {
-		//			@Override
-		//			public void run() {
-		//				createBendingPlayerAsynchronously(uuid, player);
-		//			}
-		//		}.runTaskAsynchronously(ProjectKorra.plugin);
-		createBendingPlayerAsynchronously(uuid, player); // "async"
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				createBendingPlayerAsynchronously(uuid, player); // "async"
+			}
+			
+		}.runTask(ProjectKorra.plugin);
 	}
 
 	private static void createBendingPlayerAsynchronously(final UUID uuid, final String player) {
 		ResultSet rs2 = DBConnection.sql.readQuery("SELECT * FROM pk_players WHERE uuid = '" + uuid.toString() + "'");
 		try {
 			if (!rs2.next()) { // Data doesn't exist, we want a completely new player.
+				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9) VALUES ('" + 
+				    uuid.toString() + "', '" + player + "', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null')");
 				new BendingPlayer(uuid, player, new ArrayList<Element>(), new ArrayList<SubElement>(), new HashMap<Integer, String>(), false);
-				DBConnection.sql.modifyQuery("INSERT INTO pk_players (uuid, player) VALUES ('" + uuid.toString() + "', '" + player + "')");
 				ProjectKorra.log.info("Created new BendingPlayer for " + player);
 			} else {
 				// The player has at least played before.
@@ -318,7 +321,7 @@ public class GeneralMethods {
 				String permaremoved = rs2.getString("permaremoved");
 				boolean p = false;
 				final ArrayList<Element> elements = new ArrayList<Element>();
-				if (element != null) {
+				if (element != null && !element.equals("NULL")) {
 					boolean hasAddon = element.contains(";");
 					String[] split = element.split(";");
 					if (split[0] != null) { // Player has an element.
@@ -375,7 +378,7 @@ public class GeneralMethods {
 				}
 				final ArrayList<SubElement> subelements = new ArrayList<SubElement>();
 				boolean shouldSave = false;
-				if (subelement != null) {
+				if (subelement != null && !subelement.equals("NULL")) {
 					boolean hasAddon = subelement.contains(";");
 					String[] split = subelement.split(";");
 					if (subelement.equals("-")) {
@@ -1616,9 +1619,12 @@ public class GeneralMethods {
 		Preset.loadExternalPresets();
 		new MultiAbilityManager();
 		new ComboManager();
+		// Stop the previous collision detection task before creating new manager.
+		ProjectKorra.collisionManager.stopCollisionDetection();
 		ProjectKorra.collisionManager = new CollisionManager();
 		ProjectKorra.collisionInitializer = new CollisionInitializer(ProjectKorra.collisionManager);
 		CoreAbility.registerAbilities();
+		reloadAddonPlugins();
 		ProjectKorra.collisionInitializer.initializeDefaultCollisions(); // must be called after abilities have been registered
 		ProjectKorra.collisionManager.startCollisionDetection();
 
@@ -1640,6 +1646,18 @@ public class GeneralMethods {
 		}
 		plugin.updater.checkUpdate();
 		ProjectKorra.log.info("Reload complete");
+	}
+	
+	public static void reloadAddonPlugins() {
+		for (int i = CoreAbility.getAddonPlugins().size()-1; i > -1; i--) {
+			String entry = CoreAbility.getAddonPlugins().get(i);
+			String[] split = entry.split("::");
+			if (Bukkit.getServer().getPluginManager().isPluginEnabled(split[0])) {
+				CoreAbility.registerPluginAbilities((JavaPlugin)Bukkit.getServer().getPluginManager().getPlugin(split[0]), split[1]);
+			} else {
+				CoreAbility.getAddonPlugins().remove(i);
+			}
+		}
 	}
 
 	public static void removeBlock(Block block) {
@@ -1898,8 +1916,12 @@ public class GeneralMethods {
 				elements.append(element.getName() + ",");
 			}
 		}
+		
+		if (elements.length() == 0) {
+			elements.append("NULL");
+		}
 
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements + "' WHERE uuid = '" + uuid + "'");
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET element = '" + elements.toString() + "' WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void saveSubElements(BendingPlayer bPlayer) {
@@ -1952,8 +1974,12 @@ public class GeneralMethods {
 				subs.append(element.getName() + ",");
 			}
 		}
-
-		DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs + "' WHERE uuid = '" + uuid + "'");
+		
+		if (subs.length() == 0) {
+			subs.append("NULL");
+		}
+		
+		DBConnection.sql.modifyQuery("UPDATE pk_players SET subelement = '" + subs.toString() + "' WHERE uuid = '" + uuid + "'");
 	}
 
 	public static void savePermaRemoved(BendingPlayer bPlayer) {
@@ -2018,8 +2044,13 @@ public class GeneralMethods {
 	}
 
 	public static void sendBrandingMessage(CommandSender sender, String message) {
-		ChatColor color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
-		color = color == null ? ChatColor.GOLD : color;
+		ChatColor color;
+		try {
+			color = ChatColor.valueOf(ConfigManager.languageConfig.get().getString("Chat.Branding.Color").toUpperCase());
+		} catch (IllegalArgumentException exception) {
+			color = ChatColor.GOLD;
+		}
+		
 		String prefix = ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Prefix")) + color + "ProjectKorra" + ChatColor.translateAlternateColorCodes('&', ConfigManager.languageConfig.get().getString("Chat.Branding.ChatPrefix.Suffix"));
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(prefix + message);

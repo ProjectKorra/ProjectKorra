@@ -317,7 +317,7 @@ public class FireBlastCharged extends FireAbility {
 	public boolean isHarmlessAbility() {
 		return false;
 	}
-
+	
 	@Override
 	public boolean isCollidable() {
 		return this.launched;

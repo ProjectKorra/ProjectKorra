@@ -12,6 +12,7 @@ import com.projectkorra.projectkorra.ability.ChiAbility;
 
 public class AcrobatStance extends ChiAbility {
 
+	private long cooldown;
 	private int speed;
 	private int jump;
 	private double chiBlockBoost;
@@ -22,7 +23,7 @@ public class AcrobatStance extends ChiAbility {
 		if (!bPlayer.canBend(this)) {
 			return;
 		}
-
+		this.cooldown = getConfig().getLong("Abilities.Chi.AcrobatStance.Cooldown");
 		this.speed = getConfig().getInt("Abilities.Chi.AcrobatStance.Speed") + 1;
 		this.jump = getConfig().getInt("Abilities.Chi.AcrobatStance.Jump") + 1;
 		this.chiBlockBoost = getConfig().getDouble("Abilities.Chi.AcrobatStance.ChiBlockBoost");
@@ -46,7 +47,7 @@ public class AcrobatStance extends ChiAbility {
 
 	@Override
 	public void progress() {
-		if (!bPlayer.canBendIgnoreBindsCooldowns(this) || !bPlayer.hasElement(Element.CHI)) {
+		if (!bPlayer.canBendIgnoreBinds(this) || !bPlayer.hasElement(Element.CHI)) {
 			remove();
 			return;
 		}
@@ -62,6 +63,7 @@ public class AcrobatStance extends ChiAbility {
 	@Override
 	public void remove() {
 		super.remove();
+		bPlayer.addCooldown(this);
 		bPlayer.setStance(null);
 		GeneralMethods.displayMovePreview(player);
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDERDRAGON_SHOOT, 0.5F, 2F);
@@ -81,7 +83,7 @@ public class AcrobatStance extends ChiAbility {
 
 	@Override
 	public long getCooldown() {
-		return 0;
+		return cooldown;
 	}
 
 	@Override

@@ -17,7 +17,6 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
 import com.projectkorra.projectkorra.attribute.Attribute;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 import com.projectkorra.projectkorra.firebending.combo.FireComboStream;
 import com.projectkorra.projectkorra.util.DamageHandler;
 
@@ -55,17 +54,17 @@ public class AirSweep extends AirAbility implements ComboAbility {
 			return;
 		}
 		
-		this.damage = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Damage");
-		this.range = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Range");
-		this.speed = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Speed");
-		this.knockback = getConfig().getDouble("Abilities.Air.AirCombo.AirSweep.Knockback");
-		this.cooldown = getConfig().getLong("Abilities.Air.AirCombo.AirSweep.Cooldown");
+		this.damage = getConfig().getDouble("Abilities.Air.AirSweep.Damage");
+		this.range = getConfig().getDouble("Abilities.Air.AirSweep.Range");
+		this.speed = getConfig().getDouble("Abilities.Air.AirSweep.Speed");
+		this.knockback = getConfig().getDouble("Abilities.Air.AirSweep.Knockback");
+		this.cooldown = getConfig().getLong("Abilities.Air.AirSweep.Cooldown");
 
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = AvatarState.getValue(damage);
-			this.range = AvatarState.getValue(range);
-			this.knockback = knockback * 1.4;
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSweep.Damage");
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSweep.Range");
+			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Air.AirSweep.Knockback");
 		}
 		
 		bPlayer.addCooldown(this);

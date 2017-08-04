@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -16,7 +17,6 @@ import com.projectkorra.projectkorra.ability.ComboAbility;
 import com.projectkorra.projectkorra.ability.FireAbility;
 import com.projectkorra.projectkorra.ability.util.Collision;
 import com.projectkorra.projectkorra.ability.util.ComboManager.AbilityInformation;
-import com.projectkorra.projectkorra.avatar.AvatarState;
 
 public class FireSpin extends FireAbility implements ComboAbility {
 
@@ -35,20 +35,25 @@ public class FireSpin extends FireAbility implements ComboAbility {
 		if (!bPlayer.canBendIgnoreBindsCooldowns(this)) {
 			return;
 		}
+		
+		if (player.getLocation().getBlock().getType() == Material.WATER || player.getLocation().getBlock().getType() == Material.STATIONARY_WATER){
+			return;
+		}
 
 		this.affectedEntities = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 
-		this.damage = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Damage");
-		this.range = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Range");
-		this.cooldown = getConfig().getLong("Abilities.Fire.FireCombo.FireSpin.Cooldown");
-		this.knockback = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Knockback");
-		this.speed = getConfig().getDouble("Abilities.Fire.FireCombo.FireSpin.Speed");
+		this.damage = getConfig().getDouble("Abilities.Fire.FireSpin.Damage");
+		this.range = getConfig().getDouble("Abilities.Fire.FireSpin.Range");
+		this.cooldown = getConfig().getLong("Abilities.Fire.FireSpin.Cooldown");
+		this.knockback = getConfig().getDouble("Abilities.Fire.FireSpin.Knockback");
+		this.speed = getConfig().getDouble("Abilities.Fire.FireSpin.Speed");
 
 		if (bPlayer.isAvatarState()) {
 			this.cooldown = 0;
-			this.damage = AvatarState.getValue(damage);
-			this.range = AvatarState.getValue(range);
+			this.damage = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Damage");
+			this.range = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Range");
+			this.knockback = getConfig().getDouble("Abilities.Avatar.AvatarState.Fire.FireSpin.Knockback");
 		}
 		
 		start();

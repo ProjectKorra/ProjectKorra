@@ -23,6 +23,7 @@ import com.projectkorra.projectkorra.firebending.FireBlast;
 import com.projectkorra.projectkorra.util.BlockSource;
 import com.projectkorra.projectkorra.util.ClickType;
 import com.projectkorra.projectkorra.util.TempBlock;
+import com.projectkorra.projectkorra.util.TempBlock.RevertTask;
 import com.projectkorra.projectkorra.waterbending.plant.PlantRegrowth;
 import com.projectkorra.projectkorra.waterbending.util.WaterReturn;
 
@@ -136,7 +137,7 @@ public class SurgeWave extends WaterAbility {
 			freezeradius = maxFreezeRadius;
 		}
 
-		for (Block block : GeneralMethods.getBlocksAroundPoint(frozenLocation, freezeradius)) {
+		for (final Block block : GeneralMethods.getBlocksAroundPoint(frozenLocation, freezeradius)) {
 			if (GeneralMethods.isRegionProtectedFromBuild(this, block.getLocation()) || GeneralMethods.isRegionProtectedFromBuild(player, "PhaseChange", block.getLocation())) {
 				continue;
 			} else if (TempBlock.isTempBlock(block)) {
@@ -144,17 +145,26 @@ public class SurgeWave extends WaterAbility {
 			}
 
 			Block oldBlock = block;
+			TempBlock tblock = new TempBlock(block, block.getType(), (byte) 0);
 			if (block.getType() == Material.AIR || block.getType() == Material.SNOW || isWater(block)) {
-				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
-				tblock.setRevertTime(iceRevertTime + (new Random().nextInt(1000)));
-				frozenBlocks.put(block, oldBlock.getType());
-			}
-			if (isPlant(block) && block.getType() != Material.LEAVES) {
+				tblock.setType(Material.ICE);
+			} else if (isPlant(block) && block.getType() != Material.LEAVES) {
 				block.breakNaturally();
-				TempBlock tblock = new TempBlock(block, Material.ICE, (byte) 0);
-				tblock.setRevertTime(iceRevertTime + (new Random().nextInt(1000)));
-				frozenBlocks.put(block, oldBlock.getType());
+				tblock.setType(Material.ICE);
+			} else {
+				tblock.revertBlock();
+				continue;
 			}
+			tblock.setRevertTask(new RevertTask() {
+
+				@Override
+				public void run() {
+					frozenBlocks.remove(block);
+				}
+				
+			});
+			tblock.setRevertTime(iceRevertTime + (new Random().nextInt(1000)));
+			frozenBlocks.put(block, oldBlock.getType());
 			for (Block sound : frozenBlocks.keySet()) {
 				if ((new Random()).nextInt(4) == 0) {
 					playWaterbendingSound(sound.getLocation());
@@ -239,7 +249,7 @@ public class SurgeWave extends WaterAbility {
 
 		if (System.currentTimeMillis() - time >= interval) {
 			time = System.currentTimeMillis();
-			if (!progressing && !bPlayer.getBoundAbilityName().equalsIgnoreCase(getName())) {
+			if (!progressing && !bPlayer.getBoundAbilityName().equals(getName())) {
 				remove();
 				return;
 			} else if (!progressing) {
@@ -363,8 +373,9 @@ public class SurgeWave extends WaterAbility {
 	private void thaw() {
 		if (frozenBlocks != null) {
 			for (Block block : frozenBlocks.keySet()) {
-				TempBlock.revertBlock(block, frozenBlocks.get(block));
-				frozenBlocks.remove(block);
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock.get(block).revertBlock();
+				}
 			}
 		}
 	}
@@ -385,8 +396,9 @@ public class SurgeWave extends WaterAbility {
 				surgeWave.waveBlocks.remove(block);
 			}
 			for (Block block : surgeWave.frozenBlocks.keySet()) {
-				TempBlock.revertBlock(block, Material.AIR);
-				surgeWave.frozenBlocks.remove(block);
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock.get(block).revertBlock();
+				}
 			}
 		}
 	}
@@ -403,8 +415,10 @@ public class SurgeWave extends WaterAbility {
 	public static void thaw(Block block) {
 		for (SurgeWave surgeWave : getAbilities(SurgeWave.class)) {
 			if (surgeWave.frozenBlocks.containsKey(block)) {
-				TempBlock.revertBlock(block, Material.AIR);
-				surgeWave.frozenBlocks.remove(block);
+				if (TempBlock.isTempBlock(block)) {
+					TempBlock tb = TempBlock.get(block);
+					tb.revertBlock();
+				}
 			}
 		}
 	}

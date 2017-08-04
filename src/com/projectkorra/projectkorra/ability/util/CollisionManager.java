@@ -67,15 +67,20 @@ public class CollisionManager {
 	}
 
 	private void detectCollisions() {
-		List<CoreAbility> instances = new ArrayList<>();
+		int activeInstanceCount = 0;
+		
 		for (CoreAbility ability : CoreAbility.getAbilitiesByInstances()) {
 			if (!(ability instanceof PassiveAbility)) {
-				instances.add(ability);
+				if (++activeInstanceCount > 1) {
+					break;
+				}
 			}
 		}
-		if (instances.size() <= 1) {
+		
+		if (activeInstanceCount <= 1) {
 			return;
 		}
+		
 		HashMap<CoreAbility, List<Location>> locationsCache = new HashMap<>();
 
 		for (Collision collision : collisions) {
@@ -137,7 +142,7 @@ public class CollisionManager {
 							}
 
 							if (locationFirst.getWorld() != locationSecond.getWorld()) {
-								return;
+								continue;
 							}
 							double distSquared = locationFirst.distanceSquared(locationSecond);
 							if (distSquared <= requiredDistSquared) {
